@@ -11999,3 +11999,7 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `2b1b2a29` | Multi-dimensional audit evidence | 2026-11-22T01:23:58.879Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-22T01:32:21.697Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `1c5f29e0` | Multi-dimensional audit evidence | 2026-11-22T01:32:23.538Z |
+| `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-22T01:43:56.873Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `c0f594ca` | Multi-dimensional audit evidence | 2026-11-22T01:44:02.056Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fbdb7e41` | Multi-dimensional audit evidence | 2026-11-22T01:44:08.829Z |
+| `learn-dom-k-8ab33baa` | `project://skyhook-io-radar` | `c0f594ca` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-22T01:44:40.946Z |

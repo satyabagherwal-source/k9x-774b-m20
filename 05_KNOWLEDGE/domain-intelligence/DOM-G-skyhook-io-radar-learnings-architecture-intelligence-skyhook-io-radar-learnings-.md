@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T20:56:27.755Z",
+  "timestamp": "2026-11-22T01:44:41.191Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-skyhook-io-radar-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [skyhook-io-radar-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T20:56:27.755Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T01:44:41.191Z`  
 > **Learning ID**: `LEARN-EVO-skyhook-io-radar-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), E (Creative Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), E (Creative Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from skyhook-io-radar-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `ccb8393e`  
+> **Source Version**: `c0f594ca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T20:55:49.212Z  
+> **Timestamp**: 2026-11-22T01:44:01.017Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T20:55:48.025Z  
+> **Harvest Timestamp**: 2026-11-22T01:44:01.011Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4171 stars
+- **Stars / Engagement**: 4183 stars
 
 ---
 
@@ -1179,9 +1179,10 @@ import (
 type ConnectionState string
 
 const (
-	StateConnected    ConnectionState = "connected"
-	StateDisconnected ConnectionState = "disconnected"
-	StateConnecting   ConnectionState = "connecting"
+	switchStoppedErrorType                 = "switch-stopped"
+	StateConnected         ConnectionState = "connected"
+	StateDisconnected      ConnectionState = "disconnected"
+	StateConnecting        ConnectionState = "connecting"
 )
 
 // ConnectionStatus holds detailed information about the cluster connection
@@ -1235,35 +1236,46 @@ func GetConnectionStatus() ConnectionStatus {
 
 // SetConnectionStatus updates the connection status and notifies callbacks
 func SetConnectionStatus(status ConnectionStatus) {
+	SetConnectionStatusIfCurrent(context.Background(), status)
+}
+
+// SetConnectionStatusIfCurrent keeps a late bootstrap or liveness probe from
+// overwriting a status published after its operation was cancelled.
+func SetConnectionStatusIfCurrent(operation context.Context, status ConnectionStatus) bool {
 	connectionStatusMu.Lock()
+	if operation.Err() != nil {
+		connectionStatusMu.Unlock()
+		return false
+	}
 	status.DisconnectedAt = outageStart(connectionStatus, status, time.Now())
 	if connectionStatus == status {
 		connectionStatusMu.Unlock()
-		return
+		return true
 	}
 	connectionStatus = status
-	connectionStatusMu.Unlock()
 
 	// Publish-side recovery ownership: every route into an auth-shaped
 	// disconnect (bootstrap with expired credentials, failed retry, failed
 	// context switch) must leave a reconnect loop running — the browser no
 	// longer auto-retries auth failures. Owed survives later non-auth
 	// republications (a hung-plugin retry classifies "timeout") and is only
-	// settled by a successful connect.
-	switch status.State {
-	case StateConnected:
+	// settled by a successful connect or an explicit switch stop.
+	switch {
+	case status.State == StateConnected || status.ErrorType == switchStoppedErrorType:
 		runtimeAuthRecoveryOwed.Store(false)
+	case status.State == StateDisconnected && isAuthClassification(status.ErrorType):
+		runtimeAuthRecoveryOwed.Store(true)
+	}
+	connectionStatusMu.Unlock()
+	if status.State == StateConnected {
 		resetInconclusiveStreak()
-	case StateDisconnected:
-		if isAuthClassification(status.ErrorType) {
-			runtimeAuthRecoveryOwed.Store(true)
-		}
-		if runtimeAuthRecoveryOwed.Load() {
-			startRuntimeAuthRecovery()
-		}
+	}
+	if status.State == StateDisconnected && runtimeAuthRecoveryOwed.Load() {
+		startRuntimeAuthRecovery()
 	}
 
 	notifyConnectionChange(status)
+	return true
 }
 
 func notifyConnectionChange(status ConnectionStatus) {
@@ -1296,7 +1308,14 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 	if !isClusterUnreachableMessage(message) {
 		return false
 	}
-	current := GetConnectionStatus()
+	var current ConnectionStatus
+	var operation context.Context
+	if !CaptureClusterReads(func() {
+		operation = OperationContext()
+		current = GetConnectionStatus()
+	}) || current.ErrorType == switchStoppedErrorType {
+		return false
+	}
 	if current.State == StateDisconnected && current.Error == message {
 		return true
 	}
@@ -1311,8 +1330,7 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 		Error:       message,
 		ErrorType:   ClassifyError(errors.New(message)),
 	}
-	SetConnectionStatus(status)
-	return true
+	return SetConnectionStatusIfCurrent(operation, status)
 }
 
 func clusterReachableNow(timeout time.Duration) bool {
@@ -1455,35 +1473,7 @@ func isAuthErrorMessage(lower string) bool {
 
 // isAuthRejectedMessage matches HTTP 401 responses: the request reached the API
 // server but could not be authenticated. Checked only after isAuthErrorMessage
-// so exec-plugin stderr that quotes a server error (e.g. "UnauthorizedException")
-// still classifies as client-side auth.
-func isAuthRejectedMessage(lower string) bool {
-	if strings.Contains(lower, "proxy authentication required") {
-		return false
-	}
-	rejectedMarkers := []string{
-		"unauthorized",
-		"authentication required",
-		"the server has asked for the client to provide credentials",
-	}
-	for _, marker := range rejectedMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isRBACErrorMessage(lower string) bool {
-	return strings.Contains(lower, " is forbidden") ||
-		strings.Contains(lower, "forbidden:") ||
-		strings.Contains(lower, "cannot list resource") ||
-		strings.Contains(lower, "cannot get resource")
-}
-
-func isConfigErrorMessage(lower string) bool {
-	configMarkers := []string{
-		"no context con
+// so exec-p
 ```
 
 ### Core Architecture Module: `internal/k8s/restart_loop.go`
@@ -2454,11 +2444,11 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2689** (2026-11-20): **Release Desktop workflow fails due to Go toolchain version mismatch**
+  *Symptoms*: ## Describe the bug  The Release Desktop GitHub Actions workflow is failing during dependency installation because the project is using Go 1.26.11 while a required dependency (`github.com/goreleaser/nfpm/v2@v2.49.0`) requires Go >= 1.27.4.  The failing job is `Release Desktop` for run `117535128137` / job `132767922940` (`https://github.com/skyhook-io/radar/actions/runs/43406103414/job/132767922940`).  ## To reproduce  1. Trigger the `Release Desktop` GitHub Actions workflow. 2. The job reaches the Go dependency installation step for `nfpm`. 3. The workflow exits with code 1 before producing the desktop artifacts.  ## Expected behavior  The Release Desktop workflow should complete successfully with the required Go toolchain version and produce the expected desktop release artifacts (`.tar.gz`, `.deb`, `.rpm`, `.AppImage`).  ## Screenshots  Not applicable.  ## Diagnostics (optional)  <details><summary>Diagnostics snapshot</summary>  <!-- Paste here -->  </details>  - Radar version: not specified - Kubernetes: not applicable to this CI release job  ## Logs  ```text go: downloading github.com/goreleaser/nfpm v1.10.3 go: downloading github.com/goreleaser/nfpm/v2 v2.49.0 go: github.com/goreleaser/nfpm/v2/cmd/nfpm@latest: github.com/goreleaser/nfpm/v2@v2.49.0 requires go >= 1.27.4 (running go 1.26.11; GOTOOLCHAIN=local) ##[error]Process completed with exit code 1. ```  ## Additional context  This appears to be a CI/toolchain mismatch rather than a code regression in the app itself.
+
 - **Issue #2687** (2026-11-15): **Release Desktop workflow fails during Apple notarization due to missing/expired agreement**
   *Symptoms*: ## Describe the bug  The `Release Desktop` GitHub Actions workflow fails during the Apple notarization step for the macOS release artifact. The job reaches the notarization request, then exits with a 403 from Apple’s notarization service.  ## To reproduce  1. Trigger the `Release Desktop` workflow in `skyhook-io/radar` 2. Wait for the macOS build to finish packaging the app 3. Observe the workflow attempt to submit the artifact for Apple notarization 4. The job fails before finishing the release  ## Expected behavior  The release workflow should successfully submit the signed/notarized macOS artifact to Apple and complete the release process without failing.  ## Screenshots  Not applicable.  ## Diagnostics (optional)  N/A  ## Logs  ```text 2026-11-13T10:14:58.9407140Z Conducting pre-submission checks for radar-desktop_v1.20.3_darwin_universal.zip and initiating connection to the Apple notary service... 2026-11-13T10:15:00.9809290Z Error: HTTP status code: 403. A required agreement is missing or has expired. This request requires an in-effect agreement that has not been signed or has expired. Ensure your team has signed the necessary legal agreements and that they are not expired. 2026-11-13T10:15:00.9857090Z ##[error]Process completed with exit code 1. ```  ## Additional context  The workflow URL is: https://github.com/skyhook-io/radar/actions/runs/43406103414/job/131820798764  This appears to be an Apple Developer / notarization account issue rather than a code-level build f
-
-- **Issue #2670** (2026-11-15): **Timeline: "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every few minutes**
-  *Symptoms*: ## Describe the bug  The timeline shows "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every 2–3 minutes. Nothing in spec changed. The noise hides real events.  Argo CD Applications have no status subresource (argoproj/argo-cd#22967), so each status write (e.g. status.reconciledAt on every reconcile) bumps metadata.generation.  In internal/k8s/cache.go, generationBumpSignalsSpecChange() runs the generic check (genericDesiredState ignores metadata and status) only for kinds without an audited differ. Application has one (diffApplication in history.go), so the check is skipped and the function returns true for any generation bump.  ## To reproduce  1. Install Argo CD 3.6 with a few auto-synced Applications. 2. Install Radar (Helm chart 1.20.2, in-cluster, auth mode oidc). 3. Open the timeline and wait 5–10 minutes without changing anything.  ## Expected behavior  No "spec changed" event when only status/metadata changed, like for kinds without an audited differ. Possible fix: also compare genericDesiredState for audited unstructured kinds.  ## Screenshots  - Radar version: 1.20.2 - Kubernetes: 1.35.8 (kubeadm), Argo CD 3.6.1  <img width="1438" height="742" alt="2026-11-14_184927" src="https://github.com/user-attachments/assets/aff5c3ae-2e9e-468a-8b06-ce4051c041db" /> <img width="1441" height="744" alt="2026-11-14_184842" src="https://github.com/user-attachments/assets/200f14aa-f41c-4f3d-b5d0-bd80db87886a" /> <img width="1439" height="7
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2475,1711 +2465,365 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `640f73a9` (2026-11-19)
-**Commit Message**: Answer the REST and MCP neighborhood by walking the relation families, without building a cluster graph (#2713)
-
-> One of three cutover PRs retiring the relationship graph, with #2720
-(drawer, AI context) and #2721 (Applications); merges after #2720 and
-before #2721.
+### Incident Patch 1: `3419650d` (2026-11-21)
+**Commit Message**: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24 (#2832)
 
 ## Summary
 
-The REST AI neighborhood (`/api/ai/neighborhood/...`) and MCP
-`get_neighborhood` each built an all-namespace topology to answer for
-one object. REST went through a 5 s memo that held a second copy of the
-relationship graph; MCP did a fresh build on every call. Both now walk
-outward from the object through the relation families and ownership,
-asking only about the objects they reach, so neither builds a cluster
-graph.
+Speeds up the local fast loop (`make test-changed`) and the local full
+run (`make test`), and pins the Node version CI uses. CI is unaffected.
 
 ## What changed
 
-- **`k8s.AnswerNeighborhood`** opens one session on the request's cache,
-takes its providers from it, runs `topology.WalkNeighborhood`, and
-validates the cache before returning. It refuses an empty discovery
-catalog (503 on REST, `cluster_connecting` on MCP) rather than walk a
-partial one.
-- **The walk:**
-- **What each hop asks:** the families' field dispositions and special
-producers (the same ones the Related Resources answer uses), plus
-ownership's owners, children, record
+- **Go test binaries are linked without DWARF** (`-ldflags=-w`) in
+`scripts/test-changed.sh` and `make test`. Linking `internal/server`'s
+test binary drops from about 26 s to about 8.5 s, measured three times
+with a forced relink each time. It's paid whenever anything that package
+depends on changes. The linker also needs far less memory.
+  - Stack traces, `t.Log` positions and pprof profiles are unaffected.
+- Only stepping through these binaries in a debugger is lost; `dlv test`
+builds its own binary.
+- **`tsc` is incremental** in `web` and `packages/k8s-ui`. The build
+info goes to `node_modules/.cache/tsc/`, which is ignored.
+- An unchanged re-check of `web` drops from about 4 s to under 1 s, and
+a re-check after an edit only re-checks what the edit affects.
+- The settings are ignored by Vite, by esbuild and by anything consuming
+the packages. `web` publishes only `src`.
+- **`.nvmrc`** pins Node 24, the version CI uses. Node 25
 
-**File**: `docs/mcp.md` (modified, +5/-1)
+**File**: `.nvmrc` (added, +1/-0)
 ```diff
-@@ -1180,7 +1180,7 @@ For `get_cost` and `get_rightsizing`, see [Cost and rightsizing evidence limits]
- | `search` | Find resources by content/term match (config keys, env refs, images, label values, CRD fields, webhook configs, status messages). Tokens AND'd; secret values and CA bundles never indexed. Supports `kind:`/`ns:`/`label:`/`image:` modifiers (a Kind, its plural, or a kubectl short name of a built-in such as `netpol`, `ing`, `sa`, `quota`) and CEL `filter`. Searches workloads, Pods, Services, Ingresses, IngressClasses, NetworkPolicies, ConfigMaps, Secrets (names only), PVCs, PVs, StorageClasses, HPAs, PDBs, ResourceQuotas, LimitRanges, ServiceAccounts, Roles, RoleBindings, ClusterRoles, ClusterRoleBindings, Nodes, Namespaces, Events (with `kind:Event`) and watched CRDs; a `kind:` term also searches a large CRD Radar watches only on demand. Endpoints, EndpointSlices and Leases are not searched; use `list_resources`. An IP address, `ip:port` or `[v6]:port` (a client address from a log) matches that whole address only (`10.0.1.2` never matches `10.0.1.23`): a hit with site `ip:<role>` holds it (`podIP`, `hostNetworkPod`, `clusterIP`, `externalIP`, `loadBalancerIP` from status, `node<AddressType>` such as `nodeInternalIP`; `exitedPodIP` is a finished pod's old IP, which a running pod may have been given since, and ranks below a running holder); other sites, such as a Pod's `status.hostIP` or a ConfigMap URL, only mention it. A query of one IP alone whose untruncated hits include no running holder adds `ipHint`: Pod IPs are reused, a deleted pod's IP no longer resolves, and the address may be outside the cluster. Trivy Operator reports match by CVE ID with package and installed/fixed versions, SBOM component, failed check ID and scanned image (`image:`); a secret finding's matched text is never indexed or reachable. Free tokens can land on different findings of one report, so use the CEL `report` binding (`report.vulnerabilities.exists(v, …)`) to match a single finding. A report is scan-time evidence: `summaryContext.managedBy` names the workload and `summaryContext.scanned` the scanned object (`missing` means Radar can't find it). By default Trivy Operator deletes an old ReplicaSet's reports after a rollout; with `vulnerabilityScannerScanOnlyCurrentRevisions: false` they stay, and `scanned.replicas: 0` usually marks one (a Deployment scaled to zero also reads 0). Trivy reports are returned only where the caller may list that report kind. Every result carries `coverage` (`status`, `narrowedBy`, `gaps`), and a partial result, an empty narrowed one, or one with hits that Radar's namespace collection or pin limited adds `coverageHint`; see [Search coverage](#search-coverage-and-cel-object-filters). | `query` (required), `filter` (optional CEL), `limit` (optional) |
- | `get_resource` | Inspect one known resource: minified spec, status, and metadata, plus default-on `resourceContext` with relationships and available resource-specific summaries. Operational issues and static audit posture remain distinct; audit findings are mostly latent risk, though some (expired certificates, dangling references) can be live failures. See [integration documentation](integrations.md) for controller-specific context and limits. Optional supplemental data adds events, metrics, recent changes, rollback revisions, detailed issue context, or a Node drain estimate. `include=drain-plan` reuses the read-only REST drain estimator with the caller’s credentials and the removal drawer’s explicit options; it returns up to 100 current pods, full summary counts, `drainPlanTotalPods` and `drainPlanPodsTruncated`. It evaluates Eviction API/PDB eligibility, not controller-specific policy or eviction history. `include=issues` returns up to three `relatedIssues`, with `relatedIssuesTotal` and `relatedIssuesTruncated`; this is independent of `context=none`. `staleEnv` lists env vars that running containers read from a Secret or ConfigMap key and that started before that key's last data write, so they likely still hold the earlier value until restart: on a Secret or ConfigMap it names the consuming Pods, on a Pod or workload its env vars. It is attached with `context=none` too, shows up to 5 rows with `total`, needs `get` on Pods and on the source's kind, and skips volume mounts, which refresh in place. For a Secret write made before Radar started, the row comes from the Secret's managedFields (`evidenceSource: managed_fields_mtime`), names no key, and says the write may not have touched data; ConfigMap rows come only from changes Radar observed. When every change Radar saw since the container started only reordered the value's comma-separated entries, and its history covers that whole time, the message says only the order changed; reorders of `mon_host` and `mon_initial_members` in Rook's own `rook-ceph-config` Secret (type `kubernetes.io/rook`, controlled by a CephCluster) are left out, since Ceph treats both as sets. For logs use `get_pod_lo
+@@ -0,0 +1 @@
++24
 ```
 
-**File**: `internal/k8s/collector_errors.go` (added, +31/-0)
+**File**: `Makefile` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,31 @@
-+package k8s
-+
-+import (
-+	"errors"
-+
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+
-+	"github.com/skyhook-io/radar/pkg/k8score"
-+	"github.com/skyhook-io/radar/pkg/readreason"
-+)
-+
-+// CollectorErrorCode classifies unambiguous collector refusals and sentinels.
-+// Deadlines and cancellation belong to the caller's execution policy.
-+func CollectorErrorCode(err error) (readreason.Code, bool) {
-+	switch {
-+	case errors.Is(err, k8score.ErrResourceListTooLarge):
-+		return readreason.ListTooLarge, true
-+	case errors.Is(err, k8score.ErrCollectionNotSupported):
-+		return readreason.KindNotWatchable, true
-+	case apierrors.IsUnauthorized(err):
-+		return readreason.RadarCredentialsRejected, true
-+	case apierrors.IsForbidden(err):
-+		return readreason.RadarForbidden, true
-+	case errors.Is(err, ErrUnknownDynamicKind):
-+		return readreason.KindUnknown, true
-+	case errors.Is(err, ErrDynamicNotReady):
-+		return readreason.KindSyncPending, true
-+	default:
-+		return "", false
-+	}
-+}
+@@ -155,8 +155,8 @@ clean:
+ 
+ # Run tests
+ test:
+-	go test -v ./...
+-	cd pkg && go test -v ./...
++	go test -v -ldflags=-w ./...
++	cd pkg && go test -v -ldflags=-w ./...
+ 
+ # Fast dev loop: vet/test only the changed Go packages, tsc, and `vitest related`
+ # for changed frontend files. BASE defaults to origin/main. Not a completion check.
 ```
 
-**File**: `internal/k8s/neighborhood.go` (added, +130/-0)
+**File**: `packages/k8s-ui/tsconfig.json` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,130 @@
-+package k8s
-+
-+import (
-+	"context"
-+	"fmt"
-+	"sync"
-+
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+
-+	"github.com/skyhook-io/radar/pkg/k8score"
-+	"github.com/skyhook-io/radar/pkg/ownership"
-+	"github.com/skyhook-io/radar/pkg/ownership/cachesource"
-+	"github.com/skyhook-io/radar/pkg/readreason"
-+	"github.com/skyhook-io/radar/pkg/relations"
-+	"github.com/skyhook-io/radar/pkg/resourceid"
-+	"github.com/skyhook-io/radar/pkg/topology"
-+)
-+
-+// AnswerNeighborhood binds the walk and display data to the request's cache.
-+// A root whose custom kind Radar isn't collecting yet starts that kind's
-+// watch, as a read of the object would, and is asked about once more after
-+// waiting as long as that read waits; it then answers from the watch, or says
-+// the kind is still loading or denied to Radar.
-+func AnswerNeighborhood(ctx context.Context, cache *ResourceCache, root topology.ResourceRef, opts topology.NeighborhoodOptions) (*topology.Subgraph, error) {
-+	sub, caches, err := answerNeighborhood(ctx, cache, root, opts)
-+	if err != nil || len(sub.Nodes) > 0 {
-+		return sub, err
-+	}
-+	tried, codes := collectRootKinds(ctx, caches, sub.UncollectedRoots)
-+	if !tried {
-+		return sub, nil
-+	}
-+	sub, _, err = answerNeighborhood(ctx, cache, root, opts)
-+	if err == nil && len(sub.Nodes) == 0 && sub.RootUnavailable == readreason.RadarKindNotCollected && len(codes) > 0 {
-+		// A refusal in the root's namespace is recorded only against that
-+		// watch request, and a watch still starting isn't recorded yet, so
-+		// the walk's reads see neither.
-+		sub.RootUnavailable = readreason.Primary(codes)
-+	}
-+	return sub, err
-+}
-+
-+func answerNeighborhood(ctx context.Context, cache *ResourceCache, root topology.ResourceRef, opts topology.NeighborhoodOptions) (*topology.Subgraph, cachesource.Caches, error) {
-+	session, err := BeginOwnershipRead(cache)
-+	if err != nil {
-+		return nil, cachesource.Caches{}, err
-+	}
-+	if len(session.Catalog().DependentKinds()) == 0 {
-+		// Discovery hasn't answered yet, as while Radar starts, so no related
-+		// kind could be searched or resolved.
-+		return nil, cachesource.Caches{}, ownership.ErrNotConnected
-+	}
-+	rs, ok := session.(relations.Session)
-+	if !ok {
-+		return nil, cachesource.Caches{}, fmt.Errorf("relation session unavailable")
-+	}
-+	caches, ok := cachesource.SessionCaches(session)
-+	if !ok {
-+		return nil, cachesource.Caches{}, fmt.Errorf("relation caches unavailable")
-+	}
-+	provider := NewTopologyResourceProvider(&ResourceCache{ResourceCache: caches.Typed})
-+	var dp topology.DynamicProvider
-+	if caches.Dynamic != nil && caches.Discovery != nil {
-+		dp = NewTopologyDynamicProvider(&DynamicResourceCache{DynamicResourceCache: caches.Dynamic}, &ResourceDiscovery{ResourceDiscovery: caches.Discovery})
-+	}
-+	sub, err := topology.WalkNeighborhood(ctx, rs, root, opts, provider, dp)
-+	if err != nil {
-+		return nil, cachesource.Caches{}, err
-+	}
-+	if err := session.ValidateCaches(); err != nil {
-+		return nil, cachesource.Caches{}, err
-+	}
-+	return sub, caches, nil
-+}
-+
-+// collectRootKinds starts the watch of each root candidate's custom kind the
-+// walk found uncollected (the walk lists only candidates the caller's Allow
-+// admitted) and waits for it, the whole step bounded as a read of one object
-+// waits: starting a watch otherwise waits as long as CRD discovery takes
-+// while Radar starts. It reports whether it tried any, and the codes of the
-+// watches Radar was refused or that hadn't started within the bound. Typed
-+// kinds are collected or not by configuration, and the kinds Radar reads
-+// directly are never watched, so neither is started here.
-+func collectRootKinds(ctx context.Context, caches cachesource.Caches, roots []resourceid.Ref) (tried bool, codes []readreason.Code) {
-+	if caches.Dynamic == nil || caches.Discovery == nil {
-+		return false, nil
-+	}
-+	bounded, cancel := context.WithTimeout(ctx, k8score.ObjectReadSyncWait)
-+	defer cancel()
-+	type watch struct {
-+		gvr       schema.GroupVersionResource
-+		namespace string
-+		err       error
-+	}
-+	var watches []watch
-+	for _, r := range roots {
-+		if isTypedKind(r.GroupKind()) {
-+			continue
-+		}
-+		gvr, ok := caches.Discovery.GetGVRWithGroup(r.Kind, r.Group)
-+		if !ok || ShouldBypassDynamicInformer(gvr) {
-+			continue
-+		}
-+		watches = append(watches, watch{gvr: gvr, namespace: r.Namespace})
-+	}
-+	// Every watch starts at once, and before any is waited for, so one slow
-+	// to start or to load can't keep another, of the same kind in another
-+	// group, from starting.
-+	var wg sync.WaitGroup
-+	for i := range watches {
-+		wg.Go(func() {
-+			watches[i].err = caches.Dynamic.EnsureWatchingContext(bounded, watches[i].gvr, watches[i].namespace)
-+		})
-+	}
-+	wg.Wait()
-+	for _, w := range watches {
-+		if w.err == nil {
-+			caches.Dynamic.WaitForSyncContext(bounded, w.gvr, w.namespace)
-+			continue
-+		}
-+		if code, ok := CollectorErrorCode(w.err); ok {
-+			codes = append(codes, code)
-+		} else if bounded.Err() != nil && ctx.Err
+@@ -8,6 +8,8 @@
+     "resolveJsonModule": true,
+     "isolatedModules": true,
+     "noEmit": true,
++    "incremental": true,
++    "tsBuildInfoFile": "../../node_modules/.cache/tsc/k8s-ui.tsbuildinfo",
+     "jsx": "react-jsx",
+     "types": ["node"],
+     "strict": true,
 ```
 
-**File**: `internal/k8s/read_policy.go` (modified, +24/-1)
+**File**: `scripts/test-changed.sh` (modified, +5/-1)
 ```diff
-@@ -1,8 +1,11 @@
- package k8s
+@@ -52,7 +52,11 @@ while IFS= read -r f; do
+ done <<< "$changed"
+ dedup() { tr ' ' '\n' <<< "$1" | sed '/^$/d' | sort -u | tr '\n' ' '; }
+ pkg_pkgs=$(dedup "$pkg_pkgs"); root_pkgs=$(dedup "$root_pkgs")
+-run_flag=(); [ -n "${GO_TEST_RUN:-}" ] && run_flag=(-run "$GO_TEST_RUN")
++# Test binaries are linked without DWARF: internal/server's links in about a
++# third of the time. Nothing debugs through this script; dlv test builds its
++# own binary.
++run_flag=(-ldflags=-w)
++[ -n "${GO_TEST_RUN:-}" ] && run_flag+=(-run "$GO_TEST_RUN")
+ [ -n "${GO_TEST_FRESH:-}" ] && run_flag+=(-count=1)
  
- import (
--	aicontext "github.com/skyhook-io/radar/pkg/ai/context"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
-+
-+	aicontext "github.com/skyhook-io/radar/pkg/ai/context"
-+	"github.com/skyhook-io/radar/pkg/resourceid"
-+	"github.com/skyhook-io/radar/pkg/topology"
- )
- 
- // RequiresExactNamespaceAccess reports whether namespace visibility alone is
-@@ -26,3 +29,23 @@ func ExactNamespaceAccessResource(kind, requestedGroup string) (group, resource
- 	}
- 	return "", ""
- }
-+
-+// ExactNamespaceAccessNode is ExactNamespaceAccessResource for a namespaced
-+// neighborhood node, read from the served resource the walk records on it.
-+// resolved is false when the node's kind may need that permission but the node
-+// records no resource to check it against; the caller must deny the node.
-+func ExactNamespaceAccessNode(n *topology.Node) (group, resource string, resolved bool) {
-+	apiVersion, _ := n.Data["apiVersion"].(string)
-+	resource, _ = n.Data["resource"].(string)
-+	group = resourceid.GroupFromAPIVersion(apiVersion)
-+	if resource == "" {
-+		kind, _ := n.Data["resourceKind"].(string)
-+		b, builtin := resourceid.BuiltinForKind(kind)
-+		exact := group == aicontext.TrivyGroup || builtin && b.Group == group && RequiresExactNamespaceAccess(schema.GroupVersionResource{Group: b.Group, Resource: b.Resource})
-+		return "", "", !exact
-+	}
-+	if RequiresExactNamespaceAccess(schema.GroupVersionResource{Group: group, Resource: resource}) {
-+		return group, resource, true
-+	}
-+	return "", "", true
-+}
+ # Node 25 exposes a localStorage global that breaks jsdom's.
 ```
 
-**File**: `internal/k8s/read_policy_test.go` (modified, +30/-1)
+**File**: `web/tsconfig.json` (modified, +2/-0)
 ```diff
-@@ -1,8 +1,11 @@
- package k8s
- 
- import (
--	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"testing"
-+
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+
-+	"github.com/skyhook-io/radar/pkg/topology"
- )
- 
- func TestRequiresExactNamespaceAccess(t *testing.T) {
-@@ -53,3 +56,29 @@ func TestExactNamespaceAccessResource(t *testing.T) {
- 		}
- 	}
- }
-+
-+// A node that records no resource is denied when its kind may need the
-+// caller's own permission, rather than read as needing none.
-+func TestExactNamespaceAccessNodeFailsClosedWithoutResource(t *testing.T) {
-+	for _, tc := range []struct {
-+		apiVersion, kind, resource string
-+		wantGroup, wantResource    string
-+		wantResolved               bool
-+	}{
-+		{"rbac.authorization.k8s.io/v1", "Role", "roles", "rbac.authorization.k8s.io", "roles", true},
-+		{"rbac.authorization.k8s.io/v1", "Role", "", "", "", false},
-+		{"rbac.authorization.k8s.io/v1", "RoleBinding", "", "", "", false},
-+		{"v1", "LimitRange", "", "", "", false},
-+		{"v1", "Secret", "", "", "", false},
-+		{"aquasecurity.github.io/v1alpha1", "VulnerabilityReport", "", "", "", false},
-+		{"v1", "ConfigMap", "", "", "", true},
-+		{"example.com/v1", "Role", "", "", "", true},
-+		{"rbac.authorization.k8s.io/v1", "ClusterRole", "", "", "", true},
-+	} {
-+		n := &topology.Node{Data: map[string]any{"apiVersion": tc.apiVersion, "resourceKind": tc.kind, "resource": tc.resource}}
-+		group, resource, resolved := ExactNamespaceAccessNode(n)
-+		if group != tc.wantGroup || resource != tc.wantResource || resolved != tc.wantResolved {
-+			t.Errorf("%s %s %q = %q %q %t, want %q %q %t", tc.apiVersion, tc.kind, tc.resource, group, resource, resolved, tc.wantGroup, tc.wantResource, tc.wantResolved)
-+		}
-+	}
-+}
-```
-
-**File**: `internal/k8s/relationship_watches.go` (modified, +9/-2)
-```diff
-@@ -7,14 +7,21 @@ import (
- 	"k8s.io/apimachinery/pkg/runtime/schema"
- )
- 
--func relationshipWatchKinds() []schema.GroupKind {
-+// typedKinds are the kinds the typed cache holds.
-+var typedKinds = func() map[resourceid.GroupKind]bool {
- 	typed := map[resourceid.GroupKind]bool{}
- 	for _, k := range k8score.AllKindListers() {
- 		typed[resourceid.GroupKind{Group: k.Group(), Kind: k.Kind()}] = true
- 	}
-+	return typed
-+}()
-+
-+func isTypedKind(gk resourceid.GroupKind) bool { return typedKinds[gk] }
-+
-+func relationshipWatchKinds() []schema.GroupKind {
- 	var kinds []schema.GroupKind
- 	for _, k := range relations.Kinds() {
--		if !typed[k] {
-+		if !isTypedKind(k) {
- 			kinds = append(kinds, schema.GroupKind{Group: k.Group, Kind: k.Kind})
- 		}
- 	}
-```
-
-**File**: `internal/mcp/agentlog.go` (modified, +7/-2)
-```diff
-@@ -39,7 +39,10 @@ type agentLogFields struct {
- //	  est_tokens=539 truncated=false omitted=0 context_tier=none kind=Pod ns=prod
- func emitAgentLog(f agentLogFields) {
- 	level := "info"
--	if f.Err != nil {
-+	switch {
-+	case isTimeout(f.Err):
-+		level = "warn"
-+	case f.Err != nil:
- 		level = "error"
- 	}
- 	tier := f.ContextTier
-@@ -148,7 +151,9 @@ func logToolCall[In any](
- 			toolErr = errors.New("tool returned an error result")
- 		}
- 
--		if toolErr != nil && sensitive {
-+		if isTimeout(toolErr) {
-+			log.Printf("\033[1;35m[MCP]\033[0m \033[1m%s\033[0m \033[33mTIMEOUT\033[0m (%s)", name, dur.Round(time.Millisecond))
-+		} else if toolErr != nil && sensitive {
- 			log.Printf("\033[1;35m[MCP]\033[0m \033[1m%s\033[0m \033[31mERROR\033[0m (%s)", name, dur.Round(time.Millisecond))
- 		} else if toolErr != nil {
- 			log.Printf("\033[1;35m[MCP]\033[0m \033[1m%s\033[0m \033[31mERROR\033[0m (%s) %v", name, dur.Round(time.Millisecond), toolErr)
-```
-
-**File**: `internal/mcp/errors.go` (modified, +16/-0)
-```diff
-@@ -1,6 +1,9 @@
- package mcp
- 
- import (
-+	"context"
-+	"errors"
-+
- 	"github.com/skyhook-io/radar/internal/k8s"
- 	"github.com/skyhook-io/radar/pkg/readreason"
- )
-@@ -49,3 +52,16 @@ func requireConnected() error {
- 	}
- 	return errNotConnected()
- }
-+
-+// timeoutError is a call cut off by its request's deadline. The caller can
-+// narrow the request and retry; it is not a failure of Radar's, so the call
-+// log records it as a timeout, not an error.
-+type timeoutError struct{ msg string }
-+
-+func (e *timeoutError) Error() string { return e.msg }
-+func (e *timeoutError) Unwrap() error { return context.DeadlineExceeded }
-+
-+func isTimeout(err error) bool {
-+	var t *timeoutError
-+	return errors.As(err, &t)
-+}
+@@ -10,6 +10,8 @@
+     "resolveJsonModule": true,
+     "isolatedModules": true,
+     "noEmit": true,
++    "incremental": true,
++    "tsBuildInfoFile": "../node_modules/.cache/tsc/web.tsbuildinfo",
+     "jsx": "react-jsx",
+     "strict": true,
+     "noUnusedLocals": true,
 ```
 
 ---
 
-### Incident Patch 2: `9a5a7034` (2026-11-18)
-**Commit Message**: fix(k8s): give informers and list probes their own rate-limited clients (#2719)
+### Incident Patch 2: `667da45a` (2026-11-21)
+**Commit Message**: CI: give each Go job its own build cache, refreshed from main (#2836)
 
-## Description
+## Summary
 
-First of the two PRs proposed in #2718. Right after a context switch,
-request handlers that call the apiserver as Radar (capability SSARs,
-per-user SARs, namespace discovery and LIST, server version) waited in
-the same client-go token bucket as the typed informers' LIST/WATCH
-calls, and dynamic reads shared a bucket with the list probes and CRD
-informers, so they hit their deadlines while the new cluster's caches
-started.
+CI's Go build cache was one `setup-go` entry per `go.sum`, shared by
+every root-module job.
+- **Arbitrary contents:** whichever job finished first decided what the
+cache held. The `pkg` job already had to get its own key for this
+reason.
+- **Never refreshed:** the entry was saved once and not updated until
+`go.sum` changed, so every later commit recompiled whatever had changed
+since.
 
-- `newSharedKubernetesClients` also builds an informer clientset and an
-informer dynamic client on the same observed `http.Client`, so they keep
-the transport, the auth observer (401s still drive runtime auth
-recovery) and the deadline wrapper, each with its own 50/100 bucket.
-- The typed resource cache, the dynamic resource cache, the
-supported-CRD fallback probes and the startup list probes use them
-through `GetInformerClient()` / `GetInformerDynamicClient()`. Request
-handlers keep `GetClient()` / `GetDynamicClient()`, whose buckets now
-carry only request traffic.
-- The accessors hand out the informer clients only while they belong to
-the current request client (set
+Now each Go job restores the newest build cache `main` saved for that
+job, so PR runs compile only what they change.
 
-**File**: `internal/k8s/cache.go` (modified, +3/-3)
+## What changed
+
+- **`.github/actions/go-cache-restore`:**
+  - restores the module cache, keyed by `go.sum` and shared by all jobs;
+- restores this job's newest build cache. Keys are
+`gobuild-<os>-<job>-sha-<commit>`; the `-sha-` separator keeps one job's
+fallback prefix (`backend`) from matching another job's keys
+(`backend-server`).
+- Then it backdates every restored entry. Go re-stamps an entry when it
+uses one more than an hour old, so whatever is still backdated at the
+end went unused. Writing `trim.txt` keeps Go's own five-day trim from
+deleting the backdated entries mid-job.
+- **`.github/actions/g
+
+**File**: `.github/actions/go-cache-restore/action.yml` (added, +38/-0)
 ```diff
-@@ -388,7 +388,7 @@ func InitResourceCache(ctx context.Context) error {
- 	var initErr error
- 	once, gen := claimCacheInit()
- 	once.Do(func() {
--		client := GetClient()
-+		client, informerClient := getCacheClients()
- 		if client == nil {
- 			initErr = fmt.Errorf("cannot create resource cache: k8s client not initialized")
- 			return
-@@ -443,7 +443,7 @@ func InitResourceCache(ctx context.Context) error {
- 		cronJobScheduleObservations := newCronJobScheduleObservationTracker()
- 
- 		cfg := k8score.CacheConfig{
--			Client:                  client,
-+			Client:                  informerClient,
- 			ResourceScopes:          scopes,
- 			ResourceScopeNamespaces: permResult.ScopeNamespaces,
- 			DeferredTypes:           deferredResources,
-@@ -2422,7 +2422,7 @@ func bootstrapResourcePermissions(ctx context.Context, probe func(context.Contex
- // hold the very rejection being retried, without bumping the generation, so
- // the first result can still be published if the retry is discarded.
- func freshResourcePermissions(ctx context.Context, retry bool) permissionProbe {
--	return probeResourcePermissions(ctx, retry)
-+	return probeResourcePermissions(ctx, retry, GetInformerDynamicClient)
- }
- 
- // credentialsRejectedEverywhere reports a probe in which no kind
+@@ -0,0 +1,38 @@
++name: Restore Go caches
++description: >
++  Restores the module cache (keyed by go.sum) and this job's build cache (the
++  newest one main saved for this job), then backdates the build cache so that
++  go-cache-save can keep only what this run used.
++runs:
++  using: composite
++  steps:
++    - name: Restore module cache
++      uses: actions/cache@v6
++      with:
++        path: ~/go/pkg/mod
++        key: gomod-${{ runner.os }}-${{ hashFiles('go.sum', 'pkg/go.sum') }}
++        restore-keys: gomod-${{ runner.os }}-
++
++    - name: Restore build cache
++      uses: actions/cache/restore@v6
++      with:
++        path: ~/.cache/go-build
++        # "-sha-" ends the job name, so one job's prefix (backend) can't match
++        # another job's keys (backend-server).
++        key: gobuild-${{ runner.os }}-${{ github.job }}-sha-${{ github.sha }}
++        restore-keys: gobuild-${{ runner.os }}-${{ github.job }}-sha-
++
++    # Go re-stamps a cache entry when it uses one more than an hour old, so
++    # after backdating every entry, the ones still backdated when the job ends
++    # are the ones it didn't use. trim.txt records the last trim: writing now
++    # keeps Go's own trim, which drops entries unused for five days, from
++    # deleting the backdated entries mid-job.
++    - name: Backdate the build cache
++      shell: bash
++      run: |
++        cache=$(go env GOCACHE)
++        mkdir -p "$cache"
++        find "$cache" -type f -exec touch -t 200001010000 {} +
++        date +%s > "$cache/trim.txt"
++        touch "$RUNNER_TEMP/go-cache-start"
++        echo "restored build cache: $(du -sh "$cache" | cut -f1)"
 ```
 
-**File**: `internal/k8s/cache_permission_recovery_test.go` (modified, +23/-0)
+**File**: `.github/actions/go-cache-save/action.yml` (added, +21/-0)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/client-go/dynamic"
- 	dynamicfake "k8s.io/client-go/dynamic/fake"
- 	"k8s.io/client-go/kubernetes"
- 	kubernetesfake "k8s.io/client-go/kubernetes/fake"
-@@ -247,3 +248,25 @@ func bootstrapResult(ctx context.Context, check func(context.Context, bool) *Per
- 	})
- 	return probe.result, err
- }
+@@ -0,0 +1,21 @@
++name: Save Go build cache
++description: >
++  Saves this job's build cache, pruned to the entries this run used, under a
++  key for this commit. Pair with go-cache-restore; call it as the job's last
++  step.
++runs:
++  using: composite
++  steps:
++    - name: Prune entries this run didn't use
++      shell: bash
++      run: |
++        cache=$(go env GOCACHE)
++        before=$(du -sh "$cache" | cut -f1)
++        find "$cache" -type f ! -newer "$RUNNER_TEMP/go-cache-start" -delete
++        echo "build cache: $before before pruning, $(du -sh "$cache" | cut -f1) after"
 +
-+// A context switch installs the new client before it bumps the generation, so
-+// a probe must read the generation before the client. Otherwise a probe can
-+// pick the previous cluster's client, read the bumped generation, and publish
-+// the previous cluster's access as the new one's.
-+func TestProbeReadsClientAfterGeneration(t *testing.T) {
-+	InvalidateResourcePermissionsCache()
-+	t.Cleanup(InvalidateResourcePermissionsCache)
-+	prevClient := SetTestClient(kubernetes.NewForConfigOrDie(&rest.Config{Host: "http://127.0.0.1:1"}))
-+	t.Cleanup(func() { SetTestClient(prevClient) })
-+	previousCluster := fakeDyn(t, func(schema.GroupVersionResource, string) bool { return true })
-+
-+	probe := probeResourcePermissions(context.Background(), false, func() dynamic.Interface {
-+		// The switch lands here: the previous client was already picked, and
-+		// the generation moves on.
-+		InvalidateResourcePermissionsCache()
-+		return previousCluster
-+	})
-+	if publishResourcePermissions(probe) || GetCachedPermissionResult() != nil {
-+		t.Fatalf("the previous cluster's result was published under the new generation: %+v", GetCachedPermissionResult())
-+	}
-+}
++    - name: Save build cache
++      uses: actions/cache/save@v6
++      with:
++        path: ~/.cache/go-build
++        key: gobuild-${{ runner.os }}-${{ github.job }}-sha-${{ github.sha }}
 ```
 
-**File**: `internal/k8s/capabilities.go` (modified, +11/-5)
+**File**: `.github/workflows/ci.yml` (modified, +50/-18)
 ```diff
-@@ -1127,7 +1127,7 @@ func resolveProbeGVRs(p resourceProbe) []schema.GroupVersionResource {
- // SelfSubjectAccessReview is one indirection too many — it can disagree with
- // reality on clusters using webhook authorizers (e.g. GKE IAM).
- func CheckResourcePermissions(ctx context.Context) (*PermissionCheckResult, bool) {
--	probe := probeResourcePermissions(ctx, false)
-+	probe := probeResourcePermissions(ctx, false, GetDynamicClient)
- 	return probe.result, publishResourcePermissions(probe)
- }
+@@ -16,6 +16,9 @@ concurrency:
+ # earlier run; PRs keep the cache. Go applies -count only to go test.
+ env:
+   GOFLAGS: ${{ github.event_name == 'push' && '-count=1' || '' }}
++  # Go jobs save their build cache only from main, pruned to what the run used
++  # (.github/actions/go-cache-save); PRs restore the newest one.
++  GO_CACHE_SAVE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+ # go test runs below pass -ldflags=-w: test binaries without DWARF link in
+ # about a third of the time; nothing debugs them here.
  
-@@ -1145,9 +1145,12 @@ type permissionProbe struct {
- 	unpublished bool
- }
+@@ -123,9 +126,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          # Its own build cache: sharing the root module's key let this job,
+-          # which finishes first, save a cache holding only pkg's packages.
+-          cache-dependency-path: pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
  
--// probeResourcePermissions probes without publishing. It serves a fresh cached
--// result unless bypassCache is set.
--func probeResourcePermissions(ctx context.Context, bypassCache bool) permissionProbe {
-+// probeResourcePermissions probes through the client dynFor returns, without
-+// publishing. It serves a fresh cached result unless bypassCache is set.
-+// dynFor is called only after the generation is captured. Request handlers pass
-+// GetDynamicClient; only the cache's own startup probe spends the informer
-+// client's rate limiter, through GetInformerDynamicClient.
-+func probeResourcePermissions(ctx context.Context, bypassCache bool, dynFor func() dynamic.Interface) permissionProbe {
- 	resourcePermsMu.RLock()
- 	if !bypassCache && cachedPermResult != nil && time.Now().Before(resourcePermsExpiry) {
- 		result := clonePermissionCheckResult(cachedPermResult)
-@@ -1163,13 +1166,16 @@ func probeResourcePermissions(ctx context.Context, bypassCache bool) permissionP
- 	// probe exists, and moving them later would need the same treatment.
- 	probeGen := resourcePermsGen
- 	resourcePermsMu.RUnlock()
-+	// After the generation: a context switch installs the new client before it
-+	// bumps the generation, so the reverse order can pair the previous
-+	// cluster's client with the new generation.
-+	dyn := dynFor()
+       - name: Download dependencies
+         run: go mod download
+@@ -144,6 +148,10 @@ jobs:
+       - name: Build
+         run: go build ./...
  
- 	// Compute probes WITHOUT holding the write lock — concurrent callers
- 	// may race but redundant probes are harmless. Holding the lock during
- 	// network calls would block InvalidateResourcePermissionsCache() during
- 	// context switch.
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
++
+   backend:
+     name: Backend
+     needs: changes
+@@ -170,9 +178,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
  
--	dyn := GetDynamicClient()
- 	if GetClient() == nil || dyn == nil {
- 		log.Printf("Warning: K8s client not initialized, returning no resource permissions")
- 		// Current: nothing superseded this, there is simply nothing to probe.
-```
-
-**File**: `internal/k8s/client.go` (modified, +66/-0)
-```diff
-@@ -38,6 +38,7 @@ var (
- 	k8sConfig                    *rest.Config
- 	discoveryClient              *discovery.DiscoveryClient
- 	dynamicClient                dynamic.Interface
-+	activeClients                *sharedKubernetesClients
- 	initOnce                     sync.Once
- 	initErr                      error
- 	kubeconfigPath               string
-@@ -363,6 +364,7 @@ func doInit(opts InitOptions) error {
- 	k8sClient = clients.clientset
- 	discoveryClient = clients.discovery
- 	dynamicClient = clients.dynamic
-+	activeClients = clients
- 	activeClientGeneration = clients.generation
+       - name: Download dependencies
+         run: go mod download
+@@ -202,6 +211,10 @@ jobs:
  
- 	return nil
-@@ -828,6 +830,69 @@ func GetDynamicClient() dynamic.Interface {
- 	return dynamicClient
- }
+   # gofmt and vet in their own job, so they run alongside the tests instead of
+   # before them in the slowest job.
++
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
+   backend-vet:
+     name: Backend (vet)
+     needs: changes
+@@ -214,9 +227,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
  
-+// GetInformerClient returns the clientset the informer cache lists and watches
-+// through. It shares GetClient()'s http.Client (transport, auth observer,
-+// request deadlines) but has its own client-side rate limiter, so informer
-+// LIST/WATCH traffic never delays request handlers. Falls back to GetClient()
-+// when the active client set has no informer client, e.g. a test that installed
-+// only the request client.
-+func GetInformerClient() kubernetes.Interface {
-+	clientMu.RLock()
-+	defer clientMu.RUnlock()
-+	return informerClientForLocked(k8sClient)
-+}
-+
-+// getCacheClients reads the request and informer clientsets in one critical
-+// section, so a context switch between two reads cannot pair one cluster's
-+// observer source with another cluster's informers.
-+func getCacheClients() (*kubernetes.Clientset, kubernetes.Interface) {
-+	clientMu.RLock()
-+	defer clientMu.RUnlock()
-+	return k8sClient, informerClientForLocked(k8sClient)
-+}
-+
-+// InformerClientFor maps a request clientset to the informer clientset of the
-+// same client set, so a holder of GetClient() can tell whether the resource
-+// cache (whose Client() is the informer client) describes its connection.
-+func InformerClientFor(client kubernetes.Interface) kubernetes.Interface {
-+	clientMu.RLock()
-+	defer clientMu.RUnlock()
-+	if c, ok := client.(*kubernetes.Clientset); ok {
-+		return informerClientForLocked(c)
-+	}
-+	return client
-+}
-+
-+func informerClientForLocked(client *kubernetes.Clientset) kubernetes.Interface {
-+	if client == nil {
-+		return nil
-+	}
-+	// Matching on the request client keeps an informer client from another
-+	// client set (a previous cluster) from ever being handed out.
-+	if activeClients != nil && activeClients.clientset == client && activeClients.informerClientset != nil {
-+		return activeClients.informerClientset
-+	}
-+	return client
-+}
-+
-+// GetInformerDynamicClient is GetInformerClient for the dynamic informer cache
-+// and the startup list probes, falling back to GetDynamicClient().
-+func GetInformerDynamicClient() dynamic.Interface {
-+	_, informer := getDynamicCacheClients()
-+	return informer
-+}
-+
-+// getDynamicCacheClients reads the request and informer dynamic clients in one
-+// critical section, for the same reason as getCacheClients.
-+func getDynamicCacheClients() (request, informer dynamic.Interface) {
-+	clientMu.RLock()
-+	defer clientMu.RUnlock()
-+	if dynamicClient != nil && activeClients != nil && activeClients.dynamic == dynamicClient && activeClients.informerDynamic != nil {
-+		return dynamicClient, activeClients.informerDynamic
-+	}
-+	return dynamicClient, dynamicClient
-+}
-+
- func GetDynamicClientSnapshot() (dynamic.Interface, string) {
- 	clientMu.RLock()
- 	defer clientMu.RUnlock()
-@@ -2058,6 +2123,7 @@ func installPreparedContext(p *preparedContext) {
- 	k8sClient = p.clients.clientset
- 	discoveryClient = p.clients.discovery
- 	dynamicClient = p.clients.dynamic
-+	activeClients = p.clients
- 	activeClientGeneration = p.clients.generation
- 	contextName = p.name
- 	contextBinding = newContextBinding
-```
-
-**File**: `internal/k8s/context_manager.go` (modified, +1/-0)
-```diff
-@@ -427,6 +427,7 @@ func BlockClusterAccess(err error) {
- 	k8sClient = nil
- 	discoveryClient = nil
- 	dynamicClient = nil
-+	activeClients = nil
- }
+       - name: Download dependencies
+         run: go mod download
+@@ -235,6 +249,10 @@ jobs:
+       - name: Vet
+         run: go vet ./...
  
- func contextOperationsBlockedErr() error {
-```
-
-**File**: `internal/k8s/dynamic_cache.go` (modified, +3/-2)
-```diff
-@@ -36,7 +36,7 @@ var (
- func InitDynamicResourceCache(changeCh chan k8score.ResourceChange) error {
- 	var initErr error
- 	dynamicCacheOnce.Do(func() {
--		client := GetDynamicClient()
-+		directClient, client := getDynamicCacheClients()
- 		if client == nil {
- 			initErr = fmt.Errorf("dynamic client not initialized")
- 			return
-@@ -84,6 +84,7 @@ func InitDynamicResourceCache(changeCh chan k8score.ResourceChange) error {
- 		core, err := k8score.NewDynamicResourceCache(k8score.DynamicCacheConfig{
- 			RequiredWatchKinds:          relationshipWatchKinds(),
- 			DynamicClient:               client,
-+			DirectClient:                directClient,
- 			Discovery:                   sharedDiscovery,
- 			Changes:                     changeCh,
- 			NamespaceFallback:           nsFallback,
-@@ -494,7 +495,7 @@ var supportedCRDFallbacks = []supportedCRDResource{
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
++
+   backend-server:
+     name: Backend (internal/server)
+     needs: changes
+@@ -247,9 +265,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
  
- func RegisterSupportedCRDFallbacks() {
- 	discovery := GetResourceDiscovery()
--	client := GetDynamicClient()
-+	client := GetInformerDynamicClient()
- 	if discovery == nil || client == nil {
- 		return
- 	}
-```
-
-**File**: `internal/k8s/informer_client_test.go` (added, +267/-0)
-```diff
-@@ -0,0 +1,267 @@
-+package k8s
-+
-+import (
-+	"context"
-+	"errors"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/kubernetes/fake"
-+	"k8s.io/client-go/rest"
-+)
-+
-+// The informer clients must not share a client-side rate limiter with the
-+// request clients: a cache start or relist spends the informer bucket, and a
-+// handler calling GetClient() must not wait behind it.
-+func TestInformerClientsHaveTheirOwnRateLimiters(t *testing.T) {
-+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		_, _ = w.Write([]byte(`{"kind":"NamespaceList","apiVersion":"v1","metadata":{},"items":[]}`))
-+	}))
-+	defer srv.Close()
-+
-+	clients, err := newSharedKubernetesClients(&rest.Config{Host: srv.URL, QPS: 1, Burst: 1})
-+	if err != nil {
-+		t.Fatalf("newSharedKubernetesClients: %v", err)
-+	}
-+	nsGVR := schema.GroupVersionResource{Version: "v1", Resource: "namespaces"}
-+
-+	// Spend the single token of each informer bucket.
-+	if _, err := clients.informerClientset.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{}); err != nil {
-+		t.Fatalf("informer typed list: %v", err)
-+	}
-+	if _, err := clients.informerDynamic.Resource(nsGVR).List(context.Background(), metav1.ListOptions{}); err != nil {
-+		t.Fatalf("informer dynamic list: %v", err)
-+	}
-+
-+	// With a shared bucket the next token is a second away, so the limiter
-+	// refuses a 300ms deadline up front.
-+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
-+	defer cancel()
-+	if _, err := clients.clientset.CoreV1().Namespaces().List(ctx, metav1.ListOptions{}); err != nil {
-+		t.Errorf("request typed list waited behind the informer client: %v", err)
-+	}
-+	if _, err := clients.dynamic.Resource(nsGVR).List(ctx, metav1.ListOptions{}); err != nil {
-+		t.Errorf("request dynamic list waited behind the informer client: %v", err)
-+	}
-+}
-+
-+func TestResourceCacheIsBuiltFromInformerClients(t *testing.T) {
-+	defer ResetTestState()
-+
-+	requestClient, err := kubernetes.NewForConfig(&rest.Config{Host: "http://localhost:1"})
-+	if err != nil {
-+		t.Fatalf("request client: %v", err)
-+	}
-+	informerClient := fake.NewClientset(
-+		&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "default"}},
-+		&corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "p", Namespace: "default"}},
-+	)
-+	requestDyn := fakeDyn(t, func(gvr schema.GroupVersionResource, _ string) bool {
-+		t.Errorf("list probe for %s went through the request dynamic client", gvr.Resource)
-+		return false
-+	})
-+	informerDyn := fakeDyn(t, func(gvr schema.GroupVersionResource, _ string) bool {
-+		return gvr.Group == "" && gvr.Resource == "pods"
-+	})
-+
-+	clientMu.Lock()
-+	k8sClient = requestClient
-+	dynamicClient = requestDyn
-+	activeClients = &sharedKubernetesClients{
-+		clientset:         requestClient,
-+		dynamic:           requestDyn,
-+		informerClientset: informerClient,
-+		informerDynamic:   informerDyn,
-+	}
-+	clientMu.Unlock()
-+
-+	// Observers live for the process, so stop recording when the test ends.
-+	sources := make(chan kubernetes.Interface, 1)
-+	var recording atomic.Bool
-+	recording.Store(true)
-+	defer recording.Store(false)
-+	OnResourceObserved(func(source kubernetes.Interface, _ ResourceChange, _, _ any) {
-+		if !recording.Load() {
-+			return
-+		}
-+		select {
-+		case sources <- source:
-+		default:
-+		}
-+	})
-+
-+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+	defer cancel()
-+	if err := InitResourceCache(ctx); err != nil {
-+		t.Fatalf("InitResourceCache: %v", err)
-+	}
-+	if got := GetResourceCache().Client(); got != kubernetes.Interface(informerClient) {
-+		t.Fatalf("cache built from %T, want the informer client", got)
-+	}
-+	if got := InformerClientFor(requestClient); got != kubernetes.Interface(informerClient) {
-+		t.Errorf("InformerClientFor(request client) = %T, want the informer client", got)
-+	}
-+	// Observers compare source with GetClient() (Prometheus does), so the
-+	// cache must report the request client even though it lists through the
-+	// informer client.
-+	select {
-+	case got := <-sources:
-+		if got != kubernetes.Interface(requestClient) {
-+			t.Errorf("observer source = %T, want the request client", got)
-+		}
-+	case <-ctx.Done():
-+		t.Fatal("no resource observer callback during the initial sync")
-+	}
-+}
-+
-+func TestContextSwitchReplacesInformerClients(t *testing.T) {
-+	restoreClientGlobals(t)
-+	dir := t.TempDir()
-+	path := writeKubeconfig(t, dir, "config", "alpha", []kubeEntry{
-+		{ctxName: "alpha", userName: "ua", clusterName: "cluster-alpha"},
-+		{ctxName: "beta", userName: "ub", clusterName: "cluster-beta"},
-+	})
-+	if err := doInit(InitOptions{KubeconfigPath: path}); err != nil {
-+		t.Fatalf("doInit: %v", err)
-+	}
-+	alphaInformer, alphaDyn := GetInformerClient(
-```
-
-**File**: `internal/k8s/last_context_test.go` (modified, +2/-0)
-```diff
-@@ -36,6 +36,7 @@ func restoreClientGlobals(t *testing.T) {
- 		savedConfig     = k8sConfig
- 		savedDiscovery  = discoveryClient
- 		savedDynamic    = dynamicClient
-+		savedActive     = activeClients
- 		savedGeneration = activeClientGeneration
- 		savedInit       = initializationStarted
- 		savedDirCount   = kubeconfigDirectoryFileCount
-@@ -68,6 +69,7 @@ func restoreClientGlobals(t *testing.T) {
- 		k8sConfig = savedConfig
- 		discoveryClient = savedDiscovery
- 		dynamicClient = savedDynamic
-+		activeClients = savedActive
- 		activeClientGeneration = savedGeneration
- 		initializationStarted = savedInit
- 		kubeconfigDirectoryFileCount = savedDirCount
-```
-
----
-
-### Incident Patch 3: `c9a16690` (2026-11-18)
-**Commit Message**: fix: don't keep a failed apiserver check as the answer (#2722)
-
-## Description
-
-Second of the two PRs proposed in #2718 (the first is #2719). A check
-that failed was kept as an answer; now it is reported, cached briefly,
-and retried with a back-off.
-
-- **Capabilities.** `CheckCapabilitiesForUser` discarded SAR errors, so
-a timed-out check read as denied and the all-false result was cached for
-60s (then kept another 60s by `useCapabilities`). It now records errors
-from the cluster-wide check and the namespace fallback, as
-`CheckNamespaceCapabilitiesForUser` already does: the answer still fails
-closed, but it is cached for 5s, and the response carries an optional
-`checksIncomplete`. `CheckCapabilities` (auth off) already failed closed
-with a 5s TTL and now sets the flag too, as does `handleCapabilities`
-when a namespace check errored.
-- **Server version.** `GetServerVersion` kept an empty version after a
-failed first read until the next context switch (`sync.Once`). Only a
-successful read is cached now. Callers arriving during a read share it,
-the lock isn't held across the network call, a read a context switch
-invalidated isn't cached, and for 5s after a failure callers get `""` at
-
-
-**File**: `internal/k8s/capabilities.go` (modified, +73/-12)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	pkgauth "github.com/skyhook-io/radar/pkg/auth"
- 	"github.com/skyhook-io/radar/pkg/capacityapi"
- 	"github.com/skyhook-io/radar/pkg/k8score"
-+	"golang.org/x/sync/singleflight"
- )
+       - name: Download dependencies
+         run: go mod download
+@@ -259,6 +278,10 @@ jobs:
  
- // ResourcePermissions indicates which resource types the user can list/watch
-@@ -138,6 +139,10 @@ type Capabilities struct {
- 	Karpenter              IntegrationCapability    `json:"karpenter"`               // Per-request Karpenter discovery + NodePool read state; populated by the HTTP layer after user SAR.
- 	PolicyReports          *PolicyReportStatus      `json:"policyReports,omitempty"` // Why the Kyverno PolicyReport index is (or is not) populated, so an empty policy view can say which.
- 	CloudConnect           *CloudConnectCapability  `json:"cloudConnect,omitempty"`
-+	// ChecksIncomplete: an access check errored, so a false above may be a
-+	// failed check rather than a denial. The server re-checks after a short
-+	// TTL; the UI should refetch soon.
-+	ChecksIncomplete bool `json:"checksIncomplete,omitempty"`
+   # TestNoEffortNotesReferencedFromSource scans the whole repo (.ts, .md, .sh,
+   # .yaml, ...), not only Go code. When Backend is skipped, run it alone.
++
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
+   repo-hygiene:
+     name: Repo hygiene
+     needs: changes
+@@ -271,13 +294,18 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
  
- 	// HelmWriteUnavailable records a failed or unavailable Helm-write lookup from CheckCapabilities.
- 	// It is internal preflight state, not a wire capability.
-@@ -450,7 +455,8 @@ func CheckCapabilities(ctx context.Context) (*Capabilities, error) {
- 	// Cache the result. Use a short TTL if API errors caused fail-closed results,
- 	// so transient K8s API failures don't hide UI controls for a full minute.
- 	ttl := capabilitiesTTL
--	if hadErrors.Load() {
-+	caps.ChecksIncomplete = hadErrors.Load()
-+	if caps.ChecksIncomplete {
- 		ttl = capabilitiesErrorTTL
- 		log.Printf("Warning: capability checks had API errors, using short cache TTL (%v)", ttl)
- 	}
-@@ -598,8 +604,18 @@ var (
- type userCapEntry struct {
- 	caps      *Capabilities
- 	expiresAt time.Time
-+	// lastGood is the newest complete result while later checks fail, taken
-+	// at goodAt; it is served during a re-check, never past lastGoodMaxAge.
-+	lastGood *Capabilities
-+	goodAt   time.Time
- }
+       - name: Check for effort-note paths
+         run: go test -ldflags=-w ./internal/server -run '^TestNoEffortNotesReferencedFromSource$'
  
-+// userCapabilitiesFlight runs one check per identity at a time: each costs
-+// up to two SubjectAccessReviews per capability.
-+var userCapabilitiesFlight singleflight.Group
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
 +
-+const lastGoodMaxAge = 2 * time.Minute
-+
- type userNSCapEntry struct {
- 	caps      NamespaceCapabilities
- 	expiresAt time.Time
-@@ -611,24 +627,50 @@ func userNamespaceCapabilitiesCacheKey(username string, groups []string, namespa
+   frontend:
+     name: Frontend
+     needs: changes
+@@ -330,9 +358,9 @@ jobs:
+       - uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+       - uses: actions/setup-node@v6
+         with:
+           node-version: '24'
+@@ -354,6 +382,10 @@ jobs:
+       - run: npm run test:e2e:settings
+         working-directory: web
  
- // CheckCapabilitiesForUser runs SubjectAccessReview as the given user
- // to determine what the user can do (exec, logs, delete, helm, etc.)
--// Results are cached per identity (username + groups) with 60s TTL.
-+// Results are cached per identity (username + groups) with 60s TTL, or 5s
-+// when a check errored (the result then fails closed and says so).
-+// Concurrent callers for one identity share a single check; while the
-+// re-check after a failed one runs, callers get the last complete result.
- func CheckCapabilitiesForUser(ctx context.Context, username string, groups []string) (*Capabilities, error) {
- 	identityKey := pkgauth.IdentityCacheKey(username, groups)
-+	var lastGood *Capabilities
- 	if entry, ok := userCapabilitiesCache.Load(identityKey); ok {
- 		e := entry.(*userCapEntry)
- 		if time.Now().Before(e.expiresAt) {
- 			caps := *e.caps
- 			return &caps, nil
- 		}
-+		if e.lastGood != nil && time.Since(e.goodAt) < lastGoodMaxAge {
-+			lastGood = e.lastGood
-+		}
- 	}
- 
-+	ch := userCapabilitiesFlight.DoChan(identityKey, func() (any, error) {
-+		return checkCapabilitiesForUser(identityKey, username, groups), nil
-+	})
-+	var shared *Capabilities
-+	if lastGood != nil {
-+		select {
-+		case r := <-ch:
-+			shared = r.Val.(*Capabilities)
-+		default:
-+			shared = lastGood
-+		}
-+	} else {
-+		shared = (<-ch).Val.(*Capabilities)
-+	}
-+	caps := *shared
-+	return &caps, nil
-+}
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
 +
-+func checkCapabilitiesForUser(identityKey, username string, groups []string) *Capabilities {
- 	k8sClient := GetClient()
- 	if k8sClient == nil {
--		return &Capabilities{}, nil
-+		return &Capabilities{}
- 	}
- 
- 	if GetConnectionStatus().State == StateDisconnected {
--		return &Capabilities{}, nil
-+		return &Capabilities{}
- 	}
- 
- 	checkCtx, cancel := NewOperationContext(10 * time.Second)
-@@ -657,28 +699,35 @@ func CheckCapabilitiesForUser(ctx context.Context, username string, groups []str
- 		{group: "argoproj.io", resource: "rollouts", verb: "patch", result: &caps.WorkloadWrites.Rollouts},
- 	}
- 
-+	var hadErrors atomic.Bool
- 	var wg sync.WaitGroup
- 	wg.Add(len(checks))
- 
- 	for _, check := range checks {
- 		go func(c capCheck) {
- 			defer wg.Done()
--			allowed, _ := canIAs(checkCtx, k8sClient, username, groups, "", c.group, c.resource, c.verb)
-+			allowed, apiErr := canIAs(checkCtx, k8sClient, username, groups, "", c.group, c.resource, c.verb)
- 			if allowed {
- 				*c.result = true
- 				return
- 			}
- 			// Try namespace-scoped fallback
- 			if fallbackNs := capabilityProbeNamespace(); fallbackNs != "" && c.namespaceFallback {
--				allowed, _ = canIAs(checkCtx, k8sClient, username, groups, fal
-```
-
-**File**: `internal/k8s/capabilities_user_errors_test.go` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+package k8s
-+
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync/atomic"
-+	"testing"
-+
-+	authv1 "k8s.io/api/authorization/v1"
-+	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/rest"
-+)
-+
-+// A SubjectAccessReview that errors (a timeout behind the informer start)
-+// is not a denial: the all-false result must not be served from cache once
-+// the apiserver answers, and the response must say the checks were incomplete.
-+func TestCheckCapabilitiesForUserDoesNotCacheFailedChecks(t *testing.T) {
-+	var failing atomic.Bool
-+	failing.Store(true)
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if failing.Load() {
-+			http.Error(w, "timeout", http.StatusGatewayTimeout)
-+			return
-+		}
-+		var review authv1.SubjectAccessReview
-+		if err := json.NewDecoder(r.Body).Decode(&review); err != nil {
-+			http.Error(w, "bad review", http.StatusBadRequest)
-+			return
-+		}
-+		review.Status.Allowed = true
-+		w.Header().Set("Content-Type", "application/json")
-+		_ = json.NewEncoder(w).Encode(review)
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	client, err := kubernetes.NewForConfig(&rest.Config{Host: server.URL, ContentConfig: rest.ContentConfig{ContentType: "application/json"}})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	clientMu.Lock()
-+	oldClient := k8sClient
-+	k8sClient = client
-+	clientMu.Unlock()
-+	InvalidateUserCapabilitiesCache()
-+	t.Cleanup(func() {
-+		clientMu.Lock()
-+		k8sClient = oldClient
-+		clientMu.Unlock()
-+		InvalidateUserCapabilitiesCache()
-+	})
-+
-+	caps, err := CheckCapabilitiesForUser(t.Context(), "alice", nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if caps.Exec || caps.Logs {
-+		t.Fatalf("failed checks must fail closed, got exec=%v logs=%v", caps.Exec, caps.Logs)
-+	}
-+	if !caps.ChecksIncomplete {
-+		t.Error("failed checks must be reported as incomplete")
-+	}
-+
-+	failing.Store(false)
-+	userCapabilitiesCache.Range(func(key, value any) bool {
-+		// Past the short error TTL, still well inside the full one.
-+		value.(*userCapEntry).expiresAt = value.(*userCapEntry).expiresAt.Add(-capabilitiesErrorTTL)
-+		return true
-+	})
-+	caps, err = CheckCapabilitiesForUser(t.Context(), "alice", nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if !caps.Exec || !caps.Logs || caps.ChecksIncomplete {
-+		t.Errorf("after the apiserver answers, got exec=%v logs=%v incomplete=%v; want the real grant", caps.Exec, caps.Logs, caps.ChecksIncomplete)
-+	}
-+}
-+
-+// A namespace fallback that grants access is a settled answer even when the
-+// cluster-wide check errored: re-checking cannot change what the UI shows.
-+func TestCheckCapabilitiesForUserFallbackGrantIsComplete(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		var review authv1.SubjectAccessReview
-+		if err := json.NewDecoder(r.Body).Decode(&review); err != nil {
-+			http.Error(w, "bad review", http.StatusBadRequest)
-+			return
-+		}
-+		attrs := review.Spec.ResourceAttributes
-+		if attrs != nil && attrs.Subresource == "exec" && attrs.Namespace == "" {
-+			http.Error(w, "timeout", http.StatusGatewayTimeout)
-+			return
-+		}
-+		review.Status.Allowed = true
-+		w.Header().Set("Content-Type", "application/json")
-+		_ = json.NewEncoder(w).Encode(review)
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	client, err := kubernetes.NewForConfig(&rest.Config{Host: server.URL, ContentConfig: rest.ContentConfig{ContentType: "application/json"}})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	clientMu.Lock()
-+	oldClient, oldNs := k8sClient, contextNamespace
-+	k8sClient, contextNamespace = client, "team-a"
-+	clientMu.Unlock()
-+	InvalidateUserCapabilitiesCache()
-+	t.Cleanup(func() {
-+		clientMu.Lock()
-+		k8sClient, contextNamespace = oldClient, oldNs
-+		clientMu.Unlock()
-+		InvalidateUserCapabilitiesCache()
-+	})
-+
-+	caps, err := CheckCapabilitiesForUser(t.Context(), "alice", nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if !caps.Exec {
-+		t.Fatal("namespace fallback grant must still be reported")
-+	}
-+	if caps.ChecksIncomplete {
-+		t.Error("a namespace fallback grant must be a settled answer even when the cluster-wide check errored")
-+	}
-+}
-```
-
-**File**: `internal/k8s/capabilities_user_flight_test.go` (added, +157/-0)
-```diff
-@@ -0,0 +1,157 @@
-+package k8s
-+
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	authv1 "k8s.io/api/authorization/v1"
-+	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/rest"
-+)
-+
-+// sarServer answers every SubjectAccessReview as allowed, or with a 504 while
-+// failing is set, after waiting on gate when it is non-nil.
-+type sarServer struct {
-+	reviews atomic.Int32
-+	failing atomic.Bool
-+	gate    atomic.Pointer[chan struct{}]
-+}
-+
-+// hold makes reviews wait until the returned release runs (also at cleanup).
-+func (s *sarServer) hold(t *testing.T) (release func()) {
-+	gate := make(chan struct{})
-+	s.gate.Store(&gate)
-+	var once sync.Once
-+	release = func() { once.Do(func() { s.gate.Store(nil); close(gate) }) }
-+	t.Cleanup(release)
-+	return release
-+}
-+
-+func useSARServer(t *testing.T) *sarServer {
-+	t.Helper()
-+	s := &sarServer{}
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		s.reviews.Add(1)
-+		if g := s.gate.Load(); g != nil {
-+			<-*g
-+		}
-+		if s.failing.Load() {
-+			http.Error(w, "timeout", http.StatusGatewayTimeout)
-+			return
-+		}
-+		var review authv1.SubjectAccessReview
-+		if err := json.NewDecoder(r.Body).Decode(&review); err != nil {
-+			http.Error(w, "bad review", http.StatusBadRequest)
-+			return
-+		}
-+		review.Status.Allowed = true
-+		w.Header().Set("Content-Type", "application/json")
-+		_ = json.NewEncoder(w).Encode(review)
-+	}))
-+	t.Cleanup(server.Close)
-+	client, err := kubernetes.NewForConfig(&rest.Config{Host: server.URL, ContentConfig: rest.ContentConfig{ContentType: "application/json"}})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	clientMu.Lock()
-+	oldClient, oldNs := k8sClient, contextNamespace
-+	k8sClient, contextNamespace = client, ""
-+	clientMu.Unlock()
-+	InvalidateUserCapabilitiesCache()
-+	t.Cleanup(func() {
-+		clientMu.Lock()
-+		k8sClient, contextNamespace = oldClient, oldNs
-+		clientMu.Unlock()
-+		InvalidateUserCapabilitiesCache()
-+	})
-+	return s
-+}
-+
-+func expireUserCapabilities() {
-+	userCapabilitiesCache.Range(func(_, value any) bool {
-+		value.(*userCapEntry).expiresAt = time.Now().Add(-time.Second)
-+		return true
-+	})
-+}
-+
-+// Concurrent requests from one identity share one round of reviews.
-+func TestCheckCapabilitiesForUserCoalescesConcurrentChecks(t *testing.T) {
-+	s := useSARServer(t)
-+	if _, err := CheckCapabilitiesForUser(t.Context(), "alice", nil); err != nil {
-+		t.Fatal(err)
-+	}
-+	perRound := s.reviews.Swap(0)
-+	InvalidateUserCapabilitiesCache()
-+
-+	release := s.hold(t)
-+	var wg sync.WaitGroup
-+	results := make([]*Capabilities, 8)
-+	for i := range results {
-+		wg.Add(1)
-+		go func() {
-+			defer wg.Done()
-+			results[i], _ = CheckCapabilitiesForUser(t.Context(), "alice", nil)
-+		}()
-+	}
-+	time.Sleep(200 * time.Millisecond)
-+	release()
-+	wg.Wait()
-+	if got := s.reviews.Load(); got != perRound {
-+		t.Errorf("8 concurrent checks sent %d reviews, want one round of %d", got, perRound)
-+	}
-+	for i, caps := range results {
-+		if caps == nil || !caps.Exec {
-+			t.Fatalf("caller %d got %+v", i, caps)
-+		}
-+		if i > 0 && caps == results[0] {
-+			t.Fatal("callers share one *Capabilities")
-+		}
-+	}
-+}
-+
-+// After a failed check, the re-check doesn't hold callers or hand them the
-+// fail-closed answer while it runs: they get the last complete result.
-+func TestCheckCapabilitiesForUserServesLastGoodDuringRecheck(t *testing.T) {
-+	s := useSARServer(t)
-+	if caps, _ := CheckCapabilitiesForUser(t.Context(), "alice", nil); !caps.Exec || caps.ChecksIncomplete {
-+		t.Fatalf("first check = %+v", caps)
-+	}
-+	s.failing.Store(true)
-+	expireUserCapabilities()
-+	if caps, _ := CheckCapabilitiesForUser(t.Context(), "alice", nil); caps.Exec || !caps.ChecksIncomplete {
-+		t.Fatalf("failed check = %+v, want fail-closed and incomplete", caps)
-+	}
-+
-+	s.failing.Store(false)
-+	release := s.hold(t)
-+	expireUserCapabilities()
-+	done := make(chan *Capabilities, 1)
-+	go func() {
-+		caps, _ := CheckCapabilitiesForUser(t.Context(), "alice", nil)
-+		done <- caps
-+	}()
-+	select {
-+	case caps := <-done:
-+		if !caps.Exec || caps.ChecksIncomplete {
-+			t.Errorf("during the re-check got %+v, want the last complete result", caps)
-+		}
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("caller waited on the re-check")
-+	}
-+	release()
-+	deadline := time.Now().Add(5 * time.Second)
-+	for {
-+		if caps, _ := CheckCapabilitiesForUser(t.Context(), "alice", nil); !caps.ChecksIncomplete {
-+			break
-+		}
-+		if time.Now().After(deadline) {
-+			t.Fatal("the re-check never replaced the failed answer")
-+		}
-+		time.Sleep(20 * time.Millisecond)
-+	}
-+}
-```
-
-**File**: `internal/k8s/cluster_detection.go` (modified, +70/-14)
-```diff
-@@ -23,24 +23,76 @@ var (
- )
- 
- var (
--	cachedServerVersion string
--	serverVersionOnce   = new(sync.Once)
--	serverVersionMu     sync.Mutex
-+	serverVersionMu       sync.Mutex
-+	cachedServerVersion   string
-+	serverVersionInFlight *serverVersionRead
-+	serverVersionFailedAt time.Time
- )
- 
--// GetServerVersion returns the cached Kubernetes server version.
--// The version is fetched once and cached for the lifetime of the context.
-+// serverVersionRetryAfter answers "" without a new read for a while after a
-+// failure, so callers during an outage don't each wait out the client timeout.
-+const serverVersionRetryAfter = 5 * time.Second
-+
-+type serverVersionRead struct {
-+	done        chan struct{}
-+	version     string
-+	invalidated bool // guarded by serverVersionMu
-+}
-+
-+// GetServerVersion returns the Kubernetes server version, read once per
-+// context. A failed read is not kept: a call after serverVersionRetryAfter asks
-+// again, while callers that arrive during a read wait for it instead of
-+// starting their own.
- func GetServerVersion() string {
- 	serverVersionMu.Lock()
--	defer serverVersionMu.Unlock()
--	serverVersionOnce.Do(func() {
--		if client := GetClient(); client != nil {
--			if v, err := client.Discovery().ServerVersion(); err == nil {
--				cachedServerVersion = v.GitVersion
--			}
-+	if cachedServerVersion != "" {
-+		defer serverVersionMu.Unlock()
-+		return cachedServerVersion
-+	}
-+	if time.Since(serverVersionFailedAt) < serverVersionRetryAfter {
-+		serverVersionMu.Unlock()
-+		return ""
-+	}
-+	if read := serverVersionInFlight; read != nil {
-+		serverVersionMu.Unlock()
-+		<-read.done
-+		return serverVersionOrRetry(read)
-+	}
-+	read := &serverVersionRead{done: make(chan struct{})}
-+	serverVersionInFlight = read
-+	serverVersionMu.Unlock()
-+
-+	if client := GetClient(); client != nil {
-+		if v, err := client.Discovery().ServerVersion(); err == nil {
-+			read.version = v.GitVersion
- 		}
--	})
--	return cachedServerVersion
-+	}
-+
-+	serverVersionMu.Lock()
-+	// A context switch during the read invalidated it; don't cache the
-+	// previous cluster's version.
-+	if serverVersionInFlight == read {
-+		serverVersionInFlight = nil
-+		cachedServerVersion = read.version
-+		if read.version == "" {
-+			serverVersionFailedAt = time.Now()
-+		}
-+	}
-+	serverVersionMu.Unlock()
-+	close(read.done)
-+	return serverVersionOrRetry(read)
-+}
-+
-+// serverVersionOrRetry asks again when a context switch invalidated the read,
-+// so no caller gets the previous cluster's version.
-+func serverVersionOrRetry(read *serverVersionRead) string {
-+	serverVersionMu.Lock()
-+	invalidated := read.invalidated
-+	serverVersionMu.Unlock()
-+	if invalidated {
-+		return GetServerVersion()
-+	}
-+	return read.version
- }
- 
- // InvalidateServerVersionCache resets the cached server version.
-@@ -49,7 +101,11 @@ func InvalidateServerVersionCache() {
- 	serverVersionMu.Lock()
- 	defer serverVersionMu.Unlock()
- 	cachedServerVersion = ""
--	serverVersionOnce = new(sync.Once)
-+	if serverVersionInFlight != nil {
-+		serverVersionInFlight.invalidated = true
-+	}
-+	serverVersionInFlight = nil
-+	serverVersionFailedAt = time.Time{}
- }
- 
- // ClusterInfo contains detected cluster information
-```
-
-**File**: `internal/k8s/server_version_test.go` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+package k8s
-+
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync"
-+	"sync/atomic"
-+	"testing"
-+
-+	"k8s.io/apimachinery/pkg/version"
-+	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/rest"
-+)
-+
-+func setServerVersionClient(t *testing.T, handler http.HandlerFunc) {
-+	t.Helper()
-+	server := httptest.NewServer(handler)
-+	t.Cleanup(server.Close)
-+	client, err := kubernetes.NewForConfig(&rest.Config{Host: server.URL})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	InvalidateServerVersionCache()
-+	previous := SetTestClient(client)
-+	t.Cleanup(func() {
-+		SetTestClient(previous)
-+		InvalidateServerVersionCache()
-+	})
-+}
-+
-+func writeVersion(w http.ResponseWriter) {
-+	w.Header().Set("Content-Type", "application/json")
-+	_ = json.NewEncoder(w).Encode(version.Info{GitVersion: "v1.31.2"})
-+}
-+
-+// A failed version read (a timeout behind the informer start) must not stick
-+// until the next context switch; a successful one is read once.
-+func TestGetServerVersionRetriesAfterFailureAndKeepsSuccess(t *testing.T) {
-+	var failing atomic.Bool
-+	var reads atomic.Int32
-+	failing.Store(true)
-+	setServerVersionClient(t, func(w http.ResponseWriter, r *http.Request) {
-+		reads.Add(1)
-+		if failing.Load() {
-+			http.Error(w, "timeout", http.StatusGatewayTimeout)
-+			return
-+		}
-+		writeVersion(w)
-+	})
-+
-+	if got := GetServerVersion(); got != "" {
-+		t.Fatalf("failed read = %q, want empty", got)
-+	}
-+	failing.Store(false)
-+	expireServerVersionFailure(t)
-+	if got := GetServerVersion(); got != "v1.31.2" {
-+		t.Fatalf("after the apiserver answers = %q, want v1.31.2", got)
-+	}
-+	before := reads.Load()
-+	if got := GetServerVersion(); got != "v1.31.2" || reads.Load() != before {
-+		t.Errorf("a successful version must be kept: got %q, reads %d -> %d", got, before, reads.Load())
-+	}
-+}
-+
-+// Concurrent callers share one in-flight read rather than each asking.
-+func TestGetServerVersionSharesOneInFlightRead(t *testing.T) {
-+	var reads atomic.Int32
-+	entered := make(chan struct{})
-+	release := make(chan struct{})
-+	var once sync.Once
-+	setServerVersionClient(t, func(w http.ResponseWriter, r *http.Request) {
-+		reads.Add(1)
-+		once.Do(func() { close(entered) })
-+		<-release
-+		writeVersion(w)
-+	})
-+
-+	var wg sync.WaitGroup
-+	wg.Add(1)
-+	go func() { defer wg.Done(); GetServerVersion() }()
-+	<-entered
-+	for range 5 {
-+		wg.Add(1)
-+		go func() { defer wg.Done(); GetServerVersion() }()
-+	}
-+	close(release)
-+	wg.Wait()
-+	if n := reads.Load(); n != 1 {
-+		t.Errorf("concurrent callers made %d reads, want 1", n)
-+	}
-+}
-+
-+func expireServerVersionFailure(t *testing.T) {
-+	t.Helper()
-+	serverVersionMu.Lock()
-+	serverVersionFailedAt = serverVersionFailedAt.Add(-serverVersionRetryAfter)
-+	serverVersionMu.Unlock()
-+}
-+
-+// During an outage, callers right after a failed read get "" at once instead
-+// of each waiting out the client timeout; the read is retried after the window.
-+func TestGetServerVersionAnswersEmptyRightAfterFailure(t *testing.T) {
-+	var failing atomic.Bool
-+	var reads atomic.Int32
-+	failing.Store(true)
-+	setServerVersionClient(t, func(w http.ResponseWriter, r *http.Request) {
-+		reads.Add(1)
-+		if failing.Load() {
-+			http.Error(w, "timeout", http.StatusGatewayTimeout)
-+			return
-+		}
-+		writeVersion(w)
-+	})
-+
-+	GetServerVersion()
-+	failing.Store(false)
-+	if got := GetServerVersion(); got != "" || reads.Load() != 1 {
-+		t.Fatalf("right after a failure got %q with %d reads, want \"\" without a new read", got, reads.Load())
-+	}
-+	expireServerVersionFailure(t)
-+	if got := GetServerVersion(); got != "v1.31.2" {
-+		t.Errorf("after the retry window = %q, want v1.31.2", got)
-+	}
-+}
-+
-+// A context switch during a read: neither the reader nor a waiter returns the
-+// previous cluster's version; both read again from the current client.
-+func TestGetServerVersionInvalidatedReadAsksTheNewCluster(t *testing.T) {
-+	entered := make(chan struct{})
-+	release := make(chan struct{})
-+	setServerVersionClient(t, func(w http.ResponseWriter, r *http.Request) {
-+		close(entered)
-+		<-release
-+		writeVersion(w) // old cluster: v1.31.2
-+	})
-+	newServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		_ = json.NewEncoder(w).Encode(version.Info{GitVersion: "v1.33.0"})
-+	}))
-+	t.Cleanup(newServer.Close)
-+	newClient, err := kubernetes.NewForConfig(&rest.Config{Host: newServer.URL})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	results := make(chan string, 2)
-+	go func() { results <- GetServerVersion() }()
-+	<-entered
-+	go func() { results <- GetServerVersion() }()
-+	// Let the waiter queue behind the in-flight read before the switch.
-+	for {
-+		serverVersionMu.Lock()
-+		inFlight := serverVersionInFlight != nil
-+		serverVersionMu.Unlock()
-+		if inFlight {
-+			break
-+		}
-+	}
-+	SetTestClient(newClient)
-+	InvalidateServerVersionCache()
-+	close(release)
-+	for range 2 {
-+		if got := <-results; got != "v1.33.0" {
-+			t.Errorf("after the switch got %q, w
-```
-
-**File**: `internal/server/namespaces_failure_test.go` (added, +98/-0)
-```diff
-@@ -0,0 +1,98 @@
-+package server
-+
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+	"time"
-+
-+	"k8s.io/client-go/kubernetes/fake"
-+
-+	"github.com/skyhook-io/radar/internal/k8s"
-+	"github.com/skyhook-io/radar/pkg/k8score"
-+	"github.com/skyhook-io/radar/pkg/readreason"
-+)
-+
-+func decodeNamespacesResponse(t *testing.T, resp *http.Response) (int, any) {
-+	t.Helper()
-+	defer resp.Body.Close()
-+	var body any
-+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
-+		t.Fatalf("decode: %v", err)
-+	}
-+	return resp.StatusCode, body
-+}
-+
-+// A caller whose namespace access couldn't be determined is told to retry,
-+// not handed an empty list that reads as "no namespaces".
-+func TestNamespacesReportsFailedAccessCheck(t *testing.T) {
-+	fakeNamespaceAPIServer(t, http.StatusOK, http.StatusInternalServerError, "default")
-+	env := newAuthTestServer(t)
-+	status, body := decodeNamespacesResponse(t, env.authGet(t, "/api/namespaces", "alice", ""))
-+	if m, _ := body.(map[string]any); status != http.StatusServiceUnavailable || m["error_code"] != string(readreason.UserPermissionCheckFailed) {
-+		t.Fatalf("got %d %v, want 503 %s", status, body, readreason.UserPermissionCheckFailed)
-+	}
-+}
-+
-+// Without a Namespaces informer the list comes from Radar's own LIST. A LIST
-+// that failed is reported; one that was denied still answers with the
-+// namespaces Radar was configured with.
-+func TestNamespacesWithoutInformerReportsFailedList(t *testing.T) {
-+	t.Cleanup(func() {
-+		k8s.ResetResourceCache()
-+		if err := k8s.InitTestResourceCache(testFakeClient); err != nil {
-+			t.Fatalf("restore package fixture cache: %v", err)
-+		}
-+	})
-+	k8s.ResetResourceCache()
-+	if err := k8s.InitTestResourceCacheFromConfig(k8score.CacheConfig{
-+		Client:              fake.NewClientset(),
-+		ResourceTypes:       map[string]bool{"configmaps": true},
-+		ResourceScopes:      map[string]k8score.ResourceScope{"configmaps": {Enabled: true, Namespace: "default"}},
-+		DeferredSyncTimeout: time.Hour,
-+	}); err != nil {
-+		t.Fatal(err)
-+	}
-+	if k8s.GetResourceCache().Namespaces() != nil {
-+		t.Fatal("fixture must have no Namespaces informer")
-+	}
-+	prevNs := k8s.SetTestContextNamespace("default")
-+	t.Cleanup(func() { k8s.SetTestContextNamespace(prevNs) })
-+
-+	srv := New(Config{DevMode: true})
-+	ts := httptest.NewServer(srv.Handler())
-+	t.Cleanup(func() {
-+		ts.Close()
-+		srv.Stop()
-+	})
-+
-+	for _, tc := range []struct {
-+		name       string
-+		listStatus int
-+		wantStatus int
-+		wantCode   string
-+	}{
-+		{"list fails", http.StatusInternalServerError, http.StatusInternalServerError, string(readreason.ReadError)},
-+		{"list denied", http.StatusForbidden, http.StatusOK, ""},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			fakeNamespaceAPIServer(t, tc.listStatus, http.StatusForbidden)
-+			resp, err := http.Get(ts.URL + "/api/namespaces")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			status, body := decodeNamespacesResponse(t, resp)
-+			if status != tc.wantStatus {
-+				t.Fatalf("status = %d (%v), want %d", status, body, tc.wantStatus)
-+			}
-+			if tc.wantCode != "" {
-+				if m, _ := body.(map[string]any); m["error_code"] != tc.wantCode {
-+					t.Errorf("body = %v, want error_code %s", body, tc.wantCode)
-+				}
-+			} else if list, _ := body.([]any); len(list) != 1 {
-+				t.Errorf("denied LIST body = %v, want the context namespace", body)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `internal/server/server.go` (modified, +14/-2)
-```diff
-@@ -1638,6 +1638,9 @@ func (s *Server) handleCapabilities(w http.ResponseWriter, r *http.Request) {
- 			log.Printf("[capabilities] namespace-scoped check for %q failed: %v", ns, err)
- 		} else if nsCaps != nil {
- 			mergeNamespaceCapabilities(caps, nsCaps)
-+			if nsCaps.Errors != (k8s.NamespaceCapabilityErrors{}) {
-+				caps.ChecksIncomplete = true
-+			}
- 		}
- 	}
- 
-@@ -2242,8 +2245,12 @@ func (s *Server) handleNamespaces(w http.ResponseWriter, r *http.Request) {
- 	// permCache.Get back after a transient discovery failure conflates
- 	// "cluster-admin sentinel" with "cache miss" and would silently leak the
- 	// full namespace list to a restricted user during apiserver flakes.
--	allowedNames := s.parseNamespacesForUser(r)
-+	allowedNames, discoveryFailed := s.parseNamespacesForUserWithStatus(r)
- 	if allowedNames != nil && len(allowedNames) == 0 {
-+		if discoveryFailed {
-+			s.writeCollectionFailure(w, "namespaces", permissionFailure(false, ""))
-+			return
-+		}
- 		s.writeJSON(w, []map[string]any{})
- 		return
- 	}
-@@ -2261,7 +2268,12 @@ func (s *Server) handleNamespaces(w http.ResponseWriter, r *http.Request) {
- 		// GetAccessibleNamespaces (SA-listed). Apply the same per-user
- 		// filter so restricted users don't see SA-visible names they
- 		// have no access to.
--		accessible, _ := k8s.GetAccessibleNamespaces(r.Context())
-+		accessible, source := k8s.GetAccessibleNamespacesWithSource(r.Context())
-+		if source == k8s.NamespaceListFailed {
-+			// The seeds alone would read as the whole list.
-+			s.writeCollectionFailure(w, "namespaces", readFailuref(readreason.ReadError, "Radar couldn't list namespaces; retry shortly"))
-+			return
-+		}
- 		result := make([]map[string]any, 0, len(accessible))
- 		for _, name := range accessible {
- 			if allowedSet != nil && !allowedSet[name] {
-```
-
-**File**: `packages/k8s-ui/src/types/core.ts` (modified, +3/-0)
-```diff
-@@ -154,6 +154,9 @@ export interface Capabilities {
-   // Which Cloud-connect lane this deployment gets. Optional on the wire:
-   // older backends don't advertise it — consumers fall back to wizard links.
-   cloudConnect?: CloudConnectCapability
-+  // An access check errored, so a false above may be unanswered rather than
-+  // denied. Older Radars never send it.
-+  checksIncomplete?: boolean
- }
- 
- // CloudConnectCapability picks the Cloud funnel's connect lane: 'driver'
+   k8s-ui:
+     name: k8s-ui (shared UI)
+     needs: changes
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2800** (2026-11-19): Velero: read crons restricting both day fields as the server's Velero version does (@nadaverell)
-- **PR #2799** (2026-11-19): Velero: Delete object for a backup Velero never stored (@nadaverell)
-- **PR #2798** (2026-11-19): Report the upload script's exit when it ends before the body arrives (@nadaverell)
-- **PR #2797** (2026-11-19): Make the mid-upload directory test wait until the script is reading the body (@nadaverell)
-- **PR #2795** (2026-11-19): Stop every Managed By at the first GitOps manager above an object (@nadaverell)
-- **PR #2794** (2026-11-19): Say what a reference's state means in get_resource; spell an unchecked one access_unverified (@nadaverell)
+- **PR #2836** (2026-11-21): CI: give each Go job its own build cache, refreshed from main (@nadaverell)
+- **PR #2835** (2026-11-21): CI: run vet in its own job and link test binaries without DWARF (@nadaverell)
+- **PR #2834** (2026-11-21): Cache the dev image's Docker layers in the registry, not the Actions cache (@nadaverell)
+- **PR #2832** (2026-11-21): Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24 (@nadaverell)
+- **PR #2826** (2026-11-21): Keep cluster switches running through slow cache sync and browser refreshes (@nadaverell)
+- **PR #2823** (2026-11-21): Keep diagnostics available when cluster inspection stalls (@nadaverell)
 
 ---
 
@@ -4193,6 +2837,39 @@ invalidated isn't cached, and for 5s after a failure callers get `""` at
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24
+
+**RULE**:
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3419650d`: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	go test -v -ldflags=-w ./...
+	cd pkg && go test -v -ldflags=-w ./...
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	go test -v ./...
+	cd pkg && go test -v ./...
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3419650d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

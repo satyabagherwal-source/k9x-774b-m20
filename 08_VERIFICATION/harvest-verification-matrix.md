@@ -11966,3 +11966,7 @@
 | `CYCLE-20261122-LMOR` | `2026-11-22T01:23:58.875Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md` | Yes (`0f2d5d00...`) |
 | `CYCLE-20261122-WENX` | `2026-11-22T01:32:21.693Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | Yes (`6752605f...`) |
 | `CYCLE-20261122-WG31` | `2026-11-22T01:32:23.533Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9876` | Yes (`16e41f55...`) |
+| `CYCLE-20261122-BB2C` | `2026-11-22T01:43:56.868Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md` | Yes (`3529f62c...`) |
+| `CYCLE-20261122-BF2C` | `2026-11-22T01:44:02.052Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9877` | Yes (`2e27572b...`) |
+| `CYCLE-20261122-BKAH` | `2026-11-22T01:44:08.825Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`22284158...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T01:44:40.946Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-8AB33BAA` [Domain K] | Yes (`aef740a0...`) |

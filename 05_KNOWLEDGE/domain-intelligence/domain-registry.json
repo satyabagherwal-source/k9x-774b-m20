@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T01:32:35.619Z",
-  "total_records": 2307,
+  "last_updated": "2026-11-22T01:44:42.576Z",
+  "total_records": 2308,
   "domains": {
     "A": {
       "total": 17,
@@ -2199,7 +2199,7 @@
       ]
     },
     "K": {
-      "total": 138,
+      "total": 139,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2338,7 +2338,8 @@
         "domain_intelligence-quality-verification-intelligence-clockworklabs-spacetimedb-core-invariants",
         "domain_intelligence-quality-verification-intelligence-clockworklabs-spacetimedb-learnings-core-invar",
         "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-learnings-core-invariants",
+        "DOM-K-8AB33BAA"
       ]
     },
     "L": {
@@ -15230,8 +15231,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "be876c3ee15ac5c57a01b167721898372b26863e3fd5512c810a5275541cac25",
-      "created_at": "2026-11-19T20:55:49.902Z"
+      "content_hash": "acbab22b956736cb99bdcf07951e0fe4a2e35d24b818f58591f9603f8f1d0def",
+      "created_at": "2026-11-22T01:44:02.430Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -15341,8 +15342,8 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "ce2bda2dad6dfccd585bc4cec5b657359ef0fb9369a4623bd5d68e87bff17cab",
-      "created_at": "2026-11-19T20:56:27.886Z"
+      "content_hash": "08deccce3023a6625198b9e825b3832cfd5dd8b52971c0062ba9f8c5e271fc26",
+      "created_at": "2026-11-22T01:44:41.504Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
@@ -15386,8 +15387,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "bcb60e3be6fc6e0d5f773bd46fa38981d87c5fb17f4847f3dfb4376bb3046a60",
-      "created_at": "2026-11-22T00:54:02.010Z"
+      "content_hash": "96b458428d196c5a1b0954a14141a61db05d3148fe664d543ca95fcd303165b3",
+      "created_at": "2026-11-22T01:44:09.211Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15836,8 +15837,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "b02f1a01ac4cad96d38b5a8e1a6388270c548f4391010e2e4eae4b1f5fb618ec",
-      "created_at": "2026-11-22T00:54:40.209Z"
+      "content_hash": "8d0676a6cd0de93d57e0773f3db8fe2a2160ec7c0646994828e348d03b0cec0d",
+      "created_at": "2026-11-22T01:44:42.576Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -25764,8 +25765,8 @@
       "title": "Research & Knowledge Intelligence: microsoft/Mage-VL-Cowork Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-mage-vl-cowork-research-knowledge-intelligence-microsoft-mage-vl-co.md",
       "repository": "microsoft/Mage-VL-Cowork",
-      "content_hash": "344578ce2fdf3dfa27704e45286f26302240a4982ba9dcd71cb7a64ba67fb8a9",
-      "created_at": "2026-11-17T03:34:08.582Z"
+      "content_hash": "a437c4f11a431a242b4a85459dad9b0fdf6119ff91a924059b172011f42a25c2",
+      "created_at": "2026-11-22T01:43:57.084Z"
     },
     "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-core-invariants",
@@ -25782,8 +25783,8 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-mage-vl-cowork-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-mage-vl-cowork-learnings-research-knowledge-intelligence-hf-microso.md",
       "repository": "hf-microsoft-mage-vl-cowork-learnings",
-      "content_hash": "654fd8db8d279510054926e90f781d53a09191d90ff588d3d42c8063f1b1ee67",
-      "created_at": "2026-11-17T03:34:23.851Z"
+      "content_hash": "17b60e5d1267cc64c0d0541c4235779a3d3ad624232dda90fd3b645faee5a28d",
+      "created_at": "2026-11-22T01:44:12.493Z"
     },
     "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants",
@@ -38902,6 +38903,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-22T00:54:39.504Z"
+    },
+    "DOM-K-8AB33BAA": {
+      "record_id": "DOM-K-8AB33BAA",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24",
+      "content": "When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "aef740a0a60d7ed78f7f6d81a91a2f374c04e7a5ee01754695a8ceec9ef8fa0a",
+      "summary": "Prevents defects observed in production commit `3419650d`: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24. Unval -> When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurre",
+      "provenance": {
+        "source_uri": "project://skyhook-io-radar/skyhook-io-radar-learnings.md",
+        "source_version": "c0f594ca",
+        "observed_at": "2026-11-22T01:44:01.017Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (skyhook-io-radar)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of skyhook-io-radar"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T01:44:40.918Z"
     }
   }
 }

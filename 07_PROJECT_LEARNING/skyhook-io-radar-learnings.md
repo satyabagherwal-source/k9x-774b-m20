@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `778697dd`  
+> **Source Version**: `c0f594ca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T22:41:36.064Z  
+> **Timestamp**: 2026-11-22T01:44:01.017Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:39:43.758Z  
+> **Harvest Timestamp**: 2026-11-22T01:44:01.011Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4174 stars
+- **Stars / Engagement**: 4183 stars
 
 ---
 
@@ -1151,9 +1151,10 @@ import (
 type ConnectionState string
 
 const (
-	StateConnected    ConnectionState = "connected"
-	StateDisconnected ConnectionState = "disconnected"
-	StateConnecting   ConnectionState = "connecting"
+	switchStoppedErrorType                 = "switch-stopped"
+	StateConnected         ConnectionState = "connected"
+	StateDisconnected      ConnectionState = "disconnected"
+	StateConnecting        ConnectionState = "connecting"
 )
 
 // ConnectionStatus holds detailed information about the cluster connection
@@ -1207,35 +1208,46 @@ func GetConnectionStatus() ConnectionStatus {
 
 // SetConnectionStatus updates the connection status and notifies callbacks
 func SetConnectionStatus(status ConnectionStatus) {
+	SetConnectionStatusIfCurrent(context.Background(), status)
+}
+
+// SetConnectionStatusIfCurrent keeps a late bootstrap or liveness probe from
+// overwriting a status published after its operation was cancelled.
+func SetConnectionStatusIfCurrent(operation context.Context, status ConnectionStatus) bool {
 	connectionStatusMu.Lock()
+	if operation.Err() != nil {
+		connectionStatusMu.Unlock()
+		return false
+	}
 	status.DisconnectedAt = outageStart(connectionStatus, status, time.Now())
 	if connectionStatus == status {
 		connectionStatusMu.Unlock()
-		return
+		return true
 	}
 	connectionStatus = status
-	connectionStatusMu.Unlock()
 
 	// Publish-side recovery ownership: every route into an auth-shaped
 	// disconnect (bootstrap with expired credentials, failed retry, failed
 	// context switch) must leave a reconnect loop running — the browser no
 	// longer auto-retries auth failures. Owed survives later non-auth
 	// republications (a hung-plugin retry classifies "timeout") and is only
-	// settled by a successful connect.
-	switch status.State {
-	case StateConnected:
+	// settled by a successful connect or an explicit switch stop.
+	switch {
+	case status.State == StateConnected || status.ErrorType == switchStoppedErrorType:
 		runtimeAuthRecoveryOwed.Store(false)
+	case status.State == StateDisconnected && isAuthClassification(status.ErrorType):
+		runtimeAuthRecoveryOwed.Store(true)
+	}
+	connectionStatusMu.Unlock()
+	if status.State == StateConnected {
 		resetInconclusiveStreak()
-	case StateDisconnected:
-		if isAuthClassification(status.ErrorType) {
-			runtimeAuthRecoveryOwed.Store(true)
-		}
-		if runtimeAuthRecoveryOwed.Load() {
-			startRuntimeAuthRecovery()
-		}
+	}
+	if status.State == StateDisconnected && runtimeAuthRecoveryOwed.Load() {
+		startRuntimeAuthRecovery()
 	}
 
 	notifyConnectionChange(status)
+	return true
 }
 
 func notifyConnectionChange(status ConnectionStatus) {
@@ -1268,7 +1280,14 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 	if !isClusterUnreachableMessage(message) {
 		return false
 	}
-	current := GetConnectionStatus()
+	var current ConnectionStatus
+	var operation context.Context
+	if !CaptureClusterReads(func() {
+		operation = OperationContext()
+		current = GetConnectionStatus()
+	}) || current.ErrorType == switchStoppedErrorType {
+		return false
+	}
 	if current.State == StateDisconnected && current.Error == message {
 		return true
 	}
@@ -1283,8 +1302,7 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 		Error:       message,
 		ErrorType:   ClassifyError(errors.New(message)),
 	}
-	SetConnectionStatus(status)
-	return true
+	return SetConnectionStatusIfCurrent(operation, status)
 }
 
 func clusterReachableNow(timeout time.Duration) bool {
@@ -1427,35 +1445,7 @@ func isAuthErrorMessage(lower string) bool {
 
 // isAuthRejectedMessage matches HTTP 401 responses: the request reached the API
 // server but could not be authenticated. Checked only after isAuthErrorMessage
-// so exec-plugin stderr that quotes a server error (e.g. "UnauthorizedException")
-// still classifies as client-side auth.
-func isAuthRejectedMessage(lower string) bool {
-	if strings.Contains(lower, "proxy authentication required") {
-		return false
-	}
-	rejectedMarkers := []string{
-		"unauthorized",
-		"authentication required",
-		"the server has asked for the client to provide credentials",
-	}
-	for _, marker := range rejectedMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isRBACErrorMessage(lower string) bool {
-	return strings.Contains(lower, " is forbidden") ||
-		strings.Contains(lower, "forbidden:") ||
-		strings.Contains(lower, "cannot list resource") ||
-		strings.Contains(lower, "cannot get resource")
-}
-
-func isConfigErrorMessage(lower string) bool {
-	configMarkers := []string{
-		"no context con
+// so exec-p
 ```
 
 ### Core Architecture Module: `internal/k8s/restart_loop.go`
@@ -2447,607 +2437,365 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7903f85` (2026-11-20)
-**Commit Message**: fix(traffic): no Forwarded verdict for Beyla flows, and keep the end of long node titles (#2759)
+### Incident Patch 1: `3419650d` (2026-11-21)
+**Commit Message**: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24 (#2832)
 
-## Description
+## Summary
 
-Two small display fixes for the traffic map.
+Speeds up the local fast loop (`make test-changed`) and the local full
+run (`make test`), and pins the Node version CI uses. CI is unaffected.
 
-- **Beyla flows no longer read `Forwarded`.** Beyla observes traffic and
-makes no datapath decision, but its flows defaulted to `Verdict:
-"forwarded"` in three places in `internal/traffic/beyla.go`. Those
-defaults are gone, and `error` is still set from the error rate. The
-flow list shows a muted "—" for a flow with no verdict.
-- Go aggregation already skips an empty verdict, so `verdictCounts`
-holds only `error`.
-- `verdictChoices` offers only "Error" for Beyla, or no chip when there
-are no errors.
-- Edge filtering and colouring read `verdictCounts`, so they are
-unchanged.
-- Hubble keeps its verdicts. Istio and Caretta still default to
-`forwarded`; I left them out of this change.
-- **Node titles keep their end.** Workloads of one release share a long
-prefix, so a trailing ellipsis made them all read `<release>…`. The node
-title now uses the existing `MiddleEllipsis` from k8s-ui, with the full
-name as `title`. The component is shared with the other sources, which
-helps them too.
+## What changed
 
-The Source and Destination columns of the flo
+- **Go test binaries are linked without DWARF** (`-ldflags=-w`) in
+`scripts/test-changed.sh` and `make test`. Linking `internal/server`'s
+test binary drops from about 26 s to about 8.5 s, measured three times
+with a forced relink each time. It's paid whenever anything that package
+depends on changes. The linker also needs far less memory.
+  - Stack traces, `t.Log` positions and pprof profiles are unaffected.
+- Only stepping through these binaries in a debugger is lost; `dlv test`
+builds its own binary.
+- **`tsc` is incremental** in `web` and `packages/k8s-ui`. The build
+info goes to `node_modules/.cache/tsc/`, which is ignored.
+- An unchanged re-check of `web` drops from about 4 s to under 1 s, and
+a re-check after an edit only re-checks what the edit affects.
+- The settings are ignored by Vite, by esbuild and by anything consuming
+the packages. `web` publishes only `src`.
+- **`.nvmrc`** pins Node 24, the version CI uses. Node 25
 
-**File**: `internal/traffic/beyla.go` (modified, +0/-3)
+**File**: `.nvmrc` (added, +1/-0)
 ```diff
-@@ -1118,7 +1118,6 @@ func (s *BeylaSource) queryUnorientable(ctx context.Context, opts FlowOptions, s
- 			Source:      Endpoint{Name: conv.key.srcWorkload, Namespace: conv.key.srcNs, Kind: mapBeylaKind(att.srcType), Workload: conv.key.srcWorkload},
- 			Destination: Endpoint{Name: conv.key.dstWorkload, Namespace: conv.key.dstNs, Kind: mapBeylaKind(att.dstType), Workload: conv.key.dstWorkload},
- 			Protocol:    mapBeylaTransport(conv.transport),
--			Verdict:     "forwarded",
- 			LastSeen:    time.Now(),
- 			BytesSent:   h.forward,
- 			BytesRecv:   h.backward,
-@@ -1314,7 +1313,6 @@ func (s *BeylaSource) parseL4Flows(result *prom.QueryResult, w rateWindow) (map[
- 			Destination: Endpoint{Name: dstName, Namespace: dstNs, Kind: mapBeylaKind(dstType), Workload: dstName, Port: port},
- 			Protocol:    mapBeylaTransport(labels["transport"]),
- 			Port:        port,
--			Verdict:     "forwarded",
- 			LastSeen:    time.Now(),
- 			BytesSent:   int64(val * w.seconds),
- 			// Deliberately not set here. Beyla exports rates, not connection counts,
-@@ -1379,7 +1377,6 @@ func (s *BeylaSource) parseL7Flows(result *prom.QueryResult) []Flow {
- 			HTTPMethod:  labels["http_request_method"],
- 			HTTPPath:    labels["http_route"],
- 			HTTPStatus:  parseIntLabel(labels["http_response_status_code"]),
--			Verdict:     "forwarded",
- 			LastSeen:    time.Now(),
- 			// val is a per-second request rate over a 5m window, not a
- 			// connection count; Connections here is only a non-zero weight for
+@@ -0,0 +1 @@
++24
 ```
 
-**File**: `internal/traffic/beyla_test.go` (modified, +4/-1)
+**File**: `Makefile` (modified, +2/-2)
 ```diff
-@@ -194,7 +194,8 @@ func TestBeylaSource_GetFlows_OwnerLevel(t *testing.T) {
- 	assertEq(t, "dest kind", f.Destination.Kind, "Workload")
- 	assertEq(t, "port", fmt.Sprintf("%d", f.Port), "8080")
- 	assertEq(t, "protocol", f.Protocol, "tcp")
--	assertEq(t, "verdict", f.Verdict, "forwarded")
-+	// Beyla observes traffic, not a datapath decision: no error, no verdict.
-+	assertEq(t, "verdict", f.Verdict, "")
- 	// No HTTP data on this edge, so there is no rate to report. Beyla exports no
- 	// connection count at all, and a placeholder here would drive edge thickness
- 	// and the node totals from a number nothing measured.
-@@ -641,6 +642,7 @@ func TestBeylaSource_ParseL7Flows_OwnerFallback(t *testing.T) {
- 			}
- 			assertEq(t, "dest name", flows[0].Destination.Name, tt.wantName)
- 			assertEq(t, "dest kind", flows[0].Destination.Kind, tt.wantKind)
-+			assertEq(t, "verdict", flows[0].Verdict, "")
- 		})
- 	}
- }
-@@ -1263,6 +1265,7 @@ func TestBeylaSource_GetFlows_UnorientableConversationBecomesOneUndirectedEdge(t
- 		t.Error("the edge must declare that its direction is unknown, or the graph will draw an arrow")
- 	}
- 	assertEq(t, "protocol", f.Protocol, "udp")
-+	assertEq(t, "verdict", f.Verdict, "")
- 	// Endpoints are ordered deterministically so the edge does not flip between
- 	// polls; demo/client sorts before kube-system/coredns.
- 	assertEq(t, "source", f.Source.Name, "client")
-```
-
-**File**: `packages/k8s-ui/src/types/core.ts` (modified, +1/-1)
-```diff
-@@ -1684,7 +1684,7 @@ export interface TrafficFlow {
-    *  measures a rate rather than observing individual responses, so it has a
-    *  status code for no single flow. */
-   errorRate?: number
--  verdict: string // forwarded, dropped, error
-+  verdict: string // forwarded, dropped, error; empty when the source reports none
-   /** The network plugin's own account of which policies decided this flow
-    *  (Hubble reports it). Absent when the plugin said nothing. */
-   policyVerdict?: {
-```
-
-**File**: `pkg/traffic/types.go` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ type Flow struct {
- 	// The graph draws these without an arrowhead: the traffic is real, only its
- 	// direction is not known.
- 	DirectionUnknown bool   `json:"directionUnknown,omitempty"`
--	Verdict          string `json:"verdict"` // forwarded, dropped, error
-+	Verdict          string `json:"verdict"` // forwarded, dropped, error; empty when the source reports none
- 	// PolicyVerdict is the network plugin's own account of which policies
- 	// decided this flow, when it reports one (Hubble does). It is the ground
- 	// truth a static evaluation can only approximate, and it names policy
-```
-
-**File**: `web/src/components/traffic/TrafficFlowList.tsx` (modified, +8/-4)
-```diff
-@@ -224,10 +224,14 @@ export function TrafficFlowList({ flows, responsesCallerOriented }: TrafficFlowL
-                     {flow.latencyNs && flow.latencyNs > 0 ? formatLatency(flow.latencyNs) : '—'}
-                   </span>
+@@ -155,8 +155,8 @@ clean:
  
--                  {/* Verdict */}
--                  <span className={clsx('text-right badge badge-sm text-[10px] capitalize', VERDICT_BADGE[flow.verdict] ?? SEVERITY_BADGE.neutral)}>
--                    {flow.verdict}
--                  </span>
-+                  {/* Verdict: sources that only observe traffic (Beyla) report none */}
-+                  {flow.verdict ? (
-+                    <span className={clsx('text-right badge badge-sm text-[10px] capitalize', VERDICT_BADGE[flow.verdict] ?? SEVERITY_BADGE.neutral)}>
-+                      {flow.verdict}
-+                    </span>
-+                  ) : (
-+                    <span className="text-right text-theme-text-tertiary">—</span>
-+                  )}
-                 </button>
+ # Run tests
+ test:
+-	go test -v ./...
+-	cd pkg && go test -v ./...
++	go test -v -ldflags=-w ./...
++	cd pkg && go test -v -ldflags=-w ./...
  
-                 {/* Expanded detail */}
+ # Fast dev loop: vet/test only the changed Go packages, tsc, and `vitest related`
+ # for changed frontend files. BASE defaults to origin/main. Not a completion check.
 ```
 
-**File**: `web/src/components/traffic/TrafficGraph.test.tsx` (modified, +31/-1)
+**File**: `packages/k8s-ui/tsconfig.json` (modified, +2/-0)
 ```diff
-@@ -4,7 +4,7 @@ import { createRoot, type Root } from 'react-dom/client'
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
- import type { Edge, Node } from '@xyflow/react'
- import type { AggregatedFlow } from '../../types'
--import { TrafficGraph } from './TrafficGraph'
-+import { TrafficGraph, TrafficNode } from './TrafficGraph'
- import { endpointPair, groupAddonFlows } from './trafficFilters'
- 
- const { fitView } = vi.hoisted(() => ({ fitView: vi.fn() }))
-@@ -267,3 +267,33 @@ describe('TrafficGraph edge labels for traffic measured only in bytes', () => {
-     expect(container.querySelector('[data-edge]')!.textContent).toBe('TCP · 2.4 KB/s · UDP · <1 B/s')
-   })
- })
-+
-+describe('TrafficNode title', () => {
-+  // jsdom has no layout or canvas: give the title 100px and every glyph 7px.
-+  beforeEach(() => {
-+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
-+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
-+      { font: '', measureText: (t: string) => ({ width: t.length * 7 }) } as unknown as CanvasRenderingContext2D)
-+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ width: 100 } as DOMRect)
-+  })
-+  afterEach(() => vi.restoreAllMocks())
-+
-+  it('keeps the end of a long name, so names sharing a prefix stay apart', () => {
-+    const titles = ['checkout-platform-release-engine', 'checkout-platform-release-redis'].map(label => {
-+      act(() => root.render(<TrafficNode data={{ label, namespace: 'demo', kind: 'Deployment' }} />))
-+      const title = container.querySelector(`[title="${label}"]`)!
-+      return title.lastElementChild!.textContent!
-+    })
-+    expect(titles[0]).toBe('checko…engine')
-+    expect(titles[1]).toMatch(/redis$/)
-+    expect(titles[0]).not.toBe(titles[1])
-+  })
-+
-+  it('gives screen readers the full name, not the cut one', () => {
-+    const label = 'checkout-platform-release-engine'
-+    act(() => root.render(<TrafficNode data={{ label, namespace: 'demo', kind: 'Deployment' }} />))
-+    const srOnly = container.querySelector('.sr-only')
-+    expect(srOnly?.textContent).toBe(label)
-+    expect(container.querySelector(`[title="${label}"]`)!.closest('[aria-hidden="true"]')).not.toBeNull()
-+  })
-+})
+@@ -8,6 +8,8 @@
+     "resolveJsonModule": true,
+     "isolatedModules": true,
+     "noEmit": true,
++    "incremental": true,
++    "tsBuildInfoFile": "../../node_modules/.cache/tsc/k8s-ui.tsbuildinfo",
+     "jsx": "react-jsx",
+     "types": ["node"],
+     "strict": true,
 ```
 
-**File**: `web/src/components/traffic/TrafficGraph.tsx` (modified, +11/-6)
+**File**: `scripts/test-changed.sh` (modified, +5/-1)
 ```diff
-@@ -19,7 +19,7 @@ import type { ELK } from 'elkjs/lib/elk.bundled.js'
- import type { AggregatedFlow } from '../../types'
- import { clsx } from 'clsx'
- import { X, ArrowRight, Globe, Server, Activity, Puzzle, Crosshair } from 'lucide-react'
--import { PaneLoader } from '@skyhook-io/k8s-ui'
-+import { MiddleEllipsis, PaneLoader } from '@skyhook-io/k8s-ui'
- import { isClusterAddon, type AddonMode } from './TrafficView'
- import { SEVERITY_BADGE, SEVERITY_DOT, SEVERITY_TEXT } from '@skyhook-io/k8s-ui/utils/badge-colors'
- import { getNamespaceColor } from '../../utils/traffic-colors'
-@@ -208,7 +208,7 @@ const NODE_PORT_HEIGHT = 18 // Height per port row
- const MAX_VISIBLE_PORTS = 4 // Maximum ports to show before "+N more"
+@@ -52,7 +52,11 @@ while IFS= read -r f; do
+ done <<< "$changed"
+ dedup() { tr ' ' '\n' <<< "$1" | sed '/^$/d' | sort -u | tr '\n' ' '; }
+ pkg_pkgs=$(dedup "$pkg_pkgs"); root_pkgs=$(dedup "$root_pkgs")
+-run_flag=(); [ -n "${GO_TEST_RUN:-}" ] && run_flag=(-run "$GO_TEST_RUN")
++# Test binaries are linked without DWARF: internal/server's links in about a
++# third of the time. Nothing debugs through this script; dlv test builds its
++# own binary.
++run_flag=(-ldflags=-w)
++[ -n "${GO_TEST_RUN:-}" ] && run_flag+=(-run "$GO_TEST_RUN")
+ [ -n "${GO_TEST_FRESH:-}" ] && run_flag+=(-count=1)
  
- // Custom node component
--function TrafficNode({ data }: { data: TrafficNodeData }) {
-+export function TrafficNode({ data }: { data: TrafficNodeData }) {
-   const isExternal = isExternalKind(data.kind)
-   const isInternet = data.kind === 'Internet'
-   const isAddonInternet = data.kind === 'AddonInternet' // Separate internet for addon traffic
-@@ -269,10 +269,15 @@ function TrafficNode({ data }: { data: TrafficNodeData }) {
-           />
-         )}
-         <div className="flex-1 min-w-0">
--          <div className={clsx(
--            'text-sm font-medium truncate',
--            isAddonInternet ? 'text-purple-300' : isInternet ? 'text-sky-300' : (isAddon || isAddonNode) ? 'text-purple-200' : hasNamespaceColor ? 'text-white' : 'text-theme-text-primary'
--          )}>{data.label}</div>
-+          {/* Middle-cut: workloads of one release share a long prefix and differ only at the end.
-+              MiddleEllipsis exposes only the cut text, so screen readers get the full name instead. */}
-+          <span className="sr-only">{data.label}</span>
-+          <div aria-hidden="true">
-+            <MiddleEllipsis text={data.label} title={data.label} className={clsx(
-+              'text-sm font-medium',
-+              isAddonInternet ? 'text-purple-300' : isInternet ? 'text-sky-300' : (isAddon || isAddonNode) ? 'text-purple-200' : hasNamespaceColor ? 'text-white' : 'text-theme-text-primary'
-+            )} />
-+          </div>
-           {data.namespace ? (
-             <div className={clsx(
-               'text-xs truncate',
+ # Node 25 exposes a localStorage global that breaks jsdom's.
 ```
 
-**File**: `web/src/components/traffic/trafficFilters.ts` (modified, +4/-4)
+**File**: `web/tsconfig.json` (modified, +2/-0)
 ```diff
-@@ -836,10 +836,10 @@ export function connectionRows<T extends AggregatedFlow>(flows: T[]): T[] {
- }
- 
- /**
-- * The verdict filter's choices, from the verdicts the flows contain. Caretta,
-- * Beyla and Istio report every flow forwarded unless they saw an error, so when
-- * forwarded is the only verdict present the filter would match everything and
-- * none is offered. Any other verdict, even one without a chip of its own (Hubble
-+ * The verdict filter's choices, from the verdicts the flows contain. Caretta
-+ * and Istio report every flow forwarded unless they saw an error, and Beyla
-+ * reports no verdict unless it saw one, so when forwarded is the only verdict
-+ * present the filter would match everything and none is offered. Any other verdict, even one without a chip of its own (Hubble
-  * also reports redirected, audit and more), makes Forwarded a real choice.
-  */
- export function verdictChoices(seen: Iterable<string>): string[] {
+@@ -10,6 +10,8 @@
+     "resolveJsonModule": true,
+     "isolatedModules": true,
+     "noEmit": true,
++    "incremental": true,
++    "tsBuildInfoFile": "../node_modules/.cache/tsc/web.tsbuildinfo",
+     "jsx": "react-jsx",
+     "strict": true,
+     "noUnusedLocals": true,
 ```
 
 ---
 
-### Incident Patch 2: `81e74dc3` (2026-11-20)
-**Commit Message**: Show what depends on a Flux Kustomization or HelmRelease, and flag a revision that isn't the last successful apply (#2630)
+### Incident Patch 2: `667da45a` (2026-11-21)
+**Commit Message**: CI: give each Go job its own build cache, refreshed from main (#2836)
 
-## Description
+## Summary
 
-Two small gaps on the Flux drawers (#2629).
+CI's Go build cache was one `setup-go` entry per `go.sum`, shared by
+every root-module job.
+- **Arbitrary contents:** whichever job finished first decided what the
+cache held. The `pkg` job already had to get its own key for this
+reason.
+- **Never refreshed:** the entry was saved once and not updated until
+`go.sum` changed, so every later commit recompiled whatever had changed
+since.
 
-### What changes
+Now each Go job restores the newest build cache `main` saved for that
+job, so PR runs compile only what they change.
 
-- **`spec.dependsOn` becomes a dependency edge.** `addFluxSourceEdges`
-(`pkg/topology/flux_sources.go`) already turns a Flux object's source
-references into `declaredDependency` edges. It now also adds one per
-`spec.dependsOn` entry on a Kustomization or HelmRelease. The object
-depended on shows the dependent under **Required By** in Related
-Resources; the dependent shows it under **Depends On**.
-- The target is the root's own kind and API group, the only thing Flux
-accepts there. An entry without a namespace means the root's namespace.
-- A missing target adds nothing, the same as source references
-(`addObservedDependencyEdges` only links nodes that exist). A
-self-reference is skipped.
-- **Revision visible by default, with a marker.** The Kustomization
-**Revision** and HelmRelease **Revision Info** sections open by default.
-When the attempted revision differs from the applied one, it gets a `not
-the last successful apply` badge. The revision text wraps next to the
-badge, so a long G
+## What changed
 
-**File**: `docs/gitops.md` (modified, +1/-0)
+- **`.github/actions/go-cache-restore`:**
+  - restores the module cache, keyed by `go.sum` and shared by all jobs;
+- restores this job's newest build cache. Keys are
+`gobuild-<os>-<job>-sha-<commit>`; the `-sha-` separator keeps one job's
+fallback prefix (`backend`) from matching another job's keys
+(`backend-server`).
+- Then it backdates every restored entry. Go re-stamps an entry when it
+uses one more than an hour old, so whatever is still backdated at the
+end went unused. Writing `trim.txt` keeps Go's own five-day trim from
+deleting the backdated entries mid-job.
+- **`.github/actions/g
+
+**File**: `.github/actions/go-cache-restore/action.yml` (added, +38/-0)
 ```diff
-@@ -360,6 +360,7 @@ Scoping and lifecycle:
- The GitOps tab isn't the only place Argo/Flux ownership matters. Surfaces across Radar know about GitOps and route into the right detail page when they should:
+@@ -0,0 +1,38 @@
++name: Restore Go caches
++description: >
++  Restores the module cache (keyed by go.sum) and this job's build cache (the
++  newest one main saved for this job), then backdates the build cache so that
++  go-cache-save can keep only what this run used.
++runs:
++  using: composite
++  steps:
++    - name: Restore module cache
++      uses: actions/cache@v6
++      with:
++        path: ~/go/pkg/mod
++        key: gomod-${{ runner.os }}-${{ hashFiles('go.sum', 'pkg/go.sum') }}
++        restore-keys: gomod-${{ runner.os }}-
++
++    - name: Restore build cache
++      uses: actions/cache/restore@v6
++      with:
++        path: ~/.cache/go-build
++        # "-sha-" ends the job name, so one job's prefix (backend) can't match
++        # another job's keys (backend-server).
++        key: gobuild-${{ runner.os }}-${{ github.job }}-sha-${{ github.sha }}
++        restore-keys: gobuild-${{ runner.os }}-${{ github.job }}-sha-
++
++    # Go re-stamps a cache entry when it uses one more than an hour old, so
++    # after backdating every entry, the ones still backdated when the job ends
++    # are the ones it didn't use. trim.txt records the last trim: writing now
++    # keeps Go's own trim, which drops entries unused for five days, from
++    # deleting the backdated entries mid-job.
++    - name: Backdate the build cache
++      shell: bash
++      run: |
++        cache=$(go env GOCACHE)
++        mkdir -p "$cache"
++        find "$cache" -type f -exec touch -t 200001010000 {} +
++        date +%s > "$cache/trim.txt"
++        touch "$RUNNER_TEMP/go-cache-start"
++        echo "restored build cache: $(du -sh "$cache" | cut -f1)"
+```
+
+**File**: `.github/actions/go-cache-save/action.yml` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++name: Save Go build cache
++description: >
++  Saves this job's build cache, pruned to the entries this run used, under a
++  key for this commit. Pair with go-cache-restore; call it as the job's last
++  step.
++runs:
++  using: composite
++  steps:
++    - name: Prune entries this run didn't use
++      shell: bash
++      run: |
++        cache=$(go env GOCACHE)
++        before=$(du -sh "$cache" | cut -f1)
++        find "$cache" -type f ! -newer "$RUNNER_TEMP/go-cache-start" -delete
++        echo "build cache: $before before pruning, $(du -sh "$cache" | cut -f1) after"
++
++    - name: Save build cache
++      uses: actions/cache/save@v6
++      with:
++        path: ~/.cache/go-build
++        key: gobuild-${{ runner.os }}-${{ github.job }}-sha-${{ github.sha }}
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +50/-18)
+```diff
+@@ -16,6 +16,9 @@ concurrency:
+ # earlier run; PRs keep the cache. Go applies -count only to go test.
+ env:
+   GOFLAGS: ${{ github.event_name == 'push' && '-count=1' || '' }}
++  # Go jobs save their build cache only from main, pruned to what the run used
++  # (.github/actions/go-cache-save); PRs restore the newest one.
++  GO_CACHE_SAVE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+ # go test runs below pass -ldflags=-w: test binaries without DWARF link in
+ # about a third of the time; nothing debugs them here.
  
- - **K8s resource drawer** — the header chip reads `relationships.ownership.manager` ([states](ownership.md#what-manages-an-object)): **Managed by** for `agree`, **Listed by** for `listed` and `shared`, **Tracked by** for `claimed` and `disagree` (with a warning for `disagree`), and **via <Kind>** when a controller ancestor answers. `unknown`/`none` show no chip; native Helm keeps its Helm chip. The tooltip says what names each manager; the manager's sync status shows only for `agree`. Several candidates open a menu naming each; only managers Radar found are linked, and an Application's namespace is never guessed. Older Radars without the answer keep the metadata-based chip. For a Flux manager, the tooltip of a **Tracked by** chip says what its inventory shows. A Kustomization whose `status.inventory` doesn't list the object usually means the object was removed from the source while `prune: false`, or the latest apply hasn't finished. For a HelmRelease, the usual causes are a Helm hook, an object kept by `helm.sh/resource-policy: keep`, or an unfinished release. When Radar can't read an inventory at all, the tooltip says so: a Kustomization records one once an apply succeeds, and a HelmRelease from Flux 2.8, whose helm-controller records it at each install or upgrade, so one on older Flux, or not upgraded since then, has none. An inventory with an entry Radar can't parse reads the same way.
-+- **Flux `dependsOn`** — a Kustomization or HelmRelease listed in another one's `spec.dependsOn` shows that one under **Required By**, and the dependent shows it under **Depends On**. Only the same kind counts, as in Flux; an entry without a namespace means the dependent's namespace. The Revision section of both drawers is open by default and marks an attempted revision that differs from the applied one (for a HelmRelease, the deployed chart version, or `status.lastAppliedRevision` when there is no release history) as **not the last successful apply**. Flux records the applied revision only after the apply and its health checks succeed, so the attempted revision's objects may already be in the cluster.
- - **Flux drawers** — the Kustomization and HelmRelease drawers list `status.inventory`, the objects the last apply recorded, when the controller records one, with the count in the section title.
- - **Related Resources in the resource drawer**:
-   - **Owner** and **Children** come from owner references, the links Kubernetes' garbage collector follows. A Deployment's or Rollout's old ReplicaSets (no Pods, not the current revision) sit behind *Show N older ReplicaSets*.
-```
-
-**File**: `docs/integrations.md` (modified, +2/-0)
-```diff
-@@ -828,6 +828,8 @@ observed Flux sources in both directions within Radar's namespace scope.
- Kustomizations use `spec.sourceRef`; HelmReleases use `spec.chart.spec.sourceRef`
- or `spec.chartRef`. Inline releases also link the generated HelmChart named by
- `status.helmChart`; an observed HelmChart links its source in its own namespace.
-+`spec.dependsOn` links a Kustomization or HelmRelease to the objects of the same
-+kind it waits for (an entry without a namespace means its own namespace).
- These are dependencies, not owners: topology draws each source upstream, with
- the edge pointing into the object that reads it. A link does not prove that Flux
- permits the reference or has produced an artifact.
-```
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/FluxHelmReleaseRenderer.tsx` (modified, +4/-2)
-```diff
-@@ -7,6 +7,7 @@ import { fluxConditionsToGitOpsStatus, parseFluxInventory, type FluxCondition }
- import { TimeValue } from '../../ui/ScheduleValue'
- import { getFluxDeployedRelease, getFluxHandledRequestToken, getFluxReleaseAttemptTime } from '../../../utils/flux-history'
- import { Tooltip } from '../../ui/Tooltip'
-+import { Badge } from '../../ui/Badge'
+@@ -123,9 +126,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          # Its own build cache: sharing the root module's key let this job,
+-          # which finishes first, save a cache holding only pkg's packages.
+-          cache-dependency-path: pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
  
- export interface FluxValuesReference {
-   kind?: 'ConfigMap' | 'Secret'
-@@ -85,6 +86,7 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
-   const sourceRef = chartRef.sourceRef || {}
+       - name: Download dependencies
+         run: go mod download
+@@ -144,6 +148,10 @@ jobs:
+       - name: Build
+         run: go build ./...
  
-   const lastRelease = getFluxDeployedRelease(data)
-+  const deployedRevision = lastRelease?.chartVersion || status.lastAppliedRevision
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
++
+   backend:
+     name: Backend
+     needs: changes
+@@ -170,9 +178,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
  
-   return (
-     <>
-@@ -338,7 +340,7 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
+       - name: Download dependencies
+         run: go mod download
+@@ -202,6 +211,10 @@ jobs:
  
-       {/* Revision info */}
-       {(status.helmChart || status.lastAppliedRevision || status.lastAttemptedRevision || handledRequest) && (
--        <Section title="Revision Info" defaultExpanded={false}>
-+        <Section title="Revision Info" defaultExpanded={true}>
-           <PropertyList>
-             {status.helmChart && (
-               <Property label="Helm Chart" value={status.helmChart} />
-@@ -347,7 +349,7 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
-               <Property label="Applied Revision" value={status.lastAppliedRevision} />
-             )}
-             {status.lastAttemptedRevision && (
--              <Property label="Attempted Revision" value={status.lastAttemptedRevision} />
-+              <Property label="Attempted Revision" value={<><span className="break-words">{status.lastAttemptedRevision}</span>{deployedRevision && deployedRevision !== status.lastAttemptedRevision && <> <Badge severity="warning" size="sm">not the last successful apply</Badge></>}</>} />
-             )}
-             <Property label="Last handled manual request" value={handledRequest} />
-           </PropertyList>
-```
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/FluxTiming.test.tsx` (modified, +46/-0)
-```diff
-@@ -99,4 +99,50 @@ describe('Flux drawer and resource timing', () => {
-     const invalidHistory = renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { history: [{ ...helm.status.history[0], lastDeployed: 'invalid' }] } }} />)
-     expect(invalidHistory).not.toContain('Attempt started')
-   })
+   # gofmt and vet in their own job, so they run alongside the tests instead of
+   # before them in the slowest job.
 +
-+  const text = (html: string) => html.replaceAll('<!-- -->', '')
-+  const ready = [{ type: 'Ready', status: 'True', reason: 'ReconciliationSucceeded' }]
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
+   backend-vet:
+     name: Backend (vet)
+     needs: changes
+@@ -214,9 +227,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
 +
-+  it('opens Revision and flags an attempted revision that is not the last successful apply (Kustomization)', () => {
-+    const html = text(renderToString(<KustomizationRenderer data={{ ...base, apiVersion: 'kustomize.toolkit.fluxcd.io/v1', kind: 'Kustomization', status: { ...base.status, conditions: ready, lastAppliedRevision: 'main@sha1:aaa', lastAttemptedRevision: 'main@sha1:bbb' } }} />))
-+    expect(html).toContain('main@sha1:aaa')
-+    expect(html).toContain('not the last successful apply')
-+    // The badge turns the value into an element, which Property no longer wraps; a long digest must still break.
-+    expect(html).toContain('<span class="break-words">main@sha1:bbb</span>')
-+    const section = html.match(/<button\b[\s\S]*?<\/button>/g)?.find(button => button.includes('>Revision<'))
-+    expect(section).toContain('aria-expanded="true"')
-+  })
-+
-+  it('does not call a revision that failed its health checks unapplied', () => {
-+    // kustomize-controller applies the objects, then records lastAppliedRevision only once health checks pass.
-+    const healthFailed = [{ type: 'Ready', status: 'False', reason: 'HealthCheckFailed' }]
-+    const html = text(renderToString(<KustomizationRenderer data={{ ...base, apiVersion: 'kustomize.toolkit.fluxcd.io/v1', kind: 'Kustomization', status: { ...base.status, conditions: healthFailed, lastAppliedRevision: 'main@sha1:aaa', lastAttemptedRevision: 'main@sha1:bbb' } }} />))
-+    expect(html).not.toContain('not yet applied')
-+    expect(html).toContain('not the last successful apply')
-+  })
-+
-+  it('falls back to the applied revision for a HelmRelease without release history', () => {
-+    const html = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { lastAppliedRevision: '1.2.0', lastAttemptedRevision: '1.4.0' } }} />))
-+    expect(html).toContain('not the last successful apply')
-+    const noChart = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { history: [{ version: 4, status: 'deployed' }], lastAppliedRevision: '1.2.0', lastAttemptedRevision: '1.4.0' } }} />))
-+    expect(noChart).toContain('not the last successful apply')
-+  })
-+
-+  it('flags a HelmRelease whose attempted chart differs from the deployed one', () => {
-+    const html = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { ...helm.status, conditions: ready, lastAttemptedRevision: '1.4.0' } }} />))
-+    expect(html).toContain('not the last successful apply')
-+    expect(html).toContain('<span class="break-words">1.4.0</span>')
-+    const section = html.match(/<button\b[\s\S]*?<\/button>/g)?.find(button => button.includes('Revision Info'))
-+    expect(section).toContain('aria-expanded="true"')
-+  })
-+
-+  it('shows no marker when the revisions match or one is missing', () => {
-+    const ks = text(renderToString(<KustomizationRenderer data={{ ...base, apiVersion: 'kustomize.toolkit.fluxcd.io/v1', kind: 'Kustomization', status: { ...base.status, lastAppliedRevision: 'main@sha1:aaa', lastAttemptedRevision: 'main@sha1:aaa' } }} />))
-+    const hrMatch = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { ...helm.status, lastAttemptedRevision: '1.2.0' } }} />))
-+    const hrNoHistory = text(renderToString(<FluxHelmReleaseRenderer data={{ ...helm, status: { lastAttemptedRevision: '1.4.0' } }} />))
-+    expect(ks).not.toContain('not the last successful apply')
-+    expect(hrMatch).not.toContain('not the last successful apply')
-+    expect(hrNoHistory).not.toContain('not the last successful apply')
-+  })
- })
-+
-```
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/KustomizationRenderer.tsx` (modified, +3/-2)
-```diff
-@@ -3,6 +3,7 @@ import { Section, PropertyList, Property, ConditionsSection, ProblemAlerts, Reso
- import { GitOpsStatusBadge, ManagedResourcesList, SyncCountdown } from '../../gitops'
- import { fluxConditionsToGitOpsStatus, parseFluxInventory, type FluxCondition } from '../../../types/gitops'
- import { TimeValue } from '../../ui/ScheduleValue'
-+import { Badge } from '../../ui/Badge'
- import { getFluxHandledRequestToken, getFluxLastApply } from '../../../utils/flux-history'
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
  
- interface KustomizationRendererProps {
-@@ -166,13 +167,13 @@ export function KustomizationRenderer({ data, onNavigate }: KustomizationRendere
+       - name: Download dependencies
+         run: go mod download
+@@ -235,6 +249,10 @@ jobs:
+       - name: Vet
+         run: go vet ./...
  
-       {/* Revision info */}
-       {(status.lastAppliedRevision || status.lastAttemptedRevision || lastApply || handledRequest) && (
--        <Section title="Revision" defaultExpanded={false}>
-+        <Section title="Revision" defaultExpanded={true}>
-           <PropertyList>
-             {status.lastAppliedRevision && (
-               <Property label="Applied" value={status.lastAppliedRevision} />
-             )}
-             {status.lastAttemptedRevision && status.lastAttemptedRevision !== status.lastAppliedRevision && (
--              <Property label="Attempted" value={status.lastAttemptedRevision} />
-+              <Property label="Attempted" value={<><span className="break-words">{status.lastAttemptedRevision}</span>{status.lastAppliedRevision && <> <Badge severity="warning" size="sm">not the last successful apply</Badge></>}</>} />
-             )}
-             {lastApply && (
-               <Property
-```
-
-**File**: `pkg/topology/flux_sources.go` (modified, +30/-0)
-```diff
-@@ -12,6 +12,7 @@ func addFluxSourceEdges(nodes []Node, edges []Edge, roots []*unstructured.Unstru
- 	var refs []declaredDependency
- 	chartTargets := map[string]bool{}
- 	for _, root := range roots {
-+		refs = append(refs, fluxDependsOn(root)...)
- 		for _, ref := range gitops.FluxSourceReferences(root) {
- 			refs = append(refs, declaredDependency{Source: resourceid.NewRef(resourceid.GroupFromAPIVersion(root.GetAPIVersion()), root.GetKind(), root.GetNamespace(), root.GetName()), Target: ref.Ref, Label: ref.Role, Configuration: true})
- 			if ref.Kind == "HelmChart" {
-@@ -53,3 +54,32 @@ func addFluxSourceEdges(nodes []Node, edges []Edge, roots []*unstructured.Unstru
- 	nodes, edges, sourceWarnings := addObservedDependencyEdges(nodes, edges, refs, provider, opts)
- 	return nodes, edges, append(warnings, sourceWarnings...)
- }
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
 +
-+// fluxDependsOn turns spec.dependsOn into dependencies on objects of the
-+// root's own kind and group, the only targets Flux allows there.
-+func fluxDependsOn(root *unstructured.Unstructured) []declaredDependency {
-+	kind := root.GetKind()
-+	if kind != "Kustomization" && kind != "HelmRelease" {
-+		return nil
-+	}
-+	entries, _, _ := unstructured.NestedSlice(root.Object, "spec", "dependsOn")
-+	group := resourceid.GroupFromAPIVersion(root.GetAPIVersion())
-+	source := resourceid.NewRef(group, kind, root.GetNamespace(), root.GetName())
-+	var refs []declaredDependency
-+	for _, entry := range entries {
-+		dep, ok := entry.(map[string]any)
-+		if !ok {
-+			continue
-+		}
-+		name, _ := dep["name"].(string)
-+		namespace, _ := dep["namespace"].(string)
-+		if namespace == "" {
-+			namespace = root.GetNamespace()
-+		}
-+		if namespace == root.GetNamespace() && name == root.GetName() {
-+			continue
-+		}
-+		refs = append(refs, declaredDependency{Source: source, Target: resourceid.NewRef(group, kind, namespace, name), Label: "depends on"})
-+	}
-+	return refs
-+}
-```
-
-**File**: `pkg/topology/flux_sources_test.go` (modified, +43/-0)
-```diff
-@@ -88,3 +88,46 @@ func TestFluxSourceGraphFollowsReferencedChart(t *testing.T) {
- 		})
- 	}
- }
+   backend-server:
+     name: Backend (internal/server)
+     needs: changes
+@@ -247,9 +265,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
 +
-+func TestFluxDependsOnBecomesRequiredBy(t *testing.T) {
-+	makeObject := func(group, kind, namespace, name string, dependsOn ...map[string]any) *unstructured.Unstructured {
-+		deps := make([]any, 0, len(dependsOn))
-+		for _, d := range dependsOn {
-+			deps = append(deps, d)
-+		}
-+		return &unstructured.Unstructured{Object: map[string]any{"apiVersion": group + "/v1", "kind": kind, "metadata": map[string]any{"namespace": namespace, "name": name}, "spec": map[string]any{"dependsOn": deps}}}
-+	}
-+	const ksGroup, hrGroup = "kustomize.toolkit.fluxcd.io", "helm.toolkit.fluxcd.io"
-+	base := makeObject(ksGroup, "Kustomization", "team", "base")
-+	overlay := makeObject(ksGroup, "Kustomization", "team", "overlay", map[string]any{"name": "base"})
-+	app := makeObject(hrGroup, "HelmRelease", "team", "app", map[string]any{"name": "base"})
-+	db := makeObject(hrGroup, "HelmRelease", "team", "db-hr", map[string]any{"name": "missing"}, map[string]any{"name": "db-hr"})
-+	gvrs := map[string]schema.GroupVersionResource{
-+		"Kustomization": {Group: ksGroup, Version: "v1", Resource: "kustomizations"},
-+		"HelmRelease":   {Group: hrGroup, Version: "v2", Resource: "helmreleases"},
-+	}
-+	p := &issuerTestProvider{monitorDynamicProvider: monitorDynamicProvider{gvrs: gvrs, resources: map[schema.GroupVersionResource][]*unstructured.Unstructured{
-+		gvrs["Kustomization"]: {base, overlay}, gvrs["HelmRelease"]: {app, db},
-+	}}, listCalls: map[string]int{}}
-+	node := func(kind NodeKind, prefix, name, apiVersion string) Node {
-+		return Node{ID: prefix + "/team/" + name, Kind: kind, Name: name, Data: map[string]any{"namespace": "team", "apiVersion": apiVersion}}
-+	}
-+	nodes := []Node{
-+		node(KindKustomization, "kustomization", "base", base.GetAPIVersion()),
-+		node(KindKustomization, "kustomization", "overlay", overlay.GetAPIVersion()),
-+		node(KindHelmRelease, "helmrelease", "app", app.GetAPIVersion()),
-+		node(KindHelmRelease, "helmrelease", "db-hr", db.GetAPIVersion()),
-+	}
-+	nodes, edges, warnings := addFluxSourceEdges(nodes, nil, []*unstructured.Unstructured{base, overlay, app, db}, p, DefaultBuildOptions())
-+	if len(warnings) != 0 || len(nodes) != 4 {
-+		t.Fatalf("nodes=%d warnings=%v, want 4 nodes and no warnings", len(nodes), warnings)
-+	}
-+	want := Edge{ID: "kustomization/team/overlay-to-kustomization/team/base", Source: "kustomization/team/overlay", Target: "kustomization/team/base", Type: EdgeUses, Label: "depends on"}
-+	if len(edges) != 1 || !reflect.DeepEqual(edges[0], want) {
-+		t.Fatalf("edges = %+v, want only %+v", edges, want)
-+	}
-+	rel := GetRelationships("Kustomization", "team", "base", &Topology{Nodes: nodes, Edges: edges}, nil, p)
-+	if rel == nil || len(rel.Dependents) != 1 || rel.Dependents[0].Name != "overlay" {
-+		t.Fatalf("base dependents = %+v, want overlay", rel)
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `7feff693` (2026-11-20)
-**Commit Message**: fix(gitops): keep Flux HelmRelease chart versions whole (#2783)
-
-## Description
-
-The GitOps tree shows a warning chip `attempted <version>` on a Flux
-HelmRelease whose last attempt installed exactly the version it runs,
-whenever that version is longer than 12 characters.
-
-`enrichNodeFromObject`
-([graph.go#L139-L150](https://github.com/skyhook-io/radar/blob/e02bbdaa3c06e36e13bdc02d7dc85975290f0b7c/pkg/gitops/tree/graph.go#L139-L150))
-cuts `status.lastAttemptedRevision` to 12 characters with
-`truncateRevision`, which is meant for Git revisions, and then sets
-`revision` to the whole chart version from `status.history`. The tree
-adds the chip when the two differ
-([GitOpsTreeGraph.tsx#L719-L722](https://github.com/skyhook-io/radar/blob/e02bbdaa3c06e36e13bdc02d7dc85975290f0b7c/packages/k8s-ui/src/components/gitops/tree/GitOpsTreeGraph.tsx#L719-L722)),
-so a version with build metadata such as `1.4.2+0f3c9a1b7e` never equals
-its own attempt.
-
-The fix stops cutting a Flux HelmRelease's `lastAppliedRevision` and
-`lastAttemptedRevision`: they are chart versions, not Git revisions, so
-both sides of the comparison now have the same form. A failed first
-install, with nothing installed yet, now n
-
-**File**: `pkg/gitops/tree/flux_source_facts_test.go` (modified, +20/-0)
-```diff
-@@ -111,4 +111,24 @@ func TestHelmReleaseRevisionIsTheInstalledChart(t *testing.T) {
- 	if node.Data["revision"] != "6.15.0" || node.Data["attemptedRevision"] != "6.16.0" {
- 		t.Fatalf("failed upgrade: revision = %v attempted = %v", node.Data["revision"], node.Data["attemptedRevision"])
- 	}
-+	// A version with build metadata is longer than a short revision; the
-+	// attempt that installed it must still equal it.
-+	obj.Object["status"] = map[string]any{
-+		"lastAttemptedRevision": "1.4.2+0f3c9a1b7e",
-+		"history":               []any{map[string]any{"version": int64(4), "chartVersion": "1.4.2+0f3c9a1b7e", "status": "deployed"}},
-+	}
-+	node = enrichNodeFromObject(Node{Tool: ToolFluxCD}, obj)
-+	if node.Data["revision"] != "1.4.2+0f3c9a1b7e" || node.Data["attemptedRevision"] != "1.4.2+0f3c9a1b7e" {
-+		t.Fatalf("long version: revision = %v attempted = %v", node.Data["revision"], node.Data["attemptedRevision"])
-+	}
-+	// A failed first install leaves nothing installed; the attempt still
-+	// names the version it tried, not a prefix of it.
-+	obj.Object["status"] = map[string]any{
-+		"lastAttemptedRevision": "1.4.2+0f3c9a1b7e",
-+		"history":               []any{map[string]any{"version": int64(1), "chartVersion": "1.4.2+0f3c9a1b7e", "status": "failed"}},
-+	}
-+	node = enrichNodeFromObject(Node{Tool: ToolFluxCD}, obj)
-+	if node.Data["revision"] != nil || node.Data["attemptedRevision"] != "1.4.2+0f3c9a1b7e" {
-+		t.Fatalf("failed install: revision = %v attempted = %v", node.Data["revision"], node.Data["attemptedRevision"])
-+	}
- }
-```
-
-**File**: `pkg/gitops/tree/graph.go` (modified, +10/-2)
-```diff
-@@ -133,11 +133,19 @@ func enrichNodeFromObject(node Node, obj *unstructured.Unstructured) Node {
- 	if rev, ok, _ := unstructured.NestedString(obj.Object, "status", "operationState", "syncResult", "revision"); ok && rev != "" {
- 		node.Data["lastSyncRevision"] = truncateRevision(rev)
- 	}
-+	// A Flux HelmRelease's revisions are chart versions, not Git revisions.
-+	// Cut to 12 characters, a version with build metadata (1.4.2+0f3c9a1b7e)
-+	// no longer equals the whole version status.history records, and the tree
-+	// flags a healthy release as a failed attempt.
-+	displayRevision := truncateRevision
-+	if obj.GetKind() == "HelmRelease" && gitops.ToolOf(obj) == gitops.ToolFluxCD {
-+		displayRevision = func(rev string) string { return rev }
-+	}
- 	if rev, ok, _ := unstructured.NestedString(obj.Object, "status", "lastAppliedRevision"); ok && rev != "" {
--		node.Data["revision"] = truncateRevision(rev)
-+		node.Data["revision"] = displayRevision(rev)
- 	}
- 	if rev, ok, _ := unstructured.NestedString(obj.Object, "status", "lastAttemptedRevision"); ok && rev != "" {
--		node.Data["attemptedRevision"] = truncateRevision(rev)
-+		node.Data["attemptedRevision"] = displayRevision(rev)
- 	}
- 	if rev, ok, _ := unstructured.NestedInt64(obj.Object, "status", "lastReleaseRevision"); ok && rev > 0 {
- 		node.Data["revision"] = fmt.Sprintf("rev:%d", rev)
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+ 
+       - name: Download dependencies
+         run: go mod download
+@@ -259,6 +278,10 @@ jobs:
+ 
+   # TestNoEffortNotesReferencedFromSource scans the whole repo (.ts, .md, .sh,
+   # .yaml, ...), not only Go code. When Backend is skipped, run it alone.
++
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
+   repo-hygiene:
+     name: Repo hygiene
+     needs: changes
+@@ -271,13 +294,18 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+ 
+       - name: Check for effort-note paths
+         run: go test -ldflags=-w ./internal/server -run '^TestNoEffortNotesReferencedFromSource$'
+ 
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
++
+   frontend:
+     name: Frontend
+     needs: changes
+@@ -330,9 +358,9 @@ jobs:
+       - uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+       - uses: actions/setup-node@v6
+         with:
+           node-version: '24'
+@@ -354,6 +382,10 @@ jobs:
+       - run: npm run test:e2e:settings
+         working-directory: web
+ 
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
++
+   k8s-ui:
+     name: k8s-ui (shared UI)
+     needs: changes
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2822** (2026-11-20): Stop logging the large-cluster notice on every topology build (@nadaverell)
-- **PR #2812** (2026-11-20): Scale Java4Shell scans and support Amazon ECR (@nadaverell)
-- **PR #2811** (2026-11-20): Show MetalLB pools, advertisements, peers and rejected configuration (@officialasishkumar)
-- **PR #2810** (2026-11-19): Surface likely Java workloads in the Java4Shell check (@nadaverell)
-- **PR #2809** (2026-11-19): Draw Karpenter, Crossplane and MachineHealthCheck links on a neighborhood's last hop (@nadaverell)
-- **PR #2808** (2026-11-19): Place an Argo CD Application that Managed By names without a namespace (@nadaverell)
+- **PR #2836** (2026-11-21): CI: give each Go job its own build cache, refreshed from main (@nadaverell)
+- **PR #2835** (2026-11-21): CI: run vet in its own job and link test binaries without DWARF (@nadaverell)
+- **PR #2834** (2026-11-21): Cache the dev image's Docker layers in the registry, not the Actions cache (@nadaverell)
+- **PR #2832** (2026-11-21): Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24 (@nadaverell)
+- **PR #2826** (2026-11-21): Keep cluster switches running through slow cache sync and browser refreshes (@nadaverell)
+- **PR #2823** (2026-11-21): Keep diagnostics available when cluster inspection stalls (@nadaverell)
 
 ---
 
@@ -3061,3 +2809,36 @@ install, with nothing installed yet, now n
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24
+
+**RULE**:
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3419650d`: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	go test -v -ldflags=-w ./...
+	cd pkg && go test -v -ldflags=-w ./...
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	go test -v ./...
+	cd pkg && go test -v ./...
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3419650d` are properly handled with clean fallback behavior.

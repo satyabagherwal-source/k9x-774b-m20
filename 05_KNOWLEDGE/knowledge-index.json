@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T01:32:35.619Z",
+  "last_updated": "2026-11-22T01:44:42.916Z",
   "total_verified_learnings": 9064,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23384,
+  "total_items": 23389,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -229037,8 +229037,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "778697dd",
-      "content_hash": "b026fe5167748820234c9c5ce1cba1bd912fa8df3705d1a27f315b567ce02a16",
+      "source_version": "c0f594ca",
+      "content_hash": "2e27572ba134b7b72d066eeae291fad2024ccdcc0fc52c2d1aebec22fed99bbb",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -229066,6 +229066,11 @@
           "number": 9257,
           "title": "show containers waiting on PodInitializing as starting, not failed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9877,
+          "title": "Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229073,7 +229078,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T22:41:36.330Z",
+      "verified_at": "2026-11-22T01:44:01.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229115,10 +229120,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "repository": "skyhook-io/radar",
-      "source_version": "ccb8393e",
-      "content_hash": "be876c3ee15ac5c57a01b167721898372b26863e3fd5512c810a5275541cac25",
+      "source_version": "c0f594ca",
+      "content_hash": "acbab22b956736cb99bdcf07951e0fe4a2e35d24b818f58591f9603f8f1d0def",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T20:55:49.902Z"
+      "persisted_at": "2026-11-22T01:44:02.430Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar",
@@ -229127,10 +229132,10 @@
       "relative_path": "08_VERIFICATION/skyhook-io-radar-verification-protocol-empirical-defect-shield-for-skyhook-io-ra.md",
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io/radar",
       "repository": "skyhook-io/radar",
-      "source_version": "e02bbdaa",
-      "content_hash": "a0b68d37b59364b2893d20473787e4077ff386ccfe48eb93bbbaad361de66235",
+      "source_version": "c0f594ca",
+      "content_hash": "bce1b95b1b4227d5c942033679911df974a967870d6665c7491da62f0ceb1b3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T16:31:43.050Z"
+      "persisted_at": "2026-11-22T01:44:02.596Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
@@ -229164,9 +229169,9 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce2bda2dad6dfccd585bc4cec5b657359ef0fb9369a4623bd5d68e87bff17cab",
+      "content_hash": "08deccce3023a6625198b9e825b3832cfd5dd8b52971c0062ba9f8c5e271fc26",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T20:56:27.886Z"
+      "persisted_at": "2026-11-22T01:44:41.504Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar-learnings",
@@ -229176,9 +229181,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io-radar-learnings",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "076ee38af2c9a7929765c38d4002013ae91940c8c33f896c00a462c3e28e0895",
+      "content_hash": "338125a5cd213152166c20ddb6842853f05a3e695f691785bbcfce4d4aa0ea40",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T16:32:24.585Z"
+      "persisted_at": "2026-11-22T01:44:41.705Z"
     },
     "learn-huggingface-qwen-qwen3-vl-8b-instruct": {
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
@@ -229536,8 +229541,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5195a171",
-      "content_hash": "c5eb54ed89b105037b0f540a5a3895075d68d9a1eb159c317cfb15f1360cef40",
+      "source_version": "fbdb7e41",
+      "content_hash": "22284158552a865e79073f4e5c35c24313d631f807c7bcbb858f7c8ebe201356",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229742,7 +229747,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T00:54:01.476Z",
+      "verified_at": "2026-11-22T01:44:08.618Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229784,10 +229789,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "5195a171",
-      "content_hash": "bcb60e3be6fc6e0d5f773bd46fa38981d87c5fb17f4847f3dfb4376bb3046a60",
+      "source_version": "fbdb7e41",
+      "content_hash": "96b458428d196c5a1b0954a14141a61db05d3148fe664d543ca95fcd303165b3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T00:54:02.010Z"
+      "persisted_at": "2026-11-22T01:44:09.211Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229796,10 +229801,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "9d6d6ac4",
-      "content_hash": "41e409a78177b1380c3819a008a445eb611431a8fc7ed5fc4c5c1735b7f3a970",
+      "source_version": "fbdb7e41",
+      "content_hash": "dabff320e098cc651a200185059fe4d152fe85dadfe643f46f17627f6fbc8699",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:55:47.943Z"
+      "persisted_at": "2026-11-22T01:44:09.498Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230882,9 +230887,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "b02f1a01ac4cad96d38b5a8e1a6388270c548f4391010e2e4eae4b1f5fb618ec",
+      "content_hash": "8d0676a6cd0de93d57e0773f3db8fe2a2160ec7c0646994828e348d03b0cec0d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T00:54:40.209Z"
+      "persisted_at": "2026-11-22T01:44:42.576Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -230894,9 +230899,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "483b25c851d36caaed898156e18a9eddd9eea91406a22472f5032c7f24455e42",
+      "content_hash": "9a5ab40f8f57654857ebfd9592746ed8dd81ba45372c2bdff5526f35845d31aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:56:18.959Z"
+      "persisted_at": "2026-11-22T01:44:42.916Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -266429,7 +266434,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
       "source_version": "hf-microsoft-mage-vl-cowork",
-      "content_hash": "ea548b8587b790f0bdfa397e7706e4e759c8cffa4a46cb04540bc4c5ba976508",
+      "content_hash": "3529f62cfbc060b8aaec6ac1b7302ec7cb04a5f1d3e08e576a33a65ac3172091",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
       "promoted_rules": [],
@@ -266438,7 +266443,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:34:08.153Z",
+      "verified_at": "2026-11-22T01:43:56.668Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266455,9 +266460,9 @@
       "title": "Research & Knowledge Intelligence: microsoft/Mage-VL-Cowork Core Invariants",
       "repository": "microsoft/Mage-VL-Cowork",
       "source_version": "hf-microsoft-mage-vl-cowork",
-      "content_hash": "344578ce2fdf3dfa27704e45286f26302240a4982ba9dcd71cb7a64ba67fb8a9",
+      "content_hash": "a437c4f11a431a242b4a85459dad9b0fdf6119ff91a924059b172011f42a25c2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:34:08.582Z"
+      "persisted_at": "2026-11-22T01:43:57.084Z"
     },
     "learn-github-sweetpad-dev-sweetpad": {
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
@@ -266576,9 +266581,9 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-mage-vl-cowork-learnings Core Invariants",
       "repository": "hf-microsoft-mage-vl-cowork-learnings",
       "source_version": "HEAD",
-      "content_hash": "654fd8db8d279510054926e90f781d53a09191d90ff588d3d42c8063f1b1ee67",
+      "content_hash": "17b60e5d1267cc64c0d0541c4235779a3d3ad624232dda90fd3b645faee5a28d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:34:23.851Z"
+      "persisted_at": "2026-11-22T01:44:12.493Z"
     },
     "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants",
@@ -317964,6 +317969,68 @@
       "content_hash": "863fee6b85c04afd32f8c5f5012b684795f334f74f8a4ab9e418c9bcb16af93c",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T01:32:33.965Z"
+    },
+    "rule-9877": {
+      "learning_id": "rule-9877",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9877,
+      "title": "Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "c0f594ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T01:44:01.856Z"
+    },
+    "candidate_directive-faster-local-test-loop-dwarf-free-test-binaries-incremental-tsc-node-24": {
+      "item_id": "candidate_directive-faster-local-test-loop-dwarf-free-test-binaries-incremental-tsc-node-24",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C9D2-faster-local-test-loop-dwarf-free-test-binaries-incremental-tsc-node-24.md",
+      "title": "Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24",
+      "repository": "skyhook-io-radar-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c85246f00dbe24683d7c9468827c9cb57acaa780353cc0418ca21091f2f82b9a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T01:44:41.329Z"
+    },
+    "candidate_directive-nuc-127-colon-free-implicit-iterator-suites": {
+      "item_id": "candidate_directive-nuc-127-colon-free-implicit-iterator-suites",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CA6M-nuc-127-colon-free-implicit-iterator-suites.md",
+      "title": "NUC 127 Colon-Free Implicit Iterator Suites",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aafa1ddb6d5e30cf6caa8289fd55f5ae59922552ccef68684339dc9d69abf117",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T01:44:42.392Z"
+    },
+    "agent_contract-agent-contract-nucleoidai-nucleoid-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-nucleoidai-nucleoid-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/nucleoidai-nucleoid-agent-contract-nucleoidai-nucleoid-autonomous-specialist-per.md",
+      "title": "Agent Contract: NucleoidAI/Nucleoid Autonomous Specialist Persona",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "fbdb7e41",
+      "content_hash": "4c0c903cc31083fbab2f8bcc8c99092db648eb2c1d5695fe8188396ef568b2dd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T01:44:09.367Z"
+    },
+    "agent_contract-agent-contract-nucleoidai-nucleoid-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-nucleoidai-nucleoid-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/nucleoidai-nucleoid-learnings-agent-contract-nucleoidai-nucleoid-learnings-auton.md",
+      "title": "Agent Contract: nucleoidai-nucleoid-learnings Autonomous Specialist Persona",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b62975525cfffb6ea800b64ab316fb80efb9ba8b48c6e6266374a819d9f9dfa",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T01:44:42.762Z"
     }
   },
   "ai-builder-brain": {

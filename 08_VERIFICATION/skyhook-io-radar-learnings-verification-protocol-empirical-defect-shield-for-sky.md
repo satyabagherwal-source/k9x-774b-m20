@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T16:32:23.965Z",
+  "timestamp": "2026-11-22T01:44:41.191Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-skyhook-io-radar-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [skyhook-io-radar-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T16:32:23.965Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T01:44:41.191Z`  
 > **Learning ID**: `LEARN-EVO-skyhook-io-radar-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `e02bbdaa`  
+> **Source Version**: `c0f594ca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T16:31:41.095Z  
+> **Timestamp**: 2026-11-22T01:44:01.017Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T16:31:41.087Z  
+> **Harvest Timestamp**: 2026-11-22T01:44:01.011Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4160 stars
+- **Stars / Engagement**: 4183 stars
 
 ---
 
@@ -1176,9 +1176,10 @@ import (
 type ConnectionState string
 
 const (
-	StateConnected    ConnectionState = "connected"
-	StateDisconnected ConnectionState = "disconnected"
-	StateConnecting   ConnectionState = "connecting"
+	switchStoppedErrorType                 = "switch-stopped"
+	StateConnected         ConnectionState = "connected"
+	StateDisconnected      ConnectionState = "disconnected"
+	StateConnecting        ConnectionState = "connecting"
 )
 
 // ConnectionStatus holds detailed information about the cluster connection
@@ -1232,35 +1233,46 @@ func GetConnectionStatus() ConnectionStatus {
 
 // SetConnectionStatus updates the connection status and notifies callbacks
 func SetConnectionStatus(status ConnectionStatus) {
+	SetConnectionStatusIfCurrent(context.Background(), status)
+}
+
+// SetConnectionStatusIfCurrent keeps a late bootstrap or liveness probe from
+// overwriting a status published after its operation was cancelled.
+func SetConnectionStatusIfCurrent(operation context.Context, status ConnectionStatus) bool {
 	connectionStatusMu.Lock()
+	if operation.Err() != nil {
+		connectionStatusMu.Unlock()
+		return false
+	}
 	status.DisconnectedAt = outageStart(connectionStatus, status, time.Now())
 	if connectionStatus == status {
 		connectionStatusMu.Unlock()
-		return
+		return true
 	}
 	connectionStatus = status
-	connectionStatusMu.Unlock()
 
 	// Publish-side recovery ownership: every route into an auth-shaped
 	// disconnect (bootstrap with expired credentials, failed retry, failed
 	// context switch) must leave a reconnect loop running — the browser no
 	// longer auto-retries auth failures. Owed survives later non-auth
 	// republications (a hung-plugin retry classifies "timeout") and is only
-	// settled by a successful connect.
-	switch status.State {
-	case StateConnected:
+	// settled by a successful connect or an explicit switch stop.
+	switch {
+	case status.State == StateConnected || status.ErrorType == switchStoppedErrorType:
 		runtimeAuthRecoveryOwed.Store(false)
+	case status.State == StateDisconnected && isAuthClassification(status.ErrorType):
+		runtimeAuthRecoveryOwed.Store(true)
+	}
+	connectionStatusMu.Unlock()
+	if status.State == StateConnected {
 		resetInconclusiveStreak()
-	case StateDisconnected:
-		if isAuthClassification(status.ErrorType) {
-			runtimeAuthRecoveryOwed.Store(true)
-		}
-		if runtimeAuthRecoveryOwed.Load() {
-			startRuntimeAuthRecovery()
-		}
+	}
+	if status.State == StateDisconnected && runtimeAuthRecoveryOwed.Load() {
+		startRuntimeAuthRecovery()
 	}
 
 	notifyConnectionChange(status)
+	return true
 }
 
 func notifyConnectionChange(status ConnectionStatus) {
@@ -1293,7 +1305,14 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 	if !isClusterUnreachableMessage(message) {
 		return false
 	}
-	current := GetConnectionStatus()
+	var current ConnectionStatus
+	var operation context.Context
+	if !CaptureClusterReads(func() {
+		operation = OperationContext()
+		current = GetConnectionStatus()
+	}) || current.ErrorType == switchStoppedErrorType {
+		return false
+	}
 	if current.State == StateDisconnected && current.Error == message {
 		return true
 	}
@@ -1308,8 +1327,7 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 		Error:       message,
 		ErrorType:   ClassifyError(errors.New(message)),
 	}
-	SetConnectionStatus(status)
-	return true
+	return SetConnectionStatusIfCurrent(operation, status)
 }
 
 func clusterReachableNow(timeout time.Duration) bool {
@@ -1452,35 +1470,7 @@ func isAuthErrorMessage(lower string) bool {
 
 // isAuthRejectedMessage matches HTTP 401 responses: the request reached the API
 // server but could not be authenticated. Checked only after isAuthErrorMessage
-// so exec-plugin stderr that quotes a server error (e.g. "UnauthorizedException")
-// still classifies as client-side auth.
-func isAuthRejectedMessage(lower string) bool {
-	if strings.Contains(lower, "proxy authentication required") {
-		return false
-	}
-	rejectedMarkers := []string{
-		"unauthorized",
-		"authentication required",
-		"the server has asked for the client to provide credentials",
-	}
-	for _, marker := range rejectedMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isRBACErrorMessage(lower string) bool {
-	return strings.Contains(lower, " is forbidden") ||
-		strings.Contains(lower, "forbidden:") ||
-		strings.Contains(lower, "cannot list resource") ||
-		strings.Contains(lower, "cannot get resource")
-}
-
-func isConfigErrorMessage(lower string) bool {
-	configMarkers := []string{
-		"no context con
+// so exec-p
 ```
 
 ### Core Architecture Module: `internal/k8s/restart_loop.go`
@@ -2451,11 +2441,11 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2689** (2026-11-20): **Release Desktop workflow fails due to Go toolchain version mismatch**
+  *Symptoms*: ## Describe the bug  The Release Desktop GitHub Actions workflow is failing during dependency installation because the project is using Go 1.26.11 while a required dependency (`github.com/goreleaser/nfpm/v2@v2.49.0`) requires Go >= 1.27.4.  The failing job is `Release Desktop` for run `117535128137` / job `132767922940` (`https://github.com/skyhook-io/radar/actions/runs/43406103414/job/132767922940`).  ## To reproduce  1. Trigger the `Release Desktop` GitHub Actions workflow. 2. The job reaches the Go dependency installation step for `nfpm`. 3. The workflow exits with code 1 before producing the desktop artifacts.  ## Expected behavior  The Release Desktop workflow should complete successfully with the required Go toolchain version and produce the expected desktop release artifacts (`.tar.gz`, `.deb`, `.rpm`, `.AppImage`).  ## Screenshots  Not applicable.  ## Diagnostics (optional)  <details><summary>Diagnostics snapshot</summary>  <!-- Paste here -->  </details>  - Radar version: not specified - Kubernetes: not applicable to this CI release job  ## Logs  ```text go: downloading github.com/goreleaser/nfpm v1.10.3 go: downloading github.com/goreleaser/nfpm/v2 v2.49.0 go: github.com/goreleaser/nfpm/v2/cmd/nfpm@latest: github.com/goreleaser/nfpm/v2@v2.49.0 requires go >= 1.27.4 (running go 1.26.11; GOTOOLCHAIN=local) ##[error]Process completed with exit code 1. ```  ## Additional context  This appears to be a CI/toolchain mismatch rather than a code regression in the app itself.
+
 - **Issue #2687** (2026-11-15): **Release Desktop workflow fails during Apple notarization due to missing/expired agreement**
   *Symptoms*: ## Describe the bug  The `Release Desktop` GitHub Actions workflow fails during the Apple notarization step for the macOS release artifact. The job reaches the notarization request, then exits with a 403 from Apple’s notarization service.  ## To reproduce  1. Trigger the `Release Desktop` workflow in `skyhook-io/radar` 2. Wait for the macOS build to finish packaging the app 3. Observe the workflow attempt to submit the artifact for Apple notarization 4. The job fails before finishing the release  ## Expected behavior  The release workflow should successfully submit the signed/notarized macOS artifact to Apple and complete the release process without failing.  ## Screenshots  Not applicable.  ## Diagnostics (optional)  N/A  ## Logs  ```text 2026-11-13T10:14:58.9407140Z Conducting pre-submission checks for radar-desktop_v1.20.3_darwin_universal.zip and initiating connection to the Apple notary service... 2026-11-13T10:15:00.9809290Z Error: HTTP status code: 403. A required agreement is missing or has expired. This request requires an in-effect agreement that has not been signed or has expired. Ensure your team has signed the necessary legal agreements and that they are not expired. 2026-11-13T10:15:00.9857090Z ##[error]Process completed with exit code 1. ```  ## Additional context  The workflow URL is: https://github.com/skyhook-io/radar/actions/runs/43406103414/job/131820798764  This appears to be an Apple Developer / notarization account issue rather than a code-level build f
-
-- **Issue #2670** (2026-11-15): **Timeline: "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every few minutes**
-  *Symptoms*: ## Describe the bug  The timeline shows "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every 2–3 minutes. Nothing in spec changed. The noise hides real events.  Argo CD Applications have no status subresource (argoproj/argo-cd#22967), so each status write (e.g. status.reconciledAt on every reconcile) bumps metadata.generation.  In internal/k8s/cache.go, generationBumpSignalsSpecChange() runs the generic check (genericDesiredState ignores metadata and status) only for kinds without an audited differ. Application has one (diffApplication in history.go), so the check is skipped and the function returns true for any generation bump.  ## To reproduce  1. Install Argo CD 3.6 with a few auto-synced Applications. 2. Install Radar (Helm chart 1.20.2, in-cluster, auth mode oidc). 3. Open the timeline and wait 5–10 minutes without changing anything.  ## Expected behavior  No "spec changed" event when only status/metadata changed, like for kinds without an audited differ. Possible fix: also compare genericDesiredState for audited unstructured kinds.  ## Screenshots  - Radar version: 1.20.2 - Kubernetes: 1.35.8 (kubeadm), Argo CD 3.6.1  <img width="1438" height="742" alt="2026-11-14_184927" src="https://github.com/user-attachments/assets/aff5c3ae-2e9e-468a-8b06-ce4051c041db" /> <img width="1441" height="744" alt="2026-11-14_184842" src="https://github.com/user-attachments/assets/200f14aa-f41c-4f3d-b5d0-bd80db87886a" /> <img width="1439" height="7
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2472,755 +2462,365 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `599b3ae3` (2026-11-18)
-**Commit Message**: fix(pods): show containers waiting on PodInitializing as starting, not failed (#2717)
-
-## Description
-
-The Containers column in the Pods table painted every waiting container
-red. A pod working through its init containers has its main containers
-waiting with `PodInitializing`, so a normal start showed red dots and a
-red `PodInitializing` in the tooltip, next to real failures.
-
-`getContainerSquareStates` now gives containers waiting on
-`PodInitializing` or `ContainerCreating` a `starting` status, which the
-column draws yellow (the same as a running container that isn't ready
-yet), with the reason in the secondary text colour. Every other waiting
-reason (`CrashLoopBackOff`, `ImagePullBackOff`,
-`CreateContainerConfigError`, …) stays red. This matches the Pod drawer,
-which already leaves those two reasons out of `reportedFailure`, and
-`pkg/health`'s `isFatalWaitingReason`.
-
-The column is the only consumer of `getContainerSquareStates`.
-
-## Screenshots
-
-A pod on its second init container (`wait-for-db`) with two main
-containers waiting on `PodInitializing`, on a local kind cluster.
-
-| Before | After |
-|---|---|
-|
-![before](https://raw.githubusercontent.com/DenysSamoiliuk/radar/refs/head
-
-**File**: `packages/k8s-ui/src/components/resources/ResourcesView.tsx` (modified, +3/-3)
-```diff
-@@ -8430,15 +8430,15 @@ function PodCell({ resource, column }: { resource: any; column: string }) {
-             const bgClass =
-               sq.status === 'ready' ? 'bg-green-500' :
-               sq.status === 'completed' ? 'bg-theme-text-tertiary/30 border border-theme-text-tertiary' :
--              sq.status === 'running' ? 'bg-yellow-500' :
-+              sq.status === 'running' || sq.status === 'starting' ? 'bg-yellow-500' :
-               sq.status === 'waiting' ? 'bg-red-500' :
-               sq.status === 'terminated' ? 'bg-red-500' :
-               'bg-theme-text-tertiary/30 border border-dashed border-theme-text-tertiary'
-             const ringClass = sq.restarts > 0 ? 'ring-2 ring-orange-400' : ''
-             const dotColor =
-               sq.status === 'ready' ? 'bg-green-500' :
-               sq.status === 'completed' ? 'bg-theme-text-tertiary' :
--              sq.status === 'running' ? 'bg-yellow-500' :
-+              sq.status === 'running' || sq.status === 'starting' ? 'bg-yellow-500' :
-               sq.status === 'waiting' || sq.status === 'terminated' ? 'bg-red-500' :
-               'bg-theme-text-tertiary'
-             // Relative time helper
-@@ -8458,7 +8458,7 @@ function PodCell({ resource, column }: { resource: any; column: string }) {
-               sq.status === 'ready' ? 'Running' :
-               sq.status === 'completed' ? 'Completed' :
-               sq.status === 'running' ? 'Running (not ready)' :
--              sq.status === 'waiting' ? 'Waiting' :
-+              sq.status === 'starting' || sq.status === 'waiting' ? 'Waiting' :
-               sq.status === 'terminated' ? 'Terminated' : 'Unknown'
-             const uptime = sq.status === 'ready' || sq.status === 'running' ? timeAgo(sq.startedAt) : null
-             const duration = (sq.status === 'completed' || sq.status === 'terminated') ? runDuration(sq.startedAt, sq.finishedAt) : null
-```
-
-**File**: `packages/k8s-ui/src/components/resources/container-square-states.test.ts` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+import { describe, expect, it } from 'vitest'
-+import { getContainerSquareStates } from './resource-utils'
-+
-+const waiting = (name: string, reason: string) => ({ name, ready: false, restartCount: 0, state: { waiting: { reason } } })
-+
-+describe('getContainerSquareStates', () => {
-+  it('reads containers held at PodInitializing or ContainerCreating as starting, not failed', () => {
-+    const pod = {
-+      spec: { containers: [{ name: 'app' }, { name: 'proxy' }], initContainers: [{ name: 'migrate' }, { name: 'seed' }] },
-+      status: {
-+        initContainerStatuses: [
-+          { name: 'migrate', ready: false, restartCount: 0, state: { running: { startedAt: '2026-11-15T10:00:00Z' } } },
-+          waiting('seed', 'PodInitializing'),
-+        ],
-+        containerStatuses: [waiting('app', 'PodInitializing'), waiting('proxy', 'ContainerCreating')],
-+      },
-+    }
-+    expect(getContainerSquareStates(pod).map(s => [s.name, s.status])).toEqual([
-+      ['migrate', 'running'], ['seed', 'starting'], ['app', 'starting'], ['proxy', 'starting'],
-+    ])
-+  })
-+
-+  it('keeps a real waiting failure as waiting', () => {
-+    const pod = { spec: { containers: [{ name: 'app' }] }, status: { containerStatuses: [waiting('app', 'CrashLoopBackOff')] } }
-+    expect(getContainerSquareStates(pod)[0].status).toBe('waiting')
-+    const init = { spec: { containers: [{ name: 'app' }] }, status: { initContainerStatuses: [waiting('migrate', 'ImagePullBackOff')], containerStatuses: [waiting('app', 'PodInitializing')] } }
-+    expect(getContainerSquareStates(init).map(s => s.status)).toEqual(['waiting', 'starting'])
-+  })
-+})
-```
-
-**File**: `packages/k8s-ui/src/components/resources/resource-utils.ts` (modified, +10/-3)
-```diff
-@@ -816,7 +816,8 @@ export function getPodRestarts(pod: any): number {
- 
- export interface ContainerSquareState {
-   name: string
--  status: 'ready' | 'running' | 'waiting' | 'completed' | 'terminated' | 'unknown'
-+  /** starting: waiting on a transient reason (PodInitializing, ContainerCreating), not a failure. */
-+  status: 'ready' | 'running' | 'starting' | 'waiting' | 'completed' | 'terminated' | 'unknown'
-   restarts: number
-   reason?: string
-   message?: string
-@@ -904,6 +905,12 @@ export function getDefaultLogContainerName(pod: any): string | undefined {
-   return stuck?.name || getDefaultContainerName(pod)
- }
- 
-+// PodInitializing and ContainerCreating are steps every container passes
-+// through, so they read as starting; any other waiting reason is a problem.
-+function waitingSquareStatus(reason: string | undefined): ContainerSquareState['status'] {
-+  return reason === 'PodInitializing' || reason === 'ContainerCreating' ? 'starting' : 'waiting'
-+}
-+
- export function getContainerSquareStates(pod: any): ContainerSquareState[] {
-   const result: ContainerSquareState[] = []
-   const initStatuses = pod.status?.initContainerStatuses || []
-@@ -918,7 +925,7 @@ export function getContainerSquareStates(pod: any): ContainerSquareState[] {
-     } else if (stateKey === 'running') {
-       status = cs.ready ? 'ready' : 'running'
-     } else if (stateKey === 'waiting') {
--      status = 'waiting'
-+      status = waitingSquareStatus(cs.state?.waiting?.reason)
-     } else if (stateKey === 'terminated') {
-       status = 'terminated'
-     }
-@@ -951,7 +958,7 @@ export function getContainerSquareStates(pod: any): ContainerSquareState[] {
-       } else if (stateKey === 'terminated') {
-         status = 'terminated'
-       } else if (stateKey === 'waiting') {
--        status = 'waiting'
-+        status = waitingSquareStatus(cs.state?.waiting?.reason)
-       }
-       const stateDetail = cs.state?.[stateKey]
-       const lastTerm = cs.lastState?.terminated
-```
-
----
-
-### Incident Patch 2: `4890f06d` (2026-11-18)
-**Commit Message**: fix(argo): keep auto-sync off for ApplicationSet-owned Applications with automated.enabled: false (#2739)
-
-## Description
-
-**Disable auto-sync** removed `spec.syncPolicy.automated`. The
-ApplicationSet in #2652 manages `prune` and `selfHeal` and ignores
-`/spec/syncPolicy/automated/enabled`, so it put the block back. Argo CD
-reads a block without `enabled: false` as auto-sync on, which undid the
-suspend within seconds.
-
-Argo CD 3.1 added `automated.enabled` (`SyncPolicyAutomated.Enabled`,
-read by `SyncPolicy.IsAutomatedSyncEnabled`). Suspend now does the
-following:
-
-- **For an Application an ApplicationSet owns** (an `argoproj.io`
-ApplicationSet ownerReference), suspend writes `automated.enabled:
-false` and keeps `prune`, `selfHeal` and `allowEmpty`. The
-ApplicationSet then has nothing to put back.
-- **Whether the field holds** is decided by a dry run first: the API
-server says whether it keeps `enabled`. Then Radar makes one conditional
-write, so there is no partial state.
-- **On Argo CD before 3.1** the CRD schema prunes `enabled`, so the
-block is removed. For an ApplicationSet-owned Application the result
-says the ApplicationSet may turn auto-sync back on, because nothing on
-those
-
-**File**: `docs/gitops.md` (modified, +3/-3)
-```diff
-@@ -137,8 +137,8 @@ Radar treats Terminating as a distinct lifecycle phase that dominates other stat
- | **Refresh** | Re-fetches the source repo |
- | **Hard refresh** | Sets `RefreshType=hard` to bypass repo-cache |
- | **Terminate** | Cancels an in-flight operation |
--| **Suspend / Enable auto-sync** | Suspend saves the whole `automated` block and removes it; Enable restores it. See [suspend and resume](#suspend-and-resume) |
--| **Rollback** | Pick a prior history entry by ID (Argo numbers history from 0). Written the way argocd-server writes it: a sync operation pinned to that entry's revision(s) and source(s), apply strategy (hooks don't run), the app's sync options and no retry strategy, Prune / DryRun off unless chosen. Refused with 409 while auto-sync is enabled, as Argo CD refuses it; `automated.enabled: false` counts as off only on Argo CD 3.x controllers (2.x treats any automated block as on), while Radar's suspend removes the block and works on both |
-+| **Suspend / Enable auto-sync** | Suspend saves the whole `automated` block and removes it, or, for an Application an ApplicationSet owns, switches it off with `automated.enabled: false` (Argo CD 3.1+); Enable restores it. See [suspend and resume](#suspend-and-resume) |
-+| **Rollback** | Pick a prior history entry by ID (Argo numbers history from 0). Written the way argocd-server writes it: a sync operation pinned to that entry's revision(s) and source(s), apply strategy (hooks don't run), the app's sync options and no retry strategy, Prune / DryRun off unless chosen. Refused with 409 while auto-sync is enabled, as Argo CD refuses it; `automated.enabled: false` counts as off only on Argo CD 3.1+ controllers (older ones treat any automated block as on), while Radar's suspend removes the block unless an ApplicationSet owns the Application |
- | **Selective sync** | From the Topology tab, mark individual resources and sync only those |
- 
- On Argo CD before 2.12, rolling back across a single-source/multi-source change or to a multi-source entry can deploy the wrong revisions or render nothing; with prune, it can delete resources. Radar cannot detect the controller version; the rollback confirmation warns when either the current Application uses `spec.sources` (even one source) or the history entry is multi-source. History exposes this as `rollbackMultiSourceWarning`; hosts pass it to `RollbackDialog.multiSourceWarning`. This remains a warning, not a refusal.
-@@ -176,7 +176,7 @@ How each operation is written:
- 
- #### Suspend and resume
- 
--- **Suspend** saves the whole `automated` block (`prune`, `selfHeal`, `allowEmpty`, …) in the `radarhq.io/suspended-automated` annotation and removes it. Suspending an Application whose auto-sync is already off changes nothing, so the saved settings can't be overwritten.
-+- **Suspend** saves the whole `automated` block (`prune`, `selfHeal`, `allowEmpty`, …) in the `radarhq.io/suspended-automated` annotation and removes it. Removal works with any controller. The exception is an Application an ApplicationSet owns. There, an ApplicationSet that manages `prune` or `selfHeal` would put the block back, and Argo CD reads a block without `enabled: false` as auto-sync on. So Radar switches the block off in place with `automated.enabled: false`, keeping the other fields. Auto-sync then stays off only if the ApplicationSet doesn't overwrite `enabled`, which means ignoring `/spec/syncPolicy/automated/enabled` in `ignoreApplicationDifferences` (or a create-only policy): on each update the ApplicationSet replaces the spec with its template and keeps only the fields it ignores. When it doesn't, it writes the template back within about a second, so after an in-place suspend Radar re-reads the Application for up to 2 seconds and, if auto-sync is already back on, says so and names that setting instead of reporting a suspend. Argo CD added the field in 3.1. Radar first asks the API server with a dry run whether it keeps the field, then makes one write. When the dry run is refused for a reason other than permission (an admission webhook that rejects dry runs, for example), Radar can't tell, so it removes the block as on older versions. On older versions the field is pruned, so Radar removes the block and the result says the ApplicationSet may turn auto-sync back on: nothing on those versions can keep it off. A newer CRD in front of an older controller (an upgrade in progress) keeps the field without honouring it. Suspending an Application whose auto-sync is already off changes nothing, so the saved settings can't be overwritten.
- - **Enable** restores the newest settings it finds: a block switched off in place (`automated.enabled: false`, which it keeps minus `enabled`), else the saved block. An Application Radar never suspended gets `prune` and `selfHeal` off, as Argo CD's UI and CLI do: new commits sync automatically, but a live edit alone doesn't trigger a sync. The next sync, from a new commit, still overwrites any live edit to a resour
-```
-
-**File**: `pkg/gitops/operations.go` (modified, +100/-6)
-```diff
-@@ -748,8 +748,14 @@ func stringValue(value any) string {
- // sync on an ArgoCD Application.
- //
- // Suspend saves the whole spec.syncPolicy.automated block in annotations and
--// removes the block. If auto-sync is already off it changes nothing, so a
--// second suspend can't replace the saved settings with empty ones.
-+// removes the block, in one write, except on an Application an ApplicationSet
-+// owns, where it switches the block off in place with `enabled: false` (Argo
-+// CD 3.1+) so the ApplicationSet has no prune or selfHeal to put back. A dry
-+// run, made once, tells whether the API server keeps `enabled`; where it
-+// doesn't, or the dry run is refused other than as Forbidden, the block is
-+// removed and the result says the ApplicationSet may undo it. If auto-sync is already off
-+// it changes nothing, so a second suspend can't replace the saved settings
-+// with empty ones.
- //
- // Resume turns back on the newest settings it can find:
- //   - a block switched off in place with `enabled: false` (by Argo CD 3.x
-@@ -768,6 +774,10 @@ func SetArgoAutoSync(ctx context.Context, dynClient dynamic.Interface, namespace
- 		operation, pastAction = "resume", "resumed"
- 	}
- 	noChange := false
-+	appSetRemoved := false
-+	// The dry run answers for the API server's schema, not for the read a
-+	// conflict retry rebuilds from, so it runs at most once.
-+	var keepsEnabled *bool
- 	err := updateArgoApp(ctx, dynClient, namespace, name, operation, func(app *unstructured.Unstructured) (map[string]any, error) {
- 		if err := assertNotTerminating(app, "ArgoCD Application", namespace, name); err != nil {
- 			return nil, err
-@@ -776,16 +786,37 @@ func SetArgoAutoSync(ctx context.Context, dynClient dynamic.Interface, namespace
- 		var err error
- 		if enable {
- 			patch, noChange = argoResumePatch(app)
--		} else {
--			patch, noChange, err = argoSuspendPatch(app)
-+			return patch, nil
- 		}
-+		inPlace := false
-+		if argoApplicationSetOwned(app) && ArgoAutoSyncEnabled(app) {
-+			if keepsEnabled == nil {
-+				kept, probeErr := argoKeepsAutomatedEnabled(ctx, dynClient, namespace, name)
-+				// A caller denied the dry run is denied the write. Any other
-+				// refusal (a webhook that rejects dry runs) leaves the
-+				// answer unknown, and removal works with every controller.
-+				if apierrors.IsForbidden(probeErr) {
-+					return nil, fmt.Errorf("failed to check whether the Application keeps automated.enabled: %w", probeErr)
-+				}
-+				keepsEnabled = &kept
-+			}
-+			inPlace = *keepsEnabled
-+			appSetRemoved = !inPlace
-+		}
-+		patch, noChange, err = argoSuspendPatch(app, inPlace)
- 		return patch, err
- 	})
- 	if err != nil {
- 		return OperationResult{}, err
- 	}
- 
- 	message := fmt.Sprintf("ArgoCD Application %s/%s auto-sync %s", namespace, name, pastAction)
-+	if appSetRemoved && !noChange {
-+		message += "; Argo CD didn't confirm it keeps automated.enabled, so Radar removed the automated block, and an ApplicationSet that manages prune or selfHeal may turn auto-sync back on"
-+	}
-+	if !enable && !noChange && keepsEnabled != nil && *keepsEnabled && argoAutoSyncTurnedBackOn(ctx, dynClient, namespace, name) {
-+		message = fmt.Sprintf("ArgoCD Application %s/%s auto-sync was suspended, but the ApplicationSet that owns it turned auto-sync back on. To keep it off, the ApplicationSet must ignore /spec/syncPolicy/automated/enabled in ignoreApplicationDifferences, or use a create-only policy", namespace, name)
-+	}
- 	if noChange && enable {
- 		message = fmt.Sprintf("ArgoCD Application %s/%s auto-sync is already on", namespace, name)
- 	} else if noChange {
-@@ -802,7 +833,7 @@ func SetArgoAutoSync(ctx context.Context, dynClient dynamic.Interface, namespace
- 	}, nil
- }
- 
--func argoSuspendPatch(app *unstructured.Unstructured) (map[string]any, bool, error) {
-+func argoSuspendPatch(app *unstructured.Unstructured, inPlace bool) (map[string]any, bool, error) {
- 	if !ArgoAutoSyncEnabled(app) {
- 		return nil, true, nil
- 	}
-@@ -824,11 +855,74 @@ func argoSuspendPatch(app *unstructured.Unstructured) (map[string]any, bool, err
- 			},
- 		},
- 		"spec": map[string]any{
--			"syncPolicy": map[string]any{"automated": nil},
-+			"syncPolicy": map[string]any{"automated": argoSuspendedAutomated(inPlace)},
- 		},
- 	}, false, nil
- }
- 
-+// argoSuspendedAutomated is the automated value a suspend writes: removal
-+// works with every controller; enabled: false (Argo CD 3.1+) keeps the fields
-+// an owning ApplicationSet manages, so it has no block to put back.
-+func argoSuspendedAutomated(inPlace bool) any {
-+	if inPlace {
-+		return map[string]any{"enabled": false}
-+	}
-+	return nil
-+}
-+
-+func argoApplicationSetOwned(app *unstructured.Unstructured) bool {
-+	for _, owner := range app.GetOwnerReferences() {
-+		if owner.Kind == "ApplicationSet" && schema.FromAPIVersionAndKind(owner.APIVersion, owner.Kind).Group == "argoproj.io" {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
-+// argoKeepsAutomatedEnabled asks the API server, with a dry run, whether it
-+// stores automated.enabled: 
-```
-
-**File**: `pkg/gitops/operations_test.go` (modified, +239/-1)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"reflect"
- 	"slices"
- 	"strings"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -50,7 +51,46 @@ func newFakeArgo(objs ...runtime.Object) *fake.FakeDynamicClient {
- 	scheme.AddKnownTypeWithName(argoAppGVR.GroupVersion().WithKind("ApplicationList"), &unstructured.UnstructuredList{})
- 	// Pull in the core scheme so non-Argo objects don't break the client init.
- 	_ = corev1.AddToScheme(scheme)
--	return fake.NewSimpleDynamicClient(scheme, objs...)
-+	client := fake.NewSimpleDynamicClient(scheme, objs...)
-+	client.PrependReactor("patch", "applications", dryRunPatchReactor(client, false))
-+	return client
-+}
-+
-+// dryRunPatchReactor answers a dry-run patch with the object the API server
-+// would store, without storing it. pruneEnabled models an Argo CD CRD older
-+// than 3.1, whose schema drops syncPolicy.automated.enabled.
-+func dryRunPatchReactor(client *fake.FakeDynamicClient, pruneEnabled bool) clienttesting.ReactionFunc {
-+	return func(action clienttesting.Action) (bool, runtime.Object, error) {
-+		patchAction := action.(clienttesting.PatchActionImpl)
-+		dryRun := len(patchAction.GetPatchOptions().DryRun) > 0
-+		if !dryRun && !pruneEnabled {
-+			return false, nil, nil
-+		}
-+		var patch map[string]any
-+		if err := json.Unmarshal(patchAction.GetPatch(), &patch); err != nil {
-+			return true, nil, err
-+		}
-+		current, err := client.Tracker().Get(argoAppGVR, patchAction.GetNamespace(), patchAction.GetName())
-+		if err != nil {
-+			return true, nil, err
-+		}
-+		app := current.(*unstructured.Unstructured).DeepCopy()
-+		app.Object = jsonMergePatch(app.Object, patch)
-+		if pruneEnabled {
-+			if automated, found, _ := unstructured.NestedMap(app.Object, "spec", "syncPolicy", "automated"); found {
-+				delete(automated, "enabled")
-+				_ = unstructured.SetNestedMap(app.Object, automated, "spec", "syncPolicy", "automated")
-+			}
-+		}
-+		if dryRun {
-+			return true, app, nil
-+		}
-+		app.SetResourceVersion("")
-+		if err := client.Tracker().Update(argoAppGVR, app, patchAction.GetNamespace()); err != nil {
-+			return true, nil, err
-+		}
-+		return true, app, nil
-+	}
- }
- 
- // captureLastPatch returns the body of the most recent merge-patch action,
-@@ -2106,6 +2146,11 @@ func getTestApp(t *testing.T, client *fake.FakeDynamicClient) *unstructured.Unst
- 
- func setAutoSync(t *testing.T, client *fake.FakeDynamicClient, enable bool) OperationResult {
- 	t.Helper()
-+	// An in-place suspend watches for its ApplicationSet; the fake never
-+	// writes one back, so keep the watch short.
-+	window := argoAutoSyncWatchWindow
-+	argoAutoSyncWatchWindow = 50 * time.Millisecond
-+	t.Cleanup(func() { argoAutoSyncWatchWindow = window })
- 	result, err := SetArgoAutoSync(context.Background(), client, "argocd", "demo", enable)
- 	if err != nil {
- 		t.Fatalf("SetArgoAutoSync(%v): %v", enable, err)
-@@ -2538,3 +2583,196 @@ func TestArgoSyncOperationUsesHydratedSyncSource(t *testing.T) {
- 		t.Fatalf("revision on a hydrated Application with leftover sources: %v", err)
- 	}
- }
-+
-+// newFakeArgoPre31 serves Applications the way an Argo CD older than 3.1 does:
-+// its CRD schema has no syncPolicy.automated.enabled, so the API server
-+// prunes the field from every write.
-+func newFakeArgoPre31(objs ...runtime.Object) *fake.FakeDynamicClient {
-+	client := newFakeArgo(objs...)
-+	client.PrependReactor("patch", "applications", dryRunPatchReactor(client, true))
-+	return client
-+}
-+
-+// jsonMergePatch applies an RFC 7386 merge patch: null deletes, objects merge.
-+func jsonMergePatch(target, patch map[string]any) map[string]any {
-+	if target == nil {
-+		target = map[string]any{}
-+	}
-+	for key, value := range patch {
-+		switch v := value.(type) {
-+		case nil:
-+			delete(target, key)
-+		case map[string]any:
-+			existing, _ := target[key].(map[string]any)
-+			target[key] = jsonMergePatch(existing, v)
-+		default:
-+			target[key] = v
-+		}
-+	}
-+	return target
-+}
-+
-+// Argo CD 3.1+ switches auto-sync off in place with automated.enabled: false,
-+// so an ApplicationSet that manages prune and selfHeal has nothing to put
-+// back, and Argo CD stops syncing automatically.
-+func TestSetArgoAutoSyncSuspendsInPlaceWhereArgoKeepsEnabled(t *testing.T) {
-+	original := map[string]any{"prune": true, "selfHeal": true}
-+	client := newFakeArgo(appSetOwned(appWithAutomated(original, nil)))
-+	if result := setAutoSync(t, client, false); strings.Contains(result.Message, "turned auto-sync back on") {
-+		t.Fatalf("result = %q, want a plain suspend: nothing turned auto-sync back on", result.Message)
-+	}
-+	suspended := getTestApp(t, client)
-+	automated, found := automatedOf(suspended)
-+	if !found || automated["enabled"] != false || automated["prune"] != true || automated["selfHeal"] != true {
-+		t.Fatalf("suspended automated = %#v, want prune and selfHeal kept with enabled: false", automated)
-+	}
-+	if ArgoAutoSyncEnabled(suspended) {
-+		t.Fatal("auto-sync still reads as on after suspend")
-+	}
-+	setAutoSync(t, client, true)
-+	resumed := getTestApp(t, client)
-+	if automated, _ :=
-```
-
----
-
-### Incident Patch 3: `0e239114` (2026-11-18)
-**Commit Message**: Add relation families for Gateway API, Flux, cert-manager, Karpenter, CAPI, Knative, Istio, Argo Workflows, Traefik and Contour (#2702)
-
-> **Later in the stack:** #2712 changes how relation searches scope and
-check access (match related objects first, then check the caller). The
-search behavior this PR describes is its own stage; the final contract
-is in #2712.
+### Incident Patch 1: `3419650d` (2026-11-21)
+**Commit Message**: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24 (#2832)
 
 ## Summary
 
-Radar still answers most "what does this reference / what references
-this" questions from an all-namespace relationship graph it rebuilds on
-every topology broadcast. #2691 added `pkg/relations`, a generic family
-engine that answers these per caller from the informer caches. This PR
-adds the families for the routing, GitOps, certificate,
-autoscaling-platform and workflow CRDs the graph draws today, and the
-engine features they need. Nothing reads the families yet; one later
-change switches every reader and deletes the graph.
+Speeds up the local fast loop (`make test-changed`) and the local full
+run (`make test`), and pins the Node version CI uses. CI is unaffected.
 
 ## What changed
 
-**Engine (`pkg/relations/family.go`).** Three features, each needed by
-real references:
-- `CrossNamespace`: a family whose declarations may name a namespaced
-target in another namespace (a Gateway API route attaching to a shared
-Gateway in `infra`). Its referrers are search
+- **Go test binaries are linked without DWARF** (`-ldflags=-w`) in
+`scripts/test-changed.sh` and `make test`. Linking `internal/server`'s
+test binary drops from about 26 s to about 8.5 s, measured three times
+with a forced relink each time. It's paid whenever anything that package
+depends on changes. The linker also needs far less memory.
+  - Stack traces, `t.Log` positions and pprof profiles are unaffected.
+- Only stepping through these binaries in a debugger is lost; `dlv test`
+builds its own binary.
+- **`tsc` is incremental** in `web` and `packages/k8s-ui`. The build
+info goes to `node_modules/.cache/tsc/`, which is ignored.
+- An unchanged re-check of `web` drops from about 4 s to under 1 s, and
+a re-check after an edit only re-checks what the edit affects.
+- The settings are ignored by Vite, by esbuild and by anything consuming
+the packages. `web` publishes only `src`.
+- **`.nvmrc`** pins Node 24, the version CI uses. Node 25
 
-**File**: `docs/mcp.md` (modified, +1/-0)
+**File**: `.nvmrc` (added, +1/-0)
 ```diff
-@@ -1123,6 +1123,7 @@ a miss needs a complete read.
- | `outside_namespace_pin` | The namespace, one you can see, is outside Radar's `--namespace-scope` pin. A namespace you can't see is `user_namespace_not_visible` whether or not Radar is pinned to it, so guessing names can't find the pin. | Radar's `--namespace-scope` setting |
- | `namespace_required` | A namespaced `get_resource` needs a namespace. | Pass `namespace` |
- | `object_not_found` | The object is absent from a namespace Radar read in full. | — it is an answer |
-+| `legacy_group_only` | The object a reference names exists only in an older API group, while the newer group is served and lacks it. A controller that still reads the older group uses it; one that doesn't, such as Traefik 3 for `traefik.containo.us`, ignores it. | Move the object to the newer group if the controller no longer reads the older one |
- | `cluster_connecting` | Radar is still connecting. | Retry shortly |
- | `cluster_disconnected` | Radar has no working cluster connection; the explanation says why. | Radar's connection |
- | `connection_changed` | Radar's cluster connection changed during the read. | Confirm which cluster Radar is on, then retry |
+@@ -0,0 +1 @@
++24
 ```
 
-**File**: `docs/ownership.md` (modified, +38/-8)
+**File**: `Makefile` (modified, +2/-2)
 ```diff
-@@ -75,14 +75,23 @@ with the path declaring it. The `View` answers every family the same way:
- - `References(family, subject)`: each target the subject declares, every path declaring it, and what reading it
-   found: present, absent, unread (with its gap) or withheld from the caller.
- - `Referrers(family, subject)`: what declares the subject, as the caller may read it, up to 500 with a total. A
--  family's namespaced targets are always in the declarer's namespace, so the answer reads that namespace's objects of
--  each declaring kind through the namespace index and evaluates what each declares. A cluster-scoped target is answered
--  as `Children` answers a cluster-scoped owner: the namespaces the caller may read something in are searched, each
--  declarer is checked where it is, and a gap is kept only if it covers what the caller may read
--  (`ownership.GapCoversReadable`). An index of every declaration cost about 1.4 KB per Pod
--  and made a Pod relist about five times as long ([measurements](loadtest.md#relationship-cost-baselines)).
-+  namespaced target is normally declared from its own namespace, so the answer reads that namespace's objects of each
-+  declaring kind through the namespace index and evaluates what each declares. An index of every declaration cost
-+  about 1.4 KB per Pod and made a Pod relist about five times as long
-+  ([measurements](loadtest.md#relationship-cost-baselines)).
-+- A cluster-scoped target, or any target of a family whose declarations cross namespaces (`CrossNamespace`, as Gateway
-+  API references do), is answered as `Children` answers a cluster-scoped owner: the namespaces the caller may read
-+  something in are searched, each declarer is checked where it is, and a gap is kept only if it covers what the caller
-+  may read (`ownership.GapCoversReadable`).
- - A declaration counts only if its kind is one of the family's targets and its source may declare that kind (an HPA
-   doesn't scale a DaemonSet).
-+- A declaration may name alternatives (`Declaration.Or`): the same reference in another API group its controller also
-+  reads, in the order it tries them, as Traefik 2.10 tries `traefik.io` and then `traefik.containo.us`. `References`
-+  names the first that exists, and `Referrers` counts a declaration only for the target it resolves to. A candidate
-+  Radar couldn't read, or the caller may not, stops the resolution there: the answer names it and says so rather than
-+  falling back to a later one. A target in none of them is named in the first group the cluster serves. A target found
-+  only after served groups that lack it carries `legacy_group_only`, in both directions: Traefik 2.10 and 2.11 read
-+  `traefik.containo.us` too, Traefik 3 ignores it, and Radar can't tell which controller runs.
- - Both answer nothing for a subject the caller may not read; a permission check that couldn't be made is a gap, not a
-   denial; a subject the host read that the cache doesn't hold yet leaves the answer incomplete.
+@@ -155,8 +155,8 @@ clean:
  
-@@ -96,8 +105,29 @@ The families so far:
- | `IngressBackends` | Ingresses → their default and rule backend Services | `families.go` |
- | `RolloutServices` | Argo Rollouts → the canary, stable, active and preview Services their strategy names | `families.go` |
- | `CertificateSecrets` | cert-manager Certificates → the Secret they write | `families.go` |
--
--Extractors live in `pkg/configrefs`, which the topology builder also uses.
-+| `GatewayParents` | Gateway API routes (HTTP, GRPC, TCP, TLS, UDP) → the Gateways their parentRefs attach to, in any namespace | `families.go` |
-+| `GatewayBackends` | Gateway API routes → the Services their rules send traffic to, in any namespace, whether or not a ReferenceGrant permits it | `families.go` |
-+| `GatewayClasses` | Gateways → the GatewayClass they name | `families.go` |
-+| `CertManagerIssuers` | cert-manager Certificates, CertificateRequests, ACME Orders and Challenges → the Issuer or ClusterIssuer their `issuerRef` names (external issuers aren't followed) | `families.go` |
-+| `FluxSources` | Flux Kustomizations, HelmReleases, HelmCharts → the GitRepository, OCIRepository, Bucket, ExternalArtifact, HelmRepository or HelmChart they build from, in any namespace (an inline HelmRelease also declares the HelmChart the controller recorded) | `families.go` |
-+| `NodeClasses` | Karpenter NodePools → their provider's NodeClass, or EKS Auto Mode's (`IsTarget`: each provider defines its own kind) | `families.go` |
-+| `ClusterClasses` | Cluster API Clusters → the ClusterClass their topology names, in any namespace | `families.go` |
-+| `KnativeEventDestinations` | Knative Triggers, event sources and Channels → where they send events (subscriber, sink, backing channel), in any namespace: core Services and any kind in a Knative group, such as JobSink | `families.go` |
-+| `KnativeTriggerBrokers` | Knative Triggers → the Broker they subscribe to (`brokerRef` in any namespace, or the older same-namespace `broker`) | `families.go` |
-+| `KnativeRouteRev
+ # Run tests
+ test:
+-	go test -v ./...
+-	cd pkg && go test -v ./...
++	go test -v -ldflags=-w ./...
++	cd pkg && go test -v -ldflags=-w ./...
+ 
+ # Fast dev loop: vet/test only the changed Go packages, tsc, and `vitest related`
+ # for changed frontend files. BASE defaults to origin/main. Not a completion check.
 ```
 
-**File**: `internal/server/resource_read_errors.go` (modified, +1/-0)
+**File**: `packages/k8s-ui/tsconfig.json` (modified, +2/-0)
 ```diff
-@@ -40,6 +40,7 @@ var readStatus = map[readreason.Code]int{
- 	readreason.NamespaceNotFound:          http.StatusNotFound,
- 	readreason.NamespaceRequired:          http.StatusBadRequest,
- 	readreason.ObjectNotFound:             http.StatusNotFound,
-+	readreason.LegacyGroupOnly:            http.StatusConflict,
- 	readreason.ListTooLarge:               http.StatusBadRequest,
- 	readreason.FilterEvalFailed:           http.StatusBadRequest,
- 	readreason.FindingsScanIncomplete:     http.StatusBadRequest,
+@@ -8,6 +8,8 @@
+     "resolveJsonModule": true,
+     "isolatedModules": true,
+     "noEmit": true,
++    "incremental": true,
++    "tsBuildInfoFile": "../../node_modules/.cache/tsc/k8s-ui.tsbuildinfo",
+     "jsx": "react-jsx",
+     "types": ["node"],
+     "strict": true,
 ```
 
-**File**: `packages/k8s-ui/src/utils/read-actions.ts` (modified, +3/-0)
+**File**: `scripts/test-changed.sh` (modified, +5/-1)
 ```diff
-@@ -20,6 +20,7 @@ export const READ_ACTIONS: Record<string, ReadAction> = {
-   kind_sync_pending: 'retry',
-   kind_sync_timed_out: 'wait',
-   kind_unknown: 'change_request',
-+  legacy_group_only: 'none',
-   list_too_large: 'change_request',
-   namespace_not_found: 'change_request',
-   namespace_required: 'change_request',
-@@ -78,6 +79,8 @@ export function gapReasonText(reason: string): string {
-       return "Radar's API discovery doesn't list its kind or version"
-     case 'object_not_found':
-       return "Radar doesn't have it yet"
-+    case 'legacy_group_only':
-+      return 'it exists only in an older API group, which newer versions of its controller may not read'
-     case 'cluster_connecting':
-       return 'Radar is still connecting'
-     case 'cluster_disconnected':
+@@ -52,7 +52,11 @@ while IFS= read -r f; do
+ done <<< "$changed"
+ dedup() { tr ' ' '\n' <<< "$1" | sed '/^$/d' | sort -u | tr '\n' ' '; }
+ pkg_pkgs=$(dedup "$pkg_pkgs"); root_pkgs=$(dedup "$root_pkgs")
+-run_flag=(); [ -n "${GO_TEST_RUN:-}" ] && run_flag=(-run "$GO_TEST_RUN")
++# Test binaries are linked without DWARF: internal/server's links in about a
++# third of the time. Nothing debugs through this script; dlv test builds its
++# own binary.
++run_flag=(-ldflags=-w)
++[ -n "${GO_TEST_RUN:-}" ] && run_flag+=(-run "$GO_TEST_RUN")
+ [ -n "${GO_TEST_FRESH:-}" ] && run_flag+=(-count=1)
+ 
+ # Node 25 exposes a localStorage global that breaks jsdom's.
 ```
 
-**File**: `pkg/ai/context/summary_crd.go` (modified, +2/-1)
+**File**: `web/tsconfig.json` (modified, +2/-0)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"github.com/skyhook-io/radar/pkg/conditions"
- 	"github.com/skyhook-io/radar/pkg/configrefs"
- 	"github.com/skyhook-io/radar/pkg/csr"
-+	"github.com/skyhook-io/radar/pkg/karpenter"
- 	"github.com/skyhook-io/radar/pkg/resourcecontext"
- 	"github.com/skyhook-io/radar/pkg/resourceid"
- )
-@@ -58,7 +59,7 @@ func summarizeUnstructuredKind(obj *unstructured.Unstructured, pause resourcecon
- 		return summarizeKarpenterNodePool(obj)
- 	case group == "karpenter.sh" && kind == "NodeClaim":
- 		return summarizeKarpenterNodeClaim(obj)
--	case strings.Contains(group, "karpenter") && strings.HasSuffix(kind, "NodeClass"):
-+	case karpenter.IsNodeClassKind(group, kind):
- 		return summarizeKarpenterNodeClass(obj)
- 	case group == "keda.sh" && kind == "ScaledObject":
- 		return summarizeKedaScaledObject(obj)
+@@ -10,6 +10,8 @@
+     "resolveJsonModule": true,
+     "isolatedModules": true,
+     "noEmit": true,
++    "incremental": true,
++    "tsBuildInfoFile": "../node_modules/.cache/tsc/web.tsbuildinfo",
+     "jsx": "react-jsx",
+     "strict": true,
+     "noUnusedLocals": true,
 ```
 
-**File**: `pkg/configrefs/argoworkflows.go` (added, +71/-0)
+---
+
+### Incident Patch 2: `667da45a` (2026-11-21)
+**Commit Message**: CI: give each Go job its own build cache, refreshed from main (#2836)
+
+## Summary
+
+CI's Go build cache was one `setup-go` entry per `go.sum`, shared by
+every root-module job.
+- **Arbitrary contents:** whichever job finished first decided what the
+cache held. The `pkg` job already had to get its own key for this
+reason.
+- **Never refreshed:** the entry was saved once and not updated until
+`go.sum` changed, so every later commit recompiled whatever had changed
+since.
+
+Now each Go job restores the newest build cache `main` saved for that
+job, so PR runs compile only what they change.
+
+## What changed
+
+- **`.github/actions/go-cache-restore`:**
+  - restores the module cache, keyed by `go.sum` and shared by all jobs;
+- restores this job's newest build cache. Keys are
+`gobuild-<os>-<job>-sha-<commit>`; the `-sha-` separator keeps one job's
+fallback prefix (`backend`) from matching another job's keys
+(`backend-server`).
+- Then it backdates every restored entry. Go re-stamps an entry when it
+uses one more than an hour old, so whatever is still backdated at the
+end went unused. Writing `trim.txt` keeps Go's own five-day trim from
+deleting the backdated entries mid-job.
+- **`.github/actions/g
+
+**File**: `.github/actions/go-cache-restore/action.yml` (added, +38/-0)
 ```diff
-@@ -0,0 +1,71 @@
-+package configrefs
+@@ -0,0 +1,38 @@
++name: Restore Go caches
++description: >
++  Restores the module cache (keyed by go.sum) and this job's build cache (the
++  newest one main saved for this job), then backdates the build cache so that
++  go-cache-save can keep only what this run used.
++runs:
++  using: composite
++  steps:
++    - name: Restore module cache
++      uses: actions/cache@v6
++      with:
++        path: ~/go/pkg/mod
++        key: gomod-${{ runner.os }}-${{ hashFiles('go.sum', 'pkg/go.sum') }}
++        restore-keys: gomod-${{ runner.os }}-
 +
-+import (
-+	"strings"
++    - name: Restore build cache
++      uses: actions/cache/restore@v6
++      with:
++        path: ~/.cache/go-build
++        # "-sha-" ends the job name, so one job's prefix (backend) can't match
++        # another job's keys (backend-server).
++        key: gobuild-${{ runner.os }}-${{ github.job }}-sha-${{ github.sha }}
++        restore-keys: gobuild-${{ runner.os }}-${{ github.job }}-sha-
 +
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+
-+	"github.com/skyhook-io/radar/pkg/resourceid"
-+)
-+
-+// ArgoWorkflowTemplateRefs returns the WorkflowTemplates, in namespace, and
-+// ClusterWorkflowTemplates the workflow spec at fields of obj uses: its
-+// workflowTemplateRef and every DAG task's or step's templateRef, each
-+// target once per path, in the order first named.
-+func ArgoWorkflowTemplateRefs(obj map[string]any, namespace string, fields ...string) []PathRef {
-+	spec, found, _ := unstructured.NestedMap(obj, fields...)
-+	if !found {
-+		return nil
-+	}
-+	prefix := strings.Join(fields, ".")
-+	var refs []PathRef
-+	type seenKey struct {
-+		ref  resourceid.Ref
-+		path string
-+	}
-+	seen := map[seenKey]bool{}
-+	add := func(raw map[string]any, path string) {
-+		name, _, _ := unstructured.NestedString(raw, "name")
-+		if name == "" {
-+			return
-+		}
-+		ref := resourceid.NewRef(ArgoGroup, "WorkflowTemplate", namespace, name)
-+		if cluster, _, _ := unstructured.NestedBool(raw, "clusterScope"); cluster {
-+			ref = resourceid.NewRef(ArgoGroup, "ClusterWorkflowTemplate", "", name)
-+		}
-+		if k := (seenKey{ref, prefix + "." + path}); !seen[k] {
-+			seen[k] = true
-+			refs = append(refs, PathRef{Ref: k.ref, Path: k.path})
-+		}
-+	}
-+	if workflowRef, found, _ := unstructured.NestedMap(spec, "workflowTemplateRef"); found {
-+		add(workflowRef, "workflowTemplateRef")
-+	}
-+	templates, _, _ := unstructured.NestedSlice(spec, "templates")
-+	for _, rawTemplate := range templates {
-+		template, ok := rawTemplate.(map[string]any)
-+		if !ok {
-+			continue
-+		}
-+		tasks, _, _ := unstructured.NestedSlice(template, "dag", "tasks")
-+		for _, task := range tasks {
-+			if m, ok := task.(map[string]any); ok {
-+				if ref, found, _ := unstructured.NestedMap(m, "templateRef"); found {
-+					add(ref, "templates[].dag.tasks[].templateRef")
-+				}
-+			}
-+		}
-+		groups, _, _ := unstructured.NestedSlice(template, "steps")
-+		for _, group := range groups {
-+			steps, _ := group.([]any)
-+			for _, step := range steps {
-+				if m, ok := step.(map[string]any); ok {
-+					if ref, found, _ := unstructured.NestedMap(m, "templateRef"); found {
-+						add(ref, "templates[].steps[][].templateRef")
-+					}
-+				}
-+			}
-+		}
-+	}
-+	return refs
-+}
++    # Go re-stamps a cache entry when it uses one more than an hour old, so
++    # after backdating every entry, the ones still backdated when the job ends
++    # are the ones it didn't use. trim.txt records the last trim: writing now
++    # keeps Go's own trim, which drops entries unused for five days, from
++    # deleting the backdated entries mid-job.
++    - name: Backdate the build cache
++      shell: bash
++      run: |
++        cache=$(go env GOCACHE)
++        mkdir -p "$cache"
++        find "$cache" -type f -exec touch -t 200001010000 {} +
++        date +%s > "$cache/trim.txt"
++        touch "$RUNNER_TEMP/go-cache-start"
++        echo "restored build cache: $(du -sh "$cache" | cut -f1)"
 ```
 
-**File**: `pkg/configrefs/capi.go` (added, +31/-0)
+**File**: `.github/actions/go-cache-save/action.yml` (added, +21/-0)
 ```diff
-@@ -0,0 +1,31 @@
-+package configrefs
+@@ -0,0 +1,21 @@
++name: Save Go build cache
++description: >
++  Saves this job's build cache, pruned to the entries this run used, under a
++  key for this commit. Pair with go-cache-restore; call it as the job's last
++  step.
++runs:
++  using: composite
++  steps:
++    - name: Prune entries this run didn't use
++      shell: bash
++      run: |
++        cache=$(go env GOCACHE)
++        before=$(du -sh "$cache" | cut -f1)
++        find "$cache" -type f ! -newer "$RUNNER_TEMP/go-cache-start" -delete
++        echo "build cache: $before before pruning, $(du -sh "$cache" | cut -f1) after"
 +
-+import (
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+
-+	"github.com/skyhook-io/radar/pkg/resourceid"
-+)
-+
-+const CAPIGroup = "cluster.x-k8s.io"
-+
-+// CAPIClusterClass returns the ClusterClass a Cluster API Cluster's topology
-+// names, in the namespace it names or the Cluster's own. v1beta2 names it in
-+// topology.classRef; earlier versions in topology.class and
-+// topology.classNamespace.
-+func CAPIClusterClass(cluster *unstructured.Unstructured) (PathRef, bool) {
-+	path := "spec.topology.classRef"
-+	name, _, _ := unstructured.NestedString(cluster.Object, "spec", "topology", "classRef", "name")
-+	namespace, _, _ := unstructured.NestedString(cluster.Object, "spec", "topology", "classRef", "namespace")
-+	if name == "" {
-+		path = "spec.topology.class"
-+		name, _, _ = unstructured.NestedString(cluster.Object, "spec", "topology", "class")
-+		namespace, _, _ = unstructured.NestedString(cluster.Object, "spec", "topology", "classNamespace")
-+	}
-+	if name == "" {
-+		return PathRef{}, false
-+	}
-+	if namespace == "" {
-+		namespace = cluster.GetNamespace()
-+	}
-+	return PathRef{Ref: resourceid.NewRef(CAPIGroup, "ClusterClass", namespace, name), Path: path}, true
-+}
++    - name: Save build cache
++      uses: actions/cache/save@v6
++      with:
++        path: ~/.cache/go-build
++        key: gobuild-${{ runner.os }}-${{ github.job }}-sha-${{ github.sha }}
 ```
 
-**File**: `pkg/configrefs/certmanager.go` (added, +51/-0)
+**File**: `.github/workflows/ci.yml` (modified, +50/-18)
 ```diff
-@@ -0,0 +1,51 @@
-+package configrefs
+@@ -16,6 +16,9 @@ concurrency:
+ # earlier run; PRs keep the cache. Go applies -count only to go test.
+ env:
+   GOFLAGS: ${{ github.event_name == 'push' && '-count=1' || '' }}
++  # Go jobs save their build cache only from main, pruned to what the run used
++  # (.github/actions/go-cache-save); PRs restore the newest one.
++  GO_CACHE_SAVE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+ # go test runs below pass -ldflags=-w: test binaries without DWARF link in
+ # about a third of the time; nothing debugs them here.
+ 
+@@ -123,9 +126,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          # Its own build cache: sharing the root module's key let this job,
+-          # which finishes first, save a cache holding only pkg's packages.
+-          cache-dependency-path: pkg/go.sum
++          cache: false
 +
-+import (
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+ 
+       - name: Download dependencies
+         run: go mod download
+@@ -144,6 +148,10 @@ jobs:
+       - name: Build
+         run: go build ./...
+ 
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
 +
-+	"github.com/skyhook-io/radar/pkg/resourceid"
-+)
+   backend:
+     name: Backend
+     needs: changes
+@@ -170,9 +178,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
 +
-+const (
-+	CertManagerGroup     = "cert-manager.io"
-+	CertManagerACMEGroup = "acme.cert-manager.io"
-+)
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+ 
+       - name: Download dependencies
+         run: go mod download
+@@ -202,6 +211,10 @@ jobs:
+ 
+   # gofmt and vet in their own job, so they run alongside the tests instead of
+   # before them in the slowest job.
 +
-+// CertManagerIssuer returns the Issuer or ClusterIssuer a cert-manager
-+// Certificate, CertificateRequest, ACME Order or Challenge names in
-+// spec.issuerRef, following cert-manager's defaults: an omitted kind is an
-+// Issuer in the object's namespace, an omitted group cert-manager's. An
-+// external issuer is left out: whether its kind is namespaced takes
-+// discovery to say.
-+func CertManagerIssuer(obj *unstructured.Unstructured) (PathRef, bool) {
-+	group := resourceid.GroupFromAPIVersion(obj.GetAPIVersion())
-+	switch obj.GetKind() {
-+	case "Certificate", "CertificateRequest":
-+		if group != CertManagerGroup {
-+			return PathRef{}, false
-+		}
-+	case "Order", "Challenge":
-+		if group != CertManagerACMEGroup {
-+			return PathRef{}, false
-+		}
-+	default:
-+		return PathRef{}, false
-+	}
-+	kind, _, _ := unstructured.NestedString(obj.Object, "spec", "issuerRef", "kind")
-+	issuerGroup, _, _ := unstructured.NestedString(obj.Object, "spec", "issuerRef", "group")
-+	name, _, _ := unstructured.NestedString(obj.Object, "spec", "issuerRef", "name")
-+	if kind == "" {
-+		kind = "Issuer"
-+	}
-+	if issuerGroup == "" {
-+		issuerGroup = CertManagerGroup
-+	}
-+	if name == "" || issuerGroup != CertManagerGroup || kind != "Issuer" && kind != "ClusterIssuer" {
-+		return PathRef{}, false
-+	}
-+	namespace := obj.GetNamespace()
-+	if kind == "ClusterIssuer" {
-+		namespace = ""
-+	}
-+	return PathRef{Ref: resourceid.NewRef(issuerGroup, kind, namespace, name), Path: "spec.issuerRef"}, true
-+}
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
+   backend-vet:
+     name: Backend (vet)
+     needs: changes
+@@ -214,9 +227,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+ 
+       - name: Download dependencies
+         run: go mod download
+@@ -235,6 +249,10 @@ jobs:
+       - name: Vet
+         run: go vet ./...
+ 
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
++
+   backend-server:
+     name: Backend (internal/server)
+     needs: changes
+@@ -247,9 +265,10 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+ 
+       - name: Download dependencies
+         run: go mod download
+@@ -259,6 +278,10 @@ jobs:
+ 
+   # TestNoEffortNotesReferencedFromSource scans the whole repo (.ts, .md, .sh,
+   # .yaml, ...), not only Go code. When Backend is skipped, run it alone.
++
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
+   repo-hygiene:
+     name: Repo hygiene
+     needs: changes
+@@ -271,13 +294,18 @@ jobs:
+         uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+ 
+       - name: Check for effort-note paths
+         run: go test -ldflags=-w ./internal/server -run '^TestNoEffortNotesReferencedFromSource$'
+ 
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
++
+   frontend:
+     name: Frontend
+     needs: changes
+@@ -330,9 +358,9 @@ jobs:
+       - uses: actions/setup-go@v7
+         with:
+           go-version: '1.26'
+-          cache-dependency-path: |
+-            go.sum
+-            pkg/go.sum
++          cache: false
++      - name: Restore Go caches
++        uses: ./.github/actions/go-cache-restore
+       - uses: actions/setup-node@v6
+         with:
+           node-version: '24'
+@@ -354,6 +382,10 @@ jobs:
+       - run: npm run test:e2e:settings
+         working-directory: web
+ 
++      - name: Save Go build cache
++        if: env.GO_CACHE_SAVE == 'true'
++        uses: ./.github/actions/go-cache-save
++
+   k8s-ui:
+     name: k8s-ui (shared UI)
+     needs: changes
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2779** (2026-11-18): Keep workload tabs visible when header actions wrap (@nadaverell)
-- **PR #2777** (2026-11-18): Point the community links at Slack instead of Discord (@nadaverell)
-- **PR #2775** (2026-11-18): Link the Radar community Slack from the rail, ⌘K, Diagnostics and About (@nadaverell)
-- **PR #2774** (2026-11-18): deps: batch weekly Dependabot updates (2026-11-18) (@nadaverell)
-- **PR #2771** (closed): deps(go): bump github.com/gofrs/flock from 0.13.1 to 0.13.2 (@dependabot[bot])
-- **PR #2770** (closed): deps(go): bump github.com/wailsapp/wails/v2 from 2.17.0 to 2.17.1 (@dependabot[bot])
+- **PR #2836** (2026-11-21): CI: give each Go job its own build cache, refreshed from main (@nadaverell)
+- **PR #2835** (2026-11-21): CI: run vet in its own job and link test binaries without DWARF (@nadaverell)
+- **PR #2834** (2026-11-21): Cache the dev image's Docker layers in the registry, not the Actions cache (@nadaverell)
+- **PR #2832** (2026-11-21): Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24 (@nadaverell)
+- **PR #2826** (2026-11-21): Keep cluster switches running through slow cache sync and browser refreshes (@nadaverell)
+- **PR #2823** (2026-11-21): Keep diagnostics available when cluster inspection stalls (@nadaverell)
 
 ---
 
@@ -3240,35 +2840,33 @@ Gateway in `infra`). Its referrers are search
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pods): show containers waiting on PodInitializing as starting, not failed
+## X. Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24
 
 **RULE**:
-When implementing operations in `packages/k8s-ui/src/components/resources/ResourcesView.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `599b3ae3`: pods): show containers waiting on PodInitializing as starting, not failed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3419650d`: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/k8s-ui/src/components/resources/ResourcesView.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-              sq.status === 'running' || sq.status === 'starting' ? 'bg-yellow-500' :
-              sq.status === 'running' || sq.status === 'starting' ? 'bg-yellow-500' :
-              sq.status === 'starting' || sq.status === 'waiting' ? 'Waiting' :
+	go test -v -ldflags=-w ./...
+	cd pkg && go test -v -ldflags=-w ./...
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-              sq.status === 'running' ? 'bg-yellow-500' :
-              sq.status === 'running' ? 'bg-yellow-500' :
-              sq.status === 'waiting' ? 'Waiting' :
+	go test -v ./...
+	cd pkg && go test -v ./...
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `599b3ae3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3419650d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

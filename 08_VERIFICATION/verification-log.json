@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-Q7MQ",
-    "timestamp": "2026-11-19T22:36:14.498Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "359c49b767d085bdf91b335d31694c1d119b1e30c1852d079f8158911e6aeea4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-QABL",
-    "timestamp": "2026-11-19T22:36:17.985Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "f0a0f1975c65ab6cb4d8779a21d0fd8df6801b869515010ab4dacdcc65b18d3b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-GVDS",
-    "timestamp": "2026-11-19T22:56:58.336Z",
-    "repository": "BurntSushi/ripgrep",
-    "learningId": "learn-github-burntsushi-ripgrep",
-    "contentHash": "5c2a5c0bf38727478972298812fc346736dd1d4f75a49d1bc654927f2372ba32",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-NH77",
     "timestamp": "2026-11-19T23:02:06.547Z",
     "repository": "cilium/cilium",
@@ -7492,6 +7447,51 @@
     "contentHash": "16e41f55a35454187bcffc944b75952f64a261bbe3f202aac855eaa34b864177",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-BB2C",
+    "timestamp": "2026-11-22T01:43:56.868Z",
+    "repository": "microsoft/Mage-VL-Cowork",
+    "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
+    "contentHash": "3529f62cfbc060b8aaec6ac1b7302ec7cb04a5f1d3e08e576a33a65ac3172091",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-BF2C",
+    "timestamp": "2026-11-22T01:44:02.052Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "2e27572ba134b7b72d066eeae291fad2024ccdcc0fc52c2d1aebec22fed99bbb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-BKAH",
+    "timestamp": "2026-11-22T01:44:08.825Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "22284158552a865e79073f4e5c35c24313d631f807c7bcbb858f7c8ebe201356",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

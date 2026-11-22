@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T01:32:35.793Z",
+  "last_updated": "2026-11-22T01:44:43.064Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T01:32:34.856Z",
@@ -773,9 +773,9 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-22T00:54:39.541Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-22T01:44:41.895Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "tableproapp-tablepro-learnings.md": {
       "processed_at": "2026-11-19T20:34:30.303Z",
@@ -1053,7 +1053,7 @@
       "staged_for_review": 1
     },
     "hf-microsoft-mage-vl-cowork-learnings.md": {
-      "processed_at": "2026-11-17T03:34:23.629Z",
+      "processed_at": "2026-11-22T01:44:12.292Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -1658,7 +1658,7 @@
       "staged_for_review": 1
     },
     "skyhook-io-radar-learnings.md": {
-      "processed_at": "2026-11-20T22:42:05.597Z",
+      "processed_at": "2026-11-22T01:44:40.946Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -3693,7 +3693,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2955,
-  "total_canonical_promoted": 465,
-  "total_staged_for_review": 2260
+  "total_dossiers_evaluated": 2958,
+  "total_canonical_promoted": 466,
+  "total_staged_for_review": 2261
 }

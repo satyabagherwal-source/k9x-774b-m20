@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T23:56:18.454Z",
+  "timestamp": "2026-11-22T01:44:42.271Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T23:56:18.454Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T01:44:42.271Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `9d6d6ac4`  
+> **Source Version**: `fbdb7e41`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T23:55:46.882Z  
+> **Timestamp**: 2026-11-22T01:44:08.356Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T23:55:46.877Z  
+> **Harvest Timestamp**: 2026-11-22T01:44:08.350Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -363,8 +363,8 @@ impl Parser {
         self.suite_body()
     }
 
-    /// Shares the existing body parser with conditional and exception clauses
-    /// whose real indentation has already qualified for colon omission.
+    /// Shares the existing body parser with conditional, exception and implicit
+    /// iterator suites already qualified for colon omission by real indentation.
     pub(super) fn suite_body(&mut self) -> Result<Vec<Stmt>> {
         if self.eat(&Token::Newline) || self.check(&Token::Indent) {
             self.skip_newlines();
@@ -621,8 +621,7 @@ impl Parser {
         });
         self.position = start;
         let end = outcome.as_ref()?.end;
-        if self.words
-  
+        if se
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1596,397 +1595,332 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d6d6ac4` (2026-11-21)
-**Commit Message**: NUC 128 Origins and Outcomes of Reasoning Selections
+### Incident Patch 1: `fbdb7e41` (2026-11-22)
+**Commit Message**: NUC 127 Colon-Free Implicit Iterator Suites
 
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Reasoning enhancement, token comparison required):
-the frozen candidate meets every hard criterion and passes every policy
-check, the token non-regression gate included. The cycle found no stale
-Draft, drew Reasoning enhancement uniformly from the five eligible
-categories (index 3, p = 1/5, no redraw), allocated NUC 128 in 23b93c48,
-and completed it with fresh baselines, candidate, proposer, Rust
-improvement pass and evaluator.
+Accepted under the automatic acceptance rule in continuous Syntax
+enhancement mode. The independent core and overall policy decisions
+were Accepted, with no findings or blockers. Required lexer-token
+comparison ran: 6 less, 1244 same, 0 more across 1250 paired cases.
 
-Two filter stages for reasoning selections: SELECTION |> origins keeps
-the steps that rest on no step of the selection, and SELECTION |>
-outcomes keeps the steps that no step of it rests on. A step rests on
-another when it depends on it through one or more dependency edges,
-through unselected nodes and through no reasoning observer, so a step
-on a cycle of NUC 85's fixed anchors rests on itself and is neither.
-S |> origins is exactly the accepted S |> except(S |> affects); the
-outcomes, over a filtered selection, had no accepted stage spelling.
-Kept steps keep their order, fields, distances and walk direction, so
-further s
+All three hard criteria passed independently and on the integrated tree:
+all-target build, warning-denied Clippy and formatting; the full suite
+with 3790 passed, 0 failed and 25 unchanged ignored; and backward
+compatibility with all 1250 original sources, protected assertions,
+expected returns and executed coverage. All 3802 existing test
+occurrences remain present and unweakened; all 13 additions passed.
+The 40 contextual/ordinary-name pairs include origins and outcomes.
+Integrated private-library rustdoc and export checks also passed.
 
-**File**: `README.md` (modified, +33/-0)
+Accepted claim: 5195a171879982752448d9cd651bb61f45bdbb08
+Frozen proposal: f388a47aba593f4cd5c754216cf7a63e369f2a59
+Independent core: 611028f49e4b99ab79dd39291ca4dfc84647c61f
+Independent outcome: 5e8a67baed18c81ab28284d24ee7bc34e6c73a51
+Integrated check log: d8c577cfae4190bcb1ccc7663c898df25a9db73a
+Final metadata-bound caller core: 1e3585d8b
+
+**File**: `README.md` (modified, +28/-3)
 ```diff
-@@ -2790,6 +2790,39 @@ assert([lift.floor, stopped], [4, true])
-   `until` stay ordinary names everywhere else. See the
-   [root contract](nucleoid.spec.md#exit-controlled-repeat-until-loops).
+@@ -636,11 +636,15 @@ assert(task.done, true)
+   standing rule. A named noniterable source raises the existing TypeError.
+ - The [NUC 51 candidate](docs/nuc-0051.md) additionally accepts String sources
+   as scalar snapshots, without changing that object-only List policy.
+-- Require the immediate identifier/colon header, then a newline or indent and
+-  a real indent after only normal newline/semicolon layout. No `:;`,
++- The [NUC 127 draft](docs/nuc-0127.md) also permits `for NAME` without its
++  colon before that same genuinely indented body. `NAME` is exactly one Rust
++  `Identifier`, including contextual names such as `while`, `enum` and `model`.
++- Require the immediate identifier and optional colon, then a newline or indent
++  and a real indent after only normal newline/semicolon layout. No header-line `;` or `:;`,
+   inline/braced/missing-indent or expression-source shorthand is added.
+ - Explicit `for variable of expression` and `for variable in expression`
+-  remain valid with their existing arbitrary expressions and suite forms.
++  remain valid with their existing arbitrary expressions and colon-required suite forms.
++  Two-name entry loops also keep their colon.
+   Nested scopes, receivers, returns, snapshots, graphs and rollback are unchanged.
  
-+## Origins and outcomes of reasoning selections
+ Reasoning stays live too: `why b` explains its dependencies, and `affects a`
+@@ -2897,6 +2901,27 @@ assert(every h in Human: h.mortal, true)
+   variable named `every` work as before. See the
+   [root contract](nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
+ 
++## Colon-free implicit iterator suites
 +
-+**Origins and outcomes show where a change of pressure enters and which alarms it ends at**
++**Named iterator suites use indentation without a colon**
 +
 +```nuc
-+pressure = 5
-+flow = 3
-+temperature = 70
-+strain = pressure * flow
-+leak = flow > 2 && pressure > 4
-+overheat = temperature + strain > 80
-+shutdown = pressure > 9 || overheat
-+enters = pressure |> affects |> origins
-+alarms = pressure |> affects |> outcomes
-+assert(enters.map(step -> step.node), ["strain", "leak"])
-+assert(alarms.map(step -> step.node), ["leak", "shutdown"])
-+leak = flow > 2 && strain > 12
-+panel = [leak, shutdown]
-+assert([enters.map(step -> step.node), alarms.map(step -> step.node)], [["strain"], ["panel"]])
++class Parcel(weight):
++    this.weight = weight
++light = Parcel(4)
++heavy = Parcel(7)
++total = 0
++for Parcel
++    total += it.weight
++assert(total, 11)
 +```
 +
-+- [NUC 128](docs/nuc-0128.md) adds the reasoning stages `|> origins` and
-+  `|> outcomes`, which keep the two ends of a selection.
-+  `pressure |> affects |> origins` keeps where a change of the pressure
-+  enters the model: the strain and the leak check, which read it and rest
-+  on nothing else it moves. The shutdown reads the pressure too, but it
-+  also rests on the overheat, which the pressure moves through the strain.
-+- `pressure |> affects |> outcomes` keeps where the change ends: the leak
-+  check and the shutdown, which nothing reads. Both stay live: once the
-+  leak check reads the strain, the change enters at the strain alone, and
-+  once a panel shows both alarms, it ends at the panel. See the
-+  [root contract](nucleoid.spec.md#origins-and-outcomes-of-reasoning-selections).
++- `for Parcel` uses the same one-shot population snapshot, local `it` and
++  imperative suite as `for Parcel:`. The optional colon never replaces the
++  accepted spelling or broadens the source expression.
++- See [NUC 127](docs/nuc-0127.md) and the
++  [root contract](nucleoid.spec.md#implicit-iterator-indented-loops).
 +
- ## Reactive list flattening
+ ## Benchmark
  
- **Flat turns nested lists into one live list**
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +3/-0)
 ```diff
-@@ -818,19 +818,23 @@
- {"id":"spec-0818","description":"Nucleoid returns from inside repeat-until loops in methods","code":"class Drone(battery):\n    this.battery = battery\n    this.distance = 0\n    def fly(target):\n        repeat:\n            this.battery -= 10\n            this.distance += 3\n            if this.empty: return \"stranded\"\n        until this.distance >= target\n$Drone.empty = $Drone.battery < 10\nscout = Drone(40)\nassert([scout.fly(6), scout.distance, scout.empty], [null, 6, false])\nassert([scout.fly(0), scout.distance, scout.battery], [null, 9, 10])\nassert([scout.fly(20), scout.distance, scout.empty], [\"stranded\", 12, true])\nspare = Drone(25)\nassert([spare.fly(6), spare.distance], [\"stranded\", 6])\nscout.battery = 50\nassert([scout.empty, spare.empty], [false, true])","return":null}
- {"id":"spec-0819","description":"Nucleoid nests repeat-until loops inside other loops","code":"class Truck(minimum):\n    this.minimum = minimum\n    this.load = 0\n    this.crates = 0\n$Truck.full = $Truck.load >= $Truck.minimum\nTruck(6)\nTruck(0)\nTruck(7)\nassert(Truck.map(truck -> truck.full), [false, true, false])\ndock = [4, 3, 5, 2, 6, 1]\nshipped = []\nfor truck of Truck:\n    repeat: truck.load += dock.shift(); truck.crates += 1\n    until truck.full\n    shipped.push(truck.load)\nassert([shipped, dock], [[7, 5, 8], [1]])\nTruck(3)\nassert(Truck.map(truck -> truck.crates), [2, 1, 2, 0])\nTruck.map(truck -> truck.full)","return":"[true,true,true,false]"}
- {"id":"spec-0820","description":"Nucleoid rolls back a repeat-until loop that fails during an iteration","code":"class Oven(temp):\n    this.temp = temp\n    this.steps = 0\n    def heat():\n        repeat: this.temp += 10; this.steps += 1\n        until this.ready\nmarks = [150, 180, 220]\n$Oven.ready = marks.includes($Oven.temp)\nif $Oven.temp > 200:\n    throw \"OVERHEAT\"\noven = Oven(150)\noven.heat()\nassert([oven.temp, oven.steps, oven.ready], [180, 3, true])\ntry:\n    oven.heat()\ncatch error:\n    failure = error\nassert([failure, oven.temp, oven.steps], [\"OVERHEAT\", 180, 3])\nmarks.push(190)\noven.heat()\n[oven.temp, oven.steps]","return":"[190,4]"}
--{"id":"spec-0821","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0822","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0823","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0824","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0825","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0826","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.
+@@ -838,3 +838,6 @@
+ {"id":"spec-0838","description":"Nucleoid quantifies with every as with all","code":"class Check\nready = every check in Check: check.passed\nassert(ready, true)\nfirst = Check()\nfirst.passed = true\nsecond = Check()\nassert(ready, false)\nsecond.passed = true\nassert(ready, true)\nscores = [3, 4]\nassert(every score in scores: score > 2, all score in scores: score > 2)\nassert(every score in scores: score > 3, false)\nassert((every score in scores: score > 2) ? \"pass\" : \"fail\", \"pass\")\nready","return":"true"}
+ {"id":"spec-0839","description":"Nucleoid keeps every an ordinary name where no name follows it","code":"every = [1, 2]\ntotal = every.length\nassert(total, 2)\nassert(every.every(v => v > 0), true)\npairs = {every: 3, other: every[0]}\nassert(pairs, {every: 3, other: 1})\ndef count(every) => every + 1\nassert(count(4), 5)\nevery is [5]\nassert(total, 1)\nassert(every n in every: n > 4, true)\nevery","return":"[5]"}
+ {"id":"spec-0840","description":"Nucleoid keeps other is statements on a class reference","code":"class Order(total):\n    this.total = total\norder = Order(20)\n$Order.size is big\nassert(order.size, \"big\")\ntry:\n    $Order is 5\ncatch error:\n    assert(error, ReferenceError(\"is is not defined\"))\nassert(order.big, null)\n$Order is big\nassert(order.big, true)\norder.size","return":"\"big\""}
++{"id":"spec-0841","description":"Nucleoid omits colons from implicit instance iterator suites","code":"class Entry(amount):\n    this.amount = amount\nfirst = Entry(2)\nsecond = Entry(5)\nvalues = [first, 99, second, null, {amount: 9}]\nseen = []\ntotal = 0\nfor values\n    seen.push(it.amount)\n    total += it.amount\nassert(seen, [2, 5])\nassert(total, 7)\nempty = []\nfor empty\n    total += 100\nassert(total, 7)","return":null}
++{"id":"spec-0842","description":"Nucleoid nests colon free implicit iterator scopes","code":"it = \"ab\"\ninner = \"xy\"\nseen = []\nfor it\n    for inner\n        seen.push(it)\nassert(seen, [\"x\", \"y\", \"x\", \"y\"])\nassert(it, \"ab\")","return":null}
++{"id":"spec-0843","description":"Nucleoid propagates returns and rollback through colon free implicit iterators","code":"def first(text):\n    for text\n        return it\n    return \"empty\"\nassert(first(\"ab\"), \"a\")\nassert(first(\"\"), \"empty\")\ntext = \"ab\"\nvalue = 7\nfailure = null\ntry:\n    for text\n        value = 99\n        throw \"stop\"\ncatch error:\n    failure = error\nassert(value, 7)\nassert(failure, \"stop\")\nfor text\n    value += 1\nassert(value, 9)\nvalue","return":"9"}
 ```
 
-**File**: `dataset/nucleoid.synth.91.jsonl` (added, +12/-0)
+**File**: `dataset/nucleoid.synth.31.jsonl` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-91-0001","description":"Origins after affects keeps where a change of one fact enters, the steps it reaches that rest on no step it reaches","code":"price = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * 0.2\ntotal = subtotal + tax\nprice |> affects |> origins |> nodes","return":"[\"subtotal\"]"}
-+{"id":"synth-91-0002","description":"Outcomes after affects keeps where a change of one fact ends, the steps it reaches that no step it reaches rests on","code":"price = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * 0.2\ntotal = subtotal + tax\nprice |> affects |> outcomes |> nodes","return":"[\"total\"]"}
-+{"id":"synth-91-0003","description":"Origins and outcomes of the model are its sources and its sinks","code":"rate = 0.2\nprice = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * rate\nshipping = qty * 2\n[model |> origins |> nodes, model |> outcomes |> nodes]","return":"[[\"rate\",\"price\",\"qty\"],[\"tax\",\"shipping\"]]"}
-+{"id":"synth-91-0004","description":"Outcomes of an explanation without a cycle is the explained value alone, and its origins are the facts it starts from","code":"a = 1\nb = a + 2\nc = b * 2\nd = c + a\n[d |> why |> outcomes |> nodes, d |> why |> origins |> nodes]","return":"[[\"d\"],[\"a\"]]"}
-+{"id":"synth-91-0005","description":"Origins keeps the inputs that a class governs, which stated leaves out","code":"fee = 2\nclass Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty + fee\nfirst = Order(10, 2)\n[first.total |> why |> origins |> nodes, first.total |> why |> stated |> nodes]","return":"[[\"first.price\",\"first.qty\",\"fee\"],[\"fee\"]]"}
-+{"id":"synth-91-0006","description":"Outcomes follows the chains through the steps that a filter dropped","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\ntotal = subtotal + tax\ntotal |> why |> except(subtotal) |> outcomes |> nodes","return":"[\"total\"]"}
-+{"id":"synth-91-0007","description":"Origins after depth keeps the first conclusions within the limit","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\ntotal = subtotal + tax\ntotal |> why |> depth(1) |> origins |> nodes","return":"[\"subtotal\"]"}
-+{"id":"synth-91-0008","description":"A derived value whose only input was deleted rests on no step and is an origin","code":"a = 1\nb = a * 2\nc = b + 1\ndelete a\nmodel |> origins |> nodes","return":"[\"b\"]"}
-+{"id":"synth-91-0009","description":"A standing outcomes declaration follows a new dependent of its outcome","code":"price = 10\nqty = 3\nsubtotal = price * qty\nends = price |> affects |> outcomes\ntotal = subtotal + 5\ngrand = total * 2\nends.map(step -> step.node)","return":"[\"grand\"]"}
-+{"id":"synth-91-0010","description":"Outcomes of a union keeps the ends of both explanations","code":"price = 10\nquantity = 3\nrate = 0.5\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> union(shipping |> why) |> outcomes |> nodes","return":"[\"tax\",\"shipping\"]"}
-+{"id":"synth-91-0011","description":"A class-level rule keeps where a change of each instance's cost ends","code":"class Part(cost):\n    this.cost = cost\n$Part.price = $Part.cost * 2\n$Part.label = \"$\" + $Part.price\n$Part.ends = $Part.cost |> affects |> outcomes\nbolt = Part(3)\nnut = Part(4)\n[bolt.ends.map(step -> step.node), nut.ends.map(step -> step.holds)]","return":"[[\"bolt.label\"],[\"$8\"]]"}
-+{"id":"synth-91-0012","description":"A binding named origins shadows the stage, and a try catches the error","code":"a = 1\nb = a + 1\norigins = 5\ntry:\n    found = b |> why |> origins\ncatch error:\n    found = error\n[found, b |> why |> outcomes |> nodes]","return":"[\"TypeError: origins is not an operation\",[\"b\"]]"}
+@@ -2,3 +2,4 @@
+ {"id":"synth-31-0002","description":"A mutated string property cannot extend a one-shot scalar snapshot","code":"holder = {text: \"ab\"}\nseen = []\nfor character in holder.text:\n    seen.push(character)\n    holder.text = \"xyz\"\nassert(seen, [\"a\", \"b\"])\nassert(holder.text, \"xyz\")\nholder.text = \"cd\"\nassert(seen, [\"a\", \"b\"])\nfor character of holder.text:\n    seen.push(character)\nassert(seen, [\"a\", \"b\", \"c\", \"d\"])\nseen","return":"[\"a\",\"b\",\"c\",\"d\"]"}
+ {"id":"synth-31-0003","description":"Nested named string loops restore their outer implicit iterator binding","code":"it = \"outside\"\nletters = \"xy\"\ndigits = \"12\"\nseen = []\nfor letters:\n    seen.push(it)\n    for digits:\n        seen.push(it)\n    seen.push(it)\nassert(seen, [\"x\", \"1\", \"2\", \"x\", \"y\", \"1\", \"2\", \"y\"])\nassert(it, \"outside\")\nempty = \"\"\nfor empty:\n    throw \"UNREACHABLE\"\nassert(it, \"outside\")\nseen","return":"[\"x\",\"1\",\"2\",\"x\",\"y\",\"1\",\"2\",\"y\"]"}
+ {"id":"synth-31-0004","description":"A failed scalar traversal rolls back its effects and permits a later successful loop","code":"it = \"outside\"\nseen = [\"saved\"]\ntry:\n    for it of \"abc\":\n        seen.push(it)\n        if it == \"b\":\n            throw \"CANCEL_TEXT\"\ncatch error:\n    assert(error, \"CANCEL_TEXT\")\nassert(seen, [\"saved\"])\nassert(it, \"outside\")\nfor it in \"ok\":\n    seen.push(it)\nassert(seen, [\"saved\", \"o\", \"k\"])\nassert(it, \"outside\")\nseen","return":"[\"saved\",\"o\",\"k\"]"}
++{"id":"synth-31-0005","description":"Colon-free named string suites preserve scalar order and restore an outer iterator","code":"it = \"outside\"\ntext = \"é🙂é\"\nseen = []\nfor text\n    seen.push(it)\nassert(seen, [\"é\", \"🙂\", \"e\", \"́\"])\nassert(seen.join(\"\"), text)\nassert(it, \"outside\")\nseen","return":"[\"é\",\"🙂\",\"e\",\"́\"]"}
 ```
 
-**File**: `docs/README.md` (modified, +79/-3)
+**File**: `docs/README.md` (modified, +21/-2)
 ```diff
-@@ -4514,6 +4514,10 @@ route.shift()
- - A selection is an ordered list of steps with `node`, `holds`, `rule`, `state`, and `from` fields.
- - `state` is `"stated"` for an independent fact or `"derived"` for a relationship or class-level rule.
- - List functions such as `map`, `find`, and `some` can inspect the steps.
-+- `selection |> origins` keeps the steps that rest on no step of the
-+  selection, and `selection |> outcomes` the steps that no step of it rests
-+  on, so `price |> affects |> outcomes` is where a change of the price
-+  ends ([NUC 128](nuc-0128.md)).
- - `selection |> nodes` lists the steps' `node` names, as
-   `(selection).map(step => step.node)` does for the selection the pipeline
-   denotes ([NUC 112](nuc-0112.md)).
-@@ -4788,6 +4792,69 @@ facts.map(step => step.node)
-   [union reasoning selections](../nucleoid.spec.md#union-reasoning-selections)
-   section.
- 
-+### Origins and outcomes of reasoning selections
-+
-+```
-+price = 10
-+qty = 3
-+shipping = 5
-+subtotal = price * qty
-+total = subtotal + shipping
-+unit = total / qty
-+starts = qty |> affects |> origins
-+ends = model |> outcomes
-+assert(starts.map(step => step.node), ["subtotal"])
-+assert(ends.map(step => step.node), ["unit"])
-+fee = qty * 2
-+[starts.map(step => step.node), ends.map(step => step.node)]
-+```
-+
-+- This is the complete `Nucleoid keeps the ends of selections with origins and outcomes`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `[["subtotal","fee"],["unit","fee"]]`.
-+- [NUC 128](nuc-0128.md) adds the stages `selection |> origins` and
-+  `selection |> outcomes`. `origins` keeps the steps of the selection that
-+  rest on no step of it, and `outcomes` the steps that no step of it rests
-+  on, in their order and with their fields unchanged, so
-+  `qty |> affects |> origins` is where a change of the quantity enters the
-+  model and `model |> outcomes` is the model's results. A step rests on
-+  another when it depends on it through one or more dependency edges,
-+  directly or through nodes that the selection does not hold, along the
-+  edges that the walks follow, through no reasoning observer. A step on a
-+  cycle of those edges, such as the width and the height of an
-+  instance after `$Box.width = $Box.height@first` and
-+  `$Box.height = $Box.width@first`, rests on itself, so neither stage keeps
-+  it from any selection that holds it.
-+- `selection |> origins` is exactly
-+  `selection |> except(selection |> affects)`, which names the selection
-+  twice. Over a selection that `affects`, `why` or `model` produced,
-+  `selection |> outcomes` keeps the steps whose node no step's `from`
-+  names; over a thinned selection both stages also follow the chains
-+  through the steps a filter dropped, which `from` does not name.
-+- Here the unit reads the quantity, but it rests on the total, which rests
-+  on the subtotal, so the change enters at the subtotal alone. Once the fee
-+  reads the quantity and nothing reads the fee, the fee is both where the
-+  change enters and one of the model's results.
-+- The result is a selection: the kept steps keep their distances and the
-+  direction of the selection's most recent walk, so every stage applies to
-+  it, and both stages may stand in an `intersect`, `except` or `union`
-+  argument. A `path` target is a reference, so a `path` argument that ends
-+  with either stage raises `TypeError("Cannot explain <target>")`. A
-+  selection that a `depth(null)` makes undefined stays undefined.
-+- Only `|>` followed by `origins` or `outcomes` is a stage; both names stay
-+  ordinary everywhere else, and there is no prefix form. A local or
-+  parameter, variable, function or class named `origins` or `outcomes`
-+  shadows its stage, as bindings shadow the other stages: the pipeline then
-+  raises `TypeError("origins is not an operation")` or
-+  `TypeError("outcomes is not an operation")` before selecting its source.
-+- The selection stays live through every observation its source made and
-+  through the structure of every node the stage walks, and a declaration
-+  that holds it is a reasoning observer. It renders as
-+  `selection|>origins` and `selection|>outcomes`.
-+- The authoritative contract is the
-+  [origins and outcomes of reasoning selections](../nucleoid.spec.md#origins-and-outcomes-of-reasoning-selections)
-+  section.
-+
- ### Node names of reasoning selections
- 
+@@ -1837,9 +1837,13 @@ for question of Question:
+ - Accepted [NUC 31](nuc-0031.md) specifies `for NAME:` with a genuine indented
+   body as exactly `for it of NAME:` with that same body; `NAME` is one ordinary
+   identifier source, not the iteration variable.
+-- Require the immediate identifier and colon, an immediate newline or indent,
++- The [NUC 127 draft](nuc-0127.md) permits that colon to be omitted before
++  the same genuinely indented suite. The source is exactly one Rust
++  `Identifier`; contextual spellings such as `while`, `enum`, `model`,
++  `repeat` and `until` remain names and qualify with or without the colon.
++- Require the immediate identifier and optional colon, an immediate newline or indent,
+   then a real indent after only existing newline/semicolon layout. Do not skip
+-  header separators; `:;`, inline/braced/missing-indent shorthand and
++  header separators; a header-line `;` or `:;`, inline/braced/missing-indent shorthand and
+   property/index/call/literal/class-reference/parenthesized shorthand sources
+   are not added.
+ - Source lookup precedes binding local `it`, so `for it:` reads the outer
+@@ -1859,6 +1863,21 @@ for Task:
+     it.done = true
  ```
-@@ -4938,10 +5005,13 @@ c = b * 2
-   [NUC 112](nuc-0112.md) candidate adds a final `nodes` stage, which names
-   the nodes of a selection and, unlike NUC 11's operations, returns a list
-   rather than a selection, the [NUC 120](nuc-0120.md) candidate adds a
--  `union(other)` stage, which NUC 11 does not plan either, and the
-+  `union(other)` stage, which NUC 11 does not plan either, the
-   [NUC 121](nuc-0121.md) candidate adds a final `holds` stage, which gives
--  the values of a selection's steps and, like `nodes`, returns a list. Other
--  NUC 11 operations remain proposals, not dependen
-```
-
-**File**: `docs/examples.md` (modified, +32/-0)
-```diff
-@@ -4292,6 +4292,38 @@ big.passengers = 60
-   the method is called. See [NUC 126](nuc-0126.md) and the
-   [root contract](../nucleoid.spec.md#exit-controlled-repeat-until-loops).
  
-+## Origins and outcomes of reasoning selections
++- Named String sources keep the same scalar snapshot and local `it`.
++  The colon-bearing form remains accepted with identical behavior.
 +
-+**Origins and outcomes show where more nights enter a trip budget and the figures they end at**
-+
-+```nuc
-+nights = 4
-+flight = 300
-+hotel = nights * 120
-+meals = nights * 40
-+trip = flight + hotel + meals
-+daily = trip / nights
-+enters = nights |> affects |> origins
-+ends = nights |> affects |> outcomes
-+assert([enters.map(step -> step.node), ends.map(step -> step.node)], [["hotel", "meals"], ["daily"]])
-+taxis = nights * 15
-+assert(ends.map(step -> step.node), ["daily", "taxis"])
-+trip = flight + hotel + meals + taxis
-+nights = 6
-+[enters.map(step -> step.node), ends.map(step -> step.holds)]
-+# return: [["hotel","meals","taxis"],[225]]
++```
++text = "cab"
++letters = []
++for text
++    letters.push(it)
++assert(letters, ["c", "a", "b"])
++assert(letters.join(""), text)
 +```
 +
-+- `nights |> affects |> origins` keeps where another night enters the
-+  budget: the hotel and the meals, which the nights price directly. The
-+  daily cost reads the nights too, but it rests on the trip, so the change
-+  does not enter there.
-+- `nights |> affects |> outcomes` keeps the figures the change ends at: the
-+  daily cost, and the taxis until the trip adds them. The taxis join where
-+  the change enters, and six nights cost 225 a day. See
-+  [NUC 128](nuc-0128.md) and the
-+  [root contract](../nucleoid.spec.md#origins-and-outcomes-of-reasoning-selections).
++- Explicit `for item of SOURCE:`, `for item in SOURCE:` and two-name entry
++  loops retain their required colons and all accepted suite forms.
 +
- ## Reactive list flattening
+ - [NUC 72](nuc-0072.md) adds two-name loops over an object's entries:
+   `for key, value of source:` and `for key, value in source:`. A header is a
+   two-name header exactly when `for` is followed by a name, a comma, a name and
+```
+
+**File**: `docs/examples.md` (modified, +31/-2)
+```diff
+@@ -1866,12 +1866,16 @@ assert(second.scaled, 15)
+   Noniterable sources retain their existing errors, without auto-invocation.
+ - The [NUC 51 candidate](nuc-0051.md) also accepts String snapshots without
+   changing List filtering; see [string iteration](#string-iteration).
+-- Require the immediate colon followed by newline/indent and a real indent
+-  after only normal newline/semicolon layout; `:;` never qualifies. No
++- The [NUC 127 draft](nuc-0127.md) also permits `for Reading` before the
++  same genuine indented suite. Contextual Rust identifiers such as `while`,
++  `enum` and `model` qualify too; no keyword or token is added.
++- Require the identifier and optional colon followed by newline/indent and a real indent
++  after only normal newline/semicolon layout; a header-line `;` or `:;` never qualifies. No
+   inline/braced/missing-indent, parenthesized or expression-source shorthand
+   is added.
+ - Nested `it` shadowing/restoration, receivers, return propagation, body
+   control flow, graph dependencies, rollback and resource limits are unchanged.
++- Explicit single-name and two-name entry loops retain their required colon.
+ - Full grammar and exact diagnostics are in the authoritative
+   [implicit iterator loop section](../nucleoid.spec.md#implicit-iterator-indented-loops).
  
- **Flattening keeps the dirty tiles of every room counted**
+@@ -4410,6 +4414,31 @@ safe = every truck in Truck: not truck.overloaded
+   and makes the fleet safe. See [NUC 98](nuc-0098.md) and the
+   [root contract](../nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
+ 
++## Colon-free implicit iterator suites
++
++**Colon-free implicit iterators keep population walks one shot**
++
++```nuc
++class Counter(amount):
++    this.amount = amount
++first = Counter(2)
++second = Counter(3)
++total = 0
++for Counter
++    total += it.amount
++first.amount = 9
++Counter(4)
++assert(total, 5)
++total
++# return: 5
++```
++
++- The genuine indented suite runs exactly as `for Counter:` would.
++  Later instance updates or population growth do not rerun the completed
++  body, and the loop retains the accepted scopes and transaction behavior.
++- See [NUC 127](nuc-0127.md) and the
++  [root contract](../nucleoid.spec.md#implicit-iterator-indented-loops).
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
 ```
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -155,7 +155,7 @@ Created: 31-Jul-2026
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
- | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
--| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Draft |
-+| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
+@@ -69,7 +69,7 @@ Created: 31-Jul-2026
+ | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
+ | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
+ | [125](nuc-0125.md) | Stepped Slices | Accepted |
+-| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Draft |
++| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Accepted |
  
- ### Language compatibility
+ ### Runtime features
  
-@@ -311,7 +311,7 @@ Created: 31-Jul-2026
+@@ -310,7 +310,7 @@ Created: 31-Jul-2026
+ | [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
  | [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Accepted |
  | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Accepted |
- | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Draft |
--| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+-| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Draft |
++| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Accepted |
+ | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Draft |
  
- ## Copyright
 ```
 
-**File**: `docs/nuc-0128.md` (modified, +1221/-15)
+**File**: `docs/nuc-0127.md` (modified, +340/-7)
 ```diff
 @@ -4,7 +4,7 @@
- NUC: 128
- Title: Origins and Outcomes of Reasoning Selections
- Author: Can Mingir <canmingir@gmail.com>
+ NUC: 127
+ Title: Colon-Free Implicit Iterator Suites
+ Author: Copilot <223556219+Copilot@users.noreply.github.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Reasoning enhancement
+ Category: Syntax enhancement
  Created: 21-Nov-2026
-@@ -15,29 +15,38 @@ Requires: 48, 82, 83, 88, 106, 112, 120, 121
+@@ -15,8 +15,9 @@ Requires: 31, 49, 51
  
- - Adds two pipeline stages that keep the steps at the two ends of a
-   reasoning selection. `SELECTION |> origins` keeps the steps of
--  `SELECTION` that rest on no other step of it, and
--  `SELECTION |> outcomes` keeps the steps that no other step of it rests
-+  `SELECTION` that rest on no step of it, and
-+  `SELECTION |> outcomes` keeps the steps that no step of it rests
-   on. Both keep the steps they keep in their order and with their `node`,
-   `holds`, `rule`, `state` and `from` fields unchanged, and drop the
-   others.
- - So `price |> affects |> outcomes` selects where a change of the price
--  ends, the steps it reaches that no other step it reaches is computed
-+  ends, the steps it reaches that no step it reaches is computed
-   from, and `price |> affects |> origins` where the change enters.
-   `total |> why |> origins` selects what a total starts from, and
-   `model |> origins` and `model |> outcomes` select the model's starting
-   points and its final results.
- - A step rests on another when it depends on it, directly or through nodes
-   that need not be selected, along the edges that `why` and `path` follow,
--  through no reasoning observer. So `S |> origins` is the accepted
-+  through no reasoning observer, and a step on a cycle of fixed anchors
-+  rests on itself. So `S |> origins` is the accepted
-   `S |> except(S |> affects)`, and over a selection that `affects`, `why` or
-   `model` produced, `S |> outcomes` keeps the steps whose node no step's
-   `from` names.
- - Both are filters, as `stated` and `derived` are: the result is a
-   selection, so further stages apply, and the kept steps keep the direction
-   of the most recent walk and their distances.
--- At the accepted revision each pipeline with either stage raises the
--  parse-time `TypeError("origins is not an operation")` or
--  `TypeError("outcomes is not an operation")`. Only those programs change.
-+- At the accepted revision each program that holds either stage was a
-+  whole-program parse error, or an accepted program in which the parser
-+  skips the stage, such as a template interpolation whose trailing tokens
-+  are ignored. Most of the errors were the parse-time
-+  `TypeError("origins is not an operation")` or
-+  `TypeError("outcomes is not an operation")`; where the statement parser
-+  backtracks from an unpacking or object-destructuring pattern,
-+  `SyntaxError("Unexpected ','")` or `SyntaxError("Unexpected '='")` came
-+  first. Only programs that were parse errors change: the accepted programs
-+  keep their results, and so does the parse error of a position that admits
-+  no pipeline, such as a parameter default.
-   Both names stay ordinary everywhere else, as variables, functions,
-   properties or object keys, and a binding of either name shadows its
-   stage, as bindings shadow the other stages. No keyword, token or error
-@@ -54,9 +63,10 @@ Requires: 48, 82, 83, 88, 106, 112, 120, 121
- - The starts are spelled with the selection twice:
-   `starts = price |> affects |> except(price |> affects |> affects)` is 14
-   lexer tokens where `starts = price |> affects |> origins` is 7.
--- The ends have no spelling in stages. `affects` never selects its input
--  steps, so subtracting `S |> affects` finds the starts, but `why` keeps
--  them, so the same subtraction over `why` drops every step. Over an
-+- The ends have no spelling in stages. `affects` selects a step of `S`
-+  exactly when the step rests on a step of `S`, so subtracting
-+  `S |> affects` finds the starts, but `why` keeps every step of `S`, so
-+  the same subtraction over `why` drops every step. Over an
-   `affects` selection the ends are spelled with a filter and a quantifier
-   over each step's `from`:
-   `ends = (affects price).filter(s -> not any t in (affects price): s.node in t.from)`
-@@ -73,19 +83,1215 @@ Requires: 48, 82, 83, 88, 106, 112, 120, 121
+ - An implicit iterator loop may omit its colon before a genuine indented
+   suite: `for NAME` followed by its indented body has the same meaning as
+-  `for NAME:`. `NAME` remains exactly one ordinary identifier, and the
+-  loop binds the existing local iterator `it`.
++  `for NAME:`. `NAME` remains exactly one Rust `Identifier` token,
++  including accepted contextual-name spellings such as `while`, `enum`
++  and `model`, and the loop binds the existing local iterator `it`.
+ - Reuse the accepted loop, source expression and suite parsers, with the
+   existing non-consuming genuine-indentation guard. Preserve the syntax
+   tree, canonical rendering, source positions, one-shot snapshot semantics,
+@@ -43,19 +44,351 @@ Requires: 31, 49, 51
  
  ## Rationale
  
 -- Pending: the proposer completes this section.
-+- **Category and selection.** The cycle that allocated this Draft, in the
-+  pushed commit `23b93c48` on 21-Nov-2026, made one tool-backed uniform draw
-+  (`Get-Random -Minimum 0 -Maximum 5`) over the five categories that NUC 1's
-+  registry marks eligible for automatic selection, and drew index 3,
-+  Reasoning enhancement, with probability 1/5 and no redraw. Within it, the
-+  caller chose this bounded enhancement because the pipeline has stages
-+  that walk a selection (`why`, `affects`), filter it (`stated`, `derived`,
-+  `depth`, `path`, `diff`), combine it (`intersect`, `except`, `union`) and
-+  project it (`nodes`, `holds`), but none that picks out the steps at its
-+  two ends, and no NUC proposes one. NUC 11's unimplemented `why not`,
-+  `rules`, `conflicts
++- Use the accepted source and suite parsers and their non-consuming
++  real-indentation guard. Add no speculative parse, token, keyword, AST
++  variant, public API, dependency or runtime implementation.
++- Keep exactly one named source. Property, index, call, literal,
++  class-reference, parenthesized and wider expression shorthand remain
++  outside this proposal.
++- Keep explicit single-name and two-name loops on their existing
++  colon-required parser paths, including their pinned diagnostics.
++- Only genuine indentation supplies the optional delimiter. Inline,
++  braced, missing, unindented and header-line-semicolon bodies do not
++  qualify.
++- Preserve accepted contextual identifiers through the grammar's existing
++  `name`/`enumName` normalization. ANTLR's dedicated contextual token names
++  do not make those spellings reserved keywords in the Rust lexer.
++- This fresh revision-r4 ports the same bounded feature after Accepted
++  NUC 128 advanced the shared runtime and corpus before r3 could reach
++  primary. It is not an in-place repair or rebase of frozen r3. Preserve
++  every accepted NUC 126 `repeat:`/`until` and NUC 128 `origins`/`outcomes`
++  parser, AST, runtime, grammar, corpus and test behavior.
++- Retain the caller's original uniform draw, index 0 of the five live
++  eligible categories: Syntax enhancement, Runtime features, Utility
++  enhancement, Reasoning enhancement and Language compatibility. No
++  category is redrawn or reassigned.
+ 
+ ## Specification
+ 
+-- Pending: the proposer completes this section.
++- After `for`, qualify exactly one Rust `Identifier` followed immediately
++  by a colon and genuine indented layout, or by that layout directly.
++  Contextual names, including `while`, `enum`, `model`, `repeat` and
++  `until`, qualify in both spellings.
++- Genuine layout begins with `Newline` or `Indent` and reaches a real
++  `Indent` after only the accepted `Newline`/`Semicolon` layout. A
++  header-line semicolon, including `:;`, never qualifies. Comments,
++  blank lines, tabs and line endings keep their accepted layout rules.
++- Leave the source to `clause_expression()`. A qualified implicit loop
++  uses the accepted `clause_suite()`: a present colon selects unchanged
++  `suite()`, while omission selects that same `suite_body()`.
++- Construct the existing
++  `Stmt::For { variable: "it", iterable: Identifier(NAME), body }`.
++  Canonical rendering, graph keys, statement positions and source
++  evaluation before the local `it` binding are unchanged.
++- Classes supply their ordered population snapshots; lists retain
++  registered-instance filtering, order and duplicates; Strings retain
++  Unicode-scalar snapshots. Empty traversal, scopes, receiver restoration,
++  imperative writes, returns, transactions, rollback and resource bounds
++  are those of the accepted colon-bearing form.
++- Explicit `for item of SOURCE:` and `for item in SOURCE:` keep their
++  arbitrary accepted source expressions and colon-required suites.
++  Two-name entry loops keep their required colon, parser and diagnostics.
++- Native continuation and terminal indentation recognize exactly the
++  lexical header `For Identifier`. Explicit or wider headers gain no
++  colon-free opener; blank-line commit, EOF and recovery still invoke the
++  real parser and its genuine-body requirements.
++- The authoritative contract is
++  [implicit iterator indented loops](../nucleoid.spec.md#implicit-iterator-indented-loops).
++  Its three appended entries are
++  `Nucleoid omits colons from implicit instance iterator suites`,
++  `Nucleoid nests colon free implicit iterator scopes` and
++  `Nucleoid propagates returns and rollback through colon free implicit iterators`.
++- The reference, README and examples append the other three caller-owned
++  paired cases. Across all six, only qualifying implicit-header colons are
++  removed from the supplied accepted sources; all 14 cano
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +14/-1)
+**File**: `docs/nucleoid.g4` (modified, +7/-1)
 ```diff
-@@ -547,7 +547,9 @@ stage
-     | DERIVED
-     | DIFF
-     | NODES
--    | HOLDS                                               // Expr::Reason
-+    | HOLDS
-+    | ORIGINS
-+    | OUTCOMES                                            // Expr::Reason
-     | DEPTH LPAREN expression RPAREN                       // Expr::Depth
-     | PATH LPAREN expression RPAREN                        // Expr::Path
-     | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
-@@ -969,6 +971,8 @@ enumName
-     | UNION
-     | NODES
-     | HOLDS
-+    | ORIGINS
-+    | OUTCOMES
-     | MODEL
-     | FIRST
-     | LAST
-@@ -1062,6 +1066,8 @@ AS               : 'as';
- UNION            : 'union';
- NODES            : 'nodes';
- HOLDS            : 'holds';
-+ORIGINS          : 'origins';
-+OUTCOMES         : 'outcomes';
- MODEL            : 'model';
- FIRST            : 'first';
- LAST             : 'last';
-@@ -1271,6 +1277,13 @@ fragment REGEX_CHAR
-  *                             s's steps hold. It ends the pipeline as nodes
-  *                             does, and a binding named holds shadows it at
-  *                             run time.
-+ * s |> origins             -> Expr::Reason with Stage::Origins, the steps of s
-+ *                             that rest on no step of s, and
-+ *                             s |> outcomes -> Stage::Outcomes, the steps that
-+ *                             no step of s rests on; a step on a dependency
-+ *                             cycle rests on itself. Both keep a
-+ *                             selection, and a binding of either name
-+ *                             shadows its stage at run time.
-  * An object containing spread uses Expr::SpreadObject, with later entries
-  * winning; otherwise it uses Expr::ObjectLiteral. Numeric keys become text.
-  *
+@@ -292,9 +292,15 @@ directCondition
+     : clauseExpression COLON? indentedBlock elseClause?
+     ;
+ 
++// The implicit alternative requires exactly one Rust Identifier and a real
++// indented body, with or without its colon. Contextual spellings such as
++// WHILE, ENUM, MODEL, REPEAT and UNTIL normalize through name/enumName.
++// Only NEWLINE or INDENT may immediately follow that name or its colon;
++// a header-line ';', inline/braced body or wider source never qualifies.
++// Both explicit alternatives retain their colon-required suite.
+ forStmt
+     : FOR name COMMA name (OF | IN) clauseExpression suite  // Stmt::ForEntries
+-    | FOR name COLON indentedBlock                          // Stmt::For, item "it"
++    | FOR name COLON? indentedBlock                         // Stmt::For, item "it"
+     | FOR name (OF | IN) clauseExpression suite             // Stmt::For
+     ;
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2015,13 +1949,13 @@ further s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 128 Origins and Outcomes of Reasoning Selections
+## X. NUC 127 Colon-Free Implicit Iterator Suites
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d6d6ac4`: NUC 128 Origins and Outcomes of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbdb7e41`: NUC 127 Colon-Free Implicit Iterator Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -2029,45 +1963,46 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Origins and outcomes of reasoning selections
+- The [NUC 127 draft](docs/nuc-0127.md) also permits `for NAME` without its
+  colon before that same genuinely indented body. `NAME` is exactly one Rust
+  `Identifier`, including contextual names such as `while`, `enum` and `model`.
+- Require the immediate identifier and optional colon, then a newline or indent
+  and a real indent after only normal newline/semicolon layout. No header-line `;` or `:;`,
+  remain valid with their existing arbitrary expressions and colon-required suite forms.
+  Two-name entry loops also keep their colon.
+## Colon-free implicit iterator suites
 
-**Origins and outcomes show where a change of pressure enters and which alarms it ends at**
+**Named iterator suites use indentation without a colon**
 
 ```nuc
-pressure = 5
-flow = 3
-temperature = 70
-strain = pressure * flow
-leak = flow > 2 && pressure > 4
-overheat = temperature + strain > 80
-shutdown = pressure > 9 || overheat
-enters = pressure |> affects |> origins
-alarms = pressure |> affects |> outcomes
-assert(enters.map(step -> step.node), ["strain", "leak"])
-assert(alarms.map(step -> step.node), ["leak", "shutdown"])
-leak = flow > 2 && strain > 12
-panel = [leak, shutdown]
-assert([enters.map(step -> step.node), alarms.map(step -> step.node)], [["strain"], ["panel"]])
+class Parcel(weight):
+    this.weight = weight
+light = Parcel(4)
+heavy = Parcel(7)
+total = 0
+for Parcel
+    total += it.weight
+assert(total, 11)
 ```
 
-- [NUC 128](docs/nuc-0128.md) adds the reasoning stages `|> origins` and
-  `|> outcomes`, which keep the two ends of a selection.
-  `pressure |> affects |> origins` keeps where a change of the pressure
-  enters the model: the strain and the leak check, which read it and rest
-  on nothing else it moves. The shutdown reads the pressure too, but it
-  also rests on the overheat, which the pressure moves through the strain.
-- `pressure |> affects |> outcomes` keeps where the change ends: the leak
-  check and the shutdown, whi
+- `for Parcel` uses the same one-shot population snapshot, local `it` and
+  imperative suite as `for Parcel:`. The optional colon never replaces the
+  accepted spelling or broadens the source expression.
+- See [NUC 127](docs/nuc-0127.md) and the
+  [root contract](nucleoid.spec.md#implicit-iterator-indented-loops).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Require the immediate identifier/colon header, then a newline or indent and
+  a real indent after only normal newline/semicolon layout. No `:;`,
+  remain valid with their existing arbitrary expressions and suite forms.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d6d6ac4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbdb7e41` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

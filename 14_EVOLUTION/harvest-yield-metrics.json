@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T01:32:23.543Z",
-  "total_cycles_completed": 11379,
-  "total_learnings_persisted": 11379,
-  "total_rules_promoted": 10686,
+  "last_updated": "2026-11-22T01:44:08.862Z",
+  "total_cycles_completed": 11382,
+  "total_learnings_persisted": 11382,
+  "total_rules_promoted": 10687,
   "history": [
-    {
-      "timestamp": "2026-11-21T06:28:05.966Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T06:42:14.947Z",
-      "repository": "Folkbench/folkbench",
-      "learningId": "learn-github-folkbench-folkbench",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T06:45:20.311Z",
-      "repository": "lingyired/status-trio",
-      "learningId": "learn-github-lingyired-status-trio",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T07:05:13.154Z",
       "repository": "jithin-sabu/purge-app",
@@ -1403,6 +1382,27 @@
       "repository": "embassy-rs/embassy",
       "learningId": "learn-github-embassy-rs-embassy",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:43:56.878Z",
+      "repository": "microsoft/Mage-VL-Cowork",
+      "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:44:02.061Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:44:08.862Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

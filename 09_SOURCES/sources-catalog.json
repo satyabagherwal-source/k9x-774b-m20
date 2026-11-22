@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5195a171",
+    "sourceVersion": "fbdb7e41",
     "license": "Apache-2.0",
-    "contentHash": "c5eb54ed89b105037b0f540a5a3895075d68d9a1eb159c317cfb15f1360cef40",
-    "lastHarvestedAt": "2026-11-22T00:54:01.726Z",
+    "contentHash": "22284158552a865e79073f4e5c35c24313d631f807c7bcbb858f7c8ebe201356",
+    "lastHarvestedAt": "2026-11-22T01:44:08.829Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "778697dd",
+    "sourceVersion": "c0f594ca",
     "license": "Apache-2.0",
-    "contentHash": "b026fe5167748820234c9c5ce1cba1bd912fa8df3705d1a27f315b567ce02a16",
-    "lastHarvestedAt": "2026-11-20T22:41:36.527Z",
+    "contentHash": "2e27572ba134b7b72d066eeae291fad2024ccdcc0fc52c2d1aebec22fed99bbb",
+    "lastHarvestedAt": "2026-11-22T01:44:02.056Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -11855,8 +11855,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Mage-VL-Cowork",
     "sourceVersion": "hf-microsoft-mage-vl-cowork",
     "license": "Open-Source",
-    "contentHash": "ea548b8587b790f0bdfa397e7706e4e759c8cffa4a46cb04540bc4c5ba976508",
-    "lastHarvestedAt": "2026-11-17T03:34:08.366Z",
+    "contentHash": "3529f62cfbc060b8aaec6ac1b7302ec7cb04a5f1d3e08e576a33a65ac3172091",
+    "lastHarvestedAt": "2026-11-22T01:43:56.873Z",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork"
   },
   "hf-qwen-qwen3-embedding-0.6b": {
