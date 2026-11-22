@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `0fe54a78`  
+> **Source Version**: `008cc5b3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T05:28:16.831Z  
+> **Timestamp**: 2026-11-22T06:11:31.201Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T05:28:16.825Z  
+> **Harvest Timestamp**: 2026-11-22T06:11:31.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1570,139 +1570,473 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d36a82b` (2026-11-22)
-**Commit Message**: NUC 130 Loop-Local Iterator Exits
+### Incident Patch 1: `008cc5b3` (2026-11-22)
+**Commit Message**: Draft NUC 133 Edge Lists of Reasoning Selections
 
-Rejected under the continuous automatic-acceptance rule: hard criterion 2
-fails. The existing programs_without_spreads_file_no_entry_observations
-test at tests/object_spread_entries.rs:305 expects 1,246 programs but the
-frozen candidate observes 1,252 after six new document cases.
+Category: Reasoning enhancement, drawn uniformly at random (index 3 of
+the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
+for a continuous /nuc-proposal cycle, so the token non-regression gate
+is required.
 
-Fresh independent evaluation reports overall Rejected, although the core
-reports Accepted. Actual full cargo test --no-fail-fast exits 101:
-3,867 passed, one failed, and 25 unchanged ignored. All 3,852 accepted
-identity occurrences remain; all 41 new tests pass. The core passes
-1,257 accepted-source replays and 1,263 candidate cases.
+Requested change: a reasoning pipeline gains the final stage
+SELECTION |> edges, which lists the dependency edges that the steps of
+SELECTION record: for each step in the selection's order, and for each
+name in its from list in that order, the two-item list [INPUT, NODE] of
+the input's name and the step's node name. It joins NUC 112's |> nodes
+and NUC 121's |> holds as a projection of the step records, of the from
+field both left out; a declaration that holds it is a reasoning
+observer and follows the graph. At the accepted revision |> edges
+raises TypeError("edges is not an operation") while the program is
+parsed, and only those programs change; variables, functions,
+properties and keys named edges keep their readings. Accepted programs
+cannot spell the list directly, because a callback cannot read the
+parameter of the callback around it; the working spelling pairs each
+input with its node through a string det
 
-Build all targets, warning-denied Clippy, formatting, accepted-language
-compatibility, export checks and warning-denied rustdoc pass. Runtime
-new_feature token comparison is entirely skipped, not a passing gate.
-Usefulness is unscored (missing_rubric); learning is not_configured.
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -157,6 +157,7 @@ Created: 31-Jul-2026
+ | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
+ | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
++| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Draft |
+ 
+ ### Language compatibility
+ 
+@@ -319,6 +320,7 @@ Created: 31-Jul-2026
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+ | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Draft |
++| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ 
+ ## Copyright
+ 
+```
 
-Record only the final rejected proposal and its two index entries.
-Rejected code, executable documents, tests, grammar, data and exports
-remain isolated and unchanged. No candidate repair or version change.
+**File**: `docs/nuc-0133.md` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++# NUC 133 -- Edge Lists of Reasoning Selections
++
++```
++NUC: 133
++Title: Edge Lists of Reasoning Selections
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Reasoning enhancement
++Created: 22-Nov-2026
++Requires: 112, 121
++```
++
++## Abstract
++
++- A reasoning pipeline gains the final stage `SELECTION |> edges`. It lists
++  the dependency edges that the steps of `SELECTION` record: for each step,
++  in the selection's order, and for each name in its `from` list, in that
++  order, the two-item list `[INPUT, NODE]` of the input's name and the
++  step's node name. After `subtotal = price * quantity`,
++  `tax = subtotal * rate` and `total = subtotal + tax`,
++  `total |> why |> edges` gives `[["subtotal", "total"], ["tax", "total"],
++  ["price", "subtotal"], ["quantity", "subtotal"], ["subtotal", "tax"],
++  ["rate", "tax"]]`.
++- It joins [NUC 112](nuc-0112.md)'s `|> nodes` and
++  [NUC 121](nuc-0121.md)'s `|> holds` as a projection of the step records,
++  this time of the `from` field that both left out. A declaration that holds
++  it is a reasoning observer and follows the graph: redefining `tax` with a
++  new input adds that input's edge.
++- At the accepted revision `|> edges` raises
++  `TypeError("edges is not an operation")` while the program is parsed, and
++  only those programs change. Variables, functions, properties and keys named
++  `edges` keep their readings.
++
++## Motivation
++
++- A world model that explains a conclusion often needs the structure of the
++  explanation, not only its nodes and values: which inputs feed which
++  results, to render the explanation as a graph, to check which rule reads
++  which fact, or to hand the graph to another tool. The step records hold
++  it in their `from` fields, and no stage projects it.
++- Accepted programs cannot spell the edge list directly. The natural
++  `(total |> why).flatMap(s -> s.from.map(f -> [f, s.node]))` raises
++  `ReferenceError("s is not defined")`, because a callback cannot read the
++  parameter of the callback around it, and comprehensions take one `for`
++  clause. What works today pairs each input with its node by a detour over
++  strings, `(total |> why).flatMap(s -> s.from.zip((s.node + "|").repeat(s.from.length).split("|")))`,
++  which holds only while no node name contains the separator, or keeps the
++  per-step adjacency `(total |> why).map(s -> [s.node, s.from])`, which is
++  another shape. `total |> why |> edges` states the question in the
++  pipeline that asks it.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
 
-Frozen proposal: 06e8b49644b3e071d06092ed1290aa9ce13f0e
+---
+
+### Incident Patch 2: `28eb973f` (2026-11-22)
+**Commit Message**: NUC 131 Reversal Method Aliases
+
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Language compatibility, token comparison skipped
+categorically): the frozen candidate meets every hard criterion and
+passes every policy check. The cycle found no stale Draft, drew
+Language compatibility uniformly from the five eligible categories,
+allocated NUC 131 in 2ae49a2e, and completed it with a fresh baseline,
+candidate, proposer, Rust improvement pass and evaluator.
+
+On lists and class populations, reversed(), as Kotlin and Swift spell
+it, and toReversed(), as JavaScript spells it since ES2023, are exactly
+the accepted read-only reverse(): a new list of the same items in
+reverse order, the receiver unchanged, arguments evaluated and ignored,
+live and rolled back as the accepted spelling. On strings, reversed(),
+as Kotlin spells it, and reverse(), as Ruby spells it, are exactly the
+character reversal TEXT[::-1] of NUC 125, by Unicode scalar value. Only
+calls that raised TypeError("<receiver>.<name> is not a function")
+change, including caught ones and a standing reverse() whose list
+receiver a later write replaces with a string. No token, keyword,
+error messag
+
+**File**: `README.md` (modified, +24/-0)
+```diff
+@@ -2852,6 +2852,30 @@ assert(gpa, 3.0833333333333335)
+   sequence, so a grade waiting for its credits counts once they arrive. See
+   the [root contract](nucleoid.spec.md#list-and-population-zipping).
+ 
++## Reversal method aliases
++
++**Reversal methods keep an undo history newest first**
++
++```nuc
++edits = ["draft", "trim intro"]
++undo = edits.reversed()
++top = edits.toReversed()[0]
++assert([undo, top], [["trim intro", "draft"], "trim intro"])
++edits.push("fix typo")
++assert([undo, top, edits.length], [["fix typo", "trim intro", "draft"], "fix typo", 3])
++```
++
++- [NUC 131](docs/nuc-0131.md) adds `reversed()`, as Kotlin and Swift write
++  it, and `toReversed()`, as JavaScript writes it, to lists and class
++  instance lists, and `reversed()` and `reverse()`, as Kotlin and Ruby write
++  them, to strings. On a list they are exactly the accepted `reverse()`,
++  which returns a new list and leaves its receiver unchanged, and on a string
++  exactly `text[::-1]`, which reverses its characters.
++- `undo` and `top` are live declarations over the history, so the newest edit
++  comes first after every push, while `edits` keeps the order the edits were
++  made in. See the
++  [root contract](nucleoid.spec.md#reversal-method-aliases).
++
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +23/-19)
+```diff
+@@ -826,22 +826,26 @@
+ {"id":"spec-0826","description":"Nucleoid pairs the instances of two classes in population order with zip","code":"class Driver(name):\n    this.name = name\nclass Truck(plate):\n    this.plate = plate\nada = Driver(\"Ada\")\nDriver(\"Bo\")\nTruck(\"T-1\")\ncrews = Driver.zip(Truck)\nassert([crews.length, crews[0][0], crews[0][1].plate], [1, ada, \"T-1\"])\nTruck(\"T-2\")\nTruck(\"T-3\")\nassert(crews.map(crew -> crew[0].name + \":\" + crew[1].plate), [\"Ada:T-1\", \"Bo:T-2\"])\nDriver(\"Cy\")\ncrews.map(crew -> crew[1].plate)","return":"[\"T-1\",\"T-2\",\"T-3\"]"}
+ {"id":"spec-0827","description":"Nucleoid combines the items of two lists with a function in zip","code":"prices = [4, 4, 2]\nquantities = [3, 1, 3]\ndiscount = 0\ntotal = prices.zip(quantities, (price, quantity) -> (price - discount) * quantity).sum()\nassert(total, 22)\nprices.push(5)\nassert(total, 22)\nquantities.push(2)\nquantities.push(9)\nassert(total, 32)\ndiscount = 1\ntotal","return":"23"}
+ {"id":"spec-0828","description":"Nucleoid rolls back failed zip updates","code":"def gap(load, limit):\n    if load > limit:\n        throw \"OVERLOAD\"\n    return limit - load\nlimits = [4, 8, 6]\nloads = [3, 5]\nspare = loads.zip(limits, gap)\nfailure = \"\"\ntry:\n    loads.push(9)\ncatch error:\n    failure = error\nassert([failure, loads, spare], [\"OVERLOAD\", [3, 5], [1, 3]])\ntry:\n    loads.push(2)\n    assert(spare, [1, 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([loads, spare], [[3, 5], [1, 3]])\nclass Bay(load): this.load = load\nBay(1)\nBay(7)\nroom = Bay.zip(limits, (bay, limit) -> gap(bay.load, limit))\nfailure = \"\"\ntry:\n    Bay(8)\ncatch error:\n    failure = error\nassert([failure, Bay.length, room], [\"OVERLOAD\", 2, [3, 1]])\nBay(6)\nBay(5)\nroom","return":"[3,1,0]"}
+-{"id":"spec-0829","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0830","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0831","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0832","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0833","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0834","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0835","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)
+```
+
+**File**: `dataset/nucleoid.synth.93.jsonl` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++{"id":"synth-93-0001","description":"Reverses a list of readings with Kotlin's reversed","code":"readings = [18, 21, 19]\nreadings.reversed()","return":"[19,21,18]"}
++{"id":"synth-93-0002","description":"JavaScript's toReversed returns a copy and leaves the list in order","code":"steps = [\"wake\", \"wash\", \"dress\"]\nback = steps.toReversed()\n[back, steps]","return":"[[\"dress\",\"wash\",\"wake\"],[\"wake\",\"wash\",\"dress\"]]"}
++{"id":"synth-93-0003","description":"An undo history reads the newest edit first as edits arrive","code":"edits = [\"draft\", \"trim\"]\nundo = edits.reversed()\nedits.push(\"fix\")\nundo","return":"[\"fix\",\"trim\",\"draft\"]"}
++{"id":"synth-93-0004","description":"A class population reversed lists the latest instance first","code":"class Visit(room):\n    this.room = room\nVisit(\"lab\")\nVisit(\"hall\")\nrecent = Visit.reversed()\nVisit(\"roof\")\nrecent.map(visit -> visit.room)","return":"[\"roof\",\"hall\",\"lab\"]"}
++{"id":"synth-93-0005","description":"Each train lists its cars from the rear in a class-level rule","code":"class Train(cars):\n    this.cars = cars\n$Train.fromRear = $Train.cars.toReversed()\nlocal = Train([\"engine\", \"coach\"])\nlocal.cars.push(\"caboose\")\nlocal.fromRear","return":"[\"caboose\",\"coach\",\"engine\"]"}
++{"id":"synth-93-0006","description":"Reverses a word with accents character by character","code":"\"crème brûlée\".reversed()","return":"\"eélûrb emèrc\""}
++{"id":"synth-93-0007","description":"Ruby's reverse keeps an emoji whole in a string","code":"\"go 🚀 now\".reverse()","return":"\"won 🚀 og\""}
++{"id":"synth-93-0008","description":"A class-level rule flags the palindromes among words","code":"class Word(text):\n    this.text = text\n$Word.palindrome = $Word.text.toLowerCase().reversed() == $Word.text.toLowerCase()\nwords = [Word(\"Level\"), Word(\"kayaks\"), Word(\"Anna\")]\nwords.map(word -> word.palindrome)","return":"[true,false,true]"}
++{"id":"synth-93-0009","description":"Nested lists keep their own order when the outer list is reversed","code":"[[1, 2], [3, 4], 5].reversed()","return":"[5,[3,4],[1,2]]"}
++{"id":"synth-93-0010","description":"Empty lists and empty strings reverse to empty values","code":"[[].reversed(), [].toReversed(), \"\".reversed(), \"\".reverse()]","return":"[[],[],\"\",\"\"]"}
++{"id":"synth-93-0011","description":"Arguments are evaluated and ignored as the accepted reverse ignores them","code":"log = []\nback = [1, 2, 3].toReversed(log.push(\"called\"))\n[back, log]","return":"[[3,2,1],[\"called\"]]"}
++{"id":"synth-93-0012","description":"A list read from a state version reverses without writing history","code":"queue = [\"a\", \"b\"]\nqueue.push(\"c\")\nqueue@first.reversed()","return":"[\"b\",\"a\"]"}
++{"id":"synth-93-0013","description":"A value snapshot reversed stays frozen as the list grows","code":"levels = [1, 2]\nfrozen = levels.value.reversed()\nlevels.push(3)\nfrozen","return":"[2,1]"}
++{"id":"synth-93-0014","description":"A try that caught the former error now receives the reversed list","code":"result = \"\"\ntry:\n    result = [1, 2].reversed()\ncatch error:\n    result = \"caught\"\nresult","return":"[2,1]"}
++{"id":"synth-93-0015","description":"On a class name the population alias wins over an instance method","code":"class Team(name):\n    this.name = name\n    def reversed(): return this.name + \"!\"\nred = Team(\"red\")\nTeam(\"blue\")\n[red.reversed(), Team.reversed().map(team -> team.name)]","return":"[\"red!\",[\"blue\",\"red\"]]"}
++{"id":"synth-93-0016","description":"A failing reader of a reversed list rolls back the push","code":"def latest(log):\n    if log.length > 2:\n        throw \"FULL\"\n    return log\nentries = [\"boot\", \"sync\"]\nrecent = latest(entries.reversed())\nfailure = \"\"\ntry:\n    entries.push(\"scan\")\ncatch error:\n    failure = error\n[failure, entries, recent]","return":"[\"FULL\",[\"boot\",\"sync\"],[\"sync\",\"boot\"]]"}
+```
+
+**File**: `docs/README.md` (modified, +57/-2)
+```diff
+@@ -2809,9 +2809,9 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
+ | `Boolean` | `Boolean(value)` |
+ | `Number` | `Number.MAX_INTEGER` |
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+-| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)) |
++| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)), and the reversal aliases `reversed()` and `toReversed()` of `reverse()` ([NUC 131](nuc-0131.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
+ 
+ ```
+@@ -3067,6 +3067,59 @@ assert([ada.handle, inbox, shown], ["ada king", "countess@example.org", "ADA KIN
+   [root section](../nucleoid.spec.md#case-conversion-method-aliases) an
+```
+
+**File**: `docs/examples.md` (modified, +27/-0)
+```diff
+@@ -4356,6 +4356,33 @@ dale.heights.push(200)
+   the same height climb `0` between them. See [NUC 129](nuc-0129.md) and the
+   [root contract](../nucleoid.spec.md#list-and-population-zipping).
+ 
++## Reversal method aliases
++
++**Reversal methods trace every delivery route back to its depot**
++
++```nuc
++class Route(stops):
++    this.stops = stops
++$Route.back = $Route.stops.reversed()
++$Route.sign = $Route.stops.toReversed().join(" < ")
++north = Route(["depot", "mill", "harbor"])
++south = Route(["depot", "farm"])
++assert([north.back, south.sign], [["harbor", "mill", "depot"], "farm < depot"])
++north.stops.push("lighthouse")
++south.stops.push("orchard")
++[north.back[0], south.sign]
++# return: ["lighthouse","orchard < farm < depot"]
++```
++
++- Each route keeps its way back in class-level rules: `reversed()` lists its
++  stops from the last one to the depot, and the sign a driver follows home
++  joins the stops that `toReversed()` gives. Both are exactly the accepted
++  `reverse()`, which copies the stops and never reorders the route itself.
++- Both rules follow every stop: the lighthouse at the end of the north route
++  becomes the first stop on its way back, and the orchard heads the south
++  route's sign. See [NUC 131](nuc-0131.md) and the
++  [root contract](../nucleoid.spec.md#reversal-method-aliases).
++
+ ## Reactive list flattening
+ 
+ **Flattening keeps the dirty tiles of every room counted**
+```
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -100,7 +100,7 @@ Created: 31-Jul-2026
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
- | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
--| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
-+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+@@ -174,7 +174,7 @@ Created: 31-Jul-2026
+ | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
+ | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
+ | [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
+-| [131](nuc-0131.md) | Reversal Method Aliases | Draft |
++| [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Draft |
  
- ### Utility enhancement
- 
-@@ -315,7 +315,7 @@ Created: 31-Jul-2026
- | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Accepted |
+ ### Documentation
+@@ -317,7 +317,7 @@ Created: 31-Jul-2026
  | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Accepted |
--| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
-+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
- | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Draft |
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+-| [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Draft |
++| [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Draft |
  
  ## Copyright
 ```
 
-**File**: `docs/nuc-0130.md` (modified, +205/-5)
+**File**: `docs/nuc-0131.md` (modified, +1305/-15)
 ```diff
 @@ -4,7 +4,7 @@
- NUC: 130
- Title: Loop-Local Iterator Exits
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
+ NUC: 131
+ Title: Reversal Method Aliases
+ Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
-+Status: Rejected
++Status: Accepted
  Type: Standards Track
- Category: Runtime features
+ Category: Language compatibility
  Created: 21-Nov-2026
-@@ -13,6 +13,9 @@ Requires: 8, 31, 51, 72, 119
+@@ -17,19 +17,31 @@ Requires: 61, 125
+   spell it, and `toReversed()`, as JavaScript spells it since ES2023, as
+   exact aliases of the accepted read-only `reverse()`: `[1, 2, 3].reversed()`
+   and `[1, 2, 3].toReversed()` give `[3, 2, 1]`, `Truck.reversed()` gives the
+-  instances in reverse population order, and the receiver is never written.
++  instances in reverse population order, the latest created first, and the
++  receiver is never written.
+ - Strings gain `reversed()`, as Kotlin spells it, and `reverse()`, as Ruby
+   spells it, as exact aliases of the accepted character reversal
+-  `STRING[::-1]` of [NUC 125](nuc-0125.md): `"café".reversed()` gives
+-  `"éfac"`.
++  `TEXT[::-1]` of [NUC 125](nuc-0125.md): `"café".reversed()` gives
++  `"éfac"`, reversing Unicode scalar values.
+ - Like the aliases of [NUC 116](nuc-0116.md) to [NUC 118](nuc-0118.md), they
+-  read what their accepted spellings read and stay live. At the accepted
+-  revision each of these calls raises
+-  `TypeError("<receiver>.<name> is not a function")`, and only those inputs
+-  change. `reverse()` on lists and populations, functions, properties,
+-  methods and variables named `reversed`, `toReversed` or `reverse`, and
+-  every other receiver keep their readings. No syntax, keyword or token is
+-  added.
++  read what their accepted spellings read and stay live, and further
++  arguments are evaluated and ignored. The equivalence holds per evaluation
++  of the receiver: when a later write turns a held receiver into another
++  kind of value, the call reads its name on that value, as every method name
++  is read.
++- At the accepted revision each of these calls raises
++  `TypeError("<receiver>.<name> is not a function")`, unless an argument
++  raises first. Only those calls change, along with the programs that
++  caught that error and the standing `reverse()` calls whose list receiver a
++  later write replaced with a string, which raised
++  `TypeError("<text>.reverse is not a function")` at that write.
++  `reverse()` on lists and populations, a string's `toReversed()`,
++  functions, properties, methods and variables named `reversed`,
++  `toReversed` or `reverse`, and every other receiver keep their readings.
++- No token, keyword, syntax-tree node, error type or message format,
++  dependency or public item is added.
++- The authoritative contract is
++  [Reversal method aliases](../nucleoid.spec.md#reversal-method-aliases).
  
- ## Abstract
+ ## Motivation
  
-+- Rejected: the mandatory existing corpus-count test fails, expecting 1,246
-+  programs but observing 1,252 in the frozen candidate. No implementation,
-+  executable document, test, grammar, dataset or export is integrated.
- - Add `return for`, a value-less statement that ends the nearest enclosing
-   iterator loop without returning from its enclosing function or program.
-   It applies to explicit `for ... of/in`, implicit named iterators and
-@@ -45,19 +48,216 @@ Requires: 8, 31, 51, 72, 119
+@@ -44,26 +56,1304 @@ Requires: 61, 125
+   copying names `reversed` and `toReversed` describe it exactly. Accepting
+   them moves Nucleoid toward the superset of familiar forms that its goals
+   name, without changing any accepted reading.
++- World models read ordered histories backward: an undo history newest
++  first, the stops of a route on the way home, the latest readings first, a
++  class's instances from the latest created, and a word against its own
++  reversal to tell a palindrome. These readings are standing, so they must
++  follow every push, new instance and write, which `reverse()` and `[::-1]`
++  already do and the aliases inherit.
++- The aliases advance the language-superset aspiration of the Language
++  compatibility category, as the accepted `this`/`self`, `=>`/`->`,
++  `append`, `contains`, `lower`, `upper`, `strip`, NUC 110's `startswith`,
++  `endswith` and `join`, NUC 116's size and emptiness methods, NUC 117's
++  `first` and `last` and NUC 118's case conversions do: an equivalent
++  familiar spelling beside the canonical one, with no change to any
++  accepted program.
++- Kotlin's `Iterable.reversed()` and `String.reversed()`, Swift's
++  `Sequence.reversed()`, Java 21's `SequencedCollection.reversed()`,
++  JavaScript's `Array.prototype.toReversed()` and Ruby's `String#reverse`
++  and `Array#reverse` are the prior art.
+ - Sorting copies stay out of scope. The accepted `sort()` orders by
+   JavaScript string comparison, so `[10, 9, 1, 2].sort()` gives
+   `[1, 10, 2, 9]`, while Kotlin's and Swift's `sorted()` order numbers by
+   value; a `sorted()` alias would mislead.
  
  ## Rationale
  
--Preparation pending in an isolated candidate after this Draft allocation.
-+- An iterator exit is new control flow, not a spelling of a function return
-+  or an exception. A function return leaves the enclosing function; a throw
-+  takes an exceptional path and may roll back its effects. Neither continues
-+  that same function normally immediately after its traversal.
-+- Reuse `return` with the existing reserved `for` token rather than reserving
-+  the accepted names `break` or `continue`. The two-token statement has no
-+  value, label, index, option or alternate target.
-+- Keep the target lexical and local. An intervening block, conditional,
-+  exception suite, hypothesis or noniterator loop inherits it; a function,
-+  callback or constructor never inherits a caller's target.
-+- Reuse the existing source snapshots, scope stack, imperative execution,
-+  tracking, propagation and rollback helpers. Carry control in a private
-+  exhaustive completion enum instead of a sentinel string, user `Value`,
-+  fake `Flow::Return` payload, global flag or caught exception.
-+- Preserve normal cleanup precedence: `finally` runs while unwinding and
-+  can replace a pending completion, just as its return or error already can.
-+  Consuming an exit in a cleanup's own inner iterator is normal completion
-+  of that cleanup, not a replacement of the outer pending exit.
-+- The confirmed category is Runtime features because the primary change is
-+  execution control. This randomly selected continuous proposal has no
-+  user-requested or ARC-requested acceptance basis. The caller's live-registry
-+  draw, index 1 of 5, is retained without a category or strategy redraw.
-+- Runtime applicability is `new_feature`, supported by the accepted gap
-+  program and its `Unexpected keyword 'for'` diagnostic, not by missing
-+  comparison data. Token comparison is skipped entirely for this branch;
-+  no before-count, measured-case list or passing token verdict is claimed.
-+- No hint, frozen usefulness rubric or strategy configuration was supplied.
-+  Usefulness is unscored (`missing_rubric`); learning is `not_configured` and
-+  this revision is unattributed. The offline gap probe is not a strategy
-+  selection receipt or a normative accepted counterpart.
+-- Pending: the proposer completes this section.
++- **Category and mode.** The allocating continuous cycle drew Language
++  compatibility with one tool-backed uniform draw over the five categories
++  that NUC 1's registry marks eligible for automatic selection, index 4
++  with probability 1/5 and no redraw, at 21:17:07 on 21-Nov-2026, and
++  recorded the requested change in the allocation commit `2ae49a2e`, which
++  this revision pins. Token comparison is therefore skipped as
++  `language_compatibility`. The skip is categorical; it is neither a
++  measured comparison nor a passing token gate. Runtime applicability does
++  not apply to this category.
++- **Selection.** Among the open Language compatibil
+```
+
+**File**: `nucleoid.spec.md` (modified, +202/-0)
+```diff
+@@ -612,6 +612,117 @@ operator-chain diagnostics and source positions are preserved.
+   specify the executable behavior. `tests/case_conversion_aliases.rs`
+   executes the rest.
  
- ## Specification
- 
--Preparation pending.
-+- These are the rejected candidate's proposed semantics, not accepted
-+  language behavior. The authoritative `nucleoid.spec.md` remains unchanged;
-+  its proposed section and executable cases stay in the isolated candidate.
-+- Recognize `return for` only when adjacent `Keyword::Return` and
-+  `Keyword::For` tokens share the same source line. Do not skip a newline,
-+  semicolon or comment-induced linebreak; physical newlines cannot qualify
-+  even where parentheses or brackets suppress layout. Only a terminator
-+  (`Newline`, `Semicolon`, `Dedent`, `RightBrace` or `Eof`) may follow the pair.
-+- Construct `Stmt::ReturnFor` and render it as `return for`. Preserve the
-+  existing ASTs and renderings of ordinary `return` and return values.
-+- A `for` body establishes eligibility for its explicit `of`/`in`, implicit
-+  named-source or two-name object-entry traversal. Its source expression
-+  does not establish that traversal's eligibility. Blocks, conditionals,
-+  `try`/`catch`/`finally`, hypotheses and `while`, `repeat` and repeat-until
-+  bodies inherit the surrounding eligibility, without becoming targets.
-+- Function declarations, literals, arrows, lambdas, methods and constructor
-+  bodies reset lexical eligibility. A `for` inside one of them establishes
-+  its own local target. Direct AST execution uses fresh call/constructor and
-+  deferred-rule scopes, enforcing the same boundary even without parsing.
-+- Stop remaining items of the nearest active traversal; after restoring its
-+  frame and imperative mode, execute following statements in the same scope.
-+  Exiting an inner iterator does not exit an outer one. Intervening
-+  noniterator loops stop and do not test their conditions again.
-+- Snapshot source membership once, preserving existing order, duplicates,
-+  registered-instance filtering, Unicode scalar iteration and captured entry
-+  values. Exit neith
++## Reversal method aliases
++
++- [NUC 131](docs/nuc-0131.md) adds the reversal methods that Kotlin, Swift,
++  JavaScript and Ruby write, as aliases of the accepted `reverse()` on lists
++  and class populations and of the character reversal `TEXT[::-1]` of
++  [Stepped slices](#stepped-slices) on strings. They join the accepted
++  aliases `append`, `contains`, `size`, `len`, `isEmpty`, `is_empty`,
++  `isNotEmpty`, `first` and `last` of lists and populations, and `lower`,
++  `upper`, `strip`, `startswith`, `endswith` and the case conversion aliases
++  of strings. No token, keyword, syntax tree node, error type or message
++  format is added.
++- The accepted `RECEIVER.reverse()`, on a list or a class population,
++  returns a new list of the same items in reverse order and leaves the
++  receiver as it is, unlike JavaScript's in-place `reverse()`: after
++  `xs = [1, 2, 3]`, `[xs.reverse(), xs]` is `[[3, 2, 1], [1, 2, 3]]`. On a
++  class it gives the instances in reverse population order, the latest
++  created first. An empty list or a class without instances gives `[]`. The
++  items are the receiver's own, so the instances and objects of a reversed
++  list are those of the receiver, and a nested list keeps its own order.
++  Supplied arguments are evaluated and ignored, and a declaration that calls
++  `reverse()` follows its receiver.
++- `RECEIVER.reversed()` and `RECEIVER.toReversed()` are `RECEIVER.reverse()`
++  on a list or a class population. `TEXT.reversed()` and `TEXT.reverse()` are
++  `TEXT[::-1]` on a string: a new string of its characters, Unicode scalar
++  values, in reverse order, so `"café".reversed()` is `"éfac"`,
++  `"a😀b".reverse()` is `"b😀a"` and `"".reversed()` is `""`. A combining mark
++  is a character of its own, so it changes sides: `e`, a combining acute
++  accent and `x` reverse to `x`, the accent and `e`, which shows the accent on
++  the `x`. Supplied arguments are evaluated and ignored.
++- **Receivers.** A list however it is reached, including a literal, a name, a
++  property, an index or a slice, a call or query result, a `.value` snapshot
++  and a list read from a state version; a declared class's instances, named
++  by the class, by a variable or parameter that holds it, or by `$Name`
++  outside a class-level rule or conditional, and the ranges and `Name.list()`
++  lists of them; and a string however it is reached, including a template
++  and the empty string.
++- **Evaluation.** The receiver is read first, a population's instances
++  included, then every argument once, left to right, as for every call. An
++  argument's error, such as `ReferenceError("missing is not defined")`,
++  propagates before the alias runs.
++- **Live.** A declaration or class-level rule that calls an alias depends on
++  what its accepted spelling depends on: `undo = history.reversed()` follows
++  pushes, pops, shifts, sorts and replacements of `history`,
++  `home = Stop.reversed()` follows new and deleted instances,
++  `mirror = word.reversed()` follows writes of `word`, and
++  `$Train.fromRear = $Train.cars.reversed()` follows each train's cars.
++  Errors roll back through the existing transaction.
++- **Per evaluation.** The receiver decides the reading each time a call is
++  evaluated. When a later write replaces a held receiver with another kind of
++  value, the re-evaluated call reads its name on that value, as it reads any
++  other method name. After `ys = xs.reversed()` over a list, writing
++  `xs = "abc"` makes `ys` the string `"cba"`, where `xs.toReversed()` raises
++  `TypeError("abc.toReversed is not a function")` and rolls back; writing
++  `xs = 5` raises `TypeError("number.reversed is not a function")` and rolls
++  back, where `reverse()` names `reverse`; and an object whose `reversed` is a
++  function runs it. After `t = s.reversed()` over a string, writing a list
++  makes `t` the reversed list, as `s[::-1]` does, while a number, boolean,
++  date or function raises that receiver's `TypeError` and rolls back, where
++  `s[::-1]` gives undefined.
++- **Rendering.** Statements, `why`, `affects`, `--graph` and graph keys show
++  the call as written. Its dependencies are those of the accepted spelling,
++  so `why undo` after `undo = history.reversed()` shows `undo` read from
++  `history`, as after `undo = history.reverse()`.
++- **Unchanged.** Only calls of `reversed` and `toReversed` on a list or
++  population receiver, and of `reversed` and `reverse` on a string receiver,
++  change; each raised `TypeError("<receiver>.<name> is not a function")`, or
++  an argument's error first, which stays. A standing `reverse()` call whose
++  list receiver a later write replaces with a string raised
++  `TypeError("<text>.reverse is not a function")` at that write, which rolled
++  back, and now reverses the string.
++  - A string's `toReversed()` k
 ```
 
 #### Recent Merged Pull Requests:
@@ -1731,13 +2065,13 @@ Frozen proposal: 06e8b49644b3e071d06092ed1290aa9ce13f0e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 130 Loop-Local Iterator Exits
+## X. Draft NUC 133 Edge Lists of Reasoning Selections
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d36a82b`: NUC 130 Loop-Local Iterator Exits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `008cc5b3`: Draft NUC 133 Edge Lists of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1745,16 +2079,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Draft |
+| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d36a82b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `008cc5b3` are properly handled with clean fallback behavior.

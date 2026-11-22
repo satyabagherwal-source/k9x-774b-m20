@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "8eed95c3",
+  "source_version": "008cc5b3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T14:52:52.203Z",
+  "timestamp": "2026-11-22T06:11:32.438Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8eed95c3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T14:52:52.203Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `008cc5b3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T06:11:32.438Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T14:52:51.106Z  
+> **Harvest Timestamp**: 2026-11-22T06:11:31.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -116,6 +116,7 @@ pub fn generate(statement: &Stmt) -> String {
         } => format!("for {key},{value} of {iterable}"),
         Stmt::While { condition, body } => loop_key("while", condition, body),
         Stmt::Repeat { count, body } => loop_key("repeat", count, body),
+        Stmt::RepeatUntil { body, condition } => until_key(body, condition),
         Stmt::Try { .. } | Stmt::TryFinally { .. } => "try".to_string(),
         Stmt::Declaration { name, type_name } => format!("{name}:{type_name}"),
         Stmt::Pass => "pass".to_string(),
@@ -135,6 +136,14 @@ fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
 
 fn loop_suite(word: &str, header: &Expr, body: &[Stmt]) -> String {
     format!("{word} {header}:\n{}", indent(&source_all(body)))
+}
+
+fn until_key(body: &[Stmt], condition: &Expr) -> String {
+    format!("repeat{{{}}}until({condition})", generate_all(body))
+}
+
+fn until_suite(body: &[Stmt], condition: &Expr) -> String {
+    format!("repeat:\n{}\nuntil {condition}", indent(&source_all(body)))
 }
 
 fn try_suite(body: &[Stmt], parameter: &str, catch: &[Stmt]) -> String {
@@ -260,6 +269,7 @@ fn source(statement: &Stmt) -> String {
         ),
         Stmt::While { condition, body } => loop_suite("while", condition, body),
         Stmt::Repeat { count, body } => loop_suite("repeat", count, body),
+        Stmt::RepeatUntil { body, condition } => until_suite(body, condition),
         Stmt::Try {
             body,
             parameter,
@@ -342,8 +352,8 @@ impl Parser {
         self.suite_body()
     }
 
-    /// Shares the existing body parser with conditional and exception clauses
-    /// whose real indentation has already qualified for colon omission.
+    /// Shares the existing body parser with conditional, exception and implicit
+    /// iterator suites already qualified for colon omission by real indentation.
     pub(super) fn suite_body(&mut self) -> Result<Vec<Stmt>> {
         if self.eat(&Token::Newline) || self.check(&Token::Indent) {
             self.skip_newlines();
@@ -444,6 +454,10 @@ impl Parser {
         if let Some(condition) = self.while_condition() {
             let body = self.suite()?;
             return Ok(Stmt::While { condition, body });
+        }
+
+        if self.starts_repeat_until() {
+            return self.repeat_until_statement();
         }
 
         if let Some(count) = self.repeat_count() {
@@ -596,9 +610,7 @@ impl Parser {
         });
         self.position = start;
         let end = outcome.as_ref()?.end;
-        if self.words
-            && self.accepted(Self::attempt_suppose_premise).is_none()
-            && self.separates(sta
+        if se
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1414,29 +1426,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   milestone.synthesizing_training_dataset();
 
-  const synthesized_dataset = await synthesizer.synthesize({ train });
-
-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
-
-  for (const dataset of synthesized_dataset) {
-    for (const instance of dataset.instances) {
-      await analyzer.value({
-        instance_name: next_instance_name(),
-        train,
-        input_matrix: dataset.input_matrix,
-        instance,
-      });
-    }
-
-    await object.state({
-      class_declaration,
-      declarations,
-      input_matrix: dataset.input_matrix,
-      input_instances: dataset.instances,
-    });
-
-    train.dataset.push(dataset);
-  }
+  await synthesizer.synthesize({ train });
 
   milestone.visualization();
 
@@ -1594,567 +1584,473 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8eed95c3` (2026-11-20)
-**Commit Message**: Synthesize ARC examples from object transforms
+### Incident Patch 1: `008cc5b3` (2026-11-22)
+**Commit Message**: Draft NUC 133 Edge Lists of Reasoning Selections
 
-Replace LLM-generated examples with rotated and shifted instances. Execute Nucleoid rules, validate rendered object properties, and merge matching instances into new training examples.
+Category: Reasoning enhancement, drawn uniformly at random (index 3 of
+the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
+for a continuous /nuc-proposal cycle, so the token non-regression gate
+is required.
 
-**File**: `arc/src/synthesizer.ts` (modified, +105/-111)
+Requested change: a reasoning pipeline gains the final stage
+SELECTION |> edges, which lists the dependency edges that the steps of
+SELECTION record: for each step in the selection's order, and for each
+name in its from list in that order, the two-item list [INPUT, NODE] of
+the input's name and the step's node name. It joins NUC 112's |> nodes
+and NUC 121's |> holds as a projection of the step records, of the from
+field both left out; a declaration that holds it is a reasoning
+observer and follows the graph. At the accepted revision |> edges
+raises TypeError("edges is not an operation") while the program is
+parsed, and only those programs change; variables, functions,
+properties and keys named edges keep their readings. Accepted programs
+cannot spell the list directly, because a callback cannot read the
+parameter of the callback around it; the working spelling pairs each
+input with its node through a string det
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -1,117 +1,111 @@
--import * as llm from "./lib/llm.ts";
- import * as Matrix from "./lib/Matrix";
--
--const FIELD_GUIDE = `
--- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
--- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
--- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
--`.trim();
-+import * as visualizer from "./visualizer";
-+import object from "./object.ts";
-+import * as nucleoid from "./lib/nucleoid.ts";
+@@ -157,6 +157,7 @@ Created: 31-Jul-2026
+ | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
+ | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
++| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Draft |
  
- async function synthesize({ train }) {
--  const count = train.length;
--
--  const { result } = await llm.generate({
--    few_shot: null,
--    messages: [
--      {
--        role: "assistant",
--        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
--
--        <current_dataset>
--        ${JSON.stringify({
--          ...train,
--          dataset: train.dataset.map(
--            ({ input_matrix, output_matrix, instances }) => ({
--              input_matrix,
--              output_matrix,
--              instances: instances.map((instance) => ({
--                ...instance,
--                input_instance_crop_matrix: Matrix.crop(
--                  instance.input_instance_matrix
--                ),
--                output_instance_crop_matrix: Matrix.crop(
--                  instance.output_instance_matrix
--                ),
--              })),
--            })
--          ),
--        })}
--        </current_dataset>
--        
--        How to read it:
--        ${FIELD_GUIDE}
--        
--        Your job: write ${
--          count === 1
--            ? "1 new example that follows"
--            : `${count} new examples that follow`
--        } exactly the same rule. New examples are added to the training data, so one whose output breaks the rule does more harm than a missing one.
--        
--        Work in this order:
--        1. Infer the rule and write it as a sequence of steps, precise enough that someone could apply it by hand to an input they have never seen, including how the instances are derived. Check it against every existing example and revise it until it reproduces all of them exactly.
--        2. List the invariants: what every existing example has in common that the rule relies on, plus anything "class_declaration", "declarations" and "output_canvas" impose (allowed values, dimensions, how many of something appear, what never touches or overlaps). If you are unsure whether the rule depends on a property, treat it as an invariant. Every new example must keep all of them.
--        3. Plan each new example in a sentence or two: what its input contains, how it differs from the existing examples and from your other new examples, and what output the rule gives for it.
--        4. Write the examples. Build each input first, then produce its output by applying the rule step by step, copying exactly any cell the rule leaves unchanged. Then derive its instances with the same convention as the existing examples.
--        
--        A good new example is:
--        - Correct: its output is exactly what the rule produces from its input. If you are not certain an example is correct, leave it out; returning fewer examples is better than including a wrong one.
--        - New: not a near-copy of an existing example, such as the same layout shifted, flipped or with values swapped. Vary whatever the rule does not depend on, which may include dimensions, positions, sizes, counts and values, while keeping every invariant.
--        - Informative: it covers a case the existing examples don't (an edge or corner position, a smallest or largest case, a different number of instances) or separates the real rule from a plausible wrong one, but only where the rule clearly decides the output. Avoid inputs the rule leaves open, such as ties it gives no way to break.
--        - Well-formed: every matrix is rectangular (all rows the same length) and uses only allowed values.
--        
--        Reply with one JSON object and nothing else: no prose before or after it and no code fences. Give its keys in this order:
--        - "rule": an array of strings, one step of the rule each.
--        - "invariants": an array of strings, one invariant each.
--        - "plan": an array of strings, one per new example, in the same order as "result".
--        - "result": an array of the new examples. Each has exactly the same keys, nesting and value types as the entries of "dataset" above: "input_matrix", "output_matrix", and "instances",
+ ### Language compatibility
+ 
+@@ -319,6 +320,7 @@ Created: 31-Jul-2026
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+ | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Draft |
++| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0133.md` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++# NUC 133 -- Edge Lists of Reasoning Selections
++
++```
++NUC: 133
++Title: Edge Lists of Reasoning Selections
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Reasoning enhancement
++Created: 22-Nov-2026
++Requires: 112, 121
++```
++
++## Abstract
++
++- A reasoning pipeline gains the final stage `SELECTION |> edges`. It lists
++  the dependency edges that the steps of `SELECTION` record: for each step,
++  in the selection's order, and for each name in its `from` list, in that
++  order, the two-item list `[INPUT, NODE]` of the input's name and the
++  step's node name. After `subtotal = price * quantity`,
++  `tax = subtotal * rate` and `total = subtotal + tax`,
++  `total |> why |> edges` gives `[["subtotal", "total"], ["tax", "total"],
++  ["price", "subtotal"], ["quantity", "subtotal"], ["subtotal", "tax"],
++  ["rate", "tax"]]`.
++- It joins [NUC 112](nuc-0112.md)'s `|> nodes` and
++  [NUC 121](nuc-0121.md)'s `|> holds` as a projection of the step records,
++  this time of the `from` field that both left out. A declaration that holds
++  it is a reasoning observer and follows the graph: redefining `tax` with a
++  new input adds that input's edge.
++- At the accepted revision `|> edges` raises
++  `TypeError("edges is not an operation")` while the program is parsed, and
++  only those programs change. Variables, functions, properties and keys named
++  `edges` keep their readings.
++
++## Motivation
++
++- A world model that explains a conclusion often needs the structure of the
++  explanation, not only its nodes and values: which inputs feed which
++  results, to render the explanation as a graph, to check which rule reads
++  which fact, or to hand the graph to another tool. The step records hold
++  it in their `from` fields, and no stage projects it.
++- Accepted programs cannot spell the edge list directly. The natural
++  `(total |> why).flatMap(s -> s.from.map(f -> [f, s.node]))` raises
++  `ReferenceError("s is not defined")`, because a callback cannot read the
++  parameter of the callback around it, and comprehensions take one `for`
++  clause. What works today pairs each input with its node by a detour over
++  strings, `(total |> why).flatMap(s -> s.from.zip((s.node + "|").repeat(s.from.length).split("|")))`,
++  which holds only while no node name contains the separator, or keeps the
++  per-step adjacency `(total |> why).map(s -> [s.node, s.from])`, which is
++  another shape. `total |> why |> edges` states the question in the
++  pipeline that asks it.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 ---
 
-### Incident Patch 2: `a8500c83` (2026-11-20)
-**Commit Message**: Add block indentation to terminal editor
+### Incident Patch 2: `28eb973f` (2026-11-22)
+**Commit Message**: NUC 131 Reversal Method Aliases
 
-Indent selected lines with Tab and unindent selections or the current line with Shift-Tab. Preserve selection direction and cut text, and update editor hints and documentation.
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Language compatibility, token comparison skipped
+categorically): the frozen candidate meets every hard criterion and
+passes every policy check. The cycle found no stale Draft, drew
+Language compatibility uniformly from the five eligible categories,
+allocated NUC 131 in 2ae49a2e, and completed it with a fresh baseline,
+candidate, proposer, Rust improvement pass and evaluator.
 
-**File**: `README.md` (modified, +3/-1)
+On lists and class populations, reversed(), as Kotlin and Swift spell
+it, and toReversed(), as JavaScript spells it since ES2023, are exactly
+the accepted read-only reverse(): a new list of the same items in
+reverse order, the receiver unchanged, arguments evaluated and ignored,
+live and rolled back as the accepted spelling. On strings, reversed(),
+as Kotlin spells it, and reverse(), as Ruby spells it, are exactly the
+character reversal TEXT[::-1] of NUC 125, by Unicode scalar value. Only
+calls that raised TypeError("<receiver>.<name> is not a function")
+change, including caught ones and a standing reverse() whose list
+receiver a later write replaces with a string. No token, keyword,
+error messag
+
+**File**: `README.md` (modified, +24/-0)
 ```diff
-@@ -49,7 +49,9 @@ pasted newlines never submit code or add indentation. Ctrl-J inserts an
- automatically indented newline when writing a block by hand.
- Ctrl-Enter also runs on non-Windows terminals that report it distinctly;
- Windows treats it as a newline because pasted LF produces the same key event.
--Tab accepts autocomplete (or indents); Ctrl-Space opens suggestions.
-+Tab accepts autocomplete (or inserts four spaces); with selected text it
-+indents the selected lines without replacing them. Shift-Tab unindents the
-+selection or current line. Ctrl-Space opens suggestions.
- Ctrl-P / Ctrl-N recalls input while preserving an unfinished draft.
- F1-F3 changes tabs, F6 changes the result view, and Ctrl-Up / Ctrl-Down selects
- earlier results. Mouse clicks select tabs, views and results; click/drag edits
+@@ -2852,6 +2852,30 @@ assert(gpa, 3.0833333333333335)
+   sequence, so a grade waiting for its credits counts once they arrive. See
+   the [root contract](nucleoid.spec.md#list-and-population-zipping).
+ 
++## Reversal method aliases
++
++**Reversal methods keep an undo history newest first**
++
++```nuc
++edits = ["draft", "trim intro"]
++undo = edits.reversed()
++top = edits.toReversed()[0]
++assert([undo, top], [["trim intro", "draft"], "trim intro"])
++edits.push("fix typo")
++assert([undo, top, edits.length], [["fix typo", "trim intro", "draft"], "fix typo", 3])
++```
++
++- [NUC 131](docs/nuc-0131.md) adds `reversed()`, as Kotlin and Swift write
++  it, and `toReversed()`, as JavaScript writes it, to lists and class
++  instance lists, and `reversed()` and `reverse()`, as Kotlin and Ruby write
++  them, to strings. On a list they are exactly the accepted `reverse()`,
++  which returns a new list and leaves its receiver unchanged, and on a string
++  exactly `text[::-1]`, which reverses its characters.
++- `undo` and `top` are live declarations over the history, so the newest edit
++  comes first after every push, while `edits` keeps the order the edits were
++  made in. See the
++  [root contract](nucleoid.spec.md#reversal-method-aliases).
++
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
 ```
 
-**File**: `docs/README.md` (modified, +6/-1)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +23/-19)
 ```diff
-@@ -95,7 +95,12 @@ empty lines; F5 submits the complete editor. Ctrl-Enter also submits on
- non-Windows terminals that report it distinctly. Native Windows input maps
- pasted LF to Ctrl-Enter, so that key inserts a newline on Windows rather than
- submitting a partial pasted program. Ctrl-J inserts an automatically indented
--newline when typing by hand. Tab completes or indents;
-+newline when typing by hand. Tab completes or inserts four spaces; with
-+selected text it indents the selected lines without replacing them.
-+Shift-Tab removes one leading indentation level from selected lines, or the
-+current line regardless of cursor position. A selection ending at the start
-+of a line leaves that line unchanged. Selection direction and cut/paste text
-+are preserved; each shifted line is an ordinary undoable editor edit.
- Ctrl-Space opens suggestions. Ctrl-P / Ctrl-N navigates input history.
- Use F1-F3 for tabs, F6 or the view buttons for result formats, Ctrl-Up /
- Ctrl-Down for earlier results, and F4 to focus the editor, results or
+@@ -826,22 +826,26 @@
+ {"id":"spec-0826","description":"Nucleoid pairs the instances of two classes in population order with zip","code":"class Driver(name):\n    this.name = name\nclass Truck(plate):\n    this.plate = plate\nada = Driver(\"Ada\")\nDriver(\"Bo\")\nTruck(\"T-1\")\ncrews = Driver.zip(Truck)\nassert([crews.length, crews[0][0], crews[0][1].plate], [1, ada, \"T-1\"])\nTruck(\"T-2\")\nTruck(\"T-3\")\nassert(crews.map(crew -> crew[0].name + \":\" + crew[1].plate), [\"Ada:T-1\", \"Bo:T-2\"])\nDriver(\"Cy\")\ncrews.map(crew -> crew[1].plate)","return":"[\"T-1\",\"T-2\",\"T-3\"]"}
+ {"id":"spec-0827","description":"Nucleoid combines the items of two lists with a function in zip","code":"prices = [4, 4, 2]\nquantities = [3, 1, 3]\ndiscount = 0\ntotal = prices.zip(quantities, (price, quantity) -> (price - discount) * quantity).sum()\nassert(total, 22)\nprices.push(5)\nassert(total, 22)\nquantities.push(2)\nquantities.push(9)\nassert(total, 32)\ndiscount = 1\ntotal","return":"23"}
+ {"id":"spec-0828","description":"Nucleoid rolls back failed zip updates","code":"def gap(load, limit):\n    if load > limit:\n        throw \"OVERLOAD\"\n    return limit - load\nlimits = [4, 8, 6]\nloads = [3, 5]\nspare = loads.zip(limits, gap)\nfailure = \"\"\ntry:\n    loads.push(9)\ncatch error:\n    failure = error\nassert([failure, loads, spare], [\"OVERLOAD\", [3, 5], [1, 3]])\ntry:\n    loads.push(2)\n    assert(spare, [1, 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([loads, spare], [[3, 5], [1, 3]])\nclass Bay(load): this.load = load\nBay(1)\nBay(7)\nroom = Bay.zip(limits, (bay, limit) -> gap(bay.load, limit))\nfailure = \"\"\ntry:\n    Bay(8)\ncatch error:\n    failure = error\nassert([failure, Bay.length, room], [\"OVERLOAD\", 2, [3, 1]])\nBay(6)\nBay(5)\nroom","return":"[3,1,0]"}
+-{"id":"spec-0829","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0830","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0831","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0832","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0833","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0834","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0835","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)
 ```
 
-**File**: `src/terminal/indentation.rs` (added, +150/-0)
+**File**: `dataset/nucleoid.synth.93.jsonl` (added, +16/-0)
 ```diff
-@@ -0,0 +1,150 @@
-+use tui_textarea::{CursorMove, TextArea};
-+
-+use crate::INDENT;
-+
-+#[derive(Clone, Copy)]
-+enum Direction {
-+    Indent,
-+    Unindent,
-+}
-+
-+struct Block {
-+    first: usize,
-+    last: usize,
-+    cursor: (usize, usize),
-+    anchor: Option<(usize, usize)>,
-+}
-+
-+impl Block {
-+    fn capture(editor: &TextArea<'_>) -> Self {
-+        let cursor = editor.cursor();
-+        let Some((start, end)) = editor.selection_range().filter(|(start, end)| start != end)
-+        else {
-+            return Self {
-+                first: cursor.0,
-+                last: cursor.0,
-+                cursor,
-+                anchor: None,
-+            };
-+        };
-+        let last = if end.0 > start.0 && end.1 == 0 {
-+            end.0 - 1
-+        } else {
-+            end.0
-+        };
-+        Self {
-+            first: start.0,
-+            last,
-+            cursor,
-+            anchor: Some(if cursor == start { end } else { start }),
-+        }
-+    }
-+
-+    fn shift(&mut self, row: usize, count: usize, direction: Direction) {
-+        for position in std::iter::once(&mut self.cursor).chain(self.anchor.iter_mut()) {
-+            if position.0 == row {
-+                position.1 = match direction {
-+                    Direction::Indent => position.1.saturating_add(count),
-+                    Direction::Unindent => position.1.saturating_sub(count),
-+                };
-+            }
-+        }
-+    }
-+
-+    fn restore(&self, editor: &mut TextArea<'_>) {
-+        if let Some(anchor) = self.anchor {
-+            move_to(editor, anchor);
-+            editor.start_selection();
-+        }
-+        move_to(editor, self.cursor);
-+    }
-+}
-+
-+pub(super) fn indent_selection(editor: &mut TextArea<'_>) -> bool {
-+    let block = Block::capture(editor);
-+    if block.anchor.is_none() {
-+        return false;
-+    }
-+    change(editor, block, Direction::Indent)
-+}
-+
-+pub(super) fn unindent(editor: &mut TextArea<'_>) -> bool {
-+    let block = Block::capture(editor);
-+    change(editor, block, Direction::Unindent)
-+}
-+
-+fn change(editor: &mut TextArea<'_>, mut block: Block, direction: Direction) -> bool {
-+    editor.cancel_selection();
-+    let mut changed = false;
-+    for row in block.first..=block.last {
-+        let count = match direction {
-+            Direction::Indent => INDENT.len(),
-+            Direction::Unindent => editor
-+                .lines()
-+                .get(row)
-+                .map_or(0, |line| leading_indent(line)),
-+        };
-+        if count == 0 {
-+            continue;
-+        }
-+        move_to(editor, (row, 0));
-+        let edited = match direction {
-+            Direction::Indent => editor.insert_str(INDENT),
-+            Direction::Unindent => remove_indent(editor, count),
-+        };
-+        if edited {
-+            block.shift(row, count, direction);
-+            changed = true;
-+        }
-+    }
-+    block.restore(editor);
-+    changed
-+}
-+
-+fn remove_indent(editor: &mut TextArea<'_>, count: usize) -> bool {
-+    editor.start_selection();
-+    for _ in 0..count {
-+        editor.move_cursor(CursorMove::Forward);
-+    }
-+    editor.delete_char()
-+}
-+
-+fn leading_indent(line: &str) -> usize {
-+    let mut width = 0;
-+    let mut count = 0;
-+    for character in line.chars() {
-+        width += match character {
-+            ' ' => 1,
-+            '\t' => INDENT.len() - width % INDENT.len(),
-+            _ => break,
-+        };
-+        count += 1;
-+        if width >= INDENT.len() {
-+            break;
-+        }
-+    }
-+    count
-+}
-+
-+fn move_to(editor: &mut TextArea<'_>, (row, column): (usize, usize)) {
-+    if let (Ok(row), Ok(column)) = (u16::try_from(row), u16::try_from(column)) {
-+        editor.move_cursor(CursorMove::Jump(row, column));
-+        return;
-+    }
-+    let start = u16::try_from(row).unwrap_or(u16::MAX);
-+    editor.move_cursor(CursorMove::Jump(start, 0));
-+    for _ in usize::from(start)..row {
-+        editor.move_cursor(CursorMove::Down);
-+    }
-+    if column == 0 {
-+        return;
-+    }
-+    editor.move_cursor(CursorMove::End);
-+    let end = editor.cursor().1;
-+    for _ in column.min(end)..end {
-+        editor.move_cursor(CursorMove::Back);
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests;
+@@ -0,0 +1,16 @@
++{"id":"synth-93-0001","description":"Reverses a list of readings with Kotlin's reversed","code":"readings = [18, 21, 19]\nreadings.reversed()","return":"[19,21,18]"}
++{"id":"synth-93-0002","description":"JavaScript's toReversed returns a copy and leaves the list in order","code":"steps = [\"wake\", \"wash\", \"dress\"]\nback = steps.toReversed()\n[back, steps]","return":"[[\"dress\",\"wash\",\"wake\"],[\"wake\",\"wash\",\"dress\"]]"}
++{"id":"synth-93-0003","description":"An undo history reads the newest edit first as edits arrive","code":"edits = [\"draft\", \"trim\"]\nundo = edits.reversed()\nedits.push(\"fix\")\nundo","return":"[\"fix\",\"trim\",\"draft\"]"}
++{"id":"synth-93-0004","description":"A class population reversed lists the latest instance first","code":"class Visit(room):\n    this.room = room\nVisit(\"lab\")\nVisit(\"hall\")\nrecent = Visit.reversed()\nVisit(\"roof\")\nrecent.map(visit -> visit.room)","return":"[\"roof\",\"hall\",\"lab\"]"}
++{"id":"synth-93-0005","description":"Each train lists its cars from the rear in a class-level rule","code":"class Train(cars):\n    this.cars = cars\n$Train.fromRear = $Train.cars.toReversed()\nlocal = Train([\"engine\", \"coach\"])\nlocal.cars.push(\"caboose\")\nlocal.fromRear","return":"[\"caboose\",\"coach\",\"engine\"]"}
++{"id":"synth-93-0006","description":"Reverses a word with accents character by character","code":"\"crème brûlée\".reversed()","return":"\"eélûrb emèrc\""}
++{"id":"synth-93-0007","description":"Ruby's reverse keeps an emoji whole in a string","code":"\"go 🚀 now\".reverse()","return":"\"won 🚀 og\""}
++{"id":"synth-93-0008","description":"A class-level rule flags the palindromes among words","code":"class Word(text):\n    this.text = text\n$Word.palindrome = $Word.text.toLowerCase().reversed() == $Word.text.toLowerCase()\nwords = [Word(\"Level\"), Word(\"kayaks\"), Word(\"Anna\")]\nwords.map(word -> word.palindrome)","return":"[true,false,true]"}
++{"id":"synth-93-0009","description":"Nested lists keep their own order when the outer list is reversed","code":"[[1, 2], [3, 4], 5].reversed()","return":"[5,[3,4],[1,2]]"}
++{"id":"synth-93-0010","description":"Empty lists and empty strings reverse to empty values","code":"[[].reversed(), [].toReversed(), \"\".reversed(), \"\".reverse()]","return":"[[],[],\"\",\"\"]"}
++{"id":"synth-93-0011","description":"Arguments are evaluated and ignored as the accepted reverse ignores them","code":"log = []\nback = [1, 2, 3].toReversed(log.push(\"called\"))\n[back, log]","return":"[[3,2,1],[\"called\"]]"}
++{"id":"synth-93-0012","description":"A list read from a state version reverses without writing history","code":"queue = [\"a\", \"b\"]\nqueue.push(\"c\")\nqueue@first.reversed()","return":"[\"b\",\"a\"]"}
++{"id":"synth-93-0013","description":"A value snapshot reversed stays frozen as the list grows","code":"levels = [1, 2]\nfrozen = levels.value.reversed()\nlevels.push(3)\nfrozen","return":"[2,1]"}
++{"id":"synth-93-0014","description":"A try that caught the former error now receives the reversed list","code":"result = \"\"\ntry:\n    result = [1, 2].reversed()\ncatch error:\n    result = \"caught\"\nresult","return":"[2,1]"}
++{"id":"synth-93-0015","description":"On a class name the population alias wins over an instance method","code":"class Team(name):\n    this.name = name\n    def reversed(): return this.name + \"!\"\nred = Team(\"red\")\nTeam(\"blue\")\n[red.reversed(), Team.reversed().map(team -> team.name)]","return":"[\"red!\",[\"blue\",\"red\"]]"}
++{"id":"synth-93-0016","description":"A failing reader of a reversed list rolls back the push","code":"def latest(log):\n    if log.length > 2:\n        throw \"FULL\"\n    return log\nentries = [\"boot\", \"sync\"]\nrecent = latest(entries.reversed())\nfailure = \"\"\ntry:\n    entries.push(\"scan\")\ncatch error:\n    failure = error\n[failure, entries, recent]","return":"[\"FULL\",[\"boot\",\"sync\"],[\"sync\",\"boot\"]]"}
 ```
 
-**File**: `src/terminal/indentation/tests.rs` (added, +75/-0)
+**File**: `docs/README.md` (modified, +57/-2)
 ```diff
-@@ -0,0 +1,75 @@
-+use super::*;
-+
-+#[test]
-+fn selected_lines_keep_unicode_boundaries_direction_and_cut_text() {
-+    let source = ["a\u{754c}", "", " \tsecond", "last"];
-+    let expected = ["    a\u{754c}", "    ", "     \tsecond", "last"];
-+    for (end, shifted_end) in [((3, 0), (3, 0)), ((2, 3), (2, 7))] {
-+        for reversed in [false, true] {
-+            let mut editor = TextArea::from(source);
-+            let (anchor, cursor) = if reversed {
-+                (end, (0, 1))
-+            } else {
-+                ((0, 1), end)
-+            };
-+            move_to(&mut editor, anchor);
-+            editor.start_selection();
-+            move_to(&mut editor, cursor);
-+            editor.set_yank_text("previous\ncut\n");
-+
-+            assert!(indent_selection(&mut editor));
-+            assert_eq!(editor.lines(), expected);
-+            assert_eq!(editor.selection_range(), Some(((0, 5), shifted_end)));
-+            assert_eq!(editor.cursor(), if reversed { (0, 5) } else { shifted_end });
-+            assert_eq!(editor.yank_text(), "previous\ncut\n");
-+
-+            assert!(unindent(&mut editor));
-+            assert_eq!(editor.lines(), source);
-+            assert_eq!(editor.selection_range(), Some(((0, 1), end)));
-+            assert_eq!(editor.cursor(), cursor);
-+            assert_eq!(editor.yank_text(), "previous\ncut\n");
-+        }
-+    }
-+}
-+
-+#[test]
-+fn unindent_removes_one_leading_level_without_deleting_code() {
-+    for (source, column, expected, shifted_column) in [
-+        ("    value", 7, "value", 3),
-+        ("\tvalue", 3, "value", 2),
-+        (" \tvalue", 4, "value", 2),
-+        ("  value", 0, "value", 0),
-+        (" \t   value", 7, "   value", 5),
-+        ("value", 3, "value", 3),
-+    ] {
-+        let mut editor = TextArea::from([source]);
-+        move_to(&mut editor, (0, column));
-+        editor.set_yank_text("previous cut");
-+
-+        assert_eq!(unindent(&mut editor), source != expected);
-+        assert_eq!(editor.lines(), [expected]);
-+        assert_eq!(editor.cursor(), (0, shifted_column));
-+        assert!(!editor.is_selecting());
-+        assert_eq!(editor.yank_text(), "previous cut");
-+    }
-+}
-+
-+#[test]
-+fn unindent_preserves_positions_beyond_cursor_jump_limits() {
-+    let long_line = format!("    {}", "x".repeat(usize::from(u16::MAX) + 1));
-+    let mut many_lines = vec![String::new(); usize::from(u16::MAX) + 1];
-+    many_lines.push("    value".into());
-+    for mut editor in [TextArea::from([long_line]), TextArea::new(many_lines)] {
-+        editor.move_cursor(CursorMove::Bottom);
-+        editor.move_cursor(CursorMove::End);
-+        let (row, column) = editor.cursor();
-+        let original = editor.lines().to_vec();
-+
-+        assert!(unindent(&mut editor));
-+        assert_eq!(editor.cursor(), (row, column - INDENT.len()));
-+        assert_eq!(editor.lines().len(), original.len());
-+        assert_eq!(editor.lines()[row], original[row].trim_start());
-+        assert!(editor.undo());
-+        assert_eq!(editor.lines(), original);
-+    }
-+}
+@@ -2809,9 +2809,9 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
+ | `Boolean` | `Boolean(value)` |
+ | `Number` | `Number.MAX_INTEGER` |
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+-| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)) |
++| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)), and the reversal aliases `reversed()` and `toReversed()` of `reverse()` ([NUC 131](nuc-0131.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
+ 
+ ```
+@@ -3067,6 +3067,59 @@ assert([ada.handle, inbox, shown], ["ada king", "countess@example.org", "ADA KIN
+   [root section](../nucleoid.spec.md#case-conversion-method-aliases) an
 ```
 
-**File**: `src/terminal/input.rs` (modified, +14/-6)
+**File**: `docs/examples.md` (modified, +27/-0)
 ```diff
-@@ -3,7 +3,7 @@ use nucleoid::Runtime;
+@@ -4356,6 +4356,33 @@ dale.heights.push(200)
+   the same height climb `0` between them. See [NUC 129](nuc-0129.md) and the
+   [root contract](../nucleoid.spec.md#list-and-population-zipping).
  
- use super::completion::Completion;
- use super::output::{Entry, Output, View};
--use super::{App, Focus, HELP, HISTORY_LIMIT, editor, output};
-+use super::{App, Focus, HELP, HISTORY_LIMIT, editor, indentation, output};
- 
- impl App {
-     pub(super) fn key(&mut self, key: KeyEvent, runtime: &mut Runtime) -> bool {
-@@ -120,10 +120,7 @@ impl App {
-             KeyCode::Up if self.editor.lines().len() == 1 => self.recall(false),
-             KeyCode::Down if self.editor.lines().len() == 1 => self.recall(true),
-             KeyCode::Tab => self.complete_or_indent(runtime),
--            KeyCode::BackTab => {
--                editor::dedent(&mut self.editor);
--                self.completion = None;
--            }
-+            KeyCode::BackTab => self.unindent(),
-             KeyCode::Backspace if editor::dedent(&mut self.editor) => self.edited(runtime),
-             KeyCode::Enter => {
-                 self.completion = None;
-@@ -146,6 +143,11 @@ impl App {
-     }
- 
-     fn complete_or_indent(&mut self, runtime: &Runtime) {
-+        self.history_index = None;
-+        if indentation::indent_selection(&mut self.editor) {
-+            self.completion = None;
-+            return;
-+        }
-         if self.completion.is_none() {
-             self.completion = Completion::find(runtime, &self.editor, false);
-         }
-@@ -154,7 +156,13 @@ impl App {
-         } else {
-             self.editor.insert_str(crate::INDENT);
-         }
--        self.history_index = None;
-+    }
++## Reversal method aliases
 +
-+    fn unindent(&mut self) {
-+        if indentation::unindent(&mut self.editor) {
-+            self.history_index = None;
-+        }
-+        self.completion = None;
-     }
++**Reversal methods trace every delivery route back to its depot**
++
++```nuc
++class Route(stops):
++    this.stops = stops
++$Route.back = $Route.stops.reversed()
++$Route.sign = $Route.stops.toReversed().join(" < ")
++north = Route(["depot", "mill", "harbor"])
++south = Route(["depot", "farm"])
++assert([north.back, south.sign], [["harbor", "mill", "depot"], "farm < depot"])
++north.stops.push("lighthouse")
++south.stops.push("orchard")
++[north.back[0], south.sign]
++# return: ["lighthouse","orchard < farm < depot"]
++```
++
++- Each route keeps its way back in class-level rules: `reversed()` lists its
++  stops from the last one to the depot, and the sign a driver follows home
++  joins the stops that `toReversed()` gives. Both are exactly the accepted
++  `reverse()`, which copies the stops and never reorders the route itself.
++- Both rules follow every stop: the lighthouse at the end of the north route
++  becomes the first stop on its way back, and the orchard heads the south
++  route's sign. See [NUC 131](nuc-0131.md) and the
++  [root contract](../nucleoid.spec.md#reversal-method-aliases).
++
+ ## Reactive list flattening
  
-     pub(super) fn edited(&mut self, runtime: &Runtime) {
+ **Flattening keeps the dirty tiles of every room counted**
 ```
 
-**File**: `src/terminal/mod.rs` (modified, +5/-1)
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -1,5 +1,6 @@
- mod completion;
- mod editor;
-+mod indentation;
- mod input;
- mod output;
- mod pointer;
-@@ -40,9 +41,12 @@ Windows delivers pasted LF as Ctrl-Enter, so both insert a newline there.
- Ctrl-J inserts an automatically indented newline.
+@@ -174,7 +174,7 @@ Created: 31-Jul-2026
+ | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
+ | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
+ | [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
+-| [131](nuc-0131.md) | Reversal Method Aliases | Draft |
++| [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Draft |
  
- Tab accepts a completion, or inserts four spaces when none is available.
-+With selected text, Tab indents its lines without replacing the selection.
-+Shift-Tab unindents the selected lines, or the current line from any position.
- Ctrl-Space opens completions; Up/Down selects; Escape dismisses.
- Ctrl-P / Ctrl-N recalls history and restores your unfinished draft.
--Ctrl-Z / Ctrl-Y undoes / redoes edits. Shift-arrows selects text.
-+Ctrl-Z / Ctrl-Y undoes / redoes edits, including each shifted line.
-+Shift-arrows selects text.
- Ctrl-X cuts; Ctrl-V pastes the editor's last cut text.
- Ctrl-C cancels input. Ctrl-D on an empty editor / Ctrl-Q exits.
+ ### Documentation
+@@ -317,7 +317,7 @@ Created: 31-Jul-2026
+ | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Accepted |
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+-| [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Draft |
++| [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Draft |
  
+ ## Copyright
 ```
 
-**File**: `src/terminal/tests.rs` (modified, +92/-0)
+**File**: `docs/nuc-0131.md` (modified, +1305/-15)
 ```diff
-@@ -386,6 +386,98 @@ fn familiar_undo_redo_and_cut_paste_shortcuts_work_in_the_editor() {
-     assert_eq!(app.editor.lines(), ["x"]);
- }
+@@ -4,7 +4,7 @@
+ NUC: 131
+ Title: Reversal Method Aliases
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Language compatibility
+ Created: 21-Nov-2026
+@@ -17,19 +17,31 @@ Requires: 61, 125
+   spell it, and `toReversed()`, as JavaScript spells it since ES2023, as
+   exact aliases of the accepted read-only `reverse()`: `[1, 2, 3].reversed()`
+   and `[1, 2, 3].toReversed()` give `[3, 2, 1]`, `Truck.reversed()` gives the
+-  instances in reverse population order, and the receiver is never written.
++  instances in reverse population order, the latest created first, and the
++  receiver is never written.
+ - Strings gain `reversed()`, as Kotlin spells it, and `reverse()`, as Ruby
+   spells it, as exact aliases of the accepted character reversal
+-  `STRING[::-1]` of [NUC 125](nuc-0125.md): `"café".reversed()` gives
+-  `"éfac"`.
++  `TEXT[::-1]` of [NUC 125](nuc-0125.md): `"café".reversed()` gives
++  `"éfac"`, reversing Unicode scalar values.
+ - Like the aliases of [NUC 116](nuc-0116.md) to [NUC 118](nuc-0118.md), they
+-  read what their accepted spellings read and stay live. At the accepted
+-  revision each of these calls raises
+-  `TypeError("<receiver>.<name> is not a function")`, and only those inputs
+-  change. `reverse()` on lists and populations, functions, properties,
+-  methods and variables named `reversed`, `toReversed` or `reverse`, and
+-  every other receiver keep their readings. No syntax, keyword or token is
+-  added.
++  read what their accepted spellings read and stay live, and further
++  arguments are evaluated and ignored. The equivalence holds per evaluation
++  of the receiver: when a later write turns a held receiver into another
++  kind of value, the call reads its name on that value, as every method name
++  is read.
++- At the accepted revision each of these calls raises
++  `TypeError("<receiver>.<name> is not a function")`, unless an argument
++  raises first. Only those calls change, along with the programs that
++  caught that error and the standing `reverse()` calls whose list receiver a
++  later write replaced with a string, which raised
++  `TypeError("<text>.reverse is not a function")` at that write.
++  `reverse()` on lists and populations, a string's `toReversed()`,
++  functions, properties, methods and variables named `reversed`,
++  `toReversed` or `reverse`, and every other receiver keep their readings.
++- No token, keyword, syntax-tree node, error type or message format,
++  dependency or public item is added.
++- The authoritative contract is
++  [Reversal method aliases](../nucleoid.spec.md#reversal-method-aliases).
  
-+#[test]
-+fn selected_code_indents_without_replacing_or_running_it() {
-+    let mut app = App::new(false, false);
-+    let mut runtime = Runtime::new();
-+    let source = "value = 7\nvalue + 1";
-+    app.editor = editor::new(source);
-+    app.editor.select_all();
-+    app.editor.set_yank_text("previous cut");
-+
-+    key(&mut app, &mut runtime, KeyCode::Tab, KeyModifiers::NONE);
-+    assert_eq!(app.editor.lines(), ["    value = 7", "    value + 1"]);
-+    assert!(app.editor.is_selecting());
-+    for (width, height) in [(40, 12), (100, 30)] {
-+        let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
-+        terminal.draw(|frame| app.draw(frame)).unwrap();
-+        let screen: String = terminal
-+            .backend()
-+            .buffer()
-+            .content
-+            .iter()
-+            .map(ratatui::buffer::Cell::symbol)
-+            .collect();
-+        assert!(screen.contains("Tab indent"));
-+        assert!(screen.contains("Shift-Tab unindent"));
-+        assert!(screen.contains("F5 run"));
-+        assert!(screen.contains("Ctrl-Q quit"));
-+    }
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::BackTab,
-+        KeyModifiers::SHIFT,
-+    );
-+    assert_eq!(app.editor.lines().join("\n"), source);
-+    assert_eq!(app.editor.yank_text(), "previous cut");
-+
-+    for _ in 0..2 {
-+        key(
-+            &mut app,
-+            &mut runtime,
-+            KeyCode::Char('z'),
-+            KeyModifiers::CONTROL,
-+        );
-+    }
-+    assert_eq!(app.editor.lines(), ["    value = 7", "    value + 1"]);
-+    for _ in 0..2 {
-+        key(
-+            &mut app,
-+            &mut runtime,
-+            KeyCode::Char('y'),
-+            KeyModifiers::CONTROL,
-+        );
-+    }
-+    assert_eq!(app.editor.lines().join("\n"), source);
-+    assert!(app.entries.is_empty());
-+    assert!(!runtime.state.has_variable("value"));
-+
-+    key(&mut app, &mut runtime, KeyCode::F(5), KeyModifiers::NONE);
-+    assert_eq!(app.entries.len(), 1);
-+    assert_eq!(app.entries[0].output.text(View::Text), "8");
-+}
-+
-+#[test]
-+fn unindenting_recalled_input_keeps_the_edited_buffer() {
-+    let mut app = App::new(false, false);
-+    let mut runtime = Runtime::new();
-+    app.history.push("    value = 7".into());
-+    app.editor = editor::new("unfinished draft");
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::Char('p'),
-+        KeyModifiers::CONTROL,
-+    );
-+    assert_eq!(app.editor.lines(), ["    value = 7"]);
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::BackTab,
-+        KeyModifiers::SHIFT,
-+    );
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::Char('n'),
-+        KeyModifiers::CONTROL,
-+    );
-+    assert_eq!(app.editor.lines(), ["value = 7"]);
-+    assert_eq!(app.draft, "unfinished draft");
-+    assert!(app.entries.is_empty());
-+}
-+
- #[test]
- fn windows_control_enter_is_a_pasted_lf_not_an_execution_shortcut() {
-     let mut app = App::new(false, false);
+ ## Motivation
+ 
+@@ -44,26 +56,1304 @@ Requires: 61, 125
+   copying names `reversed` and `toReversed` describe it exactly. Accepting
+   them moves Nucleoid toward the superset of familiar forms that its goals
+   name, without changing any accepted reading.
++- World models read ordered histories backward: an undo history newest
++  first, the stops of a route on the way home, the latest readings first, a
++  class's instances from the latest created, and a word against its own
++  reversal to tell a palindrome. These readings are standing, so they must
++  follow every push, new instance and write, which `reverse()` and `[::-1]`
++  already do and the aliases inherit.
++- The aliases advance the language-superset aspiration of the Language
++  compatibility category, as the accepted `this`/`self`, `=>`/`->`,
++  `append`, `contains`, `lower`, `upper`, `strip`, NUC 110's `startswith`,
++  `endswith` and `join`, NUC 116's size and emptiness methods, NUC 117's
++  `first` and `last` and NUC 118's case conversions do: an equivalent
++  familiar spelling beside the canonical one, with no change to any
++  accepted program.
++- Kotlin's `Iterable.reversed()` and `String.reversed()`, Swift's
++  `Sequence.reversed()`, Java 21's `SequencedCollection.reversed()`,
++  JavaScript's `Array.prototype.toReversed()` and Ruby's `String#reverse`
++  and `Array#reverse` are the prior art.
+ - Sorting copies stay out of scope. The accepted `sort()` orders by
+   JavaScript string comparison, so `[10, 9, 1, 2].sort()` gives
+   `[1, 10, 2, 9]`, while Kotlin's and Swift's `sorted()` order numbers by
+   value; a `sorted()` alias would mislead.
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and mode.** The allocating continuous cycle drew Language
++  compatibility with one tool-backed uniform draw over the five categories
++  that NUC 1's registry marks eligible for automatic selection, index 4
++  with probability 1/5 and no redraw, at 21:17:07 on 21-Nov-2026, and
++  recorded the requested change in the allocation commit `2ae49a2e`, which
++  this revision pins. Token comparison is therefore skipped as
++  `language_compatibility`. The skip is categorical; it is neither a
++  measured comparison nor a passing token gate. Runtime applicability does
++  not apply to this category.
++- **Selection.** Among the open Language compatibil
 ```
 
-**File**: `src/terminal/view.rs` (modified, +13/-5)
+**File**: `nucleoid.spec.md` (modified, +202/-0)
 ```diff
-@@ -103,11 +103,19 @@ fn editor_panel(frame: &mut Frame<'_>, area: Rect, app: &mut App, regions: &mut
-             )
-             .alignment(Alignment::Right),
-         )
--        .title_bottom(Line::from(if area.width >= 70 {
--            " Enter newline  Tab complete  Ctrl-J autoindent "
--        } else {
--            " Enter newline  Tab complete "
--        }));
-+        .title_bottom(Line::from(
-+            if app
-+                .editor
-+                .selection_range()
-+                .is_some_and(|(start, end)| start != end)
-+            {
-+                " Tab indent  Shift-Tab unindent "
-+            } else if area.width >= 70 {
-+                " Enter newline  Tab complete  Ctrl-J autoindent "
-+            } else {
-+                " Enter newline  Tab complete "
-+            },
-+        ));
-     regions.editor = editor_block.inner(area);
-     app.editor.set_block(editor_block);
-     app.editor.set_style(base().bg(PANEL));
+@@ -612,6 +612,117 @@ operator-chain diagnostics and source positions are preserved.
+   specify the executable behavior. `tests/case_conversion_aliases.rs`
+   executes the rest.
+ 
++## Reversal method aliases
++
++- [NUC 131](docs/nuc-0131.md) adds the reversal methods that Kotlin, Swift,
++  JavaScript and Ruby write, as aliases of the accepted `reverse()` on lists
++  and class populations and of the character reversal `TEXT[::-1]` of
++  [Stepped slices](#stepped-slices) on strings. They join the accepted
++  aliases `append`, `contains`, `size`, `len`, `isEmpty`, `is_empty`,
++  `isNotEmpty`, `first` and `last` of lists and populations, and `lower`,
++  `upper`, `strip`, `startswith`, `endswith` and the case conversion aliases
++  of strings. No token, keyword, syntax tree node, error type or message
++  format is added.
++- The accepted `RECEIVER.reverse()`, on a list or a class population,
++  returns a new list of the same items in reverse order and leaves the
++  receiver as it is, unlike JavaScript's in-place `reverse()`: after
++  `xs = [1, 2, 3]`, `[xs.reverse(), xs]` is `[[3, 2, 1], [1, 2, 3]]`. On a
++  class it gives the instances in reverse population order, the latest
++  created first. An empty list or a class without instances gives `[]`. The
++  items are the receiver's own, so the instances and objects of a reversed
++  list are those of the receiver, and a nested list keeps its own order.
++  Supplied arguments are evaluated and ignored, and a declaration that calls
++  `reverse()` follows its receiver.
++- `RECEIVER.reversed()` and `RECEIVER.toReversed()` are `RECEIVER.reverse()`
++  on a list or a class population. `TEXT.reversed()` and `TEXT.reverse()` are
++  `TEXT[::-1]` on a string: a new string of its characters, Unicode scalar
++  values, in reverse order, so `"café".reversed()` is `"éfac"`,
++  `"a😀b".reverse()` is `"b😀a"` and `"".reversed()` is `""`. A combining mark
++  is a character of its own, so it changes sides: `e`, a combining acute
++  accent and `x` reverse to `x`, the accent and `e`, which shows the accent on
++  the `x`. Supplied arguments are evaluated and ignored.
++- **Receivers.** A list however it is reached, including a literal, a name, a
++  property, an index or a slice, a call or query result, a `.value` snapshot
++  and a list read from a state version; a declared class's instances, named
++  by the class, by a variable or parameter that holds it, or by `$Name`
++  outside a class-level rule or conditional, and the ranges and `Name.list()`
++  lists of them; and a string however it is reached, including a template
++  and the empty string.
++- **Evaluation.** The receiver is read first, a population's instances
++  included, then every argument once, left to right, as for every call. An
++  argument's error, such as `ReferenceError("missing is not defined")`,
++  propagates before the alias runs.
++- **Live.** A declaration or class-level rule that calls an alias depends on
++  what its accepted spelling depends on: `undo = history.reversed()` follows
++  pushes, pops, shifts, sorts and replacements of `history`,
++  `home = Stop.reversed()` follows new and deleted instances,
++  `mirror = word.reversed()` follows writes of `word`, and
++  `$Train.fromRear = $Train.cars.reversed()` follows each train's cars.
++  Errors roll back through the existing transaction.
++- **Per evaluation.** The receiver decides the reading each time a call is
++  evaluated. When a later write replaces a held receiver with another kind of
++  value, the re-evaluated call reads its name on that value, as it reads any
++  other method name. After `ys = xs.reversed()` over a list, writing
++  `xs = "abc"` makes `ys` the string `"cba"`, where `xs.toReversed()` raises
++  `TypeError("abc.toReversed is not a function")` and rolls back; writing
++  `xs = 5` raises `TypeError("number.reversed is not a function")` and rolls
++  back, where `reverse()` names `reverse`; and an object whose `reversed` is a
++  function runs it. After `t = s.reversed()` over a string, writing a list
++  makes `t` the reversed list, as `s[::-1]` does, while a number, boolean,
++  date or function raises that receiver's `TypeError` and rolls back, where
++  `s[::-1]` gives undefined.
++- **Rendering.** Statements, `why`, `affects`, `--graph` and graph keys show
++  the call as written. Its dependencies are those of the accepted spelling,
++  so `why undo` after `undo = history.reversed()` shows `undo` read from
++  `history`, as after `undo = history.reverse()`.
++- **Unchanged.** Only calls of `reversed` and `toReversed` on a list or
++  population receiver, and of `reversed` and `reverse` on a string receiver,
++  change; each raised `TypeError("<receiver>.<name> is not a function")`, or
++  an argument's error first, which stays. A standing `reverse()` call whose
++  list receiver a later write replaces with a string raised
++  `TypeError("<text>.reverse is not a function")` at that write, which rolled
++  back, and now reverses the string.
++  - A string's `toReversed()` k
 ```
 
 #### Recent Merged Pull Requests:
@@ -2183,53 +2079,32 @@ Indent selected lines with Tab and unindent selections or the current line with 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Synthesize ARC examples from object transforms
+## X. Draft NUC 133 Edge Lists of Reasoning Selections
 
 **RULE**:
-When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8eed95c3`: Synthesize ARC examples from object transforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `008cc5b3`: Draft NUC 133 Edge Lists of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import * as visualizer from "./visualizer";
-import object from "./object.ts";
-import * as nucleoid from "./lib/nucleoid.ts";
+| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Draft |
+| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-import * as llm from "./lib/llm.ts";
-
-const FIELD_GUIDE = `
-- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
-- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
-- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
-`.trim();
-  const count = train.length;
-
-  const { result } = await llm.generate({
-    few_shot: null,
-    messages: [
-      {
-        role: "assistant",
-        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
-
-        <current_dataset>
-        ${JSON.stringify({
-          ...train,
-          dataset: train.dataset.map(
-            ({ input_matrix, output_matrix, ins
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8eed95c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `008cc5b3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T06:03:37.029Z",
+  "last_updated": "2026-11-22T06:11:37.547Z",
   "total_records": 2330,
   "domains": {
     "A": {
@@ -8100,8 +8100,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "cf0a6080444bb97ded35ac589f94d712214d0dc91f529accc9152980f86707d7",
-      "created_at": "2026-11-22T06:03:37.029Z"
+      "content_hash": "26339aa1111ef2ef236da78801b891bae0e77bb1228fa96870a5cd2366b1f0d5",
+      "created_at": "2026-11-22T06:11:37.547Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -16093,8 +16093,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "867a4c579ca20b4e5e726c8e1856e9ecaac2ecaff92b975d77ff328737892dcf",
-      "created_at": "2026-11-20T14:52:52.396Z"
+      "content_hash": "e9d3c88b12b148d0e68eaae973582dac28fb2e0842d28d3ef4639bcde1fa1106",
+      "created_at": "2026-11-22T06:11:32.602Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -16153,8 +16153,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "9da9abccf2d8db381e446d5d4fc109f2b8dd1bdfa8c5166cbdae0dd825bb2703",
-      "created_at": "2026-11-20T14:52:58.423Z"
+      "content_hash": "aebab4cf42968560e8e98b26050e3ad31808eadde4c2212411a49ecd887711b5",
+      "created_at": "2026-11-22T06:11:36.584Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -22527,8 +22527,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/MiniMax-H3-Image Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-image-research-knowledge-intelligence-comfy-org-minimax-.md",
       "repository": "Comfy-Org/MiniMax-H3-Image",
-      "content_hash": "6aea82d89c6843e7f26a521dc46a08d5a873101d6b42efd3560f8cde604d85e3",
-      "created_at": "2026-11-15T21:27:31.724Z"
+      "content_hash": "21787ee5396dcabb58609b38976792ebf5ce6c4d5ad36de2287a9d6af009a64d",
+      "created_at": "2026-11-22T06:11:15.518Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv",
@@ -22536,8 +22536,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-minimax-h3-image-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-image-learnings-research-knowledge-intelligence-hf-comfy.md",
       "repository": "hf-comfy-org-minimax-h3-image-learnings",
-      "content_hash": "c3d88c398679178f2ceda8c5a53c0d8ee750d93147fcbd9a65e7253b4bbd46b3",
-      "created_at": "2026-11-15T21:27:44.055Z"
+      "content_hash": "6ac2fb51c6316a86cecbdd75cb4504c74e7edd9501c66b7e4113f96ae26c3c12",
+      "created_at": "2026-11-22T06:11:35.794Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mradermacher-gemma-4-31b-it-ara-heretic-gguf-cor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-gemma-4-31b-it-ara-heretic-gguf-cor",

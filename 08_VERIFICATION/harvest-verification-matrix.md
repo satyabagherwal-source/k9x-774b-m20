@@ -12026,3 +12026,5 @@
 | `CYCLE-20261122-4BBY` | `2026-11-22T05:50:27.166Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9899` | Yes (`720f80e6...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T05:51:00.131Z` | `doobidoo-mcp-memory-service` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-1273A85F` [Domain H] | Yes (`21f7f92b...`) |
 | `CYCLE-20261122-L4XM` | `2026-11-22T06:03:32.026Z` | `MiniMaxAI/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | Yes (`d3c4fc0f...`) |
+| `CYCLE-20261122-V2F3` | `2026-11-22T06:11:15.327Z` | `Comfy-Org/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | Yes (`caa0bf8c...`) |
+| `CYCLE-20261122-VFG8` | `2026-11-22T06:11:32.216Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9900` | Yes (`a7c0633a...`) |

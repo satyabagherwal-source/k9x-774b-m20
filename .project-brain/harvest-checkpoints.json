@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T06:03:32.038Z",
+  "last_updated": "2026-11-22T06:11:32.229Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f44c62df0260eb9cb5414d2104e0cff30855f9913bf3eb6336952581e5b85cec",
-      "verified_at": "2026-11-22T05:28:17.654Z",
+      "content_hash": "a7c0633a94f1ce7546515fd93a9630429b0ded2949859f8bfb34377c413987e7",
+      "verified_at": "2026-11-22T06:11:32.228Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T05:28:17.654Z"
+      "last_updated": "2026-11-22T06:11:32.228Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -18486,14 +18486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3-image",
-      "content_hash": "84157cd61f49d1bf89d10e141145d4919992a9aeed6af07a1045fd920840df40",
-      "verified_at": "2026-11-15T21:27:31.584Z",
+      "content_hash": "caa0bf8ceffdcd350abc3c20bf3b96fe46553e630c1f640480c8f1dbe82a80ea",
+      "verified_at": "2026-11-22T06:11:15.339Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T21:27:31.584Z"
+      "last_updated": "2026-11-22T06:11:15.339Z"
     },
     "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF": {
       "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
