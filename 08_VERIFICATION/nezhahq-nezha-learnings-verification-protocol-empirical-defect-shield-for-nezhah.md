@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T17:58:50.065Z",
+  "timestamp": "2026-11-22T04:29:13.954Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nezhahq-nezha-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nezhahq-nezha-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T17:58:50.065Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T04:29:13.954Z`  
 > **Learning ID**: `LEARN-EVO-nezhahq-nezha-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source**: github ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
-> **Source Version**: `76b07b58`  
+> **Source Version**: `22f2184e`  
 > **License**: WTFPL  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:58:45.685Z  
+> **Timestamp**: 2026-11-22T04:29:02.656Z  
 > **Learning ID**: `learn-github-nezhahq-nezha`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:53:45.042Z  
+> **Harvest Timestamp**: 2026-11-22T04:29:02.651Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: :trollface: Self-hosted, lightweight server and website monitoring and O&M tool
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10419 stars
+- **Stars / Engagement**: 10425 stars
 
 ---
 
@@ -1010,113 +1010,161 @@ func (w *GinCustomWriter) WriteHeader(code int) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2008d645` (2026-11-19)
-**Commit Message**: security: MCP OAuth grant cap counts a member's API tokens under SQLite write lock (DoS)
+### Incident Patch 1: `c9339e68` (2026-11-21)
+**Commit Message**: fix: remove the user deletion deadlock and reject a second connection to a stream
 
-Discovered by Anthropic's OSS Scanner, as vulnerability ANT-2026-XE6CIRZS.
+Deleting a user cleaned up its servers while holding the user lock, taking
+the alerts lock and the server list lock. The alert check and monitor result
+handling take those first and the user lock second, so the two sides waited
+for each other forever and every Agent login hung with them. The cleanup now
+runs after the user lock is released.
+
+A second WebSocket opened with the same session ID replaced the first user
+connection and started a second pair of relay goroutines over one buffer; a
+large Agent frame then indexed past the slice and took the dashboard down.
+A stream now accepts one user connection.
 
 Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
-**File**: `cmd/dashboard/controller/mcp_oauth_test.go` (modified, +26/-0)
+**File**: `service/rpc/io_stream_duplicate_user_test.go` (added, +36/-0)
 ```diff
-@@ -960,3 +960,29 @@ func TestMCPOAuthUnknownAccessTokenIsCountedByWAF(t *testing.T) {
- 	require.Equal(t, 401, s.rpc(t, tokens.AccessToken, "initialize", nil).Code)
- 	require.Zero(t, counted())
- }
+@@ -0,0 +1,36 @@
++package rpc
 +
-+// The cap of 100 authorizations per user is counted on mcp_oauth_grants. A
-+// member's personal API tokens share api_tokens with the OAuth permission
-+// identities, have no quota and may be named "OAuth: ..." by their owner, so
-+// they must neither be read under the write lock nor use up the cap.
-+func TestMCPOAuthGrantCapCountsGrantsNotAPITokens(t *testing.T) {
-+	s := setupMCPOAuthSession(t)
-+	expiry := time.Now().Add(time.Hour)
-+	for i := range 100 {
-+		require.NoError(t, singleton.DB.Create(&model.APIToken{UserID: s.userID, Name: "OAuth: personal", TokenHash: model.HashAPIToken("personal-" + strconv.Itoa(i)), ExpiresAt: &expiry}).Error)
-+	}
-+	s.tokens(t)
-+	var grant model.MCPOAuthGrant
-+	require.NoError(t, singleton.DB.First(&grant).Error)
-+	require.Equal(t, s.userID, grant.UserID)
++import (
++	"errors"
++	"testing"
++)
 +
-+	for i := range 99 {
-+		name := "filler-" + strconv.Itoa(i)
-+		permission := model.APIToken{UserID: s.userID, Name: "renamed by its owner", TokenHash: model.HashAPIToken(name), ExpiresAt: &expiry}
-+		require.NoError(t, singleton.DB.Create(&permission).Error)
-+		require.NoError(t, singleton.DB.Create(&model.MCPOAuthGrant{ID: name, APITokenID: permission.ID, UserID: s.userID, ClientID: s.clientID, AccessHash: model.HashAPIToken(name), ExpiresAt: expiry}).Error)
++// A second WebSocket opened with the same session ID used to replace the first
++// connection and start a second pair of relay goroutines over the same buffer.
++// A large Agent frame then indexed past the slice and took the whole dashboard
++// process down.
++func TestUserConnectedRejectsASecondConnectionToTheSameStream(t *testing.T) {
++	handler := NewNezhaHandler()
++	const streamID = "11111111-1111-1111-1111-111111111111"
++	handler.CreateStream(streamID, 100, 0)
++	first, second := newPipeReadWriter(), newPipeReadWriter()
++	defer first.Close()
++	defer second.Close()
++
++	if err := handler.UserConnected(streamID, first); err != nil {
++		t.Fatalf("first connection: %v", err)
 +	}
-+	refused := s.request(t, "POST", mcpOAuthPath+"/token", s.exchangeForm(s.approve(t)), false)
-+	require.Equal(t, 400, refused.Code, refused.Body.String())
-+	require.Contains(t, refused.Body.String(), "invalid_grant")
++	err := handler.UserConnected(streamID, second)
++
++	if !errors.Is(err, ErrUserStreamAlreadyConnected) {
++		t.Fatalf("second connection err = %v, want ErrUserStreamAlreadyConnected", err)
++	}
++	stream, getErr := handler.GetStream(streamID)
++	if getErr != nil {
++		t.Fatalf("GetStream: %v", getErr)
++	}
++	attached, _ := handler.streamEndpoints(stream)
++	if attached != first {
++		t.Fatal("the second connection replaced the first one")
++	}
 +}
 ```
 
-**File**: `cmd/dashboard/controller/mcp_oauth_token.go` (modified, +5/-2)
+**File**: `service/rpc/io_stream_registry.go` (modified, +10/-0)
 ```diff
-@@ -161,8 +161,11 @@ func mcpOAuthExchangeCode(tx *gorm.DB, client *model.MCPOAuthClient, form url.Va
- 	if tx.First(&user, code.UserID).Error != nil || user.TokenVersion != code.UserVersion {
- 		return nil, 0, errMCPOAuthInvalidGrant
- 	}
-+	// Count the grants themselves. api_tokens also holds the user's personal
-+	// tokens, which are unbounded and may carry any name, and this transaction
-+	// already holds the database write lock while it counts.
- 	var count int64
--	if err := tx.Model(&model.APIToken{}).Where("user_id = ? AND name LIKE ? AND expires_at > ?", user.ID, "OAuth: %", time.Now()).Count(&count).Error; err != nil {
-+	if err := tx.Model(&model.MCPOAuthGrant{}).Where("user_id = ? AND expires_at > ?", user.ID, time.Now()).Count(&count).Error; err != nil {
- 		return nil, 0, err
- 	}
- 	if count >= 100 {
-@@ -176,7 +179,7 @@ func mcpOAuthExchangeCode(tx *gorm.DB, client *model.MCPOAuthClient, form url.Va
- 	if err := tx.Create(&permission).Error; err != nil {
- 		return nil, 0, err
- 	}
--	grant := model.MCPOAuthGrant{ID: mcpOAuthRandom(), APITokenID: permission.ID, ClientID: client.ID, Resource: code.Resource, UserVersion: user.TokenVersion, ExpiresAt: expiry}
-+	grant := model.MCPOAuthGrant{ID: mcpOAuthRandom(), APITokenID: permission.ID, UserID: user.ID, ClientID: client.ID, Resource: code.Resource, UserVersion: user.TokenVersion, ExpiresAt: expiry}
- 	response := mcpOAuthRotateCredentials(&grant, permission.Scopes())
- 	if err := tx.Create(&grant).Error; err != nil {
- 		return nil, 0, err
-```
-
-**File**: `model/mcp_oauth.go` (modified, +3/-0)
-```diff
-@@ -31,9 +31,12 @@ type MCPOAuthCode struct {
+@@ -7,6 +7,9 @@ import (
  
- // MCPOAuthGrant uses an APIToken as the existing permission/audit/revocation
- // identity, but its opaque access credentials are accepted only by /mcp.
-+// UserID repeats the owner of that APIToken so the per-user grant cap is
-+// counted on this table and never on the user's api_tokens rows.
- type MCPOAuthGrant struct {
- 	ID              string `gorm:"primaryKey;size:64"`
- 	APITokenID      uint64 `gorm:"uniqueIndex"`
-+	UserID          uint64 `gorm:"index;not null;default:0"`
- 	ClientID        string `gorm:"index"`
- 	Resource        string
- 	UserVersion     uint64
-```
-
-**File**: `service/singleton/singleton.go` (modified, +5/-0)
-```diff
-@@ -113,6 +113,11 @@ func InitDBFromPath(path string) error {
- 			return err
- 		}
+ var ErrAgentStreamAlreadyConnected = errors.New("agent stream already connected")
+ 
++// ErrUserStreamAlreadyConnected is returned when a stream already has its user connection.
++var ErrUserStreamAlreadyConnected = errors.New("user stream already connected")
++
+ func (s *NezhaHandler) IsStreamAuthorizedForAgent(streamId string, agentServerID uint64) bool {
+ 	s.ioStreamMutex.RLock()
+ 	defer s.ioStreamMutex.RUnlock()
+@@ -55,6 +58,13 @@ func (s *NezhaHandler) UserConnected(streamId string, userIo io.ReadWriteCloser)
+ 		s.ioStreamMutex.Unlock()
+ 		return errors.New("stream not found")
  	}
-+	// Grants issued before mcp_oauth_grants.user_id existed take the owner of
-+	// their permission identity, so they keep counting towards the per-user cap.
-+	if err := DB.Exec("UPDATE mcp_oauth_grants SET user_id = COALESCE((SELECT user_id FROM api_tokens WHERE api_tokens.id = mcp_oauth_grants.api_token_id), 0) WHERE user_id = 0").Error; err != nil {
-+		return err
++	// 一条流只能附着一个用户连接。覆盖已有连接的话，同一个会话 ID 再连一次就会
++	// 让 StartStream 再起一对中继协程，两对协程并发读同一个缓冲区，切片越界后
++	// 整个面板进程退出。
++	if stream.userIo != nil {
++		s.ioStreamMutex.Unlock()
++		return ErrUserStreamAlreadyConnected
 +	}
- 
- 	// 旧 mcp:* scope 与 nezha:* 并行了一段时间，HasScope 通过别名让 mcp:fs:write
- 	// 静默扩到 REST nezha:server:write。统一命名后这里把残留旧 scope 一次性
+ 	stream.userIo = userIo
+ 	s.ioStreamMutex.Unlock()
+ 	stream.userIoChOnce.Do(func() { close(stream.userIoConnectCh) })
 ```
 
-**File**: `service/singleton/singleton_test.go` (added, +41/-0)
+**File**: `service/singleton/user.go` (modified, +29/-17)
 ```diff
-@@ -0,0 +1,41 @@
+@@ -100,6 +100,34 @@ func OnUserDelete(id []uint64, errorFunc func(string, ...any) error) error {
+ 		}
+ 	}()
+ 
++	// 被删用户名下服务器的内存清理同样要等 UserLock 释放之后再做（defer 后进先出，
++	// 这一段在下面的 UserLock.Unlock 之后执行）。这些清理要拿告警锁和服务器列表锁，
++	// 而告警检查、监控结果处理是先拿那些锁再读 UserLock：在 UserLock 里面去拿，
++	// 两边就会互相等待，UserLock 永不释放，所有 agent 认证跟着卡死，只能重启面板。
++	var deletedServers []uint64
++	defer func() {
++		if len(deletedServers) == 0 {
++			return
++		}
++		AlertsLock.Lock()
++		for _, sid := range deletedServers {
++			for _, alert := range Alerts {
++				if AlertsCycleTransferStatsStore[alert.ID] != nil {
++					delete(AlertsCycleTransferStatsStore[alert.ID].ServerName, sid)
++					delete(AlertsCycleTransferStatsStore[alert.ID].Transfer, sid)
++					delete(AlertsCycleTransferStatsStore[alert.ID].NextUpdate, sid)
++				}
++			}
++		}
++		AlertsLock.Unlock()
++		// Cancel pending transfers before ServerShared drops the
++		// in-memory entry: same ordering rationale as batchDeleteServer.
++		if ServerTransferShared != nil {
++			ServerTransferShared.OnServersDeleted(deletedServers)
++		}
++		ServerShared.Delete(deletedServers)
++	}()
++
+ 	if len(id) < 1 {
+ 		return Localizer.ErrorT("user id not specified")
+ 	}
+@@ -169,23 +197,7 @@ func OnUserDelete(id []uint64, errorFunc func(string, ...any) error) error {
+ 		}
+ 
+ 		if server {
+-			AlertsLock.Lock()
+-			for _, sid := range servers {
+-				for _, alert := range Alerts {
+-					if AlertsCycleTransferStatsStore[alert.ID] != nil {
+-						delete(AlertsCycleTransferStatsStore[alert.ID].ServerName, sid)
+-						delete(AlertsCycleTransferStatsStore[alert.ID].Transfer, sid)
+-						delete(AlertsCycleTransferStatsStore[alert.ID].NextUpdate, sid)
+-					}
+-				}
+-			}
+-			AlertsLock.Unlock()
+-			// Cancel pending transfers before ServerShared drops the
+-			// in-memory entry: same ordering rationale as batchDeleteServer.
+-			if ServerTransferShared != nil {
+-				ServerTransferShared.OnServersDeleted(servers)
+-			}
+-			ServerShared.Delete(servers)
++			deletedServers = append(deletedServers, servers...)
+ 		}
+ 
+ 		secret := UserInfoMap[uid].AgentSecret
+```
+
+**File**: `service/singleton/user_delete_lock_order_test.go` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
 +package singleton
 +
 +import (
-+	"path/filepath"
 +	"testing"
 +	"time"
 +
@@ -1125,622 +1173,684 @@ Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 +	"github.com/nezhahq/nezha/model"
 +)
 +
-+// mcp_oauth_grants.user_id carries the per-user grant cap. Grants written
-+// before the column existed must get the owner of their API token on upgrade.
-+func TestInitDBFromPathBackfillsMCPOAuthGrantUserID(t *testing.T) {
-+	previousDB, previousConf := DB, Conf
-+	Conf = &ConfigClass{Config: &model.Config{}}
-+	closeDB := func() {
-+		sqlDB, err := DB.DB()
-+		require.NoError(t, err)
-+		require.NoError(t, sqlDB.Close())
-+	}
-+	path := filepath.Join(t.TempDir(), "dashboard.sqlite")
-+	require.NoError(t, InitDBFromPath(path))
-+	permission := model.APIToken{UserID: 42, Name: "OAuth: client", TokenHash: model.HashAPIToken("permission")}
-+	require.NoError(t, DB.Create(&permission).Error)
-+	require.NoError(t, DB.Create(&model.MCPOAuthGrant{ID: "issued-before-upgrade", APITokenID: permission.ID, AccessHash: "access", ExpiresAt: time.Now().Add(time.Hour)}).Error)
-+	require.NoError(t, DB.Migrator().DropIndex(&model.MCPOAuthGrant{}, "UserID"))
-+	require.NoError(t, DB.Migrator().DropColumn(&model.MCPOAuthGrant{}, "UserID"))
-+	require.False(t, DB.Migrator().HasColumn(&model.MCPOAuthGrant{}, "user_id"))
-+	closeDB()
++// The alert check holds the alerts lock and then reads the user table for every
++// server; handling a monitor result takes the server list lock first. Deleting
++// a user took those locks while it still held the user lock, so the two sides
++// waited for each other forever and every Agent login hung with them.
++func TestOnUserDeleteDoesNotHoldUserLockWhileWaitingForTheAlertsLock(t *testing.T) {
++	_, cleanup := setupOnUserDeleteFixture(t)
++	defer cleanup()
++	const user = uint64(100)
++	const serverID = uint64(1)
++	seedServerForTransfer(t, serverID, user)
++	require.NoError(t, DB.AutoMigrate(&model.User{}))
++	require.NoError(t, DB.Create(&model.User{Common: model.Common{ID: user}, Username: "alice", AgentSecret: "alice-secret"}).Error)
++	UserLock.Lock()
++	UserInfoMap[user] = model.UserInfo{Role: model.RoleMember, Username: "alice", AgentSecret: "alice-secret"}
++	UserLock.Unlock()
 +
-+	require.NoError(t, InitDBFromPath(path))
-+	t.Cleanup(func() {
-+		closeDB()
-+		DB, Conf = previousDB, previousConf
-+	})
-+	var grant model.MCPOAuthGrant
-+	require.NoError(t, DB.First(&grant, "id = ?", "issued-before-upgrade").Error)
-+	require.EqualValues(t, 42, grant.UserID)
++	// An alert check is in flight.
++	AlertsLock.RLock()
++	alertCheckFinished := false
++	defer func() {
++		if !alertCheckFinished {
++			AlertsLock.RUnlock()
++		}
++	}()
++	done := make(chan error, 1)
++	go func() {
++		done <- OnUserDelete([]uint64{user}, func(string, ...any) error { return nil })
++	}()
++
++	// The check reaches its user lookup once the user is gone from the table.
++	awaitWhileUnregistering(t, func() bool {
++		_, known := lookupServerOwner(user)
++		return !known
++	}, "the alert check's user lookup is blocked behind the deletion: both sides wait for each other")
++	select {
++	case err := <-done:
++		t.Fatalf("OnUserDelete returned %v while the alert check still held the alerts lock", err)
++	case <-time.After(50 * time.Millisecond):
++	}
++	_, stillListed := ServerShared.Get(serverID)
++	require.True(t, stillListed, "test setup: the server is removed only after the alert check lets go")
++
++	AlertsLock.RUnlock()
++	alertCheckFinished = true
++	select {
++	case err := <-done:
++		require.NoError(t, err)
++	case <-time.After(5 * time.Second):
++		t.Fatal("OnUserDelete did not finish after the alert check released the alerts lock")
++	}
++	_, listed := ServerShared.Get(serverID)
++	require.False(t, listed, "the deleted user's server must be removed from the server list")
 +}
 ```
 
 ---
 
-### Incident Patch 2: `8815f08e` (2026-11-19)
-**Commit Message**: security: MarkVerified DB write under global lock lets a member stall all Agents
+### Incident Patch 2: `84cd474c` (2026-11-21)
+**Commit Message**: fix: bound task notifications and release the statistics lock on panic
 
-Discovered by Anthropic's OSS Scanner, as vulnerability ANT-2026-TE7M3FLM.
+Scheduled task notifications were sent from one goroutine per reported result
+with no limit, each holding the result text for as long as a slow webhook
+takes. A task stream now sends at most four at a time and sends the rest from
+its own receive loop, which slows only the Agent that floods.
+
+The cycle transfer statistics lock was released without defer inside a
+function that recovers panics, so one panic during evaluation left it held
+and hung every later evaluation and the /service endpoint.
+
+The concurrency test now drives the real evaluator and the truncation test
+cuts inside a multi-byte character; both passed before with the guarded code
+removed.
 
 Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
-**File**: `service/rpc/auth.go` (modified, +1/-1)
+**File**: `service/rpc/nezha.go` (modified, +31/-4)
 ```diff
-@@ -280,7 +280,7 @@ func authorizeAgentForUUID(userId uint64, clientUUID string) (clientID uint64, h
- 		if t, ok := singleton.ServerTransferShared.LookupRevertDelivery(cid); ok && t.FromUserID == userId {
- 			return cid, true, nil
- 		}
--		if pending != nil && pending.FromUserID == userId {
-+		if pending != nil && pending.FromUserID == userId && singleton.ServerTransferShared.PendingSourceOwner(cid, userId) {
- 			return cid, true, nil
- 		}
- 	}
-```
-
-**File**: `service/rpc/auth_test.go` (modified, +58/-3)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"sync"
- 	"sync/atomic"
- 	"testing"
-+	"time"
- 
- 	"google.golang.org/grpc/metadata"
- 	"gorm.io/driver/sqlite"
-@@ -577,9 +578,9 @@ func TestAuthHandshakeSecretRejectedAfterTransferTerminated(t *testing.T) {
+@@ -54,6 +54,26 @@ func truncateTaskResultText(text string) string {
+ 	return text[:keep] + taskResultTruncatedSuffix
  }
  
- // HIGH security regression: the auth tolerance window for the old owner's
--// global AgentSecret must close in lockstep with MarkVerified. Holding c.mu
--// across the DB CAS, the c.pending delete and the verifiedHandshakes write
--// inside MarkVerified makes those three steps a single observable event for
-+// global AgentSecret must close in lockstep with MarkVerified. The tolerance
-+// is withdrawn before the DB CAS starts (see the next test), and the c.pending
-+// delete and the verifiedHandshakes write are a single observable event for
- // any auth-path lookup taking c.mu.RLock; once MarkVerified returns
- // verified=true, no later authorizeAgentForUUID can still see the pending
- // entry that previously admitted FromUserID.
-@@ -605,6 +606,60 @@ func TestAuthOldOwnerSecretRejectedOnceTransferIsVerifiedInDB(t *testing.T) {
- 	}
- }
- 
-+// MarkVerified does not keep the transfer index locked while its CAS waits for
-+// the DB, so auth can run in between. The row may already be Verified then
-+// while the pending entry is still published: the old owner's global
-+// AgentSecret must not be admitted on that entry.
-+func TestAuthOldOwnerSecretRejectedWhileTransferIsBeingVerified(t *testing.T) {
-+	defer setupAuthHandshakeFixture(t)()
++// maxPendingTaskNotificationsPerStream 是一条 agent 任务流上同时在发的通知数上限。
++const maxPendingTaskNotificationsPerStream = 4
 +
-+	initiatePendingTransfer(t, 11, 100, 200)
-+	pending, ok := singleton.ServerTransferShared.LookupPending(11)
-+	if !ok {
-+		t.Fatal("expected pending transfer")
-+	}
-+	if _, _, err := authorizeAgentForUUID(100, authHandshakeUUID); err != nil {
-+		t.Fatalf("old owner's global AgentSecret must be tolerated while the transfer is pending: %v", err)
-+	}
-+
-+	writing, release := make(chan struct{}), make(chan struct{})
-+	var park sync.Once
-+	if err := singleton.DB.Callback().Update().Before("gorm:update").Register("park_verify_cas", func(tx *gorm.DB) {
-+		park.Do(func() {
-+			close(writing)
-+			<-release
-+		})
-+	}); err != nil {
-+		t.Fatalf("register callback: %v", err)
-+	}
-+	verified := make(chan bool, 1)
-+	go func() {
-+		ok, _, _ := singleton.ServerTransferShared.MarkVerified(11, pending.ID)
-+		verified <- ok
-+	}()
-+	<-writing
-+
-+	rejected := make(chan error, 1)
-+	go func() {
-+		_, _, err := authorizeAgentForUUID(100, authHandshakeUUID)
-+		rejected <- err
-+	}()
++// dispatchTaskNotification 异步发送一条通知，但同一条任务流上最多同时发
++// cap(pending) 条；名额用完后在调用方（这条流的接收循环）里同步发送。
++// 结果上报的频率由 agent 决定：不设上限的话，一台 agent 连续上报失败结果就能
++// 堆出任意多个各持有 64KiB 文本、最长挂 10 分钟的协程。超额时只让这台 agent
++// 自己的接收循环慢下来，不丢通知，也不影响其他 agent。
++func dispatchTaskNotification(pending chan struct{}, send func()) {
 +	select {
-+	case err := <-rejected:
-+		if err == nil {
-+			t.Error("old owner's global AgentSecret must be rejected while MarkVerified is settling the transfer")
-+		}
-+		close(release)
-+	case <-time.After(5 * time.Second):
-+		t.Error("agent auth waited for MarkVerified's DB write")
-+		close(release)
-+		<-rejected
-+	}
-+	if !<-verified {
-+		t.Fatal("MarkVerified must report verified=true for a fresh pending")
++	case pending <- struct{}{}:
++		go func() {
++			defer func() { <-pending }()
++			send()
++		}()
++	default:
++		send()
 +	}
 +}
 +
- // FORWARD-RECOVERY (HIGH): symmetric to TestAuthHandshakeSecretRejectedAfter
- // TransferTerminated. That test pokes the DB directly to simulate an
- // attacker who learned the per-transfer forward HandshakeSecret outside
+ type NezhaHandler struct {
+ 	Auth                   *authHandler
+ 	ioStreams              map[string]*ioStreamContext
+@@ -151,6 +171,7 @@ func (s *NezhaHandler) RequestTask(stream pb.NezhaService_RequestTaskServer) err
+ 	// Returning the handler cancels the real gRPC stream and wakes a blocked Send.
+ 	// A single receiver allows the handler to observe send-side failure while Recv waits.
+ 	failed := server.TaskStreamFailure(stream)
++	pendingTaskNotifications := make(chan struct{}, maxPendingTaskNotificationsPerStream)
+ 	type taskReception struct {
+ 		result *pb.TaskResult
+ 		err    error
+@@ -219,12 +240,18 @@ func (s *NezhaHandler) RequestTask(stream pb.NezhaService_RequestTaskServer) err
+ 				// 通知必须异步发：webhook 最长会等 10 分钟，同步发送会把这台 agent 的
+ 				// 接收循环卡住，期间它的探测结果和 MCP 调用结果都收不进来。
+ 				if cr.PushSuccessful && result.GetSuccessful() {
+-					go singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Successfully"),
+-						cr.Name, server.Name, result.GetData()), "", &curServer)
++					message := fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Successfully"),
++						cr.Name, server.Name, result.GetData())
++					dispatchTaskNotification(pendingTaskNotifications, func() {
++						singleton.NotificationShared.SendNotification(cr.NotificationGroupID, message, "", &curServer)
++					})
+ 				}
+ 				if !result.GetSuccessful() {
+-					go singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Failed"),
+-						cr.Name, server.Name, result.GetData()), "", &curServer)
++					message := fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Failed"),
++						cr.Name, server.Name, result.GetData())
++					dispatchTaskNotification(pendingTaskNotifications, func() {
++						singleton.NotificationShared.SendNotification(cr.NotificationGroupID, message, "", &curServer)
++					})
+ 				}
+ 				singleton.DB.Model(cr).Updates(model.Cron{
+ 					LastExecutedAt: time.Now().Add(time.Second * -1 * time.Duration(result.GetDelay())),
 ```
 
-**File**: `service/singleton/server_transfer.go` (modified, +59/-9)
+**File**: `service/rpc/request_task_result_size_test.go` (modified, +12/-3)
 ```diff
-@@ -145,6 +145,16 @@ type ServerTransferClass struct {
- 	// concurrent callers could both pass the HasPending guard, both run
- 	// their transactions, and both succeed in creating Pending rows.
- 	initiating map[uint64]bool
-+	// verifying tracks servers whose MarkVerified call is currently running
-+	// the Pending -> Verified CAS in the DB, which it must do without holding
-+	// mu (see MarkVerified). The pending entry stays published for that time,
-+	// so everything it keeps closed stays closed; what it would open is
-+	// refused on this mark instead (PendingSourceOwner, InitiateExclusive).
-+	verifying map[uint64]bool
-+	// verifyLocks serializes MarkVerified per server, so a second presentation
-+	// of the same HandshakeSecret waits for the first one's outcome. Do not
-+	// use c.mu for this: the CAS is a DB write and may block.
-+	verifyLocks sync.Map
- 	// applyConfigSendLocks orders ApplyConfig sends per server transfer lifecycle.
- 	// Do not use c.mu for this: stream.Send may block, but stale new-secret
- 	// pushes and cancel/fail/timeout revert pushes must not overtake each other
-@@ -224,6 +234,7 @@ func NewServerTransferClass() *ServerTransferClass {
- 		terminalSecretRecovery: make(map[uint64]*model.ServerTransfer),
- 		verifiedHandshakes:     make(map[uint64]string),
- 		initiating:             make(map[uint64]bool),
-+		verifying:              make(map[uint64]bool),
- 		subs:                   make(map[uint64]chan *model.ServerTransfer),
- 		subOwners:              make(map[uint64]uint64),
- 		subCounts:              make(map[uint64]int),
-@@ -429,6 +440,18 @@ func (c *ServerTransferClass) LookupOwnerAndPending(s *model.Server) (uint64, *m
- 	return s.GetUserID(), c.pending[s.ID]
- }
- 
-+// PendingSourceOwner reports whether userID is the previous owner of a server
-+// whose transfer is still Pending, i.e. whether auth may keep tolerating that
-+// user's global AgentSecret for it. Not while MarkVerified is settling the
-+// transfer: the DB row may already be Verified although the pending entry is
-+// still published.
-+func (c *ServerTransferClass) PendingSourceOwner(serverID, userID uint64) bool {
-+	c.mu.RLock()
-+	defer c.mu.RUnlock()
-+	t, ok := c.pending[serverID]
-+	return ok && t.FromUserID == userID && !c.verifying[serverID]
-+}
-+
- // HasPending reports whether the given server has an in-flight transfer.
- // Used by Initiate to enforce the "one active transfer per server" invariant.
- func (c *ServerTransferClass) HasPending(serverID uint64) bool {
-@@ -633,6 +656,11 @@ func (c *ServerTransferClass) applyConfigSendLock(serverID uint64) *sync.Mutex {
- 	return lock.(*sync.Mutex)
- }
- 
-+func (c *ServerTransferClass) verifyLock(serverID uint64) *sync.Mutex {
-+	lock, _ := c.verifyLocks.LoadOrStore(serverID, &sync.Mutex{})
-+	return lock.(*sync.Mutex)
-+}
-+
- // Initiate runs inside the given transaction and:
- //   - creates the ServerTransfer row with Status=Pending
- //   - flips Server.UserID to toUserID
-@@ -763,7 +791,7 @@ func (c *ServerTransferClass) InitiateExclusive(serverID, fromUserID, toUserID,
- 		c.mu.Unlock()
- 		return nil, ErrServerAlreadyTransferring
+@@ -16,13 +16,22 @@ func TestTruncateTaskResultTextKeepsShortOutputAndCutsOnRuneBoundary(t *testing.
+ 		t.Fatal("output at the limit must be kept unchanged")
  	}
--	if c.initiating[serverID] {
-+	if c.initiating[serverID] || c.verifying[serverID] {
- 		c.mu.Unlock()
- 		return nil, ErrServerAlreadyTransferring
+ 
+-	// "界" is three bytes; the limit is not a multiple of three once one ASCII
+-	// byte is put in front, so a plain byte cut would split a character.
+-	oversized := "a" + strings.Repeat("界", maxTaskResultTextBytes)
++	// "界" is three bytes. With two ASCII bytes in front the limit falls inside a
++	// character (the limit minus two is not a multiple of three), so a plain byte
++	// cut would split it. One byte in front would not: the limit minus one is.
++	const asciiPrefix = "ab"
++	if (maxTaskResultTextBytes-len(asciiPrefix))%len("界") == 0 {
++		t.Fatal("test setup: the limit must fall inside a multi-byte character")
++	}
++	oversized := asciiPrefix + strings.Repeat("界", maxTaskResultTextBytes)
+ 	got := truncateTaskResultText(oversized)
+ 	if !utf8.ValidString(got) {
+ 		t.Fatal("truncated output is not valid UTF-8")
  	}
-@@ -994,26 +1022,45 @@ func (c *ServerTransferClass) sendApplyConfigTask(s *model.Server, stream pb.Nez
- // DB, the UPDATE affects zero rows and the in-memory state is left alone.
- // MarkVerified atomically transitions a Pending transfer to Verified.
- //
--// Invariant: c.mu is held across the DB CAS, the in-memory pending delete,
--// and the verifiedHandshakes write. Callers reading c.pending under c.mu
--// (auth.go's tolerance window) therefore can never observe a state where
--// the DB row is Verified but c.pending still flags the transfer as Pending —
--// the auth-bypass window that would otherwise let either a stale
--// HandshakeSecret or the old owner's global AgentSecret authenticate
--// between the two updates.
-+// Invariant: auth can never act on a state where the DB row is Verified but
-+// c.pending still flags the transfer as Pending — the auth-bypass window that
-+// would otherwise let either a stale HandshakeSecret or the old owner's
-+// global AgentSecret authenticate between the two updates.
-+//
-+// c.mu must NOT be what enforces this across the DB CAS: every agent auth
-+// (LookupByHandshakeSecret & co.) and every non-admin control admission
-+// (ServerControlTransitioning) takes c.mu for ANY server, and the agent
-+// presenting the HandshakeSecret picks the moment the UPDATE runs. Holding
-+// c.mu while that UPDATE waits for a DB connection or the write lock stalls
-+// every other tenant's agents for as long as the DB is slow. Instead:
-+//   - the per-server verify lock serializes MarkVerified for one server, so a
-+//     concurrent presentation of the same HandshakeSecret waits for the
-+//     outcome and then finds the promoted credential;
-+//   - c.verifying[serverID] is set under c.mu befor
++	kept := strings.TrimSuffix(got, taskResultTruncatedSuffix)
++	if len(kept) >= maxTaskResultTextBytes || len(kept) < maxTaskResultTextBytes-len("界") {
++		t.Fatalf("kept %d bytes, want the last whole character below the %d byte limit", len(kept), maxTaskResultTextBytes)
++	}
+ 	if !strings.HasSuffix(got, taskResultTruncatedSuffix) {
+ 		t.Fatal("truncated output does not say it was truncated")
+ 	}
 ```
 
-**File**: `service/singleton/server_transfer_verify_lock_test.go` (added, +169/-0)
+**File**: `service/rpc/task_notification_dispatch_test.go` (added, +72/-0)
 ```diff
-@@ -0,0 +1,169 @@
-+package singleton
+@@ -0,0 +1,72 @@
++package rpc
 +
 +import (
-+	"sync"
++	"sync/atomic"
 +	"testing"
 +	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"gorm.io/gorm"
 +)
 +
-+type markVerifiedResult struct {
-+	verified bool
-+	err      error
-+}
-+
-+// startMarkVerifiedParkedInDB runs MarkVerified(serverID, transferID) in a
-+// goroutine and returns once its CAS UPDATE is parked inside the DB layer,
-+// which is where a slow or contended database holds it in production. release
-+// lets the UPDATE proceed; done delivers MarkVerified's outcome.
-+func startMarkVerifiedParkedInDB(t *testing.T, c *ServerTransferClass, serverID, transferID uint64) (release func(), done <-chan markVerifiedResult) {
-+	t.Helper()
-+	writing, parked := make(chan struct{}), make(chan struct{})
-+	var park, unpark sync.Once
-+	require.NoError(t, DB.Callback().Update().Before("gorm:update").Register("park_verify_cas", func(tx *gorm.DB) {
-+		park.Do(func() {
-+			close(writing)
-+			<-parked
-+		})
-+	}))
-+	release = func() { unpark.Do(func() { close(parked) }) }
-+	t.Cleanup(release)
-+
-+	result := make(chan markVerifiedResult, 1)
-+	go func() {
-+		verified, _, err := c.MarkVerified(serverID, transferID)
-+		result <- markVerifiedResult{verified, err}
-+	}()
-+	select {
-+	case <-writing:
-+	case got := <-result:
-+		t.Fatalf("MarkVerified returned without writing the DB (verified=%v err=%v)", got.verified, got.err)
++// The Agent decides how often it reports results. Every failed scheduled task
++// used to start its own notification goroutine, each holding the result text
++// for as long as a slow webhook takes, with no limit.
++func TestDispatchTaskNotificationBoundsConcurrentSendsAndThenAppliesBackPressure(t *testing.T) {
++	pending := make(chan struct{}, maxPendingTaskNotificationsPerStream)
++	release := make(chan struct{})
++	var sending, finished atomic.Int32
++	slowWebhook := func() {
++		sending.Add(1)
++		<-release
++		finished.Add(1)
 +	}
-+	return release, result
-+}
 +
-+// Every agent sign-in and every control admission reads the transfer index,
-+// whichever server it is for, so MarkVerified must not keep the index locked
-+// while its UPDATE waits for the database: the agent presenting a handshake
-+// secret decides when that happens.
-+func TestServerTransferMarkVerifiedDoesNotLockIndexWhileWritingDB(t *testing.T) {
-+	c, cleanup := setupTransferFixture(t)
-+	defer cleanup()
-+	seedServerForTransfer(t, 1, 100)
-+	seedServerForTransfer(t, 2, 300)
-+	tr := initiateAndRegister(t, c, 1, 100, 200, 1)
-+	require.True(t, c.PendingSourceOwner(1, 100))
-+	require.False(t, c.PendingSourceOwner(1, 200))
-+
-+	release, first := startMarkVerifiedParkedInDB(t, c, 1, tr.ID)
-+
-+	type view struct {
-+		otherTransitioning, transitioning, pending, sourceTolerated bool
-+		initiateErr                                                 error
++	for range maxPendingTaskNotificationsPerStream {
++		returned := make(chan struct{})
++		go func() {
++			dispatchTaskNotification(pending, slowWebhook)
++			close(returned)
++		}()
++		select {
++		case <-returned:
++		case <-time.After(5 * time.Second):
++			t.Fatal("a notification within the limit blocked the receive loop")
++		}
 +	}
-+	seen := make(chan view, 1)
++
++	overLimitReturned := make(chan struct{})
 +	go func() {
-+		var v view
-+		// What a sign-in with an unrelated secret and a task for an
-+		// unrelated server take on their way.
-+		c.LookupByHandshakeSecret("unrelated")
-+		c.LookupByTerminalSecretRecovery("unrelated")
-+		c.LookupServerByVerifiedHandshakeSecret("unrelated")
-+		v.otherTransitioning = ServerControlTransitioning(2)
-+		v.transitioning = ServerControlTransitioning(1)
-+		v.pending = c.HasPending(1)
-+		v.sourceTolerated = c.PendingSourceOwner(1, 100)
-+		_, v.initiateErr = c.InitiateExclusive(1, 200, 300, 1)
-+		seen <- v
++		dispatchTaskNotification(pending, slowWebhook)
++		close(overLimitReturned)
 +	}()
-+	var v view
++	deadline := time.Now().Add(5 * time.Second)
++	for sending.Load() != maxPendingTaskNotificationsPerStream+1 {
++		if time.Now().After(deadline) {
++			t.Fatalf("%d notifications started, want every one of them to be sent", sending.Load())
++		}
++		time.Sleep(time.Millisecond)
++	}
 +	select {
-+	case v = <-seen:
++	case <-overLimitReturned:
++		t.Fatal("a notification over the limit returned while its webhook was still pending: nothing bounds the goroutines")
++	case <-time.After(50 * time.Millisecond):
++	}
++
++	close(release)
++	select {
++	case <-overLimitReturned:
 +	case <-time.After(5 * time.Second):
-+		release()
-+		<-first
-+		<-seen
-+		t.Fatal("transfer index lookups waited for MarkVerified's DB write")
++		t.Fatal("the over-limit notification never finished")
 +	}
-+	require.False(t, v.otherTransitioning)
-+	// The row may already be Verified: nothing the pending entry keeps closed
-+	// may open, and the old owner's tolerance must already be gone.
-+	require.True(t, v.transitioning)
-+	require.True(t, v.pending)
-+	require.False(t, v.sourceTolerated, "old owner's AgentSecret must not be tolerated while the transfer is being verified")
-+	require.ErrorIs(t, v.initiateErr, ErrServerAlreadyTransferring)
-+
-+	// A second presentation of the handshake secret waits for the first and
-+	// then finds the promoted credential rather than a half-settled transfer.
-+	second := make(chan markVerifiedResult, 1)
-+	promoted := make(chan bool, 1)
-+	go func() {
-+		verified, _, err := c.MarkVerified(1, tr.ID)
-+		_, ok := c.LookupServerByVerifiedHandshakeSecret(tr.HandshakeSecret)
-+		promoted <- ok
-+		second <- markVerifiedResult{verified, err}
++	for finished.Load() != maxPendingTaskNotificationsPerStream+1 {
++		if time.Now().After(deadline) {
++			t.Fatalf("%d notifications finished, want all %d", finished.Load(), maxPendingTaskNotificationsPerStream+1)
++		}
++		time.Sleep(time.Millisecond)
++	}
++	// Every slot is free again for the next results.
++	for len(pending) != 0 {
++		if time.Now().After(deadline) {
++			t.Fatalf("%d notification slots still taken after every send finished", len(pending))
++		}
++		time.Sleep(time.Millisecond)
++	}
++}
+```
+
+**File**: `service/singleton/alertsentinel.go` (modified, +7/-3)
+```diff
+@@ -362,9 +362,13 @@ func checkStatusForServer(alert *model.AlertRule, server *model.Server) {
+ 	}
+ 	// 评估周期流量规则会改写统计里的 map，而这里和读取方都只持有 AlertsLock 的读锁，
+ 	// 必须另外互斥（见 cycleTransferStatsMu）。
+-	cycleTransferStatsMu.Lock()
+-	point, known := alert.SnapshotStatusWithRuntime(AlertsCycleTransferStatsStore[alert.ID], server, runtime, DB)
+-	cycleTransferStatsMu.Unlock()
++	// 解锁必须用 defer：本函数开头会 recover 评估过程中的 panic，不用 defer 的话
++	// 一次 panic 就让这把锁永远不释放，之后所有规则评估和 /service 接口全部卡死。
++	point, known := func() ([]bool, bool) {
++		cycleTransferStatsMu.Lock()
++		defer cycleTransferStatsMu.Unlock()
++		return alert.SnapshotStatusWithRuntime(AlertsCycleTransferStatsStore[alert.ID], server, runtime, DB)
 +	}()
+ 	if !known {
+ 		alertsStore[alert.ID][server.ID] = nil
+ 		return
+```
+
+**File**: `service/singleton/cycle_transfer_stats_concurrency_test.go` (modified, +83/-20)
+```diff
+@@ -8,48 +8,111 @@ import (
+ 	"github.com/nezhahq/nezha/model"
+ )
+ 
++func cycleTransferRuleFixture(t *testing.T, stats *model.CycleTransferStats) (*model.AlertRule, *model.Server) {
++	t.Helper()
++	t.Cleanup(setupTestDB(t))
++	if err := DB.AutoMigrate(model.Transfer{}); err != nil {
++		t.Fatalf("migrate transfer table: %v", err)
++	}
++	previousStore, previousPrev, previousLast, previousCycle := alertsStore, alertsPrevState, alertsLastMetricSeq, AlertsCycleTransferStatsStore
++	t.Cleanup(func() {
++		alertsStore, alertsPrevState, alertsLastMetricSeq, AlertsCycleTransferStatsStore = previousStore, previousPrev, previousLast, previousCycle
++	})
++	alertsStore = map[uint64]map[uint64][]model.TimedAlertPoint{1: {1: nil}}
++	alertsPrevState = map[uint64]map[uint64]uint8{1: {}}
++	alertsLastMetricSeq = map[uint64]map[uint64]uint64{1: {}}
++	AlertsCycleTransferStatsStore = map[uint64]*model.CycleTransferStats{1: stats}
 +
-+	release()
-+	got := <-first
-+	require.NoError(t, got.err)
-+	require.True(t, got.verified)
-+	require.True(t, <-promoted)
-+	got = <-second
-+	require.NoError(t, got.err)
-+	require.False(t, got.verified)
-+	require.False(t, c.HasPending(1))
-+	require.False(t, c.PendingSourceOwner(1, 100))
++	cycleStart := time.Now().Add(-time.Hour)
++	alert := &model.AlertRule{
++		Common: model.Common{ID: 1},
++		Rules: []*model.Rule{{
++			Type: "transfer_all_cycle", Max: 1 << 40, CycleStart: &cycleStart, CycleInterval: 1, CycleUnit: "day", Cover: model.RuleCoverAll,
++		}},
++	}
++	server := &model.Server{Common: model.Common{ID: 1}, Name: "server"}
++	model.InitServer(server)
++	return alert, server
 +}
 +
-+// With the index unlocked during the CAS, a Cancel / timeout sweep that loses
-+// the CAS no longer waits for MarkVerified before its self-heal drops the
-+// pending entry. The server must stay claimed until MarkVerified has applied
-+// its outcome: a transfer initiated in between would have its pending entry
-+// deleted and its server's verified credential overwritten by that outcome.
-+func TestServerTransferInitiateRefusedWhileMarkVerifiedIsSettling(t *testing.T) {
-+	c, cleanup := setupTransferFixture(t)
-+	defer cleanup()
-+	seedServerForTransfer(t, 1, 100)
-+	tr := initiateAndRegister(t, c, 1, 100, 200, 1)
+ // The alert evaluator rewrites the per-server maps of a cycle transfer rule
+ // while the public /service endpoint reads them. Run with -race: an unguarded
+ // read is reported here, and in production it aborts the dashboard process.
++// The writer is the real evaluator, so removing its lock fails this test.
+ func TestCopyCycleTransferStatsIsSafeAgainstTheAlertEvaluator(t *testing.T) {
+-	previous := AlertsCycleTransferStatsStore
+-	t.Cleanup(func() { AlertsCycleTransferStatsStore = previous })
+-	AlertsCycleTransferStatsStore = map[uint64]*model.CycleTransferStats{
+-		1: {Name: "monthly", ServerName: map[uint64]string{}, Transfer: map[uint64]uint64{}, NextUpdate: map[uint64]time.Time{}},
+-	}
++	stats := &model.CycleTransferStats{Name: "monthly", ServerName: map[uint64]string{}, Transfer: map[uint64]uint64{}, NextUpdate: map[uint64]time.Time{}}
++	alert, server := cycleTransferRuleFixture(t, stats)
++	lease := server.AttachStateStream(alertTestStateStream{})
+ 
++	const rounds = 300
+ 	var evaluator sync.WaitGroup
+ 	evaluator.Add(1)
+ 	go func() {
+ 		defer evaluator.Done()
+-		for round := uint64(0); round < 2000; round++ {
+-			// What checkStatusForServer does while it evaluates a rule.
++		for round := uint64(1); round <= rounds; round++ {
++			if !lease.UpdateState(&model.HostState{NetInTransfer: round, NetOutTransfer: round}, time.Now()) {
++				t.Error("state update rejected")
++				return
++			}
++			// The rule skips evaluation until its next check time; clear it so
++			// every round writes the statistics.
++			alert.Rules[0].NextTransferAt = nil
+ 			AlertsLock.RLock()
+-			cycleTransferStatsMu.Lock()
+-			stats := AlertsCycleTransferStatsStore[1]
+-			stats.ServerName[round%50] = "server"
+-			stats.Transfer[round%50] = round
+-			stats.NextUpdate[round%50] = time.Now()
+-			cycleTransferStatsMu.Unlock()
++			checkStatusForServer(alert, server)
+ 			AlertsLock.RUnlock()
+ 		}
+ 	}()
+-	for round := 0; round < 2000; round++ {
+-		for _, stats := range CopyCycleTransferStats() {
+-			for serverID := range stats.Transfer {
+-				_ = stats.ServerName[serverID]
++	for round := 0; round < rounds; round++ {
++		for _, copied := range CopyCycleTransferStats() {
++			for serverID := range copied.Transfer {
++				_ = copied.ServerName[serverID]
+ 			}
+ 		}
+ 	}
+ 	evaluator.Wait()
+ 
++	// The first report is the baseline the cycle counts from.
++	if got, want := stats.Transfer[1], uint64(2*(rounds-1)); got != want {
++		t.Fatalf("the evaluator recorded %d transferred bytes, want %d: it did not write the statistics every round", got, want)
++	}
+ 	// The copy must not share maps with the store: callers filter it per viewer.
+ 	copied := CopyCycleTransferStats()
+ 	copied[1].Transfer[999] = 1
+-	if _, leaked := AlertsCycleTransferStatsStore[1].Transfer[999]; leaked {
++	if _, leaked := stats.Transfer[999]; leaked {
+ 		t.Fatal("the returned statistics share a map with the store")
+ 	}
+-	if len(copied[1].Transfer) != 51 || copied[1].Name != "monthly" {
+-		t.Fatalf("copy = %d transfer entries, name %q; want the 50 written entries plus the probe and the rule name", len(copied[1].Transfer), copied[1].Name)
++	if copied[1].Name != "monthly" || copied[1].ServerName[1] != "server" {
++		t.Fatalf("copy = name %q, server name %q; want the rule name and the evaluated server", copied[1].Name, copied[1].ServerName[1])
++	}
++}
 +
-+	release, first := startMarkVerifiedParkedInDB(t, c, 1, tr.ID)
-+
-+	// revertTransition's self-heal for a row that is no longer Pending. The
-+	// fixture pins the pool to the one connectio
++// checkStatusForServer recovers panics. A panic while it held the statistics
++// lock used to leave the lock taken for good, hanging every later evaluation
++// and the public /service endpoint.
++func TestCycleTransferStatsLockIsReleasedWhenEvaluationPanics(t *testing.T) {
++	// Statistics without maps make the evaluator panic when it records the result.
+
 ```
 
 ---
 
-### Incident Patch 3: `f897f65a` (2026-11-19)
-**Commit Message**: fix: OnUsersDeleted leaves stale Agent streams, can lock the new owner out
+### Incident Patch 3: `c2e23ad7` (2026-11-21)
+**Commit Message**: fix: stop DDNS record loss, a /service crash and oversized agent results
 
-Discovered by Anthropic's OSS Scanner, as vulnerability ANT-2026-AMI4T21G.
+DDNS: a server's address is kept in memory only and is empty after a
+dashboard restart or while the agent is offline. Saving the server in
+that window started an update with no address, which the updater treats
+as "delete the record", removing the A and AAAA records of a healthy
+server. An update is no longer started while the address is unknown.
 
-Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
+/service: the alert evaluator writes the per-server maps of cycle
+transfer rules while the public /service endpoint reads them, both under
+a read lock. Go aborts the process on a concurrent map read and write.
+The maps now have their own mutex and the endpoint works on a copy.
 
-**File**: `model/server.go` (modified, +17/-0)
+Agent results: the output of scheduled tasks and service monitors was
+stored and forwarded at whatever size the agent sent, up to megabytes
+per message. It is now cut to 64 KiB. Scheduled-task notifications are
+sent in the background so a slow webhook no longer blocks the agent's
+result stream.
+
+Workflows: release, sync-code and sync-release declare the token
+permissions they need; yq is pinned and checksum-verified, swag is
+pinned to the version CI uses, and the GitLab sync action is pinned 
+
+**File**: `.github/workflows/release.yml` (modified, +16/-2)
 ```diff
-@@ -359,6 +359,23 @@ func (s *Server) AttachStateStream(stream pb.NezhaService_ReportSystemStateServe
- 	return StateStreamLease{holder: holder, generation: holder.generation}
- }
+@@ -7,6 +7,11 @@ on:
+     branches:
+       - dev
  
-+// RevokeStateStream ends the agent's ReportSystemState session from the
-+// dashboard side. The stream authenticates only when it is opened, so this is
-+// how a credential that stops being valid is taken away from a stream that is
-+// already open: the lease handed out by AttachStateStream stops being current
-+// and can neither update nor clear the runtime state any more.
-+func (s *Server) RevokeStateStream() {
-+	holder := s.RuntimeHandle().holder
-+	holder.mu.Lock()
-+	defer holder.mu.Unlock()
-+	holder.generation++
-+	holder.stream = nil
-+	holder.lastActive = time.Time{}
-+	if holder.canonical != nil {
-+		holder.canonical.LastActive = time.Time{}
-+	}
-+}
++# 仓库的默认 workflow 权限是可写。构建会执行第三方主题的下载脚本和大量依赖代码，
++# 默认只给读权限，发版和推镜像的 job 再各自申请需要的那一项。
++permissions:
++  contents: read
 +
- func (s *Server) UpdateStateIfCurrent(lease StateStreamLease, state *HostState, lastActive time.Time) bool {
- 	return s.UpdateStateIfCurrentWithSideEffect(lease, state, lastActive, nil)
- }
+ jobs:
+   build:
+     strategy:
+@@ -28,7 +33,10 @@ jobs:
+       - name: Install dependencies
+         run: |
+           apt update && apt install unzip curl -y
+-          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
++          # 固定版本并校验摘要：这个二进制随后就在发版构建里执行，
++          # 不能跟着上游的 latest 走。
++          wget https://github.com/mikefarah/yq/releases/download/v4.54.3/yq_linux_amd64 -O /usr/bin/yq
++          echo "129534601871538efe0ba4c5e62a34fb1d5f469bcb975c4fddeb467d82974973  /usr/bin/yq" | sha256sum -c -
+           chmod +x /usr/bin/yq
+ 
+       - run: git config --global --add safe.directory /__w/nezha/nezha
+@@ -53,7 +61,7 @@ jobs:
+ 
+       - name: generate swagger docs
+         run: |
+-          go install github.com/swaggo/swag/cmd/swag@latest
++          go install github.com/swaggo/swag/cmd/swag@v1.16.6
+           swag init --pd -d cmd/dashboard -g main.go -o cmd/dashboard/docs
+           go mod tidy
+ 
+@@ -130,6 +138,9 @@ jobs:
+     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+     needs: build
+     name: Release
++    permissions:
++      contents: write # 创建 release、上传产物
++      actions: write # 触发镜像站同步 workflow
+     steps:
+       - name: Download artifacts
+         uses: actions/download-artifact@v8
+@@ -177,6 +188,9 @@ jobs:
+     if: github.event_name == 'push'
+     needs: build
+     name: Release Docker images
++    permissions:
++      contents: read
++      packages: write # 推送 GHCR 镜像
+     steps:
+       - uses: actions/checkout@v7.0.1
+ 
 ```
 
-**File**: `model/server_runtime_ownership_test.go` (modified, +18/-0)
+**File**: `.github/workflows/sync-code-atomgit.yml` (modified, +7/-1)
 ```diff
-@@ -445,3 +445,21 @@ func TestStateStreamSideEffectDoesNotBlockRuntimeSnapshot(t *testing.T) {
- 	require.False(t, lease.UpdateState(&HostState{}, time.Now()))
- 	require.True(t, next.UpdateState(&HostState{}, time.Now()))
- }
+@@ -4,12 +4,18 @@ on:
+   push:
+     branches: [master]
+ 
++# 仓库的默认 workflow 权限是可写；同步只需要读代码，显式收紧。
++permissions:
++  contents: read
 +
-+func TestServerRuntimeOwnership_revokedLeaseCannotMutateRuntime(t *testing.T) {
-+	server := &Server{}
-+	InitServer(server)
-+	lease := server.AttachStateStream(runtimeOwnershipStream{})
-+	require.True(t, lease.UpdateState(&HostState{Uptime: 1}, time.Unix(1, 0)))
+ jobs:
+   sync-code-to-atomgit:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v7.0.1
+-      - uses: adambirds/sync-github-to-gitlab-action@v1.1.0
++      # 这个第三方 action 会拿到镜像仓库的 SSH 私钥，固定到提交 SHA，
++      # tag 被改写时不会跟着执行新代码。
++      - uses: adambirds/sync-github-to-gitlab-action@654ee4b668b2746fe8367c7c3c254b6575ee1bab # v1.1.0
+         with:
+           destination_repository: git@atomgit.com:naiba/nezha-dashboard.git
+           destination_branch_name: master
+```
+
+**File**: `.github/workflows/sync-code.yml` (modified, +7/-1)
+```diff
+@@ -4,12 +4,18 @@ on:
+   push:
+     branches: [master]
+ 
++# 仓库的默认 workflow 权限是可写；同步只需要读代码，显式收紧。
++permissions:
++  contents: read
 +
-+	server.RevokeStateStream()
+ jobs:
+   sync-to-jihulab:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v7.0.1
+-      - uses: adambirds/sync-github-to-gitlab-action@v1.1.0
++      # 这个第三方 action 会拿到镜像仓库的 SSH 私钥，固定到提交 SHA，
++      # tag 被改写时不会跟着执行新代码。
++      - uses: adambirds/sync-github-to-gitlab-action@654ee4b668b2746fe8367c7c3c254b6575ee1bab # v1.1.0
+         with:
+           destination_repository: git@gitee.com:naibahq/nezha.git
+           destination_branch_name: master
+```
+
+**File**: `.github/workflows/sync-release-atomgit.yml` (modified, +4/-0)
+```diff
+@@ -3,6 +3,10 @@ name: Sync Release to AtomGit
+ on:
+   workflow_dispatch:
+ 
++# 仓库的默认 workflow 权限是可写；同步只需要读代码，显式收紧。
++permissions:
++  contents: read
 +
-+	require.False(t, lease.UpdateState(&HostState{Uptime: 2}, time.Unix(2, 0)))
-+	require.False(t, lease.Clear())
-+	snapshot := server.RuntimeSnapshot()
-+	require.Equal(t, uint64(1), snapshot.State.Uptime)
-+	require.True(t, snapshot.LastActive.IsZero())
+ jobs:
+   sync-release-to-atomgit:
+     runs-on: ubuntu-latest
+```
+
+**File**: `.github/workflows/sync-release.yml` (modified, +4/-0)
+```diff
+@@ -3,6 +3,10 @@ name: Sync Release to Gitee
+ on:
+   workflow_dispatch:
+     
++# 仓库的默认 workflow 权限是可写；同步只需要读代码，显式收紧。
++permissions:
++  contents: read
 +
-+	replacement := server.AttachStateStream(runtimeOwnershipStream{})
-+	require.True(t, replacement.UpdateState(&HostState{Uptime: 3}, time.Unix(3, 0)))
+ jobs:
+   sync-release-to-gitee:
+     runs-on: ubuntu-latest
+```
+
+**File**: `cmd/dashboard/controller/nat_update_ownership_test.go` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++package controller
++
++import (
++	"strconv"
++	"testing"
++
++	"github.com/gin-gonic/gin"
++	"github.com/stretchr/testify/require"
++
++	"github.com/nezhahq/nezha/model"
++	"github.com/nezhahq/nezha/service/singleton"
++)
++
++// updateNAT checks two owners: the target server and the NAT profile being
++// edited. Only the first one was covered; with the profile check removed a
++// member could re-point another member's tunnel at a server of their own and
++// every test stayed green.
++func TestUpdateNATRejectsProfileOwnedByAnotherMember(t *testing.T) {
++	defer setupTenancyTest(t)()
++	oldConf, oldNAT, oldUsers := singleton.Conf, singleton.NATShared, singleton.UserInfoMap
++	defer func() { singleton.Conf, singleton.NATShared, singleton.UserInfoMap = oldConf, oldNAT, oldUsers }()
++	singleton.UserInfoMap = map[uint64]model.UserInfo{10: {Role: model.RoleMember}, 20: {Role: model.RoleMember}}
++	singleton.Conf = &singleton.ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{DashboardHost: "panel.example.invalid"}, NATMemberDomains: []string{"victim.example.invalid"}}}
++	require.NoError(t, singleton.DB.AutoMigrate(&model.NAT{}))
++	singleton.NATShared = singleton.NewNATClass()
++	singleton.ServerShared.InsertForTest(&model.Server{Common: model.Common{ID: 1, UserID: 10}, Name: "victim-server"})
++	singleton.ServerShared.InsertForTest(&model.Server{Common: model.Common{ID: 2, UserID: 20}, Name: "attacker-server"})
++
++	victimProfileID, err := createNAT(ctxAsMemberWithBody(10, map[string]any{"name": "victim-tunnel", "enabled": true, "server_id": 1, "host": "203.0.113.7:80", "domain": "victim.example.invalid"}))
++	require.NoError(t, err)
++
++	hijack := ctxAsMemberWithBody(20, map[string]any{"name": "victim-tunnel", "enabled": true, "server_id": 2, "host": "203.0.113.9:80", "domain": "victim.example.invalid"})
++	hijack.Params = gin.Params{{Key: "id", Value: strconv.FormatUint(victimProfileID, 10)}}
++	_, err = updateNAT(hijack)
++
++	require.Error(t, err, "a member must not edit another member's NAT profile")
++	var stored model.NAT
++	require.NoError(t, singleton.DB.First(&stored, victimProfileID).Error)
++	require.Equal(t, uint64(1), stored.ServerID, "the profile must still point at its owner's server")
++	require.Equal(t, "203.0.113.7:80", stored.Host)
++	routed := singleton.NATShared.GetNATConfigByDomain("victim.example.invalid")
++	require.NotNil(t, routed)
++	require.Equal(t, uint64(1), routed.ServerID, "live routing must still use the owner's server")
++
++	// Control: the owner can still edit it.
++	ownerEdit := ctxAsMemberWithBody(10, map[string]any{"name": "victim-tunnel", "enabled": true, "server_id": 1, "host": "203.0.113.8:80", "domain": "victim.example.invalid"})
++	ownerEdit.Params = gin.Params{{Key: "id", Value: strconv.FormatUint(victimProfileID, 10)}}
++	_, err = updateNAT(ownerEdit)
++	require.NoError(t, err)
 +}
 ```
 
-**File**: `service/singleton/server_transfer.go` (modified, +39/-6)
+**File**: `cmd/dashboard/controller/service.go` (modified, +1/-5)
 ```diff
-@@ -1382,7 +1382,7 @@ func (c *ServerTransferClass) ReturnPendingToSource(userIDs []uint64) error {
- // to a nonexistent ToUserID. Settle the row up-front instead, mirroring
- // OnServersDeleted's CAS + in-memory cleanup pattern.
- //
--// We deliberately do NOT touch model.Server here — the live owner may be
-+// We deliberately do NOT touch Server.UserID here — the live owner may be
- // a third party (chained transfers) or the surviving counterparty, and the
- // caller's own delete loop (singleton.OnUserDelete) is responsible for any
- // servers still attributed to the deleted user. A server that is only on its
-@@ -1424,21 +1424,54 @@ func (c *ServerTransferClass) OnUsersDeleted(userIDs []uint64) {
- 		terminated = append(terminated, t)
- 	}
+@@ -27,13 +27,9 @@ import (
+ // @Router /service [get]
+ func showService(c *gin.Context) (*model.ServiceResponse, error) {
+ 	res, err, _ := requestGroup.Do(serviceResponseCacheKey(c), func() (any, error) {
+-		singleton.AlertsLock.RLock()
+-		defer singleton.AlertsLock.RUnlock()
+ 		stats := filterServiceStatsForViewer(c, singleton.ServiceSentinelShared.CopyStats())
+-		var cycleTransferStats map[uint64]model.CycleTransferStats
+-		copier.Copy(&cycleTransferStats, singleton.AlertsCycleTransferStatsStore)
+ 		return []any{
+-			stats, filterCycleTransferStatsForViewer(c, cycleTransferStats),
++			stats, filterCycleTransferStatsForViewer(c, singleton.CopyCycleTransferStats()),
+ 		}, nil
+ 	})
+ 	if err != nil {
+```
+
+**File**: `service/rpc/nezha.go` (modified, +30/-2)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	"log"
+ 	"sync"
+ 	"time"
++	"unicode/utf8"
  
-+	servers := make([]*model.Server, len(terminated))
-+	for i := range terminated {
-+		servers[i], _ = ServerShared.Get(terminated[i].ServerID)
-+	}
+ 	"github.com/jinzhu/copier"
+ 	"github.com/nezhahq/nezha/pkg/tsdb"
+@@ -34,6 +35,25 @@ const maxConfigReportBytes = 64 * 1024
+ // a report, or a failure reason, longer than maxConfigReportBytes.
+ var ErrConfigReportTooLarge = errors.New("agent config report too large")
+ 
++// maxTaskResultTextBytes bounds the Agent-chosen output of scheduled tasks and
++// service monitors. Both are meant for a human to read in a notification.
++const maxTaskResultTextBytes = 64 * 1024
 +
-+	// Unlike revertTransition, ownership is not rolled back: the server stays
-+	// with ToUserID, and it got there without MarkVerified, so the agent never
-+	// proved it left the source side. Nothing the source side holds as this
-+	// server's agent may survive that:
-+	//
-+	//   - credentials: the per-server slots are dropped regardless of transfer
-+	//     id. Register keeps terminalSecretRecovery and verifiedHandshakes of
-+	//     EARLIER transfers alive for the Pending window, and an id-matched
-+	//     delete would leave those secrets authenticating as the new owner's
-+	//     server (a restart already refuses to rebuild them once Server.UserID
-+	//     no longer matches). A stale slot would also keep
-+	//     ServerControlTransitioning true and lock the new owner out.
-+	//   - streams: RequestTask and ReportSystemState authenticate only when
-+	//     they are opened, and no agent reconnect is going to replace them.
-+	//
-+	// The task stream is detached inside the critical section that drops the
-+	// pending entry. ServerControlTransitioning reads under c.mu, so the new
-+	// owner's tasks, held back while Pending, can never be admitted while the
-+	// source side's stream is still published. SetTaskStream(nil) is a
-+	// non-blocking pointer swap; the ServerShared lookup and the revocations
-+	// that take locks of their own stay outside c.mu.
- 	c.mu.Lock()
- 	for i := range terminated {
- 		t := &terminated[i]
- 		if existing, ok := c.pending[t.ServerID]; ok && existing.ID == t.ID {
- 			delete(c.pending, t.ServerID)
++const taskResultTruncatedSuffix = "\n...(truncated)"
++
++// truncateTaskResultText cuts oversized output on a rune boundary so the kept
++// part stays valid UTF-8 for JSON and the database.
++func truncateTaskResultText(text string) string {
++	if len(text) <= maxTaskResultTextBytes {
++		return text
++	}
++	keep := maxTaskResultTextBytes
++	for keep > 0 && !utf8.RuneStart(text[keep]) {
++		keep--
++	}
++	return text[:keep] + taskResultTruncatedSuffix
++}
++
+ type NezhaHandler struct {
+ 	Auth                   *authHandler
+ 	ioStreams              map[string]*ioStreamContext
+@@ -181,6 +201,12 @@ func (s *NezhaHandler) RequestTask(stream pb.NezhaService_RequestTaskServer) err
+ 		if result != nil {
+ 			result.Delay = float32(model.FiniteStateValue(float64(result.Delay)))
  		}
--		if existing, ok := c.revertDeliveries[t.ServerID]; ok && existing.ID == t.ID {
--			delete(c.revertDeliveries, t.ServerID)
--		}
--		if existing, ok := c.terminalSecretRecovery[t.ServerID]; ok && existing.ID == t.ID {
--			delete(c.terminalSecretRecovery, t.ServerID)
-+		delete(c.revertDeliveries, t.ServerID)
-+		delete(c.terminalSecretRecovery, t.ServerID)
-+		delete(c.verifiedHandshakes, t.ServerID)
-+		if servers[i] != nil {
-+			servers[i].SetTaskStream(nil)
- 		}
- 	}
- 	c.mu.Unlock()
- 
-+	for i := range terminated {
-+		if servers[i] != nil {
-+			servers[i].RevokeStateStream()
++		// Scheduled-task and service-monitor results end up in notification
++		// bodies, monitor history and the service API. The agent chooses their
++		// length, so an agent could push megabytes per message into all three.
++		if result.GetType() == model.TaskTypeCommand || model.IsServiceSentinelNeeded(result.GetType()) {
++			result.Data = truncateTaskResultText(result.GetData())
 +		}
-+		ServerTransferRevokeStreamsForServer(terminated[i].ServerID)
-+	}
-+
- 	for i := range terminated {
- 		c.broadcast(&terminated[i])
- 	}
-```
-
-**File**: `service/singleton/user_test.go` (modified, +88/-0)
-```diff
-@@ -3,11 +3,13 @@ package singleton
- import (
- 	"fmt"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/nezhahq/nezha/model"
- 	"github.com/nezhahq/nezha/pkg/i18n"
-+	pb "github.com/nezhahq/nezha/proto"
- )
- 
- func setupOnUserDeleteFixture(t *testing.T) (*ServerTransferClass, func()) {
-@@ -180,3 +182,89 @@ func TestOnUserDeleteDeletesPendingServerWhenSourceIsDeletedToo(t *testing.T) {
- 	require.NoError(t, DB.First(&settled, tr.ID).Error)
- 	require.Equal(t, model.ServerTransferStatusCancelled, settled.Status)
- }
-+
-+type fakeStateStream struct {
-+	pb.NezhaService_ReportSystemStateServer
-+}
-+
-+// Deleting the source user of a Pending transfer leaves the server with
-+// ToUserID without MarkVerified and without a rollback. Everything the source
-+// side holds as that server's agent must end with it: the open RequestTask /
-+// ReportSystemState streams, and the credentials of an EARLIER transfer that
-+// Register keeps alive for the Pending window.
-+func TestOnUserDeleteEndsSourceSideAgentAccess(t *testing.T) {
-+	c, cleanup := setupOnUserDeleteFixture(t)
-+	defer cleanup()
-+
-+	const fromUser = uint64(100)
-+	const toUser = uint64(200)
-+	// recoveryServer: the earlier transfer was cancelled and its rollback is
-+	// still unacknowledged (terminalSecretRecovery). ackedServer: the agent
-+	// already rotated to the rollback secret (verifiedHandshakes).
-+	const recoveryServer = uint64(1)
-+	const ackedServer = uint64(2)
-+
-+	require.NoError(t, DB.AutoMigrate(&model.User{}))
-+	require.NoError(t, DB.Create(&model.User{
-+		Common:      model.Common{ID: fromUser},
-+		Username:    "alice",
-+		AgentSecret: "alice-secret",
-+	}).Error)
-+
-+	originalHook := ServerTransferStreamRevocationHook
-+	defer func() { ServerTransferStreamRevocationHook = originalHook }()
-+	ServerTransferStreamRevocationHook = nil
-+
-+	cancelled := make(map[uint64]*model.ServerTransfer)
-+	for _, serverID := range []uint64{recoveryServer, ackedServer} {
-+		seedServerForTransfer(t, serverID, fromUser)
-+		tr := initiateAndRegister(t, c, serverID, fromUser, toUser, fromUser)
-+		_, err := c.Cancel(tr.ID)
-+		require.NoError(t, err)
-+		cancelled[serverID] = tr
-+	}
-+	require.NoError(t, c.MarkRevertDelivered(ackedServer, cancelled[ackedServer].ID))
-+	_, _, admitted := c.LookupByTerminalSecretRecovery(cancelled[recoveryServer].RevertHandshakeSecret)
-+	require.True(t, admitted, "precondition: the cancelled transfer's rollback secret is in its recovery window")
-+	_, admitted = c.LookupServerByVerifiedHandshakeSecret(cancelled[ackedServer].RevertHandshakeSecret)
-+	require.True(t, admitted, "precondition: the acknowledged rollback secret is the agent's long-term credential")
-+
-+	leases := make(map[uint64]model.StateStreamLease)
-+	for _, serverID := range []uint64{recoveryServer, ackedServer} {
-+		initiateAndRegister(t, c, serverID, fromUser, toUser, fromUser)
-+		srv, ok := ServerShared.Get(serverID)
-+		require.True(t, ok)
-+		srv.SetTaskStream(newFakeTaskStream())
-+		leases[serverID] = srv.AttachStateStream(&fakeStateStream{})
-+		require.True(t, leases[serverID].UpdateState(&model.HostState{}, time.Now()), "precondition: state stream is live")
-+		require.True(t, ServerControlTransitioning(serverID), "precondition: the destination user is held back while Pending")
-+	}
-+
-+	var revoked []uint64
-+	ServerTransferStreamRevocationHook = func(serverID uint64) { revoked = append(revoked, serverID) }
-+
-+	require.NoError(t, OnUserDelete([]uint64{fromUser}, func(format string, args ...any) error {
-+		return nil
-+	}))
-+
-+	for _, serverID := range []uint64{recoveryServer, ackedServer} {
-+		srv, ok := ServerShared.Get(serverID)
-+		require.True(t, ok)
-+		require.Equal(t, toUser, srv.GetUserID(), "server %d stays with the surviving ToUserID", serverID)
-+		require.Nil(t, srv.GetTaskStream(),
-+			"server %d: the task stream opened on the deleted user's side must be detached", serverID)
-+		require.False(t, leases[serverID].UpdateState(&model.HostState{}, time.Now()),
-+			"server %d: the state stream opened on the deleted user's side must be refused", serverID)
-+		require.False(t, ServerControlTransitioning(serverID),
-+			"server %d: the new owner must not stay locked out by a stale credential slot", serverID)
-+	}
-+	require.ElementsMatch(t, []uint64{recoveryServer, ackedServer}, revoked,
-+		"IOStreams of the affected servers must be revoked")
-+
-+	for _, secret := range []string{cancelled[recoveryServer].HandshakeSecret, cancelled[recoveryServer].RevertHandshakeSecret} {
-+		_, _, admitted := c.LookupByTerminalSecretRecovery(secret)
-+		require.False(t, admitted, "a secret of the earlier, cancelled transfer must not authenticate as the new owner's server")
-+	}
-+	_, admitted = c.LookupServerByVerifiedHandshakeSecret(cancelled[ackedServer].RevertHandshakeSecret)
-+	require.False(t, admitted, "the earlier transfer's acknowledged rollback secret must not authenticate as the new owner's server")
-+}
+ 		switch result.GetType() {
+ 		case model.TaskTypeCommand:
+ 			// 处理上报的计划任务
+@@ -190,12 +216,14 @@ func (s *NezhaHandler) RequestTask(stream pb.NezhaService_RequestTaskServer) err
+ 				// 保存当前服务器状态信息
+ 				var curServer model.Server
+ 				copier.Copy(&curServer, server)
++				// 通知必须异步发：webhook 最长会等 10 分钟，同步发送会把这台 agent 的
++				// 接收循环卡住，期间它的探测结果和 MCP 调用结果都收不进来。
+ 				if cr.PushSuccessful && result.GetSuccessful() {
+-					singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Successfully"),
++					go singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Successfully"),
+ 						cr.Name, server.Name, result.GetData()), "", &curServer)
+ 				}
+ 				if !result.GetSuccessful() {
+-					singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Failed"),
++					go singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Failed"),
+ 						cr.Name, server.Name, result.GetData()), "", &curServer)
+ 				}
+ 				singleton.DB.Model(cr).Updates(model.Cron{
 ```
 
 #### Recent Merged Pull Requests:
@@ -1769,41 +1879,56 @@ Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security: MCP OAuth grant cap counts a member's API tokens under SQLite write lo
+## X. remove the user deletion deadlock and reject a second connection to a stream
 
 **RULE**:
-When implementing operations in `cmd/dashboard/controller/mcp_oauth_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `service/rpc/io_stream_duplicate_user_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2008d645`: security: MCP OAuth grant cap counts a member's API tokens under SQLite write lock (DoS). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9339e68`: remove the user deletion deadlock and reject a second connection to a stream. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/mcp_oauth_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/rpc/io_stream_duplicate_user_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+package rpc
 
-// The cap of 100 authorizations per user is counted on mcp_oauth_grants. A
-// member's personal API tokens share api_tokens with the OAuth permission
-// identities, have no quota and may be named "OAuth: ..." by their owner, so
-// they must neither be read under the write lock nor use up the cap.
-func TestMCPOAuthGrantCapCountsGrantsNotAPITokens(t *testing.T) {
-	s := setupMCPOAuthSession(t)
-	expiry := time.Now().Add(time.Hour)
-	for i := range 100 {
-		require.NoError(t, singleton.DB.Create(&model.APIToken{UserID: s.userID, Name: "OAuth: personal", TokenHash: model.HashAPIToken("personal-" + strconv.Itoa(i)), ExpiresAt: &expiry}).Error)
+import (
+	"errors"
+	"testing"
+)
+
+// A second WebSocket opened with the same session ID used to replace the first
+// connection and start a second pair of relay goroutines over the same buffer.
+// A large Agent frame then indexed past the slice and took the whole dashboard
+// process down.
+func TestUserConnectedRejectsASecondConnectionToTheSameStream(t *testing.T) {
+	handler := NewNezhaHandler()
+	const streamID = "11111111-1111-1111-1111-111111111111"
+	handler.CreateStream(streamID, 100, 0)
+	first, second := newPipeReadWriter(), newPipeReadWriter()
+	defer first.Close()
+	defer second.Close()
+
+	if err := handler.UserConnected(streamID, first); err != nil {
+		t.Fatalf("first connection: %v", err)
 	}
-	s.tokens(t)
-	var grant model.MCPOAuthGrant
-	require.NoError(t, singleton.DB.First(&grant).Error)
-	require.Equal(t, s.userID, grant.UserID)
+	err := handler.UserConnected(streamID, second)
 
-	for i := range 99 {
-		name := "filler-" + strconv.Itoa(i)
-		permission := model.APIToken{UserID: s.userID, Name: "renamed by its owner", TokenHash: model.HashAPIToken(name), ExpiresAt: &expiry}
-		require.NoError(t, singleton.DB.Create(&permission).Error)
-		require.NoError(t, singleton.DB.Create(&model.MCPOAuthGrant{ID: name, APITokenID: permission.ID, UserID: s.userID, ClientID: s.clientID, AccessHash: mode
+	if !errors.Is(err, ErrUserStreamAlreadyConnected) {
+		t.Fatalf("second connection err = %v, want ErrUserStreamAlreadyConnected", err)
+	}
+	stream, getErr := handler.GetStream(streamID)
+	if getErr != nil {
+		t.Fatalf("GetStream: %v", getErr)
+	}
+	attached, _ := handler.streamEndpoints(stream)
+	if attached != first {
+		t.Fatal("the second connection replaced the first one")
+	}
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1813,7 +1938,7 @@ func TestMCPOAuthGrantCapCountsGrantsNotAPITokens(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2008d645` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9339e68` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

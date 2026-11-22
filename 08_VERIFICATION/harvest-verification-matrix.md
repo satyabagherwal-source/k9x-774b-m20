@@ -12005,3 +12005,5 @@
 | `CYCLE-20261122-CQAD` | `2026-11-22T04:05:01.333Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md` | Yes (`54347a21...`) |
 | `CYCLE-20261122-CT83` | `2026-11-22T04:05:05.139Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9892` | Yes (`8791ca9e...`) |
 | `CYCLE-20261122-CUT1` | `2026-11-22T04:05:07.189Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9893` | Yes (`3360cd51...`) |
+| `CYCLE-20261122-7LN1` | `2026-11-22T04:29:01.645Z` | `NousResearch/Arete-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | Yes (`06ca667a...`) |
+| `CYCLE-20261122-7N6O` | `2026-11-22T04:29:03.648Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9894` | Yes (`a8c23559...`) |

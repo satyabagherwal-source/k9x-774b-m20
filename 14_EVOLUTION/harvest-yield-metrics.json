@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:05:07.199Z",
-  "total_cycles_completed": 11414,
-  "total_learnings_persisted": 11414,
-  "total_rules_promoted": 10704,
+  "last_updated": "2026-11-22T04:29:03.657Z",
+  "total_cycles_completed": 11416,
+  "total_learnings_persisted": 11416,
+  "total_rules_promoted": 10705,
   "history": [
-    {
-      "timestamp": "2026-11-21T11:55:26.649Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T11:55:33.644Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T11:55:35.197Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T04:05:07.199Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:29:01.654Z",
+      "repository": "NousResearch/Arete-27B",
+      "learningId": "learn-huggingface-nousresearch-arete-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:29:03.657Z",
+      "repository": "nezhahq/nezha",
+      "learningId": "learn-github-nezhahq-nezha",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

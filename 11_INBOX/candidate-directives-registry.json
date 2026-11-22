@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:05:13.844Z",
+  "last_updated": "2026-11-22T04:29:15.297Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-YXTA",
+      "id": "CD-7W66",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-YXTA-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-7W66-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -44997,6 +44997,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
       "domain_letter": "L"
+    },
+    {
+      "id": "CD-7V80",
+      "directive_title": "remove the user deletion deadlock and reject a second connection to a stream",
+      "source_repo": "nezhahq-nezha-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7V80-remove-the-user-deletion-deadlock-and-reject-a-second-connection-to-a-stream.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-D7C284",
+      "directive_title": "remove the user deletion deadlock and reject a second connection to a stream",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nezhahq-nezha",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D7C284-remove-the-user-deletion-deadlock-and-re.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-00AD23",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-00AD23-benchmarks-report-gold-coverage-across-r.md",
+      "staged_date": "2026-11-22"
     }
   ]
 }

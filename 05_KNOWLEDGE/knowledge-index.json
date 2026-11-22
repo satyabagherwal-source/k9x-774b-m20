@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T04:05:14.184Z",
+  "last_updated": "2026-11-22T04:29:15.729Z",
   "total_verified_learnings": 9067,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23454,
+  "total_items": 23458,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb1f4a9e86aa7bc813859dd08cacb74efdd661f87eb6e3717e5d868465aee1f8",
+      "content_hash": "b3ccdcc6c3c3b97b78fd772f91e7280e3e75be1e71f090725b40e7532444e64b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:54:18.063Z"
+      "persisted_at": "2026-11-22T04:29:15.441Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "da94930059407a9427281f76705eef55c664bee1b7808e24fc0177681ddd7520",
+      "content_hash": "b88e3c0f48c074dcbf0919e0ba4127827124e29d773aca8c77c757d8e3ee95bf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:54:18.239Z"
+      "persisted_at": "2026-11-22T04:29:15.604Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a825cafc07e58343d78abb5102e0920c53c3d437378349866245b0aee650ed02",
+      "content_hash": "95a1823cf45c5cac687fdad1da2ac11c5e420aeb52cf1492875c2d5bba46f3bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:54:18.404Z"
+      "persisted_at": "2026-11-22T04:29:15.729Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -264448,7 +264448,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/NousResearch/Arete-27B",
       "source_version": "hf-nousresearch-arete-27b",
-      "content_hash": "a89f958c698b50d54d3c3377ce9136b51285207c38a1d5d947ff236825559889",
+      "content_hash": "06ca667a3efecdd4234e88d4c67ae1fb281f50f75e2051844dad5e316581761f",
       "dossier_path": "07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
       "promoted_rules": [],
@@ -264457,7 +264457,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T00:27:01.866Z",
+      "verified_at": "2026-11-22T04:29:01.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264474,9 +264474,9 @@
       "title": "Research & Knowledge Intelligence: NousResearch/Arete-27B Core Invariants",
       "repository": "NousResearch/Arete-27B",
       "source_version": "hf-nousresearch-arete-27b",
-      "content_hash": "2df7510a7acbdce741736a3fd4d88ec6d28b0c7f04d880c6e76bd226a264c30a",
+      "content_hash": "b261586c12dca6fa7e88213570cb0da4f91b27a50efbb77935714b2215ce9a50",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T00:27:02.173Z"
+      "persisted_at": "2026-11-22T04:29:01.850Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria",
@@ -264486,9 +264486,9 @@
       "title": "Research & Knowledge Intelligence: hf-nousresearch-arete-27b-learnings Core Invariants",
       "repository": "hf-nousresearch-arete-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2816963bc937a7bf06a7e3eef6df0f3e8df06ae6c6586d6aeed6241c8bf399f",
+      "content_hash": "d26d9ef19ae2dbf72cce64183e9d8f7d625f894efc57c73883ca4fefccf643ba",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T00:27:05.090Z"
+      "persisted_at": "2026-11-22T04:29:14.680Z"
     },
     "learn-huggingface-prunaai-p-h3-image": {
       "learning_id": "learn-huggingface-prunaai-p-h3-image",
@@ -293917,8 +293917,8 @@
       "slug": "nezhahq-nezha",
       "platform": "github",
       "source_url": "https://github.com/nezhahq/nezha",
-      "source_version": "76b07b58",
-      "content_hash": "38064cb0a824d555303785e2422c3c03ece44fd89906d6c9b190db5cc86d54e8",
+      "source_version": "22f2184e",
+      "content_hash": "a8c23559bca0012c2f33b70dd0eb5aa851e920dc34bf2c6bc1c0e8fc6ece65af",
       "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "promoted_rules": [
@@ -293931,6 +293931,11 @@
           "number": 9615,
           "title": "MCP OAuth grant cap counts a member's API tokens under SQLite write lo",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9894,
+          "title": "remove the user deletion deadlock and reject a second connection to a stream",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -293938,7 +293943,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:58:46.346Z",
+      "verified_at": "2026-11-22T04:29:03.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -293992,10 +293997,10 @@
       "relative_path": "08_VERIFICATION/nezhahq-nezha-verification-protocol-empirical-defect-shield-for-nezhahq-nezha.md",
       "title": "Verification Protocol: Empirical Defect Shield for nezhahq/nezha",
       "repository": "nezhahq/nezha",
-      "source_version": "76b07b58",
-      "content_hash": "364ac306ef8745eba26b290abb3c7e34a6efa311753abf7581a26953391e1441",
+      "source_version": "22f2184e",
+      "content_hash": "d15876eea449dc9e1c94f63d85d29280a9e5862d02761b5c501396ea378b2c50",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:58:47.017Z"
+      "persisted_at": "2026-11-22T04:29:04.181Z"
     },
     "candidate_directive-security-bound-persisted-resource-reference-collections": {
       "item_id": "candidate_directive-security-bound-persisted-resource-reference-collections",
@@ -294029,9 +294034,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nezhahq-nezha-learnings",
       "repository": "nezhahq-nezha-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2d29adb037f78332927824e7186f9e90c394c12f4e084d8129ccb579739059c",
+      "content_hash": "8d74f9f853e3b7e12acba9ee23216b132e613c05f4474ec7d0dccb97ae78bc68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:58:50.505Z"
+      "persisted_at": "2026-11-22T04:29:14.371Z"
     },
     "rule-9316": {
       "learning_id": "rule-9316",
@@ -309405,13 +309410,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YXTA-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7W66-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee6a6567fe2160d5b9a3c8d3324671d7ed49db5c49fe911bc6d2d3e60c547a6f",
+      "content_hash": "7ebc72c85217e2d9c4f6a8cd609e6a05bea733c1e5415817545183e7ffc8eab5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:54:17.905Z"
+      "persisted_at": "2026-11-22T04:29:15.297Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -318972,6 +318977,56 @@
       "content_hash": "d7444343f4753f4492d8bb904c67b5d64726aed04e33848902db64e3281eb101",
       "domain_letter": "L",
       "persisted_at": "2026-11-22T04:05:13.844Z"
+    },
+    "rule-9894": {
+      "learning_id": "rule-9894",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9894,
+      "title": "remove the user deletion deadlock and reject a second connection to a stream",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "22f2184e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T04:29:03.453Z"
+    },
+    "candidate_directive-remove-the-user-deletion-deadlock-and-reject-a-second-connection-to-a-stream": {
+      "item_id": "candidate_directive-remove-the-user-deletion-deadlock-and-reject-a-second-connection-to-a-stream",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7V80-remove-the-user-deletion-deadlock-and-reject-a-second-connection-to-a-stream.md",
+      "title": "remove the user deletion deadlock and reject a second connection to a stream",
+      "repository": "nezhahq-nezha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef33e8b059b0a388197cb39fa8ac131bedad79d3b36ff6beb3313ef3a0d5340e",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-22T04:29:14.067Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nezhahq-nezha-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nezhahq-nezha-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nezhahq-nezha-technical-construction-intelligence-nezhahq-nezha-core-invariants.md",
+      "title": "Technical Construction Intelligence: nezhahq/nezha Core Invariants",
+      "repository": "nezhahq/nezha",
+      "source_version": "22f2184e",
+      "content_hash": "eacdf529b19ddee52349c5e860d89b3deea20e1eea86d83dd133f16d4502f077",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T04:29:04.023Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nezhahq-nezha-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nezhahq-nezha-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nezhahq-nezha-learnings-technical-construction-intelligence-nezhahq-nezha-learni.md",
+      "title": "Technical Construction Intelligence: nezhahq-nezha-learnings Core Invariants",
+      "repository": "nezhahq-nezha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "747dff4844f540856666374c6ff69561316517712f2fc07ad7c5d07b189a2f69",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T04:29:14.214Z"
     }
   },
   "ai-builder-brain": {

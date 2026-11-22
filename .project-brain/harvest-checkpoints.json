@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T04:05:07.203Z",
+  "last_updated": "2026-11-22T04:29:03.660Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9111,14 +9111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nezhahq-nezha",
-      "content_hash": "38064cb0a824d555303785e2422c3c03ece44fd89906d6c9b190db5cc86d54e8",
-      "verified_at": "2026-11-20T17:58:46.583Z",
+      "content_hash": "a8c23559bca0012c2f33b70dd0eb5aa851e920dc34bf2c6bc1c0e8fc6ece65af",
+      "verified_at": "2026-11-22T04:29:03.659Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:58:46.583Z"
+      "last_updated": "2026-11-22T04:29:03.659Z"
     },
     "tiajinsha/JKVideo": {
       "repository": "tiajinsha/JKVideo",
@@ -18261,14 +18261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nousresearch-arete-27b",
-      "content_hash": "a89f958c698b50d54d3c3377ce9136b51285207c38a1d5d947ff236825559889",
-      "verified_at": "2026-11-17T00:27:02.015Z",
+      "content_hash": "06ca667a3efecdd4234e88d4c67ae1fb281f50f75e2051844dad5e316581761f",
+      "verified_at": "2026-11-22T04:29:01.657Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:27:02.015Z"
+      "last_updated": "2026-11-22T04:29:01.657Z"
     },
     "Viggle/Viggle-Remake": {
       "repository": "Viggle/Viggle-Remake",

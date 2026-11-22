@@ -5993,10 +5993,10 @@
     "repository": "nezhahq/nezha",
     "platform": "github",
     "sourceUrl": "https://github.com/nezhahq/nezha",
-    "sourceVersion": "76b07b58",
+    "sourceVersion": "22f2184e",
     "license": "WTFPL",
-    "contentHash": "38064cb0a824d555303785e2422c3c03ece44fd89906d6c9b190db5cc86d54e8",
-    "lastHarvestedAt": "2026-11-20T17:58:46.575Z",
+    "contentHash": "a8c23559bca0012c2f33b70dd0eb5aa851e920dc34bf2c6bc1c0e8fc6ece65af",
+    "lastHarvestedAt": "2026-11-22T04:29:03.652Z",
     "learningId": "learn-github-nezhahq-nezha"
   },
   "tiajinsha-jkvideo": {
@@ -12135,8 +12135,8 @@
     "sourceUrl": "https://huggingface.co/NousResearch/Arete-27B",
     "sourceVersion": "hf-nousresearch-arete-27b",
     "license": "Open-Source",
-    "contentHash": "a89f958c698b50d54d3c3377ce9136b51285207c38a1d5d947ff236825559889",
-    "lastHarvestedAt": "2026-11-17T00:27:02.007Z",
+    "contentHash": "06ca667a3efecdd4234e88d4c67ae1fb281f50f75e2051844dad5e316581761f",
+    "lastHarvestedAt": "2026-11-22T04:29:01.649Z",
     "learningId": "learn-huggingface-nousresearch-arete-27b"
   },
   "hf-viggle-viggle-remake": {

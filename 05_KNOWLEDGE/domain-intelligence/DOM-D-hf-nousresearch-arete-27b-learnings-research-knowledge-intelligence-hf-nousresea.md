@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:27:04.999Z",
+  "timestamp": "2026-11-22T04:29:14.585Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-nousresearch-arete-27b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-nousresearch-arete-27b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:27:04.999Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T04:29:14.585Z`  
 > **Learning ID**: `LEARN-EVO-hf-nousresearch-arete-27b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-nousresea`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:27:01.638Z  
+> **Timestamp**: 2026-11-22T04:29:01.191Z  
 > **Learning ID**: `learn-huggingface-nousresearch-arete-27b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/NousResearch/Arete-27B](https://huggingface.co/NousResearch/Arete-27B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:23:53.392Z  
+> **Harvest Timestamp**: 2026-11-22T04:29:01.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9187 downloads | 656 likes
+- **Stars / Engagement**: 16445 downloads | 772 likes
 
 ---
 

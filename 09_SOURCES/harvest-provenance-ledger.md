@@ -12038,3 +12038,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `4e9fb95b` | Multi-dimensional audit evidence | 2026-11-22T04:05:01.338Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `73945d29` | Multi-dimensional audit evidence | 2026-11-22T04:05:05.144Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `34a14c0d` | Multi-dimensional audit evidence | 2026-11-22T04:05:07.194Z |
+| `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-22T04:29:01.649Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `22f2184e` | Multi-dimensional audit evidence | 2026-11-22T04:29:03.652Z |
