@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T03:03:32.562Z",
-  "total_records": 2317,
+  "last_updated": "2026-11-22T03:11:44.980Z",
+  "total_records": 2319,
   "domains": {
     "A": {
       "total": 17,
@@ -1468,7 +1468,7 @@
       ]
     },
     "H": {
-      "total": 554,
+      "total": 556,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2023,7 +2023,9 @@
         "DOM-H-F5CAA699",
         "domain_intelligence-technical-construction-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-i",
         "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv"
       ]
     },
     "I": {
@@ -11045,8 +11047,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "031ab8ba63cdfba64864c598a23876ab2262b6bd21dfc1a5121bc08572cbd617",
-      "created_at": "2026-11-20T16:42:14.167Z"
+      "content_hash": "18bb9fc5f0ba9b1bbc1f6464abc838f0d3719f6d3882671dc79a7dbab5c21c33",
+      "created_at": "2026-11-22T03:11:26.163Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -11081,8 +11083,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "65c3e46c2b7622615a84ab0f6b58cc5a744504713a5435311a457bcce328e050",
-      "created_at": "2026-11-20T16:42:32.074Z"
+      "content_hash": "07a53ca1bed526732bc204b6bffdf2e40391f0311abb69bc6ef07f0fd7d5fb75",
+      "created_at": "2026-11-22T03:11:43.822Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -15396,8 +15398,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "00851876af38016181891e114483f1d147d5f55aa4d9e473788dbfc5e83abac3",
-      "created_at": "2026-11-22T02:29:34.493Z"
+      "content_hash": "f234adf462e345adfa205600e90834034a20705df557fd5d3c417830969050d2",
+      "created_at": "2026-11-22T03:11:40.321Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -21487,8 +21489,8 @@
       "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-GLB-3D-Coder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-glb-3d-coder-research-knowledge-intelligence-ccore-qwen3-5-4.md",
       "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-      "content_hash": "1d192bbd60c5579d361461f6eaf14c37693e04a71935ef41745337bc55ed7970",
-      "created_at": "2026-11-15T13:39:38.046Z"
+      "content_hash": "752d99319ad3f3d23534a2baa54254ab7f7bfc535987bc6952bb13fa8e9d793f",
+      "created_at": "2026-11-22T03:11:24.930Z"
     },
     "DOM-D-55AF5812": {
       "record_id": "DOM-D-55AF5812",
@@ -21538,8 +21540,8 @@
       "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-glb-3d-coder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-research-knowledge-intelligence-hf-cc.md",
       "repository": "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings",
-      "content_hash": "356978fbd01b37dba2ed25554cd5e303ebe90a5b59360ee34457a9b74c4da471",
-      "created_at": "2026-11-15T13:40:24.865Z"
+      "content_hash": "cad16a46620e5f2a5af17dcb5c883f79aee62be246219724bde424d7bcfdd778",
+      "created_at": "2026-11-22T03:11:44.381Z"
     },
     "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants",
@@ -39093,6 +39095,24 @@
       "repository": "ontos-ai-knowhere-learnings",
       "content_hash": "38c5fa77c3ee19413208dc6068d125522802a4e3a1e52d3788deab3b3e0d8af7",
       "created_at": "2026-11-22T03:03:32.562Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: giancarloerra/SocratiCode Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-technical-construction-intelligence-giancarloerra-socr.md",
+      "repository": "giancarloerra/SocratiCode",
+      "content_hash": "2a49b45abd2730dddb971cb113c4eac35bcb3d7b2cd6e5ae55714d2c16c75b90",
+      "created_at": "2026-11-22T03:11:38.880Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: giancarloerra-socraticode-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-learnings-technical-construction-intelligence-giancarl.md",
+      "repository": "giancarloerra-socraticode-learnings",
+      "content_hash": "6d305b57fc7a0ac9db29deaadc66152201b9d2a1d07161603c43b63e1812ef64",
+      "created_at": "2026-11-22T03:11:44.980Z"
     }
   }
 }

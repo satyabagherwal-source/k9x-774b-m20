@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-WI62",
-    "timestamp": "2026-11-20T01:01:06.170Z",
-    "repository": "maziyarpanahi/openmed",
-    "learningId": "learn-github-maziyarpanahi-openmed",
-    "contentHash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-BHAU",
-    "timestamp": "2026-11-20T01:12:44.886Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-LJI1",
-    "timestamp": "2026-11-20T01:20:34.298Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "7c3ca3769baecac319375c69b100fa80fcacc9342690841985652f21095e1101",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-OMSL",
-    "timestamp": "2026-11-20T01:22:58.533Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "d69e3c87f05979e8a2fc7dd75f6463057c69f5c636f791755be1e8be8817bf57",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-ZNWZ",
     "timestamp": "2026-11-20T01:31:33.203Z",
     "repository": "HelixDB/helix-db",
@@ -7492,6 +7432,66 @@
     "contentHash": "f4dcce4a0d5152910fa33b9e7d9220d1d44aae1d97a8df8a7acda8d1f2401546",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-FSB0",
+    "timestamp": "2026-11-22T03:11:24.684Z",
+    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+    "contentHash": "1b047ef18cca3cd94e25a2b7523d3ff06b42686134bfab49118768de9c1e541f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-FT5C",
+    "timestamp": "2026-11-22T03:11:25.776Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "bd927176fb283174a7b5896d22fb32c7c4db62d5b1e161747208292e5573243c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-G2YO",
+    "timestamp": "2026-11-22T03:11:38.496Z",
+    "repository": "giancarloerra/SocratiCode",
+    "learningId": "learn-github-giancarloerra-socraticode",
+    "contentHash": "74f622beb8fc36202d1de161ca80870bebf73b1e8d1d4476114f285d6aae92c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-G473",
+    "timestamp": "2026-11-22T03:11:40.095Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "eff88fc1735fc20bb861873fcac9234039aff78d2e338f4b9c6ee1e0c80d3576",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source**: github ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
-> **Source Version**: `401a9202`  
+> **Source Version**: `7d277196`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T23:41:36.140Z  
+> **Timestamp**: 2026-11-22T03:11:37.438Z  
 > **Learning ID**: `learn-github-giancarloerra-socraticode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T23:41:36.131Z  
+> **Harvest Timestamp**: 2026-11-22T03:11:37.432Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Enterprise-grade (40m+ LOC) codebase intelligence, zero-setup, local & private Plugin/Skill/Extension or MCP: hybrid semantic search, polyglot dependency graphs, symbol-level impact analysis & call-flow, interactive HTML viewer, cross-project & branch-aware search, DB/API/infra knowledge. 61% less tokens, 84% fewer calls, 37x faster. Cloud in beta.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3372 stars
+- **Stars / Engagement**: 3380 stars
 
 ---
 
@@ -969,33 +969,184 @@ main().catch((err) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `401a9202` (2026-11-11)
-**Commit Message**: chore(deps): update @hono/node-server to 1.19.19
+### Incident Patch 1: `b1295afe` (2026-11-21)
+**Commit Message**: fix(deps): keep @ast-grep/napi below 0.51.3, which requires Node 20
 
-**File**: `package-lock.json` (modified, +3/-3)
+package.json declares node >=18.17.0 and the consumer-install jobs run
+`npm install --engine-strict` on the packed tarball with no lockfile, so they
+take the newest release the range allows. @ast-grep/napi 0.51.3 (published
+2026-11-16) added engines.node >=20.0.0, and so did its platform package, so
+those jobs fail with EBADENGINE on Node 18.17 while the lockfile (0.51.1)
+still works.
+
+Cap the range at <0.51.3 in package.json and the lockfile's root entry. A
+fresh install of the packed tarball now resolves 0.51.2, and no installed
+package excludes Node 18.17.0. Raising the declared Node floor to 20 instead is
+a separate decision for the maintainer.
+
+**File**: `package-lock.json` (modified, +1/-1)
 ```diff
-@@ -1273,9 +1273,9 @@
-       }
-     },
-     "node_modules/@hono/node-server": {
--      "version": "1.19.18",
--      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-1.19.18.tgz",
--      "integrity": "sha512-609kppIP9GITS+EwPyB6Kiq8z2yXONaYD1VHpo7MMP9celRJYbkFr9KakJncHwK0EK/XYtlogqmrLchDv5HX5w==",
-+      "version": "1.19.19",
-+      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-1.19.19.tgz",
-+      "integrity": "sha512-Fy9R7PACOzHU9LDpfnuzVyuVYevKQRcEG2mZhmfc+DRdmayEd3RVfa2XOt2IgGcPNgA77Yk63KBszepcMFK5Ng==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=18.14.1"
+@@ -25,7 +25,7 @@
+         "@ast-grep/lang-rust": "^0.0.7",
+         "@ast-grep/lang-scala": "^0.0.7",
+         "@ast-grep/lang-swift": "^0.0.8",
+-        "@ast-grep/napi": "^0.51.1",
++        "@ast-grep/napi": ">=0.51.1 <0.51.3",
+         "@google/generative-ai": "^0.24.1",
+         "@hono/node-server": "~1.19.18",
+         "@lumis-sh/wasm-eex": "^0.26.3",
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@
+     "@ast-grep/lang-rust": "^0.0.7",
+     "@ast-grep/lang-scala": "^0.0.7",
+     "@ast-grep/lang-swift": "^0.0.8",
+-    "@ast-grep/napi": "^0.51.1",
++    "@ast-grep/napi": ">=0.51.1 <0.51.3",
+     "@google/generative-ai": "^0.24.1",
+     "@hono/node-server": "~1.19.18",
+     "@lumis-sh/wasm-eex": "^0.26.3",
+```
+
+---
+
+### Incident Patch 2: `c28a7755` (2026-11-21)
+**Commit Message**: test(rust): find cargo's dep-info by extension, not by build-dir layout
+
+rust-graph-vs-cargo read cargo's dep-info from target/debug/deps. Cargo
+documents its build-directory layout as an internal detail, and from cargo
+1.100 the new layout is always on: the .d files are written to
+target/debug/build/<package>/<hash>/out/ and target/debug/deps no longer
+exists. The fixture crate still compiled, so the failure surfaced as ENOENT
+from scandir, in four suites, on any runner that picked up that cargo.
+
+Walk target/debug for *.d files instead. Verified against cargo 1.96.1 in
+both layouts (the new one forced with RUSTC_BOOTSTRAP=1 and
+CARGO_UNSTABLE_BUILD_DIR_NEW_LAYOUT=true, which fails the old test exactly as
+CI does): 14 of 14 pass in each.
+
+**File**: `tests/integration/rust-graph-vs-cargo.test.ts` (modified, +22/-4)
+```diff
+@@ -32,13 +32,31 @@ function haveCargo(): boolean {
+   }
+ }
+ 
++/**
++ * Every dep-info file (`*.d`) cargo left under `dir`, wherever it put them.
++ *
++ * Cargo documents its build-directory layout as an internal detail, and it has
++ * moved: the new layout, always on from cargo 1.100, writes them to
++ * `target/debug/build/<package>/<hash>/out/` where they used to be in
++ * `target/debug/deps/`. Reading a fixed directory made this test fail with
++ * ENOENT on the newer cargo even though the crate compiled, so find them by
++ * extension instead.
++ */
++function depInfoFiles(dir: string): string[] {
++  const found: string[] = [];
++  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
++    const full = path.join(dir, entry.name);
++    if (entry.isDirectory()) found.push(...depInfoFiles(full));
++    else if (entry.name.endsWith(".d")) found.push(full);
++  }
++  return found;
++}
++
+ /** The sources rustc opened, per cargo's own dep-info, relative to the crate. */
+ function sourcesRustcRead(root: string): Set<string> {
+-  const deps = path.join(root, "target", "debug", "deps");
+   const read = new Set<string>();
+-  for (const name of fs.readdirSync(deps)) {
+-    if (!name.endsWith(".d")) continue;
+-    for (const line of fs.readFileSync(path.join(deps, name), "utf8").split("\n")) {
++  for (const file of depInfoFiles(path.join(root, "target", "debug"))) {
++    for (const line of fs.readFileSync(file, "utf8").split("\n")) {
+       const colon = line.indexOf(":");
+       if (colon === -1) continue;
+       for (const raw of line.slice(colon + 1).trim().split(/\s+/)) {
+```
+
+---
+
+### Incident Patch 3: `7d277196` (2026-11-21)
+**Commit Message**: Merge pull request #218 from mgd43b/fix/ci-cargo-dep-info-and-node-floor
+
+fix: restore CI for cargo 1.100 and for the Node 18.17 consumer install
+
+**File**: `package-lock.json` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@
+         "@ast-grep/lang-rust": "^0.0.7",
+         "@ast-grep/lang-scala": "^0.0.7",
+         "@ast-grep/lang-swift": "^0.0.8",
+-        "@ast-grep/napi": "^0.51.1",
++        "@ast-grep/napi": ">=0.51.1 <0.51.3",
+         "@google/generative-ai": "^0.24.1",
+         "@hono/node-server": "~1.19.18",
+         "@lumis-sh/wasm-eex": "^0.26.3",
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@
+     "@ast-grep/lang-rust": "^0.0.7",
+     "@ast-grep/lang-scala": "^0.0.7",
+     "@ast-grep/lang-swift": "^0.0.8",
+-    "@ast-grep/napi": "^0.51.1",
++    "@ast-grep/napi": ">=0.51.1 <0.51.3",
+     "@google/generative-ai": "^0.24.1",
+     "@hono/node-server": "~1.19.18",
+     "@lumis-sh/wasm-eex": "^0.26.3",
+```
+
+**File**: `tests/integration/rust-graph-vs-cargo.test.ts` (modified, +22/-4)
+```diff
+@@ -32,13 +32,31 @@ function haveCargo(): boolean {
+   }
+ }
+ 
++/**
++ * Every dep-info file (`*.d`) cargo left under `dir`, wherever it put them.
++ *
++ * Cargo documents its build-directory layout as an internal detail, and it has
++ * moved: the new layout, always on from cargo 1.100, writes them to
++ * `target/debug/build/<package>/<hash>/out/` where they used to be in
++ * `target/debug/deps/`. Reading a fixed directory made this test fail with
++ * ENOENT on the newer cargo even though the crate compiled, so find them by
++ * extension instead.
++ */
++function depInfoFiles(dir: string): string[] {
++  const found: string[] = [];
++  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
++    const full = path.join(dir, entry.name);
++    if (entry.isDirectory()) found.push(...depInfoFiles(full));
++    else if (entry.name.endsWith(".d")) found.push(full);
++  }
++  return found;
++}
++
+ /** The sources rustc opened, per cargo's own dep-info, relative to the crate. */
+ function sourcesRustcRead(root: string): Set<string> {
+-  const deps = path.join(root, "target", "debug", "deps");
+   const read = new Set<string>();
+-  for (const name of fs.readdirSync(deps)) {
+-    if (!name.endsWith(".d")) continue;
+-    for (const line of fs.readFileSync(path.join(deps, name), "utf8").split("\n")) {
++  for (const file of depInfoFiles(path.join(root, "target", "debug"))) {
++    for (const line of fs.readFileSync(file, "utf8").split("\n")) {
+       const colon = line.indexOf(":");
+       if (colon === -1) continue;
+       for (const raw of line.slice(colon + 1).trim().split(/\s+/)) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #218** (2026-11-21): fix: restore CI for cargo 1.100 and for the Node 18.17 consumer install (@mgd43b)
 - **PR #215** (2026-11-04): Fix Ollama credential handling and MCP test teardown (@giancarloerra)
 - **PR #214** (2026-11-04): chore: update packages and fix Ollama proxy authentication (@giancarloerra)
 - **PR #212** (2026-11-02): fix: resolve TS/JS monorepo imports per importer and workspace exports (@giancarloerra)
 - **PR #210** (2026-10-23): fix(search): name the filter when a filtered codebase_search finds nothing (@gnyan-zadara)
 - **PR #209** (2026-10-23): fix(graph): name C# declarations by their name field and capture type, creation and qualified-call edges (@pcherkashin)
-- **PR #206** (2026-10-15): fix(graph): name attributed PHP declarations by their name field (@pma1999)
 
 ---
 
@@ -1015,13 +1166,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update @hono/node-server to 1.19.19
+## X. deps): keep @ast-grep/napi below 0.51.3, which requires Node 20
 
 **RULE**:
 When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `401a9202`: deps): update @hono/node-server to 1.19.19. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1295afe`: deps): keep @ast-grep/napi below 0.51.3, which requires Node 20. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
@@ -1029,18 +1180,14 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      "version": "1.19.19",
-      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-1.19.19.tgz",
-      "integrity": "sha512-Fy9R7PACOzHU9LDpfnuzVyuVYevKQRcEG2mZhmfc+DRdmayEd3RVfa2XOt2IgGcPNgA77Yk63KBszepcMFK5Ng==",
+        "@ast-grep/napi": ">=0.51.1 <0.51.3",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      "version": "1.19.18",
-      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-1.19.18.tgz",
-      "integrity": "sha512-609kppIP9GITS+EwPyB6Kiq8z2yXONaYD1VHpo7MMP9celRJYbkFr9KakJncHwK0EK/XYtlogqmrLchDv5HX5w==",
+// Induced defect failure mode:
+        "@ast-grep/napi": "^0.51.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `401a9202` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1295afe` are properly handled with clean fallback behavior.

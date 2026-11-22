@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T03:03:32.201Z",
+  "updated_at": "2026-11-22T03:11:44.603Z",
   "stats": {
-    "total_discovered": 7406,
-    "approved_pending_harvest": 7007,
+    "total_discovered": 7411,
+    "approved_pending_harvest": 7012,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6987,
-      "OFFICIAL_DOCUMENTATION": 240,
+      "COMMUNITY_AND_EXPERT": 6991,
+      "OFFICIAL_DOCUMENTATION": 241,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 42,
@@ -160162,6 +160162,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
         "fileName": "ontos-ai-knowhere-learnings.md"
+      }
+    },
+    "SRC-57CA6CC7FAA0": {
+      "id": "SRC-57CA6CC7FAA0",
+      "url": "https://github.com/NVIDIA/cutlass/releases/download/v4.7.0/cutlass-install-x86_64-cu13-4.7.0.tar.gz",
+      "title": "https://github.com/NVIDIA/cutlass/releases/download/v4.7.0/cutlass-install-x86_64-cu13-4.7.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:11:43.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-A452FDB9DC8A": {
+      "id": "SRC-A452FDB9DC8A",
+      "url": "https://github.com/NVIDIA/cutlass/releases/download/v4.8.1/cutlass-install-x86_64-cu13-4.8.1.tar.gz",
+      "title": "https://github.com/NVIDIA/cutlass/releases/download/v4.8.1/cutlass-install-x86_64-cu13-4.8.1.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:11:43.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-CDC408859FEB": {
+      "id": "SRC-CDC408859FEB",
+      "url": "https://github.com/NVIDIA/cutlass/releases/download/v4.8.1/cutlass-install-aarch64-cu13-4.8.1.tar.gz",
+      "title": "https://github.com/NVIDIA/cutlass/releases/download/v4.8.1/cutlass-install-aarch64-cu13-4.8.1.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:11:43.367Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-909517BD99A5": {
+      "id": "SRC-909517BD99A5",
+      "url": "https://docs.nvidia.com/cutlass/media/docs/pythonDSL/license.html",
+      "title": "https://docs.nvidia.com/cutlass/media/docs/pythonDSL/license.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:11:43.433Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-4E3F577364B6": {
+      "id": "SRC-4E3F577364B6",
+      "url": "https://github.com/giancarloerra/SocratiCode",
+      "title": "https://github.com/giancarloerra/SocratiCode",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:11:44.603Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
+        "fileName": "giancarloerra-socraticode-learnings.md"
       }
     }
   }

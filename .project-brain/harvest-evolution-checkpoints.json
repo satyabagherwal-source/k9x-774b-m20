@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:03:32.872Z",
+  "last_updated": "2026-11-22T03:11:45.296Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T01:59:00.350Z",
@@ -1003,7 +1003,7 @@
       "staged_for_review": 1
     },
     "nvidia-cuda-rust-learnings.md": {
-      "processed_at": "2026-11-20T16:42:31.680Z",
+      "processed_at": "2026-11-22T03:11:43.176Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2988,8 +2988,8 @@
       "staged_for_review": 0
     },
     "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md": {
-      "processed_at": "2026-11-15T13:40:24.606Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T03:11:44.173Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "tencent-loopforge-learnings.md": {
@@ -3691,9 +3691,14 @@
       "processed_at": "2026-11-22T00:09:59.417Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "giancarloerra-socraticode-learnings.md": {
+      "processed_at": "2026-11-22T03:11:44.579Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2979,
+  "total_dossiers_evaluated": 2982,
   "total_canonical_promoted": 468,
-  "total_staged_for_review": 2275
+  "total_staged_for_review": 2277
 }

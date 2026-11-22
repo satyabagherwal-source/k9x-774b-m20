@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:03:27.427Z",
-  "total_cycles_completed": 11400,
-  "total_learnings_persisted": 11400,
-  "total_rules_promoted": 10699,
+  "last_updated": "2026-11-22T03:11:40.105Z",
+  "total_cycles_completed": 11404,
+  "total_learnings_persisted": 11404,
+  "total_rules_promoted": 10701,
   "history": [
-    {
-      "timestamp": "2026-11-21T09:52:22.247Z",
-      "repository": "storybookjs/storybook",
-      "learningId": "learn-github-storybookjs-storybook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T09:52:45.616Z",
-      "repository": "mistralai/Timestral-209M",
-      "learningId": "learn-huggingface-mistralai-timestral-209m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T10:37:32.594Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T10:37:34.759Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T11:11:36.367Z",
       "repository": "appwrite/appwrite",
@@ -1403,6 +1375,34 @@
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:11:24.694Z",
+      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:11:25.786Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:11:38.506Z",
+      "repository": "giancarloerra/SocratiCode",
+      "learningId": "learn-github-giancarloerra-socraticode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:11:40.105Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for giancarloerra/socraticode
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for giancarloerra/SocratiCode
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "giancarloerra/socraticode",
-  "source_url": "https://github.com/giancarloerra/socraticode",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "giancarloerra/SocratiCode",
+  "source_url": "https://github.com/giancarloerra/SocratiCode",
+  "source_version": "7d277196",
+  "license": "AGPL-3.0",
+  "timestamp": "2026-11-22T03:11:38.718Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-giancarloerra-socraticode",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [giancarloerra/socraticode](https://github.com/giancarloerra/socraticode) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode) (Revision: `7d277196`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-22T03:11:38.718Z`  
+> **Learning ID**: `learn-github-giancarloerra-socraticode`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `giancarloerra/socraticode` (Commit: `historical`)
+- **Target Repository**: `giancarloerra/SocratiCode` (Commit: `7d277196`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
-> **Source**: github ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
-> **Source Version**: `c9a37f4b`  
-> **License**: AGPL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T03:14:23.797Z  
-> **Learning ID**: `learn-github-giancarloerra-socraticode`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): giancarloerra/SocratiCode
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T03:14:23.390Z  
+> **Harvest Timestamp**: 2026-11-22T03:11:37.432Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Enterprise-grade (40m+ LOC) codebase intelligence, zero-setup, local & private Plugin/Skill/Extension or MCP: hybrid semantic search, polyglot dependency graphs, symbol-level impact analysis & call-flow, interactive HTML viewer, cross-project & branch-aware search, DB/API/infra knowledge. 61% less tokens, 84% fewer calls, 37x faster. Cloud in beta.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3368 stars
+- **Stars / Engagement**: 3380 stars
 
 ---
 
@@ -994,161 +980,184 @@ main().catch((err) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9a37f4b` (2026-11-05)
-**Commit Message**: chore: release v1.16.2
+### Incident Patch 1: `b1295afe` (2026-11-21)
+**Commit Message**: fix(deps): keep @ast-grep/napi below 0.51.3, which requires Node 20
 
-**File**: `.claude-plugin/plugin.json` (modified, +1/-1)
+package.json declares node >=18.17.0 and the consumer-install jobs run
+`npm install --engine-strict` on the packed tarball with no lockfile, so they
+take the newest release the range allows. @ast-grep/napi 0.51.3 (published
+2026-11-16) added engines.node >=20.0.0, and so did its platform package, so
+those jobs fail with EBADENGINE on Node 18.17 while the lockfile (0.51.1)
+still works.
+
+Cap the range at <0.51.3 in package.json and the lockfile's root entry. A
+fresh install of the packed tarball now resolves 0.51.2, and no installed
+package excludes Node 18.17.0. Raising the declared Node floor to 20 instead is
+a separate decision for the maintainer.
+
+**File**: `package-lock.json` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "socraticode",
--  "version": "1.16.1",
-+  "version": "1.16.2",
-   "description": "Codebase intelligence — semantic search workflows, dependency graph analysis, and context artifact exploration for SocratiCode",
-   "author": {
-     "name": "Giancarlo Erra",
+@@ -25,7 +25,7 @@
+         "@ast-grep/lang-rust": "^0.0.7",
+         "@ast-grep/lang-scala": "^0.0.7",
+         "@ast-grep/lang-swift": "^0.0.8",
+-        "@ast-grep/napi": "^0.51.1",
++        "@ast-grep/napi": ">=0.51.1 <0.51.3",
+         "@google/generative-ai": "^0.24.1",
+         "@hono/node-server": "~1.19.18",
+         "@lumis-sh/wasm-eex": "^0.26.3",
 ```
 
-**File**: `.codex-plugin/plugin.json` (modified, +1/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "socraticode",
--  "version": "1.16.1",
-+  "version": "1.16.2",
-   "description": "Codebase intelligence: semantic search workflows, dependency graph analysis, and context artifact exploration for SocratiCode",
-   "author": {
-     "name": "Giancarlo Erra",
+@@ -80,7 +80,7 @@
+     "@ast-grep/lang-rust": "^0.0.7",
+     "@ast-grep/lang-scala": "^0.0.7",
+     "@ast-grep/lang-swift": "^0.0.8",
+-    "@ast-grep/napi": "^0.51.1",
++    "@ast-grep/napi": ">=0.51.1 <0.51.3",
+     "@google/generative-ai": "^0.24.1",
+     "@hono/node-server": "~1.19.18",
+     "@lumis-sh/wasm-eex": "^0.26.3",
 ```
 
-**File**: `.cursor-plugin/plugin.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "socraticode",
--  "version": "1.16.1",
-+  "version": "1.16.2",
-   "description": "Codebase intelligence: semantic search workflows, dependency graph analysis, and context artifact exploration for SocratiCode",
-   "author": {
-     "name": "Giancarlo Erra",
-```
+---
 
-**File**: `CHANGELOG.md` (modified, +44/-0)
+### Incident Patch 2: `c28a7755` (2026-11-21)
+**Commit Message**: test(rust): find cargo's dep-info by extension, not by build-dir layout
+
+rust-graph-vs-cargo read cargo's dep-info from target/debug/deps. Cargo
+documents its build-directory layout as an internal detail, and from cargo
+1.100 the new layout is always on: the .d files are written to
+target/debug/build/<package>/<hash>/out/ and target/debug/deps no longer
+exists. The fixture crate still compiled, so the failure surfaced as ENOENT
+from scandir, in four suites, on any runner that picked up that cargo.
+
+Walk target/debug for *.d files instead. Verified against cargo 1.96.1 in
+both layouts (the new one forced with RUSTC_BOOTSTRAP=1 and
+CARGO_UNSTABLE_BUILD_DIR_NEW_LAYOUT=true, which fails the old test exactly as
+CI does): 14 of 14 pass in each.
+
+**File**: `tests/integration/rust-graph-vs-cargo.test.ts` (modified, +22/-4)
 ```diff
-@@ -4,6 +4,50 @@ All notable changes to SocratiCode are documented here.
- This project uses [Conventional Commits](https://www.conventionalcommits.org/) and [Semantic Versioning](https://semver.org/).
+@@ -32,13 +32,31 @@ function haveCargo(): boolean {
+   }
+ }
  
++/**
++ * Every dep-info file (`*.d`) cargo left under `dir`, wherever it put them.
++ *
++ * Cargo documents its build-directory layout as an internal detail, and it has
++ * moved: the new layout, always on from cargo 1.100, writes them to
++ * `target/debug/build/<package>/<hash>/out/` where they used to be in
++ * `target/debug/deps/`. Reading a fixed directory made this test fail with
++ * ENOENT on the newer cargo even though the crate compiled, so find them by
++ * extension instead.
++ */
++function depInfoFiles(dir: string): string[] {
++  const found: string[] = [];
++  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
++    const full = path.join(dir, entry.name);
++    if (entry.isDirectory()) found.push(...depInfoFiles(full));
++    else if (entry.name.endsWith(".d")) found.push(full);
++  }
++  return found;
++}
++
+ /** The sources rustc opened, per cargo's own dep-info, relative to the crate. */
+ function sourcesRustcRead(root: string): Set<string> {
+-  const deps = path.join(root, "target", "debug", "deps");
+   const read = new Set<string>();
+-  for (const name of fs.readdirSync(deps)) {
+-    if (!name.endsWith(".d")) continue;
+-    for (const line of fs.readFileSync(path.join(deps, name), "utf8").split("\n")) {
++  for (const file of depInfoFiles(path.join(root, "target", "debug"))) {
++    for (const line of fs.readFileSync(file, "utf8").split("\n")) {
+       const colon = line.indexOf(":");
+       if (colon === -1) continue;
+       for (const raw of line.slice(colon + 1).trim().split(/\s+/)) {
+```
+
+---
+
+### Incident Patch 3: `7d277196` (2026-11-21)
+**Commit Message**: Merge pull request #218 from mgd43b/fix/ci-cargo-dep-info-and-node-floor
+
+fix: restore CI for cargo 1.100 and for the Node 18.17 consumer install
+
+**File**: `package-lock.json` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@
+         "@ast-grep/lang-rust": "^0.0.7",
+         "@ast-grep/lang-scala": "^0.0.7",
+         "@ast-grep/lang-swift": "^0.0.8",
+-        "@ast-grep/napi": "^0.51.1",
++        "@ast-grep/napi": ">=0.51.1 <0.51.3",
+         "@google/generative-ai": "^0.24.1",
+         "@hono/node-server": "~1.19.18",
+         "@lumis-sh/wasm-eex": "^0.26.3",
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@
+     "@ast-grep/lang-rust": "^0.0.7",
+     "@ast-grep/lang-scala": "^0.0.7",
+     "@ast-grep/lang-swift": "^0.0.8",
+-    "@ast-grep/napi": "^0.51.1",
++    "@ast-grep/napi": ">=0.51.1 <0.51.3",
+     "@google/generative-ai": "^0.24.1",
+     "@hono/node-server": "~1.19.18",
+     "@lumis-sh/wasm-eex": "^0.26.3",
+```
+
+**File**: `tests/integration/rust-graph-vs-cargo.test.ts` (modified, +22/-4)
+```diff
+@@ -32,13 +32,31 @@ function haveCargo(): boolean {
+   }
+ }
  
-+## [1.16.2](https://github.com/giancarloerra/socraticode/compare/v1.16.1...v1.16.2) (2026-11-05)
++/**
++ * Every dep-info file (`*.d`) cargo left under `dir`, wherever it put them.
++ *
++ * Cargo documents its build-directory layout as an internal detail, and it has
++ * moved: the new layout, always on from cargo 1.100, writes them to
++ * `target/debug/build/<package>/<hash>/out/` where they used to be in
++ * `target/debug/deps/`. Reading a fixed directory made this test fail with
++ * ENOENT on the newer cargo even though the crate compiled, so find them by
++ * extension instead.
++ */
++function depInfoFiles(dir: string): string[] {
++  const found: string[] = [];
++  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
++    const full = path.join(dir, entry.name);
++    if (entry.isDirectory()) found.push(...depInfoFiles(full));
++    else if (entry.name.endsWith(".d")) found.push(full);
++  }
++  return found;
++}
 +
-+* disable checkout credentials in new validation jobs ([fcc4d4d](https://github.com/giancarloerra/socraticode/commit/fcc4d4d15025ecd3bbbc1a7fcd2aa08f0c5f7576))
-+* update packages and fix Ollama proxy authentication ([3772c41](https://github.com/giancarloerra/socraticode/commit/3772c41485ca4ab396f1102e5f5efba9b92226e5))
-+
-+### Bug Fixes
-+
-+* **graph:** bind C# aliases where declared, and type-named values by type identity ([d9b8700](https://github.com/giancarloerra/socraticode/commit/d9b870028b950f562090389eecca55f677791576))
-+* **graph:** consult each C# import at its own namespace level ([e38dca3](https://github.com/giancarloerra/socraticode/commit/e38dca37b0bb68626b2f7f1266434f7c0b9e5992))
-+* **graph:** keep the written C# path and look names up as C# does ([4041e70](https://github.com/giancarloerra/socraticode/commit/4041e70befa625b47a5b162dea97f2be927d1a9a)), references [#209](https://github.com/giancarloerra/socraticode/issues/209) [#208](https://github.com/giancarloerra/socraticode/issues/208)
-+* **graph:** look each C# base up once ([74189a3](https://github.com/giancarloerra/socraticode/commit/74189a3c7f1e6eeb9d718e647b78b3213c45edbc))
-+* **graph:** name C# declarations by their name field and capture type, creation and qualified-call edges ([d0aac8d](https://github.com/giancarloerra/socraticode/commit/d0aac8d4ca9a44433a6579bacf66fbf799c99aa6))
-+* **graph:** narrow C# framework paths, skip tuple labels, keep global usings to their file ([87e2d66](https://github.com/giancarloerra/socraticode/commit/87e2d66774a02ce71737098e9d7e0f43ae570fb9))
-+* **graph:** read a C# receiver that names a value as an instance call ([5c907d3](https://github.com/giancarloerra/socraticode/commit/5c907d315dd54bda47dcd6baa6374ddbf6bea371))
-+* **graph:** record a C# record struct as a struct ([4dbfc01](https://github.com/giancarloerra/socraticode/commit/4dbfc01f08e7744b3496da099ca174f0465f3bf9))
-+* **graph:** resolve C# names only through the scopes and imports C# uses ([692963c](https://github.com/giancarloerra/socraticode/commit/692963c274d3133a1483e7251a1ee58c551adcad))
-+* normalize TypeScript configuration paths on Windows ([ceb9c7d](https://github.com/giancarloerra/socraticode/commit/ceb9c7da48744e00d4cbf69044605da2fb9338db))
-+* preserve installed package bindings in workspace graphs ([8be6abb](https://github.com/giancarloerra/socraticode/commit/8be6abb4beb7841412b604780bbb40a20ca1e367))
-+* preserve installed workspace links and missing-base aliases ([6653435](https://github.com/giancarloerra/socraticode/commit/6653435efaea5abd4ccfe627c48360297f22b91b))
-+* preserve managed diagnostics and verify native platforms ([650b5df](https://github.com/giancarloerra/socraticode/commit/650b5dfaabc5ed4fecb26e20795de62ece117c14))
-+* preserve Ollama authentication and simplify MCP test teardown ([a5bc960](https://github.com/giancarloerra/socraticode/commit/a5bc960fb7cf052fa61beb8b5aa21a81418d234c))
-+* preserve Ollama policy errors and late-exit cleanup ([106bb39](https://github.com/giancarloerra/socraticode/commit/106bb3980b1b556ea504729c4d89d8bce2f38100))
-+* preserve Ollama transport policy and diagnostics ([43d6afd](https://github.com/giancarloerra/socraticode/commit/43d6afd90383e610a0d0e60dcf7c995f4ea30553))
-+* release model download timers and verify managed startup ([32cdff4](https://github.com/giancarloerra/socraticode/commit/32cdff4a878201e46defbf131c1c86f7f43eb914))
-+* resolve monorepo imports using importer TypeScript configuration ([f22a134](https://github.com/giancarloerra/socraticode/commit/f22a134b48304cafbfa3b3b6f908a16ad7846be6))
-+* **search:** name the filter when a filtered codebase_search finds nothing ([5f42476](https://github.com/giancarloerra/socraticode/commit/5f42476526f89c8c0851446602955eb6cb66d557)), closes [#207](https://github.com/giancarloerra/socraticode/issues/207)
-+* use consistent native path canonicalization for graph inputs ([22cfea1](https://github.com/giancarloerra/socraticode/commit/22cfea1b797dc8a6b2a56a730a03ee1aac527bc4))
-+
-+### Documentation
-+
-+* clarify Node requirements by workflow ([1e8504b](https://github.com/giancarloerra/socraticode/commit/1e8504bf0ace5a41103e0c9cb85b8d62b60dace4))
-+
-+### Tests
-+
-+* await logging server closure before cleanup ([8dd7b8c](https://github.com/giancarloerra/socraticode/commit/8dd7b8c957d05e04094fb75eaf9fb241a1d69926))
-+* bound Windows descendant cleanup ([a64101f](https://github.com/giancarloerra/socraticode/commit/a64101f30873ea8e2a6921ec3263108ed362beeb))
-+* expose Windows process lookup errors ([0105edb](https://github.com/giancarloerra/socraticode/commit/0105edbb9e74b171b51979ca6996fef7271254da))
-+* **graph:** pin a C# call through a lowercase namespace ([59
-```
-
-**File**: `extension/package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "socraticode",
--  "version": "1.16.1",
-+  "version": "1.16.2",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "socraticode",
--      "version": "1.16.1",
-+      "version": "1.16.2",
-       "license": "AGPL-3.0-only",
-       "devDependencies": {
-         "@biomejs/biome": "^2.6.4",
-```
-
-**File**: `extension/package.json` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
-   "name": "socraticode",
-   "displayName": "SocratiCode",
-   "description": "Codebase context engine for VS Code's native MCP host. Hybrid search, dependency and call graphs, symbol-level impact analysis, interactive graph explorer, and searchable architecture artefacts.",
--  "version": "1.16.1",
-+  "version": "1.16.2",
-   "publisher": "giancarloerra",
-   "license": "AGPL-3.0-only",
-   "icon": "images/icon.png",
-```
-
-**File**: `gemini-extension.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "socraticode",
--  "version": "1.16.1",
-+  "version": "1.16.2",
-   "contextFileName": "GEMINI.md",
-   "mcpServers": {
-     "socraticode": {
-```
-
-**File**: `package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "socraticode",
--  "version": "1.16.1",
-+  "version": "1.16.2",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "socraticode",
--      "version": "1.16.1",
-+      "version": "1.16.2",
-       "license": "AGPL-3.0-only",
-       "dependencies": {
-         "@ast-grep/lang-bash": "^0.0.8",
+ /** The sources rustc opened, per cargo's own dep-info, relative to the crate. */
+ function sourcesRustcRead(root: string): Set<string> {
+-  const deps = path.join(root, "target", "debug", "deps");
+   const read = new Set<string>();
+-  for (const name of fs.readdirSync(deps)) {
+-    if (!name.endsWith(".d")) continue;
+-    for (const line of fs.readFileSync(path.join(deps, name), "utf8").split("\n")) {
++  for (const file of depInfoFiles(path.join(root, "target", "debug"))) {
++    for (const line of fs.readFileSync(file, "utf8").split("\n")) {
+       const colon = line.indexOf(":");
+       if (colon === -1) continue;
+       for (const raw of line.slice(colon + 1).trim().split(/\s+/)) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #218** (2026-11-21): fix: restore CI for cargo 1.100 and for the Node 18.17 consumer install (@mgd43b)
 - **PR #215** (2026-11-04): Fix Ollama credential handling and MCP test teardown (@giancarloerra)
 - **PR #214** (2026-11-04): chore: update packages and fix Ollama proxy authentication (@giancarloerra)
 - **PR #212** (2026-11-02): fix: resolve TS/JS monorepo imports per importer and workspace exports (@giancarloerra)
 - **PR #210** (2026-10-23): fix(search): name the filter when a filtered codebase_search finds nothing (@gnyan-zadara)
 - **PR #209** (2026-10-23): fix(graph): name C# declarations by their name field and capture type, creation and qualified-call edges (@pcherkashin)
-- **PR #206** (2026-10-15): fix(graph): name attributed PHP declarations by their name field (@pma1999)
 
 ---
 
@@ -1168,31 +1177,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release v1.16.2
+## X. deps): keep @ast-grep/napi below 0.51.3, which requires Node 20
 
 **RULE**:
-When implementing operations in `.claude-plugin/plugin.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9a37f4b`: release v1.16.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1295afe`: deps): keep @ast-grep/napi below 0.51.3, which requires Node 20. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/plugin.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  "version": "1.16.2",
+        "@ast-grep/napi": ">=0.51.1 <0.51.3",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-  "version": "1.16.1",
+// Induced defect failure mode:
+        "@ast-grep/napi": "^0.51.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9a37f4b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1295afe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

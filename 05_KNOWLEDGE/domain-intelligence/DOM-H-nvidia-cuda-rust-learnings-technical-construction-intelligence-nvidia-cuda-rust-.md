@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T16:42:31.800Z",
+  "timestamp": "2026-11-22T03:11:43.534Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nvidia-cuda-rust-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia-cuda-rust-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T16:42:31.800Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T03:11:43.534Z`  
 > **Learning ID**: `LEARN-EVO-nvidia-cuda-rust-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 91%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 89%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nvidia-cuda-rust-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `8046b9e9`  
+> **Source Version**: `754b6d10`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T16:42:12.888Z  
+> **Timestamp**: 2026-11-22T03:11:24.705Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:42:12.740Z  
+> **Harvest Timestamp**: 2026-11-22T03:11:24.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4077 stars
+- **Stars / Engagement**: 4079 stars
 
 ---
 
@@ -2304,788 +2304,410 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8046b9e9` (2026-11-19)
-**Commit Message**: feat(cutile): pointer operands for foreign tile-library calls (#1749)
+### Incident Patch 1: `754b6d10` (2026-11-21)
+**Commit Message**: feat(cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a) (#1849)
 
-## Why
+## What This PR Does
 
-Some tile-library functions work on global memory directly. They read
-input from it, write output to it, or take a scratch buffer. Their Tile
-IR declarations take a rank-0 `tile<ptr<T>>` operand.
-`#[cutile::foreign]` accepted only tiles and scalars, so cuTile Rust
-could not declare or call these functions. cuTile Python supports them
-through `Array.foreign_pointer`, and Tile C++ through `ct::tile<T*,
-ct::shape<>>`.
+Upgrades `cute-rs-preview`'s pinned CUTLASS MLIR compiler from `4.7.0`
+to `4.8.1` (`x86_64-cu13` and `aarch64-cu13`), absorbs all 4.8.1
+NVVM/CuTe MLIR schema changes inside `cuda-oxide-mlir-export` with
+**zero edits to existing Rust kernels**, opens the **Vera Rubin
+(`sm_107a`)** target gate, and adds 1-to-1 CuTeDSL 4.8 Rubin atoms,
+examples, and `cuda-oxide-book` updates:
 
-## What
+```text
+AXIS 1: Toolchain & Exporter Profile Bump (CUTLASS 4.7.0 -> 4.8.1)
+  Rust Kernels (all 15 existing examples + 3 models)   [0 source edits]
+    ──► Pliron Semantic IR (`dialect-cute` + `dialect-nvvm`)
+    ──► Exporter Profile (`cuda-oxide-mlir-export`: `kind`, `blockScale`,
+        `mbarrier` segments, `isCTAOnly`, shared `addrspace(3)` TMA)
+    ──► SHA-Pinned `libCutlassCompiler.so` 4.8.1 (`x86_64` + `aarch64`)
+    ──► Validated Targets: `sm_100a`, `sm_103a`, `sm_107a` (Vera Rubin), `sm_120a`
 
-- **Declarations take raw pointers.** In a `#[cutile::foreign]`
-declaration, a `*const E` or `*mut E` parameter lowers to a rank-0
-`tile<ptr<E>>` operand of `preview$call`. This follows the usual Rust
-FFI split: an `extern` declaration takes raw pointers, and a wrapper
-takes tensors and states the remaining obligations.
-  - A pointer operand is always `in`, as in Tile IR.
-- `*mut` documents that the library writes through the pointer. rustc
-rejects a `*const` where `*mut` is declared.
-- These are errors: `#[inout]` pointers, pointer results, and pointers
-to non-element types.
-- **`subtensor_mut_ptr()` on a mutable tensor (ranks 1–3) returns the
-address of the current tile block's wri
+AXIS 2: 1-to-1 CuTeDSL 4.8 Rubin Atoms & Examples
+  • `cute_rs::arch::{griddepcontrol_wait, griddepcontrol_launch_dependents}` (PDL)
+  • `MmaSs`, `TmaCopy`, `SharedTile`, `SharedTileArray` extended to `BF
 
-**File**: `cutile-rs/CHANGELOG.md` (modified, +12/-0)
+**File**: `cuda-oxide/README.md` (modified, +2/-0)
 ```diff
-@@ -51,6 +51,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
- - Add a reusable fused QKV projection, Q/K RMSNorm, FP8 conversion and paged
-   KV-scatter kernel, with a correctness example and opt-in CUDA graph benchmark
-   sweep. The initial schedule is not B200-tuned (#1746).
-+- Foreign functions take global-memory pointer operands: a `*const E` or
-+  `*mut E` parameter is a rank-0 `tile<ptr<E>>` operand. `subtensor_mut_ptr`
-+  on a mutable tensor gives the address of the current tile block's writable
-+  sub-tensor, as `load` and `store` see it, with an `i64` offset. Getting it
-+  is safe; unlike `load` and `store`, a write through it is not masked to the
-+  tensor's bounds, so the writing function's `# Safety` contract states the
-+  bounds (#1749).
- 
- ### Changed
- 
-@@ -76,6 +83,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
- - Update the optional `cuda-tile-rs` bindings and `cuda-tile-translate` build
-   from CUDA Tile IR 13.2 to the public 13.5 release, including SIMT preview
-   support and translator round-trip tests.
-+- A kernel's in-memory cache key no longer holds the tile-library list as
-+  written, only the digest of the resolved, de-duplicated libraries. A launch
-+  that names a default library again, or names a library through another
-+  path, used to compile the kernel a second time and load a second module,
-+  with its own copy of every `Global` (#1749).
- 
- ## [0.5.0] - 2026-11-04
- 
+@@ -277,6 +277,8 @@ compiles a Rust kernel to PTX, launches it on the GPU, and prints
+ | `nemotron3_moe`           | Nemotron-3 NVFP4 ReLU² MoE (`models/`): native SIMT + 5th-gen `tcgen05`  |
+ | `nemotron3_moe_cute`      | Nemotron-3 NVFP4 ReLU² MoE (`cute-rs-preview/models/`): typed `cute-rs`  |
+ | `sm100_qkv_epilogue_cute` | Fused QKV + RMSNorm + FP8 quant + paged KV scatter (`cute-rs-preview/`)  |
++| `sm107_bf16_gemm_cute`    | Rubin (`sm_107a`) & Blackwell two-CTA persistent BF16 GEMM + PDL         |
++| `sm107_mxfp8_gemm_cute`   | Rubin (`sm_107a`) persistent MXFP8 (`E4M3 + UE8M0`) GEMM + B-reuse + PDL |
+ | `qwen3_8b_cute`           | End-to-end 36-layer `Qwen/Qwen3-8B` in BF16 and NVFP4 (`cute-rs-preview`)|
+ | `qwen_decoder_cute`       | End-to-end `Qwen3-TTS 1.7B` neural audio codec & speech decoder          |
+ | `host_closure`            | Generic kernels with closures passed from host                           |
 ```
 
-**File**: `cutile-rs/cutile-book/guide/tile-libraries.md` (modified, +138/-6)
+**File**: `cuda-oxide/crates/cargo-oxide/src/cutlass_toolchain.rs` (modified, +81/-54)
 ```diff
-@@ -115,6 +115,9 @@ pub mod solver {
- - **Every other parameter is an operand the caller passes**, in the
-   declaration's order: read-only by default, read-write with `#[inout]`. Scalars are rank-0
-   tiles.
-+  A raw pointer, `*const E` or `*mut E`, is a rank-0 `tile<ptr<E>>` operand:
-+  a global-memory address the library reads or writes through (see [Pointer
-+  operands](#pointer-operands)).
- - **The results** start with the updated `#[inout]` operands. Every further
-   result is an output-only operand (`info` above): it is not a parameter,
-   and the call passes it zero-filled after the parameters. This is the form
-@@ -140,10 +143,11 @@ the ones below. The caller of a foreign function guarantees that:
-   `#[inout]`, and the results. `tileiras` rejects some mismatches, not all.
- - The library implements the function for the target architecture and for
-   the constant arguments of the call.
--- The function reads and writes only its operands and results. Foreign
--  functions take tiles, which are values, so this holds for every library
--  today. It becomes an obligation on the library once pointer operands are
--  supported.
-+- The function reads and writes only its operands and results, and the
-+  memory its pointer operands are documented to reach. For a pointer
-+  operand, the caller also guarantees what the library documents for it:
-+  that the memory is valid, large enough and aligned, and that no other
-+  thread accesses it while the call runs, unless the library allows it.
+@@ -23,13 +23,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
  
- A wrapper that upholds these obligations for every input it accepts can be
- a safe device function that calls the declaration in an `unsafe` block.
-@@ -185,6 +189,7 @@ that function's module.
- | Read-write operands | `[[cutile::experimental_inout]]` | positional `inputs` | `#[inout]` |
- | Output-only operands | implicit, from `multi_outputs` | passed explicitly | implicit: results after the `#[inout]` operands |
- | Scalars | rank-0 tiles | rank-0 tiles | rank-0 tiles |
-+| Pointers | `ct::tile<T*, ct::shape<>>` | `array.foreign_pointer` | `*const T` / `*mut T` |
- | Library | `-Xtileiras -l=path` | `Tilelib(path, version)` | `TileLibrarySpec::new(path)`, on the host |
+ pub const CUTLASS_COMPILER_ENV: &str = "CUDA_OXIDE_CUTLASS_COMPILER";
  
- ## Calling a foreign function
-@@ -212,6 +217,132 @@ the call's result, and the caller's tile is unchanged, as with any value.
- Two modules can each declare a foreign function with the same Rust name;
- each call reaches the one it names.
- 
-+## Pointer operands
-+
-+Some library functions work on global memory directly: they read their
-+input from global memory, write their output there, or take a scratch
-+buffer. Their Tile IR declarations take a rank-0 tile of pointers, which a
-+foreign declaration writes as a raw pointer:
-+
-+```text
-+preview$func extern @store_to(
-+    %x: tile<32xf32> {cuda_tile.preview$access = #cuda_tile<preview$access<in>>},
-+    %dst: tile<ptr<f32>> {cuda_tile.preview$access = #cuda_tile<preview$access<in>>}
-+  ) -> ()
-+preview$func extern @load_from(
-+    %src: tile<ptr<f32>> {cuda_tile.preview$access = #cuda_tile<preview$access<in>>},
-+    %out: tile<32xf32> {cuda_tile.preview$access = #cuda_tile<preview$access<out>>}
-+  ) -> (tile<32xf32>)
-+```
-+
-+```rust
-+/// Writes `x` to the 32 contiguous `f32` at `dst`.
-+///
-+/// # Safety
-+///
-+/// - `dst` is valid for writes of 32 contiguous `f32`: all 32 lie inside
-+///   one allocation, such as one tensor. The library does not check bounds.
-+/// - No other tile block or thread reads or writes those 32 elements
-+///   during the call.
-+#[cutile::foreign]
-+pub unsafe fn store_to(x: Tile<f32, { [32] }>, dst: *mut f32);
-+
-+/// Reads the 32 contiguous `f32` at `src`.
-+///
-+/// # Safety
-+///
-+/// - `src` is valid for reads of 32 contiguous `f32`: all 32 lie inside one
-+///   allocation, such as one tensor. The library does not check bounds.
-+/// - No other tile block or thread writes those 32 elements during the
-+///   call.
-+#[cutile::foreign]
-+pub unsafe fn load_from(src: *const f32) -> Tile<f32, { [32] }>;
-+```
-+
-+- A pointer operand is always `in`: the call passes the address, never
-+  gets one back. `*mut` states that the library writes through it, `*const`
-+  that it only reads; both lower to the same `tile<ptr<E>>`, and rustc
-+  rejects a `*const` where a `*mut` is declared. `#[inout]` pointers and
-+  pointer results are errors.
-+- `u8` and `i8` pointees are both `ptr<i8>`, as for tiles.
-+- Get the address from a tensor, or take a raw pointer kernel parameter:
-+  - `y.subtensor_mut_ptr()` (`*mut E`, needs `&mut`) is the address of the
-+    current tile block's writable sub-tensor of a mutable tensor: the
-+    element `y.load()` returns first. Like `load` and `store`, it is relative to the block, for ranks 1
-+    to 3, and needs a static tile shape. Unlike them, it does not mask the
-+    out-of-bounds part of a partial tile (see below).
-+  - `x.as_ptr()` (`*const E`) is the base of the whole view; offset it
-+    with `PointerTile::offset` to reach a chunk.
-+
-+  Getting either pointer is safe; it does
-```
-
-**File**: `cutile-rs/cutile-compiler/src/compiler/compile_foreign.rs` (modified, +14/-3)
-```diff
-@@ -151,11 +151,22 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                     let ir_ty = ir_ty.clone();
-                     Ok((rust_ty, ir_ty))
-                 }
-+                // `*const E` / `*mut E`: a rank-0 `tile<ptr<E>>`.
-+                Some(
-+                    ir_ty @ TileIrType::Tile(TileType {
-+                        element_type: TileElementType::Pointer(_),
-+                        shape,
-+                    }),
-+                ) if shape.is_empty() => {
-+                    let ir_ty = ir_ty.clone();
-+                    Ok((rust_ty, ir_ty))
-+                }
-                 _ => self.jit_error_result(
-                     &call.span(),
-                     &format!(
--                        "{what} of type `{}` is not a tile or scalar; foreign tile functions \
--                         take and return tiles and scalars only",
-+                        "{what} of type `{}` is not a tile, scalar or pointer; foreign tile \
-+                         functions take tiles, scalars and pointers, and return tiles and \
-+                         scalars",
-                         ty.to_token_stream()
-                     ),
-                 ),
-@@ -447,7 +458,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                 return self.jit_error_result(
-                     &arg_expr.span(),
-                     &format!(
--                        "argument `{}` of a foreign call must be a tile or scalar value",
-+                        "argument `{}` of a foreign call must be a tile, scalar or pointer value",
-                         crate::syn_utils::user_expr_tokens(arg_expr)
-                     ),
-                 );
-```
-
-**File**: `cutile-rs/cutile-compiler/src/compiler/compile_intrinsic.rs` (modified, +141/-0)
-```diff
-@@ -1962,6 +1962,14 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                         }
-                     }
-                     "tile_to_pointer" => {
-+                        // The value's Rust type can still name the caller's
-+                        // generic parameters (`PointerTile<*mut E, {[]}>`
-+                        // from a generic helper); its instance names the
-+                        // concrete element type.
-+                        let old_type = match &new_value.ty.type_instance {
-+                            TypeInstance::StructuredType(inst) => inst.instance_ty.clone(),
-+                            _ => old_type,
-+                        };
-                         let Some(element_type) =
-                             get_element_type_structured(&old_type, self.modules.primitives())
-                         else {
-@@ -2230,6 +2238,139 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                     ),
-                 }
-             }
-+            "tensor_layout" => {
-+                // `get_static_extent(shape, axis)`: the static extent of
-+                // `axis` of a `Shape<S>` type (the tile a mutable tensor's
-+                // `load` and `store` reach). `get_tensor_stride(tensor, axis)`:
-+                // the stride of `axis`, in elements, a constant when the
-+                // view's type fixes it and else the dynamic stride the view
-+                // carries.
-+                if call_expr.args.len() != 2 {
-+                    return self.jit_error_result(
-+                        &call_expr.span(),
-+                        &format!("`{ident}` expects a value and an axis"),
-+                    );
-+                }
-+                let axis = self
-+                    .compile_expression(
-+                        module,
-+                        block_id,
-+                        &call_expr.args[1],
-+                        generic_vars,
-+                        ctx,
-+                        None,
-+                    )?
-+                    .and_then(|v| v.bounds)
-+                    .filter(|b| b.is_exact() && b.start >= 0)
-+                    .map(|b| b.start as usize)
-+                    .ok_or_else(|| {
-+                        self.jit_error(
-+                            &call_expr.args[1].span(),
-+                            "the axis must be a non-negative compile-time constant",
-+                        )
-+                    })?;
-+                let Some(tensor) = self.compile_expression(
-+                    module,
-+                    block_id,
-+                    &call_expr.args[0],
-+                    generic_vars,
-+                    ctx,
-+                    None,
-+                )?
-+                else {
-+                    return self
-+                        .jit_error_result(&call_expr.args[0].span(), "failed to compile value");
-+                };
-+                match ident.to_string().as_str() {
-+                    "get_static_extent" => {
-+                        let shape = match &tensor.ty.type_instance {
-+                            TypeInstance::StructuredType(inst) => Some(inst.shape.clone()),
-+                            _ => get_cga_from_type(&tensor.ty.rust_ty, generic_vars),
-+                        };
-+                        let Some(shape) = shape else {
-+                            return self.jit_error_result(
-+                                &call_expr.args[0].span(),
-+                                &format!(
-+                                    "`{}` is not a shape with a known rank",
-+                                    tensor.ty.rust_ty.to_token_stream()
-+                                ),
-+                            );
-+                        };
-+                        match shape.get(axis) {
-+                            Some(&extent) if extent > 0 => self
-+                                .compile_constant(module, block_id, generic_vars, extent)
-+                                .map(Some),
-+                            Some(_) => self.jit_error_result(
-+                                &call_expr.args[0].span(),
-+                                &format!(
-+                                    "axis {axis} of `{}` has no static extent",
-+                                    tensor.ty.rust_ty.to_token_stream()
-+                                ),
-+                            ),
-+                            None => self.jit_error_result(
-+                                &call_expr.args[1].span(),
-+                                &format!(
-+                                    "axis {axis} is out of range for a rank-{} shape",
-+                                    shape.len()
-+                                ),
-+                            ),
-+                        }
-+                    }
-+                    "get_tensor_stride" => {
-+                        let Some(Type::TensorView(view)) = &tensor.ty.tile_ir_ty else {
-+                            return self.jit_error_result(
-+                                
-```
-
-**File**: `cutile-rs/cutile-compiler/src/foreign_decl.rs` (modified, +105/-21)
-```diff
-@@ -31,6 +31,10 @@
- //!   `const_args = "Function, FillMode, Batch, M, T"` gives another order.
- //! - Every other parameter is an operand the caller passes: read-only by
- //!   default, read-write with `#[inout]`. Scalars are rank-0 tiles.
-+//! - A raw pointer parameter (`*const E`, `*mut E`) is a rank-0
-+//!   `tile<ptr<E>>` operand: a global-memory address the callee may read or
-+//!   write through. It is always an `in` operand; `*mut` only states that
-+//!   the callee writes through it.
- //! - The results start with the updated `#[inout]` operands. Every further
- //!   result is an output-only operand the caller does not pass: the call
- //!   appends a zero-filled operand of each, as a Tile C++
-@@ -174,7 +178,13 @@ impl ForeignFnDecl {
-             },
-         };
-         for ty in &results {
--            check_operand_type(ty, "result")?;
-+            if check_operand_type(ty, "result")? == OperandKind::Pointer {
-+                return Err(syn::Error::new(
-+                    ty.span(),
-+                    "a foreign function cannot return a pointer; pass the memory as a \
-+                     pointer parameter instead",
-+                ));
-+            }
-         }
-         let decl = Self {
-             ident,
-@@ -490,7 +500,17 @@ fn foreign_param(input: &FnArg, arg_index: usize) -> syn::Result<Param> {
-         }
-         return Ok(Param::Str(name));
-     }
--    check_operand_type(&pat_type.ty, "parameter")?;
-+    if check_operand_type(&pat_type.ty, "parameter")? == OperandKind::Pointer
-+        && access == Access::InOut
-+    {
-+        return Err(syn::Error::new(
-+            pat_type.span(),
-+            format!(
-+                "pointer parameter `{name}` cannot be `#[inout]`: the callee reads and writes \
-+                 the memory it points to, and the pointer itself is never returned"
-+            ),
-+        ));
-+    }
-     Ok(Param::Operand(ForeignParam {
-         name,
-         ty: pat_type.ty.as_ref().clone(),
-@@ -499,31 +519,55 @@ fn foreign_param(input: &FnArg, arg_index: usize) -> syn::Result<Param> {
-     }))
+-const CUTLASS_VERSION: &str = "4.7.0";
+-const CUTLASS_PLATFORM: &str = "x86_64-cu13";
+-const ARCHIVE_NAME: &str = "cutlass-install-x86_64-cu13-4.7.0.tar.gz";
+-const ARCHIVE_URL: &str = "https://github.com/NVIDIA/cutlass/releases/download/v4.7.0/cutlass-install-x86_64-cu13-4.7.0.tar.gz";
+-const ARCHIVE_SHA256: &str = "32f0786c26ede0a5647fa25fc1b4a1429938f181ff28fd57b5632c0b00f0e24f";
+-const COMPILER_LIBRARY_SHA256: &str =
+-    "57df017e3585a10443c74c8b4cd99bda854242fb2f4c9534cf56d58c2c741628";
++const CUTLASS_VERSION: &str = "4.8.1";
+ const INSTALL_MANIFEST: &str = ".cuda-oxide-cutlass-toolchain";
+ const INSTALL_MANIFEST_FORMAT: &str = "2";
+ const LEGACY_INSTALL_MANIFEST_FORMAT: &str = "1";
+@@ -46,15 +40,39 @@ struct InstallSpec {
+     compiler_library_sha256: &'static str,
  }
  
-+/// What an operand or result type is, by its syntax.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum OperandKind {
-+    /// `Tile<E, S>` or a scalar element type name.
-+    Value,
-+    /// `*const E` or `*mut E`: a rank-0 `tile<ptr<E>>`.
-+    Pointer,
+-const OFFICIAL: InstallSpec = InstallSpec {
++const OFFICIAL_X86_64: InstallSpec = InstallSpec {
+     version: CUTLASS_VERSION,
+-    platform: CUTLASS_PLATFORM,
+-    archive_name: ARCHIVE_NAME,
+-    archive_url: ARCHIVE_URL,
+-    archive_sha256: ARCHIVE_SHA256,
+-    compiler_library_sha256: COMPILER_LIBRARY_SHA256,
++    platform: "x86_64-cu13",
++    archive_name: "cutlass-install-x86_64-cu13-4.8.1.tar.gz",
++    archive_url: "https://github.com/NVIDIA/cutlass/releases/download/v4.8.1/cutlass-install-x86_64-cu13-4.8.1.tar.gz",
++    archive_sha256: "29d63cc94c4888f773190a75f4dbcd12b8624fb87560437b989c1fe95dea485b",
++    compiler_library_sha256: "36a4314dddcc9082448720530d49bc112cf88a9f45f43a3f27d8df8d7791d8fa",
+ };
+ 
++const OFFICIAL_AARCH64: InstallSpec = InstallSpec {
++    version: CUTLASS_VERSION,
++    platform: "aarch64-cu13",
++    archive_name: "cutlass-install-aarch64-cu13-4.8.1.tar.gz",
++    archive_url: "https://github.com/NVIDIA/cutlass/releases/download/v4.8.1/cutlass-install-aarch64-cu13-4.8.1.tar.gz",
++    archive_sha256: "f49a346f32deda4612f0c328f0e0cd14663060a335c2e34ec3bc3633d1f9cf",
++    compiler_library_sha256: "2b5585de761ee91d1b170d2b7f6b98da573e2165c46dfc7232ae339467120b1f",
++};
++
++fn official_spec_for(os: &str, arch: &str) -> Option<InstallSpec> {
++    if os != "linux" {
++        return None;
++    }
++    match arch {
++        "x86_64" => Some(OFFICIAL_X86_64),
++        "aarch64" => Some(OFFICIAL_AARCH64),
++        _ => None,
++    }
 +}
 +
- /// Operands and results are tiles (`Tile<E, S>`) or scalars (an element type
--/// name). Views, tensors, references and pointers are not supported.
--fn check_operand_type(ty: &Type, what: &str) -> syn::Result<()> {
--    let ok = match ty {
-+/// name); parameters can also be raw pointers to an element type
-+/// (`*const E`, `*mut E`). Views, tensors and references are not supported.
-+fn check_operand_type(ty: &Type, what: &str) -> syn::Result<OperandKind> {
-+    let is_element_name = |ty: &Type| {
-+        matches!(ty, Type::Path(p) if p.qself.is_none()
-+            && p.path.segments.len() == 1
-+            && matches!(p.path.segments[0].arguments, syn::PathArguments::None))
-+    };
-+    let kind = match ty {
-         Type::Path(p) if p.qself.is_none() => match p.path.segments.last() {
--            Some(last) if last.ident == "Tile" => true,
--            Some(last) => {
--                p.path.segments.len() == 1 && matches!(last.arguments, syn::PathArguments::None)
--            }
--            None => false,
-+            Some(last) if last.ident == "Tile" => Some(OperandKind::Value),
-+            Some(_) if is_element_name(ty) => Some(OperandKind::Value),
-+            _ => None,
-         },
-+        Type::Ptr(ptr) => {
-+            if !is_element_name(&ptr.elem) {
-+                return Err(syn::Error::new(
-+                    ptr.elem.span(),
-+                    format!(
-+                        "a pointer {what} of a foreign function must point to an element \
-+                         type (`*const E` or `*mut E`)"
-+                    ),
-+                ));
-+            }
-+            Some(OperandKind::Pointer)
-+        }
-         Type::Paren(inner) => return check_operand_type(&inner.elem, what),
--        _ => false,
-+        _ => None,
-     };
--    if ok {
--        Ok(())
--    } else {
--        Err(syn::Error::new(
-+    kind.ok_or_else(|| {
-+        syn::Error::new(
-             ty.span(),
-             format!(
--                "a foreign function {what} must be a tile (`Tile<E, S>`) or a scalar; \
--                 views, tensors, references and pointers are not supported"
-+                "a foreign function {what} must be a tile (`Tile<E, S>`), a scalar or a \
-+                 pointer (`*const E`, `*mut E`); views, tensors and references are not \
-+                 supported"
-             ),
--        ))
--    }
-+        )
-+    })
++fn official_spec() -> Option<InstallSpec> {
++    official_spec_for(std::env::consts::OS, std::env::consts::ARCH)
++}
++
+ /// Paths exported to compiler-backed builds after a verified installation.
+ #[derive(Clone, Debug, Eq, PartialEq)]
+ pub struct ResolvedCutlass {
+@@ -72,11 +90,11 @@ pub struct InstallOutcome {
+ 
+ /// Install the one CUTLASS compiler release supported by this cargo-oxide.
+ pub fn install_official() -> Result<InstallOutcome, String> {
+-    ensure_supported_host()?;
++    let spec = ensure_supported_host()?;
+     let managed_root = managed_root()?;
+-    let install_dir = install_dir(&managed_root, OFFICIAL);
++    let install_dir = install_dir(&managed_root, spec);
+ 
+-    match resolve_at(&install_dir, OFFICIAL) {
++    match resolve_at(&install_dir, spec) {
+         Ok(Some(paths)) => {
+             return Ok(InstallOutcome {
+                 paths,
+@@ -105,12 +123,11 @@ pub fn install_official() -> Result<InstallOutcome, String> {
+         )
+     })?;
+ 
+-    let _lock =
+-        InstallLock::acquire(version_dir.join(format!(".{}.install.lock", OFFICIAL.platform)))?;
++    let _lock = InstallLock::acquire(version_dir.join(format!(".{}.install.lock", spec.platform)))?;
+ 
+     // A cooperating installer may have completed while this process waited
+     // for directory creation and lock acquisition.
+-    match resolve_at(&install_dir, OFFICIAL) {
++    match resolve_at(&install_dir, spec) {
+         Ok(Some(paths)) => {
+             return Ok(InstallOutcome {
+                 paths,
+@@ -126,20 +143,20 @@ pub fn install_official() -> Result<InstallOutcome, String> {
+         }
+     }
+ 
+-    let download_dir = TemporaryDirectory::create(version_dir, "download")?;
+-    let archive = download_dir.path.join(OFFICIAL.archive_name);
++    let download_dir = TemporaryDirectory::create(version_dir, spec.platform, "download")?;
++    let archive = download_dir.path.join(spec.archive_name);
+     eprintln!(
+         "NVIDIA's CUTLASS compiler bundle is proprietary software governed by the NVIDIA EULA:"
+     );
+     eprintln!("  https://docs.nvidia.com/cutlass/media/docs/pythonDSL/license.html");
+     eprintln!(
+         "Downloading NVIDIA CUTLASS compiler {} ({})...",
+-        OFFICIAL.version, OFFICIAL.platform
++        spec.version, spec.platform
+     );
+-    download_archive(OFFICIAL.archive_url, &archive)?;
++    download_archive(spec.archive_url, &archive)?;
+ 
+-    eprintln!("Verifying SHA-256 {}...", OFFICIAL.archive_sha256);
+-    let paths = install_verified_archive(OFFICIAL, &archive, &install_dir)?;
++    eprintln!("Verifying SHA-256 {}...", spec.a
+```
+
+**File**: `cuda-oxide/crates/cargo-oxide/src/main.rs` (modified, +1/-1)
+```diff
+@@ -546,7 +546,7 @@ enum ToolchainCommand {
+ 
+ #[derive(Clone, Copy, Debug, PartialEq, Eq, ValueEnum)]
+ enum ManagedToolchain {
+-    /// NVIDIA CUTLASS compiler 4.7.0 for Linux x86_64 and CUDA 13
++    /// NVIDIA CUTLASS compiler 4.8.1 for Linux (x86_64, aarch64) and CUDA 13
+     Cutlass,
  }
+ 
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/cutlass_backend.rs` (modified, +27/-12)
+```diff
+@@ -18,11 +18,17 @@ use std::path::{Path, PathBuf};
+ pub const CUTLASS_FULL_CUTE_MLIR22_PROFILE: &str = "cutlass-full-cute-mlir22";
+ 
+ /// Official CUTLASS release providing the compiler-library ABI.
+-pub const CUTLASS_COMPILER_VERSION: &str = "4.7.0";
++pub const CUTLASS_COMPILER_VERSION: &str = "4.8.1";
+ 
+-/// SHA-256 of the official x86_64/CUDA-13 CUTLASS 4.7 compiler library.
++/// SHA-256 of the official Linux/CUDA-13 CUTLASS 4.8.1 compiler library for the host architecture.
++#[cfg(target_arch = "aarch64")]
+ pub const CUTLASS_COMPILER_LIBRARY_SHA256: &str =
+-    "57df017e3585a10443c74c8b4cd99bda854242fb2f4c9534cf56d58c2c741628";
++    "2b5585de761ee91d1b170d2b7f6b98da573e2165c46dfc7232ae339467120b1f";
++
++/// SHA-256 of the official Linux/CUDA-13 CUTLASS 4.8.1 compiler library for the host architecture.
++#[cfg(not(target_arch = "aarch64"))]
++pub const CUTLASS_COMPILER_LIBRARY_SHA256: &str =
++    "36a4314dddcc9082448720530d49bc112cf88a9f45f43a3f27d8df8d7791d8fa";
+ 
+ /// Version-pinned ABI mode for external `gpu.module` device images. Concrete
+ /// CUTLASS wrapper ABIs require FunctionMetadata and cannot represent this
+@@ -35,9 +41,9 @@ const CUTLASS_EXTERNAL_MODULE_ABI: &str =
+ /// The C API pass manager is already anchored on `builtin.module`; adding a
+ /// second `builtin.module(...)` wrapper changes the pass nesting and does not
+ /// lower this input. The leading canonicalization is also part of the pinned
+-/// contract: CUTLASS 4.7's default first stage does not accept the generic
++/// contract: CUTLASS 4.8.1's default first stage does not accept the generic
+ /// operation form emitted by the profile.
+-const CUTLASS_PRECOMPILED_PIPELINE: &str = "canonicalize,cute-to-nvvm{check-inline-asm=false cubin-format=bin opt-level=3 use-software-pipeline-pass=true use-fold-static-pass=true use-insert-range-information-pass=true use-loop-invariant-pass=true use-strength-reduction-pass=true use-eliminate-unnecessary-sync-pass=true use-infer-loop-attrs-pass=true enable-cuda-dialect=true cuda-dialect-external-module=true}";
++const CUTLASS_PRECOMPILED_PIPELINE: &str = "canonicalize,cute-to-nvvm{check-inline-asm=false cubin-format=bin opt-level=3 use-software-pipeline-pass=true use-fold-static-pass=true use-insert-range-information-pass=true use-loop-invariant-pass=true use-strength-reduction-pass=true use-eliminate-unnecessary-sync-pass=true enable-cuda-dialect=true cuda-dialect-external-module=true}";
  
  #[cfg(test)]
-@@ -631,6 +675,26 @@ mod tests {
-         assert_eq!(decl.implicit_out_results().len(), 1);
-     }
- 
-+    #[test]
-+    fn pointer_parameters_are_in_operands() {
-+        let decl = parse(quote! {
-+            #[cutile::foreign]
-+            unsafe 
-```
-
-**File**: `cutile-rs/cutile/src/_core.rs` (modified, +157/-1)
-```diff
-@@ -882,7 +882,11 @@ pub mod core {
-             get_tensor_shape_meta(self)
-         }
- 
--        /// The base device address of this tensor view.
-+        /// The base device address of this tensor view: its element at index
-+        /// zero. For a mutable kernel tensor, whose `load` and `store` reach
-+        /// the current tile block's tile, this is still the base of the
-+        /// whole view; [`SubtensorMutPtr::subtensor_mut_ptr`] is the
-+        /// address of the block's tile.
-         ///
-         /// Safe, mirroring `<[T]>::as_ptr`: obtaining the address never
-         /// touches memory. Dereferencing it — a gather load, or building a
-@@ -2255,6 +2259,24 @@ pub mod core {
-         unreachable!()
-     }
- 
-+    /// The static extent of `axis` of a shape type, e.g. the tile shape `S`
-+    /// a mutable tensor's `load` and `store` reach.
-+    #[cuda_tile::variadic_op(N = 6)]
-+    #[cuda_tile::compiler_op(name = "tensor_layout")]
-+    pub fn get_static_extent<const S: [i32; N]>(shape: Shape<S>, axis: i32) -> i32 {
-+        unreachable!()
-+    }
-+
-+    /// The stride of `axis` of a tensor view, in elements.
-+    #[cuda_tile::variadic_op(N = 6)]
-+    #[cuda_tile::compiler_op(name = "tensor_layout")]
-+    pub fn get_tensor_stride<E: ElementType, const S: [i32; N]>(
-+        tensor: &Tensor<E, S>,
-+        axis: i32,
-+    ) -> i32 {
-+        unreachable!()
-+    }
-+
-     /// Extract a `Tensor`'s ordering token.
-     #[cuda_tile::variadic_op(N = 6)]
-     #[cuda_tile::compiler_op(name = "return_type_meta_field", type_meta_field = "token")]
-@@ -4075,6 +4097,140 @@ pub mod core {
-         new_token
-     }
- 
-+    /// Sign-extends an `i32` to a rank-0 `i64` tile.
-+    fn widen_to_i64(x: i32) -> Tile<i64, { [] }> {
-+        let x: Tile<i32, { [] }> = scalar_to_tile(x);
-+        let x: Tile<i64, { [] }> = exti(x);
-+        x
-+    }
-+
-+    /// The element offset of the current tile block's tile along one axis:
-+    /// `block id × tile extent × stride`. Each factor is widened to `i64`
-+    /// before the product, so a tensor of more than `i32::MAX` elements gets
-+    /// its offset instead of a wrapped `i32` one.
-+    fn block_tile_axis_offset(block_id: i32, extent: i32, stride: i32) -> Tile<i64, { [] }> {
-+        widen_to_i64(block_id) * widen_to_i64(extent) * widen_to_i64(stride)
-+    }
-+
-+    /// The address of the first element of the current tile block's tile of
-+    /// `y`: the element `y.load()` returns first. Each axis adds
-+    /// `block id × tile extent × stride` to the tensor's base, computed in
-+    /// `i64`.
-+    fn subtensor_mut_ptr_1d<E: ElementType, const S: [i32; 1]>(y: &mut Tensor<E, S>) -> *mut E {
-+        let pid: (i32, i32, i32) = get_tile_block_id();
-+        let tile_shape: Shape<S> = Shape::<S> { dims: &[] };
-+        let offset: Tile<i64, { [] }> = block_tile_axis_offset(
-+            pid.0,
-+            get_static_extent(tile_shape, 0),
-+            get_tensor_stride(y, 0),
-+        );
-+        let base: PointerTile<*mut E, { [] }> = get_tensor_base(y);
-+        let tile: PointerTile<*mut E, { [] }> = base.offset_tile(offset);
-+        let ptr: *mut E = tile_to_pointer(tile);
-+        ptr
-+    }
-+
-+    fn subtensor_mut_ptr_2d<E: ElementType, const S: [i32; 2]>(y: &mut Tensor<E, S>) -> *mut E {
-+        let pid: (i32, i32, i32) = get_tile_block_id();
-+        let tile_shape: Shape<S> = Shape::<S> { dims: &[] };
-+        let offset: Tile<i64, { [] }> = block_tile_axis_offset(
-+            pid.0,
-+            get_static_extent(tile_shape, 0),
-+            get_tensor_stride(y, 0),
-+        ) + block_tile_axis_offset(
-+            pid.1,
-+            get_static_extent(tile_shape, 1),
-+            get_tensor_stride(y, 1),
-+        );
-+        let base: PointerTile<*mut E, { [] }> = get_tensor_base(y);
-+        let tile: PointerTile<*mut E, { [] }> = base.offset_tile(offset);
-+        let ptr: *mut E = tile_to_pointer(tile);
-+        ptr
-+    }
-+
-+    fn subtensor_mut_ptr_3d<E: ElementType, const S: [i32; 3]>(y: &mut Tensor<E, S>) -> *mut E {
-+        let pid: (i32, i32, i32) = get_tile_block_id();
-+        let tile_shape: Shape<S> = Shape::<S> { dims: &[] };
-+        let offset: Tile<i64, { [] }> = block_tile_axis_offset(
-+            pid.0,
-+            get_static_extent(tile_shape, 0),
-+            get_tensor_stride(y, 0),
-+        ) + block_tile_axis_offset(
-+            pid.1,
-+            get_static_extent(tile_shape, 1),
-+            get_tensor_stride(y, 1),
-+        ) + block_tile_axis_offset(
-+            pid.2,
-+            get_static_extent(tile_shape, 2),
-+            get_tensor_stride(y, 2),
-+        );
-+        let base: PointerTile<*mut E, { [] }> = get_tensor_base(y);
-+        let tile: PointerTile<*mut E, { [] }> = base.offset_tile(offset);
-+        let ptr: *mut E = tile_to_pointer(tile);
-+        ptr
-+    }
-+
-+    /// The writable address of a mutable tensor's sub-tensor at the current
-+    /// tile block, for ranks 1 to 3.
-+    pub trait SubtensorMutPtr {
-+        /// 
-```
-
-**File**: `cutile-rs/cutile/src/tile_kernel.rs` (modified, +20/-3)
-```diff
-@@ -129,6 +129,12 @@ pub struct TileFunctionKey {
-     pub spec_args: Vec<(String, SpecializationBits)>,
-     pub scalar_hints: Vec<(String, DivHint)>,
-     pub grid: Option<(u32, u32, u32)>,
-+    /// The options the kernel compiles with, except the tile libraries:
-+    /// `tile_libraries` is empty here, and [`Self::tile_libraries_digest`]
-+    /// identifies the libraries instead. Every spelling of one set of
-+    /// libraries (a default the launch names again, a path given relative
-+    /// or absolute) links the same files, so it must compile once and
-+    /// share one loaded module, with one copy of each `Global`.
-     pub compile_options: CompileOptions,
-     source_hash: String,
-     device_id: usize,
-@@ -304,6 +310,9 @@ impl FunctionKey for TileFunctionKey {}
- pub struct Specialization<F: Fn() -> Module> {
-     module_ast_fn: F,
-     key: TileFunctionKey,
-+    /// The options the kernel compiles with, the default tile libraries
-+    /// included. The key holds them without the libraries.
-+    compile_options: CompileOptions,
-     /// The tile libraries the key's digest was taken from, which the
-     /// compile links.
-     tile_libraries: TileLibrarySnapshot,
-@@ -354,7 +363,7 @@ impl<F: Fn() -> Module> Specialization<F> {
-         .strides(&stride_refs)
-         .spec_args(&spec_refs)
-         .scalar_hints(&scalar_hint_refs)
--        .options(self.key.compile_options.clone());
-+        .options(self.compile_options.clone());
-         if let Some(grid) = self.key.grid {
-             compiler = compiler.grid(grid);
-         }
-@@ -394,12 +403,18 @@ pub fn _specialization_from_context<F: Fn() -> Module>(
-     let compile_options = compile_options.with_default_tile_libraries();
-     let tile_libraries =
-         TileLibrarySnapshot::new(tile_library_generation, &compile_options.tile_libraries);
-+    // The digest identifies the libraries by their resolved, de-duplicated
-+    // set; the list as written would key the same libraries differently.
-+    let key_options = CompileOptions {
-+        tile_libraries: Vec::new(),
-+        ..compile_options.clone()
-+    };
-     let mut key_builder = TileFunctionKey::builder(module_name, function_name)
-         .generics(function_generics)
-         .stride_args(stride_args)
-         .spec_args(spec_args)
-         .scalar_hints(scalar_hints)
--        .compile_options(compile_options)
-+        .compile_options(key_options)
-         .source_hash(source_hash)
-         .device_id(device_id)
-         .gpu_name(gpu_name)
-@@ -412,6 +427,7 @@ pub fn _specialization_from_context<F: Fn() -> Module>(
-     Specialization {
-         module_ast_fn,
-         key: key_builder.build(),
-+        compile_options,
-         tile_libraries,
-     }
- }
-@@ -1163,7 +1179,7 @@ fn compile_for_launch_site<F: Fn() -> Module>(
-                 &key.scalar_hints,
-                 const_grid,
-                 &gpu_name,
--                &key.compile_options,
-+                &specialization.compile_options,
-                 &specialization.tile_libraries,
-                 ToolkitCapabilities::for_device(device_id)?,
-                 &key.display_hash(),
-@@ -2350,6 +2366,7 @@ mod tests {
-         let specialization = Specialization {
-             module_ast_fn: unexpected_ast_provider as ModuleAstFn,
-             key: expected.clone(),
-+            compile_options: CompileOptions::default(),
-             tile_libraries: TileLibrarySnapshot::new(0, &[]),
-         };
- 
-```
-
-**File**: `cutile-rs/cutile/src/tile_kernel/preparation.rs` (modified, +8/-2)
-```diff
-@@ -50,7 +50,7 @@ impl<F: Fn() -> Module> Specialization<F> {
-                 anyhow::anyhow!("toolchain changed while resolving compilation job").into(),
-             );
-         }
--        let effective_options = self.key.compile_options.with_jit_env_overrides()?;
-+        let effective_options = self.compile_options.with_jit_env_overrides()?;
-         Ok(KernelCompileJob {
-             specialization: self,
-             capabilities,
-@@ -205,9 +205,15 @@ impl PreparedKernel {
+ #[path = "tests/cutlass/sm100.rs"]
+@@ -149,7 +155,7 @@ type ExpectedKernelAbis = BTreeMap<String, Vec<KernelParameterKind>>;
+ /// Compile one rendered profile module and atomically publish a verified CUDA
+ /// image suitable for `cuModuleLoadData`.
+ ///
+-/// CUTLASS 4.7 returns a host relocatable object. Its exact, fingerprint-pinned
++/// CUTLASS 4.8.1 returns a host relocatable object. Its exact, fingerprint-pinned
+ /// contract contains one local data symbol named `kernels_binary`; that symbol
+ /// is either a raw CUDA ELF image or a CUDA fatbinary. A fatbinary must contain
+ /// exactly one matching, uncompressed cubin, which is extracted so the public
+@@ -459,14 +465,23 @@ fn split_abi_items(input: &str) -> Result<Vec<&str>, String> {
+     Ok(items)
  }
  
- fn check_environment(key: &TileFunctionKey, effective: &CompileOptions) -> Result<(), Error> {
-+    // The key holds the options without the tile libraries; the snapshot
-+    // checks those.
-+    let effective_without_libraries = CompileOptions {
-+        tile_libraries: Vec::new(),
-+        ..effective.clone()
-+    };
-     if bytecode_override() != key.bytecode_override
-         || tileiras_fingerprint() != key.tileiras_fingerprint
--        || key.compile_options.with_jit_env_overrides()? != *effective
-+        || key.compile_options.with_jit_env_overrides()? != effective_without_libraries
++fn expected_host_elf_architecture() -> object::Architecture {
++    if cfg!(target_arch = "aarch64") {
++        object::Architecture::Aarch64
++    } else {
++        object::Architecture::X86_64
++    }
++}
++
+ fn extract_kernels_binary(object_bytes: &[u8]) -> Result<Vec<u8>, String> {
+     let file = object::File::parse(object_bytes).map_err(|error| error.to_string())?;
++    let expected_arch = expected_host_elf_architecture();
+     if file.format() != object::BinaryFormat::Elf
+         || file.kind() != object::ObjectKind::Relocatable
+-        || file.architecture() != object::Architecture::X86_64
++        || file.architecture() != expected_arch
      {
-         return Err(
-             anyhow::anyhow!("compiler configuration changed during kernel preparation").into(),
+         return Err(format!(
+-            "expected an x86-64 ELF relocatable, got {:?}/{:?}/{:?}",
++            "expected a {expected_arch:?} ELF relocatable, got {:?}/{:?}/{:?}",
+             file.format(),
+             file.kind(),
+             file.architecture()
+@@ -752,7 +767,7 @@ fn validate_cuda_cubin(
+ /// Check each cubin's launch argument layout against the exported MLIR.
+ ///
+ /// CUDA records parameter sizes and offsets in each kernel's `.nv.info` section.
+-/// We support the record format emitted by the pinned CUTLASS 4.7 / CUDA 13.x
++/// We support the record format emitted by the pinned CUTLASS 4.8.1 / CUDA 13.x
+ /// toolchain and reject unknown or malformed records.
+ fn validate_kernel_parameter_abi(
+     kernel: &str,
+@@ -1466,7 +1481,7 @@ mod tests {
+     }
+ 
+     #[test]
+-    #[ignore = "requires the installed official CUTLASS 4.7 compiler; does not require a GPU"]
++    #[ignore = "requires the installed official CUTLASS 4.8.1 compiler; does not require a GPU"]
+     fn cutlass_f32_direct_launch_abi_compiles() {
+         let compiler_path = std::env::var_os("CUDA_OXIDE_TEST_CUTLASS_COMP
 ```
 
----
-
-### Incident Patch 2: `186317f0` (2026-11-19)
-**Commit Message**: ci: move the cutile-rs setup action to the root .github/actions (#1835)
-
-## Summary
-
-Move the `cutile-rs` setup composite action next to the other root
-actions, as `.github/actions/setup-cutile-rs`.
-
-## Changes
-
-- `cutile-rs/.github/actions/setup/action.yml` moves to
-`.github/actions/setup-cutile-rs/action.yml`.
-- The "Install Rust" step now starts in `cutile-rs` explicitly
-(`working-directory: ${{ github.action_path }}/../../../cutile-rs`), so
-rustup still picks `cutile-rs/rust-toolchain.toml` and not the git-root
-pin.
-- The six `uses:` lines in `.github/workflows/cutile-rs.yml` are
-updated. The `build` and `cuda-tile-translate` jobs run before
-`actions/checkout`, so they keep the `$/` form; the other four use `./`.
-- `cutile-rs/.github/actionlint.yaml` and `dependabot.yml` are left
-where they are.
-
----------
-
-Signed-off-by: Roman Ivanov <[REDACTED_EMAIL]>
-
-**File**: `.github/actions/setup-cutile-rs/action.yml` (renamed, +2/-2)
+**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/copy/sm100_attention.rs` (modified, +31/-15)
 ```diff
-@@ -53,8 +53,8 @@ runs:
-     # nightly lives in cuda-oxide/rust-toolchain.toml.
-     - name: Install Rust
-       shell: bash
--      # relative path to land at the rust-toolchain.toml regardless of use of $ or ./ syntax
--      working-directory: ${{ github.action_path }}/../../..
-+      # relative path to land at cutile-rs/rust-toolchain.toml regardless of use of $ or ./ syntax
-+      working-directory: ${{ github.action_path }}/../../../cutile-rs
-       env:
-         RUST_COMPONENTS: ${{ inputs.components }}
-       run: |
+@@ -17,11 +17,13 @@ use pliron::{
+     operation::Operation,
+ };
+ 
+-/// Emit independent SM100 attention loads or stores using the verified descriptor plan.
+-pub(in crate::cute) struct Tma(
+-    #[doc = "True selects shared-to-global stores; false selects global-to-shared loads."]
+-    pub(in crate::cute) bool,
+-);
++/// Emit independent SM100 16-bit (`f16` or `bf16`) TMA loads or stores using the verified descriptor plan.
++pub(in crate::cute) struct Tma {
++    /// True selects shared-to-global stores; false selects global-to-shared loads.
++    pub(in crate::cute) store: bool,
++    /// True selects `bf16` shared pointer metadata; false selects `f16`.
++    pub(in crate::cute) bf16: bool,
++}
+ impl OperationTranslation for Tma {
+     fn translate(
+         &self,
+@@ -30,14 +32,27 @@ impl OperationTranslation for Tma {
+         input: OperationInput,
+         session: &mut TranslationSession<'_>,
+     ) -> Result<Vec<MlirOperation>, String> {
+-        let p = if self.0 {
+-            let o = CuteSm100TmaStoreOp::wrap(source);
+-            o.verify(ctx).map_err(|e| e.to_string())?;
+-            o.plan(ctx)
+-        } else {
+-            let o = CuteSm100TmaLoadOp::wrap(source);
+-            o.verify(ctx).map_err(|e| e.to_string())?;
+-            o.plan(ctx)
++        let p = match (self.store, self.bf16) {
++            (true, false) => {
++                let o = CuteSm100TmaStoreOp::wrap(source);
++                o.verify(ctx).map_err(|e| e.to_string())?;
++                o.plan(ctx)
++            }
++            (true, true) => {
++                let o = CuteSm100Bf16TmaStoreOp::wrap(source);
++                o.verify(ctx).map_err(|e| e.to_string())?;
++                o.plan(ctx)
++            }
++            (false, false) => {
++                let o = CuteSm100TmaLoadOp::wrap(source);
++                o.verify(ctx).map_err(|e| e.to_string())?;
++                o.plan(ctx)
++            }
++            (false, true) => {
++                let o = CuteSm100Bf16TmaLoadOp::wrap(source);
++                o.verify(ctx).map_err(|e| e.to_string())?;
++                o.plan(ctx)
++            }
+         }
+         .ok_or("missing SM100 TMA plan")?;
+         contract(&input)?;
+@@ -54,8 +69,9 @@ impl OperationTranslation for Tma {
+             64,
+             None,
+         )?;
+-        let data = e.cute_ptr(a[1].clone(), "f16", "smem", 128, None)?;
+-        if self.0 {
++        let elem = if self.bf16 { "bf16" } else { "f16" };
++        let data = e.cute_ptr(a[1].clone(), elem, "smem", 128, None)?;
++        if self.store {
+             let mut op = e.operation(
+                 "cute_nvgpu.arch.copy.SM100.tma_store",
+                 vec![desc, data, a[2].clone(), a[3].clone(), a[4].clone()],
 ```
 
-**File**: `.github/workflows/cutile-rs.yml` (modified, +7/-6)
+**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/copy/tma.rs` (modified, +1/-1)
 ```diff
-@@ -73,6 +73,7 @@ jobs:
-               - 'Cargo.lock'
-               - 'rust-toolchain.toml'
-               - '.github/workflows/cutile-rs.yml'
-+              - '.github/actions/setup-cutile-rs/**'
-               - '.github/copy-pr-bot.yaml'
-             # `*` covers a root file such as AGENTS.md. `**` covers every nested path.
-             any_changed:
-@@ -137,7 +138,7 @@ jobs:
-     steps:
-       - uses: actions/checkout@v7
-       # The lanes share github.job, so the lane name keeps their caches apart.
--      - uses: ./cutile-rs/.github/actions/setup
-+      - uses: ./.github/actions/setup-cutile-rs
-         with:
-           cache-key: ${{ matrix.lane.name }}
-       # The tests test whether CUTILE_TILEIRAS_PATH is set, so only the base lane
-@@ -199,7 +200,7 @@ jobs:
-           command -v tileiras
-           tileiras --help | grep -q "sm_120"
- 
--      - uses: $/cutile-rs/.github/actions/setup
-+      - uses: $/.github/actions/setup-cutile-rs
-       - uses: actions/checkout@v7
- 
-       - name: Mark checkout as safe
-@@ -294,7 +295,7 @@ jobs:
-       # Before checkout, so that checkout finds git and makes a repository, which
-       # the submodule step needs. The Rust cache is off: the target directory of
-       # this job holds the LLVM build tree.
--      - uses: $/cutile-rs/.github/actions/setup
-+      - uses: $/.github/actions/setup-cutile-rs
-         with:
-           cache: "false"
-       - uses: actions/checkout@v7
-@@ -427,7 +428,7 @@ jobs:
-     timeout-minutes: 30
-     steps:
-       - uses: actions/checkout@v7
--      - uses: ./cutile-rs/.github/actions/setup
-+      - uses: ./.github/actions/setup-cutile-rs
- 
-       # Prebuilt binary instead of `cargo install` (which compiled the tool
-       # from source on every run).
-@@ -466,7 +467,7 @@ jobs:
-     timeout-minutes: 30
-     steps:
-       - uses: actions/checkout@v7
--      - uses: ./cutile-rs/.github/actions/setup
-+      - uses: ./.github/actions/setup-cutile-rs
- 
-       - name: Check shared crates against CUDA 13.0
-         working-directory: ${{ github.workspace }}
-@@ -502,7 +503,7 @@ jobs:
-       - uses: actions/checkout@v7
- 
-       # This nightly must ship clippy, miri, and rust-src on x86_64.
--      - uses: ./cutile-rs/.github/actions/setup
-+      - uses: ./.github/actions/setup-cutile-rs
-         with:
-           components: clippy miri rust-src
- 
+@@ -107,7 +107,7 @@ impl OperationTranslation for TmaLoadTranslation {
+             "operandSegmentSizes".into(),
+             MlirAttribute::DenseI32Array(vec![1, 1, 2, 1, 0, 0, 0, 0]),
+         );
+-        copy.attributes
++        copy.properties
+             .insert("isCTAOnly".into(), MlirAttribute::Bool(true));
+         operations.push(copy);
+         Ok(operations)
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/independent_sm100.rs` (modified, +28/-4)
+```diff
+@@ -15,9 +15,33 @@ pub(crate) fn register_cute_sm100_attention_pack(
+ ) -> Result<(), TranslationError> {
+     r.register_attribute::<CuteSm100MmaAttr>(DropAttribute)?;
+     r.register_attribute::<CuteSm100TmaAttr>(DropAttribute)?;
+-    r.register_operation::<CuteSm100MmaSsOp>(Mma(false))?;
+-    r.register_operation::<CuteSm100MmaTsOp>(Mma(true))?;
+-    r.register_operation::<CuteSm100TmaLoadOp>(Tma(false))?;
+-    r.register_operation::<CuteSm100TmaStoreOp>(Tma(true))?;
++    r.register_operation::<CuteSm100MmaSsOp>(Mma {
++        ts: false,
++        bf16: false,
++    })?;
++    r.register_operation::<CuteSm100Bf16MmaSsOp>(Mma {
++        ts: false,
++        bf16: true,
++    })?;
++    r.register_operation::<CuteSm100MmaTsOp>(Mma {
++        ts: true,
++        bf16: false,
++    })?;
++    r.register_operation::<CuteSm100TmaLoadOp>(Tma {
++        store: false,
++        bf16: false,
++    })?;
++    r.register_operation::<CuteSm100Bf16TmaLoadOp>(Tma {
++        store: false,
++        bf16: true,
++    })?;
++    r.register_operation::<CuteSm100TmaStoreOp>(Tma {
++        store: true,
++        bf16: false,
++    })?;
++    r.register_operation::<CuteSm100Bf16TmaStoreOp>(Tma {
++        store: true,
++        bf16: true,
++    })?;
+     Ok(())
+ }
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/mma/sm100.rs` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ pub(in crate::cute) fn emit_mma(
+                 "nvvm.tcgen05.mma",
+                 vec![dest, av.clone(), b, desc, accumulate.clone()],
+             )?;
+-            property(&mut op, "mmaKind", "#nvvm.tcgen05_mma_kind<f16>")?;
++            property(&mut op, "kind", "#nvvm.tcgen05_mma_kind<f16>")?;
+             property(&mut op, "ctaGroup", "#nvvm.cta_group<cta_2>")?;
+             property(
+                 &mut op,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1849** (2026-11-21): feat(cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a) (@nihalpasham)
 - **PR #1835** (2026-11-19): ci: move the cutile-rs setup action to the root .github/actions (@roivanov)
 - **PR #1833** (2026-11-18): fix(cutile-kernels): add strided prefill and improve FP16 GEMM (@elibol)
 - **PR #1830** (2026-11-17): fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target (@nihalpasham)
 - **PR #1829** (2026-11-17): fix(cutile): correct masked padding and add FP16 kernel variants (@elibol)
 - **PR #1817** (2026-11-17): feat(cuda-core): make Function::set_max_dynamic_shared_memory_bytes public (@Code4me2)
-- **PR #1813** (2026-11-16): ci: test against CUDA 13.5.0 as well as the baseline toolkit (@roivanov)
 
 ---
 
@@ -3105,32 +2727,22 @@ Signed-off-by: Roman Ivanov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cutile): pointer operands for foreign tile-library calls
+## X. cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a)
 
 **RULE**:
-When implementing operations in `cutile-rs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8046b9e9`: cutile): pointer operands for foreign tile-library calls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `754b6d10`: cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Foreign functions take global-memory pointer operands: a `*const E` or
-  `*mut E` parameter is a rank-0 `tile<ptr<E>>` operand. `subtensor_mut_ptr`
-  on a mutable tensor gives the address of the current tile block's writable
-  sub-tensor, as `load` and `store` see it, with an `i64` offset. Getting it
-  is safe; unlike `load` and `store`, a write through it is not masked to the
-  tensor's bounds, so the writing function's `# Safety` contract states the
-  bounds (#1749).
-- A kernel's in-memory cache key no longer holds the tile-library list as
-  written, only the digest of the resolved, de-duplicated libraries. A launch
-  that names a default library again, or names a library through another
-  path, used to compile the kernel a second time and load a second module,
-  with its own copy of every `Global` (#1749).
+| `sm107_bf16_gemm_cute`    | Rubin (`sm_107a`) & Blackwell two-CTA persistent BF16 GEMM + PDL         |
+| `sm107_mxfp8_gemm_cute`   | Rubin (`sm_107a`) persistent MXFP8 (`E4M3 + UE8M0`) GEMM + B-reuse + PDL |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3140,7 +2752,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8046b9e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `754b6d10` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

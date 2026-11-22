@@ -11990,3 +11990,7 @@
 | `CYCLE-20261122-58T1` | `2026-11-22T03:03:12.853Z` | `ricursiveAI/Ripple-65B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md` | Yes (`26c0d218...`) |
 | `CYCLE-20261122-5DAP` | `2026-11-22T03:03:18.673Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9887` | Yes (`24402591...`) |
 | `CYCLE-20261122-5K1L` | `2026-11-22T03:03:27.417Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9888` | Yes (`f4dcce4a...`) |
+| `CYCLE-20261122-FSB0` | `2026-11-22T03:11:24.684Z` | `ccore/Qwen3.5-4B-GLB-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md` | Yes (`1b047ef1...`) |
+| `CYCLE-20261122-FT5C` | `2026-11-22T03:11:25.776Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9889` | Yes (`bd927176...`) |
+| `CYCLE-20261122-G2YO` | `2026-11-22T03:11:38.496Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9890` | Yes (`74f622be...`) |
+| `CYCLE-20261122-G473` | `2026-11-22T03:11:40.095Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`eff88fc1...`) |

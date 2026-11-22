@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T03:03:30.613Z",
-    "lastVerified": "2026-11-22T03:03:30.613Z",
+    "lastChecked": "2026-11-22T03:11:43.022Z",
+    "lastVerified": "2026-11-22T03:11:43.022Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -358,13 +358,13 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T02:29:33.031Z",
-    "lastVerified": "2026-11-22T02:29:33.031Z",
+    "lastChecked": "2026-11-22T03:11:39.598Z",
+    "lastVerified": "2026-11-22T03:11:39.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "3b7d4e0f3f3adc834f5924aa3464b073d2b3e94c960ab0e84ba2bc2845c4d663",
-    "promotedRulesCount": 1,
+    "contentHash": "eff88fc1735fc20bb861873fcac9234039aff78d2e338f4b9c6ee1e0c80d3576",
+    "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -1501,9 +1501,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-21T21:57:57.834Z",
+    "lastChecked": "2026-11-22T03:11:31.573Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-21T21:57:57.834Z"
+    "lastVerified": "2026-11-22T03:11:31.573Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2731,11 +2731,21 @@
     "lastVerified": "2026-11-21T23:25:20.037Z"
   },
   "giancarloerra-socraticode": {
-    "name": "SocratiCode",
+    "name": "giancarloerra/SocratiCode",
     "officialUrl": "https://github.com/giancarloerra/SocratiCode",
-    "lastChecked": "2026-11-20T22:57:21.663Z",
-    "revisionIdentifier": "401a9202",
-    "lastVerified": "2026-11-20T22:57:21.663Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-22T03:11:37.432Z",
+    "lastVerified": "2026-11-22T03:11:37.432Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-giancarloerra-socraticode",
+    "contentHash": "74f622beb8fc36202d1de161ca80870bebf73b1e8d1d4476114f285d6aae92c6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ratatui-ratatui": {
     "name": "ratatui/ratatui",
@@ -3901,9 +3911,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-20T23:47:45.546Z",
+    "lastChecked": "2026-11-22T03:11:29.026Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-20T23:47:45.546Z"
+    "lastVerified": "2026-11-22T03:11:29.026Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -5125,9 +5135,9 @@
   "thecodingmachine-react-native-boilerplate": {
     "name": "react-native-boilerplate",
     "officialUrl": "https://github.com/thecodingmachine/react-native-boilerplate",
-    "lastChecked": "2026-11-18T22:22:16.814Z",
+    "lastChecked": "2026-11-22T03:11:26.843Z",
     "revisionIdentifier": "1a8b1d5b",
-    "lastVerified": "2026-11-18T22:22:16.814Z"
+    "lastVerified": "2026-11-22T03:11:26.843Z"
   },
   "infracost-infracost": {
     "name": "infracost/infracost",
@@ -5521,12 +5531,12 @@
     "officialUrl": "https://github.com/NVIDIA/cuda-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T16:42:12.740Z",
-    "lastVerified": "2026-11-20T16:42:12.740Z",
+    "lastChecked": "2026-11-22T03:11:24.699Z",
+    "lastVerified": "2026-11-22T03:11:24.699Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "5c81b653e6752b84c72040e23e8e67cec960a226bcc84716e5fcf62907b326dd",
+    "contentHash": "bd927176fb283174a7b5896d22fb32c7c4db62d5b1e161747208292e5573243c",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -13457,6 +13467,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
     "contentHash": "26c0d21874ec70e0bdb5c99187f1571d6d6b8d8fdd3f826602a97f9ad23f4d84",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ccore-qwen3.5-4b-glb-3d-coder": {
+    "name": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "officialUrl": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T03:11:24.077Z",
+    "lastVerified": "2026-11-22T03:11:24.077Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+    "contentHash": "1b047ef18cca3cd94e25a2b7523d3ff06b42686134bfab49118768de9c1e541f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

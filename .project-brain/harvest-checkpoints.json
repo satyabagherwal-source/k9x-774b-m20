@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T03:03:27.430Z",
+  "last_updated": "2026-11-22T03:11:40.109Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "3b7d4e0f3f3adc834f5924aa3464b073d2b3e94c960ab0e84ba2bc2845c4d663",
-      "verified_at": "2026-11-22T02:29:34.110Z",
+      "content_hash": "eff88fc1735fc20bb861873fcac9234039aff78d2e338f4b9c6ee1e0c80d3576",
+      "verified_at": "2026-11-22T03:11:40.108Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T02:29:34.110Z"
+      "last_updated": "2026-11-22T03:11:40.108Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -3756,14 +3756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-giancarloerra-socraticode",
-      "content_hash": "223e7a20de68748531919b0859379c9f80d527b088d19e4d16b76fc114e37ee9",
-      "verified_at": "2026-11-12T23:41:57.655Z",
+      "content_hash": "74f622beb8fc36202d1de161ca80870bebf73b1e8d1d4476114f285d6aae92c6",
+      "verified_at": "2026-11-22T03:11:38.509Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T23:41:57.655Z"
+      "last_updated": "2026-11-22T03:11:38.509Z"
     },
     "jaredpalmer/formik": {
       "repository": "jaredpalmer/formik",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "5c81b653e6752b84c72040e23e8e67cec960a226bcc84716e5fcf62907b326dd",
-      "verified_at": "2026-11-20T16:42:13.835Z",
+      "content_hash": "bd927176fb283174a7b5896d22fb32c7c4db62d5b1e161747208292e5573243c",
+      "verified_at": "2026-11-22T03:11:25.789Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T16:42:13.835Z"
+      "last_updated": "2026-11-22T03:11:25.789Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -18081,14 +18081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-      "content_hash": "c0c86b7118fcc68b8ee90dd0fa84d0d8f2bad0ae7677e3c0c4ca25e7c11bc66e",
-      "verified_at": "2026-11-15T13:39:37.836Z",
+      "content_hash": "1b047ef18cca3cd94e25a2b7523d3ff06b42686134bfab49118768de9c1e541f",
+      "verified_at": "2026-11-22T03:11:24.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T13:39:37.836Z"
+      "last_updated": "2026-11-22T03:11:24.697Z"
     },
     "davila7/claude-code-templates": {
       "repository": "davila7/claude-code-templates",

@@ -12023,3 +12023,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ricursiveai-ripple-65b-preview` | `https://huggingface.co/ricursiveAI/Ripple-65B-Preview` | `hf-ricursi` | Multi-dimensional audit evidence | 2026-11-22T03:03:12.857Z |
 | `learn-github-react-metro` | `https://github.com/react/metro` | `136bb79d` | Multi-dimensional audit evidence | 2026-11-22T03:03:18.677Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `cf789c7b` | Multi-dimensional audit evidence | 2026-11-22T03:03:27.422Z |
+| `learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-22T03:11:24.689Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `754b6d10` | Multi-dimensional audit evidence | 2026-11-22T03:11:25.781Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `7d277196` | Multi-dimensional audit evidence | 2026-11-22T03:11:38.501Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0127a257` | Multi-dimensional audit evidence | 2026-11-22T03:11:40.100Z |

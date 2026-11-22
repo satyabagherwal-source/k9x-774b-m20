@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T03:03:32.733Z",
-  "total_verified_learnings": 9065,
+  "last_updated": "2026-11-22T03:11:45.151Z",
+  "total_verified_learnings": 9066,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23427,
+  "total_items": 23438,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216562,8 +216562,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "8046b9e9",
-      "content_hash": "5c81b653e6752b84c72040e23e8e67cec960a226bcc84716e5fcf62907b326dd",
+      "source_version": "754b6d10",
+      "content_hash": "bd927176fb283174a7b5896d22fb32c7c4db62d5b1e161747208292e5573243c",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -216591,6 +216591,11 @@
           "number": 9599,
           "title": "pointer operands for foreign tile-library calls",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9889,
+          "title": "upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216598,7 +216603,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T16:42:13.646Z",
+      "verified_at": "2026-11-22T03:11:25.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216640,10 +216645,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "8046b9e9",
-      "content_hash": "031ab8ba63cdfba64864c598a23876ab2262b6bd21dfc1a5121bc08572cbd617",
+      "source_version": "754b6d10",
+      "content_hash": "18bb9fc5f0ba9b1bbc1f6464abc838f0d3719f6d3882671dc79a7dbab5c21c33",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T16:42:14.167Z"
+      "persisted_at": "2026-11-22T03:11:26.163Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust",
@@ -216652,10 +216657,10 @@
       "relative_path": "08_VERIFICATION/nvidia-cuda-rust-verification-protocol-empirical-defect-shield-for-nvidia-cuda-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for NVIDIA/cuda-rust",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "8046b9e9",
-      "content_hash": "b8ca70291482d0a60faadcbb24d4313bd65da54ac7b6b643ff43e912aecabd4f",
+      "source_version": "754b6d10",
+      "content_hash": "d12107f738e3e9325e6138319412c7090107d988ca1f072351fb6d960677325f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:42:14.305Z"
+      "persisted_at": "2026-11-22T03:11:26.349Z"
     },
     "learn-github-infinitered-reactotron": {
       "learning_id": "learn-github-infinitered-reactotron",
@@ -216984,9 +216989,9 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "65c3e46c2b7622615a84ab0f6b58cc5a744504713a5435311a457bcce328e050",
+      "content_hash": "07a53ca1bed526732bc204b6bffdf2e40391f0311abb69bc6ef07f0fd7d5fb75",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T16:42:32.074Z"
+      "persisted_at": "2026-11-22T03:11:43.822Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings",
@@ -216996,9 +217001,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nvidia-cuda-rust-learnings",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "37b3f7984efdf714cffcb5af7a53535555f60cf6e9eaea8614e13d479d1f4364",
+      "content_hash": "e91590fe64d6a03c2e811245567348a3aa9185333be9392cd68704ade676e03c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:42:32.247Z"
+      "persisted_at": "2026-11-22T03:11:43.998Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
@@ -229572,8 +229577,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "2ae49a2e",
-      "content_hash": "3b7d4e0f3f3adc834f5924aa3464b073d2b3e94c960ab0e84ba2bc2845c4d663",
+      "source_version": "0127a257",
+      "content_hash": "eff88fc1735fc20bb861873fcac9234039aff78d2e338f4b9c6ee1e0c80d3576",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229783,7 +229788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T02:29:33.891Z",
+      "verified_at": "2026-11-22T03:11:39.894Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229825,10 +229830,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "2ae49a2e",
-      "content_hash": "00851876af38016181891e114483f1d147d5f55aa4d9e473788dbfc5e83abac3",
+      "source_version": "0127a257",
+      "content_hash": "f234adf462e345adfa205600e90834034a20705df557fd5d3c417830969050d2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T02:29:34.493Z"
+      "persisted_at": "2026-11-22T03:11:40.321Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -247748,7 +247753,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-glb-3d-coder",
-      "content_hash": "c0c86b7118fcc68b8ee90dd0fa84d0d8f2bad0ae7677e3c0c4ca25e7c11bc66e",
+      "content_hash": "1b047ef18cca3cd94e25a2b7523d3ff06b42686134bfab49118768de9c1e541f",
       "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
       "promoted_rules": [],
@@ -247757,7 +247762,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T13:39:37.614Z",
+      "verified_at": "2026-11-22T03:11:24.449Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247774,9 +247779,9 @@
       "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-GLB-3D-Coder Core Invariants",
       "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-glb-3d-coder",
-      "content_hash": "1d192bbd60c5579d361461f6eaf14c37693e04a71935ef41745337bc55ed7970",
+      "content_hash": "752d99319ad3f3d23534a2baa54254ab7f7bfc535987bc6952bb13fa8e9d793f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T13:39:38.046Z"
+      "persisted_at": "2026-11-22T03:11:24.930Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-core-",
@@ -247786,9 +247791,9 @@
       "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-glb-3d-coder-learnings Core Invariants",
       "repository": "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings",
       "source_version": "HEAD",
-      "content_hash": "356978fbd01b37dba2ed25554cd5e303ebe90a5b59360ee34457a9b74c4da471",
+      "content_hash": "cad16a46620e5f2a5af17dcb5c883f79aee62be246219724bde424d7bcfdd778",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T13:40:24.865Z"
+      "persisted_at": "2026-11-22T03:11:44.381Z"
     },
     "rule-8619": {
       "learning_id": "rule-8619",
@@ -318581,6 +318586,163 @@
       "content_hash": "38c5fa77c3ee19413208dc6068d125522802a4e3a1e52d3788deab3b3e0d8af7",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T03:03:32.562Z"
+    },
+    "rule-9889": {
+      "learning_id": "rule-9889",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9889,
+      "title": "upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a)",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "754b6d10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T03:11:25.572Z"
+    },
+    "candidate_directive-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a": {
+      "item_id": "candidate_directive-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FTBE-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a.md",
+      "title": "upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a)",
+      "repository": "NVIDIA/cuda-rust",
+      "source_version": "754b6d10",
+      "content_hash": "1327fc8f1d5eaeb23f72378a7d1a9b3e2757aba8b3f5267264846bc3f969c4ac",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:11:25.998Z"
+    },
+    "learn-github-giancarloerra-socraticode": {
+      "learning_id": "learn-github-giancarloerra-socraticode",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "giancarloerra/SocratiCode",
+      "repository": "giancarloerra/SocratiCode",
+      "slug": "giancarloerra-socraticode",
+      "platform": "github",
+      "source_url": "https://github.com/giancarloerra/SocratiCode",
+      "source_version": "7d277196",
+      "content_hash": "74f622beb8fc36202d1de161ca80870bebf73b1e8d1d4476114f285d6aae92c6",
+      "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9890,
+          "title": "keep @ast-grep/napi below 0.51.3, which requires Node 20",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T03:11:38.291Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9890": {
+      "learning_id": "rule-9890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9890,
+      "title": "keep @ast-grep/napi below 0.51.3, which requires Node 20",
+      "source_url": "https://github.com/giancarloerra/SocratiCode",
+      "source_version": "7d277196",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T03:11:38.291Z"
+    },
+    "candidate_directive-keep-ast-grep-napi-below-0-51-3-which-requires-node-20": {
+      "item_id": "candidate_directive-keep-ast-grep-napi-below-0-51-3-which-requires-node-20",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G34T-keep-ast-grep-napi-below-0-51-3-which-requires-node-20.md",
+      "title": "keep @ast-grep/napi below 0.51.3, which requires Node 20",
+      "repository": "giancarloerra/SocratiCode",
+      "source_version": "7d277196",
+      "content_hash": "da2bde16b0f5e1ff6b50fdbb585b5e3e11dac91be816741ceeb729bc569ae2f2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:11:38.718Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-technical-construction-intelligence-giancarloerra-socr.md",
+      "title": "Technical Construction Intelligence: giancarloerra/SocratiCode Core Invariants",
+      "repository": "giancarloerra/SocratiCode",
+      "source_version": "7d277196",
+      "content_hash": "2a49b45abd2730dddb971cb113c4eac35bcb3d7b2cd6e5ae55714d2c16c75b90",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:11:38.880Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/giancarloerra-socraticode-verification-protocol-empirical-defect-shield-for-gian.md",
+      "title": "Verification Protocol: Empirical Defect Shield for giancarloerra/SocratiCode",
+      "repository": "giancarloerra/SocratiCode",
+      "source_version": "7d277196",
+      "content_hash": "c5e749943e7995984a4e1a9133e7eba47b7c8bb7739a8643518de0d6503b219b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T03:11:39.048Z"
+    },
+    "candidate_directive-cute-rs-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a": {
+      "item_id": "candidate_directive-cute-rs-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G6Y0-cute-rs-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a.md",
+      "title": "cute-rs): upgrade CUTLASS compiler to 4.8.1 and enable Vera Rubin (sm_107a)",
+      "repository": "nvidia-cuda-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5fd1ac83cf22001b66ddab0830ab0fe08f1ff8b58bd8dd05dbff67adb1df9823",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:11:43.660Z"
+    },
+    "candidate_directive-deps-keep-ast-grep-napi-below-0-51-3-which-requires-node-20": {
+      "item_id": "candidate_directive-deps-keep-ast-grep-napi-below-0-51-3-which-requires-node-20",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G7U4-deps-keep-ast-grep-napi-below-0-51-3-which-requires-node-20.md",
+      "title": "deps): keep @ast-grep/napi below 0.51.3, which requires Node 20",
+      "repository": "giancarloerra-socraticode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17f2e5f4fa2138ab4378ee5d4e605cb52ba18ae7863705f65fe651560320cf86",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:11:44.813Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-learnings-technical-construction-intelligence-giancarl.md",
+      "title": "Technical Construction Intelligence: giancarloerra-socraticode-learnings Core Invariants",
+      "repository": "giancarloerra-socraticode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d305b57fc7a0ac9db29deaadc66152201b9d2a1d07161603c43b63e1812ef64",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:11:44.980Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode-lear": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode-lear",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/giancarloerra-socraticode-learnings-verification-protocol-empirical-defect-shiel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for giancarloerra-socraticode-learnings",
+      "repository": "giancarloerra-socraticode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5df776162059e808c76bfc0747c38198b35d0eab0ade34969eb2c37096673e09",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T03:11:45.151Z"
     }
   },
   "ai-builder-brain": {

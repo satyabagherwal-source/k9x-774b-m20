@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T13:40:24.736Z",
+  "timestamp": "2026-11-22T03:11:44.267Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-ccore-qwen3.5-4b-glb-3d-coder-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-ccore-qwen3.5-4b-glb-3d-coder-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T13:40:24.736Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T03:11:44.267Z`  
 > **Learning ID**: `LEARN-EVO-hf-ccore-qwen3.5-4b-glb-3d-coder-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-ccore-qwe`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T13:39:37.327Z  
+> **Timestamp**: 2026-11-22T03:11:24.179Z  
 > **Learning ID**: `learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T13:39:37.132Z  
+> **Harvest Timestamp**: 2026-11-22T03:11:24.077Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 57213 downloads | 432 likes
+- **Stars / Engagement**: 67722 downloads | 401 likes
 
 ---
 
