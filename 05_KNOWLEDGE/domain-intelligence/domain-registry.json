@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T22:49:39.256Z",
+  "last_updated": "2026-11-22T22:58:23.303Z",
   "total_records": 2384,
   "domains": {
     "A": {
@@ -8199,8 +8199,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "ce8b13e4c912b8049d64c4271ab800f2b7e225a40e0462619df5082676ce54a8",
-      "created_at": "2026-11-22T21:41:08.129Z"
+      "content_hash": "d2b01a31991970ea109f8691e243b7e847141fba7b52f9481fdee102f0f82097",
+      "created_at": "2026-11-22T22:58:23.303Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8488,10 +8488,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "c1b9288035387c5ae330ea7f8030f971ba910f8ff3ef98c7d0579d73749d2f14",
-      "created_at": "2026-11-22T02:29:30.481Z"
+      "content_hash": "4705fde538dccadd78784fca3c86de81556bcf8962fdcc74b2c49b907d542eef",
+      "created_at": "2026-11-22T22:58:17.037Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -10047,8 +10047,8 @@
       "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-research-knowledge-intelligence-psrben-visionhope-core-inva.md",
       "repository": "PSRben/VisionHOPE",
-      "content_hash": "96d4f596d2a059929647ae60338f323f5e029132f40db1bb119984eab18cea53",
-      "created_at": "2026-11-18T15:51:33.401Z"
+      "content_hash": "e61100abef8ae0c853afd976b344ac29072a5fc898ee5c2ae7b33d3d56e45901",
+      "created_at": "2026-11-22T22:58:05.398Z"
     },
     "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
@@ -10107,8 +10107,8 @@
       "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-learnings-research-knowledge-intelligence-hf-psrben-visionh.md",
       "repository": "hf-psrben-visionhope-learnings",
-      "content_hash": "fc0b343996a2e888cbd52e50f3546b5715950f8b6fe658dcfad5f286c335f41a",
-      "created_at": "2026-11-18T15:51:54.769Z"
+      "content_hash": "89b91b3b837dac9098650e0e53f70a130ea39496f69b4d88363e6939f7decba0",
+      "created_at": "2026-11-22T22:58:20.695Z"
     },
     "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
@@ -23906,8 +23906,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "2b9e0bc101f9e14f5630db440c851d989dceffceaf13bdc20cec96740e5fe3cd",
-      "created_at": "2026-11-21T23:47:51.795Z"
+      "content_hash": "542b016185919f5f69e763c868efaf950a50385771605e48c0cfe194548fde57",
+      "created_at": "2026-11-22T22:58:21.625Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

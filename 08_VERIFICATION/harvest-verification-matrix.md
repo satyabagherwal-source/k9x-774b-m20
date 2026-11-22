@@ -12216,3 +12216,5 @@
 | `CYCLE-20261122-34BB` | `2026-11-22T22:37:17.591Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`5977c9c0...`) |
 | `CYCLE-20261122-IPRV` | `2026-11-22T22:49:25.243Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`37dd0072...`) |
 | `CYCLE-20261122-IRD1` | `2026-11-22T22:49:27.302Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`fd1618c7...`) |
+| `CYCLE-20261122-TUWI` | `2026-11-22T22:58:05.106Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`9e1bbf74...`) |
+| `CYCLE-20261122-U3OK` | `2026-11-22T22:58:16.484Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10002` | Yes (`52c55fe5...`) |

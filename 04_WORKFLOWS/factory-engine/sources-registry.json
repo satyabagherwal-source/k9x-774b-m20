@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T22:49:36.965Z",
-    "lastVerified": "2026-11-22T22:49:36.965Z",
+    "lastChecked": "2026-11-22T22:58:20.212Z",
+    "lastVerified": "2026-11-22T22:58:20.212Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T22:15:13.836Z",
+    "lastChecked": "2026-11-22T22:58:16.888Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T22:15:13.836Z"
+    "lastVerified": "2026-11-22T22:58:16.888Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1070,9 +1070,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-11-21T22:56:52.932Z",
+    "lastChecked": "2026-11-22T22:58:14.300Z",
     "revisionIdentifier": "1a3ac2c7",
-    "lastVerified": "2026-11-21T22:56:52.932Z"
+    "lastVerified": "2026-11-22T22:58:14.300Z"
   },
   "burntsushi-ripgrep": {
     "name": "BurntSushi/ripgrep",
@@ -2359,14 +2359,14 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T18:21:27.676Z",
-    "lastVerified": "2026-11-22T18:21:27.676Z",
+    "lastChecked": "2026-11-22T22:58:15.189Z",
+    "lastVerified": "2026-11-22T22:58:15.189Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e51366b40d5800addb303ba2b5081d3a82b352bbed86e90ef4480acb046eb50f",
+    "contentHash": "52c55fe59399325c9cd734b2e3294203b32970978c01a524a850d7dba44d490a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2391,9 +2391,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-21T15:59:33.658Z",
+    "lastChecked": "2026-11-22T22:58:01.752Z",
     "revisionIdentifier": "e91f74b1",
-    "lastVerified": "2026-11-21T15:59:33.658Z"
+    "lastVerified": "2026-11-22T22:58:01.752Z"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
     "name": "TaichuAI/ZDTaichu5.0-9B",
@@ -3004,8 +3004,8 @@
     "officialUrl": "https://github.com/openkruise/kruise",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T00:09:51.373Z",
-    "lastVerified": "2026-11-22T00:09:51.373Z",
+    "lastChecked": "2026-11-22T22:58:09.266Z",
+    "lastVerified": "2026-11-22T22:58:09.266Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openkruise-kruise",
@@ -3157,12 +3157,12 @@
     "officialUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T15:51:32.415Z",
-    "lastVerified": "2026-11-18T15:51:32.415Z",
+    "lastChecked": "2026-11-22T22:58:04.375Z",
+    "lastVerified": "2026-11-22T22:58:04.375Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "fcbb1b569efa98453447a808e60630a2fa8a72c6fb71113178d600916cd6577c",
+    "contentHash": "9e1bbf74f5599547eeae00041206f36adef0ec5eef5a8fa93bbd0d3d29363d23",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9396,12 +9396,12 @@
     "lastVerified": "2026-11-20T00:14:29.717Z"
   },
   "nsh07-tomato": {
-    "name": "nsh07/Tomato",
+    "name": "Tomato",
     "officialUrl": "https://github.com/nsh07/Tomato",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-20T00:14:36.963Z",
-    "lastVerified": "2026-11-20T00:14:36.963Z",
+    "lastChecked": "2026-11-22T22:58:06.856Z",
+    "lastVerified": "2026-11-22T22:58:06.856Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nsh07-tomato",
@@ -9410,7 +9410,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b3036b46"
   },
   "yuripinto-xseo": {
     "name": "xseo",

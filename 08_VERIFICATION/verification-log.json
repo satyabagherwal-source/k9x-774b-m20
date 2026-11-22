@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-Q2H3",
-    "timestamp": "2026-11-21T00:43:46.311Z",
-    "repository": "preactjs/preact",
-    "learningId": "learn-github-preactjs-preact",
-    "contentHash": "e09783bddbcc068c81bbc076c2aeb22f2f2ad418a7f43abe2e5e9cc2e2451bb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-Q4DC",
-    "timestamp": "2026-11-21T00:43:48.768Z",
-    "repository": "TypeWhisper/typewhisper-mac",
-    "learningId": "learn-github-typewhisper-typewhisper-mac",
-    "contentHash": "31609fdb7c5b9372541a0fc4a7eabe62729d83c58c955e2b7e40f98db2c07091",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-Q9LA",
     "timestamp": "2026-11-21T00:43:55.534Z",
     "repository": "neuron-core/neuron-ai",
@@ -7492,6 +7462,36 @@
     "contentHash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-TUWI",
+    "timestamp": "2026-11-22T22:58:05.106Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "9e1bbf74f5599547eeae00041206f36adef0ec5eef5a8fa93bbd0d3d29363d23",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-U3OK",
+    "timestamp": "2026-11-22T22:58:16.484Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "52c55fe59399325c9cd734b2e3294203b32970978c01a524a850d7dba44d490a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

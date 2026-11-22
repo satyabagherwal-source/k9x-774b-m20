@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T22:49:27.350Z",
+  "last_updated": "2026-11-22T22:58:16.502Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -740,14 +740,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-psrben-visionhope",
-      "content_hash": "fcbb1b569efa98453447a808e60630a2fa8a72c6fb71113178d600916cd6577c",
-      "verified_at": "2026-11-18T15:51:33.172Z",
+      "content_hash": "9e1bbf74f5599547eeae00041206f36adef0ec5eef5a8fa93bbd0d3d29363d23",
+      "verified_at": "2026-11-22T22:58:05.123Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:51:33.172Z"
+      "last_updated": "2026-11-22T22:58:05.123Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "909e6d02dd5c99dffa3d6a30ef85bd5032ae38b970ef451616a72b8c4240be82",
-      "verified_at": "2026-11-22T20:27:43.145Z",
+      "content_hash": "52c55fe59399325c9cd734b2e3294203b32970978c01a524a850d7dba44d490a",
+      "verified_at": "2026-11-22T22:58:16.501Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:27:43.145Z"
+      "last_updated": "2026-11-22T22:58:16.501Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",

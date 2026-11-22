@@ -3,7 +3,7 @@
 > **Source Version**: `hf-psrben-vi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T15:51:32.606Z  
+> **Timestamp**: 2026-11-22T22:58:04.493Z  
 > **Learning ID**: `learn-huggingface-psrben-visionhope`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/PSRben/VisionHOPE](https://huggingface.co/PSRben/VisionHOPE))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T15:51:32.415Z  
+> **Harvest Timestamp**: 2026-11-22T22:58:04.375Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 65 downloads | 216 likes
+- **Stars / Engagement**: 76 downloads | 217 likes
 
 ---
 
