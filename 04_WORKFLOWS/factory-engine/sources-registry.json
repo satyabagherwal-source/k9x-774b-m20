@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T20:00:29.273Z",
-    "lastVerified": "2026-11-22T20:00:29.273Z",
+    "lastChecked": "2026-11-22T20:09:08.996Z",
+    "lastVerified": "2026-11-22T20:09:08.996Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -264,9 +264,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T19:31:07.725Z",
+    "lastChecked": "2026-11-22T20:09:08.982Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T19:31:07.725Z"
+    "lastVerified": "2026-11-22T20:09:08.982Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -753,14 +753,14 @@
     "officialUrl": "https://github.com/Automattic/harper",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T10:37:33.706Z",
-    "lastVerified": "2026-11-21T10:37:33.706Z",
+    "lastChecked": "2026-11-22T20:08:58.631Z",
+    "lastVerified": "2026-11-22T20:08:58.631Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-automattic-harper",
-    "contentHash": "60b569167d5e460b9da2e927159b3af827b55b73d2c67f4b0d5f78994252c36e",
+    "contentHash": "5826b7270e26022c3e18c45f52f89bf3f1163db668e97513ed0c9cb8ca1f6696",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -964,12 +964,12 @@
     "lastVerified": "2026-11-22T18:35:21.451Z"
   },
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T14:40:44.544Z",
-    "lastVerified": "2026-11-22T14:40:44.544Z",
+    "lastChecked": "2026-11-22T20:09:04.030Z",
+    "lastVerified": "2026-11-22T20:09:04.030Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -978,7 +978,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4ce60f1a"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -1803,8 +1804,8 @@
     "officialUrl": "https://github.com/loft-sh/vcluster",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T21:19:37.814Z",
-    "lastVerified": "2026-11-21T21:19:37.814Z",
+    "lastChecked": "2026-11-22T20:09:01.689Z",
+    "lastVerified": "2026-11-22T20:09:01.690Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-loft-sh-vcluster",
@@ -2040,12 +2041,12 @@
     "officialUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T13:25:32.305Z",
-    "lastVerified": "2026-11-18T13:25:32.305Z",
+    "lastChecked": "2026-11-22T20:08:56.621Z",
+    "lastVerified": "2026-11-22T20:08:56.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "a85d1e50c61df38aae1efdbe0479557b9eaa6794fd056b986e004b917cbab18b",
+    "contentHash": "18614aecff8f79f3a5c49f6df934b96a21c6a523d47a216ab86d04d72433e4f8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7482,9 +7483,9 @@
   "pathwaycom-serviette": {
     "name": "serviette",
     "officialUrl": "https://github.com/pathwaycom/serviette",
-    "lastChecked": "2026-11-21T19:44:55.662Z",
+    "lastChecked": "2026-11-22T20:09:06.469Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-21T19:44:55.662Z"
+    "lastVerified": "2026-11-22T20:09:06.469Z"
   },
   "jhspetersson-fselect": {
     "name": "fselect",
@@ -9102,9 +9103,9 @@
   "github-copilotforxcode": {
     "name": "CopilotForXcode",
     "officialUrl": "https://github.com/github/CopilotForXcode",
-    "lastChecked": "2026-11-19T20:00:18.314Z",
+    "lastChecked": "2026-11-22T20:08:59.128Z",
     "revisionIdentifier": "258d4577",
-    "lastVerified": "2026-11-19T20:00:18.314Z"
+    "lastVerified": "2026-11-22T20:08:59.128Z"
   },
   "code-forge-io-seo-tools": {
     "name": "seo-tools",

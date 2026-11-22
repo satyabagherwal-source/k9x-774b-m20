@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T19:43:32.374Z",
+  "updated_at": "2026-11-22T20:09:09.326Z",
   "stats": {
-    "total_discovered": 7644,
-    "approved_pending_harvest": 7239,
+    "total_discovered": 7646,
+    "approved_pending_harvest": 7241,
     "harvested_count": 0,
     "rejected_count": 405,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7218,
+      "COMMUNITY_AND_EXPERT": 7220,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -165356,6 +165356,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
         "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-74503B3C9838": {
+      "id": "SRC-74503B3C9838",
+      "url": "https://github.com/user-attachments/assets/706b19aa-b1d9-4196-9f36-6869d97a7814",
+      "title": "https://github.com/user-attachments/assets/706b19aa-b1d9-4196-9f36-6869d97a7814",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T20:09:09.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-E551BCF745D9": {
+      "id": "SRC-E551BCF745D9",
+      "url": "https://github.com/user-attachments/assets/9487776c-cae3-4d64-abbd-63c4abf02e48",
+      "title": "https://github.com/user-attachments/assets/9487776c-cae3-4d64-abbd-63c4abf02e48",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T20:09:09.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
       }
     }
   }

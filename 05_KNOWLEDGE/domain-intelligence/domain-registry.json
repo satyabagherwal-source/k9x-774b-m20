@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T20:00:30.716Z",
+  "last_updated": "2026-11-22T20:09:11.607Z",
   "total_records": 2377,
   "domains": {
     "A": {
@@ -8456,8 +8456,8 @@
       "title": "Research & Knowledge Intelligence: fastino/GLiNER2.5-Decide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-research-knowledge-intelligence-fastino-gliner2-5-de.md",
       "repository": "fastino/GLiNER2.5-Decide",
-      "content_hash": "4a5317524a98a3fdc0a25296b0d7435f65246a46470923a62582488b6c308579",
-      "created_at": "2026-11-18T13:25:33.146Z"
+      "content_hash": "51dded46265f5784d2f6c48f3e23ad00bda3fe949dbc8f7ac595b25c7921c550",
+      "created_at": "2026-11-22T20:08:57.663Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants",
@@ -8534,8 +8534,8 @@
       "title": "Research & Knowledge Intelligence: hf-fastino-gliner2.5-decide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-learnings-research-knowledge-intelligence-hf-fastino.md",
       "repository": "hf-fastino-gliner2.5-decide-learnings",
-      "content_hash": "6060f92cdd8a5a7a40ba9445e4dbdf16477aa380e014600f118a55e8e85a8a80",
-      "created_at": "2026-11-18T13:25:53.722Z"
+      "content_hash": "112b76c60a98309166b51b94176a32f20afbbe762d70253c329d13241725e36b",
+      "created_at": "2026-11-22T20:09:10.518Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
@@ -15168,8 +15168,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "44ce6b5113f8bf3518d986d82901a5fecfa3dbbe7acb1fb45b116c185d24dc26",
-      "created_at": "2026-11-22T18:12:37.224Z"
+      "content_hash": "b3248646bba795e49d273b154ce1215be116bd29c399cc5e16d20fefa5b1ac43",
+      "created_at": "2026-11-22T20:09:11.607Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -18229,8 +18229,8 @@
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "repository": "Automattic/harper",
-      "content_hash": "7eb3536e4b80060c26dfaa1aad43b5d7849a14d9e2268f7abe5eb806a3332f7a",
-      "created_at": "2026-11-21T10:37:35.109Z"
+      "content_hash": "31098eac64dcde2f360d9e404628ec593f22cfbe7775b360db79da69cc9de368",
+      "created_at": "2026-11-22T20:09:00.452Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
@@ -18256,8 +18256,8 @@
       "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-learnings-quality-verification-intelligence-automattic-harper-.md",
       "repository": "automattic-harper-learnings",
-      "content_hash": "091db02b413d9bdd4457b763866a712b307ebf3572770eb3153365b4ca7302a7",
-      "created_at": "2026-11-21T10:37:44.642Z"
+      "content_hash": "82676aa8ec697d528a351055d5040d2994af6db576af7b6bd15de6c76d105ac0",
+      "created_at": "2026-11-22T20:09:09.836Z"
     },
     "DOM-D-04705777": {
       "record_id": "DOM-D-04705777",

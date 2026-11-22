@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T20:00:30.990Z",
+  "last_updated": "2026-11-22T20:09:12.009Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T19:31:30.338Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-22T18:12:36.324Z",
+      "processed_at": "2026-11-22T20:09:10.762Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -288,7 +288,7 @@
       "staged_for_review": 1
     },
     "automattic-harper-learnings.md": {
-      "processed_at": "2026-11-21T10:37:44.175Z",
+      "processed_at": "2026-11-22T20:09:09.178Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1933,7 +1933,7 @@
       "staged_for_review": 1
     },
     "hf-fastino-gliner2.5-decide-learnings.md": {
-      "processed_at": "2026-11-18T13:25:53.551Z",
+      "processed_at": "2026-11-22T20:09:10.259Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3728,7 +3728,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3204,
+  "total_dossiers_evaluated": 3207,
   "total_canonical_promoted": 476,
-  "total_staged_for_review": 2426
+  "total_staged_for_review": 2428
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-NHGK",
-    "timestamp": "2026-11-20T21:25:48.452Z",
-    "repository": "dalance/procs",
-    "learningId": "learn-github-dalance-procs",
-    "contentHash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-4EP0",
-    "timestamp": "2026-11-20T21:38:58.020Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "6b7cdb42d047bc5a9e8ceadc94168a44fabc4d3b0e3d73f7874d48c3fe6de5d0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-EZY3",
     "timestamp": "2026-11-20T21:47:12.123Z",
     "repository": "databendlabs/databend",
@@ -7490,6 +7460,36 @@
     "repository": "siteline/swiftui-introspect",
     "learningId": "learn-github-siteline-swiftui-introspect",
     "contentHash": "b60993a38146cee3505787da4b5a2b7fa76a3ed2fba8ef150894db7330dd6925",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-SCV8",
+    "timestamp": "2026-11-22T20:08:57.380Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "18614aecff8f79f3a5c49f6df934b96a21c6a523d47a216ab86d04d72433e4f8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-SEUA",
+    "timestamp": "2026-11-22T20:08:59.938Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "5826b7270e26022c3e18c45f52f89bf3f1163db668e97513ed0c9cb8ca1f6696",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

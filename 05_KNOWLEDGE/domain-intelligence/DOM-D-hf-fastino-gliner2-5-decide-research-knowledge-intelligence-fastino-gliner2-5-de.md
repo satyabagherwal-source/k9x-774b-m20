@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
   "source_version": "hf-fastino-gliner2.5-decide",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T13:25:33.145Z",
+  "timestamp": "2026-11-22T20:08:57.662Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-fastino-gliner2-5-decide",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide) (Revision: `hf-fastino`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T13:25:33.145Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T20:08:57.662Z`  
 > **Learning ID**: `learn-huggingface-fastino-gliner2-5-decide`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:25:32.305Z  
+> **Harvest Timestamp**: 2026-11-22T20:08:56.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 70656 downloads | 458 likes
+- **Stars / Engagement**: 42909 downloads | 459 likes
 
 ---
 

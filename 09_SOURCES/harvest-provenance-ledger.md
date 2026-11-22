@@ -12209,3 +12209,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `420cea3a` | Multi-dimensional audit evidence | 2026-11-22T19:52:27.561Z |
 | `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-22T20:00:17.458Z |
 | `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `ddf68494` | Multi-dimensional audit evidence | 2026-11-22T20:00:25.261Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-22T20:08:57.385Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `6cb8d82a` | Multi-dimensional audit evidence | 2026-11-22T20:08:59.943Z |

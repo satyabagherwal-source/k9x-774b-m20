@@ -12176,3 +12176,5 @@
 | `CYCLE-20261122-7545` | `2026-11-22T19:52:27.557Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9982` | Yes (`4dbbc661...`) |
 | `CYCLE-20261122-H7OM` | `2026-11-22T20:00:17.446Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md` | Yes (`389d37f7...`) |
 | `CYCLE-20261122-HDPM` | `2026-11-22T20:00:25.258Z` | `siteline/swiftui-introspect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9983` | Yes (`b60993a3...`) |
+| `CYCLE-20261122-SCV8` | `2026-11-22T20:08:57.380Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`18614aec...`) |
+| `CYCLE-20261122-SEUA` | `2026-11-22T20:08:59.938Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9984` | Yes (`5826b727...`) |
