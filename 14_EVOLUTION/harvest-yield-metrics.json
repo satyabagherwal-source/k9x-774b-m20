@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T19:18:47.880Z",
-  "total_cycles_completed": 11568,
-  "total_learnings_persisted": 11568,
+  "last_updated": "2026-11-22T19:31:26.748Z",
+  "total_cycles_completed": 11569,
+  "total_learnings_persisted": 11569,
   "total_rules_promoted": 10797,
   "history": [
-    {
-      "timestamp": "2026-11-22T00:24:51.636Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T00:32:36.502Z",
       "repository": "pyannote/speaker-diarization-3.1",
@@ -1403,6 +1396,13 @@
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T19:31:26.748Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

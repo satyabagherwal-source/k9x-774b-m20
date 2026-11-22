@@ -12198,3 +12198,4 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2db04dd3` | Multi-dimensional audit evidence | 2026-11-22T19:09:59.993Z |
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-22T19:18:32.422Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `841a49be` | Multi-dimensional audit evidence | 2026-11-22T19:18:47.873Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-22T19:31:26.742Z |

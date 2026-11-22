@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-4GHM",
-    "timestamp": "2026-11-20T20:15:01.498Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "4e8e8566ac3e788b608b55b0751ee278b79fc3631b8375e1a35413c9fd82ead9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-2R98",
     "timestamp": "2026-11-20T20:41:41.756Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7477,21 @@
     "contentHash": "efdc12aa23992a09445e6518907c5c419848754ce086b38e9de41b0cada3424d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-G49E",
+    "timestamp": "2026-11-22T19:31:26.738Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "8127065dae1e0801180ffe9e88d59829f391dfb680353b100a25ff8bb5ccac6d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

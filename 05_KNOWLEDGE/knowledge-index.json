@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T19:18:54.084Z",
+  "last_updated": "2026-11-22T19:31:32.599Z",
   "total_verified_learnings": 9073,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -111970,9 +111970,9 @@
       "title": "Research & Knowledge Intelligence: Viggle/Qwen-Image-2.1-viggle-turbo Core Invariants",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "3d98073c3770ecfa2cdbf746b19d3473844a2498aeca525b9919a76b409ef960",
+      "content_hash": "2fab40658933ee6c5440906c550b8e7e5ff26961df90113e46fcbf014d208eb8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:50:50.989Z"
+      "persisted_at": "2026-11-22T19:31:26.981Z"
     },
     "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture": {
       "item_id": "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture",
@@ -112018,9 +112018,9 @@
       "title": "Research & Knowledge Intelligence: hf-viggle-qwen-image-2.1-viggle-turbo-learnings Core Invariants",
       "repository": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "8740826c4995e2a5cdeefca642fbf0646e7cb9c4d395f6dfc2768a69967a88e6",
+      "content_hash": "c2abd37ca41beca2d94a0d2cff32d26173339ea60e670a9d14d6aa03e0905355",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:51:09.993Z"
+      "persisted_at": "2026-11-22T19:31:30.136Z"
     },
     "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants": {
       "item_id": "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "18a646dff1ee108de5621b8b052f5682f53182182c2c3d0f633eb62486f7df2e",
+      "content_hash": "8348e4b857b2e75665b3ff624568545df6020164fda3ab77a276b0bd0b6c9693",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T18:44:17.189Z"
+      "persisted_at": "2026-11-22T19:31:32.214Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0494d75a76bff442bd123897de9995ddc7bb60cc9dc761d790b574a9f419256",
+      "content_hash": "62cb3b5d618bb7f11c22981656c6846befc996c1b97364fcb76319833c66c048",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T18:44:17.401Z"
+      "persisted_at": "2026-11-22T19:31:32.450Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e310794a9db7dee34374ce30228dc68a154b2c3f4d7bd939de5d26f245c7c78",
+      "content_hash": "2acd1a108682f1318cc22f1d7de84aced1c4f8592b585028b09af6b013586288",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:44:17.582Z"
+      "persisted_at": "2026-11-22T19:31:32.599Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca49145cbff80aa3480b566eddc940e72937c2ce177e17268013ecda56a4c170",
+      "content_hash": "12bfec9015483adf3bf006cc86c15cfab242dfa214643469fb99f7e94f8311ae",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T17:53:18.363Z"
+      "persisted_at": "2026-11-22T19:31:31.216Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -283682,7 +283682,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "63b956533972654358fef3cb41d11e695f3763db80c9d761331152841bb2730f",
+      "content_hash": "8127065dae1e0801180ffe9e88d59829f391dfb680353b100a25ff8bb5ccac6d",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [],
@@ -283691,7 +283691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:50:50.616Z",
+      "verified_at": "2026-11-22T19:31:26.476Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -309828,13 +309828,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RGSR-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-G8CF-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f0027e0e846c4323d2df465584ab2089c39beb28d48f5240a95282b8fb99ea4",
+      "content_hash": "ddd269d3313b565c0cf3a3e3562dcb335bd8853c2ad0c892a40970d655c91187",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T18:44:16.976Z"
+      "persisted_at": "2026-11-22T19:31:32.035Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
