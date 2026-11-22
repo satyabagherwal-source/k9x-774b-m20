@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T12:37:34.800Z",
-  "total_cycles_completed": 11492,
-  "total_learnings_persisted": 11492,
-  "total_rules_promoted": 10744,
+  "last_updated": "2026-11-22T13:01:50.777Z",
+  "total_cycles_completed": 11495,
+  "total_learnings_persisted": 11495,
+  "total_rules_promoted": 10746,
   "history": [
-    {
-      "timestamp": "2026-11-21T18:22:59.838Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T18:23:05.561Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T18:23:05.844Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T18:44:17.392Z",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-22T12:37:34.800Z",
       "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
       "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T12:57:02.385Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T12:57:04.128Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T13:01:50.777Z",
+      "repository": "internlm/Sage-S2.1-Flash",
+      "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

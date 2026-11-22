@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T12:37:39.222Z",
+  "last_updated": "2026-11-22T13:01:55.389Z",
   "directives": [
     {
       "id": "CD-001",
@@ -46151,6 +46151,46 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-013551-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-J62T",
+      "directive_title": "Oracle unparenthesized function binding for dummy table queries",
+      "source_repo": "apache-shardingsphere-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-J62T-oracle-unparenthesized-function-binding-for-dummy-table-queries.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-J6T6",
+      "directive_title": "Show ARC inputs before model calls",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-J6T6-show-arc-inputs-before-model-calls.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-216D06",
+      "directive_title": "Oracle unparenthesized function binding for dummy table queries",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-shardingsphere",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-216D06-oracle-unparenthesized-function-binding-.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-6AD10F",
+      "directive_title": "Show ARC inputs before model calls",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6AD10F-show-arc-inputs-before-model-calls.md",
       "staged_date": "2026-11-22"
     }
   ]

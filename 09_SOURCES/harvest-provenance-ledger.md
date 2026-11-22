@@ -12120,3 +12120,6 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `33d69d93` | Multi-dimensional audit evidence | 2026-11-22T12:19:20.067Z |
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `b1fdbd5b` | Multi-dimensional audit evidence | 2026-11-22T12:37:25.740Z |
 | `learn-huggingface-minimaxai-minimax-h3-image-pe` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-22T12:37:34.795Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `2436670d` | Multi-dimensional audit evidence | 2026-11-22T12:57:02.380Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bda125f2` | Multi-dimensional audit evidence | 2026-11-22T12:57:04.123Z |
+| `learn-huggingface-internlm-sage-s2-1-flash` | `https://huggingface.co/internlm/Sage-S2.1-Flash` | `hf-internl` | Multi-dimensional audit evidence | 2026-11-22T13:01:50.772Z |

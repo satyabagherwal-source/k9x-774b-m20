@@ -12087,3 +12087,6 @@
 | `CYCLE-20261122-0F3Z` | `2026-11-22T12:19:20.063Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9928` | Yes (`29a5a62a...`) |
 | `CYCLE-20261122-NOTJ` | `2026-11-22T12:37:25.735Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9929` | Yes (`511feaee...`) |
 | `CYCLE-20261122-NVT3` | `2026-11-22T12:37:34.791Z` | `MiniMaxAI/MiniMax-H3-Image-PE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md` | Yes (`24c873ac...`) |
+| `CYCLE-20261122-CWQ0` | `2026-11-22T12:57:02.376Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9930` | Yes (`530b88ec...`) |
+| `CYCLE-20261122-CY2F` | `2026-11-22T12:57:04.119Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9931` | Yes (`bcaae78f...`) |
+| `CYCLE-20261122-J38W` | `2026-11-22T13:01:50.768Z` | `internlm/Sage-S2.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | Yes (`22a5bf26...`) |

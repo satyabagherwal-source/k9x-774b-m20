@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T12:37:34.803Z",
+  "last_updated": "2026-11-22T13:01:50.780Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "9f767228d8c59ae4216875a8913a958b7edcd622224bd64630e37bb71d63d7e3",
-      "verified_at": "2026-11-22T11:34:36.655Z",
+      "content_hash": "bcaae78f64e3307243f92b0ccaaac5523a938395c5b836eb53b48fa3b386e202",
+      "verified_at": "2026-11-22T12:57:04.131Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T11:34:36.655Z"
+      "last_updated": "2026-11-22T12:57:04.131Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "bb2c133901ee77e8fa3c70655029ce73cc163aa3c0ecd5ad5c0b9f52258ffe03",
-      "verified_at": "2026-11-21T09:47:28.977Z",
+      "content_hash": "530b88ec981ac701b47bb9ce660642278811bcbe01d1bf40a797650a6a278294",
+      "verified_at": "2026-11-22T12:57:02.388Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T09:47:28.977Z"
+      "last_updated": "2026-11-22T12:57:02.388Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -19266,14 +19266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-internlm-sage-s2-1-flash",
-      "content_hash": "c367061a8a6e8715305162b90840477f2dfe5cfa5eeb954c49cc83022e1eacb9",
-      "verified_at": "2026-11-17T12:24:46.799Z",
+      "content_hash": "22a5bf26c0202a0ed659fd7cd290afad2791a19b17768ed602ca81a0ce1f9a62",
+      "verified_at": "2026-11-22T13:01:50.780Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T12:24:46.799Z"
+      "last_updated": "2026-11-22T13:01:50.780Z"
     },
     "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic": {
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",

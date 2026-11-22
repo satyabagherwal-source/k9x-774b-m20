@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "3531f118",
+    "sourceVersion": "bda125f2",
     "license": "Apache-2.0",
-    "contentHash": "9f767228d8c59ae4216875a8913a958b7edcd622224bd64630e37bb71d63d7e3",
-    "lastHarvestedAt": "2026-11-22T11:34:36.644Z",
+    "contentHash": "bcaae78f64e3307243f92b0ccaaac5523a938395c5b836eb53b48fa3b386e202",
+    "lastHarvestedAt": "2026-11-22T12:57:04.123Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "ef1f4581",
+    "sourceVersion": "2436670d",
     "license": "Apache-2.0",
-    "contentHash": "bb2c133901ee77e8fa3c70655029ce73cc163aa3c0ecd5ad5c0b9f52258ffe03",
-    "lastHarvestedAt": "2026-11-21T09:47:28.968Z",
+    "contentHash": "530b88ec981ac701b47bb9ce660642278811bcbe01d1bf40a797650a6a278294",
+    "lastHarvestedAt": "2026-11-22T12:57:02.380Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -12785,8 +12785,8 @@
     "sourceUrl": "https://huggingface.co/internlm/Sage-S2.1-Flash",
     "sourceVersion": "hf-internlm-sage-s2.1-flash",
     "license": "Open-Source",
-    "contentHash": "c367061a8a6e8715305162b90840477f2dfe5cfa5eeb954c49cc83022e1eacb9",
-    "lastHarvestedAt": "2026-11-17T12:24:46.791Z",
+    "contentHash": "22a5bf26c0202a0ed659fd7cd290afad2791a19b17768ed602ca81a0ce1f9a62",
+    "lastHarvestedAt": "2026-11-22T13:01:50.772Z",
     "learningId": "learn-huggingface-internlm-sage-s2-1-flash"
   },
   "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic": {
