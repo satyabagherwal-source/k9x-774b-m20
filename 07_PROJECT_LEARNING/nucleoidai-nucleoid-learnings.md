@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `57a7a48c`  
+> **Source Version**: `4c1f0dba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T16:57:38.800Z  
+> **Timestamp**: 2026-11-22T18:21:32.916Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T16:57:38.794Z  
+> **Harvest Timestamp**: 2026-11-22T18:21:32.910Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1579,224 +1579,114 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `57a7a48c` (2026-11-22)
-**Commit Message**: Rename state object list to objects
+### Incident Patch 1: `4c1f0dba` (2026-11-22)
+**Commit Message**: Draft NUC 134 Ruby Collection Method Aliases
 
-Use consistent naming for object lists in analysis, visualization, and milestone output.
+Category: Language compatibility. Add Ruby collect(callback) and select(callback) as exact aliases of accepted map(callback) and filter(callback) on lists and class populations. Continuous live-registry draw selected index 4 of five eligible categories; no strategy learning or advisory scoring was configured.
 
-**File**: `arc/src/analyzer.ts` (modified, +1/-1)
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -164,5 +164,5 @@ export async function state(train) {
-     });
-   }
+@@ -177,6 +177,7 @@ Created: 31-Jul-2026
+ | [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
+ | [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
++| [134](nuc-0134.md) | Ruby Collection Method Aliases | Draft |
  
--  milestone.state({ phase: "analysis", obj_list: objects });
-+  milestone.state({ phase: "analysis", objects: objects });
- }
+ ### Documentation
+ 
+@@ -321,6 +322,7 @@ Created: 31-Jul-2026
+ | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
+ 
+ ## Copyright
+ 
 ```
 
-**File**: `arc/src/lib/milestone.ts` (modified, +4/-4)
+**File**: `docs/nuc-0134.md` (added, +60/-0)
 ```diff
-@@ -222,19 +222,19 @@ export function instance_constructed({
- 
- export function state({
-   phase,
--  obj_list,
-+  objects,
- }: {
-   phase: "analysis" | "visualization";
--  obj_list: Record<string, unknown>[];
-+  objects: Record<string, unknown>[];
- }) {
-   const properties = [
--    ...new Set(obj_list.flatMap((instance) => Object.keys(instance))),
-+    ...new Set(objects.flatMap((instance) => Object.keys(instance))),
-   ].filter((property: string) => property !== "id");
- 
-   terminal.table(
-     phase === "analysis" ? "Analysis · State" : "Visualization · State",
-     ["id", ...properties],
--    obj_list,
-+    objects,
-     { key: "state" }
-   );
- }
-```
-
-**File**: `arc/src/object.ts` (modified, +5/-5)
-```diff
-@@ -142,7 +142,7 @@ async function state({
- 
-   const canvas_width: number = input_matrix[0].length;
-   const canvas_height: number = input_matrix.length;
--  const obj_list = await nucleoid.run(
-+  const objects = await nucleoid.run(
-     [
-       `canvas_width = ${canvas_width}`,
-       `canvas_height = ${canvas_height}`,
-@@ -153,13 +153,13 @@ async function state({
-     ].join("\n\n")
-   );
- 
--  milestone.state({ phase: "visualization", obj_list });
-+  milestone.state({ phase: "visualization", objects });
- 
--  [...obj_list].forEach((instance) => {
-+  [...objects].forEach((object) => {
-     const found_instance = input_instances.find(
--      ({ instance_name }) => instance.id === instance_name
-+      ({ instance_name }) => object.id === instance_name
-     );
--    found_instance.output_value = instance;
-+    found_instance.output_value = object;
-   });
- }
- 
+@@ -0,0 +1,60 @@
++# NUC 134 -- Ruby Collection Method Aliases
++
++```
++NUC: 134
++Title: Ruby Collection Method Aliases
++Author: Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Draft
++Type: Standards Track
++Category: Language compatibility
++Created: 22-Nov-2026
++Requires: 8, 61
++```
++
++## Abstract
++
++- Add Ruby's `collect(callback)` and `select(callback)` names to lists and
++  class instance lists as exact aliases of the accepted `map(callback)` and
++  `filter(callback)` operations.
++- Share the accepted callback validation, evaluation order, result ordering,
++  dependency tracking and errors. Preserve every accepted spelling, property
++  reading and other receiver's dispatch.
++- Add no implicit Ruby blocks, enumerators, in-place variants, keywords,
++  parser changes, configuration or dependencies.
++- This open-ended invocation uses continuous mode. One unbiased draw from
++  NUC 1's live registry selected Language compatibility, index 4 among five
++  eligible categories; its token comparison is categorically skipped.
++
++## Motivation
++
++- Ruby programmers and language models use `items.collect(callback)` and
++  `items.select(callback)` to transform and filter collections. Nucleoid
++  already implements both operations under `map` and `filter`, but these
++  familiar names currently raise a method-call `TypeError`.
++- Exact aliases advance the language-superset aspiration without reserving
++  identifiers, changing existing operations or introducing another callback
++  implementation. This is a bounded spelling addition, not full Ruby
++  compatibility.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section in an isolated candidate.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 ---
 
-### Incident Patch 2: `35357ce0` (2026-11-22)
-**Commit Message**: Evaluate synthesized objects together
+### Incident Patch 2: `fe5ffc0f` (2026-11-22)
+**Commit Message**: Resume NUC 133 Edge Lists of Reasoning Selections
 
-Run all candidate implementations together before validating each synthesized instance. Update the visualization state payload, rename the grammar prompt label, and suppress response debug logging.
+Renews the claim on NUC 133, which this continuous /nuc-proposal cycle
+allocated in 008cc5b3 (Draft NUC 133 Edge Lists of Reasoning
+Selections, 22-Nov-2026 00:41:27 -05:00) and is still completing: the
+frozen candidate is under independent evaluation. The allocation was
+12 h 29 min old at this claim, past the 12-hour renewal point. The claim
+changes no file.
 
-**File**: `arc/src/lib/llm.ts` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ export async function generate({
-     messages.unshift({
-       role: "system",
-       content: `
--        EBNF:
-+        Grammar:
-         ${readFileSync(join(__dirname, "..", "..", "arc.ebnf"), "utf8")}
-       `,
-     });
-```
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
-**File**: `arc/src/lib/openrouter.ts` (modified, +1/-1)
-```diff
-@@ -94,7 +94,7 @@ export async function generate({ reasoning = false, messages = [] }) {
-   let jsonContent;
- 
-   try {
--    console.debug(JSON.stringify(JSON.parse(content)));
-+    // console.debug(JSON.stringify(JSON.parse(content)));
-     jsonContent = JSON.parse(content);
-   } catch (error) {
-     throw new Error(
-```
 
-**File**: `arc/src/synthesizer.ts` (modified, +40/-25)
-```diff
-@@ -21,6 +21,8 @@ async function synthesize({ train }) {
-         instances: [],
-       };
- 
-+      const potential_instances = [];
-+
-       for (const instance of dataset.instances) {
-         const input_instance_matrix = Matrix.rotate_instance(
-           Matrix.move_instance(instance.input_instance_matrix, x, y),
-@@ -65,10 +67,6 @@ async function synthesize({ train }) {
-         const canvas_width: number = input_instance_matrix[0].length;
-         const canvas_height: number = input_instance_matrix.length;
-         const class_declaration = train.class_declaration;
--        const declarations = train.declarations;
--        const implementations = synthesized_dataset.instances.map(
--          ({ implementation }) => implementation
--        );
- 
-         synthesized_instance.input_value = await nucleoid.run(
-           [
-@@ -80,27 +78,44 @@ async function synthesize({ train }) {
-           ].join("\n\n")
-         );
- 
--        synthesized_instance.output_value = await nucleoid.run(
--          [
--            `canvas_width = ${canvas_width}`,
--            `canvas_height = ${canvas_height}`,
--            class_declaration,
--            ...declarations,
--            ...implementations,
--            synthesized_instance.implementation,
--            `${synthesized_instance_name}`,
--          ].join("\n\n")
-+        potential_instances.push(synthesized_instance);
-+      }
-+
-+      const implementations = potential_instances.map(
-+        ({ implementation }) => implementation
-+      );
-+
-+      const canvas_width: number = dataset.input_matrix[0].length;
-+      const canvas_height: number = dataset.input_matrix.length;
-+
-+      const potential_objects = await nucleoid.run(
-+        [
-+          `canvas_width = ${canvas_width}`,
-+          `canvas_height = ${canvas_height}`,
-+          train.class_declaration,
-+          ...train.declarations,
-+          ...implementations,
-+          "Obj[:]",
-+        ].join("\n\n")
-+      );
-+
-+      potential_objects.forEach((object) => {
-+        const found_instance = potential_instances.find(
-+          ({ instance_name }) => object.id === instance_name
-         );
-+        found_instance.output_value = object;
-+      });
- 
-+      for (const potential_instance of potential_instances) {
-         const { output_instance_matrix } =
-           await visualizer.output_instance_matrix({
-             phase: "analysis",
--            test_input_matrix: input_instance_matrix,
-+            test_input_matrix: potential_instance.input_instance_matrix,
-             train,
--            instance: synthesized_instance,
-+            instance: potential_instance,
-           });
- 
--        synthesized_instance.output_instance_matrix = output_instance_matrix;
-+        potential_instance.output_instance_matrix = output_instance_matrix;
- 
-         const {
-           x: output_x,
-@@ -111,20 +126,20 @@ async function synthesize({ train }) {
-         } = Matrix.measure(output_instance_matrix);
- 
-         if (
--          synthesized_instance.output_value.x === output_x &&
--          synthesized_instance.output_value.y === output_y &&
--          synthesized_instance.output_value.width === output_width &&
--          synthesized_instance.output_value.height === output_height &&
--          synthesized_instance.output_value.volume === output_volume
-+          potential_instance.output_value.x === output_x &&
-+          potential_instance.output_value.y === output_y &&
-+          potential_instance.output_value.width === output_width &&
-+          potential_instance.output_value.height === output_height &&
-+          potential_instance.output_value.volume === output_volume
-         ) {
--          synthesized_dataset.instances.push(synthesized_instance);
-+          synthesized_dataset.instances.push(potential_instance);
-           milestone.synthesized_instance_validated({
-             pair_number: validated_dataset.length + 1,
--            ...synthesized_instance,
-+            ...potential_instance,
-           });
-         } else {
-           milestone.synthesized_instance_rejected({
--            ...synthesized_instance,
-+            ...potential_instance,
-             output_measurement: {
-               x: output_x,
-               y: output_y,
-```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1824,28 +1714,29 @@ Run all candidate implementations together before validating each synthesized in
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rename state object list to objects
+## X. Draft NUC 134 Ruby Collection Method Aliases
 
 **RULE**:
-When implementing operations in `arc/src/analyzer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `57a7a48c`: Rename state object list to objects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c1f0dba`: Draft NUC 134 Ruby Collection Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/analyzer.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  milestone.state({ phase: "analysis", objects: objects });
+| [134](nuc-0134.md) | Ruby Collection Method Aliases | Draft |
+| [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  milestone.state({ phase: "analysis", obj_list: objects });
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `57a7a48c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c1f0dba` are properly handled with clean fallback behavior.

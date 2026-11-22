@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "ff15a1de",
+    "sourceVersion": "165a8ee8",
     "license": "Apache-2.0",
-    "contentHash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
-    "lastHarvestedAt": "2026-11-21T23:47:44.024Z",
+    "contentHash": "e51366b40d5800addb303ba2b5081d3a82b352bbed86e90ef4480acb046eb50f",
+    "lastHarvestedAt": "2026-11-22T18:21:28.907Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "57a7a48c",
+    "sourceVersion": "4c1f0dba",
     "license": "Apache-2.0",
-    "contentHash": "d685cb4a70ab86429d5ec681987473339335b453e7f9b4c1c8674eb8e39f5a6b",
-    "lastHarvestedAt": "2026-11-22T16:57:39.952Z",
+    "contentHash": "3247dc84ca7f68c68c6f18f4780bde0bc342875140c08289bf5afe4524b9127b",
+    "lastHarvestedAt": "2026-11-22T18:21:34.086Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "f099e88f",
+    "sourceVersion": "318183b5",
     "license": "Apache-2.0",
-    "contentHash": "377404da9935bd1b4a5682e0adcb5714fffc289adca2ebbb5e7fd8762825ae9a",
-    "lastHarvestedAt": "2026-11-21T16:40:17.259Z",
+    "contentHash": "9ae6cc34159aa854f9d837846df5371bc8ca24b7ff95d04487b12b2931cc37df",
+    "lastHarvestedAt": "2026-11-22T18:21:32.476Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -11913,10 +11913,10 @@
     "repository": "matthart1983/netwatch",
     "platform": "github",
     "sourceUrl": "https://github.com/matthart1983/netwatch",
-    "sourceVersion": "78f85143",
+    "sourceVersion": "b2780b05",
     "license": "MIT",
-    "contentHash": "f7f0375c516225aececaf9f7a26feb0612b17b3d9d7eace1c111b82083123375",
-    "lastHarvestedAt": "2026-11-19T19:23:17.453Z",
+    "contentHash": "b5282a21b43ea1af48c7817417bc271e0b4409d1c8c9b4d2254b3d6f243911ea",
+    "lastHarvestedAt": "2026-11-22T18:21:28.002Z",
     "learningId": "learn-github-matthart1983-netwatch"
   },
   "hf-prunaai-p-h3-image-comfy": {
@@ -12875,8 +12875,8 @@
     "sourceUrl": "https://huggingface.co/KORMo-VL/KORMo-Web-11B",
     "sourceVersion": "hf-kormo-vl-kormo-web-11b",
     "license": "Open-Source",
-    "contentHash": "746c30cf258690d2188ce80395fb273a6209bf56a5d42df6d2e6a69acb7f4698",
-    "lastHarvestedAt": "2026-11-18T11:54:50.302Z",
+    "contentHash": "63787e6ad3c22a6394a12518a3909c84a16548f2e4c16d976d17ccca6a239837",
+    "lastHarvestedAt": "2026-11-22T18:21:24.290Z",
     "learningId": "learn-huggingface-kormo-vl-kormo-web-11b"
   },
   "software-mansion-argent": {

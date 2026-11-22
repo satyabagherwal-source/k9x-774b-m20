@@ -12144,3 +12144,8 @@
 | `CYCLE-20261122-71JL` | `2026-11-22T18:00:24.465Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9967` | Yes (`702bb03d...`) |
 | `CYCLE-20261122-751N` | `2026-11-22T18:00:29.003Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9968` | Yes (`0121c05d...`) |
 | `CYCLE-20261122-MFDS` | `2026-11-22T18:12:22.240Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`fdd861ee...`) |
+| `CYCLE-20261122-Y1MK` | `2026-11-22T18:21:24.284Z` | `KORMo-VL/KORMo-Web-11B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md` | Yes (`63787e6a...`) |
+| `CYCLE-20261122-Y4HO` | `2026-11-22T18:21:27.996Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9969` | Yes (`b5282a21...`) |
+| `CYCLE-20261122-Y56T` | `2026-11-22T18:21:28.901Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`e51366b4...`) |
+| `CYCLE-20261122-Y7XZ` | `2026-11-22T18:21:32.471Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9970` | Yes (`9ae6cc34...`) |
+| `CYCLE-20261122-Y96P` | `2026-11-22T18:21:34.081Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9971` | Yes (`3247dc84...`) |

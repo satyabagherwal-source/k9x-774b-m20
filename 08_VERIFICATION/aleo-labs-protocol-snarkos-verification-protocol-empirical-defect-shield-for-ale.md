@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "ff15a1de",
+  "source_version": "165a8ee8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T23:47:44.244Z",
+  "timestamp": "2026-11-22T18:21:29.178Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `ff15a1de`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T23:47:44.244Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `165a8ee8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T18:21:29.178Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `ff15a1de`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `165a8ee8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T23:47:43.271Z  
+> **Harvest Timestamp**: 2026-11-22T18:21:27.676Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1263,7 +1263,7 @@ pub const CURRENT_PROPOSAL_CACHE_FILE: &str = "current-proposal-cache";
 pub const REQUIRED_CONSENSUS_UPGRADE_FILE: &str = "required-consensus-upgrade";
 
 /// The filename used to persist the hotswapped dev committee's starting round.
-#[cfg(feature = "test_network")]
+#[cfg(feature = "dev-network")]
 pub const DEV_COMMITTEE_STATE_FILE: &str = "dev-committee-state";
 
 /// The filename of the JWT secret for a given address.
@@ -1336,7 +1336,7 @@ impl NodeDataDir {
     }
 
     /// The location used to persist the hotswapped dev committee's starting round.
-    #[cfg(feature = "test_network")]
+    #[cfg(feature = "dev-network")]
     pub fn dev_committee_state_path(&self) -> PathBuf {
         self.path.join(DEV_COMMITTEE_STATE_FILE)
     }
@@ -1890,271 +1890,219 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d41f2d25` (2026-11-21)
-**Commit Message**: Merge pull request #4750 from aleo-labs-protocol/agent/sync-quiet-at-tip
+### Incident Patch 1: `bea875ce` (2026-11-22)
+**Commit Message**: Merge pull request #4756 from aleo-labs-protocol/ci/share-node-test-build
 
-Keep block sync quiet while the tip block is in flight
-
-**File**: `node/sync/src/block_sync.rs` (modified, +38/-6)
+**File**: `.github/workflows/ci.yml` (modified, +14/-10)
 ```diff
-@@ -752,15 +752,15 @@ impl<N: Network> BlockSync<N> {
-         if batches.is_empty() {
-             let total_requests = self.num_total_block_requests();
-             let num_outstanding = self.num_outstanding_block_requests();
--            if total_requests != 0 {
--                trace!(
--                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
--                );
--            } else {
-+            if total_requests == 0 {
-                 debug!(
-                     "Not block synced yet, and there are no outstanding block requests or \
-                  new block requests to send"
-                 );
-+            } else if !self.requested_all_served() {
-+                trace!(
-+                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
-+                );
-             }
-         } else {
-             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
-@@ -1375,6 +1375,10 @@ impl<N: Network> BlockSync<N> {
+@@ -220,9 +220,11 @@ jobs:
+         run: cargo locktick-clippy -q -p snarkos-utilities --message-format=json | grep '"name":"locktick"' > /dev/null
+       - run: cargo locktick-clippy --workspace --all-targets --all-features -- -D warnings
  
-             print_requests();
-             vec![]
-+        } else if self.requested_all_served() {
-+            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
-+            // block is in flight.
-+            vec![]
-         } else if let Some((sync_peers, min_common_ancestor)) =
-             self.find_sync_peers_inner(current_height, Some(start_height))
-         {
-@@ -1407,7 +1411,7 @@ impl<N: Network> BlockSync<N> {
+-  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+-  # features of a and b, and several crates enable features on their
+-  # dependencies that change what those dependencies do:
++  # Each line of `runs` is one cargo command. Lines with the same `-p` set and
++  # cargo flags share one build; nextest's `-E` and `--no-tests` are not cargo
++  # flags. `cargo test -p a -p b` unifies the features of a and b, and several
++  # crates enable features on their dependencies that change what those
++  # dependencies do:
+   # `snarkos-node-router/test-helpers`, `snarkos-node-network/test-helpers` and
+   # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
+   # other code paths. Crates share a line only where that unification enables
+@@ -327,11 +329,16 @@ jobs:
+       matrix:
+         include:
+           - name: services
++            runs: nextest run -p snarkos-node-consensus -p snarkos-cli
++          # Both lines name the same packages, so they share one build, and the
++          # filters split the run in two. A package named in `-p` but in neither
++          # filter is built and never tested. `--no-tests=fail` makes a filter
++          # that stops matching fail. Builds RocksDB, whose bindings need
++          # libclang, which hosted runners lack.
++          - name: node-rest-distribution
+             runs: |
+-              nextest run -p snarkos-node-consensus -p snarkos-cli
+-              nextest run -p snarkos-node-rest
+-          - name: node
+-            runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service
++              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node)|package(=snarkos-node-bft-storage-service) --no-tests=fail
++              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node-rest)|package(=snarkos-ledger-distribution) --no-tests=fail
+           # Both lines use `metrics`, which the `snarkos` binary enables by
+           # default. `helpers::telemetry` compiles only under it, and a line
+           # without it rebuilds the snarkvm and bft crates. nextest skips the
+@@ -349,9 +356,6 @@ jobs:
+             runs: |
+               nextest run -p snarkos-node-router
+               nextest run -p snarkos-node-sync
+-          # Builds RocksDB, whose bindings need libclang, which hosted runners lack.
+-          - name: ledger-distribution
+-            runs: nextest run -p snarkos-ledger-distribution
+     name: test (${{ matrix.name }})
+     steps: *test-steps
  
-             vec![]
-         } else {
--            // This happens if we already requested all advertised blocks.
-+            // No sync peers serve the next height to request.
-             trace!("No new blocks can be requested, but there are still outstanding requests.");
+```
+
+**File**: `CI.md` (modified, +10/-6)
+```diff
+@@ -79,8 +79,8 @@ jobs run on every event.
+ | `test (light)` | hosted | all | 90 | `snarkos-account`, `-utilities`, `-node-tcp`, `-node-sync-locators`, `-node-network` |
+ | `test (cdn)` | hosted | all | 90 | `snarkos-node-cdn` |
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+-| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli`; then `-node-rest` |
+-| `test (node)` | `cpu` | all | 90 | `snarkos-node`, `-node-bft-storage-service` |
++| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli` |
++| `test (node-rest-distribution)` | `cpu` | all | 90 | `snarkos-node`, `-node-bft-storage-service`; then `-node-rest`, `snarkos-ledger-distribution`; one build |
+ | `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
+ | `test (router-sync)` | `cpu` | all | 90 | `snarkos-node-router`; then `-node-sync` |
+ | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
+@@ -110,8 +110,11 @@ such a pull request cannot merge until a workflow reports that check for it.
  
-             print_requests();
-@@ -1939,6 +1943,15 @@ impl<N: Network> BlockSync<N> {
-         height
-     }
+ ## Test groups
  
-+    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
-+    /// ledger or requested.
-+    fn requested_all_served(&self) -> bool {
-+        let current_height = self.retention_height();
-+        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
-+        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
-+        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
-+    }
-+
-     /// Given the sync peers and their minimum common ancestor, return a list of block requests
-     /// starting at `start_height` (see `first_unrequested_height`).
-     ///
-@@ -2931,6 +2944,25 @@ mod tests {
-         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
-     }
+-Each line of a `test` entry is one cargo build. `cargo test -p a -p b` unifies
+-the features of `a` and `b`, and several crates enable features on their
++Each line of a `test` entry is one cargo command. Lines with the same `-p` set
++and cargo flags share one build, as the two lines of
++`test (node-rest-distribution)` do: nextest's `-E` filters split that build's
++tests between them. `cargo test -p a -p b` unifies the features of `a` and
++`b`, and several crates enable features on their
+ dependencies that change what those dependencies do, such as
+ `snarkos-node-router/test-helpers` and `snarkvm-ledger-block/test`. So crates
+ share a line only where that unification enables no such feature on any crate.
+@@ -123,8 +126,9 @@ this before moving a crate between lines, for example by comparing
  
-+    /// Tests when block sync has requested every block its peers serve.
-+    #[test]
-+    fn test_quiet_while_tip_block_in_flight() {
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_001, 0);
-+        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
-+        assert!(sync.requested_all_served());
-+
-+        // A peer ahead whose floor is above the next height to request.
-+        add_peers(&sync, 2, 1, 1_100, 1_050);
-+        assert!(!sync.requested_all_served());
-+
-+        // No peer ahead, but requests are outstanding.
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_000, 0);
-+        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
-+        assert!(!sync.requested_all_served());
-+    }
-+
-     /// Tests that a `Pruned` reply raises the floor, releases the whole chunk at once, and that the
-     /// chunk is re-issued at once to a peer that serves it.
-     #[test]
+ `test (bft)` runs with `metrics`, which the `snarkos` binary enables by
+ default, so the tests in `helpers::telemetry` compile. The `each-feature` job
+-checks the crate without `metrics`. The `simple_node` line passes
+-`--no-tests=fail`, because the step otherwise lets a command match no tests.
++checks the crate without `metrics`. The `simple_node` line and the two
++`node-rest-distribution` lines pass `--no-tests=fail`, because the step
++otherwise lets a command match no tests.
+ 
+ [`.config/nextest.toml`](.config/nextest.toml) sets two test threads, which
+ the hosted entries use. The fleet entries run 16 tests at a time through
 ```
 
 ---
 
-### Incident Patch 2: `5da5dc92` (2026-11-21)
-**Commit Message**: Rename the schedule gate to schedule-due and require a verdict to skip
+### Incident Patch 2: `42927119` (2026-11-22)
+**Commit Message**: Test node, rest and ledger-distribution from one build
 
-schedule-due outputs due. A head is not due only if an earlier scheduled run
-on it passed or failed with its fmt job run, so cancelled, no-op and
-gate-failed runs no longer count. This matches snarkVM's gate.
+The new test (node-rest-distribution) leg replaces test (node), the
+second line of test (services) and test (ledger-distribution). Its two
+lines name the same four packages, so cargo builds once and the second
+line's build is fresh. nextest filters split the run: snarkos-node and
+snarkos-node-bft-storage-service in the first line, snarkos-node-rest
+and snarkos-ledger-distribution in the second.
+
+The merged build enables the same features on every snarkos and snarkvm
+crate as the separate commands did, checked with --unit-graph. Only
+third-party crates such as tokio, regex and time gain features.
+
+This drops one fleet job and two of the leg's three snarkvm builds.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmMdw2sVR367ZdZ9CMB
+Claude-Session: https://claude.ai/code/session_01UYfmmPXcqUXUXgnbBMbC5a
 
-**File**: `.github/workflows/ci.yml` (modified, +69/-58)
+**File**: `.github/workflows/ci.yml` (modified, +14/-10)
 ```diff
-@@ -9,8 +9,8 @@ on:
-   push:
-     branches: ['release/**']
-   # Staging's head, every six hours. The schedule fires only in the default
--  # branch's copy of this file, and `schedule-gate` skips a head that a
--  # scheduled run already checked.
-+  # branch's copy of this file, and `schedule-due` skips a head that a
-+  # scheduled run already gave a verdict.
-   schedule:
-     - cron: '47 */6 * * *'
-   workflow_dispatch:
-@@ -21,8 +21,10 @@ permissions:
- # A superseded PR run holds a one-slot box the new head is queued behind, so a
- # new push cancels it. Other runs are grouped by event, branch and commit
- # instead: a group keeps one pending run and drops the rest, and every push to
--# a release branch needs its own verdict. Two scheduled runs of one commit run
--# one after the other, so the second's `schedule-gate` sees the first's result.
-+# a release branch needs its own verdict. Scheduled runs have groups of their
-+# own, so a push or pull request run never cancels one. Two scheduled runs of
-+# one commit run one after the other, so the second's `schedule-due` sees the
-+# first's verdict.
- concurrency:
-   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || format('{0}-{1}-{2}', github.event_name, github.ref, github.sha) }}
-   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-@@ -35,58 +37,65 @@ env:
- # fleet job, from any run, a fork's included, so no job here starts them. The
- # fleet jobs run only in this repository, which alone may use the fleet.
- #
--# Every job needs `schedule-gate`. It runs only on a schedule, so each job's
-+# Every job needs `schedule-due`. It runs only on a schedule, so each job's
- # `if:` holds a status function: a job whose need was skipped is otherwise
- # skipped too.
- jobs:
--  # On a schedule, decides whether this run checks staging's head. A head
--  # that an earlier scheduled run passed, failed or is still running is
--  # skipped: a human reruns a failed run. A re-run of a scheduled run always
--  # checks. snarkOS-internal mirrors staging with this file, and there the
--  # gate and so the whole run are skipped.
--  schedule-gate:
-+  # On a schedule, decides whether staging's head is due a check. It is not
-+  # due if an earlier scheduled run of this workflow on the same commit gave
-+  # a verdict: it passed or failed, and its `fmt` job ran. A cancelled run,
-+  # a run this job skipped and a run where this job failed give none, and a
-+  # failed head is not checked again until a human re-runs it. A re-run is
-+  # always due. snarkOS-internal mirrors staging with this file, and there
-+  # this job and so the whole run are skipped.
-+  schedule-due:
-     if: github.event_name == 'schedule' && github.repository == 'aleo-labs-protocol/snarkOS'
-     runs-on: ubuntu-latest
-     timeout-minutes: 10
-     permissions: { actions: read }
-     outputs:
--      run: ${{ steps.check.outputs.run }}
-+      due: ${{ steps.check.outputs.due }}
-     steps:
-       - id: check
-         env:
-           GH_TOKEN: ${{ github.token }}
-+          MARKER: fmt
-         run: |
-           workflow=${GITHUB_WORKFLOW_REF%%@*}
-           workflow=${workflow##*/}
--          if [ "$GITHUB_RUN_ATTEMPT" -gt 1 ]; then
--            echo "A re-run: checking $GITHUB_SHA." | tee -a "$GITHUB_STEP_SUMMARY"
--            echo run=true >> "$GITHUB_OUTPUT"
-+          due() {
-+            echo "$2" | tee -a "$GITHUB_STEP_SUMMARY"
-+            echo "due=$1" >> "$GITHUB_OUTPUT"
-             exit 0
--          fi
--          # An error here checks the head rather than leave it unchecked.
-+          }
-+          [ "$GITHUB_RUN_ATTEMPT" -eq 1 ] || due true "A re-run: checking $GITHUB_SHA."
-+          # An API error checks the head rather than leave it unchecked.
-           if ! runs=$(gh run list -R "$GITHUB_REPOSITORY" --workflow "$workflow" \
-               --event schedule --branch "$GITHUB_REF_NAME" --commit "$GITHUB_SHA" \
-               --limit 100 --json databaseId,status,conclusion,url); then
-             echo "::warning::could not list earlier scheduled runs; checking $GITHUB_SHA"
--            echo run=true >> "$GITHUB_OUTPUT"
--            exit 0
--          fi
--          earlier=$(jq --argjson id "$GITHUB_RUN_ID" '[.[] | select(.databaseId != $id)
--            | select(.status != "completed" or (.conclusion | IN("success", "failure", "timed_out")))]' <<< "$runs")
--          if [ "$(jq length <<< "$earlier")" -eq 0 ]; then
--            echo "Checking $GITHUB_SHA." | tee -a "$GITHUB_STEP_SUMMARY"
--            echo run=true >> "$GITHUB_OUTPUT"
--          else
--            jq -r --arg sha "$GITHUB_SHA" '"Skipped: \($sha) was checked by \(.[0].url) (\(.[0] | if .status == "completed" then .conclusion else .status end))."' \
--              <<< "$earlier" | tee -a "$GITHUB_STEP_SUMMARY"
--            echo run=false >> "$GITHUB_OUTPUT"
-+            due true "Checking $GITHUB_SHA."
-           fi
-+          # Newest first.
-+          while read -r id conclusion url; do
-+            if ! ma
+@@ -220,9 +220,11 @@ jobs:
+         run: cargo locktick-clippy -q -p snarkos-utilities --message-format=json | grep '"name":"locktick"' > /dev/null
+       - run: cargo locktick-clippy --workspace --all-targets --all-features -- -D warnings
+ 
+-  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+-  # features of a and b, and several crates enable features on their
+-  # dependencies that change what those dependencies do:
++  # Each line of `runs` is one cargo command. Lines with the same `-p` set and
++  # cargo flags share one build; nextest's `-E` and `--no-tests` are not cargo
++  # flags. `cargo test -p a -p b` unifies the features of a and b, and several
++  # crates enable features on their dependencies that change what those
++  # dependencies do:
+   # `snarkos-node-router/test-helpers`, `snarkos-node-network/test-helpers` and
+   # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
+   # other code paths. Crates share a line only where that unification enables
+@@ -327,11 +329,16 @@ jobs:
+       matrix:
+         include:
+           - name: services
++            runs: nextest run -p snarkos-node-consensus -p snarkos-cli
++          # Both lines name the same packages, so they share one build, and the
++          # filters split the run in two. A package named in `-p` but in neither
++          # filter is built and never tested. `--no-tests=fail` makes a filter
++          # that stops matching fail. Builds RocksDB, whose bindings need
++          # libclang, which hosted runners lack.
++          - name: node-rest-distribution
+             runs: |
+-              nextest run -p snarkos-node-consensus -p snarkos-cli
+-              nextest run -p snarkos-node-rest
+-          - name: node
+-            runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service
++              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node)|package(=snarkos-node-bft-storage-service) --no-tests=fail
++              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node-rest)|package(=snarkos-ledger-distribution) --no-tests=fail
+           # Both lines use `metrics`, which the `snarkos` binary enables by
+           # default. `helpers::telemetry` compiles only under it, and a line
+           # without it rebuilds the snarkvm and bft crates. nextest skips the
+@@ -349,9 +356,6 @@ jobs:
+             runs: |
+               nextest run -p snarkos-node-router
+               nextest run -p snarkos-node-sync
+-          # Builds RocksDB, whose bindings need libclang, which hosted runners lack.
+-          - name: ledger-distribution
+-            runs: nextest run -p snarkos-ledger-distribution
+     name: test (${{ matrix.name }})
+     steps: *test-steps
+ 
 ```
 
-**File**: `CI.md` (modified, +17/-11)
+**File**: `CI.md` (modified, +10/-6)
 ```diff
-@@ -31,25 +31,31 @@ instead, so `staging` is checked after each merge and not before it.
+@@ -79,8 +79,8 @@ jobs run on every event.
+ | `test (light)` | hosted | all | 90 | `snarkos-account`, `-utilities`, `-node-tcp`, `-node-sync-locators`, `-node-network` |
+ | `test (cdn)` | hosted | all | 90 | `snarkos-node-cdn` |
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+-| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli`; then `-node-rest` |
+-| `test (node)` | `cpu` | all | 90 | `snarkos-node`, `-node-bft-storage-service` |
++| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli` |
++| `test (node-rest-distribution)` | `cpu` | all | 90 | `snarkos-node`, `-node-bft-storage-service`; then `-node-rest`, `snarkos-ledger-distribution`; one build |
+ | `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
+ | `test (router-sync)` | `cpu` | all | 90 | `snarkos-node-router`; then `-node-sync` |
+ | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
+@@ -110,8 +110,11 @@ such a pull request cannot merge until a workflow reports that check for it.
  
- ## The schedule
+ ## Test groups
  
--The `schedule-gate` job runs first in a scheduled run. It decides whether the
--run checks the head of `staging`:
-+The `schedule-due` job runs first in a scheduled run. It decides whether the
-+head of `staging` is due a check:
+-Each line of a `test` entry is one cargo build. `cargo test -p a -p b` unifies
+-the features of `a` and `b`, and several crates enable features on their
++Each line of a `test` entry is one cargo command. Lines with the same `-p` set
++and cargo flags share one build, as the two lines of
++`test (node-rest-distribution)` do: nextest's `-E` filters split that build's
++tests between them. `cargo test -p a -p b` unifies the features of `a` and
++`b`, and several crates enable features on their
+ dependencies that change what those dependencies do, such as
+ `snarkos-node-router/test-helpers` and `snarkvm-ledger-block/test`. So crates
+ share a line only where that unification enables no such feature on any crate.
+@@ -123,8 +126,9 @@ this before moving a crate between lines, for example by comparing
  
--- A head that an earlier scheduled run passed, failed or is still running is
--  skipped. Every other job in the run is then skipped, and so is `ci-ok`.
--- A head whose earlier scheduled runs were all cancelled is checked again.
--- A re-run of a scheduled run always checks its head. To retry a failed
--  head, re-run the scheduled run's jobs.
-+- The head is not due if an earlier scheduled run on it gave a verdict: the
-+  run passed or failed, and its `fmt` job ran. Every other job in the run is
-+  then skipped, and so is `ci-ok`. The job's summary names that run.
-+- A cancelled run, a run that was not due, and a run where `schedule-due`
-+  failed give no verdict. A head with only such runs is due.
-+- A failed head is not checked again on the next tick. To retry it, re-run
-+  the scheduled run's jobs. A re-run is always due.
-+- If the GitHub API fails, the head is due.
-+
-+Scheduled runs have concurrency groups of their own. Two on one commit run
-+one after the other, and no push or pull request run cancels one.
+ `test (bft)` runs with `metrics`, which the `snarkos` binary enables by
+ default, so the tests in `helpers::telemetry` compile. The `each-feature` job
+-checks the crate without `metrics`. The `simple_node` line passes
+-`--no-tests=fail`, because the step otherwise lets a command match no tests.
++checks the crate without `metrics`. The `simple_node` line and the two
++`node-rest-distribution` lines pass `--no-tests=fail`, because the step
++otherwise lets a command match no tests.
  
- A day with no merge into `staging` costs only the hosted minutes of
--`schedule-gate` and `notify`.
-+`schedule-due` and `notify`.
- 
- The `notify` job posts to Slack when the scheduled run turns red, and once when
--it is green again. A run the gate skipped changes nothing. The channel is the
-+it is green again. A run that was not due changes nothing. The channel is the
- repository variable `CI_SLACK_CHANNEL`, `#ci` by default.
- 
- A schedule fires only in the default branch's copy of `ci.yml`.
- `snarkOS-internal` mirrors `staging` with this file, so its schedule fires too.
--There the gate is skipped, and so is every job after it.
-+There `schedule-due` is skipped, and so is every job after it.
- 
- ## Jobs
- 
-@@ -60,7 +66,7 @@ jobs run on every event.
- 
- | Job | Runner | Trigger | Timeout (min) | What it runs |
- |---|---|---|---|---|
--| `schedule-gate` | hosted | schedule | 10 | decides whether a scheduled run checks `staging`'s head |
-+| `schedule-due` | hosted | schedule | 10 | decides whether `staging`'s head is due a check |
- | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
- | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
- | `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly |
+ [`.config/nextest.toml`](.config/nextest.toml) sets two test threads, which
+ the hosted entries use. The fleet entries run 16 tests at a time through
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4758** (2026-11-22): Bump snarkVM to a33f170b2 and rename test_network to dev-network (@cbeck88)
+- **PR #4756** (2026-11-22): CI: test node, rest and ledger-distribution from one build (@cbeck88)
 - **PR #4754** (2026-11-21): Check staging on a 6-hourly schedule instead of on every push (@cbeck88)
 - **PR #4753** (2026-11-21): Bump snarkVM to aleo-labs-protocol/snarkVM@1757a9b84 (@cbeck88)
 - **PR #4752** (2026-11-21): Take locktick from snarkVM's re-export (@cbeck88)
 - **PR #4751** (2026-11-21): CI: remove the start-runner job and fork-pr-runners.yml (@cbeck88)
-- **PR #4750** (2026-11-21): Keep block sync quiet while the tip block is in flight (@eranrund)
-- **PR #4749** (closed): Deserialize snarkVM Data on the blocking pool in snarkOS (@cbeck88)
 
 ---
 
@@ -2174,58 +2122,53 @@ Claude-Session: https://claude.ai/code/session_01UYfmmMdw2sVR367ZdZ9CMB
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in block_sync.rs
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d41f2d25`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bea875ce`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            if total_requests == 0 {
-            } else if !self.requested_all_served() {
-                trace!(
-                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
-                );
-        } else if self.requested_all_served() {
-            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
-            // block is in flight.
-            vec![]
-            // No sync peers serve the next height to request.
-    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
-    /// ledger or requested.
-    fn requested_all_served(&self) -> bool {
-        let current_height = self.retention_height();
-        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
-        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
-        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
-    }
-
-    /// Tests when block sync has requested every block its peers serve.
-    #[test]
-    fn test_quiet_while_tip_block_in_flight() {
-        let sync = sample_sync
+  # Each line of `runs` is one cargo command. Lines with the same `-p` set and
+  # cargo flags share one build; nextest's `-E` and `--no-tests` are not cargo
+  # flags. `cargo test -p a -p b` unifies the features of a and b, and several
+  # crates enable features on their dependencies that change what those
+  # dependencies do:
+            runs: nextest run -p snarkos-node-consensus -p snarkos-cli
+          # Both lines name the same packages, so they share one build, and the
+          # filters split the run in two. A package named in `-p` but in neither
+          # filter is built and never tested. `--no-tests=fail` makes a filter
+          # that stops matching fail. Builds RocksDB, whose bindings need
+          # libclang, which hosted runners lack.
+          - name: node-rest-distribution
+              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node)|package(=snarkos-node-bft-storage-service) --no-tests=fail
+              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node-rest)|package(=snarkos-le
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            if total_requests != 0 {
-                trace!(
-                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
-                );
-            } else {
-            // This happens if we already requested all advertised blocks.
+  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+  # features of a and b, and several crates enable features on their
+  # dependencies that change what those dependencies do:
+              nextest run -p snarkos-node-consensus -p snarkos-cli
+              nextest run -p snarkos-node-rest
+          - name: node
+            runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service
+          # Builds RocksDB, whose bindings need libclang, which hosted runners lack.
+          - name: ledger-distribution
+            runs: nextest run -p snarkos-ledger-distribution
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d41f2d25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bea875ce` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

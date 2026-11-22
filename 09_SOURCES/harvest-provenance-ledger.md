@@ -12177,3 +12177,8 @@ Every entry in this ledger must capture:
 | `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `0a49393d` | Multi-dimensional audit evidence | 2026-11-22T18:00:24.473Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `87b3a5ff` | Multi-dimensional audit evidence | 2026-11-22T18:00:29.006Z |
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-22T18:12:22.245Z |
+| `learn-huggingface-kormo-vl-kormo-web-11b` | `https://huggingface.co/KORMo-VL/KORMo-Web-11B` | `hf-kormo-v` | Multi-dimensional audit evidence | 2026-11-22T18:21:24.290Z |
+| `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `b2780b05` | Multi-dimensional audit evidence | 2026-11-22T18:21:28.002Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `165a8ee8` | Multi-dimensional audit evidence | 2026-11-22T18:21:28.907Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `318183b5` | Multi-dimensional audit evidence | 2026-11-22T18:21:32.476Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4c1f0dba` | Multi-dimensional audit evidence | 2026-11-22T18:21:34.086Z |

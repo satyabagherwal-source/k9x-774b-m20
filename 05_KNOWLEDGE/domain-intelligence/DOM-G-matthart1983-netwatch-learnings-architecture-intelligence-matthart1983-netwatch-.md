@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T19:23:27.072Z",
+  "timestamp": "2026-11-22T18:21:37.782Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-matthart1983-netwatch-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [matthart1983-netwatch-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T19:23:27.072Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T18:21:37.782Z`  
 > **Learning ID**: `LEARN-EVO-matthart1983-netwatch-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: F (Design Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source**: github ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
-> **Source Version**: `78f85143`  
+> **Source Version**: `b2780b05`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T19:23:16.930Z  
+> **Timestamp**: 2026-11-22T18:21:26.816Z  
 > **Learning ID**: `learn-github-matthart1983-netwatch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:23:16.923Z  
+> **Harvest Timestamp**: 2026-11-22T18:21:17.845Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Network diagnostics in your terminal. Inspect traffic, connections and network behaviour. Built with Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3604 stars
+- **Stars / Engagement**: 3735 stars
 
 ---
 
@@ -2253,109 +2253,62 @@ fn report(args: &[String]) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78f85143` (2026-11-19)
-**Commit Message**: release: netwatch v1.0.0 — Diagnose with rule maturity and earned verdicts, DNS and interface rule repairs, CIDR packet filters
+### Incident Patch 1: `b2780b05` (2026-11-21)
+**Commit Message**: Merge pull request #219 from matthart1983/fix/sbom-audit-hardening
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+release: SBOM for every target, checked against each binary (#218 + hardening)
+
+**File**: `.github/workflows/release.yml` (modified, +26/-2)
 ```diff
-@@ -2,7 +2,7 @@
- 
- All notable changes to NetWatch will be documented in this file.
- 
--## [Unreleased]
-+## [1.0.0] - 2026-11-19
- 
- The 1.0 release. It is 1.0.0-rc.4 with these changes; see the rc entries below for everything new since 0.40.
- 
-```
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -1409,7 +1409,7 @@ dependencies = [
- 
- [[package]]
- name = "netwatch-tui"
--version = "1.0.0-rc.4"
-+version = "1.0.0"
- dependencies = [
-  "anyhow",
-  "brotli",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "netwatch-tui"
--version = "1.0.0-rc.4"
-+version = "1.0.0"
- edition = "2021"
- # Minimum supported Rust version, checked by CI's msrv job. Raised only in a
- # minor release, and named in the changelog when it is. Today's floor is
-```
-
-**File**: `packaging/rpm/netwatch.spec` (modified, +5/-2)
-```diff
-@@ -12,9 +12,9 @@
- # below 1.0.0 and allows, where it allows no hyphen). scripts/release.sh writes
- # both. `spec_version_matches_the_crate` in tests/packaging.rs fails the build
- # if they drift.
--%global upstream 1.0.0-rc.4
-+%global upstream 1.0.0
- Name:           netwatch
--Version:        1.0.0~rc.4
-+Version:        1.0.0
- Release:        1%{?dist}
- Summary:        Real-time network diagnostics in your terminal
- 
-@@ -100,6 +100,9 @@ MSG
- %{_unitdir}/%{name}.service
- 
- %changelog
-+* Thu Nov 19 2026 Matt Hartley <matthew.t.hartley@gmail.com> - 1.0.0-1
-+- Diagnose with rule maturity and earned verdicts, DNS and interface rule repairs, CIDR packet filters
-+
- * Sat Nov 14 2026 Matt Hartley <matthew.t.hartley@gmail.com> - 1.0.0~rc.4-1
- - Diagnose rule maturity, earned verdicts, DNS and interface rule repairs, CIDR packet filters
- 
-```
-
----
-
-### Incident Patch 2: `6f2e1a3f` (2026-11-19)
-**Commit Message**: changelog: notes for 1.0.0
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +11/-0)
-```diff
-@@ -2,6 +2,17 @@
- 
- All notable changes to NetWatch will be documented in this file.
- 
-+## [Unreleased]
-+
-+The 1.0 release. It is 1.0.0-rc.4 with these changes; see the rc entries below for everything new since 0.40.
-+
-+### Changed
-+- Dependency updates: the GitHub Actions group (#210), the cargo minor group (#208) and jsonschema 0.61.1 (#209).
-+- `cargo deny` ignores RUSTSEC-2026-0543 (chrono is unmaintained, with no vulnerability reported). chrono is to be replaced in 1.1 (#213).
-+
-+### Fixed
-+- The release workflow's apt job installs `apt-utils` when the runner lacks `apt-ftparchive`, which stopped the apt repository from being updated for 0.40.1 (#211).
-+
- ## [1.0.0-rc.4] - 2026-11-14
- 
- ### Added
+@@ -503,13 +503,37 @@ jobs:
+       - name: Install cargo-cyclonedx
+         uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+         with:
+-          tool: cargo-cyclonedx
++          tool: cargo-cyclonedx@0.5.9
+       - name: Generate the SBOM
+         id: sbom
+         run: |
+-          cargo cyclonedx --format json --spec-version 1.5 --all-features --override-filename netwatch.cdx
++          cargo cyclonedx --format json --spec-version 1.5 --all-features --target all --override-filename netwatch.cdx
+           mv netwatch.cdx.json "netwatch-${RELEASE_TAG#v}.cdx.json"
+           echo "path=netwatch-${RELEASE_TAG#v}.cdx.json" >> "$GITHUB_OUTPUT"
++      # The one SBOM is attested against every artifact, so it must name
++      # every crate each binary links. Checked against the cargo-auditable
++      # list inside each binary; phantom is waived because the SBOM covers
++      # all platforms and each binary links only its own.
++      # taiki-e/install-action has no manifest entry for sbom-attest, so it
++      # is built from the exact crates.io version with its own lockfile
++      # rather than fetched as an unchecked binary.
++      - name: Install sbom-attest
++        run: cargo install --locked sbom-attest --version 0.4.6
++      - name: Check the SBOM against every binary
++        env:
++          SBOM_PATH: ${{ steps.sbom.outputs.path }}
++        run: |
++          set -euo pipefail
++          shopt -s nullglob
++          dir=$(mktemp -d)
++          n=0
++          for a in *.tar.gz; do tar xzf "$a" -C "$dir"; done
++          for a in *.zip; do unzip -q -o "$a" -d "$dir"; done
++          for bin in "$dir"/netwatch-*; do
++            sbom-attest audit "$SBOM_PATH" --binary "$bin" --waive phantom --summary "$GITHUB_STEP_SUMMARY"
++            n=$((n + 1))
++          done
++          [ "$n" -gt 0 ]
+       - name: Attest the SBOM
+         uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
+         with:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #219** (2026-11-21): release: SBOM for every target, checked against each binary (#218 + hardening) (@matthart1983)
+- **PR #218** (2026-11-21): release: SBOM for every target, checked against each binary with sbom-attest (@Mattbusel)
 - **PR #212** (2026-11-19): deny: ignore RUSTSEC-2026-0543 (chrono unmaintained) until it is replaced (@matthart1983)
 - **PR #211** (2026-11-18): release workflow: install apt-utils when the runner lacks apt-ftparchive (@matthart1983)
 - **PR #210** (2026-11-14): build(deps): bump the actions group with 5 updates (@dependabot[bot])
 - **PR #209** (2026-11-14): build(deps): bump jsonschema from 0.60.2 to 0.61.1 (@dependabot[bot])
-- **PR #208** (2026-11-14): build(deps): bump the cargo-minor group with 5 updates (@dependabot[bot])
-- **PR #207** (2026-11-14): build(deps): bump jsonschema from 0.20.0 to 0.60.2 (@matthart1983)
 
 ---
 
@@ -2375,31 +2328,54 @@ Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release: netwatch v1.0.0 — Diagnose with rule maturity and earned verdicts, DNS 
+## X. Empirical Invariant Guard in release.yml
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matthart1983/netwatch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matthart1983/netwatch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78f85143`: release: netwatch v1.0.0 — Diagnose with rule maturity and earned verdicts, DNS and interface rule repairs, CIDR packet filters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2780b05`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [1.0.0] - 2026-11-19
+          tool: cargo-cyclonedx@0.5.9
+          cargo cyclonedx --format json --spec-version 1.5 --all-features --target all --override-filename netwatch.cdx
+      # The one SBOM is attested against every artifact, so it must name
+      # every crate each binary links. Checked against the cargo-auditable
+      # list inside each binary; phantom is waived because the SBOM covers
+      # all platforms and each binary links only its own.
+      # taiki-e/install-action has no manifest entry for sbom-attest, so it
+      # is built from the exact crates.io version with its own lockfile
+      # rather than fetched as an unchecked binary.
+      - name: Install sbom-attest
+        run: cargo install --locked sbom-attest --version 0.4.6
+      - name: Check the SBOM against every binary
+        env:
+          SBOM_PATH: ${{ steps.sbom.outputs.path }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          dir=$(mktemp -d)
+          n=0
+          for a in *.tar.gz; do tar xzf "$a" -C "$dir"; done
+          for a in *.zip; do unzip -q -o "$a" -d "$dir"; done
+          for bin in "$dir"/netwatch-*; do
+            sbom-attest audit "$SBOM_PATH" --binary "$bin" --waive pha
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-## [Unreleased]
+          tool: cargo-cyclonedx
+          cargo cyclonedx --format json --spec-version 1.5 --all-features --override-filename netwatch.cdx
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78f85143` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2780b05` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

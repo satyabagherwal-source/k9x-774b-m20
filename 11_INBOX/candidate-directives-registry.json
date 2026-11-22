@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T18:12:36.970Z",
+  "last_updated": "2026-11-22T18:21:39.450Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3601,14 +3601,14 @@
       "learning_id": "learn-github-nucleoidai-nucleoid"
     },
     {
-      "id": "CD-3NMT",
+      "id": "CD-YDBQ",
       "directive_title": "Empirical Invariant Guard in ci.yml",
       "source_repo": "aleo-labs-protocol-snarkos-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-3NMT-empirical-invariant-guard-in-ci-yml.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YDBQ-empirical-invariant-guard-in-ci-yml.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-21",
+      "date_staged": "2026-11-22",
       "domain_letter": "D"
     },
     {
@@ -46964,6 +46964,57 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9B5236-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-YC54",
+      "directive_title": "Empirical Invariant Guard in release.yml",
+      "source_repo": "matthart1983-netwatch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YC54-empirical-invariant-guard-in-release-yml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-Y84S",
+      "directive_title": "update dependency org.jruby:jruby-core to v10.1.3.0",
+      "source_repo": "vespa-engine/vespa",
+      "source_commit": "318183b5",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y84S-update-dependency-org-jruby-jruby-core-to-v10-1-3-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-Y9DF",
+      "directive_title": "Draft NUC 134 Ruby Collection Method Aliases",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "4c1f0dba",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y9DF-draft-nuc-134-ruby-collection-method-aliases.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-3E94D1",
+      "directive_title": "Empirical Invariant Guard in release.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "matthart1983-netwatch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3E94D1-empirical-invariant-guard-in-release-yml.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-657FF2",
+      "directive_title": "Empirical Invariant Guard in ci.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-657FF2-empirical-invariant-guard-in-ci-yml.md",
       "staged_date": "2026-11-22"
     }
   ]

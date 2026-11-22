@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T18:12:37.501Z",
+  "last_updated": "2026-11-22T18:21:39.980Z",
   "total_verified_learnings": 9072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23696,
+  "total_items": 23702,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112830,13 +112830,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ff15a1de",
-      "content_hash": "46f1f4bcef83dc4589e6387299ee680862fb89647a6b373af2847504281c4eea",
+      "source_version": "165a8ee8",
+      "content_hash": "2b47fa5c6e2da408942d4928468ac56b3bbc343e76587f597499580c432ae265",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:29:30.652Z"
+      "persisted_at": "2026-11-22T18:21:29.724Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215883,13 +215883,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "ff15a1de",
-      "content_hash": "9809a2d21f8433e6f2466e52bed27c5a76e95eba7febf9c44424697814a8f7ef",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "165a8ee8",
+      "content_hash": "e51366b40d5800addb303ba2b5081d3a82b352bbed86e90ef4480acb046eb50f",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215992,7 +215992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T02:29:29.898Z",
+      "verified_at": "2026-11-22T18:21:28.522Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226850,8 +226850,8 @@
       "slug": "matthart1983-netwatch",
       "platform": "github",
       "source_url": "https://github.com/matthart1983/netwatch",
-      "source_version": "78f85143",
-      "content_hash": "f7f0375c516225aececaf9f7a26feb0612b17b3d9d7eace1c111b82083123375",
+      "source_version": "b2780b05",
+      "content_hash": "b5282a21b43ea1af48c7817417bc271e0b4409d1c8c9b4d2254b3d6f243911ea",
       "dossier_path": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "promoted_rules": [
@@ -226874,6 +226874,11 @@
           "number": 8698,
           "title": "Architecture-Aware Drop-Oldest Ingestion Rings with At-Least-Once Delivery Gating",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9969,
+          "title": "Empirical Invariant Guard in release.yml",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226881,7 +226886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:23:17.225Z",
+      "verified_at": "2026-11-22T18:21:27.745Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226935,10 +226940,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/matthart1983-netwatch-agent-contract-matthart1983-netwatch-autonomous-specialist.md",
       "title": "Agent Contract: matthart1983/netwatch Autonomous Specialist Persona",
       "repository": "matthart1983/netwatch",
-      "source_version": "78f85143",
-      "content_hash": "39cd5e7b87156f60daacf68b3ed5f87dd1e5748461da99a6d5efc2cd6eeb8379",
+      "source_version": "b2780b05",
+      "content_hash": "efa998b1807a3046b858839d7945ccf57e4916f8a28a795105a71a47f9f5ff20",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:23:18.040Z"
+      "persisted_at": "2026-11-22T18:21:28.830Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch",
@@ -226947,10 +226952,10 @@
       "relative_path": "08_VERIFICATION/matthart1983-netwatch-verification-protocol-empirical-defect-shield-for-matthart.md",
       "title": "Verification Protocol: Empirical Defect Shield for matthart1983/netwatch",
       "repository": "matthart1983/netwatch",
-      "source_version": "78f85143",
-      "content_hash": "1b1e220a35bdc05259ee5284e8a78e29b80e8683e9c11470cb7a96e069cfb03c",
+      "source_version": "b2780b05",
+      "content_hash": "89f2a84b050d76720c86839a3d072d9676392d9c2cf8c3097d7b2c92531623ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:23:18.173Z"
+      "persisted_at": "2026-11-22T18:21:28.998Z"
     },
     "learn-github-kgateway-dev-kgateway": {
       "learning_id": "learn-github-kgateway-dev-kgateway",
@@ -227195,9 +227200,9 @@
       "title": "Architecture Intelligence: matthart1983-netwatch-learnings Core Invariants",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c2e0c4e20c7592971c632647f95a7390c2b3bf17f3e2f7f8ac3243f14ab8263",
+      "content_hash": "ce2b726c2457178a64a2f356e7d55495d22b980ba1fb19b93458ab85b4ed2421",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:23:27.398Z"
+      "persisted_at": "2026-11-22T18:21:38.121Z"
     },
     "agent_contract-agent-contract-matthart1983-netwatch-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-matthart1983-netwatch-learnings-autonomous-specialist-persona",
@@ -227207,9 +227212,9 @@
       "title": "Agent Contract: matthart1983-netwatch-learnings Autonomous Specialist Persona",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "b90a8e4768278d4bf2f531436cd06f8af463c4e8c08b5602c1d6a82479ca2390",
+      "content_hash": "7d4c4413a65d8b78be64bfe6a80b31c5b9268049a8f5535a71faeffa77e34a86",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:23:27.607Z"
+      "persisted_at": "2026-11-22T18:21:38.313Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch-learning",
@@ -227219,9 +227224,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for matthart1983-netwatch-learnings",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "15325ff296b0b513ae6807b7acef6b22f3d743598a68f0f03d1b1b3169a0ff70",
+      "content_hash": "cd0bbdd70eb687d230b29260b7e97821240229781fae4f702dfaf7094c731d3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:23:27.752Z"
+      "persisted_at": "2026-11-22T18:21:38.466Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin",
@@ -229689,8 +229694,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "57a7a48c",
-      "content_hash": "d685cb4a70ab86429d5ec681987473339335b453e7f9b4c1c8674eb8e39f5a6b",
+      "source_version": "4c1f0dba",
+      "content_hash": "3247dc84ca7f68c68c6f18f4780bde0bc342875140c08289bf5afe4524b9127b",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229918,6 +229923,11 @@
           "number": 9959,
           "title": "Rename state object list to objects",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9971,
+          "title": "Draft NUC 134 Ruby Collection Method Aliases",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229925,7 +229935,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:57:39.709Z",
+      "verified_at": "2026-11-22T18:21:33.854Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229967,10 +229977,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "57a7a48c",
-      "content_hash": "ef900fc43a908eda36a96ebff47e1083bbcad8a84f7998031c9f565b66252c7d",
+      "source_version": "4c1f0dba",
+      "content_hash": "96eefcd210231c96e7b573b2bc73dc85c92dc7331653191fd6e38d297d810024",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T16:57:40.393Z"
+      "persisted_at": "2026-11-22T18:21:34.504Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229979,10 +229989,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "57a7a48c",
-      "content_hash": "4a8862f3884ad2651130ea0ec537d126324caed4bdec44e63cf126dd121aef46",
+      "source_version": "4c1f0dba",
+      "content_hash": "28b82301808ead3b780219613c2de3a9aefc95fb3ef444a56348b276ce2c05cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:57:40.570Z"
+      "persisted_at": "2026-11-22T18:21:34.684Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -237560,8 +237570,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "f099e88f",
-      "content_hash": "377404da9935bd1b4a5682e0adcb5714fffc289adca2ebbb5e7fd8762825ae9a",
+      "source_version": "318183b5",
+      "content_hash": "9ae6cc34159aa854f9d837846df5371bc8ca24b7ff95d04487b12b2931cc37df",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -237584,6 +237594,11 @@
           "number": 9805,
           "title": "Pass a timeout to every ONNX evaluation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9970,
+          "title": "update dependency org.jruby:jruby-core to v10.1.3.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237591,7 +237606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T16:40:16.965Z",
+      "verified_at": "2026-11-22T18:21:32.234Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237633,10 +237648,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "f099e88f",
-      "content_hash": "720cbe48d087c659975ade65b7e1c66ef5bb5c5f8d74d6d89310d8e9d9b26485",
+      "source_version": "318183b5",
+      "content_hash": "758e0ea2835d6956cf1ee8f6cb868e9cddf7dc62a1c178cf2a27409cadae5076",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T16:40:17.717Z"
+      "persisted_at": "2026-11-22T18:21:32.904Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -237645,10 +237660,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "f099e88f",
-      "content_hash": "086458bfdaa6079d5fb01da5974c47861038e02c5a7a4e991d6efba4c047563c",
+      "source_version": "318183b5",
+      "content_hash": "5e36e65e1107c4e25b42b73d7b07dc5de6b76e8b05e26af2b80c7789cb6722b4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T16:40:17.941Z"
+      "persisted_at": "2026-11-22T18:21:33.106Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -237657,10 +237672,10 @@
       "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
       "repository": "vespa-engine/vespa",
-      "source_version": "f099e88f",
-      "content_hash": "121fbf336c3b56a07a1101e0d1c1fe12b483e409a76bd12c7a43748b0729549b",
+      "source_version": "318183b5",
+      "content_hash": "be0c06495554f66c5233e524e2eb6d97e175c3102d5b06e9bd28b80adca39c5b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:40:18.167Z"
+      "persisted_at": "2026-11-22T18:21:33.269Z"
     },
     "candidate_directive-update-lock-file": {
       "item_id": "candidate_directive-update-lock-file",
@@ -256545,9 +256560,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "d049703af690fc46e597f6bc592c3bc3a06c19dc12b1510bc82f9f7ba9b7dd23",
+      "content_hash": "ab79b026ff2f46171a5f126312ac50688a745dc55f905e64fd4d1a794e8d861e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:47:52.117Z"
+      "persisted_at": "2026-11-22T18:21:39.980Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -264981,25 +264996,25 @@
       "rule_number": 8826,
       "title": "Empirical Invariant Guard in ci.yml",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "2875dee3",
+      "source_version": "165a8ee8",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T17:41:57.915Z"
+      "verified_at": "2026-11-22T18:21:28.522Z"
     },
     "candidate_directive-empirical-invariant-guard-in-ci-yml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-ci-yml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3NMT-empirical-invariant-guard-in-ci-yml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YDBQ-empirical-invariant-guard-in-ci-yml.md",
       "title": "Empirical Invariant Guard in ci.yml",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "e53972e7f7e2bba61c257b9b7b0eb877c6757d57b1a9465d32f32463f9f88843",
+      "content_hash": "b70b24d467ccda126c000e55221b00d2d4a0bbcacb5c743390e9fc2d4138e284",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T17:42:06.441Z"
+      "persisted_at": "2026-11-22T18:21:39.450Z"
     },
     "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
@@ -265008,10 +265023,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ff15a1de",
-      "content_hash": "352af4702deb1b1e75c7680a1425e56d97aade0edac57284dd2d0c15a4482de1",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-21T23:47:44.574Z"
+      "source_version": "165a8ee8",
+      "content_hash": "b4eed1507ea4f3d30e4f2cb231397ac6dcdc57f3c76381e94184478b3d524f11",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T18:21:29.569Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -269720,9 +269735,9 @@
       "title": "Agent Contract: aleo-labs-protocol-snarkos-learnings Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "bedcaac97b382cfeafc0a28e37a76153dd270932f523cf71d64f2f19544cee79",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-21T23:47:51.975Z"
+      "content_hash": "b27d6184a8d310bb8c59cdadab382bc0f2dc338b53f6459d0e0c2e963e4916d6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T18:21:39.826Z"
     },
     "learn-github-cypress-io-cypress": {
       "learning_id": "learn-github-cypress-io-cypress",
@@ -289530,7 +289545,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KORMo-VL/KORMo-Web-11B",
       "source_version": "hf-kormo-vl-kormo-web-11b",
-      "content_hash": "746c30cf258690d2188ce80395fb273a6209bf56a5d42df6d2e6a69acb7f4698",
+      "content_hash": "63787e6ad3c22a6394a12518a3909c84a16548f2e4c16d976d17ccca6a239837",
       "dossier_path": "07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md",
       "promoted_rules": [],
@@ -289539,7 +289554,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:54:50.104Z",
+      "verified_at": "2026-11-22T18:21:24.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -289556,9 +289571,9 @@
       "title": "Research & Knowledge Intelligence: KORMo-VL/KORMo-Web-11B Core Invariants",
       "repository": "KORMo-VL/KORMo-Web-11B",
       "source_version": "hf-kormo-vl-kormo-web-11b",
-      "content_hash": "25c66399f67e9d6810b560646332137889cd384ea3639904f5cd8ae982b16d58",
+      "content_hash": "13c9cbf6faf2c52bbec048293a2975fded0d33a3b717342e23188c0bf078d956",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T11:54:50.477Z"
+      "persisted_at": "2026-11-22T18:21:24.517Z"
     },
     "candidate_directive-bump-the-all-dependencies-group-with-5-updates": {
       "item_id": "candidate_directive-bump-the-all-dependencies-group-with-5-updates",
@@ -289606,9 +289621,9 @@
       "title": "Research & Knowledge Intelligence: hf-kormo-vl-kormo-web-11b-learnings Core Invariants",
       "repository": "hf-kormo-vl-kormo-web-11b-learnings",
       "source_version": "HEAD",
-      "content_hash": "4542bd98485cb55314dde150c57de87a6bd15bc78c88cbb2e637ebdbd156b996",
+      "content_hash": "50bf4f68337cb0c608470eca248b6dafd850d45344c08e12a4dc4ae87e459a17",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T11:55:42.041Z"
+      "persisted_at": "2026-11-22T18:21:38.877Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants",
@@ -302766,13 +302781,13 @@
       "item_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-provablehq-snarkos-quality-verification-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-aleo-labs-protocol-snarkos-quality-verification-intelligence-aleo-labs-protocol-.md",
       "title": "Quality & Verification Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "cfce7f98",
-      "content_hash": "426c897065a2995245cb92b660872acd3a8d025dc1a6bc90b4a6026c81b5e09d",
+      "source_version": "165a8ee8",
+      "content_hash": "f2bac51e1740d4dc048fc43e5d6e237a7f23b81246a7359c02bfae2a2964bbd0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:21:00.202Z"
+      "persisted_at": "2026-11-22T18:21:29.381Z"
     },
     "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva": {
       "item_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
@@ -302782,9 +302797,9 @@
       "title": "Quality & Verification Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2207d066193c4fff881860fe6020b1cab81f334bbe7ebe8c29457219dc90f00",
+      "content_hash": "71f8c793d703ea0b565dfb562466c7ec323d63b6a15575b488cd2ba9e7de9a67",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:21:15.268Z"
+      "persisted_at": "2026-11-22T18:21:39.631Z"
     },
     "learn-github-zoontek-react-native-bootsplash": {
       "learning_id": "learn-github-zoontek-react-native-bootsplash",
@@ -322487,6 +322502,84 @@
       "content_hash": "490b8ea673e0dcdd05ea1cc5d2333124772576c617cb90b84ab79660e4ed8c52",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T18:00:32.742Z"
+    },
+    "rule-9969": {
+      "learning_id": "rule-9969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9969,
+      "title": "Empirical Invariant Guard in release.yml",
+      "source_url": "https://github.com/matthart1983/netwatch",
+      "source_version": "b2780b05",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T18:21:27.745Z"
+    },
+    "rule-9970": {
+      "learning_id": "rule-9970",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9970,
+      "title": "update dependency org.jruby:jruby-core to v10.1.3.0",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "318183b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T18:21:32.234Z"
+    },
+    "candidate_directive-update-dependency-org-jruby-jruby-core-to-v10-1-3-0": {
+      "item_id": "candidate_directive-update-dependency-org-jruby-jruby-core-to-v10-1-3-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y84S-update-dependency-org-jruby-jruby-core-to-v10-1-3-0.md",
+      "title": "update dependency org.jruby:jruby-core to v10.1.3.0",
+      "repository": "vespa-engine/vespa",
+      "source_version": "318183b5",
+      "content_hash": "62c65d8429f6f9d86733b22240bfa1b13d70a77c198cb35c593738b1a0ce178a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T18:21:32.718Z"
+    },
+    "rule-9971": {
+      "learning_id": "rule-9971",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9971,
+      "title": "Draft NUC 134 Ruby Collection Method Aliases",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "4c1f0dba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T18:21:33.854Z"
+    },
+    "candidate_directive-draft-nuc-134-ruby-collection-method-aliases": {
+      "item_id": "candidate_directive-draft-nuc-134-ruby-collection-method-aliases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y9DF-draft-nuc-134-ruby-collection-method-aliases.md",
+      "title": "Draft NUC 134 Ruby Collection Method Aliases",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "4c1f0dba",
+      "content_hash": "2b90047064c643b492b4c9af9b60137b7b8cee5dc9d70b755f6018578a09ad66",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T18:21:34.324Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-release-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-release-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YC54-empirical-invariant-guard-in-release-yml.md",
+      "title": "Empirical Invariant Guard in release.yml",
+      "repository": "matthart1983-netwatch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "579e32a088d33af62f0ce5e0da3c532ad209ebacaacdd9bf76391f252074f05d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T18:21:37.916Z"
     }
   },
   "ai-builder-brain": {

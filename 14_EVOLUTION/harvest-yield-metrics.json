@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T18:12:22.252Z",
-  "total_cycles_completed": 11547,
-  "total_learnings_persisted": 11547,
-  "total_rules_promoted": 10784,
+  "last_updated": "2026-11-22T18:21:34.092Z",
+  "total_cycles_completed": 11552,
+  "total_learnings_persisted": 11552,
+  "total_rules_promoted": 10788,
   "history": [
-    {
-      "timestamp": "2026-11-21T22:56:41.040Z",
-      "repository": "SulphurAI/Sulphur-3",
-      "learningId": "learn-huggingface-sulphurai-sulphur-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:56:43.831Z",
-      "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:56:52.226Z",
-      "repository": "BuilderIO/builder",
-      "learningId": "learn-github-builderio-builder",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:56:56.526Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T23:06:00.060Z",
-      "repository": "burner22/numbat",
-      "learningId": "learn-huggingface-burner22-numbat",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T23:06:14.442Z",
       "repository": "clockworklabs/SpacetimeDB",
@@ -1403,6 +1368,41 @@
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:21:24.296Z",
+      "repository": "KORMo-VL/KORMo-Web-11B",
+      "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:21:28.010Z",
+      "repository": "matthart1983/netwatch",
+      "learningId": "learn-github-matthart1983-netwatch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:21:28.912Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:21:32.483Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:21:34.092Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

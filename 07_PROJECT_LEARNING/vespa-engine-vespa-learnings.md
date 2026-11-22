@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `f099e88f`  
+> **Source Version**: `318183b5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T16:40:15.962Z  
+> **Timestamp**: 2026-11-22T18:21:31.343Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T16:40:15.956Z  
+> **Harvest Timestamp**: 2026-11-22T18:21:31.338Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7192 stars
+- **Stars / Engagement**: 7196 stars
 
 ---
 
@@ -1065,294 +1065,47 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b01d3c24` (2026-11-21)
-**Commit Message**: Pass a timeout to every ONNX evaluation
+### Incident Patch 1: `aa491a9c` (2026-11-22)
+**Commit Message**: fix(deps): update dependency org.jruby:jruby-core to v10.1.3.0
 
-**File**: `container-search/abi-spec.json` (modified, +2/-0)
+**File**: `integration/logstash-plugins/logstash-output-vespa/build.gradle` (modified, +1/-1)
 ```diff
-@@ -6846,6 +6846,7 @@
-       "public void clearAll(com.yahoo.processing.request.CompoundName, java.util.Map)",
-       "public java.util.Map listProperties(com.yahoo.processing.request.CompoundName, java.util.Map, com.yahoo.processing.request.Properties)",
-       "public boolean isComplete(java.lang.StringBuilder, java.util.Map)",
-+      "public void setParentQuery(com.yahoo.search.Query)",
-       "public com.yahoo.search.query.profile.QueryProfileProperties clone()",
-       "public bridge synthetic com.yahoo.search.query.Properties clone()",
-       "public bridge synthetic com.yahoo.processing.request.Properties clone()",
-@@ -7217,6 +7218,7 @@
-     "methods" : [
-       "public void <init>(java.lang.String, com.yahoo.search.query.profile.compiled.CompiledQueryProfileRegistry, com.yahoo.language.process.Embedder, java.util.Map, com.yahoo.search.query.Properties)",
-       "public void <init>(java.lang.String, com.yahoo.search.query.profile.compiled.CompiledQueryProfileRegistry, java.util.Map, java.util.Map, com.yahoo.search.query.Properties)",
-+      "public void <init>(java.lang.String, com.yahoo.search.query.profile.compiled.CompiledQueryProfileRegistry, java.util.Map, java.util.Map, com.yahoo.search.query.Properties, java.util.Optional)",
-       "public java.lang.String destination()",
-       "public static com.yahoo.search.query.profile.types.ConversionContext empty()"
-     ],
+@@ -67,7 +67,7 @@ dependencies {
+     implementation "org.yaml:snakeyaml:${snakeYamlVersion}"
+ 
+     testImplementation 'org.jruby:jruby-complete:9.4.15.0'
+-    testImplementation 'org.jruby:jruby-core:10.1.2.0'
++    testImplementation 'org.jruby:jruby-core:10.1.3.0'
+     testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+     testImplementation 'junit:junit:4.13.2'
+     testImplementation 'org.mockito:mockito-core:5.24.0'
 ```
 
-**File**: `container-search/src/main/java/com/yahoo/prelude/cluster/ClusterSearcher.java` (modified, +6/-0)
-```diff
-@@ -347,6 +347,12 @@ private static void processResult(Query query, FutureTask<Result> task, Result m
-             mergedResult.mergeWith(result);
-             mergedResult.hits().addAll(result.hits().asUnorderedHits());
-         } catch (ExecutionException e) {
-+            if (e.getCause() instanceof com.yahoo.language.process.TimeoutException timeout) {
-+                mergedResult.hits().addError(ErrorMessage.createTimeout("Timed out querying '" +
-+                                                                        query.getModel().getRestrict() + "': " +
-+                                                                        Exceptions.toMessageString(timeout)));
-+                return;
-+            }
-             mergedResult.hits().addError(ErrorMessage.createInternalServerError("Failed querying '" +
-                                                                                 query.getModel().getRestrict() + "': " +
-                                                                                 Exceptions.toMessageString(e),
-```
+---
 
-**File**: `container-search/src/main/java/com/yahoo/search/Query.java` (modified, +29/-1)
-```diff
-@@ -366,16 +366,44 @@ private Query(HttpRequest request,
-         init(requestMap, queryProfile, embedders, zoneInfo, schemaInfo);
-     }
- 
-+    /**
-+     * Returns the timeout that the request or the query profile sets, or null if neither does.
-+     * As for every parameter with an alias, the timeout of the request is matched without regard to case.
-+     * It replaces the timeout of the query profile only where the query profile allows that.
-+     */
-+    private static Object timeoutOf(Map<String, String> requestMap, CompiledQueryProfile queryProfile,
-+                                    Properties queryProfileProperties) {
-+        if (queryProfile == null || queryProfile.isOverridable(TIMEOUT, requestMap)) {
-+            for (var entry : requestMap.entrySet())
-+                if (entry.getKey().equalsIgnoreCase(TIMEOUT.toString())) return entry.getValue();
-+        }
-+        return queryProfileProperties == null ? null : queryProfileProperties.get(TIMEOUT, requestMap);
-+    }
-+
-     private void init(Map<String, String> requestMap,
-                       CompiledQueryProfile queryProfile,
-                       Map<String, Embedder> embedders,
-                       ZoneInfo zoneInfo,
-                       SchemaInfo schemaInfo) {
-         startTime = httpRequest.creationTime(TimeUnit.MILLISECONDS);
-+        Properties queryProfileProperties = queryProfile == null ? null
-+                                                                 : new QueryProfileProperties(queryProfile, embedders, zoneInfo);
-+        // Conversions of the request properties below must complete by the deadline of this query.
-+        // That deadline depends on the timeout, so the timeout is set first.
-+        Object timeout = timeoutOf(requestMap, queryProfile, queryProfileProperties);
-+        if (timeout != null) {
-+            try {
-+                setTimeout(timeout.toString());
-+            }
-+            catch (IllegalArgumentException e) {
-+                // The timeout is set again below, which reports it as invalid
-+            }
-+        }
-         if (queryProfile != null) {
-             // Move all request parameters to the query profile
--            Properties queryProfileProperties = new QueryProfileProperties(queryProfile, embedders, zoneInfo);
-             properties().chain(queryProfileProperties);
-+            // Converting the request properties below needs the deadline of this query
-+            properties().setParentQuery(this);
-             setPropertiesFromRequestMap(requestMap, properties(), true);
- 
-             // Create the full chain
-```
+### Incident Patch 2: `9d201e6b` (2026-11-22)
+**Commit Message**: fix(deps): update dependency org.apache.opennlp:opennlp-tools to v2.5.13
 
-**File**: `container-search/src/main/java/com/yahoo/search/query/profile/QueryProfileProperties.java` (modified, +19/-1)
+**File**: `dependency-versions/pom.xml` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,7 @@
- import com.yahoo.processing.request.CompoundName;
- import com.yahoo.processing.request.properties.PropertyMap;
- import com.yahoo.protect.Validator;
-+import com.yahoo.search.Query;
- import com.yahoo.search.query.Properties;
- import com.yahoo.search.query.profile.compiled.CompiledQueryProfile;
- import com.yahoo.search.query.profile.compiled.DimensionalValue;
-@@ -17,10 +18,12 @@
- import com.yahoo.search.query.profile.types.QueryProfileType;
- import com.yahoo.search.query.properties.IllegalAssignmentException;
- 
-+import java.time.Instant;
- import java.util.ArrayList;
- import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
- 
- /**
-  * Properties backed by a query profile.
-@@ -39,6 +42,9 @@ public class QueryProfileProperties extends Properties {
-     private final ZoneInfo zoneInfo;
-     private final Map<String, String> zoneContext;
- 
-+    /** The query which owns this, or null if none */
-+    private Query query = null;
-+
-     // Note: The priority order is: values has precedence over references
- 
-     /** Values which has been overridden at runtime, or null if none */
-@@ -187,7 +193,8 @@ private Object convertByType(CompoundName name, Object value, Map<String, String
- 
-             if (fieldDescription != null) {
-                 if (i == name.size() - 1) { // at the end of the path, check the assignment type
--                    var conversionContext = new ConversionContext(localName, profile.getRegistry(), embedders, context, this);
-+                    var conversionContext = new ConversionContext(localName, profile.getRegistry(), embedders, context, this,
-+                                                                  queryDeadline());
-                     var convertedValue = fieldDescription.getType().convertFrom(value, conversionContext);
-                     if (convertedValue == null
-                         && fieldDescription.getType() instanceof QueryProfileFieldType
-@@ -366,6 +373,17 @@ CompoundName unalias(CompoundName name, Map<String,String> context) {
-         return unaliasedName;
-     }
- 
-+    @Override
-+    public void setParentQuery(Query query) {
-+        this.query = query;
-+        super.setParentQuery(query);
-+    }
-+
-+    /** Returns the time by which the query which owns this must complete, or empty if this has no query */
-+    private Optional<Instant> queryDeadline() {
-+        return query == null ? Optional.empty() : Optional.of(Instant.ofEpochMilli(query.getStartTime() + query.getTimeout()));
-+    }
-+
-     @Override
-     public QueryProfileProperties clone() {
-         QueryProfileProperties clone = (QueryProfileProperties)super.clone();
-```
-
-**File**: `container-search/src/main/java/com/yahoo/search/query/profile/types/ConversionContext.java` (modified, +21/-0)
-```diff
-@@ -7,7 +7,10 @@
- import com.yahoo.search.query.profile.compiled.CompiledQueryProfileRegistry;
- import com.yahoo.search.query.properties.PropertyMap;
- 
-+import java.time.Instant;
- import java.util.Map;
-+import java.util.Objects;
-+import java.util.Optional;
- 
- /**
-  * @author bratseth
-@@ -20,6 +23,7 @@ public class ConversionContext {
-     private final Map<String, String> contextValues;
-     private final Properties properties;
-     private final Language language;
-+    private final Optional<Instant> deadline;
- 
-     public ConversionContext(String destination, CompiledQueryProfileRegistry registry, Embedder embedder,
-                              Map<String, String> context, Properties properties) {
-@@ -30,6 +34,19 @@ public ConversionContext(String destination, CompiledQueryProfileRegistry regist
-                              Map<String, Embedder> embedders,
-                              Map<String, String> context,
-                              Properties properties) {
-+        this(destination, registry, embedders, context, properties, Optional.empty());
-+    }
-+
-+    /**
-+     * Creates a context for conversions which must complete by the given deadline.
-+     *
-+     * @param deadline the time by which a conversion must complete, or empty for no deadline
-+     */
-+    public ConversionContext(String destination, CompiledQueryProfileRegistry registry,
-+                             Map<String, Embedder> embedders,
-+                             Map<String, String> context,
-+                             Properties properties,
-+                             Optional<Instant> deadline) {
-         this.destination = destination;
-         this.registry = registry;
-         this.embedders = embedders;
-@@ -43,6 +60,7 @@ public ConversionContext(String destination, CompiledQueryProfileRegistry regist
- 
-         this.contextValues = context;
-         this.properties = properties;
-+        this.deadline = Objects.requireNonNull(deadline, "deadline");
-     }
- 
-     /** Returns the local name of the field which will receive the converted value (or null when this is empty) */
-@@ -66,6 +84,9 @@ public ConversionContext(String destination, CompiledQueryProfileRegistry regist
-      */
-     Properties properties() { return properties; }
- 
-+    /** Returns the time by which a conversion must complete, or empty if it has no deadline */
-+    Optional<Instant> deadline() { return deadline; }
-+
-     /** Returns an empty context */
-     public static ConversionContext empty() {
-         return new ConversionContext(null, null, Embedder.throwsOnUse.asMap(), Map.of(), new PropertyMap());
-```
-
-**File**: `container-search/src/main/java/com/yahoo/search/query/profile/types/TensorFieldType.java` (modified, +1/-2)
-```diff
-@@ -1,7 +1,6 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- package com.yahoo.search.query.profile.types;
- 
--import com.yahoo.language.process.Embedder;
- import com.yahoo.processing.request.Properties;
- import com.yahoo.search.schema.internal.TensorConverter;
- import com.yahoo.search.query.profile.QueryProfileRegistry;
-@@ -51,7 +50,7 @@ public Object convertFrom(Object o, ConversionContext context) {
-         if (o instanceof SubstituteString) return new SubstituteStringTensor((SubstituteString) o, type);
-         return new TensorConverter(context.embedders())
-                 .convertTo(type, o, context.destination(), context.language(), context.contextValues(),
--                           context.properties(), null);
-+                           context.properties(), context.deadline());
-     }
- 
-     public static TensorFieldType fromTypeString(String s) {
-```
-
-**File**: `container-search/src/main/java/com/yahoo/search/query/properties/QueryProperties.java` (modified, +4/-1)
-```diff
-@@ -32,8 +32,10 @@
- import com.yahoo.search.query.ranking.WeakAnd;
- import com.yahoo.tensor.Tensor;
- 
-+import java.time.Instant;
- import java.util.HashMap;
- import java.util.Map;
-+import java.util.Optional;
- import java.util.Set;
- 
- /**
-@@ -288,7 +290,8 @@ private Object toSpecifiedType(String key, Object value, QueryProfileType type,
-         if (type == null) return value; // no type info -> keep as string
-         FieldDescription field = type.getField(key);
-         if (field == null) return value; // ditto
--        return field.getType().convertFrom(value, new ConversionContext(key, profileRegistry, embedders, context, this));
-+        var deadline = Optional.of(Instant.ofEpochMilli(query.getStartTime() + query.getTimeout()));
-+        return field.getType().convertFrom(value, new ConversionContext(key, profileRegistry, embedders, context, this, deadline));
-     }
- 
-     private void throwIllegalParameter(String key, String namespace) {
-```
-
-**File**: `container-search/src/main/java/com/yahoo/search/query/properties/RankProfileInputProperties.java` (modified, +2/-1)
-```diff
-@@ -15,6 +15,7 @@
- 
- import java.time.Instant;
- import java.util.Map;
-+import java.util.Optional;
- 
- /**
-  * Verifies and converts properties according to any input declarations in the rank profile set on the query.
-@@ -48,7 +49,7 @@ public void set(CompoundName name, Object value, Map<String, String> context) {
-                                                       query.getModel().getLanguage(),
-                                                       context,
-                                                       query.properties(),
--                                                      Instant.now().plusMillis(query.getTimeLeft()));
-+                                                      Optional.of(Instant.now().plusMillis(query.getTimeLeft())));
-                 }
-             }
-             catch (IllegalArgumentException e) {
+@@ -137,7 +137,7 @@
+         <onnxruntime.vespa.version>1.31.0</onnxruntime.vespa.version>
+         <openai-java.vespa.version>1.6.1</openai-java.vespa.version>
+         <opentelemetry.vespa.version>1.66.0</opentelemetry.vespa.version>
+-        <opennlp.vespa.version>2.5.12</opennlp.vespa.version>
++        <opennlp.vespa.version>2.5.13</opennlp.vespa.version>
+         <opentest4j.vespa.version>1.3.0</opentest4j.vespa.version>
+         <org.apache.datasketches.vespa.version>7.0.1</org.apache.datasketches.vespa.version>
+         <org.apache.datasketches.memory.vespa.version>4.1.0</org.apache.datasketches.memory.vespa.version>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38614** (2026-11-22): fix(deps): update dependency org.jruby:jruby-core to v10.1.3.0 (@renovate[bot])
+- **PR #38613** (2026-11-22): chore(deps): update dependency ch.qos.logback:logback-classic to v1.6.8 (@renovate[bot])
+- **PR #38612** (2026-11-22): fix(deps): update dependency org.apache.opennlp:opennlp-tools to v2.5.13 (@renovate[bot])
 - **PR #38607** (2026-11-21): serialize the application json model one node at a time (@andreer)
-- **PR #38604** (2026-11-20): added canonical way to make empty tensors (@havardpe)
-- **PR #38603** (2026-11-20): Reconcile Admin, ClusterControllerContainerCluster, and ContentCluster in Content (@hakonhall)
-- **PR #38600** (2026-11-20): Restore APIs from capacity cleanup needed by intermediate versions (@arnej27959)
-- **PR #38599** (closed): Add back ProvisionContext.Builder(boolean) (@hmusum)
-- **PR #38598** (2026-11-20): Expose the wrapped Slime inspector from Json (@odosk)
+- **PR #38606** (2026-11-22): fix(deps): update netty monorepo to v4.2.21.final (@renovate[bot])
+- **PR #38605** (2026-11-22): chore: update third-party attributions (@github-actions[bot])
 
 ---
 
@@ -1372,29 +1125,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pass a timeout to every ONNX evaluation
+## X. deps): update dependency org.jruby:jruby-core to v10.1.3.0
 
 **RULE**:
-When implementing operations in `container-search/abi-spec.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `integration/logstash-plugins/logstash-output-vespa/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b01d3c24`: Pass a timeout to every ONNX evaluation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa491a9c`: deps): update dependency org.jruby:jruby-core to v10.1.3.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `container-search/abi-spec.json`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/logstash-plugins/logstash-output-vespa/build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-      "public void setParentQuery(com.yahoo.search.Query)",
-      "public void <init>(java.lang.String, com.yahoo.search.query.profile.compiled.CompiledQueryProfileRegistry, java.util.Map, java.util.Map, com.yahoo.search.query.Properties, java.util.Optional)",
+    testImplementation 'org.jruby:jruby-core:10.1.3.0'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    testImplementation 'org.jruby:jruby-core:10.1.2.0'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b01d3c24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa491a9c` are properly handled with clean fallback behavior.
