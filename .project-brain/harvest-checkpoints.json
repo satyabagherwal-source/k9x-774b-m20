@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T19:52:27.569Z",
+  "last_updated": "2026-11-22T20:00:25.268Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -485,14 +485,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-lensvlm-9b",
-      "content_hash": "59f1f70d4ff446dbe3d91dfd03ae685ae605e194d80d23ce36441d68ebb4e6fe",
-      "verified_at": "2026-11-18T13:17:16.900Z",
+      "content_hash": "389d37f72759edcdd72a895aa8e0d4c4f8e1d3257b9883c353a0e6f7bb638d85",
+      "verified_at": "2026-11-22T20:00:17.465Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:17:16.900Z"
+      "last_updated": "2026-11-22T20:00:17.465Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
@@ -12066,14 +12066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siteline-swiftui-introspect",
-      "content_hash": "69bda98bc5054db79d2b30966a4232215e08801183cdac4c817348c53a7849ed",
-      "verified_at": "2026-11-19T19:39:03.757Z",
+      "content_hash": "b60993a38146cee3505787da4b5a2b7fa76a3ed2fba8ef150894db7330dd6925",
+      "verified_at": "2026-11-22T20:00:25.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T19:39:03.757Z"
+      "last_updated": "2026-11-22T20:00:25.268Z"
     },
     "github/CopilotForXcode": {
       "repository": "github/CopilotForXcode",

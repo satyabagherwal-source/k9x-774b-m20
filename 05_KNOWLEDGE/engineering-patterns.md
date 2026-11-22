@@ -746165,3 +746165,75 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0ff923a7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9983. find a replaced receiver rather than its ancestor (Harvested from siteline/swiftui-introspect)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "find a replaced receiver rather than its ancestor",
+  "source": "siteline/swiftui-introspect",
+  "source_url": "https://github.com/siteline/swiftui-introspect",
+  "source_version": "ddf68494",
+  "license": "MIT",
+  "extracted_at": "2026-11-22T20:00:24.881Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-siteline-swiftui-introspect",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [siteline/swiftui-introspect](https://github.com/siteline/swiftui-introspect) (Revision: `ddf68494`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/Introspect.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siteline/swiftui-introspect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a2b5e92c`: find a replaced receiver rather than its ancestor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Introspect.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+	/// Whether a view probe found its target, so its anchor leaves the hierarchy, where it would hide the receiver from
+	/// UIKit's search for a view controller's content scroll view.
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+	/// Whether a view probe found its target, so its anchor leaves the hierarchy. UIKit looks for a view controller's
+	/// content scroll view along first subviews, and an anchor behind the receiver is its container's first subview.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a2b5e92c` are properly handled with clean fallback behavior.

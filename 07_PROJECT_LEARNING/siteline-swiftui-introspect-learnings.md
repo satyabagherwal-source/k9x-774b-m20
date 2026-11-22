@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md`  
 > **Source**: github ([https://github.com/siteline/swiftui-introspect](https://github.com/siteline/swiftui-introspect))  
-> **Source Version**: `cd344bc3`  
+> **Source Version**: `ddf68494`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T19:39:03.240Z  
+> **Timestamp**: 2026-11-22T20:00:24.461Z  
 > **Learning ID**: `learn-github-siteline-swiftui-introspect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siteline/swiftui-introspect](https://github.com/siteline/swiftui-introspect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:39:03.235Z  
+> **Harvest Timestamp**: 2026-11-22T20:00:24.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Introspect underlying UIKit/AppKit components from SwiftUI
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6579 stars
+- **Stars / Engagement**: 6580 stars
 
 ---
 
@@ -36,39 +36,6 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `Sources/Utils.swift`
-```
-postfix operator ~
-
-postfix func ~ <T>(lhs: some Any) -> T {
-	lhs as! T
-}
-
-postfix func ~ <T>(lhs: (some Any)?) -> T? {
-	lhs as? T
-}
-
-func recursiveSequence<S: Sequence>(_ sequence: S, children: @escaping (S.Element) -> S) -> AnySequence<S.Element> {
-	AnySequence {
-		var mainIterator = sequence.makeIterator()
-		// Current iterator, or `nil` if all sequences are exhausted:
-		var iterator: AnyIterator<S.Element>?
-
-		return AnyIterator {
-			guard let iterator, let element = iterator.next() else {
-				if let element = mainIterator.next() {
-					iterator = recursiveSequence(children(element), children: children).makeIterator()
-					return element
-				}
-				return nil
-			}
-			return element
-		}
-	}
-}
-
-```
 
 ### Core Architecture Module: `Examples/Package.swift`
 ```
@@ -724,6 +691,88 @@ struct ScrollViewShowcase: View {
 
 ```
 
+### Core Architecture Module: `Examples/Showcase/Showcase/UIViewRepresentable.swift`
+```
+import SwiftUI
+@_spi(Internals) import SwiftUIIntrospect
+
+struct UIViewRepresentableShowcase: View {
+	let colors: [Color] = [.red, .green, .blue]
+
+	var body: some View {
+		VStack(spacing: 10) {
+			ForEach(colors, id: \.self) { color in
+				GenericViewRepresentable()
+					#if os(iOS) || os(tvOS) || os(visionOS)
+					.introspect(
+						.view,
+						on: .iOS(.v15, .v16, .v17, .v18, .v26, .v27),
+						.tvOS(.v15, .v16, .v17, .v18, .v26, .v27),
+						.visionOS(.v1, .v2, .v26, .v27),
+					) { view in
+						view.backgroundColor = UIColor(color)
+					}
+					#elseif os(macOS)
+					.introspect(.view, on: .macOS(.v12, .v13, .v14, .v15, .v26, .v27)) { view in
+						view.layer?.backgroundColor = NSColor(color).cgColor
+					}
+					#endif
+			}
+		}
+		.padding()
+		#if os(iOS) || os(tvOS) || os(visionOS)
+		.introspect(
+			.view,
+			on: .iOS(.v15, .v16, .v17, .v18, .v26, .v27),
+			.tvOS(.v15, .v16, .v17, .v18, .v26, .v27),
+			.visionOS(.v1, .v2, .v26, .v27),
+		) { view in
+			view.backgroundColor = .red
+		}
+		#elseif os(macOS)
+		.introspect(.view, on: .macOS(.v12, .v13, .v14, .v15, .v26, .v27)) { view in
+			view.layer?.backgroundColor = NSColor.red.cgColor
+		}
+		#endif
+	}
+}
+
+@MainActor
+struct GenericViewRepresentable: PlatformViewControllerRepresentable {
+	#if canImport(UIKit)
+	typealias UIViewControllerType = PlatformViewController
+	#elseif canImport(AppKit)
+	typealias NSViewControllerType = PlatformViewController
+	#endif
+
+	func makePlatformViewController(context: Context) -> PlatformViewController {
+		let controller = PlatformViewController(nibName: nil, bundle: nil)
+		controller.view.translatesAutoresizingMaskIntoConstraints = false
+
+		let widthConstraint = controller.view.widthAnchor.constraint(greaterThanOrEqualToConstant: .greatestFiniteMagnitude)
+		widthConstraint.priority = .defaultLow
+
+		let heightConstraint = controller.view
+			.heightAnchor
+			.constraint(greaterThanOrEqualToConstant: .greatestFiniteMagnitude)
+		heightConstraint.priority = .defaultLow
+
+		NSLayoutConstraint.activate([widthConstraint, heightConstraint])
+
+		return controller
+	}
+
+	func updatePlatformViewController(_ controller: PlatformViewController, context: Context) {
+		// NO-OP
+	}
+
+	static func dismantlePlatformViewController(_ controller: PlatformViewController, coordinator: Coordinator) {
+		// NO-OP
+	}
+}
+
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -733,8 +782,8 @@ struct ScrollViewShowcase: View {
 - **Issue #500** (2025-10-23): **Support for iOS 26?**
   *Symptoms*: ### Description  Hi! I'm using `swiftui-introspect` for my project. Amazing package by the way!  My project now supports iOS 26, but the package doesn't seem to have been update it to support it (breaking some of my app's UI).  Can I know when iOS 26 support will be added please? From the README, it looks like it should be out already, but that doesn't seem to be the case.  Thanks so much in advance!  ### Checklist  - [x] I have read the [README](https://github.com/siteline/swiftui-introspect#swiftui-introspect) before submitting this report. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/siteline/swiftui-introspect/issues) or [discussion](https://github.com/siteline/swiftui-introspect/discussions).  ### Expected behavior  _No response_  ### Actual behavior  _No response_  ### Steps to reproduce  _No response_  ### Version information  _No response_  ### Destination operating system  _No response_  ### Xcode version information  _No response_  ### Swift Compiler version information  ```shell  ```
 
-- **Issue #498** (2026-03-16): **View introspection gives zero height on Xcode 26 for any iOS version on v26.0.0 release**
-  *Symptoms*: ### Description  Introspecting any view with the .view IntrospectableViewType returns zero height on Xcode 26 with any iOS version when using v26.0.0 release. By using Xcode 16.4 instead it returns a valid value.  ``` .introspect(.view, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { view in     debugPrint("HEIGHT: \(view.bounds.height)") // <-- here I got 0 on Xcode 26 } ```  ### Checklist  - [x] I have read the [README](https://github.com/siteline/swiftui-introspect#swiftui-introspect) before submitting this report. - [x] This issue hasn't been addressed in an [existing GitHub issue](https://github.com/siteline/swiftui-introspect/issues) or [discussion](https://github.com/siteline/swiftui-introspect/discussions).  ### Expected behavior  It should return a non zero value.  ``` .introspect(.view, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { view in     debugPrint("HEIGHT: \(view.bounds.height)") // <-- here I should get a positive value } ```  ### Actual behavior  On Xcode 26 I get zero for view height, while on Xcode 16.4 I get a valid non zero value  ``` .introspect(.view, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { view in     debugPrint("HEIGHT: \(view.bounds.height)") // <-- here I got 0 on Xcode 26 and a positive value on Xcode 16.4 } ```  ### Steps to reproduce  Attach this code to a SwiftUI view and run it with Xcode 26 by choosing any iOS simulator, it will return zero for the view height.  ``` .introspect(.view, on: .iOS(.v13, .v14, .v15, .v
+- **Issue #499** (2026-11-19): **Introspecting NavigationStack breaks iOS 26 Search Tab**
+  *Symptoms*: ### Description  Setting .introspect on to a NavigationStack breaks the iOS 26 TabView searchable behavior.  In the below example, without Introspecting, when tapped on search tab it performs the expect iOS 26 animation. With introspect it just switches tab while retaining the top search bar.  ``` import SwiftUI  struct SampleExample: View {     var body: some View {         TabView {             Tab("1", systemImage: "1.square") {                 Sample(label: "1")             }             Tab("2", systemImage: "1.square") {                 Sample(label: "2")             }             Tab(role: .search) {                 Search()             }         }     } }  struct Search: View {     @State private var searchText = ""          var body: some View {         NavigationStack {             List {                 Text("Search")             }             .navigationTitle("Search")             .searchable(text: $searchText)         }         .introspect(.navigationStack, on: .iOS(.v26)) { stack in // Search tab is not working properly with this.                      }     } }  struct Sample: View {     var label: String          var body: some View {         NavigationStack {             List {                 Text(label)             }             .navigationTitle(label)         }     } } ```  ### Checklist  - [x] I have read the [README](https://github.com/siteline/swiftui-introspect#swiftui-introspect) before submitting this report. - [x] This issue hasn't been addressed in 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -751,563 +800,899 @@ struct ScrollViewShowcase: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd344bc3` (2026-11-19)
-**Commit Message**: test: add introspection benchmarks (#534)
+### Incident Patch 1: `a2b5e92c` (2026-11-21)
+**Commit Message**: fix: find a replaced receiver rather than its ancestor (#545)
 
-**File**: `AGENTS.md` (modified, +5/-0)
+**File**: `Sources/Introspect.swift` (modified, +2/-2)
 ```diff
-@@ -19,3 +19,8 @@ Version 1 maintenance starts from `1.3.0`. The `1.4.0-beta` tags are not release
- - Do not backport breaking public API changes, new platform versions, toolchain updates, deployment-target changes, packaging changes, or unrelated CI and documentation work.
- - If a feature or fix cannot be backported while preserving those compatibility constraints, explain the incompatibility and obtain maintainer approval before changing the maintenance branch.
- - Run the affected tests on every changed branch. Create version 1 and version 26 releases from their respective maintenance branches. Use minor releases for additive features and patch releases for fixes.
-+
-+## Benchmarks
-+
-+- Before opening a pull request that changes how introspection finds or customizes its target, such as selectors, probes, or hierarchy traversal, run `mise run benchmarks <base>` against the pull request's base on an Apple silicon Mac. Investigate every ⚠️ increase before opening it.
-+- Include the comparison table the task prints in the description of any pull request it was run for.
+@@ -66,8 +66,8 @@ struct IntrospectModifier<
+ 	PlatformSpecificEntity: PlatformEntity,
+ >: ViewModifier {
+ 	@State private var anchorReference = IntrospectionAnchorReference()
+-	/// Whether a view probe found its target, so its anchor leaves the hierarchy. UIKit looks for a view controller's
+-	/// content scroll view along first subviews, and an anchor behind the receiver is its container's first subview.
++	/// Whether a view probe found its target, so its anchor leaves the hierarchy, where it would hide the receiver from
++	/// UIKit's search for a view controller's content scroll view.
+ 	@State private var isAnchorRetired = false
+ 	let scope: IntrospectionScope
+ 	let selector: IntrospectionSelector<PlatformSpecificEntity>?
 ```
 
-**File**: `Tests/Benchmarks/IntrospectionBenchmarks.swift` (added, +183/-0)
+**File**: `Sources/IntrospectionProbe.swift` (modified, +76/-28)
 ```diff
-@@ -0,0 +1,183 @@
-+#if os(iOS)
-+import Combine
-+import SwiftUI
-+import SwiftUIIntrospect
-+import XCTest
-+
-+/// Measures the cost of presenting introspected views, from presentation until every introspection has customized its
-+/// target.
-+@MainActor
-+final class IntrospectionBenchmarks: XCTestCase {
-+	fileprivate static let rowCount = 100
-+
-+	func testNavigationStackReceiver() throws {
-+		guard #available(iOS 16, *) else { throw XCTSkip("NavigationStack requires iOS 16") }
-+		try measurePresentation(introspections: 1) { spy in
-+			NavigationStack {
-+				Text("Root")
-+			}
-+			.introspect(.navigationStack, on: .iOS(.v16, .v17, .v18, .v26, .v27)) { _ in spy(0) }
-+		}
-+	}
-+
-+	func testNavigationStackAncestor() throws {
-+		guard #available(iOS 16, *) else { throw XCTSkip("NavigationStack requires iOS 16") }
-+		try measurePresentation(introspections: 1) { spy in
-+			NavigationStack {
-+				Text("Root")
-+					.introspect(
-+						.navigationStack,
-+						on: .iOS(.v16, .v17, .v18, .v26, .v27),
-+						scope: .ancestor,
-+					) { _ in spy(0) }
+@@ -28,9 +28,59 @@ protocol IntrospectionProbe: AnyObject {
+ @MainActor
+ final class IntrospectionAnchorReference {
+ 	fileprivate weak var controller: IntrospectionAnchorController? = nil
+-	fileprivate weak var view: IntrospectionAnchorView? = nil
+-	/// Whether the probe found its target, so the anchor's view leaves the hierarchy.
+-	fileprivate var isRetired = false
++	fileprivate weak var view: IntrospectionAnchorView? = nil {
++		didSet {
++			if view != nil, case let .restoring(onRestore) = viewState {
++				viewState = .present
++				onRestore()
 +			}
 +		}
 +	}
 +
-+	func testScrollViewReceiver() throws {
-+		try measurePresentation(introspections: 1) { spy in
-+			ScrollView {
-+				Text("Content")
-+			}
-+			.introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26, .v27)) { _ in spy(0) }
-+		}
++	fileprivate private(set) var viewState = ViewState.present
++
++	/// Where the anchor's view stands relative to the hierarchy.
++	fileprivate enum ViewState {
++		/// In the hierarchy, where the probe searches the receiver from it.
++		case present
++		/// Out of the hierarchy, since the probe found its target.
++		case retired
++		/// On its way back, to hand the probe a new anchor to search from.
++		case restoring(onRestore: () -> Void)
 +	}
 +
-+	func testTogglesWithoutIntrospection() throws {
-+		try measurePresentation(introspections: 0) { _ in
-+			Toggles(introspected: false, spy: { _ in })
++	/// Whether the probe can search from the anchor's view, or from no anchor at all for scopes that don't need one.
++	fileprivate var isSearchable: Bool {
++		if case .present = viewState {
++			return true
 +		}
++		return false
 +	}
 +
-+	func testToggles() throws {
-+		try measurePresentation(introspections: Self.rowCount) { spy in
-+			Toggles(introspected: true, spy: spy)
++	/// Takes the anchor's view, if there is one, out of the hierarchy once the probe found its target.
++	fileprivate func retireView(rendering isAnchorRetired: Binding<Bool>) {
++		guard view != nil else {
++			return
 +		}
++		viewState = .retired
++		render(isRetired: true, in: isAnchorRetired)
 +	}
 +
-+	func testTogglesUpdate() throws {
-+		let model = TogglesModel()
-+		var customized = 0
-+		var target = Self.rowCount
-+		let completion = Completion { customized >= target }
-+		let window = try presentationWindow()
-+		window.rootViewController = UIHostingController(
-+			rootView: Toggles(introspected: true, model: model) { _ in
-+				customized += 1
-+				completion.update()
++	/// Brings the retired anchor's view back, then calls `onRestore` once a new one is in place.
++	fileprivate func restoreView(rendering isAnchorRetired: Binding<Bool>, onRestore: @escaping () -> Void) {
++		guard case .retired = viewState else {
++			return
++		}
++		viewState = .restoring(onRestore: onRestore)
++		render(isRetired: false, in: isAnchorRetired)
++	}
++
++	private func render(isRetired: Bool, in isAnchorRetired: Binding<Bool>) {
++		// on the next turn, since probes can get here during a view update
++		DispatchQueue.main.async {
++			isAnchorRetired.wrappedValue = isRetired
++		}
++	}
+ }
+ 
+ /// An entity introspection adds to the hierarchy, which selectors never return.
+@@ -78,17 +128,17 @@ final class IntrospectionCoordinator<Target: PlatformEntity> {
+ 		return true
+ 	}
+ 
+-	/// Adopts the latest closures, then customizes the cached target, or the one the probe selects when none is cached.
+-	/// Returns whether it found one.
++	/// Adopts the latest closures, then customizes the cached target, or the one the probe selects when none is cached
++	/// and a probe is given. Returns whether it found one.
+ 	@discardableResult
+ 	func update(
+-		from probe: any IntrospectionProbe,
++		from probe: (any IntrospectionProbe)?,
+ 		selector: @escaping (any IntrospectionProbe) -> Target?,
+ 		customize: @escaping (Target) -> Void,
+ 	) -> Bool {
+ 		self.selector = selector
+ 		self.customize = customize
+-		guard let target = target ?? selector(probe) else {
++		guard let target = target ?? probe.flatMap(selector) else {
+ 			return false
+ 		}
+ 		customize(target)
+@@ -320,14 +370,14 @@ final class IntrospectionAnchorView: PlatformView, IntrospectionPlatformEntity {
+ 	#if canImport(UIKit)
+ 	override func willMove(toWindow newWindow: UIWindow?) {
+ 		super.willMove(toWindow: newWindow)
+-		guard newWindow == nil, anchorReference.isRetired else {
++		guard newWindow == nil, case .retired = anchorReference.viewState else {
+ 			return
+ 		}
+-		// Navigation and tab bar controllers look for their content scroll view again only when they lay out, so they find
+-		// the receiver this anchor stood in front of.
++		// Navigation controllers look for their content scroll view again only when they lay out, so they find the
++		// receiver this anchor stood in front of.
+ 		var controller = enclosingController
+ 		while let current = controller {
+-			if current is UINavigationController || current is UITabBarController {
++			if current is UINavigationController {
+ 				current.view.setNeedsLayout()
+ 			}
+ 			controller = current.parent
+@@ -369,31 +419,28 @@ struct IntrospectionProbeViewRepresentable<Target: PlatformEntity>: PlatformView
+ 
+ 	func makePlatformView(context: Context) -> IntrospectionProbeView {
+ 		let coordinator = context.coordinator
++		let anchorReference = anchorReference
+ 		let isAnchorRetired = isAnchorRetired
+ 		return IntrospectionProbeView(anchorReference: anchorReference) { view in
+ 			guard coordinator.select(from: view) else {
+ 				return
+ 			}
+ 			view.handler = nil
+-			if view.anchorReference.view != nil {
+-				view.anchorReference.isRetired = true
+-				DispatchQueue.main.async {
+-					isAnchorRetired.wrappedValue = true
+-				}
+-			}
++			anchorReference.retireView(rendering: isAnchorRetired)
+ 		}
+ 	}
+ 
+ 	func updatePlatformView(_ view: IntrospectionProbeView, context: Context) {
+-		let found = context.coordinator.update(from: view, selector: selector, customize: customize)
+-		// The target went away after the an
+```
+
+**File**: `Tests/Tests/ContentScrollViewTests.swift` (modified, +2/-0)
+```diff
+@@ -24,6 +24,8 @@ struct ContentScrollViewTests {
+ 				.visionOS(.v1, .v2, .v26, .v27),
+ 			) { introspected = $0 },
+ 		)
++		let previousRootViewController = window.rootViewController
++		defer { window.rootViewController = previousRootViewController }
+ 		window.rootViewController = UINavigationController(rootViewController: container)
+ 
+ 		await poll { introspected != nil }
+```
+
+**File**: `Tests/Tests/IntrospectionScopeTests.swift` (modified, +84/-0)
+```diff
+@@ -23,6 +23,90 @@ struct IntrospectionScopeTests {
+ 		#expect(entity != nil)
+ 	}
+ 
++	@Test func `introspection finds a replaced receiver rather than an ancestor`() async throws {
++		let model = ReplacementModel()
++		weak var original: PlatformScrollView?
++		var replacement: PlatformScrollView?
++		var customizedAncestor = false
++		TestUtils.present(
++			view: ScrollView {
++				ReplaceableScrollView(model: model) { entity in
++					guard Self.isNested(entity) else {
++						customizedAncestor = true
++						return
++					}
++					if model.isReplaced, entity !== original {
++						replacement = entity
++					} else if original == nil {
++						original = entity
++					}
++				}
 +			},
 +		)
-+		completion.wait()
++		await poll { original != nil }
++		try #require(original != nil)
++		try await Task.sleep(nanoseconds: 300_000_000)
 +
-+		measure(metrics: Self.metrics, options: Self.options) {
-+			// Toggling twice measures both directions in every iteration.
-+			for _ in 0..<2 {
-+				target = customized + Self.rowCount
-+				model.isOn.toggle()
-+				completion.wait()
++		model.isReplaced = true
++		try await Task.sleep(nanoseconds: 300_000_000)
++		// Updates the modifier once the original receiver is gone.
++		model.revision += 1
++		await poll { replacement != nil }
++
++		#expect(replacement != nil)
++		#expect(!customizedAncestor)
++	}
++
++	/// Whether the scroll view sits inside another one.
++	private static func isNested(_ scrollView: PlatformScrollView) -> Bool {
++		var view = scrollView.superview
++		while let superview = view {
++			if superview is PlatformScrollView {
++				return true
++			}
++			view = superview.superview
++		}
++		return false
++	}
++
++	private final class ReplacementModel: ObservableObject {
++		@Published var isReplaced = false
++		@Published var revision = 0
++	}
++
++	/// A scroll view, introspected in both scopes, that SwiftUI replaces with another one when the model says so.
++	private struct ReplaceableScrollView: View {
++		@ObservedObject var model: ReplacementModel
++		let spy: (PlatformScrollView) -> Void
++
++		var body: some View {
++			Group {
++				if model.isReplaced {
++					ScrollView { Text("Replacement \(model.revision)") }
++				} else {
++					ScrollView { Text("Original \(model.revision)") }
++				}
++			}
++			#if os(iOS) || os(tvOS) || os(visionOS)
++			.introspect(
++				.scrollView,
++				on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26, .v27),
++				.tvOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26, .v27),
++				.visionOS(.v1, .v2, .v26, .v27),
++				scope: [.receiver, .ancestor],
++				customize: spy,
++			)
++			#elseif os(macOS)
++			.introspect(
++				.scrollView,
++				on: .macOS(.v10_15, .v11, .v12, .v13, .v14, .v15, .v26, .v27),
++				scope: [.receiver, .ancestor],
++				customize: spy,
++			)
++			#endif
++		}
++	}
++
+ 	private final class ScopeModel: ObservableObject {
+ 		@Published var scope: IntrospectionScope = .ancestor
+ 	}
+```
+
+---
+
+### Incident Patch 2: `d8b27a51` (2026-11-20)
+**Commit Message**: fix: keep navigation bars tracking introspected scroll views (#542)
+
+**File**: `Sources/Introspect.swift` (modified, +5/-1)
+```diff
+@@ -66,6 +66,9 @@ struct IntrospectModifier<
+ 	PlatformSpecificEntity: PlatformEntity,
+ >: ViewModifier {
+ 	@State private var anchorReference = IntrospectionAnchorReference()
++	/// Whether a view probe found its target, so its anchor leaves the hierarchy. UIKit looks for a view controller's
++	/// content scroll view along first subviews, and an anchor behind the receiver is its container's first subview.
++	@State private var isAnchorRetired = false
+ 	let scope: IntrospectionScope
+ 	let selector: IntrospectionSelector<PlatformSpecificEntity>?
+ 	let customize: (PlatformSpecificEntity) -> Void
+@@ -109,9 +112,10 @@ struct IntrospectModifier<
+ 					content,
+ 					anchor: IntrospectionAnchorViewRepresentable(anchorReference: anchorReference),
+ 					// only receiver searches start at a view anchor, and custom selectors never see one
+-					needsAnchor: scope.contains(.receiver),
++					needsAnchor: scope.contains(.receiver) && !isAnchorRetired,
+ 					probe: IntrospectionProbeViewRepresentable(
+ 						anchorReference: anchorReference,
++						isAnchorRetired: $isAnchorRetired,
+ 						selector: { selector($0, scope) },
+ 						customize: customize,
+ 					),
+```
+
+**File**: `Sources/IntrospectionProbe.swift` (modified, +66/-8)
+```diff
+@@ -29,6 +29,8 @@ protocol IntrospectionProbe: AnyObject {
+ final class IntrospectionAnchorReference {
+ 	fileprivate weak var controller: IntrospectionAnchorController? = nil
+ 	fileprivate weak var view: IntrospectionAnchorView? = nil
++	/// Whether the probe found its target, so the anchor's view leaves the hierarchy.
++	fileprivate var isRetired = false
+ }
+ 
+ /// An entity introspection adds to the hierarchy, which selectors never return.
+@@ -77,17 +79,20 @@ final class IntrospectionCoordinator<Target: PlatformEntity> {
+ 	}
+ 
+ 	/// Adopts the latest closures, then customizes the cached target, or the one the probe selects when none is cached.
++	/// Returns whether it found one.
++	@discardableResult
+ 	func update(
+ 		from probe: any IntrospectionProbe,
+ 		selector: @escaping (any IntrospectionProbe) -> Target?,
+ 		customize: @escaping (Target) -> Void,
+-	) {
++	) -> Bool {
+ 		self.selector = selector
+ 		self.customize = customize
+ 		guard let target = target ?? selector(probe) else {
+-			return
++			return false
+ 		}
+ 		customize(target)
++		return true
+ 	}
+ }
+ 
+@@ -299,7 +304,10 @@ struct IntrospectionAnchorViewRepresentable: PlatformViewRepresentable {
+ }
+ 
+ final class IntrospectionAnchorView: PlatformView, IntrospectionPlatformEntity {
++	private let anchorReference: IntrospectionAnchorReference
++
+ 	init(anchorReference: IntrospectionAnchorReference) {
++		self.anchorReference = anchorReference
+ 		super.init(frame: .zero)
+ 		anchorReference.view = self
+ 	}
+@@ -308,6 +316,24 @@ final class IntrospectionAnchorView: PlatformView, IntrospectionPlatformEntity {
+ 	required init?(coder: NSCoder) {
+ 		fatalError("init(coder:) has not been implemented")
+ 	}
++
++	#if canImport(UIKit)
++	override func willMove(toWindow newWindow: UIWindow?) {
++		super.willMove(toWindow: newWindow)
++		guard newWindow == nil, anchorReference.isRetired else {
++			return
++		}
++		// Navigation and tab bar controllers look for their content scroll view again only when they lay out, so they find
++		// the receiver this anchor stood in front of.
++		var controller = enclosingController
++		while let current = controller {
++			if current is UINavigationController || current is UITabBarController {
++				current.view.setNeedsLayout()
++			}
++			controller = current.parent
++		}
++	}
++	#endif
+ }
+ 
+ struct IntrospectionProbeViewRepresentable<Target: PlatformEntity>: PlatformViewRepresentable {
+@@ -320,16 +346,19 @@ struct IntrospectionProbeViewRepresentable<Target: PlatformEntity>: PlatformView
+ 	@Binding
+ 	private var observed: Void // workaround for state changes not triggering view updates
+ 	private let anchorReference: IntrospectionAnchorReference
++	private let isAnchorRetired: Binding<Bool>
+ 	private let selector: (any IntrospectionProbe) -> Target?
+ 	private let customize: (Target) -> Void
+ 
+ 	init(
+ 		anchorReference: IntrospectionAnchorReference,
++		isAnchorRetired: Binding<Bool>,
+ 		selector: @escaping (any IntrospectionProbe) -> Target?,
+ 		customize: @escaping (Target) -> Void,
+ 	) {
+ 		self._observed = .constant(())
+ 		self.anchorReference = anchorReference
++		self.isAnchorRetired = isAnchorRetired
+ 		self.selector = selector
+ 		self.customize = customize
+ 	}
+@@ -340,15 +369,32 @@ struct IntrospectionProbeViewRepresentable<Target: PlatformEntity>: PlatformView
+ 
+ 	func makePlatformView(context: Context) -> IntrospectionProbeView {
+ 		let coordinator = context.coordinator
++		let isAnchorRetired = isAnchorRetired
+ 		return IntrospectionProbeView(anchorReference: anchorReference) { view in
+-			if coordinator.select(from: view) {
+-				view.handler = nil
++			guard coordinator.select(from: view) else {
++				return
++			}
++			view.handler = nil
++			if view.anchorReference.view != nil {
++				view.anchorReference.isRetired = true
++				DispatchQueue.main.async {
++					isAnchorRetired.wrappedValue = true
++				}
+ 			}
+ 		}
+ 	}
+ 
+ 	func updatePlatformView(_ view: IntrospectionProbeView, context: Context) {
+-		context.coordinator.update(from: view, selector: selector, customize: customize)
++		let found = context.coordinator.update(from: view, selector: selector, customize: customize)
++		// The target went away after the anchor left, so bring the anchor back and look for the target again.
++		if !found, isAnchorRetired.wrappedValue {
++			view.anchorReference.isRetired = false
++			let isAnchorRetired = isAnchorRetired
++			DispatchQueue.main.async {
++				isAnchorRetired.wrappedValue = false
++			}
++			view.rearm()
++		}
+ 	}
+ 
+ 	static func dismantlePlatformView(_ view: IntrospectionProbeView, coordinator: Coordinator) {
+@@ -359,17 +405,29 @@ struct IntrospectionProbeViewRepresentable<Target: PlatformEntity>: PlatformView
+ final class IntrospectionProbeView: PlatformView, IntrospectionPlatformEntity {
+ 	let anchorReference: IntrospectionAnchorReference
+ 	var handler: (() -> Void)? = nil
++	private let attempt: (IntrospectionProbeView) -> Void
+ 
+ 	fileprivate init(
+ 		anchorReference: IntrospectionAnchorReference,
+-		handler: ((IntrospectionProbeView) -> Void)?,
++		ha
+```
+
+**File**: `Tests/Tests/ContentScrollViewTests.swift` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++#if canImport(UIKit)
++import SwiftUI
++import SwiftUIIntrospect
++import Testing
++
++/// UIKit looks for the scroll view that drives a view controller's navigation bar, such as its scroll edge appearance
++/// and large title, along the first subview of each view down from the view controller's view. Once introspection finds
++/// its target, it leaves that path to the receiver.
++@MainActor
++struct ContentScrollViewTests {
++	@Test func `introspected scroll view stays on the first subview path`() async throws {
++		let window = try #require(
++			UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first?.windows.first,
++		)
++		var introspected: UIScrollView? = nil
++		let container = ContainerController(
++			rootView: ScrollView {
++				Text("Content")
++			}
++			.introspect(
++				.scrollView,
++				on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26, .v27),
++				.tvOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26, .v27),
++				.visionOS(.v1, .v2, .v26, .v27),
++			) { introspected = $0 },
++		)
++		window.rootViewController = UINavigationController(rootViewController: container)
++
++		let start = Date()
++		while introspected == nil, Date().timeIntervalSince(start) < 3 {
++			try await Task.sleep(nanoseconds: 10_000_000)
++		}
++		let scrollView = try #require(introspected)
++		while !container.firstSubviewPath.contains(scrollView), Date().timeIntervalSince(start) < 4 {
++			try await Task.sleep(nanoseconds: 10_000_000)
++		}
++
++		#expect(container.firstSubviewPath.contains(scrollView))
++	}
++}
++
++/// A UIKit view controller that shows SwiftUI content through a child hosting controller.
++private final class ContainerController<Content: View>: UIViewController {
++	private let hostingController: UIHostingController<Content>
++
++	init(rootView: Content) {
++		self.hostingController = UIHostingController(rootView: rootView)
++		super.init(nibName: nil, bundle: nil)
++	}
++
++	@available(*, unavailable)
++	required init?(coder: NSCoder) {
++		fatalError("init(coder:) has not been implemented")
++	}
++
++	override func viewDidLoad() {
++		super.viewDidLoad()
++		addChild(hostingController)
++		hostingController.view.frame = view.bounds
++		hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
++		view.addSubview(hostingController.view)
++		hostingController.didMove(toParent: self)
++	}
++
++	/// The views UIKit visits looking for this view controller's content scroll view.
++	var firstSubviewPath: [UIView] {
++		Array(sequence(first: view, next: \.subviews.first))
++	}
++}
++#endif
+```
+
+---
+
+### Incident Patch 3: `07580a67` (2026-11-20)
+**Commit Message**: refactor: default to view probes on UIKit (#535)
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ SwiftUI Introspect lets you access the underlying UIKit or AppKit view for a Swi
+ How it works
+ ------------
+ 
+-SwiftUI Introspect adds an invisible `IntrospectionView` above the selected view and an invisible anchor below it, then searches the UIKit/AppKit view hierarchy between them to find the relevant view.
++SwiftUI Introspect adds an invisible probe above the selected view and an invisible anchor below it, then searches the UIKit/AppKit view hierarchy between them to find the relevant view.
+ 
+ For instance, when introspecting a `ScrollView`...
+ 
+```
+
+**File**: `Sources/Introspect.swift` (modified, +21/-2)
+```diff
+@@ -179,13 +179,32 @@ extension PlatformEntity {
+ 		return nearestAncestor
+ 	}
+ 
++	/// This entity's descendants from the bottom entity up to the top one, in depth-first order. The traversal starts at
++	/// the bottom entity, so it doesn't visit the descendants that come before it.
+ 	func allDescendants(between bottomEntity: Base, and topEntity: Base) -> some Sequence<Base> {
+-		self.allDescendants
++		recursiveSequence(subtrees(from: bottomEntity), children: { $0.descendants~ })
+ 			.lazy
+-			.drop(while: { $0 !== bottomEntity })
+ 			.prefix(while: { $0 !== topEntity })
+ 	}
+ 
++	/// The given descendant, followed by the later siblings of it and of each of its ancestors below this entity: the
++	/// roots of the subtrees a depth-first traversal visits from the descendant on.
++	private func subtrees(from descendant: Base) -> [Base] {
++		var subtrees = [descendant]
++		var entity = descendant
++		while let parent: Base = entity.ancestor~ {
++			let siblings: [Base] = parent.descendants~
++			if let index = siblings.firstIndex(where: { $0 === entity }) {
++				subtrees += siblings[(index + 1)...]
++			}
++			if parent === self {
++				return subtrees
++			}
++			entity = parent
++		}
++		return []
++	}
++
+ 	func receiver<PlatformSpecificEntity: PlatformEntity>(
+ 		ofType type: PlatformSpecificEntity.Type,
+ 	) -> PlatformSpecificEntity? {
+```
+
+**File**: `Sources/IntrospectionProbe.swift` (modified, +118/-21)
+```diff
+@@ -3,11 +3,12 @@ import SwiftUI
+ /// The kind of entities introspection inserts around the receiver to find its target: an anchor behind it, and a probe
+ /// in front of it.
+ enum IntrospectionProbeKind {
+-	/// Child view controllers, which find targets in both the view and view controller hierarchies.
++	/// Child view controllers, which find targets in both the view and view controller hierarchies. Custom selectors
++	/// receive the probe itself.
+ 	case viewController
+ 	/// Views, which leave the view controller hierarchy untouched and find view controllers through the views they own.
+-	/// Use them for view controller targets whose behavior depends on their containment, such as a tab's navigation
+-	/// controller.
++	/// On UIKit, a probe that hasn't found its target retries on later frames, for about a second after it last moved
++	/// or laid out.
+ 	///
+ 	/// Custom selectors receive the view controller enclosing the probe.
+ 	case view
+@@ -378,12 +379,20 @@ final class IntrospectionProbeView: PlatformView {
+ 	#if canImport(UIKit)
+ 	override func didMoveToWindow() {
+ 		super.didMoveToWindow()
+-		handler?()
++		select()
+ 	}
+ 
+ 	override func layoutSubviews() {
+ 		super.layoutSubviews()
++		select()
++	}
++
++	/// Looks for the target, and keeps retrying on later frames while it isn't found.
++	private func select() {
+ 		handler?()
++		if handler != nil, window != nil {
++			IntrospectionRetryScheduler.shared.schedule(self)
++		}
+ 	}
+ 	#elseif canImport(AppKit)
+ 	override func viewDidMoveToWindow() {
+@@ -398,6 +407,67 @@ final class IntrospectionProbeView: PlatformView {
+ 	#endif
+ }
+ 
++#if canImport(UIKit)
++/// Retries view probes that haven't found their target, for targets that appear without a layout pass reaching the
++/// probe, such as a search bar SwiftUI adds after presentation.
++///
++/// After each attempt that finds nothing, a probe retries on the next frame, then after intervals that double from one
++/// frame, for about a second. Finding the target, or leaving the window, ends its retries.
++@MainActor
++final class IntrospectionRetryScheduler: NSObject {
++	static let shared = IntrospectionRetryScheduler()
++
++	private struct Retry {
++		static let limit = 7
++		static let firstInterval: CFTimeInterval = 1.0 / 60
++
++		weak var probe: IntrospectionProbeView?
++		let start: CFTimeInterval
++		var count = 0
++
++		var due: CFTimeInterval {
++			start + Self.firstInterval * CFTimeInterval((1 << count) - 1)
++		}
++	}
++
++	private var retries: [ObjectIdentifier: Retry] = [:]
++
++	/// Drives every probe's retries, and pauses while none are pending.
++	private lazy var displayLink: CADisplayLink = {
++		let displayLink = CADisplayLink(target: self, selector: #selector(retryDueProbes))
++		displayLink.add(to: .main, forMode: .common)
++		return displayLink
++	}()
++
++	/// Restarts the probe's retries from the next frame.
++	func schedule(_ probe: IntrospectionProbeView) {
++		retries[ObjectIdentifier(probe)] = Retry(probe: probe, start: CACurrentMediaTime())
++		displayLink.isPaused = false
++	}
++
++	@objc private func retryDueProbes() {
++		let now = CACurrentMediaTime()
++		for (id, retry) in retries where retry.due <= now {
++			guard let probe = retry.probe, probe.handler != nil, probe.window != nil else {
++				retries[id] = nil
++				continue
++			}
++			var next = retry
++			next.count += 1
++			// Set before the attempt, which can lay out the probe and so restart its retries.
++			retries[id] = next.count < Retry.limit ? next : nil
++			probe.handler?()
++			if probe.handler == nil {
++				retries[id] = nil
 +			}
 +		}
-+		window.rootViewController = nil
-+	}
-+
-+	/// Presents the view in each iteration and waits until the given number of distinct introspections customize their
-+	/// targets. A warm-up presentation runs first, outside of the measurements.
-+	private func measurePresentation(
-+		introspections: Int,
-+		@ViewBuilder _ content: @escaping (_ spy: @escaping (Int) -> Void) -> some View,
-+	) throws {
-+		let window = try presentationWindow()
-+		// Each presentation drains its own pool, so presentations don't accumulate across iterations.
-+		let present = {
-+			autoreleasepool {
-+				var introspected = Set<Int>()
-+				let completion = Completion { introspected.count >= introspections }
-+				let controller = UIHostingController(
-+					rootView: content {
-+						introspected.insert($0)
-+						completion.update()
-+					},
-+				)
-+				window.rootViewController = controller
-+				controller.view.layoutIfNeeded()
-+				completion.wait()
-+				window.rootViewController = nil
-+			}
-+		}
-+		present()
-+		measure(metrics: Self.metrics, options: Self.options, block: present)
-+	}
-+
-+	private static var metrics: [XCTMetric] {
-+		[XCTCPUMetric(), XCTClockMetric(), XCTMemoryMetric()]
-+	}
-+
-+	private static var options: XCTMeasureOptions {
-+		let options = XCTMeasureOptions()
-+		options.iterationCount = 10
-+		return options
-+	}
-+
-+	private func presentationWindow() throws -> UIWindow {
-+		let window = UIApplication.shared
-+			.connectedScenes
-+			.compactMap { $0 as? UIWindowScene }
-+			.flatMap(\.windows)
-+			.first
-+		return try XCTUnwrap(window)
-+	}
-+}
-+
-+/// Runs the main run loop until a condition holds, without polling, so waiting adds no measured work.
-+@MainActor
-+private final class Completion {
-+	private let isComplete: () -> Bool
-+
-+	init(_ isComplete: @escaping () -> Bool) {
-+		self.isComplete = isComplete
-+	}
-+
-+	/// Stops the run loop once the condition holds. Call it whenever the condition might have changed.
-+	func update() {
-+		if isComplete() {
-+			CFRunLoopStop(CFRunLoopGetMain())
++		if retries.isEmpty {
++			displayLink.isPaused = true
 +		}
 +	}
++}
++#endif
 +
-+	func wait(timeout: TimeInterval = 10) {
-+		let deadline = Date().addingTimeInterval(timeout)
-+		while !isComplete(), Date() < deadline {
-+			CFRunLoopRunInMode(.defaultMode, deadline.timeIntervalSinceNow, false)
+ extension IntrospectionProbeView: IntrospectionProbe {
+ 	var controller: PlatformViewController? { enclosingController }
+ 
+@@ -421,35 +491,29 @@ extension IntrospectionProbeView: IntrospectionProbe {
+ 		return nil
+ 	}
+ 
+-	/// The first view controller of the given type whose view sits between the anchor and this probe.
++	/// The first view controller of the given type whose view sits between the anchor and this probe, in the view
++	/// controller hierarchy's order, as the view controller probe finds it.
+ 	private func receiverController<Entry: PlatformEntity>(ofType type: Entry.Type) -> Entry? {
+ 		guard
+ 			let anchor = introspectionAnchorEntity,
+-			let commonAncestor = anchor.nearestCommonAncestor(with: self),
+-			let container = commonAncestor.enclosingController
++			let container = anchor.nearestCommonAncestor(with: self)?.enclosingController
+ 		else {
+ 			return nil
+ 		}
+-		let candidatesByView = Dictionary(
+-			container.allDescendants.compactMap { controller -> (ObjectIdentifier, Entry)? in
++		return container.allDescendants
++			.lazy
++			.compactMap { controller -> Entry? in
+ 				guard
+ 					let candidate = controller as? Entry,
+ 					!controller.isIntrospectionPlatformEntity,
+-					let view = controller.loadedView
++					let view = controller.loadedView,
++					anchor.precedes(view),
++					view.precedes(self)
+ 				else {
+ 					return nil
+ 				
+```
+
+**File**: `Sources/IntrospectionSelector.swift` (modified, +18/-2)
+```diff
+@@ -25,26 +25,42 @@ public struct IntrospectionSelector<Target: PlatformEntity> {
+ 		)
+ 	}
+ 
+-	private(set) var probe: IntrospectionProbeKind = .viewController
++	private var explicitProbe: IntrospectionProbeKind? = nil
++	private var hasCustomSelector = false
+ 	private var receiverSelector: @MainActor (any IntrospectionProbe) -> Target?
+ 	private var ancestorSelector: @MainActor (any IntrospectionProbe) -> Target?
+ 
++	/// The probe set with `withProbe(_:)`, or else views on UIKit and view controllers on AppKit. Custom selectors also
++	/// default to view controllers, since they receive the probe.
++	var probe: IntrospectionProbeKind {
++		if let explicitProbe {
++			return explicitProbe
 +		}
-+		XCTAssertTrue(isComplete(), "Introspection didn't finish within \(timeout) seconds")
++		#if canImport(UIKit)
++		return hasCustomSelector ? .viewController : .view
++		#elseif canImport(AppKit)
++		return .viewController
++		#endif
 +	}
-+}
 +
-+@MainActor
-+private final class TogglesModel: ObservableObject {
-+	@Published var isOn = false
-+}
-+
-+private struct Toggles: View {
-+	let introspected: Bool
-+	@ObservedObject var model = TogglesModel()
-+	let spy: (Int) -> Void
-+
-+	var body: some View {
-+		ScrollView {
-+			VStack {
-+				ForEach(0..<IntrospectionBenchmarks.rowCount, id: \.self) { index in
-+					if introspecte
+ 	func withProbe(_ probe: IntrospectionProbeKind) -> Self {
+ 		var copy = self
+-		copy.probe = probe
++		copy.explicitProbe = probe
+ 		return copy
+ 	}
+ 
+ 	@_spi(Advanced)
+ 	public func withReceiverSelector(_ selector: @MainActor @escaping (PlatformViewController) -> Target?) -> Self {
+ 		var copy = self
++		copy.hasCustomSelector = true
+ 		copy.receiverSelector = { $0.controller.flatMap(selector) }
+ 		return copy
+ 	}
+ 
+ 	@_spi(Advanced)
+ 	public func withAncestorSelector(_ selector: @MainActor @escaping (PlatformViewController) -> Target?) -> Self {
+ 		var copy = self
++		copy.hasCustomSelector = true
+ 		copy.ancestorSelector = { $0.controller.flatMap(selector) }
+ 		return copy
+ 	}
 ```
 
-**File**: `Tests/Tests.xcodeproj/project.pbxproj` (modified, +235/-0)
+**File**: `Sources/ViewTypes/NavigationSplitView.swift` (modified, +9/-3)
 ```diff
-@@ -9,6 +9,7 @@
- /* Begin PBXBuildFile section */
- 		D5CEB5582E84304900A88BA3 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = D5CEB5572E84304900A88BA3 /* SwiftUIIntrospect */; };
- 		D5E04C312E842584006739F9 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = D5E04C302E842584006739F9 /* SwiftUIIntrospect */; };
-+		B0E0C0012F00000000000001 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = B0E0C0012F0000000000000D /* SwiftUIIntrospect */; };
- /* End PBXBuildFile section */
+@@ -93,7 +93,9 @@ extension iOSViewVersion<NavigationSplitViewType, UISplitViewController> {
+ 	public static let v27 = Self(for: .v27, selector: selector)
  
- /* Begin PBXContainerItemProxy section */
-@@ -19,13 +20,21 @@
- 			remoteGlobalIDString = D5E04C152E8424CD006739F9;
- 			remoteInfo = TestsHostApp;
- 		};
-+		B0E0C0012F00000000000002 /* PBXContainerItemProxy */ = {
-+			isa = PBXContainerItemProxy;
-+			containerPortal = D5E04C0C2E842486006739F9 /* Project object */;
-+			proxyType = 1;
-+			remoteGlobalIDString = D5E04C152E8424CD006739F9;
-+			remoteInfo = TestsHostApp;
-+		};
- /* End PBXContainerItemProxy section */
+ 	private static var selector: IntrospectionSelector<UISplitViewController> {
+-		.default.withAncestorSelector { $0.splitViewController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.splitViewController }
+ 	}
+ }
  
- /* Begin PBXFileReference section */
- 		D5CEB5502E84303E00A88BA3 /* TestFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TestFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
- 		D5CEB6442E8431FB00A88BA3 /* Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Tests.xctestplan; sourceTree = "<group>"; };
- 		D5E04C162E8424CD006739F9 /* TestsHostApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestsHostApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
- 		D5E04C262E84254D006739F9 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-+		B0E0C0012F00000000000003 /* Benchmarks.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Benchmarks.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
- /* End PBXFileReference section */
+@@ -115,7 +117,9 @@ extension tvOSViewVersion<NavigationSplitViewType, UINavigationController> {
+ 	public static let v27 = Self.unavailable()
  
- /* Begin PBXFileSystemSynchronizedRootGroup section */
-@@ -44,6 +53,11 @@
- 			path = Tests;
- 			sourceTree = "<group>";
- 		};
-+		B0E0C0012F00000000000004 /* Benchmarks */ = {
-+			isa = PBXFileSystemSynchronizedRootGroup;
-+			path = Benchmarks;
-+			sourceTree = "<group>";
-+		};
- /* End PBXFileSystemSynchronizedRootGroup section */
+ 	private static var selector: IntrospectionSelector<UINavigationController> {
+-		.default.withAncestorSelector { $0.navigationController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.navigationController }
+ 	}
+ }
  
- /* Begin PBXFrameworksBuildPhase section */
-@@ -70,6 +84,14 @@
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-+		B0E0C0012F00000000000005 /* Frameworks */ = {
-+			isa = PBXFrameworksBuildPhase;
-+			buildActionMask = 2147483647;
-+			files = (
-+				B0E0C0012F00000000000001 /* SwiftUIIntrospect in Frameworks */,
-+			);
-+			runOnlyForDeploymentPostprocessing = 0;
-+		};
- /* End PBXFrameworksBuildPhase section */
+@@ -126,7 +130,9 @@ extension visionOSViewVersion<NavigationSplitViewType, UISplitViewController> {
+ 	public static let v27 = Self(for: .v27, selector: selector)
  
- /* Begin PBXGroup section */
-@@ -79,6 +101,7 @@
- 				D5E04C182E8424CD006739F9 /* TestsHostApp */,
- 				D5E04C272E84254D006739F9 /* Tests */,
- 				D5CEB6442E8431FB00A88BA3 /* Tests.xctestplan */,
-+				B0E0C0012F00000000000004 /* Benchmarks */,
- 				D5CEB5512E84303E00A88BA3 /* TestFramework */,
- 				D5E04C2F2E842584006739F9 /* Frameworks */,
- 				D5E04C172E8424CD006739F9 /* Products */,
-@@ -91,6 +114,7 @@
- 				D5E04C162E8424CD006739F9 /* TestsHostApp.app */,
- 				D5E04C262E84254D006739F9 /* Tests.xctest */,
- 				D5CEB5502E84303E00A88BA3 /* TestFramework.framework */,
-+				B0E0C0012F00000000000003 /* Benchmarks.xctest */,
- 			);
- 			name = Products;
- 			sourceTree = "<group>";
-@@ -185,6 +209,30 @@
- 			productReference = D5E04C262E84254D006739F9 /* Tests.xctest */;
- 			productType = "com.apple.product-type.bundle.unit-test";
- 		};
-+		B0E0C0012F00000000000008 /* Benchmarks */ = {
-+			isa = PBXNativeTarget;
-+			buildConfigurationList = B0E0C0012F0000000000000C /* Build configuration list for PBXNativeTarget "Benchmarks" */;
-+			buildPhases = (
-+				B0E0C0012F00000000000007 /* Sources */,
-+				B0E0C0012F00000000000005 /* Frameworks */,
-+				B0E0C0012F00000000000006 /* Resources */,
-+			);
-+			buildRules = (
-+			);
-+			dependencies = (
-+				B0E0C0012F00000000000009 /* PBXTargetDependency */,
-+			);
-+			fileSystemSynchronizedGroups = (
-+				B0E0C0012F00000000000004 /* Benchmarks */,
-+			);
-+			name = Benchmarks;
-+			packageProductDependencies = (
-+				B0E0C0012F0000000000000D /* SwiftUIIntrospect */,
-+			);
-+			productName = Benchmarks;
-+			productReference = B0E0C0012F00000000000003 /* Benchmarks.xctest */;
-+			productType = "com.apple.product-type.bundle.unit-test";
-+		};
- /* End PBXNativeTarget section */
- 
- /* Begin PBXProject section */
-@@ -205,6 +253,10 @@
- 						CreatedOnToolsVersion = 26.0.1;
- 						TestTargetID = D5E04C152E8424CD006739F9;
- 					};
-+					B0E0C0012F00000000000008 = {
-+						CreatedOnToolsVersion = 27.2;
-+						TestTargetID = D5E04C152E8424CD006739F9;
-+					};
- 				};
- 			};
- 			buildConfigurationList = D5E04C0F2E842486006739F9 /* Build configuration list for PBXProject "Tests" */;
-@@ -224,6 +276,7 @@
- 				D5E04C152E8424CD006739F9 /* TestsHostA
+ 	private static var selector: IntrospectionSelector<UISplitViewController> {
+-		.default.withAncestorSelector { $0.splitViewController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.splitViewController }
+ 	}
+ }
+ #elseif canImport(AppKit)
 ```
 
-**File**: `Tests/Tests.xcodeproj/xcshareddata/xcschemes/SwiftUIIntrospectBenchmarks.xcscheme` (added, +54/-0)
+**File**: `Sources/ViewTypes/NavigationViewWithColumnsStyle.swift` (modified, +9/-3)
 ```diff
-@@ -0,0 +1,54 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<Scheme
-+   LastUpgradeVersion = "2700"
-+   version = "1.7">
-+   <BuildAction
-+      parallelizeBuildables = "YES"
-+      buildImplicitDependencies = "YES"
-+      buildArchitectures = "Automatic">
-+   </BuildAction>
-+   <TestAction
-+      buildConfiguration = "Release"
-+      selectedDebuggerIdentifier = ""
-+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.PosixSpawn"
-+      shouldUseLaunchSchemeArgsEnv = "YES">
-+      <Testables>
-+         <TestableReference
-+            skipped = "NO"
-+            parallelizable = "NO">
-+            <BuildableReference
-+               BuildableIdentifier = "primary"
-+               BlueprintIdentifier = "B0E0C0012F00000000000008"
-+               BuildableName = "Benchmarks.xctest"
-+               BlueprintName = "Benchmarks"
-+               ReferencedContainer = "container:Tests.xcodeproj">
-+            </BuildableReference>
-+         </TestableReference>
-+      </Testables>
-+   </TestAction>
-+   <LaunchAction
-+      buildConfiguration = "Release"
-+      selectedDebuggerIdentifier = ""
-+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.PosixSpawn"
-+      launchStyle = "0"
-+      useCustomWorkingDirectory = "NO"
-+      ignoresPersistentStateOnLaunch = "NO"
-+      debugDocumentVersioning = "YES"
-+      debugServiceExtension = "internal"
-+      allowLocationSimulation = "YES">
-+   </LaunchAction>
-+   <ProfileAction
-+      buildConfiguration = "Release"
-+      shouldUseLaunchSchemeArgsEnv = "YES"
-+      savedToolIdentifier = ""
-+      useCustomWorkingDirectory = "NO"
-+      debugDocumentVersioning = "YES">
-+   </ProfileAction>
-+   <AnalyzeAction
-+      buildConfiguration = "Release">
-+   </AnalyzeAction>
-+   <ArchiveAction
-+      buildConfiguration = "Release"
-+      revealArchiveInOrganizer = "YES">
-+   </ArchiveAction>
-+</Scheme>
-```
-
-**File**: `mise-tasks/benchmarks` (added, +107/-0)
-```diff
-@@ -0,0 +1,107 @@
-+#!/usr/bin/env bash
-+#MISE description="Run the benchmarks, and compare them with a base revision when one is given"
-+#USAGE arg "[base]" help="Git revision to compare the working copy against, benchmarked in a temporary export"
-+#USAGE flag "--destination <destination>" default="platform=iOS Simulator,name=iPhone 17 Pro" help="xcodebuild destination for every run"
-+#USAGE flag "--rounds <rounds>" default="2" help="Test runs per revision, alternating their order between rounds"
-+#USAGE flag "--output <directory>" help="Directory for the result bundles and exported metrics, a temporary one by default"
-+#USAGE flag "--flag-percent <percent>" default="5" help="Mark increases above this percentage"
-+#
-+# Prints a Markdown table of each benchmark's median instructions retired across
-+# all rounds, which requires hardware counters, such as an Apple silicon Mac's.
-+# Alternating the revisions' order keeps warm-up and drift from favoring either
-+# one. xcodebuild output goes to stderr.
-+set -euo pipefail
-+
-+output=${usage_output:-$(mktemp -d)}
-+mkdir -p "$output"
-+rm -f "$output"/*.json
-+
-+metric="com.apple.dt.XCTMetric_CPU.instructions_retired"
-+checkouts=(head)
-+base_checkout=
-+
-+if [ -n "${usage_base:-}" ]; then
-+	base_checkout=$(mktemp -d)
-+	trap 'rm -rf "$base_checkout"' EXIT
-+	git archive "$usage_base" | tar -x -C "$base_checkout"
-+	if xcodebuild -list -project "$base_checkout/Tests/Tests.xcodeproj" 2> /dev/null | grep -q SwiftUIIntrospectBenchmarks; then
-+		checkouts=(base head)
-+	fi
-+fi
-+
-+xcodebuild_benchmarks() { # action name [arguments...]
-+	local action=$1 directory=.
-+	[ "$2" = base ] && directory=$base_checkout
-+	shift 2
-+	xcodebuild "$action" \
-+		-workspace "$directory/SwiftUIIntrospect.xcworkspace" \
-+		-scheme SwiftUIIntrospectBenchmarks \
-+		-destination "$usage_destination" \
-+		"$@" >&2
-+}
-+
-+run() { # name round
-+	local bundle="$output/$1-$2.xcresult"
-+	rm -rf "$bundle"
-+	xcodebuild_benchmarks test-without-building "$1" -resultBundlePath "$bundle"
-+	xcrun xcresulttool get test-results metrics --path "$bundle" > "$output/$1-$2.json"
-+	if ! jq -e --arg metric "$metric" 'all(.[].testRuns[0].metrics[]; .identifier != $metric or (.measurements | min) > 0)' \
-+		"$output/$1-$2.json" > /dev/null; then
-+		echo "error: $usage_destination reports no instructions retired, so its runs can't be compared" >&2
-+		exit 1
-+	fi
-+}
-+
-+for name in "${checkouts[@]}"; do
-+	xcodebuild_benchmarks build-for-testing "$name"
-+done
-+# The first run after the simulator boots pays for its cold start, so it isn't measured.
-+rm -rf "$output/warm-up.xcresult"
-+xcodebuild_benchmarks test-without-building head -resultBundlePath "$output/warm-up.xcresult"
-+for round in $(seq 1 "$usage_rounds"); do
-+	order=("${checkouts[@]}")
-+	if ((round % 2 == 0)) && [ "${#checkouts[@]}" = 2 ]; then
-+		order=(head base)
-+	fi
-+	for name in "${order[@]}"; do
-+		run "$name" "$round"
-+	done
-+done
-+
-+medians() { # name
-+	local files=("$output/$1"-*.json)
-+	[ -e "${files[0]}" ] || { echo "{}"; return; }
-+	jq -s --arg metric "$metric" '
-+		map(.[] | {
-+			key: (.testIdentifier | sub("\\(\\)$"; "")),
-+			value: [.testRuns[0].metrics[] | select(.identifier == $metric) | .measurements[]],
-+		})
-+		| group_by(.key)
-+		| map({key: .[0].key, value: (map(.value[]) | sort | .[length / 2 | floor])})
-+		| from_entries
-+	' "${files[@]}"
-+}
-+
-+jq -n -r \
-+	--argjson base "$(medians base)" \
-+	--argjson head "$(medians head)" \
-+	--argjson flag "$usage_flag_percent" \
-+	--argjson rounds "$usage_rounds" '
-+	def value: . / 1000 | . * 10 | round / 10 | tostring + "M";
-+	def change: (if . > 0 then "+" else "" end) + (. * 10 | round / 10 | tostring) + "%";
-+	"| Benchmark | Base | Head | Change |",
-+	"| --- | ---: | ---: | ---: |",
-+	(
-+		$head | keys[] as $name
-+		| $head[$name] as $new
-+		| $base[$name] as $old
-+		| if $old == null then
-+			"| \($name) | | \($new | value) | New |"
-+		else
-+			(($new - $old) / $old * 100) as $delta
-+			| "| \($name) | \($old | value) | \($new | value) | \($delta | change)\(if $delta > $flag then " ⚠️" else "" end) |"
-+		end
-+	),
-+	"",
-+	"Median instructions retired over \($rounds) rounds of 10 iterations. ⚠️ marks increases above \($flag)%."
-+'
-```
-
-**File**: `mise.lock` (modified, +46/-0)
-```diff
-@@ -34,6 +34,52 @@ checksum = "sha256:b5c4de9ec9e83790642564370c572b559f2b4ea38147ee8ea1f5b415967da
- url = "https://github.com/jdx/hk/releases/download/v1.57.0/hk-x86_64-pc-windows-msvc.zip"
- url_api = "https://api.github.com/repos/jdx/hk/releases/assets/536864259"
+@@ -90,7 +90,9 @@ extension iOSViewVersion<NavigationViewWithColumnsStyleType, UISplitViewControll
+ 	public static let v27 = Self(for: .v27, selector: selector)
  
-+[[tools.jq]]
-+version = "1.8.2"
-+backend = "aqua:jqlang/jq"
-+
-+[tools.jq."platforms.linux-arm64"]
-+checksum = "sha256:8b85c817833814ddca00a144c33705546355afccf0cf39b188f3cdb48b852309"
-+url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-arm64"
-+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012756"
-+provenance = "github-attestations"
-+
-+[tools.jq."platforms.linux-arm64-musl"]
-+checksum = "sha256:8b85c817833814ddca00a144c33705546355afccf0cf39b188f3cdb48b852309"
-+url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-arm64"
-+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012756"
-+provenance = "github-attestations"
-+
-+[tools.jq."platforms.linux-x64"]
-+checksum = "sha256:b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f"
-+url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64"
-+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012752"
-+provenance = "github-attestations"
-+
-+[tools.jq."platforms.linux-x64-musl"]
-+checksum = "sha256:b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f"
-+url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64"
-+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012752"
-+provenance = "github-attestations"
-+
-+[tools.jq."platforms.macos-arm64"]
-+checksum = "sha256:2d75340ba57a4b4b4c8708a21c2dc8e958a48aaa8bba13b27f77f6e4c0eca07e"
-+url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-macos-arm64"
-+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012783"
-+provenance = "github-attestations"
-+
-+[tools.jq."platforms.macos-x64"]
-+checksum = "sha256:e94b266e3c26690550006abe63152b782280f4e14374accdf04cbde844f00bc0"
-+url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-macos-amd64"
-+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012782"
-+provenance = "github-attestations"
-+
-+[tools.jq."platforms.windows-x64"]
-+checksum = "sha256:a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c627"
-+url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe"
-+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012788"
-+provenance = "github-attestations"
-+
- [[tools.swiftformat]]
- version = "0.63.0"
- backend = "github:nicklockwood/SwiftFormat"
+ 	private static var selector: IntrospectionSelector<UISplitViewController> {
+-		.default.withAncestorSelector { $0.splitViewController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.splitViewController }
+ 	}
+ }
+ 
+@@ -105,7 +107,9 @@ extension tvOSViewVersion<NavigationViewWithColumnsStyleType, UINavigationContro
+ 	public static let v27 = Self(for: .v27, selector: selector)
+ 
+ 	private static var selector: IntrospectionSelector<UINavigationController> {
+-		.default.withAncestorSelector { $0.navigationController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.navigationController }
+ 	}
+ }
+ 
+@@ -116,7 +120,9 @@ extension visionOSViewVersion<NavigationViewWithColumnsStyleType, UISplitViewCon
+ 	public static let v27 = Self(for: .v27, selector: selector)
+ 
+ 	private static var selector: IntrospectionSelector<UISplitViewController> {
+-		.default.withAncestorSelector { $0.splitViewController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.splitViewController }
+ 	}
+ }
+ #elseif canImport(AppKit)
 ```
 
-**File**: `mise.toml` (modified, +1/-0)
+**File**: `Sources/ViewTypes/NavigationViewWithStackStyle.swift` (modified, +9/-3)
 ```diff
-@@ -8,4 +8,5 @@ locked = true
+@@ -75,7 +75,9 @@ extension iOSViewVersion<NavigationViewWithStackStyleType, UINavigationControlle
+ 	public static let v27 = Self(for: .v27, selector: selector)
  
- [tools]
- hk = "1"
-+jq = "1"
- swiftformat = "0"
+ 	private static var selector: IntrospectionSelector<UINavigationController> {
+-		.default.withAncestorSelector { $0.navigationController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.navigationController }
+ 	}
+ }
+ 
+@@ -90,7 +92,9 @@ extension tvOSViewVersion<NavigationViewWithStackStyleType, UINavigationControll
+ 	public static let v27 = Self(for: .v27, selector: selector)
+ 
+ 	private static var selector: IntrospectionSelector<UINavigationController> {
+-		.default.withAncestorSelector { $0.navigationController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.navigationController }
+ 	}
+ }
+ 
+@@ -101,7 +105,9 @@ extension visionOSViewVersion<NavigationViewWithStackStyleType, UINavigationCont
+ 	public static let v27 = Self(for: .v27, selector: selector)
+ 
+ 	private static var selector: IntrospectionSelector<UINavigationController> {
+-		.default.withAncestorSelector { $0.navigationController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.navigationController }
+ 	}
+ }
+ #endif
+```
+
+**File**: `Sources/ViewTypes/TabView.swift` (modified, +6/-2)
+```diff
+@@ -90,7 +90,9 @@ extension iOSViewVersion<TabViewType, UITabBarController> {
+ 	public static let v27 = Self(for: .v27, selector: selector)
+ 
+ 	private static var selector: IntrospectionSelector<UITabBarController> {
+-		.default.withAncestorSelector { $0.tabBarController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.tabBarController }
+ 	}
+ }
+ 
+@@ -105,7 +107,9 @@ extension tvOSViewVersion<TabViewType, UITabBarController> {
+ 	public static let v27 = Self(for: .v27, selector: selector)
+ 
+ 	private static var selector: IntrospectionSelector<UITabBarController> {
+-		.default.withAncestorSelector { $0.tabBarController }
++		.default
++			.withProbe(.view)
++			.withAncestorSelector { $0.tabBarController }
+ 	}
+ }
+ #elseif canImport(AppKit)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #534** (2026-11-19): test: add introspection benchmarks (@davdroman)
-- **PR #530** (2026-11-13): chore: fix inaccurate docs and remove stale project files (@davdroman)
-- **PR #529** (2026-11-13): test: run tests that were being silently skipped (@davdroman)
-- **PR #528** (2026-11-13): fix: correct `.sheet` inference on `.v27` and unavailability diagnostics (@davdroman)
-- **PR #527** (2026-10-03): feat: add default indeterminate `ProgressView` introspection (@davdroman)
-- **PR #525** (2026-09-03): CI: run SwiftFormat through hk (@davdroman)
+- **PR #545** (2026-11-21): Find a replaced receiver rather than its ancestor (@davdroman)
+- **PR #544** (2026-11-21): Keep main thread stalls from failing introspection tests (@davdroman)
+- **PR #543** (2026-11-21): Add an article on idempotent customization (@davdroman)
+- **PR #542** (2026-11-20): Keep navigation bars tracking introspected scroll views (@davdroman)
+- **PR #541** (2026-11-20): test: cover `customize` for a view re-created before its target is found (@davdroman)
+- **PR #540** (closed): test: #376 on 1.1.0 [do not merge] (@davdroman)
 
 ---
 
@@ -1327,32 +1712,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: add introspection benchmarks
+## X. find a replaced receiver rather than its ancestor
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siteline/swiftui-introspect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/Introspect.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siteline/swiftui-introspect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd344bc3`: test: add introspection benchmarks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2b5e92c`: find a replaced receiver rather than its ancestor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Introspect.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-
-## Benchmarks
-
-- Before opening a pull request that changes how introspection finds or customizes its target, such as selectors, probes, or hierarchy traversal, run `mise run benchmarks <base>` against the pull request's base on an Apple silicon Mac. Investigate every ⚠️ increase before opening it.
-- Include the comparison table the task prints in the description of any pull request it was run for.
+	/// Whether a view probe found its target, so its anchor leaves the hierarchy, where it would hide the receiver from
+	/// UIKit's search for a view controller's content scroll view.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	/// Whether a view probe found its target, so its anchor leaves the hierarchy. UIKit looks for a view controller's
+	/// content scroll view along first subviews, and an anchor behind the receiver is its container's first subview.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd344bc3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2b5e92c` are properly handled with clean fallback behavior.

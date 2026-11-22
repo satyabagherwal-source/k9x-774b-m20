@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-NE8W",
-    "timestamp": "2026-11-20T21:25:44.288Z",
-    "repository": "iPlug2/iPlug2",
-    "learningId": "learn-github-iplug2-iplug2",
-    "contentHash": "5c394fe65dc0fae067058f90934a4b44258490ea48632dc6cfab3d0adb8fde47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-NEWH",
-    "timestamp": "2026-11-20T21:25:45.137Z",
-    "repository": "RDFLib/rdflib",
-    "learningId": "learn-github-rdflib-rdflib",
-    "contentHash": "ee1b98357eb134bb439032bfa5865e2c26bace460967884eb45843c1fe9b7170",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-NHGK",
     "timestamp": "2026-11-20T21:25:48.452Z",
     "repository": "dalance/procs",
@@ -7490,6 +7460,36 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-H7OM",
+    "timestamp": "2026-11-22T20:00:17.446Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "389d37f72759edcdd72a895aa8e0d4c4f8e1d3257b9883c353a0e6f7bb638d85",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-HDPM",
+    "timestamp": "2026-11-22T20:00:25.258Z",
+    "repository": "siteline/swiftui-introspect",
+    "learningId": "learn-github-siteline-swiftui-introspect",
+    "contentHash": "b60993a38146cee3505787da4b5a2b7fa76a3ed2fba8ef150894db7330dd6925",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

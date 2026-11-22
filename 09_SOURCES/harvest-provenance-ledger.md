@@ -12207,3 +12207,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-9c50727d` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-22T19:44:11.727Z |
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-22T19:52:10.962Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `420cea3a` | Multi-dimensional audit evidence | 2026-11-22T19:52:27.561Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-22T20:00:17.458Z |
+| `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `ddf68494` | Multi-dimensional audit evidence | 2026-11-22T20:00:25.261Z |
