@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T11:14:29.462Z",
-  "total_records": 2348,
+  "last_updated": "2026-11-22T11:35:20.283Z",
+  "total_records": 2350,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 921,
+      "total": 922,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -982,7 +982,8 @@
         "DOM-D-1DB76912",
         "domain_intelligence-research-knowledge-intelligence-hf-lakonik-pi-h3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncensored-",
-        "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor"
+        "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor",
+        "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1092,7 +1093,7 @@
       ]
     },
     "G": {
-      "total": 390,
+      "total": 391,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1483,7 +1484,8 @@
         "domain_intelligence-architecture-intelligence-nativewind-nativewind-core-invariants",
         "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-xevrion-hatchzip-core-invariants",
-        "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-sfu-db-connector-x-core-invariants"
       ]
     },
     "H": {
@@ -15427,8 +15429,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "a9aa095ead70949b07b500e979de7917e3ecc3609c2faedb5d5bfdd639ccfbe0",
-      "created_at": "2026-11-22T09:26:06.068Z"
+      "content_hash": "54e15ace56b210ec852da2537bc8decf58fafb8a172f0f9ee834d4bbe565422e",
+      "created_at": "2026-11-22T11:34:37.162Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15877,8 +15879,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "c567e06ef045bc5816e357f4d7b1e675a1aeccb1a28061670d28022592048fc1",
-      "created_at": "2026-11-22T09:26:10.035Z"
+      "content_hash": "053398be870f5afe6ee75cb7204f7061cea07cec257fe5e1112398e91ffa247c",
+      "created_at": "2026-11-22T11:35:20.283Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -27353,8 +27355,8 @@
       "title": "Research & Knowledge Intelligence: meituan-longcat/LongCat-Video-Avatar-1.6 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-video-avatar-1-6-research-knowledge-intelligence-meit.md",
       "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
-      "content_hash": "1ebac0ea832260ed4216f805e2fd671236d8a3623b5800f22c850b9ce40de212",
-      "created_at": "2026-11-17T11:25:20.706Z"
+      "content_hash": "ba99c8dc8cfb73c5cd3d449f84f250590cdc953a87e23d9d972df29d1e9eca2e",
+      "created_at": "2026-11-22T11:34:34.504Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants",
@@ -27422,8 +27424,8 @@
       "title": "Research & Knowledge Intelligence: hf-meituan-longcat-longcat-video-avatar-1.6-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-video-avatar-1-6-learnings-research-knowledge-intelli.md",
       "repository": "hf-meituan-longcat-longcat-video-avatar-1.6-learnings",
-      "content_hash": "609ee2221a685e1d8917a71d1575bacebfaeb0318e4fef4bfa64d156c6bc6960",
-      "created_at": "2026-11-17T11:26:09.736Z"
+      "content_hash": "881091b0de52c4c56e153a5b32c3b8a0a6d60a37021a49b55aeda0d1306700bf",
+      "created_at": "2026-11-22T11:35:15.573Z"
     },
     "DOM-D-1453C5CA": {
       "record_id": "DOM-D-1453C5CA",
@@ -39568,6 +39570,24 @@
       "repository": "abue-ammar-tinycast-learnings",
       "content_hash": "2bb21afdd82abdad35128802ed58dae6d6e7f09d963c14e1417e10998ff70143",
       "created_at": "2026-11-22T11:14:28.065Z"
+    },
+    "domain_intelligence-architecture-intelligence-sfu-db-connector-x-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sfu-db-connector-x-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sfu-db/connector-x Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sfu-db-connector-x-architecture-intelligence-sfu-db-connector-x-core-invariants.md",
+      "repository": "sfu-db/connector-x",
+      "content_hash": "a62d040da66c10a643a571cb5cc0b7cc5e6648e9dacc96b85cde23284aef76f6",
+      "created_at": "2026-11-22T11:35:12.087Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sfu-db-connector-x-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sfu-db-connector-x-learnings-research-knowledge-intelligence-sfu-db-connector-x-.md",
+      "repository": "sfu-db-connector-x-learnings",
+      "content_hash": "e11d39380d7261f8a31ae0e9bd4faabd33a9ae0abd2023e9279f0a6597277710",
+      "created_at": "2026-11-22T11:35:19.008Z"
     }
   }
 }

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T11:14:27.325Z",
-    "lastVerified": "2026-11-22T11:14:27.325Z",
+    "lastChecked": "2026-11-22T11:35:15.068Z",
+    "lastVerified": "2026-11-22T11:35:15.068Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -232,8 +232,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-22T05:39:47.306Z",
-    "lastVerified": "2026-11-22T05:39:47.306Z",
+    "lastChecked": "2026-11-22T11:34:26.033Z",
+    "lastVerified": "2026-11-22T11:34:26.033Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -354,22 +354,21 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T10:18:06.827Z",
-    "lastVerified": "2026-11-22T10:18:06.827Z",
+    "lastChecked": "2026-11-22T11:34:35.317Z",
+    "lastVerified": "2026-11-22T11:34:35.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "1b9f227e5a206cb3e17d04a1310e6a35a88f69cb237d582730c92084f685cfd5",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "9f767228d8c59ae4216875a8913a958b7edcd622224bd64630e37bb71d63d7e3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "564e432f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -5215,14 +5214,14 @@
     "officialUrl": "https://github.com/sfu-db/connector-x",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T07:58:54.540Z",
-    "lastVerified": "2026-11-21T07:58:54.540Z",
+    "lastChecked": "2026-11-22T11:34:33.239Z",
+    "lastVerified": "2026-11-22T11:34:33.239Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "e547cb38d62999a5c812b98f71ee2dd6ac32803d239b3b3f70df6459907d4fe6",
+    "contentHash": "ce38d9d4792637d10020e95976af793672db3fcdefd23a259b60e0ef5c509cfa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6360,9 +6359,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-21T11:11:33.950Z",
+    "lastChecked": "2026-11-22T11:34:23.453Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-21T11:11:33.950Z"
+    "lastVerified": "2026-11-22T11:34:23.453Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -7618,12 +7617,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "arkivanov-decompose": {
-    "name": "arkivanov/Decompose",
+    "name": "Decompose",
     "officialUrl": "https://github.com/arkivanov/Decompose",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-19T09:43:46.451Z",
-    "lastVerified": "2026-11-19T09:43:46.451Z",
+    "lastChecked": "2026-11-22T11:34:20.968Z",
+    "lastVerified": "2026-11-22T11:34:20.968Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arkivanov-decompose",
@@ -7632,7 +7631,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "361377cb"
   },
   "vcaesar-riot": {
     "name": "vcaesar/riot",
@@ -7963,9 +7963,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-11-21T00:32:29.883Z",
+    "lastChecked": "2026-11-22T11:34:16.000Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-11-21T00:32:29.883Z"
+    "lastVerified": "2026-11-22T11:34:16.000Z"
   },
   "hf-facebook-sam3": {
     "name": "facebook/sam3",
@@ -14236,6 +14236,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meituan-longcat-longcat-video-avatar-1.6": {
+    "name": "meituan-longcat/LongCat-Video-Avatar-1.6",
+    "officialUrl": "https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T11:34:18.652Z",
+    "lastVerified": "2026-11-22T11:34:18.652Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
+    "contentHash": "9eec5864889ac8b05bb78b6b50e018d9c1de114a17e12585b5052629820d9dd0",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

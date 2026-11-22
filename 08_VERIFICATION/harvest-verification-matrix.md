@@ -12077,3 +12077,6 @@
 | `CYCLE-20261122-017R` | `2026-11-22T10:55:03.207Z` | `HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md` | Yes (`a0049ab9...`) |
 | `CYCLE-20261122-OQGT` | `2026-11-22T11:14:15.677Z` | `n4ze3m/tiny-voca` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md` | Yes (`4b264235...`) |
 | `CYCLE-20261122-ORNV` | `2026-11-22T11:14:17.227Z` | `abue-ammar/tinycast` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9923` | Yes (`7a2fa35d...`) |
+| `CYCLE-20261122-EUOK` | `2026-11-22T11:34:34.196Z` | `meituan-longcat/LongCat-Video-Avatar-1.6` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md` | Yes (`9eec5864...`) |
+| `CYCLE-20261122-EWKE` | `2026-11-22T11:34:36.638Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9924` | Yes (`9f767228...`) |
+| `CYCLE-20261122-FNIP` | `2026-11-22T11:35:11.569Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9925` | Yes (`ce38d9d4...`) |

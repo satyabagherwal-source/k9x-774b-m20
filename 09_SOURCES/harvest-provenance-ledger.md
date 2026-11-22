@@ -12110,3 +12110,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf` | `https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | `hf-hauhauc` | Multi-dimensional audit evidence | 2026-11-22T10:55:03.212Z |
 | `learn-huggingface-n4ze3m-tiny-voca` | `https://huggingface.co/n4ze3m/tiny-voca` | `hf-n4ze3m-` | Multi-dimensional audit evidence | 2026-11-22T11:14:15.681Z |
 | `learn-github-abue-ammar-tinycast` | `https://github.com/abue-ammar/tinycast` | `876b61dc` | Multi-dimensional audit evidence | 2026-11-22T11:14:17.231Z |
+| `learn-huggingface-meituan-longcat-longcat-video-avatar-1-6` | `https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6` | `hf-meituan` | Multi-dimensional audit evidence | 2026-11-22T11:34:34.201Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3531f118` | Multi-dimensional audit evidence | 2026-11-22T11:34:36.644Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `4a7baf31` | Multi-dimensional audit evidence | 2026-11-22T11:35:11.574Z |

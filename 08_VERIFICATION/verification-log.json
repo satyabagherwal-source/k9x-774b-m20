@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-EDCX",
-    "timestamp": "2026-11-20T11:30:51.297Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "ae95ee36162a3cdb2963c010dc8ff780afc78f3e2039d5a2d7c0874e3375e954",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-FAGU",
-    "timestamp": "2026-11-20T11:31:34.206Z",
-    "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
-    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
-    "contentHash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-RFUL",
-    "timestamp": "2026-11-20T11:41:01.053Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "a03c213c67bb556d3aa7f57a574f433f7354870353b3e4c65a5f5217b8ed26a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-PAIR",
     "timestamp": "2026-11-20T12:07:20.451Z",
     "repository": "DNSControl/dnscontrol",
@@ -7490,6 +7445,51 @@
     "repository": "abue-ammar/tinycast",
     "learningId": "learn-github-abue-ammar-tinycast",
     "contentHash": "7a2fa35dee8ed7a427981124efdfcec0ab92532d19ace20fd350bab362b01f7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-EUOK",
+    "timestamp": "2026-11-22T11:34:34.196Z",
+    "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
+    "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
+    "contentHash": "9eec5864889ac8b05bb78b6b50e018d9c1de114a17e12585b5052629820d9dd0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-EWKE",
+    "timestamp": "2026-11-22T11:34:36.638Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "9f767228d8c59ae4216875a8913a958b7edcd622224bd64630e37bb71d63d7e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-FNIP",
+    "timestamp": "2026-11-22T11:35:11.569Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "ce38d9d4792637d10020e95976af793672db3fcdefd23a259b60e0ef5c509cfa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

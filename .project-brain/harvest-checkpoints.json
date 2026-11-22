@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T11:14:17.240Z",
+  "last_updated": "2026-11-22T11:35:11.587Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "1b9f227e5a206cb3e17d04a1310e6a35a88f69cb237d582730c92084f685cfd5",
-      "verified_at": "2026-11-22T09:26:05.690Z",
+      "content_hash": "9f767228d8c59ae4216875a8913a958b7edcd622224bd64630e37bb71d63d7e3",
+      "verified_at": "2026-11-22T11:34:36.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T09:26:05.690Z"
+      "last_updated": "2026-11-22T11:34:36.655Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "e547cb38d62999a5c812b98f71ee2dd6ac32803d239b3b3f70df6459907d4fe6",
-      "verified_at": "2026-11-21T07:58:55.133Z",
+      "content_hash": "ce38d9d4792637d10020e95976af793672db3fcdefd23a259b60e0ef5c509cfa",
+      "verified_at": "2026-11-22T11:35:11.586Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T07:58:55.133Z"
+      "last_updated": "2026-11-22T11:35:11.586Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -19206,14 +19206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
-      "content_hash": "77084bf06e4435ef650ddd8e84e11fe046dc4784e1f27ece083b04a3f79ae2cf",
-      "verified_at": "2026-11-17T11:25:20.546Z",
+      "content_hash": "9eec5864889ac8b05bb78b6b50e018d9c1de114a17e12585b5052629820d9dd0",
+      "verified_at": "2026-11-22T11:34:34.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:25:20.546Z"
+      "last_updated": "2026-11-22T11:34:34.212Z"
     },
     "nex-agi/Nex-N2.6": {
       "repository": "nex-agi/Nex-N2.6",

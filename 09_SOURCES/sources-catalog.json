@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "564e432f",
+    "sourceVersion": "3531f118",
     "license": "Apache-2.0",
-    "contentHash": "1b9f227e5a206cb3e17d04a1310e6a35a88f69cb237d582730c92084f685cfd5",
-    "lastHarvestedAt": "2026-11-22T09:26:05.652Z",
+    "contentHash": "9f767228d8c59ae4216875a8913a958b7edcd622224bd64630e37bb71d63d7e3",
+    "lastHarvestedAt": "2026-11-22T11:34:36.644Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "4cfcea91",
+    "sourceVersion": "4a7baf31",
     "license": "MIT",
-    "contentHash": "e547cb38d62999a5c812b98f71ee2dd6ac32803d239b3b3f70df6459907d4fe6",
-    "lastHarvestedAt": "2026-11-21T07:58:55.126Z",
+    "contentHash": "ce38d9d4792637d10020e95976af793672db3fcdefd23a259b60e0ef5c509cfa",
+    "lastHarvestedAt": "2026-11-22T11:35:11.574Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -12745,8 +12745,8 @@
     "sourceUrl": "https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6",
     "sourceVersion": "hf-meituan-longcat-longcat-video-avatar-1.6",
     "license": "Open-Source",
-    "contentHash": "77084bf06e4435ef650ddd8e84e11fe046dc4784e1f27ece083b04a3f79ae2cf",
-    "lastHarvestedAt": "2026-11-17T11:25:20.538Z",
+    "contentHash": "9eec5864889ac8b05bb78b6b50e018d9c1de114a17e12585b5052629820d9dd0",
+    "lastHarvestedAt": "2026-11-22T11:34:34.201Z",
     "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6"
   },
   "hf-nex-agi-nex-n2.6": {

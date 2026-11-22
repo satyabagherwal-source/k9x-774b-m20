@@ -4,22 +4,22 @@
 {
   "source_repository": "sfu-db/connector-x",
   "source_url": "https://github.com/sfu-db/connector-x",
-  "source_version": "4cfcea91",
+  "source_version": "4a7baf31",
   "license": "MIT",
-  "timestamp": "2026-11-21T07:58:55.307Z",
+  "timestamp": "2026-11-22T11:35:11.867Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sfu-db-connector-x",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sfu-db/connector-x](https://github.com/sfu-db/connector-x) (Revision: `4cfcea91`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T07:58:55.307Z`  
+> **Provenance**: Harvested from [sfu-db/connector-x](https://github.com/sfu-db/connector-x) (Revision: `4a7baf31`).  
+> **License**: MIT | **Timestamp**: `2026-11-22T11:35:11.867Z`  
 > **Learning ID**: `learn-github-sfu-db-connector-x`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sfu-db/connector-x` (Commit: `4cfcea91`)
+- **Target Repository**: `sfu-db/connector-x` (Commit: `4a7baf31`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T07:58:54.540Z  
+> **Harvest Timestamp**: 2026-11-22T11:34:33.239Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -798,1173 +798,502 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4cfcea91` (2026-11-20)
-**Commit Message**: Merge pull request #1023 from tschm/deps/arrow-59
+### Incident Patch 1: `fbfaeb99` (2026-11-22)
+**Commit Message**: fix: return an error instead of panicking on an unsupported protocol
 
-build(rust): bump arrow to 59 and datafusion to 55.2
+An unsupported protocol (e.g. protocol="text" for Postgres) or a source
+without partition support reached unimplemented!(), so Python users got a
+PanicException. These match arms now return errors:
 
-**File**: `Cargo.lock` (modified, +347/-384)
+- connectorx get_arrow / new_record_batch_iter: the new
+  ConnectorXOutError::ProtocolNotSupported, which names the protocol, the
+  source and the protocols it accepts.
+- connectorx partition (get_col_range, get_part_query) and the Python
+  pandas path (write_pandas, get_meta): ProtocolNotSupported for protocols,
+  the existing SourceNotSupport for sources.
+
+Python raises a RuntimeError such as:
+  Protocol "text" is not supported for Postgres; supported protocols:
+  binary, csv, cursor, simple.
+
+Closes #1050
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `connectorx-python/connectorx/tests/test_errors.py` (added, +35/-0)
 ```diff
-@@ -139,7 +139,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -150,7 +150,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -201,9 +201,9 @@ checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
- 
- [[package]]
- name = "arrow"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4fb98341a7e051bb79731ecb33ec00cbd6e0e315a542d6732b46d462c9215ea2"
-+checksum = "3f04e0a89cc175eaf3740282537851e6fd9d7276f97730b9d0ea2859c11a85df"
- dependencies = [
-  "arrow-arith",
-  "arrow-array",
-@@ -222,23 +222,23 @@ dependencies = [
- 
- [[package]]
- name = "arrow-arith"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6ce4751cbc4bcccfeeea79df9571ff1dc066d61e44723c7604d11c7937f5b560"
-+checksum = "157943c720919e8f5b6731407ce5cd4c9a5ef47a75bf10edaf24b7081b5763ef"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-  "arrow-data",
-  "arrow-schema",
-  "chrono",
-- "num",
-+ "num-traits",
- ]
- 
- [[package]]
- name = "arrow-array"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b02ccba2e977a3aabb4384036109ca32f552399a2bc0588f925f91ed073ce70c"
-+checksum = "72b5b1682924f11ecf6929689c16cbc69efbb6dd141b06ad98ee1cb10d858c43"
- dependencies = [
-  "ahash",
-  "arrow-buffer",
-@@ -247,47 +247,52 @@ dependencies = [
-  "chrono",
-  "chrono-tz 0.10.4",
-  "half",
-- "hashbrown 0.16.1",
-- "num",
-+ "hashbrown 0.17.1",
-+ "libc",
-+ "num-complex",
-+ "num-integer",
-+ "num-traits",
- ]
- 
- [[package]]
- name = "arrow-buffer"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a90f8bece6a9ee316a699fbbfde368a206676a1206ce89b50f07937648e76c3c"
-+checksum = "b5d687afc6c927965a8a759f3b68de91933d9dfa2e1bb6e156bac84b85665e92"
- dependencies = [
-  "bytes",
-  "half",
-- "num",
-+ "num-bigint 0.5.1",
-+ "num-traits",
- ]
- 
- [[package]]
- name = "arrow-cast"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "61ffe645cfb4e80b1ca37a3a106ce7b4af66ccdd60c655a57e6b9aab096164a7"
-+checksum = "3f23c3379feede42135ef27ca60e67f6e643cd4343ae74e4c8b16c83f55afd85"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-  "arrow-data",
-+ "arrow-ord",
-  "arrow-schema",
-  "arrow-select",
-  "atoi",
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "chrono",
-  "comfy-table",
-  "half",
-  "lexical-core",
-- "num",
-+ "num-traits",
-  "ryu",
- ]
- 
- [[package]]
- name = "arrow-csv"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d376e82c15a6298b49a53fbb0d89348db1d5dd3a5147977d62d5516d430cfed3"
-+checksum = "85b1984628b091b8319b3c305fce21d04f9e9b2578bb733b0d0108462ae1d698"
- dependencies = [
-  "arrow-array",
-  "arrow-cast",
-@@ -300,59 +305,63 @@ dependencies = [
- 
- [[package]]
- name = "arrow-data"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "78468c813909465dd0f858950c8a0614eb63608134acf95c602ec21381258b28"
-+checksum = "bb0a031c7ff5e2bdb443117054fb466af1d4df5b7f0ecbe197713dc8b113b1ba"
- dependencies = [
-  "arrow-buffer",
-  "arrow-schema",
-  "half",
-- "num",
-+ "num-integer",
-+ "num-traits",
- ]
- 
- [[package]]
- name = "arrow-ipc"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "31f88b0fbb33af28089ccd3e4dcd0ff09de46842168d00220b920f7231feddf5"
-+checksum = "f5dd1afadda2eb821aaf851bb4c0adef60c30cc0f1a29bd02fb99dd07fb9f58d"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-  "arrow-data",
-  "arrow-schema",
-  "arrow-select",
-  "flatbuffers",
-- "lz4_flex 0.11.6",
-- "zstd",
-+ "lz4_flex",
-+ "zstd 0.13.3",
- ]
- 
- [[package]]
- name = "arrow-json"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "dff14ad7669f0742f3c43c606465ad4aad97cfcee24e6317a30f68eba9d75070"
-+checksum = "e2bc4d56a0dad84cc51c5812ccff48b642047a1f3be80349cd84318983e79edb"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-  "arrow-cast",
-- "arrow-data",
-+ "arrow-ord",
-  "arrow-schema",
-+ "arrow-select",
-  "chrono",
-  "half",
-  "indexmap 2.14.2",
-+ "itoa",
-  "lexical-core",
-  "memchr",
-- "num",
-- "serde",
-+ "num-traits",
-+ "ryu",
-+ "serde_core",
-  "serde_json",
-  "simdutf8",
- ]
- 
- [[package]]
- name = "arrow-ord"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aed58a38c3db0a2cf75ef70e3cb6bc4bd0da0a3d390de37c361
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -8,6 +8,6 @@ debug = true
- lto = true
- 
- [workspace.dependencies]
--arrow = {version = "56", features = ["prettyprint", "ffi"]}
-+arrow = {version = "59", features = ["prettyprint", "ffi"]}
- polars = {version = "0.55", features=["dtype-u8", "dtype-u16", "lazy"]}
- polars-arrow = {version = "0.55"}
-\ No newline at end of file
-```
-
-**File**: `connectorx-python/Cargo.lock` (modified, +428/-398)
-```diff
-@@ -63,12 +63,6 @@ version = "0.2.21"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
- 
--[[package]]
--name = "android-tzdata"
--version = "0.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
--
- [[package]]
- name = "android_system_properties"
- version = "0.1.5"
-@@ -107,9 +101,9 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
- 
- [[package]]
- name = "arrow"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4fb98341a7e051bb79731ecb33ec00cbd6e0e315a542d6732b46d462c9215ea2"
-+checksum = "3f04e0a89cc175eaf3740282537851e6fd9d7276f97730b9d0ea2859c11a85df"
- dependencies = [
-  "arrow-arith",
-  "arrow-array",
-@@ -128,23 +122,23 @@ dependencies = [
- 
- [[package]]
- name = "arrow-arith"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6ce4751cbc4bcccfeeea79df9571ff1dc066d61e44723c7604d11c7937f5b560"
-+checksum = "157943c720919e8f5b6731407ce5cd4c9a5ef47a75bf10edaf24b7081b5763ef"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-  "arrow-data",
-  "arrow-schema",
-  "chrono",
-- "num",
-+ "num-traits",
- ]
- 
- [[package]]
- name = "arrow-array"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b02ccba2e977a3aabb4384036109ca32f552399a2bc0588f925f91ed073ce70c"
-+checksum = "72b5b1682924f11ecf6929689c16cbc69efbb6dd141b06ad98ee1cb10d858c43"
- dependencies = [
-  "ahash 0.8.12",
-  "arrow-buffer",
-@@ -153,47 +147,52 @@ dependencies = [
-  "chrono",
-  "chrono-tz 0.10.4",
-  "half 2.7.1",
-- "hashbrown 0.16.1",
-- "num",
-+ "hashbrown 0.17.1",
-+ "libc",
-+ "num-complex",
-+ "num-integer",
-+ "num-traits",
- ]
- 
- [[package]]
- name = "arrow-buffer"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a90f8bece6a9ee316a699fbbfde368a206676a1206ce89b50f07937648e76c3c"
-+checksum = "b5d687afc6c927965a8a759f3b68de91933d9dfa2e1bb6e156bac84b85665e92"
- dependencies = [
-  "bytes",
-  "half 2.7.1",
-- "num",
-+ "num-bigint 0.5.1",
-+ "num-traits",
- ]
- 
- [[package]]
- name = "arrow-cast"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "61ffe645cfb4e80b1ca37a3a106ce7b4af66ccdd60c655a57e6b9aab096164a7"
-+checksum = "3f23c3379feede42135ef27ca60e67f6e643cd4343ae74e4c8b16c83f55afd85"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-  "arrow-data",
-+ "arrow-ord",
-  "arrow-schema",
-  "arrow-select",
-  "atoi",
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "chrono",
-  "comfy-table",
-  "half 2.7.1",
-  "lexical-core",
-- "num",
-+ "num-traits",
-  "ryu",
- ]
- 
- [[package]]
- name = "arrow-csv"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d376e82c15a6298b49a53fbb0d89348db1d5dd3a5147977d62d5516d430cfed3"
-+checksum = "85b1984628b091b8319b3c305fce21d04f9e9b2578bb733b0d0108462ae1d698"
- dependencies = [
-  "arrow-array",
-  "arrow-cast",
-@@ -206,59 +205,63 @@ dependencies = [
- 
- [[package]]
- name = "arrow-data"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "78468c813909465dd0f858950c8a0614eb63608134acf95c602ec21381258b28"
-+checksum = "bb0a031c7ff5e2bdb443117054fb466af1d4df5b7f0ecbe197713dc8b113b1ba"
- dependencies = [
-  "arrow-buffer",
-  "arrow-schema",
-  "half 2.7.1",
-- "num",
-+ "num-integer",
-+ "num-traits",
- ]
- 
- [[package]]
- name = "arrow-ipc"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "31f88b0fbb33af28089ccd3e4dcd0ff09de46842168d00220b920f7231feddf5"
-+checksum = "f5dd1afadda2eb821aaf851bb4c0adef60c30cc0f1a29bd02fb99dd07fb9f58d"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-  "arrow-data",
-  "arrow-schema",
-  "arrow-select",
-  "flatbuffers",
-- "lz4_flex 0.11.5",
-+ "lz4_flex",
-  "zstd",
- ]
- 
- [[package]]
- name = "arrow-json"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "dff14ad7669f0742f3c43c606465ad4aad97cfcee24e6317a30f68eba9d75070"
-+checksum = "e2bc4d56a0dad84cc51c5812ccff48b642047a1f3be80349cd84318983e79edb"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-  "arrow-cast",
-- "arrow-data",
-+ "arrow-ord",
-  "arrow-schema",
-+ "arrow-select",
-  "chrono",
-  "half 2.7.1",
-  "indexmap",
-+ "itoa",
-  "lexical-core",
-  "memchr",
-- "num",
-- "serde",
-+ "num-traits",
-+ "ryu",
-+ "serde_core",
-  "serde_json",
-  "simdutf8",
- ]
- 
- [[package]]
- name = "arrow-ord"
--version = "56.2.1"
-+version = "59.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aed58a38c3db0a2cf75ef70e3cb6bc4bd0da0a3d390de37c36139b31fae826e8"
+@@ -0,0 +1,35 @@
++"""Errors raised for bad arguments, before any database is contacted."""
 +
++import pytest
++
++import connectorx as cx
++
++# Nothing listens on port 1: the protocol is rejected before connecting.
++POSTGRES_URL = "postgresql://user:pass@127.0.0.1:1/db"
++MYSQL_URL = "mysql://user:pass@127.0.0.1:1/db"
++
++
++@pytest.mark.parametrize("return_type", ["pandas", "arrow", "polars", "arrow_stream"])
++def test_unsupported_postgres_protocol_raises(return_type: str) -> None:
++    if return_type == "polars":
++        pytest.importorskip("polars")
++    with pytest.raises(
++        RuntimeError, match=r'Protocol "text" is not supported for Postgres'
++    ):
++        cx.read_sql(POSTGRES_URL, "SELECT 1", protocol="text", return_type=return_type)
++
++
++@pytest.mark.parametrize("return_type", ["pandas", "arrow"])
++def test_unsupported_mysql_protocol_raises(return_type: str) -> None:
++    with pytest.raises(
++        RuntimeError,
++        match=r'Protocol "cursor" is not supported for MySQL; supported protocols: binary, text',
++    ):
++        cx.read_sql(MYSQL_URL, "SELECT 1", protocol="cursor", return_type=return_type)
++
++
++def test_unsupported_protocol_in_get_meta_raises() -> None:
++    with pytest.raises(
++        RuntimeError, match=r'Protocol "text" is not supported for Postgres'
++    ):
++        cx.get_meta(POSTGRES_URL, "SELECT 1", protocol="text")
 ```
 
-**File**: `connectorx-python/Cargo.toml` (modified, +1/-1)
+**File**: `connectorx-python/src/pandas/get_meta.rs` (modified, +16/-4)
 ```diff
-@@ -13,7 +13,7 @@ readme = "README.md"
+@@ -8,6 +8,7 @@ use super::{
+     },
+ };
+ use crate::errors::ConnectorXPythonError;
++use connectorx::errors::ConnectorXOutError;
+ use connectorx::source_router::{SourceConn, SourceType};
+ use connectorx::{
+     prelude::*,
+@@ -25,7 +26,7 @@ use connectorx::{
+     },
+     sql::CXQuery,
+ };
+-use fehler::throws;
++use fehler::{throw, throws};
+ use log::debug;
+ use postgres::NoTls;
+ use postgres_openssl::MakeTlsConnector;
+@@ -128,7 +129,11 @@ pub fn get_meta<'py>(
+                     debug!("Running dispatcher");
+                     dispatcher.get_meta(py)?
+                 }
+-                _ => unimplemented!("{} protocol not supported", protocol),
++                _ => throw!(ConnectorXOutError::protocol_not_supported(
++                    protocol,
++                    SourceType::Postgres,
++                    &["binary", "csv", "cursor", "simple"]
++                )),
+             }
+         }
+         SourceType::SQLite => {
+@@ -170,7 +175,11 @@ pub fn get_meta<'py>(
+                     debug!("Running dispatcher");
+                     dispatcher.get_meta(py)?
+                 }
+-                _ => unimplemented!("{} protocol not supported", protocol),
++                _ => throw!(ConnectorXOutError::protocol_not_supported(
++                    protocol,
++                    SourceType::MySQL,
++                    &["binary", "text"]
++                )),
+             }
+         }
+         SourceType::MsSQL => {
+@@ -230,6 +239,9 @@ pub fn get_meta<'py>(
+             );
+             dispatcher.get_meta(py)?
+         }
+-        _ => unimplemented!("{:?} not implemented!", source_conn.ty),
++        _ => throw!(ConnectorXOutError::SourceNotSupport(format!(
++            "{:?}",
++            source_conn.ty
++        ))),
+     }
+ }
+```
+
+**File**: `connectorx-python/src/pandas/mod.rs` (modified, +16/-4)
+```diff
+@@ -14,6 +14,7 @@ pub use self::transports::{
+ };
+ pub use self::typesystem::{PandasDType, PandasTypeSystem};
+ use crate::errors::ConnectorXPythonError;
++use connectorx::errors::ConnectorXOutError;
+ use connectorx::source_router::{SourceConn, SourceType};
+ use connectorx::sources::clickhouse::ClickHouseSource;
+ use connectorx::sources::oracle::OracleSource;
+@@ -28,7 +29,7 @@ use connectorx::{
+     },
+     sql::CXQuery,
+ };
+-use fehler::throws;
++use fehler::{throw, throws};
+ use log::debug;
+ use postgres::NoTls;
+ use postgres_openssl::MakeTlsConnector;
+@@ -159,7 +160,11 @@ pub fn write_pandas<'a, 'py: 'a>(
+                     dispatcher.set_pre_execution_queries(pre_execution_queries);
+                     dispatcher.run(py)?
+                 }
+-                _ => unimplemented!("{} protocol not supported", protocol),
++                _ => throw!(ConnectorXOutError::protocol_not_supported(
++                    protocol,
++                    SourceType::Postgres,
++                    &["binary", "csv", "cursor", "simple"]
++                )),
+             }
+         }
+         SourceType::SQLite => {
+@@ -200,7 +205,11 @@ pub fn write_pandas<'a, 'py: 'a>(
+                 dispatcher.set_pre_execution_queries(pre_execution_queries);
+                 dispatcher.run(py)?
+             }
+-            _ => unimplemented!("{} protocol not supported", protocol),
++            _ => throw!(ConnectorXOutError::protocol_not_supported(
++                protocol,
++                SourceType::MySQL,
++                &["binary", "text"]
++            )),
+         },
+         SourceType::MsSQL => {
+             let rt = Arc::new(tokio::runtime::Runtime::new().expect("Failed to create runtime"));
+@@ -256,6 +265,9 @@ pub fn write_pandas<'a, 'py: 'a>(
+             );
+             dispatcher.run(py)?
+         }
+-        _ => unimplemented!("{:?} not implemented!", source_conn.ty),
++        _ => throw!(ConnectorXOutError::SourceNotSupport(format!(
++            "{:?}",
++            source_conn.ty
++        ))),
+     }
+ }
+```
+
+**File**: `connectorx/src/errors.rs` (modified, +23/-0)
+```diff
+@@ -19,6 +19,17 @@ pub enum ConnectorXOutError {
+     #[error("Source {0} not supported.")]
+     SourceNotSupport(String),
  
- [dependencies]
- anyhow = "1"
--arrow = { version = "56" }
-+arrow = { version = "59" }
- bitfield = "0.13"
- bytes = "1.4"
- chrono = "0.4"
++    /// The source does not support the requested `protocol`.
++    #[error("Protocol {protocol:?} is not supported for {db}; supported protocols: {supported}.")]
++    ProtocolNotSupported {
++        /// The protocol that was asked for.
++        protocol: String,
++        /// The source, e.g. `Postgres`.
++        db: String,
++        /// The protocols the source accepts, comma-separated.
++        supported: String,
++    },
++
+     /// I/O error.
+     #[error(transparent)]
+     IOError(#[from] std::io::Error),
+@@ -260,6 +271,18 @@ pub enum ConnectorXError {
+     Other(#[from] anyhow::Error),
+ }
+ 
++impl ConnectorXOutError {
++    /// The error for a `protocol` that source `db` (e.g. `SourceType::Postgres`)
++    /// does not accept; `supported` lists the protocols it does.
++    pub fn protocol_not_supported(protocol: &str, db: impl fmt::Debug, supported: &[&str]) -> Self {
++        ConnectorXOutError::ProtocolNotSupported {
++            protocol: protocol.to_string(),
++            db: format!("{db:?}"),
++            supported: supported.join(", "),
++        }
++    }
++}
++
+ impl ConnectorXError {
+     /// Build a [`ConnectorXError::CannotProduce`] for type `T`.
+     pub fn cannot_produce<T>(context: Option<String>) -> Self {
 ```
 
-**File**: `connectorx/Cargo.toml` (modified, +1/-1)
+**File**: `connectorx/src/get_arrow.rs` (modified, +90/-4)
 ```diff
-@@ -83,7 +83,7 @@ urlencoding = { version = "2.1", optional = true }
- uuid = { version = "1", optional = true }
- uuid_old = { package = "uuid", version = "0.8", optional = true }
- j4rs = { version = "0.25", optional = true }
--datafusion = { version = "50.3", optional = true }
-+datafusion = { version = "55.2", optional = true }
- prusto = { version = "0.5", optional = true }
- serde = { version = "1", features = ["derive"], optional = true }
- clickhouse = { version = "0.15", features = ["lz4"], optional = true }
+@@ -158,7 +158,11 @@ pub fn get_arrow(
+                     dispatcher.set_pre_execution_queries(pre_execution_queries);
+                     dispatcher.run()?;
+                 }
+-                _ => unimplemented!("{} protocol not supported", protocol),
++                _ => throw!(ConnectorXOutError::protocol_not_supported(
++                    protocol,
++                    SourceType::Postgres,
++                    &["binary", "csv", "cursor", "simple"]
++                )),
+             }
+         }
+         #[cfg(feature = "src_mysql")]
+@@ -188,7 +192,11 @@ pub fn get_arrow(
+                 dispatcher.set_pre_execution_queries(pre_execution_queries);
+                 dispatcher.run()?;
+             }
+-            _ => unimplemented!("{} protocol not supported", protocol),
++            _ => throw!(ConnectorXOutError::protocol_not_supported(
++                protocol,
++                SourceType::MySQL,
++                &["binary", "text"]
++            )),
+         },
+         #[cfg(feature = "src_sqlite")]
+         SourceType::SQLite => {
+@@ -389,7 +397,11 @@ pub fn new_record_batch_iter(
+                     let iter: Box<dyn RecordBatchIterator> = Box::new(batch_iter);
+                     return iter;
+                 }
+-                _ => unimplemented!("{} protocol not supported", protocol),
++                _ => throw!(ConnectorXOutError::protocol_not_supported(
++                    protocol,
++                    SourceType::Postgres,
++                    &["binary", "csv", "cursor"]
++                )),
+             }
+         }
+         #[cfg(feature = "src_mysql")]
+@@ -425,7 +437,11 @@ pub fn new_record_batch_iter(
+                 let iter: Box<dyn RecordBatchIterator> = Box::new(batch_iter);
+                 return iter;
+             }
+-            _ => unimplemented!("{} protocol not supported", protocol),
++            _ => throw!(ConnectorXOutError::protocol_not_supported(
++                protocol,
++                SourceType::MySQL,
++                &["binary", "text"]
++            )),
+         },
+         #[cfg(feature = "src_sqlite")]
+         SourceType::SQLite => {
+@@ -498,3 +514,73 @@ pub fn new_record_batch_iter(
+         ))),
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::source_router::SourceConn;
++
++    /// Fails with the error for an unsupported `protocol`, before any
++    /// connection is attempted (nothing listens on port 1).
++    fn assert_protocol_rejected(url: &str, protocol: &str, db: &str, supported: &str) {
++        let mut conn = SourceConn::try_from(url).unwrap();
++        conn.set_protocol(protocol);
++        let queries = [CXQuery::naked("SELECT 1")];
++        let expected = format!(
++            "Protocol \"{protocol}\" is not supported for {db}; supported protocols: {supported}."
++        );
++
++        let err = get_arrow(&conn, None, &queries, None).err().unwrap();
++        assert!(matches!(
++            err,
++            ConnectorXOutError::ProtocolNotSupported { .. }
++        ));
++        assert_eq!(err.to_string(), expected);
++
++        let err = new_record_batch_iter(&conn, None, &queries, 1024, None)
++            .err()
++            .unwrap();
++        assert!(matches!(
++            err,
++            ConnectorXOutError::ProtocolNotSupported { .. }
++        ));
++        // The record batch iterator has no `simple` protocol for Postgres.
++        assert!(err
++            .to_string()
++            .starts_with(&format!("Protocol \"{protocol}\"")));
++    }
++
++    #[cfg(feature = "src_postgres")]
++    #[test]
++    fn unsupported_postgres_protocol_is_an_error() {
++        assert_protocol_rejected(
++            "postgresql://u:p@127.0.0.1:1/db",
++            "text",
++            "Postgres",
++            "binary, csv, cursor, simple",
++        );
++    }
++
++    #[cfg(feature = "src_mysql")]
++    #[test]
++    fn unsupported_mysql_protocol_is_an_error() {
++        assert_protocol_rejected(
++            "mysql://u:p@127.0.0.1:1/db",
++            "cursor",
++            "MySQL",
++            "binary, text",
++        );
++    }
++
++    #[test]
++    fn unsupported_source_is_an_error() {
++        let conn = SourceConn::try_from("nosuchdb://127.0.0.1:1/db").unwrap();
++        let queries = [CXQuery::naked("SELECT 1")];
++        let err = get_arrow(&conn, None, &queries, None).err().unwrap();
++        assert_eq!(err.to_string(), "Source Unknown not supported.");
++        let err = new_record_batch_iter(&conn, None, &queries, 1024, None)
++            .err()
++            .unwrap();
++        assert_eq!(err.to_string(), "Source Unknown not supported.");
++    }
++}
+```
+
+**File**: `connectorx/src/partition.rs` (modified, +22/-2)
+```diff
+@@ -200,7 +200,10 @@ pub fn get_col_range(source_conn: &SourceConn, query: &str, col: &str) -> OutRes
+         SourceType::Trino => trino_get_partition_range(&source_conn.conn, query, col),
+         #[cfg(feature = "src_clickhouse")]
+         SourceType::ClickHouse => clickhouse_get_partition_range(&source_conn.conn, query, col),
+-        _ => unimplemented!("{:?} not implemented!", source_conn.ty),
++        _ => Err(ConnectorXOutError::SourceNotSupport(format!(
++            "{:?}",
++            source_conn.ty
++        ))),
+     }
+ }
+ 
+@@ -246,7 +249,10 @@ pub fn get_part_query(
+         SourceType::ClickHouse => {
+             single_col_partition_query(query, col, lower, upper, &ClickHouseDialect {})?
+         }
+-        _ => unimplemented!("{:?} not implemented!", source_conn.ty),
++        _ => throw!(ConnectorXOutError::SourceNotSupport(format!(
++            "{:?}",
++            source_conn.ty
++        ))),
+     };
+     CXQuery::Wrapped(query)
+ }
+@@ -894,4 +900,18 @@ mod tests {
+             err
+         );
+     }
++
++    /// A source without partition support is an error, not a panic, both when
++    /// the range has to be queried and when it is given.
++    #[test]
++    fn unsupported_source_is_an_error() {
++        let conn = SourceConn::try_from("nosuchdb://127.0.0.1:1/db").unwrap();
++
++        let err = get_col_range(&conn, "SELECT * FROM t", "id").unwrap_err();
++        assert_eq!(err.to_string(), "Source Unknown not supported.");
++
++        let part = PartitionQuery::new("SELECT * FROM t", "id", Some(0), Some(9), 2);
++        let err = partition(&part, &conn).unwrap_err();
++        assert_eq!(err.to_string(), "Source Unknown not supported.");
++    }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `e76c95b2` (2026-11-17)
-**Commit Message**: Merge remote-tracking branch 'upstream/main' into deps/arrow-59
+### Incident Patch 2: `09860071` (2026-11-22)
+**Commit Message**: build(python): bump msgpack from 1.1.2 to 1.2.3 in /connectorx-python
 
-Resolve Cargo.lock conflicts by keeping arrow 59 / datafusion 55.2 and
-re-applying main's sqlparser 0.64, j4rs 0.25.3 and tokio 1.54.1 bumps.
+Bumps [msgpack](https://github.com/msgpack/msgpack-python) from 1.1.2 to 1.2.3.
+- [Release notes](https://github.com/msgpack/msgpack-python/releases)
+- [Changelog](https://github.com/msgpack/msgpack-python/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/msgpack/msgpack-python/compare/v1.1.2...v1.2.3)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: msgpack
+  dependency-version: 1.2.3
+  dependency-type: indirect
+...
 
-**File**: `.github/workflows/ci.yml` (modified, +6/-3)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `connectorx-python/uv.lock` (modified, +84/-49)
 ```diff
-@@ -39,7 +39,7 @@ jobs:
-         with:
-           prefix-key: v0-rust-${{ secrets.CACHE_VERSION }}
+@@ -1309,55 +1309,90 @@ wheels = [
  
--      - uses: extractions/setup-just@v4
-+      - uses: taiki-e/install-action@just
- 
-       - name: Is the code formatted?
-         run: cargo fmt --all -- --check -q
-@@ -143,7 +143,10 @@ jobs:
-     # Note: No 'container' - we run directly on the VM to access Docker for Testcontainers
-     strategy:
-       matrix:
--        python-version: ["3.14", "3.14t", "3.15", "3.15t"]
-+        # 3.15/3.15t are left out until pyproject.toml allows them: poetry
-+        # rejects 3.15 (python <3.15) and silently falls back to the runner's
-+        # system interpreter, so those jobs never actually tested 3.15.
-+        python-version: ["3.14", "3.14t"]
- 
-     steps:
-       - uses: actions/checkout@v7
-@@ -185,7 +188,7 @@ jobs:
-         with:
-           poetry-version: "2.4.1"
- 
--      - uses: extractions/setup-just@v4
-+      - uses: taiki-e/install-action@just
- 
-       - name: Install Rust
-         uses: dtolnay/rust-toolchain@stable
+ [[package]]
+ name = "msgpack"
+-version = "1.1.2"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/4d/f2/bfb55a6236ed8725a96b0aa3acbd0ec17588e6a2c3b62a93eb513ed8783f/msgpack-1.1.2.tar.gz", hash = "sha256:3b60763c1373dd60f398488069bcdc703cd08a711477b5d480eecc9f9626f47e", size = 173581, upload-time = "2025-10-08T09:15:56.596Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/2c/97/560d11202bcd537abca693fd85d81cebe2107ba17301de42b01ac1677b69/msgpack-1.1.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:2e86a607e558d22985d856948c12a3fa7b42efad264dca8a3ebbcfa2735d786c", size = 82271, upload-time = "2025-10-08T09:14:49.967Z" },
+-    { url = "https://files.pythonhosted.org/packages/83/04/28a41024ccbd67467380b6fb440ae916c1e4f25e2cd4c63abe6835ac566e/msgpack-1.1.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:283ae72fc89da59aa004ba147e8fc2f766647b1251500182fac0350d8af299c0", size = 84914, upload-time = "2025-10-08T09:14:50.958Z" },
+-    { url = "https://files.pythonhosted.org/packages/71/46/b817349db6886d79e57a966346cf0902a426375aadc1e8e7a86a75e22f19/msgpack-1.1.2-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:61c8aa3bd513d87c72ed0b37b53dd5c5a0f58f2ff9f26e1555d3bd7948fb7296", size = 416962, upload-time = "2025-10-08T09:14:51.997Z" },
+-    { url = "https://files.pythonhosted.org/packages/da/e0/6cc2e852837cd6086fe7d8406af4294e66827a60a4cf60b86575a4a65ca8/msgpack-1.1.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:454e29e186285d2ebe65be34629fa0e8605202c60fbc7c4c650ccd41870896ef", size = 426183, upload-time = "2025-10-08T09:14:53.477Z" },
+-    { url = "https://files.pythonhosted.org/packages/25/98/6a19f030b3d2ea906696cedd1eb251708e50a5891d0978b012cb6107234c/msgpack-1.1.2-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:7bc8813f88417599564fafa59fd6f95be417179f76b40325b500b3c98409757c", size = 411454, upload-time = "2025-10-08T09:14:54.648Z" },
+-    { url = "https://files.pythonhosted.org/packages/b7/cd/9098fcb6adb32187a70b7ecaabf6339da50553351558f37600e53a4a2a23/msgpack-1.1.2-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:bafca952dc13907bdfdedfc6a5f579bf4f292bdd506fadb38389afa3ac5b208e", size = 422341, upload-time = "2025-10-08T09:14:56.328Z" },
+-    { url = "https://files.pythonhosted.org/packages/e6/ae/270cecbcf36c1dc85ec086b33a51a4d7d08fc4f404bdbc15b582255d05ff/msgpack-1.1.2-cp311-cp311-win32.whl", hash = "sha256:602b6740e95ffc55bfb078172d279de3773d7b7db1f703b2f1323566b878b90e", size = 64747, upload-time = "2025-10-08T09:14:57.882Z" },
+-    { url = "https://files.pythonhosted.org/packages/2a/79/309d0e637f6f37e83c711f547308b91af02b72d2326ddd860b966080ef29/msgpack-1.1.2-cp311-cp311-win_amd64.whl", hash = "sha256:d198d275222dc54244bf3327eb8cbe00307d220241d9cec4d306d49a44e85f68", size = 71633, upload-time = "2025-10-08T09:14:59.177Z" },
+-    { url = "https://files.pythonhosted.org/packages/73/4d/7c4e2b3d9b1106cd0aa6cb56cc57c6267f59fa8bfab7d91df5adc802c847/msgpack-1.1.2-cp311-cp311-win_arm64.whl", hash = "sha256:86f8136dfa5c116365a8a651a7d7484b65b13339731dd6faebb9a0242151c406", size = 64755, upload-time = "2025-10-08T09:15:00.48Z" },
+-    { url = "https://files.pythonhosted.org/packages/ad/bd/8b0d01c756203fbab65d265859749860682ccd2a59594609aeec3a144efa/msgpack-1.1.2-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:70a0dff9d1f8da25179ffcf880e10cf1aad55fdb63cd59c9a49a1b82290062aa", size = 81939, upload-time = "2025-10-08T09:15:01.472Z" },
+-    { url = "https://files.pythonhosted.org/packages/34/68/ba4f155f793a74c1483d4bdef136e1023f7bcba557f0db4ef3db3c665cf1/msgpack-1.1.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:446abdd8b94b55c800ac34b102dffd2f6aa0ce643c55dfc017ad89347db3dbdb", size = 85064, upload-time = "2025-10-08T09:15:03.764Z" },
+-    { url = "https://files.pythonhosted.org/packages/f2/60/a064b0345fc36c4c3d2c743c82d9100c40388d77f0b48b2f04d6041dbec1/msgpack-1.1.2-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:c63eea553c69ab05b6747901b97d620bb2a690633c77f23feb0c6a947a8a7b8f", size = 417131, upload-time = "2025-10-08T09:15:05.136Z" },
+-    { url = "https://files.pythonhosted.org/packages/65/92/a5100f7185a800a5d29f8d14041f61475b9de465ffcc0f3b9fba606e4505/msgpack-1.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:372839311ccf6bdaf39b00b61288e0557916c3729529b301c52c2d88842add42", size = 427556, upload-time = "2025-10-08T09:15:06.837Z" },
+-    { url = "https://files.pythonhosted.org/packages/f5/87/ffe21d1bf7d9991354ad93949286f643b2bb6ddbeab66373922b44c3b8cc/msgpack-1.1.2-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:2929af52106ca73fcb28576218476ffbb531a036c2adbcf54a3664de124303e9", size = 404920, upload-time = "2025-10-08T09:15:08.179Z" },
+-    { url = "https://
 ```
 
-**File**: `Benchmark.md` (modified, +2/-2)
-```diff
-@@ -60,7 +60,7 @@ psql -h localhost -U postgres -d tpch -c "CREATE INDEX lineitem_l_orderkey_idx O
- 1. Make the following changes in the COPY commands of `script/benchmarks/tpch-reshift.sql`:
- 
-    1. Change `credentials` accordingly from Redshift.
--   2. (Optional) Change TPC-H data size in `from` s3 string. Currently it is 10GB (equivilant to TPC-H scale factor 10). It can be change to 3TB.
-+   2. (Optional) Change TPC-H data size in `from` s3 string. Currently it is 10GB (equivalent to TPC-H scale factor 10). It can be change to 3TB.
-  
- 2. Run modified `tpch-reshift.sql` for Redshift:
- ```
-@@ -78,7 +78,7 @@ import connectorx as cx
- cx.read_sql("connection string", "SELECT * FROM lineitem", partition_on="l_orderkey", partition_num=4)
- ```
- 
--Here are the baselines we compare againt:
-+Here are the baselines we compare against:
- * Pandas
- * Modin
- * Dask
-```
+---
 
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
-```diff
-@@ -97,7 +97,7 @@ MODIN_ENGINE=dask
-   * Examples can be found [here](https://github.com/sfu-db/connector-x/blob/main/connectorx/src/sources)
- * Define the conversion between the new source and existing destinations
-   * Examples can be found [here](https://github.com/sfu-db/connector-x/tree/main/connectorx/src/transports) and [here](https://github.com/sfu-db/connector-x/tree/main/connectorx-python/src/pandas/transports)
--* Make the new source visable to destinations, including:
-+* Make the new source visible to destinations, including:
-   * Add the source to the [source_router](https://github.com/sfu-db/connector-x/blob/main/connectorx/src/source_router.rs)
-   * Add the source to writing functions of each destination. Here are examples for [pandas](https://github.com/sfu-db/connector-x/blob/main/connectorx-python/src/pandas/mod.rs) and [arrow](https://github.com/sfu-db/connector-x/blob/main/connectorx-python/src/arrow.rs)
- * Add corresponding unit tests under `connectorx/tests` for Rust and `connectorx-python/connectorx/tests` for Python
-```
+### Incident Patch 3: `3da1da57` (2026-11-22)
+**Commit Message**: build(python): bump tornado from 6.5.4 to 6.6.1 in /connectorx-python
 
-**File**: `Cargo.lock` (modified, +36/-26)
-```diff
-@@ -139,7 +139,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -150,7 +150,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -1260,7 +1260,7 @@ dependencies = [
-  "regex",
-  "rustc-hash 2.1.3",
-  "shlex 2.0.1",
-- "syn 3.0.6",
-+ "syn 2.0.119",
- ]
- 
- [[package]]
-@@ -1711,7 +1711,7 @@ checksum = "157a8ba7b480713b56f4c09fd13fc3e0a22a5dfab8097ba61cbc5feef950788a"
- dependencies = [
-  "glob",
-  "libc",
-- "libloading",
-+ "libloading 0.8.9",
- ]
- 
- [[package]]
-@@ -1949,7 +1949,7 @@ dependencies = [
-  "rustc-hash 2.1.3",
-  "serde",
-  "serde_json",
-- "sqlparser 0.63.0",
-+ "sqlparser 0.64.0",
-  "testcontainers",
-  "thiserror 2.0.21",
-  "tiberius",
-@@ -2295,7 +2295,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
- dependencies = [
-  "quote",
-- "syn 3.0.6",
-+ "syn 2.0.119",
- ]
- 
- [[package]]
-@@ -3584,7 +3584,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -4473,7 +4473,7 @@ dependencies = [
-  "libc",
-  "percent-encoding",
-  "pin-project-lite",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "system-configuration 0.7.0",
-  "tokio",
-  "tower-service",
-@@ -4709,7 +4709,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi 0.5.3",
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -4771,9 +4771,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
- 
- [[package]]
- name = "j4rs"
--version = "0.25.2"
-+version = "0.25.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c26fb1429997a5d8f98777df359f0132f62905ecce1d3bc2836372045c67de89"
-+checksum = "ce53f4f4c6b6c070982e586633f824214994296c4ed52751bc55b589f09d3d60"
- dependencies = [
-  "cesu8",
-  "dunce",
-@@ -4782,7 +4782,7 @@ dependencies = [
-  "java-locator",
-  "jni-sys",
-  "libc",
-- "libloading",
-+ "libloading 0.9.1",
-  "log",
-  "serde",
-  "serde_json",
-@@ -5004,6 +5004,16 @@ dependencies = [
-  "windows-link",
- ]
- 
-+[[package]]
-+name = "libloading"
-+version = "0.9.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a1832accd5a4ca2795ace4d05d15c4039be15b62d3b950eff99746a990e3cc10"
-+dependencies = [
-+ "cfg-if",
-+ "windows-link",
-+]
-+
- [[package]]
- name = "liblzma"
- version = "0.4.9"
-@@ -7213,7 +7223,7 @@ dependencies = [
-  "quinn-udp",
-  "rustc-hash 2.1.3",
-  "rustls 0.23.45",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "thiserror 2.0.21",
-  "tokio",
-  "tracing",
-@@ -7251,9 +7261,9 @@ dependencies = [
-  "cfg_aliases",
-  "libc",
-  "once_cell",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "tracing",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -7859,7 +7869,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.12.1",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -8393,7 +8403,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -8428,9 +8438,9 @@ dependencies = [
- 
- [[package]]
- name = "sqlparser"
--version = "0.63.0"
-+version = "0.64.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
-+checksum = "92e0d273b4f8ddd14a35ed36862acbc9cc96cec578e36ee1881a9d42e0e0f2c8"
- dependencies = [
-  "log",
-  "recursive",
-@@ -8463,7 +8473,7 @@ dependencies = [
-  "cfg-if",
-  "libc",
-  "psm",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -8784,10 +8794,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.3.4",
-+ "getrandom 0.4.3",
-  "once_cell",
-  "rustix 1.1.5",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -8999,9 +9009,9 @@ checksum = "fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee"
- 
- [[package]]
- name = "tokio"
--version = "1.53.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
-@@ -9343,7 +9353,7 @@ version = "2.1.4"
- so
-```
+Bumps [tornado](https://github.com/tornadoweb/tornado) from 6.5.4 to 6.6.1.
+- [Changelog](https://github.com/tornadoweb/tornado/blob/master/docs/releases.rst)
+- [Commits](https://github.com/tornadoweb/tornado/compare/v6.5.4...v6.6.1)
 
-**File**: `Justfile` (modified, +0/-9)
-```diff
-@@ -131,15 +131,6 @@ seed-db-more:
-     clickhouse-client -h $CLICKHOUSE_HOST --port $CLICKHOUSE_PORT -u $CLICKHOUSE_USER --password $CLICKHOUSE_PASSWORD -d $CLICKHOUSE_DB < scripts/clickhouse.sql
- 
- # benches 
--flame-tpch conn="POSTGRES_URL":
--    cd connectorx-python && PYO3_PYTHON=$HOME/.pyenv/versions/3.8.6/bin/python3.8 PYTHONPATH=$HOME/.pyenv/versions/conn/lib/python3.8/site-packages LD_LIBRARY_PATH=$HOME/.pyenv/versions/3.8.6/lib/ cargo run --no-default-features --features executable --features fptr --features nbstr --features dsts --features srcs --release --example flame_tpch {{conn}}
--
--build-tpch:
--    cd connectorx-python && cargo build --no-default-features --features executable --features fptr --release --example tpch
--
--cachegrind-tpch: build-tpch
--    valgrind --tool=cachegrind target/release/examples/tpch
--
- python-tpch name +ARGS="": setup-python
-     #!/bin/bash
-     export PYTHONPATH=$PWD/connectorx-python
-```
+---
+updated-dependencies:
+- dependency-name: tornado
+  dependency-version: 6.6.1
+  dependency-type: indirect
+...
 
-**File**: `benchmarks/tpch-rust-arrow.py` (removed, +0/-155)
-```diff
-@@ -1,155 +0,0 @@
--"""
--Usage:
--  tpch-rust-arrow.py <num>
--
--Options:
--  -h --help     Show this screen.
--  --version     Show version.
--"""
--import json
--import os
--import time
--from typing import List
--
--import numpy as np
--import pyarrow as pa
--from connectorx import read_pg
--from docopt import docopt
--
--
--def get_sqls(table: str, count: int) -> List[str]:
--    sqls = []
--    split = np.linspace(0, 60000000, num=count + 1, endpoint=True, dtype=int)
--    for i in range(len(split) - 1):
--
--        sqls.append(
--            f"""select  l_orderkey,
--                l_partkey,
--                l_suppkey,
--                l_linenumber,
--                l_quantity::float8,
--                l_extendedprice::float8,
--                l_discount::float8,
--                l_tax::float8,
--                l_returnflag,
--                l_linestatus,
--                l_shipdate,
--                l_commitdate,
--                l_receiptdate,                
--                l_shipinstruct,
--                l_shipmode,
--                l_comment from {table} where l_orderkey > {split[i]} and l_orderkey <= {split[i+1]}"""
--        )
--    return sqls
--
--
--def field_to_json(field):
--    json = {
--        "name": field.name,
--        "nullable": field.nullable,
--    }
--    if isinstance(field.type, pa.ListType):
--        json = {
--            **json,
--            "type": {"name": "list"},
--            "children": [field_to_json(field.type.value_field)],
--        }
--    elif field.type == pa.float64():
--        json = {
--            **json,
--            "type": {"name": "floatingpoint", "precision": "DOUBLE"},
--            "children": [],
--        }
--    elif field.type == pa.uint64():
--        json = {
--            **json,
--            "type": {"name": "int", "bitWidth": 64, "isSigned": False},
--            "children": [],
--        }
--    elif field.type == pa.string():
--        json = {
--            **json,
--            "type": {"name": "utf8"},
--            "children": [],
--        }
--    elif field.type == pa.date32():
--        json = {
--            **json,
--            "type": {"name": "date", "unit": "DAY"},
--            "children": [],
--        }
--    elif isinstance(field.type, pa.StructType):
--        json = {
--            **json,
--            "type": {"name": "struct"},
--            "children": [
--                field_to_json(field.type[i]) for i in range(field.type.num_fields)
--            ],
--        }
--    else:
--        raise NotImplementedError(field.type)
--
--    return json
--
--
--def schema_to_json(schema):
--    return {
--        "fields": [field_to_json(schema.field(name)) for name in schema.names],
--        "metadata": {},
--    }
--
--
--SCHEMA = pa.schema(
--    [
--        pa.field("l_orderkey", pa.uint64(), False),
--        pa.field("l_partkey", pa.uint64(), False),
--        pa.field("l_suppkey", pa.uint64(), False),
--        pa.field("l_linenumber", pa.uint64(), False),
--        pa.field("l_quantity", pa.float64(), False),
--        pa.field("l_extendedprice", pa.float64(), False),
--        pa.field("l_discount", pa.float64(), False),
--        pa.field("l_tax", pa.float64(), False),
--        pa.field("l_returnflag", pa.string(), False),
--        pa.field("l_linestatus", pa.string(), False),
--        # pa.field("l_shipdate", pa.date32(), False),
--        # pa.field("l_commitdate", pa.date32(), False),
--        # pa.field("l_receiptdate", pa.date32(), False),
--        pa.field("l_shipdate", pa.string(), False),
--        pa.field("l_commitdate", pa.string(), False),
--        pa.field("l_receiptdate", pa.string(), False),
--        pa.field("l_shipinstruct", pa.string(), False),
--        pa.field("l_shipmode", pa.string(), False),
--        pa.field("l_comment", pa.string(), False),
--    ]
--)
--
--
--if __name__ == "__main__":
--    args = docopt(__doc__, version="1.0")
--    conn = os.environ["POSTGRES_URL"]
--    table = os.environ["POSTGRES_TABLE"]
--
--    queries = get_sqls(table, int(args["<num>"]))
--
--    print(f"numer of threads: {int(args['<num>'])}\nsqls: {queries}")
--
--    then = time.time()
--    table = read_pg(
--        conn,
--        queries,
--        json.dumps(schema_to_json(SCHEMA)),
--    )
--    print(f"finish read_pg:", time.time() - then)
--
--    tb = pa.Table.from_arrays(
--        [
--            pa.chunked_array([pa.Array._import_from_c(*ptr) for ptr in ptrs])
--            for ptrs in table.values()
--        ],
--        names=list(table.keys()),
--    )
--    print("finish concat:", time.time() - then)
--
--    df = tb.to_pandas()
--    print("finish to_pandas:", time.time() - then)
--    print(df)
-```
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `connectorx-python/Cargo.lock` (modified, +39/-339)
+**File**: `connectorx-python/uv.lock` (modified, +46/-15)
 ```diff
-@@ -2,15 +2,6 @@
- # It is not intended for manual editing.
- version = 4
- 
--[[package]]
--name = "addr2line"
--version = "0.24.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "dfbe277e56a376000877090da837660b4427aad530e3028d44e0bffe4f89a1c1"
--dependencies = [
-- "gimli",
--]
--
- [[package]]
- name = "adler2"
- version = "2.0.1"
-@@ -255,7 +246,7 @@ dependencies = [
-  "arrow-select",
-  "chrono",
-  "half 2.7.1",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itoa",
-  "lexical-core",
-  "memchr",
-@@ -875,21 +866,6 @@ dependencies = [
-  "tracing",
- ]
- 
--[[package]]
--name = "backtrace"
--version = "0.3.75"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6806a6321ec58106fea15becdad98371e28d92ccbc7c8f1b3b6dd724fe8f1002"
--dependencies = [
-- "addr2line",
-- "cfg-if",
-- "libc",
-- "miniz_oxide 0.8.9",
-- "object",
-- "rustc-demangle",
-- "windows-targets 0.52.6",
--]
--
- [[package]]
- name = "base64"
- version = "0.21.7"
-@@ -1205,12 +1181,6 @@ dependencies = [
-  "syn 1.0.109",
- ]
- 
--[[package]]
--name = "bytemuck"
--version = "1.23.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5c76a5792e44e4abe34d3abf15636779261d45a7450612059293d1d2cfc63422"
--
- [[package]]
- name = "byteorder"
- version = "1.5.0"
-@@ -1548,7 +1518,7 @@ dependencies = [
-  "rustc-hash 2.1.1",
-  "serde",
-  "serde_json",
-- "sqlparser 0.63.0",
-+ "sqlparser 0.64.0",
-  "thiserror 2.0.20",
-  "tiberius",
-  "tokio",
-@@ -1585,14 +1555,12 @@ dependencies = [
-  "postgres",
-  "postgres-native-tls",
-  "postgres-openssl",
-- "pprof",
-  "pyo3",
-  "pyo3-build-config",
-  "pyo3-built",
-  "rayon",
-  "rust_decimal",
-  "serde_json",
-- "sqlparser 0.62.0",
-  "thiserror 1.0.69",
-  "tokio",
-  "url",
-@@ -1694,15 +1662,6 @@ version = "0.8.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
- 
--[[package]]
--name = "cpp_demangle"
--version = "0.3.5"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "eeaa953eaad386a53111e47172c2fedba671e5684c8dd601a5f474f4f118710f"
--dependencies = [
-- "cfg-if",
--]
--
- [[package]]
- name = "cpufeatures"
- version = "0.2.17"
-@@ -2029,7 +1988,7 @@ dependencies = [
-  "datafusion-sql",
-  "flate2",
-  "futures",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itertools 0.15.0",
-  "liblzma",
-  "log",
-@@ -2106,7 +2065,7 @@ dependencies = [
-  "foldhash 0.2.0",
-  "half 2.7.1",
-  "hashbrown 0.17.1",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itertools 0.15.0",
-  "libc",
-  "log",
-@@ -2317,7 +2276,7 @@ dependencies = [
-  "datafusion-functions-aggregate-common",
-  "datafusion-functions-window-common",
-  "datafusion-physical-expr-common",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itertools 0.15.0",
-  "recursive",
-  "serde",
-@@ -2333,7 +2292,7 @@ checksum = "e82e313cf655cf6bc2dce6cbd23bcb0d20236a54a1b09c436615e4bac4d8c49f"
- dependencies = [
-  "arrow",
-  "datafusion-common",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itertools 0.15.0",
- ]
- 
-@@ -2493,7 +2452,7 @@ dependencies = [
-  "datafusion-expr",
-  "datafusion-expr-common",
-  "datafusion-physical-expr",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itertools 0.15.0",
-  "log",
-  "recursive",
-@@ -2516,10 +2475,10 @@ dependencies = [
-  "datafusion-physical-expr-common",
-  "half 2.7.1",
-  "hashbrown 0.17.1",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itertools 0.15.0",
-  "parking_lot 0.12.4",
-- "petgraph 0.8.3",
-+ "petgraph",
-  "recursive",
-  "tokio",
- ]
-@@ -2550,7 +2509,7 @@ dependencies = [
-  "datafusion-common",
-  "datafusion-expr-common",
-  "hashbrown 0.17.1",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itertools 0.15.0",
-  "parking_lot 0.12.4",
-  "pin-project",
-@@ -2601,7 +2560,7 @@ dependencies = [
-  "futures",
-  "half 2.7.1",
-  "hashbrown 0.17.1",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "itertools 0.15.0",
-  "log",
-  "num-traits",
-@@ -2655,7 +2614,7 @@ dependencies = [
-  "datafusion-common",
-  "datafusion-expr",
-  "datafusion-functions-nested",
-- "indexmap 2.14.1",
-+ "indexmap",
-  "log",
-  "recursive",
-  "regex",
-@@ -2681,15 +2640,6 @@ version = "0.1.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "092966b41edc516079bdf31ec78a2e0588d1d0c08f78b91d8307215928642b2b"
- 
--[[package]]
--name = "debugid"
--version = "0.7.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d6ee87af31d84ef885378aebca32be3d682b0e0dc119d5b4860a2c5bb5046730"
--dependencies = [
-- "uuid 0.8.2",
--]
--
- [[package]]
- name = "der-parser"
- version = "10.0.0"
-@@ -2970,7 +2920,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "778e2ac28f6c47af28e4907f13ffd1e1ddbd400980a9abd7c8df189bf578a5ad"
- dependencies = [
-  "libc",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.52.0",
- ]
+@@ -2611,21 +2611,52 @@ wheels = [
  
  [[package]]
-@@ -3023,12 +2973,6 @@ version = "0.1.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
- 
--[[package]]
--name = "fixedbitset"
--version = "0.2.0"
--
-```
-
-**File**: `connectorx-python/Cargo.toml` (modified, +0/-3)
-```diff
-@@ -34,7 +34,6 @@ pyo3 = {version = "0.29", default-features = false, features = ["macros", "py-cl
- pyo3-built = "0.6"
- rust_decimal = {version = "1", features = ["db-postgres"]}
- serde_json = "1"
--sqlparser = "0.62"
- thiserror = "1"
- tokio = {version = "1", features = ["rt", "rt-multi-thread", "net"]}
- url = "2"
-@@ -51,7 +50,6 @@ pyo3-build-config = {version = "0.29", features = ["resolve-config"]}
- criterion = "0.3"
- criterion-macro = "0.3"
- iai = "0.1"
--pprof = {version = "0.5", features = ["flamegraph", "criterion", "protobuf"]}
- rayon = "1"
- 
- [lints.rust]
-@@ -65,7 +63,6 @@ name = "connectorx"
- branch = ["connectorx/branch"]
- default = ["extension", "fptr", "nbstr", "dsts", "srcs", "federation", "fed_exec"]
- dsts = ["connectorx/dst_arrow"]
--executable = ["pyo3/auto-initialize"]
- extension = ["pyo3/extension-module"]
- fptr = ["connectorx/fptr"]
- federation = ["connectorx/federation"]
+ name = "tornado"
+-version = "6.5.4"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/37/1d/0a336abf618272d53f62ebe274f712e213f5a03c0b2339575430b8362ef2/tornado-6.5.4.tar.gz", hash = "sha256:a22fa9047405d03260b483980635f0b041989d8bcc9a313f8fe18b411d84b1d7", size = 513632, upload-time = "2025-12-15T19:21:03.836Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/ab/a9/e94a9d5224107d7ce3cc1fab8d5dc97f5ea351ccc6322ee4fb661da94e35/tornado-6.5.4-cp39-abi3-macosx_10_9_universal2.whl", hash = "sha256:d6241c1a16b1c9e4cc28148b1cda97dd1c6cb4fb7068ac1bedc610768dff0ba9", size = 443909, upload-time = "2025-12-15T19:20:48.382Z" },
+-    { url = "https://files.pythonhosted.org/packages/db/7e/f7b8d8c4453f305a51f80dbb49014257bb7d28ccb4bbb8dd328ea995ecad/tornado-6.5.4-cp39-abi3-macosx_10_9_x86_64.whl", hash = "sha256:2d50f63dda1d2cac3ae1fa23d254e16b5e38153758470e9956cbc3d813d40843", size = 442163, upload-time = "2025-12-15T19:20:49.791Z" },
+-    { url = "https://files.pythonhosted.org/packages/ba/b5/206f82d51e1bfa940ba366a8d2f83904b15942c45a78dd978b599870ab44/tornado-6.5.4-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d1cf66105dc6acb5af613c054955b8137e34a03698aa53272dbda4afe252be17", size = 445746, upload-time = "2025-12-15T19:20:51.491Z" },
+-    { url = "https://files.pythonhosted.org/packages/8e/9d/1a3338e0bd30ada6ad4356c13a0a6c35fbc859063fa7eddb309183364ac1/tornado-6.5.4-cp39-abi3-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:50ff0a58b0dc97939d29da29cd624da010e7f804746621c78d14b80238669335", size = 445083, upload-time = "2025-12-15T19:20:52.778Z" },
+-    { url = "https://files.pythonhosted.org/packages/50/d4/e51d52047e7eb9a582da59f32125d17c0482d065afd5d3bc435ff2120dc5/tornado-6.5.4-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e5fb5e04efa54cf0baabdd10061eb4148e0be137166146fff835745f59ab9f7f", size = 445315, upload-time = "2025-12-15T19:20:53.996Z" },
+-    { url = "https://files.pythonhosted.org/packages/27/07/2273972f69ca63dbc139694a3fc4684edec3ea3f9efabf77ed32483b875c/tornado-6.5.4-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:9c86b1643b33a4cd415f8d0fe53045f913bf07b4a3ef646b735a6a86047dda84", size = 446003, upload-time = "2025-12-15T19:20:56.101Z" },
+-    { url = "https://files.pythonhosted.org/packages/d1/83/41c52e47502bf7260044413b6770d1a48dda2f0246f95ee1384a3cd9c44a/tornado-6.5.4-cp39-abi3-musllinux_1_2_i686.whl", hash = "sha256:6eb82872335a53dd063a4f10917b3efd28270b56a33db69009606a0312660a6f", size = 445412, upload-time = "2025-12-15T19:20:57.398Z" },
+-    { url = "https://files.pythonhosted.org/packages/10/c7/bc96917f06cbee182d44735d4ecde9c432e25b84f4c2086143013e7b9e52/tornado-6.5.4-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:6076d5dda368c9328ff41ab5d9dd3608e695e8225d1cd0fd1e006f05da3635a8", size = 445392, upload-time = "2025-12-15T19:20:58.692Z" },
+-    { url = "https://files.pythonhosted.org/packages/0c/1a/d7592328d037d36f2d2462f4bc1fbb383eec9278bc786c1b111cbbd44cfa/tornado-6.5.4-cp39-abi3-win32.whl", hash = "sha256:1768110f2411d5cd281bac0a090f707223ce77fd110424361092859e089b38d1", size = 446481, upload-time = "2025-12-15T19:21:00.008Z" },
+-    { url = "https://files.pythonhosted.org/packages/d6/6d/c69be695a0a64fd37a97db12355a035a6d90f79067a3cf936ec2b1dc38cd/tornado-6.5.4-cp39-abi3-win_amd64.whl", hash = "sha256:fa07d31e0cd85c60713f2b995da613588aa03e1303d75705dca6af8babc18ddc", size = 446886, upload-time = "2025-12-15T19:21:01.287Z" },
+-    { url = "https://files.pythonhosted.org/packages/50/49/8dc3fd90902f70084bd2cd059d576ddb4f8bb44c2c7c0e33a11422acb17e/tornado-6.5.4-cp39-abi3-win_arm64.whl", hash = "sha256:053e6e16701eb6cbe641f308f4c1a9541f91b6261991160391bfc342e8a551a1", size = 445910, upload-time = "2025-12-15T19:21:02.571Z" },
++version = "6.6.1"
++source = { registry = "https://pypi.org/simple" }
++sdist = { url = "https://files.pythonhosted.org/packages/64/2b/8ff2b41620cbba0eeb0862fed21dcaa5a2ad36c6dd9bb465f9ff7a147be2/tornado-6.6.1.tar.gz", hash = "sha256:28e6311402af59c8b02e3fa0f5e7d8eb465b25081381803b127d97e6a4395d5a", size = 623388, upload-time = "2026-11-09T21:09:22.71Z" }
++wheels = [
++    { url = "https://files.pythonhosted.org/packages/77/d3/ef3a4d38d1a72c52ad07483ed760dbb93027d28f19c3a2d98148abdd63e1/tornado-6.6.1-cp311-abi3-macosx_10_9_universal2.whl", hash = "sha256:a8d3e6acde5a80d13b13b5e4c7c226ca682f31d0a62b6c33cea038714bc2de1b", size = 533249, upload-time = "2026-11-09T21:08:22.475Z" },
++    { url = "https://files.pythonhosted.org/packages/38/4d/c65ea949a3cdc185f1afac8c337074d4f2d029b48293d2db4d2c3dea4849/tornado-6.6.1-cp311-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl", hash = "sha256:1b6ff57cc69b339f8feb9e7b567b0e0eacb16bfaf234159496623ef7a67ba640", size = 534470, upload-time = "2026-11-0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1067** (2026-11-16): ci: drop python 3.15/3.15t from test matrix (@tschm)
-- **PR #1066** (2026-11-16): docs: fix typos in documentation (@hamidzr)
-- **PR #1064** (2026-11-16): build(rust): bump j4rs from 0.25.2 to 0.25.3 (@dependabot[bot])
-- **PR #1063** (2026-11-15): build(rust): bump sqlparser from 0.63.0 to 0.64.0 (@dependabot[bot])
-- **PR #1062** (2026-11-15): build(rust): bump tokio from 1.53.3 to 1.54.1 (@dependabot[bot])
-- **PR #1061** (2026-11-17): ci: install just with taiki-e/install-action instead of setup-just (@tschm)
+- **PR #1101** (2026-11-22): ci: speed up CI by fixing cache keys and parallelising the rust job (@tschm)
+- **PR #1099** (2026-11-22): build(python): combine dependabot bumps (#1094, #1095, #1097, #1098) (@tschm)
+- **PR #1098** (closed): build(python): bump fsspec from 2026.2.0 to 2026.6.0 in /connectorx-python (@dependabot[bot])
+- **PR #1097** (closed): build(python): bump msgpack from 1.1.2 to 1.2.3 in /connectorx-python (@dependabot[bot])
+- **PR #1096** (2026-11-22): build(python): bump tornado from 6.5.4 to 6.6.1 in /connectorx-python (@dependabot[bot])
+- **PR #1095** (closed): chore(python): bump black from 21.12b0 to 26.10.1 in /connectorx-python (@dependabot[bot])
 
 ---
 
@@ -1984,102 +1313,63 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. return an error instead of panicking on an unsupported protocol
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `connectorx-python/connectorx/tests/test_errors.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4cfcea91`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbfaeb99`: return an error instead of panicking on an unsupported protocol. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx-python/connectorx/tests/test_errors.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
-version = "59.3.2"
-checksum = "3f04e0a89cc175eaf3740282537851e6fd9d7276f97730b9d0ea2859c11a85df"
-version = "59.3.2"
-checksum = "157943c720919e8f5b6731407ce5cd4c9a5ef47a75bf10edaf24b7081b5763ef"
- "num-traits",
-version = "59.3.2"
-checksum = "72b5b1682924f11ecf6929689c16cbc69efbb6dd141b06ad98ee1cb10d858c43"
- "hashbrown 0.17.1",
- "libc",
- "num-complex",
- "num-integer",
- "num-traits",
-version = "59.3.2"
-checksum = "b5d687afc6c927965a8a759f3b68de91933d9dfa2e1bb6e156bac84b85665e92"
- "num-bigint 0.5.1",
- "num-traits",
-version = "59.3.2"
-checksum = "3f23c3379feede42135ef27ca60e67f6e643cd4343ae74e4c8b16c83f55afd85"
- "arrow-ord",
- "base64 0.23.1",
- "num-traits",
-version = "59.3.2"
-checksum = "85b1984628b091b8319b3c305fce21d04f9e9b2578bb733b0d0108462ae1d698"
-version = "59.3.2"
-checksum = "bb0a031c7ff5e2bdb443117054fb466af1d4df5b7f0ecbe197713dc8b113b1ba"
- "num-integer",
- "num-traits",
-version = "59.3.2"
-checksum = "f5dd1afadda2eb821aaf851bb4c0adef60c30cc0f1a29bd02fb99dd07fb9f58d"
- "lz4_flex",
- "zstd 0.13.3",
-version = "59.3.2"
-checksum = "e2bc4d56a0dad84cc51c5812ccff48b642047a1f3be80349cd84318983e79edb"
- "arrow-ord",
- "arrow-select",
- "itoa",
- "num-
+"""Errors raised for bad arguments, before any database is contacted."""
+
+import pytest
+
+import connectorx as cx
+
+# Nothing listens on port 1: the protocol is rejected before connecting.
+POSTGRES_URL = "postgresql://user:pass@127.0.0.1:1/db"
+MYSQL_URL = "mysql://user:pass@127.0.0.1:1/db"
+
+
+@pytest.mark.parametrize("return_type", ["pandas", "arrow", "polars", "arrow_stream"])
+def test_unsupported_postgres_protocol_raises(return_type: str) -> None:
+    if return_type == "polars":
+        pytest.importorskip("polars")
+    with pytest.raises(
+        RuntimeError, match=r'Protocol "text" is not supported for Postgres'
+    ):
+        cx.read_sql(POSTGRES_URL, "SELECT 1", protocol="text", return_type=return_type)
+
+
+@pytest.mark.parametrize("return_type", ["pandas", "arrow"])
+def test_unsupported_mysql_protocol_raises(return_type: str) -> None:
+    with pytest.raises(
+        RuntimeError,
+        match=r'Protocol "cursor" is not supported for MySQL; supported protocols: binary, text',
+    ):
+        cx.read_sql(MYSQL_URL, "SELECT 1", protocol="cursor", return_type=return_type)
+
+
+def test_unsupported_protocol_in_get_meta_raises() -> None:
+    with pytest.raises(
+        RuntimeError, matc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "56.2.1"
-checksum = "4fb98341a7e051bb79731ecb33ec00cbd6e0e315a542d6732b46d462c9215ea2"
-version = "56.2.1"
-checksum = "6ce4751cbc4bcccfeeea79df9571ff1dc066d61e44723c7604d11c7937f5b560"
- "num",
-version = "56.2.1"
-checksum = "b02ccba2e977a3aabb4384036109ca32f552399a2bc0588f925f91ed073ce70c"
- "hashbrown 0.16.1",
- "num",
-version = "56.2.1"
-checksum = "a90f8bece6a9ee316a699fbbfde368a206676a1206ce89b50f07937648e76c3c"
- "num",
-version = "56.2.1"
-checksum = "61ffe645cfb4e80b1ca37a3a106ce7b4af66ccdd60c655a57e6b9aab096164a7"
- "base64 0.22.1",
- "num",
-version = "56.2.1"
-checksum = "d376e82c15a6298b49a53fbb0d89348db1d5dd3a5147977d62d5516d430cfed3"
-version = "56.2.1"
-checksum = "78468c813909465dd0f858950c8a0614eb63608134acf95c602ec21381258b28"
- "num",
-version = "56.2.1"
-checksum = "31f88b0fbb33af28089ccd3e4dcd0ff09de46842168d00220b920f7231feddf5"
- "lz4_flex 0.11.6",
- "zstd",
-version = "56.2.1"
-checksum = "dff14ad7669f0742f3c43c606465ad4aad97cfcee24e6317a30f68eba9d75070"
- "arrow-data",
- "num",
- "serde",
-version = "56.2.1"
-checksum = "aed58a38c3db0a2cf75ef70e3cb6bc4bd0da0a3d390de37c361
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4cfcea91` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbfaeb99` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
