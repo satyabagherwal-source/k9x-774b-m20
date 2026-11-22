@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-17J6",
-    "timestamp": "2026-11-20T16:28:32.994Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "53c70c0ba3fdc15527d0ee57ebc3536f83ddb4e0b34863e3c3247dbab79920c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-ISVZ",
-    "timestamp": "2026-11-20T16:42:13.824Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "5c81b653e6752b84c72040e23e8e67cec960a226bcc84716e5fcf62907b326dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-J45C",
-    "timestamp": "2026-11-20T16:42:28.416Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "eca5b78ccc20fea74de7bbbe8f5b7424843e7aadafba546e6a9d7027b5a855b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-11LK",
-    "timestamp": "2026-11-20T16:56:24.920Z",
-    "repository": "apple/DepthPro2",
-    "learningId": "learn-huggingface-apple-depthpro2",
-    "contentHash": "edefcf3c29a003281773a44060df529c9fa874dbd81ce872ba6d558b21106e5f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-13GR",
     "timestamp": "2026-11-20T16:56:27.339Z",
     "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
@@ -7490,6 +7430,66 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "c0fa42e35dd52f03a6f2ec6c6a901f8225557c7131f7845d72473dcf42fa7304",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-XZD6",
+    "timestamp": "2026-11-22T16:57:22.506Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "e074e4a0a758a9aa01bff6798c44220d4e0049cf0235c931ea0fe44f3b4a0fc3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-Y1BM",
+    "timestamp": "2026-11-22T16:57:25.042Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "b08ca115fc52349a66cba80b853e2a7cf885e2fe9ea8e8dfbf81651a6fcae5e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-Y4N0",
+    "timestamp": "2026-11-22T16:57:29.340Z",
+    "repository": "SimonSchubert/LinuxCommandLibrary",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+    "contentHash": "5a359432599e69be33ca1c54bf3008630c63c5b81bc360e730461f4818f4ac39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-YCTO",
+    "timestamp": "2026-11-22T16:57:39.948Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "d685cb4a70ab86429d5ec681987473339335b453e7f9b4c1c8674eb8e39f5a6b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

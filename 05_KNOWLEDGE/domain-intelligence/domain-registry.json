@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T16:48:25.942Z",
+  "last_updated": "2026-11-22T16:57:45.288Z",
   "total_records": 2362,
   "domains": {
     "A": {
@@ -15441,8 +15441,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "03a7055dcbc56e24a7f7a208d985b82bebc8f3ca2f7f8df6d0f14fc0f0a5845b",
-      "created_at": "2026-11-22T12:57:04.518Z"
+      "content_hash": "ef900fc43a908eda36a96ebff47e1083bbcad8a84f7998031c9f565b66252c7d",
+      "created_at": "2026-11-22T16:57:40.393Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -17340,8 +17340,8 @@
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "repository": "apache/arrow",
-      "content_hash": "0ed2fed54cfeb336816b8c25bef8e7a17fd5e7bb4d335c88e1d431b7da0441a6",
-      "created_at": "2026-11-21T03:44:34.749Z"
+      "content_hash": "c4641fbc33698a6053a57f715724212e93e06a57cfce4d16240210cdaf83788e",
+      "created_at": "2026-11-22T16:57:25.493Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
@@ -17358,8 +17358,8 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-learnings-content-information-intelligence-apache-arrow-learnings-c.md",
       "repository": "apache-arrow-learnings",
-      "content_hash": "9472fc98c4e4424dea8d87ccf0645bccad68552119ef033591a171f1edba1c40",
-      "created_at": "2026-11-21T03:44:51.031Z"
+      "content_hash": "6e3b3b051a52740285a94b5f2f7c57fe4fe659fe5870e292aae491c9dd5d342e",
+      "created_at": "2026-11-22T16:57:43.934Z"
     },
     "DOM-D-A21D48E1": {
       "record_id": "DOM-D-A21D48E1",
@@ -29138,8 +29138,8 @@
       "title": "Research & Knowledge Intelligence: cross-encoder/ms-marco-MiniLM-L6-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cross-encoder-ms-marco-minilm-l6-v2-research-knowledge-intelligence-cross-enc.md",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "content_hash": "19473611230a4cb0f854d45ccdcd2ff962790765a3587ba36c56f4a910dfb35b",
-      "created_at": "2026-11-17T21:03:02.801Z"
+      "content_hash": "9037209445dd51f632caac932a9c3c6d15742215d9ed400c19b528bc823abbd4",
+      "created_at": "2026-11-22T16:57:22.750Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
@@ -29147,8 +29147,8 @@
       "title": "Research & Knowledge Intelligence: hf-cross-encoder-ms-marco-minilm-l6-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings-research-knowledge-intelligence.md",
       "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
-      "content_hash": "e3347c72d21a241eae024dec1cad65c4cb0f70c10d7b30358b36ae51456a66d6",
-      "created_at": "2026-11-17T21:03:28.758Z"
+      "content_hash": "99c4094e9e3a5b1f574b153fffa097cd7033e21378017170106fd33ef4045c57",
+      "created_at": "2026-11-22T16:57:44.499Z"
     },
     "DOM-D-6018CADD": {
       "record_id": "DOM-D-6018CADD",
@@ -33660,8 +33660,8 @@
       "title": "Technical Construction Intelligence: SimonSchubert/LinuxCommandLibrary Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-technical-construction-intelligence-simonschub.md",
       "repository": "SimonSchubert/LinuxCommandLibrary",
-      "content_hash": "c0ac94b6328594482dd2bf27a2278d95cda86130b7cceec5f4d9905e001b9b81",
-      "created_at": "2026-11-19T15:42:33.529Z"
+      "content_hash": "fba7f6cfc7b4e6a47b28eb9d2723c3f02839272fc5cbcee25f5bb082763fa0c9",
+      "created_at": "2026-11-22T16:57:29.760Z"
     },
     "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-": {
       "record_id": "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-",
@@ -33669,8 +33669,8 @@
       "title": "Technical Construction Intelligence: simonschubert-linuxcommandlibrary-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-learnings-technical-construction-intelligence-.md",
       "repository": "simonschubert-linuxcommandlibrary-learnings",
-      "content_hash": "c08040411da58e3a52ef0b1da30ccc3a35193105e93421efe805d0a7c7a653ee",
-      "created_at": "2026-11-19T15:42:45.817Z"
+      "content_hash": "271e76947febf890dc2f5e45846264594b6026bb61fbed1caca47214380d0eac",
+      "created_at": "2026-11-22T16:57:45.288Z"
     },
     "domain_intelligence-design-intelligence-biomejs-biome-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-biomejs-biome-core-invariants",

@@ -12156,3 +12156,7 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `7ff0ffa2` | Multi-dimensional audit evidence | 2026-11-22T16:48:07.387Z |
 | `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `5cc7551c` | Multi-dimensional audit evidence | 2026-11-22T16:48:11.682Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `ac73d368` | Multi-dimensional audit evidence | 2026-11-22T16:48:20.946Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-22T16:57:22.511Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `80a37645` | Multi-dimensional audit evidence | 2026-11-22T16:57:25.046Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `36cdd4ea` | Multi-dimensional audit evidence | 2026-11-22T16:57:29.345Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `57a7a48c` | Multi-dimensional audit evidence | 2026-11-22T16:57:39.952Z |

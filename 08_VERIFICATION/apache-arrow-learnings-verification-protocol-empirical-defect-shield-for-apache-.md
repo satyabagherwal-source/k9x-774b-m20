@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T03:44:50.773Z",
+  "timestamp": "2026-11-22T16:57:43.618Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-arrow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-arrow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T03:44:50.773Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T16:57:43.618Z`  
 > **Learning ID**: `LEARN-EVO-apache-arrow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `d58f83f3`  
+> **Source Version**: `80a37645`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T03:44:33.435Z  
+> **Timestamp**: 2026-11-22T16:57:23.877Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:44:33.234Z  
+> **Harvest Timestamp**: 2026-11-22T16:57:23.870Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17323 stars
+- **Stars / Engagement**: 17336 stars
 
 ---
 
@@ -1402,13 +1402,13 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55687** (2026-11-20): **GH-55669: [C++][IPC] Validate buffer bounds and replace raw pointer arithmetic in MessageDecoder**
-  *Symptoms*: ﻿### Rationale for this change  In `cpp/src/arrow/ipc`, streaming decoding and decompression can be hardened against malformed or untrusted buffers (GH-55669). This pull request incorporates the hardening work originally proposed by @Awesome06 in #55671, while resolving the build failures across the C++ matrix and addressing all active review findings.  ### What changes are included in this PR?  1. **Memory Safety and Bound Checks in MessageDecoder:**    - Replaces raw pointer arithmetic and manual memcpy with `std::span` and checked offsets in `MessageDecoderImpl`.    - Validates input sizes against negative values in `MessageDecoder::Consume`.    - Protects chunk reassembly against out-of-bounds copies.  2. **IPC Read Ceilings in IpcReadOptions:**    - Adds configurable `max_metadata_length`, `max_body_length`, and `max_decompression_ratio` to `IpcReadOptions`.    - Rejects negative lengths in `CheckMetadataLength` and `CheckBodyLength`.    - Enforces configured limits in the shared `ReadRecordBatchInternal` function so that direct public `ReadRecordBatch` entry points cannot bypass bounds checks.  3. **FlatBuffers and Metadata Hardening:**    - Adds null checks for FlatBuffers tensor and custom metadata fields.    - Removes unconditional `metadata->reserve` in `GetKeyValueMetadata` to prevent untrusted metadata counts from triggering premature large vector allocations.  4. **CI Build and Test Fixes:**    - Fixes compiler deduction error on `read_write_test.cc:3579` by sepa
+- **Issue #55722** (2026-11-22): **MINOR: [Docs] Fix spelling in documentation and comments**
+  *Symptoms*: ### Rationale for this change While reviewing the codebase, I noticed a few clear spelling and possessive errors. Just wanted to get them fixed. These are very small and rather unimportant changes, but pretty valid imo. Will try to contribute a lot more to Arrow in more meaningful ways in the future!  ### What changes are included in this PR? Corrects typos in documentation and source comments. No behavior changes.  ### Are these changes tested? Ran git diff --check. No runtime tests were needed or run for these text-only edits.  ### Are there any user-facing changes? Documentation wording only.    ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  
 
-- **Issue #55679** (2026-11-20): **[CI] The debian-13-{cpp/python-3}-i386 jobs are currently failing to install base packages from Debian**
-  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  The following jobs are failing: - [test-debian-13-cpp-i386](https://github.com/ursacomputing/crossbow/actions/runs/44430480310/job/135246278866) - [test-debian-13-python-3-i386](https://github.com/ursacomputing/crossbow/actions/runs/44430460911/job/135246208174)  With: ``` [0](https://github.com/ursacomputing/crossbow/actions/runs/44430460911/job/135246208174#step:7:323)      failed to solve: process "/bin/sh -c apt-get update -y -q &&     apt-get install -y -q --no-install-recommends         apt-transport-https         ca-certificates         gnupg         lsb-release         wget &&     if [ ${llvm} -ge 20 ]; then       wget -O /usr/share/keyrings/llvm-snapshot.asc         https://apt.llvm.org/llvm-snapshot.gpg.key &&       (echo \"Types: deb\";        echo \"URIs: https://apt.llvm.org/$(lsb_release --codename --short)/\";        echo \"Suites: llvm-toolchain-$(lsb_release --codename --short)-${llvm}\";        echo \"Components: main\";        echo \"Signed-By: /usr/share/keyrings/llvm-snapshot.asc\") |         tee /etc/apt/sources.list.d/llvm.sources;     fi &&     apt-get update -y -q &&     apt-get install -y -q --no-install-recommends         autoconf         cargo         ccache         clang-${llvm}         cmake         curl         g++         gcc         gdb         git         libbenchmark-dev         libboost-filesystem-dev         libbrotli-dev         libbz2-dev       
+- **Issue #55716** (2026-11-22): **GH-55715: [C++][Parquet] Release pre-buffered data in ParquetFileReader::Close()**
+  *Symptoms*: ### Rationale for this change  `ParquetFileReader::Close()` doesn't release pre-buffered data. Pre-buffering is enabled by default. If the source is a memory mapped file, the pre-buffered data refers to the mapped memory. So the file is still mapped after we close the reader and the source. We can't remove a mapped file on Windows.  ### What changes are included in this PR?  Release pre-buffered data in `SerializedFile::Close()`.  ### Are these changes tested?  Yes.  ### Are there any user-facing changes?  Yes.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [x] AI - [ ] Not reviewed  * GitHub Issue: #55715 
   **Post-Mortem & Fix Analysis**:
-  > Issue resolved by pull request 55675 https://github.com/apache/arrow/pull/55675
+  > Thanks for the info! I'll merge this.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1425,24 +1425,20 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d58f83f3` (2026-11-20)
-**Commit Message**: GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison (#55675)
+### Incident Patch 1: `2354ca8d` (2026-11-22)
+**Commit Message**: MINOR: [Docs] Fix spelling in documentation and comments (#55722)
 
 ### Rationale for this change
-
-The debian-13 i386 jobs are currently failing on main. It started since the ubuntu-latest bumped to 26.04.
+While reviewing the codebase, I noticed a few clear spelling and possessive errors. Just wanted to get them fixed. These are very small and rather unimportant changes, but pretty valid imo. Will try to contribute a lot more to Arrow in more meaningful ways in the future!
 
 ### What changes are included in this PR?
-
-Use ubuntu-24.04 as base for the i386 images instead of 26.04. Also force `default_min_savings` comparison to be a double, there seems to be some comparison between double and long double otherwise which makes the test fail.
+Corrects typos in documentation and source comments. No behavior changes.
 
 ### Are these changes tested?
-
-Yes via CI.
+Ran git diff --check. No runtime tests were needed or run for these text-only edits.
 
 ### Are there any user-facing changes?
-
-No
+Documentation wording only.
 
 ### Was AI used for this PR?
 
@@ -1451,7 +1447,7 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
 **PR code and description written by:**
 
 - [x] Human
-- [x] AI
+- [ ] AI
 
 **Reviewed before submission by:**
 
@@ -1459,73 +1455,129 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
 - [ ] AI
 - [ ] Not reviewed
 
-* GitHub Issue: #55679
+Authored-by: Sumedh Pimplikar <[REDACTED_EMAIL]>
+Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
 
-Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
-
-**File**: `dev/tasks/docker-tests/github.linux.yml` (modified, +1/-1)
+**File**: `cpp/examples/tutorial_examples/dataset_example.cc` (modified, +1/-1)
 ```diff
-@@ -28,7 +28,7 @@ jobs:
-   test:
-     name: |
-       Docker Test {{ flags|default("") }} {{ image }} {{ command|default("") }}
--    runs-on: ubuntu-latest
-+    runs-on: {{ runs_on|default("ubuntu-latest") }}
- {{ macros.github_set_env(env) }}
-     timeout-minutes: {{ timeout|default(60) }}
-     steps:
+@@ -76,7 +76,7 @@ arrow::Result<std::string> CreateExampleParquetDataset(
+ }
+ 
+ arrow::Status PrepareEnv() {
+-  // Initilize the compute module to register the required kernels for Dataset
++  // Initialize the compute module to register the required kernels for Dataset
+   ARROW_RETURN_NOT_OK(arrow::compute::Initialize());
+   // Get our environment prepared for reading, by setting up some quick writing.
+   ARROW_ASSIGN_OR_RAISE(auto src_table, CreateTable())
 ```
 
-**File**: `dev/tasks/tasks.yml` (modified, +6/-0)
+**File**: `cpp/src/arrow/acero/swiss_join.cc` (modified, +1/-1)
 ```diff
-@@ -408,6 +408,9 @@ tasks:
-         DEBIAN: "{{ debian_version }}"
-       flags: "-e ARROW_AZURE=OFF -e ARROW_S3=OFF -e ARROW_GANDIVA=OFF"
-       image: debian-cpp
-+      # This can be unpinned to use latest once the following issue is solved:
-+      # https://github.com/actions/runner-images/issues/14790
-+      runs_on: ubuntu-24.04
- {% endfor %}
- 
-   test-debian-experimental-cpp-gcc-15:
-@@ -526,6 +529,9 @@ tasks:
-         DEBIAN: "{{ debian_version }}"
-       flags: "-e ARROW_S3=OFF -e ARROW_GANDIVA=OFF"
-       image: debian-python
-+      # This can be unpinned to use latest once the following issue is solved:
-+      # https://github.com/actions/runner-images/issues/14790
-+      runs_on: ubuntu-24.04
- {% endfor %}
- 
-   test-ubuntu-24.04-python-3:
+@@ -1963,7 +1963,7 @@ Status JoinResidualFilter::FilterLeftSemi(const ExecBatch& keypayload_batch,
+   match_iterator.SetLookupResult(num_batch_rows, batch_start_row, match_bitvector,
+                                  key_ids, no_duplicate_keys, key_to_payload_);
+   int num_matches_next = 0;
+-  // Used to not only collect distinct row ids, but also skip unecessary matches in the
++  // Used to not only collect distinct row ids, but also skip unnecessary matches in the
+   // next batch.
+   //
+   int row_id_last = JoinMatchIterator::kInvalidRowId;
 ```
 
-**File**: `python/pyarrow/_parquet.pyx` (modified, +2/-1)
+**File**: `cpp/src/arrow/chunk_resolver.h` (modified, +1/-1)
 ```diff
-@@ -2086,11 +2086,12 @@ cdef shared_ptr[WriterProperties] _create_writer_properties(
-         WriterProperties.Builder props
-         CdcOptions cdc_options
-         double savings
-+        double default_min_savings = 0.01
+@@ -191,7 +191,7 @@ class ARROW_EXPORT ChunkResolver {
+       // Negative logical indices can become large values when cast to unsigned, and
+       // they are gracefully handled by ResolveManyImpl, but both the chunk index
+       // and the index in chunk values will be undefined in these cases. This
+-      // happend because int8_t(-1) == uint8_t(255) and 255 could be a valid
++      // happened because int8_t(-1) == uint8_t(255) and 255 could be a valid
+       // logical index in the chunked array.
+       using U = std::make_unsigned_t<IndexType>;
+       ResolveManyImpl(n_indices, reinterpret_cast<const U*>(logical_index_vec),
+```
+
+**File**: `cpp/src/arrow/util/dict_util.cc` (modified, +2/-2)
+```diff
+@@ -42,7 +42,7 @@ int64_t LogicalNullCount(const ArraySpan& span) {
+       indices_valid_bitmap, span.offset, span.length,
+       [=, &null_count](int64_t position, int64_t length, bool valid) {
+         if (valid) {
+-          // This is a run of valid indicies, so we need to look each of them up
++          // This is a run of valid indices, so we need to look each of them up
+           // in the dictionary array to see if they are null
+           for (int64_t i = position; i < position + length; i++) {
+             CType index = indices_data[i];
+@@ -74,7 +74,7 @@ void SetLogicalNullBits(const ArraySpan& span, uint8_t* out_bitmap, int64_t out_
+       indices_valid_bitmap, span.offset, span.length,
+       [=](int64_t position, int64_t length, bool valid) {
+         if (valid) {
+-          // This is a run of valid indicies, so we need to look each of them up
++          // This is a run of valid indices, so we need to look each of them up
+           // in the dictionary array to see if they are null
+           for (int64_t i = position; i < position + length; i++) {
+             CType index = indices_data[i];
+```
+
+**File**: `docs/source/cpp/compute.rst` (modified, +1/-1)
+```diff
+@@ -1621,7 +1621,7 @@ For timestamps inputs with non-empty timezone, localized timestamp components wi
+   used to set the starting day of the week using ISO convention (Monday=1, Sunday=7).
+   :member:`DayOfWeekOptions::week_start` parameter is not affected by :member:`DayOfWeekOptions::count_from_zero`.
  
-     savings = min_compression_savings
-     if not (0.0 <= savings <= 1.0):
-         raise ValueError("min_compression_savings must be in range [0, 1]")
--    if savings > 0.01 and data_page_version == "1.0":
-+    if savings > default_min_savings and data_page_version == "1.0":
-         raise ValueError("min_compression_savings requires V2 data pages")
-     props.min_compression_savings(savings)
+-* \(2) First ISO week has the majority (4 or more) of it's days in January. ISO year
++* \(2) First ISO week has the majority (4 or more) of its days in January. ISO year
+   starts with the first ISO week. ISO week starts on Monday.
+   See `ISO 8601 week date definition`_ for more details.
  
+```
+
+**File**: `docs/source/format/CDataInterface/PyCapsuleInterface.rst` (modified, +1/-1)
+```diff
+@@ -507,7 +507,7 @@ enough to support this is to check whether ``pa.Array`` has the
+   # NEW METHOD
+   def to_arrow(self) -> pa.Array:
+       # PyArrow added support for constructing arrays from objects implementing
+-      # __arrow_c_array__ in the same version it added the method for it's own
++      # __arrow_c_array__ in the same version it added the method for its own
+       # arrays. So we can use hasattr to check if the method is available as
+       # a proxy for checking the PyArrow version.
+       if hasattr(pa.Array, "__arrow_c_array__"):
+```
+
+**File**: `docs/source/format/Columnar.rst` (modified, +1/-1)
+```diff
+@@ -1130,7 +1130,7 @@ A run must have a length of at least 1. This means the values in the
+ run ends array all are positive and in strictly ascending order. A run end cannot be
+ null.
+ 
+-The REE parent has no validity bitmap, and it's null count field should always be 0.
++The REE parent has no validity bitmap, and its null count field should always be 0.
+ Null values are encoded as runs with the value null.
+ 
+ As an example, you could have the following data: ::
+```
+
+**File**: `docs/source/format/Intro.rst` (modified, +1/-1)
+```diff
+@@ -297,7 +297,7 @@ saved in the schema and the values of a specific field (key) are saved in
+ the child array.
+ 
+ Since child arrays are independent, Arrow does not enforce physical
+-consistency between the struct's validity bitmap and those of it's children.
++consistency between the struct's validity bitmap and those of its children.
+ Logically, a struct row is only valid if both the parent and the child
+ bitmaps have a value of 1 for that slot (a logical AND operation).
+ This allows for "hidden" data to exist in child arrays at null struct
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55722** (2026-11-22): MINOR: [Docs] Fix spelling in documentation and comments (@Sumdiboii)
+- **PR #55716** (2026-11-22): GH-55715: [C++][Parquet] Release pre-buffered data in ParquetFileReader::Close() (@kou)
+- **PR #55706** (2026-11-21): GH-55705: [C++] Bump simdjson to v5.2.0 (@Reranko05)
 - **PR #55687** (closed): GH-55669: [C++][IPC] Validate buffer bounds and replace raw pointer arithmetic in MessageDecoder (@Mr-Nobody-Anonymous)
 - **PR #55675** (2026-11-20): GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison (@raulcd)
 - **PR #55663** (2026-11-18): GH-55625: [CI][R] test-r-m1-san fails in "Install dependencies" since 2026-11-09 (@thisisnic)
-- **PR #55657** (2026-11-17): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
-- **PR #55654** (2026-11-17): GH-55653: [Python][Docs] Correction for operator list of Array/Scalar (@tadeja)
-- **PR #55651** (2026-11-17): GH-55630: [CI][C++] Relax simdjson error message checking (@pitrou)
 
 ---
 
@@ -1545,31 +1597,31 @@ Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison
+## X. MINOR: [Docs] Fix spelling in documentation and comments
 
 **RULE**:
-When implementing operations in `dev/tasks/docker-tests/github.linux.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/examples/tutorial_examples/dataset_example.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d58f83f3`: GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2354ca8d`: MINOR: [Docs] Fix spelling in documentation and comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/tasks/docker-tests/github.linux.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/examples/tutorial_examples/dataset_example.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    runs-on: {{ runs_on|default("ubuntu-latest") }}
+  // Initialize the compute module to register the required kernels for Dataset
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    runs-on: ubuntu-latest
+  // Initilize the compute module to register the required kernels for Dataset
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d58f83f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2354ca8d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

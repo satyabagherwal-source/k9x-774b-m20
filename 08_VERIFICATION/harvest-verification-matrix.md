@@ -12123,3 +12123,7 @@
 | `CYCLE-20261122-M312` | `2026-11-22T16:48:07.382Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9954` | Yes (`47824c59...`) |
 | `CYCLE-20261122-M6CD` | `2026-11-22T16:48:11.677Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9955` | Yes (`710bf06b...`) |
 | `CYCLE-20261122-MDHP` | `2026-11-22T16:48:20.941Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9956` | Yes (`c0fa42e3...`) |
+| `CYCLE-20261122-XZD6` | `2026-11-22T16:57:22.506Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`e074e4a0...`) |
+| `CYCLE-20261122-Y1BM` | `2026-11-22T16:57:25.042Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9957` | Yes (`b08ca115...`) |
+| `CYCLE-20261122-Y4N0` | `2026-11-22T16:57:29.340Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9958` | Yes (`5a359432...`) |
+| `CYCLE-20261122-YCTO` | `2026-11-22T16:57:39.948Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9959` | Yes (`d685cb4a...`) |

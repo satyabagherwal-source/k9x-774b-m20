@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
   "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T21:03:02.800Z",
+  "timestamp": "2026-11-22T16:57:22.749Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cross-encoder/ms-marco-MiniLM-L6-v2](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2) (Revision: `hf-cross-e`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T21:03:02.800Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T16:57:22.749Z`  
 > **Learning ID**: `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:03:02.106Z  
+> **Harvest Timestamp**: 2026-11-22T16:57:21.729Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-ranking
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 57532362 downloads | 448 likes
+- **Stars / Engagement**: 55350487 downloads | 453 likes
 
 ---
 
