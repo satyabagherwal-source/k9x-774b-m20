@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "518d40b7701bb1eb87de89af7c6055597833e8bf44f7fb2919df9c9a79e4cba6",
-    "lastHarvestedAt": "2026-11-18T12:58:20.277Z",
+    "contentHash": "1ef6de6d88054b570aac4a85fbe9c6f47f68275e931985558b717cc1067945db",
+    "lastHarvestedAt": "2026-11-22T19:43:09.706Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "4c1f0dba",
+    "sourceVersion": "fe38c7a5",
     "license": "Apache-2.0",
-    "contentHash": "3247dc84ca7f68c68c6f18f4780bde0bc342875140c08289bf5afe4524b9127b",
-    "lastHarvestedAt": "2026-11-22T18:21:34.086Z",
+    "contentHash": "8cfaba65bd1f624a0c1156d23ea15c23fec98332fe7b9ac67967b66990106aa2",
+    "lastHarvestedAt": "2026-11-22T19:43:27.260Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "1db4b548",
+    "sourceVersion": "4468e50b",
     "license": "MIT",
-    "contentHash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
-    "lastHarvestedAt": "2026-11-21T18:52:24.395Z",
+    "contentHash": "baf3dd4f013eeec0dbceea61c6d811237671a613d681a5793d62f5b21c54e9d2",
+    "lastHarvestedAt": "2026-11-22T19:43:27.996Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "77ac5633",
+    "sourceVersion": "2ad5f1a9",
     "license": "MIT",
-    "contentHash": "cbeddf249c84a6e3a3b61a9255369d1311cf196d393280673eef529bdfaffa02",
-    "lastHarvestedAt": "2026-11-19T19:23:22.852Z",
+    "contentHash": "81177f1a5d371d1a765f7bca1d9b2be63c6357acdf2487643cd25e29836d045f",
+    "lastHarvestedAt": "2026-11-22T19:43:16.148Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {
@@ -13198,5 +13198,15 @@
     "contentHash": "8c22086c9cc29a3156a278aac7548c783d97f140e71d9027a754c222e5be46d2",
     "lastHarvestedAt": "2026-11-22T18:00:13.685Z",
     "learningId": "learn-github-baarai-artex"
+  },
+  "yashabcyber7-nexadroid": {
+    "repository": "yashabcyber7/nexadroid",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yashabcyber7/nexadroid",
+    "sourceVersion": "7ca38942",
+    "license": "MIT",
+    "contentHash": "1a00472834afbc88d394c75694c8897bbc868cdcef185de4fb9010edba99831a",
+    "lastHarvestedAt": "2026-11-22T19:43:06.942Z",
+    "learningId": "learn-github-yashabcyber7-nexadroid"
   }
 }

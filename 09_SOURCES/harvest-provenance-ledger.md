@@ -12199,3 +12199,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-22T19:18:32.422Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `841a49be` | Multi-dimensional audit evidence | 2026-11-22T19:18:47.873Z |
 | `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-22T19:31:26.742Z |
+| `learn-github-yashabcyber7-nexadroid` | `https://github.com/yashabcyber7/nexadroid` | `7ca38942` | Multi-dimensional audit evidence | 2026-11-22T19:43:06.942Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-22T19:43:09.706Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `2ad5f1a9` | Multi-dimensional audit evidence | 2026-11-22T19:43:16.148Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fe38c7a5` | Multi-dimensional audit evidence | 2026-11-22T19:43:27.260Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `4468e50b` | Multi-dimensional audit evidence | 2026-11-22T19:43:27.996Z |
+| `learn-dom-d-9c50727d` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-22T19:44:11.727Z |

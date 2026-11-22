@@ -21946,5 +21946,20 @@
     "qualityScore": 10107,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-22T17:56:50.264Z"
+  },
+  {
+    "name": "nexadroid",
+    "fullName": "yashabcyber7/nexadroid",
+    "url": "https://github.com/yashabcyber7/nexadroid",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🤖📱 Production-Ready Multi-Agent AI Operating System for Android",
+    "stars": 1318,
+    "forks": 288,
+    "openIssues": 0,
+    "language": "Python",
+    "qualityScore": 995,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-22T19:39:42.637Z"
   }
 ]

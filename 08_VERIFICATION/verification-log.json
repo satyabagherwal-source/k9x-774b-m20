@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-2R98",
-    "timestamp": "2026-11-20T20:41:41.756Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "c883d286609e83cfcff414056741988949f601bd032ccd677b1e7c4c52c1cb28",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-2T4J",
-    "timestamp": "2026-11-20T20:41:44.179Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "c7cc4c5d0675008acae37b4fbb17e9e555270e02e938a788837cf163b3d70b7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-CX8K",
-    "timestamp": "2026-11-20T20:49:36.068Z",
-    "repository": "aio-libs/aiohttp",
-    "learningId": "learn-github-aio-libs-aiohttp",
-    "contentHash": "8098073ae94b9f03bcd02ede1754d892181700ce2eb7fa1e89663c8fe048cf37",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-D4ZJ",
-    "timestamp": "2026-11-20T20:49:46.111Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-NB8D",
-    "timestamp": "2026-11-20T20:57:40.765Z",
-    "repository": "thinkingmachines/Inkling-2-Mini",
-    "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
-    "contentHash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-NL04",
     "timestamp": "2026-11-20T20:57:53.428Z",
     "repository": "kgateway-dev/kgateway",
@@ -7492,6 +7417,81 @@
     "contentHash": "8127065dae1e0801180ffe9e88d59829f391dfb680353b100a25ff8bb5ccac6d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-V4JD",
+    "timestamp": "2026-11-22T19:43:06.937Z",
+    "repository": "yashabcyber7/nexadroid",
+    "learningId": "learn-github-yashabcyber7-nexadroid",
+    "contentHash": "1a00472834afbc88d394c75694c8897bbc868cdcef185de4fb9010edba99831a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-V6O4",
+    "timestamp": "2026-11-22T19:43:09.700Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "1ef6de6d88054b570aac4a85fbe9c6f47f68275e931985558b717cc1067945db",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-VBN3",
+    "timestamp": "2026-11-22T19:43:16.143Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "81177f1a5d371d1a765f7bca1d9b2be63c6357acdf2487643cd25e29836d045f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-VK7R",
+    "timestamp": "2026-11-22T19:43:27.255Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "8cfaba65bd1f624a0c1156d23ea15c23fec98332fe7b9ac67967b66990106aa2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-VKS7",
+    "timestamp": "2026-11-22T19:43:27.991Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "baf3dd4f013eeec0dbceea61c6d811237671a613d681a5793d62f5b21c54e9d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

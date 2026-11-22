@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T19:23:28.491Z",
+  "timestamp": "2026-11-22T19:44:11.960Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-momenbasel-puremac-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [momenbasel-puremac-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T19:23:28.491Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T19:44:11.960Z`  
 > **Learning ID**: `LEARN-EVO-momenbasel-puremac-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from momenbasel-puremac-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  
 > **Source**: github ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  
-> **Source Version**: `77ac5633`  
+> **Source Version**: `2ad5f1a9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T19:23:21.738Z  
+> **Timestamp**: 2026-11-22T19:43:15.488Z  
 > **Learning ID**: `learn-github-momenbasel-puremac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:23:21.733Z  
+> **Harvest Timestamp**: 2026-11-22T19:43:15.481Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Free, open-source macOS cleaner. CleanMyMac alternative with zero telemetry. Native SwiftUI, scheduled auto-cleaning, Xcode/Homebrew/system cache cleanup. MIT licensed.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7871 stars
+- **Stars / Engagement**: 7916 stars
 
 ---
 
@@ -1207,555 +1207,52 @@ actor CleaningEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77ac5633` (2026-11-19)
-**Commit Message**: homebrew: bump to 3.3.0 (sha256 37a5e421061a)
+### Incident Patch 1: `2ad5f1a9` (2026-11-22)
+**Commit Message**: chore: refresh star history
 
-**File**: `homebrew/puremac.rb` (modified, +2/-2)
+**File**: `assets/star-history-dark.svg` (modified, +11/-11)
 ```diff
-@@ -1,6 +1,6 @@
- cask "puremac" do
--  version "3.2.0"
--  sha256 "5ba35fde0b60a645d61edacc8a8b8f198625ea91ac3750c60d41efe22a240a50"
-+  version "3.3.0"
-+  sha256 "37a5e421061a9d54291ea3cc1571b8ebf82685f4beb95c8da99b319ca7f30b2c"
+@@ -23,18 +23,18 @@
+   <line x1="62" y1="58" x2="736" y2="58" stroke="#21262d" stroke-width="1"/>
+   <text x="52" y="62" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">10k</text>
  
-   url "https://github.com/momenbasel/PureMac/releases/download/v#{version}/PureMac-#{version}.zip"
-   name "PureMac"
+-  <path d="M62 367.97 L65.63 366.85 L66.81 365.74 L72.4 364.62 L72.61 363.51 L72.98 362.39 L73.44 361.27 L73.78 360.16 L74.1 359.04 L74.69 357.93 L75.24 356.81 L75.87 355.69 L76.26 354.58 L76.45 353.46 L76.64 352.31 L76.83 351.2 L77 350.08 L77.15 348.97 L77.25 347.85 L77.36 346.73 L77.5 345.62 L77.62 344.5 L77.76 343.39 L77.95 342.27 L78.14 341.15 L78.24 340.04 L78.35 338.92 L78.46 337.81 L78.57 336.69 L78.66 335.57 L78.76 334.46 L78.86 333.34 L78.99 332.23 L79.15 331.11 L79.27 329.99 L79.4 328.88 L79.58 327.76 L79.8 326.65 L80.09 325.53 L80.45 324.41 L80.92 323.3 L81.3 322.18 L81.76 321.04 L82.04 319.92 L82.41 318.8 L82.68 317.69 L82.99 316.57 L83.85 315.46 L84.52 314.34 L84.86 313.22 L85.17 312.11 L85.65 310.99 L86.18 309.88 L86.95 308.76 L87.28 307.64 L87.47 306.53 L87.63 305.41 L87.74 304.3 L87.83 303.18 L87.96 302.06 L88.12 300.95 L88.27 299.83 L88.4 298.72 L88.54 297.6 L88.71 296.48 L88.89 295.37 L89.09 294.25 L89.34 293.14 L89.59 292.02 L89.98 290.87 L90.4 289.76 L90.91 288.64 L91.26 287.52 L91.72 286.41 L92.53 285.29 L94.01 284.18 L95.33 283.06 L96.37 281.94 L97.26 280.83 L98.41 279.71 L99.98 278.6 L102.07 277.48 L102.94 276.36 L103.49 275.25 L104.27 274.13 L105.22 273.02 L105.89 271.9 L106.61 270.78 L107.83 269.67 L108.77 268.55 L111.74 267.44 L112.82 266.32 L114.81 265.2 L116.7 264.09 L117.62 262.97 L119.16 261.86 L121.43 260.71 L125.13 259.59 L128.49 258.48 L131.88 257.36 L135.71 256.25 L142.29 255.13 L146.15 254.01 L147.14 252.9 L148.06 251.78 L150.29 250.67 L152.8 249.55 L156.36 248.43 L157.22 247.32 L158.45 246.2 L159.46 245.08 L160.84 243.97 L161.79 242.85 L162.49 241.74 L163.72 240.62 L168.93 239.51 L172.58 238.39 L177.35 237.27 L182.63 236.16 L185.82 235.04 L189.27 233.93 L196.01 232.81 L201.29 231.69 L206.69 230.58 L210.79 229.43 L217.51 228.31 L226.1 227.2 L236.01 226.08 L245.59 224.97 L251.5 223.85 L260.62 222.73 L268.29 221.62 L279.16 220.5 L287.25 219.39 L296.36 218.27 L305.78 217.15 L309.12 216.04 L315.11 214.92 L324.65 213.81 L331.2 212.69 L340.46 211.57 L349.96 210.46 L359.55 209.34 L362.15 208.23 L363.5 207.11 L367.4 205.99 L369.99 204.88 L373.96 203.76 L381.45 202.65 L386.15 201.53 L394.43 200.41 L403.02 199.27 L409.63 198.15 L413.05 197.04 L420.57 195.92 L425.58 194.8 L432.93 193.69 L438.99 192.57 L446.37 191.46 L451.79 190.34 L454.53 189.22 L457.37 188.11 L458.17 186.99 L459.32 185.88 L461.52 184.76 L466.3 183.64 L471.21 182.53 L477.31 181.41 L483.86 180.3 L492.75 179.18 L500.69 178.06 L508.94 176.95 L510.64 175.83 L514.49 174.71 L519.72 173.6 L526.17 172.48 L532.01 171.37 L534.73 170.25 L538.2 169.1 L541.14 167.99 L546.71 166.87 L552.77 165.76 L558.81 164.64 L559.61 163.52 L562.11 162.41 L564.62 161.29 L567.31 160.18 L573.72 159.06 L579.1 157.94 L587.09 156.83 L593.46 155.71 L598.74 154.6 L602.73 153.48 L608.33 152.36 L613.89 151.25 L617.98 150.13 L622.58 149.02 L628.5 147.9 L631.74 146.78 L635.58 145.67 L639.21 144.55 L643.96 143.44 L647.73 142.32 L650.88 141.2 L653.56 140.09 L658.6 138.97 L663.94 137.82 L668.95 136.71 L671.36 135.59 L675.9 134.48 L679.69 133.36 L685.45 132.25 L692.26 131.13 L699.84 130.01 L704.48 128.9 L710.48 127.78 L717.14 126.67 L723.97 125.55 L730.63 124.43 L736 123.32 L736 368 L62 368 Z" fill="url(#fill-starhistorydarksvg)"/>
+-  <path d="M62 367.97 L65.63 366.85 L66.81 365.74 L72.4 364.62 L72.61 363.51 L72.98 362.39 L73.44 361.27 L73.78 360.16 L74.1 359.04 L74.69 357.93 L75.24 356.81 L75.87 355.69 L76.26 354.58 L76.45 353.46 L76.64 352.31 L76.83 351.2 L77 350.08 L77.15 348.97 L77.25 347.85 L77.36 346.73 L77.5 345.62 L77.62 344.5 L77.76 343.39 L77.95 342.27 L78.14 341.15 L78.24 340.04 L78.35 338.92 L78.46 337.81 L78.57 336.69 L78.66 335.57 L78.76 334.46 L78.86 333.34 L78.99 332.23 L79.15 331.11 L79.27 329.99 L79.4 328.88 L79.58 327.76 L79.8 326.65 L80.09 325.53 L80.45 324.41 L80.92 323.3 L81.3 322.18 L81.76 321.04 L82.04 319.92 L82.41 318.8 L82.68 317.69 L82.99 316.57 L83.85 315.46 L84.52 314.34 L84.86 313.22 L85.17 312.11 L85.65 310.99 L86.18 309.88 L86.95 308.76 L87.28 307.64 L87.47 306.53 L87.63 305.41 L87.74 304.3 L87.83 303.18 L87.96 302.06 L88.12 300.95 L88.27 299.83 L88.4 298.72 L88.54 297.6 L88.71 296.48 L88.89 295.37 L89.09 294.25 L89.34 293.14 L89.59 292.02 L89.98 290.87 L90.4 289.76 L90.91 288.64 L91.26 287.52 L91.72 286.41 L92.53 285.29 L94.01 284.18 L95.33 283.06 L96.37 281.94 L97.26 280.83 L98.41 279.71 L99.98 278.6 L102.07 277.48 L102.94 276.36 L103.49 275.25 L104.27 274.13 L105.22 273.02 L105.89 271.9 L106.61 270.78 L107.83 269.67 L108.77 268.55 L111.74 267.44 L112.82 266.32 L114.81 265.2 L116.7 264.09 L117.62 262.97 L119.16 261.86 L121.43 260.71 L125.13 259.59 L128.49 258.48 L131.88 257.36 L135.71 256.25 L142.29 255.13 L146.15 254.01 L147.14 252.9 L148.06 251.78 L150.29 
+```
+
+**File**: `assets/star-history.svg` (modified, +11/-11)
+```diff
+@@ -23,18 +23,18 @@
+   <line x1="62" y1="58" x2="736" y2="58" stroke="#e6eaef" stroke-width="1"/>
+   <text x="52" y="62" fill="#59636e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">10k</text>
+ 
+-  <path d="M62 367.97 L65.63 366.85 L66.81 365.74 L72.4 364.62 L72.61 363.51 L72.98 362.39 L73.44 361.27 L73.78 360.16 L74.1 359.04 L74.69 357.93 L75.24 356.81 L75.87 355.69 L76.26 354.58 L76.45 353.46 L76.64 352.31 L76.83 351.2 L77 350.08 L77.15 348.97 L77.25 347.85 L77.36 346.73 L77.5 345.62 L77.62 344.5 L77.76 343.39 L77.95 342.27 L78.14 341.15 L78.24 340.04 L78.35 338.92 L78.46 337.81 L78.57 336.69 L78.66 335.57 L78.76 334.46 L78.86 333.34 L78.99 332.23 L79.15 331.11 L79.27 329.99 L79.4 328.88 L79.58 327.76 L79.8 326.65 L80.09 325.53 L80.45 324.41 L80.92 323.3 L81.3 322.18 L81.76 321.04 L82.04 319.92 L82.41 318.8 L82.68 317.69 L82.99 316.57 L83.85 315.46 L84.52 314.34 L84.86 313.22 L85.17 312.11 L85.65 310.99 L86.18 309.88 L86.95 308.76 L87.28 307.64 L87.47 306.53 L87.63 305.41 L87.74 304.3 L87.83 303.18 L87.96 302.06 L88.12 300.95 L88.27 299.83 L88.4 298.72 L88.54 297.6 L88.71 296.48 L88.89 295.37 L89.09 294.25 L89.34 293.14 L89.59 292.02 L89.98 290.87 L90.4 289.76 L90.91 288.64 L91.26 287.52 L91.72 286.41 L92.53 285.29 L94.01 284.18 L95.33 283.06 L96.37 281.94 L97.26 280.83 L98.41 279.71 L99.98 278.6 L102.07 277.48 L102.94 276.36 L103.49 275.25 L104.27 274.13 L105.22 273.02 L105.89 271.9 L106.61 270.78 L107.83 269.67 L108.77 268.55 L111.74 267.44 L112.82 266.32 L114.81 265.2 L116.7 264.09 L117.62 262.97 L119.16 261.86 L121.43 260.71 L125.13 259.59 L128.49 258.48 L131.88 257.36 L135.71 256.25 L142.29 255.13 L146.15 254.01 L147.14 252.9 L148.06 251.78 L150.29 250.67 L152.8 249.55 L156.36 248.43 L157.22 247.32 L158.45 246.2 L159.46 245.08 L160.84 243.97 L161.79 242.85 L162.49 241.74 L163.72 240.62 L168.93 239.51 L172.58 238.39 L177.35 237.27 L182.63 236.16 L185.82 235.04 L189.27 233.93 L196.01 232.81 L201.29 231.69 L206.69 230.58 L210.79 229.43 L217.51 228.31 L226.1 227.2 L236.01 226.08 L245.59 224.97 L251.5 223.85 L260.62 222.73 L268.29 221.62 L279.16 220.5 L287.25 219.39 L296.36 218.27 L305.78 217.15 L309.12 216.04 L315.11 214.92 L324.65 213.81 L331.2 212.69 L340.46 211.57 L349.96 210.46 L359.55 209.34 L362.15 208.23 L363.5 207.11 L367.4 205.99 L369.99 204.88 L373.96 203.76 L381.45 202.65 L386.15 201.53 L394.43 200.41 L403.02 199.27 L409.63 198.15 L413.05 197.04 L420.57 195.92 L425.58 194.8 L432.93 193.69 L438.99 192.57 L446.37 191.46 L451.79 190.34 L454.53 189.22 L457.37 188.11 L458.17 186.99 L459.32 185.88 L461.52 184.76 L466.3 183.64 L471.21 182.53 L477.31 181.41 L483.86 180.3 L492.75 179.18 L500.69 178.06 L508.94 176.95 L510.64 175.83 L514.49 174.71 L519.72 173.6 L526.17 172.48 L532.01 171.37 L534.73 170.25 L538.2 169.1 L541.14 167.99 L546.71 166.87 L552.77 165.76 L558.81 164.64 L559.61 163.52 L562.11 162.41 L564.62 161.29 L567.31 160.18 L573.72 159.06 L579.1 157.94 L587.09 156.83 L593.46 155.71 L598.74 154.6 L602.73 153.48 L608.33 152.36 L613.89 151.25 L617.98 150.13 L622.58 149.02 L628.5 147.9 L631.74 146.78 L635.58 145.67 L639.21 144.55 L643.96 143.44 L647.73 142.32 L650.88 141.2 L653.56 140.09 L658.6 138.97 L663.94 137.82 L668.95 136.71 L671.36 135.59 L675.9 134.48 L679.69 133.36 L685.45 132.25 L692.26 131.13 L699.84 130.01 L704.48 128.9 L710.48 127.78 L717.14 126.67 L723.97 125.55 L730.63 124.43 L736 123.32 L736 368 L62 368 Z" fill="url(#fill-starhistorysvg)"/>
+-  <path d="M62 367.97 L65.63 366.85 L66.81 365.74 L72.4 364.62 L72.61 363.51 L72.98 362.39 L73.44 361.27 L73.78 360.16 L74.1 359.04 L74.69 357.93 L75.24 356.81 L75.87 355.69 L76.26 354.58 L76.45 353.46 L76.64 352.31 L76.83 351.2 L77 350.08 L77.15 348.97 L77.25 347.85 L77.36 346.73 L77.5 345.62 L77.62 344.5 L77.76 343.39 L77.95 342.27 L78.14 341.15 L78.24 340.04 L78.35 338.92 L78.46 337.81 L78.57 336.69 L78.66 335.57 L78.76 334.46 L78.86 333.34 L78.99 332.23 L79.15 331.11 L79.27 329.99 L79.4 328.88 L79.58 327.76 L79.8 326.65 L80.09 325.53 L80.45 324.41 L80.92 323.3 L81.3 322.18 L81.76 321.04 L82.04 319.92 L82.41 318.8 L82.68 317.69 L82.99 316.57 L83.85 315.46 L84.52 314.34 L84.86 313.22 L85.17 312.11 L85.65 310.99 L86.18 309.88 L86.95 308.76 L87.28 307.64 L87.47 306.53 L87.63 305.41 L87.74 304.3 L87.83 303.18 L87.96 302.06 L88.12 300.95 L88.27 299.83 L88.4 298.72 L88.54 297.6 L88.71 296.48 L88.89 295.37 L89.09 294.25 L89.34 293.14 L89.59 292.02 L89.98 290.87 L90.4 289.76 L90.91 288.64 L91.26 287.52 L91.72 286.41 L92.53 285.29 L94.01 284.18 L95.33 283.06 L96.37 281.94 L97.26 280.83 L98.41 279.71 L99.98 278.6 L102.07 277.48 L102.94 276.36 L103.49 275.25 L104.27 274.13 L105.22 273.02 L105.89 271.9 L106.61 270.78 L107.83 269.67 L108.77 268.55 L111.74 267.44 L112.82 266.32 L114.81 265.2 L116.7 264.09 L117.62 262.97 L119.16 261.86 L121.43 260.71 L125.13 259.59 L128.49 258.48 L131.88 257.36 L135.71 256.25 L142.29 255.13 L146.15 254.01 L147.14 252.9 L148.06 251.78 L150.29 250.
 ```
 
 ---
 
-### Incident Patch 2: `1a8df284` (2026-11-19)
-**Commit Message**: Merge pull request #210 from momenbasel/integration/quality-pass
+### Incident Patch 2: `8a0d4ad8` (2026-11-21)
+**Commit Message**: chore: refresh star history
 
-Reason: the categories and button added in #209 showed English in up to 14 languages, and the new collapsible sidebar headers gave VoiceOver no expanded state.
-
-**File**: `PureMac/Views/MainWindow.swift` (modified, +2/-0)
+**File**: `assets/star-history-dark.svg` (modified, +11/-11)
 ```diff
-@@ -294,6 +294,8 @@ struct MainWindow: View {
-         }
-         .buttonStyle(.plain)
-         .accessibilityLabel(Text(text))
-+        .accessibilityValue(Text(LocalizedStringKey(isExpanded.wrappedValue ? "Expanded" : "Collapsed")))
-+        .accessibilityAddTraits(.isHeader)
-     }
+@@ -23,18 +23,18 @@
+   <line x1="62" y1="58" x2="736" y2="58" stroke="#21262d" stroke-width="1"/>
+   <text x="52" y="62" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">10k</text>
  
-     private func navRow(
+-  <path d="M62 367.97 L65.64 366.85 L66.83 365.74 L72.45 364.62 L72.66 363.51 L73.03 362.39 L73.49 361.27 L73.83 360.16 L74.15 359.04 L74.74 357.93 L75.3 356.81 L75.93 355.69 L76.31 354.58 L76.51 353.46 L76.69 352.38 L76.89 351.26 L77.05 350.14 L77.21 349.03 L77.31 347.91 L77.42 346.8 L77.55 345.68 L77.68 344.56 L77.82 343.45 L78.01 342.33 L78.2 341.22 L78.29 340.1 L78.41 338.98 L78.52 337.87 L78.64 336.75 L78.72 335.64 L78.82 334.52 L78.92 333.4 L79.04 332.29 L79.21 331.17 L79.34 330.06 L79.47 328.94 L79.64 327.82 L79.86 326.71 L80.16 325.59 L80.49 324.48 L80.97 323.36 L81.35 322.24 L81.78 321.16 L82.1 320.04 L82.4 318.93 L82.71 317.81 L83.03 316.7 L83.77 315.58 L84.56 314.46 L84.94 313.35 L85.22 312.23 L85.68 311.12 L86.19 310 L87 308.88 L87.38 307.77 L87.53 306.65 L87.73 305.53 L87.83 304.42 L87.93 303.3 L88.06 302.19 L88.21 301.07 L88.35 299.96 L88.5 298.84 L88.63 297.72 L88.79 296.61 L88.99 295.49 L89.18 294.38 L89.44 293.26 L89.67 292.14 L90.01 291.06 L90.47 289.94 L90.94 288.83 L91.33 287.71 L91.78 286.59 L92.53 285.48 L93.93 284.36 L95.1 283.25 L96.32 282.13 L97.24 281.01 L98.35 279.9 L99.93 278.78 L101.4 277.67 L103.09 276.55 L103.57 275.43 L104.27 274.32 L105.29 273.2 L105.92 272.09 L106.72 270.97 L107.67 269.85 L108.83 268.74 L111.19 267.62 L112.74 266.51 L114.73 265.39 L116.14 264.27 L117.64 263.16 L118.72 262.04 L121.02 260.96 L124.08 259.84 L127.39 258.73 L131.26 257.61 L135.59 256.49 L141.81 255.38 L145.52 254.26 L147.37 253.15 L148.06 252.03 L150.34 250.91 L152.93 249.8 L156.15 248.68 L157.5 247.57 L158.58 246.45 L159.68 245.33 L160.94 244.22 L161.87 243.1 L162.78 241.99 L163.67 240.87 L168.68 239.75 L172.34 238.64 L176.76 237.52 L181.61 236.41 L185.47 235.29 L188.9 234.17 L195.69 233.06 L200.24 231.94 L206.52 230.83 L209.47 229.74 L215.39 228.62 L224.83 227.51 L234.27 226.39 L243.82 225.28 L250.38 224.16 L258.02 223.04 L267.78 221.93 L275.33 220.81 L285.69 219.7 L294.44 218.58 L303.68 217.46 L309.87 216.35 L314.01 215.23 L324.35 214.12 L330.78 213 L337.23 211.88 L348.65 210.77 L356.97 209.65 L363.13 208.54 L364.34 207.42 L367.21 206.3 L369.88 205.19 L373.65 204.07 L380.7 202.96 L386.77 201.84 L393.64 200.72 L401.02 199.64 L410.16 198.52 L413.01 197.41 L419.92 196.29 L425.75 195.18 L431.98 194.06 L438.21 192.94 L445.05 191.83 L452.81 190.71 L455.47 189.6 L458.7 188.48 L459.56 187.36 L460.44 186.25 L461.68 185.13 L466.12 184.02 L471.03 182.9 L476.1 181.78 L483.48 180.67 L491.92 179.55 L499.78 178.43 L509.84 177.32 L512.31 176.2 L514.4 175.09 L518.98 173.97 L526.64 172.86 L531.32 171.74 L535.79 170.62 L538.93 169.54 L541.88 168.42 L546.07 167.31 L551.99 166.19 L558.11 165.07 L561.22 163.96 L562.74 162.84 L565.93 161.73 L568.35 160.61 L572.84 159.49 L578.43 158.38 L584.79 157.26 L593.91 156.15 L598.43 155.03 L602.76 153.91 L607.59 152.8 L613.28 151.68 L618.11 150.57 L622.79 149.45 L629.71 148.33 L632.47 147.22 L635.87 146.1 L640 144.99 L644 143.87 L648.23 142.75 L652.98 141.64 L654.23 140.52 L658.79 139.41 L664.16 138.32 L669.52 137.2 L672.15 136.09 L675.77 134.97 L680.2 133.86 L685.87 132.74 L691.54 131.63 L697.79 130.51 L705 129.39 L710.79 128.28 L716.9 127.16 L724.49 126.05 L729.94 124.93 L736 123.81 L736 368 L62 368 Z" fill="url(#fill-starhistorydarksvg)"/>
+-  <path d="M62 367.97 L65.64 366.85 L66.83 365.74 L72.45 364.62 L72.66 363.51 L73.03 362.39 L73.49 361.27 L73.83 360.16 L74.15 359.04 L74.74 357.93 L75.3 356.81 L75.93 355.69 L76.31 354.58 L76.51 353.46 L76.69 352.38 L76.89 351.26 L77.05 350.14 L77.21 349.03 L77.31 347.91 L77.42 346.8 L77.55 345.68 L77.68 344.56 L77.82 343.45 L78.01 342.33 L78.2 341.22 L78.29 340.1 L78.41 338.98 L78.52 337.87 L78.64 336.75 L78.72 335.64 L78.82 334.52 L78.92 333.4 L79.04 332.29 L79.21 331.17 L79.34 330.06 L79.47 328.94 L79.64 327.82 L79.86 326.71 L80.16 325.59 L80.49 324.48 L80.97 323.36 L81.35 322.24 L81.78 321.16 L82.1 320.04 L82.4 318.93 L82.71 317.81 L83.03 316.7 L83.77 315.58 L84.56 314.46 L84.94 313.35 L85.22 312.23 L85.68 311.12 L86.19 310 L87 308.88 L87.38 307.77 L87.53 306.65 L87.73 305.53 L87.83 304.42 L87.93 303.3 L88.06 302.19 L88.21 301.07 L88.35 299.96 L88.5 298.84 L88.63 297.72 L88.79 296.61 L88.99 295.49 L89.18 294.38 L89.44 293.26 L89.67 292.14 L90.01 291.06 L90.47 289.94 L90.94 288.83 L91.33 287.71 L91.78 286.59 L92.53 285.48 L93.93 284.36 L95.1 283.25 L96.32 282.13 L97.24 281.01 L98.35 279.9 L99.93 278.78 L101.4 277.67 L103.09 276.55 L103.57 275.43 L104.27 274.32 L105.29 273.2 L105.92 272.09 L106.72 270.97 L107.67 269.85 L108.83 268.74 L111.19 267.62 L112.74 266.51 L114.73 265.39 L116.14 264.27 L117.64 263.16 L118.72 262.04 L121.02 260.96 L124.08 259.84 L127.39 258.73 L131.26 257.61 L135.59 256.49 L141.81 255.38 L145.52 254.26 L147.37 253.15 L148.06 252.03 L150.34 250
 ```
 
-**File**: `PureMac/ar.lproj/Localizable.strings` (modified, +31/-31)
+**File**: `assets/star-history.svg` (modified, +11/-11)
 ```diff
-@@ -888,11 +888,11 @@
- "Check access" = "Check access";
- "Checking for updates…" = "Checking for updates…";
- "Checks the official app releases on GitHub." = "Checks the official app releases on GitHub.";
--"Collapsed" = "Collapsed";
-+"Collapsed" = "مطوي";
- "Copy command" = "Copy command";
- "Download (DMG / ZIP)" = "Download (DMG / ZIP)";
- "Download the new app from the release page, quit PureMac, then replace it in Applications." = "Download the new app from the release page, quit PureMac, then replace it in Applications.";
--"Expanded" = "Expanded";
-+"Expanded" = "موسّع";
- "GitHub is receiving too many requests. Please try again later." = "GitHub is receiving too many requests. Please try again later.";
- "Homebrew" = "Homebrew";
- "Keep PureMac up to date" = "Keep PureMac up to date";
-@@ -1069,32 +1069,32 @@
- "Node Modules" = "وحدات Node";
- "Rust project target folders, cleaned with cargo clean" = "مجلدات target لمشاريع Rust، تُنظَّف باستخدام cargo clean";
- "node_modules folders in your projects" = "مجلدات node_modules في مشاريعك";
--"Select All Copies" = "Select All Copies";
--"Dev Tool Caches" = "Dev Tool Caches";
--"Package, build, and download caches of developer tools" = "Package, build, and download caches of developer tools";
--"Bun cache" = "Bun cache";
--"uv cache" = "uv cache";
--"pip cache" = "pip cache";
--"Poetry cache" = "Poetry cache";
--"CocoaPods cache" = "CocoaPods cache";
--"Swift Package Manager cache" = "Swift Package Manager cache";
--"Gradle caches" = "Gradle caches";
--"Gradle wrapper distributions" = "Gradle wrapper distributions";
--"Cargo registry cache" = "Cargo registry cache";
--"Cargo registry index" = "Cargo registry index";
--"Cargo git database" = "Cargo git database";
--"Cargo git checkouts" = "Cargo git checkouts";
--"Go build cache" = "Go build cache";
--"Go module cache" = "Go module cache";
--"Deno cache" = "Deno cache";
--"Dart pub packages" = "Dart pub packages";
--"Dart pub git packages" = "Dart pub git packages";
--"Playwright browsers" = "Playwright browsers";
--"Puppeteer browsers" = "Puppeteer browsers";
--"node-gyp headers" = "node-gyp headers";
--"Electron download cache" = "Electron download cache";
--"Electron Builder cache" = "Electron Builder cache";
--"Maven repository (may hold local installs)" = "Maven repository (may hold local installs)";
--"NuGet packages (may hold local packages)" = "NuGet packages (may hold local packages)";
--"NuGet HTTP cache" = "NuGet HTTP cache";
--"%@ (Gradle is running)" = "%@ (Gradle is running)";
-+"Select All Copies" = "تحديد كل النسخ";
-+"Dev Tool Caches" = "ذاكرات أدوات المطورين المؤقتة";
-+"Package, build, and download caches of developer tools" = "ذاكرات الحزم والبناء والتنزيلات المؤقتة لأدوات المطورين";
-+"Bun cache" = "ذاكرة Bun المؤقتة";
-+"uv cache" = "ذاكرة uv المؤقتة";
-+"pip cache" = "ذاكرة pip المؤقتة";
-+"Poetry cache" = "ذاكرة Poetry المؤقتة";
-+"CocoaPods cache" = "ذاكرة CocoaPods المؤقتة";
-+"Swift Package Manager cache" = "ذاكرة Swift Package Manager المؤقتة";
-+"Gradle caches" = "ذاكرات Gradle المؤقتة";
-+"Gradle wrapper distributions" = "توزيعات Gradle Wrapper";
-+"Cargo registry cache" = "ذاكرة سجل Cargo المؤقتة";
-+"Cargo registry index" = "فهرس سجل Cargo";
-+"Cargo git database" = "قاعدة بيانات git في Cargo";
-+"Cargo git checkouts" = "نسخ git المستخرجة في Cargo";
-+"Go build cache" = "ذاكرة بناء Go المؤقتة";
-+"Go module cache" = "ذاكرة وحدات Go المؤقتة";
-+"Deno cache" = "ذاكرة Deno المؤقتة";
-+"Dart pub packages" = "حزم Dart pub";
-+"Dart pub git packages" = "حزم git في Dart pub";
-+"Playwright browsers" = "متصفحات Playwright";
-+"Puppeteer browsers" = "متصفحات Puppeteer";
-+"node-gyp headers" = "ملفات ترويسة node-gyp";
-+"Electron download cache" = "ذاكرة تنزيلات Electron المؤقتة";
-+"Electron Builder cache" = "ذاكرة Electron Builder المؤقتة";
-+"Maven repository (may hold local installs)" = "مستودع Maven (قد يحتوي على تثبيتات محلية)";
-+"NuGet packages (may hold local packages)" = "حزم NuGet (قد تحتوي على حزم محلية)";
-+"NuGet HTTP cache" = "ذاكرة HTTP المؤقتة لـ NuGet";
-+"%@ (Gradle is running)" = "%@ (Gradle قيد التشغيل)";
-```
-
-**File**: `PureMac/de.lproj/Localizable.strings` (modified, +31/-31)
-```diff
-@@ -913,8 +913,8 @@
- "CPU - Memory" = "CPU - Memory";
- "CPU uses the Mac’s total capacity. App helpers are grouped with their app." = "CPU uses the Mac’s total capacity. App helpers are grouped with their app.";
- "CPU values appear after the next sample." = "CPU values appear after the next sample.";
--"Collapsed" = "Collapsed";
--"Expanded" = "Expanded";
-+"Collapsed" = "Eingeklappt";
-+"Expanded" = "Ausgeklappt";
- "Live updates paused" = "Live updates paused";
- "Measuring apps and processes…" = "Measuring apps and processes…";
- "Memory estimate includes active, wired and compressed memory." = "Memory estimate includes active, wired and compressed memory.";
-@@ -1072,32 +1072,32 @@
- "Node Modules" = "Node-Module";
- "Rust project target folders, cleaned with cargo clean" = "Rust-Projektordner „target“, bereinigt mit cargo clean";
- "node_modules folders in your projects" = "node_modules-Ordner in deinen Projekten";
--"Select All Copies" = "Select All Copies";
--"Dev Tool Caches" = "Dev Tool Caches";
--"Package, build, and download caches of developer tools" = "Package, build, and download caches of developer tools";
--"Bun cache" = "Bun cache";
--"uv cache" = "uv cache";
--"pip cache" = "pip cache";
--"Poetry cache" = "Poetry cache";
--"CocoaPods cache" = "CocoaPods cache";
--"Swift Package Manager cache" = "Swift Package Manager cache";
--"Gradle caches" = "Gradle caches";
--"Gradle wrapper distributions" = "Gradle wrapper distributions";
--"Cargo registry cache" = "Cargo registry cache";
--"Cargo registry index" = "Cargo registry index";
--"Cargo git database" = "Cargo git database";
--"Cargo git checkouts" = "Cargo git checkouts";
--"Go build cache" = "Go build cache";
--"Go module cache" = "Go module cache";
--"Deno cache" = "Deno cache";
--"Dart pub packages" = "Dart pub packages";
--"Dart pub git packages" = "Dart pub git packages";
--"Playwright browsers" = "Playwright browsers";
--"Puppeteer browsers" = "Puppeteer browsers";
--"node-gyp headers" = "node-gyp headers";
--"Electron download cache" = "Electron download cache";
--"Electron Builder cache" = "Electron Builder cache";
--"Maven repository (may hold local installs)" = "Maven repository (may hold local installs)";
--"NuGet packages (may hold local packages)" = "NuGet packages (may hold local packages)";
--"NuGet HTTP cache" = "NuGet HTTP cache";
--"%@ (Gradle is running)" = "%@ (Gradle is running)";
-+"Select All Copies" = "Alle Kopien auswählen";
-+"Dev Tool Caches" = "Caches von Entwicklertools";
-+"Package, build, and download caches of developer tools" = "Paket-, Build- und Download-Caches von Entwicklertools";
-+"Bun cache" = "Bun-Cache";
-+"uv cache" = "uv-Cache";
-+"pip cache" = "pip-Cache";
-+"Poetry cache" = "Poetry-Cache";
-+"CocoaPods cache" = "CocoaPods-Cache";
-+"Swift Package Manager cache" = "Swift Package Manager-Cache";
-+"Gradle caches" = "Gradle-Caches";
-+"Gradle wrapper distributions" = "Gradle-Wrapper-Distributionen";
-+"Cargo registry cache" = "Cargo-Registry-Cache";
-+"Cargo registry index" = "Cargo-Registry-Index";
-+"Cargo git database" = "Cargo-Git-Datenbank";
-+"Cargo git checkouts" = "Cargo-Git-Checkouts";
-+"Go build cache" = "Go-Build-Cache";
-+"Go module cache" = "Go-Modul-Cache";
-+"Deno cache" = "Deno-Cache";
-+"Dart pub packages" = "Dart-pub-Pakete";
-+"Dart pub git packages" = "Dart-pub-Git-Pakete";
-+"Playwright browsers" = "Playwright-Browser";
-+"Puppeteer browsers" = "Puppeteer-Browser";
-+"node-gyp headers" = "node-gyp-Header";
-+"Electron download cache" = "Electron-Download-Cache";
-+"Electron Builder cache" = "Electron Builder-Cache";
-+"Maven repository (may hold local installs)" = "Maven-Repository (kann lokale Installationen enthalten)";
-+"NuGet packages (may hold local packages)" = "NuGet-Pakete (können lokale Pakete enthalten)";
-+"NuGet HTTP cache" = "NuGet-HTTP-Cache";
-+"%@ (Gradle is running)" = "%@ (Gradle läuft)";
-```
-
-**File**: `PureMac/el.lproj/Localizable.strings` (modified, +33/-33)
-```diff
-@@ -1065,36 +1065,36 @@
- "original bundle left at %@" = "original bundle left at %@";
- "binary is outside the app bundle" = "binary is outside the app bundle";
+@@ -23,18 +23,18 @@
+   <line x1="62" y1="58" x2="736" y2="58" stroke="#e6eaef" stroke-width="1"/>
+   <text x="52" y="62" fill="#59636e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">10k</text>
  
--"Rust Targets" = "Rust Targets";
--"Node Modules" = "Node Modules";
--"Rust project target folders, cleaned with cargo clean" = "Rust project target folders, cleaned with cargo clean";
--"node_modules folders in your projects" = "node_modules folders in your projects";
--"Select All Copies" = "Select All Copies";
--"Dev Tool Caches" = "Dev Tool Caches";
--"Package, build, and download caches of developer tools" = "Package, build, and download caches of developer tools";
--"Bun cache" = "Bun cache";
--"uv cache" = "uv cache";
--"pip cache" = "pip cache";
--"Poetry cache" = "Poetry cache";
--"CocoaPods cache" = "CocoaPods cache";
--"Swift Package Manager cache" = "Swift Package Manager cache";
--"Gradle caches" = "Gradle caches";
--"Gradle wrapper distributions" = "Gradle wrapper distributions";
--"Cargo registry cache" = "Cargo registry cache";
--"Cargo registry index" = "Cargo registry index";
--"Cargo git database" = "Cargo git database";
--"Cargo git checkouts" = "Cargo git checkouts";
--"Go build cache" = "Go build cache";
--"Go module cache" = "Go module cache";
--"Deno cache" = "Deno cache";
--"Dart pub packages" = "Dart pub packages";
--"Dart pub git packages" = "Dart pub git packages";
--"Playwright browsers" = "Playwright browsers";
--"Puppeteer browsers" = "Puppeteer browsers";
--"node-gyp headers" = "node-gyp headers";
--"Electron download cache" = "Electron download cache";
--"Electron Builder cache" = "Electron Builder cache";
--"Maven repository (may hold local installs)" = "Maven repository (may hold local installs)";
--"NuGet packages (may hold local packages)" = "NuGet packages (may hold local packages)";
--"NuGet HTTP cache" = "NuGet HTTP cache";
--"%@ (Gradle is running)" = "%@ (Gradle is running)";
-+"Rust Targets" = "Φάκελοι target του Rust";
-+"Node Modules" = "Αρθρώματα Node";
-+"Rust project target folders, cleaned with cargo clean" = "Φάκελοι target έργων Rust, καθαρίζονται με cargo clean";
-+"node_modules folders in your projects" = "Φάκελοι node_modules στα έργα σας";
-+"Select All Copies" = "Επιλογή όλων των αντιγράφων";
-+"Dev Tool Caches" = "Κρυφές μνήμες εργαλείων ανάπτυξης";
-+"Package, build, and download caches of developer tools" = "Κρυφές μνήμες πακέτων, μεταγλώττισης και λήψεων εργαλείων ανάπτυξης";
-+"Bun cache" = "Κρυφή μνήμη Bun";
-+"uv cache" = "Κρυφή μνήμη uv";
-+"pip cache" = "Κρυφή μνήμη pip";
-+"Poetry cache" = "Κρυφή μνήμη Poetry";
-+"CocoaPods cache" = "Κρυφή μνήμη CocoaPods";
-+"Swift Package Manager cache" = "Κρυφή μνήμη Swift Package Manager";
-+"Gradle caches" = "Κρυφές μνήμες Gradle";
-+"Gradle wrapper distributions" = "Διανομές Gradle Wrapper";
-+"Cargo registry cache" = "Κρυφή μνήμη μητρώου Cargo";
-+"Cargo registry index" = "Ευρετήριο μητρώου Cargo";
-+"Cargo git database" = "Βάση δεδομένων git του Cargo";
-+"Cargo git checkouts" = "Αντίγραφα εργασίας git του Cargo";
-+"Go build cache" = "Κρυφή μνήμη μεταγλώττισης Go";
-+"Go module cache" = "Κρυφή μνήμη αρθρωμάτων Go";
-+"Deno cache" = "Κρυφή μνήμη Deno";
-+"Dart pub packages" = "Πακέτα Dart pub";
-+"Dart pub git packages" = "Πακέτα git του Dart pub";
-+"Playwright browsers" = "Προγράμματα περιήγησης Playwright";
-+"Puppeteer browsers" = "Προγράμματα περιήγησης Puppeteer";
-+"node-gyp headers" = "Κεφαλίδες node-gyp";
-+"Electron download cache" = "Κρυφή μνήμη λήψεων Electron";
-+"Electron Builder cache" = "Κρυφή μνήμη Electron Builder";
-+"Maven repository (may hold local installs)" = "Αποθετήριο Maven (μπορεί να περιέχει τοπικές εγκαταστάσεις)";
-+"NuGet packages (may hold local packages)" = "Πακέτα NuGet (μπορεί να περιέχουν τοπικά πακέτα)";
-+"NuGet HTTP cache" = "Κρυφή μνήμη HTTP του NuGet";
-+"%@ (Gradle is running)" = "%@ (το Gradle εκτελείται)";
-```
-
-**File**: `PureMac/es.lproj/Localizable.strings` (modified, +31/-31)
-```diff
-@@ -888,11 +888,11 @@
- "Check access" = "Check access";
- "Checking for updates…" = "Checking for updates…";
- "Checks the official app releases on GitHub." = "Checks the official app releases on GitHub.";
--"Collapsed" = "Collapsed";
-+"Collapsed" = "Contraído";
- "Copy command" = "Copy command";
- "Download (DMG / ZIP)" = "Download (DMG / ZIP)";
- "Download the new app from the release page, quit PureMac, then replace it in Applications." = "Download the new app from the release page, quit PureMac, then replace it in Applications.";
--"Expanded" = "Expanded";
-+"Expanded" = "Expandido";
- "GitHub is receiving too many requests. Please try again later." = "GitHub is receiving too many requests. Please try again later.";
- "Homebrew" = "Homebrew";
- "Keep PureMac up to date" = "Keep PureMac up to date";
-@@ -1069,32 +1069,32 @@
- "Node Modules" = "Módulos de Node";
- "Rust project target folders, cleaned with cargo clean" = "Carpetas target de proyectos Rust, limpiadas con cargo clean";
- "node_modules folders in your projects" = "Carpetas node_modules de tus proyectos";
--"Select All Copies" = "Select All Copies";
--"Dev Tool Caches" = "Dev Tool Caches";
--"Package, build, and download caches of developer tools" = "Package, build, and download caches of developer tools";
--"Bun cache" = "Bun cache";
--"uv cache" = "uv cache";
--"pip cache" = "pip cache";
--"Poetry cache" = "Poetry cache";
--"CocoaPods cache" = "CocoaPods cache";
--"Swift Package Manager cache" = "Swift Package Manager cache";
--"Gradle caches" = "Gradle caches";
--"Gradle wrapper distributions" = "Gradle wrapper distributions";
--"Cargo registry cache" = "Cargo registry cache";
--"Cargo registry index" = "Cargo registry index";
--"Cargo git database" = "Cargo git database";
--"Cargo git checkouts" = "Cargo git checkouts";
--"Go build cache" = "Go build cache";
--"Go module cache" = "Go module cache";
--"Deno cache" = "Deno cache";
--"Dart pub packages" = "Dart pub packages";
--"Dart pub git packages" = "Dart pub git packages";
--"Playwright browsers" = "Playwright browsers";
--"Puppeteer browsers" = "Puppeteer browsers";
--"node-gyp headers" = "node-gyp headers";
--"Electron download cache" = "Electron download cache";
--"Electron Builder cache" = "Electron Builder cache";
--"Maven repository (may hold local installs)" = "Maven repository (may hold local installs)";
--"NuGet packages (may hold local packages)" = "NuGet packages (may hold local packages)";
--"NuGet HTTP cache" = "NuGet HTTP cache";
--"%@ (Gradle is running)" = "%@ (Gradle is running)";
-+"Select All Copies" = "Seleccionar todas las copias";
-+"Dev Tool Caches" = "Cachés de herramientas de desarrollo";
-+"Package, build, and download caches of developer tools" = "Cachés de paquetes, compilación y descargas de herramientas de desarrollo";
-+"Bun cache" = "Caché de Bun";
-+"uv cache" = "Caché de uv";
-+"pip cache" = "Caché de pip";
-+"Poetry cache" = "Caché de Poetry";
-+"CocoaPods cache" = "Caché de CocoaPods";
-+"Swift Package Manager cache" = "Caché de Swift Package Manager";
-+"Gradle caches" = "Cachés de Gradle";
-+"Gradle wrapper distributions" = "Distribuciones de Gradle Wrapper";
-+"Cargo registry cache" = "Caché del registro de Cargo";
-+"Cargo registry index" = "Índice del registro de Cargo";
-+"Cargo git database" = "Base de datos git de Cargo";
-+"Cargo git checkouts" = "Copias de trabajo git de Cargo";
-+"Go build cache" = "Caché de compilación de Go";
-+"Go module cache" = "Caché de módulos de Go";
-+"Deno cache" = "Caché de Deno";
-+"Dart pub packages" = "Paquetes de Dart pub";
-+"Dart pub git packages" = "Paquetes git de Dart pub";
-+"Playwright browsers" = "Navegadores de Playwright";
-+"Puppeteer browsers" = "Navegadores de Puppeteer";
-+"node-gyp headers" = "Cabeceras de node-gyp";
-+"Electron download cache" = "Caché de descargas de Electron";
-+"Electron Builder cache" = "Caché de Electron Builder";
-+"Maven repository (may hold local installs)" = "Repositorio de Maven (puede contener instalaciones locales)";
-+"NuGet packages (may hold local packages)" = "Paquetes de NuGet (pueden contener paquetes locales)";
-+"NuGet HTTP cache" = "Caché HTTP de NuGet";
-+"%@ (Gradle is running)" = "%@ (Gradle se está ejecutando)";
-```
-
-**File**: `PureMac/fa.lproj/Localizable.strings` (modified, +33/-33)
-```diff
-@@ -1065,36 +1065,36 @@
- "original bundle left at %@" = "original bundle left at %@";
- "binary is outside the app bundle" = "binary is outside the app bundle";
- 
--"Rust Targets" = "Rust Targets";
--"Node Modules" = "Node Modules";
--"Rust project target folders, cleaned with cargo clean" = "Rust project target folders, cleaned with cargo clean";
--"node_modules folders in your projects" = "node_modules folders in your projects";
--"Select All Copies" = "Select All Copies";
--"Dev Tool Caches" = "Dev Tool Caches";
--"Package, build, and download caches of developer tools" = "Package, build, and download caches of developer tools";
--"Bun cache" = "Bun cache";
--"uv cache" = "uv cache";
--"pip cache" = "pip cache";
--"Poetry cache" = "Poetry cache";
--"CocoaPods cache" = "CocoaPods cache";
--"Swift Package Manager cache" = "Swift Package Manager cache";
--"Gradle caches" = "Gradle caches";
--"Gradle wrapper distributions" = "Gradle wrapper distributions";
--"Cargo registry cache" = "Cargo registry cache";
--"Cargo registry index" = "Cargo registry index";
--"Cargo git database" = "Cargo git database";
--"Cargo git checkouts" = "Cargo git checkouts";
--"Go build cache" = "Go build cache";
--"Go module cache" = "Go module cache";
--"Deno cache" = "Deno cache";
--"Dart pub packages" = "Dart pub packages";
--"Dart pub git packages" = "Dart pub git packages";
--"Playwright browsers" = "Playwright browsers";
--"Puppeteer browsers" = "Puppeteer browsers";
--"node-gyp headers" = "node-gyp headers";
--"Electron download cache" = "Electron download cache";
--"Electron Builder cache" = "Electron Builder cache";
--"Maven repository (may hold local installs)" = "Maven repository (may hold local installs)";
--"NuGet packages (may hold local packages)" = "NuGet packages (may hold local packages)";
--"NuGet HTTP cache" = "NuGet HTTP cache";
--"%@ (Gradle is running)" = "%@ (Gradle is running)";
-+"Rust Targets" = "پوشه‌های target در Rust";
-+"Node Modules" = "ماژول‌های Node";
-+"Rust project target folders, cleaned with cargo clean" = "پوشه‌های target پروژه‌های Rust که با cargo clean پاک می‌شوند";
-+"node_modules folders in your projects" = "پوشه‌های node_modules در پروژه‌های شما";
-+"Select All Copies" = "انتخاب همهٔ نسخه‌ها";
-+"Dev Tool Caches" = "حافظه‌های نهان ابزارهای توسعه";
-+"Package, build, and download caches of developer tools" = "حافظه‌های نهان بسته، ساخت و دانلود ابزارهای توسعه";
-+"Bun cache" = "حافظهٔ نهان Bun";
-+"uv cache" = "حافظهٔ نهان uv";
-+"pip cache" = "حافظهٔ نهان pip";
-+"Poetry cache" = "حافظهٔ نهان Poetry";
-+"CocoaPods cache" = "حافظهٔ نهان CocoaPods";
-+"Swift Package Manager cache" = "حافظهٔ نهان Swift Package Manager";
-+"Gradle caches" = "حافظه‌های نهان Gradle";
-+"Gradle wrapper distributions" = "توزیع‌های Gradle Wrapper";
-+"Cargo registry cache" = "حافظهٔ نهان رجیستری Cargo";
-+"Cargo registry index" = "فهرست رجیستری Cargo";
-+"Cargo git database" = "پایگاه دادهٔ git در Cargo";
-+"Cargo git checkouts" = "نسخه‌های کاری git در Cargo";
-+"Go build cache" = "حافظهٔ نهان ساخت Go";
-+"Go module cache" = "حافظهٔ نهان ماژول‌های Go";
-+"Deno cache" = "حافظهٔ نهان Deno";
-+"Dart pub packages" = "بسته‌های Dart pub";
-+"Dart pub git packages" = "بسته‌های git در Dart pub";
-+"Playwright browsers" = "مرورگرهای Playwright";
-+"Puppeteer browsers" = "مرورگرهای Puppeteer";
-+"node-gyp headers" = "سرآیندهای node-gyp";
-+"Electron download cache" = "حافظهٔ نهان دانلودهای Electron";
-+"Electron Builder cache" = "حافظهٔ نهان Electron Builder";
-+"Maven repository (may hold local installs)" = "مخزن Maven (ممکن است نصب‌های محلی داشته باشد)";
-+"NuGet packages (may hold local packages)" = "بسته‌های NuGet (ممکن است بسته‌های محلی داشته باشد)";
-+"NuGet HTTP cache" = "حافظهٔ نهان HTTP در NuGet";
-+"%@ (Gradle is running)" = "%@ (Gradle در حال اجراست)";
-```
-
-**File**: `PureMac/fr.lproj/Localizable.strings` (modified, +29/-29)
-```diff
-@@ -1065,32 +1065,32 @@
- "Node Modules" = "Modules Node";
- "Rust project target folders, cleaned with cargo clean" = "Dossiers target des projets Rust, nettoyés avec cargo clean";
- "node_modules folders in your projects" = "Dossiers node_modules de vos projets";
--"Select All Copies" = "Select All Copies";
--"Dev Tool Caches" = "Dev Tool Caches";
--"Package, build, and download caches of developer tools" = "Package, build, and download caches of developer tools";
--"Bun cache" = "Bun cache";
--"uv cache" = "uv cache";
--"pip cache" = "pip cache";
--"Poetry cache" = "Poetry cache";
--"CocoaPods cache" = "CocoaPods cache";
--"Swift Package Manager cache" = "Swift Package Manager cache";
--"Gradle caches" = "Gradle caches";
--"Gradle wrapper distributions" = "Gradle wrapper distributions";
--"Cargo registry cache" = "Cargo registry cache";
--"Cargo registry index" = "Cargo registry index";
--"Cargo git database" = "Cargo git database";
--"Cargo git checkouts" = "Cargo git checkouts";
--"Go build cache" = "Go build cache";
--"Go module cache" = "Go module cache";
--"Deno cache" = "Deno cache";
--"Dart pub packages" = "Dart pub packages";
--"Dart pub git packages" = "Dart pub git packages";
--"Playwright browsers" = "Playwright browsers";
--"Puppeteer browsers" = "Puppeteer browsers";
--"node-gyp headers" = "node-gyp headers";
--"Electron download cache" = "Electron download cache";
--"Electron Builder cache" = "Electron Builder cache";
--"Maven repository (may hold local installs)" = "Maven repository (may hold local installs)";
--"NuGet packages (may hold local packages)" = "NuGet packages (may hold local packages)";
--"NuGet HTTP cache" = "NuGet HTTP cache";
--"%@ (Gradle is running)" = "%@ (Gradle is running)";
-+"Select All Copies" = "Sélectionner toutes les copies";
-+"Dev Tool Caches" = "Caches des outils de développement";
-+"Package, build, and download caches of developer tools" = "Caches de paquets, de build et de téléchargement des outils de développement";
-+"Bun cache" = "Cache Bun";
-+"uv cache" = "Cache uv";
-+"pip cache" = "Cache pip";
-+"Poetry cache" = "Cache Poetry";
-+"CocoaPods cache" = "Cache CocoaPods";
-+"Swift Package Manager cache" = "Cache Swift Package Manager";
-+"Gradle caches" = "Caches Gradle";
-+"Gradle wrapper distributions" = "Distributions Gradle Wrapper";
-+"Cargo registry cache" = "Cache du registre Cargo";
-+"Cargo registry index" = "Index du registre Cargo";
-+"Cargo git database" = "Base de données git de Cargo";
-+"Cargo git checkouts" = "Copies de travail git de Cargo";
-+"Go build cache" = "Cache de build Go";
-+"Go module cache" = "Cache des modules Go";
-+"Deno cache" = "Cache Deno";
-+"Dart pub packages" = "Paquets Dart pub";
-+"Dart pub git packages" = "Paquets git Dart pub";
-+"Playwright browsers" = "Navigateurs Playwright";
-+"Puppeteer browsers" = "Navigateurs Puppeteer";
-+"node-gyp headers" = "En-têtes node-gyp";
-+"Electron download cache" = "Cache de téléchargement Electron";
-+"Electron Builder cache" = "Cache Electron Builder";
-+"Maven repository (may hold local installs)" = "Dépôt Maven (peut contenir des installations locales)";
-+"NuGet packages (may hold local packages)" = "Paquets NuGet (peuvent contenir des paquets locaux)";
-+"NuGet HTTP cache" = "Cache HTTP NuGet";
-+"%@ (Gradle is running)" = "%@ (Gradle est en cours d'exécution)";
-```
-
-**File**: `PureMac/it.lproj/Localizable.strings` (modified, +28/-28)
-```diff
-@@ -1070,31 +1070,31 @@
- "Rust project target folders, cleaned with cargo clean" = "Cartelle target dei progetti Rust, pulite con cargo clean";
- "node_modules folders in your projects" = "Cartelle node_modules nei tuoi progetti";
- "Select All Copies" = "Seleziona tutte le copie";
--"Dev Tool Caches" = "Dev Tool Caches";
--"Package, build, and download caches of developer tools" = "Package, build, and download caches of developer tools";
--"Bun cache" = "Bun cache";
--"uv cache" = "uv cache";
--"pip cache" = "pip cache";
--"Poetry cache" = "Poetry cache";
--"CocoaPods cache" = "CocoaPods cache";
--"Swift Package Manager cache" = "Swift Package Manager cache";
--"Gradle caches" = "Gradle caches";
--"Gradle wrapper distributions" = "Gradle wrapper distributions";
--"Cargo registry cache" = "Cargo registry cache";
--"Cargo registry index" = "Cargo registry index";
--"Cargo git database" = "Cargo git database";
--"Cargo git checkouts" = "Cargo git checkouts";
--"Go build cache" = "Go build cache";
--"Go module cache" = "Go module cache";
--"Deno cache" = "Deno cache";
--"Dart pub packages" = "Dart pub packages";
--"Dart pub git packages" = "Dart pub git packages";
--"Playwright browsers" = "Playwright browsers";
--"Puppeteer browsers" = "Puppeteer browsers";
--"node-gyp headers" = "node-gyp headers";
--"Electron download cache" = "Electron download cache";
--"Electron Builder cache" = "Electron Builder cache";
--"Maven repository (may hold local installs)" = "Maven repository (may hold local installs)";
--"NuGet packages (may hold local packages)" = "NuGet packages (may hold local packages)";
--"NuGet HTTP cache" = "NuGet HTTP cache";
--"%@ (Gradle is running)" = "%@ (Gradle is running)";
-+"Dev Tool Caches" = "Cache degli strumenti di sviluppo";
-+"Package, build, and download caches of developer tools" = "Cache di pacchetti, compilazione e download degli strumenti di sviluppo";
-+"Bun cache" = "Cache di Bun";
-+"uv cache" = "Cache di uv";
-+"pip cache" = "Cache di pip";
-+"Poetry cache" = "Cache di Poetry";
-+"CocoaPods cache" = "Cache di CocoaPods";
-+"Swift Package Manager cache" = "Cache di Swift Package Manager";
-+"Gradle caches" = "Cache di Gradle";
-+"Gradle wrapper distributions" = "Distribuzioni di Gradle Wrapper";
-+"Cargo registry cache" = "Cache del registro di Cargo";
-+"Cargo registry index" = "Indice del registro di Cargo";
-+"Cargo git database" = "Database git di Cargo";
-+"Cargo git checkouts" = "Copie di lavoro git di Cargo";
-+"Go build cache" = "Cache di compilazione di Go";
-+"Go module cache" = "Cache dei moduli di Go";
-+"Deno cache" = "Cache di Deno";
-+"Dart pub packages" = "Pacchetti Dart pub";
-+"Dart pub git packages" = "Pacchetti git di Dart pub";
-+"Playwright browsers" = "Browser di Playwright";
-+"Puppeteer browsers" = "Browser di Puppeteer";
-+"node-gyp headers" = "Header di node-gyp";
-+"Electron download cache" = "Cache dei download di Electron";
-+"Electron Builder cache" = "Cache di Electron Builder";
-+"Maven repository (may hold local installs)" = "Repository Maven (può contenere installazioni locali)";
-+"NuGet packages (may hold local packages)" = "Pacchetti NuGet (possono contenere pacchetti locali)";
-+"NuGet HTTP cache" = "Cache HTTP di NuGet";
-+"%@ (Gradle is running)" = "%@ (Gradle è in esecuzione)";
+-  <path d="M62 367.97 L65.64 366.85 L66.83 365.74 L72.45 364.62 L72.66 363.51 L73.03 362.39 L73.49 361.27 L73.83 360.16 L74.15 359.04 L74.74 357.93 L75.3 356.81 L75.93 355.69 L76.31 354.58 L76.51 353.46 L76.69 352.38 L76.89 351.26 L77.05 350.14 L77.21 349.03 L77.31 347.91 L77.42 346.8 L77.55 345.68 L77.68 344.56 L77.82 343.45 L78.01 342.33 L78.2 341.22 L78.29 340.1 L78.41 338.98 L78.52 337.87 L78.64 336.75 L78.72 335.64 L78.82 334.52 L78.92 333.4 L79.04 332.29 L79.21 331.17 L79.34 330.06 L79.47 328.94 L79.64 327.82 L79.86 326.71 L80.16 325.59 L80.49 324.48 L80.97 323.36 L81.35 322.24 L81.78 321.16 L82.1 320.04 L82.4 318.93 L82.71 317.81 L83.03 316.7 L83.77 315.58 L84.56 314.46 L84.94 313.35 L85.22 312.23 L85.68 311.12 L86.19 310 L87 308.88 L87.38 307.77 L87.53 306.65 L87.73 305.53 L87.83 304.42 L87.93 303.3 L88.06 302.19 L88.21 301.07 L88.35 299.96 L88.5 298.84 L88.63 297.72 L88.79 296.61 L88.99 295.49 L89.18 294.38 L89.44 293.26 L89.67 292.14 L90.01 291.06 L90.47 289.94 L90.94 288.83 L91.33 287.71 L91.78 286.59 L92.53 285.48 L93.93 284.36 L95.1 283.25 L96.32 282.13 L97.24 281.01 L98.35 279.9 L99.93 278.78 L101.4 277.67 L103.09 276.55 L103.57 275.43 L104.27 274.32 L105.29 273.2 L105.92 272.09 L106.72 270.97 L107.67 269.85 L108.83 268.74 L111.19 267.62 L112.74 266.51 L114.73 265.39 L116.14 264.27 L117.64 263.16 L118.72 262.04 L121.02 260.96 L124.08 259.84 L127.39 258.73 L131.26 257.61 L135.59 256.49 L141.81 255.38 L145.52 254.26 L147.37 253.15 L148.06 252.03 L150.34 250.91 L152.93 249.8 L156.15 248.68 L157.5 247.57 L158.58 246.45 L159.68 245.33 L160.94 244.22 L161.87 243.1 L162.78 241.99 L163.67 240.87 L168.68 239.75 L172.34 238.64 L176.76 237.52 L181.61 236.41 L185.47 235.29 L188.9 234.17 L195.69 233.06 L200.24 231.94 L206.52 230.83 L209.47 229.74 L215.39 228.62 L224.83 227.51 L234.27 226.39 L243.82 225.28 L250.38 224.16 L258.02 223.04 L267.78 221.93 L275.33 220.81 L285.69 219.7 L294.44 218.58 L303.68 217.46 L309.87 216.35 L314.01 215.23 L324.35 214.12 L330.78 213 L337.23 211.88 L348.65 210.77 L356.97 209.65 L363.13 208.54 L364.34 207.42 L367.21 206.3 L369.88 205.19 L373.65 204.07 L380.7 202.96 L386.77 201.84 L393.64 200.72 L401.02 199.64 L410.16 198.52 L413.01 197.41 L419.92 196.29 L425.75 195.18 L431.98 194.06 L438.21 192.94 L445.05 191.83 L452.81 190.71 L455.47 189.6 L458.7 188.48 L459.56 187.36 L460.44 186.25 L461.68 185.13 L466.12 184.02 L471.03 182.9 L476.1 181.78 L483.48 180.67 L491.92 179.55 L499.78 178.43 L509.84 177.32 L512.31 176.2 L514.4 175.09 L518.98 173.97 L526.64 172.86 L531.32 171.74 L535.79 170.62 L538.93 169.54 L541.88 168.42 L546.07 167.31 L551.99 166.19 L558.11 165.07 L561.22 163.96 L562.74 162.84 L565.93 161.73 L568.35 160.61 L572.84 159.49 L578.43 158.38 L584.79 157.26 L593.91 156.15 L598.43 155.03 L602.76 153.91 L607.59 152.8 L613.28 151.68 L618.11 150.57 L622.79 149.45 L629.71 148.33 L632.47 147.22 L635.87 146.1 L640 144.99 L644 143.87 L648.23 142.75 L652.98 141.64 L654.23 140.52 L658.79 139.41 L664.16 138.32 L669.52 137.2 L672.15 136.09 L675.77 134.97 L680.2 133.86 L685.87 132.74 L691.54 131.63 L697.79 130.51 L705 129.39 L710.79 128.28 L716.9 127.16 L724.49 126.05 L729.94 124.93 L736 123.81 L736 368 L62 368 Z" fill="url(#fill-starhistorysvg)"/>
+-  <path d="M62 367.97 L65.64 366.85 L66.83 365.74 L72.45 364.62 L72.66 363.51 L73.03 362.39 L73.49 361.27 L73.83 360.16 L74.15 359.04 L74.74 357.93 L75.3 356.81 L75.93 355.69 L76.31 354.58 L76.51 353.46 L76.69 352.38 L76.89 351.26 L77.05 350.14 L77.21 349.03 L77.31 347.91 L77.42 346.8 L77.55 345.68 L77.68 344.56 L77.82 343.45 L78.01 342.33 L78.2 341.22 L78.29 340.1 L78.41 338.98 L78.52 337.87 L78.64 336.75 L78.72 335.64 L78.82 334.52 L78.92 333.4 L79.04 332.29 L79.21 331.17 L79.34 330.06 L79.47 328.94 L79.64 327.82 L79.86 326.71 L80.16 325.59 L80.49 324.48 L80.97 323.36 L81.35 322.24 L81.78 321.16 L82.1 320.04 L82.4 318.93 L82.71 317.81 L83.03 316.7 L83.77 315.58 L84.56 314.46 L84.94 313.35 L85.22 312.23 L85.68 311.12 L86.19 310 L87 308.88 L87.38 307.77 L87.53 306.65 L87.73 305.53 L87.83 304.42 L87.93 303.3 L88.06 302.19 L88.21 301.07 L88.35 299.96 L88.5 298.84 L88.63 297.72 L88.79 296.61 L88.99 295.49 L89.18 294.38 L89.44 293.26 L89.67 292.14 L90.01 291.06 L90.47 289.94 L90.94 288.83 L91.33 287.71 L91.78 286.59 L92.53 285.48 L93.93 284.36 L95.1 283.25 L96.32 282.13 L97.24 281.01 L98.35 279.9 L99.93 278.78 L101.4 277.67 L103.09 276.55 L103.57 275.43 L104.27 274.32 L105.29 273.2 L105.92 272.09 L106.72 270.97 L107.67 269.85 L108.83 268.74 L111.19 267.62 L112.74 266.51 L114.73 265.39 L116.14 264.27 L117.64 263.16 L118.72 262.04 L121.02 260.96 L124.08 259.84 L127.39 258.73 L131.26 257.61 L135.59 256.49 L141.81 255.38 L145.52 254.26 L147.37 253.15 L148.06 252.03 L150.34 250.91 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1778,39 +1275,6 @@ Reason: the categories and button added in #209 showed English in up to 14 langu
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. homebrew: bump to 3.3.0 (sha256 37a5e421061a)
-
-**RULE**:
-When implementing operations in `homebrew/puremac.rb`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in momenbasel/PureMac. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `77ac5633`: homebrew: bump to 3.3.0 (sha256 37a5e421061a). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `homebrew/puremac.rb`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```swift
-// Verified production-grade fix pattern:
-  version "3.3.0"
-  sha256 "37a5e421061a9d54291ea3cc1571b8ebf82685f4beb95c8da99b319ca7f30b2c"
-```
-
-**NEGATIVE CONSTRAINT**:
-```swift
-// Induced defect failure mode:
-  version "3.2.0"
-  sha256 "5ba35fde0b60a645d61edacc8a8b8f198625ea91ac3750c60d41efe22a240a50"
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77ac5633` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

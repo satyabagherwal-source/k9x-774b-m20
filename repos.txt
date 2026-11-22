@@ -5310,3 +5310,7 @@ https://github.com/abue-ammar/tinycast
 # --- Automatically Discovered by AI Scout Engine [2026-11-22T18:00:08.264Z] ---
 # [AI-AGENTS] BaaRai/ARTEX (10107 score) - ARTEX - AI autonomous penetration testing system (English translation; upstream:
 https://github.com/BaaRai/ARTEX
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-22T19:43:00.286Z] ---
+# [AI-AGENTS] yashabcyber7/nexadroid (995 score) - 🤖📱 Production-Ready Multi-Agent AI Operating System for Android
+https://github.com/yashabcyber7/nexadroid

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T19:31:26.752Z",
+  "last_updated": "2026-11-22T19:43:28.008Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -455,14 +455,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "518d40b7701bb1eb87de89af7c6055597833e8bf44f7fb2919df9c9a79e4cba6",
-      "verified_at": "2026-11-18T12:58:20.284Z",
+      "content_hash": "1ef6de6d88054b570aac4a85fbe9c6f47f68275e931985558b717cc1067945db",
+      "verified_at": "2026-11-22T19:43:09.717Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:58:20.284Z"
+      "last_updated": "2026-11-22T19:43:09.717Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "3247dc84ca7f68c68c6f18f4780bde0bc342875140c08289bf5afe4524b9127b",
-      "verified_at": "2026-11-22T18:21:34.095Z",
+      "content_hash": "8cfaba65bd1f624a0c1156d23ea15c23fec98332fe7b9ac67967b66990106aa2",
+      "verified_at": "2026-11-22T19:43:27.314Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:21:34.095Z"
+      "last_updated": "2026-11-22T19:43:27.314Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "865e8ceb018de6172440a863c7b20fa0052e1ec429b60c389c41a9c1dda2cc0e",
-      "verified_at": "2026-11-21T23:25:30.720Z",
+      "content_hash": "baf3dd4f013eeec0dbceea61c6d811237671a613d681a5793d62f5b21c54e9d2",
+      "verified_at": "2026-11-22T19:43:28.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:25:30.720Z"
+      "last_updated": "2026-11-22T19:43:28.007Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -12036,14 +12036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-momenbasel-puremac",
-      "content_hash": "cbeddf249c84a6e3a3b61a9255369d1311cf196d393280673eef529bdfaffa02",
-      "verified_at": "2026-11-19T19:23:22.861Z",
+      "content_hash": "81177f1a5d371d1a765f7bca1d9b2be63c6357acdf2487643cd25e29836d045f",
+      "verified_at": "2026-11-22T19:43:16.160Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T19:23:22.861Z"
+      "last_updated": "2026-11-22T19:43:16.160Z"
     },
     "nalexn/clean-architecture-swiftui": {
       "repository": "nalexn/clean-architecture-swiftui",
@@ -19919,6 +19919,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-22T18:00:13.692Z"
+    },
+    "yashabcyber7/nexadroid": {
+      "repository": "yashabcyber7/nexadroid",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-yashabcyber7-nexadroid",
+      "content_hash": "1a00472834afbc88d394c75694c8897bbc868cdcef185de4fb9010edba99831a",
+      "verified_at": "2026-11-22T19:43:06.954Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-22T19:43:06.954Z"
     }
   },
   "repos": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T19:01:51.388Z",
+  "updated_at": "2026-11-22T19:43:32.374Z",
   "stats": {
-    "total_discovered": 7635,
-    "approved_pending_harvest": 7231,
+    "total_discovered": 7644,
+    "approved_pending_harvest": 7239,
     "harvested_count": 0,
-    "rejected_count": 404,
+    "rejected_count": 405,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7209,
+      "COMMUNITY_AND_EXPERT": 7218,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -165165,6 +165165,197 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
         "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-2BDA5E531FC9": {
+      "id": "SRC-2BDA5E531FC9",
+      "url": "https://github.com/yashabcyber7/nexadroid",
+      "title": "https://github.com/yashabcyber7/nexadroid",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T19:43:31.777Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-F85FF44CDB98": {
+      "id": "SRC-F85FF44CDB98",
+      "url": "https://github.com/yashab-cyber/KaliGpt",
+      "title": "https://github.com/yashab-cyber/KaliGpt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T19:43:31.853Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-C5D644D4CDCA": {
+      "id": "SRC-C5D644D4CDCA",
+      "url": "http://12.168.1.205:11434/",
+      "title": "http://12.168.1.205:11434/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-22T19:43:31.927Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-3EC947E36872": {
+      "id": "SRC-3EC947E36872",
+      "url": "https://github.com/alaika-cyber/swarmdroid-",
+      "title": "https://github.com/alaika-cyber/swarmdroid-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T19:43:32.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-3B2196B0CFEB": {
+      "id": "SRC-3B2196B0CFEB",
+      "url": "https://github.com/alaika-cyber/swarmdroid-/blob/main/docs/ARCHITECTURE.md",
+      "title": "https://github.com/alaika-cyber/swarmdroid-/blob/main/docs/ARCHITECTURE.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T19:43:32.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-09493B884D2F": {
+      "id": "SRC-09493B884D2F",
+      "url": "https://github.com/alaika-cyber/swarmdroid-/blob/main/docs/PRD.md",
+      "title": "https://github.com/alaika-cyber/swarmdroid-/blob/main/docs/PRD.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T19:43:32.154Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-566B4B9E3BF4": {
+      "id": "SRC-566B4B9E3BF4",
+      "url": "https://github.com/alaika-cyber/swarmdroid-/blob/main/docs/SECURITY.md",
+      "title": "https://github.com/alaika-cyber/swarmdroid-/blob/main/docs/SECURITY.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T19:43:32.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-F5F0F61DA63E": {
+      "id": "SRC-F5F0F61DA63E",
+      "url": "https://github.com/alaika-cyber/swarmdroid-/blob/main/docs/API.md",
+      "title": "https://github.com/alaika-cyber/swarmdroid-/blob/main/docs/API.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T19:43:32.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
+      }
+    },
+    "SRC-80493C49AAEA": {
+      "id": "SRC-80493C49AAEA",
+      "url": "https://github.com/alaika-cyber/swarmdroid-/blob/main/LICENSE",
+      "title": "https://github.com/alaika-cyber/swarmdroid-/blob/main/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T19:43:32.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+        "fileName": "yashabcyber7-nexadroid-learnings.md"
       }
     }
   }

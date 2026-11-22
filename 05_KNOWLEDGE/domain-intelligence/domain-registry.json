@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T19:31:32.214Z",
-  "total_records": 2372,
+  "last_updated": "2026-11-22T19:44:12.117Z",
+  "total_records": 2375,
   "domains": {
     "A": {
       "total": 19,
@@ -64,7 +64,7 @@
       ]
     },
     "D": {
-      "total": 923,
+      "total": 924,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -988,7 +988,8 @@
         "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncensored-",
         "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor",
         "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants",
+        "DOM-D-9C50727D"
       ]
     },
     "E": {
@@ -1100,7 +1101,7 @@
       ]
     },
     "G": {
-      "total": 398,
+      "total": 400,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1499,7 +1500,9 @@
         "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-baarai-artex-core-invariants",
         "domain_intelligence-architecture-intelligence-baarai-artex-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-sxyazi-yazi-core-invariants"
+        "domain_intelligence-architecture-intelligence-sxyazi-yazi-core-invariants",
+        "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-core-invariants",
+        "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8151,8 +8154,8 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/Xing4.0-29B-A4B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-xing4-0-29b-a4b-research-knowledge-intelligence-xingchen-agi-xin.md",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "content_hash": "45a5f19f8c8cc208a716fe61f9605ed561355ad37c03f81d9b5ca9806f4fd123",
-      "created_at": "2026-11-18T12:58:20.432Z"
+      "content_hash": "95ad82a97d3f272a770c8c50955dd0e8fe0a0d776bbba6b63d3ea97edb86edf5",
+      "created_at": "2026-11-22T19:43:10.001Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-dathere-qsv-core-invariants",
@@ -8169,8 +8172,8 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-xing4.0-29b-a4b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-xing4-0-29b-a4b-learnings-research-knowledge-intelligence-hf-xin.md",
       "repository": "hf-xingchen-agi-xing4.0-29b-a4b-learnings",
-      "content_hash": "1d753c7895fd347717ed630b976024548cac264ee7e1f2a9e10f6040512b972c",
-      "created_at": "2026-11-18T12:58:38.230Z"
+      "content_hash": "8211489a751a68436cf3cbdc68e63c9bf1388fc6a5f41fba4697e0c5ad2659a2",
+      "created_at": "2026-11-22T19:43:33.806Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
@@ -8581,10 +8584,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "6415f739ea5ebbc42a840eac3990672434bd5cced2c315f20cc8019b97a28332",
-      "created_at": "2026-11-21T23:25:31.104Z"
+      "content_hash": "dd84cb8cd085061d9ac5c33e922c7ec0181a87a5c40e6dfd823caf82c8d8ffe4",
+      "created_at": "2026-11-22T19:43:28.560Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -16135,8 +16138,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "e9d3c88b12b148d0e68eaae973582dac28fb2e0842d28d3ef4639bcde1fa1106",
-      "created_at": "2026-11-22T06:11:32.602Z"
+      "content_hash": "82b4fbb8732a6266ed9c031362a0d14225e1e043ea827a8a759df598ce59768e",
+      "created_at": "2026-11-22T19:43:27.838Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -21620,8 +21623,8 @@
       "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
       "repository": "momenbasel/PureMac",
-      "content_hash": "9a6b13ef6954ef8ae0347c42c2c3755b12186614710477b088e36e52e37465e1",
-      "created_at": "2026-11-19T19:23:23.230Z"
+      "content_hash": "07a12aeaf83c727b8cbe82705481f173e53923f9cbac92fde00ca7594a4c1dfa",
+      "created_at": "2026-11-22T19:43:16.451Z"
     },
     "DOM-D-E86C357A": {
       "record_id": "DOM-D-E86C357A",
@@ -21671,8 +21674,8 @@
       "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-learnings-architecture-intelligence-momenbasel-puremac-learni.md",
       "repository": "momenbasel-puremac-learnings",
-      "content_hash": "c7b65d246d4fd2e9b138da47ec5cb68eeabd87d8549e49c8a771d804f6c71f64",
-      "created_at": "2026-11-19T19:23:28.790Z"
+      "content_hash": "60e47d9b3f456cbcebf562e21e85783ccbecd27fb0649474099e31df13066413",
+      "created_at": "2026-11-22T19:44:12.117Z"
     },
     "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants",
@@ -39866,6 +39869,66 @@
       "repository": "sxyazi-yazi-learnings",
       "content_hash": "3cf931df5d9d4e5ab67d8ecf370db66d1a035195c49846e0dc0f24cf21b8b4ec",
       "created_at": "2026-11-22T19:10:03.816Z"
+    },
+    "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: yashabcyber7/nexadroid Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yashabcyber7-nexadroid-architecture-intelligence-yashabcyber7-nexadroid-core-inv.md",
+      "repository": "yashabcyber7/nexadroid",
+      "content_hash": "2c1799415e50801374bdf10441bc425a4bba321131af89c0bc967577cb919d1a",
+      "created_at": "2026-11-22T19:43:07.471Z"
+    },
+    "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: yashabcyber7-nexadroid-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yashabcyber7-nexadroid-learnings-architecture-intelligence-yashabcyber7-nexadroi.md",
+      "repository": "yashabcyber7-nexadroid-learnings",
+      "content_hash": "856b6e31f18c4b4ff1bff26f348156f3e993286efd84eeca7961ef9d8bcee301",
+      "created_at": "2026-11-22T19:43:32.909Z"
+    },
+    "DOM-D-9C50727D": {
+      "record_id": "DOM-D-9C50727D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): momenbasel/PureMac",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  \n> **Source Version**: `2ad5f1a9`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synth",
+      "content_hash": "3de852902e8240d489c8620fbcd287e0676d55f3d60c03c17a3cee031ea67dda",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba",
+      "provenance": {
+        "source_uri": "project://momenbasel-puremac/momenbasel-puremac-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T19:43:34.031Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (momenbasel-puremac)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of momenbasel-puremac"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T19:44:11.689Z"
     }
   }
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T19:31:32.599Z",
-  "total_verified_learnings": 9073,
+  "last_updated": "2026-11-22T19:44:12.117Z",
+  "total_verified_learnings": 9074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23727,
+  "total_items": 23739,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112102,9 +112102,9 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/Xing4.0-29B-A4B Core Invariants",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "45a5f19f8c8cc208a716fe61f9605ed561355ad37c03f81d9b5ca9806f4fd123",
+      "content_hash": "95ad82a97d3f272a770c8c50955dd0e8fe0a0d776bbba6b63d3ea97edb86edf5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:58:20.432Z"
+      "persisted_at": "2026-11-22T19:43:10.001Z"
     },
     "candidate_directive-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046": {
       "item_id": "candidate_directive-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046",
@@ -112150,9 +112150,9 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-xing4.0-29b-a4b-learnings Core Invariants",
       "repository": "hf-xingchen-agi-xing4.0-29b-a4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d753c7895fd347717ed630b976024548cac264ee7e1f2a9e10f6040512b972c",
+      "content_hash": "8211489a751a68436cf3cbdc68e63c9bf1388fc6a5f41fba4697e0c5ad2659a2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:58:38.230Z"
+      "persisted_at": "2026-11-22T19:43:33.806Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
@@ -113010,25 +113010,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "37096726",
-      "content_hash": "6415f739ea5ebbc42a840eac3990672434bd5cced2c315f20cc8019b97a28332",
+      "source_version": "4468e50b",
+      "content_hash": "dd84cb8cd085061d9ac5c33e922c7ec0181a87a5c40e6dfd823caf82c8d8ffe4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T23:25:31.104Z"
+      "persisted_at": "2026-11-22T19:43:28.560Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "37096726",
-      "content_hash": "a38116813fdf904a65dc142820dcefba2600add5e952236919524f2fbf68287f",
+      "source_version": "4468e50b",
+      "content_hash": "a1eb7e1d4a70b429e6f82bd39d16c78db18326848e5783de879511807b3e27ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:25:31.274Z"
+      "persisted_at": "2026-11-22T19:43:28.782Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -229699,8 +229699,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "4c1f0dba",
-      "content_hash": "3247dc84ca7f68c68c6f18f4780bde0bc342875140c08289bf5afe4524b9127b",
+      "source_version": "fe38c7a5",
+      "content_hash": "8cfaba65bd1f624a0c1156d23ea15c23fec98332fe7b9ac67967b66990106aa2",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229940,7 +229940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T18:21:33.854Z",
+      "verified_at": "2026-11-22T19:43:27.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229994,10 +229994,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "4c1f0dba",
-      "content_hash": "28b82301808ead3b780219613c2de3a9aefc95fb3ef444a56348b276ce2c05cd",
+      "source_version": "fe38c7a5",
+      "content_hash": "697b6810ff4f36eacaf4a147b7253688c897126f7cfa4b7520e7421f500a0679",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:21:34.684Z"
+      "persisted_at": "2026-11-22T19:43:28.118Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -231618,10 +231618,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "008cc5b3",
-      "content_hash": "e9d3c88b12b148d0e68eaae973582dac28fb2e0842d28d3ef4639bcde1fa1106",
+      "source_version": "fe38c7a5",
+      "content_hash": "82b4fbb8732a6266ed9c031362a0d14225e1e043ea827a8a759df598ce59768e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:11:32.602Z"
+      "persisted_at": "2026-11-22T19:43:27.838Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -248302,8 +248302,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "77ac5633",
-      "content_hash": "cbeddf249c84a6e3a3b61a9255369d1311cf196d393280673eef529bdfaffa02",
+      "source_version": "2ad5f1a9",
+      "content_hash": "81177f1a5d371d1a765f7bca1d9b2be63c6357acdf2487643cd25e29836d045f",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -248318,7 +248318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:23:22.653Z",
+      "verified_at": "2026-11-22T19:43:15.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248334,10 +248334,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
       "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
       "repository": "momenbasel/PureMac",
-      "source_version": "77ac5633",
-      "content_hash": "9a6b13ef6954ef8ae0347c42c2c3755b12186614710477b088e36e52e37465e1",
+      "source_version": "2ad5f1a9",
+      "content_hash": "07a12aeaf83c727b8cbe82705481f173e53923f9cbac92fde00ca7594a4c1dfa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:23:23.230Z"
+      "persisted_at": "2026-11-22T19:43:16.451Z"
     },
     "rule-8621": {
       "learning_id": "rule-8621",
@@ -248373,9 +248373,9 @@
       "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
       "repository": "momenbasel-puremac-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7b65d246d4fd2e9b138da47ec5cb68eeabd87d8549e49c8a771d804f6c71f64",
+      "content_hash": "60e47d9b3f456cbcebf562e21e85783ccbecd27fb0649474099e31df13066413",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:23:28.790Z"
+      "persisted_at": "2026-11-22T19:44:12.117Z"
     },
     "learn-github-pimalaya-himalaya": {
       "learning_id": "learn-github-pimalaya-himalaya",
@@ -283923,7 +283923,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "518d40b7701bb1eb87de89af7c6055597833e8bf44f7fb2919df9c9a79e4cba6",
+      "content_hash": "1ef6de6d88054b570aac4a85fbe9c6f47f68275e931985558b717cc1067945db",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [],
@@ -283932,7 +283932,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:58:20.108Z",
+      "verified_at": "2026-11-22T19:43:09.419Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -322957,6 +322957,173 @@
       "content_hash": "b9fef0f58d5c3686b675fb06d88d3dbbc9227dcfb6d23f9df3389ae8ecb3fe64",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T19:18:52.636Z"
+    },
+    "learn-github-yashabcyber7-nexadroid": {
+      "learning_id": "learn-github-yashabcyber7-nexadroid",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yashabcyber7/nexadroid",
+      "repository": "yashabcyber7/nexadroid",
+      "slug": "yashabcyber7-nexadroid",
+      "platform": "github",
+      "source_url": "https://github.com/yashabcyber7/nexadroid",
+      "source_version": "7ca38942",
+      "content_hash": "1a00472834afbc88d394c75694c8897bbc868cdcef185de4fb9010edba99831a",
+      "dossier_path": "07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yashabcyber7-nexadroid-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9980,
+          "title": "fix GitHub Pages workflow to deploy via gh-pages branch without environment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T19:43:06.677Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9980": {
+      "learning_id": "rule-9980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9980,
+      "title": "fix GitHub Pages workflow to deploy via gh-pages branch without environment",
+      "source_url": "https://github.com/yashabcyber7/nexadroid",
+      "source_version": "7ca38942",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T19:43:06.677Z"
+    },
+    "candidate_directive-fix-github-pages-workflow-to-deploy-via-gh-pages-branch-without-environment": {
+      "item_id": "candidate_directive-fix-github-pages-workflow-to-deploy-via-gh-pages-branch-without-environment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V4RQ-fix-github-pages-workflow-to-deploy-via-gh-pages-branch-without-environment.md",
+      "title": "fix GitHub Pages workflow to deploy via gh-pages branch without environment",
+      "repository": "yashabcyber7/nexadroid",
+      "source_version": "7ca38942",
+      "content_hash": "66534b9f95919be807d72468ca4fbac86f55a2c2674d50ec08a594c152f23606",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-22T19:43:07.245Z"
+    },
+    "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yashabcyber7-nexadroid-architecture-intelligence-yashabcyber7-nexadroid-core-inv.md",
+      "title": "Architecture Intelligence: yashabcyber7/nexadroid Core Invariants",
+      "repository": "yashabcyber7/nexadroid",
+      "source_version": "7ca38942",
+      "content_hash": "2c1799415e50801374bdf10441bc425a4bba321131af89c0bc967577cb919d1a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T19:43:07.471Z"
+    },
+    "agent_contract-agent-contract-yashabcyber7-nexadroid-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-yashabcyber7-nexadroid-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/yashabcyber7-nexadroid-agent-contract-yashabcyber7-nexadroid-autonomous-speciali.md",
+      "title": "Agent Contract: yashabcyber7/nexadroid Autonomous Specialist Persona",
+      "repository": "yashabcyber7/nexadroid",
+      "source_version": "7ca38942",
+      "content_hash": "6930ba3cfd120c4847f43a6152500f3a0da51067b62fd7db52ddc3ecc8770dd7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T19:43:07.695Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yashabcyber7-nexadroid": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yashabcyber7-nexadroid",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yashabcyber7-nexadroid-verification-protocol-empirical-defect-shield-for-yashabc.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yashabcyber7/nexadroid",
+      "repository": "yashabcyber7/nexadroid",
+      "source_version": "7ca38942",
+      "content_hash": "c0737d0768fc04bbb0e88c43f6be2ba0034e88e77635d9268847046d6baeee28",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T19:43:07.885Z"
+    },
+    "candidate_directive-nuc-133-edge-lists-of-reasoning-selections": {
+      "item_id": "candidate_directive-nuc-133-edge-lists-of-reasoning-selections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VKHJ-nuc-133-edge-lists-of-reasoning-selections.md",
+      "title": "NUC 133 Edge Lists of Reasoning Selections",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "fe38c7a5",
+      "content_hash": "3145fffb4a4aedca25b64d7cc5c703423e8373be3761e52e2311e5cd62de2406",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T19:43:27.614Z"
+    },
+    "candidate_directive-merge-bindings-javascript-stop-storing-unbindable-values-as-text-from-colin-m": {
+      "item_id": "candidate_directive-merge-bindings-javascript-stop-storing-unbindable-values-as-text-from-colin-m",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VL1O-merge-bindings-javascript-stop-storing-unbindable-values-as-text-from-colin-m.md",
+      "title": "Merge 'bindings/javascript: stop storing unbindable values as text' from Colin M",
+      "repository": "tursodatabase/turso",
+      "source_version": "4468e50b",
+      "content_hash": "6f690abf8aed090fc0079bcc0deea8ab34aea81c27ad90ae82a5e90859225d50",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T19:43:28.339Z"
+    },
+    "candidate_directive-ci-fix-github-pages-workflow-to-deploy-via-gh-pages-branch-without-environment": {
+      "item_id": "candidate_directive-ci-fix-github-pages-workflow-to-deploy-via-gh-pages-branch-without-environment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VOEI-ci-fix-github-pages-workflow-to-deploy-via-gh-pages-branch-without-environment.md",
+      "title": "ci: fix GitHub Pages workflow to deploy via gh-pages branch without environment",
+      "repository": "yashabcyber7-nexadroid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "10d7e72a37d9a61c517d15bde34b808c167d2ff17e1169cefd5bff5dbd13d9f1",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-22T19:43:32.690Z"
+    },
+    "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yashabcyber7-nexadroid-learnings-architecture-intelligence-yashabcyber7-nexadroi.md",
+      "title": "Architecture Intelligence: yashabcyber7-nexadroid-learnings Core Invariants",
+      "repository": "yashabcyber7-nexadroid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "856b6e31f18c4b4ff1bff26f348156f3e993286efd84eeca7961ef9d8bcee301",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T19:43:32.909Z"
+    },
+    "agent_contract-agent-contract-yashabcyber7-nexadroid-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-yashabcyber7-nexadroid-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/yashabcyber7-nexadroid-learnings-agent-contract-yashabcyber7-nexadroid-learnings.md",
+      "title": "Agent Contract: yashabcyber7-nexadroid-learnings Autonomous Specialist Persona",
+      "repository": "yashabcyber7-nexadroid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3e35d2522b7270309fa2dea2f0cf999584fcdb5e3fdcbde0e1efa546130e1db9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T19:43:33.152Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yashabcyber7-nexadroid-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yashabcyber7-nexadroid-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yashabcyber7-nexadroid-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yashabcyber7-nexadroid-learnings",
+      "repository": "yashabcyber7-nexadroid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b1a0dbbfd9598609dd1a1f841c721bfbc23830f0ec0d121adcefa5ef4eee94f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T19:43:33.335Z"
     }
   },
   "ai-builder-brain": {

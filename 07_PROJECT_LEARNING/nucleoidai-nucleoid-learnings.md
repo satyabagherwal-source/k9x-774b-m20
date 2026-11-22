@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `4c1f0dba`  
+> **Source Version**: `fe38c7a5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T18:21:32.916Z  
+> **Timestamp**: 2026-11-22T19:43:26.574Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:21:32.910Z  
+> **Harvest Timestamp**: 2026-11-22T19:43:26.566Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1220,6 +1220,7 @@ export async function declarations({ train }) {
 
 export async function instances({ train, pair_number }) {
   const [{ input_matrix, output_matrix }] = train.dataset;
+
   milestone.segmenting_training_objects({
     pair_number,
     input_matrix,
@@ -1227,6 +1228,7 @@ export async function instances({ train, pair_number }) {
   });
 
   const { result: instances } = await llm.generate({
+    grammar: true,
     messages: [
       {
         role: "user",
@@ -1579,12 +1581,387 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c1f0dba` (2026-11-22)
-**Commit Message**: Draft NUC 134 Ruby Collection Method Aliases
+### Incident Patch 1: `fe38c7a5` (2026-11-22)
+**Commit Message**: NUC 133 Edge Lists of Reasoning Selections
 
-Category: Language compatibility. Add Ruby collect(callback) and select(callback) as exact aliases of accepted map(callback) and filter(callback) on lists and class populations. Continuous live-registry draw selected index 4 of five eligible categories; no strategy learning or advisory scoring was configured.
+Accepted under the automatic acceptance rule in a continuous
+/nuc-proposal cycle: every hard criterion passes and every policy
+check passes, the required token non-regression gate included. The
+cycle drew Reasoning enhancement uniformly from the five eligible
+categories, allocated the NUC in 008cc5b3 and renewed its claim in
+fe5ffc0f. A fresh proposer prepared it in three phases, the caller's
+Rust improvement pass changed nothing, and a fresh independent
+evaluator decided Accepted.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+A reasoning pipeline gains the final stage SELECTION |> edges: one
+[input, node] pair for each name in each selected step's from list,
+in step and input order, through the final-stage path that nodes and
+holds share, with no recorded reads of the step records. Only
+programs that were whole-program parse errors at the accepted
+revision change.
+
+Hard criteria, evaluated on the frozen candidate at 008cc5b3:
+- no compile errors: fmt, build, both Clippy forms on 1.97.1 and
+  1.99.1, rustdoc and the diff checks pass without warnings;
+- every test passes: 3,892 passed, 0 failed, 25 ignored, against
+  3,856 at the pin; all 3,881 accepted identities present, 36 added;
+
+
+**File**: `README.md` (modified, +27/-0)
+```diff
+@@ -2876,6 +2876,33 @@ assert([undo, top, edits.length], [["fix typo", "trim intro", "draft"], "fix typ
+   made in. See the
+   [root contract](nucleoid.spec.md#reversal-method-aliases).
+ 
++## Edge lists of reasoning selections
++
++**Edges draws the wiring behind a heat alarm**
++
++```nuc
++temp = 31
++humidity = 70
++heat = temp > 30
++damp = humidity > 60
++alarm = heat && damp
++wiring = (alarm |> why |> edges).map(edge -> edge.join(" -> "))
++assert(wiring, ["heat -> alarm", "damp -> alarm", "temp -> heat", "humidity -> damp"])
++wind = 4
++alarm = heat && damp && wind < 10
++assert(wiring, ["heat -> alarm", "damp -> alarm", "wind -> alarm", "temp -> heat", "humidity -> damp"])
++```
++
++- [NUC 133](docs/nuc-0133.md) adds the final reasoning stage `|> edges`,
++  which lists the dependency edges of a selection's steps: for each step,
++  in the selection's order, one `[input, node]` pair for every input the
++  step reads. `alarm |> why |> edges` gives the edges of the alarm's
++  explanation, and mapping each pair to an arrow draws it.
++- The pairs are the ones the steps' `from` lists record, and they stay live
++  the way the explanation does: once the alarm also reads the wind, the
++  wind's edge joins the wiring. See the
++  [root contract](nucleoid.spec.md#edge-lists-of-reasoning-selections).
++
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +25/-21)
+```diff
+@@ -830,24 +830,28 @@
+ {"id":"spec-0830","description":"Nucleoid reverses class populations in reverse creation order","code":"class Stop(name):\n    this.name = name\nStop(\"Depot\")\nStop(\"Mill\")\nStop(\"Harbor\")\nhome = Stop.reversed()\nnames = Stop.toReversed().map(stop -> stop.name)\nassert(names, [\"Harbor\", \"Mill\", \"Depot\"])\nStop(\"Lighthouse\")\nassert([home.length, home[0].name, names], [4, \"Lighthouse\", [\"Lighthouse\", \"Harbor\", \"Mill\", \"Depot\"]])\nclass Train(cars):\n    this.cars = cars\n$Train.fromRear = $Train.cars.reversed()\nlocal = Train([\"engine\", \"coach\"])\nlocal.cars.push(\"caboose\")\nlocal.fromRear","return":"[\"caboose\",\"coach\",\"engine\"]"}
+ {"id":"spec-0831","description":"Nucleoid reverses strings by character with reversed and reverse","code":"word = \"crème\"\nmirror = word.reversed()\nassert(mirror, \"emèrc\")\nword = \"café\"\nassert([mirror, word.reverse()], [\"éfac\", \"éfac\"])\nassert([\"a😀b\".reversed(), \"\".reverse(), \"stressed\".reversed()], [\"b😀a\", \"\", \"desserts\"])\nclass Word(text):\n    this.text = text\n$Word.palindrome = $Word.text.toLowerCase().reversed() == $Word.text.toLowerCase()\nanna = Word(\"Anna\")\nkayaks = Word(\"kayaks\")\nassert([anna.palindrome, kayaks.palindrome], [true, false])\nkayaks.text = \"Kayak\"\nkayaks.palindrome","return":"true"}
+ {"id":"spec-0832","description":"Nucleoid rolls back failed updates through reversal aliases","code":"def latest(log):\n    if log.length > 3:\n        throw \"FULL\"\n    return log\nentries = [\"boot\", \"sync\"]\nrecent = latest(entries.reversed())\nfailure = \"\"\ntry:\n    entries.push(\"scan\", \"send\")\ncatch error:\n    failure = error\nassert([failure, entries, recent], [\"FULL\", [\"boot\", \"sync\"], [\"sync\", \"boot\"]])\ntry:\n    entries.push(\"scan\")\n    assert(recent, [\"scan\", \"sync\", \"boot\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([entries, recent], [[\"boot\", \"sync\"], [\"sync\", \"boot\"]])\ndef short(text):\n    if text.length > 4:\n        throw \"LONG\"\n    return text\nclass Tag(label):\n    this.label = label\n$Tag.code = short($Tag.label.reversed())\ntag = Tag(\"AB12\")\ntry:\n    tag.label = \"ABC123\"\ncatch error:\n    failure = error\nassert([failure, tag.label, tag.code], [\"LONG\", \"AB12\", \"21BA\"])\ntag.label = \"XY9\"\ntag.code","return":"\"9YX\""}
+-{"id":"spec-0833","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0834","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0835","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0836","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0837","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0838","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch
+```
+
+**File**: `dataset/nucleoid.synth.95.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-95-0001","description":"Edges lists every dependency edge of an explanation, as input and node pairs in the explanation's order","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> edges","return":"[[\"subtotal\",\"total\"],[\"shipping\",\"total\"],[\"price\",\"subtotal\"],[\"qty\",\"subtotal\"]]"}
++{"id":"synth-95-0002","description":"Edges after affects lists the edges that a change travels, with the other inputs of the steps it reaches","code":"rate = 0.1\nbase = 100\nfee = base * rate\ntotal = base + fee\nbase |> affects |> edges","return":"[[\"base\",\"fee\"],[\"rate\",\"fee\"],[\"base\",\"total\"],[\"fee\",\"total\"]]"}
++{"id":"synth-95-0003","description":"Edges over the model lists the edges of every node and leaves out the declarations that hold a stage","code":"a = 1\nb = a + 1\nc = b * 2\nwiring = c |> why |> edges\nmodel |> edges","return":"[[\"a\",\"b\"],[\"b\",\"c\"]]"}
++{"id":"synth-95-0004","description":"A reference alone gives the edges into its own node","code":"width = 3\nheight = 4\narea = width * height\narea |> edges","return":"[[\"width\",\"area\"],[\"height\",\"area\"]]"}
++{"id":"synth-95-0005","description":"Edges after stated is always empty, because a stated step has no inputs, and after derived it lists every edge","code":"x = 2\ny = x * 3\n[y |> why |> stated |> edges, y |> why |> derived |> edges]","return":"[[],[[\"x\",\"y\"]]]"}
++{"id":"synth-95-0006","description":"Edges keeps the edges from inputs that a depth-limited selection leaves out","code":"a = 1\nb = a + 1\nc = b + 1\nd = c + 1\nwhy d |> depth(1) |> edges","return":"[[\"c\",\"d\"],[\"b\",\"c\"]]"}
++{"id":"synth-95-0007","description":"Edges after union lists the edges of both explanations, each node once","code":"a = 1\nb = a + 2\nc = 5\nd = c + a\nb |> why |> union(d |> why) |> edges","return":"[[\"a\",\"b\"],[\"c\",\"d\"],[\"a\",\"d\"]]"}
++{"id":"synth-95-0008","description":"A standing declaration that holds edges follows a rewiring: the new input's edge appears and the dropped one goes","code":"a = 1\nx = 5\nb = a + 1\nc = b * 2\nwiring = c |> why |> edges\nb = x * 2\nwiring","return":"[[\"b\",\"c\"],[\"x\",\"b\"]]"}
++{"id":"synth-95-0009","description":"A change of a value alone leaves the edges as they are","code":"a = 1\nb = a + 1\nwiring = b |> why |> edges\na = 7\nwiring","return":"[[\"a\",\"b\"]]"}
++{"id":"synth-95-0010","description":"A class-level rule that holds edges gives each instance the edges of its own property","code":"rate = 2\nclass Part(cost):\n    this.cost = cost\n$Part.price = $Part.cost * rate\n$Part.links = $Part.price |> why |> edges\nbolt = Part(3)\nbolt.links","return":"[[\"bolt.cost\",\"bolt.price\"],[\"rate\",\"bolt.price\"]]"}
++{"id":"synth-95-0011","description":"Mapping each edge to an arrow renders an explanation as a graph","code":"hours = 8\npay = 20\nwage = hours * pay\nbonus = 50\ntotal = wage + bonus\n(total |> why |> edges).map(edge -> edge.join(\" -> \"))","return":"[\"wage -> total\",\"bonus -> total\",\"hours -> wage\",\"pay -> wage\"]"}
++{"id":"synth-95-0012","description":"Filtering edges by the names that nodes gives keeps only the edges between the steps of a selection","code":"price = 10\nqty = 3\nrate = 0.2\nsubtotal = price * qty\ntax = subtotal * rate\ntotal = subtotal + tax\nkept = total |> why |> except(subtotal) |> nodes\n(total |> why |> except(subtotal) |> edges).filter(edge -> kept.includes(edge[0]))","return":"[[\"tax\",\"total\"],[\"rate\",\"tax\"]]"}
+```
+
+**File**: `docs/README.md` (modified, +74/-5)
+```diff
+@@ -4689,6 +4689,9 @@ route.shift()
+ - `selection |> holds` lists the steps' `holds` values, as
+   `(selection).map(step => step.holds)` does for the selection the pipeline
+   denotes ([NUC 121](nuc-0121.md)).
++- `selection |> edges` lists the steps' dependency edges, one
++  `[input, node]` pair for each name in each step's `from` list
++  ([NUC 133](nuc-0133.md)).
+ 
+ ```
+ a = 1
+@@ -5128,6 +5131,66 @@ price = 20
+   [held values of reasoning selections](../nucleoid.spec.md#held-values-of-reasoning-selections)
+   section.
+ 
++### Edge lists of reasoning selections
++
++```
++price = 10
++qty = 3
++shipping = 5
++subtotal = price * qty
++total = subtotal + shipping
++wiring = total |> why |> edges
++reach = price |> affects |> edges
++assert(wiring, [["subtotal", "total"], ["shipping", "total"], ["price", "subtotal"], ["qty", "subtotal"]])
++assert(reach, [["price", "subtotal"], ["qty", "subtotal"], ["subtotal", "total"], ["shipping", "total"]])
++shipping = price / 2
++[wiring, reach]
++```
++
++- This is the complete `Nucleoid lists the edges of selections with edges`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns
++  `[[["subtotal","total"],["shipping","total"],["price","subtotal"],["qty","subtotal"],["price","shipping"]],[["price","subtotal"],["qty","subtotal"],["price","shipping"],["subtotal","total"],["shipping","total"]]]`.
++- [NUC 133](nuc-0133.md) adds the final stage `selection |> edges`. It lists
++  the dependency edges of the selection's steps: for each step, in their
++  order, one `[input, node]` pair for each name in the step's `from` list,
++  in its order, both strings as the step's record holds them. So
++  `total |> why |> edges` gives which inputs feed which results in the
++  total's explanation, and `price |> affects |> edges` the edges that a
++  change of the price travels, with the other inputs of the steps it
++  reaches, such as the shipping into the total. It is exactly
++  `(selection).flatMap(step => step.from.reduce((pairs, input) => pairs.concat([[input, pairs[0]]]), [step.node])[1:])`,
++  where `selection` is the selection that the pipeline before `edges`
++  denotes, read as the stages read their source.
++- The selection is written as for `nodes`: a reference, which denotes its
++  own one-step selection rather than its value, `model`, a prefix stage such
++  as `why total`, or a pipeline of any of the stages above but `nodes` and
++  `holds`. So `total |> edges` lists the edges into the total. An empty
++  selection gives `[]`, and so does one whose steps have no inputs, such as
++  `total |> why |> stated |> edges`; a selection that a `depth(null)` makes
++  undefined gives undefined.
++- Every input of a kept step is listed, whether the selection keeps that
++  input's own step or not. After `kept = S |> nodes`,
++  `(S |> edges).filter(edge => kept.includes(edge[0]))` keeps only the edges
++  between the steps of `S`.
++- The stage ends the pipeline, as `nodes` and `holds` do: a stage after it,
++  or an `intersect`, `except`, `union` or `path` argument that ends with it,
++  has a list of pairs rather than a selection and raises
++  `TypeError("Cannot explain <source>")`, as it does after the accepted
++  spelling.
++- Only `|>` followed by `edges` is the stage; `edges` stays an ordinary name
++  everywhere else, and there is no prefix form. A local or parameter,
++  variable, function or class named `edges` shadows the stage, as bindings
++  shadow the other stages: the pipeline then raises
++  `TypeError("edges is not an operation")` before selecting its source.
++- The list stays live through every observation its selection made, so a
++  rewiring, a new or deleted node and a replaced class-level rule add and
++  drop edges, and a declaration that holds it is a reasoning observer. It
++  renders as `selection|>edges`.
++- The authoritative contract is the
++  [edge lists of reasoning selections](../nucleoid.spec.md#edge-lists-of-reasoning-selections)
++  section.
++
+ ### Live structure
+ 
+ - A reasoning assignment follows both values and graph structure.
+@@ -5172,11 +5235,13 @@ c = b * 2
+   rather than a selection, the [NUC 120](nuc-0120.md) candidate adds a
+   `union(other)` stage, which NUC 11 does not plan either, the
+   [NUC 121](nuc-0121.md) candidate adds a final `holds` stage, which gives
+-  the values of a selection's steps and, like `nodes`, returns a list, and
+-  the [NUC 128](nuc-0128.md) candidate adds `origins` and `outcomes`
+-  stages, which keep the steps at the two ends of a selection and which
+-  NUC 11 does not plan either. Other NUC 11 operations remain proposals, not
+-  dependencies.
++  the values of a selection's steps and, like `nodes`, returns a list, the
++  [NUC 128](nuc-0128.md) candidate adds `origins` and `outcomes` stages,
++  which keep the steps at the two ends of a selection and which NUC 11 does
++  not plan either, and the [NUC 133](nuc-0133.md) candidate adds a final
++  `edges` stage, which lists the dependency edges of a selection's steps
++ 
+```
+
+**File**: `docs/examples.md` (modified, +28/-0)
+```diff
+@@ -4383,6 +4383,34 @@ south.stops.push("orchard")
+   route's sign. See [NUC 131](nuc-0131.md) and the
+   [root contract](../nucleoid.spec.md#reversal-method-aliases).
+ 
++## Edge lists of reasoning selections
++
++**Edges traces where a supplier's delay travels through a build schedule**
++
++```nuc
++delay = 2
++parts = 5 + delay
++assembly = parts + 3
++testing = 2
++ship = assembly + testing
++moved = delay |> affects |> edges
++assert(moved, [["delay", "parts"], ["parts", "assembly"], ["assembly", "ship"], ["testing", "ship"]])
++paint = assembly + 1
++ship = paint + testing
++moved
++# return: [["delay","parts"],["parts","assembly"],["assembly","paint"],["paint","ship"],["testing","ship"]]
++```
++
++- `delay |> affects |> edges` lists every edge the delay travels along:
++  from the delay to the parts, from the parts to the assembly and from the
++  assembly to the shipping date, which also reads the testing time, so its
++  edge from the testing stays in the list.
++- The edges follow the schedule: once painting sits between the assembly
++  and the shipping date, the delay travels through it, and the direct edge
++  from the assembly to the shipping date is gone. See
++  [NUC 133](nuc-0133.md) and the
++  [root contract](../nucleoid.spec.md#edge-lists-of-reasoning-selections).
++
+ ## Reactive list flattening
+ 
+ **Flattening keeps the dirty tiles of every room counted**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -157,7 +157,7 @@ Created: 31-Jul-2026
+ | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
+ | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
+-| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Draft |
++| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
+ 
+ ### Language compatibility
+ 
+@@ -321,7 +321,7 @@ Created: 31-Jul-2026
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+ | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
+-| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
+ 
+ ## Copyright
+```
+
+**File**: `docs/nucleoid.ebnf` (modified, +10/-2)
+```diff
+@@ -567,6 +567,7 @@ stage
+       | DIFF
+       | NODES
+       | HOLDS
++      | EDGES
+       | ORIGINS
+       | OUTCOMES                                            /* Expr::Reason */
+       | DEPTH LPAREN expression RPAREN                       /* Expr::Depth */
+@@ -979,6 +980,7 @@ enumName
+       | UNION
+       | NODES
+       | HOLDS
++      | EDGES
+       | ORIGINS
+       | OUTCOMES
+       | MODEL
+@@ -1072,6 +1074,7 @@ AS               ::= 'as'
+ UNION            ::= 'union'
+ NODES            ::= 'nodes'
+ HOLDS            ::= 'holds'
++EDGES            ::= 'edges'
+ ORIGINS          ::= 'origins'
+ OUTCOMES         ::= 'outcomes'
+ MODEL            ::= 'model'
+@@ -1152,8 +1155,8 @@ WORD_TOKEN
+       | TRUE | TRY | TYPEOF | WHILE | REPEAT | UNTIL | FINALLY | ENUM | EXTENDS
+       | ASSERT | SUPPOSE | LAMBDA | IS | ALL | EVERY | ANY | SUM | MAX | MIN
+       | MODE | WHY | AFFECTS | STATED | DERIVED | DIFF | DEPTH | PATH
+-      | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | NODES | HOLDS | ORIGINS
+-      | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT | PYTHON_INIT
++      | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | NODES | HOLDS | EDGES
++      | ORIGINS | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT | PYTHON_INIT
+ 
+ NEWLINE
+     ::= #xA
+@@ -1329,6 +1332,11 @@ REGEX_ESCAPE
+  *                             s's steps hold. It ends the pipeline as nodes
+  *                             does, and a binding named holds shadows it at
+  *                             run time.
++ * s |> edges               -> Expr::Reason with Stage::Edges, one
++ *                             [input, node] pair for each name in the from
++ *                             list of each of s's steps. It ends the pipeline
++ *                             as nodes and holds do, and a binding named
++ *                             edges shadows it at run time.
+  * s |> origins             -> Expr::Reason with Stage::Origins, the steps of s
+  *                             that rest on no step of s, and
+  *                             s |> outcomes -> Stage::Outcomes, the steps that
+```
+
+**File**: `nucleoid.spec.md` (modified, +216/-4)
+```diff
+@@ -3272,8 +3272,8 @@ statement positions; caught values and transaction recovery are unchanged.
+   node, so after a union they keep what they keep of each side:
+   `S |> union(O) |> stated` is `(S |> stated).concat(O |> except(S) |> stated)`.
+   A later `why` or `affects` walks from every step of the union, `nodes`
+-  names them, `holds` gives their values, and `origins` and `outcomes` keep
+-  the ends of the union as one selection.
++  names them, `holds` gives their values, `edges` lists their edges, and
++  `origins` and `outcomes` keep the ends of the union as one selection.
+ - Each step keeps the distance of the walk that selected it: the steps of
+   `SELECTION` their own, and the steps added from `OTHER` the distances they
+   have in `OTHER`'s own selection. So `S |> union(O) |> depth(n)` is
+@@ -3391,8 +3391,8 @@ statement positions; caught values and transaction recovery are unchanged.
+   derived step whose every input was deleted or is a reasoning observer.
+ - The kept steps keep their distances and the direction of the most recent
+   walk, so `depth`, `path`, `stated`, `derived`, `diff`, `intersect`,
+-  `except`, `union`, `nodes`, `holds` and later walks apply to the result as
+-  to the results of the accepted filters. The two stages keep a step by its
++  `except`, `union`, `nodes`, `holds`, `edges` and later walks apply to the
++  result as to the results of the accepted filters. The two stages keep a step by its
+   relation to the steps of the selection, not by a property of its own, so
+   they do not commute with the filters: `total |> why |> derived |> origins`
+   is the subtotal, while `total |> why |> origins |> derived` is empty. A
+@@ -3644,6 +3644,133 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid rolls back failed updates through held values` specify the
+   executable behavior. `tests/held_values.rs` executes the rest.
+ 
++## Edge lists of reasoning selections
++
++- [NUC 133](docs/nuc-0133.md) adds the final pipeline stage
++  `SELECTION |> edges`. It lists the dependency edges that the steps of
++  `SELECTION` record: for each step, in the selection's order, and for each
++  name in its `from` list, in that order, the two-item list `[INPUT, NODE]`
++  of the input's name and the step's `node` name, both strings exactly as
++  the step's record holds them. After `price = 10`, `quantity = 3`,
++  `rate = 0.2`, `subtotal = price * quantity`, `tax = subtotal * rate` and
++  `total = subtotal + tax`, `total |> why |> edges` is
++  `[["subtotal", "total"], ["tax", "total"], ["price", "subtotal"], ["quantity", "subtotal"], ["subtotal", "tax"], ["rate", "tax"]]`.
++- It is exactly
++  `(SELECTION).flatMap(step => step.from.reduce((pairs, input) => pairs.concat([[input, pairs[0]]]), [step.node])[1:])`,
++  where `SELECTION` is the selection that the pipeline before `edges`
++  denotes, read as the accepted stages read their source. The direct
++  `(SELECTION).flatMap(step => step.from.map(input => [input, step.node]))`
++  raises `ReferenceError("step is not defined")`, because a callback does
++  not read the parameters of the callback around it.
++- An input is named as the step's `from` list names it: an instance
++  property as `o.total` and a property of an anonymous object as
++  `obj:0.gone`, and a node that a step reads twice gives one edge. An input
++  may be a node that no selection selects, such as a pending property or a
++  reasoning observer that the step reads. A step is stated exactly when it
++  has no inputs and no class governs it, so `SELECTION |> stated |> edges`
++  is always `[]` and `SELECTION |> derived |> edges` always gives the list
++  that `SELECTION |> edges` gives. The steps of a class and of a function
++  declaration have no inputs either, and the step of an `if` block, which
++  is named after its condition, lists the names its condition reads: after
++  `class Box(w)` with `this.w = w`, `b = Box(1)` and `if b.w > 0:` with a
++  body, `model |> edges` is `[["b", "if(b.w>0)"], ["b.w", "if(b.w>0)"]]`.
++- A reference alone denotes its own one-step selection, not its value, so
++  `total |> edges` lists the edges into the total,
++  `[["subtotal", "total"], ["tax", "total"]]`, as the accepted spelling over
++  `total |> why |> depth(0)` does, while the value `(total).flatMap(...)` of
++  a number raises `TypeError("number.flatMap is not a function")`.
++- So `total |> why |> edges` gives the dependency structure of an
++  explanation, which inputs feed which results, `price |> affects |> edges`
++  the edges that a change of the price travels, with the other inputs of the
++  steps it reaches, and `model |> edges` every edge of the model's nodes in
++  model order, without the steps of pending nodes and reasoning observers.
++- The stage lists every input of each step it keeps, whether the selection
++  keeps that input's own step or not, because a step's inputs are what its
++  record's `from` field holds, which no stage rewrites:
++  `total |> why |> depth(1) |> ed
+```
+
+---
+
+### Incident Patch 2: `5815a8cd` (2026-11-22)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
@@ -1671,23 +2048,6 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 +[LICENSE](../LICENSE) for the full text.
 ```
 
----
-
-### Incident Patch 2: `fe5ffc0f` (2026-11-22)
-**Commit Message**: Resume NUC 133 Edge Lists of Reasoning Selections
-
-Renews the claim on NUC 133, which this continuous /nuc-proposal cycle
-allocated in 008cc5b3 (Draft NUC 133 Edge Lists of Reasoning
-Selections, 22-Nov-2026 00:41:27 -05:00) and is still completing: the
-frozen candidate is under independent evaluation. The allocation was
-12 h 29 min old at this claim, past the 12-hour renewal point. The claim
-changes no file.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
-
-
-
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
 - **PR #70** (2025-01-09): Variable Value in Python (@canmingir)
@@ -1714,22 +2074,47 @@ Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 134 Ruby Collection Method Aliases
+## X. NUC 133 Edge Lists of Reasoning Selections
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c1f0dba`: Draft NUC 134 Ruby Collection Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe38c7a5`: NUC 133 Edge Lists of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [134](nuc-0134.md) | Ruby Collection Method Aliases | Draft |
-| [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
+## Edge lists of reasoning selections
+
+**Edges draws the wiring behind a heat alarm**
+
+```nuc
+temp = 31
+humidity = 70
+heat = temp > 30
+damp = humidity > 60
+alarm = heat && damp
+wiring = (alarm |> why |> edges).map(edge -> edge.join(" -> "))
+assert(wiring, ["heat -> alarm", "damp -> alarm", "temp -> heat", "humidity -> damp"])
+wind = 4
+alarm = heat && damp && wind < 10
+assert(wiring, ["heat -> alarm", "damp -> alarm", "wind -> alarm", "temp -> heat", "humidity -> damp"])
+```
+
+- [NUC 133](docs/nuc-0133.md) adds the final reasoning stage `|> edges`,
+  which lists the dependency edges of a selection's steps: for each step,
+  in the selection's order, one `[input, node]` pair for every input the
+  step reads. `alarm |> why |> edges` gives the edges of the alarm's
+  explanation, and mapping each pair to an arrow draws it.
+- The pairs are the ones the steps' `from` lists record, and they stay live
+  the way the explanation does: once the alarm also reads the wind, the
+  wind's edge joins the wiring. See the
+  [root contract](nucleoid.spec.md#edge-lists-of-reasoning-selections).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1739,4 +2124,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c1f0dba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe38c7a5` are properly handled with clean fallback behavior.

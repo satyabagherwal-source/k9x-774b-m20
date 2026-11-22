@@ -12166,3 +12166,9 @@
 | `CYCLE-20261122-ZISG` | `2026-11-22T19:18:32.416Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`973b3e4f...`) |
 | `CYCLE-20261122-ZUPO` | `2026-11-22T19:18:47.868Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9979` | Yes (`efdc12aa...`) |
 | `CYCLE-20261122-G49E` | `2026-11-22T19:31:26.738Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`8127065d...`) |
+| `CYCLE-20261122-V4JD` | `2026-11-22T19:43:06.937Z` | `yashabcyber7/nexadroid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9980` | Yes (`1a004728...`) |
+| `CYCLE-20261122-V6O4` | `2026-11-22T19:43:09.700Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`1ef6de6d...`) |
+| `CYCLE-20261122-VBN3` | `2026-11-22T19:43:16.143Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`81177f1a...`) |
+| `CYCLE-20261122-VK7R` | `2026-11-22T19:43:27.255Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`8cfaba65...`) |
+| `CYCLE-20261122-VKS7` | `2026-11-22T19:43:27.991Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9981` | Yes (`baf3dd4f...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T19:44:11.727Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9C50727D` [Domain D] | Yes (`3de85290...`) |
