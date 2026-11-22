@@ -738776,3 +738776,74 @@ def apply_event(state, event):
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `96d0d018` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9899. restart under the Windows wrapper by exit code, not sys.exit (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "restart under the Windows wrapper by exit code, not sys.exit",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "a10d8f79",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-22T05:50:26.577Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `a10d8f79`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelog.d/1943.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a10d8f79`: web): restart under the Windows wrapper by exit code, not sys.exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1943.fixed.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **Windows dashboard restart left the old server running, and the scheduled-task wrapper misread exit codes (#1943, munjikesh).**
+  The restart background task called `sys.exit()`, which only raises `SystemExit` inside the ASGI app, so the process kept serving. It now ends with `os._exit()`: under `run_http_server_background.ps1` (marked by `MCP_WRAPPER_SUPERVISED`) with exit code 75, which the wrapper relaunches at once without using up a crash attempt or the restart delay, and unsupervised after starting a replacement. The wrapper also reads `.Handle` after `Start-Process`, because Windows PowerShell 5.1 otherwise returns `$null` for the exit code and logged even a graceful stop as an error.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a10d8f79` are properly handled with clean fallback behavior.

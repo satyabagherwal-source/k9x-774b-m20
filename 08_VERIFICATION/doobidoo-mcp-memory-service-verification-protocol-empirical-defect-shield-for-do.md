@@ -4,22 +4,22 @@
 {
   "source_repository": "doobidoo/mcp-memory-service",
   "source_url": "https://github.com/doobidoo/mcp-memory-service",
-  "source_version": "d22f074d",
+  "source_version": "a10d8f79",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T01:08:32.245Z",
+  "timestamp": "2026-11-22T05:50:27.416Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-doobidoo-mcp-memory-service",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `d22f074d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T01:08:32.245Z`  
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `a10d8f79`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T05:50:27.416Z`  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `doobidoo/mcp-memory-service` (Commit: `d22f074d`)
+- **Target Repository**: `doobidoo/mcp-memory-service` (Commit: `a10d8f79`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:08:31.006Z  
+> **Harvest Timestamp**: 2026-11-22T05:50:25.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2137 stars
+- **Stars / Engagement**: 2138 stars
 
 ---
 
@@ -2943,339 +2943,336 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef9166a8` (2026-11-20)
-**Commit Message**: fix(api): pull the configured ref and back up before a server update (#2100) (#2101)
+### Incident Patch 1: `a10d8f79` (2026-11-21)
+**Commit Message**: fix(web): restart under the Windows wrapper by exit code, not sys.exit (#2105)
 
-POST /api/server/update ran a hardcoded `git pull origin main`, while
-GET /api/version/check reads MCP_UPDATE_GIT_REMOTE and MCP_UPDATE_GIT_BRANCH,
-so an install that set them was checked against one ref and updated from
-another. Both now take the remote and branch from _update_git_source().
+sys.exit() inside the restart BackgroundTask only raises SystemExit, which
+the ASGI server logs while the process keeps serving, so an acknowledged
+restart never replaced the process on Windows. The restart now ends the
+process with os._exit(), and the error path does the same.
 
-The update also backs up the database directly before the pull, after the
-confirm, dirty-tree and installer checks, and returns the backup's filename
-in the new optional backup_filename field. A backend without a local
-database file skips the backup and says so in the message; any other backup
-failure returns 500 and git pull is not run.
+run_http_server_background.ps1 sets MCP_WRAPPER_SUPERVISED=1 for the server
+it launches. In that case the server spawns nothing and exits with 75
+(SUPERVISED_RESTART_EXIT_CODE); the wrapper relaunches at once, without
+counting a crash attempt or waiting RestartDelaySeconds, so the port is free
+before the next start. Unsupervised Windows runs still start a replacement
+and then exit 0.
 
-Fixes #2100
+The wrapper also reads Process.Handle right after Start-Process: Windows
+PowerShell 5.1 otherwise leaves ExitCode $null, so even a graceful exit 0
+was logged as an error and relaunched.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Fixes #1943
 
-**File**: `.env.example` (modified, +3/-2)
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/1943.fixed.md` (added, +2/-0)
 ```diff
-@@ -235,8 +235,9 @@ MCP_HTTP_PORT=8000
- # you have one.
- # MCP_MEMORY_ALLOW_SELF_SIGNED_CERTS=true
- 
--# Dashboard "check for updates" (GET /api/version/check) git source.
--# The check fetches a remote and counts commits behind <remote>/<branch>.
-+# Dashboard "check for updates" (GET /api/version/check) and "update"
-+# (POST /api/server/update) git source. The check fetches a remote and counts
-+# commits behind <remote>/<branch>; the update runs `git pull <remote> <branch>`.
- # Override these if your checkout's remote is named differently (e.g. the
- # remote still points at old GitHub, or Codeberg was added as `codeberg` /
- # `upstream`) or tracks a non-main branch. Defaults preserve origin/main.
+@@ -0,0 +1,2 @@
++- **Windows dashboard restart left the old server running, and the scheduled-task wrapper misread exit codes (#1943, munjikesh).**
++  The restart background task called `sys.exit()`, which only raises `SystemExit` inside the ASGI app, so the process kept serving. It now ends with `os._exit()`: under `run_http_server_background.ps1` (marked by `MCP_WRAPPER_SUPERVISED`) with exit code 75, which the wrapper relaunches at once without using up a crash attempt or the restart delay, and unsupervised after starting a replacement. The wrapper also reads `.Handle` after `Start-Process`, because Windows PowerShell 5.1 otherwise returns `$null` for the exit code and logged even a graceful stop as an error.
 ```
 
-**File**: `changelog.d/2100.fixed.md` (added, +1/-0)
+**File**: `scripts/service/windows/run_http_server_background.ps1` (modified, +34/-8)
 ```diff
-@@ -0,0 +1 @@
-+- **The dashboard's Update pulled `origin/main` whatever the update check compared against, and changed the checkout without a backup (#2100).** `POST /api/server/update` ran a hardcoded `git pull origin main`, while `GET /api/version/check` reads `MCP_UPDATE_GIT_REMOTE` and `MCP_UPDATE_GIT_BRANCH`, so an install that set them was told about one branch and updated from another. Both now resolve the remote and branch in one place, and the pull is `git pull <remote> <branch>` (default `origin main`). The update also backs up the database directly before the pull, after the confirm, dirty-tree and installer checks; the response names the backup in `backup_filename`. A backend without a local database file (Cloudflare) skips the backup and says so, and any other backup failure returns 500 without running `git pull`.
-```
-
-**File**: `src/mcp_memory_service/web/api/server.py` (modified, +60/-10)
-```diff
-@@ -109,6 +109,7 @@ class UpdateResponse(BaseModel):
-     restart_scheduled: bool
-     pre_restart_pid: Optional[int] = Field(None, description="PID of the process scheduling the restart; clients compare to verify a real restart occurred")
-     pre_restart_version: Optional[str] = Field(None, description="Version of the running process before restart")
-+    backup_filename: Optional[str] = Field(None, description="Database backup taken before the pull; None when the storage backend has no local database file")
+@@ -36,6 +36,9 @@ $PythonLogFile = Join-Path $LogDir "http-server-python.log"
+ $PidFile = Join-Path $env:LOCALAPPDATA "mcp-memory\http-server.pid"
+ $MaxRestarts = 3
+ $RestartDelaySeconds = 60
++# Exit code the server uses to ask for an immediate relaunch (dashboard restart/update).
++# Keep in sync with SUPERVISED_RESTART_EXIT_CODE in src/mcp_memory_service/web/api/server.py.
++$RestartExitCode = 75
  
- 
- # Helper functions
-@@ -178,6 +179,52 @@ def _run_git_command(args: List[str], timeout: int = GIT_TIMEOUT_SECONDS) -> Tup
-     return _run_command(['git'] + args, timeout, "Git")
- 
- 
-+def _update_git_source() -> Tuple[str, str]:
-+    """
-+    Return ``(remote, branch)`` that both the update check and the update use.
+ # Ensure log directory exists
+ if (-not (Test-Path $LogDir)) {
+@@ -222,13 +225,29 @@ while ($RestartCount -lt $MaxRestarts) {
+         # file. It avoids the .NET event handler runspace bug where
+         # `$script:LogFile` was not captured, which silently dropped every
+         # line of server output in the previous implementation.
+-        $Process = Start-Process -FilePath $ExePath `
+-            -ArgumentList $ExeArgs `
+-            -WorkingDirectory $ProjectRoot `
+-            -NoNewWindow `
+-            -PassThru `
+-            -RedirectStandardOutput $PythonLogFile `
+-            -RedirectStandardError $PythonErrFile
++        #
++        # MCP_WRAPPER_SUPERVISED tells the server it runs under this wrapper, so a
++        # dashboard restart exits with $RestartExitCode and the loop below
++        # relaunches it instead of a replacement nobody supervises. It is set only
++        # around Start-Process (the child copies its environment at creation) and
++        # removed again, so it cannot outlive this script in a console that ran
++        # it in-process and then starts a server by hand.
++        $env:MCP_WRAPPER_SUPERVISED = "1"
++        try {
++            $Process = Start-Process -FilePath $ExePath `
++                -ArgumentList $ExeArgs `
++                -WorkingDirectory $ProjectRoot `
++                -NoNewWindow `
++                -PassThru `
++                -RedirectStandardOutput $PythonLogFile `
++                -RedirectStandardError $PythonErrFile
++        } finally {
++            Remove-Item Env:\MCP_WRAPPER_SUPERVISED -ErrorAction SilentlyContinue
++        }
 +
-+    Configurable so installs whose remote is named differently (codeberg,
-+    upstream, ...) or that track a non-main branch are checked against, and
-+    updated from, the same ref. Defaults preserve the historical origin/main.
++        # Windows PowerShell 5.1 leaves ExitCode $null for a -PassThru process
++        # unless its Handle was read while it was running. Touch it right away.
++        $null = $Process.Handle
+ 
+         # Save PID
+         Set-Content -Path $PidFile -Value $Process.Id
+@@ -247,7 +266,7 @@ while ($RestartCount -lt $MaxRestarts) {
+             Remove-Item $PythonErrFile -Force -ErrorAction SilentlyContinue
+         }
+ 
+-        Write-Log "Server exited with code $ExitCode" $(if ($ExitCode -eq 0) { "INFO" } else { "ERROR" })
++        Write-Log "Server exited with code $ExitCode" $(if (($ExitCode -eq 0) -or ($ExitCode -eq $RestartExitCode)) { "INFO" } else { "ERROR" })
+ 
+         # Clean up PID file
+         if (Test-Path $PidFile) {
+@@ -260,6 +279,13 @@ while ($RestartCount -lt $MaxRestarts) {
+             break
+         }
+ 
++        # Restart requested by the server: relaunch now. This is not a crash, so
++        # it neither uses up a restart attempt nor waits $RestartDelaySeconds.
++        if ($ExitCode -eq $RestartExitCode) {
++            Write-Log "Server requested a restart (exit code $RestartExitCode). Restarting immediately."
++            continue
++        }
++
+     } catch {
+         Write-Log "Error starting server: $_" "ERROR"
+     }
+```
+
+**File**: `src/mcp_memory_service/web/api/server.py` (modified, +35/-9)
+```diff
+@@ -18,6 +18,7 @@
+ Provides server status, version checking, updates, and restart capabilities.
+ """
+ 
++import contextlib
+ import os
+ import sys
+ import time
+@@ -48,6 +49,11 @@
+ 
+ # Constants
+ RESTART_DELAY_SECONDS = 3
++# Exit code that tells the Windows wrapper (run_http_server_background.ps1) "relaunch me now";
++# keep in sync with $RestartExitCode there. 75 is sysexits' EX_TEMPFAIL, not used by Python or uv.
++SUPERVISED_RESTART_EXIT_CODE = 75
++# Set to "1" by the wrapper for the server it launches, so a restart can exit and let it relaunch.
++SUPERVISED_ENV_VAR = "MCP_WRAPPER_SUPERVISED"
+ GIT_TIMEOUT_SECONDS = 30
+ PIP_TIMEOUT_SECONDS = 300
+ 
+@@ -285,6 +291,24 @@ def _get_restart_args() -> List[str]:
+     return [sys.executable] + list(sys.argv)
+ 
+ 
++def _is_supervised() -> bool:
++    """True when the Windows wrapper launched this process and will relaunch it on exit."""
++    return os.environ.get(SUPERVISED_ENV_VAR) == "1"
++
++
++def _exit_process(code: int) -> None:
++    """End the process now.
++
++    sys.exit() inside a BackgroundTask only raises SystemExit, which Starlette
++    logs as an ASGI exception while the server keeps serving, so exit with
++    os._exit() after flushing what a buffered stdout would otherwise lose.
 +    """
-+    return (
-+        os.getenv('MCP_UPDATE_GIT_REMOTE', 'origin'),
-+        os.getenv('MCP_UPDATE_GIT_BRANCH', 'main'),
++    for stream in (sys.stdout, sys.stderr):
++        with contextlib.suppress(OSError, ValueError):
++            stream.flush()
++    os._exit(code)
++
++
+ async def _restart_server_delayed():
+     """Restart the server after a delay to allow HTTP response to complete."""
+     await asyncio.sleep(RESTART_DELAY_SECONDS)
+@@ -294,25 +318,27 @@ async def _restart_server_delayed():
+     args = _get_restart_args()
+ 
+     try:
+-        if sys.platform == 'win32':
+-            # Windows: Start a new process, then exit
++        if sys.platform != 'win32':
++            # Linux/Mac: Replace process with execv
++            os.execv(sys.executable, args)
++        elif _is_supervised():
++            # Under the Windows wrapper: exit with the restart code; the wrapper
++            # relaunches once the port is free, so no unmanaged replacement.
++            _exit_process(SUPERVISED_RESTART_EXIT_CODE)
++        else:
++            # Windows, unsupervised: start a new process, then exit
+             subprocess.Popen(
+                 args,
+                 creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+             )
+-        else:
+-            # Linux/Mac: Replace process with execv
+-            os.execv(sys.executable, args)
+-
+-        # Exit current process (Windows only reaches here)
+-        sys.exit(0)
++            _exit_process(0)
+     except PermissionError:
+         logger.error("Failed to restart server: insufficient permissions")
+     except FileNotFoundError:
+         logger.error("Failed to restart server: executable not found: %s", _sanitize_log_value(sys.executable))
+     except Exception as e:
+         logger.error("Failed to restart server: %s - %s", _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
+-        sys.exit(1)
++        _exit_process(1)
+ 
+ 
+ # Endpoints
+```
+
+**File**: `tests/web/api/test_server_management.py` (modified, +118/-0)
+```diff
+@@ -32,6 +32,7 @@
+ import importlib.util
+ import os
+ import shutil
++import subprocess
+ import sys
+ from types import SimpleNamespace
+ 
+@@ -477,3 +478,120 @@ def test_refused_update_leaves_no_backup(test_app, fake_backup):
+ 
+     assert response.status_code == 409
+     assert fake_backup.events == []
++
++
++# Restart under the Windows wrapper (#1943)
++#
++# A BackgroundTask that calls sys.exit() only raises SystemExit, which Starlette
++# logs as an ASGI exception while the server keeps serving. The restart has to
++# end the process with os._exit(): with the wrapper's marker set it exits with
++# the restart code and spawns nothing, otherwise it spawns a replacement first.
++
++@pytest.fixture
++def windows_restart(monkeypatch):
++    """Run _restart_server_delayed as on Windows, recording os._exit and Popen."""
++    calls = SimpleNamespace(exits=[], popen=[])
++    monkeypatch.setattr(sys, 'platform', 'win32')
++    monkeypatch.setattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 512, raising=False)
++    monkeypatch.setattr(server_module, 'RESTART_DELAY_SECONDS', 0)
++    monkeypatch.setattr(server_module.os, '_exit', lambda code: calls.exits.append(code))
++
++    def fake_popen(*args, **kwargs):
++        calls.popen.append(args)
++
++    monkeypatch.setattr(server_module.subprocess, 'Popen', fake_popen)
++    return calls
++
++
++async def test_supervised_restart_exits_with_the_restart_code_and_spawns_nothing(windows_restart, monkeypatch):
++    monkeypatch.setenv('MCP_WRAPPER_SUPERVISED', '1')
++
++    await server_module._restart_server_delayed()
++
++    assert windows_restart.exits == [75]
++    assert windows_restart.popen == []
++
++
++async def test_unsupervised_windows_restart_spawns_then_exits_zero(windows_restart, monkeypatch):
++    monkeypatch.delenv('MCP_WRAPPER_SUPERVISED', raising=False)
++
++    await server_module._restart_server_delayed()
++
++    assert len(windows_restart.popen) == 1
++    assert windows_restart.exits == [0]
++
++
++async def test_restart_error_path_exits_with_os_exit(windows_restart, monkeypatch):
++    monkeypatch.delenv('MCP_WRAPPER_SUPERVISED', raising=False)
++
++    def broken_popen(*args, **kwargs):
++        raise OSError('boom')
++
++    monkeypatch.setattr(server_module.subprocess, 'Popen', broken_popen)
++
++    await server_module._restart_server_delayed()
++
++    assert windows_restart.exits == [1]
++
++
++def test_restart_exit_code_avoids_the_codes_python_and_uv_already_use():
++    assert server_module.SUPERVISED_RESTART_EXIT_CODE not in {0, 1, 2, 3, 130, 143, 0xC000013A}
++
++
++# Runs the restart in a real interpreter, the way the ASGI server does: uvicorn
++# catches BaseException from a background task and goes on serving, so anything
++# that raises SystemExit instead of ending the process shows up as STILL RUNNING.
++# Popen is stubbed so that a regression cannot spawn a real replacement.
++_RESTART_PROBE = '''
++import asyncio, subprocess
++from mcp_memory_service.web.api import server
++server.RESTART_DELAY_SECONDS = 0
++
++def popen(*args, **kwargs):
++    print('POPEN CALLED')
++    if {fail}:
++        raise OSError('boom')
++
++subprocess.Popen = popen
++try:
++    asyncio.run(server._restart_server_delayed())
++except BaseException as exc:
++    print('SWALLOWED', type(exc).__name__)
++print('STILL RUNNING')
++'''
++
++
++def _run_restart_probe(env_extra, fail_popen=False):
++    env = {k: v for k, v in os.environ.items() if k != 'MCP_WRAPPER_SUPERVISED'}
++    env.update(env_extra)
++    return subprocess.run(
++        [sys.executable, '-c', _RESTART_PROBE.format(fail=fail_popen)],
++        check=False, capture_output=True, text=True, env=env, timeout=60,
 +    )
 +
 +
-+async def _backup_before_update() -> Tuple[Optional[str], str]:
-+    """
-+    Back up the database before the update changes the checkout.
++@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
++def test_supervised_restart_really_ends_the_process_with_the_restart_code():
++    proc = _run_restart_probe({'MCP_WRAPPER_SUPERVISED': '1'})
 +
-+    A new release can migrate the database on the restart that follows, so the
-+    backup is the way back. Returns ``(backup_filename, note)``; the filename is
-+    None when the storage backend has no local database file to back up. Any
-+    other failure raises HTTP 500 before git pull runs.
-+    """
-+    from ...backup.scheduler import get_backup_service
-+
-+    try:
-+        backup_service = get_backup_service()
-+        if backup_service.db_path is None:
-+            return None, "No database backup was made: this storage backend has no local database file."
-+        result = await backup_service.create_backup(description="Automatic backup before server update")
-+    except Exception as e:
-+        result = {'success': False, 'error': f"{type(e).__name__}: {e}"}
-+
-+    if not result.get('success'):
-+        error = result.get('error', 'Unknown error')
-+        logger.error("AUDIT: Server update aborted — database backup failed: %s", _sanitize_log_value(error))
-+        raise HTTPException(
-+            status_code=500,
-+            detail=(
-+                f"Database backup before the update failed: {error}. "
-+                "The checkout was NOT changed (git pull was not run)."
-+            ),
-+        )
-+    return result['filename'], f"Database backed up to {result['filename']}."
++    assert proc.returncode == 75, (proc.stdout, proc.stderr)
++    assert 'STILL RUNNING' not in proc.stdout
++    assert 'POPEN CALLED' not in proc.stdout
 +
 +
- def _find_uv() -> Optional[str]:
-     """The uv that launched this server (``uv run`` exports it as ``UV``), else uv on PATH."""
-     uv_path = os.environ.get("UV")
-@@ -311,12 +358,7 @@ async def check_for_updates(
-     Returns number of commits behind and list of commit messages.
-     Requires admin access.
-     """
--    # The remote name and branch are configurable so installs whose remote is
--    # named differently (codeberg, upstream, ...) or tracks a non-main branch can
--    # still check for updates without editing the source. Defaults preserve the
--    # historical origin/main behavior.
--    remote = os.getenv('MCP_UPDATE_GIT_REMOTE', 'origin')
--    branch = os.getenv('MCP_UPDATE_GIT_BRANCH', 'main')
-+    remote, branch = _update_git_source()
-     upstream_ref = f'{remote}/{branch}'
- 
-     # Try to fetch latest changes
-@@ -422,7 +464,9 @@ async def update_server(
-     """
-     Update server from git and restart.
- 
--    Performs git pull, pip install, and schedules restart.
-+    Backs up the database, pulls MCP_UPDATE_GIT_REMOTE/MCP_UPDATE_GIT_BRANCH
-+    (default origin/main, the ref /version/check compares against), runs pip
-+    install, and schedules restart.
-     Returns 202 Accepted with output from each step.
-     Requires admin access and explicit confirmation.
-     """
-@@ -477,8 +521,13 @@ async def update_server(
-             ),
-         )
- 
--    # Step 1: Git pull
--    git_output, git_success = _run_git_command(['pull', 'origin', 'main'])
-+    # Back up last, directly before the pull, so a request refused by the
-+    # checks above leaves no backup file behind.
-+    backup_filename, backup_note = await _backup_before_update()
++@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
++def test_unsupervised_restart_really_ends_the_process_after_spawning():
++    proc = _run_restart_probe({})
 +
-+    # Step 1: Git pull from the ref /version/check compares against
-+    remote, branch = _update_git_source()
-+    git_output, git_success = _run_git_command(['pull', remote, branch])
- 
-     if not git_success:
-         logger.error("AUDIT: Server update aborted — git pull failed: %s", _sanitize_log_value(git_output))
-@@ -507,10 +556,11 @@ async def update_server(
- 
-     return UpdateResponse(
-         status="success",
--        message=f"Update completed successfully, server restarting in {RESTART_DELAY_SECONDS} seconds",
-+        message=f"Update completed successfully, server restarting in {RESTART_DELAY_SECONDS} seconds. {backup_note}",
-  
-```
-
-**File**: `tests/web/api/test_server_management.py` (modified, +127/-0)
-```diff
-@@ -47,10 +47,40 @@
- # each path segment via getattr on the parent package, and the `web` submodule
- # isn't always set as an attribute on `mcp_memory_service` at that point.
- # Holding a direct module reference dodges that resolution path entirely.
-+from mcp_memory_service.backup import scheduler as scheduler_module
- from mcp_memory_service.web.api import server as server_module
- from mcp_memory_service.web.oauth.middleware import AuthenticationResult
- 
- 
-+class FakeBackupService:
-+    """Stands in for BackupService; records each backup in `events`."""
-+
-+    def __init__(self, events=None, db_path='/data/sqlite_vec.db', result=None, error=None):
-+        self.events = events if events is not None else []
-+        self.db_path = db_path
-+        self.result = result or {'success': True, 'filename': 'memory_backup_20261120_120000.db'}
-+        self.error = error
-+
-+    async def create_backup(self, description=None):
-+        self.events.append(('backup', description))
-+        if self.error:
-+            raise self.error
-+        return self.result
++    assert proc.returncode == 0, (proc.stdout, proc.stderr)
++    assert 'POPEN CALLED' in proc.stdout
++    assert 'STILL RUNNING' not in proc.stdout
 +
 +
-+def _use_backup_service(monkeypatch, service):
-+    # server.py imports get_backup_service from the scheduler at call time,
-+    # the way web/api/backup.py does, so patch it at the source.
-+    monkeypatch.setattr(scheduler_module, 'get_backup_service', lambda: service)
-+    return service
++@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
++def test_failed_restart_really_ends_the_process_instead_of_raising_system_exit():
++    proc = _run_restart_probe({}, fail_popen=True)
 +
-+
-+@pytest.fixture(autouse=True)
-+def fake_backup(monkeypatch):
-+    """Every update in this module backs up into a fake, never the real database."""
-+    return _use_backup_service(monkeypatch, FakeBackupService())
-+
-+
- @pytest.fixture
- def test_app(monkeypatch):
-     """FastAPI test client with admin auth bypassed and restart task neutered."""
-@@ -350,3 +380,100 @@ def test_pipless_env_with_uv_installs_through_uv(monkeypatch):
-     assert mock_run.call_args.args[0] == [
-         'C:/bin/uv.exe', 'pip', 'install', '--python', sys.executable, '-e', '.',
-     ]
-+
-+
-+# --- #2100: pull the configured ref, back up before pulling ---
-+
-+def _clean_tree():
-+    return patch.object(server_module, '_check_working_tree_clean', return_value=(True, []))
-+
-+
-+def _git_recording(events):
-+    def run_git(args, timeout=server_module.GIT_TIMEOUT_SECONDS):
-+        events.append(('git', args))
-+        return 'Updating abc..def', True
-+    return patch.object(server_module, '_run_git_command', side_effect=run_git)
-+
-+
-+def _pip_ok():
-+    return patch.object(server_module, '_run_pip_command', return_value=('Successfully installed', True))
-+
-+
-+@pytest.mark.integration
-+@pytest.mark.parametrize('env, expected', [
-+    ({'MCP_UPDATE_GIT_REMOTE': 'upstream', 'MCP_UPDATE_GIT_BRANCH': 'stable'}, ['pull', 'upstream', 'stable']),
-+    ({}, ['pull', 'origin', 'main']),
-+])
-+def test_update_pulls_the_configured_remote_and_branch(test_app, monkeypatch, env, expected):
-+    """The update pulls the ref /version/check compares against, not a hardcoded origin/main."""
-+    monkeypatch.delenv('MCP_UPDATE_GIT_REMOTE', raising=False)
-+    monkeypatch.delenv('MCP_UPDATE_GIT_BRANCH', raising=False)
-+    for name, value in env.items():
-+        monkeypatch.setenv(name, value)
-+    events = []
-+    with _clean_tree(), _git_recording(events), _pip_ok():
-+        response = test_app.post('/api/server/update', json={'confirm': True})
-+
-+    assert response.status_code == 200
-+    assert [args for kind, args in events if kind == 'git'] == [expected]
-+
-+
-+@pytest.mark.integration
-+def test_update_backs_up_before_pulling(test_app, monkeypatch):
-+    """The backup is taken first, and its filename comes back in the response."""
-+    events = []
-+    _use_backup_service(monkeypatch, FakeBackupService(events))
-+    with _clean_tree(), _git_recording(events), _pip_ok():
-+        response = test_app.post('/api/server/update', json={'confirm': True})
-+
-+    assert response.status_code == 200
-+    assert [kind for kind, _ in events] == ['backup', 'git']
-+    body = response.json()
-+    assert body['backup_filename'] == 'memory_backup_20261120_120000.db'
-+    assert 'memory_backup_20261120_120000.db' in body['message']
-+
-+
-+@pytest.mark.integration
-+@pytest.mark.parametrize('service', [
-+    FakeBackupService(result={'success': False, 'error': 'disk full'}),
-+    FakeBackupService(error=OSError('disk full')),
-+], ids=['backup-reports-failure', 'backup-raises'])
-+def test_update_backup_failure_returns_500_and_never_pulls(test_app, monkeypatch, service):
-+    """A failed backup stops the update before git pull, and says the checkout is unchanged."""
-+    events = []
-+    service.events = events
-+    _use_backup_service(monkeypatch, service)
-+    with _clean_tree(), _git_recording(events), _pip_ok() as mock_pip:
-+        response = test_app.post('/api/server/update', json={'confirm': True})
-+
-+    assert response.status_code == 500
-+    detail = response.json()['detail']
-+    assert 'backup' in detail and 'disk full' in detail
-+    assert 'NOT changed' in detail
-+    assert [kind for kind, _ in events] == ['backup']
-+    m
-```
-
----
-
-### Incident Patch 2: `79a6081f` (2026-11-20)
-**Commit Message**: docs(contributing): name PEP 20 as the tie-breaker where the style guide is silent (#2095)
-
-Adds a short Zen of Python section under Coding Standards that maps four of its lines to rules the project already enforces, and a pointer to it from CLAUDE.md. Not a new gate; CI does not check it.
-
-**File**: `CLAUDE.md` (modified, +4/-0)
-```diff
-@@ -202,6 +202,10 @@ Claude Desktop wiring: see README.
- 
- ## Development Guidelines
- 
-+Where the rules below are silent, PEP 20 (`python -c "import this"`) breaks the
-+tie; the lines this project already applies as rules are listed in
-+[CONTRIBUTING.md](CONTRIBUTING.md#design-principles-the-zen-of-python).
-+
- ### Quality gates
- 
- Three layers: pre-commit (under 5s, Groq/Gemini complexity plus security, blocks on
-```
-
-**File**: `CONTRIBUTING.md` (modified, +19/-0)
-```diff
-@@ -321,6 +321,25 @@ Open a PR from your fork to the main repository with:
- - Write descriptive variable and function names
- - Add docstrings to all public functions/classes (Google style)
- 
-+### Design Principles: The Zen of Python
-+
-+The style guide says how code should look. Where it is silent,
-+[PEP 20](https://peps.python.org/pep-0020/) breaks the tie
-+(`python -c "import this"`). It is not an extra gate: CI does not check it,
-+reviewers cite it. Several rules in this project are one of its lines applied:
-+
-+- **Errors should never pass silently.** `memory.metadata.get('tags', [])`
-+  returns `[]` instead of failing, and that reached production three times.
-+  Read `Memory` fields by attribute (`memory.tags`). See also
-+  [Error Handling](#error-handling).
-+- **Explicit is better than implicit.** Type hints on every function signature,
-+  and specific exception types.
-+- **Simple is better than complex. Flat is better than nested.** The complexity
-+  budget is 8 per function, and `scripts/pr/pre_pr_check.sh` blocks on the
-+  functions a change touches.
-+- **In the face of ambiguity, refuse the temptation to guess.** Download and
-+  inspect a real sample before writing a parser for external data.
-+
- ### Code Organization
- 
- ```python
++    assert proc.returncode == 1, (proc.stdout, proc.stderr)
++    assert 'STILL RUNNING' not in proc.stdout
++    assert 'SWALLOWED' not in proc.stdout
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2105** (2026-11-21): fix(web): restart under the Windows wrapper by exit code, not sys.exit (@munjikesh)
 - **PR #2103** (2026-11-20): chore(release): v13.0.0 (@doobidoo)
 - **PR #2101** (2026-11-20): fix(api): pull the configured ref and back up before a server update (#2100) (@PloneMraz)
 - **PR #2099** (2026-11-20): feat(service): let a server follow release tags on its own (@doobidoo)
 - **PR #2095** (2026-11-20): docs(contributing): name PEP 20 as the tie-breaker where the style guide is silent (@doobidoo)
 - **PR #2092** (2026-11-19): fix(cli): accept comma-separated extensions in directory ingestion (@alksv1)
-- **PR #2091** (2026-11-19): fix(chunker): preserve sentence punctuation and overlap boundaries (#2090) (@Adil-Khan-N)
 
 ---
 
@@ -3295,34 +3292,32 @@ Adds a short Zen of Python section under Coding Standards that maps four of its 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. api): pull the configured ref and back up before a server update
+## X. web): restart under the Windows wrapper by exit code, not sys.exit
 
 **RULE**:
-When implementing operations in `.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1943.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef9166a8`: api): pull the configured ref and back up before a server update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a10d8f79`: web): restart under the Windows wrapper by exit code, not sys.exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.example`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1943.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Dashboard "check for updates" (GET /api/version/check) and "update"
-# (POST /api/server/update) git source. The check fetches a remote and counts
-# commits behind <remote>/<branch>; the update runs `git pull <remote> <branch>`.
+- **Windows dashboard restart left the old server running, and the scheduled-task wrapper misread exit codes (#1943, munjikesh).**
+  The restart background task called `sys.exit()`, which only raises `SystemExit` inside the ASGI app, so the process kept serving. It now ends with `os._exit()`: under `run_http_server_background.ps1` (marked by `MCP_WRAPPER_SUPERVISED`) with exit code 75, which the wrapper relaunches at once without using up a crash attempt or the restart delay, and unsupervised after starting a replacement. The wrapper also reads `.Handle` after `Start-Process`, because Windows PowerShell 5.1 otherwise returns `$null` for the exit code and logged even a graceful stop as an error.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-# Dashboard "check for updates" (GET /api/version/check) git source.
-# The check fetches a remote and counts commits behind <remote>/<branch>.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef9166a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a10d8f79` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

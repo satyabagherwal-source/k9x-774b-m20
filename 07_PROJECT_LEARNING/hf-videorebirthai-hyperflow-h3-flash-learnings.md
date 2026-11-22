@@ -3,7 +3,7 @@
 > **Source Version**: `hf-videorebi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T20:22:36.920Z  
+> **Timestamp**: 2026-11-22T05:50:11.592Z  
 > **Learning ID**: `learn-huggingface-videorebirthai-hyperflow-h3-flash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash](https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:22:36.731Z  
+> **Harvest Timestamp**: 2026-11-22T05:50:11.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 496060 downloads | 302 likes
+- **Stars / Engagement**: 819207 downloads | 348 likes
 
 ---
 

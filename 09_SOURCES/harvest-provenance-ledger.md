@@ -12055,3 +12055,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0fe54a78` | Multi-dimensional audit evidence | 2026-11-22T05:28:17.644Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `7431a275` | Multi-dimensional audit evidence | 2026-11-22T05:28:17.823Z |
 | `learn-huggingface-tencent-qwen3-8-27b-dspine-b16` | `https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-22T05:39:40.569Z |
+| `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-22T05:50:12.148Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a10d8f79` | Multi-dimensional audit evidence | 2026-11-22T05:50:27.170Z |
+| `learn-dom-h-1273a85f` | `project://doobidoo-mcp-memory-service` | `a10d8f79` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md` | 2026-11-22T05:51:00.131Z |

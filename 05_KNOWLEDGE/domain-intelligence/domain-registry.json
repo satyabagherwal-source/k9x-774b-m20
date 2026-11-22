@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T05:39:54.603Z",
-  "total_records": 2329,
+  "last_updated": "2026-11-22T05:51:02.299Z",
+  "total_records": 2330,
   "domains": {
     "A": {
       "total": 17,
@@ -1473,7 +1473,7 @@
       ]
     },
     "H": {
-      "total": 561,
+      "total": 562,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2035,7 +2035,8 @@
         "DOM-H-6CF392AE",
         "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-nezhahq-nezha-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-nezhahq-nezha-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-nezhahq-nezha-learnings-core-invariants",
+        "DOM-H-1273A85F"
       ]
     },
     "I": {
@@ -8144,8 +8145,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "d85563978ab2ffa8e41559690bfe65cb76fcfcf8eb9a289e0b96d9531f53a105",
-      "created_at": "2026-11-22T05:39:54.603Z"
+      "content_hash": "478a12a888683d1863bba4c8032b08ebdd3e1649b786fc64cbcfb6c704039e06",
+      "created_at": "2026-11-22T05:51:02.299Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -13279,8 +13280,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "11189ce6ced6224a5e8ccb847d674ffe994f92fa2e0f855fe1e03fa98908e9eb",
-      "created_at": "2026-11-21T01:08:32.398Z"
+      "content_hash": "92b7fca4e48ac01ee2b428220e948202a2b3a779ae3c8cc3dbe11a1f87a995b6",
+      "created_at": "2026-11-22T05:50:27.590Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -21995,8 +21996,8 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
       "repository": "doobidoo-mcp-memory-service-learnings",
-      "content_hash": "b233341be2cefb1e1c2028bc9c0a75cbd181b391b844093de9a99a40b54ff5df",
-      "created_at": "2026-11-19T23:16:17.980Z"
+      "content_hash": "61c532b11e0e4f6b5386d1111b9dbe67d5761c8b3566213cbeb6c449d3d20848",
+      "created_at": "2026-11-22T05:51:00.779Z"
     },
     "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",
@@ -22283,8 +22284,8 @@
       "title": "Research & Knowledge Intelligence: VideoRebirthAI/hyperflow-h3-flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-videorebirthai-hyperflow-h3-flash-research-knowledge-intelligence-videorebirt.md",
       "repository": "VideoRebirthAI/hyperflow-h3-flash",
-      "content_hash": "c355e60f6a7c7e04996d88411f0c4d914615b4c8f7a1ba5a0cacad9366e320a3",
-      "created_at": "2026-11-15T20:22:37.333Z"
+      "content_hash": "3ed0efe039b66455d33ac0730ebc4fdf0e78e44c2cb9f466a7fc5bd9e6fbcbcb",
+      "created_at": "2026-11-22T05:50:12.370Z"
     },
     "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants",
@@ -22343,8 +22344,8 @@
       "title": "Research & Knowledge Intelligence: hf-videorebirthai-hyperflow-h3-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-videorebirthai-hyperflow-h3-flash-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-videorebirthai-hyperflow-h3-flash-learnings",
-      "content_hash": "4242489d79c9a517a139d8ae6ae860c9c3a15eeb3841c5f61cd750e17e3657b4",
-      "created_at": "2026-11-15T20:23:09.874Z"
+      "content_hash": "778cfc9a3bca32ba1ff33ebee5051420e653e8c7f175e7a5f3065ed3e31ead10",
+      "created_at": "2026-11-22T05:50:31.008Z"
     },
     "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants",
@@ -39279,6 +39280,48 @@
       "repository": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings",
       "content_hash": "ca742b1ba99989e0afff6cffaaf729e5d06485f4a79c4beecaf1c306cda3c630",
       "created_at": "2026-11-22T05:12:42.224Z"
+    },
+    "DOM-H-1273A85F": {
+      "record_id": "DOM-H-1273A85F",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "web): restart under the Windows wrapper by exit code, not sys.exit",
+      "content": "When implementing operations in `changelog.d/1943.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "21f7f92b853174ee18a11acfb6bc75d2677ea7c4aad4be425f58972030008341",
+      "summary": "Prevents defects observed in production commit `a10d8f79`: web): restart under the Windows wrapper by exit code, not sys.exit. Unvalidated e -> When implementing operations in `changelog.d/1943.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, an",
+      "provenance": {
+        "source_uri": "project://doobidoo-mcp-memory-service/doobidoo-mcp-memory-service-learnings.md",
+        "source_version": "a10d8f79",
+        "observed_at": "2026-11-22T05:50:25.965Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (doobidoo-mcp-memory-service)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of doobidoo-mcp-memory-service"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T05:51:00.094Z"
     }
   }
 }

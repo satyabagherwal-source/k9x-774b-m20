@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "d22f074d",
+    "sourceVersion": "a10d8f79",
     "license": "Apache-2.0",
-    "contentHash": "9e079f04ffd20ff45e19f3d941bb12b9b6efd3cd0252ace68f746dc6337cc3aa",
-    "lastHarvestedAt": "2026-11-21T01:08:32.036Z",
+    "contentHash": "720f80e64f9037edd2c02c102fbc2366019117f86ade462b9584629e7bddcc4b",
+    "lastHarvestedAt": "2026-11-22T05:50:27.170Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -12275,8 +12275,8 @@
     "sourceUrl": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
     "sourceVersion": "hf-videorebirthai-hyperflow-h3-flash",
     "license": "Open-Source",
-    "contentHash": "edd400731f1fafa351308d951cbc36a865e4f02a453e148b68d277923b10fdda",
-    "lastHarvestedAt": "2026-11-15T20:22:37.208Z",
+    "contentHash": "18ca163bac8d3866f8d18eb0d88677b638d3aaddeba1c92f2ef59949b3dc8c22",
+    "lastHarvestedAt": "2026-11-22T05:50:12.148Z",
     "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash"
   },
   "hf-comfy-org-minimax-h3-image": {

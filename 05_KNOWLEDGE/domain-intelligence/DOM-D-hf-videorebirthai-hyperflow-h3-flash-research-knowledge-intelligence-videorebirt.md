@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
   "source_version": "hf-videorebirthai-hyperflow-h3-flash",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T20:22:37.332Z",
+  "timestamp": "2026-11-22T05:50:12.369Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [VideoRebirthAI/hyperflow-h3-flash](https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash) (Revision: `hf-videore`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T20:22:37.332Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:50:12.369Z`  
 > **Learning ID**: `learn-huggingface-videorebirthai-hyperflow-h3-flash`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash](https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:22:36.731Z  
+> **Harvest Timestamp**: 2026-11-22T05:50:11.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 496060 downloads | 302 likes
+- **Stars / Engagement**: 819207 downloads | 348 likes
 
 ---
 

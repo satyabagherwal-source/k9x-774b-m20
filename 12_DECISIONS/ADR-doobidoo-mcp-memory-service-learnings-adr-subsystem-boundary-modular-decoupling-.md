@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T23:16:17.695Z",
+  "timestamp": "2026-11-22T05:51:00.415Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-doobidoo-mcp-memory-service-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [doobidoo-mcp-memory-service-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T23:16:17.695Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:51:00.415Z`  
 > **Learning ID**: `LEARN-EVO-doobidoo-mcp-memory-service-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of doobidoo-mcp-memory-service-learnings, modular boundar
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `bbc14454`  
+> **Source Version**: `a10d8f79`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T23:15:45.598Z  
+> **Timestamp**: 2026-11-22T05:50:25.965Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of doobidoo-mcp-memory-service-learnings, modular boundar
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T23:15:45.592Z  
+> **Harvest Timestamp**: 2026-11-22T05:50:25.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of doobidoo-mcp-memory-service-learnings, modular boundar
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2136 stars
+- **Stars / Engagement**: 2138 stars
 
 ---
 
@@ -2938,11 +2938,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2100** (2026-11-20): **POST /api/server/update ignores MCP_UPDATE_GIT_REMOTE/BRANCH and takes no backup**
+  *Symptoms*: ## What is wrong  `POST /api/server/update` (the "Update" button in the dashboard) does two things an operator would not expect. Both are in `src/mcp_memory_service/web/api/server.py`, line numbers on `main` today.  1. **It ignores the configured remote and branch.** `check_for_updates()` reads `MCP_UPDATE_GIT_REMOTE` and `MCP_UPDATE_GIT_BRANCH` (lines 318-319, documented in `.env.example`), so "update available" is computed against, say, `upstream/stable`. `update_server()` then runs a hardcoded `git pull origin main` (line 481). An install that set those variables is told about one branch and updated from another. 2. **It changes the checkout without a backup.** The update pulls, reinstalls and restarts. A new release can migrate the database on that restart, and nothing was saved before it. The backup service that `POST /api/backup/now` uses is right there.  Found while writing #2098, which left this endpoint alone on purpose.  ## Scope (settled)  1. Resolve remote and branch in one place and use it in both `check_for_updates()` and `update_server()`. Same variables, same defaults (`origin`, `main`). The pull becomes `git pull <remote> <branch>`. 2. Before the `git pull`, call `get_backup_service().create_backup(description=...)` (from `mcp_memory_service.backup.scheduler`, the way `web/api/backup.py` does).    - Backup succeeded: go on. Put the backup's filename into the response message or a new optional field on `UpdateResponse`.    - `BackupService.db_path` is `None` (
+
 - **Issue #2090** (2026-11-19): **fix(chunker): sentence-aware chunking strips ending punctuation and breaks overlap boundaries**
   *Symptoms*: ### Bug Description  When using TextChunker with respect_sentence_boundaries=True (or using loaders that rely on sentence-aware chunking), all sentence-ending punctuation ('.', '!', '?') is stripped from     intermediate sentences. This produces run-on chunks where sentences have lost their punctuation.      Furthermore, _get_overlap_text() attempts to locate sentence boundaries inside the chunk overlap using self.sentence_endings.split(overlap). Because the preceding chunk text has had     all its sentence punctuation stripped, the splitter fails to find any sentence boundary, falling back to a raw character slice that chops words in half (e.g. "tence here Third     sentence here").  ### Steps to Reproduce  1. Run Python with the ingestion chunker:     ```python     from mcp_memory_service.ingestion.chunker import ChunkingStrategy, TextChunker      strategy = ChunkingStrategy(         chunk_size=80,         chunk_overlap=0,         respect_paragraph_boundaries=False,         respect_sentence_boundaries=True,         min_chunk_size=10,     )     chunker = TextChunker(strategy)     text = "First sentence here. Second sentence here! Third sentence here? Fourth sentence here."     chunks = [chunk for chunk, _ in chunker.chunk_text(text)]     print(chunks)  2. Observe the first chunk in the output.  ### Expected Behavior  The emitted text chunks should preserve all sentence-ending punctuation marks ('.', '!', '?') and maintain grammatically complete sentences:  ['First sentence h
-
-- **Issue #2083** (2026-11-19): **[Bug]:  GET /api/search/similar/{content_hash} Fails with 404 in Multi-Memory Databases Due to Vector Retrieve on Hash Hex**
-  *Symptoms*: ### Bug Description  The endpoint `GET /api/search/similar/{content_hash}` in `src/mcp_memory_service/web/api/search.py` attempts to find the target memory by calling `storage.retrieve(content_hash,     n_results=1)` instead of `storage.get_by_hash(content_hash)`.  Because `storage.retrieve()` executes a semantic vector similarity search, it generates an embedding vector for the 64-character hexadecimal SHA-256 string and returns the memory     whose content vector happens to be closest in cosine distance to that hex string.  In any database containing multiple memories, the top vector result for a random SHA-256 string is almost never the target memory itself. As a result, the subsequent equality check:     ```python     if not target_results or target_results[0].memory.content_hash != content_hash:         raise HTTPException(status_code=404, detail="Memory not found")     ```     fails and raises HTTP 404 "Memory not found", even though the memory exists in the database.  Furthermore, running vector embedding inference over SHA-256 strings wastes compute and introduces unnecessary latency.  ### Steps to Reproduce   1. In an empty test database, store two distinct memories:        - Memory A: `"Alpha service handles user authentication and session tokens."`        - Memory B: `"Database cluster stores persistent records for users and sessions."` 2. Obtain `hash_A` for Memory A. 3. Call `GET /api/search/similar/{hash_A}`.   ### Expected Behavior  - HTTP 200 OK.     - Memory 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2959,498 +2959,336 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bbc14454` (2026-11-19)
-**Commit Message**: fix(cli): accept comma-separated extensions in directory ingestion (#2092)
+### Incident Patch 1: `a10d8f79` (2026-11-21)
+**Commit Message**: fix(web): restart under the Windows wrapper by exit code, not sys.exit (#2105)
 
-* fix(cli): accept comma-separated extensions in directory ingestion
+sys.exit() inside the restart BackgroundTask only raises SystemExit, which
+the ASGI server logs while the process keeps serving, so an acknowledged
+restart never replaced the process on Windows. The restart now ends the
+process with os._exit(), and the error path does the same.
 
-* docs(changelog): record the CLI extension filter fix (#2092)
+run_http_server_background.ps1 sets MCP_WRAPPER_SUPERVISED=1 for the server
+it launches. In that case the server spawns nothing and exits with 75
+(SUPERVISED_RESTART_EXIT_CODE); the wrapper relaunches at once, without
+counting a crash attempt or waiting RestartDelaySeconds, so the port is free
+before the next start. Unsupervised Windows runs still start a replacement
+and then exit 0.
 
----------
+The wrapper also reads Process.Handle right after Start-Process: Windows
+PowerShell 5.1 otherwise leaves ExitCode $null, so even a graceful exit 0
+was logged as an error and relaunched.
 
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+Fixes #1943
 
-**File**: `changelog.d/2092.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+- **Directory ingestion accepts comma-separated extensions (#2092, @alksv1).** The documented `--extensions pdf,md` option previously skipped ordinary PDF and Markdown files. It now imports both file types, and repeating `--extensions` still works.
-```
-
-**File**: `src/mcp_memory_service/cli/ingestion.py` (modified, +6/-1)
-```diff
-@@ -202,7 +202,12 @@ async def run_batch_ingestion():
-             
-             # Determine file extensions to process
-             if extensions:
--                file_extensions = [ext.lstrip('.') for ext in extensions]
-+                file_extensions = [
-+                    ext.strip().lstrip('.')
-+                    for value in extensions
-+                    for ext in value.split(',')
-+                    if ext.strip()
-+                ]
-             else:
-                 file_extensions = list(SUPPORTED_FORMATS.keys())
-             
-```
-
-**File**: `tests/unit/test_cli_ingestion.py` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+"""Exercise mcp_memory_service.cli.ingestion through the public Click command."""
-+
-+from pathlib import Path
-+
-+import pytest
-+from click.testing import CliRunner
-+
-+from mcp_memory_service.cli.main import cli
-+
-+
-+@pytest.mark.parametrize(
-+    ("options", "expected_files"),
-+    [
-+        (["--extensions", "pdf,md"], ["manual.pdf", "notes.md"]),
-+        (["-e", ".pdf", "-e", "md"], ["manual.pdf", "notes.md"]),
-+        (["-e", "pdf, .md,", "-e", ".pdf"], ["manual.pdf", "notes.md"]),
-+        ([], ["manual.pdf", "notes.md", "other.txt"]),
-+        (["-e", ""], []),
-+        (["-e", ", ,"], []),
-+    ],
-+)
-+def test_ingest_directory_extensions(
-+    tmp_path: Path, options: list[str], expected_files: list[str]
-+) -> None:
-+    files = [tmp_path / name for name in ("manual.pdf", "notes.md", "other.txt")]
-+    for path in files:
-+        path.touch()
-+
-+    result = CliRunner().invoke(
-+        cli, ["ingest-directory", str(tmp_path), "--dry-run", *options]
-+    )
-+
-+    assert result.exit_code == (0 if expected_files else 1), result.output
-+    for path in files:
-+        assert result.output.count(str(path)) == expected_files.count(path.name)
-```
-
----
-
-### Incident Patch 2: `6829b73e` (2026-11-19)
-**Commit Message**: fix(web): use get_by_hash in /search/similar endpoint (#2083) (#2085)
-
-* fix(web): look up target memory by hash in /search/similar endpoint (#2083)
-
-* fix(review): clean changelog fragment and assert non-empty similar results (#2083)
-
-**File**: `changelog.d/2083.fixed.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+- **`GET /api/search/similar/{content_hash}` returned 404 in multi-memory databases (#2083).**
-+  The endpoint passed the 64-character SHA-256 hex string to `storage.retrieve()`, running a vector similarity search instead of looking up the memory by primary key. When the database had more than one memory, the nearest vector match to the hex string almost never matched the target memory, causing the lookup to fail. The endpoint now calls `storage.get_by_hash()`, guaranteeing O(1) indexed retrieval and eliminating unnecessary embedding computation.
-```
-
-**File**: `src/mcp_memory_service/web/api/search.py` (modified, +3/-8)
-```diff
-@@ -538,16 +538,11 @@ async def find_similar(
-     start_time = time.time()
- 
-     try:
--        # First, get the target memory by searching with its hash
--        # This is inefficient but works with current storage interface
-+        # Look up the target memory directly by its hash
-         scope = resolve_store(store)
--        target_results = await storage.retrieve(content_hash, n_results=1, store=scope)
--
--        if not target_results or target_results[0].memory.content_hash != content_hash:
-+        target_memory = await storage.get_by_hash(content_hash, store=scope)
-+        if not target_memory:
-             raise HTTPException(status_code=404, detail="Memory not found")
--
--        target_memory = target_results[0].memory
--
-         # Use the target memory's content to find similar memories
-         similar_results = await storage.retrieve(
-             query=target_memory.content,
-```
-
-**File**: `tests/web/api/test_search_similar.py` (added, +135/-0)
-```diff
-@@ -0,0 +1,135 @@
-+# Copyright 2024 Heinrich Krupp
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+"""
-+Tests for GET /api/search/similar/{content_hash} endpoint.
-+Verifies that target memories are looked up directly by hash rather than through
-+vector search, preventing false 404 errors in multi-memory databases.
-+"""
-+
-+import os
-+import tempfile
-+import pytest
-+import pytest_asyncio
-+from fastapi.testclient import TestClient
-+
-+from mcp_memory_service.web.dependencies import set_storage
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+
-+
-+@pytest.fixture
-+def temp_db():
-+    """Create a temporary database for testing."""
-+    with tempfile.TemporaryDirectory() as tmpdir:
-+        db_path = os.path.join(tmpdir, "test_search_similar.db")
-+        yield db_path
-+
-+
-+@pytest_asyncio.fixture
-+async def initialized_storage(temp_db, monkeypatch):
-+    """Create and initialize a real SQLite storage backend."""
-+    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    monkeypatch.setenv("MCP_MEMORY_ALLOW_HASH_EMBEDDINGS", "1")
-+    monkeypatch.setenv("MCP_MEMORY_ONNX_ALLOW_DOWNLOAD", "0")
-+
-+    storage = SqliteVecMemoryStorage(temp_db)
-+    await storage.initialize()
-+    yield storage
-+    await storage.close()
-+
-+
-+@pytest.fixture
-+def test_app(initialized_storage, monkeypatch):
-+    """Create a FastAPI test application with initialized storage."""
-+    monkeypatch.setenv("MCP_API_KEY", "")
-+    monkeypatch.setenv("MCP_OAUTH_ENABLED", "false")
-+    monkeypatch.setenv("MCP_ALLOW_ANONYMOUS_ACCESS", "true")
-+    monkeypatch.setenv("INCLUDE_HOSTNAME", "false")
-+
-+    from mcp_memory_service.web.app import app
-+    from mcp_memory_service.web.oauth.middleware import (
-+        get_current_user,
-+        require_write_access,
-+        require_read_access,
-+        require_store_read,
-+        AuthenticationResult,
-+    )
-+
-+    set_storage(initialized_storage)
-+
-+    async def mock_get_current_user():
-+        return AuthenticationResult(
-+            authenticated=True,
-+            client_id="test_client",
-+            scope="read write admin",
-+            auth_method="test",
-+        )
-+
-+    app.dependency_overrides[get_current_user] = mock_get_current_user
-+    app.dependency_overrides[require_write_access] = mock_get_current_user
-+    app.dependency_overrides[require_read_access] = mock_get_current_user
-+    app.dependency_overrides[require_store_read] = mock_get_current_user
-+
-+    client = TestClient(app)
-+    yield client
-+
-+    app.dependency_overrides.clear()
-+
-+
-+@pytest.mark.integration
-+def test_search_similar_with_multiple_memories(test_app):
-+    """GET /api/search/similar/{content_hash} succeeds when multiple memories exist in the DB."""
-+    # Seed 3 distinct memories
-+    res1 = test_app.post(
-+        "/api/memories",
-+        json={"content": "Alpha service handles authentication and token refresh.", "tags": ["auth"]},
-+    )
-+    assert res1.status_code == 200
-+    hash1 = res1.json()["content_hash"]
-+
-+    res2 = test_app.post(
-+        "/api/memories",
-+        json={"content": "Beta service validates session tokens and user permissions.", "tags": ["auth", "security"]},
-+    )
-+    assert res2.status_code == 200
-+    hash2 = res2.json()["content_hash"]
-+
-+    res3 = test_app.post(
-+        "/api/memories",
-+        json={"content": "Gamma database stores user preferences and configuration.", "tags": ["storage"]},
-+    )
-+    assert res3.status_code == 200
-+    hash3 = res3.json()["content_hash"]
-+
-+    # Call similar search for hash1
-+    response = test_app.get(f"/api/search/similar/{hash1}")
-+    assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
-+
-+    data = response.json()
-+    assert data["search_type"] == "similar"
-+    assert len(data["results"]) == 2
-+    # Ensure the target memory itself is filtered out and the remaining memories are returned
-+    result_hashes = [r["memory"]["content_hash"] for r in data["results"]]
-+    assert hash1 not in result_hashes
-+    assert hash2 in result_hashes
-+    assert hash3 in result_hashes
-+
-+
-+@pytest.mark.integration
-+def test_search_similar_returns_404_for_unknown_hash(test_app):
-+    """GET /api/search/similar/{content_hash} returns 404 for nonexistent memory hash."""
-+    fake_hash = "0" * 64
-+    response = test_app.get(f"/api/search/similar/{fake_hash}")
-+    assert response.status_code == 404
-+    assert response.json()["detail"] == "Memory not found"
-```
-
----
-
-### Incident Patch 3: `943f0872` (2026-11-19)
-**Commit Message**: fix(storage): duplicate refusal no longer names the other store (#2060) (#2081)
-
-* fix(storage): duplicate refusal no longer names the other store (#2060)
-
-content_hash is unique across stores, so storing content that already exists
-in another store is refused. The refusal named that store, which let a
-store-scoped credential learn store names (often tenant or project names).
-It now says only that the content exists in another store, on sqlite-vec and
-Cloudflare alike. The same-store message is unchanged.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B
-
-* test(storage): use the temp_db_path fixture and Black formatting (#2060)
-
-Addresses review feedback: SQLite-vec tests use the temp_db_path fixture
-rather than managing their own temporary directory.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B
-
----------
-
-Co-authored-by: Deviprasad <[REDACTED_EMAIL]>
 Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/2060.fixed.md` (added, +7/-0)
+**File**: `changelog.d/1943.fixed.md` (added, +2/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+- **Duplicate refusals no longer name the other store (closes #2060).** `content_hash` is
-+  unique across stores, so storing content that already exists in a different store is
-+  refused. The refusal used to say which store held it, which let a store-scoped credential
-+  learn store names that are often tenant or project names. It now says only
-+  `Duplicate content detected (exact match); already exists in another store`, on sqlite-vec
-+  and Cloudflare alike. The same-store message is unchanged. An operator can still find the
-+  row with `store="all"`.
+@@ -0,0 +1,2 @@
++- **Windows dashboard restart left the old server running, and the scheduled-task wrapper misread exit codes (#1943, munjikesh).**
++  The restart background task called `sys.exit()`, which only raises `SystemExit` inside the ASGI app, so the process kept serving. It now ends with `os._exit()`: under `run_http_server_background.ps1` (marked by `MCP_WRAPPER_SUPERVISED`) with exit code 75, which the wrapper relaunches at once without using up a crash attempt or the restart delay, and unsupervised after starting a replacement. The wrapper also reads `.Handle` after `Start-Process`, because Windows PowerShell 5.1 otherwise returns `$null` for the exit code and logged even a graceful stop as an error.
 ```
 
-**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +6/-2)
+**File**: `scripts/service/windows/run_http_server_background.ps1` (modified, +34/-8)
 ```diff
-@@ -785,10 +785,14 @@ async def _store_memory(
+@@ -36,6 +36,9 @@ $PythonLogFile = Join-Path $LogDir "http-server-python.log"
+ $PidFile = Join-Path $env:LOCALAPPDATA "mcp-memory\http-server.pid"
+ $MaxRestarts = 3
+ $RestartDelaySeconds = 60
++# Exit code the server uses to ask for an immediate relaunch (dashboard restart/update).
++# Keep in sync with SUPERVISED_RESTART_EXIT_CODE in src/mcp_memory_service/web/api/server.py.
++$RestartExitCode = 75
  
-     @staticmethod
-     def _exact_duplicate_message(existing_store: str, requested_store: str) -> str:
--        """Describe an exact-hash conflict the way sqlite-vec does."""
-+        """Describe an exact-hash conflict the way sqlite-vec does.
+ # Ensure log directory exists
+ if (-not (Test-Path $LogDir)) {
+@@ -222,13 +225,29 @@ while ($RestartCount -lt $MaxRestarts) {
+         # file. It avoids the .NET event handler runspace bug where
+         # `$script:LogFile` was not captured, which silently dropped every
+         # line of server output in the previous implementation.
+-        $Process = Start-Process -FilePath $ExePath `
+-            -ArgumentList $ExeArgs `
+-            -WorkingDirectory $ProjectRoot `
+-            -NoNewWindow `
+-            -PassThru `
+-            -RedirectStandardOutput $PythonLogFile `
+-            -RedirectStandardError $PythonErrFile
++        #
++        # MCP_WRAPPER_SUPERVISED tells the server it runs under this wrapper, so a
++        # dashboard restart exits with $RestartExitCode and the loop below
++        # relaunches it instead of a replacement nobody supervises. It is set only
++        # around Start-Process (the child copies its environment at creation) and
++        # removed again, so it cannot outlive this script in a console that ran
++        # it in-process and then starts a server by hand.
++        $env:MCP_WRAPPER_SUPERVISED = "1"
++        try {
++            $Process = Start-Process -FilePath $ExePath `
++                -ArgumentList $ExeArgs `
++                -WorkingDirectory $ProjectRoot `
++                -NoNewWindow `
++                -PassThru `
++                -RedirectStandardOutput $PythonLogFile `
++                -RedirectStandardError $PythonErrFile
++        } finally {
++            Remove-Item Env:\MCP_WRAPPER_SUPERVISED -ErrorAction SilentlyContinue
++        }
 +
-+        The message does not name the other store, so a store-scoped credential
-+        cannot learn store names.
-+        """
-         message = "Duplicate content detected (exact match)"
-         if existing_store != requested_store:
--            return f"{message}; already exists in store {existing_store!r}"
-+            return f"{message}; already exists in another store"
-         return message
++        # Windows PowerShell 5.1 leaves ExitCode $null for a -PassThru process
++        # unless its Handle was read while it was running. Touch it right away.
++        $null = $Process.Handle
  
-     async def _live_duplicate_refusal(
+         # Save PID
+         Set-Content -Path $PidFile -Value $Process.Id
+@@ -247,7 +266,7 @@ while ($RestartCount -lt $MaxRestarts) {
+             Remove-Item $PythonErrFile -Force -ErrorAction SilentlyContinue
+         }
+ 
+-        Write-Log "Server exited with code $ExitCode" $(if ($ExitCode -eq 0) { "INFO" } else { "ERROR" })
++        Write-Log "Server exited with code $ExitCode" $(if (($ExitCode -eq 0) -or ($ExitCode -eq $RestartExitCode)) { "INFO" } else { "ERROR" })
+ 
+         # Clean up PID file
+         if (Test-Path $PidFile) {
+@@ -260,6 +279,13 @@ while ($RestartCount -lt $MaxRestarts) {
+             break
+         }
+ 
++        # Restart requested by the server: relaunch now. This is not a crash, so
++        # it neither uses up a restart attempt nor waits $RestartDelaySeconds.
++        if ($ExitCode -eq $RestartExitCode) {
++            Write-Log "Server requested a restart (exit code $RestartExitCode). Restarting immediately."
++            continue
++        }
++
+     } catch {
+         Write-Log "Error starting server: $_" "ERROR"
+     }
 ```
 
-**File**: `src/mcp_memory_service/storage/mixins/store.py` (modified, +8/-2)
+**File**: `src/mcp_memory_service/web/api/server.py` (modified, +35/-9)
 ```diff
-@@ -41,10 +41,16 @@ class StoreMixin:
-     def _exact_duplicate_message(
-         existing_store: str | None, requested_store: str
-     ) -> str:
--        """Describe a global exact-hash conflict and name its other store."""
-+        """Describe a global exact-hash conflict without naming the other store.
-+
-+        ``content_hash`` is unique across stores, so a conflict with another store
-+        is refused. The message says only that the content exists in another store:
-+        store names are often tenant or project names, and a store-scoped
-+        credential must not learn them.
-+        """
-         message = "Duplicate content detected (exact match)"
-         if existing_store is not None and existing_store != requested_store:
--            return f"{message}; already exists in store {existing_store!r}"
-+            return f"{message}; already exists in another store"
-         return message
+@@ -18,6 +18,7 @@
+ Provides server status, version checking, updates, and restart capabilities.
+ """
  
-     def _purge_tombstone(self, content_hash: str) -> None:
++import contextlib
+ import os
+ import sys
+ import time
+@@ -48,6 +49,11 @@
+ 
+ # Constants
+ RESTART_DELAY_SECONDS = 3
++# Exit code that tells the Windows wrapper (run_http_server_background.ps1) "relaunch me now";
++# keep in sync with $RestartExitCode there. 75 is sysexits' EX_TEMPFAIL, not used by Python or uv.
++SUPERVISED_RESTART_EXIT_CODE = 75
++# Set to "1" by the wrapper for the server it launches, so a restart can exit and let it relaunch.
++SUPERVISED_ENV_VAR = "MCP_WRAPPER_SUPERVISED"
+ GIT_TIMEOUT_SECONDS = 30
+ PIP_TIMEOUT_SECONDS = 300
+ 
+@@ -285,6 +291,24 @@ def _get_restart_args() -> List[str]:
+     return [sys.executable] + list(sys.argv)
+ 
+ 
++def _is_supervised() -> bool:
++    """True when the Windows wrapper launched this process and will relaunch it on exit."""
++    return os.environ.get(SUPERVISED_ENV_VAR) == "1"
++
++
++def _exit_process(code: int) -> None:
++    """End the process now.
++
++    sys.exit() inside a BackgroundTask only raises SystemExit, which Starlette
++    logs as an ASGI exception while the server keeps serving, so exit with
++    os._exit() after flushing what a buffered stdout would otherwise lose.
++    """
++    for stream in (sys.stdout, sys.stderr):
++        with contextlib.suppress(OSError, ValueError):
++            stream.flush()
++    os._exit(code)
++
++
+ async def _restart_server_delayed():
+     """Restart the server after a delay to allow HTTP response to complete."""
+     await asyncio.sleep(RESTART_DELAY_SECONDS)
+@@ -294,25 +318,27 @@ async def _restart_server_delayed():
+     args = _get_restart_args()
+ 
+     try:
+-        if sys.platform == 'win32':
+-            # Windows: Start a new process, then exit
++        if sys.platform != 'win32':
++            # Linux/Mac: Replace process with execv
++            os.execv(sys.executable, args)
++        elif _is_supervised():
++            # Under the Windows wrapper: exit with the restart code; the wrapper
++            # relaunches once the port is free, so no unmanaged replacement.
++            _exit_process(SUPERVISED_RESTART_EXIT_CODE)
++        else:
++            # Windows, unsupervised: start a new process, then exit
+             subprocess.Popen(
+                 args,
+                 creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+             )
+-        else:
+-            # Linux/Mac: Replace process with execv
+-            os.execv(sys.executable, args)
+-
+-        # Exit current process (Windows only reaches here)
+-        sys.exit(0)
++            _exit_process(0)
+     except PermissionError:
+         logger.error("Failed to restart server: insufficient permissions")
+     except FileNotFoundError:
+         logger.error("Failed to restart server: executable not found: %s", _sanitize_log_value(sys.executable))
+     except Exception as e:
+         logger.error("Failed to restart server: %s - %s", _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
+-        sys.exit(1)
++        _exit_process(1)
+ 
+ 
+ # Endpoints
 ```
 
-**File**: `tests/storage/test_duplicate_refusal_hides_store_name.py` (added, +69/-0)
+**File**: `tests/web/api/test_server_management.py` (modified, +118/-0)
 ```diff
-@@ -0,0 +1,69 @@
-+"""An exact-duplicate refusal does not name the store that holds the content.
-+
-+``content_hash`` is unique across stores, so storing content that already lives
-+in another store is refused. Store names are often tenant, team or project names,
-+so the message says only that the content exists in another store, and a
-+store-scoped credential cannot learn which one.
-+"""
-+
-+import os
-+
-+import pytest
-+import pytest_asyncio
-+
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1"
-+
-+FIRST_STORE = "acme-payments-team"
-+SECOND_STORE = "globex-research"
+@@ -32,6 +32,7 @@
+ import importlib.util
+ import os
+ import shutil
++import subprocess
+ import sys
+ from types import SimpleNamespace
+ 
+@@ -477,3 +478,120 @@ def test_refused_update_leaves_no_backup(test_app, fake_backup):
+ 
+     assert response.status_code == 409
+     assert fake_backup.events == []
 +
 +
-+@pytest_asyncio.fixture
-+async def storage(temp_db_path):
-+    s = SqliteVecMemoryStorage(os.path.join(temp_db_path, "test.db"))
-+    await s.initialize()
-+    yield s
-+    await s.close()
++# Restart under the Windows wrapper (#1943)
++#
++# A BackgroundTask that calls sys.exit() only raises SystemExit, which Starlette
++# logs as an ASGI exception while the server keeps serving. The restart has to
++# end the process with os._exit(): with the wrapper's marker set it exits with
++# the restart code and spawns nothing, otherwise it spawns a replacement first.
++
++@pytest.fixture
++def windows_restart(monkeypatch):
++    """Run _restart_server_delayed as on Windows, recording os._exit and Popen."""
++    calls = SimpleNamespace(exits=[], popen=[])
++    monkeypatch.setattr(sys, 'platform', 'win32')
++    monkeypatch.setattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 512, raising=False)
++    monkeypatch.setattr(server_module, 'RESTART_DELAY_SECONDS', 0)
++    monkeypatch.setattr(server_module.os, '_exit', lambda code: calls.exits.append(code))
++
++    def fake_popen(*args, **kwargs):
++        calls.popen.append(args)
++
++    monkeypatch.setattr(server_module.subprocess, 'Popen', fake_popen)
++    return calls
 +
 +
-+def _memory(content):
-+    return Memory(
-+        content=content, content_hash=generate_content_hash(content), tags=["t"]
++async def test_supervised_restart_exits_with_the_restart_code_and_spawns_nothing(windows_restart, monkeypatch):
++    monkeypatch.setenv('MCP_WRAPPER_SUPERVISED', '1')
++
++    await server_module._restart_server_delayed()
++
++    assert windows_restart.exits == [75]
++    assert windows_restart.popen == []
++
++
++async def test_unsupervised_windows_restart_spawns_then_exits_zero(windows_restart, monkeypatch):
++    monkeypatch.delenv('MCP_WRAPPER_SUPERVISED', raising=False)
++
++    await server_module._restart_server_delayed()
++
++    assert len(windows_restart.popen) == 1
++    assert windows_restart.exits == [0]
++
++
++async def test_restart_error_path_exits_with_os_exit(windows_restart, monkeypatch):
++    monkeypatch.delenv('MCP_WRAPPER_SUPERVISED', raising=False)
++
++    def broken_popen(*args, **kwargs):
++        raise OSError('boom')
++
++    monkeypatch.setattr(server_module.subprocess, 'Popen', broken_popen)
++
++    await server_module._restart_server_delayed()
++
++    assert windows_restart.exits == [1]
++
++
++def test_restart_exit_code_avoids_the_codes_python_and_uv_already_use():
++    assert server_module.SUPERVISED_RESTART_EXIT_CODE not in {0, 1, 2, 3, 130, 143, 0xC000013A}
++
++
++# Runs the restart in a real interpreter, the way the ASGI server does: uvicorn
++# catches BaseException from a background task and goes on serving, so anything
++# that raises SystemExit instead of ending the process shows up as STILL RUNNING.
++# Popen is stubbed so that a regression cannot spawn a real replacement.
++_RESTART_PROBE = '''
++import asyncio, subprocess
++from mcp_memory_service.web.api import server
++server.RESTART_DELAY_SECONDS = 0
++
++def popen(*args, **kwargs):
++    print('POPEN CALLED')
++    if {fail}:
++        raise OSError('boom')
++
++subprocess.Popen = popen
++try:
++    asyncio.run(server._restart_server_delayed())
++except BaseException as exc:
++    print('SWALLOWED', type(exc).__name__)
++print('STILL RUNNING')
++'''
++
++
++def _run_restart_probe(env_extra, fail_popen=False):
++    env = {k: v for k, v in os.environ.items() if k != 'MCP_WRAPPER_SUPERVISED'}
++    env.update(env_extra)
++    return subprocess.run(
++        [sys.executable, '-c', _RESTART_PROBE.format(fail=fail_popen)],
++        check=False, capture_output=True, text=True, env=env, timeout=60,
 +    )
 +
 +
-+@pytest.mark.asyncio
-+async def test_refusal_for_content_in_another_store_does_not_name_it(storage):
-+    content = "The incident review is scheduled for Friday."
-+    ok, msg = await storage.store(
-+        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
-+    )
-+    assert ok, msg
++@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
++def test_supervised_restart_really_ends_the_process_with_the_restart_code():
++    proc = _run_restart_probe({'MCP_WRAPPER_SUPERVISED': '1'})
 +
-+    ok, msg = await storage.store(
-+        _memory(content), skip_semantic_dedup=True, store=SECOND_STORE
-+    )
-+
-+    assert not ok
-+    assert msg.startswith("Duplicate content detected (exact match)")
-+    assert "another store" in msg
-+    assert FIRST_STORE not in msg
++    assert proc.returncode == 75, (proc.stdout, proc.stderr)
++    assert 'STILL RUNNING' not in proc.stdout
++    assert 'POPEN CALLED' not in proc.stdout
 +
 +
-+@pytest.mark.asyncio
-+async def test_refusal_in_the_same_store_keeps_the_plain_message(storage):
-+    content = "Quarterly planning notes live in the shared drive."
-+    ok, msg = await storage.store(
-+        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
-+    )
-+    assert ok, msg
++@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
++def test_unsupervised_restart_really_ends_the_process_after_spawning():
++    proc = _run_restart_probe({})
 +
-+    ok, msg = await storage.store(
-+        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
-+    )
++    assert proc.returncode == 0, (proc.stdout, proc.stderr)
++    assert 'POPEN CALLED' in proc.stdout
++    assert 'STILL RUNNING' not in proc.stdout
 +
-+    assert not ok
-+    assert msg == "Duplicate content detected (exact match)"
-```
-
-**File**: `tests/storage/test_store_scope_semantic_dedup.py` (modified, +11/-7)
-```diff
-@@ -167,7 +167,7 @@ async def test_semantic_dedup_only_rejects_matches_in_target_store(storage):
- 
- 
- @pytest.mark.asyncio
--async def test_exact_duplicate_names_the_store_that_already_has_the_hash(storage):
-+async def test_exact_duplicate_does_not_name_the_store_that_already_has_the_hash(storage):
-     content = "identical content must remain globally unique"
-     memory = _memory(content)
- 
-@@ -177,15 +177,17 @@ async def test_exact_duplicate_names_the_store_that_already_has_the_hash(storage
-     ok, message = await storage.store(_memory(content), store="default")
-     assert not ok
-     assert "exact match" in message
--    assert "knowledge" in message
-+    assert "another store" in message
-+    assert "knowledge" not in message
- 
-     batch_results = await storage.store_batch([_memory(content)], store="default")
-     assert not batch_results[0][0]
--    assert "knowledge" in batch_results[0][1]
-+    assert "another store" in batch_results[0][1]
-+    assert "knowledge" not in batch_results[0][1]
- 
- 
- @pytest.mark.asyncio
--async def test_store_race_names_winning_store_without_partial_writes(storage):
-+async def test_store_race_does_not_name_winning_store_without_partial_writes(storage):
-     memory = _memory("content inserted by a competing writer")
-     racing_connection = _race_connection(storage, memory, "winner")
-     storage.conn = racing_connection
-@@ -197,12 +199,13 @@ async def test_store_race_names_winning_store_without_partial_writes(storage):
-     assert racing_connection.injected
-     assert racing_connection.integrity_error_seen
-     assert not ok
--    assert "winner" in message
-+    assert "another store" in message
-+    assert "winner" not in message
-     _assert_only_winning_record(storage.conn, memory, "winner")
- 
- 
- @pytest.mark.asyncio
--async def test_store_batch_race_names_winning_store_without_partial_writes(storage):
-+async def test_store_batch_race_does_not_name_winning_store_without_partial_writes(storage):
-     memory = _memory("batch content inserted by a competing writer")
-     racing_connection = _race_connection(storage, memory, "winner")
-     storage.conn = racing_connection
-@@ -212,5 +215,6 @@ async def test_store_batch_race_names_winning_store_without_partial_writes(stora
-     assert racing_connection.injected
-     assert racing_connection.integrity_error_seen
-     assert not results[0][0]
--    assert "winner" in results[0][1]
-+    assert "another store" in results[0][1]
-+    assert "winner" not in results[0][1]
-     _assert_only_winning_record(storage.conn, memory, "winner")
-```
-
-**File**: `tests/web/api/test_cloudflare_store_grant.py` (modified, +1/-1)
-```diff
-@@ -172,7 +172,7 @@ async def test_tombstone_of_another_store_is_not_taken_over(cloudflare_storage,
-     ok, msg = await cloudflare_storage.store(memory, store="a")
- 
-     assert not ok
--    assert msg == "Duplicate content detected (exact match); already exists in store 'b'"
-+    assert msg == "Duplicate content detected (exact match); already exists in another store"
-     cloudflare.vector_upserts.assert_not_called()
-     row = cloudflare.row(content_hash)
-     assert row["store"] == "b" and row["deleted_at"] is not None
++
++@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
++def test_failed_restart_really_ends_the_process_instead_of_raising_system_exit():
++    proc = _run_restart_probe({}, fail_popen=True)
++
++    assert proc.returncode == 1, (proc.stdout, proc.stderr)
++    assert 'STILL RUNNING' not in proc.stdout
++    assert 'SWALLOWED' not in proc.stdout
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2105** (2026-11-21): fix(web): restart under the Windows wrapper by exit code, not sys.exit (@munjikesh)
+- **PR #2103** (2026-11-20): chore(release): v13.0.0 (@doobidoo)
+- **PR #2101** (2026-11-20): fix(api): pull the configured ref and back up before a server update (#2100) (@PloneMraz)
+- **PR #2099** (2026-11-20): feat(service): let a server follow release tags on its own (@doobidoo)
+- **PR #2095** (2026-11-20): docs(contributing): name PEP 20 as the tie-breaker where the style guide is silent (@doobidoo)
 - **PR #2092** (2026-11-19): fix(cli): accept comma-separated extensions in directory ingestion (@alksv1)
-- **PR #2091** (2026-11-19): fix(chunker): preserve sentence punctuation and overlap boundaries (#2090) (@Adil-Khan-N)
-- **PR #2087** (2026-11-19): fix(time-parser): preserve month years, accept now, and fall through on non-date between queries (#2086) (@Adil-Khan-N)
-- **PR #2085** (2026-11-19): fix(web): use get_by_hash in /search/similar endpoint (#2083) (@Adil-Khan-N)
-- **PR #2084** (2026-11-19): fix(storage): preserve timestamp boundaries in delete_memories fallba… (@Adil-Khan-N)
-- **PR #2082** (2026-11-19): docs(contributing): say that linking an issue means a reference in the PR description (@doobidoo)
 
 ---
 
@@ -3470,21 +3308,22 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): accept comma-separated extensions in directory ingestion
+## X. web): restart under the Windows wrapper by exit code, not sys.exit
 
 **RULE**:
-When implementing operations in `changelog.d/2092.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1943.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bbc14454`: cli): accept comma-separated extensions in directory ingestion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a10d8f79`: web): restart under the Windows wrapper by exit code, not sys.exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2092.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1943.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Directory ingestion accepts comma-separated extensions (#2092, @alksv1).** The documented `--extensions pdf,md` option previously skipped ordinary PDF and Markdown files. It now imports both file types, and repeating `--extensions` still works.
+- **Windows dashboard restart left the old server running, and the scheduled-task wrapper misread exit codes (#1943, munjikesh).**
+  The restart background task called `sys.exit()`, which only raises `SystemExit` inside the ASGI app, so the process kept serving. It now ends with `os._exit()`: under `run_http_server_background.ps1` (marked by `MCP_WRAPPER_SUPERVISED`) with exit code 75, which the wrapper relaunches at once without using up a crash attempt or the restart delay, and unsupervised after starting a replacement. The wrapper also reads `.Handle` after `Start-Process`, because Windows PowerShell 5.1 otherwise returns `$null` for the exit code and logged even a graceful stop as an error.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3494,7 +3333,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bbc14454` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a10d8f79` are properly handled with clean fallback behavior.
 
 
 ## Consequences

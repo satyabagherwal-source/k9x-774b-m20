@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-PO0L",
-    "timestamp": "2026-11-20T05:07:43.701Z",
-    "repository": "CrawlCove/hreflang-checker",
-    "learningId": "learn-github-crawlcove-hreflang-checker",
-    "contentHash": "f1e63dd159add14564ae0660b1d4fac600bd2f2104fbfff7cc5b9239981b9e6c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-0QK4",
-    "timestamp": "2026-11-20T05:16:20.212Z",
-    "repository": "octodns/octodns",
-    "learningId": "learn-github-octodns-octodns",
-    "contentHash": "1eccfec56aa5efc13874ce94d66729b26f7feebd326cdbc58849cb98937432d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-0UYW",
     "timestamp": "2026-11-20T05:16:25.928Z",
     "repository": "apache/shardingsphere",
@@ -7492,6 +7462,36 @@
     "contentHash": "3db6329d5209b6d696cf39402d1acbe08c7595e03c0a51a6d5a6f04c5c9e665c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-3ZQN",
+    "timestamp": "2026-11-22T05:50:12.143Z",
+    "repository": "VideoRebirthAI/hyperflow-h3-flash",
+    "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+    "contentHash": "18ca163bac8d3866f8d18eb0d88677b638d3aaddeba1c92f2ef59949b3dc8c22",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-4BBY",
+    "timestamp": "2026-11-22T05:50:27.166Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "720f80e64f9037edd2c02c102fbc2366019117f86ade462b9584629e7bddcc4b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

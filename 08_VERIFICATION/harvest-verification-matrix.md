@@ -12022,3 +12022,6 @@
 | `CYCLE-20261122-BTGO` | `2026-11-22T05:28:17.640Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`f44c62df...`) |
 | `CYCLE-20261122-BTLN` | `2026-11-22T05:28:17.819Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9898` | Yes (`3b9dd897...`) |
 | `CYCLE-20261122-QGET` | `2026-11-22T05:39:40.565Z` | `tencent/Qwen3.8-27B-DSpine-b16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md` | Yes (`3db6329d...`) |
+| `CYCLE-20261122-3ZQN` | `2026-11-22T05:50:12.143Z` | `VideoRebirthAI/hyperflow-h3-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md` | Yes (`18ca163b...`) |
+| `CYCLE-20261122-4BBY` | `2026-11-22T05:50:27.166Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9899` | Yes (`720f80e6...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T05:51:00.131Z` | `doobidoo-mcp-memory-service` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-1273A85F` [Domain H] | Yes (`21f7f92b...`) |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T05:39:40.575Z",
-  "total_cycles_completed": 11430,
-  "total_learnings_persisted": 11430,
-  "total_rules_promoted": 10712,
+  "last_updated": "2026-11-22T05:50:27.176Z",
+  "total_cycles_completed": 11432,
+  "total_learnings_persisted": 11432,
+  "total_rules_promoted": 10713,
   "history": [
-    {
-      "timestamp": "2026-11-21T12:48:52.840Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T13:05:17.814Z",
-      "repository": "XHToken/Spark-X2.6-4B",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T13:05:26.324Z",
       "repository": "linkerd/linkerd2",
@@ -1403,6 +1389,20 @@
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",
       "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:50:12.154Z",
+      "repository": "VideoRebirthAI/hyperflow-h3-flash",
+      "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:50:27.176Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

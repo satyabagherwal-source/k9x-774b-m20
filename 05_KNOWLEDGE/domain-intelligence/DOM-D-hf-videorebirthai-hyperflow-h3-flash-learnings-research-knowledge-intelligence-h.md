@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T20:23:09.796Z",
+  "timestamp": "2026-11-22T05:50:30.885Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-videorebirthai-hyperflow-h3-flash-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-videorebirthai-hyperflow-h3-flash-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T20:23:09.796Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:50:30.885Z`  
 > **Learning ID**: `LEARN-EVO-hf-videorebirthai-hyperflow-h3-flash-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-videorebi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T20:22:36.920Z  
+> **Timestamp**: 2026-11-22T05:50:11.592Z  
 > **Learning ID**: `learn-huggingface-videorebirthai-hyperflow-h3-flash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash](https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:22:36.731Z  
+> **Harvest Timestamp**: 2026-11-22T05:50:11.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 496060 downloads | 302 likes
+- **Stars / Engagement**: 819207 downloads | 348 likes
 
 ---
 

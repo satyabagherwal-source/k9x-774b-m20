@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T05:39:54.603Z",
+  "last_updated": "2026-11-22T05:51:02.299Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23474,
+  "total_items": 23477,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d85563978ab2ffa8e41559690bfe65cb76fcfcf8eb9a289e0b96d9531f53a105",
+      "content_hash": "478a12a888683d1863bba4c8032b08ebdd3e1649b786fc64cbcfb6c704039e06",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T05:39:54.603Z"
+      "persisted_at": "2026-11-22T05:51:02.299Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -223847,8 +223847,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "d22f074d",
-      "content_hash": "9e079f04ffd20ff45e19f3d941bb12b9b6efd3cd0252ace68f746dc6337cc3aa",
+      "source_version": "a10d8f79",
+      "content_hash": "720f80e64f9037edd2c02c102fbc2366019117f86ade462b9584629e7bddcc4b",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -223886,6 +223886,11 @@
           "number": 9689,
           "title": "pull the configured ref and back up before a server update",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9899,
+          "title": "restart under the Windows wrapper by exit code, not sys.exit",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223893,7 +223898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T01:08:31.833Z",
+      "verified_at": "2026-11-22T05:50:26.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223935,10 +223940,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "d22f074d",
-      "content_hash": "11189ce6ced6224a5e8ccb847d674ffe994f92fa2e0f855fe1e03fa98908e9eb",
+      "source_version": "a10d8f79",
+      "content_hash": "92b7fca4e48ac01ee2b428220e948202a2b3a779ae3c8cc3dbe11a1f87a995b6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:08:32.398Z"
+      "persisted_at": "2026-11-22T05:50:27.590Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
@@ -223947,10 +223952,10 @@
       "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "d22f074d",
-      "content_hash": "94c2aad95d866af6fed5f92d01de6ad71862de8e70411503ae1a6ae7e92a74c0",
+      "source_version": "a10d8f79",
+      "content_hash": "00958f58ac1b6b97d775f69eb8e0424a5fbf2a6e5fe4c3da150b3529e605419e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:08:32.550Z"
+      "persisted_at": "2026-11-22T05:50:27.760Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
@@ -223959,10 +223964,10 @@
       "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "d22f074d",
-      "content_hash": "c8b6bd58bfddcfb809c7a6cb51df5388e93b6e282ddd84ee245527be29984c9c",
+      "source_version": "a10d8f79",
+      "content_hash": "d82781b2db44e541571258b8fa78c43afc1bff50f18ff89d56f588a9a7ce606e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:08:32.683Z"
+      "persisted_at": "2026-11-22T05:50:27.903Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
@@ -249511,9 +249516,9 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "b233341be2cefb1e1c2028bc9c0a75cbd181b391b844093de9a99a40b54ff5df",
+      "content_hash": "61c532b11e0e4f6b5386d1111b9dbe67d5761c8b3566213cbeb6c449d3d20848",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:16:17.980Z"
+      "persisted_at": "2026-11-22T05:51:00.779Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin",
@@ -249523,9 +249528,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "07533804845985168d6fc30eed008ef34b6fa07ff036ed617ef435a8bc774784",
+      "content_hash": "3287a5d8d389c791e436e0587080f9d157596f579e9f02d6b84c7432c1feea26",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:16:18.137Z"
+      "persisted_at": "2026-11-22T05:51:00.981Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le",
@@ -249535,9 +249540,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "1957ccd3b86b71468852c1156dacb1af1e06e4e0615dec44fbff029c7102dc02",
+      "content_hash": "2ff2844391b1cc8143351be458a7eb4d6106ce6c4d9714737a94b685743ba3df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T23:16:18.277Z"
+      "persisted_at": "2026-11-22T05:51:01.146Z"
     },
     "learn-github-lottie-react-native-lottie-react-native": {
       "learning_id": "learn-github-lottie-react-native-lottie-react-native",
@@ -250342,7 +250347,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
       "source_version": "hf-videorebirthai-hyperflow-h3-flash",
-      "content_hash": "edd400731f1fafa351308d951cbc36a865e4f02a453e148b68d277923b10fdda",
+      "content_hash": "18ca163bac8d3866f8d18eb0d88677b638d3aaddeba1c92f2ef59949b3dc8c22",
       "dossier_path": "07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
       "promoted_rules": [],
@@ -250351,7 +250356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T20:22:37.086Z",
+      "verified_at": "2026-11-22T05:50:11.888Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250368,9 +250373,9 @@
       "title": "Research & Knowledge Intelligence: VideoRebirthAI/hyperflow-h3-flash Core Invariants",
       "repository": "VideoRebirthAI/hyperflow-h3-flash",
       "source_version": "hf-videorebirthai-hyperflow-h3-flash",
-      "content_hash": "c355e60f6a7c7e04996d88411f0c4d914615b4c8f7a1ba5a0cacad9366e320a3",
+      "content_hash": "3ed0efe039b66455d33ac0730ebc4fdf0e78e44c2cb9f466a7fc5bd9e6fbcbcb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T20:22:37.333Z"
+      "persisted_at": "2026-11-22T05:50:12.370Z"
     },
     "learn-github-nsh07-tomato": {
       "learning_id": "learn-github-nsh07-tomato",
@@ -250468,9 +250473,9 @@
       "title": "Research & Knowledge Intelligence: hf-videorebirthai-hyperflow-h3-flash-learnings Core Invariants",
       "repository": "hf-videorebirthai-hyperflow-h3-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "4242489d79c9a517a139d8ae6ae860c9c3a15eeb3841c5f61cd750e17e3657b4",
+      "content_hash": "778cfc9a3bca32ba1ff33ebee5051420e653e8c7f175e7a5f3065ed3e31ead10",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T20:23:09.874Z"
+      "persisted_at": "2026-11-22T05:50:31.008Z"
     },
     "candidate_directive-concurrency-remove-state-read-on-io-thread": {
       "item_id": "candidate_directive-concurrency-remove-state-read-on-io-thread",
@@ -319267,6 +319272,44 @@
       "content_hash": "e0fb3273b8776e0f22399430c2e5f4987c7aed060516d32228d14dee14076e1d",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T05:28:22.255Z"
+    },
+    "rule-9899": {
+      "learning_id": "rule-9899",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9899,
+      "title": "restart under the Windows wrapper by exit code, not sys.exit",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "a10d8f79",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T05:50:26.900Z"
+    },
+    "candidate_directive-restart-under-the-windows-wrapper-by-exit-code-not-sys-exit": {
+      "item_id": "candidate_directive-restart-under-the-windows-wrapper-by-exit-code-not-sys-exit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4BIT-restart-under-the-windows-wrapper-by-exit-code-not-sys-exit.md",
+      "title": "restart under the Windows wrapper by exit code, not sys.exit",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "a10d8f79",
+      "content_hash": "fcd7efaa00db36bf973803e551c3c96dd159e0e54caff3336a20b02805a2b9b8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T05:50:27.417Z"
+    },
+    "candidate_directive-web-restart-under-the-windows-wrapper-by-exit-code-not-sys-exit": {
+      "item_id": "candidate_directive-web-restart-under-the-windows-wrapper-by-exit-code-not-sys-exit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5137-web-restart-under-the-windows-wrapper-by-exit-code-not-sys-exit.md",
+      "title": "web): restart under the Windows wrapper by exit code, not sys.exit",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "161a496e04a9f2346a8ca342a2d34144be535b8b55e238dcc2781add0ac4f16d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T05:51:00.556Z"
     }
   },
   "ai-builder-brain": {
