@@ -4953,10 +4953,10 @@
     "repository": "nativewind/nativewind",
     "platform": "github",
     "sourceUrl": "https://github.com/nativewind/nativewind",
-    "sourceVersion": "ddcfd806",
+    "sourceVersion": "b56a0289",
     "license": "MIT",
-    "contentHash": "183a548e4e9fed9c990dbe247de517257518561356b0517ae5647019887a9f4e",
-    "lastHarvestedAt": "2026-11-04T09:57:48.246Z",
+    "contentHash": "5fb62de7c7c845ca32b4a7c645477a3feacfb25e2ef53e122831c85a74309e79",
+    "lastHarvestedAt": "2026-11-22T00:09:53.068Z",
     "learningId": "learn-github-nativewind-nativewind"
   },
   "crossplane-crossplane": {
@@ -11725,8 +11725,8 @@
     "sourceUrl": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
     "sourceVersion": "hf-xiaomi-research-xiaomi-ocr-0",
     "license": "Open-Source",
-    "contentHash": "5ff1e181b825d5d9690614eff7f7b5470198e6abc7ae39273f278b5aef8786d4",
-    "lastHarvestedAt": "2026-11-15T11:12:32.602Z",
+    "contentHash": "43186978e3ba6532c8edf2369cff9642a144f577b9b2f512cb53696ba1ff35d0",
+    "lastHarvestedAt": "2026-11-22T00:09:47.066Z",
     "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0"
   },
   "hf-liquidai-d1-2b": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T23:55:47.399Z",
+  "last_updated": "2026-11-22T00:09:53.076Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7551,14 +7551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativewind-nativewind",
-      "content_hash": "183a548e4e9fed9c990dbe247de517257518561356b0517ae5647019887a9f4e",
-      "verified_at": "2026-11-04T09:57:48.292Z",
+      "content_hash": "5fb62de7c7c845ca32b4a7c645477a3feacfb25e2ef53e122831c85a74309e79",
+      "verified_at": "2026-11-22T00:09:53.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:57:48.292Z"
+      "last_updated": "2026-11-22T00:09:53.076Z"
     },
     "crossplane/crossplane": {
       "repository": "crossplane/crossplane",
@@ -17646,14 +17646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-      "content_hash": "5ff1e181b825d5d9690614eff7f7b5470198e6abc7ae39273f278b5aef8786d4",
-      "verified_at": "2026-11-15T11:12:32.611Z",
+      "content_hash": "43186978e3ba6532c8edf2369cff9642a144f577b9b2f512cb53696ba1ff35d0",
+      "verified_at": "2026-11-22T00:09:47.074Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T11:12:32.611Z"
+      "last_updated": "2026-11-22T00:09:47.074Z"
     },
     "LiquidAI/d1-2B": {
       "repository": "LiquidAI/d1-2B",

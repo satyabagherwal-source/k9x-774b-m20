@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T23:56:19.698Z",
+  "last_updated": "2026-11-22T00:10:00.325Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44298,6 +44298,35 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-04EEB1-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-YHIB",
+      "directive_title": "Update Nativewind attribution",
+      "source_repo": "nativewind-nativewind-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YHIB-update-nativewind-attribution.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-1CD6C0",
+      "directive_title": "Update Nativewind attribution",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nativewind-nativewind",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1CD6C0-update-nativewind-attribution.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-C71AD2",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C71AD2-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
     }
   ]
 }

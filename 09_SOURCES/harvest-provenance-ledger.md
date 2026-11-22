@@ -11983,3 +11983,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-21T23:55:31.806Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9d6d6ac4` | Multi-dimensional audit evidence | 2026-11-21T23:55:47.361Z |
 | `learn-dom-d-6eecdba7` | `project://hf-fusioncow-sulphur-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | 2026-11-21T23:56:17.643Z |
+| `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-22T00:09:47.066Z |
+| `learn-github-nativewind-nativewind` | `https://github.com/nativewind/nativewind` | `b56a0289` | Multi-dimensional audit evidence | 2026-11-22T00:09:53.068Z |

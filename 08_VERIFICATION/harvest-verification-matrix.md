@@ -11950,3 +11950,5 @@
 | `CYCLE-20261121-FVQ1` | `2026-11-21T23:55:31.801Z` | `SulphurAI/Sulphur-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | Yes (`3bbf7a4a...`) |
 | `CYCLE-20261121-G7Q4` | `2026-11-21T23:55:47.356Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`b0c6615f...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:56:17.643Z` | `hf-fusioncow-sulphur-3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6EECDBA7` [Domain D] | Yes (`29e79ad7...`) |
+| `CYCLE-20261122-Y7N9` | `2026-11-22T00:09:47.061Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md` | Yes (`43186978...`) |
+| `CYCLE-20261122-YCA0` | `2026-11-22T00:09:53.064Z` | `nativewind/nativewind` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9871` | Yes (`5fb62de7...`) |

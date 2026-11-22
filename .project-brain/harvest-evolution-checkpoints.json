@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T23:56:20.204Z",
+  "last_updated": "2026-11-22T00:10:01.228Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-21T21:58:03.324Z",
+      "processed_at": "2026-11-22T00:10:00.333Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2963,8 +2963,8 @@
       "staged_for_review": 0
     },
     "hf-xiaomi-research-xiaomi-ocr-0-learnings.md": {
-      "processed_at": "2026-11-15T11:13:54.995Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T00:09:59.014Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-sensenova-sensenova-loop-9b-preview-learnings.md": {
@@ -3686,9 +3686,14 @@
       "processed_at": "2026-11-21T22:57:57.569Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "nativewind-nativewind-learnings.md": {
+      "processed_at": "2026-11-22T00:09:59.417Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2934,
+  "total_dossiers_evaluated": 2937,
   "total_canonical_promoted": 464,
-  "total_staged_for_review": 2246
+  "total_staged_for_review": 2248
 }

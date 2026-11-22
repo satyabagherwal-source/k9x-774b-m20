@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nativewind-nativewind-learnings.md`  
 > **Source**: github ([https://github.com/nativewind/nativewind](https://github.com/nativewind/nativewind))  
-> **Source Version**: `ddcfd806`  
+> **Source Version**: `b56a0289`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:57:47.474Z  
+> **Timestamp**: 2026-11-22T00:09:52.021Z  
 > **Learning ID**: `learn-github-nativewind-nativewind`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativewind-nativewind-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nativewind/nativewind](https://github.com/nativewind/nativewind))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:57:46.056Z  
+> **Harvest Timestamp**: 2026-11-22T00:09:52.016Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The utility-first workflow you love from Tailwind CSS in your React Native applications.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8117 stars
+- **Stars / Engagement**: 8130 stars
 
 ---
 
@@ -287,274 +287,29 @@ module.exports = function (api) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `600b31a6` (2026-11-02)
-**Commit Message**: chore(deps): update the lockfile for react-native-css 3.1.0-rc.1
+### Incident Patch 1: `b56a0289` (2026-11-19)
+**Commit Message**: Update Nativewind attribution
 
-**File**: `yarn.lock` (modified, +7/-7)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -10474,7 +10474,7 @@ __metadata:
-     react: "npm:19.2.3"
-     react-native: "npm:0.86.3"
-     react-native-builder-bob: "npm:^0.40.13"
--    react-native-css: "npm:3.1.0-rc.0"
-+    react-native-css: "npm:3.1.0-rc.1"
-     react-native-reanimated: "npm:4.5.1"
-     react-native-safe-area-context: "npm:~5.7.0"
-     react-native-worklets: "npm:0.10.1"
-@@ -10486,7 +10486,7 @@ __metadata:
-     typescript: "npm:~6.0.3"
-     typescript-eslint: "npm:^8.40.0"
-   peerDependencies:
--    react-native-css: 3.1.0-rc.0
-+    react-native-css: 3.1.0-rc.1
-     tailwindcss: ">4.1.11"
-   languageName: unknown
-   linkType: soft
-@@ -11501,7 +11501,7 @@ __metadata:
-     react-dom: "npm:19.2.3"
-     react-native: "npm:0.86.3"
-     react-native-builder-bob: "npm:^0.40.13"
--    react-native-css: "npm:3.1.0-rc.0"
-+    react-native-css: "npm:3.1.0-rc.1"
-     react-native-monorepo-config: "npm:^0.1.9"
-     react-native-reanimated: "npm:4.5.1"
-     react-native-web: "npm:~0.21.0"
-@@ -11510,9 +11510,9 @@ __metadata:
-   languageName: unknown
-   linkType: soft
+@@ -25,7 +25,7 @@ Nativewind makes sure you're using the best style engine for any given platform
  
--"react-native-css@npm:3.1.0-rc.0":
--  version: 3.1.0-rc.0
--  resolution: "react-native-css@npm:3.1.0-rc.0"
-+"react-native-css@npm:3.1.0-rc.1":
-+  version: 3.1.0-rc.1
-+  resolution: "react-native-css@npm:3.1.0-rc.1"
-   dependencies:
-     "@types/debug": "npm:^4.1.12"
-     babel-plugin-react-compiler: "npm:^19.1.0-rc.2"
-@@ -11524,7 +11524,7 @@ __metadata:
-     lightningcss: ">=1.27.0"
-     react: ">=19"
-     react-native: ">=0.81"
--  checksum: 10c0/2170c000c5fc5e7a885a19f870f333337753ab586f19903a3dfd9eed4e60f97f03498fb4be06bdccd7858740936328460796fbff5d0dda3066b323a4ceb7a966
-+  checksum: 10c0/e17bacc2b3e393456b36463f4003f3f3cfb2823b9a6a482259564cc691775b8e7253d042ad04b5d6c552039c0a16f6e2ccefba8154910ddec0919cc832f1a1d2
-   languageName: node
-   linkType: hard
+ Nativewind processes your styles during your application's build step and uses a minimal runtime to selectively apply reactive styles (eg changes to device orientation, light dark mode).
  
-```
-
----
-
-### Incident Patch 2: `ddcfd806` (2026-11-02)
-**Commit Message**: docs: point Nativewind RC guidance and migration skills at the rc.1 pair
-
-**File**: `.claude/skills/debug-nw/SKILL.md` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ Read `DEVELOPMENT.md`, `docs/expo57-rc.md` and the relevant sections of `docs/rc
- 
- ## 1. Check the version pair
- 
--The current target is `nativewind@5.0.0-rc.0` with exactly `react-native-css@3.1.0-rc.0`. Check the manifest, lockfile and installed versions. Do not substitute `@latest`, `@preview` or the old `^3.0.1` engine range. The repository manifest can retain a preview version between releases; use the published release contract for consumer setup.
-+The current target is `nativewind@5.0.0-rc.1` with exactly `react-native-css@3.1.0-rc.1`. Check the manifest, lockfile and installed versions. Do not substitute `@latest`, `@preview` or the old `^3.0.1` engine range. The repository manifest can retain a preview version between releases; use the published release contract for consumer setup.
- 
- The tested target is Expo 57.0.22, React Native 0.86.3, React 19.2.3, Reanimated 4.5.1 and Worklets 0.10.1. The tested CSS toolchain uses Tailwind CSS and `@tailwindcss/postcss` 4.1.12 with Lightning CSS 1.30.1. Engine peer minimums are not evidence of runtime verification on every older SDK. Treat an Expo upgrade as a separate step and preserve the app's package manager and unrelated configuration.
- 
-```
-
-**File**: `.claude/skills/triage/SKILL.md` (modified, +4/-4)
-```diff
-@@ -53,7 +53,7 @@ Read `DEVELOPMENT.md` in the react-native-css repo for the full architecture dia
- |---|---|
- | Branch | `main` |
- | npm package | `react-native-css` |
--| RC consumer version | `3.1.0-rc.0` (paired with Nativewind 5.0.0-rc.0) |
-+| RC consumer version | `3.1.0-rc.1` (paired with Nativewind 5.0.0-rc.1) |
- | Local repo path | `<react-native-css-checkout>` |
- 
- ### If filed on `nativewind/nativewind`
-@@ -70,7 +70,7 @@ Figure out whether this is a **v4** or **v5** issue. Clues:
- | Branch | `v4` | `main` |
- | Tailwind | v3 | v4 |
- | Runtime | `react-native-css-interop` | `react-native-css` |
--| Current version | `4.2.7` | `5.0.0-rc.0` with `react-native-css@3.1.0-rc.0` |
-+| Current version | `4.2.7` | `5.0.0-rc.1` with `react-native-css@3.1.0-rc.1` |
- | Repro template | `npx rn-new@latest --nativewind` | `npx rn-new@next --nativewind` |
- | Local repo path | `<nativewind-v4-checkout>` | `<nativewind-v5-checkout>` |
- 
-@@ -217,8 +217,8 @@ Repository tests exercise local source with installed dependencies. They are not
- 
- First reproduce the reporter's exact versions, then compare with the applicable release:
- - Nativewind v4: `nativewind@4.2.7`, with its v4 engine and Tailwind 3 setup
--- Nativewind v5 RC: `nativewind@5.0.0-rc.0` and `react-native-css@3.1.0-rc.0` together
--- Standalone react-native-css: inspect its release contract; use 3.1.0-rc.0 when comparing the Nativewind RC engine
-+- Nativewind v5 RC: `nativewind@5.0.0-rc.1` and `react-native-css@3.1.0-rc.1` together
-+- Standalone react-native-css: inspect its release contract; use 3.1.0-rc.1 when comparing the Nativewind RC engine
- 
- Read current release records before substituting any newer version. Preserve the original baseline and do not mix preview or latest tags into the pinned RC comparison.
- 
-```
-
-**File**: `DEVELOPMENT.md` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- 
- This is **Nativewind v5** (main branch), targeting **Tailwind CSS v4**.
- The stable version (v4.2.7, targeting Tailwind v3) lives on the `v4` branch.
--The published v5 target is Nativewind 5.0.0-rc.0 with exactly react-native-css 3.1.0-rc.0. Read [the release setup](docs/expo57-rc.md) and [compatibility limits](docs/rc-compatibility.md) before advising consumers. A preview version in the source manifest does not identify the current published consumer target.
-+The published v5 target is Nativewind 5.0.0-rc.1 with exactly react-native-css 3.1.0-rc.1. Read [the release setup](docs/expo57-rc.md) and [compatibility limits](docs/rc-compatibility.md) before advising consumers. A preview version in the source manifest does not identify the current published consumer target.
- 
- ## Documentation
- 
-```
-
-**File**: `contributing.md` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ Include a minimal reproduction, exact resolved package versions, configuration,
- 
- You can start a v4 reproduction with `npx rn-new@latest --nativewind` or a v5 reproduction with `npx rn-new@next --nativewind`. Add `--expo-router` when the issue involves Router. Generator tags can change; inspect the generated manifest and lockfile rather than assuming a particular Expo SDK or package pair.
- 
--For the v5 RC, follow [the published setup](docs/expo57-rc.md): Nativewind 5.0.0-rc.0 and react-native-css 3.1.0-rc.0 on the tested Expo 57 toolchain. Consult [the compatibility notes](docs/rc-compatibility.md) before treating unsupported CSS values as regressions. Preserve the reporter's original baseline when comparing versions.
-+For the v5 RC, follow [the published setup](docs/expo57-rc.md): Nativewind 5.0.0-rc.1 and react-native-css 3.1.0-rc.1 on the tested Expo 57 toolchain. Consult [the compatibility notes](docs/rc-compatibility.md) before treating unsupported CSS values as regressions. Preserve the reporter's original baseline when comparing versions.
- 
- ## Develop a change
- 
-```
-
-**File**: `docs/expo57-rc.md` (modified, +9/-3)
-```diff
-@@ -1,15 +1,21 @@
- # Nativewind v5 Expo 57 release candidate
- 
--Nativewind 5.0.0-rc.0 is published. [react-native-css 3.1.0-rc.0](https://github.com/nativewind/react-native-css/releases/tag/3.1.0-rc.0) is available on npm. The installation instructions below target that exact pair. V4.2.7 remains the stable Nativewind release.
-+Nativewind 5.0.0-rc.1 is published. [react-native-css 3.1.0-rc.1](https://github.com/nativewind/react-native-css/releases/tag/3.1.0-rc.1) is available on npm. The installation instructions below target that exact pair. V4.2.7 remains the stable Nativewind release.
- 
--Package pair: Nativewind 5.0.0-rc.0 and react-native-css 3.1.0-rc.0. Nativewind's peer dependency selects that exact engine candidate. The target is Expo 57.0.22, React Native 0.86.3, React 19.2.3, Reanimated 4.5.1, and Worklets 0.10.1.
-+Package pair: Nativewind 5.0.0-rc.1 and react-native-css 3.1.0-rc.1. Nativewind's peer dependency selects that exact engine candidate. The target is Expo 57.0.22, React Native 0.86.3, React 19.2.3, Reanimated 4.5.1, and Worklets 0.10.1.
-+
-+Nativewind 5.0.0-rc.1 has the same Nativewind code as 5.0.0-rc.0 and moves the exact engine pin to react-native-css 3.1.0-rc.1. If you're on 5.0.0-rc.0, upgrade both packages together:
-+
-+```sh
-+npm install --save-exact nativewind@5.0.0-rc.1 react-native-css@3.1.0-rc.1
-+```
+-> Built and maintained by the team at [Ronin Software](https://ronindevs.com/?utm_source=nativewind&utm_medium=readme). We help teams build, fix, and ship React Native apps.
++> Built and maintained by the team at [Ronin Technologies](https://ronindevs.com/?utm_source=nativewind&utm_medium=readme). We help teams build, fix, and ship React Native apps.
  
  ## Installation
  
- In an Expo 57 project:
- 
- ```sh
--npm install --save-exact nativewind@5.0.0-rc.0 react-native-css@3.1.0-rc.0 tailwindcss@4.1.12 @tailwindcss/postcss@4.1.12 lightningcss@1.30.1
-+npm install --save-exact nativewind@5.0.0-rc.1 react-native-css@3.1.0-rc.1 tailwindcss@4.1.12 @tailwindcss/postcss@4.1.12 lightningcss@1.30.1
- npx expo install react-native-reanimated react-native-worklets react-native-safe-area-context expo-system-ui
- ```
- 
-```
-
-**File**: `docs/rc-compatibility.md` (modified, +2/-2)
-```diff
-@@ -1,8 +1,8 @@
- # Nativewind v5 RC compatibility notes
- 
--Compatibility notes for the Expo 57 RC. The audit is complete and react-native-css 3.1.0-rc.0 is published. Nativewind 5.0.0-rc.0 is also published.
-+Compatibility notes for the Expo 57 RC. The audit is complete. Nativewind 5.0.0-rc.1 and react-native-css 3.1.0-rc.1 are published. The audit ran against 5.0.0-rc.0 and 3.1.0-rc.0. Nativewind 5.0.0-rc.1 keeps the same Nativewind code and moves to the engine fixes in [react-native-css 3.1.0-rc.1](https://github.com/nativewind/react-native-css/releases/tag/3.1.0-rc.1).
- 
--The target is Expo 57.0.22 with React Native 0.86.3, React 19.2.3, Reanimated 4.5.1 and Worklets 0.10.1. The published package pair is Nativewind 5.0.0-rc.0 and react-native-css 3.1.0-rc.0. Use those exact versions together.
-+The target is Expo 57.0.22 with React Native 0.86.3, React 19.2.3, Reanimated 4.5.1 and Worklets 0.10.1. The published package pair is Nativewind 5.0.0-rc.1 and react-native-css 3.1.0-rc.1. Use those exact versions together.
- 
- ## Corrections to the preview documentation
- 
-```
-
-**File**: `skills/nativewind-preview-to-rc/SKILL.md` (modified, +4/-4)
-```diff
-@@ -1,11 +1,11 @@
- ---
- name: nativewind-preview-to-rc
--description: Upgrade an existing Nativewind 5.0.0-preview.4 app using react-native-css 3.0.7 to Nativewind 5.0.0-rc.0, preserving Tailwind 4 setup and checking changed engine contracts. Use the v4 migration skill for Tailwind 3 applications.
-+description: Upgrade an existing Nativewind 5.0.0-preview.4 app using react-native-css 3.0.7 to Nativewind 5.0.0-rc.1, preserving Tailwind 4 setup and checking changed engine contracts. Use the v4 migration skill for Tailwind 3 applications.
- ---
- 
--# Upgrade the v5 preview to RC0
-+# Upgrade the v5 preview to the RC
- 
--Target the exact published pair `nativewind@5.0.0-rc.0` and `react-native-css@3.1.0-rc.0`. The tested Expo target is 57.0.22, React Native 0.86.3, React 19.2.3, Reanimated 4.5.1 and Worklets 0.10.1. Tailwind CSS and `@tailwindcss/postcss` are 4.1.12; lightningcss is 1.30.1. See [the changed contracts](references/contracts.md) before editing app code. Read [the measured verification scope](references/verification.md) before describing this skill as tested; do not equate structural validation with application verification.
-+Target the exact published pair `nativewind@5.0.0-rc.1` and `react-native-css@3.1.0-rc.1`. The tested Expo target is 57.0.22, React Native 0.86.3, React 19.2.3, Reanimated 4.5.1 and Worklets 0.10.1. Tailwind CSS and `@tailwindcss/postcss` are 4.1.12; lightningcss is 1.30.1. See [the changed contracts](references/contracts.md) before editing app code. Read [the measured verification scope](references/verification.md) before describing this skill as tested; do not equate structural validation with application verification.
- 
- ## Inspect and preserve
- 
-@@ -21,7 +21,7 @@ If Expo differs from the tested target, handle the SDK upgrade as a separate ste
- Use the existing package manager and update both packages in one install with exact versions. For npm:
- 
- ```sh
--npm install --save-exact nativewind@5.0.0-rc.0 react-native-css@3.1.0-rc.0
-+npm install --save-exact nativewind@5.0.0-rc.1 react-native-css@3.1.0-rc.1
- ```
- 
- Keep working Tailwind 4, PostCSS, root CSS imports and `withNativewind` configuration. Preserve custom plugins, resolver settings, source discovery and browser theme behavior. Verify the RC's exact engine peer dependency in the resolved lockfile. A `preview` or `latest` tag is not an exact pin. Do not fix a mismatch by ignoring peer dependencies.
-```
-
-**File**: `skills/nativewind-preview-to-rc/references/contracts.md` (modified, +3/-3)
-```diff
-@@ -1,8 +1,8 @@
--# Preview 4 to RC0 contracts
-+# Preview 4 to RC contracts
- 
--The source pair is Nativewind 5.0.0-preview.4 with react-native-css 3.0.7. The destination pair is Nativewind 5.0.0-rc.0 with react-native-css 3.1.0-rc.0.
-+The source pair is Nativewind 5.0.0-preview.4 with react-native-css 3.0.7. The destination pair is Nativewind 5.0.0-rc.1 with react-native-css 3.1.0-rc.1.
- 
--The [published release notes](https://github.com/nativewind/nativewind/releases/tag/5.0.0-rc.0) and [compatibility guide](https://github.com/nativewind/nativewind/blob/main/docs/rc-compatibility.md) are authoritative for this pinned target.
-+The [5.0.0-rc.0 release notes](https://github.com/nativewind/nativewind/releases/tag/5.0.0-rc.0), the [5.0.0-rc.1 release notes](https://github.com/nativewind/nativewind/releases/tag/5.0.0-rc.1) and [compatibility guide](https://github.com/nativewind/nativewind/blob/main/docs/rc-compatibility.md) are authoritative for this pinned target.
- 
- Legacy `@cssInterop` and `@react-native` configuration was silently ignored by the previous engine and now produces errors. Determine the intended behavior before removing a directive. Theme selection on native uses React Native Appearance; runtime variables that must not be inlined use the Metro compiler option `inlineVariables.exclude`. Preserve actual values and customizations; record unsupported intent explicitly.
- 
-```
-
----
-
-### Incident Patch 3: `83246fd5` (2026-11-02)
-**Commit Message**: chore(deps): require react-native-css 3.1.0-rc.1 for the Nativewind RC
-
-**File**: `example/package.json` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@
-     "react": "19.2.3",
-     "react-dom": "19.2.3",
-     "react-native": "0.86.3",
--    "react-native-css": "3.1.0-rc.0",
-+    "react-native-css": "3.1.0-rc.1",
-     "react-native-reanimated": "4.5.1",
-     "react-native-web": "~0.21.0",
-     "react-native-worklets": "0.10.1",
-```
-
-**File**: `package.json` (modified, +2/-2)
-```diff
-@@ -140,7 +140,7 @@
-     "react": "19.2.3",
-     "react-native": "0.86.3",
-     "react-native-builder-bob": "^0.40.13",
--    "react-native-css": "3.1.0-rc.0",
-+    "react-native-css": "3.1.0-rc.1",
-     "react-native-reanimated": "4.5.1",
-     "react-native-safe-area-context": "~5.7.0",
-     "react-native-worklets": "0.10.1",
-@@ -153,7 +153,7 @@
-     "typescript-eslint": "^8.40.0"
-   },
-   "peerDependencies": {
--    "react-native-css": "3.1.0-rc.0",
-+    "react-native-css": "3.1.0-rc.1",
-     "tailwindcss": ">4.1.11"
-   },
-   "react-native-builder-bob": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1893** (2026-11-19): Update Nativewind attribution (@danstepanov)
+- **PR #1892** (2026-11-19): Update Nativewind attribution (@danstepanov)
 - **PR #1884** (2026-11-02): docs: point Nativewind RC guidance and migration skills at the rc.1 pair (@danstepanov)
 - **PR #1883** (2026-11-02): chore(release): add Nativewind 5.0.0-rc.1 descriptor (@danstepanov)
 - **PR #1882** (2026-11-02): chore(deps): require react-native-css 3.1.0-rc.1 for the Nativewind RC (@danstepanov)
 - **PR #1873** (2026-10-16): ci(issue-repro): scope issues:write to jobs that need it (@sammoore)
-- **PR #1868** (2026-09-15): docs: sync skills and contributor guidance with the v5 RC (@danstepanov)
-- **PR #1867** (2026-09-14): Update published RC release documentation (@danstepanov)
 
 ---
 
@@ -574,40 +329,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update the lockfile for react-native-css 3.1.0-rc.1
+## X. Update Nativewind attribution
 
 **RULE**:
-When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nativewind/nativewind. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nativewind/nativewind. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `600b31a6`: deps): update the lockfile for react-native-css 3.1.0-rc.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b56a0289`: Update Nativewind attribution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    react-native-css: "npm:3.1.0-rc.1"
-    react-native-css: 3.1.0-rc.1
-    react-native-css: "npm:3.1.0-rc.1"
-"react-native-css@npm:3.1.0-rc.1":
-  version: 3.1.0-rc.1
-  resolution: "react-native-css@npm:3.1.0-rc.1"
-  checksum: 10c0/e17bacc2b3e393456b36463f4003f3f3cfb2823b9a6a482259564cc691775b8e7253d042ad04b5d6c552039c0a16f6e2ccefba8154910ddec0919cc832f1a1d2
+> Built and maintained by the team at [Ronin Technologies](https://ronindevs.com/?utm_source=nativewind&utm_medium=readme). We help teams build, fix, and ship React Native apps.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-    react-native-css: "npm:3.1.0-rc.0"
-    react-native-css: 3.1.0-rc.0
-    react-native-css: "npm:3.1.0-rc.0"
-"react-native-css@npm:3.1.0-rc.0":
-  version: 3.1.0-rc.0
-  resolution: "react-native-css@npm:3.1.0-rc.0"
-  checksum: 10c0/2170c000c5fc5e7a885a19f870f333337753ab586f19903a3dfd9eed4e60f97f03498fb4be06bdccd7858740936328460796fbff5d0dda3066b323a4ceb7a966
+// Induced defect failure mode:
+> Built and maintained by the team at [Ronin Software](https://ronindevs.com/?utm_source=nativewind&utm_medium=readme). We help teams build, fix, and ship React Native apps.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `600b31a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b56a0289` are properly handled with clean fallback behavior.

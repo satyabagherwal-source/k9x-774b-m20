@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T23:55:47.396Z",
-  "total_cycles_completed": 11364,
-  "total_learnings_persisted": 11364,
-  "total_rules_promoted": 10680,
+  "last_updated": "2026-11-22T00:09:53.073Z",
+  "total_cycles_completed": 11366,
+  "total_learnings_persisted": 11366,
+  "total_rules_promoted": 10681,
   "history": [
-    {
-      "timestamp": "2026-11-21T04:20:35.698Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T04:39:06.628Z",
-      "repository": "kirillzyusko/react-native-keyboard-controller",
-      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T04:39:08.805Z",
       "repository": "meshery/meshery",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T00:09:47.071Z",
+      "repository": "xiaomi-research/Xiaomi-OCR-0",
+      "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T00:09:53.073Z",
+      "repository": "nativewind/nativewind",
+      "learningId": "learn-github-nativewind-nativewind",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

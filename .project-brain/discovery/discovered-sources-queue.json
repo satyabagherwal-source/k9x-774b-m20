@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T23:47:52.499Z",
+  "updated_at": "2026-11-22T00:09:59.645Z",
   "stats": {
-    "total_discovered": 7385,
-    "approved_pending_harvest": 6986,
+    "total_discovered": 7390,
+    "approved_pending_harvest": 6991,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6966,
+      "COMMUNITY_AND_EXPERT": 6971,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -159700,6 +159700,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
         "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-0FCEB8B43AF9": {
+      "id": "SRC-0FCEB8B43AF9",
+      "url": "https://github.com/nativewind/nativewind",
+      "title": "https://github.com/nativewind/nativewind",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T00:09:59.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
+        "fileName": "nativewind-nativewind-learnings.md"
+      }
+    },
+    "SRC-C00A4AA87CB5": {
+      "id": "SRC-C00A4AA87CB5",
+      "url": "https://prettier.io/docs/en/configuration.html",
+      "title": "https://prettier.io/docs/en/configuration.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T00:09:59.496Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
+        "fileName": "nativewind-nativewind-learnings.md"
+      }
+    },
+    "SRC-1AAC16048646": {
+      "id": "SRC-1AAC16048646",
+      "url": "https://stackblitz.com/edit/nativewind-test-vfyfwd?file=nativewind.test.tsx",
+      "title": "https://stackblitz.com/edit/nativewind-test-vfyfwd?file=nativewind.test.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T00:09:59.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
+        "fileName": "nativewind-nativewind-learnings.md"
+      }
+    },
+    "SRC-DA4020B2E19E": {
+      "id": "SRC-DA4020B2E19E",
+      "url": "https://github.com/user-attachments/assets/43ddd323-9cb6-438c-8cb9-50c876b43bf2",
+      "title": "https://github.com/user-attachments/assets/43ddd323-9cb6-438c-8cb9-50c876b43bf2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T00:09:59.595Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
+        "fileName": "nativewind-nativewind-learnings.md"
+      }
+    },
+    "SRC-40901A74A1AB": {
+      "id": "SRC-40901A74A1AB",
+      "url": "https://ronindevs.com/",
+      "title": "https://ronindevs.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T00:09:59.645Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
+        "fileName": "nativewind-nativewind-learnings.md"
       }
     }
   }

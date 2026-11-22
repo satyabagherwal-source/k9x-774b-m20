@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-KY3H",
-    "timestamp": "2026-11-19T21:08:10.013Z",
-    "repository": "herdrdev/herdr",
-    "learningId": "learn-github-herdrdev-herdr",
-    "contentHash": "e1984438b74ad738167ef692c08f1aa11c235378bad58e5c2bed9e96b83e5d4f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-L2DL",
-    "timestamp": "2026-11-19T21:08:15.561Z",
-    "repository": "jacklandrin/OnlySwitch",
-    "learningId": "learn-github-jacklandrin-onlyswitch",
-    "contentHash": "185b64a2b7074aa88f696b7df84b3687589be66e0d1fe6ca05f19b08614dc7e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-L4KJ",
     "timestamp": "2026-11-19T21:08:18.403Z",
     "repository": "okteto/okteto",
@@ -7492,6 +7462,36 @@
     "contentHash": "b0c6615f858f3b5aaa9b069eb32b9aaa014182d266f7bf0a8e010bb64bb529a0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-Y7N9",
+    "timestamp": "2026-11-22T00:09:47.061Z",
+    "repository": "xiaomi-research/Xiaomi-OCR-0",
+    "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+    "contentHash": "43186978e3ba6532c8edf2369cff9642a144f577b9b2f512cb53696ba1ff35d0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-YCA0",
+    "timestamp": "2026-11-22T00:09:53.064Z",
+    "repository": "nativewind/nativewind",
+    "learningId": "learn-github-nativewind-nativewind",
+    "contentHash": "5fb62de7c7c845ca32b4a7c645477a3feacfb25e2ef53e122831c85a74309e79",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

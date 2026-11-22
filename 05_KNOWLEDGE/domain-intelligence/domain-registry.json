@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T23:56:19.868Z",
-  "total_records": 2304,
+  "last_updated": "2026-11-22T00:10:01.041Z",
+  "total_records": 2306,
   "domains": {
     "A": {
       "total": 17,
@@ -1072,7 +1072,7 @@
       ]
     },
     "G": {
-      "total": 386,
+      "total": 388,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1459,7 +1459,9 @@
         "domain_intelligence-architecture-intelligence-pubkey-rxdb-core-invariants",
         "domain_intelligence-architecture-intelligence-pubkey-rxdb-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants",
-        "domain_intelligence-architecture-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core-invar"
+        "domain_intelligence-architecture-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core-invar",
+        "domain_intelligence-architecture-intelligence-nativewind-nativewind-core-invariants",
+        "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8119,8 +8121,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "5885960e39cd0fe0fa08dc0da2660cd3870a607666abac1bc55c400575e8a9b0",
-      "created_at": "2026-11-21T21:58:04.167Z"
+      "content_hash": "483ef90c60cc21c9630b642b488b6c409a2412851a5642d4881bdc3acbe83105",
+      "created_at": "2026-11-22T00:10:01.041Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -21102,8 +21104,8 @@
       "title": "Research & Knowledge Intelligence: xiaomi-research/Xiaomi-OCR-0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomi-research-xiaomi-ocr-0-research-knowledge-intelligence-xiaomi-research-.md",
       "repository": "xiaomi-research/Xiaomi-OCR-0",
-      "content_hash": "1572b8dead618391b88e02299ac2c536d21aacd4145dc9f9f0a55accdc881fa4",
-      "created_at": "2026-11-15T11:12:32.778Z"
+      "content_hash": "084a750e4b3508d3a478c14a8c80803416c6a01da19e43ef34f5d9cf9cae6333",
+      "created_at": "2026-11-22T00:09:47.270Z"
     },
     "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-core-invariants",
@@ -21222,8 +21224,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomi-research-xiaomi-ocr-0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomi-research-xiaomi-ocr-0-learnings-research-knowledge-intelligence-hf-xia.md",
       "repository": "hf-xiaomi-research-xiaomi-ocr-0-learnings",
-      "content_hash": "0daf57f97b09d992b9ca2539584c53d3658f7ccb76061d9de546492dcea19d18",
-      "created_at": "2026-11-15T11:13:55.239Z"
+      "content_hash": "c8be26a6c75e9309724ad22168f82b531811b85be24ed21c14fb86e34ec5584a",
+      "created_at": "2026-11-22T00:09:59.231Z"
     },
     "DOM-D-F3C32546": {
       "record_id": "DOM-D-F3C32546",
@@ -38839,6 +38841,24 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-21T23:56:17.616Z"
+    },
+    "domain_intelligence-architecture-intelligence-nativewind-nativewind-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nativewind-nativewind-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nativewind/nativewind Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativewind-nativewind-architecture-intelligence-nativewind-nativewind-core-invar.md",
+      "repository": "nativewind/nativewind",
+      "content_hash": "b28a5362bc1ea52384da96dcd17a8a33ac44459b3d064c713fb479ad4b96c50f",
+      "created_at": "2026-11-22T00:09:53.437Z"
+    },
+    "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nativewind-nativewind-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativewind-nativewind-learnings-architecture-intelligence-nativewind-nativewind-.md",
+      "repository": "nativewind-nativewind-learnings",
+      "content_hash": "682de2f7fc5b3b823c3d24a9ddd41d06aabdb3b928d7fdaf41b04db3b0b98ccf",
+      "created_at": "2026-11-22T00:10:00.006Z"
     }
   }
 }
