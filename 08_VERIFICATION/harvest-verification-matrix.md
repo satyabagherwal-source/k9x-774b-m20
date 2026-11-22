@@ -12206,3 +12206,6 @@
 | `CYCLE-20261122-D87M` | `2026-11-22T21:49:09.970Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`f56b473a...`) |
 | `CYCLE-20261122-N7TV` | `2026-11-22T21:56:56.035Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`8cc5e186...`) |
 | `CYCLE-20261122-NGZ7` | `2026-11-22T21:57:07.891Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9998` | Yes (`5abeb9d6...`) |
+| `CYCLE-20261122-ZA6I` | `2026-11-22T22:06:18.954Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`ebe10e83...`) |
+| `CYCLE-20261122-ZBIR` | `2026-11-22T22:06:20.691Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9999` | Yes (`568d2296...`) |
+| `CYCLE-20261122-ZJUG` | `2026-11-22T22:06:31.480Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`b33c024c...`) |

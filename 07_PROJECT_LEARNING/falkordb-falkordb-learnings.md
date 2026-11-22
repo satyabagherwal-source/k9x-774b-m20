@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `b65fcac0`  
+> **Source Version**: `41d2f20c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T00:33:13.758Z  
+> **Timestamp**: 2026-11-22T22:06:19.335Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T00:33:13.542Z  
+> **Harvest Timestamp**: 2026-11-22T22:06:19.326Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10504 stars
+- **Stars / Engagement**: 10501 stars
 
 ---
 
@@ -822,65 +822,25 @@ mod tests {
             "DEP_Z_INCLUD
 ```
 
-### Core Architecture Module: `proofs/runtime_core/repro_3439.py`
+### Core Architecture Module: `proofs/runtime_core/repro_limit.py`
 ```
-"""Live repro for #3439 (RuntimeCore.Proto.writer_reply_race, pre-existing on main).
+"""Live repro for runtime_core B1/B2 (Budget.hard_cap_unsound_*): `record_cap` used as a hard stop.
 
-Usage: python repro_3439.py PORT SECONDS N_QUEUED_WRITERS N_INLINE_FAILING_WRITERS N_READERS
-Setup first: GRAPH.QUERY g "CREATE INDEX FOR (n:L) ON (n.v)".
-`repro_3439.py P 60 2 1 0` crashes the Rust server ("already immutably borrowed" in
-Pending::resync_published_indexes); C survives. `repro_3439.py P 60 0 2 6` exercises
-resync against PR #3436 read guards (no panic expected).
+Usage: python repro_limit.py PORT   (server with the Rust module, then again with the C module)
+Re-run on main 256ab4d3f: Rust [] / [] / [], C [[2]] / [[30]] / [[20]].
 """
-import sys, threading, time, redis
-port = int(sys.argv[1]); dur = float(sys.argv[2])
-stop = time.time() + dur
-stats = {"w1": 0, "w2": 0, "rd": 0, "err": [], "w1_bad": 0}
-lock = threading.Lock()
-def note(k, e=None):
-    with lock:
-        if e is None: stats[k] += 1
-        else:
-            if len(stats["err"]) < 20: stats["err"].append(f"{k}: {e!r}"[:300])
-def w1():
-    r = redis.Redis(port=port, socket_timeout=30)
-    while time.time() < stop:
-        try:
-            res = r.execute_command("GRAPH.QUERY", "g", "CREATE (x:Q {p0:0, p1:1, p2:2, p3:3, p4:4, p5:5, p6:6, p7:7, p8:8, p9:9, p10:10, p11:11, p12:12, p13:13, p14:14, p15:15, p16:16, p17:17, p18:18, p19:19, p20:20, p21:21, p22:22, p23:23, p24:24, p25:25, p26:26, p27:27, p28:28, p29:29, p30:30, p31:31, p32:32, p33:33, p34:34, p35:35, p36:36, p37:37, p38:38, p39:39, p40:40, p41:41, p42:42, p43:43, p44:44, p45:45, p46:46, p47:47, p48:48, p49:49, p50:50, p51:51, p52:52, p53:53, p54:54, p55:55, p56:56, p57:57, p58:58, p59:59, p60:60, p61:61, p62:62, p63:63, p64:64, p65:65, p66:66, p67:67, p68:68, p69:69, p70:70, p71:71, p72:72, p73:73, p74:74, p75:75, p76:76, p77:77, p78:78, p79:79, p80:80, p81:81, p82:82, p83:83, p84:84, p85:85, p86:86, p87:87, p88:88, p89:89, p90:90, p91:91, p92:92, p93:93, p94:94, p95:95, p96:96, p97:97, p98:98, p99:99, p100:100, p101:101, p102:102, p103:103, p104:104, p105:105, p106:106, p107:107, p108:108, p109:109, p110:110, p111:111, p112:112, p113:113, p114:114, p115:115, p116:116, p117:117, p118:118, p119:119, p120:120, p121:121, p122:122, p123:123, p124:124, p125:125, p126:126, p127:127, p128:128, p129:129, p130:130, p131:131, p132:132, p133:133, p134:134, p135:135, p136:136, p137:137, p138:138, p139:139, p140:140, p141:141, p142:142, p143:143, p144:144, p145:145, p146:146, p147:147, p148:148, p149:149, p150:150, p151:151, p152:152, p153:153, p154:154, p155:155, p156:156, p157:157, p158:158, p159:159, p160:160, p161:161, p162:162, p163:163, p164:164, p165:165, p166:166, p167:167, p168:168, p169:169, p170:170, p171:171, p172:172, p173:173, p174:174, p175:175, p176:176, p177:177, p178:178, p179:179, p180:180, p181:181, p182:182, p183:183, p184:184, p185:185, p186:186, p187:187, p188:188, p189:189, p190:190, p191:191, p192:192, p193:193, p194:194, p195:195, p196:196, p197:197, p198:198, p199:199, p200:200, p201:201, p202:202, p203:203, p204:204, p205:205, p206:206, p207:207, p208:208, p209:209, p210:210, p211:211, p212:212, p213:213, p214:214, p215:215, p216:216, p217:217, p218:218, p219:219, p220:220, p221:221, p222:222, p223:223, p224:224, p225:225, p226:226, p227:227, p228:228, p229:229, p230:230, p231:231, p232:232, p233:233, p234:234, p235:235, p236:236, p237:237, p238:238, p239:239, p240:240, p241:241, p242:242, p243:243, p244:244, p245:245, p246:246, p247:247, p248:248, p249:249, p250:250, p251:251, p252:252, p253:253, p254:254, p255:255, p256:256, p257:257, p258:258, p259:259, p260:260, p261:261, p262:262, p263:263, p264:264, p265:265, p266:266, p267:267, p268:268, p269:269, p270:270, p271:271, p272:272, p273:273, p274:274, p275:275, p276:276, p277:277, p278:278, p279:279, p280:280, p281:281, p282:282, p283:283, p284:284, p285:285, p286:286, p287:287, p288:288, p289:289, p290:290, p291:291, p292:292, p293:293, p294:294, p295:295, p296:296, p297:297, p298:298, p299:299}) WITH x UNWIND range(1,3000) AS i RETURN x")
-            note("w1")
-        except Exception as e:
-            note("w1_err", e); stats["w1_bad"] += 1
-def w2():
-    r = redis.Redis(port=port, socket_timeout=30)
-    i = 0
-    while time.time() < stop:
-        i += 1
-        try:
-            p = r.pipeline(transaction=True)
-            p.execute_command("GRAPH.QUERY", "g", f"CREATE (n:L {{v: {i}}}) WITH n RETURN 1/0")
-            res = p.execute(raise_on_error=False)
-            if isinstance(res[0], Exception) and "Division by zero" in str(res[0]): note("w2")
-            else: note("w2_err", res[0])
-        except redis.ResponseError as e:
-            if "Division by zero" in str(e): note("w2")
-            else: note("w2_err", e)
-        except Exception as e:
-            note("w2_err", e)
-def rd():
-    r = redis.Redis(port=port, socket_timeout=30)
-    while time.time() < stop:
-        try:
-            r.execute_command("GRAPH.RO_QUERY", "g", "MATCH (n:L) WHERE n.v > 0 RETURN count(n)")
-            r.execute_command("GRAPH.RO_QUERY", "g", "MATCH (x:Q) RETURN x.p, labels(x) LIMIT 2000")
-            note("rd")
-        except Exception as e:
-            note("rd_err", e)
-ts = [threading.Thread(target=w1) for _ in range(int(sys.argv[3]))] + [threading.Thread(target=w2) for _ in range(int(sys.argv[4]))] + [threading.Thread(target=rd) for _ in range(int(sys.argv[5]))]
-for t in ts: t.start()
-for t in ts: t.join()
-print(stats)
-try: print("ping", redis.Redis(port=port, socket_timeout=5).ping())
-except Exception as e: print("ping failed", e)
+import sys, redis
+r = redis.Redis(port=int(sys.argv[1]))
+q = lambda s: r.execute_command("GRAPH.QUERY", "g", s)
+r.delete("g")
+q("CREATE (a1:A {id:1}), (b1:B {id:10}), (a2:A {id:2}), (b2:B {id:20}), (a1)-[:R]->(b1), (a2)-[:R]->(b2), (b2)-[:R]->(a2)")
+print("B1a", q("MATCH (a:A)-[:R]->(b)-[:R]->(a) RETURN a.id LIMIT 1")[1])
+r.delete("g")
+q("CREATE (a1:A {id:1}), (b1:B {id:10}), (a2:A {id:2}), (b2:B {id:20}), (c:C {id:30}), (a1)-[:R]->(b1), (a2)-[:R]->(b2), (b2)-[:R]->(c)")
+print("B1b", q("MATCH (a:A)-[:R]->(b)-[:R]->(c) RETURN c.id LIMIT 1")[1])
+r.delete("g")
+q("CREATE (a1:A {id:1}), (b1:B {id:10}), (a2:A {id:2}), (b2:B {id:20}), (a1)-[:R]->(b1), (a2)-[:R]->(b2)")
+print("B2", q("MATCH (a:A)-[:R]->(b) WITH b SKIP 0 RETURN b.id SKIP 1 LIMIT 1")[1])
 
 ```
 
@@ -1258,1388 +1218,1019 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59764075` (2026-11-19)
-**Commit Message**: fix(telemetry): keep telemetry streams node-local and strip them from snapshots (Rust port of #3759) (#3844)
+### Incident Patch 1: `d070f1f9` (2026-11-22)
+**Commit Message**: fix: GRAPH.DELETE of indexed graphs corrupts RediSearch's shared N/A key (#3483) (#3511)
 
-* fix(telemetry): keep telemetry streams node-local and strip them from snapshots
+* fix: GRAPH.DELETE of indexed graphs corrupts RediSearch's shared N/A key (#3483)
 
-Port of #3759 (C, master) to the Rust engine, for #3723.
+graph_free drops a graph on a new thread with no GIL, and SpecHandle::drop
+calls RediSearch_DropIndex without it (#726). At ea1a6f4 that path frees
+RediSearch's process-global NA_rstr (IndexError_Clear), while the main thread
+holds it for every index it creates. The refcount is not atomic, so updates
+are lost, the key is freed while indexes still point at it, and a later free
+crashes the server in RM_FreeString.
 
-Each node now logs the queries it serves its own clients: a replica logs
-its reads instead of logging nothing. The writes were already
-unreplicated key-API writes, so the flusher's replica discard and its
-hold through a replica pause are removed.
+Move deps/RediSearch to FalkorDB/RediSearch#29, where index errors borrow
+NA_rstr instead of refcounting it and the GC stop of a dropped index runs on
+the main thread. Correct the comments that said the drop thread takes the GIL.
 
-Queries a node did not serve are not logged: `dispatch::logs_telemetry`
-leaves out commands received from the master and commands replayed
-while loading.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-The streams are kept out of every snapshot. The persistence-start
-handler deletes each registered graph's stream on all four start
-subevents: in the fork child of a BGSAVE, diskless sync or AOF rewrite
-only the child's copy goes; a synchronous SAVE or DEBUG RELOAD drops
-the live stream. This is what stops the consumer-group cursor Redis
-replicates for a stream from reaching an RDB in a state the loader
-rejects.
+* docs: correct comments that misstate which locks are held
 
-A graph takes its stream with it when its key is freed (DEL, UNLINK,
-expiry, eviction, overwrite), in the same callback, so no sav
+Index teardown takes no GIL (SpecHandle/OwnedIndex drop); there is no GIL
+lock-order assertion; ForkGC holds only the GIL across fork(); no Drop impl
+consults is_main_thread; the replica CREATE INDEX path is the async one.
+Found by the RediSearch LLAPI thread audit
 
-**File**: `proofs/graph_persist/COVERAGE.tsv` (modified, +27/-27)
+**File**: `deps/RediSearch` (modified, +1/-1)
 ```diff
-@@ -16,32 +16,32 @@ graph/src/graph/graphblas/serialization.rs	encode	178	PROVEN	Layout.roaring_roun
- graph/src/graph/graphblas/serialization.rs	encode_with_range	185	PROVEN	Layout.chunkType_covers (slice partition) + roaring_roundtrip; #3438's select/advance_to/take seek = skip/take: PendingCommit SaveLayout.encRoarP
- graph/src/graph/graphblas/serialization.rs	decode	206	PROVEN	Layout.roaring_roundtrip, encoded_len_mult8 (length check never rejects own output)
- graph/src/graph/graphblas/serialization.rs	decode_with_count	227	PROVEN	Layout.roaring_roundtrip; count check (#2996: try_from + checked_mul): countCheck_in_bounds (every bytes[i*8..(i+1)*8] in range), countCheck_own; before #2996 a count of 2^61 matched an empty buffer
--src/redis_type.rs	io_cache_size	71	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
--src/redis_type.rs	io_key_name	86	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
--src/redis_type.rs	graph_rdb_load	99	PROVEN	RedisType.loadWhole/loadPartial: load_main_last, load_main_first (registry Arc = key value = finished graph, no vkey registered, any key order); decoder Persist.multi_load; cacheOnLoad: cache_size_on_load (W5-rdb-1 fixed by #3262 361f62ac1)
--src/redis_type.rs	graph_rdb_save	189	PROVEN	RedisType.rdbSave (= saveKeySlice.getD whole): save_main, save_vkey (slice i, key_count K), save_single
--src/redis_type.rs	save_key_slice	213	PROVEN	RedisType.saveKeySlice: save_main, save_vkey, save_single, metaSave_of_slice (VKEY_STATE/GRAPH_REGISTRY lookups are the modelled maps; rdb_save_graph_key = Persist encoder)
--src/redis_type.rs	save_string_nul	250	PROVEN	Codec.stripNul_nulTerm
--src/redis_type.rs	strip_trailing_nul	268	PROVEN	Codec.stripNul_nulTerm
--src/redis_type.rs	graph_aux_save	274	PROVEN	RedisType.auxSave: aux_roundtrip, aux_after
--src/redis_type.rs	graph_aux_load	295	PROVEN	RedisType.auxLoad: aux_roundtrip, aux_after, aux_truncated, strip_keeps_inner_nul (UdfRepo::deserialize/register_udf are inputs)
--src/redis_type.rs	pre_fork_prepare	359	PROVEN	RedisType.preFork: preFork_spec (wait_all = GraphBLAS effect)
--src/redis_type.rs	on_persistence	376	PROVEN	RedisType.onPersistence: onPersistence_spec
--src/redis_type.rs	create_virtual_keys	418	PROVEN	RedisType.createVKeys: save_main, save_vkey, createdKeys_spec; names Uuid.vkeyName_inj/vkeyName_ne (OpenKey/SetValue = effects, key_holds_graph = input); vkeys typed graphmeta (vkeyType, #3161)
--src/redis_type.rs	delete_virtual_keys	530	PROVEN	RedisType.deleteVKeys: deleteVKeys_spec, createdKeys_spec
--src/redis_type.rs	delete_key	549	AXIOMATISED	Redis module API DeleteKey
--src/redis_type.rs	delete_stale_graphmeta_keys	595	PROVEN	RedisType.deleteStaleGraphmeta: scanKeys_spec
--src/redis_type.rs	delete_stale_virtual_keys	629	PROVEN	RedisType.deleteStaleVirtual: deleteStaleVirtual_spec; Persist.multi_meta (meta keys = exactly the virtual keys)
--src/redis_type.rs	scan_keys_by_type	646	PROVEN	RedisType.scanKeys: scanKeys_spec, scanKeys_stops (RedisModule_Call replies are inputs)
--src/redis_type.rs	finalize_pending_graphs	733	PROVEN	RedisType.finalizePending: load_main_first, load_main_last
--src/redis_type.rs	install_graph	768	PROVEN	RedisType.finalizePending (install arm): load_main_first
--src/redis_type.rs	uuid_v4	794	PROVEN	RedisType.uuid (#3286: uuid_fields, clock and counter in separate fields): uuid_counter_distinct (names differ whenever counters differ mod 2^48, any clocks), uuid_same_clock_distinct, uuid_regression_pair_distinct, uuid_length; vkeyName_uuid_counter, names_vname_inj (discharges VKeys.Names.vname_inj)
--src/redis_type.rs	uuid_fields	816	PROVEN	RedisType.uuidFields: counter_field_bijective (last field = bijection of seq mod 2^48, for every seq; the const _ block checks sample points), uuidFields_fit, mixB_mod48, uuid_last_field
--src/redis_type.rs	same_fields	843	PROVEN	RedisType.sameFields (helper of the compile-time const _ check): sameFields_iff (= equality of the five fields), const_check_holds (the const block's assertions hold for every clock, not only its samples)
--src/redis_type.rs	graphmeta_rdb_load	956	PROVEN	RedisType.metaLoad: metaLoad_spec (decode = rdb_load_graph: Persist.key_rt/run_keys); cacheOnLoad: cache_size_on_load
--src/redis_type.rs	graphmeta_rdb_save	981	PROVEN	RedisType.metaSave (= saveKeySlice, #3161): metaSave_of_slice, metaSave_rdbSave, metaSave_stale
--src/redis_type.rs	graphmeta_free	993	PROVEN	RedisType.metaFree: metaFree_spec
--src/redis_type.rs	graphmeta_aux_load	1003	PROVEN	RedisType.metaAuxLoad: metaAuxLoad_spec
-+src/redis_type.rs	io_cache_size	72	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
-+src/redis_type.rs	io_key_name	87	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
-+src/redis_type.rs	graph_rdb_load	100	PROVEN	R
+@@ -1 +1 @@
+-Subproject commit 1317b41b3f1a2f68fea81e250b0b32a57dc7d6d1
++Subproject commit 994282d3075adae126076b0aa141b1c6ac66c0bf
 ```
 
-**File**: `proofs/graph_persist/GraphPersist.lean` (modified, +1/-1)
+**File**: `deps/native-deps.lock` (modified, +1/-1)
 ```diff
-@@ -113,7 +113,7 @@ Headline theorems:
- * `rebuild_calls`, `rebuild_entity`, `rebuild_meta_first` — index replay.
- * `save_main`, `save_vkey`, `save_single`, `createdKeys_spec`, `deleteVKeys_spec` — SAVE
-   writes the graph's key + `K - 1` virtual keys with slices `0..K`, `key_count = K`, and
--  deletes exactly those virtual keys afterwards; `onPersistence_spec` (BGSAVE never splits).
-+  deletes exactly those virtual keys afterwards; `onPersistence_spec` (BGSAVE never splits); `onPersistence_strip` (#3844: every persistence start strips the telemetry streams).
- * `load_main_last`, `load_main_first` — whatever the position of the graph's own key in the
-   load order, the registered `Arc` and the key's value coincide and hold the finished graph;
-   no virtual key is registered; placeholders are dropped.
+@@ -24,5 +24,5 @@ pin = v1.3.x
+ [redisearch]
+ path = deps/RediSearch
+ url = https://github.com/FalkorDB/RediSearch.git
+-rev = 1317b41b3f1a2f68fea81e250b0b32a57dc7d6d1
++rev = 994282d3075adae126076b0aa141b1c6ac66c0bf
+ pin = falkordb/llapi-extensions-8.6
 ```
 
-**File**: `proofs/graph_persist/GraphPersist/RedisType/AuxData.lean` (modified, +27/-13)
+**File**: `graph/src/graph/graph.rs` (modified, +2/-3)
 ```diff
-@@ -9,8 +9,8 @@ Source: origin/main `5c7af54f2` (line numbers re-pinned there).
- | `auxSave`               | `graph_aux_save` (:272-290) |
- | `auxLoad`               | `graph_aux_load` (:293-334) |
- | `metaAuxLoad`           | `graphmeta_aux_load` (:981-991) |
--| `Sub`, `onPersistence`  | `on_persistence` (:375-400) |
--| `preFork`               | `pre_fork_prepare` (:357-368) |
-+| `Sub`, `onPersistence`  | `on_persistence` (:384-413; strips telemetry at every start since #3844) |
-+| `preFork`               | `pre_fork_prepare` (:360-370) |
- | `metaFree`              | `graphmeta_free` (:971-977); `graphmeta_rdb_save` is `VKeys.metaSave` since #3161 |
- 
- Names and scripts are byte strings; `String::from_utf8_lossy` is the identity on the UTF-8
-@@ -136,35 +136,49 @@ theorem metaAuxLoad_spec (w : When) (n : Nat) (r : List It) :
- 
- /-- The `REDISMODULE_SUBEVENT_PERSISTENCE_*` cases `on_persistence` distinguishes. -/
- inductive Sub where
--  | rdbStart       -- BGSAVE fork child
-+  | rdbStart       -- BGSAVE / diskless-sync fork child
-   | syncRdbStart   -- SAVE / DEBUG RELOAD
-+  | aofStart       -- AOF rewrite fork child
-+  | syncAofStart   -- synchronous AOF rewrite
-   | ended
-   | failed
-   | other
-   deriving DecidableEq, Repr
- 
-+/-- `stripTelemetry` is `strip_telemetry_streams` (`:421`, #3844): delete the queued
-+streams of freed graphs, then the stream of every registered graph. -/
- inductive Act where
-   | createVKeys
-+  | stripTelemetry
-   | deleteVKeys
--  | nothing
-   deriving DecidableEq, Repr
- 
--/-- `on_persistence` (:375). -/
--def onPersistence : Sub → Act
--  | .syncRdbStart => .createVKeys
--  | .rdbStart => .nothing
--  | .ended | .failed => .deleteVKeys
--  | .other => .nothing
-+/-- `on_persistence` (:384): the actions it takes, in order. -/
-+def onPersistence : Sub → List Act
-+  | .syncRdbStart => [.createVKeys, .stripTelemetry]
-+  | .rdbStart | .aofStart | .syncAofStart => [.stripTelemetry]
-+  | .ended | .failed => [.deleteVKeys]
-+  | .other => []
- 
- /-- Virtual keys exist only around a synchronous save: a BGSAVE child never allocates them
- (so a BGSAVE always writes every graph as a single key), and every end of a save — success
- or failure — removes them. -/
- theorem onPersistence_spec (s : Sub) :
--    (onPersistence s = .createVKeys ↔ s = .syncRdbStart) ∧
--    (onPersistence s = .deleteVKeys ↔ s = .ended ∨ s = .failed) := by
-+    (.createVKeys ∈ onPersistence s ↔ s = .syncRdbStart) ∧
-+    (.deleteVKeys ∈ onPersistence s ↔ s = .ended ∨ s = .failed) := by
-   cases s <;> simp [onPersistence]
- 
--/-- `pre_fork_prepare` (:357): only on the main thread, wait on every registered graph. -/
-+/-- #3844: every kind of persistence start (C's `_IsEventPersistenceStart`) strips the
-+telemetry streams before the snapshot is written, and nothing else does. -/
-+theorem onPersistence_strip (s : Sub) :
-+    (.stripTelemetry ∈ onPersistence s ↔
-+      s = .rdbStart ∨ s = .syncRdbStart ∨ s = .aofStart ∨ s = .syncAofStart) := by
-+  cases s <;> simp [onPersistence]
-+
-+/-- A `SAVE` creates the virtual keys first, then strips. -/
-+theorem onPersistence_sync_order : onPersistence .syncRdbStart = [.createVKeys, .stripTelemetry] := rfl
-+
-+/-- `pre_fork_prepare` (:360): only on the main thread, wait on every registered graph. -/
- def preFork {Gr : Type} (isMain : Bool) (registry : List Gr) : List Gr :=
-   if isMain then registry else []
- 
-```
-
-**File**: `proofs/graph_persist/README.md` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ Yes:
- 
- - `save_main`, `save_vkey`, `save_single`: SAVE writes the graph's own key plus K − 1 virtual keys holding slices `0..K`, with `key_count = K`;
- - `deleteVKeys_spec`: the virtual keys are deleted afterwards;
--- `onPersistence_spec`: BGSAVE never splits a graph;
-+- `onPersistence_spec`: BGSAVE never splits a graph; `onPersistence_strip`: every persistence start strips the telemetry streams (#3844);
- - `metaSave_stale`: since #3161 virtual keys have the `graphmeta` type, and a leftover one writes nothing;
- - `load_main_first`, `load_main_last`: whatever position the graph's own key has in the load order, the registered graph and the key's value end up as the same finished graph.
- 
-```
-
-**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +68/-59)
-```diff
-@@ -130,15 +130,15 @@ src/graph_core.rs	compute_effective_timeout	996	PROVEN	Args.rustTimeout: rustTim
- src/graph_core.rs	reply_invalid_graph_version	1035	PROVEN	GraphCore.invalidVersionBytes: invalidVersion_shape
- src/graph_core.rs	admit	1049	PROVEN	GraphCore.admitQ: admit_bounded, capped (QueueSlot::try_acquire; never waits)
- src/graph_core.rs	query_mut	1060	PROVEN	GraphCore.dispatch/admitQ (#3014): stale_version, inline_uncapped, capped, admit_bounded
--src/graph_core.rs	query_sync	1264	PROVEN	GraphCore.syncOutcome: sync_err, sync_write_logs
--src/graph_core.rs	profile_mut	1393	PROVEN	GraphCore.profileOutcome/dispatch (admitQ, #3014): profile_write_runs_as_write, profile_read_replied, capped
--src/graph_core.rs	profile_sync	1494	PROVEN	GraphCore.profileOutcome: profile_write_runs_as_write, profile_read_replied
--src/graph_core.rs	finish_write	1565	PROVEN	GraphCore.writeSteps (commit if escalated, else nothing: the version drops with the runtime, #3657; escalated: published under GraphCore.keyOfWrite's key, or refused, #3850/#3851): reply_after_commit, reply_only_after_commit, unkeyed_refused, unescalated_silent
--src/graph_core.rs	abandon_write	1600	PROVEN	GraphCore.abandonSteps (resync only if version_is_current, nothing to release, #3657): failed_no_commit, stale_run_silent
--src/graph_core.rs	commit_and_replicate	1616	PROVEN	GraphCore.commitSteps: modified_replicates_or_warns, unmodified_silent; replicated key bytes = utf8(lossy(key)): KeyName.bug2653_nonutf8_key_mangled (#2653)
--src/graph_core.rs	process_write_queued_query	1694	PROVEN	GraphCore.loopExit: loopExit_safe (no stranded message on exit); slot dropped on dequeue: SearchConcurrency Pool.paths_release_once
--src/graph_core.rs	CtxSink::replicate	1842	PROVEN	GraphCore.replicateArgv: replicateArgv_shape
--src/graph_core.rs	graph_free	1855	PROVEN	GraphCore.free: free_unregisters, free_keeps_others
-+src/graph_core.rs	query_sync	1264	PROVEN	GraphCore.syncOutcome/logsTelemetry (#3844 log_query): sync_err, sync_write_logs, sync_read_logs, sync_unserved_silent, sync_log_only
-+src/graph_core.rs	profile_mut	1400	PROVEN	GraphCore.profileOutcome/dispatch (admitQ, #3014): profile_write_runs_as_write, profile_read_replied, capped
-+src/graph_core.rs	profile_sync	1501	PROVEN	GraphCore.profileOutcome: profile_write_runs_as_write, profile_read_replied
-+src/graph_core.rs	finish_write	1572	PROVEN	GraphCore.writeSteps (commit if escalated, else nothing: the version drops with the runtime, #3657; escalated: published under GraphCore.keyOfWrite's key, or refused, #3850/#3851): reply_after_commit, reply_only_after_commit, unkeyed_refused, unescalated_silent
-+src/graph_core.rs	abandon_write	1607	PROVEN	GraphCore.abandonSteps (resync only if version_is_current, nothing to release, #3657): failed_no_commit, stale_run_silent
-+src/graph_core.rs	commit_and_replicate	1623	PROVEN	GraphCore.commitSteps: modified_replicates_or_warns, unmodified_silent; replicated key bytes = utf8(lossy(key)): KeyName.bug2653_nonutf8_key_mangled (#2653)
-+src/graph_core.rs	process_write_queued_query	1701	PROVEN	GraphCore.loopExit: loopExit_safe (no stranded message on exit); slot dropped on dequeue: SearchConcurrency Pool.paths_release_once
-+src/graph_core.rs	CtxSink::replicate	1849	PROVEN	GraphCore.replicateArgv: replicateArgv_shape
-+src/graph_core.rs	graph_free	1862	PROVEN	GraphCore.free: free_unregisters, free_keeps_others; Telemetry.graphFree (#3844 queues the freed keys' streams): graphFree_registry, graphFree_queues, freed_stream_stripped
- src/query_session.rs	QuerySession::begin	178	PROVEN	QuerySession.begin: escalate_order
- src/query_session.rs	QuerySession::begin_with	185	PROVEN	QuerySession.beginWith/readPastGate (#3816: past the WriterGate first; facts parameter): beginWith_open, beginWith_nowait, readPastGate_ends_reading, upgrade_unregistered, reauth_replay
- src/query_session.rs	QuerySession::begin_writer	205	PROVEN	QuerySession.beginWriter: writer_holds_gil, release_order
-@@ -171,55 +171,64 @@ src/query_session.rs	Gil::acquire	701	PROVEN	QuerySession.gilAcquire (no-op iff
- src/query_session.rs	Gil::drop	724	PROVEN	QuerySession.gilDrop: gil_stack, gil_out_of_order
- src/query_session.rs	lock_gil	745	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
- src/query_session.rs	release_gil	758	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
--src/module_init.rs	pthread_atfork	97	AXIOMATISED	libc pthread_atfork declaration
--src/module_init.rs	on_fork_child	124	PROVEN	ModuleInit.forkChildAborts: fork_gc_never_aborts, fork_all_synced
--src/module_init.rs	sync_deepbind_environ	160	NOT COVERED	Linux-only; not modelled. Bound to ld.so/libc: dlopen(NULL) + dlsym("environ"), then points libc's own environ at graph::env_snapshot::leak_deep_copy of that array. CI reaches only its no-op return; the snapshot path runs only under a valkey-server that copy-relocates environ (#3493).
-+s
-```
-
-**File**: `proofs/redis_layer/README.md` (modified, +1/-1)
-```diff
-@@ -162,7 +162,7 @@ C-side bugs seen along the way: C crashes on some malformed bulk tokens, and cou
- | `KeyName.lean` | #2653: key names as bytes, a concrete `from_utf8_lossy`, the replicated key |
- | `ErrorText.lean` | #3428: `str_as_legal_resp_string` (error and simple-string reply text) on bytes; history pre-#3428 counterexamples (removed in bbee75955; the last revision that has them is 17ccc5412) |
- | `Commands.lean`, `Commands2.lean` | The smaller command handlers: constraint, record, copy, bulk, memory, config get, and others |
--| `Telemetry.lean`, `TelemetryReg.lean`, `TelemetryLoop.lean` | `telemetry.rs`: stream names, the query registry, batching, the flusher |
-+| `Telemetry.lean`, `TelemetryReg.lean`, `TelemetryLoop.lean`, `TelemetryFreed.lean` | `telemetry.rs`: stream names, the query registry, batching, the flusher, the #3844 persistence strip and freed-graph stream queue |
- | `SlowLog.lean` | `slow_log.rs` (incl. #3442, fixed by #3456: `MinCache`, `SlowestKept`, `add`) |
- | `RelLookup.lean` | #3447 (open) / #3449 (fixed by #3462): the relationship lookups behind the reply encoders (endpoints, type id/name over graph, snapshots and pending), the cascade commit and `GRAPH.RECORD` |
- | `Allocator.lean` | `allocator.rs`: per-thread allocation counters |
-```
-
-**File**: `proofs/redis_layer/RedisLayer.lean` (modified, +7/-3)
-```diff
-@@ -11,6 +11,7 @@ import RedisLayer.SerialProof
- import RedisLayer.SerialCLayout
- import RedisLayer.RespVerbose
- import RedisLayer.TelemetryLoop
-+import RedisLayer.TelemetryFreed
- import RedisLayer.ModuleInit
- import RedisLayer.ConfigRewrite
- import RedisLayer.QuerySession
-@@ -144,7 +145,7 @@ C-side bugs found on the way: C crashes on malformed bulk tokens; `L:L` counts t
- | `Serial`, `SerialSchema`, `SerialEntry`, `SerialProof` | `src/serializers/mod.rs` (header/schema encode+decode; `SerialSchema.decField` = `decode_index_field` `:637-725`, `encField`/`encPh` = field loop `:383-427`) |
- | `SerialCLayout` | C's multi-type index-field entry vs `decode_index_field` (#3484, fixed by #3514 `a0ba12950`); pre-#3514 counterexamples (removed in bbee75955; the last revision that has them is 17ccc5412) history |
- | `Resp`, `RespCompact`, `RespVerbose` | `src/reply.rs` (call streams, postponed lengths, RESP2 bytes) |
--| `Telemetry`, `TelemetryReg`, `TelemetryLoop` | `src/telemetry.rs` |
-+| `Telemetry`, `TelemetryReg`, `TelemetryLoop`, `TelemetryFreed` | `src/telemetry.rs`; `TelemetryFreed`: the #3844 persistence strip (`strip_stream`, the freed-graph queue, `redis_type.rs` `strip_telemetry_streams`) |
- | `ModuleInit` | `src/module_init.rs`, `src/lib.rs` config table, `src/config.rs` |
- | `ConfigRewrite` | `CONFIG REWRITE` of the `lib.rs:97-116` native configs vs. what `GRAPH.CONFIG SET` / load arguments store (#3419) |
- | `QuerySession` | `src/query_session.rs` |
-@@ -166,9 +167,12 @@ Headline theorems:
-   tree; `compact_reply` lands on `Compact.encReply`, which `decReply_enc` decodes;
-   `bytes_of_emits` gives the RESP2 bytes; `postponed_wrong_len` shows a wrong count breaks.
- * Telemetry: `streamName_key_name`/`streamName_inj`/`stream_same_slot`, registry placement and
--  transitions, `WaitingEntry` guard laws, `drain_conserves`, `capDeferred_suffix`,
-+  transitions, `WaitingEntry` guard laws, `drain_conserves`,
-   `retain_sound`/`pass2Step_sound` (re-keying), `group_keeps_order` (per-graph arrival order
--  survives the sort), `iter_replica_never_writes`.
-+  survives the sort), `iterSteps_delete_before_write`; since #3844 telemetry is node-local:
-+  `GraphCore.sync_unserved_silent` (replicated / AOF-replayed queries are not logged),
-+  `freed_stream_stripped`/`stripAll_covers` (no stream reaches a snapshot); the old replica
-+  rule is kept as history (`Pre3844.enqueue_replica`, `Pre3844.iter_replica_never_writes`).
- * `LoadArgs.rust_c_same_accept` (#3328) — module-load arguments accepted exactly as C's
-   `Config_Init` (modulo leading whitespace and Rust-only names, both confirmed live; for
-   arguments without embedded NUL, since C reads C strings; given `FsOk`, i.e. `File::create`
-```
-
-**File**: `proofs/redis_layer/RedisLayer/GraphCore.lean` (modified, +31/-9)
-```diff
-@@ -5,7 +5,7 @@ import RedisLayer.Resp
- | here | there (`origin/main`) |
- | --- | --- |
- | `upToNulB`, `cGraphKey`, `cGraphName` | `up_to_nul` `:92`, `c_graph_name` `:106`, `c_graph_key` `:121` |
--| `Reg.*`                     | `register_graph` `:142`, `graph_is_registered` `:190`, `rename_graph` `:250`, `graph_free` `:1858` |
-+| `Reg.*`                     | `register_graph` `:142`, `graph_is_registered` `:190`, `rename_graph` `:250`, `graph_free` `:1862` (stream queue: `Telemetry.graphFree`) |
- | `keyOfWrite`                | `key_of_write` `:223` (#3850/#3851) |
- | `modified`                  | `WriteQueryOk::new` `:303` |
- | `sanitise`                  | `ffi::sanitise_error` `:362` |
-@@ -15,7 +15,7 @@ import RedisLayer.Resp
- | `writeSteps`                | `try_query_write` `:834`, `finish_write` `:1568`, `abandon_write` `:1603`, `commit_and_replicate` `:1619` |
- | `executeWrite`, `Attempt`   | `execute_query_write` `:784` (retry loop, #3290), `WriteAttempt::from` `:823` |
- | `admitQ`, `dispatch`        | `admit` `:1052`, `query_mut` `:1063` (#3014) |
--| `syncOutcome`               | `query_sync` `:1267`, `profile_sync` `:1497`, `profile_mut` `:1396` |
-+| `syncOutcome`, `logsTelemetry` | `query_sync` `:1264` (`log_query`, #3844), `dispatch::logs_telemetry` `dispatch.rs:63`, `profile_sync` `:1501`, `profile_mut` `:1400` |
- | `loopExit`                  | `process_write_queued_query` `:1697` |
- | `EFFECT_COMMAND`            | `CtxSink::replicate` `:1845` |
- | `TG`                        | `ThreadedGraph::new` `:600`, `from_mvcc` `:617` (unbounded write channel since #3014) |
-@@ -449,18 +449,40 @@ theorem read_releases_admission (ok : Bool) : admissionKept ok false = false :=
- /-! ## Sync paths (`query_sync`, `profile_sync`, `profile_mut`) -/
- 
- inductive Out | errNoTelemetry | readTelemetry | writeTelemetry | writeErr | profileRead
-+  | readUnlogged | writeUnlogged
-   deriving DecidableEq
- 
-+/-- `dispatch::logs_telemetry` (`dispatch.rs:63`, #3844): a query is this node's to log
-+unless it came from the master (`REPLICATED`) or from AOF replay (`LOADING`). -/
-+def logsTelemetry (replicated loading : Bool) : Bool := !(replicated || loading)
-+
-+theorem logsTelemetry_iff (r l : Bool) : logsTelemetry r l = true ↔ r = false ∧ l = false := by
-+  cases r <;> cases l <;> decide
-+
- /-- `query_sync`: read errors return without telemetry; reads log a read entry; writes run
- under `begin_writer` and log a write entry with zero wait, or fail through the divergence
--guard. -/
--def syncOutcome (readOk isWrite writeOk : Bool) : Out :=
-+guard. Since #3844 an entry is enqueued only if `log_query` (`logsTelemetry` of the
-+context, `:1287`); the reply is the same either way. -/
-+def syncOutcome (readOk isWrite writeOk logQuery : Bool) : Out :=
-   if !readOk then .errNoTelemetry
--  else if !isWrite then .readTelemetry
--  else if writeOk then .writeTelemetry else .writeErr
--
--theorem sync_write_logs : syncOutcome true true true = .writeTelemetry := rfl
--theorem sync_err (w o : Bool) : syncOutcome false w o = .errNoTelemetry := rfl
-+  else if !isWrite then (if logQuery then .readTelemetry else .readUnlogged)
-+  else if writeOk then (if logQuery then .writeTelemetry else .writeUnlogged) else .writeErr
-+
-+theorem sync_write_logs : syncOutcome true true true true = .writeTelemetry := rfl
-+theorem sync_read_logs : syncOutcome true false true true = .readTelemetry := rfl
-+theorem sync_err (w o l : Bool) : syncOutcome false w o l = .errNoTelemetry := rfl
-+
-+/-- #3844: a replicated or replayed query is never logged on this node. -/
-+theorem sync_unserved_silent (rd w o r l : Bool) (h : r = true ∨ l = true) :
-+    syncOutcome rd w o (logsTelemetry r l) ≠ .readTelemetry ∧
-+    syncOutcome rd w o (logsTelemetry r l) ≠ .writeTelemetry := by
-+  cases r <;> cases l <;> simp at h <;> cases rd <;> cases w <;> cases o <;> decide
-+
-+/-- …and the decision does not change what is executed: same outcome up to logging. -/
-+theorem sync_log_only (rd w o : Bool) :
-+    (syncOutcome rd w o true = .readTelemetry ↔ syncOutcome rd w o false = .readUnlogged) ∧
-+    (syncOutcome rd w o true = .writeTelemetry ↔ syncOutcome rd w o false = .writeUnlogged) := by
-+  cases rd <;> cases w <;> cases o <;> decide
- 
- /-- `profile_sync`/`profile_mut`: same detection, write plans run with `profile = true`. -/
- def profileOutcome (detectOk : Bool) (d : Detect) (writeOk : Bool) : Out :=
-```
-
----
-
-### Incident Patch 2: `4205fec1` (2026-11-18)
-**Commit Message**: fix: GRAPH.BULK publishes under the key that holds its graph now, or is refused if none does (#3863)
-
-* fix: GRAPH.BULK publishes under the key that holds its graph now, or is refused if none does (#3792)
-
-A bulk batch is admitted on the main thread, then committed and replicated
-later from a worker, as the command itself, key included. A RENAME or MOVE in
-between passed the worker's registry check, and the batch was replicated under
-a key the replica no longer had, so master and replica diverged. A failed BEGIN
-batch deleted whatever its key held by then, including a graph another client
-had created there.
-
-Before it publishes anything, the worker now asks key_of_write (#3855) where
-the graph lives. It replicates under the key the graph was renamed to, and is
-refused when no key holds it. The failed-BEGIN cleanup removes the graph from
-the key that holds it now, or deletes nothing.
-
-* proofs: update the Lean proofs for this change (proof-impact bot)
-
-Verified patch of the proof-impact run https://github.com/FalkorDB/FalkorDB/actions/runs/44318428516
-at b8028f7e11423c00fb6386d82f4374890cfc9605, applied by hand after rebasing onto main (held items reviewed).
-
-Proof-Bot-Run: https://
-
-**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +65/-64)
-```diff
-@@ -100,46 +100,46 @@ src/graph_core.rs	c_graph_name	106	PROVEN	GraphCore.cGraphName: cGraphName_key (
- src/graph_core.rs	c_graph_key	121	PROVEN	GraphCore.cGraphKey: upToNulB_nonul, cGraphName_key
- src/graph_core.rs	register_graph	142	PROVEN	GraphCore.register: register_registered, register_get; MultiDb.query (registry keyed by name only, keyspace by (db,key)) — #2782 open: bug2782_same_name_other_db_aborts refutes KeyspaceRegistered/WritesSucceed
- src/graph_core.rs	graph_is_registered	190	PROVEN	GraphCore.isRegistered: free_unregisters, free_keeps_others; MultiDb.existing_ok (under KeyspaceRegistered), bug2782_invariant_broken: OPEN BUG #2782 refutes KeyspaceRegistered on main (kept PROVEN, bug named)
--src/graph_core.rs	key_of_write	220	PROVEN	GraphCore.keyOfWrite (#3850/#3851; key_holds_graph as keyspace lookup, TelemetryLoop.keyHolds_iff): keyOfWrite_main, keyOfWrite_admitted, keyOfWrite_renamed, keyOfWrite_holds, keyOfWrite_unheld
--src/graph_core.rs	rename_graph	250	PROVEN	GraphCore.rename: rename_moves, rename_absent
--src/graph_core.rs	WriteQueryOk::new	303	PROVEN	GraphCore.modified: modified_zero, modified_replicates_or_warns
--src/graph_core.rs	ffi::sanitise_error	362	PROVEN	GraphCore.sanitise: sanitise_nonul, sanitise_len, sanitise_id
--src/graph_core.rs	ffi::block_client	377	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::unblock_client	388	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::get_thread_safe_context	397	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::free_thread_safe_context	408	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::reply_error	417	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::signal_modified_key	434	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::yield_ctx	456	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::measure_time_start	473	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::measure_time_end	483	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::hold_string	500	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::free_string	511	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::trim_string_allocation	526	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ffi::replicate_argv	541	AXIOMATISED	one RedisModule_* call (Redis module API contract)
--src/graph_core.rs	ThreadedGraph::new	600	PROVEN	GraphCore.TG.new: TG.new_idle (unbounded write channel, #3014)
--src/graph_core.rs	ThreadedGraph::from_mvcc	617	PROVEN	GraphCore.TG.fromMvcc: TG.new_idle (unbounded write channel, #3014)
--src/graph_core.rs	execute_query	636	PROVEN	RoQuery.ro_never_writes, GraphCore.executeQuery/admissionKept: ro_write_rejected, read_releases_admission (#3014)
--src/graph_core.rs	execute_profile	722	PROVEN	GraphCore.profileDetect/admissionKept: profileDetect_write, read_releases_admission (#3014)
--src/graph_core.rs	execute_query_write	784	PROVEN	GraphCore.executeWrite (#3290 retry loop): executeWrite_first, stale_run_silent
--src/graph_core.rs	try_query_write	834	PROVEN	GraphCore.writeSteps/abandonSteps (#3657 infallible write_version, Stale on abandon; #3850/#3851 refused finish_write abandons and fails): reply_after_commit, reply_only_after_commit, failed_no_commit, unkeyed_refused, stale_run_silent, unregistered_not_stale
--src/graph_core.rs	WriteAttempt::from	823	PROVEN	GraphCore.Attempt.ofString: ofString_not_stale
--src/graph_core.rs	reply_profile	936	PROVEN	GraphCore.profileDepth/profileOps (#2390: all ops, plain depth): profileDepth_eq, profileDepth_commit_counts, profileOps_all
--src/graph_core.rs	BlockedClient::new	973	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
--src/graph_core.rs	BlockedClient::drop	981	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
--src/graph_core.rs	compute_effective_timeout	999	PROVEN	Args.rustTimeout: rustTimeout_write_pq, rustTimeout_rw_uniform (#2998 fixed by #3000 2e8172d76), rustTimeout_le_max, rustTimeout_pos, rustTimeout_exceeds, rustTimeout_write_ignores_pq
--src/graph_core.rs	reply_invalid_graph_version	1038	PROVEN	GraphCore.invalidVersionBytes: invalidVersion_shape
--src/graph_core.rs	admit	1052	PROVEN	GraphCore.admitQ: admit_bounded, capped (QueueSlot::try_acquire; never waits)
--src/graph_core.rs	query_mut	1063	PROVEN	GraphCore.dispatch/admitQ (#3014): stale_version, inline_uncapped, capped, admit_bounded
--src/graph_core.rs	query_sync	1267	PROVEN	GraphCore.syncOutcome: sync_err, sync_write_logs
--src/graph_core.rs	profile_mut	1396	PROVEN	GraphCore.profileOutcome/dispatch (admitQ, #3014): profile_write_runs_as_write, profile_read_replied, capped
--src/graph_core.rs	p
-```
-
-**File**: `proofs/redis_layer/RedisLayer/Commands2.lean` (modified, +75/-9)
-```diff
-@@ -1,6 +1,7 @@
- import RedisLayer.Commands
- import RedisLayer.ModuleInit
- import RedisLayer.Telemetry
-+import RedisLayer.GraphCore
- /-!
- # Constraint, record, copy, bulk and config-get handlers (`src/commands/*.rs`, `origin/main`)
- 
-@@ -14,7 +15,7 @@ import RedisLayer.Telemetry
- | `applyCons`, `consWorker` | `apply_constraint` `:599`; `graph_constraint` pool path `:547-585` (#3819) |
- | `recordShape`             | `record.rs` `record_mut` `:44`, `graph_record` `:180` |
- | `copyOut`                 | `copy.rs` `graph_copy` `:27` (`pipe`/`fork`/`_exit`/`waitpid` are libc, AXIOMATISED) |
--| `bulkFlow`, `heldReplicate`, `maybeYield`, `publishOps`, `edgeRecords` | `bulk_insert.rs` `:218-1045` |
-+| `bulkFlow`, `heldReplicate`, `heldRekey`, `bulkArgv`, `discardCreated`, `maybeYield`, `publishOps`, `edgeRecords` | `bulk_insert.rs` `:247-1125` (#3863: `discard_created_graph` `:296`, `HeldArgs::rekey` `:396`, the worker's `key_of_write` `:1026`) |
- | `getNames`, `getOne`, `asI64`, `asU64` | `config_cmd.rs` `config_get_one` `:57`, `ConfigValue::as_i64/as_u64` `:294-306` |
- -/
- namespace RedisLayer.Commands
-@@ -396,6 +397,27 @@ def heldReplicate (argv : List String) : Option (String × List String) :=
- theorem heldReplicate_verbatim (c : String) (rest : List String) :
-     heldReplicate (c :: rest) = some (c, rest) := rfl
- 
-+/-- `HeldArgs::rekey` (`:396`, #3863): argument 1 (the graph key) is replaced by `key`. -/
-+def heldRekey (argv : List String) (key : String) : List String :=
-+  match argv with
-+  | c :: _ :: rest => c :: key :: rest
-+  | _ => argv
-+
-+/-- The worker's replicated vector (`:1092-1096`): rekeyed only when `key_of_write`'s `live`
-+differs from the `admitted` key. -/
-+def bulkArgv (admitted live : String) (argv : List String) : List String :=
-+  if live ≠ admitted then heldRekey argv live else argv
-+
-+/-- Not renamed: the client's own arguments, verbatim (as before #3863). -/
-+theorem bulkArgv_admitted (a : String) (argv : List String) : bulkArgv a a argv = argv := by
-+  simp [bulkArgv]
-+
-+/-- Renamed: the batch reaches the replica under the key the graph lives at now, the rest of
-+the arguments unchanged. -/
-+theorem bulkArgv_renamed (a l c k : String) (rest : List String) :
-+    heldReplicate (bulkArgv a l (c :: k :: rest)) = some (c, (if l ≠ a then l else k) :: rest) := by
-+  unfold bulkArgv; by_cases h : l ≠ a <;> simp [h, heldRekey, heldReplicate]
-+
- /-- The publish step of `graph_bulk_insert` (`g.commit_index_docs(&mut docs)`, :830 / :952;
- `BulkIndexDocs::publish` before #3307): bulk only adds, so `node_removes`/`edge_removes` are
- empty and `commit_index_docs` (graph.rs:3785, `GQ.commitIndexDocs` in proofs/graph_queries)
-@@ -418,11 +440,41 @@ theorem edgeRecords_bound (r : Nat) (rs : List (List (Option Nat))) (out : List
-   unfold edgeRecords at h; split at h; · simp at h
-   · cases h; simp; omega
- 
--/-- `discard_created_graph`: stream then key. -/
--def discardOps (name : List Char) : List String := ["DEL " ++ String.ofList (Telemetry.streamName name), "delete key"]
--
--theorem discardOps_stream_first (n : List Char) :
--    (discardOps n).head? = some ("DEL " ++ String.ofList (Telemetry.streamName n)) := rfl
-+/-- `discard_created_graph`: stream then key. Since #3863 the key deleted is `live`, the one
-+`key_of_write` finds holding the graph; the stream stays named after C's `name`. -/
-+def discardOps (name live : List Char) : List String :=
-+  ["DEL " ++ String.ofList (Telemetry.streamName name), "delete key " ++ String.ofList live]
-+
-+/-- `discard_created_graph` (`:296`, #3863): `key_of_write` first; `Err` deletes nothing. -/
-+def discardCreated (main : Bool) (ks : List Char → Option Nat) (reg : GraphCore.Reg) (g : Nat)
-+    (name : List Char) : List String :=
-+  match GraphCore.keyOfWrite main ks reg g name with
-+  | some live => discardOps name live
-+  | none => []
-+
-+theorem discardOps_stream_first (n l : List Char) :
-+    (discardOps n l).head? = some ("DEL " ++ String.ofList (Telemetry.streamName n)) := rfl
-+
-+/-- Inline (main thread): the addressed key, as before #3863. -/
-+theorem discardCreated_main (ks : List Char → Option Nat) (reg : GraphCore.Reg) (g : Nat) (n : List Char) :
-+    discardCreated true ks reg g n = discardOps n n := by
-+  simp [discardCreated, GraphCore.keyOfWrite_main]
-+
-+/-- Worker, graph still at its key: that key. -/
-+theorem discardCreated_admitted (m : Bool) (ks : List Char → Option Nat) (reg : GraphCore.Reg) (g : Nat)
-+    (n : List Char) (h : ks n = some g) : discardCreated m ks reg g n = discardOps n n := by
-+  simp [discardCreated, GraphCore.keyOfWrite_admitted m ks reg g n h]
-+
-+/-- Worker, graph renamed: the renamed key is deleted, not whatever now sits at the old one. -/
-+theorem discardCreated_renamed (ks : List Char → Option Nat) (reg : GraphCore.Reg) (g : Nat) (n r : List Char)
-+    (ha : ks n ≠ some g) (hr : reg.find? (·.2 = g) = some (r, g)) (hn : ks r = some g) :
-+    discardCreated false ks reg g n = discardOps n r := by
-+  simp [discardCreated, Graph
-```
-
-**File**: `proofs/redis_layer/RedisLayer/GraphCore.lean` (modified, +2/-2)
-```diff
-@@ -6,7 +6,7 @@ import RedisLayer.Resp
- | --- | --- |
- | `upToNulB`, `cGraphKey`, `cGraphName` | `up_to_nul` `:92`, `c_graph_name` `:106`, `c_graph_key` `:121` |
- | `Reg.*`                     | `register_graph` `:142`, `graph_is_registered` `:190`, `rename_graph` `:250`, `graph_free` `:1858` |
--| `keyOfWrite`                | `key_of_write` `:220` (#3850/#3851) |
-+| `keyOfWrite`                | `key_of_write` `:223` (#3850/#3851) |
- | `modified`                  | `WriteQueryOk::new` `:303` |
- | `sanitise`                  | `ffi::sanitise_error` `:362` |
- | `invalidVersionBytes`       | `reply_invalid_graph_version` `:1038` |
-@@ -146,7 +146,7 @@ theorem rename_moves (r : Reg) (o n : List Char) (g : Nat) (h : r.get o = some g
-     congr 2; congr 1; funext p; simp [Bool.and_comm]
-   rw [e, get_filter_self]
- 
--/-! ## `key_of_write` (`:220`, #3850/#3851): the key a write is published under
-+/-! ## `key_of_write` (`:223`, #3850/#3851): the key a write is published under
- 
- `ks k` is the graph allocation the keyspace holds at key `k` (`key_holds_graph`, `redis_type.rs:577`,
- is `ks k = some g`: TelemetryLoop `keyHolds_iff`). `main` is `is_main_thread()`. The registry
-```
-
-**File**: `proofs/search_concurrency/COVERAGE.tsv` (modified, +37/-37)
-```diff
-@@ -37,43 +37,43 @@ src/graph_core.rs	c_graph_name	106	NOT COVERED	string helper
- src/graph_core.rs	c_graph_key	121	NOT COVERED	string helper
- src/graph_core.rs	register_graph	142	MODELLED	Mvcc.S.registered := true
- src/graph_core.rs	graph_is_registered	190	PROVEN	Mvcc.delete_blocks_writes (registered guard on mutate/commit)
--src/graph_core.rs	rename_graph	250	NOT COVERED	registry re-key; RENAME not modelled
--src/graph_core.rs	new	303	NOT COVERED	WriteQueryOk::new modified predicate
--src/graph_core.rs	sanitise_error	362	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	block_client	377	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	unblock_client	388	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	get_thread_safe_context	397	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	free_thread_safe_context	408	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	reply_error	417	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	signal_modified_key	434	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	yield_ctx	456	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	measure_time_start	473	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	measure_time_end	483	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	hold_string	500	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	free_string	511	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	trim_string_allocation	526	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	replicate_argv	541	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
--src/graph_core.rs	new	600	PROVEN	unbounded write channel (#3014); Locks.never_stuck_3014 (send never waits)
--src/graph_core.rs	from_mvcc	617	MODELLED	as new
--src/graph_core.rs	execute_query	636	MODELLED	Mvcc Ev.read on snapshot; write detection not modelled
--src/graph_core.rs	execute_profile	722	MODELLED	as execute_query
--src/graph_core.rs	execute_query_write	784	PROVEN	Mvcc fork/checkFork (#3290/#3657): inline_write_ok, stale_then_rerun, checkFork_on_committed (retry sees the inline write) (BUG 5; counterexample removed in bbee75955; the last revision that has them is 17ccc5412)
--src/graph_core.rs	reply_profile	936	NOT COVERED	reply formatting here; PROVEN in redis_layer (GraphCore.profileOps_all, profileDepth_eq; #2390 lists every op)
--src/graph_core.rs	new	973	AXIOMATISED	RM_BlockClient FFI
--src/graph_core.rs	drop	981	AXIOMATISED	RM_UnblockClient FFI
--src/graph_core.rs	compute_effective_timeout	999	NOT COVERED	config arithmetic, not concurrency
--src/graph_core.rs	reply_invalid_graph_version	1038	NOT COVERED	reply formatting
--src/graph_core.rs	admit	1052	PROVEN	Pool.acquireLoop/acquire_bounded; Locks.succ3014 dispatch (reject, never wait): main_never_blocks, inv3014_step
--src/graph_core.rs	query_mut	1063	PROVEN	Locks.main_never_blocks/never_stuck_3014/inv3014_step (admit + unbounded spawn, #3014); drain producer (send then CAS)
--src/graph_core.rs	query_sync	1267	PROVEN	Mvcc.inline_write_ok (inline writer = escalate 0 then forkCur; never refused by a matching queued write, #3290)
--src/graph_core.rs	profile_mut	1396	PROVEN	same admission/producer protocol as query_mut: Locks.main_never_blocks, never_stuck_3014
--src/graph_core.rs	profile_sync	1497	MODELLED	as query_sync
--src/graph_core.rs	finish_write	1568	PROVEN	Mvcc Ev.commit (session in writer mode, key_of_write found its key) / Ev.abandon (never escalated: the version just drops with the runtime; or refused by key_of_write, #3850/#3851, and abandoned by the caller)
--src/graph_core.rs	abandon_write	1603	PROVEN	Mvcc Ev.abandon (the fork is dropped, nothing to roll back); index resync not modelled
--src/graph_core.rs	commit_and_replicate	1619	PROVEN	Mvcc Ev.commit requires GIL (fork_excludes_commit)
--src/graph_core.rs	process_write_queued_query	1697	PROVEN	Locks.drain_no_lost_message/explore_saturated/recheck_needed (write_loop protocol, 2 producers exhaustive)
--src/graph_core.rs	replicate	1845	AXIOMATISED	RM_Replicate FFI
--src/graph_core.rs	graph_free	1858	PROVEN	Mvcc Ev.delete (registered := false) + delete_blocks_writes
-+src/graph_core.rs	rename_graph	253	NOT COVERED	registry re-key; RENAME not modelled
-+src/graph_core.rs	new	306	NOT COVERED	WriteQueryOk::new modified predicate
-+src/graph_core.rs	sanitise_error	365	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
-+src/graph_core.rs	block_client	380	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
-+src/graph_core.rs	unblock_client	391	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
-+src/graph_core.rs	get_threa
-```
-
-**File**: `src/commands/bulk_insert.rs` (modified, +76/-8)
-```diff
-@@ -2,7 +2,9 @@ use crate::dispatch::must_run_inline;
- use crate::query_session::{QuerySession, WriteFacts, hold_gil};
- use crate::{
-     config::CONFIGURATION_CACHE_SIZE,
--    graph_core::{BlockedClient, ThreadedGraph, c_graph_key, c_graph_name, ffi, register_graph},
-+    graph_core::{
-+        BlockedClient, ThreadedGraph, c_graph_key, c_graph_name, ffi, key_of_write, register_graph,
-+    },
-     redis_type::{GRAPH_TYPE, wrong_type_compat},
-     telemetry,
- };
-@@ -17,6 +19,7 @@ use parking_lot::RwLock;
- use roaring::RoaringTreemap;
- use std::collections::HashMap;
- use std::ffi::CString;
-+use std::ptr::null_mut;
- use std::sync::Arc;
- use valkey_module::{
-     Context, ContextFlags, NextArg, ValkeyError, ValkeyResult, ValkeyString, ValkeyValue, raw,
-@@ -280,16 +283,35 @@ fn parse_header(
- /// fails must leave no key behind, otherwise re-running the loader against a
- /// corrected input trips the "already exists" guard instead of retrying.
- ///
-+/// A batch that failed on a worker is cleaned up after a `RENAME`, `MOVE`, `DEL` or
-+/// `FLUSHALL` may have run, so the graph is taken out of the key that holds it now
-+/// ([`key_of_write`]), not out of whatever the addressed key holds. Deleting the
-+/// addressed key deleted a graph another client had created there since, and left
-+/// a renamed one behind on the master alone. If no key in the client's database
-+/// holds the graph, nothing is deleted: a flushed graph is gone already, and one
-+/// `MOVE`d to another database is out of this context's reach.
-+///
- /// Requires the GIL — the caller either runs on the main Redis thread or holds
- /// it explicitly.
- fn discard_created_graph(
-     ctx: &Context,
-     key_str: &ValkeyString,
-+    graph: &Arc<RwLock<ThreadedGraph>>,
- ) {
-     // The graph was created under C's name, so that — not the addressed key — is
--    // what has to be taken back out of the keyspace.
--    telemetry::delete_stream(ctx, &c_graph_name(key_str));
--    if let Ok(key) = ctx.open_key_writable(&c_graph_key(ctx, key_str)) {
-+    // where it was stored, and what its telemetry stream is named after.
-+    let name: Arc<str> = Arc::from(c_graph_name(key_str));
-+    let Ok(live) = key_of_write(ctx, graph, &name) else {
-+        return;
-+    };
-+    telemetry::delete_stream(ctx, &name);
-+    let key = if live == name {
-+        // The exact bytes, which `name` may only approximate.
-+        c_graph_key(ctx, key_str)
-+    } else {
-+        ValkeyString::create_from_slice(ctx.get_raw(), live.as_bytes())
-+    };
-+    if let Ok(key) = ctx.open_key_writable(&key) {
-         let _ = key.delete();
-     }
- }
-@@ -364,6 +386,25 @@ impl HeldArgs {
-         let cmd = CString::new(name).expect("a dispatched command name has no interior NUL");
-         unsafe { ffi::replicate_argv(ctx, &cmd, &self.argv[1..]) };
-     }
-+
-+    /// Propagate under `key` instead of the key the client named: the batch's graph
-+    /// was renamed to `key` while the batch was built, so that is the name the batch
-+    /// has to reach the replica under.
-+    ///
-+    /// # Safety
-+    /// The GIL must be held: the replaced string came from client command arguments.
-+    unsafe fn rekey(
-+        &mut self,
-+        key: &[u8],
-+    ) {
-+        let fresh = ValkeyString::create_from_slice(null_mut(), key);
-+        // SAFETY: `fresh` is valid and the GIL is held. The held reference is this
-+        // struct's own; `fresh` drops its own reference when it goes out of scope.
-+        let held = unsafe { ffi::hold_string(fresh.inner) };
-+        // SAFETY: argument 1 came from `hold_string` and leaves the vector here, so
-+        // it is freed exactly once.
-+        unsafe { ffi::free_string(std::mem::replace(&mut self.argv[1], held)) };
-+    }
- }
- 
- impl Drop for HeldArgs {
-@@ -887,7 +928,7 @@ pub fn graph_bulk_insert(
-             Err(e) => {
-                 drop(tg);
-                 if begin {
--                    discard_created_graph(ctx, &key_str);
-+                    discard_created_graph(ctx, &key_str, &graph);
+@@ -3752,9 +3752,8 @@ impl Graph {
+                     .create_index(index_type, label, attrs, len, options)?;
+                 // Same bookkeeping as `create_index`: surface the
+                 // indexed attr names in `db.propertyKeys()` even if no
+-                // entity has yet written to them. Critical for
+-                // RDB-load and EFFECT_CREATE_INDEX (replica) paths,
+-                // which go through this sync variant.
++                // entity has yet written to them. Critical for the
++                // RDB-load path, which goes through this sync variant.
+                 for attr in attrs {
+                     self.add_node_attribute_name(attr);
                  }
-                 Err(ValkeyError::String(format!("ERR bulk insert failed: {e}")))
-             }
-@@ -923,7 +964,15 @@ pub fn graph_bulk_insert(
-         .iter()
-         .map(|rs| rs.as_slice().to_vec())
-         .collect();
--    let held = held.expect("held on the background path, which is the only path here");
-+    let mut held = held.expect("held on the background path, which is the only path here");
-+    // The key the graph is stored at now, which the worker asks about again before it
-+    // publishes: the addressed key for an existing graph, C's name for one this batch
-+    // created (see `c_graph_key`).
-+    let admitted: Arc<str> = Arc::from(if begin {
-+        c_graph_name(&key_str)
-+    } else {
-+        key_str.to_string_lossy()
-+    });
-     // The cleanup path re-opens the key by name, so it also needs the exact bytes:
-     // `to_string` goes through `to_string_lossy`, and a non-UTF-8 graph name would come
-     // back with replacemen
 ```
 
-**File**: `src/graph_core.rs` (modified, +4/-1)
+**File**: `graph/src/index/mod.rs` (modified, +8/-5)
 ```diff
-@@ -217,7 +217,10 @@ pub fn graph_is_registered(arc: &Arc<RwLock<ThreadedGraph>>) -> bool {
- /// A key that is not valid UTF-8 is the exception. `admitted` is the lossy rendering
- /// of its bytes, so nothing here can open it, and it is taken as it was before this
- /// check existed, on the registry's word.
--fn key_of_write(
-+///
-+/// `GRAPH.BULK` asks the same question of a batch it built on a worker, and of a
-+/// failed `BEGIN` batch before taking its graph back out of the keyspace.
-+pub fn key_of_write(
-     ctx: &Context,
-     graph: &Arc<RwLock<ThreadedGraph>>,
-     admitted: &Arc<str>,
+@@ -956,7 +956,9 @@ impl Drop for OwnedIndex {
+     fn drop(&mut self) {
+         // No global lock, even for the last release: `IndexSpec_Free` touches no
+         // Redis timer (it asserts the temporary-index timer is already stopped, and
+-        // the ForkGC timer self-terminates by not rescheduling — RediSearch `gc.c`).
++        // the ForkGC timer self-terminates by not rescheduling — RediSearch `gc.c`)
++        // and no Redis object another thread can reach (its index errors borrow the
++        // shared "N/A" key rather than refcount it: a refcount is not atomic, #3483).
+         // Only index *creation* needs it, via `RM_CreateTimer`.
+         //
+         // That is load-bearing for #726: an index-scan iterator drops its cloned
+@@ -1000,10 +1002,11 @@ impl SpecHandle {
+ impl Drop for SpecHandle {
+     fn drop(&mut self) {
+         // No global lock, for the same reason as `OwnedIndex::drop`: nothing here
+-        // stops a timer. Load-bearing too — a reader holding the per-graph read lock
+-        // can be the last holder of the spec (a concurrent `drop_index_bg` swaps the
+-        // index map under it), and taking the global lock there is the #726
+-        // inversion.
++        // stops a timer on this thread (`RediSearch_DropIndex` hands the GC stop to
++        // the main thread) or touches a shared Redis object. Load-bearing too — a
++        // reader holding the per-graph read lock can be the last holder of the spec
++        // (a concurrent `drop_index_bg` swaps the index map under it), and taking
++        // the global lock there is the #726 inversion.
+         //
+         // `DropIndex` invalidates the spec *and* releases the creation ref, so pass
+         // the raw pointer via `into_raw` to avoid a second release from `OwnedIndex`.
 ```
 
-**File**: `tests/flow/test_bulk_insertion.py` (modified, +42/-0)
+**File**: `graph/src/locks.rs` (modified, +3/-2)
 ```diff
-@@ -1069,3 +1069,45 @@ def long(v):
-         self.env.assertEqual(p1, {f"p{i}": 1000000 + i if i % 2 == 0 else i for i in range(n)})
-         res = graph.query("MATCH (n:L) RETURN n.p1, n.p2 ORDER BY id(n)")
-         self.env.assertEqual(res.result_set, [[1000001, 2], [1, 1000002]])
-+
-+    # A BEGIN batch builds on a worker. If its key is deleted and created again by
-+    # another client meanwhile, the batch is refused, and the graph at the key now
-+    # is not the batch's to take back out of the keyspace: deleting the key the
-+    # batch named deleted that client's graph.
-+    def test17_failed_begin_spares_a_recreated_key(self):
-+        conn = self.db.connection
-+        graphname = "bulk_recreated"
-+        conn.delete(graphname)
-+        count = 2000000
-+        token = (b"N\0" + struct.pack("=I", 1) + b"v\0" +
-+                 struct.pack("=Bq", 4, 7) * count)
-+
-+        reply = []
-+
-+        def load():
-+            con = redis.Redis(self.env.host, self.port, socket_timeout=120,
-+                              retry=Retry(NoBackoff(), 0))
-+            try:
-+                reply.append(con.execute_command("GRAPH.BULK", graphname, "BEGIN",
-+                                                 count, 0, 1, 0, token))
-+            except Exception as e:  # a timeout too, so it reaches the assertions
-+                reply.append(e)
-+
-+        loader = threading.Thread(target=load)
-+        loader.start()
-+        # blocked from admission until the worker has committed or failed
-+        deadline = time.time() + 10
-+        while not any(c["cmd"].lower() == "graph.bulk" and "b" in c["flags"]
-+                      for c in conn.client_list()):
-+            if time.time() > deadline:
-+                raise AssertionError("GRAPH.BULK never ran on a worker")
-+            time.sleep(0.001)
-+        conn.delete(graphname)
-+        self.db.select_graph(graphname).query("CREATE (:Other)")
-+        loader.join()
-+
-+        self.env.assertIsInstance(reply[0], redis.ResponseError)
-+        self.env.assertContains("deleted or replaced", str(reply[0]))
-+        res = self.db.select_graph(graphname).query(
-+            "MATCH (n) RETURN labels(n)[0], count(n)")
-+        self.env.assertEqual(res.result_set, [["Other", 1]])
+@@ -11,8 +11,9 @@
+ //! lock deadlocked the server for six hours (issue #726). That inversion is now
+ //! unrepresentable here: this crate cannot take the global lock at all, so code that
+ //! holds the indexer lock has nothing to invert against. Host FFI that *does* need
+-//! the global lock (the RediSearch index spec lifecycle) documents it as a
+-//! precondition and relies on the caller having escalated.
++//! the global lock (RediSearch index *creation*, which registers a timer) documents
++//! it as a precondition and relies on the caller having escalated. Index teardown
++//! needs no global lock (`SpecHandle::drop`).
+ //!
+ //! ## Two-phase locking (mirrors C's `QueryCtx_AcquireWriteLock`)
+ //!
 ```
 
-**File**: `tests/flow/test_replication.py` (modified, +155/-1)
+**File**: `graph/src/thread_id.rs` (modified, +1/-3)
 ```diff
-@@ -3,12 +3,31 @@
- from constraint_utils import *
- import csv
- import os
-+import struct
- import tempfile
-+import threading
- import time
- 
- GRAPH_ID = "replication"
- 
- 
-+def in_db(con, db):
-+    """A connection to the server behind `con`, on database `db`."""
-+    kwargs = con.connection_pool.connection_kwargs
-+    return redis.Redis(host=kwargs["host"], port=kwargs["port"], db=db)
-+
-+
-+def bulk_nodes(label, count, bad_last=False):
-+    """A GRAPH.BULK node token: `count` (:label {v: 7}) records, then, with
-+    `bad_last`, one record of an unknown property type, which fails the batch
-+    after the rest of it was built."""
-+    token = (label.encode() + b"\0" + struct.pack("=I", 1) + b"v\0" +
-+             struct.pack("=Bq", 4, 7) * count)
-+    if bad_last:
-+        token += struct.pack("=Bq", 99, 0)
-+    return token
-+
-+
- # test to see if replication works as expected
- # FalkorDB should replicate all write queries which had an effect on the
- # underline graph, e.g. CREATE, DELETE, UPDATE operations as well as
-@@ -409,6 +428,40 @@ def write():
-             raise
-         return writer
- 
-+    # run `action` while `args` runs on a worker, and return the command's reply,
-+    # or the error it got. This waits for the client to block, not for the key to
-+    # exist: a command on an existing graph finds its key there before it is even
-+    # sent, and the client stays blocked from admission until the worker is done
-+    def _while_queued(self, args, action):
-+        env = self.env
-+        reply = []
-+
-+        def run():
-+            con = redis.Redis(env.host, env.port, socket_timeout=120,
-+                              decode_responses=True, retry=Retry(NoBackoff(), 0))
-+            try:
-+                reply.append(con.execute_command(*args))
-+            except Exception as e:  # a timeout too, so it reaches the assertions
-+                reply.append(e)
-+
-+        sender = threading.Thread(target=run)
-+        sender.start()
-+        try:
-+            deadline = time.monotonic() + 10
-+            while True:
-+                clients = self._bounded(env.getConnection(), deadline).client_list()
-+                if any(c["cmd"].lower() == args[0].lower() and "b" in c["flags"]
-+                       for c in clients):
-+                    break
-+                if time.monotonic() > deadline:
-+                    raise AssertionError(f"{args[0]} never ran on a worker")
-+                time.sleep(0.001)
-+            action()
-+        finally:
-+            # joined even if the action raised, so the command cannot outlive the test
-+            sender.join()
-+        return reply[0]
-+
-     # a client for `con`'s server whose every command gives up at `deadline`:
-     # the socket timeout is the time left (at most 5 s) and nothing is retried,
-     # so no single command can outlast the caller's deadline
-@@ -420,7 +473,9 @@ def _bounded(con, deadline):
-                            socket_connect_timeout=left, retry=NO_RETRY)
- 
-     # until the replica has applied everything the master propagated, within
--    # 30 s: every INFO, the primary's included, is bounded by that deadline
-+    # 30 s: every INFO, the primary's included, is bounded by that deadline. A
-+    # replica applies a replicated GRAPH.BULK inline, yielding as it goes, and
-+    # past busy-reply-threshold answers -BUSY until it is done
-     def _wait_replica_caught_up(self, source_con, replica_con):
-         deadline = time.monotonic() + 30
-         target = self._bounded(source_con, deadline).info("replication")["master_repl_offset"]
-@@ -433,6 +488,9 @@ def _wait_replica_caught_up(self, source_con, replica_con):
-                 # the replica did not answer in the time left: poll again
-                 # until the deadline, then fail below
-                 continue
-+            except redis.ResponseError as e:
-+                if "BUSY" not in str(e):
-+                    raise
-             time.sleep(0.05)
-         self.env.assertTrue(False, message=f"replica did not reach offset {target} in 30 s")
- 
-@@ -473,6 +531,35 @@ def test_rename_during_queued_write(self):
-             env.assertEqual(res.result_set[0][0], 1)
-         env.assertEqual(source_con.info("stats")["sync_full"], sync_full_before)
- 
-+    # the same, with MOVE: the graph leaves this database, so no key here holds
-+    # it, and the write is refused, as C refuses it. committed, it was
-+    # replicated under the key it was admitted at, which the replica had moved
-+    # away too: the replica made a new graph there and diverged
-+    def test_move_during_queued_write(self):
-+        env = self.env
-+        source_con = env.getConnection()
-+        replica_con = env.getSlaveConnection()
-+        key = "move_during_write"
-+        for con in (source_con, in_db(source_con, 1)):
-+            con.delete(key)
-+        source_con.execute_command("GRAPH.QUERY", key, "CREATE (:Seed)")
-+        env.assertEqual(source_con.execute_command("WAIT", "1", "10000"), 1)
-+        sync_full_before = sour
+@@ -19,9 +19,7 @@ pub fn set_main_thread() {
+ /// Returns true if the calling thread is the recorded main thread.
+ ///
+ /// If `set_main_thread` has not been called yet (e.g. unit tests that build
+-/// `graph` without the module shell), this returns `false` so `Drop` impls
+-/// take the GIL-acquiring branch — which itself no-ops when the FFI symbols
+-/// are unresolved.
++/// `graph` without the module shell), this returns `false`.
+ pub fn is_main_thread() -> bool {
+     MAIN_THREAD_ID
+         .get()
+```
+
+**File**: `src/commands/config_cmd.rs` (modified, +2/-2)
+```diff
+@@ -24,8 +24,8 @@
+ //!
+ //! ASYNC_DELETE and DELAY_INDEXING are settable, as they are in C, but nothing in
+ //! this engine reads either one yet: graph teardown is always off-thread (see
+-//! `graph_core::graph_free`, which cannot free inline — `Index::drop` takes the GIL,
+-//! which the main thread already holds while the free callback runs), and the
++//! `graph_core::graph_free`, which hands the free to a spawned thread so a large
++//! graph does not stall the main thread), and the
+ //! decoders always build indexes eagerly. So `SET` on them records a value and
+ //! changes no behaviour; C reads both.
+ //!
+```
+
+**File**: `src/commands/explain.rs` (modified, +1/-2)
+```diff
+@@ -39,8 +39,7 @@ fn explain(
+     query: &str,
+ ) -> ValkeyResult {
+     // L1-read for exactly the plan build, through a session: the optimizer consults
+-    // the index to pick scans, and a session is what publishes the lock mode that the
+-    // GIL lock-order assertion reads (#726).
++    // the index to pick scans.
+     let Plan { plan, .. } = {
+         let session = QuerySession::begin(graph);
+         session.with_graph(|tg| tg.graph.read().get_plan(query))
 ```
 
 ---
 
-### Incident Patch 3: `98e05a41` (2026-11-19)
-**Commit Message**: fix(planner): a variable-length hop on an anchored endpoint leads its component (#2558) (#3593)
+### Incident Patch 2: `f4485cd1` (2026-11-22)
+**Commit Message**: fix: reject an ORDER BY aggregate whose constants differ from the projection's (max(x % 4.0) vs max(x % 3)) (#3254)
 
-* fix(planner): a variable-length hop on an anchored endpoint leads its component (#2558)
+* fix: match an ORDER BY aggregate to a projection only when its constants are equal (#3236)
 
-plan_match sorted every variable-length hop after the fixed-length ones. With
-`(person {id})-[:KNOWS*2..2]-(friend), (friend)-[:LIVES]->(city:City)` that put
-the fixed hop at the leaf, select_scan_node started from the City label scan, and
-the var-length hop (whose `person` scan the earlier #2562 pass then dropped
-because `friend` was bound below) expanded from every row that scan produced.
+expr_ir_eq fell back to comparing only the ExprIR variant, so any two
+constants of different types (Int vs Float, Int vs String, Null vs Int)
+compared equal, and so did the payloads of Quantifier, ListComprehension,
+Reduce, Case, ShortestPath and CompiledRegex. ORDER BY max(n.v % 4.0) was
+bound to a projected max(n.v % 3) and the query sorted by the wrong
+expression instead of failing.
 
-When nothing is bound yet and no fixed-length hop is itself anchored, a
-variable-length hop with an anchored endpoint (inline attrs or a WHERE
-predicate) sorts first, so the plan starts at the index lookup like C does.
+Compare constants by value equality, as C's AR_EXP_Equals does with
+SIValue_Compare (3 still matches 3.0, as in C), and compare every payload.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test: quantifiers that differ only in kind are different ORDER BY aggregates
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix: compare mixed Int/Float constants exactly; test: clean up the nodes it creates
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* proofs: drop the raw_exprs_structurally_equal rows (constant comparison changed) to NOT COVERED
+
+Co-Authored-By: Claude Opus 5.5 <
+
+**File**: `graph/src/parser/ast.rs` (modified, +1/-1)
+```diff
+@@ -569,7 +569,7 @@ pub struct NestedPlanRef<TVar> {
+ }
+ 
+ /// Quantifier types for list predicates (all, any, none, single).
+-#[derive(Clone, Debug)]
++#[derive(Clone, Debug, PartialEq, Eq)]
+ pub enum QuantifierType {
+     All,
+     Any,
+```
+
+**File**: `graph/src/planner/binder.rs` (modified, +78/-6)
+```diff
+@@ -36,6 +36,7 @@ use crate::runtime::value::{Value, ValueTypeOf};
+ use crate::tree;
+ use orx_tree::{Dfs, Dyn, DynNode, DynTree, NodeRef};
+ use std::collections::{HashMap, HashSet};
++use std::mem::discriminant;
+ use std::sync::Arc;
+ 
+ /// The variables of one scope.
+@@ -2869,6 +2870,25 @@ fn replace_agg_subtrees(
+     new_tree
+ }
+ 
++/// 2^63: the first float above the `i64` range, and the negation of its first
++/// float below it (`i64::MIN` is exactly `-2^63`).
++const I64_RANGE_BOUND: f64 = 9_223_372_036_854_775_808.0;
++
++/// Whether two constants are the same value. An `Int` and a `Float` match
++/// only when the float is that exact integer: `Value`'s own equality rounds the
++/// integer to `f64`, which would conflate neighbours past 2^53.
++fn constants_equal(
++    a: &Value,
++    b: &Value,
++) -> bool {
++    match (a, b) {
++        (Value::Int(i), Value::Float(f)) | (Value::Float(f), Value::Int(i)) => {
++            f.fract() == 0.0 && *f >= -I64_RANGE_BOUND && *f < I64_RANGE_BOUND && *f as i64 == *i
++        }
++        _ => a == b,
++    }
++}
++
+ /// Compare two raw (pre-bind) expression trees structurally, ignoring
+ /// internal `__agg_order_by_placeholder__` variables that the parser
+ /// appends to aggregate functions.
+@@ -2915,15 +2935,44 @@ fn raw_exprs_structurally_equal(
+         b: &ExprIR<Arc<String>>,
+     ) -> bool {
+         match (a, b) {
+-            (ExprIR::Variable(va), ExprIR::Variable(vb)) => va == vb,
++            // Constants match when they are equal values, as in C
++            // (`SIValue_Compare`): `3` matches `3.0`, `null` matches only
++            // `null`, and values of unrelated types never match.
++            (ExprIR::Constant(va), ExprIR::Constant(vb)) => constants_equal(va, vb),
++            (ExprIR::Variable(va), ExprIR::Variable(vb))
++            | (ExprIR::ListComprehension(va), ExprIR::ListComprehension(vb)) => va == vb,
+             (ExprIR::FuncInvocation(fa), ExprIR::FuncInvocation(fb)) => fa.name == fb.name,
+-            (ExprIR::Constant(Value::String(sa)), ExprIR::Constant(Value::String(sb))) => sa == sb,
+-            (ExprIR::Constant(Value::Int(ia)), ExprIR::Constant(Value::Int(ib))) => ia == ib,
+-            (ExprIR::Constant(Value::Float(fa)), ExprIR::Constant(Value::Float(fb))) => fa == fb,
+-            (ExprIR::Constant(Value::Bool(ba)), ExprIR::Constant(Value::Bool(bb))) => ba == bb,
+             (ExprIR::Property(pa), ExprIR::Property(pb)) => pa == pb,
+             (ExprIR::Parameter(pa), ExprIR::Parameter(pb)) => pa == pb,
+-            _ => std::mem::discriminant(a) == std::mem::discriminant(b),
++            (ExprIR::Case { has_subject: sa }, ExprIR::Case { has_subject: sb }) => sa == sb,
++            (
++                ExprIR::Quantifier {
++                    quantifier_type: qa,
++                    var: va,
++                },
++                ExprIR::Quantifier {
++                    quantifier_type: qb,
++                    var: vb,
++                },
++            ) => qa == qb && va == vb,
++            (ExprIR::Reduce(ra), ExprIR::Reduce(rb)) => {
++                ra.accumulator == rb.accumulator && ra.iterator == rb.iterator
++            }
++            (ExprIR::ShortestPath(sa), ExprIR::ShortestPath(sb)) => {
++                sa.rel_types == sb.rel_types
++                    && sa.min_hops == sb.min_hops
++                    && sa.max_hops == sb.max_hops
++                    && sa.directed == sb.directed
++            }
++            (ExprIR::CompiledRegex(ra), ExprIR::CompiledRegex(rb)) => {
++                ra.kind == rb.kind && ra.regex.as_str() == rb.regex.as_str()
++            }
++            // The remaining variants carry no payload, except the graph
++            // patterns (`Pattern`, `PatternComprehension`, `NestedPlan`),
++            // which are not compared: their anonymous elements get a fresh
++            // name per occurrence, so two copies of the same pattern would
++            // never compare equal.
++            _ => discriminant(a) == discriminant(b),
+         }
+     }
+ 
+@@ -3048,6 +3097,29 @@ mod tests {
+         }
+     }
+ 
++    /// Mixed `Int`/`Float` constants are equal only when the float is exactly
++    /// that integer, so ids past 2^53 are not conflated.
++    #[test]
++    fn constants_equal_compares_mixed_numbers_exactly() {
++        use super::constants_equal;
++        use crate::runtime::value::Value;
++
++        assert!(constants_equal(&Value::Int(3), &Value::Float(3.0)));
++        assert!(constants_equal(&Value::Float(3.0), &Value::Int(3)));
++        assert!(!constants_equal(&Value::Int(4), &Value::Float(3.0)));
++        assert!(!constants_equal(&Value::Int(3), &Value::Float(3.5)));
++        assert!(!constants_equal(
++            &Value::Int(9_007_199_254_740_993),
++            &Value::Float(9_007_199_254_740_992.0)
++        ));
++        assert!(constants_equal(
++            &Value::Int(9_007_199_254_740_992),
++            &Value::Float(9_007_199_254_740_992.0)
++        ));
++        assert!(!constants_equal(&Value::I
+```
+
+**File**: `proofs/FINDINGS.md` (modified, +0/-1)
+```diff
+@@ -147,7 +147,6 @@ IDs are `W2-<area>-<n>`. "C ✓" means C gives the correct answer, so the bug is
+ - Minor: `point({latitude:null, longitude:1})` gives a different error message from the same map passed as a value.
+ - **W4-plan-1** — `expr_to_plan` keeps null rows under `NOT` (`planner/mod.rs:1421-1427`): `NOT(complex)` is planned as AntiSemiApply, so rows where the inner predicate is null pass. `MATCH (a:N) WHERE NOT (a.v > 1 OR (a)-->()) RETURN count(a)` → Rust 2, C 1. Tests in `lean_planner_build.rs`.
+ - **W4-plan-2** — a subscript is never accepted as a boolean (`binder.rs:2304-2314`): `WHERE n.flags[0]` → "Expected boolean predicate", C 1. Same for `true AND l[0]` and `true AND -null`.
+-- **W4-plan-3** — ORDER BY aggregate matched to the wrong projection: `expr_ir_eq` (`binder.rs:2653`) falls back to discriminant equality, so all Int/Float/Null/Bool/String constants compare equal. `RETURN … max(n.v % 3) AS m ORDER BY max(n.v % 4.0)` sorts by `m`; C rejects the query. **PR #3011 widens this to non-aggregate ORDER BY, so fix `expr_ir_eq` before or with #3011.**
+ - Minor divergences: `false AND (1+2)` → false (C type error); `date({year:2020, month:null})` treats null as absent (C errors); `WITH r WHERE r.w = 1` on a var-length `r` is rejected (C 1).
+ - **W4-parse-5 (crash)** — 2000 chained `UNWIND [1] AS xN` clauses crash the server in planning or execution (parse, validate and bind succeed up to 8000); C runs 5000.
+ - Lean-only, not confirmed live (the malformed-RDB path): `set_span` stores `n as u16` (`attribute_store.rs:597`, `:608`), so 65,536+ entries per entity wrap in a malformed RDB (the GRAPH.BULK side was fixed by #3063).
+```
+
+**File**: `proofs/binder/COVERAGE.tsv` (modified, +61/-60)
+```diff
+@@ -1,62 +1,63 @@
+ file	function	line	bucket	lean_name_or_reason
+-graph/src/planner/binder.rs	Scope::get	53	PROVEN	Table.Env.find? (named entries only); Env.pushUnnamed_find, Env.has_iff_find
+-graph/src/planner/binder.rs	Scope::contains_key	60	PROVEN	Table.Env.has; Env.has_iff_find
+-graph/src/planner/binder.rs	Scope::insert	67	PROVEN	Table.Env.insert; Env.insert_new_eq, Env.insert_new_length, Env.insert_old_length
+-graph/src/planner/binder.rs	Scope::remove	75	PROVEN	Table.Env.erase; Env.erase_find, erase_length_le
+-graph/src/planner/binder.rs	Scope::lookup_anon	84	NOT COVERED	(#3302): not modelled yet
+-graph/src/planner/binder.rs	Scope::push_unnamed	94	PROVEN	Table.Env.pushUnnamed; Env.pushUnnamed_length, Env.pushUnnamed_find, Env.pushUnnamed_views, pushUnnamed_covers
+-graph/src/planner/binder.rs	Scope::iter	102	PROVEN	Table.Env.named; Env.keys_named, Env.pushUnnamed_views
+-graph/src/planner/binder.rs	Scope::keys	107	PROVEN	Table.Env.keys; Env.keys_named, Env.pushUnnamed_views
+-graph/src/planner/binder.rs	Scope::values	112	PROVEN	Table.Env.values; Env.values_length, Env.pushUnnamed_views
+-graph/src/planner/binder.rs	Scope::into_values	117	PROVEN	Table.Env.values; Env.values_length; Scopes.foreachRestore_covers
+-graph/src/planner/binder.rs	Scope::len	121	PROVEN	Table.Env (List.length counts named + unnamed); Env.values_length, Env.pushUnnamed_length
+-graph/src/planner/binder.rs	Scope::retain	126	PROVEN	Table.Env.retain; Env.retain_keeps_unnamed; Scopes.comprehension_cleanup_breaks
+-graph/src/planner/binder.rs	Binder::default	171	PROVEN	Stack.default_spec (one empty scope, no parent lookup); #2981 no MATCH relationship aliases yet (BSt.default.matchRels = [])
+-graph/src/planner/binder.rs	Binder::bind	197	PROVEN	mergeSV_ge, mergeSV_covers (bind merges live + retired scope_vars)
+-graph/src/planner/binder.rs	Binder::scope_vars	212	PROVEN	Stack.scopeVars_lengths (one sorted table per live scope, lengths preserved); sortedScopeVars_spec
+-graph/src/planner/binder.rs	Binder::update_all_node_labels	220	PROVEN	accumulate/specScanLabels: labels_agree_match_only, accumulate_bound_match_only, labels_leak_fixed, create_new_keeps_labels (#3049; pre3049_labels_leak historical); REMOVE ignored, RemoveLabels.bug3450_remove_label_kept_across_with (open #3450, property StampedLabelsHeld)
+-graph/src/planner/binder.rs	Binder::update_graph_labels	258	PROVEN	Stack.updNode_replace (MATCH: accumulated set), updNode_union (OPTIONAL: own labels kept + accumulated added), updNode_none, updNode_idem
+-graph/src/planner/binder.rs	Binder::current_env	337	PROVEN	Stack.BSt.current, current_setCurrent
+-graph/src/planner/binder.rs	Binder::current_env_mut	343	PROVEN	Stack.current_setCurrent, setCurrent_outer (only the innermost table changes)
+-graph/src/planner/binder.rs	Binder::push_scope	349	PROVEN	Stack.push_current, push_toSt (empty child table, parent = old current, p2c/cfp kept)
+-graph/src/planner/binder.rs	Binder::commit_scope	354	PROVEN	Stack.commit_spec
+-graph/src/planner/binder.rs	Binder::bind_ir	360	PROVEN	BindIR.bindIR (every arm) : shortestOk_iff, match_shortest_unbound, match_nonbool, match_rel_reused / match_records_rels / relReused_fresh / relReused_unnamed (#2981: a named relationship variable of an earlier MATCH is rejected; aliases are Table.Alias, unnamed ones skipped), optional_labels_restored, mergeOk_*, unwind_order, delete_nonentity, return_star_empty, yieldLoop_ok/yield_duplicate/yield_requires_entity, bindYield_alias/hidden, query_seq, union_columns/union_state; foreachRestore_covers; unionCheck_ok_iff
+-graph/src/planner/binder.rs	Binder::bind_call_subquery	844	PROVEN	BindIR.bindCallSubquery: callSubquery_nonreturning, callSubquery_collision, subqueryReturns_noInternal, callSubquery_covers; Scopes.callBody_query_disjoint; #2981 pruneMatchRels_spec (the body's MATCH relationship aliases do not leak out); #3891 pruneVarlen_spec, pruneVarlen_prop_on_path (the body's [r*] marks do not leak out: a later path with the same key still rejects p.prop)
+-graph/src/planner/binder.rs	Binder::bind_call_body	971	NOT COVERED	(#3302): not modelled yet
+-graph/src/planner/binder.rs	Binder::build_import_projections	1132	NOT COVERED	(#3302): not modelled yet
+-graph/src/planner/binder.rs	Binder::validate_import_with	1152	PROVEN	validateImport_ok, validateImport_rejects_expr
+-graph/src/planner/binder.rs	Binder::bind_projection	1208	NOT COVERED	(#3302): not modelled yet
+-graph/src/planner/binder.rs	Binder::bind_graph	1480	PROVEN	rustBind vs specBind: agree_on_outer_refs, node_attr_on_rel_rust_accepts, node_attr_on_own_rel_accepts, node_attr_later_rel, node_attr_later_node_rejected, foldGrow_mono, q2923_fixed, defRels_named_only (#2981 defRels: named relationship aliases defined first; Elem aliases are Table.Alias), rel_attr_forward_node, self_reference_ok; defineName_ignores_parent; merged_occurrences (endpoint shares the node's merged attrs) abstracted: Elem.node carries every occurrence's attrs
+-graph/src/planner/binder.rs	Binder::bind_graph
+```
+
+**File**: `proofs/binder/FalkorBinder.lean` (modified, +7/-5)
+```diff
+@@ -67,7 +67,7 @@ proofs/planner_build `RemoveVerified`; the issue's CREATE/MERGE half does not re
+ | `RC`, `bindIR`, `shortestOk`, `mergeOk`, `yieldLoop`, `bindYield`, `bindCallSubquery`, `importProjections`, `createCheck` (BindIR.lean) | `bind_ir` :262, `bind_call_subquery` :716, `build_import_projections` :984, `bind_graph_create` :1562 |
+ | `mayBool`, `mayEntity`, `validate` (Types.lean) | `expr_may_return_boolean` :2323, `expr_may_return_entity` :2392, `validate_boolean_operands(_impl)` :2297/2301 |
+ | `nodeToValue`, `collectConstArgs`, `foldCall`, `rewriteStruct`, `rewriteRegex` (Fold.lean) | `expr_tree_to_value` :2465, `collect_constant_args` :2497, folding :2124, `rewrite_struct_constructor` :2515, `rewrite_compiled_regex` :2580 |
+-| `exprIrEq`, `strip`/`eqS`, `structEq`, `replaceAgg` (AggEq.lean) | `expr_ir_eq` :2682, `nodes_eq` :2652, `raw_exprs_structurally_equal` :2644, `replace_agg_subtrees` :2614 |
++| `constEq`, `exprIrEq`, `strip`/`eqS`, `structEq`, `replaceAgg` (AggEq.lean) | `constants_equal` :2843, `expr_ir_eq` :2896, `nodes_eq` :2866, `raw_exprs_structurally_equal` :2858, `replace_agg_subtrees` :2809 (#3254) |
+ 
+ ## Proven (one line each)
+ * `fresh_not_used`, `mint_new_covers`, `reinsert_covers`: minting under a new key is fresh and keeps the table covering.
+@@ -93,7 +93,8 @@ proofs/planner_build `RemoveVerified`; the issue's CREATE/MERGE half does not re
+   `bind_iterable_outer`; per-arm `bindIR` theorems (`shortestOk_iff`, `mergeOk_*`, `yieldLoop_ok`,
+   `callSubquery_covers`, `importProjections_covers`, `createCheck_*`); `mayBool_sound_except`, `mayEntity_eq`;
+   `nodeToValue_sound`/`_complete`, `foldCall_sound`, `rewriteStruct_shape`, `rewriteRegex_spec`;
+-  `nodesEq_refl`/`_symm`, `exprIrEq_exact`, `replaceAgg_id`/`_root`.
++  `nodesEq_refl`/`_symm`, `exprIrEq_exact`, `replaceAgg_id`/`_root`; #3254 `exprIrEq_exact_any_kind`,
++  `const_kinds_distinguished`, `order_by_float_rejected`/`_equal` (bug 9 fixed).
+ * #2845 CALL entry projection (`CallBoundary`, folded in from the retired pr2845_review):
+   `Pr2845.bodyNew_entry`, `importProj_spec`, `entry_ids_below`, `body_own_unbound`,
+   `body_import_value`, `union_branch_label_fixed` (#3027), `pushed_read_unbound` (W6-opt-1).
+@@ -139,13 +140,14 @@ proofs/planner_build `RemoveVerified`; the issue's CREATE/MERGE half does not re
+    `RETURN true AND -null` → Rust error, C `null`. Lean `getElement_rejected`, `negate_rejected`
+    (`mayBool_sound_except`: sound for every other variant). Fix: move `GetElement` (and the null-capable
+    unary/list forms) to the "runtime-typed → true" arm.
+-9. **ORDER BY aggregate matched to the wrong projection** (NEW, `expr_ir_eq` binder.rs:2682 falls back to
++9. **ORDER BY aggregate matched to the wrong projection** (FIXED by #3254: constants compared by value,
++   quantifier kinds compared; Lean `const_kinds_distinguished`, `order_by_float_rejected`; history below; `expr_ir_eq` binder.rs:2682 falls back to
+    `discriminant` equality, so every two `Constant`s of different kinds — Int vs Float, Null vs Int,
+    Bool vs Int, String vs Int — and any two quantifiers compare equal): `CREATE (:N {g:1, v:3}), (:N {g:2, v:4})`,
+    `MATCH (n:N) RETURN n.g AS g, max(n.v % 3) AS m ORDER BY max(n.v % 4.0)` → Rust rows `[1,0],[2,1]`
+    (sorted by `m`), C `failed to map aggregation expression within ORDER BY clause, please use alias`
+    (openCypher order by `max(v % 4.0)` would be `[2,1],[1,0]`); with `% 4` (Int) Rust also rejects.
+-   Lean `order_by_wrong_aggregate`, `const_kinds_conflated`. Fix: compare `Constant` values with
++   Lean `pre3254_order_by_wrong_aggregate`, `pre3254_const_kinds_conflated`. Fix: compare `Constant` values with
+    type-aware equality (`Value` equality, not discriminant) and compare quantifier kinds.
+ 
+ ## Spec vs C disagreements (not Rust-vs-C bugs)
+@@ -175,7 +177,7 @@ proofs/planner_build `RemoveVerified`; the issue's CREATE/MERGE half does not re
+ * #3011: generalises `replace_agg_subtrees` to `replace_projected_subtrees` (non-aggregate ORDER BY
+   expressions repeating a projection read its alias), guarded by `is_alias_rewritable`, which admits
+   `Constant(Bool|Int|Float|String)` — exactly the kinds `expr_ir_eq` conflates with each other
+-  (`const_kinds_conflated`). With it, bug 9 would extend to plain expressions, e.g.
++  (`pre3254_const_kinds_conflated`; fixed by #3254). Before #3254, bug 9 would extend to plain expressions, e.g.
+   `RETURN n.v % 3 AS k ORDER BY n.v % 4.0` (sorted by `k`). Fix bug 9 first (or compare constants by value).
+ 
+ ## Gaps
+```
+
+**File**: `proofs/binder/FalkorBinder/AggEq.lean` (modified, +170/-72)
+```diff
+@@ -5,29 +5,34 @@
+ | --- | --- |
+ | `RV`, `RD`, `RE` | raw (pre-bind) `ExprIR<Arc<String>>` payloads and trees |
+ | `disc` | `std::mem::discriminant` of the `ExprIR` variant |
+-| `isAggPlaceholder` | binder.rs:2631-2633 |
+-| `exprIrEq` | `expr_ir_eq` binder.rs:2665-2683 |
+-| `nodesEq` | `nodes_eq` binder.rs:2635-2663 |
+-| `structEq` | `raw_exprs_structurally_equal` binder.rs:2627-2684 |
+-| `replaceAgg` | `replace_agg_subtrees` binder.rs:2597-2622 |
+-
+-Floats are opaque codes compared by a parameter `feq` (f64 `==`, so NaN ≠ NaN).
+-
+-* `nodesEq_refl` / `nodesEq_symm`: an equivalence when `feq` is.
+-* `nodesEq_sound`: equal trees are equal up to placeholders — **only** when no
+-  constant pair of different kinds (Int vs Float, Null vs …) and no quantifier
+-  /comprehension payloads differ; `const_kinds_conflated` is the counterexample.
+-* CONFIRMED bug: `max(n.v % 3)` and `max(n.v % 4.0)` compare equal (the
+-  `Constant` fallback compares only the discriminant), so
+-  `RETURN n.g AS g, max(n.v % 3) AS m ORDER BY max(n.v % 4.0)` sorts by `m`.
++| `constEq` | `constants_equal` binder.rs:2843-2853 (`Value` `==` = `compare_value` value.rs:1256) |
++| `isAggPlaceholder` | binder.rs:2862-2864 |
++| `exprIrEq` | `expr_ir_eq` binder.rs:2896-2939 |
++| `nodesEq` | `nodes_eq` binder.rs:2866-2894 |
++| `structEq` | `raw_exprs_structurally_equal` binder.rs:2858-2942 |
++| `replaceAgg` | `replace_agg_subtrees` binder.rs:2809-2834 |
++
++Floats are opaque codes compared by a parameter `feq` (f64 `==`, so NaN ≠ NaN);
++`fint f = some i` says the float `f` is exactly the `i64` `i` (`fract() == 0`,
++in `[-2^63, 2^63)`, `f as i64 == i`). Other constants (lists, maps, temporals, …)
++are `other ty x`, equal per `oeq ty` within one type and never across types
++(`Value::order` is injective on types).
++
++* `nodesEq_refl` / `nodesEq_symm`: an equivalence when `feq`/`oeq` are.
++* `exprIrEq_exact`, `exprIrEq_exact_any_kind`: exact on every value-compared payload.
++* `const_kinds_distinguished`, `order_by_float_rejected`, `order_by_float_equal`:
++  #3254 fixed W4-plan-3 — `max(n.v % 3)` no longer matches `max(n.v % 4.0)`,
++  still matches `max(n.v % 3.0)`. The pre-#3254 counterexamples are kept as
++  `pre3254_const_kinds_conflated` / `pre3254_order_by_wrong_aggregate`.
++* `patterns_by_variant`: graph patterns are still compared by variant only.
+ * `replaceAgg_id`: with no matching aggregate the ORDER BY tree is unchanged;
+-  `replaceAgg_sound`: every replacement is justified by `structEq`.
++  `matchItem_spec`: every replacement is justified by `structEq`.
+ -/
+ namespace FalkorBinder.Agg
+ 
+ /-- `Value`s that occur as constants in raw expressions. -/
+ inductive RV
+-  | null | bool (b : Bool) | int (i : Int) | float (f : Nat) | str (s : String) | other (tag : Nat)
++  | null | bool (b : Bool) | int (i : Int) | float (f : Nat) | str (s : String) | other (ty : Nat) (x : Nat)
+   deriving DecidableEq, Repr
+ 
+ inductive RD
+@@ -38,6 +43,10 @@ inductive RD
+   | param (p : String)
+   | quant (kind : Nat) (v : String)
+   | listComp (v : String)
++  | case (hasSubject : Bool)
++  | reduce (acc it : String)
++  | shortest (rels : List String) (minHops : Nat) (maxHops : Option Nat) (directed : Bool)
++  | regex (kind : Nat) (src : String)
+   | other (tag : Nat)
+   deriving DecidableEq, Repr
+ 
+@@ -50,7 +59,8 @@ def RE.d : RE → RD | .node d _ => d
+ /-- Variant discriminant: payloads are ignored. -/
+ def disc : RD → Nat
+   | .var _ => 0 | .func _ _ => 1 | .const _ => 2 | .prop _ => 3 | .param _ => 4
+-  | .quant _ _ => 5 | .listComp _ => 6 | .other t => 7 + t
++  | .quant _ _ => 5 | .listComp _ => 6 | .case _ => 7 | .reduce _ _ => 8
++  | .shortest _ _ _ _ => 9 | .regex _ _ => 10 | .other t => 11 + t
+ 
+ def placeholder : String := "__agg_order_by_placeholder__"
+ 
+@@ -61,9 +71,37 @@ def isAggPlaceholder : RD → Bool
+ theorem isAggPlaceholder_iff (d : RD) : isAggPlaceholder d = true ↔ d = .var placeholder := by
+   cases d <;> simp [isAggPlaceholder]
+ 
+-variable (feq : Nat → Nat → Bool)
++variable (feq : Nat → Nat → Bool) (fint : Nat → Option Int) (oeq : Nat → Nat → Nat → Bool)
++
++/-- `constants_equal`: Int/Float exact, otherwise `Value` equality. -/
++def constEq : RV → RV → Bool
++  | .int i, .float f => fint f == some i
++  | .float f, .int i => fint f == some i
++  | .null, .null => true
++  | .bool a, .bool b => a == b
++  | .int a, .int b => a == b
++  | .float a, .float b => feq a b
++  | .str a, .str b => a == b
++  | .other t a, .other u b => t == u && oeq t a b
++  | _, _ => false
+ 
+ def exprIrEq : RD → RD → Bool
++  | .const a, .const b => constEq feq fint oeq a b
++  | .var a, .var b => a == b
++  | .listComp a, .listComp b => a == b
++  | .func a _, .func b _ => a == b
++  | .prop a, .prop b => a == b
++  | .param a, .param b => a == b
++  | .case a, .case b => a == b
++  | .quant k a, .quant l b => k == l && a == b
++  | .reduce a i, .reduce b j => a == b && i == j
++  | .shortest r mn mx d, .shortest r' mn' mx' d' => r == r' && mn == mn' && mx == mx' && d == d'
++  | .regex k s, .
+```
+
+**File**: `proofs/binder/README.md` (modified, +3/-2)
+```diff
+@@ -67,7 +67,8 @@ openCypher binds a pattern left to right, clause by clause.
+ | `bind_paren`, `bind_andOr_paren` | `(x)` binds exactly like `x`, and nested AND/OR bind flat (since #3335) | `BindExpr.lean` |
+ | `mayBool_sound_except`, `mayEntity_eq` | The boolean and entity type checks, and their exact exceptions | `Types.lean` |
+ | `nodeToValue_sound`, `foldCall_sound` | Constant folding gives the same value as evaluation | `Fold.lean` |
+-| `exprIrEq_exact` | `expr_ir_eq` is exact on expressions it can compare by value | `AggEq.lean` |
++| `exprIrEq_exact`, `exprIrEq_exact_any_kind` | `expr_ir_eq` is exact on expressions it can compare by value; since #3254 constants of different kinds never match | `AggEq.lean` |
++| `order_by_float_rejected`, `order_by_float_equal` | `ORDER BY max(n.v % 4.0)` no longer matches `max(n.v % 3)`; `% 3.0` still does (#3254) | `AggEq.lean` |
+ | `importProj_spec`, `entry_ids_below`, `body_import_value` | A `CALL {}` body's entry projection (#2845) imports exactly the listed variables, below the body's own ids | `CallBoundary.lean` |
+ 
+ ### How `mint_fresh_iff` and the covering lemmas fit together
+@@ -92,7 +93,7 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_binder`, not committ
+ | W2-binder-6 | `pre3049_labels_leak`, `labels_leak_fixed` | Labels from CREATE and from pattern comprehensions tighten an earlier MATCH scan: 0 or 1 rows where C returns 3 | **Fixed by PR #3049** (`with_node_labels_rolled_back`) |
+ | W2-binder-7 | `defineName_ignores_parent` | A pattern predicate in `WITH … WHERE` rebinds a parent variable as a fresh one: 3 rows where C returns 1 | **Open** (PR #3062 not merged) |
+ | W4-plan-2 | `getElement_rejected`, `negate_rejected` | `WHERE n.flags[0]` → "Expected boolean predicate" (C: 1); same for `true AND l[0]` and `true AND -null` | **Open** |
+-| W4-plan-3 | `order_by_wrong_aggregate`, `const_kinds_conflated` | `expr_ir_eq` treats all Int/Float/Null/Bool/String constants as equal, so `ORDER BY max(n.v % 4.0)` sorts by the alias of `max(n.v % 3)`; C rejects the query | **Open**; PR #3011 would widen it to non-aggregate ORDER BY, so fix this first |
++| W4-plan-3 | `pre3254_order_by_wrong_aggregate`, `pre3254_const_kinds_conflated` | `expr_ir_eq` treated all Int/Float/Null/Bool/String constants as equal, so `ORDER BY max(n.v % 4.0)` sorted by the alias of `max(n.v % 3)`; C rejects the query | **Fixed** by #3254 (`order_by_float_rejected`) |
+ | W6-opt-1 | `pushed_read_unbound` | Filter push-down gives an OPTIONAL MATCH inside `CALL {}` the outer query's ids: "Variable n not found" where C returns rows | **Open** |
+ | #1334 | `bug1334_pattern_predicate_declares_var` (property `PatternPredDeclaresNothing`) | A WHERE pattern predicate may mint a new named variable: `MATCH (n0) WITH * WHERE () -- (n1) RETURN *` binds and returns every `n0`; C rejects it (issue #1334; the C error message is not recorded here) | **Open** |
+ | #3450 | `bug3450_remove_label_kept_across_with` (property `StampedLabelsHeld`, `RemoveLabels.lean`) | `REMOVE a:A` leaves `A` in the accumulated label set, which `WITH a` copies and `update_all_node_labels` stamps on the next MATCH: `MATCH (a:A) REMOVE a:A WITH a MATCH (a)-[:R]->(b)` gives 0 rows, C 1. The fixed stamp `specStamp` satisfies the property (`specStamp_held`). The issue's CREATE/MERGE back-propagation half does not reproduce | **Open** |
+```
+
+**File**: `tests/test_e2e.py` (modified, +40/-0)
+```diff
+@@ -2057,6 +2057,46 @@ def test_optional_match_null_merge():
+ 
+ 
+ 
++def test_order_by_aggregate_matches_projection_only_on_equal_constants():
++    """An ORDER BY aggregate binds to a projected aggregate only when their
++    constants are equal values, as in C (#3236): `3` matches `3.0`, but `4.0`
++    does not match `3`, and `null` does not match `7`."""
++    query("UNWIND range(1, 6) AS i CREATE (:N {g: i % 2, v: i})", write=True)
++    try:
++        for order_by in [
++            "max(n.v % 4.0)",
++            "max(coalesce(n.x, null))",
++            "max(n.v % '3')",
++        ]:
++            try:
++                common.g.query(
++                    f"MATCH (n:N) RETURN n.g AS g, max(n.v % 3) AS m, max(coalesce(n.x, 7)) AS c ORDER BY {order_by}"
++                )
++            except ResponseError as e:
++                assert "failed to map aggregation expression" in str(e), order_by
++            else:
++                assert False, f"ORDER BY {order_by} should be rejected"
++
++        for order_by in ["max(n.v % 3)", "max(n.v % 3.0)"]:
++            res = query(
++                f"MATCH (n:N) RETURN n.g AS g, max(n.v % 3) AS m ORDER BY {order_by} DESC, g"
++            )
++            assert res.result_set == [[0, 2], [1, 2]], order_by
++
++        # quantifiers that differ only in kind are different aggregates
++        projected = "max(all(x IN [1, 2] WHERE x > 1))"
++        query_exception(
++            f"MATCH (n:N) RETURN n.g AS g, {projected} AS m ORDER BY max(any(x IN [1, 2] WHERE x > 1))",
++            "failed to map aggregation expression",
++        )
++        res = query(
++            f"MATCH (n:N) RETURN n.g AS g, {projected} AS m ORDER BY {projected}, g"
++        )
++        assert res.result_set == [[0, False], [1, False]]
++    finally:
++        query("MATCH (n:N) DETACH DELETE n", write=True)
++
++
+ def test_call_optional_match_filter_not_pushed_with_outer_variable_ids():
+     """A filter in an OPTIONAL MATCH inside a CALL {} body must stay on the
+     body's own rows: variable ids are per scope, so the body's `n` must not
+```
+
+---
+
+### Incident Patch 3: `256ab4d3` (2026-11-22)
+**Commit Message**: fix: a write that keeps losing its version runs as a writer after a bounded retry (#3559) (#3578)
+
+* fix: a write that keeps losing its version runs as a writer after 3 retries (#3559)
+
+A queued write matches as a reader and is retried when another writer
+commits underneath it. The loop had no bound, and each retry restarted
+TIMEOUT and the latency clock, so under a steady stream of inline writes
+it never finished (C holds the write lock for the whole query).
+
+After MAX_STALE_RETRIES stale runs the write runs as a writer (GIL and
+write lock first, re-authorized like an escalation), which cannot be made
+stale. All attempts share one clock, so TIMEOUT and the slow log count
+from the first attempt.
+
+Closes #3559
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(planner): promote only one self-contained, startable var-length walk
+* fix: escalate sooner after a slow stale run and bound GRAPH.BULK's retry (#3559)
 
-Copilot/cubic review of #3593: do not promote a walk whose attrs read a
-variable bound by another hop, a bidirectional walk anchored only on its
-to endpoint, or more than one walk; key WHERE variables on (scope, id);
-tests wait for the index and assert the index scan
+Measured with 30 samples: each stale run of the starved write wastes about
+39 ms, so three of them cost more than C's single pass. A stale run that
+took 10 ms or more is now not retried as a reader. GRAPH.BULK's build loop
+had the same unbounded retry and now falls back to a writer the same way.
 
-**File**: `graph/src/planner/mod.rs` (modified, +147/-6)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED
+
+**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +73/-72)
 ```diff
-@@ -41,8 +41,10 @@ use std::{
- };
- 
- use crate::planner::hop_order::{HopShape, self_loops_after_binders};
--use crate::planner::optimizer::collect_expr_variables;
-+use crate::planner::optimizer::collect_expr_scoped_variables;
-+use crate::planner::optimizer::collect_single_variable_conjuncts;
- use crate::planner::optimizer::references::ir_references_variable;
-+use crate::planner::optimizer::{endpoint_scan_score, walk_scans_to_endpoint};
- use crate::runtime::functions::{FnType, Type, get_functions};
- use crate::runtime::value::Value;
- use crate::tree;
-@@ -2000,9 +2002,15 @@ impl Planner {
-         let mut vec = vec![];
-         // Variables the WHERE predicate constrains. Used below to order the
-         // hops of a component so constrained endpoints are reached first.
--        let filter_vars: HashSet<u32> = filter
-+        let filter_vars: HashSet<(u32, u32)> = filter
-             .as_ref()
--            .map_or_default(|f| collect_expr_variables(f));
-+            .map_or_default(|f| collect_expr_scoped_variables(f));
-+        // The subset of those a promoted walk can start from: variables a WHERE
-+        // conjunct constrains by itself, evaluable as soon as the endpoint is
-+        // scanned (`p.id = length(r)` waits for the path, so it anchors nothing).
-+        let anchor_vars: HashSet<(u32, u32)> = filter
-+            .as_ref()
-+            .map_or_default(|f| collect_single_variable_conjuncts(f));
-         // Collect extra filters for bound variables with new constraints
-         // (labels or inline properties). These are applied as top-level
-         // filters rather than as plan components, so they don't interfere
-@@ -2017,7 +2025,18 @@ impl Planner {
-         // Inline attrs already lowered to a Filter in this clause, keyed by
-         // (alias, attrs map identity). See `lower_inline_attrs`.
-         let mut lowered_attrs: HashSet<(u32, u32, usize)> = HashSet::new();
--        for component in pattern.connected_components() {
-+        // Whether an earlier clause bound anything. Reversing a promoted walk
-+        // rebuilds its scan, which would drop an earlier clause's input if one
-+        // sits underneath. Components of this clause are independent of each
-+        // other, so what they bind does not count.
-+        let bound_before_clause = !self.visited.is_empty();
-+        // Computed once: the decomposition is a graph walk.
-+        let components = pattern.connected_components();
-+        let single_component = components.len() == 1
-+            && !filter
-+                .as_ref()
-+                .is_some_and(|f| Self::has_pattern_expr(&f.root()));
-+        for component in components {
-             let relationships = component.relationships();
-             // Endpoints already bound by earlier clauses may carry labels
-             // that were never enforced by a scan or traversal (e.g.
-@@ -2042,9 +2061,102 @@ impl Planner {
-             // traversals (especially self-loops / ExpandInto) are planned as
-             // leaves and variable-length traversals sit above them.
-             let mut sorted_rels: Vec<_> = relationships.to_vec();
-+            // An endpoint the query constrains (inline attributes, or a WHERE
-+            // predicate) is a cheap place to start: an index lookup or a short
-+            // scan rather than every node of a label.
-+            let is_constrained = |n: &Arc<QueryNode<Arc<String>, Variable>>| {
-+                n.attrs.root().num_children() > 0
-+                    || anchor_vars.contains(&(n.alias.scope_id, n.alias.id))
-+            };
-+            let anchored = |r: &QueryRelationship<Arc<String>, Arc<String>, Variable>| {
-+                is_constrained(&r.from) || is_constrained(&r.to)
-+            };
-+            // A variable-length hop on an anchored endpoint leads the component
-+            // when no fixed-length hop is anchored and nothing is bound yet.
-+            // Planned last, as the sort below does by default, it would sit
-+            // above a fixed-length hop that `select_scan_node` then starts from
-+            // an unrelated label scan, and the var-length expansion runs from
-+            // every candidate that scan finds (#2558).
-+            //
-+            // Only a walk that can start the plan leads, and the hops after it
-+            // follow the pattern outward (see below), so each one has a bound
-+            // endpoint when its turn comes:
-+            //   - no walk in the component reads a variable in its endpoint or
-+            //     edge attributes, so moving it loses no match;
-+            //   - the endpoint `select_var_len_scan_node` will scan is the
-+            //     anchored one. That pass scans the endpoint with the higher
-+            //     `endpoint_scan_score` (the `to` side only when strictly
-+            //     higher, since the walk can run either way), so the decision is
-+            //     made here with the same score and a predicate that mentions
-+            //     an endpoint at all (`
+@@ -120,57 +120,57 @@ src/graph_core.rs	ThreadedGraph::new	603	PROVEN	GraphCore.TG.new: TG.new_idle (u
+ src/graph_core.rs	ThreadedGraph::from_mvcc	620	PROVEN	GraphCore.TG.fromMvcc: TG.new_idle (unbounded write channel, #3014)
+ src/graph_core.rs	execute_query	639	PROVEN	RoQuery.ro_never_writes, GraphCore.executeQuery/admissionKept: ro_write_rejected, read_releases_admission (#3014)
+ src/graph_core.rs	execute_profile	721	PROVEN	GraphCore.profileDetect/admissionKept: profileDetect_write, read_releases_admission (#3014)
+-src/graph_core.rs	execute_query_write	783	PROVEN	GraphCore.executeWrite (#3290 retry loop): executeWrite_first, stale_run_silent
+-src/graph_core.rs	try_query_write	833	PROVEN	GraphCore.writeSteps/abandonSteps (#3657 infallible write_version, Stale on abandon; #3850/#3851 refused finish_write abandons and fails): reply_after_commit, reply_only_after_commit, failed_no_commit, unkeyed_refused, stale_run_silent, unregistered_not_stale
+-src/graph_core.rs	WriteAttempt::from	822	PROVEN	GraphCore.Attempt.ofString: ofString_not_stale
+-src/graph_core.rs	reply_profile	933	PROVEN	GraphCore.profileDepth/profileOps (#2390: all ops, plain depth): profileDepth_eq, profileDepth_commit_counts, profileOps_all
+-src/graph_core.rs	BlockedClient::new	970	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
+-src/graph_core.rs	BlockedClient::drop	978	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
+-src/graph_core.rs	compute_effective_timeout	996	PROVEN	Args.rustTimeout: rustTimeout_write_pq, rustTimeout_rw_uniform (#2998 fixed by #3000 2e8172d76), rustTimeout_le_max, rustTimeout_pos, rustTimeout_exceeds, rustTimeout_write_ignores_pq
+-src/graph_core.rs	reply_invalid_graph_version	1035	PROVEN	GraphCore.invalidVersionBytes: invalidVersion_shape
+-src/graph_core.rs	admit	1049	PROVEN	GraphCore.admitQ: admit_bounded, capped (QueueSlot::try_acquire; never waits)
+-src/graph_core.rs	query_mut	1060	PROVEN	GraphCore.dispatch/admitQ (#3014): stale_version, inline_uncapped, capped, admit_bounded
+-src/graph_core.rs	query_sync	1264	PROVEN	GraphCore.syncOutcome/logsTelemetry (#3844 log_query): sync_err, sync_write_logs, sync_read_logs, sync_unserved_silent, sync_log_only
+-src/graph_core.rs	profile_mut	1400	PROVEN	GraphCore.profileOutcome/dispatch (admitQ, #3014): profile_write_runs_as_write, profile_read_replied, capped
+-src/graph_core.rs	profile_sync	1501	PROVEN	GraphCore.profileOutcome: profile_write_runs_as_write, profile_read_replied
+-src/graph_core.rs	finish_write	1572	PROVEN	GraphCore.writeSteps (commit if escalated, else nothing: the version drops with the runtime, #3657; escalated: published under GraphCore.keyOfWrite's key, or refused, #3850/#3851): reply_after_commit, reply_only_after_commit, unkeyed_refused, unescalated_silent
+-src/graph_core.rs	abandon_write	1607	PROVEN	GraphCore.abandonSteps (resync only if version_is_current, nothing to release, #3657): failed_no_commit, stale_run_silent
+-src/graph_core.rs	commit_and_replicate	1623	PROVEN	GraphCore.commitSteps: modified_replicates_or_warns, unmodified_silent; replicated key bytes = utf8(lossy(key)): KeyName.bug2653_nonutf8_key_mangled (#2653)
+-src/graph_core.rs	process_write_queued_query	1701	PROVEN	GraphCore.loopExit: loopExit_safe (no stranded message on exit); slot dropped on dequeue: SearchConcurrency Pool.paths_release_once
+-src/graph_core.rs	CtxSink::replicate	1849	PROVEN	GraphCore.replicateArgv: replicateArgv_shape
+-src/graph_core.rs	graph_free	1862	PROVEN	GraphCore.free: free_unregisters, free_keeps_others; Telemetry.graphFree (#3844 queues the freed keys' streams): graphFree_registry, graphFree_queues, freed_stream_stripped
++src/graph_core.rs	execute_query_write	793	PROVEN	GraphCore.executeWrite (#3290 retry loop): executeWrite_first, stale_run_silent; GraphCore.loopW/escalateNext (#3559 bounded retry): escalate_after_max, reader_before_max, loopW_readers, loopW_length, loopW_bounded, loopW_has_result, loopW_decided, loopW_not_stale, loopW_first (writer runs never stale: QuerySession.writer_never_stale)
++src/graph_core.rs	try_query_write	886	PROVEN	GraphCore.writeSteps/abandonSteps (#3657 infallible write_version, Stale on abandon; #3850/#3851 refused finish_write abandons and fails; #3559 one timeout for all runs: a run past it fails before forking, no write step): reply_after_commit, reply_only_after_commit, failed_no_commit, unkeyed_refused, stale_run_silent, unregistered_not_stale; GraphCore.resolveT/runBudget (#3559): resolveT_kept, runBudget_le, runBudget_unlimited
++src/graph_core.rs	WriteAttempt::from	864	PROVEN	GraphCore.Attempt.ofString: ofString_not_stale
++src/graph_core.rs	reply_profile	1001	PROVEN	GraphCore.profileDepth/profileOps (#2390: all ops, plain depth): profileDepth_eq, profileDepth_commit_counts, profileOps_all
++src/graph_core.rs	BlockedClient::new	1038	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
++src/graph_core.rs	BlockedClient::drop	1046	AXIOMA
 ```
 
-**File**: `graph/src/planner/optimizer/mod.rs` (modified, +79/-1)
+**File**: `proofs/redis_layer/RedisLayer/Commands2.lean` (modified, +1/-1)
 ```diff
-@@ -63,7 +63,7 @@ mod utilize_node_by_id;
- 
- use std::collections::{HashMap, HashSet};
- 
--use orx_tree::{Bfs, DynTree, NodeRef};
-+use orx_tree::{Bfs, DynNode, DynTree, NodeRef};
- 
- use crate::{
-     graph::graph::Graph,
-@@ -99,6 +99,84 @@ pub(crate) fn collect_expr_variables(expr: &DynTree<ExprIR<Variable>>) -> HashSe
-     vars
- }
- 
-+/// Collects the `(scope_id, id)` of every variable an expression references.
-+/// Variable ids are only unique within a scope, so callers that mix scopes
-+/// (a pattern next to a `WHERE` with comprehension variables) key on both.
-+pub(crate) fn collect_expr_scoped_variables(
-+    expr: &DynTree<ExprIR<Variable>>
-+) -> HashSet<(u32, u32)> {
-+    let mut vars = HashSet::new();
-+    for idx in expr.root().indices::<Bfs>() {
-+        if let ExprIR::Variable(var) = expr.node(idx).data() {
-+            vars.insert((var.scope_id, var.id));
-+        }
-+    }
-+    vars
-+}
-+
-+/// Collects the `(scope_id, id)` of every variable that a top-level `AND`
-+/// conjunct of `expr` reads on its own: a conjunct over a single variable can
-+/// run as soon as that variable is bound, one that also reads another
-+/// (a path, a second node) has to wait for it. A conjunct holding a pattern
-+/// is left out: the aliases the pattern reads are not in the expression tree.
-+pub(crate) fn collect_single_variable_conjuncts(
-+    expr: &DynTree<ExprIR<Variable>>
-+) -> HashSet<(u32, u32)> {
-+    fn walk(
-+        node: &DynNode<ExprIR<Variable>>,
-+        out: &mut HashSet<(u32, u32)>,
-+    ) {
-+        match node.data() {
-+            ExprIR::And | ExprIR::Paren => {
-+                for child in node.children() {
-+                    walk(&child, out);
-+                }
-+            }
-+            _ => {
-+                let mut vars = HashSet::new();
-+                let mut has_pattern = false;
-+                for data in node.walk::<Bfs>() {
-+                    match data {
-+                        ExprIR::Variable(var) => {
-+                            vars.insert((var.scope_id, var.id));
-+                        }
-+                        ExprIR::Pattern(_) | ExprIR::PatternComprehension(_) => has_pattern = true,
-+                        _ => {}
-+                    }
-+                }
-+                if !has_pattern && vars.len() == 1 {
-+                    out.extend(vars);
-+                }
-+            }
-+        }
-+    }
-+    let mut out = HashSet::new();
-+    walk(&expr.root(), &mut out);
-+    out
-+}
-+
-+/// The part of a scan endpoint's score known before the plan is built: a
-+/// predicate that mentions the node (inline attributes included) counts 2, a
-+/// label 1. `select_scan_node` adds the bound-variable bonus and breaks ties on
-+/// label cardinality; the planner has neither, so it uses this alone.
-+pub(crate) fn endpoint_scan_score(
-+    filtered: bool,
-+    labelled: bool,
-+) -> u32 {
-+    u32::from(filtered) * 2 + u32::from(labelled)
-+}
-+
-+/// Which end of a variable-length walk `select_var_len_scan_node` scans: the
-+/// `to` end only when it strictly outscores `from`, a tie keeps the pattern's
-+/// own direction. The planner asks the same question to decide whether a walk
-+/// can lead its component, so both read this one rule.
-+pub(crate) const fn walk_scans_to_endpoint(
-+    from_score: u32,
-+    to_score: u32,
-+) -> bool {
-+    to_score > from_score
-+}
-+
- /// Collects all variable IDs provided by a plan subtree.
- pub(crate) fn collect_subtree_variables(node: &orx_tree::DynNode<IR>) -> HashSet<u32> {
-     use crate::runtime::runtime::GetVariables;
-```
-
-**File**: `graph/src/planner/optimizer/select_scan_node.rs` (modified, +71/-31)
-```diff
-@@ -75,7 +75,10 @@ use crate::{
- };
- 
- use super::super::IR;
--use super::{collect_expr_variables, collect_subtree_variables};
-+use super::{
-+    collect_expr_scoped_variables, collect_expr_variables, collect_subtree_variables,
-+    endpoint_scan_score, walk_scans_to_endpoint,
-+};
- 
- /// Scores a candidate scan endpoint for the scan node selection optimizer.
- ///
-@@ -118,14 +121,9 @@ fn score_endpoint(
-     // the planner and stripped from the pattern, so they arrive here through
-     // `filtered_vars` like any other predicate rather than being counted
-     // separately — which used to score such an endpoint twice.
--    if filtered_vars.all.contains(&key) {
--        score += 2;
--    }
-+    score += endpoint_scan_score(filtered_vars.all.contains(&key), !node.labels.is_empty());
-     let has_equality = filtered_vars.equality.contains(&key);
-     let filter_runs_late = filtered_vars.above.contains(&key);
--    if !node.labels.is_empty() {
--        score += 1;
--    }
-     // Cardinality: minimum label node count (lower is better).
-     // For nodes with no labels, use u64::MAX so labeled nodes win ties.
-     let cardinality = if node.labels.is_empty() {
-@@ -562,6 +560,28 @@ fn child_subtree_binds(
-     binds
- }
- 
-+/// Whether anything below the planner scan at `scan_idx` may bind `alias`:
-+/// one of its children binds it, or contains an `Argument(None)`, which is
-+/// opaque about what it carries. Unlike `child_subtree_binds`, an opaque
-+/// `Argument` counts as binding, since the caller is about to scan `alias`
-+/// on top of these children and must not rebind it.
-+fn subtree_may_bind(
-+    plan: &DynTree<IR>,
-+    scan_idx: NodeIdx<Dyn<IR>>,
-+    alias: &Variable,
-+) -> bool {
-+    use crate::runtime::runtime::GetVariables;
-+    plan.node(scan_idx).children().any(|child| {
-+        child
-+            .walk::<Bfs>()
-+            .any(|ir| matches!(ir, IR::Argument(None)))
-+            || child
-+                .get_variables()
-+                .iter()
-+                .any(|v| v.id == alias.id && v.scope_id == alias.scope_id)
-+    })
-+}
-+
- /// Picks which endpoint of a leaf `CondVarLenTraverse` to scan.
- ///
- /// The planner always scans the pattern's `from` endpoint. When `to` is the
-@@ -603,14 +623,22 @@ fn select_var_len_scan_node(
-         };
-         // Nothing to choose between: both endpoints are already bound, both
-         // ends are the same variable, or the runtime has no backwards walk for
--        // this pattern (bidirectional / allShortestPaths).
-+        // this pattern (allShortestPaths).
-         if *expand_into
--            || relationship.bidirectional
-             || relationship.all_shortest_paths != AllShortestPaths::No
-             || relationship.from.alias.id == relationship.to.alias.id
-         {
-             continue;
-         }
-+        // The edge attributes are evaluated per edge, before the walk binds
-+        // anything: one that reads an endpoint sees it bound only when that
-+        // end is the one scanned (or bound by an input). Dropping the `from`
-+        // scan unbinds `from`; rescanning `to` flips which end is bound.
-+        let attr_vars = collect_expr_scoped_variables(&relationship.attrs);
-+        let attrs_read_from =
-+            attr_vars.contains(&(relationship.from.alias.scope_id, relationship.from.alias.id));
-+        let attrs_read_to =
-+            attr_vars.contains(&(relationship.to.alias.scope_id, relationship.to.alias.id));
-         // Only rewrite when the planner put its own scan for `from` here.
-         if node.num_children() != 1 {
-             continue;
-@@ -667,7 +695,10 @@ fn select_var_len_scan_node(
-             (filter, include_pending)
-         };
-         let wrapper_ok = !has_filter && !has_include_pending;
--        if wrapper_ok && child_subtree_binds(optimized_plan, scan_idx, &to.alias) {
-+        if wrapper_ok
-+            && !attrs_read_from
-+            && child_subtree_binds(optimized_plan, scan_idx, &to.alias)
-+        {
-             let kept: Vec<DynTree<IR>> = optimized_plan
-                 .node(scan_idx)
-                 .children()
-@@ -686,26 +717,9 @@ fn select_var_len_scan_node(
-             }
-         }
- 
--        // The leaf rewrite below replaces the whole subtree with a fresh scan
--        // of `to`, carrying over only an `Argument` leaf (and re-adding
--        // `IncludePending` inside MERGE). Anything else there is an earlier
--        // clause that `plan_query` stitched under the traverse: a `Filter`
--        // (`MATCH (a) WHERE a.v = 1 MATCH (a)-[*]->(b)`) or an operator below
--        // the scan (`UNWIND … MATCH (a)-[*]->(b)`). Dropping it would lose a
--        // predicate or rows, so keep the planner's direction instead.
--        let scan_node = optimized_plan.node(scan_idx);
--        let only_argument_below = match scan_node.num_children() {
--            0 => true,
--            1 => {
--                let below = scan_node.child(0);
--                matches!(below.data(), IR::Argument(_)) && below.num_chil
-```
-
-**File**: `graph/src/runtime/ops/cond_var_len_traverse.rs` (modified, +15/-5)
-```diff
-@@ -248,16 +248,24 @@ impl VarLenIter<'_> {
-                     continue;
-                 }
- 
--                let neighbor = if reversed {
-+                // An undirected walk follows an edge either way, so it reads the
-+                // same whether it starts at `from` or, reversed, at `to`.
-+                let neighbor = if bidirectional {
-+                    if edge_src == current {
-+                        Some(edge_dst)
-+                    } else if edge_dst == current {
-+                        Some(edge_src)
-+                    } else {
-+                        None
-+                    }
-+                } else if reversed {
-                     if edge_dst == current {
-                         Some(edge_src)
-                     } else {
-                         None
-                     }
-                 } else if edge_src == current {
-                     Some(edge_dst)
--                } else if bidirectional && edge_dst == current {
--                    Some(edge_src)
-                 } else {
-                     None
-                 };
-@@ -557,8 +565,10 @@ impl<'a> CondVarLenTraverseOp<'a> {
- 
-         // When `to` is bound but `from` is unbound (e.g. `(:L1)<-[:R1*]-()`)
-         // we reverse the traversal: start from the bound `to` node and follow
--        // edges in the opposite direction, emitting destinations as `from`.
--        let reversed = from_id.is_none() && to_id.is_some() && !bidirectional;
-+        // edges in the opposite direction, emitting destinations as `from`. An
-+        // undirected walk reverses too: it follows edges both ways, and only the
-+        // start, the emitted endpoints and the path order change.
-+        let reversed = from_id.is_none() && to_id.is_some();
- 
-         // Get starting nodes
-         let start_nodes: Vec<NodeId> = if reversed {
-```
-
-**File**: `proofs/binder/COVERAGE.tsv` (modified, +1/-1)
-```diff
-@@ -58,4 +58,4 @@ graph/src/planner/binder.rs	raw_exprs_structurally_equal::expr_ir_eq	2890	PROVEN
- graph/src/planner/binder.rs	denotes	2912	NOT COVERED	(#3302): not modelled yet
- graph/src/planner/binder.rs	sorted_scope_vars	2919	PROVEN	Stack.sortedScopeVars_spec (permutation of the table, sorted by id, same length)
- graph/src/planner/binder.rs	merge_scope_vars	2927	PROVEN	mergeSV_ge, mergeSV_covers
--graph/src/planner/mod.rs	Planner::fresh_var	1015	NOT COVERED	(#3302): not modelled yet
-+graph/src/planner/mod.rs	Planner::fresh_var	1017	NOT COVERED	(#3302): not modelled yet
-```
-
-**File**: `proofs/ops_traverse/COVERAGE.tsv` (modified, +5/-5)
-```diff
-@@ -25,11 +25,11 @@ graph/src/runtime/ops/expand_into.rs	ExpandIntoOp::expand_row	125	PROVEN	CondTra
- graph/src/runtime/ops/expand_into.rs	ExpandIntoOp::next	251	PROVEN	Drive.capDrive: eiNext_stream, capDrive_flatten
- graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::path_value	139	PROVEN	VarLenGlue.pathValue: pathValue_spec, Alt.reverse
- graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::begin_start_node	152	PROVEN	VarLen.varLen 0-hop branch: varLen_sound, varLen_complete, zero_zero
--graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::advance	196	PROVEN	VarLen.dfs: dfs_sound, dfs_complete, varLen_iff (trails, min..max); absorbed edge filter verdict edgeVerdict_eq_filterEval (= FilterOp, #2390)
--graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::next	402	PROVEN	VarLenGlue.vlStep/run: run_complete, run_err
--graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::new	455	PROVEN	VarLenGlue.VlSt.new/findPrev: vlNew_spec
--graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::expand_row	518	PROVEN	VarLenGlue.rowPlan: rowPlan_spec; VarLen.varLen (no_sibling_uniqueness)
--graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::next	629	PROVEN	Drive.driveE: vlOpNext_stream, driveE_ok, driveE_child_err
-+graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::advance	196	PROVEN	VarLen.dfs: dfs_sound, dfs_complete, varLen_iff (trails, min..max); absorbed edge filter verdict edgeVerdict_eq_filterEval (= FilterOp, #2390); #3593: an undirected step no longer depends on `reversed` (= step g true; varLen_bidir_reverse_iff)
-+graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::next	410	PROVEN	VarLenGlue.vlStep/run: run_complete, run_err
-+graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::new	463	PROVEN	VarLenGlue.VlSt.new/findPrev: vlNew_spec
-+graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::expand_row	526	PROVEN	VarLenGlue.rowPlan: rowPlan_spec (#3593: reversed whenever only `to` is a node, directed or not); VarLen.varLen_bidir_reverse_iff, Walk.reverse_bidir, step_bidir_symm (an undirected walk reversed binds the same trails); VarLen.varLen (no_sibling_uniqueness)
-+graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::next	639	PROVEN	Drive.driveE: vlOpNext_stream, driveE_ok, driveE_child_err
- graph/src/runtime/ops/node_by_label_scan.rs	NodeByLabelScanOp::new	56	PROVEN	CTGlue.labelScanNew: ctors_spec
- graph/src/runtime/ops/node_by_label_scan.rs	NodeByLabelScanOp::next	77	PROVEN	Scans.labelScan: mem_labelScan, length_labelScan (get_nodes axiomatised as sorted list)
- graph/src/runtime/ops/node_by_id_seek.rs	NodeByIdSeekOp::new	32	PROVEN	CTGlue.idSeekNew: ctors_spec
-```
-
-**File**: `proofs/ops_traverse/OpsTraverse/VarLen.lean` (modified, +40/-2)
-```diff
-@@ -15,8 +15,9 @@ Modelled as a recursive DFS; the engine uses an explicit stack, which changes
- only the *order* of emissions (it pops the last pushed neighbour first), not
- the multiset. Destination id / label filters and edge-attribute / WHERE
- filters are pure post-filters on each candidate and are not modelled; the
--reversed traversal (`reversed`, `:543`) is the same DFS on the transposed
--direction.
-+reversed traversal (`reversed`, `:571`) is the same DFS on the transposed
-+direction, and for an undirected walk (reversed since #3593) the same DFS from
-+the other end: `varLen_bidir_reverse_iff`.
+@@ -15,7 +15,7 @@ import RedisLayer.GraphCore
+ | `applyCons`, `consWorker` | `apply_constraint` `:599`; `graph_constraint` pool path `:547-585` (#3819) |
+ | `recordShape`             | `record.rs` `record_mut` `:44`, `graph_record` `:180` |
+ | `copyOut`                 | `copy.rs` `graph_copy` `:27` (`pipe`/`fork`/`_exit`/`waitpid` are libc, AXIOMATISED) |
+-| `bulkFlow`, `heldReplicate`, `heldRekey`, `bulkArgv`, `discardCreated`, `maybeYield`, `publishOps`, `edgeRecords` | `bulk_insert.rs` `:247-1125` (#3863: `discard_created_graph` `:296`, `HeldArgs::rekey` `:396`, the worker's `key_of_write` `:1026`) |
++| `bulkFlow`, `heldReplicate`, `heldRekey`, `bulkArgv`, `discardCreated`, `maybeYield`, `publishOps`, `edgeRecords` | `bulk_insert.rs` `:249-1148` (#3863: `discard_created_graph` `:298`, `HeldArgs::rekey` `:398`, the worker's `key_of_write` `:1048`; #3559 bounded stale retry escalates to `begin_writer_checked`, a refusal is the same failure path) |
+ | `getNames`, `getOne`, `asI64`, `asU64` | `config_cmd.rs` `config_get_one` `:57`, `ConfigValue::as_i64/as_u64` `:294-306` |
  -/
- 
- namespace OpsTraverse.VarLen
-@@ -146,6 +147,43 @@ theorem varLen_iff {g : Graph} {b : Bool} {start minH maxH : Nat} {es : List Nat
-       Walk g b start es d ∧ es.Nodup ∧ minH ≤ es.length ∧ es.length ≤ maxH :=
-   ⟨varLen_sound, fun ⟨hw, hnd, h1, h2⟩ => varLen_complete hw hnd h1 h2⟩
- 
-+/-- An undirected step can be taken backwards. -/
-+theorem step_bidir_symm {g : Graph} {s n e : Nat} (h : (e, n) ∈ step g true s) :
-+    (e, s) ∈ step g true n := by
-+  rw [mem_step] at h ⊢
-+  obtain ⟨x, hx, hid, h⟩ := h
-+  refine ⟨x, hx, hid, ?_⟩
-+  rcases h with ⟨h1, h2⟩ | ⟨_, h2, h3, h4⟩
-+  · by_cases hn : x.src = n
-+    · exact Or.inl ⟨hn, by omega⟩
-+    · exact Or.inr ⟨rfl, hn, h2, h1⟩
-+  · exact Or.inl ⟨h4, h3⟩
-+
-+theorem Walk.snoc {g : Graph} {b : Bool} {s m n e : Nat} {es : List Nat}
-+    (hw : Walk g b s es m) (h : (e, n) ∈ step g b m) : Walk g b s (es ++ [e]) n := by
-+  induction hw with
-+  | nil => exact .cons h (.nil _)
-+  | cons hs _ ih => exact .cons hs (ih h)
-+
-+/-- An undirected walk read backwards is an undirected walk. -/
-+theorem Walk.reverse_bidir {g : Graph} {s d : Nat} {es : List Nat} (hw : Walk g true s es d) :
-+    Walk g true d es.reverse s := by
-+  induction hw with
-+  | nil => exact .nil _
-+  | cons hs _ ih => simpa using ih.snoc (step_bidir_symm hs)
-+
-+/-- **PROVEN** (#3593: `expand_row` reverses an undirected walk too): from the bound `to`, the
-+undirected DFS finds exactly the trails of the forward walk, read backwards, ending at `from`. -/
-+theorem varLen_bidir_reverse_iff {g : Graph} {s d minH maxH : Nat} {es : List Nat} :
-+    (es, d) ∈ varLen g true s minH maxH ↔ (es.reverse, s) ∈ varLen g true d minH maxH := by
-+  rw [varLen_iff, varLen_iff, List.length_reverse]
-+  have hn : es.reverse.Nodup ↔ es.Nodup := by
-+    simp only [List.Nodup, List.pairwise_reverse]
-+    exact ⟨fun h => h.imp Ne.symm, fun h => h.imp Ne.symm⟩
-+  constructor
-+  · rintro ⟨hw, h1, h2⟩; exact ⟨hw.reverse_bidir, hn.2 h1, h2⟩
-+  · rintro ⟨hw, h1, h2⟩; exact ⟨by simpa using hw.reverse_bidir, hn.1 h1, h2⟩
-+
- /-- `*0..0` yields exactly the start node. -/
- theorem zero_zero (g : Graph) (b : Bool) (s : Nat) : varLen g b s 0 0 = [([], s)] := by
-   simp [varLen, dfs]
+ namespace RedisLayer.Commands
 ```
 
-**File**: `proofs/ops_traverse/OpsTraverse/VarLenGlue.lean` (modified, +9/-7)
+**File**: `proofs/redis_layer/RedisLayer/GraphCore.lean` (modified, +191/-4)
 ```diff
-@@ -6,7 +6,7 @@ Variable-length traverse glue (graph/src/runtime/ops/cond_var_len_traverse.rs).
+@@ -12,8 +12,10 @@ import RedisLayer.Resp
+ | `invalidVersionBytes`       | `reply_invalid_graph_version` `:1038` |
+ | `profileDepth`, `profileOps`| `reply_profile` `:936` (all ops, plain depth, since #2390) |
+ | `isWrite`, `profileDetect`, `admissionKept` | `execute_query` `:636` / `execute_profile` `:722` write detection and `admission.take()` |
+-| `writeSteps`                | `try_query_write` `:834`, `finish_write` `:1568`, `abandon_write` `:1603`, `commit_and_replicate` `:1619` |
+-| `executeWrite`, `Attempt`   | `execute_query_write` `:784` (retry loop, #3290), `WriteAttempt::from` `:823` |
++| `writeSteps`                | `try_query_write` `:886`, `finish_write` `:1633`, `abandon_write` `:1668`, `commit_and_replicate` `:1684` |
++| `executeWrite`, `Attempt`   | `execute_query_write` `:793` (retry loop, #3290), `WriteAttempt::from` `:863` |
++| `WTimeout`, `resolveT`, `runBudget` | `try_query_write` `:886` one timeout for all runs (`WriteTimeout` `:870`, #3559) |
++| `loopW`, `escalateNext`, `Run` | `execute_query_write` `:793` bounded retry (#3559), `MAX_STALE_RETRIES` `:847`, `SLOW_STALE_RUN` `:854` |
+ | `admitQ`, `dispatch`        | `admit` `:1052`, `query_mut` `:1063` (#3014) |
+ | `syncOutcome`, `logsTelemetry` | `query_sync` `:1264` (`log_query`, #3844), `dispatch::logs_telemetry` `dispatch.rs:63`, `profile_sync` `:1501`, `profile_mut` `:1400` |
+ | `loopExit`                  | `process_write_queued_query` `:1697` |
+@@ -296,12 +298,13 @@ theorem unescalated_silent (k h m b : Bool) :
+ 
+ `try_query_write` returns `WriteAttempt::Stale` only from the error arm after
+ `abandon_write` when `session.is_stale()` — nothing mutated, published or replied — and the
+-loop re-runs on a fresh session (`QuerySession::begin_with`). -/
++loop re-runs on a fresh session (`QuerySession::begin_with`, or `begin_writer_checked` once the
++bounded retry below escalates, #3559). -/
+ 
+ inductive Attempt | stale | failed (e : String) | ok
+   deriving DecidableEq, Repr
+ 
+-/-- `impl From<String> for WriteAttempt` (`:823`): every other error is `Failed`. -/
++/-- `impl From<String> for WriteAttempt` (`:863`): every other error is `Failed`. -/
+ def Attempt.ofString (e : String) : Attempt := .failed e
+ theorem ofString_not_stale (e : String) : Attempt.ofString e ≠ .stale := by simp [Attempt.ofString]
+ 
+@@ -323,6 +326,190 @@ nothing, and it committed and replied nothing. -/
+ theorem stale_run_silent (w k m b : Bool) :
+     writeSteps false w k false m b = [] := by simp [writeSteps, abandonSteps]
+ 
++/-! ### The bounded retry (#3559)
++
++`execute_query_write` (`:793`) counts stale runs; after `MAX_STALE_RETRIES` (`:847`) of them, or
++at once after a stale run that took `SLOW_STALE_RUN` (`:854`, 10 ms) or longer, the next run
++begins as a writer (`QuerySession::begin_writer_checked`) instead of a reader
++(`begin_with`). A run is a function of the mode it begins in; a refused
++`begin_writer_checked` is that run's `failed` outcome (`map_err(…)?`). Times are nanoseconds. -/
++
++def maxStaleRetries : Nat := 3
++def slowStaleRun : Nat := 10000000
++
++/-- `stale_runs >= MAX_STALE_RETRIES || wasted >= SLOW_STALE_RUN`, after the increment. -/
++def escalateNext (staleRuns wasted : Nat) : Bool :=
++  decide (maxStaleRetries ≤ staleRuns) || decide (slowStaleRun ≤ wasted)
++
++/-- One run's report: its outcome and how long it took. -/
++structure Run where
++  a : Attempt
++  wasted : Nat
++
++/-- The loop: `s` stale runs so far, `w` whether this run begins as a writer; `runs` the
++successive runs, each given the mode it begins in. Returns the result (`none`: still
++running) and the mode of every run taken. -/
++def loopW (s : Nat) (w : Bool) : List (Bool → Run) → Option Attempt × List Bool
++  | [] => (none, [])
++  | f :: rest =>
++    match (f w).a with
++    | .stale =>
++      let p := loopW (s + 1) (escalateNext (s + 1) (f w).wasted) rest
++      (p.1, w :: p.2)
++    | a => (some a, [w])
++
++theorem escalate_after_max (n t : Nat) (h : maxStaleRetries ≤ n) : escalateNext n t = true := by
++  simp [escalateNext, h]
++
++theorem reader_before_max (n t : Nat) (h : n < maxStaleRetries) (ht : t < slowStaleRun) :
++    escalateNext n t = false := by
++  simp [escalateNext]; omega
++
++/-- **Still the first run that was not stale** (as `executeWrite_first`), each run taken in the
++mode the loop chose for it. -/
++theorem loopW_first (s : Nat) (w : Bool) (runs : List (Bool → Run)) :
++    (loopW s w runs).1 =
++      executeWrite (List.zipWith (fun f m => (f m).a) runs (loopW s w runs).2) := by
++  induction runs generalizing s w with
++  | nil => simp [loopW, executeWrite]
++  | cons f rest ih =>
++    cases ha : (f w).a <;> simp [loopW, ha, executeWrite, ih]
++
++/-- A stale run is never the result. -/
++theorem loopW_not_stale (s : Nat) (w : Bool) (runs : List (Bool → Run)) :
++    (loopW s w runs).1 ≠ some .stale := by
++  induction runs generalizing s w with
++  | nil => simp [loopW]
++  | cons f rest ih =>
++    cases ha : (f w).a <;> simp [loopW, ha, ih]
++
++/-- **Bounded**: at most `MAX_
+```
+
+**File**: `proofs/redis_layer/RedisLayer/QuerySession.lean` (modified, +84/-9)
+```diff
+@@ -8,16 +8,17 @@ Redis — AXIOMATISED rows for `lock_gil`/`release_gil`, which only call
+ 
+ | here | there |
  | --- | --- |
- | `pathValue`, `Alt`   | `VarLenIter::path_value` (:139) |
- | `Frame`, `vlNext`, `run` | `Iterator for VarLenIter::next` (:392): pop the frame buffer, stop on a parked error, else begin the next start node or `advance` one DFS frame |
--| `rowPlan`            | `CondVarLenTraverseOp::expand_row` (:500): endpoint resolution, reversal, start nodes, destination, hop defaults |
-+| `rowPlan`            | `CondVarLenTraverseOp::expand_row` (:526): endpoint resolution, reversal, start nodes, destination, hop defaults |
- | `VlSt.new`, `findPrev` | `CondVarLenTraverseOp::new` (:441) |
- | `vlOpNext`           | `CondVarLenTraverseOp::next` (:611) — `Drive.driveE` with the parked-error check |
+-| `Th`, `holdsGil`, `gilAcquire`, `gilDrop` | `holds_gil` `:681`, `Gil::acquire` `:701`, `Gil::drop` `:724`, `hold_gil` `:674`, `GIL_CTX` |
++| `Th`, `holdsGil`, `gilAcquire`, `gilDrop` | `holds_gil` `:702`, `Gil::acquire` `:722`, `Gil::drop` `:745`, `hold_gil` `:695`, `GIL_CTX` |
+ | `S`, `begin`, `beginWriter`   | `QuerySession::begin` `:178`, `begin_writer` `:205` (main thread only since #3816: `debug_assert!(holds_gil())`) |
+-| `beginWith`, `readPastGate`, `mayWaitAtGate` | `begin_with` `:185`, `read_past_gate` `:524`, `may_wait_at_gate` `:548`; `WriterGate::is_closed`/`close`/`wait_until_open` `:569-577` are the `gateWait`/`gateClose`/`gateOpen` events |
+-| `release`                     | `release_locks` `:317`, `Drop` `:652` |
+-| `withGraph`, `withGraphMut`   | `with_graph` `:334`, `with_graph_mut` `:350` |
+-| `Att`, `pollLoop`, `acquireWrite` | `acquire_write` `:460` (#3816): per attempt GIL, check, `try_write_arc_for(slice)`; the gate closes after `GATE_AFTER_SLICES` = 2 misses; one blocking try when the interval is ≤ 0 or the thread already holds the GIL |
+-| `authorize`, `World`          | `authorize_write` `:496`: registry, then `reauthorize_write` |
+-| `escalate`, `upgrade`         | `escalate` `:399`, `upgrade_to_write` `:377` (and the trait shim `:639`) |
+-| `reauthorize`                 | `reauthorize_write` `:598` |
+-| `Version`, `SS`, `writeVersion`, `isStale`, `versionIsCurrent`, `checkFork`, `upgradeS`, `upgradeSt` | #3657: `enum Version` `:128`, `write_version` `:239`, `is_stale` `:255`, `version_is_current` `:263`, `is_writer` `:267`, `check_fork` `:279`, `facts` `:225` |
++| `beginWriterChecked`          | `begin_writer_checked` `:235` (#3559): `begin_with`, then `escalate`; a refusal drops the reader `escalate` re-took |
++| `beginWith`, `readPastGate`, `mayWaitAtGate` | `begin_with` `:185`, `read_past_gate` `:545`, `may_wait_at_gate` `:569`; `WriterGate::is_closed`/`close`/`wait_until_open` `:590-577` are the `gateWait`/`gateClose`/`gateOpen` events |
++| `release`                     | `release_locks` `:338`, `Drop` `:673` |
++| `withGraph`, `withGraphMut`   | `with_graph` `:355`, `with_graph_mut` `:371` |
++| `Att`, `pollLoop`, `acquireWrite` | `acquire_write` `:481` (#3816): per attempt GIL, check, `try_write_arc_for(slice)`; the gate closes after `GATE_AFTER_SLICES` = 2 misses; one blocking try when the interval is ≤ 0 or the thread already holds the GIL |
++| `authorize`, `World`          | `authorize_write` `:517`: registry, then `reauthorize_write` |
++| `escalate`, `upgrade`         | `escalate` `:420`, `upgrade_to_write` `:398` (and the trait shim `:660`) |
++| `reauthorize`                 | `reauthorize_write` `:619` |
++| `Version`, `SS`, `writeVersion`, `isStale`, `versionIsCurrent`, `checkFork`, `upgradeS`, `upgradeSt` | #3657: `enum Version` `:128`, `write_version` `:260`, `is_stale` `:276`, `version_is_current` `:284`, `is_writer` `:288`, `check_fork` `:300`, `facts` `:225` |
+ | `CommitError`, `WriteAbort.ofCommit` | `From<CommitError> for WriteAbort` `:95` |
  
-@@ -152,7 +152,7 @@ theorem run_complete {I : Type} : ∀ (n : Nat) (s : It I), s.err = false → po
- theorem run_err {I : Type} (n : Nat) (st sts : List (Frame I)) :
-     run (n + 1) ⟨[], st, sts, true⟩ = [] := by simp [run, vlStep]
+ **#3816 (af228a34f).** Off the main thread `escalate` waits for the write lock in
+@@ -363,6 +364,72 @@ theorem release_order (t : Th) (hm : t.main = false) (hc : t.ctx = false) :
+     (release (beginWriter t)).th.log = t.log ++ [.gilLock, .writeLock, .writeUnlock, .gilUnlock] := by
+   simp [release, beginWriter, dropMode, gilAcquire, holdsGil, gilDrop, hm, hc]
  
--/-! ## `expand_row` (:500) -/
-+/-! ## `expand_row` (:526) -/
++/-- `begin_writer_checked` (`:235`, #3559): `begin_with` (read lock), then `escalate` — the same
++wait (`acquire_write`, so off the main thread the GIL is given back between slices) and the same
++`authorize_write` check under the GIL hold the lock is taken under that `upgrade_to_write` makes.
++On a refusal the session is returned out of scope inside the `Err`, so it is dropped: the read
++lock `escalate` re-took goes. `none`: still waiting after the given attempts. -/
++def beginWriterChecked (t : Th) (i : Int) (ws : List World) (f : Facts) :
++    Option (Option WriteAbort × S) :=
++  (upgrade (begin t) i ws f).map fun (a, s) => (a, if a.isNone then s else release s)
++
++/-- **The same refusal escalation gives**: `begin_writer_checked` refuses exactly when, and with
++exactly the abort that, `upgrade_to_write` on a reader session refuses (the version check apart:
++this is the part of `upgrade_to_write` before `check_fork`, and a fresh writer has no fork to
++check — `writer_never_stale`). -/
++theorem beginWriterChecked_refusal (t : Th) (i : Int) (ws : List World) (f : Facts) :
++    (beginWriterChecked t i ws f).map (·.1) = (upgrade (begin t) i ws f).map (·.1) := by
++  unfold beginWriterChecked
++  cases hu : upgrade (begin t) i ws f with
++  | none => rfl
++  | some p => obtain ⟨a, s⟩ := p; rfl
++
++/-- Accepted, it is a writer holding both locks: it may mutate. -/
++theorem beginWriterChecked_ok (t : Th) (i : Int) (ws : List World) (f : Facts) (s' : 
+```
+
+**File**: `proofs/search_concurrency/COVERAGE.tsv` (modified, +37/-36)
+```diff
+@@ -57,45 +57,45 @@ src/graph_core.rs	new	603	PROVEN	unbounded write channel (#3014); Locks.never_st
+ src/graph_core.rs	from_mvcc	620	MODELLED	as new
+ src/graph_core.rs	execute_query	639	MODELLED	Mvcc Ev.read on snapshot; write detection not modelled
+ src/graph_core.rs	execute_profile	721	MODELLED	as execute_query
+-src/graph_core.rs	execute_query_write	783	PROVEN	Mvcc fork/checkFork (#3290/#3657): inline_write_ok, stale_then_rerun, checkFork_on_committed (retry sees the inline write) (BUG 5; counterexample removed in bbee75955; the last revision that has them is 17ccc5412)
+-src/graph_core.rs	reply_profile	933	NOT COVERED	reply formatting here; PROVEN in redis_layer (GraphCore.profileOps_all, profileDepth_eq; #2390 lists every op)
+-src/graph_core.rs	new	970	AXIOMATISED	RM_BlockClient FFI
+-src/graph_core.rs	drop	978	AXIOMATISED	RM_UnblockClient FFI
+-src/graph_core.rs	compute_effective_timeout	996	NOT COVERED	config arithmetic, not concurrency
+-src/graph_core.rs	reply_invalid_graph_version	1035	NOT COVERED	reply formatting
+-src/graph_core.rs	admit	1049	PROVEN	Pool.acquireLoop/acquire_bounded; Locks.succ3014 dispatch (reject, never wait): main_never_blocks, inv3014_step
+-src/graph_core.rs	query_mut	1060	PROVEN	Locks.main_never_blocks/never_stuck_3014/inv3014_step (admit + unbounded spawn, #3014); drain producer (send then CAS)
+-src/graph_core.rs	query_sync	1264	PROVEN	Mvcc.inline_write_ok (inline writer = escalate 0 then forkCur; never refused by a matching queued write, #3290)
+-src/graph_core.rs	profile_mut	1400	PROVEN	same admission/producer protocol as query_mut: Locks.main_never_blocks, never_stuck_3014
+-src/graph_core.rs	profile_sync	1501	MODELLED	as query_sync
+-src/graph_core.rs	finish_write	1572	PROVEN	Mvcc Ev.commit (session in writer mode, key_of_write found its key) / Ev.abandon (never escalated: the version just drops with the runtime; or refused by key_of_write, #3850/#3851, and abandoned by the caller)
+-src/graph_core.rs	abandon_write	1607	PROVEN	Mvcc Ev.abandon (the fork is dropped, nothing to roll back); index resync not modelled
+-src/graph_core.rs	commit_and_replicate	1623	PROVEN	Mvcc Ev.commit requires GIL (fork_excludes_commit)
+-src/graph_core.rs	process_write_queued_query	1701	PROVEN	Locks.drain_no_lost_message/explore_saturated/recheck_needed (write_loop protocol, 2 producers exhaustive)
+-src/graph_core.rs	replicate	1849	AXIOMATISED	RM_Replicate FFI
+-src/graph_core.rs	graph_free	1862	PROVEN	Mvcc Ev.delete (registered := false) + delete_blocks_writes
++src/graph_core.rs	execute_query_write	793	PROVEN	Mvcc fork/checkFork (#3290/#3657): inline_write_ok, stale_then_rerun, checkFork_on_committed (retry sees the inline write), stale_then_writer_rerun (#3559 escalated rerun) (BUG 5; counterexample removed in bbee75955; the last revision that has them is 17ccc5412)
++src/graph_core.rs	reply_profile	1001	NOT COVERED	reply formatting here; PROVEN in redis_layer (GraphCore.profileOps_all, profileDepth_eq; #2390 lists every op)
++src/graph_core.rs	new	1038	AXIOMATISED	RM_BlockClient FFI
++src/graph_core.rs	drop	1046	AXIOMATISED	RM_UnblockClient FFI
++src/graph_core.rs	compute_effective_timeout	1064	NOT COVERED	config arithmetic, not concurrency
++src/graph_core.rs	reply_invalid_graph_version	1103	NOT COVERED	reply formatting
++src/graph_core.rs	admit	1117	PROVEN	Pool.acquireLoop/acquire_bounded; Locks.succ3014 dispatch (reject, never wait): main_never_blocks, inv3014_step
++src/graph_core.rs	query_mut	1128	PROVEN	Locks.main_never_blocks/never_stuck_3014/inv3014_step (admit + unbounded spawn, #3014); drain producer (send then CAS)
++src/graph_core.rs	query_sync	1332	PROVEN	Mvcc.inline_write_ok (inline writer = escalate 0 then forkCur; never refused by a matching queued write, #3290)
++src/graph_core.rs	profile_mut	1468	PROVEN	same admission/producer protocol as query_mut: Locks.main_never_blocks, never_stuck_3014
++src/graph_core.rs	profile_sync	1569	MODELLED	as query_sync
++src/graph_core.rs	finish_write	1640	PROVEN	Mvcc Ev.commit (session in writer mode, key_of_write found its key) / Ev.abandon (never escalated: the version just drops with the runtime; or refused by key_of_write, #3850/#3851, and abandoned by the caller)
++src/graph_core.rs	abandon_write	1675	PROVEN	Mvcc Ev.abandon (the fork is dropped, nothing to roll back); index resync not modelled
++src/graph_core.rs	commit_and_replicate	1691	PROVEN	Mvcc Ev.commit requires GIL (fork_excludes_commit)
++src/graph_core.rs	process_write_queued_query	1769	PROVEN	Locks.drain_no_lost_message/explore_saturated/recheck_needed (write_loop protocol, 2 producers exhaustive)
++src/graph_core.rs	replicate	1917	AXIOMATISED	RM_Replicate FFI
++src/graph_core.rs	graph_free	1930	PROVEN	Mvcc Ev.delete (registered := false) + delete_blocks_writes
+ src/query_session.rs	begin	178	MODELLED	reader mode (graphR acquire)
+ src/query_session.rs	begin_with	185	MODELLED	Locks.gateReaderProg ordered (gate_programs_ordered, #3816 read_past_gate); reader mode
+ src/query_session.rs	begin_writer	205	
+```
+
+**File**: `proofs/search_concurrency/SearchConcurrency/Locks.lean` (modified, +15/-2)
+```diff
+@@ -4,9 +4,10 @@
+ | here | there |
+ | --- | --- |
+ | `Lock.gil < .graph < .indexer` | `graph/src/locks.rs:9` ordering rule; `query_session.rs:30` `Mode` |
+-| `writerProg`, `pollWriterProg` | `QuerySession::escalate` (`query_session.rs:399`): release R, then `acquire_write` (`:460`): per slice GIL, timed W; since #3816 the `WriterGate` closes after two misses |
+-| `gate`, `rank3816`, `gateReaderProg` | #3816: `WriterGate` (`:569-577`), `read_past_gate` (`:524`) |
++| `writerProg`, `pollWriterProg` | `QuerySession::escalate` (`query_session.rs:420`): release R, then `acquire_write` (`:481`): per slice GIL, timed W; since #3816 the `WriterGate` closes after two misses |
++| `gate`, `rank3816`, `gateReaderProg` | #3816: `WriterGate` (`:590-598`), `read_past_gate` (`:545`) |
+ | `inlineWriterProg`             | `QuerySession::begin_writer` (`:205`): GIL, W |
++| `retryWriterProg`              | `QuerySession::begin_writer_checked` (`:235`, #3559) from `execute_query_write`'s / `graph_bulk_insert`'s retry: `begin_with`, then `escalate`; `authorize_write`'s registry check runs under each slice's GIL |
+ | `populateProg`                 | `populate_index_batch` (`graph.rs:562`): indexer lock only |
+ | `commitIndexProg`              | `Graph::commit_index` under writer mode (`graph.rs:3799`): GIL, W, indexer |
+ | `forkProg`                     | `pre_fork_prepare` (`redis_type.rs:350`): GIL (main), registry mutex |
+@@ -107,6 +108,15 @@ theorem all_programs_ordered :
+     okProg [] writerProg ∧ okProg [] inlineWriterProg ∧ okProg [] populateProg ∧
+     okProg [] dropIndexBgProg ∧ okProg [] forkProg ∧ okProg [] telemetryProg := by decide
  
- inductive EV where
-   | node (n : Nat)
-@@ -169,29 +169,31 @@ def asNode : Option EV → Option Nat
-   | some (.node n) => some n
-   | _ => none
++/-- #3559: a queued write that keeps going stale reruns from `begin_writer_checked` on its worker:
++`begin_with` (read lock), then `escalate` — drop the read lock, GIL, `authorize_write`'s registry
++check under that GIL hold, the write lock — then the commit's indexer lock. -/
++def retryWriterProg : List Op :=
++  [.acq graphR, .rel graphR, .acq gil, .acq registry, .rel registry, .acq graphR,
++   .acq indexer, .rel indexer, .rel graphR, .rel gil]
++
++theorem retry_writer_ordered : okProg [] retryWriterProg = true := by decide
++
+ theorem bad_escalate_rejected : okProg [] badEscalateProg = false := by decide
  
--/-- cond_var_len_traverse.rs:531-570. `fromBound`/`toBound` = `batch.is_bound_at`. -/
-+/-- cond_var_len_traverse.rs:546-576. `fromBound`/`toBound` = `batch.is_bound_at`. -/
- def rowPlan (fromV toV : Option EV) (fromBound toBound bidir : Bool) (minH maxH : Option Nat) :
-     Option Plan :=
-   let fromId := asNode fromV
-   let toId := asNode toV
-   if fromId.isNone && fromBound then none
-   else if toId.isNone && toBound then none
-   else
--    let reversed := fromId.isNone && toId.isSome && !bidir
-+    let _ := bidir   -- read by the iterator (`step`), no longer by the reversal (#3593)
-+    let reversed := fromId.isNone && toId.isSome
-     some { reversed
-            starts := if reversed then toId.map ([·]) else fromId.map ([·])
-            dest := if reversed then fromId else toId
-            minH := minH.getD 1
-            maxH := maxH.getD 4294967295 }
+ /-! ## Gap closed 2026-10-20 (#3226): the RediSearch locks an open index scan holds
+@@ -221,6 +231,9 @@ theorem gate_programs_ordered :
+     okProgBy rank3816 [] telemetryProg ∧ okProgBy rank3816 [] forkProg ∧
+     okProgBy rank3816 [] writerClosedScanProg ∧ okProgBy rank3816 [] restoreProg := by decide
  
- /-- A bound non-node endpoint skips the row; hops default to `*1..u32::MAX`; the walk is
--reversed exactly when only `to` is a node and the edge is directed; the start set is the bound
-+reversed exactly when only `to` is a node (since #3593 for an undirected edge too, which
-+`VarLen.varLen_bidir_reverse_iff` shows is sound); the start set is the bound
- endpoint (or the `from` label scan) and the destination the other endpoint. -/
- theorem rowPlan_spec (fromV toV : Option EV) (fb tb bidir : Bool) (mn mx : Option Nat) :
-     (asNode fromV = none → fb = true → rowPlan fromV toV fb tb bidir mn mx = none) ∧
-     (∀ p, rowPlan fromV toV fb tb bidir mn mx = some p →
-       p.minH = mn.getD 1 ∧ p.maxH = mx.getD 4294967295 ∧
--      (p.reversed = true ↔ (asNode fromV = none ∧ (asNode toV).isSome ∧ bidir = false)) ∧
-+      (p.reversed = true ↔ (asNode fromV = none ∧ (asNode toV).isSome)) ∧
-       (p.reversed = true → p.starts = (asNode toV).map ([·]) ∧ p.dest = asNode fromV) ∧
-       (p.reversed = false → p.starts = (asNode fromV).map ([·]) ∧ p.dest = asNode toV)) := by
-   constructor
-@@ -205,7 +207,7 @@ theorem rowPlan_spec (fromV toV : Option EV) (fb tb bidir : Bool) (mn mx : Optio
-       · simp only [Option.some.injEq] at hp
-         subst hp
-         refine ⟨rfl, rfl, ?_, fun h => ?_, fun h => ?_⟩
--        · simp [Bool.and_eq_true, Option.isNone_iff_eq_none, and_assoc]
-+        · simp [Bool.and_eq_true, Option.isNone_iff_eq_none]
-         · simp only at h; simp [h]
-         · simp only at h; simp [h]
++/-- …and under the #3816 rank (gate first), as `escalate` with its first slice taking the lock. -/
++theorem retry_writer_ordered_3816 : okProgBy rank3816 [] retryWriterProg = true := by decide
++
+ /-- A reader waiting at the closed gate holds no lock, so the gate's writer, which needs
+ the GIL and the write lock, never waits on it (a gate reader cannot close a cycle). -/
+ theorem gate_waiter_holds_nothing :
+```
+
+**File**: `proofs/search_concurrency/SearchConcurrency/Mvcc.lean` (modified, +15/-0)
+```diff
+@@ -607,6 +607,21 @@ theorem stale_then_rerun :
+     ((run init rerunTrace).map (fun s => (s.pub, s.acked, s.ver))) = some ([7, 8], [7, 8], 2) := by
+   decide
  
++/-- **The escalated rerun** (#3559): after its stale runs the queued write begins as a writer
++(`QuerySession::begin_writer_checked`: `begin_with`, then `escalate` — GIL, write lock — and then a
++`Current` version) instead of a reader. Nothing can commit under it, so it needs no check: `7` then
++`8`, both acknowledged, and the reader run is the only one ever found stale. This is one scenario
++for the *effect* of the escalation; *when* it happens (the stale-run count and the 10 ms rule) is
++`GraphCore.loopW` in `redis_layer`, with `loopW_bounded` and `escalate_after_max`. -/
++def escalatedRerunTrace : List Ev :=
++  inlineTrace ++ [.escalate 1, .checkFork 1, .abandon 1, .release 1,
++                  .escalate 1, .forkCur 1, .mutate 1 8, .commit 1, .swap 1, .release 1]
++
++theorem stale_then_writer_rerun :
++    ((run init escalatedRerunTrace).map (fun s => (s.pub, s.acked, s.ver, s.stale))) =
++      some ([7, 8], [7, 8], 2, [1]) := by
++  decide
++
+ /-- An indexer batch between the queued write's fork and its check does not make it stale:
+ the check still succeeds, and the commit goes through. -/
+ theorem batch_does_not_stale :
+```
+
+**File**: `src/commands/bulk_insert.rs` (modified, +32/-9)
+```diff
+@@ -1,4 +1,5 @@
+ use crate::dispatch::must_run_inline;
++use crate::graph_core::{MAX_STALE_RETRIES, SLOW_STALE_RUN};
+ use crate::query_session::{QuerySession, WriteFacts, hold_gil};
+ use crate::{
+     config::CONFIGURATION_CACHE_SIZE,
+@@ -21,6 +22,7 @@ use std::collections::HashMap;
+ use std::ffi::CString;
+ use std::ptr::null_mut;
+ use std::sync::Arc;
++use std::time::Instant;
+ use valkey_module::{
+     Context, ContextFlags, NextArg, ValkeyError, ValkeyResult, ValkeyString, ValkeyValue, raw,
+ };
+@@ -985,13 +987,30 @@ pub fn graph_bulk_insert(
+             // when this block ends — before the client is unblocked below.
+             // A loop only to run the insert again if an inline writer commits while
+             // phase 1 builds (see the escalation below); every other path breaks.
++            //
++            // The retry is bounded, like `execute_query_write`'s: after a few stale
++            // builds, or one that took long, the insert runs as a writer from the
++            // start — the GIL and write lock held for the whole build, as in C — so
++            // a steady stream of inline writes cannot starve it.
++            let mut stale_runs = 0;
++            let mut as_writer = false;
+             let result: Result<(), String> = 'phase: loop {
+-                let session = QuerySession::begin_with(&graph, facts);
+-                // Phase 1: build the new version as a reader, GIL-free, into a private
+-                // fork. Forking takes nothing, so an inline writer is never refused
+-                // because this insert is building; phase 2's escalation checks whether
+-                // one committed meanwhile. Every early exit below drops the fork with
+-                // the session — there is nothing else to release.
++                let attempt_start = Instant::now();
++                let session = if as_writer {
++                    match QuerySession::begin_writer_checked(&graph, facts) {
++                        Ok(session) => session,
++                        Err(e) => break 'phase Err(e.to_string()),
++                    }
++                } else {
++                    QuerySession::begin_with(&graph, facts)
++                };
++                // Phase 1: build the new version into a private fork. As a reader (every
++                // run but an escalated one) that is GIL-free, and forking takes nothing,
++                // so an inline writer is never refused because this insert is building;
++                // phase 2's escalation checks whether one committed meanwhile. An
++                // escalated run is already a writer and builds under the GIL and the
++                // write lock, so there is nothing to check. Every early exit below drops
++                // the fork with the session — there is nothing else to release.
+                 let mut fork = session.write_version();
+                 let mut docs = IndexDocs::default();
+                 let tokens: Vec<&[u8]> = token_data.iter().map(std::vec::Vec::as_slice).collect();
+@@ -1014,6 +1033,9 @@ pub fn graph_bulk_insert(
+                     // An inline writer committed while phase 1 built: nothing was
+                     // published, so build again on top of its version.
+                     if session.is_stale() {
++                        stale_runs += 1;
++                        as_writer = stale_runs >= MAX_STALE_RETRIES
++                            || attempt_start.elapsed() >= SLOW_STALE_RUN;
+                         continue 'phase;
+                     }
+                     break 'phase Err(e.to_string());
+@@ -1035,9 +1057,10 @@ pub fn graph_bulk_insert(
+                 // cannot resolve against its own snapshot.
+                 //
+                 // Every token has succeeded by now, so nothing reaches the index for an
+-                // insert that later rolls back. The cost is a GIL hold proportional to
+-                // the number of indexed rows — paid only when the graph actually has an
+-                // index, since `docs` is otherwise empty.
++                // insert that later rolls back. For a run that built as a reader the cost
++                // is a GIL hold proportional to the number of indexed rows — paid only
++                // when the graph actually has an index, since `docs` is otherwise empty;
++                // an escalated run holds the GIL for the whole build anyway.
+                 //
+                 // Validated before publishing, as on the inline path above and
+                 // for the same reason: RediSearch is not MVCC, so a document
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3901** (2026-11-19): ci: publish the merge queue's macOS module on releases (@DvirDukhan)
-- **PR #3899** (2026-11-19): ci: build and test the macOS module in the merge queue (@DvirDukhan)
-- **PR #3898** (2026-11-19): fix(build): strip RediSearch's linkme sections on macOS too (@DvirDukhan)
-- **PR #3897** (2026-11-19): [rust-build] Bump default Valkey version to 9.2.0 (@DvirDukhan)
-- **PR #3894** (closed): ci: build and release the macOS arm64 module again (@gkorland)
-- **PR #3891** (2026-11-19): fix(binder): a CALL {} body's variable-length relationship marks end with the body (@DvirDukhan)
+- **PR #3954** (2026-11-22): version 6.2.0 (@DvirDukhan)
+- **PR #3953** (closed): release 6.2.0 through the merge queue (@DvirDukhan)
+- **PR #3952** (2026-11-22): release 6.2.0 through the merge queue (@DvirDukhan)
+- **PR #3951** (2026-11-22): proofs: re-target to main and raise coverage to 99.7% PROVEN; prune FINDINGS.md (@AviAvni)
+- **PR #3950** (2026-11-22): version 6.2.0 (@DvirDukhan)
+- **PR #3946** (2026-11-22): Dual-license FalkorDB under SSPLv1 and AGPLv3 (@gkorland)
 
 ---
 
@@ -2659,38 +2250,28 @@ tests wait for the index and assert the index scan
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. telemetry): keep telemetry streams node-local and strip them from snapshots (Rus
+## X. GRAPH.DELETE of indexed graphs corrupts RediSearch's shared N/A key
 
 **RULE**:
-When implementing operations in `proofs/graph_persist/COVERAGE.tsv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deps/RediSearch`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59764075`: telemetry): keep telemetry streams node-local and strip them from snapshots (Rust port of #3759). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d070f1f9`: GRAPH.DELETE of indexed graphs corrupts RediSearch's shared N/A key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `proofs/graph_persist/COVERAGE.tsv`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `deps/RediSearch`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-src/redis_type.rs	io_cache_size	72	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
-src/redis_type.rs	io_key_name	87	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
-src/redis_type.rs	graph_rdb_load	100	PROVEN	R
+Subproject commit 994282d3075adae126076b0aa141b1c6ac66c0bf
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-src/redis_type.rs	io_cache_size	71	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
-src/redis_type.rs	io_key_name	86	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
-src/redis_type.rs	graph_rdb_load	99	PROVEN	RedisType.loadWhole/loadPartial: load_main_last, load_main_first (registry Arc = key value = finished graph, no vkey registered, any key order); decoder Persist.multi_load; cacheOnLoad: cache_size_on_load (W5-rdb-1 fixed by #3262 361f62ac1)
-src/redis_type.rs	graph_rdb_save	189	PROVEN	RedisType.rdbSave (= saveKeySlice.getD whole): save_main, save_vkey (slice i, key_count K), save_single
-src/redis_type.rs	save_key_slice	213	PROVEN	RedisType.saveKeySlice: save_main, save_vkey, save_single, metaSave_of_slice (VKEY_STATE/GRAPH_REGISTRY lookups are the modelled maps; rdb_save_graph_key = Persist encoder)
-src/redis_type.rs	save_string_nul	250	PROVEN	Codec.stripNul_nulTerm
-src/redis_type.rs	strip_trailing_nul	268	PROVEN	Codec.stripNul_nulTerm
-src/redis_type.rs	graph_aux_save	274	PROVEN	RedisType.auxSave: aux_roundtrip, aux_after
-src/redis_type.rs	
+Subproject commit 1317b41b3f1a2f68fea81e250b0b32a57dc7d6d1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59764075` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d070f1f9` are properly handled with clean fallback behavior.

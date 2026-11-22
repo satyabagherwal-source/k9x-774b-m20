@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T21:57:12.986Z",
+  "last_updated": "2026-11-22T22:06:38.851Z",
   "total_records": 2384,
   "domains": {
     "A": {
@@ -8127,8 +8127,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "9ad6673057122a42454b7e6f2c472ca69770f18d421d904d42278288cd3b570e",
-      "created_at": "2026-11-22T17:35:29.081Z"
+      "content_hash": "dcddb7041eb904aeb69c57bc18fccd605d615daee857ab73c1cfb4931c51588f",
+      "created_at": "2026-11-22T22:06:32.015Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8145,8 +8145,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "875aa7b4c8cedd0804980caef7a2f4f568a08e1efb619e90da5ed76b5ba5f0e9",
-      "created_at": "2026-11-22T17:35:40.355Z"
+      "content_hash": "02531824632b7cffb9de278144a0bb6bfc7e7e8093452cd39ec40fd2ed788313",
+      "created_at": "2026-11-22T22:06:38.851Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -9567,8 +9567,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen-Image-2.1-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-research-knowledge-intelligence-unsloth-qwen-imag.md",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "content_hash": "663adb9151363b8f88607a08fdb8a2c1972e50641f5681045e2f2a40070ff273",
-      "created_at": "2026-11-18T15:06:02.382Z"
+      "content_hash": "5d6260d88bade7bbdfe4de3b69362c3393112918133951c16a01e281c2648165",
+      "created_at": "2026-11-22T22:06:19.248Z"
     },
     "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
@@ -9627,8 +9627,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen-image-2.1-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
       "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
-      "content_hash": "394bab814e028a18e460548c736e57d66a0327bcbc683710e4326a558942ed63",
-      "created_at": "2026-11-18T15:06:15.262Z"
+      "content_hash": "55b7a76df541c8ac9c9bbb25603c0df8ac3ddb4d8f00df4b55bf057e62addcdc",
+      "created_at": "2026-11-22T22:06:36.529Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
@@ -19208,8 +19208,8 @@
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "repository": "FalkorDB/FalkorDB",
-      "content_hash": "f693af3dce98b915591c2ad15f70c91f7699e4a428e874abc345f0296fbea2ec",
-      "created_at": "2026-11-20T00:33:15.110Z"
+      "content_hash": "3cfa7104394cdb4162aecedd97efd9df70e0eaaca23ba0c8a1a022e803ebd076",
+      "created_at": "2026-11-22T22:06:21.267Z"
     },
     "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
@@ -19226,8 +19226,8 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-learnings-technical-construction-intelligence-falkordb-falkord.md",
       "repository": "falkordb-falkordb-learnings",
-      "content_hash": "52d8748c19dbefd5939cdb98fafd0539d5d81a2d4dba244b0836c2ba42d6ee95",
-      "created_at": "2026-11-20T00:33:31.306Z"
+      "content_hash": "fe1cd52921f06222c71456f387eab2e5ad683908250dd1117965dfb1d2faad68",
+      "created_at": "2026-11-22T22:06:35.795Z"
     },
     "DOM-D-04368044": {
       "record_id": "DOM-D-04368044",

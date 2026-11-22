@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-176W",
-    "timestamp": "2026-11-20T23:56:26.408Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "c9c965d1ff4d95851120f0593160151e8ecd999ffad6540b8f013ae471c23688",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-2YAO",
-    "timestamp": "2026-11-20T23:57:48.192Z",
-    "repository": "rafsoh/dimeApp",
-    "learningId": "learn-github-rafsoh-dimeapp",
-    "contentHash": "41d3ae6037e6c4e2ce946cf83dac073e61f11f645399b1bbcbf82026c1382182",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-KIN4",
-    "timestamp": "2026-11-21T00:11:27.712Z",
-    "repository": "parcel-bundler/parcel",
-    "learningId": "learn-github-parcel-bundler-parcel",
-    "contentHash": "b45c0b76e4b4e3db207e78df55a635a799c255f49f01de1c6257de49544b6965",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-L63G",
     "timestamp": "2026-11-21T00:11:58.108Z",
     "repository": "xevrion/hatchzip",
@@ -7490,6 +7445,51 @@
     "repository": "sigstore/cosign",
     "learningId": "learn-github-sigstore-cosign",
     "contentHash": "5abeb9d6fabfc3103187b8043923c20410d937ab136ebbbcf760ba922803281b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-ZA6I",
+    "timestamp": "2026-11-22T22:06:18.954Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "ebe10e839eaec712e54ee8b1fb94a1d419d0a21ae409843c981cf57f2fac2118",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-ZBIR",
+    "timestamp": "2026-11-22T22:06:20.691Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "568d2296b4b8ef48c2551dfc96adc5f0225f68bc730d51285c1c301dda6dff82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-ZJUG",
+    "timestamp": "2026-11-22T22:06:31.480Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "b33c024ca9c4060500b165a35d946b67e0b1348cdc324f824ca0061c622fd919",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

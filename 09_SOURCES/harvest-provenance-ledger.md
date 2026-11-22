@@ -12239,3 +12239,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `920ad6aa` | Multi-dimensional audit evidence | 2026-11-22T21:49:09.974Z |
 | `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-22T21:56:56.040Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `19c90f91` | Multi-dimensional audit evidence | 2026-11-22T21:57:07.895Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-22T22:06:18.960Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `41d2f20c` | Multi-dimensional audit evidence | 2026-11-22T22:06:20.696Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `965d58cd` | Multi-dimensional audit evidence | 2026-11-22T22:06:31.485Z |

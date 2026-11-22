@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T21:57:13.315Z",
+  "last_updated": "2026-11-22T22:06:39.291Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T21:41:07.464Z",
@@ -398,12 +398,12 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-22T17:35:39.318Z",
+      "processed_at": "2026-11-22T22:06:36.794Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "falkordb-falkordb-learnings.md": {
-      "processed_at": "2026-11-20T00:33:30.916Z",
+      "processed_at": "2026-11-22T22:06:35.169Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2043,7 +2043,7 @@
       "staged_for_review": 1
     },
     "hf-unsloth-qwen-image-2.1-gguf-learnings.md": {
-      "processed_at": "2026-11-18T15:06:15.091Z",
+      "processed_at": "2026-11-22T22:06:36.262Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3237,
+  "total_dossiers_evaluated": 3240,
   "total_canonical_promoted": 478,
-  "total_staged_for_review": 2448
+  "total_staged_for_review": 2450
 }

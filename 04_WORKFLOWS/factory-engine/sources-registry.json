@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T21:57:11.120Z",
-    "lastVerified": "2026-11-22T21:57:11.120Z",
+    "lastChecked": "2026-11-22T22:06:34.983Z",
+    "lastVerified": "2026-11-22T22:06:34.983Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -177,8 +177,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T21:32:09.283Z",
-    "lastVerified": "2026-11-22T21:32:09.283Z",
+    "lastChecked": "2026-11-22T22:06:30.565Z",
+    "lastVerified": "2026-11-22T22:06:30.565Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -641,9 +641,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-21T22:06:30.351Z",
+    "lastChecked": "2026-11-22T22:06:28.060Z",
     "revisionIdentifier": "23065a0b",
-    "lastVerified": "2026-11-21T22:06:30.351Z"
+    "lastVerified": "2026-11-22T22:06:28.060Z"
   },
   "iii-hq-iii": {
     "name": "iii",
@@ -1921,14 +1921,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T17:35:27.897Z",
-    "lastVerified": "2026-11-22T17:35:27.897Z",
+    "lastChecked": "2026-11-22T22:06:30.577Z",
+    "lastVerified": "2026-11-22T22:06:30.577Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "69da9d65e79afc90757b43ffa8ea60d10c32e9cd9ee65ce8d50df032ebce12d5",
+    "contentHash": "b33c024ca9c4060500b165a35d946b67e0b1348cdc324f824ca0061c622fd919",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1941,22 +1941,21 @@
     "lastVerified": "2026-11-22T01:07:36.246Z"
   },
   "falkordb-falkordb": {
-    "name": "FalkorDB",
+    "name": "FalkorDB/FalkorDB",
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T14:27:35.365Z",
-    "lastVerified": "2026-11-21T14:27:35.365Z",
+    "lastChecked": "2026-11-22T22:06:19.326Z",
+    "lastVerified": "2026-11-22T22:06:19.326Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "9b511dfbd54a79d9fdd97ec71a1b147f7a926b99b866d93caf6d6f1993244747",
+    "contentHash": "568d2296b4b8ef48c2551dfc96adc5f0225f68bc730d51285c1c301dda6dff82",
     "promotedRulesCount": 1,
-    "recentFixesCount": 22,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b65fcac0"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-apple-lensvlm-9b": {
     "name": "apple/LensVLM-9B",
@@ -2684,9 +2683,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-11-21T23:06:04.108Z",
+    "lastChecked": "2026-11-22T22:06:23.196Z",
     "revisionIdentifier": "18fcfdda",
-    "lastVerified": "2026-11-21T23:06:04.108Z"
+    "lastVerified": "2026-11-22T22:06:23.196Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -2858,12 +2857,12 @@
     "officialUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T15:06:01.636Z",
-    "lastVerified": "2026-11-18T15:06:01.636Z",
+    "lastChecked": "2026-11-22T22:06:18.110Z",
+    "lastVerified": "2026-11-22T22:06:18.110Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "7961d7abaa45a1931dcf4a6a0ad61da21f49987ad8662b430864a1005f9724e9",
+    "contentHash": "ebe10e839eaec712e54ee8b1fb94a1d419d0a21ae409843c981cf57f2fac2118",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9316,9 +9315,9 @@
   "mohamedrejeb-calf": {
     "name": "Calf",
     "officialUrl": "https://github.com/MohamedRejeb/Calf",
-    "lastChecked": "2026-11-19T23:15:34.368Z",
+    "lastChecked": "2026-11-22T22:06:20.658Z",
     "revisionIdentifier": "6b13fad1",
-    "lastVerified": "2026-11-19T23:15:34.368Z"
+    "lastVerified": "2026-11-22T22:06:20.658Z"
   },
   "luzikov-codex-seo-skill": {
     "name": "codex-seo-skill",

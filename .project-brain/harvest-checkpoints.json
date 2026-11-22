@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T21:57:07.904Z",
+  "last_updated": "2026-11-22T22:06:31.496Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -665,14 +665,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "content_hash": "7961d7abaa45a1931dcf4a6a0ad61da21f49987ad8662b430864a1005f9724e9",
-      "verified_at": "2026-11-18T15:06:02.212Z",
+      "content_hash": "ebe10e839eaec712e54ee8b1fb94a1d419d0a21ae409843c981cf57f2fac2118",
+      "verified_at": "2026-11-22T22:06:18.971Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:06:02.212Z"
+      "last_updated": "2026-11-22T22:06:18.971Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Pro-RL": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "9b511dfbd54a79d9fdd97ec71a1b147f7a926b99b866d93caf6d6f1993244747",
-      "verified_at": "2026-11-20T00:33:14.765Z",
+      "content_hash": "568d2296b4b8ef48c2551dfc96adc5f0225f68bc730d51285c1c301dda6dff82",
+      "verified_at": "2026-11-22T22:06:20.707Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T00:33:14.765Z"
+      "last_updated": "2026-11-22T22:06:20.707Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "69da9d65e79afc90757b43ffa8ea60d10c32e9cd9ee65ce8d50df032ebce12d5",
-      "verified_at": "2026-11-22T17:35:28.666Z",
+      "content_hash": "b33c024ca9c4060500b165a35d946b67e0b1348cdc324f824ca0061c622fd919",
+      "verified_at": "2026-11-22T22:06:31.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T17:35:28.666Z"
+      "last_updated": "2026-11-22T22:06:31.496Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
