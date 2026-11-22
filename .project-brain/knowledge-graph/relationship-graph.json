@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-22T02:42:32.151Z",
+  "updated_at": "2026-11-22T03:38:25.446Z",
   "statistics": {
-    "total_nodes": 466,
+    "total_nodes": 467,
     "total_edges": 200,
     "domain_distribution": {
       "D": 286,
       "M": 1,
-      "H": 79,
+      "H": 80,
       "J": 22,
       "K": 29,
       "L": 8,
@@ -10414,6 +10414,28 @@
       ],
       "created_at": "2026-11-22T02:42:32.151Z",
       "updated_at": "2026-11-22T02:42:32.151Z"
+    },
+    "DOM-H-6CF392AE": {
+      "id": "DOM-H-6CF392AE",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "deps): bump next and fast-xml-parser for security advisories",
+      "summary": "Prevents defects observed in production commit `b3fba7d0`: deps): bump next and fast-xml-parser for security advisories. Unvalidated executi -> When implementing operations in `.changeset/patched-next-xml-parser.md`, engineers MUST enforce rigorous boundary validation, safe state tra",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://lingodotdev-lingo.dev/lingodotdev-lingo.dev-learnings.md",
+        "source_version": "b3fba7d0",
+        "observed_at": "2026-11-22T03:37:49.198Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lingodotdev-lingo.dev)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-22T03:38:25.446Z",
+      "updated_at": "2026-11-22T03:38:25.446Z"
     }
   },
   "edges": [

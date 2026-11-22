@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T03:11:44.603Z",
+  "updated_at": "2026-11-22T03:38:25.544Z",
   "stats": {
-    "total_discovered": 7411,
-    "approved_pending_harvest": 7012,
+    "total_discovered": 7413,
+    "approved_pending_harvest": 7014,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6991,
+      "COMMUNITY_AND_EXPERT": 6993,
       "OFFICIAL_DOCUMENTATION": 241,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -160272,6 +160272,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
         "fileName": "giancarloerra-socraticode-learnings.md"
+      }
+    },
+    "SRC-76009BF9240A": {
+      "id": "SRC-76009BF9240A",
+      "url": "https://github.com/lingodotdev/lingo.dev",
+      "title": "https://github.com/lingodotdev/lingo.dev",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:38:25.478Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
+        "fileName": "lingodotdev-lingo.dev-learnings.md"
+      }
+    },
+    "SRC-0DC065915130": {
+      "id": "SRC-0DC065915130",
+      "url": "https://www.cloudflarestatus.com/api/v2/status.json",
+      "title": "https://www.cloudflarestatus.com/api/v2/status.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:38:25.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
+        "fileName": "lingodotdev-lingo.dev-learnings.md"
       }
     }
   }

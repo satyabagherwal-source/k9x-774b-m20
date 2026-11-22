@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T00:00:27.481Z",
+  "timestamp": "2026-11-22T03:37:56.165Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-webai-official-twil-8b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-webai-official-twil-8b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T00:00:27.481Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T03:37:56.165Z`  
 > **Learning ID**: `LEARN-EVO-hf-webai-official-twil-8b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-webai-off`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T23:59:43.539Z  
+> **Timestamp**: 2026-11-22T03:37:43.556Z  
 > **Learning ID**: `learn-huggingface-webai-official-twil-8b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/webAI-Official/TwIL-8B](https://huggingface.co/webAI-Official/TwIL-8B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T23:59:43.292Z  
+> **Harvest Timestamp**: 2026-11-22T03:37:43.447Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 59753 downloads | 410 likes
+- **Stars / Engagement**: 77774 downloads | 399 likes
 
 ---
 

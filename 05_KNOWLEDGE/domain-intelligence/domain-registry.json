@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T03:25:06.817Z",
-  "total_records": 2319,
+  "last_updated": "2026-11-22T03:38:27.068Z",
+  "total_records": 2322,
   "domains": {
     "A": {
       "total": 17,
@@ -1468,7 +1468,7 @@
       ]
     },
     "H": {
-      "total": 556,
+      "total": 559,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2025,7 +2025,10 @@
         "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants",
+        "DOM-H-6CF392AE",
+        "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-learnings-core-invaria"
       ]
     },
     "I": {
@@ -8089,8 +8092,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "4e5f5458cfb7767f1364191453439ee49ae76b8fe71611e188aadd21e0f99afb",
-      "created_at": "2026-11-22T03:25:05.827Z"
+      "content_hash": "5a553874ccfef2e833a6217d69b8170b151aec154792535372a0992a5b1f6244",
+      "created_at": "2026-11-22T03:38:27.068Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -22944,8 +22947,8 @@
       "title": "Research & Knowledge Intelligence: webAI-Official/TwIL-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-webai-official-twil-8b-research-knowledge-intelligence-webai-official-twil-8b.md",
       "repository": "webAI-Official/TwIL-8B",
-      "content_hash": "160e7d9d02883b2287d252252f8bc5b8825657f2064783273eac29f677eb742d",
-      "created_at": "2026-11-15T23:59:44.049Z"
+      "content_hash": "4ecab63867c6bf56d539ec8dceab287161a646521b93c495a4fe6ab32cde550f",
+      "created_at": "2026-11-22T03:37:44.252Z"
     },
     "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants",
@@ -23004,8 +23007,8 @@
       "title": "Research & Knowledge Intelligence: hf-webai-official-twil-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-webai-official-twil-8b-learnings-research-knowledge-intelligence-hf-webai-off.md",
       "repository": "hf-webai-official-twil-8b-learnings",
-      "content_hash": "afb4706f3de46ff497648d48f9cc1418dbacd7fb51e20e69ec95bb33484f9985",
-      "created_at": "2026-11-16T00:00:27.574Z"
+      "content_hash": "b8778d6d9747a1cb18fde1a2656547e0712d59193b6f346ae902367af8812aed",
+      "created_at": "2026-11-22T03:37:56.275Z"
     },
     "DOM-H-20A56733": {
       "record_id": "DOM-H-20A56733",
@@ -39113,6 +39116,66 @@
       "repository": "giancarloerra-socraticode-learnings",
       "content_hash": "6d305b57fc7a0ac9db29deaadc66152201b9d2a1d07161603c43b63e1812ef64",
       "created_at": "2026-11-22T03:11:44.980Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lingodotdev/lingo.dev Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingodotdev-lingo-dev-technical-construction-intelligence-lingodotdev-lingo-dev-.md",
+      "repository": "lingodotdev/lingo.dev",
+      "content_hash": "c10623eff76aa4ab54840306ca6431527218bb4edb2546c0ea33a6b1df175164",
+      "created_at": "2026-11-22T03:37:50.595Z"
+    },
+    "DOM-H-6CF392AE": {
+      "record_id": "DOM-H-6CF392AE",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "deps): bump next and fast-xml-parser for security advisories",
+      "content": "When implementing operations in `.changeset/patched-next-xml-parser.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "2bf9f28b72252a41ea6cb71c1769170121fc7bd63ccc25347dd9f144ac5e2e6b",
+      "summary": "Prevents defects observed in production commit `b3fba7d0`: deps): bump next and fast-xml-parser for security advisories. Unvalidated executi -> When implementing operations in `.changeset/patched-next-xml-parser.md`, engineers MUST enforce rigorous boundary validation, safe state tra",
+      "provenance": {
+        "source_uri": "project://lingodotdev-lingo.dev/lingodotdev-lingo.dev-learnings.md",
+        "source_version": "b3fba7d0",
+        "observed_at": "2026-11-22T03:37:49.198Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lingodotdev-lingo.dev)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of lingodotdev-lingo.dev"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T03:38:25.422Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lingodotdev-lingo.dev-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingodotdev-lingo-dev-learnings-technical-construction-intelligence-lingodotdev-.md",
+      "repository": "lingodotdev-lingo.dev-learnings",
+      "content_hash": "81a33507aa3ef07ced7f79e648afbece0ea2711b429224b88b7839727d896bac",
+      "created_at": "2026-11-22T03:38:25.960Z"
     }
   }
 }

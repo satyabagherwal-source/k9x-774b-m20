@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T03:25:06.970Z",
-  "total_verified_learnings": 9066,
+  "last_updated": "2026-11-22T03:38:27.429Z",
+  "total_verified_learnings": 9067,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23438,
+  "total_items": 23446,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e5f5458cfb7767f1364191453439ee49ae76b8fe71611e188aadd21e0f99afb",
+      "content_hash": "5a553874ccfef2e833a6217d69b8170b151aec154792535372a0992a5b1f6244",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:25:05.827Z"
+      "persisted_at": "2026-11-22T03:38:27.068Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "554cb82e282619a74d875ebce6f6fc8bbcfc58f6a65363b210809f94041e506b",
+      "content_hash": "e6ae360fc394d53c881caf22bc3bde7b6d51def28be4e7850f8042d8d6e872a8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:25:05.988Z"
+      "persisted_at": "2026-11-22T03:38:27.267Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "889bd0fff69021229a79197393b66c74b72703d16c54fb73082211befb487d2f",
+      "content_hash": "1ffcbbcdfd3576bb5fadb0ac684e2082662c9480711bf7d435deadbe2f6279e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:25:06.123Z"
+      "persisted_at": "2026-11-22T03:38:27.429Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -252424,7 +252424,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/webAI-Official/TwIL-8B",
       "source_version": "hf-webai-official-twil-8b",
-      "content_hash": "2d8600d24a68ab9f5e73738015d2a6d224b1bd13178d7f0ae8ca329d0c53d445",
+      "content_hash": "79dc532c3182f3f55b44076b734484e5babf402361f6b847bf57ed5f7fefc01d",
       "dossier_path": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
       "promoted_rules": [],
@@ -252433,7 +252433,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T23:59:43.734Z",
+      "verified_at": "2026-11-22T03:37:43.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252450,9 +252450,9 @@
       "title": "Research & Knowledge Intelligence: webAI-Official/TwIL-8B Core Invariants",
       "repository": "webAI-Official/TwIL-8B",
       "source_version": "hf-webai-official-twil-8b",
-      "content_hash": "160e7d9d02883b2287d252252f8bc5b8825657f2064783273eac29f677eb742d",
+      "content_hash": "4ecab63867c6bf56d539ec8dceab287161a646521b93c495a4fe6ab32cde550f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T23:59:44.049Z"
+      "persisted_at": "2026-11-22T03:37:44.252Z"
     },
     "rule-8669": {
       "learning_id": "rule-8669",
@@ -252572,9 +252572,9 @@
       "title": "Research & Knowledge Intelligence: hf-webai-official-twil-8b-learnings Core Invariants",
       "repository": "hf-webai-official-twil-8b-learnings",
       "source_version": "HEAD",
-      "content_hash": "afb4706f3de46ff497648d48f9cc1418dbacd7fb51e20e69ec95bb33484f9985",
+      "content_hash": "b8778d6d9747a1cb18fde1a2656547e0712d59193b6f346ae902367af8812aed",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T00:00:27.574Z"
+      "persisted_at": "2026-11-22T03:37:56.275Z"
     },
     "candidate_directive-python-preserve-stored-memory-json-value-types": {
       "item_id": "candidate_directive-python-preserve-stored-memory-json-value-types",
@@ -309395,13 +309395,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XDSI-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EK01-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d03e681175d1510fd04e751951b066f14a797198f840f82beb3c2474f32225cf",
+      "content_hash": "de9352e8d604843a2489bf4c41fadfd19fddb31d73637b70e4f486ea838027ef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:25:05.685Z"
+      "persisted_at": "2026-11-22T03:38:26.892Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -318743,6 +318743,125 @@
       "content_hash": "5df776162059e808c76bfc0747c38198b35d0eab0ade34969eb2c37096673e09",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T03:11:45.151Z"
+    },
+    "learn-github-lingodotdev-lingo-dev": {
+      "learning_id": "learn-github-lingodotdev-lingo-dev",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lingodotdev/lingo.dev",
+      "repository": "lingodotdev/lingo.dev",
+      "slug": "lingodotdev-lingo.dev",
+      "platform": "github",
+      "source_url": "https://github.com/lingodotdev/lingo.dev",
+      "source_version": "b3fba7d0",
+      "content_hash": "dded2e742ff0a8766990c5b06805cc8c2df6d665916cd1dd4e9fe10ba3e61a8c",
+      "dossier_path": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9891,
+          "title": "bump next and fast-xml-parser for security advisories",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T03:37:50.022Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9891": {
+      "learning_id": "rule-9891",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9891,
+      "title": "bump next and fast-xml-parser for security advisories",
+      "source_url": "https://github.com/lingodotdev/lingo.dev",
+      "source_version": "b3fba7d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T03:37:50.022Z"
+    },
+    "candidate_directive-bump-next-and-fast-xml-parser-for-security-advisories": {
+      "item_id": "candidate_directive-bump-next-and-fast-xml-parser-for-security-advisories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DRVK-bump-next-and-fast-xml-parser-for-security-advisories.md",
+      "title": "bump next and fast-xml-parser for security advisories",
+      "repository": "lingodotdev/lingo.dev",
+      "source_version": "b3fba7d0",
+      "content_hash": "f7b5575a15d62053f6572a168de3162756844ee8c202b03b8464571ea61a30f7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:37:50.433Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingodotdev-lingo-dev-technical-construction-intelligence-lingodotdev-lingo-dev-.md",
+      "title": "Technical Construction Intelligence: lingodotdev/lingo.dev Core Invariants",
+      "repository": "lingodotdev/lingo.dev",
+      "source_version": "b3fba7d0",
+      "content_hash": "c10623eff76aa4ab54840306ca6431527218bb4edb2546c0ea33a6b1df175164",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:37:50.595Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-lingodotdev-lingo-dev": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingodotdev-lingo-dev",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/lingodotdev-lingo-dev-verification-protocol-empirical-defect-shield-for-lingodot.md",
+      "title": "Verification Protocol: Empirical Defect Shield for lingodotdev/lingo.dev",
+      "repository": "lingodotdev/lingo.dev",
+      "source_version": "b3fba7d0",
+      "content_hash": "d2f7f6075f806e4739a9629b81012191c1bc983a419753dd3b89f803f4bf84a4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T03:37:50.769Z"
+    },
+    "candidate_directive-deps-bump-next-and-fast-xml-parser-for-security-advisories": {
+      "item_id": "candidate_directive-deps-bump-next-and-fast-xml-parser-for-security-advisories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EJ59-deps-bump-next-and-fast-xml-parser-for-security-advisories.md",
+      "title": "deps): bump next and fast-xml-parser for security advisories",
+      "repository": "lingodotdev-lingo.dev-learnings",
+      "source_version": "HEAD",
+      "content_hash": "64eff4552a2fc2be761246408ce7f40cbcfa7710ff0477d4a84c5876603ff56e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:38:25.774Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingodotdev-lingo-dev-learnings-technical-construction-intelligence-lingodotdev-.md",
+      "title": "Technical Construction Intelligence: lingodotdev-lingo.dev-learnings Core Invariants",
+      "repository": "lingodotdev-lingo.dev-learnings",
+      "source_version": "HEAD",
+      "content_hash": "81a33507aa3ef07ced7f79e648afbece0ea2711b429224b88b7839727d896bac",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:38:25.960Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-lingodotdev-lingo-dev-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingodotdev-lingo-dev-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/lingodotdev-lingo-dev-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for lingodotdev-lingo.dev-learnings",
+      "repository": "lingodotdev-lingo.dev-learnings",
+      "source_version": "HEAD",
+      "content_hash": "db91275f8bb8e3fd930a58fef7375250cdbadc3be42400a16ca1a3a3086bdd91",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T03:38:26.152Z"
     }
   },
   "ai-builder-brain": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:24:53.096Z",
-  "total_cycles_completed": 11405,
-  "total_learnings_persisted": 11405,
-  "total_rules_promoted": 10701,
+  "last_updated": "2026-11-22T03:37:50.234Z",
+  "total_cycles_completed": 11407,
+  "total_learnings_persisted": 11407,
+  "total_rules_promoted": 10702,
   "history": [
-    {
-      "timestamp": "2026-11-21T11:11:43.146Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T11:16:31.627Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T11:16:47.676Z",
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -1403,6 +1389,20 @@
       "repository": "microsoft/Florence-2-base",
       "learningId": "learn-huggingface-microsoft-florence-2-base",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:37:44.049Z",
+      "repository": "webAI-Official/TwIL-8B",
+      "learningId": "learn-huggingface-webai-official-twil-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:37:50.234Z",
+      "repository": "lingodotdev/lingo.dev",
+      "learningId": "learn-github-lingodotdev-lingo-dev",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

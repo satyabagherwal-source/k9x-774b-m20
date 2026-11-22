@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T03:24:53.099Z",
+  "last_updated": "2026-11-22T03:37:50.237Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8616,14 +8616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingodotdev-lingo-dev",
-      "content_hash": "c4b3a7614263b8bf4e20a5048c0a6757426cc36f6359576fb25323601baddd17",
-      "verified_at": "2026-11-10T05:14:21.223Z",
+      "content_hash": "dded2e742ff0a8766990c5b06805cc8c2df6d665916cd1dd4e9fe10ba3e61a8c",
+      "verified_at": "2026-11-22T03:37:50.236Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T05:14:21.223Z"
+      "last_updated": "2026-11-22T03:37:50.236Z"
     },
     "StarTrail-org/LEANN": {
       "repository": "StarTrail-org/LEANN",
@@ -18156,14 +18156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-webai-official-twil-8b",
-      "content_hash": "2d8600d24a68ab9f5e73738015d2a6d224b1bd13178d7f0ae8ca329d0c53d445",
-      "verified_at": "2026-11-15T23:59:43.895Z",
+      "content_hash": "79dc532c3182f3f55b44076b734484e5babf402361f6b847bf57ed5f7fefc01d",
+      "verified_at": "2026-11-22T03:37:44.052Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T23:59:43.895Z"
+      "last_updated": "2026-11-22T03:37:44.052Z"
     },
     "unsloth/Qwen3.8-Flash-Next-GGUF": {
       "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",

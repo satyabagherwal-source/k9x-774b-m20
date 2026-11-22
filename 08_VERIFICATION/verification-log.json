@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-UKCW",
-    "timestamp": "2026-11-20T01:55:34.928Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "064c95d69542cbab6a58fa0d2a59d6208ea34a1858d1d65b9bd56ba32c2a4bca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-JFBY",
-    "timestamp": "2026-11-20T02:14:54.814Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "2f1d3a14b7300f742205a28c116ee9b867fa35c7a394f2d606ce3c9952116cd5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-JL0D",
     "timestamp": "2026-11-20T02:15:02.173Z",
     "repository": "aquasecurity/trivy",
@@ -7492,6 +7462,36 @@
     "contentHash": "f6055a802ae01b888da45218e374a6243d4ea6153229c000b53b1c6f8be74a43",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-DMXZ",
+    "timestamp": "2026-11-22T03:37:44.039Z",
+    "repository": "webAI-Official/TwIL-8B",
+    "learningId": "learn-huggingface-webai-official-twil-8b",
+    "contentHash": "79dc532c3182f3f55b44076b734484e5babf402361f6b847bf57ed5f7fefc01d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-DRPS",
+    "timestamp": "2026-11-22T03:37:50.224Z",
+    "repository": "lingodotdev/lingo.dev",
+    "learningId": "learn-github-lingodotdev-lingo-dev",
+    "contentHash": "dded2e742ff0a8766990c5b06805cc8c2df6d665916cd1dd4e9fe10ba3e61a8c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

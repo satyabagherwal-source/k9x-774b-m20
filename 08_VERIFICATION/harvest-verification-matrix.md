@@ -11995,3 +11995,6 @@
 | `CYCLE-20261122-G2YO` | `2026-11-22T03:11:38.496Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9890` | Yes (`74f622be...`) |
 | `CYCLE-20261122-G473` | `2026-11-22T03:11:40.095Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`eff88fc1...`) |
 | `CYCLE-20261122-X42N` | `2026-11-22T03:24:53.087Z` | `microsoft/Florence-2-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | Yes (`f6055a80...`) |
+| `CYCLE-20261122-DMXZ` | `2026-11-22T03:37:44.039Z` | `webAI-Official/TwIL-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md` | Yes (`79dc532c...`) |
+| `CYCLE-20261122-DRPS` | `2026-11-22T03:37:50.224Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9891` | Yes (`dded2e74...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T03:38:25.449Z` | `lingodotdev-lingo.dev` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6CF392AE` [Domain H] | Yes (`2bf9f28b...`) |

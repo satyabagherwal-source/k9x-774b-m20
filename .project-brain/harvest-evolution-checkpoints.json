@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:25:07.095Z",
+  "last_updated": "2026-11-22T03:38:27.586Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T01:59:00.350Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-22T03:25:05.222Z",
+      "processed_at": "2026-11-22T03:38:26.336Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -83,8 +83,8 @@
       "staged_for_review": 1
     },
     "hf-webai-official-twil-8b-learnings.md": {
-      "processed_at": "2026-11-16T00:00:27.372Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T03:37:56.070Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "projectdiscovery-nuclei-learnings.md": {
@@ -3696,9 +3696,14 @@
       "processed_at": "2026-11-22T03:11:44.579Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "lingodotdev-lingo.dev-learnings.md": {
+      "processed_at": "2026-11-22T03:38:25.449Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2985,
-  "total_canonical_promoted": 468,
-  "total_staged_for_review": 2279
+  "total_dossiers_evaluated": 2988,
+  "total_canonical_promoted": 469,
+  "total_staged_for_review": 2280
 }

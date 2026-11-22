@@ -12028,3 +12028,6 @@ Every entry in this ledger must capture:
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `7d277196` | Multi-dimensional audit evidence | 2026-11-22T03:11:38.501Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0127a257` | Multi-dimensional audit evidence | 2026-11-22T03:11:40.100Z |
 | `learn-huggingface-microsoft-florence-2-base` | `https://huggingface.co/microsoft/Florence-2-base` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-22T03:24:53.091Z |
+| `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-22T03:37:44.044Z |
+| `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `b3fba7d0` | Multi-dimensional audit evidence | 2026-11-22T03:37:50.228Z |
+| `learn-dom-h-6cf392ae` | `project://lingodotdev-lingo.dev` | `b3fba7d0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md` | 2026-11-22T03:38:25.449Z |
