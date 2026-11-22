@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T04:39:04.763Z",
+  "last_updated": "2026-11-22T04:51:56.758Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "3cb059791176083ee53ac9e7f08771a29b5d3286e7328610c8e02dd137834fb9",
-      "verified_at": "2026-11-21T23:26:46.922Z",
+      "content_hash": "7a4bff03771cc94046938f084832151354dab410144f1cee7f7be1085977d191",
+      "verified_at": "2026-11-22T04:51:26.465Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:26:46.922Z"
+      "last_updated": "2026-11-22T04:51:26.465Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -18276,14 +18276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-viggle-remake",
-      "content_hash": "4352be78a027a98f14822feae47a4827ec00b58b84b7efe8d301a4e02d2ee27c",
-      "verified_at": "2026-11-17T02:32:18.771Z",
+      "content_hash": "57fa81f5621ce675d4d6b2907168b268a202269b52c9be5f0da99c3cb208550b",
+      "verified_at": "2026-11-22T04:51:56.757Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T02:32:18.771Z"
+      "last_updated": "2026-11-22T04:51:56.757Z"
     },
     "alchaincyf/nuwa-skill": {
       "repository": "alchaincyf/nuwa-skill",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "ae71d15abe0fffbdd14fa89a05b457a62f40fc28fbe1e66328c7c5ca4df1016a",
-      "verified_at": "2026-11-22T02:40:18.514Z",
+      "content_hash": "9584104f386e2e76172099a413f8d3dc787cbc527bde57069a09700467968f91",
+      "verified_at": "2026-11-22T04:51:23.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T02:40:18.514Z"
+      "last_updated": "2026-11-22T04:51:23.662Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:39:04.759Z",
-  "total_cycles_completed": 11418,
-  "total_learnings_persisted": 11418,
-  "total_rules_promoted": 10706,
+  "last_updated": "2026-11-22T04:51:56.754Z",
+  "total_cycles_completed": 11421,
+  "total_learnings_persisted": 11421,
+  "total_rules_promoted": 10708,
   "history": [
-    {
-      "timestamp": "2026-11-21T12:19:37.459Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T12:19:41.543Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T12:19:45.738Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T12:29:18.957Z",
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
@@ -1403,6 +1382,27 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:51:23.658Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:51:26.462Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:51:56.754Z",
+      "repository": "Viggle/Viggle-Remake",
+      "learningId": "learn-huggingface-viggle-viggle-remake",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

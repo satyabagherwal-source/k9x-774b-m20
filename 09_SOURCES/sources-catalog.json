@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "1db8e79a",
+    "sourceVersion": "1a4f4eb6",
     "license": "BSD-3-Clause",
-    "contentHash": "3cb059791176083ee53ac9e7f08771a29b5d3286e7328610c8e02dd137834fb9",
-    "lastHarvestedAt": "2026-11-21T23:26:46.911Z",
+    "contentHash": "7a4bff03771cc94046938f084832151354dab410144f1cee7f7be1085977d191",
+    "lastHarvestedAt": "2026-11-22T04:51:26.455Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -12145,8 +12145,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Viggle-Remake",
     "sourceVersion": "hf-viggle-viggle-remake",
     "license": "Open-Source",
-    "contentHash": "4352be78a027a98f14822feae47a4827ec00b58b84b7efe8d301a4e02d2ee27c",
-    "lastHarvestedAt": "2026-11-17T02:32:18.763Z",
+    "contentHash": "57fa81f5621ce675d4d6b2907168b268a202269b52c9be5f0da99c3cb208550b",
+    "lastHarvestedAt": "2026-11-22T04:51:56.747Z",
     "learningId": "learn-huggingface-viggle-viggle-remake"
   },
   "alchaincyf-nuwa-skill": {
@@ -13123,10 +13123,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/deeporg",
-    "sourceVersion": "e828492b",
+    "sourceVersion": "85c58cdb",
     "license": "Apache-2.0",
-    "contentHash": "606f180bf7b9fbae8b0c9b29251e8275dcb4da1e67e2597a83f2a1c94c6abd72",
-    "lastHarvestedAt": "2026-11-21T01:08:19.091Z",
+    "contentHash": "9584104f386e2e76172099a413f8d3dc787cbc527bde57069a09700467968f91",
+    "lastHarvestedAt": "2026-11-22T04:51:23.651Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "hf-openai-clip-vit-large-patch14": {

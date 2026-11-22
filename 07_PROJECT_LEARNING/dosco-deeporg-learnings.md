@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source**: github ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
-> **Source Version**: `e828492b`  
+> **Source Version**: `85c58cdb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T01:08:18.390Z  
+> **Timestamp**: 2026-11-22T04:51:22.735Z  
 > **Learning ID**: `learn-github-dosco-deeporg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:08:18.185Z  
+> **Harvest Timestamp**: 2026-11-22T04:51:22.477Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DeepORG (formerly GraphJin) — one AI agent for your whole organization: databases, APIs, files, and code over MCP
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3237 stars
+- **Stars / Engagement**: 3239 stars
 
 ---
 
@@ -528,14 +528,14 @@ type RunManifest struct {
 func (m RunManifest) Complete() bool { return m.Status == RunStatusComplete }
 
 func (m RunManifest) ResumeCommand() string {
-	args := []string{"graphjin", "eval", string(m.Intent)}
+	args := []string{"deeporg", "eval", string(m.Intent)}
 	args = append(args, m.InvocationArgs...)
 	args = append(args, "--resume", m.RunID, "--yes")
 	return strings.Join(args, " ")
 }
 
 func (m RunManifest) RestartCommand() string {
-	args := []string{"graphjin", "eval", string(m.Intent)}
+	args := []string{"deeporg", "eval", string(m.Intent)}
 	args = append(args, m.InvocationArgs...)
 	args = append(args, "--restart", "--yes")
 	return strings.Join(args, " ")
@@ -745,7 +745,7 @@ func manifestCompatibilityMismatches(have, want RunManifest) []string {
 	check(have.EpisodeSchemaVersion == want.EpisodeSchemaVersion, "episode_schema_version")
 	check(have.ReportSchemaVersion == want.ReportSchemaVersion, "report_schema_version")
 	check(have.RewardVersion == want.RewardVersion, "reward_version")
-	check(have.
+	check(have.Ge
 ```
 
 ### Core Architecture Module: `agent/stated_change.go`
@@ -1194,7 +1194,7 @@ func renderWorldReadme(world worldSpec) string {
 	var out strings.Builder
 	fmt.Fprintf(&out, "# %s\n\nA generated GraphJin world: domain %s, seed %d.\n\n",
 		world.Name, world.Domain, world.Seed)
-	out.WriteString("Regenerate exactly:\n\n```bash\ngraphjin env new-world " +
+	out.WriteString("Regenerate exactly:\n\n```bash\ndeeporg env new-world " +
 		worldRegenerateFlags(world) + fmt.Sprintf(" --tables %d", len(world.Tables)))
 	if len(world.Applied) != 0 {
 		out.WriteString(" --pathologies " + strings.Join(world.Applied, ","))
@@ -1215,7 +1215,7 @@ func renderWorldReadme(world worldSpec) string {
 			fmt.Fprintf(&out, "- **%s** — %s\n", name, pathologyDescription(name))
 		}
 	}
-	out.WriteString("\n## Use\n\n```bash\ngraphjin eval create --path . --writable --scale 300 --composition coverage\ngraphjin env serve --path . --suite eval/suite.yml --pool 4\n```\n")
+	out.WriteString("\n## Use\n\n```bash\ndeeporg eval create --path . --writable --scale 300 --composition coverage\ndeeporg env serve --path . --suite eval/suite.yml --pool 4\n```\n")
 	return out.String()
 }
 
@@ -1226,13 +1226,13 @@ func pathologyDescription(name string) string {
 	case PathologySynonymCollision:
 		return "one word meaning two things in one schema, with nothing marking which is which"
 	case PathologyLegacyColumns:
-		return "a column that looks authoritative and is stale, so answering from it is
+		return "a column that looks authoritative and is stale, so answering from it is wr
 ```
 
 ### Core Architecture Module: `core/api.go`
 ```
 // Package core provides an API to include and use the GraphJin compiler with your own code.
-// For detailed documentation visit https://graphjin.com
+// For detailed documentation visit https://deeporg.io
 package core
 
 import (
@@ -1548,7 +1548,7 @@ func (g *GraphJin) getEngine() (*graphjinEngine, error) {
 	return gj, nil
 }
 
-// FilesystemBackend returns the backend ins
+// FilesystemBackend returns the backend insta
 ```
 
 ### Core Architecture Module: `core/args.go`
@@ -2552,974 +2552,799 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bc79e50b` (2026-11-13)
-**Commit Message**: fix(introspection): expose columns of Postgres functions returning table rows (#693)
+### Incident Patch 1: `73d7188e` (2026-11-21)
+**Commit Message**: fix(serv): stop two replicas colliding on revision bumps and metric ticks
 
-Postgres functions that return rows of a table were not queryable through
-GraphJin. `RETURNS TABLE (LIKE users)` was discovered as a single output
-column named "like", so selecting any real column failed with
-"field 'id' is not a column or a function; available columns: like".
-`RETURNS SETOF users` and `RETURNS users` were discovered with no output
-columns at all and were not exposed.
+Two races between replicas that share one control store. Both showed up
+as intermittent failures of TestWatchScheduleTwoRunnersFireOncePerTick
+and TestMetricWatchFiresOnceOnCrossingAcrossReplicas.
 
-Function discovery read row columns from information_schema.attributes,
-which only lists standalone composite types, never the row types of
-tables, views or materialized views. Read them from pg_attribute through
-the return type's typrelid instead. This covers tables, views,
-materialized views, foreign and partitioned tables and composite types,
-skips dropped columns, and reports column types with format_type like
-table discovery does. The single OUT parameter that holds the whole row
-is no longer reported as a column, because Postgres expands it into the
-row's columns. Enum and domain outputs keep their existing behaviour.
+Revision bump. bumpArtifactRevision read the revision and wrote it back.
+Two replicas bumping a domain that had no row yet both inserted it, and
+the second failed on the primary key (UNIQUE constraint failed:
+_graphjin_revisions.domain). A slow replica could also write an older
+number over a newer one. The bump is now a single
+UPDATE ... SET revision = revision + 1, with an INSERT only when the
+domain has no row, and the UPDATE again when that INSERT loses to
+another replica.
 
-Function output columns now also carry the array flag and honour the
-configured blocklist, s
+Metric watch reading. A tick's reading was saved on its own, before the
+clock moved. A replica that read the row in between saw the new state
+with the tick still due and folded the same tick in a second time. The
+reading is now stored by the statement that moves the clock
+(claimWatchScheduleTick), so one replica's reading is kept per tick. A
+replica that reported a breach but lost the clock to one that saw none
+still records its breach, so a
 
-**File**: `core/internal/introspection/sql/postgres_functions.sql` (modified, +30/-13)
+**File**: `serv/artifacts.go` (modified, +47/-10)
 ```diff
-@@ -1,3 +1,16 @@
-+WITH row_type_routines AS (
-+	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
-+	-- composite_type and RETURNS TABLE (LIKE tbl).
-+	SELECT r.specific_name,
-+		t.typrelid
-+	FROM information_schema.routines r
-+		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
-+		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
-+		AND t.typname = r.type_udt_name
-+	WHERE r.routine_type = 'FUNCTION'
-+		AND r.data_type = 'USER-DEFINED'
-+		AND t.typrelid != 0
-+)
- SELECT r.specific_name as func_id,
- 	r.routine_schema as func_schema,
- 	r.routine_name as func_name,
-@@ -18,6 +31,15 @@ FROM information_schema.routines r
- 	)
- WHERE r.routine_type = 'FUNCTION'
- 	AND r.data_type != 'void'
-+	-- The single OUT parameter of a row type function holds the whole row.
-+	-- Postgres expands it into the row's columns, returned by the SELECT below.
-+	AND NOT (
-+		p.parameter_mode = 'OUT'
-+		AND r.specific_name IN (
-+			SELECT specific_name
-+			FROM row_type_routines
-+		)
-+	)
- 	AND r.specific_schema NOT IN (
- 		'_graphjin',
- 		'information_schema',
-@@ -31,25 +53,20 @@ SELECT r.specific_name as func_id,
- 	r.routine_schema as func_schema,
- 	r.routine_name as func_name,
- 	'record' as data_type,
--	a.ordinal_position as param_id,
--	COALESCE(
--		a.attribute_name,
--		CAST(a.ordinal_position as CHAR(3))
--	) as param_name,
--	a.data_type as param_type,
-+	f.attnum as param_id,
-+	f.attname as param_name,
-+	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
- 	'OUT' as param_kind
- FROM information_schema.routines r
--	RIGHT JOIN information_schema.attributes a ON (
--		r.data_type = 'USER-DEFINED'
--		AND a.udt_schema = r.type_udt_schema
--		AND a.udt_name = r.type_udt_name
--	)
--WHERE r.routine_type = 'FUNCTION'
-+	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
-+	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
-+WHERE f.attnum > 0
-+	AND f.attisdropped = false
- 	AND r.specific_schema NOT IN (
- 		'_graphjin',
- 		'information_schema',
- 		'performance_schema',
- 		'pg_catalog',
- 		'mysql',
- 		'sys'
--	);
-\ No newline at end of file
-+	);
+@@ -1064,29 +1064,66 @@ func artifactStatus(status string) string {
+ 	return status
+ }
+ 
++// bumpArtifactRevision moves a domain's revision on by one.
++//
++// Several replicas bump the same domain at the same moment, so the increment
++// is one statement that the database applies atomically. Direct SQL for the
++// same reason as claimTaskVerification: the internal GraphQL mutation API
++// cannot add to a column or report the affected-row count. Reading the
++// revision and writing it back let two replicas both insert a domain's first
++// row, and the second failed on the primary key; it also let a slow replica
++// write an older number over a newer one.
+ func (s *graphjinService) bumpArtifactRevision(ctx context.Context, domain string) error {
+ 	if s == nil {
+ 		return nil
+ 	}
+-	if _, _, _, ok := s.artifactDB(); !ok {
++	db, dbType, _, ok := s.artifactDB()
++	if !ok {
+ 		return nil
+ 	}
+ 	domain = strings.TrimSpace(domain)
+ 	if domain == "" {
+ 		domain = "artifacts"
+ 	}
+-	now := time.Now().UTC().Format(time.RFC3339)
+-	current, err := s.artifactRevision(ctx, domain)
+-	if err != nil {
+-		return err
++	revisions := artifactTableName(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema, "revisions")
++	domainCol := quoteStoreIdent(dbType, "domain")
++	revisionCol := quoteStoreIdent(dbType, "revision")
++	updatedAtCol := quoteStoreIdent(dbType, "updated_at")
++	now := time.Now().UTC()
++	var updatedAt any = now.Format(time.RFC3339)
++	if dbType == "postgres" || dbType == "" {
++		updatedAt = now
++	}
++	increment := func() (bool, error) {
++		res, err := s.internalStoreExec(ctx, db, dbType,
++			fmt.Sprintf("UPDATE %s SET %s = %s + 1, %s = %s WHERE %s = %s",
++				revisions, revisionCol, revisionCol,
++				updatedAtCol, taskVerifySQLPlaceholder(dbType, 1),
++				domainCol, taskVerifySQLPlaceholder(dbType, 2)),
++			updatedAt, domain)
++		if err != nil {
++			return false, err
++		}
++		affected, err := res.RowsAffected()
++		return affected > 0, err
+ 	}
+-	input := map[string]any{"domain": domain, "revision": current + 1, "updated_at": now}
+-	if current == 0 {
+-		_, err = s.internalStoreMutationRows(ctx, "revisions", `insert: $input`, revisionStoreFields, map[string]any{"input": input})
++	if done, err := increment(); err != nil || done {
+ 		return err
+ 	}
+-	_, err = s.internalStoreMutationRows(ctx, "revisions", `where: { domain: { eq: $domain } }, update: $input`, revisionStoreFields, map[string]any{"domain": domain, "input": map[string]any{"revision": current + 1, "updated_at": now}})
+-	return err
++	// The domain has no row yet. If another replica inserts it first, this
++	// insert fails on the primary key and the increment applies after all.
++	_, insertErr := s.internalStoreExec(ctx, db, dbType,
++		fmt.Sprintf("INSERT INTO %s (%s, %s, %s) VALUES (%s, 1, %s)",
++			revisions, domainCol, revisionCol, updatedAtCol,
++			taskVerifySQLPlaceholder(dbType, 1), taskVerifySQLPlaceholder(dbType, 2)),
++		domain, updatedAt)
++	if insertErr == nil {
++		return nil
++	}
++	if done, err := increment(); err == nil && done {
++		return nil
++	}
++	return insertErr
+ }
+ 
+ func identityVarString(ctx context.Context, name string) (string, bool) {
 ```
 
-**File**: `core/internal/qcode/schema.go` (modified, +4/-3)
+**File**: `serv/control_store_internal.go` (modified, +23/-0)
 ```diff
-@@ -147,9 +147,10 @@ func parseTFieldsFunction(fn *sdata.DBFunction, fields []graph.TField) (
- 			paramType += "(" + dir.TypeSuffix + ")"
- 		}
- 		p := sdata.DBFuncParam{
--			ID:   i,
--			Name: f.Name,
--			Type: paramType,
-+			ID:    i,
-+			Name:  f.Name,
-+			Type:  paramType,
-+			Array: f.List,
- 		}
- 		switch {
- 		case dir.Input:
+@@ -2,6 +2,7 @@ package serv
+ 
+ import (
+ 	"context"
++	"database/sql"
+ 	"encoding/json"
+ 	"fmt"
+ 	"strings"
+@@ -273,6 +274,28 @@ func (s *graphjinService) internalStoreGraphQL(ctx context.Context, query string
+ 	return nil, fmt.Errorf("internal store SQLite retry exhausted")
+ }
+ 
++// internalStoreExec runs one direct SQL statement against the control store
++// with the SQLite busy retry internalStoreGraphQL applies, so a statement that
++// needs direct SQL (an atomic increment, an affected-row count) is no more
++// likely to fail under write contention than the GraphQL write it replaces.
++// The statement must be safe to run again after a busy error, which every
++// single autocommit statement is: a busy statement wrote nothing.
++func (s *graphjinService) internalStoreExec(ctx context.Context, db *sql.DB, dbType, query string, args ...any) (sql.Result, error) {
++	attempts := 1
++	if dbType == "sqlite" {
++		attempts = internalStoreSQLiteBusyMaxAttempts
++	}
++	for attempt := 0; ; attempt++ {
++		res, err := db.ExecContext(ctx, query, args...)
++		if err == nil || !isInternalStoreSQLiteBusyError(err) || attempt == attempts-1 {
++			return res, err
++		}
++		if err := waitInternalStoreSQLiteRetry(ctx, internalStoreSQLiteBusyDelay(attempt)); err != nil {
++			return nil, err
++		}
++	}
++}
++
+ func (s *graphjinService) internalStoreGraphQLOnce(ctx context.Context, query string, raw json.RawMessage) (map[string]json.RawMessage, error) {
+ 	res, err := s.gj.GraphQL(s.internalStoreContext(ctx), query, raw, nil)
+ 	if err != nil {
 ```
 
-**File**: `core/internal/sdata/schema_test.go` (modified, +31/-0)
+**File**: `serv/metric_watch.go` (modified, +4/-0)
 ```diff
-@@ -88,3 +88,34 @@ func TestAddRemoteRelWithParentStillWorks(t *testing.T) {
- 		t.Fatalf("row-join remote (parented) should still build: %v", err)
+@@ -618,6 +618,10 @@ func (s *graphjinService) evaluateWatchMetricTick(
+ 	return state, crossings, nil
+ }
+ 
++// saveWatchMetricState stores a metric state whatever the schedule's clock
++// says. A tick's reading normally goes in with the clock, through
++// claimWatchScheduleTick; this is only for the replica that reported a breach
++// and then found the clock already moved.
+ func (s *graphjinService) saveWatchMetricState(ctx context.Context, id string, state watchMetricState, evalErr error) error {
+ 	lastError := ""
+ 	if evalErr != nil {
+```
+
+**File**: `serv/metric_watch_test.go` (modified, +87/-0)
+```diff
+@@ -417,6 +417,93 @@ func TestMetricWatchRecoversFromCrashBeforeStateSave(t *testing.T) {
  	}
  }
-+
-+func TestNewDBInfoFunctionOutputColumns(t *testing.T) {
-+	fn := DBFunction{
-+		Schema: "public",
-+		Name:   "get_users",
-+		Type:   "record",
-+		Inputs: []DBFuncParam{{ID: 1, Name: "max_id", Type: "bigint"}},
-+		Outputs: []DBFuncParam{
-+			{ID: 1, Name: "id", Type: "bigint"},
-+			{ID: 2, Name: "password", Type: "text"},
-+			{ID: 3, Name: "tags", Type: "text[]", Array: true},
-+		},
-+	}
-+	di := NewDBInfo("postgres", 140000, "public", "db", nil, []DBFunction{fn}, []string{"password"})
-+
-+	if len(di.Tables) != 1 || di.Tables[0].Type != "function" {
-+		t.Fatalf("expected one function table, got %+v", di.Tables)
-+	}
-+	want := map[string]struct{ blocked, array bool }{
-+		"id":       {},
-+		"password": {blocked: true},
-+		"tags":     {array: true},
-+	}
-+	for _, col := range di.Tables[0].Columns {
-+		w := want[col.Name]
-+		if col.Blocked != w.blocked || col.Array != w.array {
-+			t.Errorf("column %s: blocked=%v array=%v, want blocked=%v array=%v",
-+				col.Name, col.Blocked, col.Array, w.blocked, w.array)
-+		}
-+	}
-+}
-```
-
-**File**: `core/internal/sdata/tables.go` (modified, +5/-3)
-```diff
-@@ -125,9 +125,11 @@ func NewDBInfo(
- 		var cols []DBColumn
- 		for _, v := range f.Outputs {
- 			cols = append(cols, DBColumn{
--				ID:   int32(v.ID),
--				Name: v.Name,
--				Type: v.Type,
-+				ID:      int32(v.ID),
-+				Name:    v.Name,
-+				Type:    v.Type,
-+				Array:   v.Array,
-+				Blocked: isInList(v.Name, blockList),
- 			})
- 		}
- 		t := NewDBTable(f.Schema, f.Name, "function", cols)
-```
-
-**File**: `core/schema.go` (modified, +2/-2)
-```diff
-@@ -124,8 +124,8 @@ const schemaTemplate = `# dbinfo:{{if .Type}}{{ .Type }}{{else}}postgres{{end}},
- {{- if ne .Name "" }}{{ .Name }}{{ else }}_arg{{ .ID }}{{ end }}:
- {{- "\t"}}
- {{- $var := .Type|dbtype }}
--{{- (index $var 0)|pascal }}
--{{- if .Array}}[]{{end}}
-+{{- $type := (index $var 0)|pascal }}
-+{{- if .Array}}[{{ $type }}]{{else}}{{ $type }}{{end}}
- {{- "\t"}}
- {{- if ne (index $var 1) ""}} @type_args(args: {{ (index $var 1) | printf "%q" }}){{end}}
- {{- end -}}
-```
-
-**File**: `core/schema_test.go` (modified, +31/-0)
-```diff
-@@ -50,6 +50,37 @@ func TestCreateSchema(t *testing.T) {
  
- }
- 
-+func TestCreateSchemaFunctionArrayParams(t *testing.T) {
-+	var buf bytes.Buffer
-+
-+	fn := sdata.DBFunction{
-+		Schema:  "public",
-+		Name:    "get_products",
-+		Type:    "record",
-+		Inputs:  []sdata.DBFuncParam{{ID: 1, Name: "ids", Type: "bigint[]", Array: true}},
-+		Outputs: []sdata.DBFuncParam{{ID: 1, Name: "tags", Type: "text[]", Array: true}},
-+	}
-+	di := sdata.NewDBInfo("postgres", 140000, "public", "db", nil, []sdata.DBFunction{fn}, nil)
-+	if err := writeSchema(di, &buf); err != nil {
++// staleMetricTick returns a metric watch with one tick due, and the row as a
++// replica read it before any replica handled that tick.
++func staleMetricTick(t *testing.T, db *sql.DB, svc *graphjinService, ctx context.Context, name string) (id string, stale map[string]any, due time.Time) {
++	t.Helper()
++	setOpenOrders(t, db, 1)
++	row, err := insertMetricWatch(t, svc, ctx, name, nil)
++	if err != nil {
 +		t.Fatal(err)
 +	}
++	id = stringFromAny(row["id"])
++	due = time.Now().UTC().Truncate(5 * time.Minute)
++	setWatchNextFire(t, db, id, due)
++	stale, err = svc.internalWatchStoreRow(ctx, id)
++	if err != nil || stale == nil {
++		t.Fatalf("read watch %s: %v", id, err)
++	}
++	return id, stale, due
++}
 +
-+	ds, err := qcode.ParseSchema(buf.Bytes())
-+	if err != nil {
-+		t.Fatalf("parse exported schema: %v\n%s", err, buf.String())
++// One reading is kept per tick: a replica that read the watch before another
++// replica finished the tick must not store its own reading over it.
++func TestMetricWatchLateReplicaDoesNotOverwriteClaimedTick(t *testing.T) {
++	db, replicas := newScheduleWatchReplicas(t, 2)
++	first, late := replicas[0], replicas[1]
++	ctx := artifactUserCtx("user_1")
++	id, stale, due := staleMetricTick(t, db, late, ctx, "late_replica")
++	sched := mustWatchSchedule(t, "*/5 * * * *", "UTC")
++	now := due.Add(2 * time.Second)
++
++	setOpenOrders(t, db, 3)
++	if sweep, err := first.sweepWatchSchedules(ctx, now); err != nil || sweep.Fired != 1 {
++		t.Fatalf("first replica fired=%d err=%v", sweep.Fired, err)
 +	}
-+	if len(ds.Functions) != 1 {
-+		t.Fatalf("expected one function, got %+v", ds.Functions)
++
++	// The number moves again before the late replica runs its query.
++	setOpenOrders(t, db, 0)
++	fired, _, err := late.fireWatchSchedule(ctx, stale, sched, stringMapValue(stale, "next_fire_at"), due, now)
++	if err != nil || fired {
++		t.Fatalf("late replica fired=%v err=%v", fired, err)
 +	}
-+	got := ds.Functions[0]
-+	if len(got.Inputs) != 1 || got.Inputs[0].Type != "bigint" || !got.Inputs[0].Array {
-+		t.Errorf("input changed through schema export: %+v", got.Inputs)
++	st := metricWatchState(t, late, ctx, id)
++	if st.LastValue != 3.0 || !st.Breached {
++		t.Fatalf("the claimed tick's reading was overwritten: %+v", st)
 +	}
-+	if len(got.Outputs) != 1 || got.Outputs[0].Type != "text" || !got.Outputs[0].Array {
-+		t.Errorf("output changed through schema export: %+v", got.Outputs)
++	if len(st.History) != 2 {
++		t.Fatalf("history = %+v, want the probe plus one point for the tick", st.History)
++	}
++	if ids := watchEventIDs(t, db); len(ids) != 1 {
++		t.Fatalf("events = %v, want 1", ids)
 +	}
 +}
 +
- func TestWriteSchemaWithDatabase(t *testing.T) {
- 	var buf bytes.Buffer
++// The replica that reports a breach keeps it on record even when another
++// replica, reading a moment earlier, moved the clock without seeing it.
++// Otherwise a value that stays over the threshold fires again on the next tick.
++func TestMetricWatchBreachStaysRecordedWhenAnotherReplicaClaimsTheTick(t *testing.T) {
++	db, replicas := newScheduleWatchReplicas(t, 2)
++	first, late := replicas[0], replicas[1]
++	ctx := artifactUserCtx("user_1")
++	id, stale, due := staleMetricTick(t, db, late, ctx, "late_breach")
++	sched := mustWatchSchedule(t, "*/5 * * * *", "UTC")
++	now := due.Add(2 * time.Second)
++
++	if sweep, err := first.sweepWatchSchedules(ctx, now); err != nil || sweep.Fired != 0 {
++		t.Fatalf("first replica fired=%d err=%v", sweep.Fired, err)
++	}
++
++	setOpenOrders(t, db, 3)
++	fired, _, err := late.fireWatchSchedule(ctx, stale, sched, stringMapValue(stale, "next_fire_at"), due, now)
++	if err != nil || !fired {
++		t.Fatalf("late replica fired=%v err=%v, want the crossing reported", fired, err)
++	}
++	st := metricWatchState(t, first, ctx, id)
++	if st.LastValue != 3.0 || !st.Breached {
++		t.Fatalf("the reported breach is not on record: %+v", st)
++	}
++	if len(st.History) != 2 {
++		t.Fatalf("history = %+v, want the probe plus one point for the tick", st.History)
++	}
++	if sweep, err := first.sweepWatchSchedules(ctx, due.Add(5*time.Minute+2*time.Second)); err != nil || sweep.Fired != 0 {
++		t.Fatalf("next tick fired=%d err=%v; the breach was already reported", sweep.Fired, err)
++	}
++	if ids := watchEventIDs(t, db); len(ids) != 1 {
++		t.Fatalf("events = %v, want 1", ids)
++	}
++}
++
+ // A failing query records the error and keeps the schedule moving.
+ func TestMetricWatchQueryErrorKeepsSchedule(t *testing.T) {
+ 	db, replicas := newScheduleWatchReplicas(t, 1)
+```
+
+**File**: `serv/revision_signal_test.go` (modified, +34/-0)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"strings"
++	"sync"
+ 	"testing"
+ 	"time"
  
-```
-
-**File**: `tests/postgres.sql` (modified, +12/-0)
-```diff
-@@ -268,6 +268,18 @@ SELECT EXISTS (
-     where p.product_id = id
-   );
- $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_users_up_to(max_id bigint) RETURNS TABLE (LIKE users) AS $$
-+SELECT u.*
-+FROM users u
-+WHERE u.id <= max_id $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_products_up_to(max_id bigint) RETURNS SETOF products AS $$
-+SELECT p.*
-+FROM products p
-+WHERE p.id <= max_id $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_user_row(user_id bigint) RETURNS users AS $$
-+SELECT u.*
-+FROM users u
-+WHERE u.id = user_id $$ LANGUAGE SQL;
- -- graph relationships
- CREATE TABLE graph_node (id TEXT PRIMARY KEY, label TEXT);
- CREATE TABLE graph_edge (
-```
-
-**File**: `tests/query_pg_test.go` (modified, +118/-0)
-```diff
-@@ -329,6 +329,124 @@ func Example_queryWithFunctionReturingUserDefinedTypes() {
- 	// Output: {"get_product":[{"id":1,"name":"Product 1"},{"id":2,"name":"Product 2"}]}
+@@ -89,6 +90,39 @@ func TestRevisionSignalReadsPastGraphQLDefaultLimit(t *testing.T) {
+ 	}
  }
  
-+func Example_queryWithFunctionReturningTableLike() {
-+	// `RETURNS TABLE (LIKE users)` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_users_up_to":[{"email":"user1@test.com","full_name":"User 1","id":1},{"email":"user2@test.com","full_name":"User 2","id":2}]}`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_users_up_to(order_by: { id: asc }, args: { max_id: 2 }) {
-+			id
-+			full_name
-+			email
++// Replicas bump a domain at the same moment, including the first bump, when the
++// domain has no row yet. Every bump succeeds and every bump counts.
++func TestBumpArtifactRevisionIsAtomicAcrossReplicas(t *testing.T) {
++	_, replicas := newScheduleWatchReplicas(t, 2)
++	ctx := context.Background()
++	const perReplica = 4
++	for _, domain := range []string{"watch_events", "tasks", "notifications", "first_bump"} {
++		if base, err := replicas[0].artifactRevision(ctx, domain); err != nil || base != 0 {
++			t.Fatalf("%s revision before any bump = %d err=%v, want 0", domain, base, err)
 +		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
++		var wg sync.WaitGroup
++		start := make(chan struct{})
++		for _, svc := range replicas {
++			for range perReplica {
++				wg.Add(1)
++				go func() {
++					defer wg.Done()
++					<-start
++					if err := svc.bumpArtifactRevision(ctx, domain); err != nil {
++						t.Errorf("bump %s: %v", domain, err)
++					}
++				}()
++			}
++		}
++		close(start)
++		wg.Wait()
++		want := int64(len(replicas) * perReplica)
++		if got, err := replicas[0].artifactRevision(ctx, domain); err != nil || got != want {
++			t.Fatalf("%s revision = %d err=%v, want %d", domain, got, err, want)
++		}
 +	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
-+	} else {
-+		printJSON(res.Data)
-+	}
-+	// Output: {"get_users_up_to":[{"email":"user1@test.com","full_name":"User 1","id":1},{"email":"user2@test.com","full_name":"User 2","id":2}]}
 +}
 +
-+func Example_queryWithFunctionReturningSetofTable() {
-+	// `RETURNS SETOF products` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_products_up_to":[{"id":1,"name":"Product 1","tags":["Tag 1","Tag 2","Tag 3","Tag 4","Tag 5"]}]}`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_products_up_to(where: { tags: { contains: ["Tag 1"] } }, order_by: { id: asc }, limit: 1, args: { max_id: 2 }) {
-+			id
-+			name
-+			tags
+ func TestRevisionSignalSubscriptionMembersAreIsolated(t *testing.T) {
+ 	svc := newRevisionSignalTestService(t)
+ 	ctx, cancel := context.WithCancel(context.Background())
+```
+
+**File**: `serv/schedule_runner.go` (modified, +72/-29)
+```diff
+@@ -300,6 +300,9 @@ func (s *graphjinService) sweepWatchSchedules(ctx context.Context, now time.Time
+ // leaves the tick due with its event already written; the next sweep, on any
+ // replica, finds the event and only moves the clock on. A tick is neither lost
+ // nor doubled, and no step holds a lock or needs Redis.
++//
++// The returned bool reports whether this call wrote the tick's event, also
++// when a later step failed.
+ func (s *graphjinService) fireWatchSchedule(
+ 	ctx context.Context,
+ 	row map[string]any,
+@@ -328,43 +331,51 @@ func (s *graphjinService) fireWatchSchedule(
+ 	// shutdown from cutting the follow-up bookkeeping (enrichment, wake-ups)
+ 	// short once the event exists.
+ 	ctx = context.WithoutCancel(ctx)
++	next := sched.next(now)
+ 	var metricEvent map[string]any
+-	var metricState *watchMetricState
++	var reading *watchMetricReading
+ 	if metric, metered := parseWatchMetricJSON(jsonMapString(row, "metric_json")); metered {
+ 		// A metric watch fires only when its number crosses. The event still
+ 		// goes in before the state and the clock move, so a replica that dies
+ 		// part-way re-reads the tick and the event id stops a second fire.
++		//
++		// The reading is stored by the statement that moves the clock, so one
++		// replica's reading is kept per tick. Stored on its own, ahead of the
++		// clock, it was visible to a replica that read the row in between
++		// with the tick still due, and that replica folded the same tick into
++		// the state a second time.
+ 		state, crossings, evalErr := s.evaluateWatchMetricTick(ownerCtx, row, def, metric, sched, now)
++		reading = &watchMetricReading{State: state, Err: evalErr}
+ 		if evalErr != nil || len(crossings) == 0 {
+-			if err := s.saveWatchMetricState(ctx, def.ID, state, evalErr); err != nil {
+-				return false, time.Time{}, err
+-			}
+-			next := sched.next(now)
+-			if _, err := s.advanceWatchSchedule(ctx, def.ID, raw, due, next); err != nil {
++			if _, err := s.claimWatchScheduleTick(ctx, def.ID, raw, due, next, reading); err != nil {
+ 				return false, time.Time{}, err
+ 			}
+ 			return false, next, nil
+ 		}
+ 		metricEvent = watchMetricEventPayload(metric, state, crossings)
+-		metricState = &state
+ 	}
+ 	inserted, err := s.insertWatchScheduleEvent(ctx, &def, proposal, sched, due, now, metricEvent)
+ 	if err != nil {
+-		// Nothing has moved: the tick stays due and the next sweep retries it.
+-		return false, time.Time{}, err
+-	}
+-	if metricState != nil {
+-		// Saved before the clock moves: a later tick must see this breach, or
+-		// a value that stays over the threshold would fire again.
+-		if err := s.saveWatchMetricState(ctx, def.ID, *metricState, nil); err != nil {
+-			return inserted, time.Time{}, err
+-		}
++		// The clock has not moved: the tick stays due and the next sweep
++		// retries it. inserted is true when the event went in and only its
++		// follow-up failed; the retry then finds the event and finishes.
++		return inserted, time.Time{}, err
+ 	}
+-	next := sched.next(now)
+-	advanced, err := s.advanceWatchSchedule(ctx, def.ID, raw, due, next)
++	// For a metric watch the breach is stored as the clock moves: a later
++	// tick must see it, or a value that stays over the threshold would fire
++	// again.
++	advanced, err := s.claimWatchScheduleTick(ctx, def.ID, raw, due, next, reading)
+ 	if err != nil {
+ 		return inserted, time.Time{}, err
+ 	}
++	if inserted && !advanced && reading != nil {
++		// Another replica moved the clock first and stored its own reading,
++		// which need not show a breach when the number changed between the
++		// two reads. This replica reported the breach, so its reading stands.
++		if err := s.saveWatchMetricState(ctx, def.ID, reading.State, nil); err != nil {
++			return inserted, next, err
 +		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
 +	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
-+	} else {
-+		printJSON(res.Data)
-+	}
-+	// Output: {"get_products_up_to":[{"id":1,"name":"Product 1","tags":["Tag 1","Tag 2","Tag 3","Tag 4","Tag 5"]}]}
+ 	if !inserted && !advanced {
+ 		// Another replica recorded this tick and moved the clock.
+ 		return false, next, nil
+@@ -395,6 +406,22 @@ func (s *graphjinService) fireWatchSchedule(
+ // reports whether this call made the move; of several replicas advancing the
+ // same tick, exactly one does.
+ func (s *graphjinService) advanceWatchSchedule(ctx context.Context, id, raw string, prev, next time.Time) (bool, error) {
++	return s.claimWatchScheduleTick(ctx, id, raw, prev, next, nil)
 +}
 +
-+func Example_queryWithFunctionReturningTableRow() {
-+	// `RETURNS users` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_user_row":[{"full_name":"User 3","id":3}]}`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_user_row(args: { user_id: 3 }) {
-+			id
-+			full_name
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
-+	} else {
-+		printJSON(res.Data)
-+	}
-+	// Output: {"get_user_row":[{"full_name":"User 3","id":3}]}
++// watchMetricReading is what one replica read for a metric watch's tick: the
++// state to store, and the query or path error when the read failed.
++type watchMetricReading struct {
++	State watchMetricState
++	Err   error
 +}
 +
-+func Example_queryWithFunctionReturningTableBlockedColumn() {
-+	// `RETURNS TABLE (LIKE users)` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`column: 'public.get_users_up_to.email' blocked`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_users_up_to(args: { max_id: 2 }) {
-+			id
-+			email
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true, Blocklist: []string{"email"}})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	_, err = gj.GraphQL(context.Background(), gql, nil, nil)
-+	fmt.Println(err)
-+	// Output: column: 'public.get_users_up_to.email' blocked
-+}
-+
- func Example_queryWithFunctionAndDirectives() {
- 	// Skip for MongoDB/Snowflake emulator: custom database functions not supported
- 	if dbType == "mongodb" || dbType == "snowflake" {
++// claimWatchScheduleTick is advanceWatchSchedule that also stores a metric
++// watch's reading, in the same statement. The reading and the clock move
++// together or not at all, so the replica that claims a tick is the only one
++// whose reading is kept, and no replica can read the new state with the tick
++// still due.
++func (s *graphjinService) claimWatchScheduleTick(ctx context.Context, id, raw string, prev, next time.Time, reading *watchMetricReading) (bool, error) {
+ 	db, dbType, watches, _, ok := s.watchDB()
+ 	if !ok 
 ```
 
 ---
 
-### Incident Patch 2: `ffd03671` (2026-11-19)
-**Commit Message**: fix(eval): benchmark test-version labels drop "governed" on the next publish
+### Incident Patch 2: `85c58cdb` (2026-11-22)
+**Commit Message**: ci: run each test suite as its own job, skip database suites when nothing they compile changed [skip-release]
 
-The benchmark pages describe each test version with a label, and the
-first ones read "governed read-only Q&A" and "governed retail Q&A (...,
-governance)". They are now "read-only Q&A" and "retail Q&A (...,
-refusals)", matching the site, which dropped the word.
+Build was one job: the twelve database suites ran two at a time in batches
+that each waited for their slowest suite (39 min), then the package tests
+ran after all of them (15 min, almost all cmd/v3). Runs took ~57 minutes.
 
-Publish writes these labels only when a benchmark's data has none, and
-the published data already lists test versions this build does not
-know. So the new wording alone would never reach the pages. Each
-publish now rewords the retired phrases in the stored labels and keeps
-everything else in them. The live pages change on the next publish of
-each benchmark.
+Now there is a Build job, a Package tests job, and one job per database,
+all side by side, so a run takes as long as its slowest job.
 
-A test runs a real publish over data holding the old wording and a test
-version the build does not know, and fails when the rewording is not
-called.
+The database jobs run only when a module the tests/ suite compiles in
+changes (core, conf, serv, agent, auth, codesql, plugin, the drivers,
+tests itself) or the test plumbing does. tests/ imports serv/v3, so
+gating them on core alone would let a serv change break them unseen.
+PRs that only touch website/** no longer run Build at all, matching push.
+
+setup-go now reads the Go version from go.work: the pinned 1.23.1 made
+every run download 1.25.5 anyway, and the extra actions/cache step
+collided with setup-go's own module cache ("tar: File exists").
+
+New make targets: test-packages and test-db DB=<name>. A single-suite
+run of scripts/test-parallel.sh streams its output instead of holding it
+back unless it fails.
+
+Co-Author
+
+**File**: `.github/workflows/build.yml` (modified, +115/-14)
+```diff
+@@ -3,38 +3,139 @@ name: Build
+ on:
+   pull_request:
+     branches: [master]
+-    paths-ignore: ["**.md", "docs/**"]
++    paths-ignore:
++      - "**.md"
++      - "docs/**"
++      - "website/**"
+   push:
+     branches: [master]
+     paths-ignore:
+       - "**.md"
+       - "docs/**"
+       - ".github/workflows/**"
+       - "website/**"
++  # Runs every job, whatever changed. Pushes that only touch workflows don't
++  # trigger Build, so this is how a workflow change gets its first run.
++  # Auto Release only follows push runs, so a manual run never releases.
++  workflow_dispatch:
++
++# Every suite is its own job so they run side by side. As one job the database
++# suites ran two at a time and the package tests waited for all of them: ~57
++# minutes. Now the run takes as long as its slowest job.
++#
++# Auto Release waits for this whole workflow to succeed, so every job here
++# gates a release. A job skipped because nothing it tests changed counts as
++# success.
+ 
+ jobs:
+-  lint-and-test:
+-    name: Lint and Test
++  changes:
++    name: Detect changes
+     runs-on: ubuntu-latest
++    timeout-minutes: 5
++    permissions:
++      contents: read
++      pull-requests: read
++    outputs:
++      db: ${{ steps.filter.outputs.db }}
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+ 
+-      - name: Set up Go
+-        uses: actions/setup-go@v4
++      - name: Filter paths
++        id: filter
++        uses: dorny/paths-filter@v3
+         with:
+-          go-version: "1.23.1"
++          filters: |
++            # Everything the tests/ module compiles in. Regenerate with:
++            #   go list -deps -test -tags "mysql mariadb mssql sqlite fts5" ./tests | grep dosco/graphjin
++            # tests/ imports serv/v3, which pulls in agent, auth and codesql,
++            # so a change to any of them can break a database suite.
++            db:
++              - "core/**"
++              - "conf/**"
++              - "serv/**"
++              - "agent/**"
++              - "auth/**"
++              - "codesql/**"
++              - "plugin/**"
++              - "mongodriver/**"
++              - "bigquerydriver/**"
++              - "cassandradriver/**"
++              - "clickhousedriver/**"
++              - "tests/**"
++              - "go.work"
++              - "go.work.sum"
++              - "Makefile"
++              - "scripts/test-*.sh"
++              - ".github/workflows/build.yml"
+ 
+-      - name: Cache Go modules
+-        uses: actions/cache@v3
++  build:
++    name: Build
++    runs-on: ubuntu-latest
++    timeout-minutes: 20
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Set up Go
++        uses: actions/setup-go@v5
+         with:
+-          path: ~/go/pkg/mod
+-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+-          restore-keys: |
+-            ${{ runner.os }}-go-
++          go-version-file: go.work
++          cache-dependency-path: "**/go.sum"
+ 
+       - name: Build
+         run: make build
+ 
+-      - name: Run Tests
+-        run: make test
++  packages:
++    name: Package tests
++    runs-on: ubuntu-latest
++    timeout-minutes: 45
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Set up Go
++        uses: actions/setup-go@v5
++        with:
++          go-version-file: go.work
++          cache-dependency-path: "**/go.sum"
++
++      - name: Run package tests
++        run: make test-packages
++
++  database:
++    name: DB ${{ matrix.db }}
++    needs: changes
++    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.db == 'true'
++    runs-on: ubuntu-latest
++    timeout-minutes: 45
++    strategy:
++      # One failing database must not cancel the others' results.
++      fail-fast: false
++      matrix:
++        # Keep in step with ALL_DBS in scripts/test-parallel.sh.
++        db:
++          - postgres
++          - mysql
++          - mariadb
++          - sqlite
++          - oracle
++          - mssql
++          - mongodb
++          - cassandra
++          - clickhouse
++          - snowflake
++          - bigquery
++          - redshift
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Set up Go
++        uses: actions/setup-go@v5
++        with:
++          go-version-file: go.work
++          cache-dependency-path: "**/go.sum"
++
++      - name: Run ${{ matrix.db }} tests
++        run: make test-db DB=${{ matrix.db }}
+```
+
+**File**: `Makefile` (modified, +10/-1)
+```diff
+@@ -16,7 +16,7 @@ endif
+ # Build-time Go variables
+ BUILD_FLAGS ?= -ldflags '-s -w -X "main.version=${BUILD_VERSION}" -X "main.commit=${BUILD}" -X "main.date=${BUILD_DATE}" -X "github.com/dosco/graphjin/serv/v3.version=${BUILD_VERSION}"'
+ 
+-.PHONY: all download-tools build wasm-build gen config-schema agent-openapi clean tidy test test-parallel-dbs test-sequential test-norace run demo demo-agent demo-smoke demo-agent-smoke smoke-all smoke-default env-image env-image-smoke run-github-actions lint changlog release version help test-mongodb test-cassandra test-clickhouse $(PLATFORMS)
++.PHONY: all download-tools build wasm-build gen config-schema agent-openapi clean tidy test test-parallel-dbs test-packages test-db test-sequential test-norace run demo demo-agent demo-smoke demo-agent-smoke smoke-all smoke-default env-image env-image-smoke run-github-actions lint changlog release version help test-mongodb test-cassandra test-clickhouse $(PLATFORMS)
+ 
+ tidy:
+ 	@find . -name "go.mod" -execdir go mod tidy \;
+@@ -33,6 +33,15 @@ test: test-parallel-dbs
+ test-parallel-dbs:
+ 	@bash scripts/test-parallel.sh
+ 
++# The two halves of `make test`, run as separate jobs in CI (.github/workflows/build.yml).
++test-packages:
++	@go test -v -race -timeout $(GO_TEST_TIMEOUT) $(PACKAGES)
++
++# One database suite, e.g. `make test-db DB=postgres`.
++test-db:
++	@test -n "$(DB)" || { echo "usage: make test-db DB=<postgres|mysql|...>"; exit 2; }
++	@PARALLEL_DBS="$(DB)" bash scripts/test-parallel.sh
++
+ test-sequential: test-postgres test-mysql test-mariadb test-sqlite test-oracle test-mssql test-mongodb test-cassandra test-clickhouse
+ 	@go test -v -race -timeout $(GO_TEST_TIMEOUT) $(PACKAGES)
+ 
+```
+
+**File**: `scripts/test-parallel.sh` (modified, +10/-1)
+```diff
+@@ -17,7 +17,7 @@ ALL_DBS="postgres mysql mariadb sqlite oracle mssql mongodb cassandra clickhouse
+ # Allow caller to select a subset via env var
+ DBS="${PARALLEL_DBS:-$ALL_DBS}"
+ 
+-# Max number of suites to run concurrently (default 4)
++# Max number of suites to run concurrently (default 2)
+ MAX_PARALLEL="${MAX_PARALLEL:-2}"
+ 
+ # Temp directory for per-suite output
+@@ -75,6 +75,15 @@ db_test_cmd() {
+ DB_ARRAY=($DBS)
+ DB_COUNT=${#DB_ARRAY[@]}
+ 
++# A single suite (one CI job per database) runs in the foreground so its
++# output streams live instead of being held back unless it fails.
++if [ "$DB_COUNT" -eq 1 ]; then
++    cmd=$(db_test_cmd "${DB_ARRAY[0]}")
++    echo "==> Running ${DB_ARRAY[0]}: $cmd"
++    eval "$cmd"
++    exit $?
++fi
++
+ echo "==> Starting parallel DB test suites: $DBS"
+ echo "==> Concurrency limit: $MAX_PARALLEL (total suites: $DB_COUNT)"
+ echo ""
+```
+
+---
+
+### Incident Patch 3: `dcaf384f` (2026-11-22)
+**Commit Message**: fix(core): refuse bulk update rows that set different fields
+
+The columns of a bulk update come from the first row, so a later row
+that left a field out set that column to NULL, and a field only a later
+row set was dropped. Both changed data the caller never asked to change.
+
+A bulk update now requires every row to be an object that sets the same
+fields as the first row, and names the row and the field when one does
+not. The whole update is refused, so no row changes. To clear a column,
+set it to null explicitly.
+
+The docs also note that the response returns at most default_limit rows.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `cmd/cmd_eval_publish.go` (modified, +32/-7)
+**File**: `core/internal/qcode/bulk_update_test.go` (modified, +18/-0)
 ```diff
-@@ -19,9 +19,9 @@ const (
- 	benchmarkDataVersion  = "graphjin.benchmark.data/v3"
- 	defaultBenchmarkSlug  = "deeporg"
- 	defaultBenchmarkName  = "DeepORG — The Organizational Agent Benchmark"
--	defaultBenchmarkScope = "2026.1/2026.2 — governed read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
-+	defaultBenchmarkScope = "2026.1/2026.2 — read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
- 
--	deepcontosoBenchmarkScope = "2026.1 — governed retail Q&A (aggregations, time windows, schema discovery, governance)"
-+	deepcontosoBenchmarkScope = "2026.1 — " + deepcontosoFirstScope
- )
- 
- type benchmarkIdentity struct {
-@@ -378,10 +378,9 @@ func runEvalPublish(cmd *cobra.Command, evalOpts *evalCLIOptions, opts *evalPubl
- 	if benchmark.Slug == defaultBenchmarkSlug && len(data.Suite.GenerationScopes) == 0 {
- 		data.Suite.GenerationScopes = defaultBenchmarkGenerationScopes()
- 	} else if benchmark.Slug == DeepContosoBenchmarkSlug && len(data.Suite.GenerationScopes) == 0 {
--		data.Suite.GenerationScopes = map[string]string{
--			"2026.1": "governed retail Q&A (aggregations, time windows, schema discovery, governance)",
--		}
-+		data.Suite.GenerationScopes = map[string]string{"2026.1": deepcontosoFirstScope}
- 	}
-+	rewordRetiredScopes(&data.Suite)
- 	if existing >= 0 {
- 		data.Runs[existing] = entry
- 	} else {
-@@ -556,10 +555,36 @@ func benchmarkSuiteFromReport(report gjeval.Report) benchmarkSuite {
- 	}
- }
- 
-+// deepcontosoFirstScope describes DeepContoso's first test version.
-+const deepcontosoFirstScope = "retail Q&A (aggregations, time windows, schema discovery, refusals)"
-+
-+// retiredScopeWording is wording the published test-version labels used
-+// before, and what each says now. The labels are written once, when a
-+// benchmark's data has none, so a change of wording reaches the published
-+// pages only by rewording the stored labels on the next publish.
-+//
-+// "Governed" was dropped from the site on 2026-11-19: few readers knew what
-+// it meant.
-+var retiredScopeWording = []struct{ old, new string }{
-+	{"governed retail Q&A (aggregations, time windows, schema discovery, governance)", deepcontosoFirstScope},
-+	{"governed read-only Q&A", "read-only Q&A"},
-+}
-+
-+// rewordRetiredScopes rewrites retired wording in a suite's test-version
-+// labels, keeping everything else in them.
-+func rewordRetiredScopes(suite *benchmarkSuite) {
-+	for _, w := range retiredScopeWording {
-+		suite.ScopeLabel = strings.ReplaceAll(suite.ScopeLabel, w.old, w.new)
-+		for generation, scope := range suite.GenerationScopes {
-+			suite.GenerationScopes[generation] = strings.ReplaceAll(scope, w.old, w.new)
-+		}
-+	}
-+}
-+
- func defaultBenchmarkGenerationScopes() map[string]string {
- 	return map[string]string{
--		"2026.1": "governed read-only Q&A",
--		"2026.2": "governed read-only Q&A",
-+		"2026.1": "read-only Q&A",
-+		"2026.2": "read-only Q&A",
- 		"2027.1": "adds writes, alerts, follow-ups, multi-source",
- 		"2028.1": "intent-phrased tasks with execution twins, v10 ruler",
- 		"2028.2": "cross-source ruler fix (v11): argument-free file reads count",
-```
-
-**File**: `cmd/cmd_eval_publish_test.go` (modified, +61/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"math"
- 	"os"
- 	"path/filepath"
-+	"reflect"
- 	"strings"
- 	"testing"
- 	"time"
-@@ -684,3 +685,63 @@ func publishTestBenchmark(t *testing.T) benchmarkIdentity {
- func publishTestDataPath(site string) string {
- 	return filepath.Join(site, "data", "benchmarks", "deeporg.yaml")
- }
-+
-+// Stored test-version labels are written once, so a change of their wording
-+// reaches the published pages when the next publish rewords them. Wording that
-+// is not retired, and versions this build does not know, are kept.
-+func TestEvalPublishRewordsRetiredScopeLabels(t *testing.T) {
-+	project, site := t.TempDir(), t.TempDir()
-+	first := publishTestReport("20260803T101112.000000000Z-first")
-+	writePublishTestReport(t, project, first)
-+	if err := publishTestRun(t, project, site, first.RunID, &evalPublishOptions{Site: site}); err != nil {
-+		t.Fatal(err)
-+	}
-+	dataPath := publishTestDataPath(site)
-+	data, err := loadBenchmarkData(dataPath, publishTestBenchmark(t))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	data.Suite.ScopeLabel = "2026.1/2026.2 — governed read-only Q&A · 2028.4 — tasks state what they grade"
-+	data.Suite.GenerationScopes = map[string]string{
-+		"2026.1": "governed read-only Q&A",
-+		"2027.1": "adds writes, alerts, follow-ups, multi-source",
-+		"2028.4": "tasks state what they grade",
-+	}
-+	raw, err := marshalBenchmarkData(data)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.WriteFile(dataPath, raw, 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	second := publishTestReport("20260804T101112.000000000Z-second")
-+	writePublishTestReport(t, project, second)
-+	if err := publishTestRun(t, project, site, second.RunID, &evalPublishOptions{Site: site}); err != nil {
-+		t.Fatal(err)
-+	}
-+	data, err = loadBenchmarkData(dataPath, publishTestBenchmark(t))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if want := "2026.1/2026.2 — read-only Q&A · 2028.4 — tasks state what they grade"; data.Suite.ScopeLabel != want {
-+		t.Fatalf("scope label = %q, want %q", data.Suite.ScopeLabel, want)
-+	}
-+	want := map[string]string{"2026.1": "read-only Q&A", "2027.1": "adds writes, alerts, follow-ups, multi-source", "2028.4": "tasks state what they grade"}
-+	if !reflect.DeepEqual(data.Suite.GenerationScopes, want) {
-+		t.Fatalf("generation scopes = %v, want %v", data.Suite.GenerationScopes, want)
-+	}
-+	for _, s := range append([]string{defaultBenchmarkScope, deepcontosoBenchmarkScope}, mapValues(defaultBenchmarkGenerationScopes())...) {
-+		if strings.Contains(strings.ToLower(s), "governed") {
-+			t.Fatalf("a label this build writes still says governed: %q", s)
-+		}
-+	}
-+}
-+
-+func mapValues(m map[string]string) []string {
-+	out := make([]string, 0, len(m))
-+	for _, v := range m {
-+		out = append(out, v)
-+	}
-+	return out
-+}
-```
-
----
-
-### Incident Patch 3: `1d5b14f7` (2026-11-19)
-**Commit Message**: feat(agent): the data agent can be built to read a result before going on
-
-Off, and nothing a person running GraphJin can set: it is an option for
-GraphJin's own tests and measurements (WithResultFeedback).
-
-Without it the data agent's model writes one program: look up the
-table, run the query, call final. The query is written before the
-look-up has returned, so from a guess at the columns and how values are
-spelled, and nothing a function returns is seen by a model again unless
-the program prints it. With it, Ax ends a block after a function whose
-result has to be read and gives the model a fresh call with that result
-in front of it. "lookups" does that for catalog and help look-ups and
-lets a query's rows be followed by dependent code; "all" does it for
-every function.
-
-How it has to be wired, each learned by experiment:
-
-- Ax decides whether a block can end early when the agent is built,
-  from the runtime it is built with. A {language, usageInstructions}
-  record there, with the runtime passed per call, leaves it off. The
-  runtime then also supplies the usage instructions.
-- Ax's own registration of each function is the one that has to run,
-  and each is also bound under its b
-
-**File**: `agent/agent.go` (modified, +28/-6)
-```diff
-@@ -407,6 +407,7 @@ type Agent struct {
- 	rateLimiter   *ProviderRateLimiter
- 	customClient  bool
- 	newSelector   ProgramFactory
-+	feedback      resultFeedback
- }
- 
- func New(gj *core.GraphJin, config Config, options ...Option) (*Agent, error) {
-@@ -749,7 +750,13 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 	runtime.WithCodeBlockBudget(cfg.TimeoutSeconds)
- 	runtime.WithHandoffFallback(protocol.state.runtimeHandoffEvidence)
- 	runtime.WithClarificationNudge(protocol.state.clarificationNudge)
-+	feedback := a.feedback
-+	// With result feedback on, Ax registers the functions itself, through the
-+	// wrapper that reads a result back to the model (RegisterHostCallable).
- 	for _, tool := range tools {
-+		if feedback != feedbackOff {
-+			break
-+		}
- 		t := tool
- 		registerAdvertisedCallable(runtime.RegisterCallable, t.Name, func(params ax.Value) (ax.Value, error) {
- 			return t.Handler(asMap(params))
-@@ -765,8 +772,13 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 		})
- 	}
- 
-+	functions := toolArray(tools)
-+	if feedback != feedbackOff {
-+		functions = feedback.functions(tools)
-+	}
-+	usage := runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions
- 	options := map[string]ax.Value{
--		"functions":         toolArray(tools),
-+		"functions":         functions,
- 		"functionDiscovery": false,
- 		// Every GraphJin answer requires model-driven discovery, either a
- 		// runtime distillation or a catalog/help call. Ax's automatic respond()
-@@ -790,7 +802,7 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 			// filtered domain guides and capability-denial guidance are rendered
- 			// only for the executor, where Ax also renders the authoritative skill
- 			// documents. The distiller intentionally has no skill documents.
--			"usageInstructions": runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions,
-+			"usageInstructions": usage,
+@@ -104,6 +104,24 @@ func TestBulkUpdateRejectsUnmatchableRows(t *testing.T) {
+ 			data: `[]`,
+ 			want: "the list of rows is empty",
  		},
- 		"max_actor_steps": maxSteps,
- 	}
-@@ -811,8 +823,7 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 			}
- 			return values
- 		})
--		options["instructionAddenda"] = []ax.Value{executorHandoffInstructions, capabilityInstructions, preparedDiscoveryInstructions}
--		runtimeOptions := options["runtime"].(map[string]ax.Value)
-+		options["instructionAddenda"] = []ax.Value{executorHandoffInstructions, capabilityInstructions, feedback.rewrite(preparedDiscoveryInstructions)}
- 		var selectedGuides strings.Builder
- 		for _, guide := range skills {
- 			if prepared.unselected {
-@@ -828,9 +839,20 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 		// skills option loads guides into the executor only; put the selected
- 		// guides in the shared runtime instructions so early execution follows
- 		// the same computation, syntax, and governance contracts.
--		runtimeOptions["usageInstructions"] = runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions + "\n\n" + preparedDiscoveryInstructions + selectedGuides.String()
-+		usage += "\n\n" + preparedDiscoveryInstructions + selectedGuides.String()
- 	}
--	program = a.newProgram(agentSignature, options)
-+	signature := agentSignature
-+	if feedback == feedbackOff {
-+		options["runtime"].(map[string]ax.Value)["usageInstructions"] = usage
-+	} else {
-+		// Ax decides whether a block can end after a function's result when
-+		// the agent is built, from the runtime it is built with: a
-+		// {language, usageInstructions} record there, with the runtime passed
-+		// per call, leaves it off.
-+		options["runtime"] = runtime.WithResultFeedback(feedback.rewrite(usage))
-+		signature = feedback.rewrite(agentSignature)
-+	}
-+	program = a.newProgram(signature, options)
- 	if prepared != nil {
- 		installPreparedHandoff(ctx, program, prepared, a.runtime, req)
- 	}
++		{
++			name: "later row leaves out a field",
++			gql:  `mutation { products(update: $data) { id } }`,
++			data: `[{"id": 1, "name": "a", "price": 5}, {"id": 2, "price": 6}]`,
++			want: `row 2 does not set "name", which the first row sets`,
++		},
++		{
++			name: "later row sets an extra field",
++			gql:  `mutation { products(update: $data) { id } }`,
++			data: `[{"id": 1, "name": "a"}, {"id": 2, "name": "b"}, {"id": 3, "name": "c", "price": 6}]`,
++			want: `row 3 sets "price", which the first row does not`,
++		},
++		{
++			name: "row is not an object",
++			gql:  `mutation { products(update: $data) { id } }`,
++			data: `[{"id": 1, "name": "a"}, 2]`,
++			want: "row 2 is not an object",
++		},
+ 		{
+ 			name: "nested mutation",
+ 			gql:  `mutation { products(update: $data) { id } }`,
 ```
 
-**File**: `agent/result_feedback.go` (added, +133/-0)
+**File**: `core/internal/qcode/mutate.go` (modified, +31/-0)
 ```diff
-@@ -0,0 +1,133 @@
-+package agent
-+
-+import (
-+	"strings"
-+
-+	ax "github.com/ax-llm/ax/packages/go"
-+)
-+
-+// resultFeedback is whether a run reads what a function returned before it
-+// writes the code that depends on it.
-+//
-+// Without it the model writes one program: look up the table, run the query,
-+// call final. The query is written before the look-up has returned, so it is
-+// written from the model's guess at the columns and the spelling of values,
-+// and nothing the functions return is seen by a model again unless the
-+// program prints it. A note attached to a result went unread in every run
-+// that was traced.
-+//
-+// With it, Ax ends the block after a function whose result has to be read and
-+// gives the model a fresh turn with that result in front of it. A function
-+// whose result is plain data may still be followed by dependent code in the
-+// same block.
-+type resultFeedback string
-+
-+const (
-+	feedbackOff resultFeedback = ""
-+	// feedbackLookups: catalog and help look-ups are read on a fresh turn;
-+	// a query's rows are data, so the block that runs it may also finish.
-+	feedbackLookups resultFeedback = "lookups"
-+	// feedbackAll: every function's result is read on a fresh turn.
-+	feedbackAll resultFeedback = "all"
-+)
-+
-+// WithResultFeedback sets how a run reads its functions' results: "lookups",
-+// "all", or "" for off.
-+func WithResultFeedback(mode string) Option {
-+	return func(a *Agent) {
-+		switch resultFeedback(strings.TrimSpace(mode)) {
-+		case feedbackLookups:
-+			a.feedback = feedbackLookups
-+		case feedbackAll:
-+			a.feedback = feedbackAll
-+		default:
-+			a.feedback = feedbackOff
+@@ -303,9 +303,40 @@ func (co *Compiler) checkBulkUpdateData(m Mutate) (withoutWhere bool, err error)
+ 	if len(m.Ti.PrimaryCols) == 0 {
+ 		return false, fmt.Errorf("bulk update: table %q has no primary key to match rows on", m.Ti.Name)
+ 	}
++	if err := checkBulkUpdateRowFields(m.Data.Children); err != nil {
++		return false, err
++	}
+ 	return withoutWhere, nil
+ }
+ 
++// checkBulkUpdateRowFields requires every row of a bulk update to set the
++// same fields as the first row. The columns to update come from the first
++// row, so a later row that leaves a field out would set that column to NULL
++// and a field only a later row sets would be dropped; both lose data the
++// caller never meant to change.
++func checkBulkUpdateRowFields(rows []*graph.Node) error {
++	first := rows[0]
++	for i, row := range rows {
++		if row.Type != graph.NodeObj {
++			return fmt.Errorf("bulk update: row %d is not an object", i+1)
 +		}
-+	}
-+}
-+
-+// policy is Ax's result policy for one of the agent's functions.
-+func (m resultFeedback) policy(function string) string {
-+	if m == feedbackLookups && function == "execute_graphql" {
-+		return "data"
-+	}
-+	return "inspect"
-+}
-+
-+// functions hands Ax the agent's functions as plain records. Ax runs a typed
-+// Tool through a path that ends the whole run when its handler returns an
-+// error; a record's error is returned to the model's code, and the run goes
-+// on. Every recovery this agent sends the model (the real column names after
-+// an unknown column, the corrected query, the detail to inspect first) is a
-+// returned error.
-+func (m resultFeedback) functions(tools []ax.Tool) ax.Value {
-+	records := make([]ax.Value, 0, len(tools))
-+	for _, tool := range tools {
-+		records = append(records, functionRecord(tool, tool.Handler, m.policy(tool.Name)))
-+	}
-+	return ax.Array(records...)
-+}
-+
-+// functionRecord is one function as a plain record, with Ax's result policy
-+// for it: "inspect" ends the block so the result is read on a fresh turn,
-+// "data" lets the code that follows the call run.
-+func functionRecord(tool ax.Tool, handler func(map[string]ax.Value) (ax.Value, error), policy string) ax.Value {
-+	return map[string]ax.Value{
-+		"name":         tool.Name,
-+		"description":  tool.Description,
-+		"parameters":   tool.Schema(),
-+		"handler":      handler,
-+		"resultPolicy": policy,
-+	}
-+}
-+
-+// feedbackRewrite is one sentence of the standing instructions that tells the
-+// model to look up and act in a single program, with what replaces it when a
-+// look-up ends the block.
-+type feedbackRewrite struct {
-+	in      string // where the sentence lives, for the test that keeps these in step
-+	old     string
-+	lookups string
-+	all     string
-+}
-+
-+var feedbackRewrites = []feedbackRewrite{
-+	{
-+		in:      "agentSignature",
-+		old:     "Author the query and call query_catalog({id:...}) in the same code block as execution; these lookups reuse verified prefetched facts locally. Avoid a separate turn printing the hidden seed to find IDs or known columns.",
-+		lookups: "Call query_catalog({id:...}) for the exact detail and end the block there: its result is shown to you on the next turn, and the query is written from what it shows. Do not spend a turn printing the hidden seed to find IDs or known columns.",
-+	},
-+	{
-+		in:      "runtimeSeedUsageInstructions",
-+		old:     `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}), author the query with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_graphql, and final from its result.`,
-+		lookups: `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}) and end the block; on the next turn its result is in front of you, so author the query from the columns and values it shows, with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_graphql, and final from its result.`,
-+		all:     `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}) and end the block; on the next turn its result is in front of you, so author the query from the columns and values it shows, with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_gra
-```
-
-**File**: `agent/result_feedback_test.go` (added, +186/-0)
-```diff
-@@ -0,0 +1,186 @@
-+package agent
-+
-+import (
-+	"context"
-+	"errors"
-+	"strings"
-+	"testing"
-+
-+	ax "github.com/ax-llm/ax/packages/go"
-+)
-+
-+// feedbackRuntime counts the look-ups and queries a run makes, and remembers
-+// how many model calls had been made when each query ran.
-+type feedbackRuntime struct {
-+	fakeRuntime
-+	client       *recordingClient
-+	lookups      int
-+	queries      int
-+	queryAtCalls []int
-+	queryErr     error
-+}
-+
-+func (r *feedbackRuntime) QueryCatalog(ctx context.Context, args map[string]any) (any, error) {
-+	if len(detailIDsFromArgs(args)) != 0 {
-+		r.lookups++
-+	}
-+	return r.fakeRuntime.QueryCatalog(ctx, args)
-+}
-+
-+func (r *feedbackRuntime) ExecuteGraphQL(_ context.Context, args map[string]any) (any, error) {
-+	r.queries++
-+	r.queryAtCalls = append(r.queryAtCalls, len(r.client.calls))
-+	if r.queryErr != nil {
-+		err := r.queryErr
-+		r.queryErr = nil
-+		return nil, err
-+	}
-+	return map[string]any{"data": map[string]any{"accounts": []any{map[string]any{"id": 1, "name": "Meridian Robotics"}}}}, nil
-+}
-+
-+const (
-+	// The program models write today: look up, query and finish in one go.
-+	oneProgram     = `{"javascriptCode":"const d = await query_catalog({id:'table:app:main.accounts'}); const r = await execute_graphql({query:'query { accounts { id name } }'}); await final('Answer from the rows.', {rows: r.data});"}`
-+	queryAndFinish = `{"javascriptCode":"const r = await execute_graphql({query:'query { accounts { id name } }'}); await final('Answer from the rows.', {rows: r.data});"}`
-+	finishOnly     = `{"javascriptCode":"await final('Answer from the rows.', {rows: r.data});"}`
-+	reply          = `{"status":"answered","answer":"Meridian Robotics"}`
-+)
-+
-+func runWithFeedback(t *testing.T, mode string, rt *feedbackRuntime, responses ...string) *recordingClient {
-+	t.Helper()
-+	rec := &recordingClient{responses: responses}
-+	rt.client = rec
-+	runner := newAgent(
-+		Config{Provider: "openai", APIKeyEnv: "GRAPHJIN_UNUSED", TimeoutSeconds: 50, MaxSteps: 6},
-+		rt,
-+		WithClientFactory(func(Config) (ax.AIClient, error) { return rec, nil }),
-+		WithResultFeedback(mode),
-+	)
-+	if _, err := runner.Run(context.Background(), Request{Instruction: "Which accounts do we have?", Capabilities: profileWithRoleAndRoots("user")}); err != nil {
-+		t.Fatalf("%q: %v", mode, err)
-+	}
-+	return rec
-+}
-+
-+// Off, the whole program runs: the query is sent in the same model call that
-+// asked for the table's detail, so it was written before that detail was read.
-+// With result feedback the look-up ends the block: the query runs only after
-+// a model call that was shown what the look-up returned.
-+func TestResultFeedbackShowsALookupBeforeTheQueryRuns(t *testing.T) {
-+	off := &feedbackRuntime{}
-+	rec := runWithFeedback(t, "", off, oneProgram, reply)
-+	if off.lookups != 1 || off.queries != 1 || off.queryAtCalls[0] != 1 {
-+		t.Fatalf("off: lookups=%d queries=%d ran after %v model calls; want one program doing both", off.lookups, off.queries, off.queryAtCalls)
-+	}
-+	if len(rec.calls) != 2 {
-+		t.Fatalf("off: %d model calls, want 2", len(rec.calls))
-+	}
-+
-+	for mode, script := range map[string][]string{
-+		"lookups": {oneProgram, queryAndFinish, reply},
-+		"all":     {oneProgram, queryAndFinish, finishOnly, reply},
-+	} {
-+		rt := &feedbackRuntime{}
-+		rec := runWithFeedback(t, mode, rt, script...)
-+		if rt.lookups != 1 || rt.queries != 1 {
-+			t.Fatalf("%s: lookups=%d queries=%d, want one of each", mode, rt.lookups, rt.queries)
++		if i == 0 {
++			continue
 +		}
-+		if rt.queryAtCalls[0] != 2 {
-+			t.Fatalf("%s: the query ran after %d model calls, want it held until the second", mode, rt.queryAtCalls[0])
-+		}
-+		if len(rec.calls) != len(script) {
-+			t.Fatalf("%s: %d model calls, want %d", mode, len(rec.calls), len(script))
-+		}
-+		// The second model call is shown what the look-up returned, without
-+		// the program having printed it.
-+		second := dumpAXValue(rec.calls[1].values)
-+		for _, want := range []string{"table:app:main.accounts", "Execution paused before"} {
-+			if !strings.Contains(second, want) {
-+				t.Errorf("%s: the model call after the look-up does not carry %q", mode, want)
++		for _, f := range first.Children {
++			if _, ok := row.CMap[f.Name]; !ok {
++				return fmt.Errorf("bulk update: row %d does not set %q, which the first row sets; every row must set the same fields", i+1, f.Name)
 +			}
 +		}
-+		if mode == "all" {
-+			third := dumpAXValue(rec.calls[2].values)
-+			if !strings.Contains(third, "Meridian Robotics") {
-+				t.Errorf("all: the model call after the query was not shown its rows")
++		for _, f := range row.Children {
++			if _, ok := first.CMap[f.Name]; !ok {
++				return fmt.Errorf("bulk update: row %d sets %q, which the first row does not; every row must set the same fields", i+1, f.Name)
 +			}
 +		}
 +	}
++	return nil
 +}
 +
-+// A function's error is a message for the model. Run through Ax's own
-+// registration it used to end the run; handed over as a plain record it is
-+// returned to the model's code, shown on the next turn, and the run goes on,
-+// whichever name the code called the function by.
-+func TestResultFeedbackReturnsAFunctionErrorToTheModel(t *testing.T) {
-+	const hint = "this call did NOT return data: field 'amount' is not a column; available columns: id, name, mrr_cents"
-+	for _, name := range []string{"execute_graphql", axFlatFunctionNamespace + ".execute_graphql"} {
-+		broken := `{"javascriptCode":"const r = await ` + name + `({query:'qu
+ // checkBulkUpdateMutates verifies that each root bulk update carries the
+ // primary key it is matched on and does not nest mutations of related tables.
+ func checkBulkUpdateMutates(qc *QCode) error {
 ```
 
-**File**: `agent/runtime_handoff.go` (modified, +45/-1)
+**File**: `tests/update_test.go` (modified, +11/-0)
 ```diff
-@@ -32,6 +32,26 @@ type graphJinCodeRuntime struct {
- 	pendingContinuation    func() string
- 	completionContinuation func() string
- 	clarificationNudge     func() string
-+	// feedback is set when the run reads its functions' results on a fresh
-+	// turn; usage is then GraphJin's instruction text for the code stages,
-+	// which Ax asks the runtime for when the runtime is what it is built with.
-+	feedback bool
-+	usage    string
-+}
+@@ -560,4 +560,15 @@ func TestBulkUpdateMatchesRowsByPrimaryKey(t *testing.T) {
+ 		products(update: $data) { id }
+ 	}`, json.RawMessage(`{ "data": [{ "name": "No Key" }] }`), nil)
+ 	require.ErrorContains(t, err, `primary key "id"`)
 +
-+// WithResultFeedback makes this the runtime Ax is constructed with, so Ax can
-+// see that it supports ending a block after a function whose result has to be
-+// read. usage is the instruction text for the stages that write code.
-+func (r *graphJinCodeRuntime) WithResultFeedback(usage string) *graphJinCodeRuntime {
-+	r.feedback = true
-+	r.usage = usage
-+	return r
-+}
-+
-+// SupportsObservationBoundaries is how Ax asks a runtime whether a block can
-+// be ended after a function result that has to be read.
-+func (r *graphJinCodeRuntime) SupportsObservationBoundaries() bool {
-+	return r.feedback
++	// A row that leaves out a field the first row sets would set that column
++	// to NULL, so the whole update is refused and no row changes.
++	_, err = gj.GraphQL(ctx, `mutation {
++		products(update: $data) { id }
++	}`, json.RawMessage(`{ "data": [
++		{ "id": 91, "name": "Partial Product 91", "price": 5 },
++		{ "id": 92, "price": 6 }
++	] }`), nil)
++	require.ErrorContains(t, err, `row 2 does not set "name"`)
++	require.Equal(t, map[float64]string{91: "Filtered Product 91", 92: "Bulk Product 92"}, stored())
  }
+```
+
+**File**: `website/content/core/mutations.md` (modified, +1/-1)
+```diff
+@@ -146,7 +146,7 @@ mutation {
  
- // WithHandoffFallback supplies runtime-only evidence gathered by GraphJin
-@@ -77,6 +97,9 @@ func (r *graphJinCodeRuntime) Language() string {
- }
+ GraphJin joins each row to the table row with the same primary key. Because the list scopes the update, the `where` clause is optional on PostgreSQL, MySQL, MariaDB, and SQLite. A `where` clause, when given, further limits which listed rows may change. Snowflake also matches rows by primary key but still requires a `where` clause.
  
- func (r *graphJinCodeRuntime) UsageInstructions() string {
-+	if r.usage != "" {
-+		return r.usage
-+	}
- 	return r.base.UsageInstructions()
- }
+-Every row must include the full primary key, and every row should carry the same fields: the columns to update come from the first row, and a field missing from a later row sets that column to `NULL` for that row. Rows whose key matches no table row are skipped. A bulk update must use a variable, not an inline list, and cannot nest writes to related tables. Other databases, including SQL Server, Oracle, and MongoDB, reject list updates.
++Every row must include the full primary key and set the same fields as the first row. A row that leaves out a field, or adds one, is refused with an error that names the row and the field, and no row changes. To clear a column, set it to `null` explicitly. Rows whose key matches no table row are skipped. The response returns at most `default_limit` rows (20 unless configured), even when more rows were updated. A bulk update must use a variable, not an inline list, and cannot nest writes to related tables. Other databases, including SQL Server, Oracle, and MongoDB, reject list updates.
  
-@@ -97,8 +120,29 @@ func (r *graphJinCodeRuntime) RegisterCallable(name string, handler axgoja.HostC
- // instead, whenever the model had called the function the way the prompt
- // shows it. Called by the bare name, the same error reached the model and the
- // run went on.
-+//
-+// With result feedback on, Ax's registrations are the ones that run. Reading a
-+// result on a fresh turn is done by Ax's own wrapper around each function: it
-+// records what the function returned and holds back the next call. The agent
-+// then hands Ax its functions as plain records (resultFeedback.functions),
-+// whose errors that wrapper returns to the model's code. Each function is
-+// also bound under its bare name, the spelling GraphJin's instructions use.
- func (r *graphJinCodeRuntime) RegisterHostCallable(name string, handler func(ax.Value) (ax.Value, error)) {
--	registerAxPrimitive(r.base, name, handler)
-+	if !r.feedback {
-+		registerAxPrimitive(r.base, name, handler)
-+		return
-+	}
-+	registerAxCallable(r.base, name, handler)
-+}
-+
-+// registerAxCallable keeps a registration Ax makes, and binds a function Ax
-+// registers under its qualified name (utils.ask_graphjin) under its bare name
-+// as well, the spelling GraphJin's instructions use.
-+func registerAxCallable(base *axgoja.Runtime, name string, handler func(ax.Value) (ax.Value, error)) {
-+	base.RegisterHostCallable(name, handler)
-+	if bare, qualified := strings.CutPrefix(name, axFlatFunctionNamespace+"."); qualified && bare != "" {
-+		base.RegisterHostCallable(bare, handler)
-+	}
- }
- 
- func (r *graphJinCodeRuntime) CreateSession(globals map[string]ax.Value, options map[string]ax.Value) (ax.CodeSession, error) {
+ {{< verified by="TestBulkUpdateMatchesRowsByPrimaryKey" file="tests/update_test.go" line="490" >}}
+ {{< verified by="TestBulkUpdateRejectsUnmatchableRows" file="core/internal/qcode/bulk_update_test.go" line="84" >}}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #695** (closed): Update the homepage testimonial to use DeepORG (@dosco)
+- **PR #694** (2026-11-22): feat(core): update a list of rows in one mutation, matched by primary key (@officialasishkumar)
 - **PR #693** (2026-11-13): fix(introspection): expose columns of Postgres functions returning table rows (@officialasishkumar)
 - **PR #692** (2026-10-31): fix(discovery): aggregate SQLite index statistics per table (@rudycelekli)
 - **PR #691** (2026-11-06): fix(openapi): discover fields inherited through allOf response schemas (@rudycelekli)
 - **PR #690** (2026-10-31): fix(graph): require complete standalone argument values (@rudycelekli)
-- **PR #689** (2026-11-06): fix(graph): resolve fragments independently of definition order (@rudycelekli)
 
 ---
 
@@ -3539,69 +3364,61 @@ How it has to be wired, each learned by experiment:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. introspection): expose columns of Postgres functions returning table rows
+## X. serv): stop two replicas colliding on revision bumps and metric ticks
 
 **RULE**:
-When implementing operations in `core/internal/introspection/sql/postgres_functions.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `serv/artifacts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bc79e50b`: introspection): expose columns of Postgres functions returning table rows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73d7188e`: serv): stop two replicas colliding on revision bumps and metric ticks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/internal/introspection/sql/postgres_functions.sql`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `serv/artifacts.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-WITH row_type_routines AS (
-	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
-	-- composite_type and RETURNS TABLE (LIKE tbl).
-	SELECT r.specific_name,
-		t.typrelid
-	FROM information_schema.routines r
-		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
-		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
-		AND t.typname = r.type_udt_name
-	WHERE r.routine_type = 'FUNCTION'
-		AND r.data_type = 'USER-DEFINED'
-		AND t.typrelid != 0
-)
-	-- The single OUT parameter of a row type function holds the whole row.
-	-- Postgres expands it into the row's columns, returned by the SELECT below.
-	AND NOT (
-		p.parameter_mode = 'OUT'
-		AND r.specific_name IN (
-			SELECT specific_name
-			FROM row_type_routines
-		)
-	)
-	f.attnum as param_id,
-	f.attname as param_name,
-	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
-	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
-	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
-WHERE f.attnum > 0
-	AND f.attisdropped = false
-	);
+// bumpArtifactRevision moves a domain's revision on by one.
+//
+// Several replicas bump the same domain at the same moment, so the increment
+// is one statement that the database applies atomically. Direct SQL for the
+// same reason as claimTaskVerification: the internal GraphQL mutation API
+// cannot add to a column or report the affected-row count. Reading the
+// revision and writing it back let two replicas both insert a domain's first
+// row, and the second failed on the primary key; it also let a slow replica
+// write an older number over a newer one.
+	db, dbType, _, ok := s.artifactDB()
+	if !ok {
+	revisions := artifactTableName(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema, "revisions")
+	domainCol := quoteStoreIdent(dbType, "domain")
+	revisionCol := quoteStoreIdent(dbType, "revision")
+	updatedAtCol := quoteStoreIdent(dbType, "updated_at")
+	now := time.Now().UTC()
+	var updatedAt any = now.Format(time.RFC3339)
+	if dbType == "postgres" || dbType == "" {
+		updatedAt = now
+	}
+	increment := func() (bool, error) {
+		res, err := s.internalStoreExec(ctx, db, dbType,
+			fmt.Sprintf("UPDATE %s SET %s = %s + 1, %s = %s WHERE %s = %s",
+				revisions, revisionCol, revisionCol,
+			
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	a.ordinal_position as param_id,
-	COALESCE(
-		a.attribute_name,
-		CAST(a.ordinal_position as CHAR(3))
-	) as param_name,
-	a.data_type as param_type,
-	RIGHT JOIN information_schema.attributes a ON (
-		r.data_type = 'USER-DEFINED'
-		AND a.udt_schema = r.type_udt_schema
-		AND a.udt_name = r.type_udt_name
-	)
-WHERE r.routine_type = 'FUNCTION'
-	);
+	if _, _, _, ok := s.artifactDB(); !ok {
+	now := time.Now().UTC().Format(time.RFC3339)
+	current, err := s.artifactRevision(ctx, domain)
+	if err != nil {
+		return err
+	input := map[string]any{"domain": domain, "revision": current + 1, "updated_at": now}
+	if current == 0 {
+		_, err = s.internalStoreMutationRows(ctx, "revisions", `insert: $input`, revisionStoreFields, map[string]any{"input": input})
+	_, err = s.internalStoreMutationRows(ctx, "revisions", `where: { domain: { eq: $domain } }, update: $input`, revisionStoreFields, map[string]any{"domain": domain, "input": map[string]any{"revision": current + 1, "updated_at": now}})
+	return err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc79e50b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73d7188e` are properly handled with clean fallback behavior.

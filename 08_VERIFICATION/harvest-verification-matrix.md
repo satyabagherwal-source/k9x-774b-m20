@@ -12010,3 +12010,6 @@
 | `CYCLE-20261122-KD4Z` | `2026-11-22T04:38:57.155Z` | `PrunaAI/P-Image-OSS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | Yes (`cb5546f0...`) |
 | `CYCLE-20261122-KIZW` | `2026-11-22T04:39:04.748Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9895` | Yes (`6c2cdba6...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T04:39:42.430Z` | `hf-prunaai-p-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-03750A38` [Domain D] | Yes (`292e8454...`) |
+| `CYCLE-20261122-0D4U` | `2026-11-22T04:51:23.646Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9884` | Yes (`9584104f...`) |
+| `CYCLE-20261122-0FAQ` | `2026-11-22T04:51:26.450Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9896` | Yes (`7a4bff03...`) |
+| `CYCLE-20261122-12O7` | `2026-11-22T04:51:56.743Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | Yes (`57fa81f5...`) |

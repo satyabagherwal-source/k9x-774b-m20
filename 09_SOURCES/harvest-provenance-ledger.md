@@ -12043,3 +12043,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prunaai-p-h3-image` | `https://huggingface.co/PrunaAI/P-H3-Image` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-22T04:38:57.160Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `7131e7e4` | Multi-dimensional audit evidence | 2026-11-22T04:39:04.752Z |
 | `learn-dom-d-03750a38` | `project://hf-prunaai-p-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | 2026-11-22T04:39:42.430Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `85c58cdb` | Multi-dimensional audit evidence | 2026-11-22T04:51:23.651Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `1a4f4eb6` | Multi-dimensional audit evidence | 2026-11-22T04:51:26.455Z |
+| `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-22T04:51:56.747Z |

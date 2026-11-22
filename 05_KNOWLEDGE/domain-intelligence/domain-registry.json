@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T04:39:45.230Z",
-  "total_records": 2326,
+  "last_updated": "2026-11-22T04:52:02.005Z",
+  "total_records": 2327,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 912,
+      "total": 913,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -973,7 +973,8 @@
         "DOM-D-60FE0061",
         "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-core-invariants",
-        "DOM-D-03750A38"
+        "DOM-D-03750A38",
+        "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-learnings-core-invariants"
       ]
     },
     "E": {
@@ -8213,8 +8214,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "63b2f24b914884c2384d482e4e69189bbb76a2f602627702f5cf646aa74e659d",
-      "created_at": "2026-11-21T00:52:06.105Z"
+      "content_hash": "686496935fbd805d191cb25d29dec5535a33a4af84f088c3828125468fde01e3",
+      "created_at": "2026-11-22T04:51:26.943Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -13240,8 +13241,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "2891a42415e833293f3c79df6ad3be06859c2e2fab27ef0c0baedc33ceb1e856",
-      "created_at": "2026-11-21T00:52:14.341Z"
+      "content_hash": "71a61953d69cc0c891ab2db88fb2a1bb46a94cbafe7086eb184ebd2cbd77904c",
+      "created_at": "2026-11-22T04:52:02.005Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -25565,8 +25566,8 @@
       "title": "Research & Knowledge Intelligence: Viggle/Viggle-Remake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-viggle-remake-research-knowledge-intelligence-viggle-viggle-remake-cor.md",
       "repository": "Viggle/Viggle-Remake",
-      "content_hash": "00460d73d91f46645d05cd0dc6028d3e85d24b324c44224447f4a5f353a06a55",
-      "created_at": "2026-11-17T02:32:18.931Z"
+      "content_hash": "725aa1c2a06d78ad8ad18efb6f004093821d5f2950356bd71681231a0b7705bb",
+      "created_at": "2026-11-22T04:51:57.008Z"
     },
     "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-core-invariants",
@@ -25583,8 +25584,8 @@
       "title": "Research & Knowledge Intelligence: hf-viggle-viggle-remake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-viggle-remake-learnings-research-knowledge-intelligence-hf-viggle-vigg.md",
       "repository": "hf-viggle-viggle-remake-learnings",
-      "content_hash": "b702288b093bcde281580ccbc2e1034ea758f0e78c0268e7416f18bb5ad26439",
-      "created_at": "2026-11-17T02:32:27.336Z"
+      "content_hash": "e1b0929efbd8b3d7f0d3f54b6dc703bebf008f5c9369f1ba5773cdff1dd064fd",
+      "created_at": "2026-11-22T04:52:00.222Z"
     },
     "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-learnings-core-invariants",
@@ -39028,10 +39029,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "43908bc3457316f1c0297db2da9f7e2eb4c678da6906a01cd75555c1fa3f95e6",
-      "created_at": "2026-11-22T02:40:18.844Z"
+      "content_hash": "d245d02c15b4f2101cdb5ac3114c238e77c89426c76e54dbdacb85dd25dd1c68",
+      "created_at": "2026-11-22T04:51:24.164Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
@@ -39249,6 +39250,15 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-22T04:39:42.393Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-learnings-research-knowledge-intelligence-dosco-deeporg-learnings-.md",
+      "repository": "dosco-deeporg-learnings",
+      "content_hash": "f40dc9afb84ec7857b792bcdb60e00a5fe00a068bb217a42b136a366ff90246a",
+      "created_at": "2026-11-22T04:52:01.009Z"
     }
   }
 }

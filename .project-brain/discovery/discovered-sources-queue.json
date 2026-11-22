@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T04:39:43.082Z",
+  "updated_at": "2026-11-22T04:52:01.538Z",
   "stats": {
-    "total_discovered": 7443,
-    "approved_pending_harvest": 7043,
+    "total_discovered": 7444,
+    "approved_pending_harvest": 7044,
     "harvested_count": 0,
     "rejected_count": 400,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7022,
+      "COMMUNITY_AND_EXPERT": 7023,
       "OFFICIAL_DOCUMENTATION": 242,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -160969,6 +160969,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
         "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-3B0CACBB538B": {
+      "id": "SRC-3B0CACBB538B",
+      "url": "https://github.com/tailscale/wireguard-go/compare/330f55178f24...a8c4fbf26d6c",
+      "title": "https://github.com/tailscale/wireguard-go/compare/330f55178f24...a8c4fbf26d6c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:52:01.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
       }
     }
   }

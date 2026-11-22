@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:39:44.114Z",
+  "last_updated": "2026-11-22T04:52:01.799Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44684,11 +44684,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-BSIC",
+      "id": "CD-0DDF",
       "directive_title": "stop two replicas colliding on revision bumps and metric ticks",
       "source_repo": "dosco/deeporg",
       "source_commit": "85c58cdb",
-      "staged_file": "11_INBOX/candidate-directives/CD-BSIC-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0DDF-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
       "date_staged": "2026-11-22",
@@ -44717,11 +44717,11 @@
       "domain_letter": "K"
     },
     {
-      "id": "CD-EOHC",
+      "id": "CD-15SY",
       "directive_title": "serv): stop two replicas colliding on revision bumps and metric ticks",
-      "source_repo": "dosco-graphjin-learnings",
+      "source_repo": "dosco-deeporg-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EOHC-serv-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-15SY-serv-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -45054,6 +45054,35 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-39A864-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-16KN",
+      "directive_title": "net/netmon: don't hold mu while closing the OS monitor",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-16KN-net-netmon-don-t-hold-mu-while-closing-the-os-monitor.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-7E7BD1",
+      "directive_title": "serv): stop two replicas colliding on revision bumps and metric ticks",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dosco-deeporg",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7E7BD1-serv-stop-two-replicas-colliding-on-revi.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-3F7A01",
+      "directive_title": "net/netmon: don't hold mu while closing the OS monitor",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3F7A01-net-netmon-don-t-hold-mu-while-closing-t.md",
       "staged_date": "2026-11-22"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T00:52:14.081Z",
+  "timestamp": "2026-11-22T04:52:01.677Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T00:52:14.081Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T04:52:01.677Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale-tailscale-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `36780d60`  
+> **Source Version**: `1a4f4eb6`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T00:52:04.701Z  
+> **Timestamp**: 2026-11-22T04:51:25.215Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:52:04.696Z  
+> **Harvest Timestamp**: 2026-11-22T04:51:25.210Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39394 stars
+- **Stars / Engagement**: 39438 stars
 
 ---
 
@@ -851,151 +851,233 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4f7439b4` (2026-11-20)
-**Commit Message**: feature/conn25: name lock-requiring methods Locked (#22532)
+### Incident Patch 1: `1a4f4eb6` (2026-11-07)
+**Commit Message**: net/netmon: don't hold mu while closing the OS monitor
 
-Two methods read or write state guarded by their receiver's mutex without
-taking it, relying on every caller to hold it, but were not named to say
-so. enqueueAddressAssignment documented the requirement in prose only;
-lookupAddrBySrcIPAndTransitIP had no doc comment at all. Rename both with
-the Locked suffix the package already uses for drainAddrsLocked,
-transitIPRoutableLocked and removeFlowLocked, and give the connector
-lookup a doc comment stating the requirement.
+On Windows, winMon.Close unregisters the route/address/interface change
+callbacks and waits for in-flight ones to return. Those callbacks call
+Monitor.isActive, which takes m.mu. Monitor.Close held m.mu across
+om.Close, so a change notification arriving during Close deadlocked
+with it, and the test binary hung until the timeout.
 
-Fixes https://github.com/tailscale/corp/issues/38924
+Release m.mu before calling om.Close. m.closed is already set under the
+lock, so late callbacks see the monitor as inactive and return.
 
-Change-Id: Ib8bcaf5809ae6f982a504ae554ad1304dbb53018
+This is also the root cause of the Windows "ipnlocal: watchdog timeout"
+panics that kill the ipn/ipnlocal and wgengine/netstack test binaries.
 
-Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
+Add TestMonitorCloseWaitsForOSCallback, which uses a fake osMon whose
+Close, like winipcfg's Unregister, waits for a callback that needs
+m.mu. That reproduces the deadlock on any OS.
 
-**File**: `feature/conn25/client.go` (modified, +7/-7)
+flakestress TestMonitorCloseWaitsForOSCallback, -p 4, linux:
+  before: 16/16 runs deadlocked
+  after:  0/135569 runs
+
+Fixes #22228
+Fixes #22548
+
+Change-Id: Ibe7740ca23a1ab375d37c280838942f49b4a6a8f
+Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+
+**File**: `net/netmon/netmon.go` (modified, +8/-4)
 ```diff
-@@ -157,8 +157,8 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- 	if existing, ok := c.assignments.lookupByDomainDst(domain, dst); ok {
- 		// We have the domain/dst, but it's possible this came from another connector
- 		// and the original connector is dead, in which case we currently don't
--		// call enqueueAddressAssignment and register the TransitIP with the other
--		// connector. And we don't install the new connector's node key in WireGuard.
-+		// call enqueueAddressAssignmentLocked and register the TransitIP with the
-+		// other connector. And we don't install the new connector's node key in WireGuard.
- 		//
- 		// The correct action would be to allocate a new TransitIP associated
- 		// with that new connector, and then register the TransitIP address, and
-@@ -241,7 +241,7 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- 		transitPool.returnAddr(tip)
- 		return nil, err
- 	}
--	if err := c.enqueueAddressAssignment(as); err != nil {
-+	if err := c.enqueueAddressAssignmentLocked(as); err != nil {
- 		c.assignments.remove(as)
- 		magicPool.returnAddr(mip)
- 		transitPool.returnAddr(tip)
-@@ -269,9 +269,9 @@ var errQueueFull = errors.New("queue full")
- // no longer accepts address assignments.
- var errClientShutdown = errors.New("conn25 client shut down")
+@@ -49,6 +49,10 @@ type message interface {
  
--// enqueueAddressAssignment queues addrs to be registered with its connector by
--// sendLoop. c.mu must be held.
--func (c *client) enqueueAddressAssignment(addrs *addrs) error {
-+// enqueueAddressAssignmentLocked queues addrs to be registered with its
-+// connector by sendLoop. c.mu must be held.
-+func (c *client) enqueueAddressAssignmentLocked(addrs *addrs) error {
- 	if c.closed {
- 		return errClientShutdown
+ // osMon is the interface that each operating system-specific
+ // implementation of the link monitor must implement.
++//
++// Lock order: Monitor.mu is acquired after any osMon lock. An osMon
++// may acquire Monitor.mu (e.g. winMon calls Monitor.isActive from OS
++// callbacks); Monitor must not call osMon methods while holding it.
+ type osMon interface {
+ 	Close() error
+ 
+@@ -72,7 +76,7 @@ type Monitor struct {
+ 	b       *eventbus.Client
+ 	changed *eventbus.Publisher[ChangeDelta]
+ 
+-	om     osMon         // nil means not supported on this platform
++	om     osMon         // nil means not supported on this platform; its methods must not be called with mu held
+ 	change chan bool     // send false to wake poller, true to also force ChangeDeltas be sent
+ 	stop   chan struct{} // closed on Stop
+ 	static bool          // static Monitor that doesn't actually monitor
+@@ -526,15 +530,15 @@ func (m *Monitor) Close() error {
+ 	if m.wallTimer != nil {
+ 		m.wallTimer.Stop()
  	}
-@@ -489,7 +489,7 @@ func (c *client) resendTransitIPMapping(transitIP netip.Addr) {
- 		// We have no mappings for this transit IP, so nothing to resend.
- 		return
++	started := m.started
++	m.mu.Unlock()
+ 
++	// Close the OS monitor without holding m.mu; see the osMon lock order.
+ 	var err error
+ 	if m.om != nil {
+ 		err = m.om.Close()
  	}
--	err := c.enqueueAddressAssignment(mapping)
-+	err := c.enqueueAddressAssignmentLocked(mapping)
- 	if err != nil {
- 		c.logf("error enqueueing address assignment for resend: %v", err)
+ 
+-	started := m.started
+-	m.mu.Unlock()
+-
+ 	if started {
+ 		m.goroutines.Wait()
  	}
 ```
 
-**File**: `feature/conn25/client_test.go` (modified, +3/-3)
+**File**: `net/netmon/netmon_test.go` (modified, +49/-0)
 ```diff
-@@ -411,8 +411,8 @@ func (c *client) currentGeneration() uint64 {
- 	return c.generation
+@@ -4,11 +4,13 @@
+ package netmon
+ 
+ import (
++	"errors"
+ 	"flag"
+ 	"net"
+ 	"net/netip"
+ 	"reflect"
+ 	"strings"
++	"sync"
+ 	"sync/atomic"
+ 	"testing"
+ 	"time"
+@@ -32,6 +34,53 @@ func TestMonitorStartClose(t *testing.T) {
+ 	}
  }
  
--// enqueueAddressAssignmentForTest is [client.enqueueAddressAssignment] with the
--// lock it expects callers to hold, plus the generation stamp that
-+// enqueueAddressAssignmentForTest is [client.enqueueAddressAssignmentLocked]
-+// with the lock it expects callers to hold, plus the generation stamp that
- // [client.reserveAddresses] would have applied. The production callers all
- // enqueue from inside a c.mu critical section; tests reach for it on its own,
- // and build the [addrs] by hand rather than reserving one. Without the stamp
-@@ -422,7 +422,7 @@ func (c *client) enqueueAddressAssignmentForTest(as *addrs) error {
- 	c.mu.Lock()
- 	defer c.mu.Unlock()
- 	as.generation = c.generation
--	return c.enqueueAddressAssignment(as)
-+	return c.enqueueAddressAssignmentLocked(as)
- }
- 
- func TestTransitIPConnMapping(t *testing.T) {
++// callbackWaitingOSMon is an osMon whose Close, like the Windows
++// winipcfg Unregister methods, waits for an in-flight OS callback
++// that needs the Monitor's mutex.
++type callbackWaitingOSMon struct {
++	m      *Monitor
++	closed chan struct{}
++}
++
++func (om *callbackWaitingOSMon) Close() error {
++	close(om.closed)
++	var wg sync.WaitGroup
++	wg.Go(func() { om.m.InterfaceState() })
++	wg.Wait()
++	return nil
++}
++
++func (om *callbackWaitingOSMon) Receive() (message, error) {
++	<-om.closed
++	return nil, errors.New("closed")
++}
++
++func TestMonitorCloseWaitsForOSCallback(t *testing.T) {
++	bus := eventbus.New()
++	defer bus.Close()
++
++	mon, err := New(bus, t.Logf)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := mon.om.Close(); err != nil {
++		t.Fatal(err)
++	}
++	mon.om = &callbackWaitingOSMon{m: mon, closed: make(chan struct{})}
++	mon.Start()
++
++	done := make(chan error, 1)
++	go func() { done <- mon.Close() }()
++	select {
++	case err := <-done:
++		if err != nil {
++			t.Fatal(err)
++		}
++	case <-time.After(10 * time.Second):
++		t.Fatal("Monitor.Close deadlocked waiting for OS callback")
++	}
++}
++
+ func TestMonitorJustClose(t *testing.T) {
+ 	bus := eventbus.New()
+ 	defer bus.Close()
 ```
 
-**File**: `feature/conn25/conn25_test.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `1cc8632a` (2026-11-21)
+**Commit Message**: go.mod: bump github.com/tailscale/wireguard-go
+
+* github.com/tailscale/wireguard-go: https://github.com/tailscale/wireguard-go/compare/330f55178f24...a8c4fbf26d6c
+
+Triggered by @raggi via the bumpdep workflow.
+
+Updates #22475
+
+Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
+
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -643,7 +643,7 @@ func TestHandleConnectorTransitIPRequest(t *testing.T) {
- 								i, j, len(wantLookup))
- 						}
- 						pip, tip, wantDip := wantLookup[0], wantLookup[1], wantLookup[2]
--						gotDip, _ := c.connector.lookupAddrBySrcIPAndTransitIP(pip, tip)
-+						gotDip, _ := c.connector.lookupAddrBySrcIPAndTransitIPLocked(pip, tip)
- 						if gotDip != wantDip {
- 							t.Errorf("wrong result on lookup[%d][%d] ([%v], [%v]): got [%v] expected [%v]",
- 								i, j, pip, tip, gotDip, wantDip)
+@@ -172,4 +172,4 @@
+     });
+   };
+ }
+-# nix-direnv cache busting line: sha256-BqLElx5MlGtEXEkh+2PTo3A38vQjHsQWjHLrXK1K7Zg=
++# nix-direnv cache busting line: sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI=
 ```
 
-**File**: `feature/conn25/connector.go` (modified, +5/-2)
+**File**: `flakehashes.json` (modified, +2/-2)
 ```diff
-@@ -116,7 +116,7 @@ type transitIPExpiryEntry struct {
- func (c *connector) realIPForTransitIPConnection(srcIP netip.Addr, transitIP netip.Addr) (netip.Addr, bool) {
- 	c.mu.Lock()
- 	defer c.mu.Unlock()
--	return c.lookupAddrBySrcIPAndTransitIP(srcIP, transitIP)
-+	return c.lookupAddrBySrcIPAndTransitIPLocked(srcIP, transitIP)
+@@ -4,7 +4,7 @@
+     "sri": "sha256-Qmy06FkeFkjqCo1FLSD9dO7hTvdo/gC2VACJniuiQBU="
+   },
+   "vendor": {
+-    "goModSum": "sha256-q9yKYr8Hs+m30TEtGIfZ0BXTrKz576ZtGnXEw2XRfmc=",
+-    "sri": "sha256-BqLElx5MlGtEXEkh+2PTo3A38vQjHsQWjHLrXK1K7Zg="
++    "goModSum": "sha256-QP1as7ifhlOtEVS1hZaWhNQ1HMDQRKve2PEZMziRxCQ=",
++    "sri": "sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI="
+   }
  }
- 
- // transitIPInPool reports whether tip is within the transit IP pool of its
-@@ -164,7 +164,10 @@ func (c *connector) packetFilterAllow(p packet.Parsed) (bool, string) {
- 	return false, ""
- }
- 
--func (c *connector) lookupAddrBySrcIPAndTransitIP(srcIP, transitIP netip.Addr) (netip.Addr, bool) {
-+// lookupAddrBySrcIPAndTransitIPLocked returns the real destination IP that the
-+// peer at srcIP registered for transitIP, or (zero, false) if it registered
-+// none. c.mu must be held.
-+func (c *connector) lookupAddrBySrcIPAndTransitIPLocked(srcIP, transitIP netip.Addr) (netip.Addr, bool) {
- 	m, ok := c.transitIPs[srcIP]
- 	if !ok || m == nil {
- 		return netip.Addr{}, false
 ```
 
-**File**: `feature/conn25/connector_test.go` (modified, +1/-1)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -272,7 +272,7 @@ func TestConnectorDisallowedDestinations(t *testing.T) {
- 			if tt.wantCode == OK {
- 				wantDst = unmapped
- 			}
--			if got, _ := c.connector.lookupAddrBySrcIPAndTransitIP(peerIP, transitIP); got != wantDst {
-+			if got, _ := c.connector.lookupAddrBySrcIPAndTransitIPLocked(peerIP, transitIP); got != wantDst {
- 				t.Errorf("lookup(%v, %v) = %v, want %v", peerIP, transitIP, got, wantDst)
- 			}
- 		})
+@@ -125,7 +125,7 @@ require (
+ 	github.com/tailscale/ts-gokrazy v0.0.0-20260630224145-b83088f2e52e
+ 	github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea
+ 	github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6
+-	github.com/tailscale/wireguard-go v0.0.0-20261119191353-330f55178f24
++	github.com/tailscale/wireguard-go v0.0.0-20261121000637-a8c4fbf26d6c
+ 	github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e
+ 	github.com/tc-hib/winres v0.3.1
+ 	github.com/tcnksm/go-httpstat v0.2.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1152,8 +1152,8 @@ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea h1:a
+ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea/go.mod h1:agQPE6y6ldqCOui2gkIh7ZMztTkIQKH049tv8siLuNQ=
+ github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6 h1:l10Gi6w9jxvinoiq15g8OToDdASBni4CyJOdHY1Hr8M=
+ github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6/go.mod h1:ZXRML051h7o4OcI0d3AaILDIad/Xw0IkXaHM17dic1Y=
+-github.com/tailscale/wireguard-go v0.0.0-20261119191353-330f55178f24 h1:znSXvacbd0ocSc2jmRIf0WL7PuvAnohnKbNlBffdppM=
+-github.com/tailscale/wireguard-go v0.0.0-20261119191353-330f55178f24/go.mod h1:Hl7pyu83xNjc1LY5e9apq2mWm8Hl76wRtJbwZ2XISqY=
++github.com/tailscale/wireguard-go v0.0.0-20261121000637-a8c4fbf26d6c h1:hLTbcmifu309AoHUdjK+x5mFv/rp2kC01JHkdhCS48A=
++github.com/tailscale/wireguard-go v0.0.0-20261121000637-a8c4fbf26d6c/go.mod h1:Hl7pyu83xNjc1LY5e9apq2mWm8Hl76wRtJbwZ2XISqY=
+ github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e h1:zOGKqN5D5hHhiYUp091JqK7DPCqSARyUfduhGUY8Bek=
+ github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e/go.mod h1:orPd6JZXXRyuDusYilywte7k094d7dycXXU5YnWsrwg=
+ github.com/tc-hib/winres v0.3.1 h1:CwRjEGrKdbi5CvZ4ID+iyVhgyfatxFoizjPhzez9Io4=
+```
+
+**File**: `shell.nix` (modified, +1/-1)
+```diff
+@@ -16,4 +16,4 @@
+ ) {
+   src =  ./.;
+ }).shellNix
+-# nix-direnv cache busting line: sha256-BqLElx5MlGtEXEkh+2PTo3A38vQjHsQWjHLrXK1K7Zg=
++# nix-direnv cache busting line: sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22556** (closed): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
+- **PR #22555** (closed): net/netmon: don't hold Monitor.mu while closing the OS monitor (@bradfitz)
+- **PR #22544** (2026-11-21): ipn/ipnlocal: deflake TestServeAppCapsConcurrentStreams on Windows (@bradfitz)
+- **PR #22542** (2026-11-21): .github: use gomodfs for the Go module cache on Windows CI (@bradfitz)
+- **PR #22537** (2026-11-21): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
 - **PR #22535** (2026-11-20): magicsock,tstun: add gauges for the number of open queues and sockets (@illotum)
-- **PR #22534** (2026-11-20): feature/conn25: do not lock mu in packetFilterAllow (@mazdakn)
-- **PR #22532** (2026-11-20): feature/conn25: name lock-requiring methods Locked (@mazdakn)
-- **PR #22531** (closed): ipn/ipnlocal: add failing test for serve TCP forward half-close (@bcreane)
-- **PR #22528** (2026-11-20): net/memnet: don't arm deadline timers on a closed Pipe (@bradfitz)
-- **PR #22527** (2026-11-20): util/syspolicy/source: notify sessions when a forced read finds a change (@nickkhyl)
 
 ---
 
@@ -1015,43 +1097,41 @@ Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feature/conn25: name lock-requiring methods Locked
+## X. net/netmon: don't hold mu while closing the OS monitor
 
 **RULE**:
-When implementing operations in `feature/conn25/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `net/netmon/netmon.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4f7439b4`: feature/conn25: name lock-requiring methods Locked. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a4f4eb6`: net/netmon: don't hold mu while closing the OS monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/conn25/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/netmon/netmon.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// call enqueueAddressAssignmentLocked and register the TransitIP with the
-		// other connector. And we don't install the new connector's node key in WireGuard.
-	if err := c.enqueueAddressAssignmentLocked(as); err != nil {
-// enqueueAddressAssignmentLocked queues addrs to be registered with its
-// connector by sendLoop. c.mu must be held.
-func (c *client) enqueueAddressAssignmentLocked(addrs *addrs) error {
-	err := c.enqueueAddressAssignmentLocked(mapping)
+//
+// Lock order: Monitor.mu is acquired after any osMon lock. An osMon
+// may acquire Monitor.mu (e.g. winMon calls Monitor.isActive from OS
+// callbacks); Monitor must not call osMon methods while holding it.
+	om     osMon         // nil means not supported on this platform; its methods must not be called with mu held
+	started := m.started
+	m.mu.Unlock()
+	// Close the OS monitor without holding m.mu; see the osMon lock order.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		// call enqueueAddressAssignment and register the TransitIP with the other
-		// connector. And we don't install the new connector's node key in WireGuard.
-	if err := c.enqueueAddressAssignment(as); err != nil {
-// enqueueAddressAssignment queues addrs to be registered with its connector by
-// sendLoop. c.mu must be held.
-func (c *client) enqueueAddressAssignment(addrs *addrs) error {
-	err := c.enqueueAddressAssignment(mapping)
+	om     osMon         // nil means not supported on this platform
+	started := m.started
+	m.mu.Unlock()
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4f7439b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a4f4eb6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

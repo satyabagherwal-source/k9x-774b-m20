@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-BD21",
-    "timestamp": "2026-11-20T03:32:37.465Z",
-    "repository": "slatedb/slatedb",
-    "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "3585b2d9260a7de769e5d37798419c48b0e189621e4a70df1e1aa5ecae6a956e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-W5P8",
-    "timestamp": "2026-11-20T03:48:47.708Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "7f90d73fb1008c30c084ff7d0f72ac184bf1c5ad4ffd40e5968f9aae8975f23d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-DV82",
-    "timestamp": "2026-11-20T04:02:33.938Z",
-    "repository": "bridgecrewio/checkov",
-    "learningId": "learn-github-bridgecrewio-checkov",
-    "contentHash": "0072a4b4236687a668da16f6d6332567198030c6c3e47292a0671d62cd6edf7a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-DYTM",
     "timestamp": "2026-11-20T04:02:38.602Z",
     "repository": "gluesql/gluesql",
@@ -7492,6 +7447,51 @@
     "contentHash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-0D4U",
+    "timestamp": "2026-11-22T04:51:23.646Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "9584104f386e2e76172099a413f8d3dc787cbc527bde57069a09700467968f91",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-0FAQ",
+    "timestamp": "2026-11-22T04:51:26.450Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "7a4bff03771cc94046938f084832151354dab410144f1cee7f7be1085977d191",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-12O7",
+    "timestamp": "2026-11-22T04:51:56.743Z",
+    "repository": "Viggle/Viggle-Remake",
+    "learningId": "learn-huggingface-viggle-viggle-remake",
+    "contentHash": "57fa81f5621ce675d4d6b2907168b268a202269b52c9be5f0da99c3cb208550b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

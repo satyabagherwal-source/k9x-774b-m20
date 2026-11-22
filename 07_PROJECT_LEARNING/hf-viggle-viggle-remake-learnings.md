@@ -3,7 +3,7 @@
 > **Source Version**: `hf-viggle-vi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T02:32:18.373Z  
+> **Timestamp**: 2026-11-22T04:51:56.116Z  
 > **Learning ID**: `learn-huggingface-viggle-viggle-remake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Viggle/Viggle-Remake](https://huggingface.co/Viggle/Viggle-Remake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T02:32:13.923Z  
+> **Harvest Timestamp**: 2026-11-22T04:51:13.444Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: video-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 218765 downloads | 465 likes
+- **Stars / Engagement**: 281611 downloads | 515 likes
 
 ---
 
