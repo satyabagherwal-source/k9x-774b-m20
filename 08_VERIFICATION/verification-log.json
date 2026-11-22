@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-PAIR",
-    "timestamp": "2026-11-20T12:07:20.451Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "cc5f574cfad974afe02e36e62c011cafe9aa5c68f9f07bb7cf3076483535f1b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-PCWC",
-    "timestamp": "2026-11-20T12:07:23.532Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "e5947726184ef4446c8f9b891968e7584815252acb597cd029f3c94c94d5600e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-PEER",
-    "timestamp": "2026-11-20T12:07:25.491Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "e7c8068e36d43ce7469b67ff4395560324a87a2184f67b9e6d7f11aaf71e8cc5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-ZH9V",
     "timestamp": "2026-11-20T12:15:15.763Z",
     "repository": "transact-rs/sqlx",
@@ -7490,6 +7445,51 @@
     "repository": "sfu-db/connector-x",
     "learningId": "learn-github-sfu-db-connector-x",
     "contentHash": "ce38d9d4792637d10020e95976af793672db3fcdefd23a259b60e0ef5c509cfa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-VRHS",
+    "timestamp": "2026-11-22T11:47:43.216Z",
+    "repository": "nex-agi/Nex-N2.6",
+    "learningId": "learn-huggingface-nex-agi-nex-n2-6",
+    "contentHash": "c9105f20186dae2e75e641a97a0ce9c7c8b35948f7cb89cde48872ce1184a8aa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-VX8V",
+    "timestamp": "2026-11-22T11:47:50.671Z",
+    "repository": "tw93/Mole",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "2fcfd92f58fef8a40403dd210c52f725378a55981b90ff7c8c9a0f53a3a462a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-W376",
+    "timestamp": "2026-11-22T11:47:58.386Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "b38ef501836b54f8d9f5ba73dfd1fa7d23606205ffd3916f5d3ca9f924f3e275",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T11:35:11.587Z",
+  "last_updated": "2026-11-22T11:47:58.401Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7206,14 +7206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqlpage-sqlpage",
-      "content_hash": "382485af7fa8f5f2b5bf014630f6d10bb365edf344c55ca99d79815956713243",
-      "verified_at": "2026-11-20T04:48:37.201Z",
+      "content_hash": "b38ef501836b54f8d9f5ba73dfd1fa7d23606205ffd3916f5d3ca9f924f3e275",
+      "verified_at": "2026-11-22T11:47:58.400Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T04:48:37.201Z"
+      "last_updated": "2026-11-22T11:47:58.400Z"
     },
     "DouyinFE/semi-design": {
       "repository": "DouyinFE/semi-design",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "584aaebc80d5385f671dda8006c333364a50f2362833c2d88f88144199b51996",
-      "verified_at": "2026-11-19T10:15:44.772Z",
+      "content_hash": "2fcfd92f58fef8a40403dd210c52f725378a55981b90ff7c8c9a0f53a3a462a3",
+      "verified_at": "2026-11-22T11:47:50.686Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T10:15:44.772Z"
+      "last_updated": "2026-11-22T11:47:50.686Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",
@@ -19221,14 +19221,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nex-agi-nex-n2-6",
-      "content_hash": "73d0fb5b69299908bc64d9118435bb3e30f7c2099bf994976f82d97b6d2bce64",
-      "verified_at": "2026-11-17T11:25:22.927Z",
+      "content_hash": "c9105f20186dae2e75e641a97a0ce9c7c8b35948f7cb89cde48872ce1184a8aa",
+      "verified_at": "2026-11-22T11:47:43.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:25:22.927Z"
+      "last_updated": "2026-11-22T11:47:43.231Z"
     },
     "maxwell-model/Maxwell-V1-Flash": {
       "repository": "maxwell-model/Maxwell-V1-Flash",

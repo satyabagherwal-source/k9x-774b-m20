@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T11:35:20.068Z",
+  "last_updated": "2026-11-22T11:48:04.475Z",
   "directives": [
     {
       "id": "CD-001",
@@ -46047,6 +46047,48 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-067635-disable-openrouter-response-debug-loggin.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-VXFU",
+      "directive_title": "keep sudo sinks' preview rows out of the ownership refusal",
+      "source_repo": "tw93/Mole",
+      "source_commit": "d3b743e0",
+      "staged_file": "11_INBOX/candidate-directives/CD-VXFU-keep-sudo-sinks-preview-rows-out-of-the-ownership-refusal.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-W7WA",
+      "directive_title": "Add a status_bar component",
+      "source_repo": "sqlpage-sqlpage-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W7WA-add-a-status_bar-component.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-W6NU",
+      "directive_title": "clean): keep sudo sinks' preview rows out of the ownership refusal",
+      "source_repo": "tw93-mole-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W6NU-clean-keep-sudo-sinks-preview-rows-out-of-the-ownership-refusal.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-F008D0",
+      "directive_title": "Add a status_bar component",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sqlpage-sqlpage",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F008D0-add-a-status-bar-component.md",
       "staged_date": "2026-11-22"
     }
   ]

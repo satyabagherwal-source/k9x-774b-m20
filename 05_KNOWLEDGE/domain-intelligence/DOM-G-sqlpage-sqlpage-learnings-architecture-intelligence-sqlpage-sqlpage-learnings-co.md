@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T04:48:41.488Z",
+  "timestamp": "2026-11-22T11:48:04.369Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sqlpage-sqlpage-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sqlpage-sqlpage-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T04:48:41.488Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T11:48:04.369Z`  
 > **Learning ID**: `LEARN-EVO-sqlpage-sqlpage-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from sqlpage-sqlpage-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `c88c005c`  
+> **Source Version**: `d65bda49`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T04:48:36.296Z  
+> **Timestamp**: 2026-11-22T11:47:57.250Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T04:48:36.291Z  
+> **Harvest Timestamp**: 2026-11-22T11:47:57.244Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2584 stars
+- **Stars / Engagement**: 2585 stars
 
 ---
 
@@ -1189,568 +1189,347 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c88c005c` (2026-11-19)
-**Commit Message**: Explore monthly sales exports with DuckDB (#1605)
+### Incident Patch 1: `d65bda49` (2026-11-21)
+**Commit Message**: Add a status_bar component (#1608)
 
-* Test DuckDB CSV reporting through ODBC
+* Add a status_bar component
 
-* Explore DuckDB monthly sales from CSV exports
+* Keep status bar styling in its own stylesheet
 
-* Run DuckDB reporting SQL directly through SQLPage
+* Position the status bar with CSS
 
-**File**: `.github/hurl-examples.yml` (modified, +8/-0)
+* Keep status bar styles in the component template
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -63,6 +63,14 @@ all_examples:
-   - 'src/app_config.rs'
-   - 'src/webserver/database/connect.rs'
+@@ -2,6 +2,7 @@
  
-+# Follow a monthly CSV report from a SQLPage table into ODBC detail rows.
-+'examples/duckdb-reporting':
-+  - 'src/app_config.rs'
-+  - 'src/webserver/http_request_info.rs'
-+  - 'src/webserver/request_variables.rs'
-+  - 'src/webserver/database/**'
-+  - 'sqlpage/templates/table.handlebars'
-+
- # Create a PostgreSQL-backed page, request it, and render dynamic rows in a table.
- 'examples/SQLPage developer user interface':
-   - 'src/filesystem.rs'
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +10/-6)
-```diff
-@@ -279,6 +279,7 @@ jobs:
-           - platform: linux/amd64
-             variant: duckdb
-             tag_suffix: -linux-amd64-duckdb
-+            export: true
-           - platform: linux/arm64
-             variant: duckdb
-             tag_suffix: -linux-arm64-duckdb
-@@ -318,8 +319,7 @@ jobs:
-         with:
-           username: ${{ env.REGISTRY_USERNAME }}
-           password: ${{ secrets.DOCKERHUB_TOKEN }}
--      # The Hurl examples run against a real image, so the one platform they use
--      # is also exported as a tarball instead of only being pushed by digest.
-+      # Export both amd64 variants for the Hurl examples.
-       - name: Build image for Hurl examples
-         if: matrix.export
-         uses: docker/build-push-action@v7
-@@ -330,7 +330,7 @@ jobs:
-           labels: ${{ steps.meta.outputs.labels }}
-           tags: |
-             ${{ steps.meta.outputs.tags }}
--            ${{ env.REGISTRY_IMAGE }}:main
-+            ${{ env.REGISTRY_IMAGE }}:main${{ matrix.variant == 'duckdb' && '-duckdb' || '' }}
-           outputs: type=docker,dest=${{ runner.temp }}/sqlpage.tar
-           cache-from: |
-             type=gha,scope=${{ steps.cache-scope.outputs.artifact }}
-@@ -342,7 +342,7 @@ jobs:
-         if: matrix.export
-         uses: actions/upload-artifact@v7
-         with:
--          name: sqlpage-linux-amd64-minimal-image
-+          name: sqlpage-linux-amd64-${{ matrix.variant }}-image
-           path: ${{ runner.temp }}/sqlpage.tar
-           if-no-files-found: error
-           retention-days: 1
-@@ -424,6 +424,8 @@ jobs:
-       fail-fast: false
-       matrix:
-         example: ${{ fromJSON(needs.hurl_examples.outputs.examples) }}
-+    env:
-+      SQLPAGE_IMAGE_VARIANT: ${{ matrix.example == 'examples/duckdb-reporting' && 'duckdb' || 'minimal' }}
-     steps:
-       - uses: actions/checkout@v7
-       - name: Install Hurl
-@@ -435,12 +437,14 @@ jobs:
-       - name: Download SQLPage image
-         uses: actions/download-artifact@v8
-         with:
--          name: sqlpage-linux-amd64-minimal-image
-+          name: sqlpage-linux-amd64-${{ env.SQLPAGE_IMAGE_VARIANT }}-image
-           path: ${{ runner.temp }}/sqlpage-image
-       - name: Load SQLPage image
-         run: |
-           docker load --input "${{ runner.temp }}/sqlpage-image/sqlpage.tar"
--          docker tag "${{ env.REGISTRY_IMAGE }}:main" "${{ env.REGISTRY_IMAGE }}:latest"
-+          if [[ "$SQLPAGE_IMAGE_VARIANT" == minimal ]]; then
-+            docker tag "${{ env.REGISTRY_IMAGE }}:main" "${{ env.REGISTRY_IMAGE }}:latest"
-+          fi
-       - name: Run example Hurl test
-         run: scripts/test-examples-hurl.sh "${{ matrix.example }}"
+ ## unreleased
  
++- The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
+ - A file input with `multiple` now keeps every selected file, instead of only the last one. The new [`sqlpage.persist_uploaded_files`](https://sql-page.com/functions.sql?function=persist_uploaded_files) function saves them all and returns a JSON array with the `path`, original `name`, `mime_type` and `size` of each file.
+ - Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
+ - Inline icons now align with their labels in components such as tabs and steps.
 ```
 
-**File**: `examples/duckdb-reporting/README.md` (added, +19/-0)
+**File**: `examples/official-site/sqlpage/migrations/80_status_bar.sql` (added, +23/-0)
 ```diff
-@@ -0,0 +1,19 @@
-+# DuckDB CSV report
+@@ -0,0 +1,23 @@
++INSERT INTO component(name, icon, description, introduced_in_version) VALUES
++    ('status_bar', 'layout-bottombar',
++     'Display short status messages and links in a single horizontal bar. Each row adds one segment. When there are several segments, the last one aligns to the far edge. If the segments do not all fit, scroll the bar horizontally to see the rest.',
++     '0.49.0');
 +
-+Run `docker compose up` from this folder and open [the monthly sales report](http://localhost:8080/).
-+Compare sales and revenue by month and region, then follow **View sales** to see
-+the transactions and the targets in effect on their sale dates.
++INSERT INTO parameter(component, name, description, type, top_level, optional)
++SELECT 'status_bar', * FROM (VALUES
++    ('fixed', 'Keep the bar at the bottom of the screen while the page scrolls. Defaults to true. A fixed bar overlays page content, so leave space below your last item if needed. Set to false to place the bar in the page where the SQL appears.', 'BOOLEAN', TRUE, TRUE),
++    ('label', 'Accessible name for the bar. Defaults to "Status bar".', 'TEXT', TRUE, TRUE),
++    ('title', 'Text displayed in the segment.', 'TEXT', FALSE, TRUE),
++    ('icon', 'Icon displayed before the text.', 'ICON', FALSE, TRUE),
++    ('color', 'Color of the segment text and icon.', 'COLOR', FALSE, TRUE),
++    ('tooltip', 'Text shown when hovering over the segment or focusing its link. For an icon without a title, supply a tooltip to give the segment an accessible name.', 'TEXT', FALSE, TRUE),
++    ('link', 'URL to open when the segment is clicked.', 'URL', FALSE, TRUE)
++) p;
 +
-+Drop another monthly export into `sales/` with the same CSV columns to include
-+it in the report. Both pages query the typed CSV files directly with DuckDB's
-+`read_csv`. The summary groups dates into months with `time_bucket` and
-+aggregates with `GROUP BY ALL`. The detail page uses `arg_max_null` to pick
-+the regional target for the latest effective date on or before each sale.
-+SQLPage builds the drill-down links and binds their month and region to the
-+detail query. Request the detail page with `Accept: application/json` for JSON.
-+
-+Run the end-to-end test from the repository root.
-+
-+```sh
-+scripts/test-examples-hurl.sh examples/duckdb-reporting
-+```
++INSERT INTO example(component, description, properties) VALUES
++    ('status_bar', 'A query workspace shows the database connection, row count, and a link to the function reference. Omit `fixed` to pin this bar to the bottom of the screen.', json('[
++        {"component":"status_bar","label":"Query status","fixed":false},
++        {"title":"Connected","icon":"database","color":"green","tooltip":"Connected to the reporting database"},
++        {"title":"24 rows"},
++        {"title":"SQL functions","icon":"book","link":"/functions.sql"}
++    ]'));
 ```
 
-**File**: `examples/duckdb-reporting/docker-compose.yml` (added, +10/-0)
+**File**: `examples/official-site/sqlpage/migrations/99_shared_id_class_attributes.sql` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,10 @@
-+services:
-+  web:
-+    image: ${SQLPAGE_IMAGE:-lovasoa/sqlpage:main-duckdb}
-+    ports:
-+      - "8080:8080"
-+    volumes:
-+      - .:/var/www:ro
-+    environment:
-+      # Keep the fixture small while crossing the baseline driver's 16-row batch boundary.
-+      SQLPAGE_MAX_PENDING_ROWS: "16"
+@@ -28,6 +28,7 @@ FROM (VALUES
+     ('list', TRUE),
+     ('list', FALSE),
+     ('map', TRUE),
++    ('status_bar', TRUE),
+     ('tab', TRUE),
+     ('tab', FALSE),
+     ('table', TRUE),
+@@ -69,6 +70,8 @@ FROM (VALUES
+     ('list', TRUE),
+     ('list', FALSE),
+     ('map', TRUE),
++    ('status_bar', TRUE),
++    ('status_bar', FALSE),
+     ('tab', TRUE),
+     ('tab', FALSE),
+     ('table', TRUE),
 ```
 
-**File**: `examples/duckdb-reporting/index.sql` (added, +26/-0)
+**File**: `sqlpage/templates/status_bar.handlebars` (added, +29/-0)
 ```diff
-@@ -0,0 +1,26 @@
-+select 'shell' as component, 'Monthly sales' as title;
-+select 'table' as component, 'Sales by month and region' as title, 'Report' as markdown;
+@@ -0,0 +1,29 @@
++<style nonce="{{@csp_nonce}}">
++    /* Tabler's boxed page normally contains fixed elements. Let the bar use the viewport. */
++    :is(.layout-boxed, html[data-bs-layout="boxed"] body) > .page:has(.status-bar.fixed-bottom) {
++        contain: none;
 +
-+with sales as (
-+    select region, amount, time_bucket(interval '1 month', sold_on) as sale_month
-+    from read_csv(
-+        'sales/*.csv',
-+        header = true,
-+        columns = {
-+            'sale_id': 'INTEGER', 'region': 'VARCHAR',
-+            'sold_on': 'DATE', 'amount': 'DECIMAL(12,2)'
++        /* Keep the boxed menu anchored to the page. */
++        > #sqlpage_header > .fixed-top {
++            position: absolute;
 +        }
-+    )
-+)
-+select
-+    strftime(sale_month, '%Y-%m') as Month,
-+    region as Region,
-+    count(*) as Sales,
-+    sum(amount) as Revenue,
-+    '[View sales](' || sqlpage.link(
-+        'sales.sql',
-+        json_object('month', sale_month, 'region', region)
-+    ) || ')' as Report
-+from sales
-+group by all
-+order by Month desc, Region;
-```
-
-**File**: `examples/duckdb-reporting/sales.sql` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+select 'table' as component, 'Sales and targets' as title;
-+
-+select
-+    sales.sale_id,
-+    sales.sold_on,
-+    sales.amount,
-+    arg_max_null(targets.target_amount, targets.effective_on) as target_amount
-+from read_csv(
-+    'sales/*.csv',
-+    header = true,
-+    columns = {
-+        'sale_id': 'INTEGER', 'region': 'VARCHAR',
-+        'sold_on': 'DATE', 'amount': 'DECIMAL(12,2)'
 +    }
-+) as sales
-+left join read_csv(
-+    'targets.csv',
-+    header = true,
-+    columns = {'region': 'VARCHAR', 'effective_on': 'DATE', 'target_amount': 'DECIMAL(12,2)'}
-+) as targets
-+    on sales.region = targets.region
-+    and sales.sold_on >= targets.effective_on
-+where time_bucket(interval '1 month', sales.sold_on) = cast($month as date)
-+    and sales.region = $region
-+group by all
-+order by sales.sold_on desc, sales.sale_id desc;
++    .status-bar > * + :last-child {
++        margin-inline-start: auto;
++    }
++    .status-bar > a:focus-visible {
++        outline-offset: -2px;
++    }
++</style>
++<div role="status" aria-label="{{default label 'Status bar'}}"
++    {{#if id}}id="{{id}}"{{/if}}
++    class="status-bar d-flex divide-x overflow-x-auto bg-surface fs-5 {{#if (default fixed true)}}fixed-bottom border-top{{else}}my-2 border rounded{{/if}} {{class}}">
++    {{#each_row}}
++        {{#if link}}<a href="{{link}}"{{else}}<span{{/if}}
++            class="d-flex flex-shrink-0 align-items-center gap-1 text-nowrap px-3 py-1 {{#if color}}text-{{color}}{{/if}} {{class}}"
++            {{#if tooltip}}data-bs-toggle="tooltip" title="{{tooltip}}"{{/if}}>
++            {{#if icon}}<span aria-hidden="true">{{~icon_img icon 16~}}</span>{{/if}}
++            {{#if title includeZero=true}}{{title}}{{else}}<span class="visually-hidden">{{tooltip}}</span>{{/if}}
++        {{#if link}}</a>{{else}}</span>{{/if}}
++    {{/each_row}}
++</div>
 ```
 
-**File**: `examples/duckdb-reporting/sales/2026-07.csv` (added, +21/-0)
+**File**: `tests/end-to-end/fixtures/status-bar/fragment.sql` (added, +2/-0)
 ```diff
-@@ -0,0 +1,21 @@
-+sale_id,region,sold_on,amount
-+1,North,2026-07-01,3.50
-+2,North,2026-07-02,
-+3,North,2026-07-03,-8.75
-+4,South,2026-07-04,90.01
-+5,North,2026-07-05,24.40
-+6,North,2026-07-06,16.20
-+7,North,2026-07-07,105.78
-+8,North,2026-07-08,1.02
-+9,North,2026-07-09,10.02
-+10,South,2026-07-10,0.00
-+11,North,2026-07-11,8.38
-+12,North,2026-07-12,51.26
-+13,North,2026-07-13,33.02
-+14,North,2026-07-14,98.07
-+15,North,2026-07-15,10.50
-+16,North,2026-07-16,19.32
-+17,North,2026-07-17,
-+18,North,2026-07-18,30.14
-+19,North,2026-07-19,24.92
-+20,North,2026-07-20,1234.56
+@@ -0,0 +1,2 @@
++SELECT 'status_bar' AS component, 'Sync status' AS label;
++SELECT 'Synced' AS title;
 ```
 
-**File**: `examples/duckdb-reporting/sales/2026-08.csv` (added, +4/-0)
+**File**: `tests/end-to-end/fixtures/status-bar/index.sql` (added, +20/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+sale_id,region,sold_on,amount
-+21,North,2026-08-01,40.00
-+22,North,2026-08-03,60.00
-+23,South,2026-08-04,17.25
+@@ -0,0 +1,20 @@
++SELECT 'shell' AS component, 'Builds' AS title, 'boxed' AS layout, TRUE AS fixed_top_menu
++WHERE $boxed IS NOT NULL;
++
++SELECT 'status_bar' AS component, 'repository' AS id, 'project-status' AS class,
++    'Repository status' AS label, FALSE AS fixed;
++SELECT 'Build passed' AS title, 'circle-check' AS icon, 'green' AS color,
++    'All checks passed' AS tooltip, '#activity' AS link, 'build-result' AS class;
++SELECT 'Branch: feature/improve-search-index' AS title;
++SELECT '12 pending changes' AS title;
++SELECT 'View history' AS title, '#history' AS link;
++
++SELECT 'list' AS component, 'Recent activity' AS title, 'activity' AS id,
++    'min-vh-100' AS class;
++SELECT 'Search index updated' AS title;
++
++SELECT 'title' AS component, 'Build history' AS contents, 'history' AS id;
++
++SELECT 'status_bar' AS component;
++SELECT 'Connected' AS title;
++SELECT 'history' AS icon, 'Open build history' AS tooltip, '#history' AS link;
+```
+
+**File**: `tests/end-to-end/fixtures/status-bar/test.ts` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++import { expect, loadFragment, test } from "../../fixture.ts";
++
++test("rows render in order with icons, tooltips and links", async ({
++  page,
++}) => {
++  const bar = page.getByRole("status", { name: "Repository status" });
++  await expect(bar).toHaveAttribute("id", "repository");
++  await expect(bar).toContainClass("project-status");
++  await expect(bar).toHaveText(
++    /Build passed\s*Branch: feature\/improve-search-index\s*12 pending changes\s*View history/,
++  );
++
++  const build = bar.getByRole("link", { name: "Build passed", exact: true });
++  const history = bar.getByRole("link", { name: "View history" });
++  await expect(bar.locator(".build-result")).toContainClass("text-green");
++  await expect(build.locator("svg")).toBeVisible();
++  const barRight = await bar.evaluate((el) => el.getBoundingClientRect().right);
++  const textRight = await history.evaluate((el) => {
++    const text = document.createRange();
++    text.selectNodeContents(el);
++    return text.getBoundingClientRect().right;
++  });
++  expect(barRight - textRight).toBeLessThan(32);
++  await build.hover();
++  await expect(page.getByRole("tooltip")).toHaveText("All checks passed");
++  await history.click();
++  await expect(page).toHaveURL(/#history$/);
++  await expect(
++    page.getByRole("heading", { name: "Build history" }),
++  ).toBeInViewport();
++});
++
++test.describe("without JavaScript", () => {
++  test.use({ javaScriptEnabled: false });
++
++  test("the status bar stays at the viewport bottom and the fixed menu fits the boxed shell", async ({
++    page,
++  }) => {
++    await page.goto("/status-bar/?boxed=1");
++    const fixed = page.getByRole("status", { name: "Status bar", exact: true });
++    const inline = page.getByRole("status", { name: "Repository status" });
++    const bottomGap = () =>
++      fixed.evaluate((bar) => innerHeight - bar.getBoundingClientRect().bottom);
++
++    const header = await page.getByRole("banner").evaluate((el) => {
++      const { x, width } = el.getBoundingClientRect();
++      return { x, width };
++    });
++    expect(header.x).toBeGreaterThan(0);
++    expect(await page.getByRole("navigation").boundingBox()).toMatchObject(
++      header,
++    );
++    await expect(fixed.getByText("Connected", { exact: true })).toBeVisible();
++    await expect(
++      fixed.getByRole("link", { name: "Open build history" }),
++    ).toBeVisible();
++    await expect(inline).toBeInViewport();
++    expect(await bottomGap()).toBeCloseTo(0);
++    await page
++      .getByRole("heading", { name: "Build history" })
++      .scrollIntoViewIfNeeded();
++    await expect(inline).not.toBeInViewport();
++    expect(await bottomGap()).toBeCloseTo(0);
++  });
++});
++
++test("a narrow bar scrolls to the next focused link without widening the page", async ({
++  page,
++}) => {
++  await page.setViewportSize({ width: 320, height: 640 });
++  const bar = page.getByRole("status", { name: "Repository status" });
++  const history = bar.getByRole("link", { name: "View history" });
++  await expect(history).not.toBeInViewport();
++  await bar.getByRole("link", { name: "Build passed" }).focus();
++  await page.keyboard.press("Tab");
++  await expect(history).toBeFocused();
++  await expect(history).toBeInViewport({ ratio: 0.99 });
++  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
++    320,
++  );
++});
++
++test("a fixed bar disappears with its embedded fragment", async ({ page }) => {
++  await loadFragment(
++    page,
++    "/status-bar/fragment.sql",
++    "#activity",
++    "#activity",
++  );
++  const bar = page.getByRole("status", { name: "Sync status" });
++  await expect(bar).toHaveText("Synced");
++  await page.locator("#activity").evaluate((el) => el.remove());
++  await expect(bar).toHaveCount(0);
++});
 ```
 
 ---
 
-### Incident Patch 2: `15958af5` (2026-11-19)
-**Commit Message**: Exercise transactional user onboarding on SQL Server (#1606)
+### Incident Patch 2: `a3168950` (2026-11-21)
+**Commit Message**: Align inline icons with their text labels (#1609)
 
-* Test SQL Server form writes and recovery
-
-* Preserve capacity of SQL Server group lists
-
-* Exercise SQL Server JSON form memberships
-
-* Onboard SQL Server users and memberships in one transaction
-
-* Run native SQL Server onboarding in the SQLPage request
-
-**File**: `.github/hurl-examples.yml` (modified, +7/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -82,6 +82,13 @@ all_examples:
-   - 'src/webserver/database/sql_to_json.rs'
-   - 'sqlpage/templates/form.handlebars'
+@@ -4,6 +4,7 @@
  
-+# Round-trip SQL Server JSON multi-selects and recover after a failed write.
-+'examples/microsoft sql server advanced forms':
-+  - 'src/webserver/http_request_info.rs'
-+  - 'src/webserver/request_variables.rs'
-+  - 'src/webserver/database/**'
-+  - 'sqlpage/templates/form.handlebars'
-+
- # A real cookie jar round-trips an encoded space and removes it from a subfolder.
- 'examples/read-and-set-http-cookies':
-   - 'src/render.rs'
+ - A file input with `multiple` now keeps every selected file, instead of only the last one. The new [`sqlpage.persist_uploaded_files`](https://sql-page.com/functions.sql?function=persist_uploaded_files) function saves them all and returns a JSON array with the `path`, original `name`, `mime_type` and `size` of each file.
+ - Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
++- Inline icons now align with their labels in components such as tabs and steps.
+ 
+ ## v0.48.0 (2026-11-12)
+ 
 ```
 
-**File**: `examples/microsoft sql server advanced forms/README.md` (modified, +18/-24)
+**File**: `examples/official-site/custom_components.sql` (modified, +1/-1)
 ```diff
-@@ -1,34 +1,28 @@
--# Handling json data in Microsoft SQL Server
-+# Onboard users and assign groups with SQL Server
- 
--This demonstrates both how to produce and read json data from a SQL query
--in MS SQL Server (or Azure SQL Database), for creating advanced forms.
--
--This lets your user interact with your database with a simple web interface,
--even when you have multiple tables, with one-to-many relationships.
-+Create groups, then use a SQLPage form to onboard users and assign their
-+memberships. SQL Server saves the user and memberships together.
- 
- ![](./screenshots/app.png)
- 
--## Documentation
--
--SQLPage requires JSON to create multi-select input (dropdowns where an user can select multiple values).
--The result of these multi-selects is a JSON array, which also needs to be read by SQL queries.
--
--This example demonstrates how to consume [JSON](https://en.wikipedia.org/wiki/JSON) data from a SQL Server database,
--using the [`OPENJSON`](https://docs.microsoft.com/en-us/sql/t-sql/functions/openjson-transact-sql)
--function to parse the JSON data into a table,
--and [`FOR JSON PATH`](https://learn.microsoft.com/en-us/sql/relational-databases/json/format-query-results-as-json-with-for-json-sql-server)
--to format query results as a JSON array.
-+## Try it
- 
-+Run `docker compose up` in this directory and open the [onboarding page](http://localhost:8080/).
-+The database container runs `sqlcmd` to create the tables.
- 
--This demonstrates an application designed for managing groups and users, allowing the creation of new groups, adding users, and assigning users to one or multiple groups. 
-+1. Create two groups. Use **View group** in the confirmation to jump to the new group. A blank description is saved as SQL `NULL`.
-+2. Under **Add a user**, enter a name and select both groups. You can also add a user with no groups.
-+3. Submit the form and check the memberships under **Users**.
- 
--The application has the following sections:
-+## How it works
- 
--- **Create a New Group**: A form where users can enter the name of a new group.
--- **Groups Display**: A list of existing groups.
--- **Add a User**: A form where users can enter the name of a new user and select one or multiple groups to assign to this user.
--- **Users Display**: A list of existing users and their associated group memberships.
-+- `OUTPUT INSERTED` gives SQLPage the new group and its generated ID for the confirmation link. `FOR JSON PATH` supplies the groups to the multi-select.
-+- SQLPage binds the submitted name and group choices into the `IF ... BEGIN ... END` batch in `index.sql`. `SCOPE_IDENTITY()` returns the new user ID, and `OPENJSON ... WITH` reads the selected IDs as integers.
-+- The batch saves the user and memberships in one transaction. If a selected group has been deleted since the form loaded, the foreign key rejects the selection and `XACT_ABORT` rolls back the entire transaction.
-+- `CROSS APPLY` and `STRING_AGG` summarize memberships for each user. Users without memberships stay visible.
- 
--When users submit the form, their selections are packaged up and sent to the database server. The server receives these selections as a structured JSON array.
-+Run the end-to-end test from the repository root.
- 
--The database then takes this list of selections and temporarily converts it into a format it can work with using the `OPENJSON` function, before saving the information permanently in the database tables. This allows the system to process multiple selections at once in an efficient way.
-+```sh
-+scripts/test-examples-hurl.sh 'examples/microsoft sql server advanced forms'
-+```
+@@ -131,7 +131,7 @@ and SQLPage adds a few more:
+ - `array_contains`: returns true if a list contains a value
+ - `static_path`: returns the path to one of the static files bundled with SQLPage. Accepts arguments like `sqlpage.js`, `sqlpage.css`, `apexcharts.js`, etc.
+ - `app_config`: returns the value of a configuration parameter from sqlpage''s configuration file, such as `max_uploaded_file_size`, `site_prefix`, etc.
+-- `icon_img`: generate an svg icon from a *tabler* icon name
++- `icon_img`: render a Tabler SVG icon aligned with adjacent text. An optional second argument sets its size in pixels (default 24).
+ - `markdown`: renders markdown text. Accepts an optional 2nd argument `''allow_unsafe''` that will render embedded html blocks: use only on trusted content. See the [Commonmark spec](https://spec.commonmark.org/0.31.2/#html-blocks) for more info.
+ - `each_row`: iterates over the rows of a query result
+ - `typeof`: returns the type of a value (`string`, `number`, `boolean`, `object`, `array`, `null`)
 ```
 
-**File**: `examples/microsoft sql server advanced forms/docker-compose.yml` (modified, +1/-0)
+**File**: `frontend/src/icons.css` (added, +4/-0)
 ```diff
-@@ -11,6 +11,7 @@ services:
-     environment:
-       RUST_LOG: sqlpage=debug
-       DATABASE_URL: mssql://sa:YourStrong!Passw0rd@db:1433/
-+      MAX_DATABASE_POOL_CONNECTIONS: 1
-   db:
-     image: mcr.microsoft.com/mssql/server:2022-latest
-     volumes:
+@@ -0,0 +1,4 @@
++.sqlpage-icon {
++  /* An inline SVG's baseline is its bottom edge. Center it on capital letters. */
++  vertical-align: calc((1cap - attr(height px)) / 2);
++}
 ```
 
-**File**: `examples/microsoft sql server advanced forms/index.sql` (modified, +49/-20)
+**File**: `scripts/build-frontend.mjs` (modified, +1/-0)
 ```diff
-@@ -1,37 +1,66 @@
- select 'form' as component, 'Create a new Group' as title, 'Create' as validate;
--select 'Name' as name;
-+select 'Name' as name, 255 as maxlength;
-+select 'GroupDescription' as name, 'Description (optional)' as label, 80 as maxlength;
+@@ -11,6 +11,7 @@ const STYLESHEET = [
+   "node_modules/@tabler/core/dist/css/tabler.min.css",
+   "node_modules/tom-select/dist/css/tom-select.bootstrap5.css",
+   "node_modules/@tabler/core/dist/css/tabler-vendors.min.css",
++  "frontend/src/icons.css",
+   "frontend/src/sqlpage.css",
+ ];
  
--insert into groups(name) select :Name where :Name is not null;
-+set GroupDescription = nullif(:GroupDescription, N'');
-+insert into dbo.groups (name, description)
-+output
-+    'alert' as component,
-+    'success' as color,
-+    'Group created' as title,
-+    inserted.name as description,
-+    concat('#group-', inserted.id) as link,
-+    'View group' as link_text
-+select :Name, :GroupDescription
-+where :Name is not null;
- 
- select 'list' as component, 'Groups' as title, 'No group yet' as empty_title;
--select name as title from groups;
-+select concat('group-', id) as id, name as title, description
-+from dbo.groups
-+order by id;
- 
- select 'form' as component, 'Add a user' as title, 'Add' as validate;
- select 'UserName' as name, 'Name' as label;
--select 
--    'Memberships[]'  as name,
-+select
-+    'Memberships[]' as name,
-     'Group memberships' as label,
-     'select' as type,
--    1     as multiple,
--    'press ctrl to select multiple values' as description,
-+    1 as multiple,
-     (
--        SELECT name as label, id as value
--        FROM groups
--        FOR JSON PATH -- this builds a JSON array of objects
-+        select name as label, id as value
-+        from dbo.groups
-+        order by id
-+        for json path
-     ) as options;
- 
--insert into users(name) select :UserName where :UserName is not null;
-+if :UserName is not null
-+begin
-+    set nocount on;
-+    set xact_abort on;
-+
-+    begin transaction;
-+
-+    insert into dbo.users (name) values (:UserName);
-+    declare @user_id int = scope_identity();
-+
-+    insert into dbo.group_members (group_id, user_id)
-+    select group_id, @user_id
-+    from openjson(:Memberships) with (group_id int '$');
- 
--insert into group_members(group_id, user_id)
--select json_elem.value, IDENT_CURRENT('users')
--from openjson(:Memberships) as json_elem
--where :Memberships is not null;
-+    commit transaction;
-+end;
- 
- select 'list' as component, 'Users' as title, 'No user yet' as empty_title;
- select
-     users.name as title,
--    string_agg(groups.name, ', ') as description
--from users
--left join group_members on users.id = group_members.user_id
--left join groups on groups.id = group_members.group_id
--group by users.id, users.name;
-\ No newline at end of file
-+    memberships.description,
-+    iif(memberships.description is null, 'No groups assigned', null) as description_md
-+from dbo.users
-+cross apply (
-+    select string_agg(cast(groups.name as nvarchar(max)), N', ')
-+        within group (order by groups.id) as description
-+    from dbo.group_members
-+    join dbo.groups on groups.id = group_members.group_id
-+    where group_members.user_id = users.id
-+) as memberships
-+order by users.id;
 ```
 
-**File**: `examples/microsoft sql server advanced forms/sqlpage/mssql-migrations/0001_db_init.sql` (modified, +3/-2)
+**File**: `src/template_helpers.rs` (modified, +1/-1)
 ```diff
-@@ -1,11 +1,12 @@
- create table users (
-     id int primary key IDENTITY(1,1),
--    name varchar(255) not null
-+    name nvarchar(255) not null
- );
+@@ -239,7 +239,7 @@ impl HelperDef for IconImgHelper {
  
- create table groups (
-     id int primary key IDENTITY(1,1),
--    name varchar(255) not null
-+    name nvarchar(255) not null,
-+    description nvarchar(80) null
- );
- 
- create table group_members (
+         write!(
+             writer,
+-            r#"<svg viewBox="0 0 24 24" width="{size}" height="{size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{inner_content}</svg>"#
++            r#"<svg class="sqlpage-icon" viewBox="0 0 24 24" width="{size}" height="{size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{inner_content}</svg>"#
+         )?;
+         Ok(())
+     }
 ```
 
-**File**: `examples/microsoft sql server advanced forms/test.hurl` (removed, +0/-1)
+**File**: `tests/end-to-end/fixtures/steps/index.sql` (added, +2/-0)
 ```diff
-@@ -1 +0,0 @@
--../../test.hurl
-\ No newline at end of file
+@@ -0,0 +1,2 @@
++SELECT 'steps' AS component;
++SELECT 'Review' AS title, 'eye' AS icon, '#review' AS link;
 ```
 
-**File**: `examples/microsoft sql server advanced forms/test.hurl` (added, +100/-0)
+**File**: `tests/end-to-end/fixtures/steps/test.ts` (added, +21/-0)
 ```diff
-@@ -0,0 +1,100 @@
-+GET http://127.0.0.1:8080/
-+HTTP 200
-+[Asserts]
-+xpath "//form//input[@name='Name']" exists
-+xpath "//form//input[@name='GroupDescription']" exists
-+xpath "//code[@class='sqlpage-error-description']" not exists
+@@ -0,0 +1,21 @@
++import { expect, test } from "../../fixture.ts";
 +
-+# The form maps a blank description to SQL NULL before binding the insert.
-+POST http://127.0.0.1:8080/
-+[FormParams]
-+Name: L'équipe 東京
-+GroupDescription:
-+HTTP 200
-+[Captures]
-+unicode_group_id: xpath "string(//select[@name='Memberships[]'][@multiple]/option[normalize-space(.)=\"L'équipe 東京\"]/@value)"
-+[Asserts]
-+xpath "//code[@class='sqlpage-error-description']" not exists
-+variable "unicode_group_id" matches "^[0-9]+$"
-+xpath "string(//div[contains(@class, 'alert-success')][.//h4='Group created']//div[@class='alert-description'])" == "L'équipe 東京"
-+xpath "//div[contains(@class, 'alert-success')][.//h4='Group created']//a[@href='#group-{{unicode_group_id}}']" exists
-+xpath "//div[@id='group-{{unicode_group_id}}']" exists
-+
-+GET http://127.0.0.1:8080/
-+Accept: application/json
-+HTTP 200
-+[Asserts]
-+jsonpath "$[4].id" == "group-{{unicode_group_id}}"
-+jsonpath "$[4].title" == "L'équipe 東京"
-+jsonpath "$[4].description" == null
-+
-+# SQL Server rejects descriptions longer than the column's 80 characters.
-+POST http://127.0.0.1:8080/
-+[FormParams]
-+Name: Rejected group
-+GroupDescription: This description is more than eighty characters long and exceeds the database column size.
-+HTTP 200
-+[Asserts]
-+xpath "string(//code[@class='sqlpage-error-description'])" contains "would be truncated"
-+xpath "//div[contains(@class, 'alert-success')][.//h4='Group created']" not exists
-+
-+POST http://127.0.0.1:8080/
-+[FormParams]
-+Name: Recovered group
-+GroupDescription: Saved after a failed write
-+HTTP 200
-+[Captures]
-+recovered_group_id: xpath "string(//select[@name='Memberships[]'][@multiple]/option[normalize-space(.)='Recovered group']/@value)"
-+[Asserts]
-+xpath "//code[@class='sqlpage-error-description']" not exists
-+xpath "//select[@name='Memberships[]'][@multiple]/option[@value='{{unicode_group_id}}']" exists
-+variable "recovered_group_id" matches "^[0-9]+$"
-+
-+GET http://127.0.0.1:8080/
-+Accept: application/json
-+HTTP 200
-+[Asserts]
-+jsonpath "$[*].title" not contains "Rejected group"
-+jsonpath "$[5].id" == "group-{{recovered_group_id}}"
-+jsonpath "$[5].title" == "Recovered group"
-+jsonpath "$[5].description" == "Saved after a failed write"
-+
-+# A stale group selection rejects the whole onboarding transaction.
-+POST http://127.0.0.1:8080/
-+Content-Type: application/x-www-form-urlencoded
-+`UserName=Report+Reader&Memberships%5B%5D={{unicode_group_id}}&Memberships%5B%5D=-1`
-+HTTP 200
-+[Asserts]
-+xpath "string(//code[@class='sqlpage-error-description'])" contains "FK_group_members_groups"
-+
-+GET http://127.0.0.1:8080/
-+Accept: application/json
-+HTTP 200
-+[Asserts]
-+jsonpath "$[*].title" not contains "Report Reader"
-+
-+# Submit two options rendered from FOR JSON PATH. SQLPage binds the selections
-+# as a JSON array and OPENJSON expands it into membership rows.
-+POST http://127.0.0.1:8080/
-+Content-Type: application/x-www-form-urlencoded
-+`UserName=Report+Reader&Memberships%5B%5D={{unicode_group_id}}&Memberships%5B%5D={{recovered_group_id}}`
-+HTTP 200
-+[Asserts]
-+xpath "//code[@class='sqlpage-error-description']" not exists
-+
-+POST http://127.0.0.1:8080/
-+[FormParams]
-+UserName: Élodie
-+HTTP 200
-+[Asserts]
-+xpath "//code[@class='sqlpage-error-description']" not exists
-+xpath "//p[normalize-space()='No groups assigned']" exists
-+
-+GET http://127.0.0.1:8080/
-+Accept: application/json
-+HTTP 200
-+[Asserts]
-+jsonpath "$[10].title" == "Report Reader"
-+jsonpath "$[10].description" == "L'équipe 東京, Recovered group"
-+jsonpath "$[11].title" == "Élodie"
-+jsonpath "$[11].description" == null
++test("the step icon aligns with the capital letters of its title", async ({
++  page,
++}) => {
++  const icon = page.getByRole("link", { name: "Review" }).locator("svg");
++  const offset = await icon.evaluate((svg) => {
++    // An empty inline-block sits on the text baseline. Its top is one cap height above it.
++    const capital = document.createElement("span");
++    capital.style.cssText = "display: inline-block; height: 1cap";
++    svg.after(capital);
++    const centerY = (element: Element) => {
++      const { top, height } = element.getBoundingClientRect();
++      return top + height / 2;
++    };
++    const delta = centerY(svg) - centerY(capital);
++    capital.remove();
++    return delta;
++  });
++  expect(Math.abs(offset)).toBeLessThanOrEqual(1);
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1609** (2026-11-21): Align inline icons with their labels (@lovasoa)
+- **PR #1608** (2026-11-21): Add a status_bar component (@lovasoa)
 - **PR #1606** (2026-11-19): Exercise transactional user onboarding on SQL Server (@lovasoa)
 - **PR #1605** (2026-11-19): Explore monthly sales exports with DuckDB (@lovasoa)
 - **PR #1603** (2026-11-17): Let big number titles and descriptions wrap (@lovasoa)
 - **PR #1602** (2026-11-19): Keep every file of a `multiple` file input, and add `sqlpage.persist_uploaded_files` (@theochr72)
-- **PR #1601** (2026-11-12): Update 'http_only' cookie description (@lovasoa)
-- **PR #1595** (2026-11-12): refactor(database) :: decode rows into named columns first (@81reap)
 
 ---
 
@@ -1770,28 +1549,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Explore monthly sales exports with DuckDB
+## X. Add a status_bar component
 
 **RULE**:
-When implementing operations in `.github/hurl-examples.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c88c005c`: Explore monthly sales exports with DuckDB. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d65bda49`: Add a status_bar component. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/hurl-examples.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Follow a monthly CSV report from a SQLPage table into ODBC detail rows.
-'examples/duckdb-reporting':
-  - 'src/app_config.rs'
-  - 'src/webserver/http_request_info.rs'
-  - 'src/webserver/request_variables.rs'
-  - 'src/webserver/database/**'
-  - 'sqlpage/templates/table.handlebars'
-
+- The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1801,7 +1573,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c88c005c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d65bda49` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

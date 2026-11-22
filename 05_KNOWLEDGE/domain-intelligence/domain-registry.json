@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T11:35:20.283Z",
-  "total_records": 2350,
+  "last_updated": "2026-11-22T11:48:04.659Z",
+  "total_records": 2352,
   "domains": {
     "A": {
-      "total": 17,
+      "total": 19,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -23,7 +23,9 @@
         "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-core-invariants",
         "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-koderover-zadig-core-invariants",
-        "domain_intelligence-human-need-intelligence-koderover-zadig-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-koderover-zadig-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-tw93-mole-core-invariants",
+        "domain_intelligence-human-need-intelligence-tw93-mole-learnings-core-invariants"
       ]
     },
     "B": {
@@ -27364,8 +27366,8 @@
       "title": "Research & Knowledge Intelligence: nex-agi/Nex-N2.6 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nex-agi-nex-n2-6-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invari.md",
       "repository": "nex-agi/Nex-N2.6",
-      "content_hash": "08d6d3a2f695595797f3dc4ab41c54372e2d186412569a444382623207f79f9f",
-      "created_at": "2026-11-17T11:25:23.090Z"
+      "content_hash": "72f2830e98c4a443d57d3853de7937c08d336e5b177c54167be9b3a9636760a9",
+      "created_at": "2026-11-22T11:47:43.457Z"
     },
     "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants",
@@ -27475,8 +27477,8 @@
       "title": "Research & Knowledge Intelligence: hf-nex-agi-nex-n2.6-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nex-agi-nex-n2-6-learnings-research-knowledge-intelligence-hf-nex-agi-nex-n2-.md",
       "repository": "hf-nex-agi-nex-n2.6-learnings",
-      "content_hash": "f8e14dd7ac7a155e3ab0bfd08138cc89d8004e199abf38e97a571dfdcd2338f8",
-      "created_at": "2026-11-17T11:26:42.143Z"
+      "content_hash": "dba0c6d39fc68bc0a5f3d9f456f30a5751207ed4f3a7f3f05e95a97e1d092b1a",
+      "created_at": "2026-11-22T11:48:02.352Z"
     },
     "DOM-D-4085BE40": {
       "record_id": "DOM-D-4085BE40",
@@ -30273,8 +30275,8 @@
       "title": "Architecture Intelligence: sqlpage/SQLPage Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-architecture-intelligence-sqlpage-sqlpage-core-invariants.md",
       "repository": "sqlpage/SQLPage",
-      "content_hash": "4e5d489578ee85dda5a715d1ae78c48af34387d30eae07a516ae235e44f8f178",
-      "created_at": "2026-11-20T04:48:37.508Z"
+      "content_hash": "d652f2c474d89108554d0a8249b973f484d30652a90a405e6e33f5553eda77af",
+      "created_at": "2026-11-22T11:47:58.826Z"
     },
     "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-",
@@ -30300,8 +30302,8 @@
       "title": "Architecture Intelligence: sqlpage-sqlpage-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-learnings-architecture-intelligence-sqlpage-sqlpage-learnings-co.md",
       "repository": "sqlpage-sqlpage-learnings",
-      "content_hash": "b41b06ae449f3e33f458ad09d5e8901716b9cd35433d922b72b9548ec09fec3c",
-      "created_at": "2026-11-20T04:48:41.715Z"
+      "content_hash": "36945354f6e8dde55c337c0ceeb12203ec838acfea8b97d1f3c4014c6cde097b",
+      "created_at": "2026-11-22T11:48:04.659Z"
     },
     "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants",
@@ -39588,6 +39590,24 @@
       "repository": "sfu-db-connector-x-learnings",
       "content_hash": "e11d39380d7261f8a31ae0e9bd4faabd33a9ae0abd2023e9279f0a6597277710",
       "created_at": "2026-11-22T11:35:19.008Z"
+    },
+    "domain_intelligence-human-need-intelligence-tw93-mole-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-tw93-mole-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: tw93/Mole Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-tw93-mole-human-need-intelligence-tw93-mole-core-invariants.md",
+      "repository": "tw93/Mole",
+      "content_hash": "7aabd600df41a776b339aad62e761668aef5cb409eedc8b970793d37cb60c5b2",
+      "created_at": "2026-11-22T11:47:51.113Z"
+    },
+    "domain_intelligence-human-need-intelligence-tw93-mole-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-tw93-mole-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: tw93-mole-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-tw93-mole-learnings-human-need-intelligence-tw93-mole-learnings-core-invariants.md",
+      "repository": "tw93-mole-learnings",
+      "content_hash": "50faf9b26a46eb2f7de35c8bd1a4f7587d409310f0ddb703dc0a33ecc63dbefc",
+      "created_at": "2026-11-22T11:48:03.068Z"
     }
   }
 }

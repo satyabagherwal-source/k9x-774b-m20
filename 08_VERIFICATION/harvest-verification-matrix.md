@@ -12080,3 +12080,6 @@
 | `CYCLE-20261122-EUOK` | `2026-11-22T11:34:34.196Z` | `meituan-longcat/LongCat-Video-Avatar-1.6` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md` | Yes (`9eec5864...`) |
 | `CYCLE-20261122-EWKE` | `2026-11-22T11:34:36.638Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9924` | Yes (`9f767228...`) |
 | `CYCLE-20261122-FNIP` | `2026-11-22T11:35:11.569Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9925` | Yes (`ce38d9d4...`) |
+| `CYCLE-20261122-VRHS` | `2026-11-22T11:47:43.216Z` | `nex-agi/Nex-N2.6` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md` | Yes (`c9105f20...`) |
+| `CYCLE-20261122-VX8V` | `2026-11-22T11:47:50.671Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9926` | Yes (`2fcfd92f...`) |
+| `CYCLE-20261122-W376` | `2026-11-22T11:47:58.386Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9927` | Yes (`b38ef501...`) |

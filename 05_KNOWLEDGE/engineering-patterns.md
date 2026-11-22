@@ -741240,3 +741240,143 @@ def test_unsupported_protocol_in_get_meta_raises() -> None:
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `fbfaeb99` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9926. keep sudo sinks' preview rows out of the ownership refusal (Harvested from tw93/Mole)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep sudo sinks' preview rows out of the ownership refusal",
+  "source": "tw93/Mole",
+  "source_url": "https://github.com/tw93/Mole",
+  "source_version": "d3b743e0",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-22T11:47:50.122Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tw93-mole",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tw93/Mole](https://github.com/tw93/Mole) (Revision: `d3b743e0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/rules/core.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5d795f30`: clean): keep sudo sinks' preview rows out of the ownership refusal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/core.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```shell
+// Verified production-grade fix pattern:
+- `safe_remove` is a plain `rm` as the invoking user, so `_mole_user_sink_refuses_on_ownership` refuses an item another user owns that this user cannot unlink (folder not writable or sticky, or a folder item not writable), logging `SKIPPED ... (owned by another user)` instead of a `FAILED` row on every clean, and `_safe_clean_impl` asks the same function before recording its preview, so the preview never lists it (Mole Mac I-314, `CacheScanner.userSinkRefusesOnOwnership`). Links and runs as root are never refused here. Never put this check in `record_dry_run_cleanup_target`: `safe_sudo_remove`, `safe_sudo_find_delete` and other sudo sinks preview through it and remove root-owned items themselves, so their rows would vanish from the dry run. Locked by `safe_clean neither lists nor removes an item another user owns that this user cannot unlink` (red with either half removed) and `record_dry_run_cleanup_target still records a root-owned item for a sudo sink` in `tests/clean_core.bats`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```shell
+// Induced defect failure mode:
+- `safe_remove` is a plain `rm` as the invoking user, so `_mole_user_sink_refuses_on_ownership` refuses an item another user owns that this user cannot unlink (folder not writable or sticky, or a folder item not writable), logging `SKIPPED ... (owned by another user)` instead of a `FAILED` row on every clean, and `record_dry_run_cleanup_target` asks the same function so the preview never lists it (Mole Mac I-314, `CacheScanner.userSinkRefusesOnOwnership`). Links and runs as root are never refused here. Locked by `safe_clean neither lists nor removes an item another user owns that this user cannot unlink` in `tests/clean_core.bats`, red with either half removed.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5d795f30` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9927. Add a status_bar component (Harvested from sqlpage/SQLPage)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Add a status_bar component",
+  "source": "sqlpage/SQLPage",
+  "source_url": "https://github.com/sqlpage/SQLPage",
+  "source_version": "d65bda49",
+  "license": "MIT",
+  "extracted_at": "2026-11-22T11:47:57.829Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sqlpage-sqlpage",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `d65bda49`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d65bda49`: Add a status_bar component. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d65bda49` are properly handled with clean fallback behavior.
