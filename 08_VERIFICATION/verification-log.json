@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-O0XT",
-    "timestamp": "2026-11-20T06:02:26.369Z",
-    "repository": "CrawlCove/xml-sitemap-validator",
-    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
-    "contentHash": "6c509ebf85fd0421289182b2d9d320cb231c797e9da84606d13150d6d6ec70a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-O5LI",
-    "timestamp": "2026-11-20T06:02:32.406Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-YSDA",
     "timestamp": "2026-11-20T06:10:48.478Z",
     "repository": "fujiapple852/trippy",
@@ -7490,6 +7460,36 @@
     "repository": "Cactus-Compute/mirage",
     "learningId": "learn-huggingface-cactus-compute-mirage",
     "contentHash": "47200bb90b24d57ec9c706507203b3f32f812efbfbb582501b53fd01dbed0cf8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-80PA",
+    "timestamp": "2026-11-22T06:49:19.246Z",
+    "repository": "Comfy-Org/RelayVSR",
+    "learningId": "learn-huggingface-comfy-org-relayvsr",
+    "contentHash": "c518870b1fe1f8ed567fdebf1927ade100d4917bd1f004bea9e7fdb91c69b713",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-8D42",
+    "timestamp": "2026-11-22T06:49:35.330Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "df5086930e094dd17c09a3b7ff89f6bab276ea1791c22ca3f376e39e8a80898d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

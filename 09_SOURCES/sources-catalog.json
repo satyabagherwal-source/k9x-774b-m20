@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "008cc5b3",
+    "sourceVersion": "b4f4fbdd",
     "license": "Apache-2.0",
-    "contentHash": "a7c0633a94f1ce7546515fd93a9630429b0ded2949859f8bfb34377c413987e7",
-    "lastHarvestedAt": "2026-11-22T06:11:32.221Z",
+    "contentHash": "df5086930e094dd17c09a3b7ff89f6bab276ea1791c22ca3f376e39e8a80898d",
+    "lastHarvestedAt": "2026-11-22T06:49:35.334Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -12365,8 +12365,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/RelayVSR",
     "sourceVersion": "hf-comfy-org-relayvsr",
     "license": "Open-Source",
-    "contentHash": "60782fc62b931b3b445bf33778ac152aa3c7acb04744e9451d91728d97ce0aca",
-    "lastHarvestedAt": "2026-11-16T01:45:09.563Z",
+    "contentHash": "c518870b1fe1f8ed567fdebf1927ade100d4917bd1f004bea9e7fdb91c69b713",
+    "lastHarvestedAt": "2026-11-22T06:49:19.251Z",
     "learningId": "learn-huggingface-comfy-org-relayvsr"
   },
   "hf-zyphra-zonos3-mini": {

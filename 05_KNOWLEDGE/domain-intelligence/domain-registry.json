@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T06:41:13.699Z",
-  "total_records": 2330,
+  "last_updated": "2026-11-22T06:50:07.737Z",
+  "total_records": 2331,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 915,
+      "total": 916,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -976,7 +976,8 @@
         "DOM-D-03750A38",
         "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",
-        "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen"
+        "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen",
+        "DOM-D-22D0FBF8"
       ]
     },
     "E": {
@@ -11721,8 +11722,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "86174b8a7a7645800731d8dbb3d1e3e55f23c730617505632ac91b3fa166cc6e",
-      "created_at": "2026-11-22T05:20:03.113Z"
+      "content_hash": "ed240beea6f49c1ea0f361e90dc6436179e45a6b08bd646933793005ff403d1f",
+      "created_at": "2026-11-22T06:50:07.737Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -15409,8 +15410,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "568491dd3316ec8440715df16d1811c0cb1ef863ba3f912f0cc11977a0101300",
-      "created_at": "2026-11-22T05:28:18.111Z"
+      "content_hash": "481efaf92d557c3c3b33e65d1118fdb1e1345ca81cce38999ae1d43381166370",
+      "created_at": "2026-11-22T06:49:35.546Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15859,8 +15860,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "aa59ee77847a646e270f5c713c0bc0d1a6f4d10bdcfa6169dfb9b8a9cd3e676d",
-      "created_at": "2026-11-22T05:28:23.475Z"
+      "content_hash": "d183aa98629d10f5b32855282b4e2e9644c5568cb0a8699e8298fcd0351239da",
+      "created_at": "2026-11-22T06:50:07.026Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -23315,8 +23316,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/RelayVSR Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-relayvsr-research-knowledge-intelligence-comfy-org-relayvsr-core-in.md",
       "repository": "Comfy-Org/RelayVSR",
-      "content_hash": "393cc5d359dd0ea0f62c16b7376fd77ffe3689c8c83c4e7cf687bbbb1192cb17",
-      "created_at": "2026-11-16T01:45:09.719Z"
+      "content_hash": "d811920b734ec85a17e1254f26d556524b67c1413237dbfc63e755d6a1d24add",
+      "created_at": "2026-11-22T06:49:19.455Z"
     },
     "domain_intelligence-technical-construction-intelligence-medialab-xan-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-medialab-xan-core-invariants",
@@ -23351,8 +23352,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-relayvsr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-relayvsr-learnings-research-knowledge-intelligence-hf-comfy-org-rel.md",
       "repository": "hf-comfy-org-relayvsr-learnings",
-      "content_hash": "1044860af4ae0fbfd00e22d023ae4818dad1751189fa60c10824032df26e9354",
-      "created_at": "2026-11-16T01:45:25.939Z"
+      "content_hash": "3fe909fecb08a844e40ce11a78ee7a3f90152698314b12ffae628eef931afd3e",
+      "created_at": "2026-11-22T06:49:38.585Z"
     },
     "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-learnings-core-invari": {
       "record_id": "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-learnings-core-invari",
@@ -39322,6 +39323,48 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-22T05:51:00.094Z"
+    },
+    "DOM-D-22D0FBF8": {
+      "record_id": "DOM-D-22D0FBF8",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  \n> **Source Version**: `b4f4fbdd`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "bca3573e66499b021384489c0cad7816aa9607606a2a889a8b428e8eba015a4a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo",
+      "provenance": {
+        "source_uri": "project://nucleoidai-nucleoid/nucleoidai-nucleoid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T06:49:38.749Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nucleoidai-nucleoid)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of nucleoidai-nucleoid"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T06:50:06.469Z"
     }
   }
 }

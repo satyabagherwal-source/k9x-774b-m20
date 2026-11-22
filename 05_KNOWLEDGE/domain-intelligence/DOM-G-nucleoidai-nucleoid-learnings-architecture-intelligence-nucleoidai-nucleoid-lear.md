@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T05:28:23.184Z",
+  "timestamp": "2026-11-22T06:50:06.911Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T05:28:23.184Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T06:50:06.911Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `0fe54a78`  
+> **Source Version**: `b4f4fbdd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T05:28:16.831Z  
+> **Timestamp**: 2026-11-22T06:49:34.859Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T05:28:16.825Z  
+> **Harvest Timestamp**: 2026-11-22T06:49:34.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1598,140 +1598,24 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d36a82b` (2026-11-22)
-**Commit Message**: NUC 130 Loop-Local Iterator Exits
+### Incident Patch 1: `b4f4fbdd` (2026-11-22)
+**Commit Message**: Resume NUC 132 Rust String Boundary Method Aliases
 
-Rejected under the continuous automatic-acceptance rule: hard criterion 2
-fails. The existing programs_without_spreads_file_no_entry_observations
-test at tests/object_spread_entries.rs:305 expects 1,246 programs but the
-frozen candidate observes 1,252 after six new document cases.
+Preserve the active invocation's Draft allocation
+0fe54a781d7cbab378adc3614b7c580fa8b886f6 after concurrently accepted
+NUC 131 Reversal Method Aliases at
+28eb973f38e3b88eb972db0180c046a2f7373858 and Draft NUC 133.
 
-Fresh independent evaluation reports overall Rejected, although the core
-reports Accepted. Actual full cargo test --no-fail-fast exits 101:
-3,867 passed, one failed, and 25 unchanged ignored. All 3,852 accepted
-identity occurrences remain; all 41 new tests pass. The core passes
-1,257 accepted-source replays and 1,263 candidate cases.
+The completed r1 preparation remains isolated and unchanged, with no
+Rust improvement pass, final evaluation, integration or outcome.
+Pin this empty claim for a fresh preserving r2 baseline and candidate
+with a fresh proposer/evaluator pair. Keep the original request, title,
+Language compatibility category, continuous mode and unbiased draw.
+This is the current owner's preserving revision, not a stale takeover.
 
-Build all targets, warning-denied Clippy, formatting, accepted-language
-compatibility, export checks and warning-denied rustdoc pass. Runtime
-new_feature token comparison is entirely skipped, not a passing gate.
-Usefulness is unscored (missing_rubric); learning is not_configured.
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-Record only the final rejected proposal and its two index entries.
-Rejected code, executable documents, tests, grammar, data and exports
-remain isolated and unchanged. No candidate repair or version change.
 
-Frozen proposal: 06e8b49644b3e071d06092ed1290aa9ce13f0e
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -100,7 +100,7 @@ Created: 31-Jul-2026
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
- | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
--| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
-+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
- 
- ### Utility enhancement
- 
-@@ -315,7 +315,7 @@ Created: 31-Jul-2026
- | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Accepted |
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Accepted |
--| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
-+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
- | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Draft |
- 
- ## Copyright
-```
-
-**File**: `docs/nuc-0130.md` (modified, +205/-5)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 130
- Title: Loop-Local Iterator Exits
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Rejected
- Type: Standards Track
- Category: Runtime features
- Created: 21-Nov-2026
-@@ -13,6 +13,9 @@ Requires: 8, 31, 51, 72, 119
- 
- ## Abstract
- 
-+- Rejected: the mandatory existing corpus-count test fails, expecting 1,246
-+  programs but observing 1,252 in the frozen candidate. No implementation,
-+  executable document, test, grammar, dataset or export is integrated.
- - Add `return for`, a value-less statement that ends the nearest enclosing
-   iterator loop without returning from its enclosing function or program.
-   It applies to explicit `for ... of/in`, implicit named iterators and
-@@ -45,19 +48,216 @@ Requires: 8, 31, 51, 72, 119
- 
- ## Rationale
- 
--Preparation pending in an isolated candidate after this Draft allocation.
-+- An iterator exit is new control flow, not a spelling of a function return
-+  or an exception. A function return leaves the enclosing function; a throw
-+  takes an exceptional path and may roll back its effects. Neither continues
-+  that same function normally immediately after its traversal.
-+- Reuse `return` with the existing reserved `for` token rather than reserving
-+  the accepted names `break` or `continue`. The two-token statement has no
-+  value, label, index, option or alternate target.
-+- Keep the target lexical and local. An intervening block, conditional,
-+  exception suite, hypothesis or noniterator loop inherits it; a function,
-+  callback or constructor never inherits a caller's target.
-+- Reuse the existing source snapshots, scope stack, imperative execution,
-+  tracking, propagation and rollback helpers. Carry control in a private
-+  exhaustive completion enum instead of a sentinel string, user `Value`,
-+  fake `Flow::Return` payload, global flag or caught exception.
-+- Preserve normal cleanup precedence: `finally` runs while unwinding and
-+  can replace a pending completion, just as its return or error already can.
-+  Consuming an exit in a cleanup's own inner iterator is normal completion
-+  of that cleanup, not a replacement of the outer pending exit.
-+- The confirmed category is Runtime features because the primary change is
-+  execution control. This randomly selected continuous proposal has no
-+  user-requested or ARC-requested acceptance basis. The caller's live-registry
-+  draw, index 1 of 5, is retained without a category or strategy redraw.
-+- Runtime applicability is `new_feature`, supported by the accepted gap
-+  program and its `Unexpected keyword 'for'` diagnostic, not by missing
-+  comparison data. Token comparison is skipped entirely for this branch;
-+  no before-count, measured-case list or passing token verdict is claimed.
-+- No hint, frozen usefulness rubric or strategy configuration was supplied.
-+  Usefulness is unscored (`missing_rubric`); learning is `not_configured` and
-+  this revision is unattributed. The offline gap probe is not a strategy
-+  selection receipt or a normative accepted counterpart.
- 
- ## Specification
- 
--Preparation pending.
-+- These are the rejected candidate's proposed semantics, not accepted
-+  language behavior. The authoritative `nucleoid.spec.md` remains unchanged;
-+  its proposed section and executable cases stay in the isolated candidate.
-+- Recognize `return for` only when adjacent `Keyword::Return` and
-+  `Keyword::For` tokens share the same source line. Do not skip a newline,
-+  semicolon or comment-induced linebreak; physical newlines cannot qualify
-+  even where parentheses or brackets suppress layout. Only a terminator
-+  (`Newline`, `Semicolon`, `Dedent`, `RightBrace` or `Eof`) may follow the pair.
-+- Construct `Stmt::ReturnFor` and render it as `return for`. Preserve the
-+  existing ASTs and renderings of ordinary `return` and return values.
-+- A `for` body establishes eligibility for its explicit `of`/`in`, implicit
-+  named-source or two-name object-entry traversal. Its source expression
-+  does not establish that traversal's eligibility. Blocks, conditionals,
-+  `try`/`catch`/`finally`, hypotheses and `while`, `repeat` and repeat-until
-+  bodies inherit the surrounding eligibility, without becoming targets.
-+- Function declarations, literals, arrows, lambdas, methods and constructor
-+  bodies reset lexical eligibility. A `for` inside one of them establishes
-+  its own local target. Direct AST execution uses fresh call/constructor and
-+  deferred-rule scopes, enforcing the same boundary even without parsing.
-+- Stop remaining items of the nearest active traversal; after restoring its
-+  frame and imperative mode, execute following statements in the same scope.
-+  Exiting an inner iterator does not exit an outer one. Intervening
-+  noniterator loops stop and do not test their conditions again.
-+- Snapshot source membership once, preserving existing order, duplicates,
-+  registered-instance filtering, Unicode scalar iteration and captured entry
-+  values. Exit neith
-```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1753,39 +1637,6 @@ Frozen proposal: 06e8b49644b3e071d06092ed1290aa9ce13f0e
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. NUC 130 Loop-Local Iterator Exits
-
-**RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `4d36a82b`: NUC 130 Loop-Local Iterator Exits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d36a82b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

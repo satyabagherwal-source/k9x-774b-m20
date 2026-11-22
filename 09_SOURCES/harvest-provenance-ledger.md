@@ -12066,3 +12066,6 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `5efdf449` | Multi-dimensional audit evidence | 2026-11-22T06:27:34.551Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `c955ae49` | Multi-dimensional audit evidence | 2026-11-22T06:36:17.197Z |
 | `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-22T06:41:07.840Z |
+| `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-22T06:49:19.251Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `b4f4fbdd` | Multi-dimensional audit evidence | 2026-11-22T06:49:35.334Z |
+| `learn-dom-d-22d0fbf8` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-22T06:50:06.498Z |

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T06:41:10.882Z",
-    "lastVerified": "2026-11-22T06:41:10.882Z",
+    "lastChecked": "2026-11-22T06:49:38.235Z",
+    "lastVerified": "2026-11-22T06:49:38.235Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -358,13 +358,13 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T06:11:31.195Z",
-    "lastVerified": "2026-11-22T06:11:31.195Z",
+    "lastChecked": "2026-11-22T06:49:34.854Z",
+    "lastVerified": "2026-11-22T06:49:34.854Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "a7c0633a94f1ce7546515fd93a9630429b0ded2949859f8bfb34377c413987e7",
-    "promotedRulesCount": 1,
+    "contentHash": "df5086930e094dd17c09a3b7ff89f6bab276ea1791c22ca3f376e39e8a80898d",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -888,9 +888,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-22T01:58:48.374Z",
+    "lastChecked": "2026-11-22T06:49:25.781Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-22T01:58:48.374Z"
+    "lastVerified": "2026-11-22T06:49:25.781Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -3965,9 +3965,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-21T02:00:38.671Z",
+    "lastChecked": "2026-11-22T06:49:28.227Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-21T02:00:38.671Z"
+    "lastVerified": "2026-11-22T06:49:28.227Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -5087,12 +5087,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-aws-cdk": {
-    "name": "aws/aws-cdk",
+    "name": "aws-cdk",
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T03:36:44.645Z",
-    "lastVerified": "2026-11-21T03:36:44.645Z",
+    "lastChecked": "2026-11-22T06:49:23.365Z",
+    "lastVerified": "2026-11-22T06:49:23.365Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
@@ -5101,7 +5101,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "629d0164"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -6390,9 +6391,9 @@
   "amir1376-ab-download-manager": {
     "name": "ab-download-manager",
     "officialUrl": "https://github.com/amir1376/ab-download-manager",
-    "lastChecked": "2026-11-19T02:55:55.284Z",
+    "lastChecked": "2026-11-22T06:49:20.833Z",
     "revisionIdentifier": "f15b691c",
-    "lastVerified": "2026-11-19T02:55:55.284Z"
+    "lastVerified": "2026-11-22T06:49:20.833Z"
   },
   "argoproj-argo-workflows": {
     "name": "argoproj/argo-workflows",
@@ -6945,9 +6946,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-20T21:38:42.656Z",
+    "lastChecked": "2026-11-22T06:49:15.722Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-20T21:38:42.656Z"
+    "lastVerified": "2026-11-22T06:49:15.722Z"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
     "name": "mudler/locate-anything.cpp-gguf",
@@ -13822,6 +13823,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cactus-compute-mirage",
     "contentHash": "47200bb90b24d57ec9c706507203b3f32f812efbfbb582501b53fd01dbed0cf8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-comfy-org-relayvsr": {
+    "name": "Comfy-Org/RelayVSR",
+    "officialUrl": "https://huggingface.co/Comfy-Org/RelayVSR",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T06:49:18.574Z",
+    "lastVerified": "2026-11-22T06:49:18.574Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-relayvsr",
+    "contentHash": "c518870b1fe1f8ed567fdebf1927ade100d4917bd1f004bea9e7fdb91c69b713",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

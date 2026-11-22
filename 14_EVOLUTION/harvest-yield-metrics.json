@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T06:41:07.847Z",
-  "total_cycles_completed": 11440,
-  "total_learnings_persisted": 11440,
+  "last_updated": "2026-11-22T06:49:35.339Z",
+  "total_cycles_completed": 11442,
+  "total_learnings_persisted": 11442,
   "total_rules_promoted": 10716,
   "history": [
-    {
-      "timestamp": "2026-11-21T13:53:30.288Z",
-      "repository": "Qwen/Qwen3-14B",
-      "learningId": "learn-huggingface-qwen-qwen3-14b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T13:53:31.505Z",
-      "repository": "watchexec/watchexec",
-      "learningId": "learn-github-watchexec-watchexec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T13:53:36.593Z",
       "repository": "karakeep-app/karakeep",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T06:41:07.847Z",
       "repository": "Cactus-Compute/mirage",
       "learningId": "learn-huggingface-cactus-compute-mirage",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T06:49:19.256Z",
+      "repository": "Comfy-Org/RelayVSR",
+      "learningId": "learn-huggingface-comfy-org-relayvsr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T06:49:35.339Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T06:41:14.124Z",
+  "last_updated": "2026-11-22T06:50:07.932Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -218925,13 +218925,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-17S3-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-91YM-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e260e3de207e4f3a4aaeace646177250140dbf23f7e43ae8711528d4c6cf971",
+      "content_hash": "ca0591e8ebc05bb6ba54d7b92be85981ba228a991be2d705eb0b99a25b09e05d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:20:02.979Z"
+      "persisted_at": "2026-11-22T06:50:07.534Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218941,9 +218941,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "86174b8a7a7645800731d8dbb3d1e3e55f23c730617505632ac91b3fa166cc6e",
+      "content_hash": "ed240beea6f49c1ea0f361e90dc6436179e45a6b08bd646933793005ff403d1f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:20:03.113Z"
+      "persisted_at": "2026-11-22T06:50:07.737Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218953,9 +218953,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ebdc9f19279e61ae30c310fc89cbd759bbfb37ff136ef10bc20e7c91c79a21e4",
+      "content_hash": "f363bbb6fc3ad67f3e6db53c66c0c999732066457f9161d9d13cc11838e5cf4b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T05:20:03.248Z"
+      "persisted_at": "2026-11-22T06:50:07.932Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -229602,8 +229602,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "008cc5b3",
-      "content_hash": "a7c0633a94f1ce7546515fd93a9630429b0ded2949859f8bfb34377c413987e7",
+      "source_version": "b4f4fbdd",
+      "content_hash": "df5086930e094dd17c09a3b7ff89f6bab276ea1791c22ca3f376e39e8a80898d",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229818,7 +229818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T06:11:32.017Z",
+      "verified_at": "2026-11-22T06:49:35.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229860,10 +229860,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "0fe54a78",
-      "content_hash": "568491dd3316ec8440715df16d1811c0cb1ef863ba3f912f0cc11977a0101300",
+      "source_version": "b4f4fbdd",
+      "content_hash": "481efaf92d557c3c3b33e65d1118fdb1e1345ca81cce38999ae1d43381166370",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T05:28:18.111Z"
+      "persisted_at": "2026-11-22T06:49:35.546Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230963,9 +230963,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa59ee77847a646e270f5c713c0bc0d1a6f4d10bdcfa6169dfb9b8a9cd3e676d",
+      "content_hash": "d183aa98629d10f5b32855282b4e2e9644c5568cb0a8699e8298fcd0351239da",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T05:28:23.475Z"
+      "persisted_at": "2026-11-22T06:50:07.026Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -253888,7 +253888,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/RelayVSR",
       "source_version": "hf-comfy-org-relayvsr",
-      "content_hash": "60782fc62b931b3b445bf33778ac152aa3c7acb04744e9451d91728d97ce0aca",
+      "content_hash": "c518870b1fe1f8ed567fdebf1927ade100d4917bd1f004bea9e7fdb91c69b713",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md",
       "promoted_rules": [],
@@ -253897,7 +253897,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T01:45:09.413Z",
+      "verified_at": "2026-11-22T06:49:19.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253914,9 +253914,9 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/RelayVSR Core Invariants",
       "repository": "Comfy-Org/RelayVSR",
       "source_version": "hf-comfy-org-relayvsr",
-      "content_hash": "393cc5d359dd0ea0f62c16b7376fd77ffe3689c8c83c4e7cf687bbbb1192cb17",
+      "content_hash": "d811920b734ec85a17e1254f26d556524b67c1413237dbfc63e755d6a1d24add",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T01:45:09.719Z"
+      "persisted_at": "2026-11-22T06:49:19.455Z"
     },
     "learn-github-medialab-xan": {
       "learning_id": "learn-github-medialab-xan",
@@ -254162,9 +254162,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-relayvsr-learnings Core Invariants",
       "repository": "hf-comfy-org-relayvsr-learnings",
       "source_version": "HEAD",
-      "content_hash": "1044860af4ae0fbfd00e22d023ae4818dad1751189fa60c10824032df26e9354",
+      "content_hash": "3fe909fecb08a844e40ce11a78ee7a3f90152698314b12ffae628eef931afd3e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T01:45:25.939Z"
+      "persisted_at": "2026-11-22T06:49:38.585Z"
     },
     "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-learnings-core-invari": {
       "item_id": "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-learnings-core-invari",

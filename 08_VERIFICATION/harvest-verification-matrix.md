@@ -12033,3 +12033,6 @@
 | `CYCLE-20261122-G1ZO` | `2026-11-22T06:27:34.548Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`75357683...`) |
 | `CYCLE-20261122-R99J` | `2026-11-22T06:36:17.191Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9901` | Yes (`b66a05d5...`) |
 | `CYCLE-20261122-XHIZ` | `2026-11-22T06:41:07.835Z` | `Cactus-Compute/mirage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | Yes (`47200bb9...`) |
+| `CYCLE-20261122-80PA` | `2026-11-22T06:49:19.246Z` | `Comfy-Org/RelayVSR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | Yes (`c518870b...`) |
+| `CYCLE-20261122-8D42` | `2026-11-22T06:49:35.330Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`df508693...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T06:50:06.498Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-22D0FBF8` [Domain D] | Yes (`bca3573e...`) |
