@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T02:18:08.974Z",
-  "total_cycles_completed": 11390,
-  "total_learnings_persisted": 11390,
-  "total_rules_promoted": 10691,
+  "last_updated": "2026-11-22T02:29:34.107Z",
+  "total_cycles_completed": 11394,
+  "total_learnings_persisted": 11394,
+  "total_rules_promoted": 10694,
   "history": [
-    {
-      "timestamp": "2026-11-21T08:24:26.536Z",
-      "repository": "openai/clip-vit-large-patch14",
-      "learningId": "learn-huggingface-openai-clip-vit-large-patch14",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T08:24:30.011Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T08:24:47.301Z",
-      "repository": "yazinsai/OpenOats",
-      "learningId": "learn-github-yazinsai-openoats",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T08:25:04.599Z",
-      "repository": "Comfy-Org/MOSS-Image",
-      "learningId": "learn-huggingface-comfy-org-moss-image",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T08:52:48.410Z",
       "repository": "etcd-io/etcd",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-22T02:18:08.974Z",
       "repository": "PeerDB-io/peerdb",
       "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:29:17.629Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:29:30.109Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:29:32.386Z",
+      "repository": "infiniflow/infinity",
+      "learningId": "learn-github-infiniflow-infinity",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:29:34.107Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

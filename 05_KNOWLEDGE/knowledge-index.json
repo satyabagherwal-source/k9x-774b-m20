@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T02:18:40.842Z",
+  "last_updated": "2026-11-22T02:29:39.459Z",
   "total_verified_learnings": 9065,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23401,
+  "total_items": 23407,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "ff15a1de",
-      "content_hash": "496a753259fbe485abcd2ba72bc40befd16fb63515fa99e31f8cc126fc5cae82",
+      "content_hash": "c1b9288035387c5ae330ea7f8030f971ba910f8ff3ef98c7d0579d73749d2f14",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T23:47:44.403Z"
+      "persisted_at": "2026-11-22T02:29:30.481Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "ff15a1de",
-      "content_hash": "604212174ad0227349adff322c15ab3b99aea4951fcd73ae47a24f5fa31ea71f",
+      "content_hash": "46f1f4bcef83dc4589e6387299ee680862fb89647a6b373af2847504281c4eea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:47:44.717Z"
+      "persisted_at": "2026-11-22T02:29:30.652Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d9d4295ec1c8ddba28b33eb493bba1f0fb7b45ebb58c65e4cc35e53cf0f354e",
+      "content_hash": "21affbe325103189689d3c4940193fb1a974cae13c9cc114406462c4c57cd64e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T21:23:02.958Z"
+      "persisted_at": "2026-11-22T02:29:38.458Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215862,13 +215862,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "ff15a1de",
-      "content_hash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "9809a2d21f8433e6f2466e52bed27c5a76e95eba7febf9c44424697814a8f7ef",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215971,7 +215971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:47:43.815Z",
+      "verified_at": "2026-11-22T02:29:29.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215985,26 +215985,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "8d02655f",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ff15a1de",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T15:31:17.527Z"
+      "verified_at": "2026-11-22T02:29:29.898Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FWAW-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y2D2-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "unhappychoice-gitlogue-learnings",
+      "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "d356592d5a20d1379596f16f9c9a125edcf29270e0877b71a9ff1c4cdce71f89",
+      "content_hash": "cbf73a5436597f09379b36104a766d1bfe059452edc553f17b7bcfa7010fc695",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T15:31:39.468Z"
+      "persisted_at": "2026-11-22T02:29:38.297Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -218453,8 +218453,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "22c627e7",
-      "content_hash": "9e0f5919dbe82c706baa9632557fe3c2b029749eb6571b5ccd1167097e5ff1bd",
+      "source_version": "07c5af63",
+      "content_hash": "609b89751a4a9068873d362d26e663634d52198930cc0d8f596d3d2e2cb0e5a0",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -218487,6 +218487,11 @@
           "number": 9425,
           "title": "bound process memory; read vectors in place",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9882,
+          "title": "close the #3573 gaps (HNSW build parallelism and kernels, import me",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218494,7 +218499,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T18:20:05.327Z",
+      "verified_at": "2026-11-22T02:29:32.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218548,10 +218553,10 @@
       "relative_path": "08_VERIFICATION/infiniflow-infinity-verification-protocol-empirical-defect-shield-for-infiniflow.md",
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow/infinity",
       "repository": "infiniflow/infinity",
-      "source_version": "22c627e7",
-      "content_hash": "a42f1916406fab2f840ff6d6760d0d7cb09d4a43cfb0352c4e9fb1d7d3be0b9f",
+      "source_version": "07c5af63",
+      "content_hash": "cb5269c21479e8405b7ba98eb3c1370ca59ec7c296692614ad32dc0eee9b0f9f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T18:20:05.963Z"
+      "persisted_at": "2026-11-22T02:29:32.931Z"
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -218686,9 +218691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow-infinity-learnings",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "2523637ad59f9eac2dbea8d3b8447ebf31c69cfbc7a82411f18fca906c372303",
+      "content_hash": "4de1fecb55246993eea0e443f93f60a14b8f66a0457d5530c26f707d463d4e9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:55:43.763Z"
+      "persisted_at": "2026-11-22T02:29:39.459Z"
     },
     "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase": {
       "item_id": "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase",
@@ -220115,9 +220120,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "ecfb1d8e195983b221b972083d1411bd0e7e6e230797f0506d06d781e42ded63",
+      "content_hash": "ff35105a3257c052ab8b0f381050784bc8019254cd4cc2abeaea0236acd4e7dd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:23:03.136Z"
+      "persisted_at": "2026-11-22T02:29:38.645Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -229551,8 +229556,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "fbdb7e41",
-      "content_hash": "22284158552a865e79073f4e5c35c24313d631f807c7bcbb858f7c8ebe201356",
+      "source_version": "2ae49a2e",
+      "content_hash": "3b7d4e0f3f3adc834f5924aa3464b073d2b3e94c960ab0e84ba2bc2845c4d663",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229750,6 +229755,11 @@
           "number": 9793,
           "title": "Draft NUC 126 Exit-Controlled Repeat-Until Loops",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9883,
+          "title": "Draft NUC 130 Loop-Local Iterator Exits",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229757,7 +229767,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:44:08.618Z",
+      "verified_at": "2026-11-22T02:29:33.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229799,10 +229809,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "fbdb7e41",
-      "content_hash": "96b458428d196c5a1b0954a14141a61db05d3148fe664d543ca95fcd303165b3",
+      "source_version": "2ae49a2e",
+      "content_hash": "00851876af38016181891e114483f1d147d5f55aa4d9e473788dbfc5e83abac3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:44:09.211Z"
+      "persisted_at": "2026-11-22T02:29:34.493Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229811,10 +229821,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "fbdb7e41",
-      "content_hash": "dabff320e098cc651a200185059fe4d152fe85dadfe643f46f17627f6fbc8699",
+      "source_version": "2ae49a2e",
+      "content_hash": "e94dd88a257dd2b70fc4d4b944e892805ba6c62ecf0a87375a2d16af7cf61009",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:44:09.498Z"
+      "persisted_at": "2026-11-22T02:29:34.666Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -278028,9 +278038,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac1e93fc561b776de21f6aa1a1d3aeed2e4e57c079c738d64671339e5d897586",
+      "content_hash": "3ae8da65040a8f5f31458db129da97d5a3304e16de39819e94340d7c9281d994",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:57:59.496Z"
+      "persisted_at": "2026-11-22T02:29:37.694Z"
     },
     "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
@@ -278219,7 +278229,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "632038690498b863934f5484e4bdc9e241bcefc8f0ea241fbeb5786cc713b834",
+      "content_hash": "baaaa5725ffc1e692bc41b0ccf3334944f1d0873b22a0c0d52d3a626a06045cf",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [],
@@ -278228,7 +278238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:57:39.620Z",
+      "verified_at": "2026-11-22T02:29:17.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278245,9 +278255,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF Core Invariants",
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "f87cd199f9f3454fa57a7a8d18c71f8ecb3ba12687f4542c9781baa768d5daf5",
+      "content_hash": "652cd409a80b7164283f3ecceafafe8553edb935ecd2b9756b8aa3fd58cda539",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:57:40.007Z"
+      "persisted_at": "2026-11-22T02:29:17.835Z"
     },
     "rule-9024": {
       "learning_id": "rule-9024",
@@ -298485,10 +298495,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-technical-construction-intelligence-infiniflow-infinity-core.md",
       "title": "Technical Construction Intelligence: infiniflow/infinity Core Invariants",
       "repository": "infiniflow/infinity",
-      "source_version": "22c627e7",
-      "content_hash": "770e68d8c037f7a86466ca751a19c3ae476fea246f9681239fdfbb5013154825",
+      "source_version": "07c5af63",
+      "content_hash": "db53bf033b428d355458b0906a3d70eff8ff5941eab22dbf4e1d43285ab0b8e1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T18:20:05.828Z"
+      "persisted_at": "2026-11-22T02:29:32.761Z"
     },
     "rule-9426": {
       "learning_id": "rule-9426",
@@ -318219,6 +318229,82 @@
       "content_hash": "b03cd052d1ed86f4947289fec9c6af92bbac0d08c82bd49d638e3891ccce7ca8",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T02:18:40.478Z"
+    },
+    "rule-9882": {
+      "learning_id": "rule-9882",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9882,
+      "title": "close the #3573 gaps (HNSW build parallelism and kernels, import me",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "07c5af63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T02:29:32.176Z"
+    },
+    "candidate_directive-close-the-3573-gaps-hnsw-build-parallelism-and-kernels-import-me": {
+      "item_id": "candidate_directive-close-the-3573-gaps-hnsw-build-parallelism-and-kernels-import-me",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XXYU-close-the-3573-gaps-hnsw-build-parallelism-and-kernels-import-me.md",
+      "title": "close the #3573 gaps (HNSW build parallelism and kernels, import me",
+      "repository": "infiniflow/infinity",
+      "source_version": "07c5af63",
+      "content_hash": "82fc2df3c72638ef3b03dc9c69d207573fa72c4828d17d1aeedd4bced3d61231",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:29:32.601Z"
+    },
+    "rule-9883": {
+      "learning_id": "rule-9883",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9883,
+      "title": "Draft NUC 130 Loop-Local Iterator Exits",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "2ae49a2e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T02:29:33.891Z"
+    },
+    "candidate_directive-draft-nuc-130-loop-local-iterator-exits": {
+      "item_id": "candidate_directive-draft-nuc-130-loop-local-iterator-exits",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XZAP-draft-nuc-130-loop-local-iterator-exits.md",
+      "title": "Draft NUC 130 Loop-Local Iterator Exits",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "2ae49a2e",
+      "content_hash": "d51caedceac66d69461329b0c0ef7904e0a9bc302c7bd49583036aa785dee561",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T02:29:34.322Z"
+    },
+    "candidate_directive-rust_engine-close-the-3573-gaps-hnsw-build-parallelism-and-kernels-import-me": {
+      "item_id": "candidate_directive-rust_engine-close-the-3573-gaps-hnsw-build-parallelism-and-kernels-import-me",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y30B-rust_engine-close-the-3573-gaps-hnsw-build-parallelism-and-kernels-import-me.md",
+      "title": "rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import me",
+      "repository": "infiniflow-infinity-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e7d5d4a1a828c774e285c7cd1a6bbebbf07bd498d40694120f7e06addd0e5103",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:29:39.134Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-learnings-technical-construction-intelligence-infiniflow-inf.md",
+      "title": "Technical Construction Intelligence: infiniflow-infinity-learnings Core Invariants",
+      "repository": "infiniflow-infinity-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a621099bcbdec9a009ec13681bb17b5b386c5132491026f7dad67af4226b9895",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:29:39.291Z"
     }
   },
   "ai-builder-brain": {

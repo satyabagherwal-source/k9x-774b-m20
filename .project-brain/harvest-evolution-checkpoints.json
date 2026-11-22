@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T02:18:40.996Z",
+  "last_updated": "2026-11-22T02:29:39.593Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T01:59:00.350Z",
@@ -1603,7 +1603,7 @@
       "staged_for_review": 0
     },
     "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md": {
-      "processed_at": "2026-11-17T17:57:59.324Z",
+      "processed_at": "2026-11-22T02:29:37.484Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2058,7 +2058,7 @@
       "staged_for_review": 1
     },
     "provablehq-snarkos-learnings.md": {
-      "processed_at": "2026-11-21T21:23:02.516Z",
+      "processed_at": "2026-11-22T02:29:37.888Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2228,7 +2228,7 @@
       "staged_for_review": 0
     },
     "infiniflow-infinity-learnings.md": {
-      "processed_at": "2026-11-16T21:55:43.200Z",
+      "processed_at": "2026-11-22T02:29:38.797Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3693,7 +3693,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2967,
+  "total_dossiers_evaluated": 2970,
   "total_canonical_promoted": 467,
-  "total_staged_for_review": 2266
+  "total_staged_for_review": 2269
 }

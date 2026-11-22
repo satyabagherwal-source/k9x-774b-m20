@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T21:23:02.684Z",
+  "timestamp": "2026-11-22T02:29:38.175Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T21:23:02.684Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T02:29:38.175Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `3862fd16`  
+> **Source Version**: `ff15a1de`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T21:19:45.000Z  
+> **Timestamp**: 2026-11-22T02:29:29.380Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:19:44.893Z  
+> **Harvest Timestamp**: 2026-11-22T02:29:29.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1149,6 +1149,11 @@ pub struct DevHotswapConfig {
 //! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
 //! defines the cargo aliases that set the cfg.
 //!
+//! `locktick` comes from snarkVM's re-export, `snarkvm::utilities::locktick`, so these locks and
+//! snarkVM's register with one copy of the crate, and [`spawn_lock_reporter`] logs both. Hazard: a
+//! direct dependency on `locktick` can build a second copy, whose `lock_snapshots` misses
+//! snarkVM's locks.
+//!
 //! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
 //! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
 //! that dereferences to the plain guard. Code that passes a guard to an associated function of
@@ -1163,16 +1168,16 @@ pub struct DevHotswapConfig {
 #[cfg(not(locktick))]
 type Guard<G> = G;
 #[cfg(locktick)]
-type Guard<G> = ::locktick::LockGuard<G>;
+type Guard<G> = ::snarkvm::utilities::locktick::LockGuard<G>;
 
 /// Synchronous locks from `parking_lot`.
 pub mod parking_lot {
     use super::Guard;
 
-    #[cfg(locktick)]
-    use ::locktick::parking_lot as backend;
     #[cfg(not(locktick))]
     use ::parking_lot as backend;
+    #[cfg(locktick)]
+    use ::snarkvm::utilities::locktick::parking_lot as backend;
 
     pub type Mutex<T> = backend::Mutex<T>;
     pub type RwLock<T> = backend::RwLock<T>;
@@ -1186,7 +1191,7 @@ pub mod tokio {
     use super::Guard;
 
     #[cfg(locktick)]
-    use ::locktick::tokio as backend;
+    use ::snarkvm::utilities::locktick::tokio as backend;
     #[cfg(not(locktick))]
     use ::tokio::sync as backend;
 
@@ -1205,7 +1210,7 @@ pub fn spawn_lock_reporter() {
         loop {
             tracing::info!("[locktick] checking for active lock guards");
             let ts = std::time::Instant::now();
-            let mut infos = ::locktick::lock_snapshots();
+            let mut infos = ::snarkvm::utilities::locktick::lock_snapshots();
             infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
 
             for lock in infos {
@@ -1899,294 +1904,437 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d41f2d25` (2026-11-21)
-**Commit Message**: Merge pull request #4750 from aleo-labs-protocol/agent/sync-quiet-at-tip
+### Incident Patch 1: `ff15a1de` (2026-11-21)
+**Commit Message**: Merge pull request #4752 from aleo-labs-protocol/locktick-reexport
 
-Keep block sync quiet while the tip block is in flight
-
-**File**: `node/sync/src/block_sync.rs` (modified, +38/-6)
+**File**: `Cargo.lock` (modified, +62/-62)
 ```diff
-@@ -752,15 +752,15 @@ impl<N: Network> BlockSync<N> {
-         if batches.is_empty() {
-             let total_requests = self.num_total_block_requests();
-             let num_outstanding = self.num_outstanding_block_requests();
--            if total_requests != 0 {
--                trace!(
--                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
--                );
--            } else {
-+            if total_requests == 0 {
-                 debug!(
-                     "Not block synced yet, and there are no outstanding block requests or \
-                  new block requests to send"
-                 );
-+            } else if !self.requested_all_served() {
-+                trace!(
-+                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
-+                );
-             }
-         } else {
-             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
-@@ -1375,6 +1375,10 @@ impl<N: Network> BlockSync<N> {
+@@ -5755,16 +5755,16 @@ name = "snarkos-utilities"
+ version = "4.13.1"
+ dependencies = [
+  "anyhow",
+- "locktick",
+  "parking_lot",
++ "snarkvm",
+  "tokio",
+  "tracing",
+ ]
  
-             print_requests();
-             vec![]
-+        } else if self.requested_all_served() {
-+            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
-+            // block is in flight.
-+            vec![]
-         } else if let Some((sync_peers, min_common_ancestor)) =
-             self.find_sync_peers_inner(current_height, Some(start_height))
-         {
-@@ -1407,7 +1411,7 @@ impl<N: Network> BlockSync<N> {
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "anyhow",
+  "rand 0.10.3",
+@@ -5783,7 +5783,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -5810,7 +5810,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5823,7 +5823,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5837,7 +5837,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5847,7 +5847,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5857,7 +5857,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5867,7 +5867,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5887,12 +5887,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
  
-             vec![]
-         } else {
--            // This happens if we already requested all advertised blocks.
-+            // No sync peers serve the next height to request.
-             trace!("No new blocks can be requested, but there are still outstanding requests.");
+ [[package]]
+ name = "snarkvm-circuit-network"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -5903,7 +5903,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-program"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb
+```
+
+**File**: `Cargo.toml` (modified, +1/-4)
+```diff
+@@ -45,7 +45,7 @@ members = [
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "1757a9b84ac0da2e55da11fbb10f0f5cd63f0240" #staging
++rev = "5dc3edd5a74b22df7e9880607becb648fd477ecb" #staging
+ #version = "=4.12.0"
+ default-features = false
  
-             print_requests();
-@@ -1939,6 +1943,15 @@ impl<N: Network> BlockSync<N> {
-         height
-     }
+@@ -99,9 +99,6 @@ version = "0.3"
+ [workspace.dependencies.futures-util]
+ version = "0.3"
  
-+    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
-+    /// ledger or requested.
-+    fn requested_all_served(&self) -> bool {
-+        let current_height = self.retention_height();
-+        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
-+        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
-+        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
-+    }
-+
-     /// Given the sync peers and their minimum common ancestor, return a list of block requests
-     /// starting at `start_height` (see `first_unrequested_height`).
-     ///
-@@ -2931,6 +2944,25 @@ mod tests {
-         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
-     }
+-[workspace.dependencies.locktick]
+-version = "0.6"
+-
+ [workspace.dependencies.lru]
+ version = "0.19.0"
  
-+    /// Tests when block sync has requested every block its peers serve.
-+    #[test]
-+    fn test_quiet_while_tip_block_in_flight() {
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_001, 0);
-+        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
-+        assert!(sync.requested_all_served());
-+
-+        // A peer ahead whose floor is above the next height to request.
-+        add_peers(&sync, 2, 1, 1_100, 1_050);
-+        assert!(!sync.requested_all_served());
-+
-+        // No peer ahead, but requests are outstanding.
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_000, 0);
-+        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
-+        assert!(!sync.requested_all_served());
-+    }
-+
-     /// Tests that a `Pruned` reply raises the floor, releases the whole chunk at once, and that the
-     /// chunk is re-issued at once to a peer that serves it.
-     #[test]
+```
+
+**File**: `utilities/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -33,9 +33,9 @@ workspace = true
+ [dependencies.parking_lot]
+ workspace = true
+ 
+-[target.'cfg(locktick)'.dependencies.locktick]
++[target.'cfg(locktick)'.dependencies.snarkvm]
+ workspace = true
+-features = [ "parking_lot", "tokio" ]
++features = [ "utilities" ]
+ 
+ [dev-dependencies.tokio]
+ workspace = true
+```
+
+**File**: `utilities/src/locks.rs` (modified, +10/-5)
+```diff
+@@ -19,6 +19,11 @@
+ //! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
+ //! defines the cargo aliases that set the cfg.
+ //!
++//! `locktick` comes from snarkVM's re-export, `snarkvm::utilities::locktick`, so these locks and
++//! snarkVM's register with one copy of the crate, and [`spawn_lock_reporter`] logs both. Hazard: a
++//! direct dependency on `locktick` can build a second copy, whose `lock_snapshots` misses
++//! snarkVM's locks.
++//!
+ //! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
+ //! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
+ //! that dereferences to the plain guard. Code that passes a guard to an associated function of
+@@ -33,16 +38,16 @@
+ #[cfg(not(locktick))]
+ type Guard<G> = G;
+ #[cfg(locktick)]
+-type Guard<G> = ::locktick::LockGuard<G>;
++type Guard<G> = ::snarkvm::utilities::locktick::LockGuard<G>;
+ 
+ /// Synchronous locks from `parking_lot`.
+ pub mod parking_lot {
+     use super::Guard;
+ 
+-    #[cfg(locktick)]
+-    use ::locktick::parking_lot as backend;
+     #[cfg(not(locktick))]
+     use ::parking_lot as backend;
++    #[cfg(locktick)]
++    use ::snarkvm::utilities::locktick::parking_lot as backend;
+ 
+     pub type Mutex<T> = backend::Mutex<T>;
+     pub type RwLock<T> = backend::RwLock<T>;
+@@ -56,7 +61,7 @@ pub mod tokio {
+     use super::Guard;
+ 
+     #[cfg(locktick)]
+-    use ::locktick::tokio as backend;
++    use ::snarkvm::utilities::locktick::tokio as backend;
+     #[cfg(not(locktick))]
+     use ::tokio::sync as backend;
+ 
+@@ -75,7 +80,7 @@ pub fn spawn_lock_reporter() {
+         loop {
+             tracing::info!("[locktick] checking for active lock guards");
+             let ts = std::time::Instant::now();
+-            let mut infos = ::locktick::lock_snapshots();
++            let mut infos = ::snarkvm::utilities::locktick::lock_snapshots();
+             infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
+ 
+             for lock in infos {
 ```
 
 ---
 
-### Incident Patch 2: `4282ec76` (2026-11-21)
-**Commit Message**: Compute the quiet-sync condition in one place
+### Incident Patch 2: `5c417e57` (2026-11-21)
+**Commit Message**: Take locktick from snarkVM's re-export
 
-requested_all_served now derives the heights itself, so
-issue_block_requests computes them only when it decides the trace.
-Fix the quiet-branch and else-branch comments, and trim the test.
+Under cfg(locktick), snarkos-utilities reaches locktick through
+snarkvm::utilities::locktick instead of its own locktick dependency, and
+the root workspace no longer declares locktick. With a separate
+requirement in each repo, a version drift would build two locktick
+crates with separate lock registries, and spawn_lock_reporter would
+silently stop listing snarkVM's locks. Now the snarkVM rev alone picks
+the one locktick in the build.
 
-**File**: `node/sync/src/block_sync.rs` (modified, +14/-16)
+The dependency is the existing snarkvm workspace entry with only its
+utilities feature, so the bump-snarkvm job's single rev keeps covering
+it. It exists only under cfg(locktick), so the default build graph of
+snarkos-utilities is unchanged.
+
+This bumps snarkVM to staging 5dc3edd5a, which includes the re-export
+(snarkVM #3900).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +62/-62)
 ```diff
-@@ -752,14 +752,12 @@ impl<N: Network> BlockSync<N> {
-         if batches.is_empty() {
-             let total_requests = self.num_total_block_requests();
-             let num_outstanding = self.num_outstanding_block_requests();
--            let current_height = self.retention_height();
--            let start_height = self.first_unrequested_height(current_height.saturating_add(1));
-             if total_requests == 0 {
-                 debug!(
-                     "Not block synced yet, and there are no outstanding block requests or \
-                  new block requests to send"
-                 );
--            } else if !self.requested_all_served(current_height, start_height) {
-+            } else if !self.requested_all_served() {
-                 trace!(
-                     "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
-                 );
-@@ -1377,8 +1375,9 @@ impl<N: Network> BlockSync<N> {
+@@ -5755,16 +5755,16 @@ name = "snarkos-utilities"
+ version = "4.13.1"
+ dependencies = [
+  "anyhow",
+- "locktick",
+  "parking_lot",
++ "snarkvm",
+  "tokio",
+  "tracing",
+ ]
  
-             print_requests();
-             vec![]
--        } else if self.requested_all_served(current_height, start_height) {
--            // This is normal at the tip, while the tip block is in flight.
-+        } else if self.requested_all_served() {
-+            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
-+            // block is in flight.
-             vec![]
-         } else if let Some((sync_peers, min_common_ancestor)) =
-             self.find_sync_peers_inner(current_height, Some(start_height))
-@@ -1412,7 +1411,7 @@ impl<N: Network> BlockSync<N> {
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "anyhow",
+  "rand 0.10.3",
+@@ -5783,7 +5783,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -5810,7 +5810,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5823,7 +5823,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5837,7 +5837,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5847,7 +5847,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5857,7 +5857,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5867,7 +5867,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5887,12 +5887,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
  
-             vec![]
-         } else {
--            // This happens if we already requested all advertised blocks.
-+            // No sync peers serve the next height to request.
-             trace!("No new blocks can be requested, but there are still outstanding requests.");
- 
-             print_requests();
-@@ -1944,9 +1943,11 @@ impl<N: Network> BlockSync<N> {
-         height
-     }
- 
--    /// Returns `true` if a peer serves blocks above `current_height`, and every block any peer
--    /// serves is below `start_height`, i.e. already requested (see `first_unrequested_height`).
--    fn requested_all_served(&self, current_height: u32, start_height: u32) -> bool {
-+    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
-+    /// ledger or requested.
-+    fn requested_all_served(&self) -> bool {
-+        let current_height = self.retention_height();
-+        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
-         let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
-         max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
-     }
-@@ -2943,26 +2944,23 @@ mod tests {
-         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
-     }
- 
--    /// Tests that block sync takes the quiet branch at the tip while the tip block is in flight,
--    /// but not when a peer ahead does not serve the next block or no peer is ahead.
-+    /// Tests when block sync has requested every block its peers serve.
-     #[test]
-     fn test_quiet_while_tip_block_in_flight() {
-         let sync = sample_sync_at_height(1_000);
-         add_peers(&sync, 1, 1, 1_001, 0);
-         insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
--        assert!(sync.prepare_block_requests().is_empty());
--        assert!(sync.requested_all_served(1_000, 1_002));
-+        assert!(sync.requested_all_served());
- 
-         // A peer ahead whose floor is above the next height to request.
-         add_peers(&sync, 2, 1, 1_100, 1_050);
--        assert!(sync.prepare_block_requests().is_empty());
--        assert!(!sync.requested_all_served(1_000, 1_002));
-+        assert!(!sync.requested_all_served());
- 
-         // No peer ahead, but requests are outstanding.
-         let sync = sample_sync_at_height(1_000);
-         add_peers(&sync, 1, 1, 1_000, 0);
-         insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
--        assert!(!sync.requested_all_served(1_000, 1_002));
-+        assert!(!sync.requested_all_served());
-     }
- 
-     /// Tests that a `Pruned` reply raises the floor, releases the whole chunk at once, and that the
+ [[package]]
+ name = "snarkvm-circuit-network"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -5903,7 +5903,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-program"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb
 ```
 
----
-
-### Incident Patch 3: `12893ec2` (2026-11-21)
-**Commit Message**: Keep block sync quiet while the tip block is in flight
-
-Since #4725, a client at the tip logs five TRACE lines on each sync pass
-while the tip block is in flight: no peer serves the next height, so
-prepare_block_requests takes the "outstanding requests" branch. This
-pushed client logs in the devnet-merge upgrade test over the 1 MiB cap.
-
-If every block the peers serve is already requested, return no batches
-without logging, and skip the "Not block synced yet" trace.
-
-**File**: `node/sync/src/block_sync.rs` (modified, +39/-5)
+**File**: `Cargo.toml` (modified, +1/-4)
 ```diff
-@@ -752,15 +752,17 @@ impl<N: Network> BlockSync<N> {
-         if batches.is_empty() {
-             let total_requests = self.num_total_block_requests();
-             let num_outstanding = self.num_outstanding_block_requests();
--            if total_requests != 0 {
--                trace!(
--                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
--                );
--            } else {
-+            let current_height = self.retention_height();
-+            let start_height = self.first_unrequested_height(current_height.saturating_add(1));
-+            if total_requests == 0 {
-                 debug!(
-                     "Not block synced yet, and there are no outstanding block requests or \
-                  new block requests to send"
-                 );
-+            } else if !self.requested_all_served(current_height, start_height) {
-+                trace!(
-+                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
-+                );
-             }
-         } else {
-             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
-@@ -1375,6 +1377,9 @@ impl<N: Network> BlockSync<N> {
+@@ -45,7 +45,7 @@ members = [
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "1757a9b84ac0da2e55da11fbb10f0f5cd63f0240" #staging
++rev = "5dc3edd5a74b22df7e9880607becb648fd477ecb" #staging
+ #version = "=4.12.0"
+ default-features = false
  
-             print_requests();
-             vec![]
-+        } else if self.requested_all_served(current_height, start_height) {
-+            // This is normal at the tip, while the tip block is in flight.
-+            vec![]
-         } else if let Some((sync_peers, min_common_ancestor)) =
-             self.find_sync_peers_inner(current_height, Some(start_height))
-         {
-@@ -1939,6 +1944,13 @@ impl<N: Network> BlockSync<N> {
-         height
-     }
+@@ -99,9 +99,6 @@ version = "0.3"
+ [workspace.dependencies.futures-util]
+ version = "0.3"
  
-+    /// Returns `true` if a peer serves blocks above `current_height`, and every block any peer
-+    /// serves is below `start_height`, i.e. already requested (see `first_unrequested_height`).
-+    fn requested_all_served(&self, current_height: u32, start_height: u32) -> bool {
-+        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
-+        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
-+    }
-+
-     /// Given the sync peers and their minimum common ancestor, return a list of block requests
-     /// starting at `start_height` (see `first_unrequested_height`).
-     ///
-@@ -2931,6 +2943,28 @@ mod tests {
-         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
-     }
+-[workspace.dependencies.locktick]
+-version = "0.6"
+-
+ [workspace.dependencies.lru]
+ version = "0.19.0"
  
-+    /// Tests that block sync takes the quiet branch at the tip while the tip block is in flight,
-+    /// but not when a peer ahead does not serve the next block or no peer is ahead.
-+    #[test]
-+    fn test_quiet_while_tip_block_in_flight() {
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_001, 0);
-+        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
-+        assert!(sync.prepare_block_requests().is_empty());
-+        assert!(sync.requested_all_served(1_000, 1_002));
-+
-+        // A peer ahead whose floor is above the next height to request.
-+        add_peers(&sync, 2, 1, 1_100, 1_050);
-+        assert!(sync.prepare_block_requests().is_empty());
-+        assert!(!sync.requested_all_served(1_000, 1_002));
-+
-+        // No peer ahead, but requests are outstanding.
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_000, 0);
-+        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
-+        assert!(!sync.requested_all_served(1_000, 1_002));
-+    }
-+
-     /// Tests that a `Pruned` reply raises the floor, releases the whole chunk at once, and that the
-     /// chunk is re-issued at once to a peer that serves it.
-     #[test]
+```
+
+**File**: `utilities/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -33,9 +33,9 @@ workspace = true
+ [dependencies.parking_lot]
+ workspace = true
+ 
+-[target.'cfg(locktick)'.dependencies.locktick]
++[target.'cfg(locktick)'.dependencies.snarkvm]
+ workspace = true
+-features = [ "parking_lot", "tokio" ]
++features = [ "utilities" ]
+ 
+ [dev-dependencies.tokio]
+ workspace = true
+```
+
+**File**: `utilities/src/locks.rs` (modified, +10/-5)
+```diff
+@@ -19,6 +19,11 @@
+ //! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
+ //! defines the cargo aliases that set the cfg.
+ //!
++//! `locktick` comes from snarkVM's re-export, `snarkvm::utilities::locktick`, so these locks and
++//! snarkVM's register with one copy of the crate, and [`spawn_lock_reporter`] logs both. Hazard: a
++//! direct dependency on `locktick` can build a second copy, whose `lock_snapshots` misses
++//! snarkVM's locks.
++//!
+ //! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
+ //! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
+ //! that dereferences to the plain guard. Code that passes a guard to an associated function of
+@@ -33,16 +38,16 @@
+ #[cfg(not(locktick))]
+ type Guard<G> = G;
+ #[cfg(locktick)]
+-type Guard<G> = ::locktick::LockGuard<G>;
++type Guard<G> = ::snarkvm::utilities::locktick::LockGuard<G>;
+ 
+ /// Synchronous locks from `parking_lot`.
+ pub mod parking_lot {
+     use super::Guard;
+ 
+-    #[cfg(locktick)]
+-    use ::locktick::parking_lot as backend;
+     #[cfg(not(locktick))]
+     use ::parking_lot as backend;
++    #[cfg(locktick)]
++    use ::snarkvm::utilities::locktick::parking_lot as backend;
+ 
+     pub type Mutex<T> = backend::Mutex<T>;
+     pub type RwLock<T> = backend::RwLock<T>;
+@@ -56,7 +61,7 @@ pub mod tokio {
+     use super::Guard;
+ 
+     #[cfg(locktick)]
+-    use ::locktick::tokio as backend;
++    use ::snarkvm::utilities::locktick::tokio as backend;
+     #[cfg(not(locktick))]
+     use ::tokio::sync as backend;
+ 
+@@ -75,7 +80,7 @@ pub fn spawn_lock_reporter() {
+         loop {
+             tracing::info!("[locktick] checking for active lock guards");
+             let ts = std::time::Instant::now();
+-            let mut infos = ::locktick::lock_snapshots();
++            let mut infos = ::snarkvm::utilities::locktick::lock_snapshots();
+             infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
+ 
+             for lock in infos {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4754** (2026-11-21): Check staging on a 6-hourly schedule instead of on every push (@cbeck88)
 - **PR #4753** (2026-11-21): Bump snarkVM to aleo-labs-protocol/snarkVM@1757a9b84 (@cbeck88)
+- **PR #4752** (2026-11-21): Take locktick from snarkVM's re-export (@cbeck88)
 - **PR #4751** (2026-11-21): CI: remove the start-runner job and fork-pr-runners.yml (@cbeck88)
 - **PR #4750** (2026-11-21): Keep block sync quiet while the tip block is in flight (@eranrund)
 - **PR #4749** (closed): Deserialize snarkVM Data on the blocking pool in snarkOS (@cbeck88)
-- **PR #4748** (2026-11-21): Print the startup error chain without snarkvm::utilities::display_error (@cbeck88)
 
 ---
 
@@ -2206,58 +2354,47 @@ without logging, and skip the "Not block synced yet" trace.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in block_sync.rs
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d41f2d25`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff15a1de`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            if total_requests == 0 {
-            } else if !self.requested_all_served() {
-                trace!(
-                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
-                );
-        } else if self.requested_all_served() {
-            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
-            // block is in flight.
-            vec![]
-            // No sync peers serve the next height to request.
-    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
-    /// ledger or requested.
-    fn requested_all_served(&self) -> bool {
-        let current_height = self.retention_height();
-        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
-        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
-        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
-    }
-
-    /// Tests when block sync has requested every block its peers serve.
-    #[test]
-    fn test_quiet_while_tip_block_in_flight() {
-        let sync = sample_sync
+ "snarkvm",
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            if total_requests != 0 {
-                trace!(
-                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
-                );
-            } else {
-            // This happens if we already requested all advertised blocks.
+ "locktick",
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d41f2d25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff15a1de` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

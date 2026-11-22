@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T02:18:40.246Z",
+  "updated_at": "2026-11-22T02:29:38.928Z",
   "stats": {
-    "total_discovered": 7398,
-    "approved_pending_harvest": 6999,
+    "total_discovered": 7401,
+    "approved_pending_harvest": 7002,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6979,
+      "COMMUNITY_AND_EXPERT": 6982,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -159986,6 +159986,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
         "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-433EB4A30725": {
+      "id": "SRC-433EB4A30725",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T02:29:38.005Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-D08ADD689BB7": {
+      "id": "SRC-D08ADD689BB7",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T02:29:38.055Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-6E9451908B6F": {
+      "id": "SRC-6E9451908B6F",
+      "url": "https://github.com/yuzhichang/pilota",
+      "title": "https://github.com/yuzhichang/pilota",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T02:29:38.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
+        "fileName": "infiniflow-infinity-learnings.md"
       }
     }
   }

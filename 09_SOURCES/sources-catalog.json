@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "fbdb7e41",
+    "sourceVersion": "2ae49a2e",
     "license": "Apache-2.0",
-    "contentHash": "22284158552a865e79073f4e5c35c24313d631f807c7bcbb858f7c8ebe201356",
-    "lastHarvestedAt": "2026-11-22T01:44:08.829Z",
+    "contentHash": "3b7d4e0f3f3adc834f5924aa3464b073d2b3e94c960ab0e84ba2bc2845c4d663",
+    "lastHarvestedAt": "2026-11-22T02:29:34.102Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "3862fd16",
+    "sourceVersion": "ff15a1de",
     "license": "Apache-2.0",
-    "contentHash": "3919bff8a6ca847a991704fc8a036f429364c06081633873aec27c63011af5f2",
-    "lastHarvestedAt": "2026-11-21T21:19:46.039Z",
+    "contentHash": "9809a2d21f8433e6f2466e52bed27c5a76e95eba7febf9c44424697814a8f7ef",
+    "lastHarvestedAt": "2026-11-22T02:29:30.104Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "22c627e7",
+    "sourceVersion": "07c5af63",
     "license": "Apache-2.0",
-    "contentHash": "9e0f5919dbe82c706baa9632557fe3c2b029749eb6571b5ccd1167097e5ff1bd",
-    "lastHarvestedAt": "2026-11-19T18:20:05.503Z",
+    "contentHash": "609b89751a4a9068873d362d26e663634d52198930cc0d8f596d3d2e2cb0e5a0",
+    "lastHarvestedAt": "2026-11-22T02:29:32.380Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -11905,8 +11905,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "632038690498b863934f5484e4bdc9e241bcefc8f0ea241fbeb5786cc713b834",
-    "lastHarvestedAt": "2026-11-17T17:57:39.827Z",
+    "contentHash": "baaaa5725ffc1e692bc41b0ccf3334944f1d0873b22a0c0d52d3a626a06045cf",
+    "lastHarvestedAt": "2026-11-22T02:29:17.624Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf"
   },
   "matthart1983-netwatch": {

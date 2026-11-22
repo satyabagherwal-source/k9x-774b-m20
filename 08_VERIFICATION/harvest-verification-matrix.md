@@ -11979,3 +11979,7 @@
 | `CYCLE-20261122-J98K` | `2026-11-22T02:18:07.364Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md` | Yes (`e278f979...`) |
 | `CYCLE-20261122-JAH0` | `2026-11-22T02:18:08.964Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9881` | Yes (`2d77a7ba...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T02:18:39.549Z` | `czy0729-bangumi` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-60FE0061` [Domain D] | Yes (`22b37053...`) |
+| `CYCLE-20261122-XMER` | `2026-11-22T02:29:17.619Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md` | Yes (`baaaa572...`) |
+| `CYCLE-20261122-XW1F` | `2026-11-22T02:29:30.099Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`9809a2d2...`) |
+| `CYCLE-20261122-XXSO` | `2026-11-22T02:29:32.376Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9882` | Yes (`609b8975...`) |
+| `CYCLE-20261122-XZ4I` | `2026-11-22T02:29:34.098Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9883` | Yes (`3b7d4e0f...`) |

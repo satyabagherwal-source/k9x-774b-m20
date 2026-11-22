@@ -12012,3 +12012,7 @@ Every entry in this ledger must capture:
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `81c1e12a` | Multi-dimensional audit evidence | 2026-11-22T02:18:07.368Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `78271fc2` | Multi-dimensional audit evidence | 2026-11-22T02:18:08.969Z |
 | `learn-dom-d-60fe0061` | `project://czy0729-bangumi` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md` | 2026-11-22T02:18:39.549Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-22T02:29:17.624Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ff15a1de` | Multi-dimensional audit evidence | 2026-11-22T02:29:30.104Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `07c5af63` | Multi-dimensional audit evidence | 2026-11-22T02:29:32.380Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2ae49a2e` | Multi-dimensional audit evidence | 2026-11-22T02:29:34.102Z |

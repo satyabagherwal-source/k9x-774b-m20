@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T02:18:40.644Z",
-  "total_records": 2310,
+  "last_updated": "2026-11-22T02:29:39.291Z",
+  "total_records": 2311,
   "domains": {
     "A": {
       "total": 17,
@@ -1467,7 +1467,7 @@
       ]
     },
     "H": {
-      "total": 548,
+      "total": 549,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2016,7 +2016,8 @@
         "DOM-H-A2EA49E2",
         "DOM-H-149B3A5C",
         "domain_intelligence-technical-construction-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-",
-        "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-learnings-core-invariant"
       ]
     },
     "I": {
@@ -8414,10 +8415,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "496a753259fbe485abcd2ba72bc40befd16fb63515fa99e31f8cc126fc5cae82",
-      "created_at": "2026-11-21T23:47:44.403Z"
+      "content_hash": "c1b9288035387c5ae330ea7f8030f971ba910f8ff3ef98c7d0579d73749d2f14",
+      "created_at": "2026-11-22T02:29:30.481Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9649,8 +9650,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "0d9d4295ec1c8ddba28b33eb493bba1f0fb7b45ebb58c65e4cc35e53cf0f354e",
-      "created_at": "2026-11-21T21:23:02.958Z"
+      "content_hash": "21affbe325103189689d3c4940193fb1a974cae13c9cc114406462c4c57cd64e",
+      "created_at": "2026-11-22T02:29:38.458Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -15389,8 +15390,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "96b458428d196c5a1b0954a14141a61db05d3148fe664d543ca95fcd303165b3",
-      "created_at": "2026-11-22T01:44:09.211Z"
+      "content_hash": "00851876af38016181891e114483f1d147d5f55aa4d9e473788dbfc5e83abac3",
+      "created_at": "2026-11-22T02:29:34.493Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -28521,8 +28522,8 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf-learnings-research-kn.md",
       "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings",
-      "content_hash": "ac1e93fc561b776de21f6aa1a1d3aeed2e4e57c079c738d64671339e5d897586",
-      "created_at": "2026-11-17T17:57:59.496Z"
+      "content_hash": "3ae8da65040a8f5f31458db129da97d5a3304e16de39819e94340d7c9281d994",
+      "created_at": "2026-11-22T02:29:37.694Z"
     },
     "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
@@ -28575,8 +28576,8 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf-research-knowledge-in.md",
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
-      "content_hash": "f87cd199f9f3454fa57a7a8d18c71f8ecb3ba12687f4542c9781baa768d5daf5",
-      "created_at": "2026-11-17T17:57:40.007Z"
+      "content_hash": "652cd409a80b7164283f3ecceafafe8553edb935ecd2b9756b8aa3fd58cda539",
+      "created_at": "2026-11-22T02:29:17.835Z"
     },
     "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-core-invariants",
@@ -34031,8 +34032,8 @@
       "title": "Technical Construction Intelligence: infiniflow/infinity Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-technical-construction-intelligence-infiniflow-infinity-core.md",
       "repository": "infiniflow/infinity",
-      "content_hash": "770e68d8c037f7a86466ca751a19c3ae476fea246f9681239fdfbb5013154825",
-      "created_at": "2026-11-19T18:20:05.828Z"
+      "content_hash": "db53bf033b428d355458b0906a3d70eff8ff5941eab22dbf4e1d43285ab0b8e1",
+      "created_at": "2026-11-22T02:29:32.761Z"
     },
     "DOM-D-2BF9F19D": {
       "record_id": "DOM-D-2BF9F19D",
@@ -38998,6 +38999,15 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-22T02:18:39.522Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: infiniflow-infinity-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-learnings-technical-construction-intelligence-infiniflow-inf.md",
+      "repository": "infiniflow-infinity-learnings",
+      "content_hash": "a621099bcbdec9a009ec13681bb17b5b386c5132491026f7dad67af4226b9895",
+      "created_at": "2026-11-22T02:29:39.291Z"
     }
   }
 }

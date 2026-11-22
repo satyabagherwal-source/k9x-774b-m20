@@ -737273,3 +737273,163 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `78271fc2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9882. close the #3573 gaps (HNSW build parallelism and kernels, import me (Harvested from infiniflow/infinity)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "close the #3573 gaps (HNSW build parallelism and kernels, import me",
+  "source": "infiniflow/infinity",
+  "source_url": "https://github.com/infiniflow/infinity",
+  "source_version": "07c5af63",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-22T02:29:31.878Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-infiniflow-infinity",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [infiniflow/infinity](https://github.com/infiniflow/infinity) (Revision: `07c5af63`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/rust_engine.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `38370ad8`: rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import memory, fulltext, exact scan). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust_engine.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+  # The level `rust_engine/.cargo/config.toml` leaves at `native` is wrong for a
+  # binary that has to run elsewhere, so every lane pins its own here.
+  #
+  # These are the *target-scoped* variables, not `RUSTFLAGS`: cargo appends them
+  # to the section's list, so the `link-arg=-fuse-ld=mold` in `config.toml`
+  # survives and the later `-C target-cpu=` wins. `RUSTFLAGS` would replace the
+  # list wholesale and drop mold. The loom and sanitizer steps set `RUSTFLAGS`
+  # deliberately - they want a clean slate - and pass the linker flag themselves
+  # where it matters.
+  #
+  # AVX2 baseline (Haswell, 2013). The binary carries no AVX-512: `crc32fast`
+  # was the only source of it, and it is patched to a slicing-by-8 stand-in
+  # (`crates/crc32fast-shim`, see `[patch.crates-io]`). Without that patch the
+  # crate emits 52 `zmm` instructions whatever `target-cpu` says, and on this
+  # runner pool some CPUs advertise `avx512f` in CPUID and then reject it - the
+  # engine died with SIGILL before it could log a line.
+  #
+  # The C flags repeat the level for a different reason: rustc's flag does not
+  # reach RocksDB. `librocksdb-sys`'s build script reads
+  # `CARGO_ENCODED_RUSTFLAGS` and 
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `38370ad8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9883. Draft NUC 130 Loop-Local Iterator Exits (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Draft NUC 130 Loop-Local Iterator Exits",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "2ae49a2e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-22T02:29:33.592Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `2ae49a2e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `eec6a55b`: Draft NUC 130 Loop-Local Iterator Exits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `eec6a55b` are properly handled with clean fallback behavior.

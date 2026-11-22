@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T02:18:08.977Z",
+  "last_updated": "2026-11-22T02:29:34.110Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
-      "verified_at": "2026-11-21T23:47:44.032Z",
+      "content_hash": "9809a2d21f8433e6f2466e52bed27c5a76e95eba7febf9c44424697814a8f7ef",
+      "verified_at": "2026-11-22T02:29:30.111Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:47:44.032Z"
+      "last_updated": "2026-11-22T02:29:30.111Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "22284158552a865e79073f4e5c35c24313d631f807c7bcbb858f7c8ebe201356",
-      "verified_at": "2026-11-22T01:44:08.864Z",
+      "content_hash": "3b7d4e0f3f3adc834f5924aa3464b073d2b3e94c960ab0e84ba2bc2845c4d663",
+      "verified_at": "2026-11-22T02:29:34.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T01:44:08.864Z"
+      "last_updated": "2026-11-22T02:29:34.110Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "9e0f5919dbe82c706baa9632557fe3c2b029749eb6571b5ccd1167097e5ff1bd",
-      "verified_at": "2026-11-19T18:20:05.510Z",
+      "content_hash": "609b89751a4a9068873d362d26e663634d52198930cc0d8f596d3d2e2cb0e5a0",
+      "verified_at": "2026-11-22T02:29:32.388Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:20:05.510Z"
+      "last_updated": "2026-11-22T02:29:32.388Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",
@@ -17916,14 +17916,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "632038690498b863934f5484e4bdc9e241bcefc8f0ea241fbeb5786cc713b834",
-      "verified_at": "2026-11-17T17:57:39.837Z",
+      "content_hash": "baaaa5725ffc1e692bc41b0ccf3334944f1d0873b22a0c0d52d3a626a06045cf",
+      "verified_at": "2026-11-22T02:29:17.632Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:57:39.837Z"
+      "last_updated": "2026-11-22T02:29:17.632Z"
     },
     "matthart1983/netwatch": {
       "repository": "matthart1983/netwatch",

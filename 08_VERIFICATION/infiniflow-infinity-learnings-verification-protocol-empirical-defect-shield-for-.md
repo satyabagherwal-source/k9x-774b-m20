@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T21:55:43.364Z",
+  "timestamp": "2026-11-22T02:29:39.017Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-infiniflow-infinity-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [infiniflow-infinity-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T21:55:43.364Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T02:29:39.017Z`  
 > **Learning ID**: `LEARN-EVO-infiniflow-infinity-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `46dbc57a`  
+> **Source Version**: `07c5af63`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T21:55:36.968Z  
+> **Timestamp**: 2026-11-22T02:29:31.345Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:55:36.961Z  
+> **Harvest Timestamp**: 2026-11-22T02:29:31.339Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4766 stars
+- **Stars / Engagement**: 4772 stars
 
 ---
 
@@ -1374,639 +1374,611 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f807c52` (2026-11-15)
-**Commit Message**: Fix: invalidate fulltext index reader cache on compact and import commit (#3424)
+### Incident Patch 1: `38370ad8` (2026-11-21)
+**Commit Message**: rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import memory, fulltext, exact scan) (#3578)
 
-## What problem does this PR solve?
-
-Follow-up to #3418, complementary to #3423 (different hole, no
-overlapping files).
-
-The per-table `TableIndexReaderCache` is invalidated on fulltext index
-create/drop/dump/optimize (`PrepareCommitDumpIndex`) and on cleanup.
-**Compaction and import never invalidate it**: their fulltext chunk
-infos travel through the compact/import txn stores without emitting a
-`WalCmdDumpIndexV2`, so none of the existing invalidation call sites
-fire.
-
-Because the cache freshness test (`begin_ts >= cache_ts_`) is satisfied
-by every transaction once the cache has been built, the consequences
-are:
-
-- **After COMPACT commits**: fulltext queries keep being answered by
-cached `ColumnIndexReader`s over the *deprecated* segments, and never
-see the compacted segment — silently wrong results. When the cleanup
-task later physically frees the deprecated chunks, the cached readers
-dangle, which is the same failure mode as the server crash in #3418.
-- **After IMPORT commits**: the imported rows are invisible to fulltext
-search until an unrelated append/dump/cleanup happens to invalidate the
-cache
-
-**File**: `src/storage/new_txn/new_txn_data_impl.cpp` (modified, +48/-0)
+**File**: `.github/workflows/rust_engine.yml` (modified, +63/-2)
 ```diff
-@@ -36,6 +36,7 @@ import :block_meta;
- import :segment_meta;
- import :table_meta;
- import :table_index_meta;
-+import :index_base;
- import :segment_index_meta;
- import :new_catalog;
- import :meta_key;
-@@ -67,6 +68,7 @@ import third_party;
- import column_def;
- import row_id;
- import constant_expr;
-+import create_index_info;
- import data_type;
+@@ -43,6 +43,52 @@ env:
+   RUST_DESELECT: |
+     python/restart_test/test_cross_engine_bytes_60_storage.py::test_the_port_round_trips_through_object_storage
  
- namespace infinity {
-@@ -1735,6 +1737,34 @@ Status NewTxn::PrepareCommitImport(WalCmdImportV2 *import_cmd) {
- 
-     BuildFastRoughFilterTask::ExecuteOnNewSealedSegment(&segment_meta);
- 
-+    {
-+        // The imported segment's fulltext index chunks are carried by the import txn store,
-+        // not by a WalCmdDumpIndexV2, so the invalidation in PrepareCommitDumpIndex never
-+        // fires here: without this, cached readers keep serving a chunk list that misses
-+        // the imported segment.
-+        std::vector<std::string> *index_id_strs_ptr = nullptr;
-+        std::vector<std::string> *index_name_strs_ptr = nullptr;
-+        status = table_meta.GetIndexIDs(index_id_strs_ptr, &index_name_strs_ptr);
-+        if (!status.ok()) {
-+            return status;
-+        }
-+        size_t index_count = index_id_strs_ptr->size();
-+        for (size_t idx = 0; idx < index_count; ++idx) {
-+            TableIndexMeta table_index_meta(index_id_strs_ptr->at(idx), index_name_strs_ptr->at(idx), table_meta);
-+            auto [index_base, index_status] = table_index_meta.GetIndexBase();
-+            if (!index_status.ok()) {
-+                return index_status;
-+            }
-+            if (index_base->index_type_ == IndexType::kFullText) {
-+                status = table_meta.InvalidateFtIndexCache();
-+                if (!status.ok()) {
-+                    return status;
-+                }
-+                break;
-+            }
-+        }
-+    }
++  # The level `rust_engine/.cargo/config.toml` leaves at `native` is wrong for a
++  # binary that has to run elsewhere, so every lane pins its own here.
++  #
++  # These are the *target-scoped* variables, not `RUSTFLAGS`: cargo appends them
++  # to the section's list, so the `link-arg=-fuse-ld=mold` in `config.toml`
++  # survives and the later `-C target-cpu=` wins. `RUSTFLAGS` would replace the
++  # list wholesale and drop mold. The loom and sanitizer steps set `RUSTFLAGS`
++  # deliberately - they want a clean slate - and pass the linker flag themselves
++  # where it matters.
++  #
++  # AVX2 baseline (Haswell, 2013). The binary carries no AVX-512: `crc32fast`
++  # was the only source of it, and it is patched to a slicing-by-8 stand-in
++  # (`crates/crc32fast-shim`, see `[patch.crates-io]`). Without that patch the
++  # crate emits 52 `zmm` instructions whatever `target-cpu` says, and on this
++  # runner pool some CPUs advertise `avx512f` in CPUID and then reject it - the
++  # engine died with SIGILL before it could log a line.
++  #
++  # The C flags repeat the level for a different reason: rustc's flag does not
++  # reach RocksDB. `librocksdb-sys`'s build script reads
++  # `CARGO_ENCODED_RUSTFLAGS` and takes the *first* `target-cpu` it finds
++  # (`rustflags::from_env().find_map()`), which is the `native` in
++  # `rust_engine/.cargo/config.toml` - the override above only wins for rustc,
++  # which takes the last. So the C++ side was always `-march=native`: built on
++  # an AMD runner it carried `insertq` (SSE4a, AMD-only), and an Intel Xeon
++  # 6975P-C died in `rocksdb::ImmutableDBOptions` with SIGILL while an EPYC ran
++  # the same artifact fine. `cc` appends `CFLAGS`/`CXXFLAGS` after every flag
++  # the build script sets, so repeating the level here is what pins RocksDB.
++  CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: >-
++    -C target-cpu=x86-64-v3
++  CFLAGS_x86_64_unknown_linux_gnu: -march=x86-64-v3 -mpclmul
++  CXXFLAGS_x86_64_unknown_linux_gnu: -march=x86-64-v3 -mpclmul
++  # ARMv9-A with SVE2, which is what `ubuntu-24.04-arm` (Azure Cobalt 100) is.
++  # The default `generic` has NEON only, so `f32x8` would split across two
++  # 128-bit registers. macOS lanes are `aarch64-apple-darwin` and read neither
++  # variable - Apple Silicon has no SVE and must not inherit this.
++  #
++  # `CFLAGS`/`CXXFLAGS` repeat the level for the same reason as on x86_64: the
++  # RocksDB build script takes the first `target-cpu`, which is the `native`
++  # in `rust_engine/.cargo/config.toml`. On this triple `native` and
++  # `neoverse-n2` describe the same hardware, so the repeat changes nothing
++  # today; it keeps the two sides from drifting if the pin ever moves.
++  CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS: >-
++    -C target-cpu=neoverse-n2
++  CFLAGS_aarch64_unknown_linux_gnu: -mcpu=neoverse-n2
++  CXXFLAGS_aarch64_unknown_linux_gnu: -mcpu=neoverse-n2
 +
-     PersistenceManager *pm = InfinityContext::instance().persistence_manager();
-     if (pm != nullptr) {
-         // When all data and index is write to disk, try to finalize the
-@@ -2060,12 +2090,30 @@ Status NewTxn::PrepareCommitCompact(WalCmdCompactV2 *compact_cmd) {
-         if (!status.ok()) {
-             return status;
-         }
-+        bool ft_index_cache_invalidated = false;
-         size_t index_count = index_id_strs_ptr->size();
-         for (size_t idx = 0; idx < index_count; ++idx) {
-             const std::string &index_id_str = index_id_strs_ptr->at(idx);
-             const std::string &index_name_str = index_name_strs_ptr->at(idx);
- 
-             TableIndexMeta table_index_meta(index_id_str, index_name_str, table_meta);
-+
-+            auto [index_base, index_status] = table_index_meta.GetIndexBase();
-+            if (!index_status.ok()) {
-+                return index_status;
-+            }
-+            if (index_base->index_type_ == IndexType::kFullText && !ft_index_cache_invalidated) {
-+                // The compacted segment's fulltext index chunks are carried by the compact txn
-+                // store, not by a WalCmdDumpIndexV2, so the invalidation in
-+                // PrepareCommitDumpIndex never fires here: without this, cached readers keep
-+                // serving the deprecated segments and never see the compacted one.
-+                status = table_meta.InvalidateFtIndexCache();
-+                if (!status.ok()) {
-+                    return status;
-+                }
-+                ft_index_cache_invalidated = true;
-+            }
-+
-             std::vector<SegmentID> *segment_ids_ptr = nullptr;
-             std::tie(segment_ids_ptr, status) = table_index_meta.GetSegmentIndexIDs1();
-             if (!status.ok()) {
+ jobs:
+   quality:
+     # Gate F: formatting, lints, licenses / advisories.
+@@ -660,6 +706,8 @@ jobs:
+         # `/var/infinity/test_data`; this is the same generate-and-copy step
+         # the other Go jobs run.
+         run: uv run --python 3.13 python3 tools/sqllogictest.py -jc=1
++      - name: Check the binary can run on this CPU
++        run: ./scripts/check_engine_binary.sh ./bin/infinity conf/infinity_conf.toml
+       - name: Start the engine
+         # `ulimit -n` is for the many-client case: it holds 5 000 sockets and
+         # the server, started here with the same limit, holds the 5 000 it
+@@ -721,6 +769,12 @@ jobs:
+       - uses: astral-sh/setup-uv@v7
+       - name: Install the SDK and the test dependencies
+         run: uv sync --python 3.13 --extra test --index-url https://pypi.org/simple/
++      - name: Check the binary can run on this CPU
++        # The binary is built on one runner and executed on another, so a
++        # `target-cpu` the executor lacks shows up as a bare SIGILL with an
++        # empty log - which is what "unhealthy in 60s" looked like when this was
++        # first pinned to a level.
++        run: ./scripts/check_engine_binary.sh ./bin/infinity conf/infinity_conf.toml
+       - name: Start the engine
+         run: |
+           nohup ./bin/infinity --config=conf/infinity_conf.toml > infinity.log 2>&1 &
+@@ -792,6 +846,8 @@ jobs:
+         # generate-and-copy step the reference's jobs run (`-jc` copies without
+         # running the .slt suite).
+         run: uv run --python 3.13 python3 tools/sqllogictest.py -jc=1
++      - name: Check the binary can run on this CPU
++        run: ./scripts/check_engine_binary.sh ./bin/infinity conf/infinity_conf.toml
+       - name: Start the engine
+         run: |
+           nohup ./bin/infinity --config=conf/infinity_conf.toml > infinity.log 2>&1 &
+@@ -845,6 +901,8 @@ jobs:
+         # The HTTP suite runs the same PySDK cases (`--http`), impo
 ```
 
----
-
-### Incident Patch 2: `91e45e52` (2026-11-15)
-**Commit Message**: Fix: invalidate fulltext index reader cache on chunk-level cleanup (server crash, #3418) (#3423)
-
-## What & why
-
-Fixes the server-killing fulltext crash reported in #3418 (full
-root-cause analysis in [this
-comment](https://github.com/infiniflow/infinity/issues/3418#issuecomment-5446559296)).
-
-`CleanSegmentIndex` invalidates `TableIndexReaderCache` before
-destroying segment index data, but `CleanChunkIndex` did not — while
-**chunk-level cleanup is the normal path for merged-away fulltext
-chunks**. `ChunkIndexMeta::UninitSet` deletes the chunk's `.pos`/`.dic`
-files and releases its column-length `BufferObj` (later destroyed by
-`BufferManager::RemoveClean`), yet the reader cache kept serving
-`DiskIndexSegmentReader`s (raw mmap pointers) and raw `BufferObj*`s over
-that freed data — `GetIndexReader`'s `begin_ts >= cache_ts_` test never
-expires on its own. The first fulltext query after the cleanup commit
-(Begin TS == cleanup KV commit TS in our production logs) then decoded
-garbage postings and crashed the whole server inside
-`FastPForLib::simdunpack` (via `TermDocIterator::BM25Score`),
-deterministically per term.
-
-## Change
-
-Mirror the exact guarded invalidation `CleanSegmentIndex` alr
-
-**File**: `src/storage/catalog/new_catalog.cppm` (modified, +1/-1)
+**File**: `AGENTS.md` (modified, +338/-0)
 ```diff
-@@ -326,7 +326,7 @@ public:
- 
-     static Status LoadFlushedChunkIndex1(SegmentIndexMeta &segment_index_meta, const WalChunkIndexInfo &chunk_info, NewTxn *new_txn);
- 
--    static Status CleanChunkIndex(ChunkIndexMeta &chunk_index_meta, UsageFlag usage_flag);
-+    static Status CleanChunkIndex(ChunkIndexMeta &chunk_index_meta, UsageFlag usage_flag, bool invalidate_ft_cache = true);
- 
-     static Status GetColumnVector(ColumnMeta &column_meta,
-                                   const std::shared_ptr<ColumnDef> &col_def,
+@@ -97,3 +97,341 @@ When executing shell commands:
+ - If an environment variable is required, ask the user to configure it permanently (e.g., via pytest.ini, .env, or shell profile) instead of injecting it inline.
+ - ONLY execute direct commands like "pytest", "python -m pytest", or "uv run pytest".
+ - NEVER use chained commands with "&&", ";", or "|".
++
++## 7. Rust Engine — Async Conventions
++
++The engine runs every statement on **one** runtime. That runtime is the only
++place a request can make progress, so a worker held while waiting is a
++potential deadlock, not merely a slow path. Every rule below follows from one
++direction:
++
++> **Write the async form first. A synchronous form may exist only where
++> something outside the engine forces it, and it must say so.**
++
++Two consequences shape the rest of this section. First, "it compiles and the
++tests pass" is not evidence that a conversion is right — a parked worker only
++misbehaves under concurrency. Second, the absence of the word `block_on` is not
++evidence that a call is safe; most of the stalls in this engine's history came
++from ordinary synchronous calls made from the wrong place.
++
++### 7.1 Default direction: convert, do not bridge
++
++When a synchronous call site needs an asynchronous callee, the answer is
++**make the chain async**, not "wrap it in `block_on`". Work down this list and
++stop at the first step that applies:
++
++1. **Make the caller `async`.** If its caller is also ours, convert that too.
++   Keep going up until you reach a boundary you genuinely do not own. This is
++   the normal path — most conversions end here, and each one removes a place
++   where a thread can be parked.
++2. **Move the operation off the path.** If the caller cannot become async (a
++   `Drop`, a callback from a foreign synchronous API), restructure so the wait
++   happens somewhere that can await, instead of parking a thread mid-chain.
++3. **Scope the bridge.** If a bridge is truly unavoidable, make it one
++   well-named function that states why, or gate it behind `#[cfg(test)]` so
++   production cannot reach it. One bridge, one comment, one place.
++4. **Only then** keep a `block_on` — under the conditions in §7.4.
++
++Two habits to avoid, both of which cost real debugging time:
++
++- **Do not add a sync twin "for flexibility".** A synchronous variant beside
++  the async one, written because it was convenient at one call site, ends up
++  bridging a lock that the async path needs and deadlocks the commit. If nobody
++  needs the sync form, do not write it.
++- **Do not treat an existing `block_on` as furniture.** Each one was a decision
++  made under constraints that may no longer hold. Re-derive it: "who calls
++  this, and can they await?" If the answer is "nobody", delete it (§7.13); if
++  it is "our code, and it can", convert it.
++
++The asymmetry is deliberate: an `async fn` costs a caller nothing it cannot
++already do, while a parked thread costs a worker and a deadlock risk that only
++appears under load. When the choice is unclear, prefer the async form and keep
++the boundary explicit at the outermost edge rather than scattered through the
++middle.
++
++### 7.2 Nothing blocking may run inside a task
++
++> **A task may not be paused for an unbounded time while holding a worker.**
++
++The loudest violation is a `block_on` inside an `async fn`: it parks the
++worker outright. If the awaited work needs a worker to finish (a bottom half, a
++row allocator, a fan-out on the blocking pool, a `tokio::sync::Mutex` held by
++another task), the process deadlocks instead of failing.
++
++The quiet violations are just as real and contain none of those words:
++
++- **A synchronous system call** — `fsync`, `rename`, `mmap` faults, a
++  synchronous database batch, a DNS lookup, `std::thread::sleep`. A `fsync`
++  during a checkpoint runs on whichever worker called it, and a slow disk
++  stalls every task behind it.
++- **A `std::sync::Mutex` held across an `.await`** — the same stall one layer
++  up (§7.8).
++- **A CPU-bound leaf** — encoding a batch of rows, decoding a block, walking a
++  graph — left on a worker (§7.10).
++- **A blocking channel receive or a thread join** on the request path.
++
++Apply the test literally: *can this task be paused for an unbounded time while
++holding a worker?* If yes, it is a bug however it is spelled. §7.1 says how to
++get out of it; §7.4 lists the cases where the answer may legitimately be "yes".
++
++### 7.3 I/O and the system-call boundary
++
++Prefer an asynchronous I/O API whenever the library offers one. `tokio::fs`
++covers open, read, write, `sync_all`, `rename`, `create_dir_all` and the rest;
++using it means the syscall happens on the blocking pool while the worker stays
++free. The same applies to sockets, timers and channels — if there is an async
++form, the synchronous form has no reason to exist on a request path.
++
++Some operations have **no** portable async form. The common case is opening a
++*directory* to `fsync` it after a rename, which `tokio::
 ```
 
-**File**: `src/storage/catalog/new_catalog_static_impl.cpp` (modified, +19/-2)
+**File**: `python/restart_test/bytes_common.py` (modified, +9/-1)
 ```diff
-@@ -1037,7 +1037,7 @@ Status NewCatalog::CleanSegmentIndex(SegmentIndexMeta &segment_index_meta, Usage
+@@ -198,6 +198,14 @@ def _config(root, engine, pg_port, quota="2GB"):
+       row-capacity trigger as the only dumps.
+     """
+     persistence = "" if engine == "cpp" else f"{root}/persistence"
++    # The Rust CLI serves Thrift, HTTP and PG from **one** process and refuses a
++    # `client_port` that is already bound: with both set to `pg_port` it starts
++    # the PG listener and then aborts with "cannot serve on ...: 127.0.0.1:...
++    # is bound by another process". These harnesses drive everything over PG,
++    # so PG keeps `pg_port` and Thrift moves one port up. The C++ engine is left
++    # alone: its config has always used the default, and its front ends are
++    # separate processes, so the two ports never meet.
++    client_port_line = f"client_port = {pg_port + 1}" if engine == "rust" else ""
+     return f"""
+ [general]
+ version = "0.7.4"
+@@ -209,7 +217,7 @@ def _config(root, engine, pg_port, quota="2GB"):
+ peer_ip = "0.0.0.0"
+ peer_port = 23851
+ postgres_port = {pg_port}
+-
++{client_port_line}
+ [log]
+ log_dir = "{root}/log"
+ log_to_stdout = true
+```
+
+**File**: `rust_engine/.cargo/config.toml` (modified, +78/-4)
+```diff
+@@ -6,8 +6,82 @@
+ CC = "clang"
+ CXX = "clang++"
+ 
+-# Link with mold. A full link of this workspace is dominated by the ~40 MB
+-# binary plus the static RocksDB, and mold does that several times faster than
+-# the system `ld` without changing the output.
++# One section per target triple, so each architecture gets its own baseline and
++# neither can affect the other. `cargo` only reads the section whose triple it
++# is building for: an `aarch64-unknown-linux-gnu` build never sees the x86_64
++# flags, and the macOS lanes (`aarch64-apple-darwin`) match no section here at
++# all - Apple Silicon has no SVE, so it must not inherit the Linux ARMv9 one.
++#
++# `target-cpu=native` is the local default: a developer's build uses whatever
++# the machine has, which is the right answer when the binary only runs there.
++# A release cannot use it - the output would depend on whichever runner the job
++# landed on, and a machine with AVX-512 would emit `zmm` the users' CPUs fault
++# on. The release and test lanes override it with
++# `CARGO_TARGET_<TRIPLE>_RUSTFLAGS`, which **appends** to this list rather than
++# replacing it: the later `-C target-cpu=...` wins, and the `link-arg` below
++# survives. (Setting `RUSTFLAGS` instead would replace the list wholesale and
++# drop mold, so the CI must use the target-scoped variable.)
++#
++# `link-arg=-fuse-ld=mold` stays in each section for that reason: a full link of
++# this workspace is dominated by the ~40 MB binary plus the static RocksDB, and
++# mold does that several times faster than the system `ld` without changing the
++# output.
+ [target.x86_64-unknown-linux-gnu]
+-rustflags = ["-C", "link-arg=-fuse-ld=mold"]
++rustflags = [
++    "-C", "link-arg=-fuse-ld=mold",
++    "-C", "target-cpu=native",
++]
++
++# The CI override for this triple is
++#   -C target-cpu=x86-64-v3
++# plus `CFLAGS`/`CXXFLAGS_x86_64_unknown_linux_gnu="-march=x86-64-v3 -mpclmul"`
++# for the C side.
++#
++# The C flags need the level spelled out, and not only `-mpclmul`: this file's
++# `native` still reaches `librocksdb-sys`, whose build script takes the *first*
++# `target-cpu` in `CARGO_ENCODED_RUSTFLAGS` while rustc takes the last. A
++# `-march=native` build on an AMD host therefore emits SSE4a (`insertq`) into
++# RocksDB, which faults on any Intel CPU.
++#
++# `crc32fast` is patched to a SIMD-free stand-in, so nothing here pulls in an
++# AVX-512 path that a hypervisor might advertise and then reject.
++#
++# `x86-64-v3` is the AVX2 baseline (Haswell, 2013). Without it the default
++# `x86-64` target has only SSE2, and `std::simd`'s `f32x8` is split into two
++# 128-bit halves: the exact scan's `l2_sq` came out as `subps`/`mulps`/`addps`
++# with no `ymm` register at all. With v3 the same kernel is one
++# `vsubps`/`vmulps`/`vaddps` over 256 bits, which took the SIFT 1M brute-force
++# scan from 39.4 to 34.9 ms p50.
++#
++# RocksDB's `crc32c.cc` calls `_mm_clmulepi64_si128`, and no x86-64-vN level
++# defines `__PCLMUL__` (v3 and v4 both leave it undefined), so the C compiler
++# needs `-mpclmul` or the build dies with
++# `'__builtin_ia32_pclmulqdq128' needs target feature pclmul`.
++#
++# That flag belongs on `CFLAGS`, **not** on `-C target-feature=+pclmulqdq`.
++# Giving it to rustc makes LLVM emit 52 AVX-512 instructions elsewhere in the
++# binary - measured: `zmm` goes 0 -> 52 with the target feature, 0 without.
++# `native` implies `pclmul` anyway, which is why the local default needs no
++# separate flag.
++
++# aarch64 Linux. The CI override for this triple is
++#   -C target-cpu=neoverse-n2
++#
++# `neoverse-n2` is the CPU in `ubuntu-24.04-arm` (Azure Cobalt 100) and the
++# smallest named ARMv9 profile `rustc` knows: it enables `v9a` plus `sve2`, so
++# `std::simd`'s `f32x8` can use 256-bit SVE registers instead of being split
++# across two 128-bit NEON ones. The default `generic` target has `neon` only.
++#
++# This is a bigger commitment than the x86 side: `sve2` is absent from ARMv8
++# parts, and a binary built this way faults on them. It is pinned because the
++# release lane and the arm64 test lane both run on that hardware; a build meant
++# for older ARM servers needs the override changed to `generic`.
++#
++# The CI also sets `CFLAGS`/`CXXFLAGS_aarch64_unknown_linux_gnu=-mcpu=neoverse-n2`,
++# for the same reason as on x86_64: the RocksDB build script sees the `native`
++# above, not this override.
++[target.aarch64-unknown-linux-gnu]
++rustflags = [
++    "-C", "link-arg=-fuse-ld=mold",
++    "-C", "target-cpu=native",
++]
+```
+
+**File**: `rust_engine/Cargo.lock` (modified, +1/-7)
+```diff
+@@ -629,11 +629,6 @@ dependencies = [
+ [[package]]
+ name = "crc32fast"
+ version = "1.5.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "01a7799fd6b852db0e61728dde9a204c423b44d689dbd432522543614b490e78"
+-dependencies = [
+- "cfg-if",
+-]
+ 
+ [[package]]
+ name = "crossbeam-deque"
+@@ -3231,7 +3226,6 @@ name = "storage"
+ version = "0.1.0"
+ dependencies = [
+  "common",
+- "crc32fast",
+  "hmac",
+  "index",
+  "lz4_flex 0.13.1",
+@@ -3244,6 +3238,7 @@ dependencies = [
+  "serde_json",
+  "sha2",
+  "tempfile",
++ "tokio",
+ ]
+ 
+ [[package]]
+@@ -3626,7 +3621,6 @@ name = "txn"
+ version = "0.1.0"
+ dependencies = [
+  "common",
+- "futures-executor",
+  "loom",
+  "storage",
+  "tempfile",
+```
+
+**File**: `rust_engine/Cargo.toml` (modified, +23/-3)
+```diff
+@@ -31,15 +31,20 @@ warnings = "deny"
+ 
+ [workspace.dependencies]
+ rust-stemmers = "1.2"
+-# block_on for the synchronous Engine::execute adapter (tests / cli / bin tools)
+-futures-executor = "0.3"
+ tokio = { version = "1", default-features = false, features = [
+     "rt",
+     "rt-multi-thread",
+     "net",
+     "sync",
+     "time",
+     "io-util",
++    # `#[tokio::test]`: the engine's writes are async now, so a test that
++    # compacts or checkpoints drives them with `.await` instead of a
++    # synchronous bridge.
++    "macros",
++    # `tokio::fs::*`: the server's `SHOW` handlers stat the block mirror; the
++    # async form keeps the reactor thread out of the syscall.
++    "fs",
+ ] }
+ common = { path = "crates/common" }
+ storage = { path = "crates/storage" }
+@@ -62,7 +67,6 @@ hmac = "0.12"
+ sha2 = "0.10"
+ rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+ rustls-native-certs = "0.8"
+-crc32fast = "1"
+ memmap2 = "0.9"
+ thiserror = "1"
+ tempfile = "3"
+@@ -76,3 +80,19 @@ serde_json = "1"
+ [patch.crates-io]
+ pilota = { git = "https://github.com/yuzhichang/pilota", branch = "fix/thrift-reference-field" }
+ pilota-thrift-parser = { git = "https://github.com/yuzhichang/pilota", branch = "fix/thrift-reference-field" }
++
++# `crc32fast` compiles an AVX-512 path (`calculate_avx512`) behind
++# `#[target_feature(enable = "avx512f")]`, which lands in the binary whatever
++# `target-cpu` says: measured, 52 `zmm` instructions when building for
++# `x86-64-v3` and 26 for `x86-64-v2`. A binary that carries instructions its CPU
++# rejects dies with SIGILL before it can log anything, and a crate-level flag
++# cannot remove a `#[target_feature]` function.
++#
++# It arrives through `parquet -> flate2` as well as directly, so patching is the
++# only way to keep AVX2 in the rest of the build without carrying that path. The
++# stand-in is the same slicing-by-8 CRC with no SIMD.
++#
++# This is not what the Xeon SIGILL turned out to be - that was an `insertq` in
++# RocksDB built with `-march=native`, fixed by the CI's `CXXFLAGS`. The patch
++# stays because the hazard it removes is real on its own.
++crc32fast = { path = "crates/crc32fast-shim" }
+```
+
+**File**: `rust_engine/crates/cli/examples/result_bench.rs` (modified, +15/-8)
+```diff
+@@ -30,19 +30,23 @@ fn rows_of(result: &[QueryResult]) -> usize {
      }
-     for (ChunkID chunk_id : *chunk_ids_ptr) {
-         ChunkIndexMeta chunk_index_meta(chunk_id, segment_index_meta);
--        status = NewCatalog::CleanChunkIndex(chunk_index_meta, usage_flag);
-+        status = NewCatalog::CleanChunkIndex(chunk_index_meta, usage_flag, /*invalidate_ft_cache=*/false);
-         if (!status.ok()) {
-             return status;
-         }
-@@ -1149,12 +1149,29 @@ Status NewCatalog::LoadFlushedChunkIndex1(SegmentIndexMeta &segment_index_meta,
-     return Status::OK();
  }
  
--Status NewCatalog::CleanChunkIndex(ChunkIndexMeta &chunk_index_meta, UsageFlag usage_flag) {
-+Status NewCatalog::CleanChunkIndex(ChunkIndexMeta &chunk_index_meta, UsageFlag usage_flag, bool invalidate_ft_cache) {
-     LOG_TRACE(fmt::format("CleanChunkIndex: cleaning table id: {}, segment_id: {}, index_id: {}, chunk_id: {}",
-                           chunk_index_meta.segment_index_meta().table_index_meta().table_meta().table_id_str(),
-                           chunk_index_meta.segment_index_meta().segment_id(),
-                           chunk_index_meta.segment_index_meta().table_index_meta().index_id_str(),
-                           chunk_index_meta.chunk_id()));
-+    if (usage_flag != UsageFlag::kTransform && invalidate_ft_cache) {
-+        // Invalidate the fulltext index reader cache before the chunk's data
-+        // (posting/dictionary files, column-length buffer) is physically
-+        // destroyed below. Chunk-level cleanups (the normal path for
-+        // merged-away fulltext chunks) did not do this:
-+        // TableIndexReaderCache::GetIndexReader would keep serving cached
-+        // DiskIndexSegmentReaders and raw BufferObj pointers over freed data,
-+        // and the first fulltext query after the cleanup commit crashed the
-+        // server in the posting decoder (see issue #3418).
-+        // CleanSegmentIndex invalidates once for the whole segment and passes
-+        // invalidate_ft_cache = false to skip the redundant per-chunk calls.
-+        TableMeta &table_meta = chunk_index_meta.segment_index_meta().table_index_meta().table_meta();
-+        Status invalidate_status = table_meta.InvalidateFtIndexCache();
-+        if (!invalidate_status.ok()) {
-+            return invalidate_status;
-+        }
-+    }
-     chunk_index_meta.RestoreSet();
-     Status status;
+-fn best(e: &Engine, sql: &str, runs: usize) -> (Duration, usize) {
++async fn best(e: &Engine, sql: &str, runs: usize) -> (Duration, usize) {
+     let mut best = Duration::from_secs(3600);
+     let mut rows = 0;
+     for _ in 0..runs {
+         let t0 = Instant::now();
+-        let out = e.execute_blocking(sql).expect("execute");
++        let out = e.execute(sql).await.expect("execute");
+         best = best.min(t0.elapsed());
+         rows = rows_of(&out);
+     }
+     (best, rows)
+ }
  
-```
-
----
-
-### Incident Patch 3: `e07b634a` (2026-11-15)
-**Commit Message**: Rust engine: make HNSW usable at 1M rows (memory-segment training, index-only query path, reference-aligned LSG) (#3564)
-
-## What
-
-Three HNSW changes in the Rust engine, all measured end-to-end (`SEARCH
-MATCH VECTOR`, 128-dim, `M=16`, `ef_construction=200`, LVQ):
-
-1. **Train the memory segment before its first batch** — a fresh `CREATE
-INDEX` used to build rows over an untrained store (LVQ mean / RaBitQ
-centroid / LSG state all zero), so recall was visibly worse than the
-same index after a restart.
-2. **Zero-copy batch build + parallel LSG averages** — the graph build
-borrows the batch instead of cloning it, and the per-row LSG averages
-(`rows × samples × dims`) are computed across cores.
-3. **Reference-aligned LSG, and a query path that never touches the
-whole table.**
-
-## Why
-
-### LSG diverged from the reference
-
-The reference parses/validates/persists `lsg_config` and constructs an
-`HnswLSGBuilder` for `build_type=lsg` (`hnsw_handler_impl.cpp:218`), but
-**no production path trains it**: `InsertSampleVecs` / `InsertLSAvg` /
-`SetLSGParam` appear only in `test_lsg_build_ut.cpp`, and
-`HnswHandler::InsertVecs` (`hnsw_handler.cppm:151`) goes straight from
-`StoreData` to `Build`. So `L
-
-**File**: `rust_engine/crates/analyzer/src/core.rs` (modified, +16/-3)
-```diff
-@@ -80,6 +80,18 @@ thread_local! {
- /// C++: the shipped resource root (`InfinityContext::config()` fallback).
- pub const DEFAULT_RESOURCE_PATH: &str = "/usr/share/infinity/resource";
- 
-+/// The resource root [`AnalyzerPool::instance`] loads its dictionaries from.
-+///
-+/// `INFINITY_RESOURCE_PATH` names a checkout of the resource tree, the way a
-+/// host that does not install to the shipped location points at its copy; it
-+/// falls back to [`DEFAULT_RESOURCE_PATH`]. The same variable is what
-+/// `crates/analyzer-ffi/tests/c_api.rs` uses, so one setting drives both.
-+pub fn resource_path() -> std::path::PathBuf {
-+    std::env::var_os("INFINITY_RESOURCE_PATH")
-+        .map(std::path::PathBuf::from)
-+        .unwrap_or_else(|| std::path::PathBuf::from(DEFAULT_RESOURCE_PATH))
+ fn main() {
++    executor::scheduler().block_on_runtime(run());
 +}
 +
- /// C++: `AnalyzerPool` (`analyzer_pool.cppm`) — parses an analyzer name and
- /// hands out a fresh analyzer.
- ///
-@@ -503,11 +515,12 @@ pub fn is_constructible_analyzer_name(name: &str) -> bool {
- impl AnalyzerPool {
-     /// C++: `Singleton<AnalyzerPool>::instance()`.
-     ///
--    /// Loads from the shipped resource root; a host that keeps the dictionaries
--    /// elsewhere builds its own with [`Self::with_resource_path`].
-+    /// Loads from [`resource_path`] (`INFINITY_RESOURCE_PATH`, else the shipped
-+    /// root); a host that needs several roots builds its own with
-+    /// [`Self::with_resource_path`].
-     pub fn instance() -> &'static AnalyzerPool {
-         static INSTANCE: OnceLock<AnalyzerPool> = OnceLock::new();
--        INSTANCE.get_or_init(|| Self::with_resource_path(DEFAULT_RESOURCE_PATH))
-+        INSTANCE.get_or_init(|| Self::with_resource_path(resource_path()))
++async fn run() {
+     let dir = std::env::args()
+         .nth(1)
+         .unwrap_or_else(|| "/tmp/result-bench".into());
+@@ -51,21 +55,24 @@ fn main() {
+         .and_then(|s| s.parse().ok())
+         .unwrap_or(40000);
+     let _ = std::fs::remove_dir_all(&dir);
+-    let e = Engine::open(&dir).expect("open");
+-    let _ = e.execute_blocking("DROP TABLE IF EXISTS t;");
+-    let _ = e.execute_blocking("CREATE TABLE t (id INT, name VARCHAR);");
++    let e = Engine::open_async(&dir, Default::default())
++        .await
++        .expect("open");
++    let _ = e.execute("DROP TABLE IF EXISTS t;").await;
++    let _ = e.execute("CREATE TABLE t (id INT, name VARCHAR);").await;
+     let mut i = 0;
+     while i < n {
+         let batch = (n - i).min(100);
+         let vals: Vec<String> = (0..batch)
+             .map(|j| format!("({}, 'v{}')", i + j, i + j))
+             .collect();
+-        e.execute_blocking(&format!("INSERT INTO t VALUES {};", vals.join(", ")))
++        e.execute(&format!("INSERT INTO t VALUES {};", vals.join(", ")))
++            .await
+             .expect("insert");
+         i += batch;
      }
+     let t0 = Instant::now();
+-    executor::block_on(e.flush()).expect("flush");
++    e.flush().await.expect("flush");
+     println!("checkpoint: {:?}", t0.elapsed());
  
-     /// A pool whose dictionary-driven families load from `dir`.
+     for sql in [
+@@ -76,7 +83,7 @@ fn main() {
+         "SELECT * FROM t ORDER BY id;",
+         "SELECT count(*) FROM t;",
+     ] {
+-        let (elapsed, rows) = best(&e, sql, 5);
++        let (elapsed, rows) = best(&e, sql, 5).await;
+         println!("{elapsed:>12?}  {rows:>6} rows  {sql}");
+     }
+     let _ = std::fs::remove_dir_all(&dir);
 ```
 
-**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +30/-6)
+**File**: `rust_engine/crates/cli/src/fulltext_bench.rs` (modified, +25/-22)
 ```diff
-@@ -3565,6 +3565,11 @@ impl Engine {
-     /// The buffered rows among `ids`, looked up once for the whole batch: the
-     /// per-row `pending_row` paid a `table_key` (a formatted, lowercased
-     /// string) and a lock for every id.
-+    ///
-+    /// The walk runs over `ids`, not over the buffer: the buffer holds every
-+    /// row written since the last checkpoint, so scanning it made a query that
-+    /// needs ten rows pay for the whole table (`pending_pos` / the id-sorted
-+    /// buffer answer a lookup in O(1)/O(log n)).
-     pub(crate) fn buffered_rows_for(
-         &self,
-         table: &str,
-@@ -3578,11 +3583,12 @@ impl Engine {
-         if entry.pending_rows.is_empty() {
-             return Default::default();
+@@ -165,7 +165,7 @@ fn json_string_at(line: &str, start: usize) -> Option<(String, usize)> {
+ 
+ /// Runs the reference's five queries (`FTBENCH_QUERY_REPEAT` samples each and
+ /// the best is reported; `FTBENCH_EXTRA_QUERY` adds one).
+-fn run_queries(e: &Engine) -> common::Result<()> {
++async fn run_queries(e: &Engine) -> common::Result<()> {
+     let repeat: usize = std::env::var("FTBENCH_QUERY_REPEAT")
+         .ok()
+         .and_then(|v| v.parse().ok())
+@@ -190,7 +190,7 @@ fn run_queries(e: &Engine) -> common::Result<()> {
+         let mut hits = 0;
+         for i in 0..repeat {
+             let t = Instant::now();
+-            let rs = e.execute_blocking(&sql)?;
++            let rs = e.execute(&sql).await?;
+             let elapsed = t.elapsed();
+             if i == 0 {
+                 first = elapsed;
+@@ -207,18 +207,19 @@ fn run_queries(e: &Engine) -> common::Result<()> {
+ }
+ 
+ /// `infinity fulltext-bench <dir> <mode> <corpus.jsonl> [batch]`.
+-pub fn run(dir: &Path, mode: &str, corpus: &str, batch: usize) -> common::Result<()> {
+-    let e = Engine::open(dir)?;
++pub async fn run(dir: &Path, mode: &str, corpus: &str, batch: usize) -> common::Result<()> {
++    let e = Engine::open_default_async(dir).await?;
+     // `query-only` reuses a directory a previous run left behind: no DDL, no
+     // index build. It exists so a profiler sees the query path alone.
+     if mode == "query-only" {
+-        run_queries(&e)?;
++        run_queries(&e).await?;
+         return Ok(());
+     }
+-    let _ = e.execute_blocking(&format!("DROP TABLE IF EXISTS {TABLE};"));
+-    e.execute_blocking(&format!(
++    let _ = e.execute(&format!("DROP TABLE IF EXISTS {TABLE};")).await;
++    e.execute(&format!(
+         "CREATE TABLE {TABLE} (id VARCHAR, title VARCHAR, text VARCHAR);"
+-    ))?;
++    ))
++    .await?;
+ 
+     // C++ `BenchmarkCreateIndex` times `CreateIndex` + `Flush` together, but
+     // the two `Flush`es checkpoint different storage stacks, so the checkpoint
+@@ -235,9 +236,9 @@ pub fn run(dir: &Path, mode: &str, corpus: &str, batch: usize) -> common::Result
+         None => format!("CREATE INDEX {INDEX} ON {TABLE} (text) USING FULLTEXT;"),
+     };
+     let t = Instant::now();
+-    e.execute_blocking(&create_index_sql)?;
++    e.execute(&create_index_sql).await?;
+     let create_index = t.elapsed();
+-    match checkpoint_cost(&e)? {
++    match checkpoint_cost(&e).await? {
+         Some(flush) => {
+             println!("Create index cost: {create_index:?} (DDL; Flush {flush:?} not included)")
          }
--        entry
--            .pending_rows
--            .iter()
--            .filter(|(seq, _)| ids.contains(seq))
--            .map(|(seq, values)| (*seq, values.clone()))
-+        ids.iter()
-+            .filter_map(|seq| {
-+                entry
-+                    .buffered_row(*seq)
-+                    .map(|values| (*seq, values.clone()))
-+            })
+@@ -265,42 +266,44 @@ pub fn run(dir: &Path, mode: &str, corpus: &str, batch: usize) -> common::Result
+             })
              .collect()
-     }
-     /// One row of the append buffer. The point-read path must not clone the
-@@ -4336,7 +4342,18 @@ impl Engine {
-         // A table whose first commit has not reached a checkpoint yet has no
-         // block file at all: its rows are in the append buffer, and that is
-         // still a readable table.
--        let buffered = self.pending_rows_of(&table);
-+        //
-+        // An index already named the rows, so the buffer is probed for those
-+        // ids only. Cloning the whole buffer here is O(table) per query: a
-+        // 200k-row table kept every row in the append buffer until its first
-+        // checkpoint, and each KNN query deep-cloned all of them (each row
-+        // carrying its embedding text) before dropping all but ten. That was
-+        // the query path's cost, not the graph search (measured 33.6 ms vs
-+        // 0.38 ms for the same search called directly).
-+        let buffered: std::collections::HashMap<usize, Vec<Value>> = match rows_wanted {
-+            Some(rows) => self.buffered_rows_for(&table, rows),
-+            None => self.pending_rows_of(&table).into_iter().collect(),
-+        };
-         if blocks.is_empty() && buffered.is_empty() {
-             return Err(Error::NotFound(format!("no blocks for table '{table}'")));
+     };
+-    let insert_all = |e: &Engine| -> common::Result<()> {
++    let insert_all = async |e: &Engine| -> common::Result<()> {
+         let t = Instant::now();
+         for chunk in rows.chunks(batch.max(1)) {
+-            e.insert_literals(QUALIFIED, Some(&columns), to_literals(chunk))?;
++            e.insert_literals(QUALIFIED, Some(&columns), to_literals(chunk))
++                .await?;
          }
-@@ -4581,6 +4598,13 @@ impl Engine {
-     /// `dense_index_building_worker`: the reference's dense-index pool size,
-     /// `hardware_concurrency() / 2` clamped to at least 2 (`config_impl.cpp:516-518`).
-     pub(crate) fn hnsw_build_workers(&self) -> usize {
-+        if let Some(n) = std::env::var("INFINITY_HNSW_BUILD_WORKERS")
-+            .ok()
-+            .and_then(|v| v.parse::<usize>().ok())
-+            .filter(|n| *n > 0)
-+        {
-+            return n;
-+        }
-         std::thread::available_parallelism()
-             .map(|count| count.get() / 2)
-             .unwrap_or(1)
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/index_chunk.rs` (modified, +42/-0)
-```diff
-@@ -49,6 +49,48 @@ pub(crate) struct HnswOptions {
-     pub(crate) lsg: Option<index::lsg::LsgConfig>,
+         println!("Insert data {n} rows cost: {:?}", t.elapsed());
+         Ok(())
+     };
+ 
+     match mode {
+-        "insert" => insert_all(&e)?,
++        "insert" => insert_all(&e).await?,
+         "import" => {
+             let t = Instant::now();
+-            e.import_literals(QUALIFIED, Some(&columns), to_literals(&rows))?;
++            e.import_literals(QUALIFIED, Some(&columns), to_literals(&rows))
++                .await?;
+             println!("Import data cost: {:?}", t.elapsed());
+         }
+         "merge" => {
+-            insert_all(&e)?;
++            insert_all(&e).await?;
+             let t = Instant::now();
+-            e.optimize_indexes()?;
++            e.optimize_indexes_async().await?;
+             println!("Merge index cost: {:?}", t.elapsed());
+         }
+         "query" => {
+-            insert_all(&e)?;
++            insert_all(&e).await?;
+             let t = Instant::now();
+-            e.optimize_indexes()?;
++            e.optimize_indexes_async().await?;
+             println!("Merge index cost: {:?}", t.elapsed());
+-            run_queries(&e)?;
++            run_queries(&e).await?;
+         }
+         other => {
+             return Err(common::Error::Invalid(format!(
+                 "unknown fulltext-bench mode '{other}' (insert|import|merge|query)"
+             )))
+         }
+     }
+-    let _ = checkpoint_cost(&e)?;
++    let _ = checkpoint_cost(&e).await?;
+     Ok(())
  }
  
-+impl HnswOptions {
-+    /// The `WITH (...)` options a `CREATE INDEX ... USING HNSW` stored.
-+    ///
-+    /// `build_type='lsg'` is what turns the index into a local-scaling one; the
-+    /// reference then requires `lsg_config` and falls back to `LSGConfig`'s own
-+    /// defaults (`0.01 / 10 / 1`) when it is missing.
-+    pub(crate) fn from_options(options: &[(String, String)]) -> Self {
-+        let raw = |name: &str| {
-+            options
-+                .iter()
-+                .find(|(k, _)| k.eq_ignore_ascii_case(name))
-+                .map(|(_, v)| v.as_str())
-+        };
-+        let num = |name: &str, default: usize| {
-+            raw(name)
-+                .and_then(|v| v.trim().parse().ok())
-+                .unwrap_or(default)
-+        };
-+        let lsg = match raw("build_type") {
-+            Some(t)
-+                if t.trim()
-+                    .trim_matches(['\'', '"'])
-+                    .eq_ignore_ascii_case("lsg") =>
-+            {
-+                Some(
-+                    raw("lsg_config")
-+                        .and_then(index::lsg::LsgConfig::parse)
-+                        .unwrap_or_default(),
-+                )
-+            }
-+            _ => None,
-+        };
-+        Self {
-+            m: num("M", 16),
-+            ef_construction: num("EF_CONSTRUCTION", 200),
-+            metric: index::vector::Metric::parse(raw("metric").unwrap_or("l2")),
-+            encoding: index::vector::HnswEncoding::parse(raw("encode").unwrap_or_default()),
-+            lsg,
-+        }
-+    }
-+}
-+
- pub struct LoadedVectorIndex {
-     pub index: HnswHandler,
-     pub labels: Vec<u32>,
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/misc.rs` (modified, +78/-2)
-```diff
-@@ -111,6 +111,10 @@ pub(crate) struct BlockCursor<'a> {
-     pub(crate) types: Vec<i32>,
-     /// `(segment, block)` of the blocks a reader may see.
-     pub(crate) visible: std::collections::HashSet<(u32, u16)>,
-+    /// The block map `visible` came from: a different `Arc` is a writer that
-+    /// rescanned (`BlockCursor::refresh_visible`), the same one cannot hold a
-+    /// block the snapshot is missing.
-+    pub(crate) index: Option<Arc<std::sync::Mutex<storage::block_index::BlockIndex>>>,
-     pub(crate) root: PathBuf,
-     /// The block last decoded, with the `version` that says which of its slots
-     /// are live.
-@@ -139,6 +143,7 @@ impl<'a> BlockCursor<'a> {
-                     "a column of '{table}' has no C++ block layout, so its rows are not in blocks"
-                 ))
-             })?;
-+        let index = engine.block_index_for(&table);
-         let visible = engine
-             .visible_block_ids(&table)
-             .into_iter()
-@@ -153,18 +158,76 @@ impl<'a> BlockCursor<'a> {
-             meta,
-             types,
-             visible,
-+            index,
-             root: engine.blocks_root(),
-             block: None,
-             dead,
-         })
+@@ -313,11 +316,11 @@ fn flush_enabled() -> bool {
+ 
+ /// Runs `Engine::flush` (the reference's `Flush`) when `FTBENCH_FLUSH` asks for
+ /// it and returns what it cost.
+-fn checkpoint_cost(e: &Engine) -> common::Result<Option<std::time::Duration>> {
++async fn checkpoint_cost(e: &Engine) -> common::Result<Option<std::time::Duration>> {
+     if !flush_enabled() {
+         return Ok(None);
      }
- 
-+    /// Re-reads the visible blocks and the delete journal, if the writer rescanned
-+    /// its block map since this cursor was created.
-+    ///
-+    /// The block writer moves rows from the append buffer into a block **without**
-+    /// any ordering against a reader: it writes the block's files and only then
-+    /// retires the buffered copies, so a cursor that snapshotted the block set
-+    /// before that write sees neither the buffer's row nor the block that now
-+    /// holds it. A full-text hit list lands exactly there - a compaction renumbers
-+    /// the postings under a statement that started before the merge, and the
-+    /// merged rows are the ids the cache names. Re-reading the set is what turns
-+    /// the miss back into a hit.
-+    ///
-+    /// The block writer replaces the table's map with a fresh `Arc` once its files
-+    /// are on disk (`write_blocks_mode_with`), so an unchanged `Arc` means no
-+    /// block can have been added: the answer stays short and nothing is rescanned.
-+    fn refresh_visible(&mut self) -> bool {
-+        let Some(index) = self.engine.block_index_for(&self.table) else {
-+            return false;
-+        };
-+        if self
-+            .index
-+            .as_ref()
-+            .is_some_and(|seen| Arc::ptr_eq(seen, &index))
-+        {
-+            return false;
-+        }
-+        self.visible = self
-+            .engine
-+            .visible_block_ids(&self.table)
-+            .into_iter()
-+            .map(|id| (id.segment_id, id.block_id))
-+            .collect();
-+        self.dead = self
-+            .engine
-+            .tombstone_set_at(&self.table, crate::read_ts())
-+            .unwrap_or_default();
-+        self.index = Some(index);
-+        self.block = None;
-+        true
-+    }
-+
-     /// Many rows at once, in id order.
-     ///
-     /// The ids are grouped by block and each block is decoded once, instead of
-     /// once per row: a 5k-row `UPDATE` names 5k ids that all live in one block,
-     /// and decoding the block per id was most of its scan.
-+    ///
-+    /// A short answer is retried once against a fresh block set (see
-+    /// [`Self::refresh_visible`]): a writer that mirrored the rows between this
-+    /// cursor's snapshot and this call leaves them in a block the snapshot does
-+    /// not name, and the buffered copy is already retired.
-     pub(crate) fn rows(&mut self, ids: &[u64]) -> Result<Vec<(usize, Vec<Value>)>> {
-+        let mut complete = true;
-+        let mut out = self.rows_of(ids, &mut complete)?;
-+        if !complete && self.refresh_visible() {
-+            out = self.rows_of(ids, &mut complete)?;
-+        }
-+        Ok(out)
-+    }
-+
-+    /// [`Self::rows`] against the snapshot the cursor holds. `complete` says every
-+    /// id was accounted for (decoded, buffered, or deleted).
-+    fn rows_of(&mut self, ids: &[u64], complete: &mut bool) -> Result<Vec<(usize, Vec<Value>)>> {
-         let mut sorted: Vec<usize> = ids.iter().map(|id| *id as usize).collect();
-         sorted.sort_unstable();
-         sorted.dedup();
-@@ -198,7 +261,11 @@ impl<'a> BlockCursor<'a> {
-                 }
-                 wanted.insert(*seq);
-             }
--            if wanted.is_empty() || !self.visible.contains(&(segment, block_no)) {
-+            if wanted.is_empty() {
-+                continue;
-+            }
-+            if !self.visible.contains(&(segment, block_no)) {
-+                *complete = false;
-                 continue;
-             }
-             let id = BlockId {
-@@ -214,6 +281,7 @@ impl<'a> BlockCursor<'a> {
-                 .unwrap_or(true)
-             {
-                 let Ok(block) = self.engine.block_map(&self.table, &self.root, id) else {
-+                    *complete = false;
-                     continue;
-                 };
-    
-```
-
-**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +3/-19)
-```diff
-@@ -1526,27 +1526,11 @@ impl Engine {
-                     let Some(dims) = types.get(ci).and_then(|t| type_dim(t)) else {
-                         continue;
-                     };
--                    let opt = |name: &str| -> Option<usize> {
--                        im.options
--                            .iter()
--                            .find(|(k, _)| k.eq_ignore_ascii_case(name))
--                            .and_then(|(_, v)| v.parse().ok())
--                    };
--                    let m = opt("M").unwrap_or(16);
--                    let efc = opt("EF_CONSTRUCTION").unwrap_or(200);
--                    let opt = |name: &str| {
--                        im.options
--                            .iter()
--                            .find(|(k, _)| k.eq_ignore_ascii_case(name))
--                            .map(|(_, v)| v.clone())
--                    };
--                    let metric =
--                        index::vector::Metric::parse(&opt("metric").unwrap_or_else(|| "l2".into()));
--                    let encoding =
--                        index::vector::HnswEncoding::parse(&opt("encode").unwrap_or_default());
-+                    let options =
-+                        crate::blocks::index_chunk::HnswOptions::from_options(&im.options);
-                     entry.hnsw_mem.entry(im.id).or_insert_with(|| {
-                         Arc::new(Mutex::new(crate::hnsw_mem::HnswIndexInMem::new_with(
--                            dims, m, efc, metric, encoding,
-+                            dims, &options,
-                         )))
-                     });
-                 }
-```
-
-**File**: `rust_engine/crates/executor/src/engine/import.rs` (modified, +12/-0)
-```diff
-@@ -305,6 +305,15 @@ impl Engine {
-             // statement opened.
-             self.commit_import_chunk(table, t, &segments, &encoded_rows, &batches_all)
-                 .await?;
-+            // `live_rows` is what the query path's cache freshness and index
-+            // coverage gates compare against, and it adds a *delta* to a
-+            // published count - so every write path has to report its rows.
-+            // `INSERT` does (`note_live_rows` in the commit hook), `COPY` did
-+            // not: a table loaded by `COPY` kept the count of whatever last
-+            // published it (`row_count`, or a vector cache build over the rows
-+            // of the time), which made a stale vector cache look fresh and let
-+            // an index that covers part of the table pass the coverage gate.
-+            self.note_live_rows(table, staged as isize);
-         } else {
-             drop(t);
-         }
-@@ -501,6 +510,9 @@ impl Engine {
-         let t3 = std::time::Instant::now();
-         let _visible = BottomGuard::new(&self.txn, ts);
-         self.note_append(table, rows.len(), true, Some(ts));
-+        // The published live-row count, as `INSERT` reports it: the cache
-+        // freshness and index coverage gates compare against it.
-+        self.note_live_rows(table, rows.len() as isize);
-         let segment = (base >> 32) as u32;
-         let imported = self.segment_rows(table, segment as usize) as u64;
-         self.note_import_rows(table, segment, imported);
-```
-
-**File**: `rust_engine/crates/executor/src/engine/query.rs` (modified, +16/-0)
-```diff
-@@ -2105,6 +2105,22 @@ impl Engine {
-                         returns.clone().unwrap_or_default(),
-                     ));
-                 }
-+                // The catalog record stores the `WITH (...)` text as written,
-+                // and the C++ engine reads `lsg_config` back with
-+                // `LSGConfig::FromString`, which only knows the spelling it
-+                // writes itself (`sample_raito`). Accepting `sample_ratio` in SQL
-+                // but persisting it verbatim made such a directory abort the C++
-+                // engine (`Invalid index parameter type: sample_ratio`), so the
-+                // value is normalised to `LSGConfig::ToString` before it is
-+                // stored. `LsgConfig::parse` takes both spellings.
-+                if let Some(pos) = index_opts
-+                    .iter()
-+                    .position(|(k, _)| k.eq_ignore_ascii_case("lsg_config"))
-+                {
-+                    if let Some(config) = index::lsg::LsgConfig::parse(&index_opts[pos].1) {
-+                        index_opts[pos].1 = config.to_string();
-+                    }
-+                }
-                 self.ddl_commit_typed(
-                     TxnOp::CreateIndex {
-                         table: table.clone(),
-```
-
-**File**: `rust_engine/crates/executor/src/engine/state.rs` (modified, +11/-0)
-```diff
-@@ -7565,6 +7565,17 @@ pub(crate) fn parse_vec_str(s: &str) -> Vec<f64> {
-         .collect()
- }
- 
-+/// [`parse_vec_str`] straight into `f32`: the HNSW build and its append hook
-+/// feed an `f32` graph, and going through `f64` parsed into one vector only to
-+/// copy every element into another doubled the work on a 10k-row build.
-+pub(crate) fn parse_vec_f32(s: &str) -> Vec<f32> {
-+    let t = s.trim().trim_start_matches('[').trim_end_matches(']');
-+    t.split([',', ' '])
-+        .filter(|x| !x.is_empty())
-+        .filter_map(|x| x.parse::<f32>().ok())
-+        .collect()
-+}
-+
- /// Splits a stored multi-vector value into `dims`-sized token rows. Bit
- /// columns are scored as hamming and are not part of the MaxSim index.
- pub(crate) fn parse_multivector_doc(text: &str, dims: usize) -> Option<Vec<Vec<f32>>> {
+     let t = Instant::now();
+-    executor::block_on(e.flush())?;
++    e.flush()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3570** (2026-11-16): executor: record each full-text chunk name once, and name the row a MATCH lost (@yingfeng)
-- **PR #3569** (closed): executor: record each full-text chunk name once, and name the row a MATCH lost (@yingfeng)
-- **PR #3568** (2026-11-16): executor: column-wise WHERE/ORDER BY, per-request panic bounds, night… (@yingfeng)
-- **PR #3566** (2026-11-16): executor: carry results as a columnar DataBlock instead of Value rows (@yingfeng)
-- **PR #3565** (2026-11-16): executor: fix the commit/dump deadlock and render insert cells once (@yingfeng)
-- **PR #3564** (2026-11-15): Rust engine: make HNSW usable at 1M rows (memory-segment training, index-only query path, reference-aligned LSG) (@yingfeng)
+- **PR #3580** (2026-11-21): rust_engine: provided embedded engine running in-process (@yingfeng)
+- **PR #3579** (2026-11-21): fulltext and spann improvements (@yingfeng)
+- **PR #3578** (2026-11-21): rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import memory, fulltext, exact scan) (@yuzhichang)
+- **PR #3577** (2026-11-19): add license header (@yingfeng)
+- **PR #3576** (2026-11-19): rust_engine: bound process memory; read vectors in place (@yingfeng)
+- **PR #3575** (2026-11-21): Keep accented Latin letters inside words in the RAG tokenizer (@nthuat)
 
 ---
 
@@ -2026,44 +1998,40 @@ The reference parses/validates/persists `lsg_config` and constructs an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. invalidate fulltext index reader cache on compact and import commit
+## X. rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import me
 
 **RULE**:
-When implementing operations in `src/storage/new_txn/new_txn_data_impl.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust_engine.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f807c52`: invalidate fulltext index reader cache on compact and import commit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38370ad8`: rust_engine: close the #3573 gaps (HNSW build parallelism and kernels, import memory, fulltext, exact scan). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/new_txn/new_txn_data_impl.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust_engine.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-import :index_base;
-import create_index_info;
-    {
-        // The imported segment's fulltext index chunks are carried by the import txn store,
-        // not by a WalCmdDumpIndexV2, so the invalidation in PrepareCommitDumpIndex never
-        // fires here: without this, cached readers keep serving a chunk list that misses
-        // the imported segment.
-        std::vector<std::string> *index_id_strs_ptr = nullptr;
-        std::vector<std::string> *index_name_strs_ptr = nullptr;
-        status = table_meta.GetIndexIDs(index_id_strs_ptr, &index_name_strs_ptr);
-        if (!status.ok()) {
-            return status;
-        }
-        size_t index_count = index_id_strs_ptr->size();
-        for (size_t idx = 0; idx < index_count; ++idx) {
-            TableIndexMeta table_index_meta(index_id_strs_ptr->at(idx), index_name_strs_ptr->at(idx), table_meta);
-            auto [index_base, index_status] = table_index_meta.GetIndexBase();
-            if (!index_status.ok()) {
-                return index_status;
-            }
-            if (index_base->index_type_ == IndexType::kFullText) {
-                status = table_meta.InvalidateFtIndexCache();
-                if (!status.ok()) {
-     
+  # The level `rust_engine/.cargo/config.toml` leaves at `native` is wrong for a
+  # binary that has to run elsewhere, so every lane pins its own here.
+  #
+  # These are the *target-scoped* variables, not `RUSTFLAGS`: cargo appends them
+  # to the section's list, so the `link-arg=-fuse-ld=mold` in `config.toml`
+  # survives and the later `-C target-cpu=` wins. `RUSTFLAGS` would replace the
+  # list wholesale and drop mold. The loom and sanitizer steps set `RUSTFLAGS`
+  # deliberately - they want a clean slate - and pass the linker flag themselves
+  # where it matters.
+  #
+  # AVX2 baseline (Haswell, 2013). The binary carries no AVX-512: `crc32fast`
+  # was the only source of it, and it is patched to a slicing-by-8 stand-in
+  # (`crates/crc32fast-shim`, see `[patch.crates-io]`). Without that patch the
+  # crate emits 52 `zmm` instructions whatever `target-cpu` says, and on this
+  # runner pool some CPUs advertise `avx512f` in CPUID and then reject it - the
+  # engine died with SIGILL before it could log a line.
+  #
+  # The C flags repeat the level for a different reason: rustc's flag does not
+  # reach RocksDB. `librocksdb-sys`'s build script reads
+  # `CARGO_ENCODED_RUSTFLAGS` and 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2073,7 +2041,7 @@ import create_index_info;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f807c52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38370ad8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
