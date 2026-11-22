@@ -12071,3 +12071,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-22d0fbf8` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-22T06:50:06.498Z |
 | `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-22T06:57:51.696Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `056c7016` | Multi-dimensional audit evidence | 2026-11-22T06:58:06.153Z |
+| `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m` | `https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-22T07:05:57.690Z |
+| `learn-github-apache-maka` | `https://github.com/apache/maka` | `ac52d482` | Multi-dimensional audit evidence | 2026-11-22T07:06:00.460Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T06:58:06.158Z",
-  "total_cycles_completed": 11444,
-  "total_learnings_persisted": 11444,
-  "total_rules_promoted": 10717,
+  "last_updated": "2026-11-22T07:06:00.464Z",
+  "total_cycles_completed": 11446,
+  "total_learnings_persisted": 11446,
+  "total_rules_promoted": 10718,
   "history": [
-    {
-      "timestamp": "2026-11-21T13:53:45.477Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T14:27:40.941Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T14:27:48.352Z",
       "repository": "envoyproxy/envoy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T06:58:06.158Z",
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:05:57.695Z",
+      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:06:00.464Z",
+      "repository": "apache/maka",
+      "learningId": "learn-github-apache-maka",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

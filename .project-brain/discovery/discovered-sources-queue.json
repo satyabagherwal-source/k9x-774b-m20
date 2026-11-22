@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T06:27:38.793Z",
+  "updated_at": "2026-11-22T07:06:09.778Z",
   "stats": {
-    "total_discovered": 7457,
-    "approved_pending_harvest": 7056,
+    "total_discovered": 7460,
+    "approved_pending_harvest": 7059,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7036,
+      "COMMUNITY_AND_EXPERT": 7039,
       "OFFICIAL_DOCUMENTATION": 242,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -161270,6 +161270,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
         "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-4D1450729E6F": {
+      "id": "SRC-4D1450729E6F",
+      "url": "https://github.com/apache/maka",
+      "title": "https://github.com/apache/maka",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T07:06:09.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-maka-learnings.md",
+        "fileName": "apache-maka-learnings.md"
+      }
+    },
+    "SRC-ED46F465722E": {
+      "id": "SRC-ED46F465722E",
+      "url": "https://www.npmjs.com/package/@maka-agent/cli",
+      "title": "https://www.npmjs.com/package/@maka-agent/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T07:06:09.740Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-maka-learnings.md",
+        "fileName": "apache-maka-learnings.md"
+      }
+    },
+    "SRC-9BE961CBBC0A": {
+      "id": "SRC-9BE961CBBC0A",
+      "url": "https://github.com/apache/maka.git",
+      "title": "https://github.com/apache/maka.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T07:06:09.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-maka-learnings.md",
+        "fileName": "apache-maka-learnings.md"
       }
     }
   }

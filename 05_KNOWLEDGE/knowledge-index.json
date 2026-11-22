@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T06:58:11.502Z",
-  "total_verified_learnings": 9068,
+  "last_updated": "2026-11-22T07:06:11.361Z",
+  "total_verified_learnings": 9069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23484,
+  "total_items": 23491,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228683,9 +228683,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "6715e06a40a145b4bcc8fc9bce782b0f6dba5e698809a4b4861012d418c29a3f",
+      "content_hash": "63e3d824049e97e5827e166396fe07bf283ecaaa33bbc24b01f9c721e7624cbb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:25:06.817Z"
+      "persisted_at": "2026-11-22T07:06:11.220Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -228695,9 +228695,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "82333fd2be7f9a4eb1b4b163795ab8eb06d38b7122c7cdaf49b1a30f36603b4e",
+      "content_hash": "f3394113a44ab66c0f974539f332a3448e8695fca962efc7ebb769a5f8deb1e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:25:06.970Z"
+      "persisted_at": "2026-11-22T07:06:11.361Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -262461,7 +262461,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
       "source_version": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
-      "content_hash": "b5247ff9e549c20b6498f08d701bf65d4f25ef2abb3381df937f5fe8f1838209",
+      "content_hash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
       "promoted_rules": [],
@@ -262470,7 +262470,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T22:19:16.237Z",
+      "verified_at": "2026-11-22T07:05:57.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262487,9 +262487,9 @@
       "title": "Research & Knowledge Intelligence: facebook/dinov3-vitl16-pretrain-lvd1689m Core Invariants",
       "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
       "source_version": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
-      "content_hash": "5fa40046be27126b95fad7a1051b30ad8ac21a4abd632c73afd4d9fd4793f0e6",
+      "content_hash": "3a601e4612ba9cfc2b7d9f788d907a137136e002a772dccb64aa4c0ef02e1cc2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T22:19:16.649Z"
+      "persisted_at": "2026-11-22T07:05:57.873Z"
     },
     "rule-8799": {
       "learning_id": "rule-8799",
@@ -262675,9 +262675,9 @@
       "title": "Research & Knowledge Intelligence: hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings Core Invariants",
       "repository": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings",
       "source_version": "HEAD",
-      "content_hash": "86eb7e9ff0e9e0074ebc6e8278ca97b1c696b63807fa12bd8e0cf86a7742b72e",
+      "content_hash": "4a2c558d4891c802a13fbc874be3c926a5bf260a6b8517cd597637f39ea50bf2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T22:19:34.974Z"
+      "persisted_at": "2026-11-22T07:06:10.544Z"
     },
     "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-iplug2-iplug2-learnings-core-invariants",
@@ -302519,13 +302519,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XEJV-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TPFP-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "44d08ac2cc99dc9caa8d57c98e526dc0a981e8c4411617d7ede6c09d534010cd",
+      "content_hash": "34ac1a0e5a4bb12b0a14fae972265ca5fe918804dae21b48b0df442e2eb5e24e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T03:25:06.668Z"
+      "persisted_at": "2026-11-22T07:06:11.078Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -319415,6 +319415,113 @@
       "content_hash": "48442972191f37c69ee91ef4a58f9f14a410c29d097254ad0400bae228506cd8",
       "domain_letter": "I",
       "persisted_at": "2026-11-22T06:58:10.346Z"
+    },
+    "learn-github-apache-maka": {
+      "learning_id": "learn-github-apache-maka",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "apache/maka",
+      "repository": "apache/maka",
+      "slug": "apache-maka",
+      "platform": "github",
+      "source_url": "https://github.com/apache/maka",
+      "source_version": "ac52d482",
+      "content_hash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
+      "dossier_path": "07_PROJECT_LEARNING/apache-maka-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/apache-maka-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9903,
+          "title": "test(ci): fix desktop draft race and remaining rust-preview CI failures",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T07:06:00.291Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9903": {
+      "learning_id": "rule-9903",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9903,
+      "title": "test(ci): fix desktop draft race and remaining rust-preview CI failures",
+      "source_url": "https://github.com/apache/maka",
+      "source_version": "ac52d482",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T07:06:00.291Z"
+    },
+    "candidate_directive-test-ci-fix-desktop-draft-race-and-remaining-rust-preview-ci-failures": {
+      "item_id": "candidate_directive-test-ci-fix-desktop-draft-race-and-remaining-rust-preview-ci-failures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TOL9-test-ci-fix-desktop-draft-race-and-remaining-rust-preview-ci-failures.md",
+      "title": "test(ci): fix desktop draft race and remaining rust-preview CI failures",
+      "repository": "apache-maka-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b8bcdfcb98ab6a8f7e54b22d3e037985833d0bd46448010883ea023cd9fe0d24",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T07:06:09.987Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-maka-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-apache-maka-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-technical-construction-intelligence-apache-maka-core-invariants.md",
+      "title": "Technical Construction Intelligence: apache/maka Core Invariants",
+      "repository": "apache/maka",
+      "source_version": "ac52d482",
+      "content_hash": "1450cf7f2313009f05e4c2e533b2991b2f91b63e0311f313b7efbb5630c9f1b8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T07:06:00.794Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/apache-maka-verification-protocol-empirical-defect-shield-for-apache-maka.md",
+      "title": "Verification Protocol: Empirical Defect Shield for apache/maka",
+      "repository": "apache/maka",
+      "source_version": "ac52d482",
+      "content_hash": "4a8c03b033690be605a71a900439f5c0aad2eca787a7b37c00840fbea1cc99d5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T07:06:00.937Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-learnings-technical-construction-intelligence-apache-maka-learnings-.md",
+      "title": "Technical Construction Intelligence: apache-maka-learnings Core Invariants",
+      "repository": "apache-maka-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a00a2e12b4440dab672bd1a5ef1fed038508733f3f9415dced4ceb4ee78cf12e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T07:06:10.120Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/apache-maka-learnings-verification-protocol-empirical-defect-shield-for-apache-m.md",
+      "title": "Verification Protocol: Empirical Defect Shield for apache-maka-learnings",
+      "repository": "apache-maka-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2775f13a1b049fb0f559457e6d60cb9f229293263a485ece7bb05003981c173c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T07:06:10.256Z"
     }
   },
   "ai-builder-brain": {

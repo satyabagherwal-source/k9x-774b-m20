@@ -12038,3 +12038,5 @@
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T06:50:06.498Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-22D0FBF8` [Domain D] | Yes (`bca3573e...`) |
 | `CYCLE-20261122-J03W` | `2026-11-22T06:57:51.692Z` | `Zyphra/ZONOS3-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md` | Yes (`00b690f4...`) |
 | `CYCLE-20261122-JB9H` | `2026-11-22T06:58:06.149Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9902` | Yes (`170aee8e...`) |
+| `CYCLE-20261122-TF3Q` | `2026-11-22T07:05:57.686Z` | `facebook/dinov3-vitl16-pretrain-lvd1689m` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md` | Yes (`c7bb55d0...`) |
+| `CYCLE-20261122-TH8O` | `2026-11-22T07:06:00.456Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9903` | Yes (`1c9471c7...`) |

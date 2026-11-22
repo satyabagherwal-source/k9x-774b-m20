@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T06:58:06.161Z",
+  "last_updated": "2026-11-22T07:06:00.467Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18651,14 +18651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-      "content_hash": "b5247ff9e549c20b6498f08d701bf65d4f25ef2abb3381df937f5fe8f1838209",
-      "verified_at": "2026-11-16T22:19:16.448Z",
+      "content_hash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
+      "verified_at": "2026-11-22T07:05:57.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T22:19:16.448Z"
+      "last_updated": "2026-11-22T07:05:57.697Z"
     },
     "tonhowtf/omniget": {
       "repository": "tonhowtf/omniget",
@@ -19859,6 +19859,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-22T04:38:57.170Z"
+    },
+    "apache/maka": {
+      "repository": "apache/maka",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-apache-maka",
+      "content_hash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
+      "verified_at": "2026-11-22T07:06:00.467Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-22T07:06:00.467Z"
     }
   },
   "repos": {

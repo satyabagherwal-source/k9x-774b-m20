@@ -21889,5 +21889,20 @@
     "downloads": 1186,
     "qualityScore": 7766,
     "discoveredAt": "2026-11-21T22:54:26.494Z"
+  },
+  {
+    "name": "maka",
+    "fullName": "apache/maka",
+    "url": "https://github.com/apache/maka",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Apache Maka (Incubating) is a high-performance agent workspace that keeps a complete record of everything it did.",
+    "stars": 5996,
+    "forks": 579,
+    "openIssues": 398,
+    "language": "Rust",
+    "qualityScore": 4522,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-11-22T07:03:14.703Z"
   }
 ]

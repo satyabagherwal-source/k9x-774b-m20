@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-9UMQ",
-    "timestamp": "2026-11-20T06:19:24.626Z",
-    "repository": "erkamyaman/rust-anything",
-    "learningId": "learn-github-erkamyaman-rust-anything",
-    "contentHash": "99e2cdb0bd13b92bce1919761f6f74d2737aa17983d05f2fe23386fb07dc63bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-9XXO",
-    "timestamp": "2026-11-20T06:19:28.908Z",
-    "repository": "SimonSchubert/Kai",
-    "learningId": "learn-github-simonschubert-kai",
-    "contentHash": "fac8a97cb2b3cf88369f350a9487cf7920221fe74c451c67fc3f04a14002cc81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-A4KZ",
     "timestamp": "2026-11-20T06:19:37.523Z",
     "repository": "StarRocks/starrocks",
@@ -7490,6 +7460,36 @@
     "repository": "pixeltable/pixeltable",
     "learningId": "learn-github-pixeltable-pixeltable",
     "contentHash": "170aee8eaa5d4377de00bf868c0963ff748965d9dd676f49b84efc73f33008e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-TF3Q",
+    "timestamp": "2026-11-22T07:05:57.686Z",
+    "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+    "contentHash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-TH8O",
+    "timestamp": "2026-11-22T07:06:00.456Z",
+    "repository": "apache/maka",
+    "learningId": "learn-github-apache-maka",
+    "contentHash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

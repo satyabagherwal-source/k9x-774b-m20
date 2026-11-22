@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T06:58:09.495Z",
-    "lastVerified": "2026-11-22T06:58:09.495Z",
+    "lastChecked": "2026-11-22T07:06:09.537Z",
+    "lastVerified": "2026-11-22T07:06:09.537Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -176,8 +176,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T06:27:37.684Z",
-    "lastVerified": "2026-11-22T06:27:37.684Z",
+    "lastChecked": "2026-11-22T07:06:09.527Z",
+    "lastVerified": "2026-11-22T07:06:09.527Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1045,9 +1045,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-22T02:18:07.183Z",
+    "lastChecked": "2026-11-22T07:06:04.492Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-22T02:18:07.183Z"
+    "lastVerified": "2026-11-22T07:06:04.492Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -4105,12 +4105,12 @@
     "revisionIdentifier": "3beb4d3b"
   },
   "risingwavelabs-risingwave": {
-    "name": "risingwavelabs/risingwave",
+    "name": "risingwave",
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T02:26:57.639Z",
-    "lastVerified": "2026-11-21T02:26:57.639Z",
+    "lastChecked": "2026-11-22T07:06:07.090Z",
+    "lastVerified": "2026-11-22T07:06:07.090Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
@@ -4119,7 +4119,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c0386a2f"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -5201,9 +5202,9 @@
   "encoredev-encore": {
     "name": "encore",
     "officialUrl": "https://github.com/encoredev/encore",
-    "lastChecked": "2026-11-21T03:52:30.505Z",
+    "lastChecked": "2026-11-22T07:06:02.071Z",
     "revisionIdentifier": "8a7465a4",
-    "lastVerified": "2026-11-21T03:52:30.505Z"
+    "lastVerified": "2026-11-22T07:06:02.071Z"
   },
   "sfu-db-connector-x": {
     "name": "sfu-db/connector-x",
@@ -6513,9 +6514,9 @@
   "lysine-dev-okio": {
     "name": "okio",
     "officialUrl": "https://github.com/lysine-dev/okio",
-    "lastChecked": "2026-11-19T03:27:15.135Z",
+    "lastChecked": "2026-11-22T07:05:59.555Z",
     "revisionIdentifier": "f0e3f479",
-    "lastVerified": "2026-11-19T03:27:15.135Z"
+    "lastVerified": "2026-11-22T07:05:59.555Z"
   },
   "rook-rook": {
     "name": "rook/rook",
@@ -13861,6 +13862,40 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-facebook-dinov3-vitl16-pretrain-lvd1689m": {
+    "name": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "officialUrl": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T07:05:57.119Z",
+    "lastVerified": "2026-11-22T07:05:57.119Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+    "contentHash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apache-maka": {
+    "name": "apache/maka",
+    "officialUrl": "https://github.com/apache/maka",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-22T07:05:59.635Z",
+    "lastVerified": "2026-11-22T07:05:59.635Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-apache-maka",
+    "contentHash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 18,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

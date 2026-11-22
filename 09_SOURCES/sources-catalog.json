@@ -12395,8 +12395,8 @@
     "sourceUrl": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
     "sourceVersion": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
     "license": "Open-Source",
-    "contentHash": "b5247ff9e549c20b6498f08d701bf65d4f25ef2abb3381df937f5fe8f1838209",
-    "lastHarvestedAt": "2026-11-16T22:19:16.438Z",
+    "contentHash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
+    "lastHarvestedAt": "2026-11-22T07:05:57.690Z",
     "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m"
   },
   "tonhowtf-omniget": {
@@ -13158,5 +13158,15 @@
     "contentHash": "2ea5f4010de33f37c3a13f7e7ba6f3d2018e817854a34f49634bb6a7f517aedb",
     "lastHarvestedAt": "2026-11-21T22:56:41.035Z",
     "learningId": "learn-huggingface-sulphurai-sulphur-3"
+  },
+  "apache-maka": {
+    "repository": "apache/maka",
+    "platform": "github",
+    "sourceUrl": "https://github.com/apache/maka",
+    "sourceVersion": "ac52d482",
+    "license": "Apache-2.0",
+    "contentHash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
+    "lastHarvestedAt": "2026-11-22T07:06:00.460Z",
+    "learningId": "learn-github-apache-maka"
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
   "source_version": "hf-facebook-dinov3-vitl16-pretrain-lvd1689m",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T22:19:16.648Z",
+  "timestamp": "2026-11-22T07:05:57.872Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [facebook/dinov3-vitl16-pretrain-lvd1689m](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m) (Revision: `hf-faceboo`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T22:19:16.648Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T07:05:57.872Z`  
 > **Learning ID**: `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T22:19:15.739Z  
+> **Harvest Timestamp**: 2026-11-22T07:05:57.119Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-feature-extraction
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 693430 downloads | 2362 likes
+- **Stars / Engagement**: 706788 downloads | 2563 likes
 
 ---
 
