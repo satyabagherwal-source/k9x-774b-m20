@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T00:09:58.882Z",
-    "lastVerified": "2026-11-22T00:09:58.882Z",
+    "lastChecked": "2026-11-22T00:24:54.787Z",
+    "lastVerified": "2026-11-22T00:24:54.787Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -172,22 +172,21 @@
     "revisionIdentifier": "9a44a8e8"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T23:39:49.191Z",
-    "lastVerified": "2026-11-21T23:39:49.191Z",
+    "lastChecked": "2026-11-22T00:24:50.760Z",
+    "lastVerified": "2026-11-22T00:24:50.760Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "1b7c00ff9946028a37bfede9c49bf0a294647cb047541d1c7d65bd11154fe3cb",
+    "contentHash": "dff9a27778f0d013a0c8706670e8ffeb1828e177a9f6390dc33b7d3d9530c65d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "778227f6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -232,8 +231,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T18:44:23.990Z",
-    "lastVerified": "2026-11-21T18:44:23.990Z",
+    "lastChecked": "2026-11-22T00:24:41.621Z",
+    "lastVerified": "2026-11-22T00:24:41.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -1653,9 +1652,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-20T20:28:18.916Z",
+    "lastChecked": "2026-11-22T00:24:44.039Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-20T20:28:18.916Z"
+    "lastVerified": "2026-11-22T00:24:44.039Z"
   },
   "googleworkspace-cli": {
     "name": "cli",
@@ -3021,12 +3020,12 @@
     "lastVerified": "2026-11-21T20:36:28.798Z"
   },
   "beclab-olares": {
-    "name": "beclab/Olares",
+    "name": "Olares",
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T21:38:56.376Z",
-    "lastVerified": "2026-11-20T21:38:56.376Z",
+    "lastChecked": "2026-11-22T00:24:39.237Z",
+    "lastVerified": "2026-11-22T00:24:39.237Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
@@ -3035,7 +3034,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "83f304b1"
   },
   "xerj-org-xerj": {
     "name": "xerj-org/xerj",
@@ -4242,9 +4242,9 @@
   "midudev-preguntas-entrevista-react": {
     "name": "preguntas-entrevista-react",
     "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
-    "lastChecked": "2026-11-18T19:34:16.140Z",
+    "lastChecked": "2026-11-22T00:24:36.646Z",
     "revisionIdentifier": "99d805f1",
-    "lastVerified": "2026-11-18T19:34:16.140Z"
+    "lastVerified": "2026-11-22T00:24:36.646Z"
   },
   "go-eagle-eagle": {
     "name": "eagle",
@@ -4630,14 +4630,14 @@
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T10:34:14.290Z",
-    "lastVerified": "2026-11-20T10:34:14.290Z",
+    "lastChecked": "2026-11-22T00:24:35.647Z",
+    "lastVerified": "2026-11-22T00:24:35.647Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
+    "contentHash": "f229e00b89abaf31466d2e97a3881d38d9d9761add0f79efc29cceec29261682",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13194,6 +13194,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
     "contentHash": "43186978e3ba6532c8edf2369cff9642a144f577b9b2f512cb53696ba1ff35d0",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-sensenova-sensenova-loop-9b-preview": {
+    "name": "sensenova/SenseNova-Loop-9B-Preview",
+    "officialUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T00:24:34.378Z",
+    "lastVerified": "2026-11-22T00:24:34.378Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+    "contentHash": "61105f69fdab68408ed8cba6590fc7c923de1d92b29d9ade5b17f38a02351075",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -11985,3 +11985,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-6eecdba7` | `project://hf-fusioncow-sulphur-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | 2026-11-21T23:56:17.643Z |
 | `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-22T00:09:47.066Z |
 | `learn-github-nativewind-nativewind` | `https://github.com/nativewind/nativewind` | `b56a0289` | Multi-dimensional audit evidence | 2026-11-22T00:09:53.068Z |
+| `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-22T00:24:35.054Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `a5ac161f` | Multi-dimensional audit evidence | 2026-11-22T00:24:36.500Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `598cce81` | Multi-dimensional audit evidence | 2026-11-22T00:24:51.631Z |

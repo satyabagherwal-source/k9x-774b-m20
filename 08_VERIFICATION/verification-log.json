@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-L4KJ",
-    "timestamp": "2026-11-19T21:08:18.403Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-59XB",
-    "timestamp": "2026-11-19T21:23:58.463Z",
-    "repository": "lapce/lapce",
-    "learningId": "learn-github-lapce-lapce",
-    "contentHash": "57f1919f4bf96d16635785f0f970accb62c4caf96c2cc4deb8f1f2e34ef68589",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-5FGM",
-    "timestamp": "2026-11-19T21:24:05.638Z",
-    "repository": "dragonflyoss/dragonfly",
-    "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "edefedb1733c2d33b402498b0cc0ce9b13299d9c33c02ed2da42d333b7d7cd13",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-5JSL",
     "timestamp": "2026-11-19T21:24:11.253Z",
     "repository": "lioensky/VCPToolBox",
@@ -7490,6 +7445,51 @@
     "repository": "nativewind/nativewind",
     "learningId": "learn-github-nativewind-nativewind",
     "contentHash": "5fb62de7c7c845ca32b4a7c645477a3feacfb25e2ef53e122831c85a74309e79",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-H8TN",
+    "timestamp": "2026-11-22T00:24:35.051Z",
+    "repository": "sensenova/SenseNova-Loop-9B-Preview",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+    "contentHash": "61105f69fdab68408ed8cba6590fc7c923de1d92b29d9ade5b17f38a02351075",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-H9XT",
+    "timestamp": "2026-11-22T00:24:36.497Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "f229e00b89abaf31466d2e97a3881d38d9d9761add0f79efc29cceec29261682",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-HLM4",
+    "timestamp": "2026-11-22T00:24:51.628Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "dff9a27778f0d013a0c8706670e8ffeb1828e177a9f6390dc33b7d3d9530c65d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

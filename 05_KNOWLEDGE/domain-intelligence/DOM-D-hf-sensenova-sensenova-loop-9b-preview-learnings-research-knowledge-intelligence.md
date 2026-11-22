@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T12:36:57.685Z",
+  "timestamp": "2026-11-22T00:24:55.669Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-sensenova-sensenova-loop-9b-preview-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-sensenova-sensenova-loop-9b-preview-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T12:36:57.685Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T00:24:55.669Z`  
 > **Learning ID**: `LEARN-EVO-hf-sensenova-sensenova-loop-9b-preview-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-sensenova`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T12:36:19.137Z  
+> **Timestamp**: 2026-11-22T00:24:34.600Z  
 > **Learning ID**: `learn-huggingface-sensenova-sensenova-loop-9b-preview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview](https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T12:31:16.895Z  
+> **Harvest Timestamp**: 2026-11-22T00:24:34.378Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4708 downloads | 302 likes
+- **Stars / Engagement**: 5910 downloads | 321 likes
 
 ---
 

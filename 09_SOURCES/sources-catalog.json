@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "778227f6",
+    "sourceVersion": "598cce81",
     "license": "NOASSERTION",
-    "contentHash": "1b7c00ff9946028a37bfede9c49bf0a294647cb047541d1c7d65bd11154fe3cb",
-    "lastHarvestedAt": "2026-11-21T22:48:38.311Z",
+    "contentHash": "dff9a27778f0d013a0c8706670e8ffeb1828e177a9f6390dc33b7d3d9530c65d",
+    "lastHarvestedAt": "2026-11-22T00:24:51.631Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "f79ae2bc",
+    "sourceVersion": "a5ac161f",
     "license": "MIT",
-    "contentHash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
-    "lastHarvestedAt": "2026-11-20T10:44:16.825Z",
+    "contentHash": "f229e00b89abaf31466d2e97a3881d38d9d9761add0f79efc29cceec29261682",
+    "lastHarvestedAt": "2026-11-22T00:24:36.500Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -11745,8 +11745,8 @@
     "sourceUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
     "sourceVersion": "hf-sensenova-sensenova-loop-9b-preview",
     "license": "Open-Source",
-    "contentHash": "31d59e7664099f318243d443ff74470d6a204a7aeaecb5fcb683060fed083087",
-    "lastHarvestedAt": "2026-11-15T12:36:19.599Z",
+    "contentHash": "61105f69fdab68408ed8cba6590fc7c923de1d92b29d9ade5b17f38a02351075",
+    "lastHarvestedAt": "2026-11-22T00:24:35.054Z",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview"
   },
   "hf-pyannote-speaker-diarization-3.1": {

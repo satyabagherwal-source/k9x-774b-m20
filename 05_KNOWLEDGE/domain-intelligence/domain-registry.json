@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T00:10:01.041Z",
+  "last_updated": "2026-11-22T00:24:56.510Z",
   "total_records": 2306,
   "domains": {
     "A": {
@@ -9768,8 +9768,8 @@
       "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
       "repository": "kucherenko/jscpd",
-      "content_hash": "4f8c2c690f8e38e3fd6d60ba77185f897e70794b4b651e3362a63a7c1655adf6",
-      "created_at": "2026-11-20T10:44:17.271Z"
+      "content_hash": "05abc548daa6c6d26cf8d3ac7204e23e3a585f63e6bbd4eed4153a0c3184c247",
+      "created_at": "2026-11-22T00:24:36.820Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants",
@@ -9786,8 +9786,8 @@
       "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-learnings-technical-construction-intelligence-kucherenko-jscpd-.md",
       "repository": "kucherenko-jscpd-learnings",
-      "content_hash": "650cb45bbd1f6a3f37a4a3755d339b928038573d982c68988bf4af49e4115b10",
-      "created_at": "2026-11-20T10:44:20.870Z"
+      "content_hash": "9624ece03cd9987989d5f744ebdeb7d2ee51468c3ee521da4a643352e58729da",
+      "created_at": "2026-11-22T00:24:55.307Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
@@ -12363,8 +12363,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "c84eb08e4e7de97df74e5e1d1e8855344c5c975807cbcc82ce274b829ffebcbb",
-      "created_at": "2026-11-21T20:36:44.359Z"
+      "content_hash": "085989f6fc61a3e443be3897b1f8d768d8853d877de35739537c057ff81708c2",
+      "created_at": "2026-11-22T00:24:51.976Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12432,8 +12432,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "1c624a3398ccd43738876e73cb0a3dc23aee2ef7e443ab537d37199597b02ebc",
-      "created_at": "2026-11-21T20:36:50.606Z"
+      "content_hash": "99940291b3fc872a4591833eed2d9f8172c3f265e7c926d1978b1006d3aeb4e3",
+      "created_at": "2026-11-22T00:24:56.510Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -21311,8 +21311,8 @@
       "title": "Research & Knowledge Intelligence: sensenova/SenseNova-Loop-9B-Preview Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-preview-research-knowledge-intelligence-sensenova.md",
       "repository": "sensenova/SenseNova-Loop-9B-Preview",
-      "content_hash": "356787931adb43faccf3b73094abdd88fa60c281b8dbadfcdb438cc99e3dd0dd",
-      "created_at": "2026-11-15T12:36:19.827Z"
+      "content_hash": "497af33254a6665d9106d0d47b8ff510a45719f2c4e6eb0302fad9bf0dc9df00",
+      "created_at": "2026-11-22T00:24:35.222Z"
     },
     "domain_intelligence-architecture-intelligence-vi-websocat-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vi-websocat-learnings-core-invariants",
@@ -21371,8 +21371,8 @@
       "title": "Research & Knowledge Intelligence: hf-sensenova-sensenova-loop-9b-preview-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-preview-learnings-research-knowledge-intelligence.md",
       "repository": "hf-sensenova-sensenova-loop-9b-preview-learnings",
-      "content_hash": "5351b834778f05d4a888d5cf889579a9169bd5f12e1d730235cbc3eb7efd9d8e",
-      "created_at": "2026-11-15T12:36:57.789Z"
+      "content_hash": "8a1abeeb9332b8a34120c0c1e8d1801898b6972a9025838736080c5d7a9406af",
+      "created_at": "2026-11-22T00:24:55.745Z"
     },
     "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-core-invariant",

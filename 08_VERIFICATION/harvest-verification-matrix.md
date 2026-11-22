@@ -11952,3 +11952,6 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:56:17.643Z` | `hf-fusioncow-sulphur-3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6EECDBA7` [Domain D] | Yes (`29e79ad7...`) |
 | `CYCLE-20261122-Y7N9` | `2026-11-22T00:09:47.061Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md` | Yes (`43186978...`) |
 | `CYCLE-20261122-YCA0` | `2026-11-22T00:09:53.064Z` | `nativewind/nativewind` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9871` | Yes (`5fb62de7...`) |
+| `CYCLE-20261122-H8TN` | `2026-11-22T00:24:35.051Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md` | Yes (`61105f69...`) |
+| `CYCLE-20261122-H9XT` | `2026-11-22T00:24:36.497Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9872` | Yes (`f229e00b...`) |
+| `CYCLE-20261122-HLM4` | `2026-11-22T00:24:51.628Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9873` | Yes (`dff9a277...`) |

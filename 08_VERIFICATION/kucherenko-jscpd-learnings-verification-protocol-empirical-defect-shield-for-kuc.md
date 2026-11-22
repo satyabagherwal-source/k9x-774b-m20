@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T10:44:20.554Z",
+  "timestamp": "2026-11-22T00:24:55.082Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kucherenko-jscpd-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kucherenko-jscpd-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T10:44:20.554Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T00:24:55.082Z`  
 > **Learning ID**: `LEARN-EVO-kucherenko-jscpd-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `f79ae2bc`  
+> **Source Version**: `a5ac161f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T10:44:15.593Z  
+> **Timestamp**: 2026-11-22T00:24:35.652Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T10:34:14.290Z  
+> **Harvest Timestamp**: 2026-11-22T00:24:35.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6586 stars
+- **Stars / Engagement**: 6589 stars
 
 ---
 
@@ -1904,714 +1904,151 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c206ed58` (2026-11-18)
-**Commit Message**: fix(deps): move the detection date helper to cpd-core
+### Incident Patch 1: `b2b8a142` (2026-11-20)
+**Commit Message**: build: raise the Rust toolchain and MSRV to 1.98
 
-Review of #1310:
-- now_iso8601() lives in cpd_core::time, next to the two report models
-  that carry a detection date, so basta no longer goes through the
-  statistics module of cpd-finder for it; jiff moves there too
-- it can't panic: it builds the timestamp from SystemTime itself, a
-  clock before 1970 gives the epoch and a time jiff can't hold gives the
-  seconds as a number, as the chrono code did
-- basta calls the function where it needs it, the re-export in
-  analyze.rs is gone
-- tests: a clock before 1970, a time past the year 9999, and the shape
-  of the live value
+oxc 0.159 requires rustc 1.98, so every Rust job of the bump failed
+before compiling anything. rust-version goes to 1.98 and the pinned
+toolchain to 1.98.1, in rust-toolchain.toml, the workflows and the
+flake hash.
 
-**File**: `rust/Cargo.lock` (modified, +1/-1)
+Clippy 1.98 has a new lint, chunks_exact_to_as_chunks. The cache reader
+and dot() in cpd-semantic now use as_chunks; dot() adds the products in
+the same order as before.
+
+**File**: `.github/workflows/crates-publish.yml` (modified, +1/-1)
 ```diff
-@@ -584,6 +584,7 @@ checksum = "417bef24afe1460300965a25ff4a24b8b45ad011948302ec221e8a0a81eb2c79"
- name = "cpd-core"
- version = "0.1.23"
- dependencies = [
-+ "jiff",
-  "rayon",
-  "rustc-hash",
-  "serde",
-@@ -600,7 +601,6 @@ dependencies = [
-  "cpd-tokenizer",
-  "globset",
-  "ignore",
-- "jiff",
-  "memchr",
-  "memmap2",
-  "rayon",
+@@ -74,7 +74,7 @@ jobs:
+       - name: Install Rust toolchain
+         uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
+         with:
+-          toolchain: "1.97.1"
++          toolchain: "1.98.1"
+ 
+       - name: Cache Cargo registry and target
+         uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
 ```
 
-**File**: `rust/crates/basta/src/analyze.rs` (modified, +1/-3)
+**File**: `.github/workflows/npm-rust-publish.yml` (modified, +1/-1)
 ```diff
-@@ -351,12 +351,10 @@ fn stats(graph: &Graph, findings: &[Finding], total_lines: u32, entry_points: us
-         } else {
-             (f64::from(dead_lines) / f64::from(total_lines)) * 100.0
-         },
--        detection_date: now_iso8601(),
-+        detection_date: cpd_core::time::now_iso8601(),
+@@ -160,7 +160,7 @@ jobs:
+         if: steps.platform-package.outputs.published != 'true'
+         uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
+         with:
+-          toolchain: "1.97.1"
++          toolchain: "1.98.1"
+           targets: ${{ matrix.target.rustTarget }}
+ 
+       - name: Cache Cargo registry and target
+```
+
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
+```diff
+@@ -151,7 +151,7 @@ jobs:
+       - name: Install Rust toolchain
+         uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
+         with:
+-          toolchain: "1.97.1"
++          toolchain: "1.98.1"
+           components: clippy
+ 
+       - name: Cache Cargo registry and target
+```
+
+**File**: `.github/workflows/rust.yml` (modified, +3/-3)
+```diff
+@@ -25,7 +25,7 @@ jobs:
+ 
+       - uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
+         with:
+-          toolchain: "1.97.1"
++          toolchain: "1.98.1"
+           components: clippy, rustfmt
+ 
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+@@ -177,7 +177,7 @@ jobs:
+ 
+       - uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
+         with:
+-          toolchain: "1.97.1"
++          toolchain: "1.98.1"
+           components: llvm-tools-preview
+ 
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+@@ -305,7 +305,7 @@ jobs:
+ 
+       - uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
+         with:
+-          toolchain: "1.97.1"
++          toolchain: "1.98.1"
+ 
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+         with:
+```
+
+**File**: `flake.nix` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@
+           file = ./rust/rust-toolchain.toml;
+           # Hash of the versioned channel manifest (channel-rust-<x.y.z>.toml);
+           # the toolchain file must pin an exact patch version or this drifts.
+-          sha256 = "sha256-A1abGIbOtcBSdrUMhDGrER3pRM1hQP4fp9gh3Y4PKc8=";
++          sha256 = "sha256-p8h3Sl/YRByZfZTAKXdsvF6xEenXKrXSVvpphmZENH4=";
+         };
+ 
+         craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
+```
+
+**File**: `rust/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@ members = [
+ 
+ [workspace.package]
+ edition = "2024"
+-rust-version = "1.97"
++rust-version = "1.98"
+ authors = ["jscpd contributors"]
+ license = "MIT"
+ homepage = "https://jscpd.dev"
+```
+
+**File**: `rust/README.md` (modified, +1/-1)
+```diff
+@@ -120,7 +120,7 @@ See [docs/api.md](../docs/api.md) and [examples/rust-cpd-finder](../examples/rus
+ 
+ ## Building and testing
+ 
+-Requires Rust 1.97+ (the MSRV declared in `Cargo.toml`, enforced by the `msrv`
++Requires Rust 1.98+ (the MSRV declared in `Cargo.toml`, enforced by the `msrv`
+ job in CI). Development uses the exact toolchain pinned in `rust-toolchain.toml`.
+ 
+ ```bash
+```
+
+**File**: `rust/crates/cpd-semantic/src/embed/cache.rs` (modified, +4/-2)
+```diff
+@@ -154,8 +154,10 @@ pub fn load(path: &Path) -> Cache {
+     for chunk in bytes[12..].chunks_exact(record) {
+         let key = u128::from_le_bytes(chunk[..16].try_into().unwrap_or_default());
+         let vector = chunk[16..]
+-            .chunks_exact(4)
+-            .map(|b| f32::from_le_bytes([b[0], b[1], b[2], b[3]]))
++            .as_chunks::<4>()
++            .0
++            .iter()
++            .map(|b| f32::from_le_bytes(*b))
+             .collect();
+         vectors.insert(key, vector);
      }
- }
- 
--pub(crate) use cpd_finder::statistics::now_iso8601;
--
- #[cfg(test)]
- mod tests {
-     use super::*;
-```
-
-**File**: `rust/crates/basta/src/rustc.rs` (modified, +1/-1)
-```diff
-@@ -184,7 +184,7 @@ fn stats(findings: &[Finding], total_lines: u32) -> Stats {
-         } else {
-             (f64::from(dead_lines) / f64::from(total_lines)) * 100.0
-         },
--        detection_date: crate::analyze::now_iso8601(),
-+        detection_date: cpd_core::time::now_iso8601(),
-     }
- }
- 
-```
-
-**File**: `rust/crates/cpd-core/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ rustc-hash = "2"
- xxhash-rust = { version = "0.8", features = ["xxh3"] }
- rayon = "1"
- serde = { version = "1", features = ["derive"] }
-+jiff = { version = "0.2", default-features = false, features = ["std"] }
- 
- [dev-dependencies]
- serde_json = "1"
-```
-
-**File**: `rust/crates/cpd-core/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -7,3 +7,4 @@ pub mod history;
- pub mod models;
- pub mod paths;
- pub mod summary;
-+pub mod time;
-```
-
-**File**: `rust/crates/cpd-core/src/time.rs` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+//! The clock string that reports carry as their detection date.
-+
-+use std::time::{Duration, SystemTime, UNIX_EPOCH};
-+
-+/// The current UTC time as `2026-11-18T09:30:00.123Z`, the shape of
-+/// JavaScript's `Date.prototype.toISOString()`.
-+pub fn now_iso8601() -> String {
-+    iso8601_utc(SystemTime::now())
-+}
-+
-+/// Format a system time in UTC with millisecond precision. It never panics:
-+/// a clock before 1970 gives the epoch, and a time that jiff can't hold
-+/// (past the year 9999) gives the seconds as a plain number.
-+fn iso8601_utc(time: SystemTime) -> String {
-+    let since_epoch = time.duration_since(UNIX_EPOCH).unwrap_or_default();
-+    timestamp(since_epoch)
-+        .map(|timestamp| format!("{timestamp:.3}"))
-+        .unwrap_or_else(|| since_epoch.as_secs().to_string())
-+}
-+
-+fn timestamp(since_epoch: Duration) -> Option<jiff::Timestamp> {
-+    let seconds = i64::try_from(since_epoch.as_secs()).ok()?;
-+    let nanoseconds = i32::try_from(since_epoch.subsec_nanos()).ok()?;
-+    jiff::Timestamp::new(seconds, nanoseconds).ok()
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn at(seconds: u64, nanoseconds: u32) -> SystemTime {
-+        UNIX_EPOCH + Duration::new(seconds, nanoseconds)
-+    }
-+
-+    #[test]
-+    fn formats_utc_with_milliseconds() {
-+        let cases = [
-+            (0, 0, "1970-01-01T00:00:00.000Z"),
-+            (86_399, 999_999_999, "1970-01-01T23:59:59.999Z"),
-+            (1_709_164_800, 7_000_000, "2024-02-29T00:00:00.007Z"),
-+            (1_795_080_645, 123_000_000, "2026-11-19T09:30:45.123Z"),
-+        ];
-+        for (seconds, nanoseconds, expected) in cases {
-+            assert_eq!(
-+                iso8601_utc(at(seconds, nanoseconds)),
-+                expected,
-+                "seconds = {seconds}"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn a_clock_before_1970_gives_the_epoch() {
-+        let before = UNIX_EPOCH - Duration::from_secs(86_400);
-+        assert_eq!(iso8601_utc(before), "1970-01-01T00:00:00.000Z");
-+    }
-+
-+    #[test]
-+    fn a_time_past_the_year_9999_gives_plain_seconds() {
-+        let seconds = 400_000_000_000;
-+        assert_eq!(iso8601_utc(at(seconds, 0)), seconds.to_string());
-+    }
-+
-+    #[test]
-+    fn now_has_the_shape_of_to_iso_string() {
-+        let now = now_iso8601();
-+        let shape: String = now
-+            .chars()
-+            .map(|c| if c.is_ascii_digit() { '0' } else { c })
-+            .collect();
-+        assert_eq!(shape, "0000-00-00T00:00:00.000Z", "{now}");
-+    }
-+}
-```
-
-**File**: `rust/crates/cpd-finder/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -20,6 +20,5 @@ ignore = "0.4"
- globset = "0.4"
- rayon = "1"
- regex = "1"
--jiff = { version = "0.2", default-features = false, features = ["std"] }
- memmap2 = "0.9"
- memchr = "2.8"
-```
-
-**File**: `rust/crates/cpd-finder/src/statistics.rs` (modified, +1/-31)
-```diff
-@@ -57,7 +57,7 @@ pub fn compute<'a>(
-         }
-     }
- 
--    let detection_date = now_iso8601();
-+    let detection_date = cpd_core::time::now_iso8601();
- 
-     Statistics {
-         total: StatRow {
-@@ -77,17 +77,6 @@ pub fn compute<'a>(
-     }
- }
- 
--/// The current UTC time as `2026-11-18T09:30:00.123Z`, the shape of
--/// JavaScript's `Date.prototype.toISOString()`.
--pub fn now_iso8601() -> String {
--    iso8601_utc(jiff::Timestamp::now())
--}
--
--/// Format a timestamp in UTC with millisecond precision.
--fn iso8601_utc(timestamp: jiff::Timestamp) -> String {
--    format!("{timestamp:.3}")
--}
--
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -201,22 +190,3 @@ mod tests {
-         assert_eq!(stats.formats["javascript"].sources, 1);
-     }
- }
--
--#[cfg(test)]
--mod iso8601_tests {
--    use super::iso8601_utc;
--
--    #[test]
--    fn formats_utc_with_milliseconds() {
--        let cases = [
--            (0, 0, "1970-01-01T00:00:00.000Z"),
--            (86_399, 999_999_999, "1970-01-01T23:59:59.999Z"),
--            (1_709_164_800, 7_000_000, "2024-02-29T00:00:00.007Z"),
--            (1_795_080_645, 123_000_000, "2026-11-19T09:30:45.123Z"),
--        ];
--        for (secs, nanos, expected) in cases {
--            let timestamp = jiff::Timestamp::new(secs, nanos).unwrap();
--            assert_eq!(iso8601_utc(timestamp), expected, "secs = {secs}");
--        }
--    }
--}
-```
-
----
-
-### Incident Patch 2: `94d8958f` (2026-11-18)
-**Commit Message**: fix(deps): format the detection date with jiff
-
-The hand-written date conversion goes away. jiff is one of the two
-crates the advisory recommends, and it is in the tree already through
-env_logger, so the lockfile gains no package. cpd-finder asks for it
-without default features: a UTC timestamp needs no time zone database.
-
-**File**: `rust/Cargo.lock` (modified, +1/-0)
-```diff
-@@ -600,6 +600,7 @@ dependencies = [
-  "cpd-tokenizer",
-  "globset",
-  "ignore",
-+ "jiff",
-  "memchr",
-  "memmap2",
-  "rayon",
-```
-
-**File**: `rust/crates/cpd-finder/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -20,5 +20,6 @@ ignore = "0.4"
- globset = "0.4"
- rayon = "1"
- regex = "1"
-+jiff = { version = "0.2", default-features = false, features = ["std"] }
- memmap2 = "0.9"
- memchr = "2.8"
-```
-
-**File**: `rust/crates/cpd-finder/src/statistics.rs` (modified, +11/-42)
-```diff
-@@ -80,39 +80,12 @@ pub fn compute<'a>(
- /// The current UTC time as `2026-11-18T09:30:00.123Z`, the shape of
- /// JavaScript's `Date.prototype.toISOString()`.
- pub fn now_iso8601() -> String {
--    let duration = std::time::SystemTime::now()
--        .duration_since(std::time::UNIX_EPOCH)
--        .unwrap_or_default();
--    iso8601_utc(duration.as_secs(), duration.subsec_millis())
-+    iso8601_utc(jiff::Timestamp::now())
- }
- 
--/// Format seconds since the Unix epoch, plus milliseconds, as an ISO 8601 UTC
--/// timestamp. The date comes from the days-to-civil conversion of the
--/// proleptic Gregorian calendar, so no date-time crate is needed for it.
--pub fn iso8601_utc(secs: u64, millis: u32) -> String {
--    let days = secs / 86_400;
--    let rem = secs % 86_400;
--    // Shift the epoch to 0000-03-01 so a leap day is the last day of a year.
--    let z = days + 719_468;
--    let era = z / 146_097;
--    let day_of_era = z % 146_097;
--    let year_of_era =
--        (day_of_era - day_of_era / 1_460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
--    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
--    let shifted_month = (5 * day_of_year + 2) / 153;
--    let day = day_of_year - (153 * shifted_month + 2) / 5 + 1;
--    let month = if shifted_month < 10 {
--        shifted_month + 3
--    } else {
--        shifted_month - 9
--    };
--    let year = year_of_era + era * 400 + u64::from(month <= 2);
--    format!(
--        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}.{millis:03}Z",
--        rem / 3_600,
--        rem % 3_600 / 60,
--        rem % 60
--    )
-+/// Format a timestamp in UTC with millisecond precision.
-+fn iso8601_utc(timestamp: jiff::Timestamp) -> String {
-+    format!("{timestamp:.3}")
- }
- 
- #[cfg(test)]
-@@ -234,20 +207,16 @@ mod iso8601_tests {
-     use super::iso8601_utc;
- 
-     #[test]
--    fn formats_known_instants() {
-+    fn formats_utc_with_milliseconds() {
-         let cases = [
-             (0, 0, "1970-01-01T00:00:00.000Z"),
--            (86_399, 999, "1970-01-01T23:59:59.999Z"),
--            (951_782_400, 0, "2000-02-29T00:00:00.000Z"),
--            (951_868_800, 0, "2000-03-01T00:00:00.000Z"),
--            (1_709_164_800, 7, "2024-02-29T00:00:00.007Z"),
--            (1_735_689_599, 0, "2024-12-31T23:59:59.000Z"),
--            (1_735_689_600, 0, "2025-01-01T00:00:00.000Z"),
--            (1_795_080_645, 123, "2026-11-19T09:30:45.123Z"),
--            (4_107_542_400, 0, "2100-03-01T00:00:00.000Z"),
-+            (86_399, 999_999_999, "1970-01-01T23:59:59.999Z"),
-+            (1_709_164_800, 7_000_000, "2024-02-29T00:00:00.007Z"),
-+            (1_795_080_645, 123_000_000, "2026-11-19T09:30:45.123Z"),
-         ];
--        for (secs, millis, expected) in cases {
--            assert_eq!(iso8601_utc(secs, millis), expected, "secs = {secs}");
-+        for (secs, nanos, expected) in cases {
-+            let timestamp = jiff::Timestamp::new(secs, nanos).unwrap();
-+            assert_eq!(iso8601_utc(timestamp), expected, "secs = {secs}");
-         }
-     }
- }
-```
-
----
-
-### Incident Patch 3: `a9dbd250` (2026-11-18)
-**Commit Message**: fix(deps): drop chrono for RUSTSEC-2026-0543
-
-chrono is unmaintained (#1309). jscpd used it in two places, both to
-print the detection date of a report as an ISO 8601 UTC timestamp.
-cpd-finder now formats it with a days-to-civil conversion, and basta
-calls the same function instead of its own copy.
-
-The lockfile loses chrono and the 13 crates only it pulled in.
-
-Fixes #1309
-
-**File**: `rust/Cargo.lock` (modified, +0/-138)
-```diff
-@@ -37,15 +37,6 @@ version = "0.2.21"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
- 
--[[package]]
--name = "android_system_properties"
--version = "0.1.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae221649c9976a6f6c56ae1facf410f3ddb33cc661c4b7b61020a912d4237fbc"
--dependencies = [
-- "libc",
--]
--
- [[package]]
- name = "annotate-snippets"
- version = "0.12.16"
-@@ -233,7 +224,6 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
- name = "basta"
- version = "0.3.3"
- dependencies = [
-- "chrono",
-  "clap",
-  "cpd-core",
-  "cpd-finder",
-@@ -447,19 +437,6 @@ dependencies = [
-  "ryu",
- ]
- 
--[[package]]
--name = "chrono"
--version = "0.4.45"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
--dependencies = [
-- "iana-time-zone",
-- "js-sys",
-- "num-traits",
-- "wasm-bindgen",
-- "windows-link",
--]
--
- [[package]]
- name = "clap"
- version = "4.6.7"
-@@ -618,7 +595,6 @@ dependencies = [
- name = "cpd-finder"
- version = "0.1.22"
- dependencies = [
-- "chrono",
-  "cpd-core",
-  "cpd-similarity",
-  "cpd-tokenizer",
-@@ -1170,30 +1146,6 @@ dependencies = [
-  "percent-encoding",
- ]
- 
--[[package]]
--name = "futures-core"
--version = "0.3.34"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
--
--[[package]]
--name = "futures-task"
--version = "0.3.34"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
--
--[[package]]
--name = "futures-util"
--version = "0.3.34"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
--dependencies = [
-- "futures-core",
-- "futures-task",
-- "pin-project-lite",
-- "slab",
--]
--
- [[package]]
- name = "gemm"
- version = "0.19.0"
-@@ -1471,30 +1423,6 @@ dependencies = [
-  "typenum",
- ]
- 
--[[package]]
--name = "iana-time-zone"
--version = "0.1.65"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e31bc9ad994ba00e440a8aa5c9ef0ec67d5cb5e5cb0cc7f8b744a35b389cc470"
--dependencies = [
-- "android_system_properties",
-- "core-foundation-sys",
-- "iana-time-zone-haiku",
-- "js-sys",
-- "log",
-- "wasm-bindgen",
-- "windows-core",
--]
--
--[[package]]
--name = "iana-time-zone-haiku"
--version = "0.1.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f31827a206f56af32e590ba56d5d2d085f558508192593743f16b2306495269f"
--dependencies = [
-- "cc",
--]
--
- [[package]]
- name = "icu_collections"
- version = "2.3.0"
-@@ -1768,7 +1696,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
- dependencies = [
-  "cfg-if",
-- "futures-util",
-  "wasm-bindgen",
- ]
- 
-@@ -2455,12 +2382,6 @@ dependencies = [
-  "siphasher",
- ]
- 
--[[package]]
--name = "pin-project-lite"
--version = "0.2.17"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
--
- [[package]]
- name = "pkg-config"
- version = "0.3.34"
-@@ -3103,12 +3024,6 @@ version = "1.0.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "33f4fe9184a62d842c9ef383018f3306d8ba224fd9d836f56d7288308847c256"
- 
--[[package]]
--name = "slab"
--version = "0.4.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
--
- [[package]]
- name = "smallvec"
- version = "1.16.2"
-@@ -3764,65 +3679,12 @@ dependencies = [
-  "windows-sys 0.61.2",
- ]
- 
--[[package]]
--name = "windows-core"
--version = "0.62.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b8e83a14d34d0623b51dce9581199302a221863196a1dde71a7663a4c2be9deb"
--dependencies = [
-- "windows-implement",
-- "windows-interface",
-- "windows-link",
-- "windows-result",
-- "windows-strings",
--]
--
--[[package]]
--name = "windows-implement"
--version = "0.60.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "053e2e040ab57b9dc951b72c264860db7eb3b0200ba345b4e4c3b14f67855ddf"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 2.0.119",
--]
--
--[[package]]
--name = "windows-interface"
--version = "0.59.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3f316c4a2570ba26bbec722032c4099d8c8bc095efccdc15688708623367e358"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 2.0.119",
--]
--
- [[package]]
- name = "windows-link"
- version = "0.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
- 
--[[package]]
--name = "windows-result"
--version = "0.4.1"
--source = 
-```
-
-**File**: `rust/crates/basta/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -37,7 +37,6 @@ oxc_syntax = "0.158"
- ruff_python_ast = "0.0.21"
- ruff_python_parser = "0.0.21"
- rustc-hash = "2"
--chrono = "0.4"
- rayon = "1"
- serde = { version = "1", features = ["derive"] }
- serde_json = "1"
-```
-
-**File**: `rust/crates/basta/src/analyze.rs` (modified, +1/-10)
-```diff
-@@ -22,7 +22,6 @@ use crate::rustc;
- use cpd_finder::walker::{WalkConfig, walk};
- use rayon::prelude::*;
- use std::path::{Path, PathBuf};
--use std::time::{SystemTime, UNIX_EPOCH};
- 
- /// Everything a run produced, plus the graph it was derived from so callers
- /// that want more than the findings (the MCP server, tests) need not rebuild it.
-@@ -356,15 +355,7 @@ fn stats(graph: &Graph, findings: &[Finding], total_lines: u32, entry_points: us
-     }
- }
- 
--pub(crate) fn now_iso8601() -> String {
--    let duration = SystemTime::now()
--        .duration_since(UNIX_EPOCH)
--        .unwrap_or_default();
--    let seconds = duration.as_secs();
--    chrono::DateTime::from_timestamp(seconds as i64, duration.subsec_millis() * 1_000_000)
--        .map(|dt| dt.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string())
--        .unwrap_or_else(|| seconds.to_string())
--}
-+pub(crate) use cpd_finder::statistics::now_iso8601;
- 
- #[cfg(test)]
- mod tests {
-```
-
-**File**: `rust/crates/cpd-finder/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -20,6 +20,5 @@ ignore = "0.4"
- globset = "0.4"
- rayon = "1"
- regex = "1"
--chrono = "0.4"
- memmap2 = "0.9"
- memchr = "2.8"
-```
-
-**File**: `rust/crates/cpd-finder/src/statistics.rs` (modified, +62/-11)
-```diff
-@@ -57,17 +57,7 @@ pub fn compute<'a>(
-         }
-     }
- 
--    use std::time::{SystemTime, UNIX_EPOCH};
--    let detection_date = {
--        let duration = SystemTime::now()
--            .duration_since(UNIX_EPOCH)
--            .unwrap_or_default();
--        let secs = duration.as_secs();
--        let millis = duration.subsec_millis();
--        chrono::DateTime::from_timestamp(secs as i64, millis * 1_000_000)
--            .map(|dt| dt.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string())
--            .unwrap_or_else(|| format!("{secs}"))
--    };
-+    let detection_date = now_iso8601();
- 
-     Statistics {
-         total: StatRow {
-@@ -87,6 +77,44 @@ pub fn compute<'a>(
-     }
- }
- 
-+/// The current UTC time as `2026-11-18T09:30:00.123Z`, the shape of
-+/// JavaScript's `Date.prototype.toISOString()`.
-+pub fn now_iso8601() -> String {
-+    let duration = std::time::SystemTime::now()
-+        .duration_since(std::time::UNIX_EPOCH)
-+        .unwrap_or_default();
-+    iso8601_utc(duration.as_secs(), duration.subsec_millis())
-+}
-+
-+/// Format seconds since the Unix epoch, plus milliseconds, as an ISO 8601 UTC
-+/// timestamp. The date comes from the days-to-civil conversion of the
-+/// proleptic Gregorian calendar, so no date-time crate is needed for it.
-+pub fn iso8601_utc(secs: u64, millis: u32) -> String {
-+    let days = secs / 86_400;
-+    let rem = secs % 86_400;
-+    // Shift the epoch to 0000-03-01 so a leap day is the last day of a year.
-+    let z = days + 719_468;
-+    let era = z / 146_097;
-+    let day_of_era = z % 146_097;
-+    let year_of_era =
-+        (day_of_era - day_of_era / 1_460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
-+    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
-+    let shifted_month = (5 * day_of_year + 2) / 153;
-+    let day = day_of_year - (153 * shifted_month + 2) / 5 + 1;
-+    let month = if shifted_month < 10 {
-+        shifted_month + 3
-+    } else {
-+        shifted_month - 9
-+    };
-+    let year = year_of_era + era * 400 + u64::from(month <= 2);
-+    format!(
-+        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}.{millis:03}Z",
-+        rem / 3_600,
-+        rem % 3_600 / 60,
-+        rem % 60
-+    )
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -200,3 +228,26 @@ mod tests {
-         assert_eq!(stats.formats["javascript"].sources, 1);
-     }
- }
-+
-+#[cfg(test)]
-+mod iso8601_tests {
-+    use super::iso8601_utc;
-+
-+    #[test]
-+    fn formats_known_instants() {
-+        let cases = [
-+            (0, 0, "1970-01-01T00:00:00.000Z"),
-+            (86_399, 999, "1970-01-01T23:59:59.999Z"),
-+            (951_782_400, 0, "2000-02-29T00:00:00.000Z"),
-+            (951_868_800, 0, "2000-03-01T00:00:00.000Z"),
-+            (1_709_164_800, 7, "2024-02-29T00:00:00.007Z"),
-+            (1_735_689_599, 0, "2024-12-31T23:59:59.000Z"),
-+            (1_735_689_600, 0, "2025-01-01T00:00:00.000Z"),
-+            (1_795_080_645, 123, "2026-11-19T09:30:45.123Z"),
-+            (4_107_542_400, 0, "2100-03-01T00:00:00.000Z"),
-+        ];
-+        for (secs, millis, expected) in cases {
-+            assert_eq!(iso8601_utc(secs, millis), expected, "secs = {secs}");
-+        }
-+    }
-+}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1318** (2026-11-20): chore(deps): bump ureq from 3.5.1 to 3.5.2 in /rust (@dependabot[bot])
+- **PR #1317** (2026-11-20): chore(deps): bump clap from 4.6.7 to 4.6.8 in /rust (@dependabot[bot])
 - **PR #1316** (2026-11-20): chore(deps): bump serde-saphyr from 2.0.0 to 2.1.1 in /rust (@dependabot[bot])
 - **PR #1315** (2026-11-20): chore(deps): bump the ruff group in /rust with 2 updates (@dependabot[bot])
 - **PR #1314** (2026-11-20): chore(deps): bump taiki-e/install-action from 2.90.3 to 2.90.5 (@dependabot[bot])
-- **PR #1312** (2026-11-20): chore(deps): bump cachix/install-nix-action from 31.11.3 to 31.11.5 (@dependabot[bot])
-- **PR #1311** (2026-11-20): chore(deps): bump EmbarkStudios/cargo-deny-action from 2.1.1 to 2.1.2 (@dependabot[bot])
+- **PR #1313** (2026-11-21): chore(deps): bump the oxc group across 1 directory with 7 updates (@dependabot[bot])
 
 ---
 
@@ -2631,31 +2068,31 @@ Fixes #1309
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): move the detection date helper to cpd-core
+## X. build: raise the Rust toolchain and MSRV to 1.98
 
 **RULE**:
-When implementing operations in `rust/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/crates-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c206ed58`: deps): move the detection date helper to cpd-core. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2b8a142`: build: raise the Rust toolchain and MSRV to 1.98. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/crates-publish.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "jiff",
+          toolchain: "1.98.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "jiff",
+          toolchain: "1.97.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c206ed58` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2b8a142` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

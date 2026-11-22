@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T00:10:01.228Z",
+  "last_updated": "2026-11-22T00:24:56.785Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T00:10:00.333Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-21T22:48:42.215Z",
+      "processed_at": "2026-11-22T00:24:55.892Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -858,7 +858,7 @@
       "staged_for_review": 1
     },
     "kucherenko-jscpd-learnings.md": {
-      "processed_at": "2026-11-20T10:44:20.359Z",
+      "processed_at": "2026-11-22T00:24:54.901Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2968,8 +2968,8 @@
       "staged_for_review": 0
     },
     "hf-sensenova-sensenova-loop-9b-preview-learnings.md": {
-      "processed_at": "2026-11-15T12:36:57.559Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T00:24:55.576Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "mochidiffusion-mochidiffusion-learnings.md": {
@@ -3693,7 +3693,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2937,
+  "total_dossiers_evaluated": 2940,
   "total_canonical_promoted": 464,
-  "total_staged_for_review": 2248
+  "total_staged_for_review": 2250
 }
