@@ -12535,8 +12535,8 @@
     "sourceUrl": "https://huggingface.co/laion/clap-htsat-fused",
     "sourceVersion": "hf-laion-clap-htsat-fused",
     "license": "Open-Source",
-    "contentHash": "55b4ffd0dcc8a49077c808dd8df372d39dac7f22a180987138a86042cb10a905",
-    "lastHarvestedAt": "2026-11-14T09:18:01.295Z",
+    "contentHash": "d6f0b51a8f715ff982ac2ad4d10b96e3291dcdb283907631341671decc2f1910",
+    "lastHarvestedAt": "2026-11-22T08:41:01.230Z",
     "learningId": "learn-huggingface-laion-clap-htsat-fused"
   },
   "onehumanbeing-esp32-iphone-agent": {

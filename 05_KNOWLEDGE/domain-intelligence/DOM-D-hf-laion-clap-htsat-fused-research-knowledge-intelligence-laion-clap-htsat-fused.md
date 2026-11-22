@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/laion/clap-htsat-fused",
   "source_version": "hf-laion-clap-htsat-fused",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T09:18:01.451Z",
+  "timestamp": "2026-11-22T08:41:01.425Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-laion-clap-htsat-fused",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [laion/clap-htsat-fused](https://huggingface.co/laion/clap-htsat-fused) (Revision: `hf-laion-c`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T09:18:01.451Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T08:41:01.425Z`  
 > **Learning ID**: `learn-huggingface-laion-clap-htsat-fused`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/laion/clap-htsat-fused](https://huggingface.co/laion/clap-htsat-fused))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T09:07:59.463Z  
+> **Harvest Timestamp**: 2026-11-22T08:35:56.834Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: audio-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8599807 downloads | 178 likes
+- **Stars / Engagement**: 8341816 downloads | 180 likes
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T08:23:01.299Z",
+  "last_updated": "2026-11-22T08:41:06.457Z",
   "total_records": 2344,
   "domains": {
     "A": {
@@ -8114,8 +8114,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "60de60a3798c36caa8fd61298b04f1f337aeedada51d276bc9a40656125d3edf",
-      "created_at": "2026-11-22T07:48:39.757Z"
+      "content_hash": "9e2a67273c858dffc4a8f19bb42ecb9336df8d7f6bcc7b0e35d039011451e9ed",
+      "created_at": "2026-11-22T08:41:05.271Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -15006,8 +15006,8 @@
       "title": "Research & Knowledge Intelligence: laion/clap-htsat-fused Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-laion-clap-htsat-fused-research-knowledge-intelligence-laion-clap-htsat-fused.md",
       "repository": "laion/clap-htsat-fused",
-      "content_hash": "d3fa518e1b070efcf43ef50c4ea09a8f082a0088445e4ba0e9ea19e55be14a51",
-      "created_at": "2026-11-14T09:18:01.452Z"
+      "content_hash": "e1a06abff151780db7a1236559260aeda8b1bc62206fba908a7db51b32a56597",
+      "created_at": "2026-11-22T08:41:01.426Z"
     },
     "DOM-D-7AAC58BB": {
       "record_id": "DOM-D-7AAC58BB",
@@ -15057,8 +15057,8 @@
       "title": "Research & Knowledge Intelligence: hf-laion-clap-htsat-fused-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-laion-clap-htsat-fused-learnings-research-knowledge-intelligence-hf-laion-cla.md",
       "repository": "hf-laion-clap-htsat-fused-learnings",
-      "content_hash": "b2e5451260a3c8535cf2bbe04fc0c2637e98d4061e8bd0ef463f03a191af1259",
-      "created_at": "2026-11-14T09:18:33.146Z"
+      "content_hash": "1de4db1a43dedc5e57709bb18837f5fc0057bfcfd65a987f4e0dc6a4398a7cb0",
+      "created_at": "2026-11-22T08:41:04.473Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes",
@@ -17994,8 +17994,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "bbca6da242e144361663d7541cebdd678fc2cb5ada4f5ab0b4c97ede5ec2d297",
-      "created_at": "2026-11-22T07:48:40.866Z"
+      "content_hash": "ffcfd726e80536ad653d0b82c3e3e38e00fd849b41c802910fdbc8dfbb410686",
+      "created_at": "2026-11-22T08:41:06.457Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
