@@ -12129,3 +12129,7 @@ Every entry in this ledger must capture:
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `c06497f3` | Multi-dimensional audit evidence | 2026-11-22T13:59:15.180Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `bc58781b` | Multi-dimensional audit evidence | 2026-11-22T14:17:17.251Z |
 | `learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored` | `https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | `hf-moonmat` | Multi-dimensional audit evidence | 2026-11-22T14:17:27.524Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `2c4a0f1a` | Multi-dimensional audit evidence | 2026-11-22T14:40:37.000Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `4ce60f1a` | Multi-dimensional audit evidence | 2026-11-22T14:40:45.607Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `5f59f4a1` | Multi-dimensional audit evidence | 2026-11-22T14:40:47.893Z |
+| `learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-22T14:45:34.926Z |

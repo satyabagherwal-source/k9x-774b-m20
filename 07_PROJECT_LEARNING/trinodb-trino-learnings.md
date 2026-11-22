@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `6678854c`  
+> **Source Version**: `5f59f4a1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T11:55:32.684Z  
+> **Timestamp**: 2026-11-22T14:40:46.873Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T11:55:32.679Z  
+> **Harvest Timestamp**: 2026-11-22T14:40:46.868Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13531 stars
+- **Stars / Engagement**: 13538 stars
 
 ---
 
@@ -1854,215 +1854,253 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c25db227` (2026-11-20)
-**Commit Message**: Retry Databricks tests on Glue client NullPointerException
+### Incident Patch 1: `5f59f4a1` (2026-11-22)
+**Commit Message**: Extract the JUnit product test suite runner
 
-Databricks intermittently fails CREATE TABLE with a HiveException caused
-by a NullPointerException in AWSCatalogMetastoreClient.isCompatibleWith.
-It is thrown inside the Databricks runtime while registering the table in
-Glue, after the Delta log was committed, and the cluster recovers right
-away. The tests were not retried because the @Flaky pattern covered only
-communication failures.
-
-Match this failure in the shared Databricks pattern so that all tests
-using it are retried. A retry runs the whole test, which picks a fresh
-table name and location.
-
-**File**: `testing/trino-product-tests/src/test/java/io/trino/tests/product/deltalake/DeltaLakeDatabricksUtilsJunit.java` (modified, +4/-2)
+**File**: `.github/bin/run-product-test-suites.sh` (added, +108/-0)
 ```diff
-@@ -34,7 +34,7 @@ public final class DeltaLakeDatabricksUtilsJunit
- {
-     private static final Logger log = Logger.get(DeltaLakeDatabricksUtilsJunit.class);
- 
--    public static final String DATABRICKS_COMMUNICATION_FAILURE_ISSUE = "https://github.com/trinodb/trino/issues/14391";
-+    public static final String DATABRICKS_COMMUNICATION_FAILURE_ISSUE = "https://github.com/trinodb/trino/issues/14391, https://github.com/trinodb/trino/issues/27642";
-     @Language("RegExp")
-     public static final String DATABRICKS_COMMUNICATION_FAILURE_MATCH =
-             "\\Q[Databricks][\\E(DatabricksJDBCDriver|JDBCDriver)\\Q](500593) Communication link failure. Failed to connect to server. Reason: \\E" +
-@@ -47,7 +47,9 @@ public final class DeltaLakeDatabricksUtilsJunit
-                     "|HTTP request failed by code: 50[02]" +
-                     "|HTTP response code: 503" +
-                     "|The cluster is temporarily unavailable" +
--                    "|The current cluster state is Terminated";
-+                    "|The current cluster state is Terminated" +
-+                    // Databricks' Glue client intermittently fails registering a table in the catalog: https://github.com/trinodb/trino/issues/27642
-+                    "|\\Qjava.lang.NullPointerException\\E\\s+at \\Qcom.amazonaws.glue.catalog.metastore.AWSCatalogMetastoreClient.isCompatibleWith(\\E";
- 
-     private static final RetryPolicy<QueryResult> DATABRICKS_COMMUNICATION_FAILURE_RETRY_POLICY = RetryPolicy.<QueryResult>builder()
-             .handleIf(throwable -> Throwables.getRootCause(throwable) instanceof SQLException)
-```
-
----
-
-### Incident Patch 2: `db0f9cd6` (2026-11-19)
-**Commit Message**: Fix compressed text writes to insert-only tables
-
-Trino wrote the files of insert-only transactional tables without the
-compression codec extension. Readers of text-based formats such as
-TEXTFILE and JSON detect the codec from that extension, so with the
-default GZIP codec both Trino and Hive read the compressed data as
-plain text and returned wrong rows or failed.
-
-Append the extension to insert-only table files in the ACID write
-path, as the non-transactional write path already does. Full ACID
-files keep their exact bucket_NNNNN names, which readers rely on.
-
-**File**: `plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveWriterFactory.java` (modified, +8/-2)
-```diff
-@@ -424,8 +424,14 @@ public HiveWriter createWriter(Page partitionColumns, int position, OptionalInt
-         Location path = writeInfo.writePath();
-         if (transaction.isAcidTransactionRunning() && transaction.getOperation() != CREATE_TABLE) {
-             String subdir = computeAcidSubdir(transaction);
--            String nameFormat = table != null && isInsertOnlyTable(table.getParameters()) ? "%05d_0" : "bucket_%05d";
--            path = path.appendPath(subdir).appendPath(nameFormat.formatted(bucketToUse));
-+            String fileName;
-+            if (table != null && isInsertOnlyTable(table.getParameters())) {
-+                fileName = "%05d_0".formatted(bucketToUse) + getFileExtension(compressionCodec, outputStorageFormat);
-+            }
-+            else {
-+                fileName = "bucket_%05d".formatted(bucketToUse);
-+            }
-+            path = path.appendPath(subdir).appendPath(fileName);
-         }
-         else {
-             path = path.appendPath(computeFileName(bucketNumber) + getFileExtension(compressionCodec, outputStorageFormat));
-```
-
-**File**: `plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHive3OnDataLake.java` (modified, +25/-0)
-```diff
-@@ -20,6 +20,7 @@
- import org.junit.jupiter.api.TestInstance;
- 
- import static io.trino.testing.TestingNames.randomNameSuffix;
-+import static org.assertj.core.api.Assertions.assertThat;
- import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
- 
- @TestInstance(PER_CLASS)
-@@ -52,6 +53,30 @@ public void testAcidTableMultipleDereferencesOfSameColumn()
-         }
-     }
- 
-+    @Test
-+    void testInsertIntoCompressedInsertOnlyTextTable()
-+    {
-+        Session session = Session.builder(getQueryRunner().getDefaultSession())
-+                .setCatalogSessionProperty("hive", "insert_existing_partitions_behavior", "APPEND")
-+                .setCatalogSessionProperty("hive", "compression_codec", "GZIP")
-+                .build();
-+        String tableName = "test_insert_only_text_" + randomNameSuffix();
-+        String hiveTableName = getHiveTestTableName(tableName);
-+        String testTable = getFullyQualifiedTestTableName(tableName);
-+        hiveFlociDataLake.runOnHive("CREATE TABLE " + hiveTableName + " (id int, name string) STORED AS TEXTFILE TBLPROPERTIES ('transactional'='true', 'transactional_properties'='insert_only')");
-+        try {
-+            assertUpdate(session, "INSERT INTO " + testTable + " VALUES (1, 'a'), (2, 'b')", 2);
+@@ -0,0 +1,108 @@
++#!/usr/bin/env bash
 +
-+            assertQuery("SELECT id, name FROM " + testTable, "VALUES (1, 'a'), (2, 'b')");
-+            assertThat(hiveFlociDataLake.runOnHive("SELECT id, name FROM " + hiveTableName))
-+                    .containsPattern("[ |]+1[ |]+a[ |]+")
-+                    .containsPattern("[ |]+2[ |]+b[ |]+");
-+        }
-+        finally {
-+            hiveFlociDataLake.runOnHive("DROP TABLE " + hiveTableName);
-+        }
-+    }
++set -eo pipefail
 +
-     @Test
-     public void testCreateEmptyPartitionOnTransactionalTable()
-     {
++mkdir -p logs
++
++# Suites load checked-in configuration from paths relative to the repository root.
++product_test_distribution=testing/trino-product-tests/target/product-test-distribution
++test_jar=("${product_test_distribution}"/lib/trino-product-tests-*-tests.jar)
++product_test_classpath=$(< "${product_test_distribution}/classpath.txt")
++product_test_classpath="${product_test_distribution}/${product_test_classpath//:/:${product_test_distribution}/}"
++
++declare -a suite_results=()
++declare -a suite_totals=()
++echo "## pt ${MATRIX_SUITE}" >> "$GITHUB_STEP_SUMMARY"
++echo "" >> "$GITHUB_STEP_SUMMARY"
++
++failed=0
++failed_suites=()
++
++for suite in ${MATRIX_SUITE}; do
++  log_file="logs/${suite}.log"
++  echo "### ${suite}" >> "$GITHUB_STEP_SUMMARY"
++  echo "" >> "$GITHUB_STEP_SUMMARY"
++
++  set +e
++  java \
++    -Xmx512M \
++    -XX:+ExitOnOutOfMemoryError \
++    -Dtrino.product-tests.image="${TRINO_PRODUCT_TESTS_IMAGE}" \
++    -cp "${test_jar[0]}:${product_test_classpath}" \
++    io.trino.tests.product.suite.${suite} \
++    | tee "${log_file}"
++  rc=${PIPESTATUS[0]}
++  set -e
++
++  total_line=$(grep '^TOTAL' "${log_file}" | tail -1 || true)
++  if [ -n "${total_line}" ]; then
++    suite_totals+=("${suite}:${total_line}")
++  else
++    suite_totals+=("${suite}:TOTAL summary not found")
++  fi
++
++  if [ "${rc}" -ne 0 ]; then
++    failed=1
++    failed_suites+=("${suite}")
++    suite_results+=("${suite}:FAILED")
++    echo "- Result: FAILED" >> "$GITHUB_STEP_SUMMARY"
++  else
++    suite_results+=("${suite}:PASSED")
++    echo "- Result: PASSED" >> "$GITHUB_STEP_SUMMARY"
++  fi
++
++  if grep -Eq '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"; then
++    echo "- Failure details:" >> "$GITHUB_STEP_SUMMARY"
++    grep -E '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}" >> "$GITHUB_STEP_SUMMARY"
++  fi
++  echo "" >> "$GITHUB_STEP_SUMMARY"
++done
++
++echo ""
++echo "========================================"
++echo "         PT-JUNIT SUITE SUMMARY         "
++echo "========================================"
++echo "Suite: ${MATRIX_SUITE}"
++echo ""
++for entry in "${suite_results[@]}"; do
++  suite_name=${entry%%:*}
++  suite_result=${entry#*:}
++  suite_total=""
++  for total_entry in "${suite_totals[@]}"; do
++    if [[ "${total_entry}" == "${suite_name}:"* ]]; then
++      suite_total=${total_entry#*:}
++      break
++    fi
++  done
++  printf '%-32s | %-7s | %s\n' "${suite_name}" "${suite_result}" "${suite_total}"
++done
++echo "========================================"
++echo ""
++
++if [ "${failed}" -ne 0 ]; then
++  echo "FAILED SUITES:"
++  for suite in "${failed_suites[@]}"; do
++    echo "- ${suite}"
++  done
++  echo ""
++  echo "FAILURE DETAILS:"
++  echo "----------------"
++  for suite in "${failed_suites[@]}"; do
++    log_file="logs/${suite}.log"
++    echo ""
++    echo "${suite}:"
++    if grep -q '^FAILURE DETAILS:' "${log_file}"; then
++      sed -n '/^FAILURE DETAILS:/,$p' "${log_file}"
++    elif grep -Eq '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"; then
++      grep -E '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"
++    else
++      echo "No structured failure details found in ${log_file}"
++    fi
++  done
++  echo ""
++  echo "## Failed suites" >> "$GITHUB_STEP_SUMMARY"
++  for suite in "${failed_suites[@]}"; do
++    echo "- ${suite}" >> "$GITHUB_STEP_SUMMARY"
++  done
++  exit 1
++fi
 ```
 
----
-
-### Incident Patch 3: `6678854c` (2026-11-20)
-**Commit Message**: Fix wrong sign for sub-hour time zone offsets
-
-Parsing the signed hour loses the minus sign in -00:30. Use the sign
-from the zone ID so that GMT-00:30 normalizes to -00:30, and invert it
-for Etc/GMT so that Etc/GMT+00:30 does too.
-
-**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/timestamp/TestTimestamp.java` (modified, +11/-0)
+**File**: `.github/workflows/ci.yml` (modified, +1/-106)
 ```diff
-@@ -2668,6 +2668,17 @@ public void testWithTimeZone()
-         assertThat(assertions.expression("with_timezone(TIMESTAMP '2020-05-01 12:34:56.123456789123', 'America/Los_Angeles')")).matches("TIMESTAMP '2020-05-01 12:34:56.123456789123 America/Los_Angeles'");
-     }
- 
-+    @Test
-+    public void testWithTimeZoneSubHourOffset()
-+    {
-+        assertThat(assertions.query(
-+                """
-+                SELECT zone, to_unixtime(with_timezone(TIMESTAMP '1970-01-01 00:00:00', zone))
-+                FROM (VALUES 'GMT-00:30', 'Etc/GMT-00:30', 'Etc/GMT+00:30') t(zone)
-+                """))
-+                .matches("VALUES ('GMT-00:30', 1800e0), ('Etc/GMT-00:30', -1800e0), ('Etc/GMT+00:30', 1800e0)");
-+    }
-+
-     @Test
-     public void testSequenceIntervalDayToSecond()
-     {
-```
-
-**File**: `core/trino-spi/src/main/java/io/trino/spi/type/TimeZoneKey.java` (modified, +3/-2)
-```diff
-@@ -301,11 +301,12 @@ else if (zoneId.length() - offset <= 3) {
-                     return "UTC";
-                 }
- 
-+                boolean positive = zoneId.charAt(offset) == '+';
-                 if (prefix.equals("Etc/GMT")) {
--                    hour = -hour;
-+                    positive = !positive;
-                 }
- 
--                return formatZoneOffset(hour >= 0, abs(hour), minute);
-+                return formatZoneOffset(positive, abs(hour), minute);
-             }
-         }
- 
-```
-
-**File**: `core/trino-spi/src/test/java/io/trino/spi/type/TestTimeZoneKey.java` (modified, +17/-0)
-```diff
-@@ -25,6 +25,7 @@
- import java.time.ZoneId;
- import java.time.ZoneOffset;
- import java.time.ZonedDateTime;
-+import java.util.List;
- import java.util.SortedSet;
- 
- import static io.trino.spi.type.TimeZoneKey.MAX_TIME_ZONE_KEY;
-@@ -162,6 +163,22 @@ public void testHourOffsetZone()
-         assertThat(TimeZoneKey.getTimeZoneKey("-0735")).isSameAs(TimeZoneKey.getTimeZoneKeyForOffset(-(7 * 60 + 35)));
-     }
- 
-+    @Test
-+    public void testPrefixedOffsetZones()
-+    {
-+        for (TimeZoneKey timeZoneKey : TimeZoneKey.getTimeZoneKeys()) {
-+            if (!(timeZoneKey.getZoneId() instanceof ZoneOffset offset)) {
-+                continue;
-+            }
-+            for (String prefix : List.of("GMT", "UTC", "UT", "Etc/UTC", "Etc/UT")) {
-+                String zoneId = prefix + offset.getId();
-+                assertThat(TimeZoneKey.getTimeZoneKey(zoneId)).as(zoneId).isSameAs(timeZoneKey);
-+            }
-+            String zoneId = "Etc/GMT" + ZoneOffset.ofTotalSeconds(-offset.getTotalSeconds()).getId();
-+            assertThat(TimeZoneKey.getTimeZoneKey(zoneId)).as(zoneId).isSameAs(timeZoneKey);
-+        }
-+    }
-+
-     @Test
-     public void testZoneKeyLookup()
-     {
+@@ -1044,7 +1044,6 @@ jobs:
+           docker tag "${image}" trino:for-product-tests
+       - name: Product Tests (JUnit suites)
+         id: tests
+-        shell: bash
+         env:
+           TRINO_PRODUCT_TESTS_IMAGE: "trino:for-product-tests"
+           ABFS_CONTAINER: ${{ vars.AZURE_ABFS_HIERARCHICAL_CONTAINER }}
+@@ -1064,111 +1063,7 @@ jobs:
+           SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
+           SNOWFLAKE_ROLE: ${{ vars.SNOWFLAKE_ROLE }}
+           SNOWFLAKE_WAREHOUSE: ${{ vars.SNOWFLAKE_WAREHOUSE }}
+-        run: |
+-          mkdir -p logs
+-
+-          # Suites load checked-in configuration from paths relative to the repository root.
+-          product_test_distribution=testing/trino-product-tests/target/product-test-distribution
+-          test_jar=("${product_test_distribution}"/lib/trino-product-tests-*-tests.jar)
+-          product_test_classpath=$(< "${product_test_distribution}/classpath.txt")
+-          product_test_classpath="${product_test_distribution}/${product_test_classpath//:/:${product_test_distribution}/}"
+-
+-          declare -a suite_results=()
+-          declare -a suite_totals=()
+-          echo "## pt ${MATRIX_SUITE}" >> "$GITHUB_STEP_SUMMARY"
+-          echo "" >> "$GITHUB_STEP_SUMMARY"
+-
+-          failed=0
+-          failed_suites=()
+-
+-          for suite in ${MATRIX_SUITE}; do
+-            log_file="logs/${suite}.log"
+-            echo "### ${suite}" >> "$GITHUB_STEP_SUMMARY"
+-            echo "" >> "$GITHUB_STEP_SUMMARY"
+-
+-            set +e
+-            java \
+-              -Xmx512M \
+-              -XX:+ExitOnOutOfMemoryError \
+-              -Dtrino.product-tests.image="${TRINO_PRODUCT_TESTS_IMAGE}" \
+-              -cp "${test_jar[0]}:${product_test_classpath}" \
+-              io.trino.tests.product.suite.${suite} \
+-              | tee "${log_file}"
+-            rc=${PIPESTATUS[0]}
+-            set -e
+-
+-            total_line=$(grep '^TOTAL' "${log_file}" | tail -1 || true)
+-            if [ -n "${total_line}" ]; then
+-              suite_totals+=("${suite}:${total_line}")
+-            else
+-              suite_totals+=("${suite}:TOTAL summary not found")
+-            fi
+-
+-            if [ "${rc}" -ne 0 ]; then
+-              failed=1
+-              failed_suites+=("${suite}")
+-              suite_results+=("${suite}:FAILED")
+-              echo "- Result: FAILED" >> "$GITHUB_STEP_SUMMARY"
+-            else
+-              suite_results+=("${suite}:PASSED")
+-              echo "- Result: PASSED" >> "$GITHUB_STEP_SUMMARY"
+-            fi
+-
+-            if grep -Eq '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"; then
+-              echo "- Failure details:" >> "$GITHUB_STEP_SUMMARY"
+-              grep -E '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}" >> "$GITHUB_STEP_SUMMARY"
+-            fi
+-            echo "" >> "$GITHUB_STEP_SUMMARY"
+-          done
+-
+-          echo ""
+-          echo "========================================"
+-          echo "         PT-JUNIT SUITE SUMMARY         "
+-          echo "========================================"
+-          echo "Suite: ${MATRIX_SUITE}"
+-          echo ""
+-          for entry in "${suite_results[@]}"; do
+-            suite_name=${entry%%:*}
+-            suite_result=${entry#*:}
+-            suite_total=""
+-            for total_entry in "${suite_totals[@]}"; do
+-              if [[ "${total_entry}" == "${suite_name}:"* ]]; then
+-                suite_total=${total_entry#*:}
+-                break
+-              fi
+-            done
+-            printf '%-32s | %-7s | %s\n' "${suite_name}" "${suite_result}" "${suite_total}"
+-          done
+-          echo "========================================"
+-          echo ""
+-
+-          if [ "${failed}" -ne 0 ]; then
+-            echo "FAILED SUITES:"
+-            for suite in "${failed_suites[@]}"; do
+-              echo "- ${suite}"
+-            done
+-            echo ""
+-            echo "FAILURE DETAILS:"
+-            echo "----------------"
+-            for suite in "${failed_suites[@]}"; do
+-              log_file="logs/${suite}.log"
+-              echo ""
+-              echo "${suite}:"
+-              if grep -q '^FAILURE DETAILS:' "${log_file}"; then
+-                sed -n '/^FAILURE DETAILS:/,$p' "${log_file}"
+-              elif grep -Eq '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"; then
+-                grep -E '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"
+-              else
+-                echo "No structured failure details found in ${log_file}"
+-              fi
+-            done
+-            echo ""
+-            echo "## Failed suites" >> "$GITHUB_STEP_SUMMARY"
+-            for suite in "${failed_suites[@]}"; do
+-              echo "- ${suite}" >> "$GITHUB_STEP_SUMMARY"
+-            done
+-            exit 1
+-          fi
++        run: .github/bin/run-product-test-suites.sh
+       - name: Upload JUnit suite logs
+         i
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #32307** (closed): Add support for SET NOT NULL in engine and PostgreSQL (@chenjian2664)
+- **PR #32297** (2026-11-22): Extract the JUnit product test suite runner (@electrum)
 - **PR #32280** (2026-11-20): Fix wrong sign for sub-hour time zone offsets (@findepi)
+- **PR #32279** (2026-11-21): Fix operators stalling after a memory wait (@raunaqmorarka)
 - **PR #32278** (2026-11-20): Fix flaky random data assertions in TestFakerQueries (@nineinchnick)
 - **PR #32277** (2026-11-20): Retry Databricks tests on Glue client NullPointerException (@findepi)
-- **PR #32267** (2026-11-20): Fix unsupported Etc/Greenwich and Etc/Zulu zones (@findepi)
-- **PR #32265** (2026-11-20): Omit stats and costs from fragments sent to workers (@raunaqmorarka)
-- **PR #32264** (2026-11-20): Wait in ExplainAnalyzeOperator without blocking threads (@findepi)
 
 ---
 
@@ -2082,32 +2120,66 @@ for Etc/GMT so that Etc/GMT+00:30 does too.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Retry Databricks tests on Glue client NullPointerException
+## X. Extract the JUnit product test suite runner
 
 **RULE**:
-When implementing operations in `testing/trino-product-tests/src/test/java/io/trino/tests/product/deltalake/DeltaLakeDatabricksUtilsJunit.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/bin/run-product-test-suites.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c25db227`: Retry Databricks tests on Glue client NullPointerException. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f59f4a1`: Extract the JUnit product test suite runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `testing/trino-product-tests/src/test/java/io/trino/tests/product/deltalake/DeltaLakeDatabricksUtilsJunit.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/bin/run-product-test-suites.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    public static final String DATABRICKS_COMMUNICATION_FAILURE_ISSUE = "https://github.com/trinodb/trino/issues/14391, https://github.com/trinodb/trino/issues/27642";
-                    "|The current cluster state is Terminated" +
-                    // Databricks' Glue client intermittently fails registering a table in the catalog: https://github.com/trinodb/trino/issues/27642
-                    "|\\Qjava.lang.NullPointerException\\E\\s+at \\Qcom.amazonaws.glue.catalog.metastore.AWSCatalogMetastoreClient.isCompatibleWith(\\E";
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+mkdir -p logs
+
+# Suites load checked-in configuration from paths relative to the repository root.
+product_test_distribution=testing/trino-product-tests/target/product-test-distribution
+test_jar=("${product_test_distribution}"/lib/trino-product-tests-*-tests.jar)
+product_test_classpath=$(< "${product_test_distribution}/classpath.txt")
+product_test_classpath="${product_test_distribution}/${product_test_classpath//:/:${product_test_distribution}/}"
+
+declare -a suite_results=()
+declare -a suite_totals=()
+echo "## pt ${MATRIX_SUITE}" >> "$GITHUB_STEP_SUMMARY"
+echo "" >> "$GITHUB_STEP_SUMMARY"
+
+failed=0
+failed_suites=()
+
+for suite in ${MATRIX_SUITE}; do
+  log_file="logs/${suite}.log"
+  echo "### ${suite}" >> "$GITHUB_STEP_SUMMARY"
+  echo "" >> "$GITHUB_STEP_SUMMARY"
+
+  set +e
+  java \
+    -Xmx512M \
+    -XX:+ExitOnOutOfMemoryError \
+    -Dtrino.product-tests.image="${TRINO_PRODUCT_TESTS_IMAGE}" \
+    -cp "${test_jar[0]}:${product_test_classpath}" \
+    io.trino.tests.product.suite.${suite} \
+    | tee "${log_file}"
+  rc=${PIPESTATUS[0]}
+  set -e
+
+  total_line=$(grep '^TOTAL' "${log_file}" | tail -1 || true)
+  if [ -n "${total_line}" ]; then
+    suit
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    public static final String DATABRICKS_COMMUNICATION_FAILURE_ISSUE = "https://github.com/trinodb/trino/issues/14391";
-                    "|The current cluster state is Terminated";
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c25db227` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f59f4a1` are properly handled with clean fallback behavior.

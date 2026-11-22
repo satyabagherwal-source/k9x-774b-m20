@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T14:17:30.438Z",
-    "lastVerified": "2026-11-22T14:17:30.438Z",
+    "lastChecked": "2026-11-22T14:45:37.813Z",
+    "lastVerified": "2026-11-22T14:45:37.813Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,12 +354,12 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T12:57:03.065Z",
-    "lastVerified": "2026-11-22T12:57:03.065Z",
+    "lastChecked": "2026-11-22T14:40:44.552Z",
+    "lastVerified": "2026-11-22T14:40:44.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -368,7 +368,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bda125f2"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -949,22 +950,21 @@
     "lastVerified": "2026-11-21T18:44:21.642Z"
   },
   "rustls-rustls": {
-    "name": "rustls",
+    "name": "rustls/rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T06:57:58.282Z",
-    "lastVerified": "2026-11-22T06:57:58.282Z",
+    "lastChecked": "2026-11-22T14:40:44.544Z",
+    "lastVerified": "2026-11-22T14:40:44.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 0,
+    "contentHash": "61946723aab1d05baea752a6bf80b94cfaf0ac95916d4df6520635d27cc6d6cc",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "10bb7f9c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -5720,14 +5720,14 @@
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-21T11:55:32.679Z",
-    "lastVerified": "2026-11-21T11:55:32.679Z",
+    "lastChecked": "2026-11-22T14:40:46.868Z",
+    "lastVerified": "2026-11-22T14:40:46.868Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "e846110a239c6649c64dfe86400aa08990c50126c174d90a21cd4143d93ee3c5",
+    "contentHash": "6d8d652bace14afe6a3e1179038bf39c252e50bd7ce59ff312c9d6c242f1f149",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6845,12 +6845,12 @@
     "lastVerified": "2026-11-22T07:56:35.112Z"
   },
   "opentofu-opentofu": {
-    "name": "opentofu/opentofu",
+    "name": "opentofu",
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T13:30:35.315Z",
-    "lastVerified": "2026-11-21T13:30:35.315Z",
+    "lastChecked": "2026-11-22T14:40:37.124Z",
+    "lastVerified": "2026-11-22T14:40:37.124Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
@@ -6859,7 +6859,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0183949c"
   },
   "genkit-ai-genkit": {
     "name": "genkit-ai/genkit",
@@ -7982,9 +7983,9 @@
   "louiscad-splitties": {
     "name": "Splitties",
     "officialUrl": "https://github.com/LouisCAD/Splitties",
-    "lastChecked": "2026-11-19T13:21:46.975Z",
+    "lastChecked": "2026-11-22T14:40:34.617Z",
     "revisionIdentifier": "1ed56ba2",
-    "lastVerified": "2026-11-19T13:21:46.975Z"
+    "lastVerified": "2026-11-22T14:40:34.617Z"
   },
   "killercup-cargo-edit": {
     "name": "cargo-edit",
@@ -8290,14 +8291,14 @@
     "officialUrl": "https://github.com/biomejs/biome",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T01:51:31.238Z",
-    "lastVerified": "2026-11-21T01:51:31.238Z",
+    "lastChecked": "2026-11-22T14:40:35.789Z",
+    "lastVerified": "2026-11-22T14:40:35.789Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-biomejs-biome",
-    "contentHash": "6690b2d603cd0d576a764bce671e6bb3d234d92b925399bfc6e45299bcb8c9cd",
+    "contentHash": "0545489c9bc43bb69450e5de623503221afbe9baa0fe86ec3dbd9eace7248083",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14396,6 +14397,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
     "contentHash": "066950ea53d8f62cddaa0059d4b4132bb13587485674501ed8faf5c30f6d0731",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-harness-hub-qwen3.8-27b-pi-adapted": {
+    "name": "harness-hub/Qwen3.8-27B-pi-adapted",
+    "officialUrl": "https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T14:40:33.547Z",
+    "lastVerified": "2026-11-22T14:40:33.547Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
+    "contentHash": "7ded80e004fe294f6371c72d554f948ad957f31c56dda61f8d60825b9074748b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

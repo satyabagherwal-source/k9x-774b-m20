@@ -12096,3 +12096,7 @@
 | `CYCLE-20261122-KWYV` | `2026-11-22T13:59:15.175Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9933` | Yes (`7c79b813...`) |
 | `CYCLE-20261122-83WF` | `2026-11-22T14:17:17.247Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9934` | Yes (`fc3e2e77...`) |
 | `CYCLE-20261122-8BTR` | `2026-11-22T14:17:27.519Z` | `MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md` | Yes (`066950ea...`) |
+| `CYCLE-20261122-23YC` | `2026-11-22T14:40:36.996Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9935` | Yes (`0545489c...`) |
+| `CYCLE-20261122-2ALF` | `2026-11-22T14:40:45.603Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9936` | Yes (`61946723...`) |
+| `CYCLE-20261122-2CCX` | `2026-11-22T14:40:47.889Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9937` | Yes (`6d8d652b...`) |
+| `CYCLE-20261122-8HU2` | `2026-11-22T14:45:34.922Z` | `harness-hub/Qwen3.8-27B-pi-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md` | Yes (`7ded80e0...`) |

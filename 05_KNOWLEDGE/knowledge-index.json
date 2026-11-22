@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T14:17:32.629Z",
+  "last_updated": "2026-11-22T14:45:40.283Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23590,
+  "total_items": 23597,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -232250,8 +232250,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "426c33de",
-      "content_hash": "6690b2d603cd0d576a764bce671e6bb3d234d92b925399bfc6e45299bcb8c9cd",
+      "source_version": "2c4a0f1a",
+      "content_hash": "0545489c9bc43bb69450e5de623503221afbe9baa0fe86ec3dbd9eace7248083",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -232279,6 +232279,11 @@
           "number": 9694,
           "title": "format/html): keep touching siblings on the same line",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9935,
+          "title": "parse/svelte): support type parameters in snippet blocks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232286,7 +232291,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T01:51:32.190Z",
+      "verified_at": "2026-11-22T14:40:36.795Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232328,10 +232333,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "repository": "biomejs/biome",
-      "source_version": "7c3aa0dd",
-      "content_hash": "76334f2af5373fb26b9b10c093e4048e540bbebe17b37b45b91bf07c791b1971",
+      "source_version": "2c4a0f1a",
+      "content_hash": "a1400d8797f7da5942619d129011e9566c590437f8c628177efcd8fbe6c2b9cc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T20:03:28.298Z"
+      "persisted_at": "2026-11-22T14:40:37.382Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome",
@@ -232340,10 +232345,10 @@
       "relative_path": "08_VERIFICATION/biomejs-biome-verification-protocol-empirical-defect-shield-for-biomejs-biome.md",
       "title": "Verification Protocol: Empirical Defect Shield for biomejs/biome",
       "repository": "biomejs/biome",
-      "source_version": "426c33de",
-      "content_hash": "9f09976e6c639c07d7ccbddb8b1425592125bdf08278669c2000f92bcc434ea3",
+      "source_version": "2c4a0f1a",
+      "content_hash": "4bc1455dd73126f019be34f70f36ffb243cfffb6019a7638f695b01f9807a714",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:51:32.904Z"
+      "persisted_at": "2026-11-22T14:40:37.547Z"
     },
     "rule-8497": {
       "learning_id": "rule-8497",
@@ -232519,9 +232524,9 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa07ebc5b24c505301e32b8b08e117a8e69f2c429706e0aa70d0d2ea07add38c",
+      "content_hash": "b002ac3cc248c3d924d45fea6592819f07d21e25f4d1d7819ab4f7427b4efc3c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T20:03:45.518Z"
+      "persisted_at": "2026-11-22T14:45:38.528Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings",
@@ -232531,9 +232536,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "b1856f2ae064033a7807fcd10d4222963428826ed7de78325bbf5967dcf597bf",
+      "content_hash": "eea8f447f5e447c9c23fdb6349ccd6e5a08bf0b962fbca63f3a2d0998681abb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:51:40.557Z"
+      "persisted_at": "2026-11-22T14:45:38.710Z"
     },
     "candidate_directive-deps-bump-aiohttp": {
       "item_id": "candidate_directive-deps-bump-aiohttp",
@@ -233144,8 +233149,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "6678854c",
-      "content_hash": "e846110a239c6649c64dfe86400aa08990c50126c174d90a21cd4143d93ee3c5",
+      "source_version": "5f59f4a1",
+      "content_hash": "6d8d652bace14afe6a3e1179038bf39c252e50bd7ce59ff312c9d6c242f1f149",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -233193,6 +233198,11 @@
           "number": 9775,
           "title": "Retry Databricks tests on Glue client NullPointerException",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9937,
+          "title": "Extract the JUnit product test suite runner",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233200,7 +233210,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:55:33.453Z",
+      "verified_at": "2026-11-22T14:40:47.692Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233242,10 +233252,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "repository": "trinodb/trino",
-      "source_version": "6678854c",
-      "content_hash": "3649940620123fc3e3cf27fd5f95dfa3c27b68649a96aac52f97e145f38c7aba",
+      "source_version": "5f59f4a1",
+      "content_hash": "567e8e13d51818aaa5070420a88e2d2861021cba1f72023f9d8871deb26ac043",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T11:55:33.990Z"
+      "persisted_at": "2026-11-22T14:40:48.269Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino",
@@ -233254,10 +233264,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "6678854c",
-      "content_hash": "cceaf01546b7b67effa899afa5cd59b127083dca6377011df12fc1ea98299171",
+      "source_version": "5f59f4a1",
+      "content_hash": "f94927436494d4a04a1ac646929d599d501ba2ca70f8c5c03e8ec6a046213f39",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:55:34.138Z"
+      "persisted_at": "2026-11-22T14:40:48.436Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -260291,8 +260301,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "10bb7f9c",
-      "content_hash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
+      "source_version": "4ce60f1a",
+      "content_hash": "61946723aab1d05baea752a6bf80b94cfaf0ac95916d4df6520635d27cc6d6cc",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -260330,6 +260340,11 @@
           "number": 9842,
           "title": "Asynchronous Co-Routine Fuel and Starvation Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9936,
+          "title": "fix objective documentation defects",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260337,7 +260352,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:51:24.117Z",
+      "verified_at": "2026-11-22T14:40:45.399Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260379,10 +260394,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "repository": "rustls/rustls",
-      "source_version": "10bb7f9c",
-      "content_hash": "1aabb6e336c31420a4c3b5f505cdad0e7c31caeae37d179b26de7dced649ae1b",
+      "source_version": "4ce60f1a",
+      "content_hash": "1580a3da54e7f749f572e95c390fcee0b120abad093873223cbd63121f90181c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T20:51:25.383Z"
+      "persisted_at": "2026-11-22T14:40:45.985Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls",
@@ -260391,10 +260406,10 @@
       "relative_path": "08_VERIFICATION/rustls-rustls-verification-protocol-empirical-defect-shield-for-rustls-rustls.md",
       "title": "Verification Protocol: Empirical Defect Shield for rustls/rustls",
       "repository": "rustls/rustls",
-      "source_version": "10bb7f9c",
-      "content_hash": "ceca218520c0f186da512f26954da4881942125a8b86b2a49b96fc18c6dc67d7",
+      "source_version": "4ce60f1a",
+      "content_hash": "9fc8a77a28fbcb3e662cdec3ee51ac1c32a153c47753105a7a9260eee2a7a847",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T20:51:25.874Z"
+      "persisted_at": "2026-11-22T14:40:46.150Z"
     },
     "rule-8768": {
       "learning_id": "rule-8768",
@@ -260454,9 +260469,9 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "repository": "rustls-rustls-learnings",
       "source_version": "HEAD",
-      "content_hash": "8346659f263bbe4e2e3c94184a18fd736938d265342c1627a75ecd486203d89c",
+      "content_hash": "26dedf338b3a34cf2bb885d73a519946f244bc4ced7970c31301d0d448419323",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T20:52:08.094Z"
+      "persisted_at": "2026-11-22T14:45:40.124Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings",
@@ -260466,9 +260481,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rustls-rustls-learnings",
       "repository": "rustls-rustls-learnings",
       "source_version": "HEAD",
-      "content_hash": "7122d17de15439633f1c9c21a6c284fc6951d934dce456f31a2beb78239ca0ee",
+      "content_hash": "87f7123b32a13bb647a9bfbbd552b375b02c012f084100ee88aacad7d7e9d7d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T20:52:08.583Z"
+      "persisted_at": "2026-11-22T14:45:40.283Z"
     },
     "candidate_directive-sql-respect-query-block-scope-in-sql-completion": {
       "item_id": "candidate_directive-sql-respect-query-block-scope-in-sql-completion",
@@ -281456,7 +281471,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted",
       "source_version": "hf-harness-hub-qwen3.8-27b-pi-adapted",
-      "content_hash": "84ba9b85bab2d4c645895618ca7beec1015a9bbfbdd12a88c2c27336838aae8e",
+      "content_hash": "7ded80e004fe294f6371c72d554f948ad957f31c56dda61f8d60825b9074748b",
       "dossier_path": "07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md",
       "promoted_rules": [],
@@ -281465,7 +281480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:56:37.048Z",
+      "verified_at": "2026-11-22T14:45:34.695Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281482,9 +281497,9 @@
       "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-pi-adapted Core Invariants",
       "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
       "source_version": "hf-harness-hub-qwen3.8-27b-pi-adapted",
-      "content_hash": "3c26fd038f54f88277ab3e25b05a050d1c2d2c9b6e9d8e39bfc912d2987133c1",
+      "content_hash": "d6d4e449fe5976ed05bbace52980bf7e5dce0d129bd42e524572aa3be9392cd0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T21:56:37.540Z"
+      "persisted_at": "2026-11-22T14:45:35.126Z"
     },
     "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8": {
       "learning_id": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
@@ -281582,9 +281597,9 @@
       "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-pi-adapted-learnings Core Invariants",
       "repository": "hf-harness-hub-qwen3.8-27b-pi-adapted-learnings",
       "source_version": "HEAD",
-      "content_hash": "833e93a39454d1d447a783e554e567751cdfdb1b690541c6ecb9bc82a7f43728",
+      "content_hash": "59d88a8a2d534de20c61eb7217db0e75ae7ab425acd480a16d358db59ab320b1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T21:57:33.907Z"
+      "persisted_at": "2026-11-22T14:45:39.056Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core",
@@ -320959,6 +320974,96 @@
       "content_hash": "1823ff66d3d874a42d7762ae973479ecdac8519ea54e7e4924a40fc059a227fc",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T14:17:30.860Z"
+    },
+    "rule-9935": {
+      "learning_id": "rule-9935",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9935,
+      "title": "parse/svelte): support type parameters in snippet blocks",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "2c4a0f1a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T14:40:36.795Z"
+    },
+    "candidate_directive-parse-svelte-support-type-parameters-in-snippet-blocks": {
+      "item_id": "candidate_directive-parse-svelte-support-type-parameters-in-snippet-blocks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8KHL-parse-svelte-support-type-parameters-in-snippet-blocks.md",
+      "title": "parse/svelte): support type parameters in snippet blocks",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1d6d3d5b60750a2685c023006b8680c94f523ebed9afbd23bb83678ae800e183",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T14:45:38.365Z"
+    },
+    "rule-9936": {
+      "learning_id": "rule-9936",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9936,
+      "title": "fix objective documentation defects",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "4ce60f1a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T14:40:45.399Z"
+    },
+    "candidate_directive-fix-objective-documentation-defects": {
+      "item_id": "candidate_directive-fix-objective-documentation-defects",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2ARE-fix-objective-documentation-defects.md",
+      "title": "fix objective documentation defects",
+      "repository": "rustls/rustls",
+      "source_version": "4ce60f1a",
+      "content_hash": "f88bd2b946c8d9fbba2700073005442d6383b6b657c40a39e9b784d6438dc8dd",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T14:40:45.822Z"
+    },
+    "rule-9937": {
+      "learning_id": "rule-9937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9937,
+      "title": "Extract the JUnit product test suite runner",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "5f59f4a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T14:40:47.692Z"
+    },
+    "candidate_directive-extract-the-junit-product-test-suite-runner": {
+      "item_id": "candidate_directive-extract-the-junit-product-test-suite-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2CIS-extract-the-junit-product-test-suite-runner.md",
+      "title": "Extract the JUnit product test suite runner",
+      "repository": "trinodb/trino",
+      "source_version": "5f59f4a1",
+      "content_hash": "15b186c0895342c6eba773328f093395ed5e76d4f6a6004a384e4310a1caa9f5",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-22T14:40:48.103Z"
+    },
+    "candidate_directive-doc-fix-objective-documentation-defects": {
+      "item_id": "candidate_directive-doc-fix-objective-documentation-defects",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8LQ4-doc-fix-objective-documentation-defects.md",
+      "title": "doc: fix objective documentation defects",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "21adaa62dcef49d21596d3c77ea1ff4489418c2a9b88bf84fd763402e8cfa6fd",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T14:45:39.967Z"
     }
   },
   "ai-builder-brain": {

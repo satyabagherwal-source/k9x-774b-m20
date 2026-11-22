@@ -4,23 +4,23 @@
 {
   "source_repository": "biomejs/biome",
   "source_url": "https://github.com/biomejs/biome",
-  "source_version": "7c3aa0dd",
+  "source_version": "2c4a0f1a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T20:03:28.171Z",
+  "timestamp": "2026-11-22T14:40:37.214Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-biomejs-biome",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `7c3aa0dd`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T20:03:28.171Z`  
+> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `2c4a0f1a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T14:40:37.214Z`  
 > **Learning ID**: `learn-github-biomejs-biome`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: F (Design Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
 - **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:03:26.979Z  
+> **Harvest Timestamp**: 2026-11-22T14:40:35.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A toolchain for web projects, aimed to provide functionalities to maintain them. Biome offers formatter and linter, usable via CLI and LSP.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 26125 stars
+- **Stars / Engagement**: 26176 stars
 
 ---
 
@@ -955,14 +955,11 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13275** (2026-11-17): **fix(tools): allow recent crate dependencies when publishing**
-  *Symptoms*: <!--   IMPORTANT!!   If you generated this PR with the help of any AI assistance, please disclose it in the PR.   https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#ai-assistance-notice -->  <!-- 	Thanks for submitting a Pull Request! We appreciate you spending the time to work on these changes. 	Please provide enough information so that others can review your PR. 	Once created, your PR will be automatically labeled according to changed files. 	Learn more about contributing: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md -->  ## Summary  Adding this environment variable should allow to publish the crates  https://github.com/biomejs/biome/actions/runs/44082200506/job/134035677888  <!-- Explain the **motivation** for making this change. What existing problem does the pull request solve?-->  <!-- Link any relevant issues if necessary or include a transcript of any Discord discussion. -->  <!-- If you create a user-facing change, please write a changeset: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#writing-a-changeset (your changeset is often a good starting point for this summary as well) -->  ## Test Plan  Merge and trigger the workflows again  <!-- What demonstrates that your implementation is correct? -->  ## Docs  <!-- If you're submitting a new rule or action (or an option for them), the documentation is part of the code. Make sure rules and actions have example usages, and that all options are documented. 
-  **Post-Mortem & Fix Analysis**:
-  > ### ⚠️ No Changeset found  Latest commit: 61a20023d648ff7fd90765a983747216eacefa4f  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/fix/crate-publish-age?filename=.changeset/swift-heads-wish.md&value=---%0A%0A---%0A%0Afix(tools)%3A%20allow%20recent%20crate%20dependencies%20when%20publishing%0A)  
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13275?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  ### Walkthrough  The publi
+- **Issue #13364** (2026-11-22): **chore(deps): fix advisories**
+  *Symptoms*: <!--   IMPORTANT!!   If you generated this PR with the help of any AI assistance, please disclose it in the PR.   https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#ai-assistance-notice -->  <!-- 	Thanks for submitting a Pull Request! We appreciate you spending the time to work on these changes. 	Please provide enough information so that others can review your PR. 	Once created, your PR will be automatically labeled according to changed files. 	Learn more about contributing: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md -->  ## Summary  Updated `url` from 2.5.8 to 2.5.9 to fix RUSTSEC-2026-0592, including its required `form_urlencoded` update from 1.2.2 to 1.2.3.  This PR was generated by an AI agent (Codex, GPT-6.1-Sol).  ## Test Plan  Green CI  ## Docs 
 
-- **Issue #13266** (2026-11-17): **chore(deps): fix advisories**
-  *Symptoms*: <!--   IMPORTANT!!   If you generated this PR with the help of any AI assistance, please disclose it in the PR.   https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#ai-assistance-notice -->  <!-- 	Thanks for submitting a Pull Request! We appreciate you spending the time to work on these changes. 	Please provide enough information so that others can review your PR. 	Once created, your PR will be automatically labeled according to changed files. 	Learn more about contributing: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md -->  ## Summary  Updated `libz-sys` from 1.1.31 to 1.1.33 in Cargo.lock to fix RUSTSEC-2026-0544.  This PR was generated by an AI agent (Codex, GPT-6.1-Sol).  ## Test Plan  Green CI  ## Docs 
+- **Issue #13362** (2026-11-22): **fix(fmt): memory layout bounds**
+  *Symptoms*: <!--   IMPORTANT!!   If you generated this PR with the help of any AI assistance, please disclose it in the PR.   https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#ai-assistance-notice -->  <!-- 	Thanks for submitting a Pull Request! We appreciate you spending the time to work on these changes. 	Please provide enough information so that others can review your PR. 	Once created, your PR will be automatically labeled according to changed files. 	Learn more about contributing: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md -->  ## Summary  > Used an agent to fix it  There was a failure in the CI due to a change that I didn't address in one of PRs I just merged. This should address it.  The `FormatElement` enum grew up too much, and this PR fixes it.   <!-- Explain the **motivation** for making this change. What existing problem does the pull request solve?-->  <!-- Link any relevant issues if necessary or include a transcript of any Discord discussion. -->  <!-- If you create a user-facing change, please write a changeset: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#writing-a-changeset (your changeset is often a good starting point for this summary as well) -->  ## Test Plan  New tests. Green CI  <!-- What demonstrates that your implementation is correct? -->  ## Docs  <!-- If you're submitting a new rule or action (or an option for them), the documentation is part of the code. Make sure rules and actions have example usages, and that all opti
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -979,277 +976,754 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b359a583` (2026-11-17)
-**Commit Message**: fix(parse/html): don't panic on a second CDATA start marker (#13262)
+### Incident Patch 1: `c0719125` (2026-11-21)
+**Commit Message**: fix(parse/svelte): support type parameters in snippet blocks (#13345)
 
-**File**: `.changeset/fix-html-second-cdata-marker-panic.md` (added, +5/-0)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/svelte-snippet-type-parameters.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Fixed [#13258](https://github.com/biomejs/biome/issues/13258): the HTML parser no longer panics when a CDATA section starts with a second `<![CDATA[` marker. The marker is kept as literal text.
++Fixed [#13335](https://github.com/biomejs/biome/issues/13335): Svelte `{#snippet}` blocks with type parameters, such as `{#snippet row<T extends string>(item: T)}`, are now parsed and formatted. Invalid snippet signatures no longer make the linter panic.
 ```
 
-**File**: `crates/biome_html_parser/src/lexer/mod.rs` (modified, +0/-1)
+**File**: `crates/biome_embeds/src/visitor.rs` (modified, +3/-1)
 ```diff
-@@ -940,7 +940,6 @@ impl<'src> HtmlLexer<'src> {
-         let dispatched = lookup_byte(current);
+@@ -807,7 +807,9 @@ impl EmbeddedBindingsBuilder {
+             self.register_binding(token.text_trimmed_range(), token.token_text_trimmed());
+         }
  
-         match dispatched {
--            LSS if self.at_start_cdata() => self.consume_cdata_start(),
-             BTC if self.at_end_cdata() => self.consume_cdata_end(),
-             _ => {
-                 while let Some(char) = self.current_byte() {
+-        if let Ok(parameters) = root.parameters() {
++        if let Ok(parameters) = root.parameters()
++            && let Some(parameters) = parameters.as_js_parameters()
++        {
+             for param in parameters.items().iter().flatten() {
+                 if let Some(formal) = param
+                     .as_any_js_formal_parameter()
 ```
 
-**File**: `crates/biome_html_parser/src/lexer/tests.rs` (modified, +23/-3)
+**File**: `crates/biome_grit_patterns/src/grit_target_language/js_target_language/generated_mappings.rs` (modified, +1/-1)
 ```diff
-@@ -396,16 +396,36 @@ fn unquoted_attribute_value_invalid_chars() {
+@@ -810,7 +810,7 @@ pub fn native_slots_for_name(node_name: &str) -> &'static [(&'static str, u32)]
+         "JsStaticMemberExpression" => &[("object", 0), ("member", 2)],
+         "JsSvelteDeclarationRoot" => &[("declaration", 0)],
+         "JsSvelteLegacyConstRoot" => &[("declarator", 0)],
+-        "JsSvelteSnippetRoot" => &[("name", 0), ("parameters", 1)],
++        "JsSvelteSnippetRoot" => &[("name", 0), ("type_parameters", 1), ("parameters", 2)],
+         "JsSwitchStatement" => &[("discriminant", 2), ("cases", 5)],
+         "JsTemplateElement" => &[("expression", 1)],
+         "JsTemplateExpression" => &[("tag", 0), ("type_arguments", 1), ("elements", 3)],
+```
+
+**File**: `crates/biome_html_formatter/tests/specs/html/svelte/snippet_type_parameters.svelte` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++<script lang="ts">
++</script>
++
++{#snippet row<T   extends string>(item:T)}
++  <li>{item}</li>
++{/snippet}
++
++{#snippet pair<const A,B=A>(a:A, b:B)}
++  {a}{b}
++{/snippet}
++
++{#snippet table<TFirstVeryLongTypeParameter extends Record<string, unknown>, TSecondVeryLongTypeParameter>(rows: TFirstVeryLongTypeParameter[], columns: TSecondVeryLongTypeParameter[])}
++  {rows.length}
++{/snippet}
+```
+
+**File**: `crates/biome_html_formatter/tests/specs/html/svelte/snippet_type_parameters.svelte.snap` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++---
++source: crates/biome_formatter_test/src/snapshot_builder.rs
++info: svelte/snippet_type_parameters.svelte
++---
++
++# Input
++
++```svelte
++<script lang="ts">
++</script>
++
++{#snippet row<T   extends string>(item:T)}
++  <li>{item}</li>
++{/snippet}
++
++{#snippet pair<const A,B=A>(a:A, b:B)}
++  {a}{b}
++{/snippet}
++
++{#snippet table<TFirstVeryLongTypeParameter extends Record<string, unknown>, TSecondVeryLongTypeParameter>(rows: TFirstVeryLongTypeParameter[], columns: TSecondVeryLongTypeParameter[])}
++  {rows.length}
++{/snippet}
++
++```
++
++
++# Formatted
++
++```svelte
++<script lang="ts">
++</script>
++
++{#snippet row<T extends string>(item: T)}
++	<li>{item}</li>
++{/snippet}
++
++{#snippet pair<const A, B = A>(a: A, b: B)}
++	{a}{b}
++{/snippet}
++
++{#snippet table<
++	TFirstVeryLongTypeParameter extends Record<string, unknown>,
++	TSecondVeryLongTypeParameter,
++>(
++	rows: TFirstVeryLongTypeParameter[],
++	columns: TSecondVeryLongTypeParameter[],
++)}
++	{rows.length}
++{/snippet}
++
++```
+```
+
+**File**: `crates/biome_js_factory/src/generated/node_factory.rs` (modified, +32/-10)
+```diff
+@@ -3458,17 +3458,39 @@ pub fn js_svelte_legacy_const_root(
  }
- 
- #[test]
--fn cdata_full() {
-+fn cdata_start_in_regular_context() {
-     assert_lex! {
--        HtmlLexContext::CdataSection,
--        "<![CDATA[1]]>",
-+        HtmlLexContext::Regular {
-+            framework: HtmlFramework::Plain,
-+        },
-+        "<![CDATA[",
-         CDATA_START: 9,
+ pub fn js_svelte_snippet_root(
+     name: AnyJsBinding,
+-    parameters: JsParameters,
++    parameters: AnyJsSvelteSnippetParameters,
+     eof_token: SyntaxToken,
+-) -> JsSvelteSnippetRoot {
+-    JsSvelteSnippetRoot::unwrap_cast(SyntaxNode::new_detached(
+-        JsSyntaxKind::JS_SVELTE_SNIPPET_ROOT,
+-        [
+-            Some(SyntaxElement::Node(name.into_syntax())),
+-            Some(SyntaxElement::Node(parameters.into_syntax())),
+-            Some(SyntaxElement::Token(eof_token)),
+-        ],
+-    ))
++) -> JsSvelteSnippetRootBuilder {
++    JsSvelteSnippetRootBuilder {
++        name,
++        parameters,
++        eof_token,
++        type_parameters: None,
 +    }
 +}
++pub struct JsSvelteSnippetRootBuilder {
++    name: AnyJsBinding,
++    parameters: AnyJsSvelteSnippetParameters,
++    eof_token: SyntaxToken,
++    type_parameters: Option<TsTypeParameters>,
++}
++impl JsSvelteSnippetRootBuilder {
++    pub fn with_type_parameters(mut self, type_parameters: TsTypeParameters) -> Self {
++        self.type_parameters = Some(type_parameters);
++        self
++    }
++    pub fn build(self) -> JsSvelteSnippetRoot {
++        JsSvelteSnippetRoot::unwrap_cast(SyntaxNode::new_detached(
++            JsSyntaxKind::JS_SVELTE_SNIPPET_ROOT,
++            [
++                Some(SyntaxElement::Node(self.name.into_syntax())),
++                self.type_parameters
++                    .map(|token| SyntaxElement::Node(token.into_syntax())),
++                Some(SyntaxElement::Node(self.parameters.into_syntax())),
++                Some(SyntaxElement::Token(self.eof_token)),
++            ],
++        ))
++    }
+ }
+ pub fn js_switch_statement(
+     switch_token: SyntaxToken,
+```
+
+**File**: `crates/biome_js_factory/src/generated/syntax_factory.rs` (modified, +9/-2)
+```diff
+@@ -5076,7 +5076,7 @@ impl SyntaxFactory for JsSyntaxFactory {
+             }
+             JS_SVELTE_SNIPPET_ROOT => {
+                 let mut elements = (&children).into_iter();
+-                let mut slots: RawNodeSlots<3usize> = RawNodeSlots::default();
++                let mut slots: RawNodeSlots<4usize> = RawNodeSlots::default();
+                 let mut current_element = elements.next();
+                 if let Some(element) = &current_element
+                     && AnyJsBinding::can_cast(element.kind())
+@@ -5086,7 +5086,14 @@ impl SyntaxFactory for JsSyntaxFactory {
+                 }
+                 slots.next_slot();
+                 if let Some(element) = &current_element
+-                    && JsParameters::can_cast(element.kind())
++                    && TsTypeParameters::can_cast(element.kind())
++                {
++                    slots.mark_present();
++                    current_element = elements.next();
++                }
++                slots.next_slot();
++                if let Some(element) = &current_element
++                    && AnyJsSvelteSnippetParameters::can_cast(element.kind())
+                 {
+                     slots.mark_present();
+                     current_element = elements.next();
+```
+
+**File**: `crates/biome_js_formatter/src/generated.rs` (modified, +27/-0)
+```diff
+@@ -12672,6 +12672,33 @@ impl IntoFormat<JsFormatContext> for biome_js_syntax::AnyJsSvelteLegacyConstDecl
+         FormatOwnedWithRule :: new (self , crate :: js :: any :: svelte_legacy_const_declarator :: FormatAnyJsSvelteLegacyConstDeclarator :: default ())
+     }
+ }
++impl AsFormat<JsFormatContext> for biome_js_syntax::AnyJsSvelteSnippetParameters {
++    type Format<'a> = FormatRefWithRule<
++        'a,
++        biome_js_syntax::AnyJsSvelteSnippetParameters,
++        crate::js::any::svelte_snippet_parameters::FormatAnyJsSvelteSnippetParameters,
++    >;
++    fn format(&self) -> Self::Format<'_> {
++        FormatRefWithRule::new(
++            self,
++            crate::js::any::svelte_snippet_parameters::FormatAnyJsSvelteSnippetParameters::default(
++            ),
++        )
++    }
++}
++impl IntoFormat<JsFormatContext> for biome_js_syntax::AnyJsSvelteSnippetParameters {
++    type Format = FormatOwnedWithRule<
++        biome_js_syntax::AnyJsSvelteSnippetParameters,
++        crate::js::any::svelte_snippet_parameters::FormatAnyJsSvelteSnippetParameters,
++    >;
++    fn into_format(self) -> Self::Format {
++        FormatOwnedWithRule::new(
++            self,
++            crate::js::any::svelte_snippet_parameters::FormatAnyJsSvelteSnippetParameters::default(
++            ),
++        )
++    }
++}
+ impl AsFormat<JsFormatContext> for biome_js_syntax::AnyJsSwitchClause {
+     type Format<'a> = FormatRefWithRule<
+         'a,
+```
+
+---
+
+### Incident Patch 2: `5d4d4745` (2026-11-22)
+**Commit Message**: fix(astro): preserve failed and unsupported embeds (#13016)
+
+**File**: `.changeset/neat-buttons-buy.md` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++---
++"@biomejs/biome": patch
++---
 +
-+#[test]
-+fn cdata_content() {
-+    assert_lex! {
-+        HtmlLexContext::CdataSection,
-+        "1]]>",
-         HTML_LITERAL: 1,
-         CDATA_END: 3,
++Fixed [#12956](https://github.com/biomejs/biome/issues/12956): Biome now leaves the contents of unsupported `<script>` and `<style>` blocks unchanged instead of trying to format them as JavaScript or CSS. This includes embedded languages such as Less, SCSS, PostCSS, CoffeeScript, and custom `lang` or `type` values.
++
++```astro
++<style lang="less">
++  @color: red;
++  .card { color: @color; }
++</style>
++
++<script lang="coffee">
++  square = (value) -> value * value
++</script>
++```
++
++Malformed Astro frontmatter, expressions, scripts, and styles also retain their original text while Biome formats the surrounding markup.
+```
+
+**File**: `crates/biome_formatter/src/format_element.rs` (modified, +88/-4)
+```diff
+@@ -392,14 +392,26 @@ impl Width {
      }
  }
  
-+#[test]
-+fn cdata_start_in_content_is_literal() {
-+    assert_lex! {
-+        HtmlLexContext::CdataSection,
-+        "<![CDATA[x]]>",
-+        HTML_LITERAL: 10,
-+        CDATA_END: 3,
-+    }
-+}
-+
- #[test]
- fn svelte_openings() {
-     assert_lex! {
-```
-
-**File**: `crates/biome_html_parser/tests/html_specs/error/cdata.html` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<![CDATA[<![CDATA[
-```
-
-**File**: `crates/biome_html_parser/tests/html_specs/error/cdata.html.snap` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+---
-+source: crates/biome_html_parser/tests/spec_test.rs
-+expression: snapshot
-+---
-+
-+## Input
-+
-+```html
-+<![CDATA[<![CDATA[
-+
-+```
-+
-+
-+## AST
-+
-+```
-+HtmlRoot {
-+    bom_token: missing (optional),
-+    frontmatter: missing (optional),
-+    processing_instruction: missing (optional),
-+    directive: missing (optional),
-+    html: HtmlElementList [
-+        HtmlCdataSection {
-+            cdata_start_token: CDATA_START@0..9 "<![CDATA[" [] [],
-+            content_token: HTML_LITERAL@9..19 "<![CDATA[\n" [] [],
-+            cdata_end_token: missing (required),
-+        },
-+    ],
-+    eof_token: EOF@19..19 "" [] [],
-+}
-+```
-+
-+## CST
-+
-+```
-+0: HTML_ROOT@0..19
-+  0: (empty)
-+  1: (empty)
-+  2: (empty)
-+  3: (empty)
-+  4: HTML_ELEMENT_LIST@0..19
-+    0: HTML_CDATA_SECTION@0..19
-+      0: CDATA_START@0..9 "<![CDATA[" [] []
-+      1: HTML_LITERAL@9..19 "<![CDATA[\n" [] []
-+      2: (empty)
-+  5: EOF@19..19 "" [] []
-+
-+```
-+
-+## Diagnostics
-+
-+```
-+cdata.html:2:1 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  × expected `]]>` but instead the file ends
-+  
-+    1 │ <![CDATA[<![CDATA[
-+  > 2 │ 
-+      │ 
-+  
-+  i the file ends here
-+  
-+    1 │ <![CDATA[<![CDATA[
-+  > 2 │ 
-+      │ 
-+  
-+```
-```
-
-**File**: `crates/biome_html_parser/tests/html_specs/ok/cdata.html` (modified, +2/-0)
-```diff
-@@ -2,3 +2,5 @@
- <![CDATA[1<3]]>
- <![CDATA[lorem ipsum dolar 33 bottles of beer on the wall, 33 bottles of beer! Take one down, pass it around ...]]>
- <![CDATA[<div attributes="some-attribute"></div>]]>
-+<![CDATA[<![CDATA[x]]>
-+<![CDATA[<![CDATA[]]>
-```
-
-**File**: `crates/biome_html_parser/tests/html_specs/ok/cdata.html.snap` (modified, +24/-4)
-```diff
-@@ -10,6 +10,8 @@ expression: snapshot
- <![CDATA[1<3]]>
- <![CDATA[lorem ipsum dolar 33 bottles of beer on the wall, 33 bottles of beer! Take one down, pass it around ...]]>
- <![CDATA[<div attributes="some-attribute"></div>]]>
-+<![CDATA[<![CDATA[x]]>
-+<![CDATA[<![CDATA[]]>
- 
- ```
- 
-@@ -43,20 +45,30 @@ HtmlRoot {
-             content_token: HTML_LITERAL@161..200 "<div attributes=\"some-attribute\"></div>" [] [],
-             cdata_end_token: CDATA_END@200..203 "]]>" [] [],
-         },
-+        HtmlCdataSection {
-+            cdata_start_token: CDATA_START@203..213 "<![CDATA[" [Newline("\n")] [],
-+            content_token: HTML_LITERAL@213..223 "<![CDATA[x" [] [],
-+            cdata_end_token: CDATA_END@223..226 "]]>" [] [],
-+        },
-+        HtmlCdataSection {
-+            cdata_start_token: CDATA_START@226..236 "<![CDATA[" [Newline("\n")] [],
-+            content_token: HTML_LITERAL@236..245 "<![CDATA[" [] [],
-+            cdata_end_token: CDATA_END@245..248 "]]>" [] [],
-+        },
-     ],
--    eof_token: EOF@203..204 "" [Newline("\n")] [],
-+    eof_token: EOF@248..249 "" [Newline("\n")] [],
+-/// The pre-computed unicode width of single-line text, or a marker for multiline text.
++/// The pre-computed unicode width of single-line text, or a marker for text
++/// that requires special multiline printing.
+ #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+ pub enum TextWidth {
+     Width(Width),
+     Multiline,
++    /// Prints the text without replacing its source line endings.
++    PreserveLineEndings(Option<Width>),
  }
- ```
  
- ## CST
+ impl TextWidth {
++    pub fn from_text_preserving_line_endings(text: &str, indent_width: IndentWidth) -> Self {
++        let width = if text.contains(['\r', '\n']) {
++            None
++        } else {
++            Self::from_text(text, indent_width).width()
++        };
++        Self::PreserveLineEndings(width)
++    }
++
+     pub fn from_text(text: &str, indent_width: IndentWidth) -> Self {
+         const fn is_printable_ascii(byte: u8) -> bool {
+             matches!(byte, b' '..=b'~')
+@@ -437,12 +449,17 @@ impl TextWidth {
+     pub const fn width(self) -> Option<Width> {
+         match self {
+             Self::Width(width) => Some(width),
++            Self::PreserveLineEndings(width) => width,
+             Self::Multiline => None,
+         }
+     }
  
- ```
--0: HTML_ROOT@0..204
-+0: HTML_ROOT@0..249
-   0: (empty)
-   1: (empty)
-   2: (empty)
-   3: (empty)
--  4: HTML_ELEMENT_LIST@0..203
-+  4: HTML_ELEMENT_LIST@0..248
-     0: HTML_CDATA_SECTION@0..19
-       0: CDATA_START@0..9 "<![CDATA[" [] []
-       1: HTML_LITERAL@9..16 "example" [] []
-@@ -73,6 +85,14 @@ HtmlRoot {
-       0: CDATA_START@151..161 "<![CDATA[" [Newline("\n")] []
-       1: HTML_LITERAL@161..200 "<div attributes=\"some-attribute\"></div>" [] []
-       2: CDATA_END@200..203 "]]>" [] []
--  5: EOF@203..204 "" [Newline("\n")] []
-+    4: HTML_CDATA_SECTION@203..226
-+      0: CDATA_START@203..213 "<![CDATA[" [Newline("\n")] []
-+      1: HTML_LITERAL@213..223 "<![CDATA[x" [] []
-+      2: CDATA_END@223..226 "]]>" [] []
-+    5: HTML_CDATA_SECTION@226..248
-+      0: CDATA_START@226..236 "<![CDATA[" [Newline("\n")] []
-+      1: HTML_LITERAL@236..245 "<![CDATA[" [] []
-+      2: CDATA_END@245..248 "]]>" [] []
-+  5: EOF@248..249 "" [Newline("\n")] []
+     pub(crate) const fn is_multiline(self) -> bool {
+-        matches!(self, Self::Multiline)
++        matches!(self, Self::Multiline | Self::PreserveLineEndings(None))
++    }
++
++    pub(crate) const fn preserves_line_endings(self) -> bool {
++        matches!(self, Self::PreserveLineEndings(_))
+     }
+ }
  
- ```
+@@ -643,8 +660,10 @@ const _: () =
+ 
+ #[cfg(test)]
+ mod tests {
+-    use crate::IndentWidth;
+-    use crate::format_element::{LINE_TERMINATORS, TextWidth, normalize_newlines};
++    use crate::format_element::{
++        FormatElement, FormatElements, LINE_TERMINATORS, TextWidth, Width, normalize_newlines,
++    };
++    use crate::{IndentWidth, PlainSource};
+ 
+     #[test]
+     fn text_width() {
+@@ -663,6 +682,71 @@ mod tests {
+         assert_eq!(width("a\0\rb"), Some(2));
+     }
+ 
++    #[test]
++    fn text_width_preserving_line_endings_keeps_the_single_line_width() {
++        let indent_width = IndentWidth::try_from(4).unwrap();
++        let width = |text| {
++            TextWidth::from_text_preserving_line_endings(text, indent_width)
++                .width()
++                .map(Width::value)
++        };
++
++        assert_eq!(
++            TextWidth::from_text_preserving_line_endings("ab", indent_width),
++            TextWidth::PreserveLineEndings(Some(Width::new(2))),
++        );
++        assert_eq!(width(""), Some(0));
++        assert_eq!(width("printable ASCII ~"), Some(17));
++        assert_eq!(width("a\tb"), Some(6));
++        assert_eq!(width("a寿司b"), Some(6));
++    }
++
++    #[test]
++    fn text_width_preserving_line_endings_has_no_width_with_line_breaks() {
++        let indent_width = IndentWidth::try_from(4).unwrap();
++
++        for text in ["a\r\nb", "a\nb", "a\rb", "\r\n", "\n", "\r"] {
++            assert_eq!(
++                TextWidth::from_text_preserving_line_endings(text, indent_width),
++                TextWidth::PreserveLineEndings(None),
++                "{text:?}",
++            );
++        }
++    }
++
++    #[test]
++    fn preserved_text_is_multiline_only_without_a_width() {
++        assert!(TextWidth::PreserveLineEndings(None).is_multiline());
++        assert!(!TextWidth::PreserveLineEndings(Some(Width::new(1))).is_multiline());
++    }
++
++    #[test]
++    fn preserved_text_will_break_only_with_a_line_break() {
++        fn will_break(text: &str) -> bool {
++            FormatElement::<PlainSource>::Text {
++                text: text.into(),
++                text_width: TextWidth::from_text_preserving_line_endings(
++                    text,
++                    IndentWidth::default(),
++                ),
++            }
++            .will_break()
++        }
++
++        assert!(will_break("a\r\nb"));
++        assert!(will_break("a\nb"));
++        assert!(will_break("a\rb"));
++        assert!(!will_break("a"));
++    }
++
++    #[test]
++    fn only_preserved_text_preserves_line_endings() {
++        assert!(TextWidth::PreserveLineEndings(None).preserves_line_endings());
++        assert!(TextWidth::PreserveLineEndings(Some(Width::new(1))).preserves_line_endings());
++        assert!(!TextWidth::Multiline.preserves_line_endings());
++        assert!(!TextWidth::Width(Width::new(1)).preserves_line_endings());
++    }
++
+     #[test]
+     fn test_normalize_newlines() {
+         assert_eq!(normalize_newlines("a\nb", LINE_TERMINATORS), "a\nb");
 ```
 
-**File**: `crates/biome_html_parser/tests/html_specs/ok/svg/cdata-second-marker.svg` (added, +1/-0)
+**File**: `crates/biome_formatter/src/format_element/document.rs` (modified, +44/-0)
 ```diff
-@@ -0,0 +1 @@
-+<svg><![CDATA[<![CDATA[x]]></svg>
+@@ -1055,6 +1055,50 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn preserved_text_expands_enclosing_groups_only_with_a_line_break() {
++        use crate::format_element::tag::Tag::*;
++
++        fn modes_of_groups_around(text: &str) -> Vec<GroupMode> {
++            let mut document = Document::from(vec![
++                FormatElement::Tag(StartGroup(tag::Group::new())),
++                FormatElement::Tag(StartGroup(tag::Group::new())),
++                FormatElement::Text {
++                    text: text.into(),
++                    text_width: TextWidth::from_text_preserving_line_endings(
++                        text,
++                        IrFormatOptions.indent_width(),
++                    ),
++                },
++                FormatElement::Tag(EndGroup),
++                FormatElement::Tag(EndGroup),
++            ]);
++
++            document.propagate_expand();
++
++            document
++                .as_elements()
++                .iter()
++                .filter_map(|element| match element {
++                    FormatElement::Tag(StartGroup(group)) => Some(group.mode()),
++                    _ => None,
++                })
++                .collect()
++        }
++
++        for text in ["a\r\nb", "a\nb", "a\rb"] {
++            assert_eq!(
++                modes_of_groups_around(text),
++                [GroupMode::Propagated, GroupMode::Propagated],
++                "{text:?}",
++            );
++        }
++        assert_eq!(
++            modes_of_groups_around("a"),
++            [GroupMode::Flat, GroupMode::Flat],
++        );
++    }
++
+     #[test]
+     fn display_literal_line_break() {
+         let document = Document::from(vec![FormatElement::Line(LineMode::Literal {
+```
+
+**File**: `crates/biome_formatter/src/printer/mod.rs` (modified, +348/-2)
+```diff
+@@ -460,7 +460,25 @@ impl<'a, S: Source> Printer<'a, S> {
+                 }
+             }
+             Text::Text { text, text_width } => {
+-                if let Some(width) = text_width.and_then(TextWidth::width) {
++                if text_width.is_some_and(TextWidth::preserves_line_endings) {
++                    self.state.buffer.push_str(text);
++                    if let Some(last_line_break) = text.rfind(['\r', '\n']) {
++                        let suffix = &text[last_line_break + 1..];
++                        self.state.line_width =
++                            TextWidth::from_text(suffix, self.options.indent_width())
++                                .width()
++                                .map_or(0, |width| width.value() as usize);
++                        self.state.measured_group_fits = false;
++                    } else {
++                        self.state.line_width +=
++                            TextWidth::from_text(text, self.options.indent_width())
++                                .width()
++                                .map_or(0, |width| width.value() as usize);
++                    }
++                    if !text.is_empty() {
++                        self.state.has_empty_line = false;
++                    }
++                } else if let Some(width) = text_width.and_then(TextWidth::width) {
+                     self.state.buffer.push_str(text);
+                     self.state.line_width += width.value() as usize;
+                     if !text.is_empty() {
+@@ -1578,10 +1596,14 @@ impl<'a, 'print, S: Source> FitsMeasurer<'a, 'print, S> {
+                 if let Some(width) = text_width.and_then(TextWidth::width) {
+                     self.state.line_width += width.value() as usize;
+                 } else {
++                    let preserves_line_endings =
++                        text_width.is_some_and(TextWidth::preserves_line_endings);
+                     for c in text.chars() {
+                         let char_width = match c {
+                             '\t' => self.options().indent_width.value() as usize,
+-                            '\n' => {
++                            line_break @ ('\n' | '\r')
++                                if line_break == '\n' || preserves_line_endings =>
++                            {
+                                 return if self.must_be_flat
+                                     || self.state.line_width > self.options().print_width.into()
+                                 {
+@@ -1699,6 +1721,7 @@ struct FitsState {
+ #[cfg(test)]
+ mod tests {
+     use crate::LineEnding;
++    use crate::format_element::TextWidth;
+     use crate::prelude::*;
+     use crate::printer::{PrintWidth, Printer, PrinterOptions};
+     use crate::{
+@@ -1819,6 +1842,329 @@ a"#,
+         );
+     }
+ 
++    #[test]
++    fn it_preserves_marked_text_line_endings() {
++        let options = PrinterOptions {
++            line_ending: LineEnding::Crlf,
++            ..PrinterOptions::default()
++        };
++
++        let result = format_with_options(
++            &format_args![
++                format_with(|f| {
++                    f.write_element(FormatElement::Text {
++                        text: "first\nsecond\r\nthird\rfourth".into(),
++                        text_width: TextWidth::from_text_preserving_line_endings(
++                            "first\nsecond\r\nthird\rfourth",
++                            2.try_into().unwrap(),
++                        ),
++                    })
++                }),
++                hard_line_break()
++            ],
++            options,
++        );
++
++        assert_eq!("first\nsecond\r\nthird\rfourth\r\n", result.as_code());
++    }
++
++    /// Writes `text` as one text element with the given `text_width`.
++    struct TextWithWidth<'a> {
++        text: &'a str,
++        text_width: TextWidth,
++    }
++
++    impl Format<SimpleFormatContext> for TextWithWidth<'_> {
++        fn fmt(&self, f: &mut Formatter<SimpleFormatContext>) -> FormatResult<()> {
++            f.write_element(FormatElement::Text {
++                text: self.text.into(),
++                text_width: self.text_width,
++            })
++        }
++    }
++
++    fn preserved_text(text: &str) -> TextWithWidth<'_> {
++        TextWithWidth {
++            text,
++            text_width: TextWidth::from_text_preserving_line_endings(text, 4.try_into().unwrap()),
++        }
++    }
++
++    fn ordinary_text(text: &str) -> TextWithWidth<'_> {
++        TextWithWidth {
++            text,
++            text_width: TextWidth::from_text(text, 4.try_into().unwrap()),
++        }
++    }
++
++    /// Writes `self.0` as mapped text, which has no pre-computed width.
++    struct MappedText<'a>(&'a str);
++
++    impl Format<SimpleFormatContext> for MappedText<'_> {
++        fn fmt(&self, f: &mut Formatter<SimpleFormatContext>) -> FormatResult<()> {
++            f.write_element(FormatElement::MappedText {
++                text: self.0.into(),
++                source_position: 0,
++            })
++        }
++    }
++
++ 
+```
+
+**File**: `crates/biome_html_formatter/src/astro/auxiliary/embedded_content.rs` (modified, +9/-0)
+```diff
+@@ -1,9 +1,18 @@
+ use crate::prelude::*;
++use crate::verbatim::format_html_verbatim_node_preserving_line_endings;
+ use biome_html_syntax::AstroEmbeddedContent;
+ use biome_rowan::AstNode;
+ #[derive(Debug, Clone, Default)]
+ pub(crate) struct FormatAstroEmbeddedContent;
+ impl FormatNodeRule<AstroEmbeddedContent> for FormatAstroEmbeddedContent {
++    fn fmt_verbatim_embedded_node(
++        &self,
++        node: &AstroEmbeddedContent,
++        f: &mut HtmlFormatter,
++    ) -> FormatResult<()> {
++        format_html_verbatim_node_preserving_line_endings(node.syntax()).fmt(f)
++    }
++
+     fn fmt_fields(&self, node: &AstroEmbeddedContent, f: &mut HtmlFormatter) -> FormatResult<()> {
+         format_html_verbatim_node(node.syntax()).fmt(f)
+     }
+```
+
+**File**: `crates/biome_html_formatter/src/context.rs` (modified, +25/-0)
+```diff
+@@ -425,6 +425,9 @@ pub struct HtmlFormatContext {
+     /// Content ranges of the embedded snippets whose formatting is delegated to
+     /// the formatter of their language, sorted by position.
+     embedded_node_ranges: Vec<TextRange>,
++
++    /// Content ranges of failed embedded snippets that retain their source text.
++    verbatim_embedded_node_ranges: Vec<TextRange>,
+ }
+ 
+ impl HtmlFormatContext {
+@@ -434,6 +437,7 @@ impl HtmlFormatContext {
+             comments: Rc::new(comments),
+             source_map: None,
+             embedded_node_ranges: Vec::new(),
++            verbatim_embedded_node_ranges: Vec::new(),
+         }
+     }
+ 
+@@ -448,6 +452,19 @@ impl HtmlFormatContext {
+         self
+     }
+ 
++    pub fn with_verbatim_embedded_node_ranges(
++        mut self,
++        mut verbatim_embedded_node_ranges: Vec<TextRange>,
++    ) -> Self {
++        verbatim_embedded_node_ranges.sort_unstable_by_key(|range| (range.start(), range.end()));
++        self.verbatim_embedded_node_ranges = verbatim_embedded_node_ranges;
++        self
++    }
++
++    pub fn has_embedded_node_ranges(&self) -> bool {
++        !self.embedded_node_ranges.is_empty() || !self.verbatim_embedded_node_ranges.is_empty()
++    }
++
+     pub fn should_delegate_fmt_embedded_nodes(&self) -> bool {
+         !self.embedded_node_ranges.is_empty()
+     }
+@@ -465,6 +482,14 @@ impl HtmlFormatContext {
+             })
+             .is_ok()
+     }
++
++    pub fn is_verbatim_embedded_node_range(&self, range: TextRange) -> bool {
++        self.verbatim_embedded_node_ranges
++            .binary_search_by_key(&(range.start(), range.end()), |range| {
++                (range.start(), range.end())
++            })
++            .is_ok()
++    }
+ }
+ 
+ impl FormatContext for HtmlFormatContext {
+```
+
+**File**: `crates/biome_html_formatter/src/html/auxiliary/element.rs` (modified, +7/-1)
+```diff
+@@ -306,7 +306,13 @@ impl FormatHtmlElement {
+         if should_format_embedded_nodes {
+             write!(f, [children.format()])?;
+         } else if should_be_verbatim {
+-            write!(f, [FormatHtmlVerbatimElementChildren(node)])?;
++            write!(
++                f,
++                [FormatHtmlVerbatimElementChildren {
++                    node,
++                    preserve_line_endings: has_embedded_content,
++                }]
++            )?;
+         } else {
+             // Use BestFitting layout to allow the formatter to choose between
+             // flat and expanded versions. The `if_group_breaks`/`if_group_fits_on_line`
+```
+
+**File**: `crates/biome_html_formatter/src/html/auxiliary/embedded_content.rs` (modified, +9/-0)
+```diff
+@@ -1,10 +1,19 @@
+ use crate::prelude::*;
++use crate::verbatim::format_verbatim_skipped_preserving_line_endings;
+ use biome_formatter::{format_args, write};
+ use biome_html_syntax::HtmlEmbeddedContent;
+ use biome_rowan::AstNode;
+ #[derive(Debug, Clone, Default)]
+ pub(crate) struct FormatHtmlEmbeddedContent;
+ impl FormatNodeRule<HtmlEmbeddedContent> for FormatHtmlEmbeddedContent {
++    fn fmt_verbatim_embedded_node(
++        &self,
++        node: &HtmlEmbeddedContent,
++        f: &mut HtmlFormatter,
++    ) -> FormatResult<()> {
++        format_verbatim_skipped_preserving_line_endings(node.syntax()).fmt(f)
++    }
++
+     fn fmt_fields(&self, node: &HtmlEmbeddedContent, f: &mut HtmlFormatter) -> FormatResult<()> {
+         format_verbatim_skipped(node.syntax()).fmt(f)
+     }
 ```
 
 ---
 
-### Incident Patch 2: `7c3aa0dd` (2026-11-17)
-**Commit Message**: fix(tools): allow recent crate dependencies when publishing (#13275)
+### Incident Patch 3: `2c4a0f1a` (2026-11-22)
+**Commit Message**: chore(deps): fix advisories (#13364)
 
-**File**: `xtask/publish_crates/src/cargo.rs` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -89,6 +89,7 @@ impl CargoRunner for SystemCargo {
- 
-     fn publish(&mut self, workspace: &Workspace, package: &PublishPackage) -> Result<bool> {
-         self.command(&workspace.root)
-+            .env("CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE", "allow")
-             .args([
-                 "publish",
-                 "--package",
-```
-
----
-
-### Incident Patch 3: `74e546ab` (2026-11-17)
-**Commit Message**: chore(deps): fix advisories (#13266)
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -4642,9 +4642,9 @@ dependencies = [
+@@ -3617,9 +3617,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
  
  [[package]]
- name = "libz-sys"
--version = "1.1.31"
-+version = "1.1.33"
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
-+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
  dependencies = [
-  "cc",
-  "libc",
+  "percent-encoding",
+ ]
+@@ -7199,9 +7199,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13275** (2026-11-17): fix(tools): allow recent crate dependencies when publishing (@ematipico)
-- **PR #13266** (2026-11-17): chore(deps): fix advisories (@dyc3)
-- **PR #13265** (2026-11-17): release: crates v0.7.2 (@github-actions[bot])
-- **PR #13264** (2026-11-17): release: crates v0.7.1 (@github-actions[bot])
-- **PR #13262** (2026-11-17): fix(parse/html): don't panic on a second CDATA start marker (@GBra-4-669)
-- **PR #13250** (2026-11-16): docs(rowan): clarify the red-node pool docs and changeset (@dyc3)
+- **PR #13364** (2026-11-22): chore(deps): fix advisories (@dyc3)
+- **PR #13362** (2026-11-22): fix(fmt): memory layout bounds (@ematipico)
+- **PR #13355** (2026-11-22): refactor(rowan): token walk (@ematipico)
+- **PR #13345** (2026-11-21): fix(parse/svelte): support type parameters in snippet blocks (@dyc3)
+- **PR #13344** (2026-11-21): perf(grit): stop copying the match history on every state clone (@Jayllyz)
+- **PR #13343** (2026-11-21): refactor(core): path handling (@ematipico)
 
 ---
 
@@ -1269,16 +1743,16 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parse/html): don't panic on a second CDATA start marker
+## X. parse/svelte): support type parameters in snippet blocks
 
 **RULE**:
-When implementing operations in `.changeset/fix-html-second-cdata-marker-panic.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/svelte-snippet-type-parameters.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b359a583`: parse/html): don't panic on a second CDATA start marker. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0719125`: parse/svelte): support type parameters in snippet blocks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-html-second-cdata-marker-panic.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/svelte-snippet-type-parameters.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
@@ -1287,7 +1761,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 "@biomejs/biome": patch
 ---
 
-Fixed [#13258](https://github.com/biomejs/biome/issues/13258): the HTML parser no longer panics when a CDATA section starts with a second `<![CDATA[` marker. The marker is kept as literal text.
+Fixed [#13335](https://github.com/biomejs/biome/issues/13335): Svelte `{#snippet}` blocks with type parameters, such as `{#snippet row<T extends string>(item: T)}`, are now parsed and formatted. Invalid snippet signatures no longer make the linter panic.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1297,7 +1771,7 @@ Fixed [#13258](https://github.com/biomejs/biome/issues/13258): the HTML parser n
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b359a583` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0719125` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

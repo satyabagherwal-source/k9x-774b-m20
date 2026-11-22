@@ -3,7 +3,7 @@
 > **Source Version**: `hf-harness-h`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T21:56:36.732Z  
+> **Timestamp**: 2026-11-22T14:45:34.419Z  
 > **Learning ID**: `learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:56:36.594Z  
+> **Harvest Timestamp**: 2026-11-22T14:40:33.547Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `harness-hub/Qwen3.8-27B-pi-adapted`
-- **Description**: ML Foundation Model
+- **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 85 likes
+- **Stars / Engagement**: 2831 downloads | 955 likes
 
 ---
 

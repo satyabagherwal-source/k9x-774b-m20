@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "10bb7f9c",
+    "sourceVersion": "4ce60f1a",
     "license": "NOASSERTION",
-    "contentHash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
-    "lastHarvestedAt": "2026-11-21T20:51:24.447Z",
+    "contentHash": "61946723aab1d05baea752a6bf80b94cfaf0ac95916d4df6520635d27cc6d6cc",
+    "lastHarvestedAt": "2026-11-22T14:40:45.607Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "6678854c",
+    "sourceVersion": "5f59f4a1",
     "license": "Apache-2.0",
-    "contentHash": "e846110a239c6649c64dfe86400aa08990c50126c174d90a21cd4143d93ee3c5",
-    "lastHarvestedAt": "2026-11-21T11:55:33.639Z",
+    "contentHash": "6d8d652bace14afe6a3e1179038bf39c252e50bd7ce59ff312c9d6c242f1f149",
+    "lastHarvestedAt": "2026-11-22T14:40:47.893Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "426c33de",
+    "sourceVersion": "2c4a0f1a",
     "license": "Apache-2.0",
-    "contentHash": "6690b2d603cd0d576a764bce671e6bb3d234d92b925399bfc6e45299bcb8c9cd",
-    "lastHarvestedAt": "2026-11-21T01:51:32.390Z",
+    "contentHash": "0545489c9bc43bb69450e5de623503221afbe9baa0fe86ec3dbd9eace7248083",
+    "lastHarvestedAt": "2026-11-22T14:40:37.000Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
@@ -12825,8 +12825,8 @@
     "sourceUrl": "https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted",
     "sourceVersion": "hf-harness-hub-qwen3.8-27b-pi-adapted",
     "license": "Open-Source",
-    "contentHash": "84ba9b85bab2d4c645895618ca7beec1015a9bbfbdd12a88c2c27336838aae8e",
-    "lastHarvestedAt": "2026-11-17T21:56:37.300Z",
+    "contentHash": "7ded80e004fe294f6371c72d554f948ad957f31c56dda61f8d60825b9074748b",
+    "lastHarvestedAt": "2026-11-22T14:45:34.926Z",
     "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted"
   },
   "hf-apple-fastframes-l": {

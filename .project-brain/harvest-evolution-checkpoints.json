@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T14:17:32.801Z",
+  "last_updated": "2026-11-22T14:45:40.427Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T14:17:31.887Z",
@@ -163,9 +163,9 @@
       "staged_for_review": 0
     },
     "rustls-rustls-learnings.md": {
-      "processed_at": "2026-11-21T20:52:07.015Z",
+      "processed_at": "2026-11-22T14:45:39.234Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "nguyenphutrong-quotio-learnings.md": {
       "processed_at": "2026-11-19T18:20:38.076Z",
@@ -1423,7 +1423,7 @@
       "staged_for_review": 0
     },
     "biomejs-biome-learnings.md": {
-      "processed_at": "2026-11-21T01:51:39.766Z",
+      "processed_at": "2026-11-22T14:45:37.964Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3358,8 +3358,8 @@
       "staged_for_review": 1
     },
     "hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md": {
-      "processed_at": "2026-11-17T21:57:33.619Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T14:45:38.861Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "shoutem-ui-learnings.md": {
@@ -3718,7 +3718,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3123,
+  "total_dossiers_evaluated": 3126,
   "total_canonical_promoted": 473,
-  "total_staged_for_review": 2375
+  "total_staged_for_review": 2377
 }

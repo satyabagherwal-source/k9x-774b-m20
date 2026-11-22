@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T14:17:32.629Z",
+  "last_updated": "2026-11-22T14:45:40.124Z",
   "total_records": 2354,
   "domains": {
     "A": {
@@ -16369,8 +16369,8 @@
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "repository": "biomejs/biome",
-      "content_hash": "76334f2af5373fb26b9b10c093e4048e540bbebe17b37b45b91bf07c791b1971",
-      "created_at": "2026-11-17T20:03:28.298Z"
+      "content_hash": "a1400d8797f7da5942619d129011e9566c590437f8c628177efcd8fbe6c2b9cc",
+      "created_at": "2026-11-22T14:40:37.382Z"
     },
     "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants",
@@ -16429,8 +16429,8 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-learnings-architecture-intelligence-biomejs-biome-learnings-core-i.md",
       "repository": "biomejs-biome-learnings",
-      "content_hash": "aa07ebc5b24c505301e32b8b08e117a8e69f2c429706e0aa70d0d2ea07add38c",
-      "created_at": "2026-11-17T20:03:45.518Z"
+      "content_hash": "b002ac3cc248c3d924d45fea6592819f07d21e25f4d1d7819ab4f7427b4efc3c",
+      "created_at": "2026-11-22T14:45:38.528Z"
     },
     "DOM-L-817D65B4": {
       "record_id": "DOM-L-817D65B4",
@@ -16612,8 +16612,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "3649940620123fc3e3cf27fd5f95dfa3c27b68649a96aac52f97e145f38c7aba",
-      "created_at": "2026-11-21T11:55:33.990Z"
+      "content_hash": "567e8e13d51818aaa5070420a88e2d2861021cba1f72023f9d8871deb26ac043",
+      "created_at": "2026-11-22T14:40:48.269Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -24612,8 +24612,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "1aabb6e336c31420a4c3b5f505cdad0e7c31caeae37d179b26de7dced649ae1b",
-      "created_at": "2026-11-21T20:51:25.383Z"
+      "content_hash": "1580a3da54e7f749f572e95c390fcee0b120abad093873223cbd63121f90181c",
+      "created_at": "2026-11-22T14:40:45.985Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -24630,8 +24630,8 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-learnings-technical-construction-intelligence-rustls-rustls-learni.md",
       "repository": "rustls-rustls-learnings",
-      "content_hash": "8346659f263bbe4e2e3c94184a18fd736938d265342c1627a75ecd486203d89c",
-      "created_at": "2026-11-21T20:52:08.094Z"
+      "content_hash": "26dedf338b3a34cf2bb885d73a519946f244bc4ced7970c31301d0d448419323",
+      "created_at": "2026-11-22T14:45:40.124Z"
     },
     "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants",
@@ -29244,8 +29244,8 @@
       "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-pi-adapted Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-pi-adapted-research-knowledge-intelligence-harness-hu.md",
       "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
-      "content_hash": "3c26fd038f54f88277ab3e25b05a050d1c2d2c9b6e9d8e39bfc912d2987133c1",
-      "created_at": "2026-11-17T21:56:37.540Z"
+      "content_hash": "d6d4e449fe5976ed05bbace52980bf7e5dce0d129bd42e524572aa3be9392cd0",
+      "created_at": "2026-11-22T14:45:35.126Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants",
@@ -29304,8 +29304,8 @@
       "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-pi-adapted-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-pi-adapted-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-harness-hub-qwen3.8-27b-pi-adapted-learnings",
-      "content_hash": "833e93a39454d1d447a783e554e567751cdfdb1b690541c6ecb9bc82a7f43728",
-      "created_at": "2026-11-17T21:57:33.907Z"
+      "content_hash": "59d88a8a2d534de20c61eb7217db0e75ae7ab425acd480a16d358db59ab320b1",
+      "created_at": "2026-11-22T14:45:39.056Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core",
