@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T10:29:59.123Z",
+  "last_updated": "2026-11-22T10:55:03.222Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "ed85dc81a544471d0e2fb647d1e78faa3237b4dfcdbf30e2ab1aa1eff57e5793",
-      "verified_at": "2026-11-21T00:24:36.177Z",
+      "content_hash": "05d2cf3a6fe1d39f4e83d31cd85d40a7b1632d98e3379fa9a34fd5aeb58c53f2",
+      "verified_at": "2026-11-22T10:54:50.451Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:24:36.177Z"
+      "last_updated": "2026-11-22T10:54:50.451Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",
@@ -19146,14 +19146,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
-      "content_hash": "c6ae4f8a676f9ed5249876a581a2b747d04082690736a6eed5c62cab0b405aea",
-      "verified_at": "2026-11-16T16:09:22.025Z",
+      "content_hash": "a0049ab9f1f541048aad2a734fccd4a2900a8bd80145239a8e4df04e9bea215f",
+      "verified_at": "2026-11-22T10:55:03.222Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T16:09:22.025Z"
+      "last_updated": "2026-11-22T10:55:03.222Z"
     },
     "n4ze3m/tiny-voca": {
       "repository": "n4ze3m/tiny-voca",

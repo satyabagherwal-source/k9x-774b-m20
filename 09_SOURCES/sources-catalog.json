@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "fa9e5eb0",
+    "sourceVersion": "6cb727eb",
     "license": "MIT",
-    "contentHash": "ed85dc81a544471d0e2fb647d1e78faa3237b4dfcdbf30e2ab1aa1eff57e5793",
-    "lastHarvestedAt": "2026-11-21T00:24:36.168Z",
+    "contentHash": "05d2cf3a6fe1d39f4e83d31cd85d40a7b1632d98e3379fa9a34fd5aeb58c53f2",
+    "lastHarvestedAt": "2026-11-22T10:54:50.440Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -12705,8 +12705,8 @@
     "sourceUrl": "https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
     "sourceVersion": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "c6ae4f8a676f9ed5249876a581a2b747d04082690736a6eed5c62cab0b405aea",
-    "lastHarvestedAt": "2026-11-16T16:09:22.016Z",
+    "contentHash": "a0049ab9f1f541048aad2a734fccd4a2900a8bd80145239a8e4df04e9bea215f",
+    "lastHarvestedAt": "2026-11-22T10:55:03.212Z",
     "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf"
   },
   "hf-n4ze3m-tiny-voca": {

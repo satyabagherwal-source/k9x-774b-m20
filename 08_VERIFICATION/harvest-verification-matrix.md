@@ -12073,3 +12073,5 @@
 | `CYCLE-20261122-3HV3` | `2026-11-22T10:29:45.135Z` | `IFM/PAN2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md` | Yes (`cb88b108...`) |
 | `CYCLE-20261122-3JFV` | `2026-11-22T10:29:47.179Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9920` | Yes (`972a8dce...`) |
 | `CYCLE-20261122-3SNA` | `2026-11-22T10:29:59.110Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9921` | Yes (`83ebdd27...`) |
+| `CYCLE-20261122-ZRD0` | `2026-11-22T10:54:50.436Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9922` | Yes (`05d2cf3a...`) |
+| `CYCLE-20261122-017R` | `2026-11-22T10:55:03.207Z` | `HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md` | Yes (`a0049ab9...`) |

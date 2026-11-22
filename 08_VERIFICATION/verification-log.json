@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-MF3S",
-    "timestamp": "2026-11-20T11:09:07.192Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-E4IG",
-    "timestamp": "2026-11-20T11:30:39.832Z",
-    "repository": "tencent/Hy4",
-    "learningId": "learn-huggingface-tencent-hy4",
-    "contentHash": "ec25fdd5dc8c74a2901fa277389f13894f3a31812852e84172074fb8b63a41f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-E8YT",
     "timestamp": "2026-11-20T11:30:45.605Z",
     "repository": "touchlab/Kermit",
@@ -7492,6 +7462,36 @@
     "contentHash": "83ebdd273de2c04e81a107320703c798b22f9bf5f9d5c18d2b229b186bea93c7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-ZRD0",
+    "timestamp": "2026-11-22T10:54:50.436Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "05d2cf3a6fe1d39f4e83d31cd85d40a7b1632d98e3379fa9a34fd5aeb58c53f2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-017R",
+    "timestamp": "2026-11-22T10:55:03.207Z",
+    "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+    "contentHash": "a0049ab9f1f541048aad2a734fccd4a2900a8bd80145239a8e4df04e9bea215f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

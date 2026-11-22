@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `fa9e5eb0`  
+> **Source Version**: `6cb727eb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T00:24:35.301Z  
+> **Timestamp**: 2026-11-22T10:54:49.291Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:24:35.125Z  
+> **Harvest Timestamp**: 2026-11-22T10:54:49.178Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4738 stars
+- **Stars / Engagement**: 4750 stars
 
 ---
 
@@ -1458,8 +1458,19 @@ fn load_font(candidates: &[&str], fallback: &'static [u8]) -> fontdue::Font {
     parse(fallback).expect("bundled font parses")
 }
 
+static DEFAULT_FONTS: std::sync::OnceLock<(fontdue::Font, fontdue::Font)> = std::sync::OnceLock::new();
+
+fn parsed_default_fonts() -> &'static (fontdue::Font, fontdue::Font) {
+    DEFAULT_FONTS.get_or_init(|| (load_font(&[], MONO_FONT_BYTES), load_font(SYSTEM_UI_FONTS, UI_FONT_BYTES)))
+}
+
 pub fn default_fonts() -> pixel_core::fonts::FontRegistry {
-    pixel_core::fonts::FontRegistry::new(load_font(&[], MONO_FONT_BYTES), load_font(SYSTEM_UI_FONTS, UI_FONT_BYTES))
+    let (mono, ui) = parsed_default_fonts();
+    pixel_core::fonts::FontRegistry::new(mono.clone(), ui.clone())
+}
+
+pub fn prepare_default_fonts() {
+    parsed_default_fonts();
 }
 
 pub fn engine_info(engine: &Engine) -> serde_json::Value {
@@ -1550,96 +1561,552 @@ impl Bridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0935ef2` (2026-11-19)
-**Commit Message**: fix incorrect cell size report (#318)
+### Incident Patch 1: `6cb727eb` (2026-11-21)
+**Commit Message**: wheel notches scroll a row at once, easing only the newest step (#325)
 
-**File**: `pixel/engine/crates/pixel-terminal/src/terminal.rs` (modified, +40/-1)
+**File**: `pixel/engine/crates/pixel-core/src/device.rs` (modified, +2/-2)
 ```diff
-@@ -115,6 +115,12 @@ impl WindowSize {
-             None
+@@ -1,7 +1,7 @@
+ use std::sync::Arc;
+ 
+ use crate::scroll::ScrollProfile;
+-use crate::scroll::profiles::Smooth;
++use crate::scroll::profiles::Notch;
+ use crate::text_metrics::{FontMetrics, TextMetrics};
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+@@ -34,7 +34,7 @@ impl Default for Device {
+             name: "pixels".into(),
+             text: Arc::new(FontMetrics),
+             lattice: (1.0, 1.0),
+-            scroll: Arc::new(Smooth { tau: 0.08, brake: 0.025 }),
++            scroll: Arc::new(Notch { rows: 1.0, tau: 0.03 }),
+             colors: ColorDepth::TrueColor,
+             pointer: Pointer::Precise,
          }
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/scroll/mod.rs` (modified, +2/-0)
+```diff
+@@ -1,6 +1,7 @@
+ pub mod profiles;
+ 
+ pub trait ScrollProfile: std::fmt::Debug + Send + Sync {
++    fn land(&self, _state: &mut ScrollState, _max: f32) {}
+     fn tick(&self, _state: &mut ScrollState, _delta: f32, _max: f32) {}
+     fn step(&self, state: &mut ScrollState, dt: f32, max: f32);
+ }
+@@ -19,6 +20,7 @@ impl ScrollState {
+     pub fn tick<P: ScrollProfile + ?Sized>(&mut self, profile: &P, delta: f32, max: f32) {
+         self.idle = 0.0;
+         self.reveal = true;
++        profile.land(self, max);
+         self.target = (self.target + delta).clamp(0.0, max);
+         profile.tick(self, delta, max);
      }
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/scroll/profiles/mod.rs` (modified, +2/-0)
+```diff
+@@ -1,7 +1,9 @@
+ mod glide;
++mod notch;
+ mod smooth;
+ mod step;
+ 
+ pub use glide::Glide;
++pub use notch::Notch;
+ pub use smooth::Smooth;
+ pub use step::Step;
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/scroll/profiles/notch.rs` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++use super::super::{ScrollProfile, ScrollState};
 +
-+    // its possible that the cell size and the reported window size are in different units (like iterm)
-+    pub fn contradicts_cell(&self, cell: (u32, u32)) -> bool {
-+        self.cell_size()
-+            .is_some_and(|(w, h)| w * 2 >= cell.0 * 3 && h * 2 >= cell.1 * 3)
++#[derive(Debug, Clone, Copy)]
++pub struct Notch {
++    pub rows: f32,
++    pub tau: f32,
++}
++
++impl ScrollProfile for Notch {
++    fn land(&self, state: &mut ScrollState, max: f32) {
++        state.position = state.target.min(max.max(state.position));
 +    }
++
++    fn tick(&self, state: &mut ScrollState, delta: f32, max: f32) {
++        state.target = (state.target + delta * (self.rows - 1.0)).clamp(0.0, max);
++    }
++
++    fn step(&self, state: &mut ScrollState, dt: f32, _max: f32) {
++        state.velocity = 0.0;
++        if self.tau <= 0.0 {
++            state.position = state.target;
++        } else {
++            state.chase(self.tau, dt);
++        }
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::scroll::settle;
++
++    const NOTCH: Notch = Notch {
++        rows: 1.0,
++        tau: 0.03,
++    };
++
++    #[test]
++    fn a_notch_lands_the_step_in_flight() {
++        let mut state = ScrollState::default();
++        state.tick(&NOTCH, 20.0, 1000.0);
++        state.step(&NOTCH, 1.0 / 60.0, 1000.0);
++        assert!(state.position > 0.0 && state.position < 20.0);
++        state.tick(&NOTCH, 20.0, 1000.0);
++        assert_eq!(state.position, 20.0);
++        assert_eq!(state.target, 40.0);
++    }
++
++    #[test]
++    fn stops_within_one_notch_of_the_wheel() {
++        let mut state = ScrollState::default();
++        for _ in 0..30 {
++            state.tick(&NOTCH, 20.0, 10_000.0);
++            state.step(&NOTCH, 1.0 / 120.0, 10_000.0);
++            assert!(state.target - state.position <= 20.0);
++        }
++        settle(&mut state, &NOTCH, 10_000.0);
++        assert_eq!(state.position, 600.0);
++    }
++
++    #[test]
++    fn reversing_turns_around_at_once() {
++        let mut state = ScrollState::default();
++        state.tick(&NOTCH, 20.0, 1000.0);
++        state.tick(&NOTCH, 20.0, 1000.0);
++        state.tick(&NOTCH, -20.0, 1000.0);
++        assert_eq!(state.position, 40.0);
++        assert_eq!(state.target, 20.0);
++    }
++
++    #[test]
++    fn zero_tau_jumps_like_codex() {
++        let instant = Notch {
++            rows: 1.0,
++            tau: 0.0,
++        };
++        let mut state = ScrollState::default();
++        state.tick(&instant, 20.0, 1000.0);
++        assert!(state.step(&instant, 1.0 / 60.0, 1000.0));
++        assert!(state.settled());
++        assert_eq!(state.position, 20.0);
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `20a4fafa` (2026-11-21)
+**Commit Message**: pixel ssh mode v2 (#309)
+
+* pixel/pair: render a remote app on the screen's computer, over messages the app delivers (transferToLocalRendering, handleLocalRendering)
+
+* fix comments
+
+* fix comments
+
+---------
+
+Co-authored-by: RobPruzan <[REDACTED_EMAIL]>
+
+**File**: `pixel/AGENT-DOCS.md` (modified, +74/-0)
+```diff
+@@ -25,6 +25,8 @@ Paths are relative to this directory (`pixel/`). Source: `packages/pixel/src/`.
+ | `packages/pixel/src/instances.ts` | instance records, `listInstances`, `findOwner` |
+ | `packages/pixel/src/host/` | same-pane tabs and TUI embedding |
+ | `packages/pixel/src/ssh/index.ts` | `@zenbu-labs/pixel/ssh` |
++| `packages/pixel/src/pair/` | `@zenbu-labs/pixel/pair`: `transferToLocalRendering`, `handleLocalRendering` |
++| `packages/pixel/src/terminal/stream.ts` | drawing into a stream terminal: the env names, building and reading them |
+ | `packages/pixel/src/terminal/` | `@zenbu-labs/pixel/terminal`, one file per terminal in `terminals/` |
+ | `packages/pixel/src/preload/index.ts` | `@zenbu-labs/pixel/preload` types for `window.pixel` |
+ | `packages/pixel/src/electron/index.ts` | `@zenbu-labs/pixel/electron`, re-exports `electron` |
+@@ -352,6 +354,78 @@ pixel.quit(): void                     // same as navigating to pixel://quit
+ 
+ Usage: `<WebView src={session.url} {...session.view} />`. Example: `examples/ssh`.
+ 
++## @zenbu-labs/pixel/pair
++
++`packages/pixel/src/pair/`
++
++Renders a pixel app on the computer with the screen while it runs on the computer you ssh'd to, into the same ssh
++session: frames stay on the screen's computer (shared memory into the terminal) and input is native. The remote side
++transfers to local rendering; the screen's computer handles it by running the app's pixel process there, drawing into the
++remote's terminal. pixel/pair only carries the terminal. It gives each side messages to deliver and takes the ones that
++arrive; how they travel, who may connect, and everything else the app's two sides say to each other is the app's.
++
++| export | line | what it does |
++| --- | --- | --- |
++| `transferToLocalRendering({ send, tty?, env?, args?, meta?, signal?, onStarted? }): LocalRendering` | `transfer.ts:108` | remote side: hands its terminal to rendering on the screen's computer (raw mode, input, resizes, output; put back on exit, drop or kill) |
++| `LocalRendering` | `transfer.ts:38` | `{ receive(message), disconnected(), done: Promise<LocalRenderingResult> }` |
++| `LocalRenderingResult` | `transfer.ts:36` | `{ started: true, code, lost } \| { started: false, error: LocalRenderingError }`; `lost` means the connection dropped while it rendered |
++| `LocalRenderingError` | `transfer.ts:28` | `noTerminal`, `protocol` (with `older`), `refused` (also when the app's process can't be started or exits before it draws), `disconnected` (before start), `cancelled` (before start), `timeout` |
++| `handleLocalRendering({ send, start, log? }): HandledRendering` | `handle.ts:66` | screen side: runs the app's pixel process with `start({ args, env, meta })` and relays its terminal |
++| `HandledRendering` | `handle.ts:36` | `{ receive(message), disconnected(), stop(), closed }` |
++
++```ts
++// remote
++const rendering = transferToLocalRendering({ send: (m) => conn.send({ pixel: m }), args: ["--open", file], meta: { machine } });
++conn.on("message", (m) => m.pixel && rendering.receive(m.pixel));
++conn.on("close", () => rendering.disconnected());
++const result = await rendering.done;
++
++// screen
++const handled = handleLocalRendering({
++  send: (m) => conn.send({ pixel: m }),
++  start: (launch) => ({ command, args: launch.args, env: { ...launch.env, MY_APP_REMOTE: String(launch.meta.machine) } }),
++});
++conn.on("message", (m) => m.pixel && handled.receive(m.pixel));
++conn.on("close", () => handled.disconnected());
++```
++
++What the app's transport must do: deliver each message whole (`Uint8Array`), in order, both ways, and call
++`disconnected()` on both sides when the connection is gone. Each side also pings every 2 s and treats 6 s of silence as
++a disconnect. Terminal output is acked: the screen side stops reading the pixel process's output while more than 4 MB is
++unacked. The first message carries the protocol range (`wire.ts`); ranges that don't overlap are refused
++(`PIXEL_PAIR_PROTOCOL=a-b` overrides it, for tests).
++
++The terminal transferred is this process's own (stdin and stdout, resizes from `SIGWINCH`, `process.env`) unless `tty`
++names a terminal device, for a process that isn't in the terminal it serves, like a daemon handed `/dev/ttys012` by
++the CLI the user ran: it opens the device (`O_NOCTTY`), watches its size, and reads the terminal's description from
++`env`. Either way it resets and restores the terminal if the process is killed (a watcher on the same tty).
++
++`start` gets `args` and `meta` from the remote and the `env` the process must run with; it may return a
++`{ pid, stop(), exited }` handle instead of a command. `meta` reaches the process only if the app passes it on, through
++`env` or `args`, along with whatever it needs to reach the app's own messages. Whoever can deliver messages to `receive`
++can start the app's process with chosen args: only do that for connections the app has authenticated, and treat `args`
++and `meta` as input from that computer.
++
++The process's env (
+```
+
+**File**: `pixel/engine/crates/pixel-bridge/src/lib.rs` (modified, +12/-1)
+```diff
+@@ -35,8 +35,19 @@ fn load_font(candidates: &[&str], fallback: &'static [u8]) -> fontdue::Font {
+     parse(fallback).expect("bundled font parses")
  }
  
- fn retry_intr<T>(mut call: impl FnMut() -> rustix::io::Result<T>) -> rustix::io::Result<T> {
-@@ -489,6 +495,9 @@ impl Terminal {
-                     }
-                     RawEvent::WindowSize(ws) => Event::WindowSize(ws),
-                     RawEvent::CellSize(cell) => {
-+                        let Some(cell) = self.accept_cell_report(cell) else {
-+                            continue;
-+                        };
-                         self.cell = Some(cell);
-                         Event::CellSize(cell)
-                     }
-@@ -773,7 +782,9 @@ impl Terminal {
-             return Ok(self.cell);
-         }
-         if self.hosted.is_none() && !self.wrapper.relayed() {
--            self.cell = self.read_report(300, parse_cell_size_report)?;
-+            self.cell = self
-+                .read_report(300, parse_cell_size_report)?
-+                .and_then(|cell| self.accept_cell_report(cell));
-         }
-         if self.cell.is_none() {
-             self.cell = self.size()?.cell_size();
-@@ -782,6 +793,18 @@ impl Terminal {
++static DEFAULT_FONTS: std::sync::OnceLock<(fontdue::Font, fontdue::Font)> = std::sync::OnceLock::new();
++
++fn parsed_default_fonts() -> &'static (fontdue::Font, fontdue::Font) {
++    DEFAULT_FONTS.get_or_init(|| (load_font(&[], MONO_FONT_BYTES), load_font(SYSTEM_UI_FONTS, UI_FONT_BYTES)))
++}
++
+ pub fn default_fonts() -> pixel_core::fonts::FontRegistry {
+-    pixel_core::fonts::FontRegistry::new(load_font(&[], MONO_FONT_BYTES), load_font(SYSTEM_UI_FONTS, UI_FONT_BYTES))
++    let (mono, ui) = parsed_default_fonts();
++    pixel_core::fonts::FontRegistry::new(mono.clone(), ui.clone())
++}
++
++pub fn prepare_default_fonts() {
++    parsed_default_fonts();
+ }
+ 
+ pub fn engine_info(engine: &Engine) -> serde_json::Value {
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/frame.rs` (modified, +3/-0)
+```diff
+@@ -198,6 +198,9 @@ impl Engine {
+ 
+     fn finish_frame(&mut self, start: Instant, slot: Instant, bytes: usize, cpu: Option<(u64, u64)>) -> io::Result<()> {
+         crate::profiler::count("bytes", || bytes as u64);
++        if bytes > 0 {
++            self.presented.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
++        }
+         if let Some((thread_before, process_before)) = cpu
+             && let Some((thread_after, process_after)) = crate::profiler::cpu_us()
+         {
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/mod.rs` (modified, +2/-0)
+```diff
+@@ -302,6 +302,7 @@ pub struct Engine {
+     frame_due: Option<Instant>,
+     scroll_requests: Vec<(usize, scroll::ScrollRequest, bool, bool)>,
+     pub stats: FrameStats,
++    pub presented: std::sync::Arc<std::sync::atomic::AtomicU64>,
+ }
+ 
+ const PRECISE_WAIT_TAIL: Duration = Duration::from_micros(1500);
+@@ -384,6 +385,7 @@ impl Engine {
+             frame_due: None,
+             scroll_requests: Vec::new(),
+             stats: FrameStats::default(),
++            presented: Default::default(),
+         };
+         for view in &mut engine.comp.views {
+             view.tree.set_lattice(engine.device.lattice);
+```
+
+**File**: `pixel/engine/crates/pixel-kitty/src/lib.rs` (modified, +12/-2)
+```diff
+@@ -82,6 +82,7 @@ pub struct Kitty {
+     cell_change: Option<(u32, u32)>,
+     transport: FrameTransport,
+     transport_retry: TransportRetry,
++    relayed_replies: bool,
+     herdr: Option<herdr::Herdr>,
+     herdr_target: Option<HerdrTarget>,
+     herdr_retry: Option<(Instant, Duration)>,
+@@ -154,6 +155,9 @@ impl Kitty {
+                 if kitty.herdr.is_none() && kitty.herdr_target.is_some() {
+                     kitty.herdr_retry = Some((Instant::now() + HERDR_RETRY_MIN, HERDR_RETRY_MIN));
+                 }
++                kitty.relayed_replies = env
++                    .var("PIXEL_TERMINAL_FEATURES")
++                    .is_some_and(|features| features.split(',').any(|feature| feature.trim() == "local-terminal"));
+                 kitty.transport = kitty.probe_transport(tty, env)?;
+                 kitty.identity = kitty.probe_identity(tty, env)?;
+                 kitty.present = kitty.choose_present(tty, env)?;
+@@ -173,6 +177,7 @@ impl Kitty {
+             cell_change: None,
+             transport: FrameTransport::Inline,
+             transport_retry: TransportRetry::Settled,
++            relayed_replies: false,
+             herdr: None,
+             herdr_target,
+             herdr_retry: None,
+@@ -322,6 +327,10 @@ impl Kitty {
+         Ok(())
      }
  
- 
-+    fn accept_cell_report(&self, cell: (u32, u32)) -> Option<(u32, u32)> {
-+        let ws = self.size().ok()?;
-+        if ws.contradicts_cell(cell) {
-+            pixel_core::logging::warn(
-+                "terminal",
-+                format!("ignoring reported cell {cell:?}, the window's pixels imply {:?}", ws.cell_size()),
-+            );
-+            return None;
-+        }
-+        Some(cell)
++    fn frame_probe_ms(&self) -> u64 {
++        if self.relayed_replies { RELAYED_PROBE_TIMEOUT_MS } else { FRAME_PROBE_TIMEOUT_MS }
 +    }
 +
-     pub fn ask_cell_size(&mut self) -> io::Result<Option<(u32, u32)>> {
-         if let Some(state) = &self.hosted {
-             return Ok(state.cell.or_else(|| state.size.cell_size()));
-@@ -1904,6 +1927,22 @@ mod tests {
-         assert!(matches!(event, RawEvent::CellSize((10, 21))));
+     fn probe_frame_file(&mut self, tty: &mut dyn Tty) -> io::Result<Option<bool>> {
+         let path = self.frame_path(FRAME_SLOTS, 0);
+         if std::fs::write(&path, [0u8, 0, 0, 255]).is_err() {
+@@ -337,7 +346,7 @@ impl Kitty {
+             self.wrapper,
+         ))?;
+         self.io.out().flush()?;
+-        let reply = ask(tty, FRAME_PROBE_TIMEOUT_MS, true, |buf| {
++        let reply = ask(tty, self.frame_probe_ms(), true, |buf| {
+             parse_probe_reply(buf, b"Gi=300;")
+         })?;
+         let _ = std::fs::remove_file(&path);
+@@ -358,7 +367,7 @@ impl Kitty {
+             self.wrapper,
+         ))?;
+         self.io.out().flush()?;
+-        let reply = ask(tty, FRAME_PROBE_TIMEOUT_MS, true, |buf| {
++        let reply = ask(tty, self.frame_probe_ms(), true, |buf| {
+             parse_probe_reply(buf, b"Gi=299;")
+         })?;
+         let _ = rustix::shm::unlink(&name);
+@@ -629,6 +638,7 @@ impl Kitty {
+ const SHM_PROBE_ID: u32 = 299;
+ const FILE_PROBE_ID: u32 = 300;
+ const FRAME_PROBE_TIMEOUT_MS: u64 = 300;
++const RELAYED_PROBE_TIMEOUT_MS: u64 = 1500;
+ const TRANSPORT_RETRY_GAP: Duration = Duration::from_secs(1);
+ 
+ const FRAME_SLOTS: u64 = 8;
+```
+
+**File**: `pixel/engine/crates/pixel-kitty/src/present/mod.rs` (modified, +19/-2)
+```diff
+@@ -168,6 +168,12 @@ pub(super) fn parse_frame_edit_reply(buf: &[u8]) -> Option<bool> {
+     Some(answer.starts_with(b"OK"))
+ }
+ 
++pub(super) fn find_xtversion(buf: &[u8]) -> Option<(Identity, std::ops::Range<usize>)> {
++    let at = buf.windows(4).position(|w| w == b"\x1bP>|")?;
++    let end = buf[at + 4..].windows(2).position(|w| w == b"\x1b\\")?;
++    Some((parse_xtversion(&buf[at..])?, at..at + 4 + end + 2))
++}
++
+ pub(super) fn parse_xtversion(buf: &[u8]) -> Option<Identity> {
+     let start = buf.windows(4).position(|w| w == b"\x1bP>|")? + 4;
+     let rest = &buf[start..];
+@@ -215,8 +221,8 @@ impl Kitty {
+         }
+         self.io.out().write_all(b"\x1b[>0q")?;
+         self.io.out().flush()?;
+-        Ok(ask(tty, IDENTITY_PROBE_TIMEOUT_MS, false, |buf| parse_xtversion(buf).map(|identity| (identity, 0..buf.len())))?
+-            .unwrap_or(Identity::Unknown))
++        let wait = if self.relayed_replies { crate::RELAYED_PROBE_TIMEOUT_MS } else { IDENTITY_PROBE_TIMEOUT_MS };
++        Ok(ask(tty, wait, true, find_xtversion)?.unwrap_or(Identity::Unknown))
      }
  
+     fn probe_frame_edits(&mut self, tty: &mut dyn Tty) -> io::Result<bool> {
+@@ -316,6 +322,16 @@ impl Kitty {
+ mod tests {
+     use super::*;
+ 
 +    #[test]
-+    fn a_cell_reported_in_points_contradicts_a_window_in_device_pixels() {
-+        let ws = WindowSize {
-+            cols: 100,
-+            rows: 40,
-+            width_px: 1640,
-+            height_px: 1360,
-+        };
-+        assert!(ws.contradicts_cell((8, 17)));
-+        assert!(!ws.contradicts_cell((16, 34)));
-+        assert!(!ws.contradicts_cell((15, 33)));
-+        assert!(!ws.contradicts_cell((19, 42)));
-+        let no_pixels = WindowSize { width_px: 0, height_px: 0, ..ws };
-+        assert!(!no_pixels.contradicts_cell((8, 17)));
++    fn xtversion_reply_spans_only_the_reply() {
++        let buf = b"ab\x1bP>|ghostty 1.2.0\x1b\\cd";
++        let (identity, range) = find_xtversion(buf).unwrap();
++        assert_eq!(identity, Identity::Ghostty { version: (1, 2, 0) });
++        assert_eq!(&buf[range], b"\x1bP>|ghostty 1.2.0\x1b\\");
++        assert!(find_xtversion(b"keys only").is_none());
++        assert!(find_xtversion(b"\x1bP>|kitty(0.41").is_none());
 +    }
 +
      #[test]
-     fn parses_cell_size_report_amid_noise() {
-         assert_eq!(parse_cell_size_report(b"\x1b[6;14;7t"), Some((7, 14)));
+     fn only_rex_prefers_tiles() {
+         assert!(Identity::Rex.prefers_tiles());
+@@ -405,3 +421,4 @@ mod tests {
+         assert!(matches!(straight_pixels(&canvas, true), Cow::Owned(_)));
+     }
+ }
++
+```
+
+**File**: `pixel/engine/crates/pixel-node/src/lib.rs` (modified, +32/-0)
+```diff
+@@ -213,6 +213,15 @@ pub struct HostOptions {
+     pub tty: Option<String>,
+ }
+ 
++#[napi(object)]
++pub struct StreamOptions {
++    pub socket: String,
++    pub cols: u32,
++    pub rows: u32,
++    pub width_px: Option<u32>,
++    pub height_px: Option<u32>,
++}
++
+ #[napi(object)]
+ pub struct SurfaceShm {
+     pub fd: i32,
+@@ -285,6 +294,11 @@ fn create_backend(name: &str, options: &serde_json::Value) -> Result<Box<dyn Bac
+ }
+ 
+ 
++#[napi]
++pub fn prepare_fonts() {
++    pixel_bridge::prepare_default_fonts();
++}
++
+ #[napi]
+ pub struct PixelEngine {
+     engine: Option<Engine>,
+@@ -293,6 +307,7 @@ pub struct PixelEngine {
+     rx: Option<Receiver<String>>,
+     waker: Waker,
+     surfaces: Arc<SurfaceMailbox>,
++    presented: Arc<std::sync::atomic::AtomicU64>,
+     captures: capture::Registry,
+     stop: Arc<AtomicBool>,
+     thread: Option<JoinHandle<()>>,
+@@ -306,6 +321,7 @@ impl PixelEngine {
+         wrapper: Option<String>,
+         session_env: Option<std::collections::HashMap<String, String>>,
+         host: Option<HostOptions>,
++        stream: Option<StreamOptions>,
+     ) -> Result<Self> {
+         let session_env = match session_env {
+             Some(env) => pixel_terminal::SessionEnv::of_session(env),
+@@ -320,6 +336,15 @@ impl PixelEngine {
+                 name: host.name,
+                 tty: host.tty,
+             }),
++            stream: stream.map(|stream| pixel_terminal::StreamOptions {
++                socket: stream.socket,
++                size: pixel_terminal::WindowSize {
++                    cols: stream.cols,
++                    rows: stream.rows,
++                    width_px: stream.width_px.unwrap_or(0),
++                    height_px: stream.height_px.unwrap_or(0),
++                },
++            }),
+             wrapper: pixel_terminal::Wrapper::named(wrapper.as_deref()),
+             session_env,
+             watch_resize: false,
+@@ -349,6 +374,7 @@ impl PixelEngine {
+         let waker = engine.backend.waker().map_err(err)?;
+         engine.cpu_throttle.register_current_thread();
+         let info = engine_info(&engine).to_string();
++        let presented = engine.presented.clone();
+         let (tx, rx) = channel();
+         Ok(Self {
+             engine: Some(engine),
+@@ -358,6 +384,7 @@ impl PixelEngine {
+             waker,
+             // who even uses you tho
+             surfaces: Arc::new(SurfaceMailbox::default()),
++            presented,
+             captures: capture::Registry::default(),
+             stop: Arc::new(AtomicBool::new(false)),
+             thread: None,
+@@ -422,6 +449,11 @@ impl PixelEngine {
+         self.waker.wake();
+     }
+ 
++    #[napi]
++    pub fn frames_presented(&self) -> f64 {
++        self.presented.load(Ordering::Relaxed) as f64
++    }
++
+     #[napi]
+     pub fn surface_stats(&self) -> String {
+         let (submitted, coalesced, presented, rows) = self.surfaces.stats();
+```
+
+**File**: `pixel/engine/crates/pixel-terminal/src/backend.rs` (modified, +11/-3)
+```diff
+@@ -27,6 +27,12 @@ pub struct HostOptions {
+     pub tty: Option<String>,
+ }
+ 
++#[derive(Debug, Clone)]
++pub struct StreamOptions {
++    pub socket: String,
++    pub size: WindowSize,
++}
++
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+ pub enum Renderer {
+     #[default]
+@@ -46,6 +52,7 @@ impl Renderer {
+ pub struct TerminalOptions {
+     pub tty: Option<String>,
+     pub host: Option<HostOptions>,
++    pub stream: Option<StreamOptions>,
+     pub wrapper: Wrapper,
+     pub session_env: SessionEnv,
+     pub watch_resize: bool,
+@@ -89,9 +96,10 @@ pub(crate) fn window_from(ws: &WindowSize, cell: (u32, u32), cell_is_exact: bool
+ 
+ impl TerminalBackend {
+     pub fn new(options: TerminalOptions) -> io::Result<Self> {
+-        let open = |pixel_mouse: bool| match &options.tty {
+-            Some(path) => Terminal::open(path, options.wrapper, pixel_mouse),
+-            None => Terminal::new(options.wrapper, pixel_mouse),
++        let open = |pixel_mouse: bool| match (&options.stream, &options.tty) {
++            (Some(stream), _) => Terminal::connect_stream(&stream.socket, stream.size, options.wrapper, pixel_mouse),
++            (None, Some(path)) => Terminal::open(path, options.wrapper, pixel_mouse),
++            (None, None) => Terminal::new(options.wrapper, pixel_mouse),
+         };
+         let (mut term, presenter): (Terminal, Box<dyn Presenter>) = match (&options.host, options.renderer) {
+             (Some(host), _) => {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #325** (2026-11-21): instant wheel scroll (@RobPruzan)
 - **PR #319** (2026-11-20): apply webview page scrolls as image offset instructions (@RobPruzan)
 - **PR #318** (2026-11-19): fix incorrect cell size report (@RobPruzan)
+- **PR #309** (2026-11-21): pixel ssh mode v2 (@RobPruzan)
 - **PR #308** (2026-11-19): Add setting for tiled image transmission (@RobPruzan)
 - **PR #304** (2026-11-18): read rects from layout instead of queued state (@RobPruzan)
-- **PR #303** (2026-11-17): don't auto show scrollbar (@RobPruzan)
-- **PR #299** (2026-11-16): add flag for no agent indicator (@RobPruzan)
 
 ---
 
@@ -1659,59 +2126,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. incorrect cell size report
+## X. wheel notches scroll a row at once, easing only the newest step
 
 **RULE**:
-When implementing operations in `pixel/engine/crates/pixel-terminal/src/terminal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixel/engine/crates/pixel-core/src/device.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0935ef2`: incorrect cell size report. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6cb727eb`: wheel notches scroll a row at once, easing only the newest step. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/engine/crates/pixel-terminal/src/terminal.rs`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/engine/crates/pixel-core/src/device.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-
-    // its possible that the cell size and the reported window size are in different units (like iterm)
-    pub fn contradicts_cell(&self, cell: (u32, u32)) -> bool {
-        self.cell_size()
-            .is_some_and(|(w, h)| w * 2 >= cell.0 * 3 && h * 2 >= cell.1 * 3)
-    }
-                        let Some(cell) = self.accept_cell_report(cell) else {
-                            continue;
-                        };
-            self.cell = self
-                .read_report(300, parse_cell_size_report)?
-                .and_then(|cell| self.accept_cell_report(cell));
-    fn accept_cell_report(&self, cell: (u32, u32)) -> Option<(u32, u32)> {
-        let ws = self.size().ok()?;
-        if ws.contradicts_cell(cell) {
-            pixel_core::logging::warn(
-                "terminal",
-                format!("ignoring reported cell {cell:?}, the window's pixels imply {:?}", ws.cell_size()),
-            );
-            return None;
-        }
-        Some(cell)
-    }
-
-    #[test]
-    fn a_cell_reported_in_points_contradicts_a_window_in_device_pixels() {
-        let ws = WindowSize {
-            cols: 100,
-            rows: 40,
-            width_px: 1640,
-            height_px: 1360,
-       
+use crate::scroll::profiles::Notch;
+            scroll: Arc::new(Notch { rows: 1.0, tau: 0.03 }),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-            self.cell = self.read_report(300, parse_cell_size_report)?;
+use crate::scroll::profiles::Smooth;
+            scroll: Arc::new(Smooth { tau: 0.08, brake: 0.025 }),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0935ef2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6cb727eb` are properly handled with clean fallback behavior.

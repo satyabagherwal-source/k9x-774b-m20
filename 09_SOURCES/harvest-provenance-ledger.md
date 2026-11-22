@@ -12106,3 +12106,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ifm-pan2` | `https://huggingface.co/IFM/PAN2` | `hf-ifm-pan` | Multi-dimensional audit evidence | 2026-11-22T10:29:45.140Z |
 | `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `2a25c9e6` | Multi-dimensional audit evidence | 2026-11-22T10:29:47.183Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `3635d34e` | Multi-dimensional audit evidence | 2026-11-22T10:29:59.114Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `6cb727eb` | Multi-dimensional audit evidence | 2026-11-22T10:54:50.440Z |
+| `learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf` | `https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | `hf-hauhauc` | Multi-dimensional audit evidence | 2026-11-22T10:55:03.212Z |

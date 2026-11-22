@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T10:30:04.199Z",
+  "last_updated": "2026-11-22T10:55:08.988Z",
   "total_verified_learnings": 9070,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23548,
+  "total_items": 23550,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d2c9449c04f4d8a03328204afec7bc93a233fc3284b46e69a8b962ac02a167c",
+      "content_hash": "b73af2c51801edb2f1da0afb188010d7f5b688f788e436aa91d1bf640e75ec9f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T09:26:10.972Z"
+      "persisted_at": "2026-11-22T10:55:08.618Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d02ef1daa72fc3fc941646a761850f72b9c225d34f87bcae132630a72b86f72",
+      "content_hash": "6e41a6aa8c36e429c379cc7d0138201dfaf1e0381bf3fe6784547d41dc20f64f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T09:26:11.139Z"
+      "persisted_at": "2026-11-22T10:55:08.820Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b223d071cb9d1f73d4f18a1aee862b4dd969b7902d26d90af44018c8ecee4478",
+      "content_hash": "f6ef46076d8ca655f24a61918f06d5557e97eb751f8d6d2ed667a8285592b9a4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T09:26:11.286Z"
+      "persisted_at": "2026-11-22T10:55:08.988Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -229334,8 +229334,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "fa9e5eb0",
-      "content_hash": "ed85dc81a544471d0e2fb647d1e78faa3237b4dfcdbf30e2ab1aa1eff57e5793",
+      "source_version": "6cb727eb",
+      "content_hash": "05d2cf3a6fe1d39f4e83d31cd85d40a7b1632d98e3379fa9a34fd5aeb58c53f2",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -229363,6 +229363,11 @@
           "number": 9675,
           "title": "incorrect cell size report",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9922,
+          "title": "wheel notches scroll a row at once, easing only the newest step",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229370,7 +229375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:24:35.989Z",
+      "verified_at": "2026-11-22T10:54:50.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229412,10 +229417,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-architecture-intelligence-zenbu-labs-terminal-browse.md",
       "title": "Architecture Intelligence: zenbu-labs/terminal-browser Core Invariants",
       "repository": "zenbu-labs/terminal-browser",
-      "source_version": "fa9e5eb0",
-      "content_hash": "af6203ff7e034e28ef09f7a3f889e537734d66f4e583c66859ad2a8f2a9f0441",
+      "source_version": "6cb727eb",
+      "content_hash": "95baaa2d0308cc7a889d01bc08cfd45714af69be78d463c745c1fd7a9baf9eaa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:24:36.516Z"
+      "persisted_at": "2026-11-22T10:54:50.920Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser",
@@ -229424,10 +229429,10 @@
       "relative_path": "08_VERIFICATION/zenbu-labs-terminal-browser-verification-protocol-empirical-defect-shield-for-ze.md",
       "title": "Verification Protocol: Empirical Defect Shield for zenbu-labs/terminal-browser",
       "repository": "zenbu-labs/terminal-browser",
-      "source_version": "fa9e5eb0",
-      "content_hash": "50d777acca9390c206e7eec43cd8595be9d197d342bdec7e1a584b53434c2e1f",
+      "source_version": "6cb727eb",
+      "content_hash": "0646bfe40f6f69ebb1d4d3e1ee3c3aec2fa49dec0f7da0eff8da811f1257fd3c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:24:36.671Z"
+      "persisted_at": "2026-11-22T10:54:51.138Z"
     },
     "learn-github-okteto-okteto": {
       "learning_id": "learn-github-okteto-okteto",
@@ -229936,9 +229941,9 @@
       "title": "Architecture Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
       "repository": "zenbu-labs-terminal-browser-learnings",
       "source_version": "HEAD",
-      "content_hash": "a83b717b78d54716ead1832597df55ed42cb52c475b41e134e9be353f0612337",
+      "content_hash": "7dc5410fed94f07ed7b8eccea2763e0cd8ba79e74f0fef40aa89ef65f325af95",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:24:51.503Z"
+      "persisted_at": "2026-11-22T10:55:06.958Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser-le",
@@ -229948,9 +229953,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zenbu-labs-terminal-browser-learnings",
       "repository": "zenbu-labs-terminal-browser-learnings",
       "source_version": "HEAD",
-      "content_hash": "27be86ca3a376a17fadc6d40ccbcf62112b7f089d22d7d1fe3cad49e181d31fd",
+      "content_hash": "6e6b13229a4431945826578e093f014123d4463e63f94854f311c8e38149a3e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:24:51.644Z"
+      "persisted_at": "2026-11-22T10:55:07.163Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva",
@@ -259525,7 +259530,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
       "source_version": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
-      "content_hash": "c6ae4f8a676f9ed5249876a581a2b747d04082690736a6eed5c62cab0b405aea",
+      "content_hash": "a0049ab9f1f541048aad2a734fccd4a2900a8bd80145239a8e4df04e9bea215f",
       "dossier_path": "07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md",
       "promoted_rules": [],
@@ -259534,7 +259539,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T16:09:21.843Z",
+      "verified_at": "2026-11-22T10:55:02.967Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259551,9 +259556,9 @@
       "title": "Research & Knowledge Intelligence: HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF Core Invariants",
       "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
       "source_version": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
-      "content_hash": "72d3d0c97f142f7b635f1c316105e484f825f459482d4cc6b045dcee61e0233c",
+      "content_hash": "f708ce67347b5a24c2135ae6270a88e6ca840da0007621d6d5bf244aae7001c7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T16:09:22.164Z"
+      "persisted_at": "2026-11-22T10:55:03.465Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggr",
@@ -259563,9 +259568,9 @@
       "title": "Research & Knowledge Intelligence: hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings Core Invariants",
       "repository": "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "cbfe0ae0f16b0f83c5ceb0bd7959bbdb91ca7d06558ab573b84f879791a57a2a",
+      "content_hash": "44d1bb22a5f73dbe596106a240f7d7f4b6ace84670640bc1448f88962a57fdb7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T16:09:25.077Z"
+      "persisted_at": "2026-11-22T10:55:07.585Z"
     },
     "domain_intelligence-technical-construction-intelligence-stakater-reloader-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-learnings-core-invariants",
@@ -309546,13 +309551,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TQPM-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-057Z-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7959800cf0fdbde92111ff4b2aee6c8f39dc1f89931892c4be2590550d5149b",
+      "content_hash": "7444981b7d9fb3be2aa18a17d3fa778892762360f860d460e082a49c47891a09",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T09:26:10.813Z"
+      "persisted_at": "2026-11-22T10:55:08.405Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -320348,6 +320353,32 @@
       "content_hash": "6472e6eef950379910f1456575169ea0f1e597e94ed863fcf081458fe341522b",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T10:30:02.903Z"
+    },
+    "rule-9922": {
+      "learning_id": "rule-9922",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9922,
+      "title": "wheel notches scroll a row at once, easing only the newest step",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "6cb727eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T10:54:50.198Z"
+    },
+    "candidate_directive-wheel-notches-scroll-a-row-at-once-easing-only-the-newest-step": {
+      "item_id": "candidate_directive-wheel-notches-scroll-a-row-at-once-easing-only-the-newest-step",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-03Y6-wheel-notches-scroll-a-row-at-once-easing-only-the-newest-step.md",
+      "title": "wheel notches scroll a row at once, easing only the newest step",
+      "repository": "zenbu-labs-terminal-browser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "618566750b2e83bff951e4f15dcd5b7a852e4e6c9ac0a2ae9efcb484b40137da",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T10:55:06.756Z"
     }
   },
   "ai-builder-brain": {

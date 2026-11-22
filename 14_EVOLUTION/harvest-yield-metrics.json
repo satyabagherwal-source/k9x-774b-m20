@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T10:29:59.119Z",
-  "total_cycles_completed": 11478,
-  "total_learnings_persisted": 11478,
-  "total_rules_promoted": 10736,
+  "last_updated": "2026-11-22T10:55:03.218Z",
+  "total_cycles_completed": 11480,
+  "total_learnings_persisted": 11480,
+  "total_rules_promoted": 10737,
   "history": [
-    {
-      "timestamp": "2026-11-21T17:15:36.921Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T17:28:05.654Z",
-      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T17:28:08.249Z",
       "repository": "XHToken/Spark-X2.6-4B-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T10:54:50.447Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T10:55:03.218Z",
+      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+      "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

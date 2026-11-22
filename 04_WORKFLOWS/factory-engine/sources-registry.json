@@ -20,9 +20,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-22T05:19:56.481Z",
+    "lastChecked": "2026-11-22T10:54:56.252Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-22T05:19:56.481Z"
+    "lastVerified": "2026-11-22T10:54:56.252Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T10:30:02.335Z",
-    "lastVerified": "2026-11-22T10:30:02.335Z",
+    "lastChecked": "2026-11-22T10:55:06.200Z",
+    "lastVerified": "2026-11-22T10:55:06.200Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -176,8 +176,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T09:47:38.929Z",
-    "lastVerified": "2026-11-22T09:47:38.929Z",
+    "lastChecked": "2026-11-22T10:55:01.249Z",
+    "lastVerified": "2026-11-22T10:55:01.249Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -5112,9 +5112,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-11-21T07:05:16.070Z",
+    "lastChecked": "2026-11-22T10:54:58.730Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-11-21T07:05:16.070Z"
+    "lastVerified": "2026-11-22T10:54:58.730Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -6259,9 +6259,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-21T09:47:17.993Z",
+    "lastChecked": "2026-11-22T10:54:53.849Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-21T09:47:17.993Z"
+    "lastVerified": "2026-11-22T10:54:53.849Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -7548,9 +7548,9 @@
   "mobilenativefoundation-store": {
     "name": "Store",
     "officialUrl": "https://github.com/MobileNativeFoundation/Store",
-    "lastChecked": "2026-11-19T08:27:34.244Z",
+    "lastChecked": "2026-11-22T10:54:51.476Z",
     "revisionIdentifier": "74a5988f",
-    "lastVerified": "2026-11-19T08:27:34.244Z"
+    "lastVerified": "2026-11-22T10:54:51.476Z"
   },
   "apache-pinot": {
     "name": "apache/pinot",
@@ -7924,14 +7924,14 @@
     "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T00:24:35.125Z",
-    "lastVerified": "2026-11-21T00:24:35.125Z",
+    "lastChecked": "2026-11-22T10:54:49.178Z",
+    "lastVerified": "2026-11-22T10:54:49.178Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "ed85dc81a544471d0e2fb647d1e78faa3237b4dfcdbf30e2ab1aa1eff57e5793",
+    "contentHash": "05d2cf3a6fe1d39f4e83d31cd85d40a7b1632d98e3379fa9a34fd5aeb58c53f2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14182,6 +14182,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ifm-pan2",
     "contentHash": "cb88b1080596debb8ac25658808b831ab941d1d60443114f8e74e5f73ee22a93",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf": {
+    "name": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "officialUrl": "https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T10:54:48.813Z",
+    "lastVerified": "2026-11-22T10:54:48.813Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
+    "contentHash": "a0049ab9f1f541048aad2a734fccd4a2900a8bd80145239a8e4df04e9bea215f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
