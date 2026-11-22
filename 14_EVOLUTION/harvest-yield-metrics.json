@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T01:07:29.562Z",
-  "total_cycles_completed": 11374,
-  "total_learnings_persisted": 11374,
-  "total_rules_promoted": 10684,
+  "last_updated": "2026-11-22T01:23:58.924Z",
+  "total_cycles_completed": 11377,
+  "total_learnings_persisted": 11377,
+  "total_rules_promoted": 10685,
   "history": [
-    {
-      "timestamp": "2026-11-21T06:13:50.940Z",
-      "repository": "nitrojs/nitro",
-      "learningId": "learn-github-nitrojs-nitro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T06:13:53.384Z",
-      "repository": "wquguru/cicada",
-      "learningId": "learn-github-wquguru-cicada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T06:14:00.254Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T06:27:54.245Z",
       "repository": "tuist/tuist",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-22T01:07:29.562Z",
       "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
       "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:23:45.623Z",
+      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:23:47.046Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:23:58.924Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

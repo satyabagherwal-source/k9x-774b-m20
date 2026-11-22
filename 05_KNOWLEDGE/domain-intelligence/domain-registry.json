@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T01:07:40.377Z",
+  "last_updated": "2026-11-22T01:24:04.440Z",
   "total_records": 2307,
   "domains": {
     "A": {
@@ -10057,8 +10057,8 @@
       "title": "Architecture Intelligence: grpc/grpc-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-architecture-intelligence-grpc-grpc-rust-core-invariants.md",
       "repository": "grpc/grpc-rust",
-      "content_hash": "7c439baa2c358df5db39288e9aa713135e48f43145e0366f191613c29011b6c6",
-      "created_at": "2026-11-18T21:50:10.095Z"
+      "content_hash": "3504a3e08c5ffb38301e66337516621bcc127fe720cca22a773b568ac1bafe2b",
+      "created_at": "2026-11-22T01:23:47.697Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants",
@@ -10093,8 +10093,8 @@
       "title": "Architecture Intelligence: grpc-grpc-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-learnings-architecture-intelligence-grpc-grpc-rust-learnings-core.md",
       "repository": "grpc-grpc-rust-learnings",
-      "content_hash": "93e6dbffe80e6f4a73403ab855617021c85bb25f56468db5058147cef8975b58",
-      "created_at": "2026-11-18T21:50:21.568Z"
+      "content_hash": "9b72653a2a359a0026ee5a19d7c39283bf6df41dee0d92f77242a66234da4e55",
+      "created_at": "2026-11-22T01:24:02.993Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
@@ -24646,8 +24646,8 @@
       "title": "Research & Knowledge Intelligence: divagr1925/Qwen3.5-4B-Qwenputer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-divagr1925-qwen3-5-4b-qwenputer-research-knowledge-intelligence-divagr1925-qw.md",
       "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
-      "content_hash": "814074c824a96eea85084f5313e9fe6d4a99af087cd8437f213955d4ad04a582",
-      "created_at": "2026-11-16T18:38:23.767Z"
+      "content_hash": "af5f694b912920dc7d56f9beca551310ac4fcf3f4e43c6a688d8578c64f7342a",
+      "created_at": "2026-11-22T01:23:45.901Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor",
@@ -24655,8 +24655,8 @@
       "title": "Research & Knowledge Intelligence: hf-divagr1925-qwen3.5-4b-qwenputer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-divagr1925-qwen3.5-4b-qwenputer-learnings",
-      "content_hash": "0fcdc490269458d5c8599283a1eff521d1c98b3b46fd60be44b3a87a1404d31d",
-      "created_at": "2026-11-16T18:38:40.379Z"
+      "content_hash": "2ea0a972f65abd093f35bdf5b886b4ceba5a86d4e29ff624ca9865d71d9f5348",
+      "created_at": "2026-11-22T01:24:03.661Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-core-invariants",
@@ -36766,8 +36766,8 @@
       "title": "Architecture Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-architecture-intelligence-lancedb-lancedb-core-invariants.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "d62bda71e486cc1a681163654af183014e959bb9f45c2e846451aeff6800dfe5",
-      "created_at": "2026-11-20T21:06:27.184Z"
+      "content_hash": "1fc2f56606e33a1ffe6783f0aa0d99b7563217d99e99253a98e2653296f0668e",
+      "created_at": "2026-11-22T01:23:59.405Z"
     },
     "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
@@ -36775,8 +36775,8 @@
       "title": "Architecture Intelligence: lancedb-lancedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-learnings-architecture-intelligence-lancedb-lancedb-learnings-co.md",
       "repository": "lancedb-lancedb-learnings",
-      "content_hash": "4857acf4b2f4b6dd4fb893b93d238c8bb3c2608d6caeade7d6a51de00c95a4d8",
-      "created_at": "2026-11-20T21:06:30.449Z"
+      "content_hash": "63263faf1543d8e320b51336e8abef03850d289e6218f27a41a4e8d11309596c",
+      "created_at": "2026-11-22T01:24:04.440Z"
     },
     "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants",

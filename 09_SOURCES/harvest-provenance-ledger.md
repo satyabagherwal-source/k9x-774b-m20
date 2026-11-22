@@ -11994,3 +11994,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5195a171` | Multi-dimensional audit evidence | 2026-11-22T00:54:01.726Z |
 | `learn-dom-d-7f03ec79` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-22T00:54:39.541Z |
 | `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-22T01:07:29.557Z |
+| `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-22T01:23:45.616Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `831ba3d9` | Multi-dimensional audit evidence | 2026-11-22T01:23:47.037Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `2b1b2a29` | Multi-dimensional audit evidence | 2026-11-22T01:23:58.879Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T00:24:56.172Z",
+  "updated_at": "2026-11-22T01:24:03.979Z",
   "stats": {
-    "total_discovered": 7392,
-    "approved_pending_harvest": 6993,
+    "total_discovered": 7393,
+    "approved_pending_harvest": 6994,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6973,
+      "COMMUNITY_AND_EXPERT": 6974,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -159854,6 +159854,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-735486849DAD": {
+      "id": "SRC-735486849DAD",
+      "url": "https://github.com/lancedb/lancedb/ac",
+      "title": "https://github.com/lancedb/lancedb/ac",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T01:24:03.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
       }
     }
   }

@@ -11961,3 +11961,6 @@
 | `CYCLE-20261122-J3ZU` | `2026-11-22T00:54:01.722Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`c5eb54ed...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T00:54:39.541Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7F03EC79` [Domain D] | Yes (`5a150d1a...`) |
 | `CYCLE-20261122-0FBB` | `2026-11-22T01:07:29.543Z` | `unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md` | Yes (`765acd74...`) |
+| `CYCLE-20261122-LCGC` | `2026-11-22T01:23:45.612Z` | `divagr1925/Qwen3.5-4B-Qwenputer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md` | Yes (`34e99b3a...`) |
+| `CYCLE-20261122-LDJS` | `2026-11-22T01:23:47.032Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9875` | Yes (`62fc8613...`) |
+| `CYCLE-20261122-LMOR` | `2026-11-22T01:23:58.875Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md` | Yes (`0f2d5d00...`) |

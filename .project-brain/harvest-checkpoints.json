@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T01:07:29.565Z",
+  "last_updated": "2026-11-22T01:23:58.929Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "00e832b487fe833b2b8833c5de785b6b3bc2046fcec78a75336ff80d42cdb497",
-      "verified_at": "2026-11-20T12:50:15.174Z",
+      "content_hash": "62fc8613480b17e9c1039485701bd3b1361dc4a8a0f3f64f4003865a0b14c9a3",
+      "verified_at": "2026-11-22T01:23:47.052Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T12:50:15.174Z"
+      "last_updated": "2026-11-22T01:23:47.052Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "930310ebb278215e07459257d75a38983d53de9644d3bbb754e6e0190ac7e0fa",
-      "verified_at": "2026-11-20T21:06:26.873Z",
+      "content_hash": "0f2d5d00b3a9924eccd8520ed954e8c6e1ee3697c54fcb44596c5192d9f6bec9",
+      "verified_at": "2026-11-22T01:23:58.928Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T21:06:26.873Z"
+      "last_updated": "2026-11-22T01:23:58.928Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -17796,14 +17796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-      "content_hash": "6c1685141cd6ea6898d4cf22562c9e9d996f7faad6d646c4a716db22f6a43daa",
-      "verified_at": "2026-11-16T18:38:23.592Z",
+      "content_hash": "34e99b3ab676a5f451299e21e7b295db17ef032b029007fa76f5a2a671fb5098",
+      "verified_at": "2026-11-22T01:23:45.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:38:23.592Z"
+      "last_updated": "2026-11-22T01:23:45.627Z"
     },
     "abenzerps/Qwen-Image-2.1-Turbo-Quantized": {
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",

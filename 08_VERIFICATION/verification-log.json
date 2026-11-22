@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-52U6",
-    "timestamp": "2026-11-19T22:19:48.510Z",
-    "repository": "dosco/graphjin",
-    "learningId": "learn-github-dosco-graphjin",
-    "contentHash": "239e1951270f4c30bbf6c456f98a3ee5fd5f8b83ac3e60d48c390a516fd8e763",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-F39W",
-    "timestamp": "2026-11-19T22:27:35.636Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "598a9b3014d9acdae6a942b399f884408f3df2932cf55f9f62d1a2f141bba76a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-F5H5",
-    "timestamp": "2026-11-19T22:27:38.489Z",
-    "repository": "seo-skills/seo-audit-skill",
-    "learningId": "learn-github-seo-skills-seo-audit-skill",
-    "contentHash": "9431c5e425388678abfcc49b4b229936b0ca1afb9598d4ccd4f56e5cae070736",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-FB3V",
     "timestamp": "2026-11-19T22:27:45.787Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7490,6 +7445,51 @@
     "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
     "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
     "contentHash": "765acd7442815b977e810f84150fa7213aba3b7f55f0703e4472455423b770df",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-LCGC",
+    "timestamp": "2026-11-22T01:23:45.612Z",
+    "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+    "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
+    "contentHash": "34e99b3ab676a5f451299e21e7b295db17ef032b029007fa76f5a2a671fb5098",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-LDJS",
+    "timestamp": "2026-11-22T01:23:47.032Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "62fc8613480b17e9c1039485701bd3b1361dc4a8a0f3f64f4003865a0b14c9a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-LMOR",
+    "timestamp": "2026-11-22T01:23:58.875Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "0f2d5d00b3a9924eccd8520ed954e8c6e1ee3697c54fcb44596c5192d9f6bec9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "78a8aa87",
+    "sourceVersion": "831ba3d9",
     "license": "MIT",
-    "contentHash": "00e832b487fe833b2b8833c5de785b6b3bc2046fcec78a75336ff80d42cdb497",
-    "lastHarvestedAt": "2026-11-20T12:50:15.164Z",
+    "contentHash": "62fc8613480b17e9c1039485701bd3b1361dc4a8a0f3f64f4003865a0b14c9a3",
+    "lastHarvestedAt": "2026-11-22T01:23:47.037Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "0d2655ed",
+    "sourceVersion": "2b1b2a29",
     "license": "Apache-2.0",
-    "contentHash": "930310ebb278215e07459257d75a38983d53de9644d3bbb754e6e0190ac7e0fa",
-    "lastHarvestedAt": "2026-11-20T21:06:26.866Z",
+    "contentHash": "0f2d5d00b3a9924eccd8520ed954e8c6e1ee3697c54fcb44596c5192d9f6bec9",
+    "lastHarvestedAt": "2026-11-22T01:23:58.879Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -11825,8 +11825,8 @@
     "sourceUrl": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
     "sourceVersion": "hf-divagr1925-qwen3.5-4b-qwenputer",
     "license": "Open-Source",
-    "contentHash": "6c1685141cd6ea6898d4cf22562c9e9d996f7faad6d646c4a716db22f6a43daa",
-    "lastHarvestedAt": "2026-11-16T18:38:23.584Z",
+    "contentHash": "34e99b3ab676a5f451299e21e7b295db17ef032b029007fa76f5a2a671fb5098",
+    "lastHarvestedAt": "2026-11-22T01:23:45.616Z",
     "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer"
   },
   "hf-abenzerps-qwen-image-2.1-turbo-quantized": {

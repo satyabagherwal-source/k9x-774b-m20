@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T12:50:31.459Z",
+  "timestamp": "2026-11-22T01:24:02.654Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-grpc-grpc-rust-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [grpc-grpc-rust-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T12:50:31.459Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T01:24:02.654Z`  
 > **Learning ID**: `LEARN-EVO-grpc-grpc-rust-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `78a8aa87`  
+> **Source Version**: `831ba3d9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T12:50:14.121Z  
+> **Timestamp**: 2026-11-22T01:23:45.712Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:50:14.005Z  
+> **Harvest Timestamp**: 2026-11-22T01:23:45.701Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12548 stars
+- **Stars / Engagement**: 12558 stars
 
 ---
 
@@ -2038,13 +2038,13 @@ enum SubscriptionMode {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3060** (2026-11-20): **ci: use an example binary to locate protoc-gen-grpc-rust files**
+  *Symptoms*: We have a few options here:  - Use either the old path or the new path - Use jq to parse cargo output to find the output directory - This one -- make a binary print the path  This one felt the nicest to me, but LMK what you think.
+
 - **Issue #3058** (2026-11-20): **ci: create protoc-cache before copying the protoc build into it**
   *Symptoms*: The "Populate cache directory" step was relying on cp to create protoc-cache/. That depends on platform-specific cp behavior, and fails on the macOS runner with "cp: protoc-cache: No such file or directory".  It went unnoticed because the step only runs when the protoc binaries cache misses.  This change restores the behavior pre-#2685 and creates the directory first before copying the contents of install/ to it, which produces the same protoc-cache/bin layout on every platform. 
   **Post-Mortem & Fix Analysis**:
   > the CI blocker is due to Rust 1.100's change in build path. Need to update the CI script to be able to find both the old path (`build/protoc-gen-grpc-rust-<hash>/out`) and the new (`build/protoc-gen-grpc-rust/<hash>/out`) path
-
-- **Issue #3055** (2026-11-19): **grpc: move Listener types from runtime to server; and a minor tweak to accommodate errors better**
-  *Symptoms*: We still need to decide whether we want to standardize on this model or the model used by client-side addresses.  We can wait until later on that, though.  (Ideally pre-0.10 though.)  The first commit here is #3054.  The next one tweaks the way errors are handled by the unix address type so we no longer need `FailingSocketAddress`.  The last one just moves everything from rt to server.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2061,74 +2061,531 @@ enum SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8a469b3` (2026-11-18)
-**Commit Message**: Fix mock example client failing to connect. (#3046)
+### Incident Patch 1: `10337899` (2026-11-20)
+**Commit Message**: grpc: early channel dispatch fixes (#3047)
 
-## Motivation
+1. Make RPCs fail if they make it to the subchannel when it's not READY
+(was `todo!()`)
+2. Handle `Drop` results from pickers (was `todo!()`)
+3. Handle the race where pickers can return recently-not-ready
+subchannels (was missing)
 
-Fixes #1333. `serve_with_incoming*` treats the end of the incoming
-stream as the listener closing. The mock currently passes a
-`tokio_stream::once()` that ends right after yielding. Thus, the
-`serve_with_incoming_shutdown` sends a `GOAWAY` to that connection
-before the RPC actually runs, causing a connection failure.
-
-## Solution
-
-Chain `tokio_stream::pending()`, which keeps the stream open like a real
-listener. Use a oneshot signal that can be called to shutdown the server
-side at the end of `main()`.
-
-**File**: `examples/src/mock/mock.rs` (modified, +12/-2)
+**File**: `grpc/src/client/channel.rs` (modified, +208/-12)
 ```diff
-@@ -23,6 +23,7 @@
-  */
+@@ -42,6 +42,7 @@ use crate::StatusError;
+ use crate::client::CallOptions;
+ use crate::client::ConnectivityState;
+ use crate::client::Invoke;
++use crate::client::InvokeOnce;
+ use crate::client::RecvStream;
+ use crate::client::RequestHeaders;
+ use crate::client::ResponseStreamItem;
+@@ -505,29 +506,54 @@ impl Invoke for LbInvoker {
+                 .pick(PickOptions::new(&headers, &options))
+             {
+                 PickResult::Pick(mut pr) => {
+-                    let on_complete = pr.on_complete.take();
+                     let Some(sc) = pr.subchannel.downcast_ref::<InternalSubchannel>() else {
+                         panic!(
+                             "picked subchannel is not an implementation provided by the channel"
+                         );
+                     };
+-                    let (tx, rx) = sc.invoke(headers, options).await;
+-                    // Notify the LB policy when the RPC completes (or is
+-                    // abandoned) so it can release any per-call state.
+-                    let rx = match on_complete {
+-                        Some(on_complete) => {
+-                            BoxRecvStream::new(CompletionRecvStream::new(rx, on_complete))
+-                        }
+-                        None => rx,
+-                    };
+-                    return (tx, rx);
++                    if let Ok(invoker) = sc.ready_invoker() {
++                        let on_complete = pr.on_complete.take();
++                        let (tx, rx) = invoker.invoke_once(headers, options).await;
++                        // Notify the LB policy when the RPC completes (or is
++                        // abandoned) so it can release any per-call state.
++                        let rx = match on_complete {
++                            Some(on_complete) => {
++                                BoxRecvStream::new(CompletionRecvStream::new(rx, on_complete))
++                            }
++                            None => rx,
++                        };
++                        return (tx, rx);
++                    }
++                    // The subchannel likely left READY before the LB policy
++                    // updated its picker, so queue the pick and wait for a new
++                    // picker.  Dropping the pick drops its completion callback
++                    // without invoking it, since the RPC never started.
+                 }
+                 PickResult::Queue => {}
+                 PickResult::Fail(status) => {
++                    // TODO: Check wait-for-ready and queue instead.
++                    if status.is_restricted_control_plane_code() {
++                        return FailingRecvStream::new_stream_pair(
++                            StatusError::new(
++                                StatusCodeError::Internal,
++                                format!("picker returned illegal status: {status}"),
++                            ),
++                            None,
++                        );
++                    }
+                     return FailingRecvStream::new_stream_pair(status, None);
+                 }
+                 PickResult::Drop(status) => {
+-                    todo!("dropped pick: {:?}", status);
++                    if status.is_restricted_control_plane_code() {
++                        return FailingRecvStream::new_stream_pair(
++                            StatusError::new(
++                                StatusCodeError::Internal,
++                                format!("picker returned illegal status: {status}"),
++                            ),
++                            None,
++                        );
++                    }
++                    return FailingRecvStream::new_stream_pair(status, None);
+                 }
+             }
+             // Queued: wait for this snapshot to be superseded, then retry the
+@@ -874,10 +900,19 @@ fn setup_registeries() {
+ #[cfg(test)]
+ mod tests {
+     use std::sync::Barrier;
++    use std::sync::atomic::AtomicBool;
++    use std::sync::atomic::Ordering;
+     use std::time::Duration;
  
- use hyper_util::rt::TokioIo;
-+use tokio_stream::StreamExt;
- use tonic::{
-     Request, Response, Status,
-     transport::{Endpoint, Server, Uri},
-@@ -42,13 +43,19 @@ use hello_world::{
- #[tokio::main]
- async fn main() -> Result<(), Box<dyn std::error::Error>> {
-     let (client, server) = tokio::io::duplex(1024);
-+    let (shutdown_tx, shutdown_rx) = tokio::sync::oneshot::channel();
+     use super::*;
++    use crate::client::load_balancing::Pick;
++    use crate::client::load_balancing::test_utils::StubPolicyFuncs;
++    use crate::client::load_balancing::test_utils::reg_stub_policy;
++    use crate::client::name_resolution::Endpoint;
++    use crate::client::name_resolution::test_utils::FakeResolverBuilder;
++    use crate::client::test_util::NopRecvMessage;
+     use crate::credentials::LocalChannelCredentials;
++    use crate::metadata::MetadataMap;
  
-     let greeter = MyGreeter::default();
- 
--    tokio::spawn(async move {
-+    // The server shuts down when the incoming stream ends, so chain
-+    // `pending()` to keep the stream open until `shutdown_tx` fires.
-+    let server_task = tokio::spawn(async move {
-         Server::builder()
-             .add_service(GreeterServer::new(greeter))
--            .serve_with_incoming(tokio_stream::once(Ok::<_, std::io::Error>(server)))
-+            .serve_with_incoming_shutdown(
-+                tokio_stream::once(Ok::<_, std::io::Error>(server)).chain(tokio_stream::pending()),
-+                async { drop(shutdown_rx.await) },
-+            )
-             .await
-     });
- 
-@@ -79,6 +86,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
- 
-     println!("RESPONSE={response:?}");
- 
-+    shutdown_tx.send(()).unwrap();
-+    server_task.await??;
+     fn new_channel() -> Channel {
+         Channel::builder(
+@@ -1011,4 +1046,165 @@ mod tests {
+         let snapshot = assert_next(snapshot.next()).await;
+         assert_eq!(*snapshot.value(), 1);
+     }
 +
-     Ok(())
- }
++    // Sets its flag when dropped.
++    struct DropFlag(Arc<AtomicBool>);
++    impl Drop for DropFlag {
++        fn drop(&mut self) {
++            self.0.store(true, Ordering::SeqCst);
++        }
++    }
++
++    // Picks `subchannel`, with a completion callba
+```
+
+**File**: `grpc/src/client/name_resolution/config_selector.rs` (modified, +2/-99)
+```diff
+@@ -136,7 +136,6 @@ mod tests {
+ 
+     use bytes::Bytes;
+     use tokio::sync::mpsc;
+-    use tokio::sync::oneshot;
+     use tokio::sync::watch;
+     use tokio::task::JoinHandle;
+     use tonic_prost::prost::Message as _;
+@@ -158,15 +157,10 @@ mod tests {
+     use crate::client::boxed::BoxRecvStream;
+     use crate::client::boxed::BoxSendStream;
+     use crate::client::interceptor::Intercept;
+-    use crate::client::name_resolution::ChannelController;
+     use crate::client::name_resolution::Endpoint;
+-    use crate::client::name_resolution::Resolver;
+-    use crate::client::name_resolution::ResolverBuilder;
+-    use crate::client::name_resolution::ResolverOptions;
+     use crate::client::name_resolution::TCP_IP_NETWORK_TYPE;
+-    use crate::client::name_resolution::Target;
+-    use crate::client::name_resolution::WorkScheduler;
+-    use crate::client::name_resolution::global_registry;
++    use crate::client::name_resolution::test_utils::FakeResolverBuilder;
++    use crate::client::name_resolution::test_utils::FakeResolverHandle;
+     use crate::client::test_util::ByteRecvMsg;
+     use crate::client::test_util::ByteSendMsg;
+     use crate::core::Address;
+@@ -284,97 +278,6 @@ mod tests {
+         }
+     }
+ 
+-    /// Returns a resolver scheme that is unique within the test binary.
+-    /// Resolvers can't be removed from the global registry, so each test
+-    /// registers its own.
+-    fn unique_scheme() -> String {
+-        static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
+-        format!(
+-            "config-selector-test-{}",
+-            NEXT_ID.fetch_add(1, Ordering::Relaxed)
+-        )
+-    }
+-
+-    /// A resolver update, and a sender for the channel's result of applying
+-    /// it.
+-    type PendingUpdate = (ResolverUpdate, oneshot::Sender<Result<(), String>>);
+-
+-    /// Builds [`FakeResolver`]s, sending a handle to each one to the test.
+-    struct FakeResolverBuilder {
+-        scheme: String,
+-        handle_tx: mpsc::UnboundedSender<FakeResolverHandle>,
+-    }
+-
+-    impl FakeResolverBuilder {
+-        /// Registers a new builder in the global registry. Returns its scheme
+-        /// and a receiver for the handles of the resolvers it builds.
+-        fn register() -> (String, mpsc::UnboundedReceiver<FakeResolverHandle>) {
+-            let scheme = unique_scheme();
+-            let (handle_tx, handle_rx) = mpsc::unbounded_channel();
+-            global_registry().add_builder(Box::new(Self {
+-                scheme: scheme.clone(),
+-                handle_tx,
+-            }));
+-            (scheme, handle_rx)
+-        }
+-    }
+-
+-    impl ResolverBuilder for FakeResolverBuilder {
+-        fn build(&self, _target: &Target, options: ResolverOptions) -> Box<dyn Resolver> {
+-            let (update_tx, update_rx) = mpsc::unbounded_channel();
+-            let _ = self.handle_tx.send(FakeResolverHandle {
+-                work_scheduler: options.work_scheduler,
+-                update_tx,
+-            });
+-            Box::new(FakeResolver { update_rx })
+-        }
+-
+-        fn scheme(&self) -> &str {
+-            &self.scheme
+-        }
+-
+-        fn is_valid_uri(&self, _target: &Target) -> bool {
+-            true
+-        }
+-    }
+-
+-    /// Lets the test push updates to the channel through a [`FakeResolver`].
+-    struct FakeResolverHandle {
+-        work_scheduler: Arc<dyn WorkScheduler>,
+-        update_tx: mpsc::UnboundedSender<PendingUpdate>,
+-    }
+-
+-    impl FakeResolverHandle {
+-        /// Sends `update` to the channel and returns the channel's result of
+-        /// applying it.
+-        async fn update(&self, update: ResolverUpdate) -> Result<(), String> {
+-            let (result_tx, result_rx) = oneshot::channel();
+-            self.update_tx.send((update, result_tx)).unwrap();
+-            self.work_scheduler.schedule_work();
+-            GrpcRuntime::default()
+-                .timeout(DEFAULT_TEST_TIMEOUT, result_rx)
+-                .await
+-                .expect("timed out waiting for the channel to apply the update")
+-                .unwrap()
+-        }
+-    }
+-
+-    /// A resolver that sends the channel the updates pushed through its
+-    /// [`FakeResolverHandle`].
+-    struct FakeResolver {
+-        update_rx: mpsc::UnboundedReceiver<PendingUpdate>,
+-    }
+-
+-    impl Resolver for FakeResolver {
+-        fn resolve_now(&mut self) {}
+-
+-        fn work(&mut self, channel_controller: &mut dyn ChannelController) {
+-            while let Ok((update, result_tx)) = self.update_rx.try_recv() {
+-                let _ = result_tx.send(channel_controller.update(update));
+-            }
+-        }
+-    }
+-
+     /// Local channel credentials that hold every handshake until
+     /// [`open`](Self::open) is called. Until then, the channel's subchannels
+     /// stay CONNECTING, so its RPCs stay queued waiting for a pick.
+```
+
+**File**: `grpc/src/client/name_resolution/mod.rs` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ pub(crate) mod dns;
+ pub(crate) use registry::global_registry;
+ 
+ #[cfg(test)]
+-mod test_utils;
++pub(crate) mod test_utils;
+ 
+ pub(crate) mod proxy_resolver;
  
 ```
 
+**File**: `grpc/src/client/name_resolution/test_utils.rs` (modified, +101/-0)
+```diff
+@@ -23,14 +23,24 @@
+  */
+ 
+ use std::sync::Arc;
++use std::sync::atomic::AtomicUsize;
++use std::sync::atomic::Ordering;
++use std::time::Duration;
+ 
+ use tokio::sync::mpsc;
++use tokio::sync::oneshot;
+ 
+ use crate::client::name_resolution::ChannelController;
++use crate::client::name_resolution::Resolver;
++use crate::client::name_resolution::ResolverBuilder;
++use crate::client::name_resolution::ResolverOptions;
+ use crate::client::name_resolution::ResolverUpdate;
++use crate::client::name_resolution::Target;
+ use crate::client::name_resolution::WorkScheduler;
++use crate::client::name_resolution::global_registry;
+ use crate::client::service_config::ParseResult;
+ use crate::client::service_config::ServiceConfig;
++use crate::rt::GrpcRuntime;
+ 
+ /// A work scheduler for testing.
+ pub(crate) struct TestWorkScheduler {
+@@ -85,3 +95,94 @@ impl ChannelController for TestChannelController {
+         ServiceConfig::parse(config)
+     }
+ }
++
++/// Returns a resolver scheme that is unique within the test binary.
++/// Resolvers can't be removed from the global registry, so each test
++/// registers its own.
++fn unique_scheme() -> String {
++    static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
++    format!(
++        "fake-resolver-test-{}",
++        NEXT_ID.fetch_add(1, Ordering::Relaxed)
++    )
++}
++
++/// A resolver update, and a sender for the channel's result of applying
++/// it.
++type PendingUpdate = (ResolverUpdate, oneshot::Sender<Result<(), String>>);
++
++/// Builds [`FakeResolver`]s, sending a handle to each one to the test.
++pub(crate) struct FakeResolverBuilder {
++    scheme: String,
++    handle_tx: mpsc::UnboundedSender<FakeResolverHandle>,
++}
++
++impl FakeResolverBuilder {
++    /// Registers a new builder in the global registry. Returns its scheme
++    /// and a receiver for the handles of the resolvers it builds.
++    pub(crate) fn register() -> (String, mpsc::UnboundedReceiver<FakeResolverHandle>) {
++        let scheme = unique_scheme();
++        let (handle_tx, handle_rx) = mpsc::unbounded_channel();
++        global_registry().add_builder(Box::new(Self {
++            scheme: scheme.clone(),
++            handle_tx,
++        }));
++        (scheme, handle_rx)
++    }
++}
++
++impl ResolverBuilder for FakeResolverBuilder {
++    fn build(&self, _target: &Target, options: ResolverOptions) -> Box<dyn Resolver> {
++        let (update_tx, update_rx) = mpsc::unbounded_channel();
++        let _ = self.handle_tx.send(FakeResolverHandle {
++            work_scheduler: options.work_scheduler,
++            update_tx,
++        });
++        Box::new(FakeResolver { update_rx })
++    }
++
++    fn scheme(&self) -> &str {
++        &self.scheme
++    }
++
++    fn is_valid_uri(&self, _target: &Target) -> bool {
++        true
++    }
++}
++
++/// Lets the test push updates to the channel through a [`FakeResolver`].
++pub(crate) struct FakeResolverHandle {
++    work_scheduler: Arc<dyn WorkScheduler>,
++    update_tx: mpsc::UnboundedSender<PendingUpdate>,
++}
++
++impl FakeResolverHandle {
++    /// Sends `update` to the channel and returns the channel's result of
++    /// applying it.
++    pub(crate) async fn update(&self, update: ResolverUpdate) -> Result<(), String> {
++        let (result_tx, result_rx) = oneshot::channel();
++        self.update_tx.send((update, result_tx)).unwrap();
++        self.work_scheduler.schedule_work();
++        GrpcRuntime::default()
++            .timeout(Duration::from_secs(10), result_rx)
++            .await
++            .expect("timed out waiting for the channel to apply the update")
++            .unwrap()
++    }
++}
++
++/// A resolver that sends the channel the updates pushed through its
++/// [`FakeResolverHandle`].
++struct FakeResolver {
++    update_rx: mpsc::UnboundedReceiver<PendingUpdate>,
++}
++
++impl Resolver for FakeResolver {
++    fn resolve_now(&mut self) {}
++
++    fn work(&mut self, channel_controller: &mut dyn ChannelController) {
++        while let Ok((update, result_tx)) = self.update_rx.try_recv() {
++            let _ = result_tx.send(channel_controller.update(update));
++        }
++    }
++}
+```
+
+**File**: `grpc/src/client/subchannel.rs` (modified, +61/-21)
+```diff
+@@ -41,6 +41,7 @@ use crate::StatusError;
+ use crate::client::CallOptions;
+ use crate::client::ConnectivityState;
+ use crate::client::Invoke;
++use crate::client::InvokeOnce;
+ use crate::client::RequestHeaders;
+ use crate::client::boxed::BoxInvoker;
+ use crate::client::boxed::BoxRecvStream;
+@@ -60,6 +61,7 @@ use crate::client::transport::TransportOptions;
+ use crate::client::transport::http_connect::HttpConnectHandshaker;
+ use crate::core::Address;
+ use crate::core::ConnectionInfo;
++use crate::credentials::call::CallCredentials;
+ use crate::credentials::call::CallDetails;
+ use crate::credentials::call::ClientConnectionSecurityInfo as CallClientConnectionSecurityInfo;
+ use crate::credentials::common::Authority;
+@@ -172,37 +174,36 @@ impl PartialEq for InternalSubchannelState {
+     }
+ }
+ 
+-impl Invoke for InternalSubchannel {
++/// Starts one RPC on the connection a subchannel had when
++/// [`InternalSubchannel::ready_invoker`] was called.
++///
++/// Holding this keeps that connection's service alive, so it must be used
++/// immediately.  It is only [`InvokeOnce`], so it can't be reused.
++pub(crate) struct ReadyInvoker {
++    state: Arc<ReadyState>,
++    call_creds: Option<Arc<dyn CallCredentials>>,
++}
++
++/// An error returned by [`InternalSubchannel::ready_invoker`] when the
++/// subchannel is not READY.
++#[derive(Debug)]
++pub(crate) struct SubchannelNotReady;
++
++impl InvokeOnce for ReadyInvoker {
+     type SendStream = BoxSendStream;
+     type RecvStream = BoxRecvStream;
+ 
+-    async fn invoke(
+-        &self,
++    async fn invoke_once(
++        self,
+         mut headers: RequestHeaders,
+         options: CallOptions,
+     ) -> (Self::SendStream, Self::RecvStream) {
+-        let (state, call_creds) = {
+-            let data = self.data.lock().unwrap();
+-
+-            let state = match &data.state {
+-                InternalSubchannelState::Ready(state) => state.clone(),
+-                _ => todo!("handle non-READY subchannel"),
+-            };
+-
+-            let creds = data
+-                .security_opts
+-                .credentials
+-                .get_call_credentials(private::UnstableToken)
+-                .cloned();
+-
+-            (state, creds)
+-        };
+-
++        let state = self.state;
+         let fail_with = |status| -> (BoxSendStream, BoxRecvStream) {
+             FailingRecvStream::new_stream_pair(status, Some(state.connection_info.clone()))
+         };
+ 
+-        if let Some(call_creds) = call_creds {
++        if let Some(call_creds) = self.call_creds {
+             if call_creds.minimum_channel_security_level()
+                 > state.connection_info.security_info().security_level()
+             {
+@@ -244,6 +245,28 @@ impl Invoke for InternalSubchannel {
+     }
+ }
+ 
++impl Invoke for InternalSubchannel {
++    type SendStream = BoxSendStream;
++    type RecvStream = BoxRecvStream;
++
++    async fn invoke(
++        &self,
++        headers: RequestHeaders,
++        options: CallOptions,
++    ) -> (Self::SendStream, Self::RecvStream) {
++        match self.ready_invoker() {
++            Ok(invoker) => invoker.invoke_once(headers, options).await,
++            Err(SubchannelNotReady) => FailingRecvStream::new_stream_pair(
++                StatusError::new(
++                    StatusCodeError::Unavailable,
++                    format!("subchannel for {} is not READY", self.address),
++                ),
++                None,
++            ),
++        }
++    }
++}
++
+ pub(crate) struct InternalSubchannel {
+     address: Address,
+     data: Arc<Mutex<InternalSubchannelData>>,
+@@ -311,6 +334,23 @@ impl PartialEq for InternalSubchannel {
+ }
+ 
+ impl InternalSubchannel {
++    /// Returns an invoker for the subchannel's current connection, or an error
++    /// if the subchannel is not READY.
++    pub(crate) fn ready_invoker(&self) -> Result<ReadyInvoker, SubchannelNotReady> {
++        let data = self.data.lock().unwrap();
++        let InternalSubchannelState::Ready(state) = &data.state else {
++            return Err(SubchannelNotReady);
++        };
++        Ok(ReadyInvoker {
++            state: state.clone(),
++            call_creds: data
++                .security_opts
++                .credentials
++                .get_call_credentials(private::UnstableToken)
++                .cloned(),
++        })
++    }
++
+     pub(super) fn new_arc(
+         address: Address,
+         transport: ArcTransport,
+```
+
 #### Recent Merged Pull Requests:
+- **PR #3060** (2026-11-20): ci: use an example binary to locate protoc-gen-grpc-rust files (@dfawley)
 - **PR #3058** (closed): ci: create protoc-cache before copying the protoc build into it (@dfawley)
+- **PR #3057** (2026-11-20): grpc: make GrpcRuntime pub; move unstable rt APIs to rt::unstable (@dfawley)
 - **PR #3055** (2026-11-19): grpc: move Listener types from runtime to server; and a minor tweak to accommodate errors better (@dfawley)
 - **PR #3054** (2026-11-19): grpc: remove tower from the tonic client transport (@dfawley)
 - **PR #3048** (2026-11-19): Connection Attempt Delay timer tests. (@nathanielford)
-- **PR #3046** (2026-11-18): Fix mock example client failing to connect. (@nathanielford)
-- **PR #3045** (2026-11-18): feat(tonic-xds): expose configurable runtime knobs on channel (@YutaoMa)
 
 ---
 
@@ -2148,43 +2605,61 @@ side at the end of `main()`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mock example client failing to connect.
+## X. grpc: early channel dispatch fixes
 
 **RULE**:
-When implementing operations in `examples/src/mock/mock.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `grpc/src/client/channel.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8a469b3`: mock example client failing to connect.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10337899`: grpc: early channel dispatch fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/src/mock/mock.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/client/channel.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use tokio_stream::StreamExt;
-    let (shutdown_tx, shutdown_rx) = tokio::sync::oneshot::channel();
-    // The server shuts down when the incoming stream ends, so chain
-    // `pending()` to keep the stream open until `shutdown_tx` fires.
-    let server_task = tokio::spawn(async move {
-            .serve_with_incoming_shutdown(
-                tokio_stream::once(Ok::<_, std::io::Error>(server)).chain(tokio_stream::pending()),
-                async { drop(shutdown_rx.await) },
-            )
-    shutdown_tx.send(()).unwrap();
-    server_task.await??;
-
+use crate::client::InvokeOnce;
+                    if let Ok(invoker) = sc.ready_invoker() {
+                        let on_complete = pr.on_complete.take();
+                        let (tx, rx) = invoker.invoke_once(headers, options).await;
+                        // Notify the LB policy when the RPC completes (or is
+                        // abandoned) so it can release any per-call state.
+                        let rx = match on_complete {
+                            Some(on_complete) => {
+                                BoxRecvStream::new(CompletionRecvStream::new(rx, on_complete))
+                            }
+                            None => rx,
+                        };
+                        return (tx, rx);
+                    }
+                    // The subchannel likely left READY before the LB policy
+                    // updated its picker, so queue the pick and wait for a new
+                    // picker.  Dropping the pick drops its completion callback
+                    // without invoking it, since the RPC never started.
+                    // TODO: Check wait-for-ready and queue instead.
+                    if status.is_restricted_control_plane_code() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    tokio::spawn(async move {
-            .serve_with_incoming(tokio_stream::once(Ok::<_, std::io::Error>(server)))
+                    let on_complete = pr.on_complete.take();
+                    let (tx, rx) = sc.invoke(headers, options).await;
+                    // Notify the LB policy when the RPC completes (or is
+                    // abandoned) so it can release any per-call state.
+                    let rx = match on_complete {
+                        Some(on_complete) => {
+                            BoxRecvStream::new(CompletionRecvStream::new(rx, on_complete))
+                        }
+                        None => rx,
+                    };
+                    return (tx, rx);
+                    todo!("dropped pick: {:?}", status);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8a469b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10337899` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
