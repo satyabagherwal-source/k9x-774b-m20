@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-E0CG",
-    "timestamp": "2026-11-20T09:10:36.352Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-951D",
-    "timestamp": "2026-11-20T09:34:48.769Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "cc019eca902a59378d40b518e50c664f7fe6be82ed5c4b679783d81b23e6d46a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-96FI",
     "timestamp": "2026-11-20T09:34:50.574Z",
     "repository": "StarTrail-org/LEANN",
@@ -7490,6 +7460,36 @@
     "repository": "adventists-ai/Sophon-Realtime-v1",
     "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
     "contentHash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-TA26",
+    "timestamp": "2026-11-22T09:25:49.230Z",
+    "repository": "deepseek-ai/DeepSeek-V3.2",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
+    "contentHash": "6551c12b1a5d7da59472ffb897e5c1bd52b40d432f08ab8fee74ec86442e3527",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-TMQ8",
+    "timestamp": "2026-11-22T09:26:05.648Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "1b9f227e5a206cb3e17d04a1310e6a35a88f69cb237d582730c92084f685cfd5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

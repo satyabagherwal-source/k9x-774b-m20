@@ -12093,3 +12093,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-22T08:22:56.436Z |
 | `learn-huggingface-laion-clap-htsat-fused` | `https://huggingface.co/laion/clap-htsat-fused` | `hf-laion-c` | Multi-dimensional audit evidence | 2026-11-22T08:41:01.230Z |
 | `learn-huggingface-adventists-ai-sophon-realtime-v1` | `https://huggingface.co/adventists-ai/Sophon-Realtime-v1` | `hf-adventi` | Multi-dimensional audit evidence | 2026-11-22T09:11:04.913Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3-2` | `https://huggingface.co/deepseek-ai/DeepSeek-V3.2` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-22T09:25:49.235Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `564e432f` | Multi-dimensional audit evidence | 2026-11-22T09:26:05.652Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T09:11:09.669Z",
+  "last_updated": "2026-11-22T09:26:10.972Z",
   "total_records": 2344,
   "domains": {
     "A": {
@@ -8114,8 +8114,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "9e2a67273c858dffc4a8f19bb42ecb9336df8d7f6bcc7b0e35d039011451e9ed",
-      "created_at": "2026-11-22T08:41:05.271Z"
+      "content_hash": "2d2c9449c04f4d8a03328204afec7bc93a233fc3284b46e69a8b962ac02a167c",
+      "created_at": "2026-11-22T09:26:10.972Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -15249,8 +15249,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V3.2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-2-research-knowledge-intelligence-deepseek-ai-deepsee.md",
       "repository": "deepseek-ai/DeepSeek-V3.2",
-      "content_hash": "a0f7537ff940bc1f37ec5c579134cab6c7236fd6cca5aec18284053884cdd3d2",
-      "created_at": "2026-11-14T10:30:01.213Z"
+      "content_hash": "3235c1a0e4f17ac0d4143764ebf509b9ce0ba0080e16de5bc5a60bd6d196edb3",
+      "created_at": "2026-11-22T09:25:49.443Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openai-community-gpt2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openai-community-gpt2-core-invariants",
@@ -15318,8 +15318,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v3.2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-2-learnings-research-knowledge-intelligence-hf-deepse.md",
       "repository": "hf-deepseek-ai-deepseek-v3.2-learnings",
-      "content_hash": "0bf934258b9bfccfcd83431f81e2566c319ce46f95fdca7a6dd11e6b86d7e409",
-      "created_at": "2026-11-14T10:30:46.075Z"
+      "content_hash": "82a6b688857e8e42ab32080cd3db4d0cfd5762ca259755ce3c9c551bfe61074f",
+      "created_at": "2026-11-22T09:26:09.245Z"
     },
     "DOM-D-E4E3EE21": {
       "record_id": "DOM-D-E4E3EE21",
@@ -15423,8 +15423,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "cb99095a59d5e30f5d03c5051ef94910527a201ba85e2d8d105ca393b751ae00",
-      "created_at": "2026-11-22T07:27:47.033Z"
+      "content_hash": "a9aa095ead70949b07b500e979de7917e3ecc3609c2faedb5d5bfdd639ccfbe0",
+      "created_at": "2026-11-22T09:26:06.068Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15873,8 +15873,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "d183aa98629d10f5b32855282b4e2e9644c5568cb0a8699e8298fcd0351239da",
-      "created_at": "2026-11-22T06:50:07.026Z"
+      "content_hash": "c567e06ef045bc5816e357f4d7b1e675a1aeccb1a28061670d28022592048fc1",
+      "created_at": "2026-11-22T09:26:10.035Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",

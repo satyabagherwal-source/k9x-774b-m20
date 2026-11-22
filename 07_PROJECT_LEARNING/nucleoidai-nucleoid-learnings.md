@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `5e0af050`  
+> **Source Version**: `564e432f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T07:27:45.258Z  
+> **Timestamp**: 2026-11-22T09:26:05.180Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:27:45.251Z  
+> **Harvest Timestamp**: 2026-11-22T09:26:05.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1572,270 +1572,413 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51d61f14` (2026-11-22)
-**Commit Message**: Group ARC output and manage build cache space
+### Incident Patch 1: `564e432f` (2026-11-22)
+**Commit Message**: NUC 132 Rust String Boundary Method Aliases
 
-Display related ARC grids and states in shared side-by-side panels. Add disk-space checks and Cargo cache cleanup rules for repeated agent workflows.
+Accepted under the automatic-acceptance rule. The fresh independent
+overall decision and deterministic core both accepted the unchanged
+frozen candidate; all three hard criteria also pass on the integrated tree.
 
-**File**: `.claude/CLAUDE.md` (modified, +2/-1)
+Add starts_with and ends_with only to the existing string query arms.
+Preserve legacy spellings, conversions, argument evaluation, routing,
+liveness, rollback and written rendering. No parser or version changes.
+
+Both independent and integrated unfiltered suites: 3,872 passed, zero
+failed, 25 unchanged ignored. All 3,881 accepted identity occurrences and
+16 additions remain. Build all targets, warning-denied Clippy, formatting,
+warning-denied rustdoc and exports pass. Replay all 1,264 accepted sources
+and validate all 1,269 current programs, including full assertion coverage.
+
+Continuous Language compatibility: token comparison skipped entirely as
+language_compatibility, not a passing gate. Usefulness is unscored
+missing_rubric; learning is not_configured and unattributed.
+
+Independent outcome: 3091f3ca39b6c9b21e592d37a8b0286317b5478c.
+Integrated checks: 314681def0d5d14459f789af2a9b22267477138c.
+Final metadata-bound core: c722ae
+
+**File**: `README.md` (modified, +26/-0)
 ```diff
-@@ -11,14 +11,15 @@ not a replacement for the policies it links to.
- | File | Policy |
- | --- | --- |
- | [project.instructions.md](rules/project.instructions.md) | Language goals, reference documents, and runtime architecture |
--| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, and no automated ARC tests |
-+| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, grouped side-by-side terminal output, and no automated ARC tests |
- | [rust.instructions.md](rules/rust.instructions.md) | Concrete runtime types, dependencies, and Rust community conventions |
- | [power-of-ten.instructions.md](rules/power-of-ten.instructions.md) | NASA's Power of 10 rules adapted to the Rust crate: the lints, runtime limits, 500-line file limit and policy test that enforce them, and the known runtime-value recursion gap |
- | [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
- | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
- | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
- | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
- | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
-+| [disk-space.instructions.md](rules/disk-space.instructions.md) | Before every round of a continuous or repeated task, check free disk space and, below 50 GB, clear the machine's finished Cargo build caches (`CACHEDIR.TAG` targets and `incremental` folders) before starting; clear your own finished rounds' targets every round, keep anything in use, in progress or not build output, and pause when space stays low |
- | [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+@@ -2971,6 +2971,32 @@ assert(total, 11)
+ - See [NUC 127](docs/nuc-0127.md) and the
+   [root contract](nucleoid.spec.md#implicit-iterator-indented-loops).
  
- All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
++## Rust string boundary method aliases
++
++**Rust boundary methods keep file flags live**
++
++```nuc
++class File(name):
++    this.name = name
++$File.draft = $File.name.starts_with("draft_")
++$File.table = $File.name.ends_with(".csv")
++file = File("draft_report.csv")
++assert([file.draft, file.table], [true, true])
++file.name = "notes.txt"
++assert([file.draft, file.table], [false, false])
++[file.draft, file.table]
++# return: [false,false]
++```
++
++- [NUC 132](docs/nuc-0132.md) adds Rust's familiar `starts_with` and
++  `ends_with` names for the accepted string boundary queries. Each file's
++  flags follow its name through the same class-rule dependencies.
++- The first argument converts to Nucleoid text; missing arguments test
++  `"undefined"` and further arguments are evaluated and ignored. Rust's
++  pattern traits and static typing are not introduced. All accepted
++  JavaScript and Python spellings remain available.
++- See the [root contract](nucleoid.spec.md#rust-string-boundary-method-aliases).
++
+ ## Benchmark
+ 
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
-**File**: `.claude/rules/arc.instructions.md` (modified, +17/-0)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +2/-0)
 ```diff
-@@ -145,3 +145,20 @@ Do not read or expose credentials, make paid LLM calls without authorization,
- or alter provider/model settings merely to manufacture a passing result. An
- `/arc-purposal` invocation authorizes its one `bun start <puzzle-id>` run and
- nothing more.
-+
-+## Grouped, side-by-side terminal output
-+
-+The solver's terminal always displays by group and side by side:
-+
-+- Results that belong together share one box, one column per panel, each
-+  under its own numbered title: one object's input, output and state, every
-+  object that one step separates, segments or composes, or the expected and
-+  predicted grids. Milestones in `arc/src/lib/milestone.ts` build these boxes
-+  with `terminal.panels`, which moves panels onto further rows of the same
-+  box only when the window is too narrow.
-+- Never print related results as a run of separate boxes, one after another,
-+  and never print a result on its own before a later group shows it: it
-+  appears once, in its group. A result that no later group shows, such as a
-+  rejected synthesized instance, gets its own group where it happens.
-+- One-line progress steps, model reasoning and usage lines, alerts and the
-+  failure box stay outside the groups.
+@@ -849,3 +849,5 @@
+ {"id":"spec-0849","description":"Nucleoid omits colons from implicit instance iterator suites","code":"class Entry(amount):\n    this.amount = amount\nfirst = Entry(2)\nsecond = Entry(5)\nvalues = [first, 99, second, null, {amount: 9}]\nseen = []\ntotal = 0\nfor values\n    seen.push(it.amount)\n    total += it.amount\nassert(seen, [2, 5])\nassert(total, 7)\nempty = []\nfor empty\n    total += 100\nassert(total, 7)","return":null}
+ {"id":"spec-0850","description":"Nucleoid nests colon free implicit iterator scopes","code":"it = \"ab\"\ninner = \"xy\"\nseen = []\nfor it\n    for inner\n        seen.push(it)\nassert(seen, [\"x\", \"y\", \"x\", \"y\"])\nassert(it, \"ab\")","return":null}
+ {"id":"spec-0851","description":"Nucleoid propagates returns and rollback through colon free implicit iterators","code":"def first(text):\n    for text\n        return it\n    return \"empty\"\nassert(first(\"ab\"), \"a\")\nassert(first(\"\"), \"empty\")\ntext = \"ab\"\nvalue = 7\nfailure = null\ntry:\n    for text\n        value = 99\n        throw \"stop\"\ncatch error:\n    failure = error\nassert(value, 7)\nassert(failure, \"stop\")\nfor text\n    value += 1\nassert(value, 9)\nvalue","return":"9"}
++{"id":"spec-0852","description":"Nucleoid tests string boundaries with Rust spellings","code":"text = \"café.csv\"\nassert([text.starts_with(\"café\"), text.ends_with(\".csv\")], [true, true])\nassert([text.starts_with(\"Café\"), text.ends_with(\"CSV\")], [false, false])\nassert([\"\".starts_with(\"\"), \"\".ends_with(\"\")], [true, true])\nassert([\"é\".starts_with(\"é\"), \"é\".ends_with(\"é\")], [false, false])\nassert([\"12 notes\".starts_with(12), \"flagtrue\".ends_with(true), \"null notes\".starts_with(null)], [true, true, true])\nassert([\"undefined notes\".starts_with(), \"notesundefined\".ends_with()], [true, true])\nassert([\"notes.csv\".ends_with([\".csv\", \".txt\"]), \"notes.csv,.txt\".ends_with([\".csv\", \".txt\"])], [false, true])\nassert([\"abc\".starts_with(\"b\", 1), \"abc\".ends_with(\"b\", 0, 2)], [false, false])\n[text.starts_with(\"café\"), text.ends_with(\".csv\")]","return":"[true,true]"}
++{"id":"spec-0853","description":"Nucleoid keeps Rust boundary rules live and rolls back failed receiver updates","code":"class File(name):\n    this.name = name\nprefix = \"draft_\"\nsuffix = \".csv\"\n$File.draft = $File.name.starts_with(prefix)\n$File.table = $File.name.ends_with(suffix)\nreport = File(\"draft_report.csv\")\nnotes = File(\"notes.txt\")\nselected = File.filter(file -> file.draft and file.table).map(file -> file.name)\nassert([report.draft, report.table, notes.draft, notes.table], [true, true, false, false])\nnotes.name = \"draft_notes.csv\"\nassert(selected, [\"draft_report.csv\", \"draft_notes.csv\"])\nprefix = \"draft_notes\"\nassert([report.draft, notes.draft, selected], [false, true, [\"draft_notes.csv\"]])\nfailure = \"\"\ntry:\n    notes.name = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.starts_with is not a function\"))\nassert([notes.name, notes.draft, notes.table, selected], [\"draft_notes.csv\", true, true, [\"draft_notes.csv\"]])\nsuffix = \".txt\"\nassert([report.table, notes.table, selected], [false, false, []])\n[notes.name, notes.draft, notes.table]","return":"[\"draft_notes.csv\",true,false]"}
 ```
 
-**File**: `.claude/rules/disk-space.instructions.md` (added, +55/-0)
+**File**: `dataset/nucleoid.synth.94.jsonl` (added, +3/-0)
 ```diff
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,3 @@
++{"id":"synth-94-0001","description":"Rust boundary names select draft CSV documents and follow new names","code":"names = [\"draft_report.csv\", \"notes.txt\", \"sent.csv\"]\ndrafts = names.filter(name -> name.starts_with(\"draft_\") and name.ends_with(\".csv\"))\nassert(drafts, [\"draft_report.csv\"])\nnames.push(\"draft_costs.csv\")\nassert(drafts, [\"draft_report.csv\", \"draft_costs.csv\"])\ndrafts","return":"[\"draft_report.csv\",\"draft_costs.csv\"]"}
++{"id":"synth-94-0002","description":"Literal Unicode affixes and coerced values keep Nucleoid boundary semantics","code":"assert([\"café.csv\".starts_with(\"café\"), \"café.csv\".ends_with(\".csv\")], [true, true])\nassert(\"é\".starts_with(\"é\"), false)\nassert([\"12 files\".starts_with(12), \"reportnull\".ends_with(null)], [true, true])\n[\"undefined\".starts_with(), \"list.csv,.txt\".ends_with([\".csv\", \".txt\"])]","return":"[true,true]"}
++{"id":"synth-94-0003","description":"A class boundary rule follows names and restores a failed non-string update","code":"class File(name):\n    this.name = name\n$File.table = $File.name.ends_with(\".csv\")\nfile = File(\"notes.txt\")\nassert(file.table, false)\nfile.name = \"notes.csv\"\nassert(file.table, true)\nfailure = \"\"\ntry:\n    file.name = 7\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.ends_with is not a function\"))\n[file.name, file.table]","return":"[\"notes.csv\",true]"}
+```
+
+**File**: `docs/README.md` (modified, +40/-1)
+```diff
+@@ -2809,7 +2809,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
+ | `Boolean` | `Boolean(value)` |
+ | `Number` | `Number.MAX_INTEGER` |
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+-| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
++| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), Rust's `starts_with(prefix)` and `ends_with(suffix)` ([NUC 132](nuc-0132.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+ | `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)), and the reversal aliases `reversed()` and `toReversed()` of `reverse()` ([NUC 131](nuc-0131.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
+@@ -3120,6 +3120,44 @@ assert([latest[0], recent.length, readings], [23, 3, [18, 21, 19, 23]])
+   [root section](../nucleoid.spec.md#reversal-method-aliases) and its four
+   appended entries define the results, liveness and rollback.
+ 
++### Rust string boundary method aliases
++
++```
++name = "draft_report.csv"
++prefix = "draft_"
++suffix = ".csv"
++draft = name.starts_with(prefix)
++table = name.ends_with(suffix)
++assert([draft, table], [true, true])
++name = "notes.txt"
++assert([draft, table], [false, false])
++prefix = "notes"
++suffix = ".txt"
++assert([draft, table], [true, true])
++[draft, table]
++```
++
++- [NUC 132](nuc-0132.md) adds exactly Rust's `starts_with(prefix)` and
++  `ends_with(suffix)` names on strings. They use the accepted
++  `startsWith`/`startswith` and `endsWith`/`endswith` operations.
++- Matching is literal, case-sensitive and not Unicode-normalized. The
++  first argument converts to Nucleoid text: `null` tests `"null"`, a
++  missing argument tests `"undefined"`, and a list tests its comma-joined
++  text, not several patterns. Empty affixes match empty strings.
++- The receiver evaluates first, then every argument left to right.
++  Further arguments are evaluated and ignored, not positions; argument
++  errors propagate. A null or undefined receiv
+```
+
+**File**: `docs/examples.md` (modified, +28/-0)
+```diff
+@@ -4494,6 +4494,34 @@ total
+ - See [NUC 127](nuc-0127.md) and the
+   [root contract](../nucleoid.spec.md#implicit-iterator-indented-loops).
+ 
++## Rust string boundary method aliases
++
++**Rust boundary methods keep a document desk's selection live**
++
++```nuc
++class Document(name):
++    this.name = name
++$Document.draft = $Document.name.starts_with("draft_")
++$Document.table = $Document.name.ends_with(".csv")
++first = Document("draft_sales.csv")
++second = Document("notes.txt")
++selected = Document.filter(doc -> doc.draft and doc.table).map(doc -> doc.name)
++assert(selected, ["draft_sales.csv"])
++second.name = "draft_costs.csv"
++assert(selected, ["draft_sales.csv", "draft_costs.csv"])
++first.name = "sent_sales.csv"
++assert(selected, ["draft_costs.csv"])
++selected
++# return: ["draft_costs.csv"]
++```
++
++- Each document's literal prefix and suffix rules use the same operations
++  as `startsWith` and `endsWith`. The live selection follows changed names
++  without an imperative walk.
++- These are Rust's names with Nucleoid's conversions and call semantics,
++  not Rust pattern overloads. See [NUC 132](nuc-0132.md) and the
++  [root contract](../nucleoid.spec.md#rust-string-boundary-method-aliases).
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -176,7 +176,7 @@ Created: 31-Jul-2026
+ | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
+ | [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
+ | [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
+-| [132](nuc-0132.md) | Rust String Boundary Method Aliases | Draft |
++| [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
+ 
+ ### Documentation
+ 
+@@ -319,7 +319,7 @@ Created: 31-Jul-2026
+ | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Accepted |
+ | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+ | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
+-| [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Draft |
++| [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ 
+ ## Copyright
+```
+
+**File**: `docs/nuc-0132.md` (modified, +266/-7)
+```diff
+@@ -4,7 +4,7 @@
+ NUC: 132
+ Title: Rust String Boundary Method Aliases
+ Author: Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Language compatibility
+ Created: 22-Nov-2026
+@@ -13,6 +13,9 @@ Requires: 110
+ 
+ ## Abstract
+ 
++- Accepted under the automatic-acceptance rule after independent behavior,
++  compatibility and development checks passed. The continuous Language
++  compatibility policy categorically skips token comparison.
+ - Add Rust's `starts_with(prefix)` and `ends_with(suffix)` names to string
+   receivers as exact aliases of accepted `startsWith(prefix)` and
+   `endsWith(suffix)`. Preserve those spellings and the accepted Python
+@@ -41,24 +44,280 @@ Requires: 110
+   without reserving identifiers or changing accepted operations. Sharing the
+   existing implementation avoids a second matcher or different coercions.
+ - Keep this bounded family separate from accepted NUC 110's Python names,
+-  NUC 118's case-conversion aliases and pending NUC 131's reversal aliases.
+-  No pending proposal is a dependency.
++  NUC 118's case-conversion aliases and accepted NUC 131's reversal aliases.
++  Preserve NUC 131 unchanged; no pending proposal is a dependency.
+ 
+ ## Rationale
+ 
+-Preparation pending in an isolated candidate after this Draft allocation.
++- **Confirmed selection.** The caller checked stale allocated Drafts and
++  made one unbiased draw from NUC 1's live eligible registry at
++  `2026-11-22T00:15:00.8147684-05:00`: index 4 of five categories,
++  Language compatibility. This preserving revision keeps that draw, its
++  bounded request and continuous mode; it does not redraw.
++- **Existing operations.** Add two names to the existing string query
++  arms. Their first-argument text conversion, boolean result and literal
++  matching are shared by construction. Reject a second matcher and
++  parse-time normalization, which would change written rendering.
++- **Per evaluation.** The equivalence is on string receivers. A later
++  non-string receiver reads the written name through its accepted routing,
++  including user-defined methods and callable object properties. Do not
++  coerce the receiver to a string or intercept another receiver's methods.
++- **Scope.** Reject Rust pattern traits, character or predicate overloads,
++  positional variants, static methods, additional aliases and utilities.
++  Keep the lexer, parser, grammar, terminal completions, public types,
++  dependencies, MSRV and project version unchanged.
++- **Protected corpus.** The pushed empty Resume claim
++  `b4f4fbdd0e1e260f49759800735ecb25d5055d13` is this revision's accepted
++  baseline. Its external immutable `nuc-0132-baseline-r2.json`, raw blob
++  `0ba752131476ad98363520adc214b56c049b4aa4`, contains 1,264
++  executable-document programs, including accepted NUC 131, with no extras.
++  Append genuine examples without rewriting any historical source,
++  assertion or return. Adjust only corpus-size and append-position pins
++  mechanically derived from the additions.
++- **Preserving port.** The earlier r1 preparation against allocation
++  `0fe54a781d7cbab378adc3614b7c580fa8b886f6` was never Rust-improved,
++  finally frozen, independently evaluated or integrated. This fresh r2
++  candidate ports only its two query names, five document programs,
++  focused tests and three synthesized programs. NUC 131's code, programs,
++  tests and canonical split 93 remain protected. Move the unaccepted
++  records to unused split 94, changing only their split IDs.
++- **Token policy.** Comparison is entirely skipped as
++  `language_compatibility`, with no measured cases or token claims.
++  Runtime applicability is not applicable; runtime inputs stay unset.
++  The skip does not waive accepted replay, integrity, compatibility or
++  development checks. The new cases need no accepted-syntax counterparts.
++- **Optional evidence.** No hint or frozen usefulness rubric was supplied.
++  Usefulness is unscored (`missing_rubric`), not zero. Learning is
++  `not_configured` and this revision is unattributed: no strategy policy,
++  selection receipt, trial, assessment or reward exists.
++- **Prior evidence.** The caller's current accepted-runtime probe returned
++  the two written-name `TypeError` strings and four `true` results for the
++  older spellings before edits. It demonstrates the unsupported names, not
++  a normative counterpart, candidate execution or learning evidence.
+ 
+ ## Specification
+ 
+-Preparation pending.
++- The authoritative contract is
++  [Rust string boundary method aliases](../nucleoid.spec.md#rust-string-boundary-method-aliases).
++- On string receivers, `TEXT.starts_with(prefix)` dispatches to the same
++  query arm as `TEXT.startsWith(prefix)` and `TEXT.startswith(prefix)`;
++  `TEXT.ends_with(suffix)` dispatches to the same arm as
++  `TEXT.endsWith(suffix)` and `TEXT.endswith(suffix)`.
++- The first argument converts with the accepted Nucleoid text conversion.
++  Matching is literal and 
+```
+
+**File**: `nucleoid.spec.md` (modified, +90/-0)
+```diff
+@@ -723,6 +723,54 @@ operator-chain diagnostics and source positions are preserved.
+   specify the executable behavior. `tests/reversal_aliases.rs` executes the
+   rest.
+ 
++## Rust string boundary method aliases
++
++- [NUC 132](docs/nuc-0132.md) adds exactly `starts_with(prefix)` and
++  `ends_with(suffix)` on string receivers. They are additional names of the
++  accepted `startsWith`/`startswith` and `endsWith`/`endswith` query arms,
++  not new operations. Every accepted name remains available.
++- **Matching.** The first argument converts to its Nucleoid text form.
++  Matching is literal and case-sensitive, without Unicode normalization:
++  `"café.csv".starts_with("café")` is `true`, but decomposed `"é"` does
++  not match composed `"é"`. An empty affix matches even an empty string.
++  A number tests its text, `null` tests `"null"`, and a missing argument
++  tests `"undefined"`. A list tests its comma-joined text, not alternatives.
++- **Evaluation.** The receiver evaluates first, then all arguments once,
++  left to right. Further arguments are evaluated and ignored; they do not
++  specify positions. Argument errors propagate before matching. A `null`
++  or undefined receiver stays undefined without evaluating any argument.
++- **Live.** Declarations and class-level rules retain the accepted call's
++  dependencies, including ignored arguments, in written evaluation order.
++  A rule such as `$File.table = $File.name.ends_with(suffix)` follows each
++  file's name and the suffix. Failed updates and enclosing transactions
++  roll back through the existing runtime.
++- **Per receiver.** The aliases equal their accepted operations whenever
++  the receiver evaluates to a string. A later non-string receiver reads the
++  written method name using its existing routing: a number raises
++  `TypeError("number.starts_with is not a function")`, while an object's
++  callable `starts_with` property still runs that property.
++- **Unchanged.** Lists, class populations, numbers, booleans, objects,
++  instances, functions, dates and regular expressions retain their
++  routing and errors. Reads such as `text.starts_with` stay undefined;
++  assignments keep `TypeError("Cannot assign 'starts_with' on string")`.
++  Static `String.starts_with(...)` keeps
++  `TypeError("String.starts_with is not a function")`; `ends_with` follows
++  the same existing error formats. No lexer, parser, keyword, syntax-tree
++  contract or terminal-completion entry changes.
++- **Rendering.** Statements, explanations, graph keys and graph output
++  retain the method name as written. There is no parse-time normalization
++  to a JavaScript or Python spelling.
++- **Rust differences.** These names inherit Nucleoid semantics, not Rust's
++  `Pattern` traits or static types. Values convert to text rather than
++  becoming character sets or predicate patterns; missing and extra
++  arguments retain Nucleoid's treatment. No positional variant, extra
++  alias or utility is introduced.
++- The two appended entries `Nucleoid tests string boundaries with Rust
++  spellings` and `Nucleoid keeps Rust boundary rules live and rolls back
++  failed receiver updates` define the executable behavior.
++  `tests/rust_string_boundary_aliases.rs` covers the public built-in,
++  evaluation order, receiver isolation and written rendering.
++
+ ## Reactive string padding
+ 
+ - [NUC 111](docs/nuc-0111.md) adds JavaScript's standard padding methods to
+@@ -28453,4 +28501,46 @@ for text
+ assert(value, 9)
+ value
+ # return: 9
 +---
-+applyTo: "**"
++# Nucleoid tests string boundaries with Rust spellings
++
++text = "café.csv"
++assert([text.starts_with("café"), text.ends_with(".csv")], [true, true])
++assert([text.starts_with("Café"), text.ends_with("CSV")], [false, false])
++assert(["".starts_with(""), "".ends_with("")], [true, true])
++assert(["é".starts_with("é"), "é".ends_with("é")], [false, false])
++assert(["12 notes".starts_with(12), "flagtrue".ends_with(true), "null notes".starts_with(null)], [true, true, true])
++assert(["undefined notes".starts_with(), "notesundefined".ends_with()], [true, true])
++assert(["notes.csv".ends_with([".csv", ".txt"]), "notes.csv,.txt".ends_with([".csv", ".txt"])], [false, true])
++assert(["abc".starts_with("b", 1), "abc".ends_with("b", 0, 2)], [false, false])
++[text.starts_with("café"), text.ends_with(".csv")]
++# return: [true,true]
 +---
++# Nucleoid keeps Rust boundary rules live and rolls back failed receiver updates
 +
-+# Disk space: clear build caches before the next round
-+
-+These rules apply to every agent that works in rounds: the `/nuc-proposal`
-+caller in continuous mode, including cycles coordinated through
-+`/nuc-evaluate`, and any other agent that repeats a task, such as a `/loop`
-+session or a batch of `/arc-purposal` puzzles. Cargo build directories are the
-+cache that fills this machine's drive: a NUC worktree's `target` reaches about
-+14 GB, and a round builds several, for its candidate, baselines, evaluation
-+and integration.
-+
-+## Check before every round
-+
-+- Before every round, the first one included, and before its first pull,
-+  check the free space of the drive that holds the repository, its worktrees
-+  and the agent workspaces, for example with `Get-PSDrive C` or `df -h /c`.
-+- Free space is low below 50 GB. Then clear the caches below on the whole
-+  machine before the round starts, and check again.
-+- If less than 50 GB is still free after clearing, do not start the round.
-+  The disk is a resource limit: pause and report what was cleared and what
-+  still holds the space.
-+- Report what was cleared, with paths and sizes, in the round's report.
-+
-+## What to clear
-+
-+Clear only Cargo build output: a directory that holds a `CACHEDIR.TAG` file,
-+which Cargo writes at the root of every target directory, or the
-+`incremental` folder of a target.
-+
-+- **Your own finished rounds:** once a round's outcome is recorded, its
-+  candidate, baseline, integration, probe and audit targets are no longer
-+  needed. Clear them at the end of every round, whether or not space is low.
-+- **Other sessions' finished work:** build directories in
-+  `.copilot/session-state`, in other agents' scratchpads and in their
-+  worktrees, when the NUC that the directory's path names has an outcome on
-+  `main`, or when nothing has written to the directory for more than 24
-+  hours.
-+- **The primary checkout:** `target/debug/incremental`.
-+
-+## What to keep
-+
-+- A build directory that anything wrote to in the last hour, and every build
-+  directory of a NUC that is still in progress, since another session may be
-+  using it.
-+- The primary checkout's built binaries and compiled dependencies, such as
-+  `target/debug/nucleoid.exe`, which the REPL and the ARC solver use.
-+- Everything that is not build output: worktrees and their sources,
-+  uncommitted candidates, baselines, reports, receipts, checkpoints, and the
-+  logs and artifacts that a NUC or ARC record cites, `arc/` data and
-+  `node_modules`, the Cargo registry and the toolchains. Never remove another
-+  session's worktree; clear only the build directories inside it.
-+- Never read `.env` files while measuring or clearing.
++class File(name):
++    this.name = name
++prefix = "draft_"
++suffix = ".csv"
++$File.draft = $File.name.starts_with(prefix)
++$File.table = $File.name.ends_with(suffix)
++report = File("draft_report.csv")
++notes = File("notes.txt")
++selected = File.filter(file -> file.draft and file.table).map(file -> file.name)
++assert([report.draft, report.table, notes.draft, notes.table], [true, true, false, false])
++notes.name = "draft_notes.csv"
++assert(selected, ["draft_report.csv", "draft_notes.csv"])
++prefix = "draft_notes"
++assert([report.draft, notes.draft, selected], [false, true, [
 ```
 
-**File**: `.claude/rules/proposals.instructions.md` (modified, +6/-3)
-```diff
-@@ -494,9 +494,12 @@ In continuous mode, after finalizing and committing an `Accepted`,
- `Automatic-Accepted` or `Rejected` outcome for a new NUC, the caller
- immediately starts a distinct new proposal under
- the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
--Each cycle, the first one included, first
--[picks up a stale Draft](#pick-up-stale-drafts-first-caller-only) when one
--exists. Run cycles sequentially with fresh agents, baselines, candidate
-+Before every cycle, the first one included, the caller clears the finished
-+cycle's build directories and checks free disk space under the
-+[disk-space policy](disk-space.instructions.md), clearing the machine's
-+finished build caches when space is low. Each cycle, the first one included,
-+first [picks up a stale Draft](#pick-up-stale-drafts-first-caller-only) when
-+one exists. Run cycles sequentially with fresh agents, baselines, candidate
- worktrees and reports, preserving the selection, compatibility and acceptance
- requirements.
- Only the caller continues; workers stop at their handoffs. This does not
-```
+---
 
-**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +3/-1)
-```diff
-@@ -352,7 +352,9 @@ unstaged work. Baselines and reports remain in the session workspace.
- 
- After recording the outcome, follow the
- [continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
--without requesting confirmation to record outcomes or continue. For uncertain
-+without requesting confirmation to record outcomes or continue, clearing
-+build caches before the next cycle under the
-+[disk-space policy](../../rules/disk-space.instructions.md). For uncertain
- category additions, selections, updates, or assignments, workers return the
- question to the caller, who asks the user for confirmation under the proposal skill's
- [classification rule](../nuc-proposal/SKILL.md#classify-every-proposal).
-```
+### Incident Patch 2: `82fd8933` (2026-11-22)
+**Commit Message**: Add silhouettes to visualizer input
 
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +8/-2)
-```diff
-@@ -19,7 +19,10 @@ Work on exactly one proposal revision in the caller's isolated candidate.
- Every `/nuc-proposal` task runs in this order, and every continuous cycle
- repeats it:
- 
--1. **Pull.** As always before starting a task, pull the primary checkout with
-+1. **Pull.** In continuous mode, first check free disk space and, when it is
-+   low, clear the machine's finished build caches under the
-+   [disk-space policy](../../rules/disk-space.instructions.md). Then, as
-+   always before starting a task, pull the primary checkout with
-    `git pull --no-rebase --autostash` under the
-    [git synchronization policy](../../rules/git.instructions.md#pull-first),
-    so the task runs against the most current remote state. Report the commits
-@@ -540,10 +543,13 @@ next cycle:
- - **Rejected:** record and commit only rejection documentation and index/outcome
-   metadata; leave rejected language changes isolated.
- 
-+Then clear the finished cycle's own build directories and check free disk
-+space under the [disk-space policy](../../rules/disk-space.instructions.md),
-+clearing the machine's finished build caches when less than 50 GB is free.
- Immediately start another fresh "purpose a NUC" cycle without waiting for a
- new user prompt. Repeat sequentially in the active agent session until the
- user stops, pauses or redirects the work, the session ends, or a resource limit
--is reached. A `Blocked` decision, failed outcome recording, or missing required
-+is reached; space that stays low after clearing is such a limit. A `Blocked` decision, failed outcome recording, or missing required
- input pauses continuation; report the blocker instead of bypassing it.
- 
- Continuous cycles do not ask for confirmation before recording an outcome or
-```
+Include silhouettes for training inputs and instance matrices, plus the partial input matrix.
 
-**File**: `arc/README.md` (modified, +56/-44)
+**File**: `arc/src/visualizer.ts` (modified, +8/-0)
 ```diff
-@@ -172,9 +172,11 @@ Panels expand up to 120 terminal columns, shrinking to fit narrower windows.
- 
- Immediately after the header, a puzzle preview shows the training input/output
- pairs side by side, with the test input below. Narrow windows wrap complete
--pairs onto additional rows; oversized pairs use the existing column-split matrix
--panels instead of dropping cells. The opening preview never receives or displays
--the expected test output. The final Expected/Result comparison remains unchanged.
-+pairs onto additional rows; an oversized pair shows its `Input` and `Output`
-+panels in one box titled `Train <n>`, splitting wide grids into column
-+sections instead of dropping cells. The opening preview never receives or
-+displays the expected test output, which appears only in the final
-+Expected/Result comparison.
- 
- Numbered analysis/visualization stages, boxed declarations and object states,
- and color-coded ARC grids with row/column coordinates keep the run readable.
-@@ -185,46 +187,55 @@ such as `1.3.1` and `1.3.2` for training-object segmentation. Continued grid
- panels keep the same full number. The declarations header includes the
- output canvas instead of adding a separate milestone.
- 
--Related panels sit side by side in one box, one column per panel, each under
--its own numbered title; a box for one instance names the instance once, in a
--title row above the columns. Each training pair's segmented objects share one
--box with a row per object, its `Input` beside its `Output`, such as
--`1.4.1 Input` and `1.5.1 Output`; segmented-object panels use `Input` and
--`Output` without object-number labels. Each constructed instance shows its
--`Input crop`, `Output crop`, `Implementation` and `Input state` side by side,
--`1.8.1` through `1.11.1` for the first one. After the `Analysis · State`
--table, a `Synthesizing training pairs` step precedes the synthesis call. Each
--synthesized instance's output is then composed as a test object's is, from its
--`Composing the output object · <instance>` step to its `Placed output`. When
--validation rejects the instance, because its `Output state` and the measured
--`Placed output` disagree on `x`, `y`, `width`, `height` or `volume`, a red `✗`
--step follows at once, such as
--`1.18.1 Rejected <instance> · Output state ≠ Placed output · volume 5 ≠ 4`,
--naming each disagreeing property with the state's value first. A
--`<count> training pairs synthesized` step (`pair` for one) follows, with one
--box per synthesized instance that passed validation, titled
--`Synthesized <n> · <instance>`, where `<n>` numbers its synthesized pair: its
--full-size `Input` and `Output` matrices side by side, then its `Output state`.
--Model token usage remains attached to its active milestone. Instance-specific
--steps, and the headers of instance panels shown on their own, include the
--instance name. In the visualization, the segmented test objects' `Input`
--panels sit side by side (`2.4.1`, `2.4.2`, …). Each test object's
--`Executing the object transformation` step, such as `2.7.1`, is followed by
--one box with its `Input crop`, `Implementation` and `Input state` side by
--side, `2.5.1`, `2.6.1` and `2.8.1`; if that execution fails, the crop and
--implementation still print before the error. Its composition shows the same
--`Input crop` again before its `Output crop`, under its own number, such as
--`2.11.1`, rather than continuing the synthesis count, and an `Output state`
--panel right after the `Output crop`: the object's row of the
--`Visualization · State` table, before its `Placed output`.
--The visualization's output-crop header also shows the object's output
--orientation as an arrow emoji and its degrees, such as
--`2.12.1 Output crop · <instance> · ➡️ 90°`, and every input- and
--output-state header, in both stages, shows the orientation of the state it
--displays the same way, such as `2.8.1 Input state · ⬆️ 0°` under its
--instance's title row. An orientation that is not a multiple of 45 degrees
--shows `🧭` instead of an arrow, and an object without a numeric
--`orientation` adds nothing to the header.
-+The terminal always displays by group and side by side. Related panels share
-+one box, one column per panel, each under its own numbered title, rather than
-+following one another as separate boxes, and a result appears once, in its
-+group, rather than on its own before a later box repeats it. A box for one
-+instance names the instance once, in a title row above the columns. Each
-+training pair's segmented objects share one box with a row per object, its
-+`Input` beside its `Output`, such as `1.4.1 Input` and `1.5.1 Output`;
-+segmented-object panels use `Input` and `Output` without object-number labels.
-+Each constructed instance shows its `Input crop`, `Output crop`,
-+`Implementation` and `Input state` side by side, `1.8.1` through `1.11.1` for
-+the first one. After the `Analysis · State` table, a
-+`Synthesizing training pairs` step precedes the synthesis call. Each
-+synthesized instance's output is th
-```
-
-**File**: `arc/src/app.ts` (modified, +2/-0)
-```diff
-@@ -121,6 +121,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
-   }
- 
-+  milestone.test_output_composed({ instances: input_instances });
-+
-   result_matrix = Matrix.canvas(result_matrix, output_canvas);
- 
-   milestone.comparison({ test_output_matrix, result_matrix });
+@@ -29,11 +29,18 @@ export async function instances({ train, test_input_matrix }) {
+             class_declaration: train.class_declaration,
+             dataset: train.dataset.map(({ input_matrix, instances }) => ({
+               input_matrix,
++              input_silhouette_matrix: Matrix.silhouette(input_matrix),
+               instances: instances.map((instance) => ({
+                 instance_matrix: instance.input_instance_matrix,
+                 instance_crop_matrix: Matrix.crop(
+                   instance.input_instance_matrix
+                 ),
++                instance_silhouette_matrix: Matrix.silhouette(
++                  instance.input_instance_matrix
++                ),
++                instance_silhouette_crop_matrix: Matrix.silhouette(
++                  Matrix.crop(instance.input_instance_matrix)
++                ),
+                 implementation: instance.implementation,
+                 x: instance.input_value.x,
+                 y: instance.input_value.y,
+@@ -56,6 +63,7 @@ export async function instances({ train, test_input_matrix }) {
+             dataset: [
+               {
+                 input_matrix: partial_matrix,
++                input_silhouette_matrix: Matrix.silhouette(partial_matrix),
+                 instances: [
+                   {
+                     instance_crop_matrix: "<INPUT_INSTANCE_CROP_MATRIX>",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1864,29 +2007,53 @@ Display related ARC grids and states in shared side-by-side panels. Add disk-spa
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Group ARC output and manage build cache space
+## X. NUC 132 Rust String Boundary Method Aliases
 
 **RULE**:
-When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51d61f14`: Group ARC output and manage build cache space. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `564e432f`: NUC 132 Rust String Boundary Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, grouped side-by-side terminal output, and no automated ARC tests |
-| [disk-space.instructions.md](rules/disk-space.instructions.md) | Before every round of a continuous or repeated task, check free disk space and, below 50 GB, clear the machine's finished Cargo build caches (`CACHEDIR.TAG` targets and `incremental` folders) before starting; clear your own finished rounds' targets every round, keep anything in use, in progress or not build output, and pause when space stays low |
+## Rust string boundary method aliases
+
+**Rust boundary methods keep file flags live**
+
+```nuc
+class File(name):
+    this.name = name
+$File.draft = $File.name.starts_with("draft_")
+$File.table = $File.name.ends_with(".csv")
+file = File("draft_report.csv")
+assert([file.draft, file.table], [true, true])
+file.name = "notes.txt"
+assert([file.draft, file.table], [false, false])
+[file.draft, file.table]
+# return: [false,false]
+```
+
+- [NUC 132](docs/nuc-0132.md) adds Rust's familiar `starts_with` and
+  `ends_with` names for the accepted string boundary queries. Each file's
+  flags follow its name through the same class-rule dependencies.
+- The first argument converts to Nucleoid text; missing arguments test
+  `"undefined"` and further arguments are evaluated and ignored. Rust's
+  pattern traits and static typing are not introduced. All accepted
+  JavaScript and Python spellings remain available.
+- See the [root contract](nucleoid.spec.md#rust-string-boundary-method-aliases).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, and no automated ARC tests |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51d61f14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `564e432f` are properly handled with clean fallback behavior.

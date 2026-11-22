@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T09:11:04.918Z",
-  "total_cycles_completed": 11465,
-  "total_learnings_persisted": 11465,
+  "last_updated": "2026-11-22T09:26:05.687Z",
+  "total_cycles_completed": 11467,
+  "total_learnings_persisted": 11467,
   "total_rules_promoted": 10730,
   "history": [
-    {
-      "timestamp": "2026-11-21T16:18:44.996Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T16:18:59.646Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T16:31:24.962Z",
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T09:11:04.918Z",
       "repository": "adventists-ai/Sophon-Realtime-v1",
       "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T09:25:49.241Z",
+      "repository": "deepseek-ai/DeepSeek-V3.2",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T09:26:05.687Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

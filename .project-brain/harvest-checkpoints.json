@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T09:11:04.922Z",
+  "last_updated": "2026-11-22T09:26:05.691Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "9457b0dfecc7c5fddd268c3cc11c737f5566885c49e719d4aaa698571a0cea6a",
-      "verified_at": "2026-11-22T07:27:46.531Z",
+      "content_hash": "1b9f227e5a206cb3e17d04a1310e6a35a88f69cb237d582730c92084f685cfd5",
+      "verified_at": "2026-11-22T09:26:05.690Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:27:46.531Z"
+      "last_updated": "2026-11-22T09:26:05.690Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -18906,14 +18906,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3-2",
-      "content_hash": "2f735245cb5977ba11c6be9993868f8493ddf88e731decaca9e8bc820689ce0e",
-      "verified_at": "2026-11-14T10:30:01.057Z",
+      "content_hash": "6551c12b1a5d7da59472ffb897e5c1bd52b40d432f08ab8fee74ec86442e3527",
+      "verified_at": "2026-11-22T09:25:49.244Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T10:30:01.057Z"
+      "last_updated": "2026-11-22T09:25:49.244Z"
     },
     "higurashi-ai/Haru-4B": {
       "repository": "higurashi-ai/Haru-4B",

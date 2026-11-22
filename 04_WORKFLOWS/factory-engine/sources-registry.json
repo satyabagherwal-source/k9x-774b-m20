@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T09:11:07.821Z",
-    "lastVerified": "2026-11-22T09:11:07.821Z",
+    "lastChecked": "2026-11-22T09:26:08.891Z",
+    "lastVerified": "2026-11-22T09:26:08.891Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,22 +354,21 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T08:09:24.837Z",
-    "lastVerified": "2026-11-22T08:09:24.837Z",
+    "lastChecked": "2026-11-22T09:26:05.175Z",
+    "lastVerified": "2026-11-22T09:26:05.175Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "9457b0dfecc7c5fddd268c3cc11c737f5566885c49e719d4aaa698571a0cea6a",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "1b9f227e5a206cb3e17d04a1310e6a35a88f69cb237d582730c92084f685cfd5",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5e0af050"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1898,12 +1897,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T04:05:04.083Z",
-    "lastVerified": "2026-11-22T04:05:04.083Z",
+    "lastChecked": "2026-11-22T09:25:56.114Z",
+    "lastVerified": "2026-11-22T09:25:56.114Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1912,7 +1911,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "73945d29"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -4697,9 +4697,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-21T05:01:26.858Z",
+    "lastChecked": "2026-11-22T09:25:58.365Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-21T05:01:26.858Z"
+    "lastVerified": "2026-11-22T09:25:58.365Z"
   },
   "actix-actix-web": {
     "name": "actix/actix-web",
@@ -5855,8 +5855,8 @@
     "officialUrl": "https://github.com/octodns/octodns",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T07:05:10.976Z",
-    "lastVerified": "2026-11-21T07:05:10.976Z",
+    "lastChecked": "2026-11-22T09:25:53.215Z",
+    "lastVerified": "2026-11-22T09:25:53.215Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-octodns-octodns",
@@ -7194,9 +7194,9 @@
   "vercel-swr": {
     "name": "swr",
     "officialUrl": "https://github.com/vercel/swr",
-    "lastChecked": "2026-11-19T06:52:28.216Z",
+    "lastChecked": "2026-11-22T09:25:50.799Z",
     "revisionIdentifier": "8148ef01",
-    "lastVerified": "2026-11-19T06:52:28.216Z"
+    "lastVerified": "2026-11-22T09:25:50.799Z"
   },
   "fabio-rovai-open-ontologies": {
     "name": "fabio-rovai/open-ontologies",
@@ -7703,12 +7703,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zvec-ai-zvec-grep": {
-    "name": "zvec-ai/zvec-grep",
+    "name": "zvec-grep",
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T23:21:18.126Z",
-    "lastVerified": "2026-11-20T23:21:18.126Z",
+    "lastChecked": "2026-11-22T09:25:45.757Z",
+    "lastVerified": "2026-11-22T09:25:45.757Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
@@ -7717,7 +7717,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ad737d20"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",
@@ -14079,6 +14080,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
     "contentHash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-deepseek-ai-deepseek-v3.2": {
+    "name": "deepseek-ai/DeepSeek-V3.2",
+    "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T09:25:48.602Z",
+    "lastVerified": "2026-11-22T09:25:48.602Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
+    "contentHash": "6551c12b1a5d7da59472ffb897e5c1bd52b40d432f08ab8fee74ec86442e3527",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T09:11:09.993Z",
+  "last_updated": "2026-11-22T09:26:11.423Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T08:23:00.607Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-22T08:41:04.653Z",
+      "processed_at": "2026-11-22T09:26:10.351Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,9 +773,9 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-22T06:50:06.498Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-22T09:26:09.440Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "tableproapp-tablepro-learnings.md": {
       "processed_at": "2026-11-19T20:34:30.303Z",
@@ -2543,8 +2543,8 @@
       "staged_for_review": 1
     },
     "hf-deepseek-ai-deepseek-v3.2-learnings.md": {
-      "processed_at": "2026-11-14T10:30:45.869Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T09:26:09.031Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-openai-community-gpt2-learnings.md": {
@@ -3713,7 +3713,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3075,
+  "total_dossiers_evaluated": 3078,
   "total_canonical_promoted": 473,
-  "total_staged_for_review": 2341
+  "total_staged_for_review": 2343
 }
