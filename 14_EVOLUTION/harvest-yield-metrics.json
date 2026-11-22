@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T00:54:01.732Z",
-  "total_cycles_completed": 11373,
-  "total_learnings_persisted": 11373,
+  "last_updated": "2026-11-22T01:07:29.562Z",
+  "total_cycles_completed": 11374,
+  "total_learnings_persisted": 11374,
   "total_rules_promoted": 10684,
   "history": [
-    {
-      "timestamp": "2026-11-21T06:01:27.199Z",
-      "repository": "ShiftHackZ/SDAI-KMP",
-      "learningId": "learn-github-shifthackz-sdai-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T06:13:50.940Z",
       "repository": "nitrojs/nitro",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-22T00:54:01.732Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:07:29.562Z",
+      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

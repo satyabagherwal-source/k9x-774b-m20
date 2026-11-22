@@ -11805,8 +11805,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
     "sourceVersion": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
     "license": "Open-Source",
-    "contentHash": "a588de79a3cd447f6de48ee37de30a32a34e6ed6e0236f5a78631ce76e073a0b",
-    "lastHarvestedAt": "2026-11-16T11:45:10.704Z",
+    "contentHash": "765acd7442815b977e810f84150fa7213aba3b7f55f0703e4472455423b770df",
+    "lastHarvestedAt": "2026-11-22T01:07:29.557Z",
     "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf"
   },
   "kortix-ai-companyos": {

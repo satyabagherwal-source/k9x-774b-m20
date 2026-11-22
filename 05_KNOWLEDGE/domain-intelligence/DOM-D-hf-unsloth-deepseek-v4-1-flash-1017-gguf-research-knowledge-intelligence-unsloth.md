@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
   "source_version": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T11:45:10.868Z",
+  "timestamp": "2026-11-22T01:07:29.752Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [unsloth/DeepSeek-V4.1-Flash-1017-GGUF](https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF) (Revision: `hf-unsloth`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T11:45:10.868Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T01:07:29.752Z`  
 > **Learning ID**: `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF](https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T11:44:53.895Z  
+> **Harvest Timestamp**: 2026-11-22T01:07:25.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1477622 downloads | 410 likes
+- **Stars / Engagement**: 1618638 downloads | 436 likes
 
 ---
 
