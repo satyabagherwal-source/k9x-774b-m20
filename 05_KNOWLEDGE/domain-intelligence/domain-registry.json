@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T23:06:59.256Z",
-  "total_records": 2385,
+  "last_updated": "2026-11-22T23:16:26.572Z",
+  "total_records": 2386,
   "domains": {
     "A": {
       "total": 19,
@@ -1513,7 +1513,7 @@
       ]
     },
     "H": {
-      "total": 571,
+      "total": 572,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2085,7 +2085,8 @@
         "DOM-H-833AC1DF",
         "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar",
         "DOM-H-17797BC1",
-        "DOM-H-7A8AC6A4"
+        "DOM-H-7A8AC6A4",
+        "DOM-H-BBA39C7F"
       ]
     },
     "I": {
@@ -8155,8 +8156,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "5c01720b934218f6fce107abd08ef6e00e6e05de75cbf20d6ed24e56b25f3393",
-      "created_at": "2026-11-22T22:49:39.256Z"
+      "content_hash": "ee0b2dbba2191e6298a686c97597280719400434322aba52ad8d7bdc2df42690",
+      "created_at": "2026-11-22T23:16:26.572Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8594,10 +8595,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "dd84cb8cd085061d9ac5c33e922c7ec0181a87a5c40e6dfd823caf82c8d8ffe4",
-      "created_at": "2026-11-22T19:43:28.560Z"
+      "content_hash": "33e225dfa69f71ea1895ca6e3f12e72f05a69d48a958f3506eededfa90014fc3",
+      "created_at": "2026-11-22T23:15:47.737Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -10126,8 +10127,8 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-research-knowledge-intellig.md",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "content_hash": "10628d66c0ed73d244e27058292c3795602e5c59b30b5844a553d65368fc494c",
-      "created_at": "2026-11-18T15:59:39.946Z"
+      "content_hash": "bc35920e805cfc145529572c087238907811351109ade80541e8632a73d041be",
+      "created_at": "2026-11-22T23:15:33.738Z"
     },
     "domain_intelligence-architecture-intelligence-grpc-grpc-rust-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-grpc-grpc-rust-core-invariants",
@@ -10180,8 +10181,8 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-learnings-research-knowledg.md",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings",
-      "content_hash": "bab632ede1ee0a70744d4453b4067ff0d9fbfeba6eaf2f1bf81715363ccfdc63",
-      "created_at": "2026-11-18T16:00:41.822Z"
+      "content_hash": "03994d04c0914986a274ed07d14d1f8643d938ba541f0157770f1c3b037b48e0",
+      "created_at": "2026-11-22T23:15:51.036Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants",
@@ -24547,8 +24548,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-turso-learnings",
-      "content_hash": "5ed65abe38ac3851b6ca95902522dca93a0dab47488d23e822ada803439aa70f",
-      "created_at": "2026-11-19T14:55:41.154Z"
+      "content_hash": "571cd251aababfa1aa028ddbdf53f5a381783fad22ccd2c3aa482ea086508958",
+      "created_at": "2026-11-22T23:16:25.223Z"
     },
     "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
@@ -40112,6 +40113,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-22T23:06:58.193Z"
+    },
+    "DOM-H-BBA39C7F": {
+      "record_id": "DOM-H-BBA39C7F",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Merge 'bindings/javascript: stop storing unbindable values as text' from Colin M",
+      "content": "When implementing operations in `bindings/javascript/packages/common/promise.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "7cf7eb892fad521b1c17bccaec1e8b6ac376be337b5c911479d8ced5f82b7591",
+      "summary": "Prevents defects observed in production commit `4468e50b`: Merge 'bindings/javascript: stop storing unbindable values as text' from Colin Mc -> When implementing operations in `bindings/javascript/packages/common/promise.ts`, engineers MUST enforce rigorous boundary validation, safe ",
+      "provenance": {
+        "source_uri": "project://tursodatabase-turso/tursodatabase-turso-learnings.md",
+        "source_version": "4468e50b",
+        "observed_at": "2026-11-22T23:15:46.561Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tursodatabase-turso)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of tursodatabase-turso"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T23:16:24.368Z"
     }
   }
 }

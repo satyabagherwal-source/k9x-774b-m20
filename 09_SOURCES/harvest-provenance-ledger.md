@@ -12256,3 +12256,6 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `d0957897` | Multi-dimensional audit evidence | 2026-11-22T23:06:21.271Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `340dc085` | Multi-dimensional audit evidence | 2026-11-22T23:06:25.102Z |
 | `learn-dom-d-8bd6649e` | `project://modelcontextprotocol-kotlin-sdk` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md` | 2026-11-22T23:06:58.222Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-22T23:15:33.508Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `4468e50b` | Multi-dimensional audit evidence | 2026-11-22T23:15:47.300Z |
+| `learn-dom-h-bba39c7f` | `project://tursodatabase-turso` | `4468e50b` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md` | 2026-11-22T23:16:24.409Z |

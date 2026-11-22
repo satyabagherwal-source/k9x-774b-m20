@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T23:06:25.111Z",
+  "last_updated": "2026-11-22T23:15:47.310Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -755,14 +755,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "47a77635a1b42bf31ca496cb0dbb3693a9d68f2ebf050e4cfb61737e4608c776",
-      "verified_at": "2026-11-18T15:59:39.770Z",
+      "content_hash": "4cc42b892be79f5b5ea60f7444ac0b98cbbc4f1d0aaa5ec19edb38cad6d6969d",
+      "verified_at": "2026-11-22T23:15:33.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:59:39.770Z"
+      "last_updated": "2026-11-22T23:15:33.517Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "baf3dd4f013eeec0dbceea61c6d811237671a613d681a5793d62f5b21c54e9d2",
-      "verified_at": "2026-11-22T19:43:28.007Z",
+      "content_hash": "cb2622da3e8c77b2e715a4c670252e91c08ce5308a6ab90b3ad8137dcbef1093",
+      "verified_at": "2026-11-22T23:15:47.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:43:28.007Z"
+      "last_updated": "2026-11-22T23:15:47.310Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

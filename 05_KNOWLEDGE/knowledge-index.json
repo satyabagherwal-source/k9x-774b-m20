@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T23:06:59.455Z",
+  "last_updated": "2026-11-22T23:16:26.974Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23809,
+  "total_items": 23810,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c01720b934218f6fce107abd08ef6e00e6e05de75cbf20d6ed24e56b25f3393",
+      "content_hash": "ee0b2dbba2191e6298a686c97597280719400434322aba52ad8d7bdc2df42690",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:49:39.256Z"
+      "persisted_at": "2026-11-22T23:16:26.572Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8f19909e912acfc3ebdc1d23d2ec431c353778b6bc1d29e25d606327296fe5e",
+      "content_hash": "38029204a2d927404e2e27269e9a4d9792a4c618bd7438b267c5c11fa0133b0d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:49:39.484Z"
+      "persisted_at": "2026-11-22T23:16:26.788Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd9ffd5d7777defebfa80b2b180364845a0866aa5347ac02bbee981369adc72d",
+      "content_hash": "3ffcca1dd4ba40d6c983c76bb39a8cfbf77e68d37864e7b94f880a01d8ad2b9c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:49:39.648Z"
+      "persisted_at": "2026-11-22T23:16:26.974Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -113010,25 +113010,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
       "source_version": "4468e50b",
-      "content_hash": "dd84cb8cd085061d9ac5c33e922c7ec0181a87a5c40e6dfd823caf82c8d8ffe4",
+      "content_hash": "33e225dfa69f71ea1895ca6e3f12e72f05a69d48a958f3506eededfa90014fc3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T19:43:28.560Z"
+      "persisted_at": "2026-11-22T23:15:47.737Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
       "source_version": "4468e50b",
-      "content_hash": "a1eb7e1d4a70b429e6f82bd39d16c78db18326848e5783de879511807b3e27ce",
+      "content_hash": "3dad7cbaf86e7faeaed8d81fdcfae334be0548f3b712e901f6219e926787dbc2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:43:28.782Z"
+      "persisted_at": "2026-11-22T23:15:47.922Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -212546,7 +212546,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "47a77635a1b42bf31ca496cb0dbb3693a9d68f2ebf050e4cfb61737e4608c776",
+      "content_hash": "4cc42b892be79f5b5ea60f7444ac0b98cbbc4f1d0aaa5ec19edb38cad6d6969d",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [],
@@ -212555,7 +212555,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:59:39.551Z",
+      "verified_at": "2026-11-22T23:15:33.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212572,9 +212572,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "10628d66c0ed73d244e27058292c3795602e5c59b30b5844a553d65368fc494c",
+      "content_hash": "bc35920e805cfc145529572c087238907811351109ade80541e8632a73d041be",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:59:39.946Z"
+      "persisted_at": "2026-11-22T23:15:33.738Z"
     },
     "learn-github-grpc-grpc-rust": {
       "learning_id": "learn-github-grpc-grpc-rust",
@@ -213037,9 +213037,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "bab632ede1ee0a70744d4453b4067ff0d9fbfeba6eaf2f1bf81715363ccfdc63",
+      "content_hash": "03994d04c0914986a274ed07d14d1f8643d938ba541f0157770f1c3b037b48e0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:00:41.822Z"
+      "persisted_at": "2026-11-22T23:15:51.036Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants",
@@ -213604,8 +213604,8 @@
       "slug": "tursodatabase-turso",
       "platform": "github",
       "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "37096726",
-      "content_hash": "865e8ceb018de6172440a863c7b20fa0052e1ec429b60c389c41a9c1dda2cc0e",
+      "source_version": "4468e50b",
+      "content_hash": "cb2622da3e8c77b2e715a4c670252e91c08ce5308a6ab90b3ad8137dcbef1093",
       "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
@@ -213663,6 +213663,11 @@
           "number": 9820,
           "title": "run the simulator built with optimizations",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9981,
+          "title": "Merge 'bindings/javascript: stop storing unbindable values as text' from Colin M",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213670,7 +213675,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:25:30.482Z",
+      "verified_at": "2026-11-22T23:15:47.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260316,9 +260321,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ed65abe38ac3851b6ca95902522dca93a0dab47488d23e822ada803439aa70f",
+      "content_hash": "571cd251aababfa1aa028ddbdf53f5a381783fad22ccd2c3aa482ea086508958",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T14:55:41.154Z"
+      "persisted_at": "2026-11-22T23:16:25.223Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings",
@@ -260328,9 +260333,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-turso-learnings",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed3070716980c1f2427f59f7fae8e6f375440ce59cd9237a3a12f5906e82840f",
+      "content_hash": "9245e4463c63c719d37c81138aa6d7cf49be430580ac7c5c16a15bc0fe7a810f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T14:55:41.356Z"
+      "persisted_at": "2026-11-22T23:16:25.449Z"
     },
     "learn-huggingface-n4ze3m-tiny-voca": {
       "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
@@ -309954,13 +309959,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-J0G4-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HGMH-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c5aff9839800abc2f7dd63bb01c0e37383dc8b850bc341f82bd96796f51b783",
+      "content_hash": "535229b8108499cf40c99f100bbfb4f4759fab5750c765dd9fb4b33eb642cdab",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:49:39.081Z"
+      "persisted_at": "2026-11-22T23:16:26.360Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -323195,13 +323200,13 @@
       "item_id": "candidate_directive-merge-bindings-javascript-stop-storing-unbindable-values-as-text-from-colin-m",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VL1O-merge-bindings-javascript-stop-storing-unbindable-values-as-text-from-colin-m.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HFKN-merge-bindings-javascript-stop-storing-unbindable-values-as-text-from-colin-m.md",
       "title": "Merge 'bindings/javascript: stop storing unbindable values as text' from Colin M",
-      "repository": "tursodatabase/turso",
-      "source_version": "4468e50b",
-      "content_hash": "6f690abf8aed090fc0079bcc0deea8ab34aea81c27ad90ae82a5e90859225d50",
+      "repository": "tursodatabase-turso-learnings",
+      "source_version": "HEAD",
+      "content_hash": "56781fbbdbc1817e83c589cc65238bea5d0a306f11a6f2e4bb19f2ffae02d665",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T19:43:28.339Z"
+      "persisted_at": "2026-11-22T23:16:24.997Z"
     },
     "candidate_directive-ci-fix-github-pages-workflow-to-deploy-via-gh-pages-branch-without-environment": {
       "item_id": "candidate_directive-ci-fix-github-pages-workflow-to-deploy-via-gh-pages-branch-without-environment",
@@ -324157,6 +324162,20 @@
       "content_hash": "20a92bbafaeb02462a3a4c4bf77eb2b077a98f4740bbb1399d7dddfb711f59c9",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T23:06:25.319Z"
+    },
+    "rule-9981": {
+      "learning_id": "rule-9981",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9981,
+      "title": "Merge 'bindings/javascript: stop storing unbindable values as text' from Colin M",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "4468e50b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T23:15:47.089Z"
     }
   },
   "ai-builder-brain": {

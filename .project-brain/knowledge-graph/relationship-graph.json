@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-22T23:06:58.219Z",
+  "updated_at": "2026-11-22T23:16:24.407Z",
   "statistics": {
-    "total_nodes": 477,
+    "total_nodes": 478,
     "total_edges": 202,
     "domain_distribution": {
       "D": 291,
       "M": 1,
-      "H": 84,
+      "H": 85,
       "J": 22,
       "K": 29,
       "L": 8,
@@ -10658,6 +10658,28 @@
       ],
       "created_at": "2026-11-22T23:06:58.219Z",
       "updated_at": "2026-11-22T23:06:58.219Z"
+    },
+    "DOM-H-BBA39C7F": {
+      "id": "DOM-H-BBA39C7F",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Merge 'bindings/javascript: stop storing unbindable values as text' from Colin M",
+      "summary": "Prevents defects observed in production commit `4468e50b`: Merge 'bindings/javascript: stop storing unbindable values as text' from Colin Mc -> When implementing operations in `bindings/javascript/packages/common/promise.ts`, engineers MUST enforce rigorous boundary validation, safe ",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://tursodatabase-turso/tursodatabase-turso-learnings.md",
+        "source_version": "4468e50b",
+        "observed_at": "2026-11-22T23:15:46.561Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tursodatabase-turso)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-22T23:16:24.407Z",
+      "updated_at": "2026-11-22T23:16:24.407Z"
     }
   },
   "edges": [

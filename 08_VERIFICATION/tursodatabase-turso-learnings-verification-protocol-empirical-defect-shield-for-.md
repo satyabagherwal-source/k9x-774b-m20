@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T14:55:40.895Z",
+  "timestamp": "2026-11-22T23:16:24.863Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tursodatabase-turso-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-turso-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T14:55:40.895Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T23:16:24.863Z`  
 > **Learning ID**: `LEARN-EVO-tursodatabase-turso-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `72006e5e`  
+> **Source Version**: `4468e50b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T14:52:37.519Z  
+> **Timestamp**: 2026-11-22T23:15:46.561Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:52:37.299Z  
+> **Harvest Timestamp**: 2026-11-22T23:15:46.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25299 stars
+- **Stars / Engagement**: 25316 stars
 
 ---
 
@@ -1457,13 +1457,17 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12107** (2026-11-19): **postgres: add more known-gap tests against PostgreSQL**
-  *Symptoms*: Adds 22 tests to the known-gap suite from #12084. They cover cases where tursopg gives a different result than PostgreSQL 18 and that had no test yet. They follow the rules in the "Known gaps" section of `postgres/CONTRIBUTING.md`.  ## New gaps  **operators-functions (B)** - B-128 (S1), B-129 (S1): jsonb `||` and `-` return wrong values with no error. B-122 stops at its `jsonb_set` error, so it did not show this. - B-130 (S2): 16 nested scalar subqueries. tursopg accepts 15. B-124 tests 64 levels. - B-131 (S2): `pg_options_to_table` with a column alias list. - B-132 (S2): `pg_size_pretty`.  **ddl-catalog (E)** - E-99 to E-105 (S4, E-104 S1): `pg_available_extensions()`, index names in `pg_indexes`, `conkey` and `indkey` as arrays, an unquoted name that finds a quoted mixed-case schema, a `regclass` cast of an unknown name. - E-107, E-108 (S2): a PL/pgSQL trigger function, and a `SECURITY DEFINER` function with `SET search_path`. - E-109 to E-114 (S4): the privilege functions, `pg_has_role`, `pg_is_other_temp_schema`, `pg_column_is_updatable`, the relation size functions, `pg_stat_user_tables`.  **Regression tests** (match PostgreSQL already, no `@tursopg` block) - A-81: a `numeric(10,2)` column rounds on insert. A-22 covers the literal cast, which still fails. - E-106: the `pg_class` row level security flags.  ## Notes  - All expected results come from real runs on tursopg and on PostgreSQL 18. - When a test fails because of an older gap, a comment names it, for example "see 
-
-- **Issue #12101** (2026-11-19): **core, postgres: use less stack when preparing a statement**
-  *Symptoms*: ## Description  On main, preparing a PostgreSQL-dialect statement uses 47–63 KB of stack in a release build. On a 64 KB stack, that leaves almost nothing for the caller's own frames.  This PR cuts PostgreSQL-dialect prepare by 20–24 KB and SQLite-dialect prepare by about 2 KB.  **Measurements** (stack used by `Connection::prepare`, release build, macOS arm64, table `t(id INTEGER PRIMARY KEY, value INTEGER)`):  | statement | dialect | on main | in this PR | |---|---|---|---| | `SELECT 1` | PostgreSQL | 58.5 KB | 34.4 KB | | `SELECT id, value FROM t ORDER BY id` | PostgreSQL | 63.2 KB | 39.0 KB | | `INSERT INTO t VALUES (2, 2)` | PostgreSQL | 47.2 KB | 27.5 KB | | `SELECT id, value FROM t ORDER BY id` | SQLite | 34.8 KB | 32.7 KB |  Method (not in the PR): fill the stack below the caller with a marker byte, call `prepare`, find the lowest byte that changed.  ## Motivation and context  - **`Statement` holds `ProgramState` (2,032 bytes) inline**, so `Statement` is 2,624 bytes. The PostgreSQL frontend moves it through builder calls (`with_result_kind`, `with_tx_tracking`, `with_post_run`, …), and the caller's frame holds a copy per move. This PR boxes the state: `Statement` is about 600 bytes. - **On main, `prepare_statement_inner` parses, translates and prepares in one function.** Its stack frame (26 KB per `scripts/stack/frame-sizes.sh`) stays allocated while `prepare_translated_cmd` plans the statement. This PR moves parsing and translation into `translate_statement`, marked `#
+- **Issue #12264** (2026-11-22): **core/translate/optimizer: use no index seek for IN (SELECT) across date/time types**
+  *Symptoms*: Stacked on #12182.  ## Description  #12182 makes `x IN (SELECT y ...)` fail when `x` and `y` are two different types among `date`, `timestamp` and `timestamptz`. But when `x` has an index, the query uses the index instead, and returns wrong rows with no error. The index lookup uses the subquery's values as they are stored, without reading them as `x`'s type. Main gives the same wrong count.  ```sql -- tursodb --experimental-custom-types CREATE TABLE a(d date) STRICT; CREATE TABLE b(ts timestamp) STRICT; CREATE INDEX b_ts ON b(ts); INSERT INTO a VALUES ('2024-01-05'); INSERT INTO b VALUES ('2024-01-05 00:00:00'); SELECT count(*) FROM b WHERE ts IN (SELECT d FROM a); -- main and #12182: 0 -- this PR:         cannot compare type timestamp with type date in IN (SELECT ...) -- PostgreSQL:      1 ```  In this PR, the planner does not use an index for such an `IN (SELECT ...)`. The query then fails with the same error as without an index.  ## Motivation and context  A query should not return different rows depending on whether an index exists.  ## Description of AI Usage  Written by Claude Code from a design reviewed by a human.  ## The weakest part about this PR  The query fails where PostgreSQL returns 1. Comparing the two types in `IN (SELECT ...)` needs the subquery's values converted, which neither #12182 nor this PR does.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
   **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `2894e3f53592` is [here](https://github.com/tursodatabase/turso/pull/12101#pullrequestreview-5975493652).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:2894e3f53592b8099a1513fd4894afaf4ca8c9bf --> <!-- autofixer:contributor-review-recommends:2894e3f53592b8099a1513fd4894afaf4ca8c9bf --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiMTgwMjRkZDAxZGU1ODU3MjFkYzYxMzIwNzA5ZTAzOGNkNmE0MWFhMCIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMTlUMTI6NDM6MzYuODIwWiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24iOnsidmFsdWUiOiJyZWNvbW1lbmQiLCJyZWFzb24iOiJSZXN1bHRzIGFyZSBpZGVudGljYWwgb24gbWFpbiBhbmQgd2l0aCB0aGlzIGNoYW5nZSwgYW5kIHRoZSBzdGFjayBzYXZpbmdzIGFyZSByZXByb2R1Y2VkIGhlcmUgKGFib3V0IDI1IEtCIGZvciBQb3N0Z3JlU1FM
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 28.29%**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/tz-in-subquery-index-cross-type?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **52 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrume
+  > Superseded by #12182, which now refuses every comparison of two different custom types that convert values, including the indexed `IN (SELECT ...)` case this PR fixed.
+
+- **Issue #12233** (2026-11-22): **bindings/javascript: stop storing unbindable values as text**
+  *Symptoms*: `bind_at` has no case for `undefined`, non-buffer objects or functions, so it stores their `String()` text:  ```js const stmt = db.prepare('SELECT ? AS a, ? AS b');  stmt.get(1, undefined); // better-sqlite3: { a: 1, b: null } // Turso:          { a: 1, b: 'undefined' }  stmt.get(1, new Date(0)); // better-sqlite3: TypeError: SQLite3 can only bind numbers, strings, bigints, buffers, and null // Turso:          { a: 1, b: 'Wed Dec 31 1969 16:00:00 GMT-0800 (Pacific Standard Time)' } ```  So an insert with a missing field stores the text `undefined` instead of NULL, and a `Date` is stored as text that changes with the process's time zone and that `datetime()` reads as NULL.  `undefined` now binds as NULL, and everything else `bind_at` has no case for throws better-sqlite3's `TypeError`. Turso's serverless driver binds a `Date` as epoch milliseconds instead, so that's the alternative if you'd rather not throw.  `batch()` on the promise API converted the same values with `String()` before they reached `bind_at`. It now throws the same error while checking its values, before any statement runs, and binds a `DataView` as its bytes instead of `[object DataView]`.  This doesn't close the issue. `get(1, { a: 2 })` on `SELECT ? AS x, :a AS y` now throws where better-sqlite3 binds `:a`, and a lone `undefined` never reaches `bind_at`, which is #10135.  Refs #11089 
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Autofixer reviews pull requests from outside contributors on its own. The review of `ef93f49959a8` is [here](https://github.com/tursodatabase/turso/pull/12233#pullrequestreview-6007762616).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:ef93f49959a8163b920a7e692315b96bc4385b5b --> <!-- autofixer:contributor-review-recommends:ef93f49959a8163b920a7e692315b96bc4385b5b --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiNTg4NjI3NTE4MzAzNjM3YjJkYzI5YTFhMzI2MDVhYWY2YzYxNTIyMiIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMjFUMDk6MDc6MjEuMjU1WiIsInZlcmRpY3QiOiJyZXF1ZXN0X2NoYW5nZXMiLCJyZWNvbW1lbmRhdGlvbiI6eyJ2YWx1ZSI6Im5lZWRzX2h1bWFuIiwicmVhc29uIjoiTWFrZSBgbm9ybWFsaXplQmF0Y2hCaW5kVmFsdWVgIGluIHByb21pc2UudHMgc3RvcCBjYWxsaW5nIFN0cmluZygpIG9uIHZhbHVlcyBgYmluZF9hdGAgcmVmdXNlcywgc28gYmF0
+  > ### Autofixer follow-ups  - Not filed: When a positional argument or a named key is missing. Duplicate of #10135: Issue #10135 already reports that a Statement call omitting a positional or named parameter reuses the value bound by the previous call, and the input is JavaScript that cannot be run with tursodb or sqlite3.  <!-- autofixer:follow-ups-done -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1480,638 +1484,656 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1befb62a` (2026-11-19)
-**Commit Message**: Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' from app/turso-github-handyman
+### Incident Patch 1: `4468e50b` (2026-11-22)
+**Commit Message**: Merge 'bindings/javascript: stop storing unbindable values as text' from Colin McDonnell
 
-## Problem
+`bind_at` has no case for `undefined`, non-buffer objects or functions,
+so it stores their `String()` text:
 
-```sql
--- tursopg (Turso's PostgreSQL-compatible server)
-SELECT n, avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW)
-FROM (VALUES (1, 1e308 * 10), (2, 1.0), (3, 1.0)) AS v(n, x);
--- panic: Avg xInverse without matching xStep
+```js
+const stmt = db.prepare('SELECT ? AS a, ? AS b');
 
-SELECT n, sum(x) OVER w, avg(x) OVER w
-FROM (VALUES (1, 1e308 * 10), (2, 1.0), (3, 2.0), (4, 4.0)) AS v(n, x)
-WINDOW w AS (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW);
--- Turso:      Inf|Inf, Inf|Inf, NULL|NULL, NULL|NULL
--- PostgreSQL: Infinity|Infinity, Infinity|Infinity, 3|1.5, 6|3
+stmt.get(1, undefined);
+// better-sqlite3: { a: 1, b: null }
+// Turso:          { a: 1, b: 'undefined' }
+
+stmt.get(1, new Date(0));
+// better-sqlite3: TypeError: SQLite3 can only bind numbers, strings, bigints, buffers, and null
+// Turso:          { a: 1, b: 'Wed Dec 31 1969 16:00:00 GMT-0800 (Pacific Standard Time)' }
 ```
 
-The SQLite dialect (`tursodb`) panics on the same `avg` window.
-`sqlite3` returns NULL there instead.
+So an insert with a missing field stores the text `undefined` instead of
+NULL, and a `Date` is stored as text that changes with the process's
+time zone and that `datetime()` reads as NULL.
 
-There are two causes, both in `core/vdbe/execute.rs`:
-- `avg()` did not count a row added after its sum became NaN (stored as
-NULL). Removing that row from the frame still decreased the count, so
-the count reached 0 and the `debug_assert!` failed. SQLite's `sumStep`
-counts every non-NULL row.
-- Removing a row from a frame adds its negation to the total. When an
-infinite value leaves the frame, the total becomes `Inf - Inf`, whi
+`undefined` now binds as NULL, and everything else `bind_at` has no case
+for throws better-sqlite3's `TypeError`. Turso's serverless driver binds
+a `Date` as epoch milliseconds instead, so that's the alternative if
+you'd rather not throw.
 
-**File**: `core/dialect/mod.rs` (modified, +12/-0)
+`batch()` on the promise API converted the same values with `String()`
+before they reached `bind_at`. It now throws the same error while
+checking its values, before any statement runs, and
+
+**File**: `bindings/javascript/packages/common/promise.ts` (modified, +2/-2)
 ```diff
-@@ -518,6 +518,18 @@ pub trait Dialect: Send + Sync + 'static {
-         false
-     }
+@@ -903,12 +903,12 @@ function normalizeBatchBindValue(value: any): any {
+   if (
+     typeof value === "boolean" ||
+     typeof value === "string" ||
+-    (ArrayBuffer.isView(value) && !(value instanceof DataView))
++    ArrayBuffer.isView(value)
+   ) {
+     return value;
+   }
+   if (value instanceof ArrayBuffer) return new Uint8Array(value);
+-  return String(value);
++  throw new TypeError("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
+ }
  
-+    /// Whether `sum()` and `avg()` count their infinite inputs apart from
-+    /// the total of the finite ones.
-+    ///
-+    /// PostgreSQL does, so a moving window frame gives a finite result again
-+    /// once its infinite values leave it. SQLite adds them to the total.
-+    /// Removing a row from a window frame adds its negation, so once an
-+    /// infinite value leaves, the total is `Inf - Inf`, which is NaN, and
-+    /// the result stays NULL.
-+    fn sum_counts_infinite_inputs(&self) -> bool {
-+        false
+ /**
+```
+
+**File**: `bindings/javascript/packages/native/promise.test.ts` (modified, +36/-16)
+```diff
+@@ -716,25 +716,33 @@ test('batch validates every bigint before executing the first statement', async
+     expect(await stmt.all([])).toEqual([{ n: 0 }]);
+ })
+ 
+-test('batch coerces bind values once during validation', async () => {
++test('batch refuses a value with no SQLite type before executing the first statement', async () => {
+     const db = await connect(":memory:");
+-    await db.exec("CREATE TABLE t_batch_coercion (x TEXT)");
+-    let coercions = 0;
+-    const value = {
+-        toString() {
+-            coercions++;
+-            if (coercions > 1) throw new Error("value was coerced twice");
+-            return "coerced";
+-        },
+-    };
++    await db.exec("CREATE TABLE t_batch_unbindable (x)");
+ 
+-    await db.batch([
+-        { sql: "INSERT INTO t_batch_coercion VALUES (?)", args: [value] },
+-    ]);
++    let error: any;
++    try {
++        await db.batch([
++            { sql: "INSERT INTO t_batch_unbindable VALUES (?)", args: [1] },
++            { sql: "INSERT INTO t_batch_unbindable VALUES (?)", args: [new Date(0)] },
++        ]);
++    } catch (caught) {
++        error = caught;
 +    }
-+
-     /// Whether `ALTER TABLE ADD COLUMN` with a non-constant default works on
-     /// a table that has rows.
-     ///
-```
-
-**File**: `core/vdbe/execute.rs` (modified, +183/-39)
-```diff
-@@ -7426,11 +7426,12 @@ fn kbn_init_from_int(acc: &mut Value, i: i64, state: &mut SumAggState) {
- /// Initialize aggregate payload with default values.
- /// Payload layout by aggregate type:
- /// - Count/Count0: [Integer(0)]
--/// - Sum: [Null, Float(0.0), Integer(0), Integer(0), Integer(0)]
--///   // acc, r_err, approx, ovrfl, count
--/// - Total: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0)]
-+/// - Sum: [Null, Float(0.0), Integer(0), Integer(0), Integer(0), Integer(0), Integer(0)]
-+///   // acc, r_err, approx, ovrfl, count, pos_inf, neg_inf
-+/// - Total: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0), Integer(0), Integer(0)]
- ///   // same but starts at 0.0
--/// - Avg: [Float(0.0), Float(0.0), Integer(0)]  // sum, r_err, count - uses KBN like SUM
-+/// - Avg: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0)]
-+///   // sum, r_err, count, pos_inf, neg_inf - uses KBN like SUM
- /// - Min/Max: [Null]
- /// - GroupConcat/StringAgg:
- ///   [Null|Text, Integer(count), Integer(first separator length),
-@@ -7445,7 +7446,7 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
-             payload.push(Value::from_i64(0));
-         }
-         AggFunc::Sum | AggFunc::Total => {
--            payload.try_reserve_exact(5)?;
-+            payload.try_reserve_exact(7)?;
-             let acc = if matches!(func, AggFunc::Total) {
-                 Value::from_f64(0.0)
-             } else {
-@@ -7456,12 +7457,16 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
-             payload.push(Value::from_i64(0));
-             payload.push(Value::from_i64(0));
-             payload.push(Value::from_i64(0));
-+            payload.push(Value::from_i64(0));
-+            payload.push(Value::from_i64(0));
-         }
-         AggFunc::Avg => {
--            payload.try_reserve_exact(3)?;
-+            payload.try_reserve_exact(5)?;
-             payload.push(Value::from_f64(0.0));
-             payload.push(Value::from_f64(0.0));
-             payload.push(Value::from_i64(0));
-+            payload.push(Value::from_i64(0));
-+            payload.push(Value::from_i64(0));
-         }
-         AggFunc::Min | AggFunc::Max => {
-             payload.try_reserve_exact(1)?;
-@@ -7531,13 +7536,17 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
- /// # Payload layouts (see `init_agg_payload` for initial values):
- /// - **Count**: `[count: Integer]` - increments if arg is not NULL
- /// - **Count0**: `[count: Integer]` - always increments (COUNT(*))
--/// - **Avg**: `[sum: Float, r_err: Float, count: Integer]` - uses KBN compensation like SUM
-+/// - **Avg**: `[sum: Float, r_err: Float, count: Integer, pos_inf: Integer, neg_inf: Integer]`
-+///   - uses KBN compensation like SUM
- /// - **Sum/Total**:
--///   `[acc, r_err: Float, approx: Integer, ovrfl: Integer, count: Integer]`
-+///   `[acc, r_err: Float, approx: Integer, ovrfl: Integer, count: Integer,
-+///     pos_inf: Integer, neg_inf: Integer]`
- ///   - `acc`: running sum (Null/Integer/Float depending on inputs)
- ///   - `r_err`: Kahan-Babuška-Neumaier compensation term for floating-point precision
- ///   - `approx`: 1 if result is approximate (float arithmetic used)
- ///   - `ovrfl`: 1 if integer overflow occurred (Total promotes to float, Sum errors)
-+///   - `pos_inf`/`neg_inf`: number of +Inf/-Inf inputs, which are not added to `acc`
-+///     when `counts_infinite_inputs` is set (see `Dialect::sum_counts_infinite_inputs`)
- /// - **Min/Max**: `[current_extreme: Value]` - tracks min/max seen so far
- /// - **GroupConcat/StringAgg**:
- ///   `[accumulated: Null|Text, count: Integer, first_separator_len: Integer,
-@@ -7553,6 +7562,7 @@ fn update_agg_payload(
-     maybe_arg2: Option<&Value>, // for GroupConcat/StringAgg, JsonGroupObject/JsonbGroupObject,
-     payload: &mut crate::alloc::Vec<Value>,
-     collation: CollationSeq,
-+    counts_infinite_inputs: bool,
- ) -> Result<()> {
-     match func {
-         AggFunc::Count => {
-@@ -7583,40 +7593,50 @@ fn update_agg_payload(
-             if matches!(arg, Value::Null) {
-                 return Ok(());
-             }
--            // invariant as per init_agg_payload: payload[0] is Float (sum), payload[1] is Float (r_err), payload[2] is Integer (count)
--            let [sum_val, r_err_val, count_val, ..] = payload.as_mut_slice() else {
-+            // invariant as per init_agg_payload: payload[0] is Float (sum), payload[1] is Float (r_err),
-+            // payload[2] is Integer (count), payload[3] and payload[4] are Integer (pos_inf, neg_inf)
-+            let [sum_val, r_err_val, count_val, pos_inf, neg_inf, ..] = payload.as_mut_slice()
-+            else {
-                 mark_unlikely();
-                 return Err(LimboError::InternalError(
-                     "Avg: payload too short".to_string(),
-                 ));
-             };
--            if matches!(*sum_val, Value::Null) {
--                return Ok(());
--            }
--       
-```
-
-**File**: `postgres/frontend/catalog.rs` (modified, +4/-0)
-```diff
-@@ -403,6 +403,10 @@ impl Dialect for PostgresDialect {
-         true
-     }
  
-+    fn sum_counts_infinite_inputs(&self) -> bool {
-+        true
+-    expect(coercions).toBe(1);
+-    const stmt = await db.prepare("SELECT x FROM t_batch_coercion");
+-    expect(await stmt.all([])).toEqual([{ x: "coerced" }]);
++    expect(error).toBeInstanceOf(TypeError);
++    expect(error.message).toContain("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
++    expect(error.batchIndex).toBe(1);
++    const stmt = await db.prepare("SELECT COUNT(*) AS n FROM t_batch_unbindable");
++    expect(await stmt.all([])).toEqual([{ n: 0 }]);
++})
++
++test('batch binds a DataView as its bytes', async () => {
++    const db = await connect(":memory:");
++    const [result] = await db.batch([
++        { sql: "SELECT hex(?) AS x", args: [new DataView(new Uint8Array([9, 1, 2, 3]).buffer, 1, 2)] },
++    ]);
++    expect(result.rows).toEqual([{ x: "0102" }]);
+ })
+ 
+ test('atomic batch rejects transaction control before BEGIN', async () => {
+@@ -800,3 +808,15 @@ test('a whole number binds as INTEGER only inside the int64 range', async () =>
+     expect(await stmt.get(2 ** 63 - 1024)).toEqual({ type: "integer", above_max: 0 });
+     expect(await stmt.get(-(2 ** 63))).toEqual({ type: "integer", above_max: 0 });
+ })
++
++test('undefined binds as NULL and a value with no SQLite type is refused', async () => {
++    const db = await connect(":memory:");
++    const stmt = await db.prepare("SELECT typeof(?) AS a, typeof(?) AS b");
++    expect(await stmt.get(1, undefined)).toEqual({ a: "integer", b: "null" });
++    expect(await stmt.get([undefined, 1])).toEqual({ a: "null", b: "integer" });
++    for (const value of [new Date(0), { a: 1 }, new Map(), new ArrayBuffer(2), () => 1, Symbol("s")]) {
++        const error = await stmt.get(1, value).catch((e) => e);
++        expect(error).toBeInstanceOf(TypeError);
++        expect(error.message).toBe("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
 +    }
-+
-     fn add_column_computes_default_for_existing_rows(&self) -> bool {
-         true
-     }
++})
 ```
 
-**File**: `postgres/tests/integration/postgres/dialect.rs` (modified, +39/-0)
+**File**: `bindings/javascript/packages/wasm/promise.test.ts` (modified, +13/-0)
 ```diff
-@@ -1915,6 +1915,45 @@ fn test_postgres_window_avg_partition(db: TempDatabase) {
-     }
- }
- 
-+// PostgreSQL rejects `1e308::float8 * 10` as an overflow, so its results
-+// below come from the same rows written with 'Infinity'::float8. NaN is
-+// returned as NULL.
-+#[turso_macros::test(mvcc)]
-+fn test_postgres_window_sum_avg_are_finite_after_infinite_values_leave_frame(db: TempDatabase) {
-+    let conn = db.connect_postgres();
-+    conn.execute("CREATE TABLE t (n int, x float8)").unwrap();
-+    conn.execute(
-+        "INSERT INTO t VALUES (1, 1e308::float8 * 10), (2, 1), (3, 2), (4, 4), \
-+         (5, -1e308::float8 * 10), (6, 1e308::float8 * 10), (7, 8)",
-+    )
-+    .unwrap();
+@@ -376,3 +376,16 @@ test('a whole number binds as INTEGER only inside the int64 range', async () =>
+     expect(await stmt.get(-(2 ** 63))).toEqual({ type: "integer", above_max: 0 });
+     await db.close();
+ })
 +
-+    assert_eq!(
-+        rows_of(
-+            &conn,
-+            "SELECT n, avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW) \
-+             FROM t ORDER BY n",
-+        ),
-+        ["1|Inf", "2|1.0", "3|2.0", "4|4.0", "5|-Inf", "6|Inf", "7|8.0"]
-+    );
-+    assert_eq!(
-+        rows_of(
-+            &conn,
-+            "SELECT n, sum(x) OVER w, avg(x) OVER w FROM t \
-+             WINDOW w AS (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) ORDER BY n",
-+        ),
-+        [
-+            "1|Inf|Inf",
-+            "2|Inf|Inf",
-+            "3|3.0|1.5",
-+            "4|6.0|3.0",
-+            "5|-Inf|-Inf",
-+            "6||",
-+            "7|Inf|Inf",
-+        ]
-+    );
-+}
-+
- // ==================== OPERATORS: ||, ILIKE, JSON ====================
- 
- #[turso_macros::test(mvcc)]
++test('undefined binds as NULL and a value with no SQLite type is refused', async () => {
++    const db = await connect(":memory:");
++    const stmt = await db.prepare("SELECT typeof(?) AS a, typeof(?) AS b");
++    expect(await stmt.get(1, undefined)).toEqual({ a: "integer", b: "null" });
++    expect(await stmt.get([undefined, 1])).toEqual({ a: "null", b: "integer" });
++    for (const value of [new Date(0), { a: 1 }, new Map(), new ArrayBuffer(2), () => 1, Symbol("s")]) {
++        const error = await stmt.get(1, value).catch((e) => e);
++        expect(error).toBeInstanceOf(TypeError);
++        expect(error.message).toBe("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
++    }
++    await db.close();
++})
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/window/frame_sum_overflow.sqltest` (modified, +26/-0)
+**File**: `bindings/javascript/src/lib.rs` (modified, +11/-7)
 ```diff
-@@ -68,3 +68,29 @@ test window-sum-all-int-overflow-errors {
- }
- expect error {
- }
-+
-+# Inf + -Inf is NaN, which sum() and avg() return as NULL. Removing a row
-+# from a frame adds its negation, so once an infinite value leaves the
-+# frame the total is NaN and the result stays NULL for the rest of the
-+# partition. avg() still counts each row added after that, so removing
-+# those rows later finds them counted.
-+setup infinite_value {
-+    CREATE TABLE inf(n INT, x REAL);
-+    INSERT INTO inf VALUES (1, 1e999), (2, 1.0), (3, 2.0), (4, 4.0);
-+}
-+
-+@setup infinite_value
-+test window-sum-avg-stay-null-after-infinite-value-leaves-frame {
-+    SELECT n,
-+           avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW),
-+           avg(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW),
-+           sum(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW),
-+           total(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
-+    FROM inf;
-+}
-+expect {
-+    1|Inf|Inf|Inf|Inf
-+    2||Inf|Inf|Inf
-+    3||||
-+    4||||
-+}
-```
-
----
-
-### Incident Patch 2: `8097ffc2` (2026-11-19)
-**Commit Message**: Merge 'core/translate: report no such column, not a panic, for unselected CTEs' from app/turso-github-handyman
-
-## Problem
-
-```sql
-WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT x WHERE EXISTS (SELECT 1 FROM c));
-WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT (SELECT x FROM c), (SELECT x));
--- Turso:  panic "Outer query subquery result_columns_start_reg must be set in program"
--- SQLite: no such column: x
-```
-
-Before it plans a FROM clause subquery, `parse_from_clause_table` in
-`core/translate/planner.rs` plans each CTE that the subquery reads (here
-through `EXISTS (SELECT 1 FROM c)`) and adds it to the subquery's outer
-query references. It marked that entry `cte_definition_only: false`, so
-column binding treated `c` as an outer table. `x` bound to the CTE's
-column, but no code computes that column for this scope, so code
-generation panicked. The same happened with `c.x`, with a subquery after
-a `JOIN`, and in a `LATERAL` subquery on the PostgreSQL frontend.
-
-## Fix
-
-The entry is now always `cte_definition_only: true`. Column binding
-skips such entries, so a CTE's columns are visible only where a FROM
-clause names the CTE. This is how
-`add_ctes_read_by_subqueries_as_outer_refs` a
-
-**File**: `core/translate/planner.rs` (modified, +1/-4)
-```diff
-@@ -1645,9 +1645,6 @@ fn parse_from_clause_table(
-                 if already_visible {
-                     continue;
+@@ -878,7 +878,7 @@ impl Statement {
+         })?;
+         let value_type = value.get_type()?;
+         let turso_value = match value_type {
+-            ValueType::Null => turso_core::Value::Null,
++            ValueType::Null | ValueType::Undefined => turso_core::Value::Null,
+             ValueType::Number => {
+                 let n: f64 = unsafe { value.cast()? };
+                 // `i64::MAX as f64` is 2^63, one past the largest i64, so the upper bound is exclusive.
+@@ -909,14 +909,10 @@ impl Statement {
+                 if obj.is_buffer()? || obj.is_typedarray()? || obj.is_dataview()? {
+                     turso_core::Value::Blob(array_buffer_view_bytes(env, value)?)
+                 } else {
+-                    let s = value.coerce_to_string()?.into_utf8()?;
+-                    turso_core::Value::Text(s.as_str()?.to_owned().into())
++                    return throw_unbindable_value(env);
                  }
--                let name_used_by_table_on_the_left = outer_query_refs_for_subquery
--                    .iter()
--                    .any(|reference| reference.identifier == cte_definition.name);
-                 // This plan only makes the name visible. A later FROM lookup performs
-                 // the real CTE use and validates its explicit column list.
-                 let cte_table = plan_cte(
-@@ -1671,7 +1668,7 @@ fn parse_from_clause_table(
-                         .then(|| cte_definition.select.clone()),
-                     cte_explicit_columns: cte_definition.explicit_columns.clone(),
-                     cte_id: Some(cte_definition.cte_id),
--                    cte_definition_only: name_used_by_table_on_the_left,
-+                    cte_definition_only: true,
-                     rowid_referenced: false,
-                     outer_join_may_null_extend: false,
-                     scope_depth: 0,
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/cte.sqltest` (modified, +38/-0)
-```diff
-@@ -1668,6 +1668,44 @@ expect error {
-     no such column: y
+             }
+-            _ => {
+-                let s = value.coerce_to_string()?.into_utf8()?;
+-                turso_core::Value::Text(s.as_str()?.to_owned().into())
+-            }
++            _ => return throw_unbindable_value(env),
+         };
+ 
+         self.statement_handle()?
+@@ -1052,6 +1048,14 @@ impl Statement {
+     }
  }
  
-+# A FROM clause subquery can read a CTE through a nested subquery, but the CTE's
-+# columns are not visible in the FROM clause subquery itself.
-+test cte-columns-not-visible-in-from-subquery-whose-exists-reads-cte {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT x WHERE EXISTS (SELECT 1 FROM c));
-+}
-+expect error {
-+    no such column: x
-+}
-+
-+test cte-columns-not-visible-in-from-subquery-whose-scalar-subquery-reads-cte {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT (SELECT x FROM c), (SELECT x));
-+}
-+expect error {
-+    no such column: x
++fn throw_unbindable_value(env: &Env) -> Result<()> {
++    env.throw_type_error(
++        "SQLite3 can only bind numbers, strings, bigints, buffers, and null",
++        None,
++    )?;
++    Err(Error::from_status(Status::PendingException))
 +}
 +
-+test cte-qualified-column-not-visible-in-from-subquery-whose-exists-reads-cte {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT c.x WHERE EXISTS (SELECT 1 FROM c));
-+}
-+expect error {
-+    no such column: c\.x
-+}
-+
-+test cte-columns-not-visible-in-joined-from-subquery-whose-exists-reads-cte {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT 1) JOIN (SELECT x WHERE EXISTS (SELECT 1 FROM c));
-+}
-+expect error {
-+    no such column: x
-+}
-+
-+test cte-columns-visible-in-from-subquery-that-selects-from-cte {
-+    WITH c AS (SELECT 5 AS x)
-+    SELECT * FROM (SELECT x, (SELECT x), (SELECT count(*) FROM c) FROM c);
-+}
-+expect {
-+    5|5|1
-+}
-+
- # A CTE is not a table-valued function; calling it with arguments is an error.
- test cte-referenced-with-call-arguments-rejected {
-     WITH cte1(x) AS (VALUES(1)) SELECT * FROM cte1(7);
+ /// Copies the bytes a typed array, Buffer or DataView covers.
+ ///
+ /// The view's buffer, byte offset and byte length are read with the built-in
 ```
 
-**File**: `testing/shared-sqltests/lateral-errors.sqltest` (modified, +17/-0)
+**File**: `testing/conformance/javascript/__test__/sync.test.js` (modified, +1/-1)
 ```diff
-@@ -544,3 +544,20 @@ expect {
-     2|2
-     3|0
- }
-+
-+# A CTE that a subquery reads does not make its columns visible in a LATERAL
-+# subquery whose FROM clause does not name it.
-+test lateral-cannot-read-columns-of-a-cte-it-does-not-select-from {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT 1 AS y) AS s, LATERAL (SELECT x WHERE EXISTS (SELECT 1 FROM c)) AS l;
-+}
-+expect error {
-+    no such column: x
-+}
-+@sqlstate 42703
-+expect @tursopg error {
-+    no such column: x
-+}
-+@sqlstate 42703
-+expect @postgres error {
-+    column "x" does not exist
-+}
+@@ -309,7 +309,7 @@ test.serial("Statement.run() [named]", async (t) => {
+   t.is(info.lastInsertRowid, 3);
+ });
+ 
+-test.skip("Statement.run() with array bind parameter", async (t) => {
++test.serial("Statement.run() with array bind parameter", async (t) => {
+   const db = t.context.db;
+ 
+   db.exec(`
 ```
 
 ---
 
-### Incident Patch 3: `315e9a32` (2026-11-19)
-**Commit Message**: skills/debugging: fix log paths and the ThreadSanitizer and simulator commands
+### Incident Patch 2: `0239af92` (2026-11-22)
+**Commit Message**: Merge 'core/translate: refuse comparing two different custom types that convert values' from Jussi Saurio
 
-The skill said to get trace logs from make test, but the Makefile sets
-RUST_LOG=off, and it named testing/test.log as the output. tursodb reads
-RUST_LOG and writes to stderr or to the file given with -t. The
-ThreadSanitizer command never set -Zsanitizer=thread, so it ran without the
-sanitizer, and it used rustup override, which changes the toolchain of the
-checkout; it now uses cargo +nightly with RUSTFLAGS.
+Custom types are the types made with `CREATE TYPE` (behind
+`--experimental-custom-types`). They include date, timestamp and
+timestamptz, which tursopg, Turso's PostgreSQL frontend, provides. A
+custom type can convert a value when it stores it (ENCODE) and when it
+reads it (DECODE). timestamptz, for example, stores its value as UTC
+text. A domain is a type defined on another type with extra checks, as
+in `CREATE DOMAIN positive AS integer CHECK (value > 0)`.
 
-The architecture overview and the repeated manual inspection section are
-removed. The skill is now the only copy.
+On main, Turso compares values of two different custom types by the
+values as stored. For many pairs that gives wrong answers with no error.
+For example, a `date` and a `timestamp` of the same day are not equal,
+and a `timestamptz` compared with a `varchar` compares UTC text with the
+text the user typed:
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+```sql
+-- tursodb --experimental-custom-types
+CREATE TABLE t (d date, ts timestamp, tz timestamptz, v varchar(40)) STRICT;
+INSERT INTO t VALUES ('2024-01-05', '2024-01-05 00:00:00', '2024-01-05 02:00:00+02', '2024-01-05 02:00:00+02');
+SELECT d = ts FROM t;
+-- main:       0
+-- this PR:    cannot compare type date with type
 
-**File**: `.claude/skills/debugging/SKILL.md` (modified, +31/-62)
+**File**: `core/function.rs` (modified, +7/-0)
 ```diff
-@@ -1,104 +1,73 @@
- ---
- name: debugging
--description: How to debug tursodb using Bytecode comparison, logging, ThreadSanitizer, deterministic simulation, and corruption analysis tools
-+description: How to debug tursodb using bytecode comparison, logging, ThreadSanitizer, deterministic simulation, stack usage scripts, and corruption analysis tools
- ---
- # Debugging Guide
- 
--## Bytecode Comparison Flow
-+## Bytecode Comparison
- 
--Turso aims for SQLite compatibility. When behavior differs:
--
--```
--1. EXPLAIN query in sqlite3
--2. EXPLAIN query in tursodb
--3. Compare bytecode
--   ├─ Different → bug in code generation
--   └─ Same but results differ → bug in VM or storage layer
--```
--
--### Example
-+When Turso and SQLite give different results, run `EXPLAIN` on both:
- 
- ```bash
--# SQLite
- sqlite3 :memory: "EXPLAIN SELECT 1 + 1;"
--
--# Turso
- cargo run --bin tursodb :memory: "EXPLAIN SELECT 1 + 1;"
- ```
- 
--## Manual Query Inspection
--
--```bash
--cargo run --bin tursodb :memory: 'SELECT * FROM foo;'
--cargo run --bin tursodb :memory: 'EXPLAIN SELECT * FROM foo;'
--```
-+Different bytecode means a bug in code generation (`core/translate/`). Same bytecode
-+with different results means a bug in the VM or storage layer.
- 
- ## Logging
- 
--```bash
--# Trace core during tests
--RUST_LOG=none,turso_core=trace make test
-+`tursodb` logs with `tracing`. It reads `RUST_LOG` (default level: warn) and writes to
-+stderr, or to a file with `-t <file>` (`--tracing-output`).
- 
--# Output goes to testing/test.log
--# Warning: can be megabytes per test run
-+```bash
-+RUST_LOG=turso_core=trace cargo run --bin tursodb -- -t /tmp/turso.log :memory: 'SELECT 1;'
- ```
- 
-+Logs can reach megabytes. `make test` sets `RUST_LOG=off`, so use `cargo run` or `cargo test` to get logs.
-+
- ## Threading Issues
- 
--Use stress tests with ThreadSanitizer:
-+Run the stress test under ThreadSanitizer. It needs a nightly toolchain with the `rust-src` component, and `--target` set to the host target (`x86_64-unknown-linux-gnu` on Linux, `aarch64-apple-darwin` on Apple Silicon):
- 
- ```bash
--rustup toolchain install nightly
--rustup override set nightly
--cargo run -Zbuild-std --target x86_64-unknown-linux-gnu \
-+RUSTFLAGS="-Zsanitizer=thread" cargo +nightly run -Zbuild-std --target x86_64-unknown-linux-gnu \
-   -p turso_stress -- --vfs syscall --nr-threads 4 --nr-iterations 1000
- ```
- 
-+Flags: `--vfs`, `--nr-threads` (`-t`), `--nr-iterations` (`-i`); see `--help` for the rest.
-+
- ## Deterministic Simulation
- 
--Reproduce bugs with seed. Note: simulator uses legacy "limbo" naming.
-+Replay a failure with its seed. The simulator binary is named `limbo_sim`.
- 
- ```bash
--# Simulator
- RUST_LOG=limbo_sim=debug cargo run --bin limbo_sim -- -s <seed>
- 
--# Whopper (concurrent DST)
-+# Whopper (concurrent simulator). Repeat a run with the same seed and flags.
- SEED=1234 ./testing/concurrent-simulator/bin/run
- ```
- 
-+See `testing/concurrent-simulator/README.md` for flags such as `--mode` and `--swarm`.
-+
- ## Stack Usage
- 
--Parsing and translating an expression recurse once per level of nesting, so
--the stack frame size of those functions limits how deep an expression can be.
--Three scripts in `scripts/stack/` measure stack use. Use a release build
--(`cargo build --release --bin tursodb`): debug builds do not reuse stack slots,
--so their frames say little about what users run. Run each script with `-h`
--for all options.
-+Parsing and translating an expression recurse once per level of nesting, so frame
-+size limits how deep an expression can be. Scripts in `scripts/stack/` measure it
-+(`-h` lists options). Use a release build (`cargo build --release --bin tursodb`);
-+debug builds do not reuse stack slots, so their frames say little about what users run.
- 
- ```bash
--# Frame size of each function, read from its prologue. -c compares two binaries.
--scripts/stack/frame-sizes.sh 'translate::expr::'
--scripts/stack/frame-sizes.sh -c /tmp/tursodb-main 'translate_expr$' 'parse_expr_inner$'
--
--# Smallest stack that runs a SQL script, per binary. -S adds sqlite3.
--scripts/stack/min-stack.sh -S -b /tmp/tursodb-main -b target/release/tursodb deep.sql
--
--# Which functions use the stack at the deepest point (runs under lldb).
--scripts/stack/stack-profile.sh deep.sql
-+scripts/stack/frame-sizes.sh '<function name pattern>'        # frame size per function; -c compares two binaries
-+scripts/stack/min-stack.sh -S -b target/release/tursodb deep.sql   # smallest stack that runs a script
-+scripts/stack/stack-profile.sh deep.sql                 # functions on the stack at its deepest point (lldb)
- ```
- 
--Functions that recurse per level should be small. Move rare and large paths
--into `#[inline(never)]` helpers, like SQLite's `SQLITE_NOINLINE`.
--
--## Architecture Reference
--
--- **Parser** → AST from SQL strings
--- **Code generator** → bytecode from AST
--- **Virtual machine** → executes SQLite-compatible bytecode
--- **Storage layer** → B-tree operations, paging
--
--## Corruption Debugging
-+Functions that recurse per 
+@@ -1916,6 +1916,10 @@ pub enum ResultType {
+     /// argument from the second on, and the last one when there is an odd
+     /// number of arguments. The conditions are never returned.
+     OneOfTheIifValues,
++    /// One of the first and the third argument, unchanged: `lag(x, n, default)`
++    /// and `lead(x, n, default)` return the value of x in another row, or the
++    /// default. The second argument is an offset and is never returned.
++    OneOfTheFirstAndThirdArguments,
+     /// A number that keeps the type of a numeric first argument: `ceil(5)` is
+     /// an integer, `ceil(5.5)` a real. A text argument is first converted to a
+     /// number, so `ceil('3')` is an integer.
+@@ -1955,6 +1959,9 @@ impl Func {
+             Self::Vector(func) => declared(func.return_type()),
+             Self::External(func) => declared(func.func.return_type()),
+             Self::Agg(AggFunc::Min | AggFunc::Max) => ResultType::OneOfTheArguments,
++            Self::Window(WindowFunc::Lag | WindowFunc::Lead) => {
++                ResultType::OneOfTheFirstAndThirdArguments
++            }
+             #[cfg(all(feature = "fts", not(target_family = "wasm")))]
+             Self::Fts(_) => ResultType::Unknown,
+             Self::Agg(_) | Self::Window(_) | Self::AlterTable(_) | Self::Dialect(_) => {
 ```
 
-**File**: `docs/agent-guides/debugging.md` (removed, +0/-98)
+**File**: `core/schema.rs` (modified, +11/-0)
 ```diff
-@@ -1,98 +0,0 @@
-----
--name: debugging
--description: Bytecode comparison, logging, ThreadSanitizer, deterministic simulation
-----
--# Debugging Guide
--
--## Bytecode Comparison Flow
--
--Turso aims for SQLite compatibility. When behavior differs:
--
--```
--1. EXPLAIN query in sqlite3
--2. EXPLAIN query in tursodb
--3. Compare bytecode
--   ├─ Different → bug in code generation
--   └─ Same but results differ → bug in VM or storage layer
--```
--
--### Example
--
--```bash
--# SQLite
--sqlite3 :memory: "EXPLAIN SELECT 1 + 1;"
--
--# Turso
--cargo run --bin tursodb :memory: "EXPLAIN SELECT 1 + 1;"
--```
--
--## Manual Query Inspection
--
--```bash
--cargo run --bin tursodb :memory: 'SELECT * FROM foo;'
--cargo run --bin tursodb :memory: 'EXPLAIN SELECT * FROM foo;'
--```
--
--## Logging
--
--```bash
--# Trace core during tests
--RUST_LOG=none,turso_core=trace make test
--
--# Output goes to testing/test.log
--# Warning: can be megabytes per test run
--```
--
--## Threading Issues
--
--Use stress tests with ThreadSanitizer:
--
--```bash
--rustup toolchain install nightly
--rustup override set nightly
--cargo run -Zbuild-std --target x86_64-unknown-linux-gnu \
--  -p turso_stress -- --vfs syscall --nr-threads 4 --nr-iterations 1000
--```
--
--## Deterministic Simulation
--
--Reproduce bugs with seed. Note: simulator uses legacy "limbo" naming.
--
--```bash
--# Simulator
--RUST_LOG=limbo_sim=debug cargo run --bin limbo_sim -- -s <seed>
--
--# Whopper (concurrent DST)
--SEED=1234 ./testing/concurrent-simulator/bin/run
--```
--
--## Stack Usage
--
--Parsing and translating an expression recurse once per level of nesting, so
--the stack frame size of those functions limits how deep an expression can be.
--Three scripts in `scripts/stack/` measure stack use. Use a release build
--(`cargo build --release --bin tursodb`): debug builds do not reuse stack slots,
--so their frames say little about what users run. Run each script with `-h`
--for all options.
--
--```bash
--# Frame size of each function, read from its prologue. -c compares two binaries.
--scripts/stack/frame-sizes.sh 'translate::expr::'
--scripts/stack/frame-sizes.sh -c /tmp/tursodb-main 'translate_expr$' 'parse_expr_inner$'
--
--# Smallest stack that runs a SQL script, per binary. -S adds sqlite3.
--scripts/stack/min-stack.sh -S -b /tmp/tursodb-main -b target/release/tursodb deep.sql
--
--# Which functions use the stack at the deepest point (runs under lldb).
--scripts/stack/stack-profile.sh deep.sql
--```
--
--Functions that recurse per level should be small. Move rare and large paths
--into `#[inline(never)]` helpers, like SQLite's `SQLITE_NOINLINE`.
--
--## Architecture Reference
--
--- **Parser** → AST from SQL strings
--- **Code generator** → bytecode from AST
--- **Virtual machine** → executes SQLite-compatible bytecode
--- **Storage layer** → B-tree operations, paging
+@@ -627,6 +627,17 @@ impl TypeDef {
+         }
+     }
+ 
++    /// Whether a column of this type is not the same as a column of its base type: a
++    /// STRUCT or UNION, or a type that converts values when it stores or reads them.
++    /// A type with at most a COERCE check, such as varchar(n), is not, because its
++    /// values stay what they were stored as.
++    pub fn changes_stored_value(&self) -> bool {
++        self.is_struct()
++            || self.is_union()
++            || self.encode().is_some()
++            || !self.decode_returns_value_unchanged()
++    }
++
+     /// True when stored values are read back unchanged (no DECODE, or `DECODE value`).
+     pub fn decode_returns_value_unchanged(&self) -> bool {
+         self.decode().is_none_or(
+```
+
+**File**: `core/translate/collate.rs` (modified, +176/-10)
+```diff
+@@ -7,13 +7,17 @@ use turso_parser::ast::{Expr, UnaryOperator};
+ 
+ use crate::{
+     function::ExternalCollation,
+-    schema::Schema,
++    function::ResultType,
++    schema::{Schema, TypeDef},
+     sync::{Arc, LazyLock, RwLock, Weak},
+     translate::{
+         catalog::CatalogContext,
+         emitter::Resolver,
+         expr::{
+-            expr_type::{query_column_type, type_of, type_ordering, ExprType},
++            expr_type::{
++                first_and_third_arguments, iif_values, query_column_type, same_type_def, type_of,
++                type_ordering, ExprType,
++            },
+             row_value_component_expr, row_value_len,
+         },
+         expr_context::{ExprContext, ExprProperties},
+@@ -508,6 +512,7 @@ pub fn comparison_collation_across_queries(
+     rhs: &Expr,
+     rhs_context: &ExprContext<'_, '_>,
+ ) -> Result<CollationSeq> {
++    check_comparable_exprs(lhs, lhs_context, rhs, rhs_context)?;
+     if let Some(ordering) = common_type_ordering([(lhs, lhs_context), (rhs, rhs_context)])? {
+         return Ok(CollationSeq::Type(ordering));
+     }
+@@ -546,6 +551,7 @@ pub fn in_subquery_collation(
+         type_of(lhs, &lhs_context.type_env()),
+         query_column_type(query, column, resolver),
+     ];
++    check_comparable(&types[0], &types[1], resolver.schema())?;
+     let has_collate = has_collate_operator(lhs) || has_collate_operator(rhs);
+     if let Some(ordering) = common_ordering(&types, resolver.schema(), has_collate)? {
+         return Ok(CollationSeq::Type(ordering));
+@@ -562,6 +568,7 @@ pub fn in_list_collation(
+     rhs: &[Box<Expr>],
+     context: &ExprContext<'_, '_>,
+ ) -> Result<CollationSeq> {
++    check_in_list_comparable(lhs, rhs, context)?;
+     let operands = std::iter::once(lhs)
+         .chain(rhs.iter().map(|item| item.as_ref()))
+         .map(|expr| (expr, context));
+@@ -604,6 +611,12 @@ pub(crate) fn expr_text_collation(
+ pub fn first_collation<'a, 'c, 's: 'c>(
+     exprs: impl IntoIterator<Item = (&'a Expr, ExprContext<'c, 's>)> + Clone,
+ ) -> Result<CollationSeq> {
++    check_comparable_types(
++        exprs
++            .clone()
++            .into_iter()
++            .map(|(expr, context)| (type_of(expr, &context.type_env()), context.schema())),
++    )?;
+     if let Some(ordering) = common_type_ordering(exprs.clone())? {
+         return Ok(CollationSeq::Type(ordering));
+     }
+@@ -785,23 +798,64 @@ pub(crate) fn check_expr_collation(expr: &Expr, context: &ExprContext<'_, '_>) -
+             let operands =
+                 std::iter::once(lhs.as_ref()).chain(rhs.iter().map(|item| item.as_ref()));
+             common_type_ordering(operands.map(|expr| (expr, context)))?;
++            check_in_list_comparable(lhs, rhs, context)?;
+             Ok(())
+         }
+-        // Compiled as `base = when` for each WHEN.
++        // Compiled as `base = when` for each WHEN, and the values of the THENs and
++        // the ELSE are the one result.
+         Expr::Case {
+-            base: Some(base),
++            base,
+             when_then_pairs,
+-            ..
+-        } => when_then_pairs
+-            .iter()
+-            .try_for_each(|(when, _)| check_comparison(base, when, context)),
++            else_expr,
++        } => {
++            if let Some(base) = base {
++                when_then_pairs
++                    .iter()
++                    .try_for_each(|(when, _)| check_comparison(base, when, context))?;
++            }
++            let results = when_then_pairs
++                .iter()
++                .map(|(_, then)| then.as_ref())
++                .chain(else_expr.as_deref());
++            check_comparable_results(results, context)
++        }
+         Expr::FunctionCall { name, args, .. } => {
+             let func = context
+                 .catalog()
+                 .resolve_function(name.as_str(), args.len())?;
+-            if func.is_some_and(|func| func.needs_collation()) {
++            let needs_collation = func.as_ref().is_some_and(|func| func.needs_collation());
++            if needs_collation {
++                check_comparable_results(args.iter().map(|arg| arg.as_ref()), context)?;
+                 common_type_ordering(args.iter().map(|arg| (arg.as_ref(), context)))?;
+             }
++            // The result is one of these arguments, so they have one type. A function
++            // that needs a collation, such as min and max, was checked above.
++            match func.as_ref().map(|func| func.result_type()) {
++                Some(ResultType::OneOfTheArguments) if !needs_collation => {
++                    check_comparable_results(args.iter().map(|arg| arg.as_ref()), context)?;
++                }
++                Some(ResultType::OneOfTheIifValues) => {
++                    check_comparable_results(iif_values(args).map(|arg| arg.as_ref()), context)?;
++                }
++                Some(ResultType::OneOfTheFirstAndThirdArguments) => {
++                    check_comparable_results(
++                        first_and_third_arguments(args).map(
+```
+
+**File**: `core/translate/expr/expr_type.rs` (modified, +14/-10)
+```diff
+@@ -1074,16 +1074,6 @@ fn function_type(name: &ast::Name, args: &[Box<ast::Expr>], env: &TypeEnv) -> Ex
+                 .map_or(ExprType::Builtin(BuiltinType::Any), |arg| type_of(arg, env)),
+             1,
+         ),
+-        // A value of another row: its own argument's type, or for lag and
+-        // lead the common type of the argument and the default (the third
+-        // argument).
+-        Func::Window(WindowFunc::Lag | WindowFunc::Lead) => common_type(
+-            args.iter()
+-                .enumerate()
+-                .filter(|(i, _)| *i != 1)
+-                .map(|(_, arg)| arg.as_ref()),
+-            env,
+-        ),
+         Func::Window(WindowFunc::FirstValue | WindowFunc::LastValue | WindowFunc::NthValue) => args
+             .first()
+             .map_or(ExprType::Builtin(BuiltinType::Any), |arg| type_of(arg, env)),
+@@ -1102,6 +1092,9 @@ fn result_type(result_type: ResultType, args: &[Box<ast::Expr>], env: &TypeEnv)
+         ResultType::FirstArgument => first_argument().unwrap_or(any),
+         ResultType::OneOfTheArguments => common_type(args.iter().map(|arg| arg.as_ref()), env),
+         ResultType::OneOfTheIifValues => common_type(iif_values(args).map(|arg| arg.as_ref()), env),
++        ResultType::OneOfTheFirstAndThirdArguments => {
++            common_type(first_and_third_arguments(args).map(|arg| arg.as_ref()), env)
++        }
+         ResultType::NumberOfTheFirstArgumentsType => match first_argument() {
+             Some(ty) => negated_type(ty),
+             None => any,
+@@ -1164,6 +1157,17 @@ pub(crate) fn iif_values(args: &[Box<ast::Expr>]) -> impl Iterator<Item = &Box<a
+         .map(|(_, arg)| arg)
+ }
+ 
++/// The arguments of `lag(x, n, default)` that the result is one of: x and the
++/// default.
++pub(crate) fn first_and_third_arguments(
++    args: &[Box<ast::Expr>],
++) -> impl Iterator<Item = &Box<ast::Expr>> + Clone {
++    args.iter()
++        .enumerate()
++        .filter(|(i, _)| *i != 1)
++        .map(|(_, arg)| arg)
++}
++
+ /// The type of a call to a function that declares the type it returns.
+ fn declared_return_type(
+     return_type: ReturnType,
+```
+
+**File**: `core/translate/insert.rs` (modified, +8/-2)
+```diff
+@@ -41,7 +41,7 @@ use crate::{
+             QueryDestination, ResultSetColumn, TableReferences,
+         },
+         planner::{collect_subquery_table_refs_in_expr, plan_ctes_as_outer_refs, ROWID_STRS},
+-        select::translate_select,
++        select::translate_insert_source_select,
+         stmt_journal::{any_index_or_ipk_has_replace, set_insert_stmt_journal_flags},
+         subquery::{
+             emit_non_from_clause_subqueries_for_eval_at, emit_non_from_clause_subquery,
+@@ -2538,7 +2538,13 @@ fn init_source_emission<'a>(
+                     coroutine_implementation_start: ctx.halt_label,
+                 };
+                 let num_result_cols = program.nested(|program| {
+-                    translate_select(select, resolver, program, query_destination, connection)
++                    translate_insert_source_select(
++                        select,
++                        resolver,
++                        program,
++                        query_destination,
++                        connection,
++                    )
+                 })?;
+                 if num_result_cols != required_column_count {
+                     crate::bail_parse_error!(
+```
+
+**File**: `core/translate/planner.rs` (modified, +2/-0)
+```diff
+@@ -1448,6 +1448,7 @@ fn prepare_recursive_cte_plan(
+         outer_query_refs,
+         QueryDestination::placeholder_for_subquery(),
+         connection,
++        false,
+     )?;
+ 
+     let explicit_columns = (!cte_definition.explicit_columns.is_empty())
+@@ -1509,6 +1510,7 @@ fn prepare_recursive_cte_plan(
+         &recursive_query_outer_refs,
+         QueryDestination::placeholder_for_subquery(),
+         connection,
++        false,
+     )?;
+ 
+     if initial_query.select_result_columns().len() != recursive_query.select_result_columns().len()
+```
+
+**File**: `core/translate/schema/mod.rs` (modified, +4/-1)
+```diff
+@@ -30,7 +30,7 @@ use crate::translate::catalog::CatalogContext;
+ use crate::translate::collate::CollationSeq;
+ use crate::translate::emitter::{prepare_cdc_if_necessary, Resolver};
+ use crate::translate::expr::expr_type::{
+-    base_value_type, decode_type, iif_values, value_type, ExprType,
++    base_value_type, decode_type, first_and_third_arguments, iif_values, value_type, ExprType,
+ };
+ use crate::translate::expr::{takes_input_of_type, walk_expr, WalkControl};
+ use crate::translate::fkeys::emit_fk_drop_table_check;
+@@ -462,6 +462,9 @@ fn resolve_func_return_type(
+         ResultType::OneOfTheIifValues => {
+             common_check_type(iif_values(args).map(|arg| type_of(arg)))
+         }
++        ResultType::OneOfTheFirstAndThirdArguments => {
++            common_check_type(first_and_third_arguments(args).map(|arg| type_of(arg)))
++        }
+         // ceil, floor and trunc give an integer for an integer and a real for
+         // a real. A text or blob argument is first converted to a number,
+         // which may be either.
+```
+
+**File**: `core/translate/select.rs` (modified, +69/-1)
+```diff
+@@ -49,13 +49,57 @@ pub fn translate_select(
+     query_destination: QueryDestination,
+     connection: &Arc<crate::Connection>,
+ ) -> Result<usize> {
+-    let plan = prepare_select_plan(
++    translate_select_with_source(
+         select,
+         resolver,
+         program,
++        query_destination,
++        connection,
++        false,
++    )
++}
++
++/// [translate_select] for the rows of `INSERT INTO t VALUES (...), (...)`. An
++/// INSERT converts each row to its target column, so a bare VALUES source does
++/// not need one type for the rows of a column, whatever WITH clause it carries.
++pub fn translate_insert_source_select(
++    select: ast::Select,
++    resolver: &Resolver,
++    program: &mut ProgramBuilder,
++    query_destination: QueryDestination,
++    connection: &Arc<crate::Connection>,
++) -> Result<usize> {
++    translate_select_with_source(
++        select,
++        resolver,
++        program,
++        query_destination,
++        connection,
++        true,
++    )
++}
++
++#[turso_macros::trace_stack]
++fn translate_select_with_source(
++    select: ast::Select,
++    resolver: &Resolver,
++    program: &mut ProgramBuilder,
++    query_destination: QueryDestination,
++    connection: &Arc<crate::Connection>,
++    is_insert_source: bool,
++) -> Result<usize> {
++    let plan = prepare_select_plan_from_arms(
++        select.body.select,
++        select.body.compounds,
++        select.with,
++        select.order_by,
++        select.limit,
++        resolver,
++        program,
+         &[],
+         query_destination,
+         connection,
++        is_insert_source,
+     )?;
+     if program.trigger.is_some() {
+         if let Some(virtual_table) = plan_first_virtual_table_name(&plan) {
+@@ -186,6 +230,7 @@ pub fn prepare_select_plan(
+         outer_query_refs,
+         query_destination,
+         connection,
++        false,
+     )
+ }
+ 
+@@ -206,6 +251,7 @@ pub(crate) fn prepare_select_plan_from_arms(
+     outer_query_refs: &[OuterQueryReference],
+     query_destination: QueryDestination,
+     connection: &Arc<crate::Connection>,
++    is_insert_source: bool,
+ ) -> Result<Plan> {
+     let _nested_query = resolver.enter_nested_query()?;
+     let mut compound_arms = compound_arms.into_iter().peekable();
+@@ -220,6 +266,7 @@ pub(crate) fn prepare_select_plan_from_arms(
+             outer_query_refs,
+             query_destination,
+             connection,
++            is_insert_source,
+         )?)));
+     }
+ 
+@@ -235,6 +282,7 @@ pub(crate) fn prepare_select_plan_from_arms(
+         outer_query_refs,
+         query_destination.clone(),
+         connection,
++        false,
+     )?;
+ 
+     let mut left = Vec::with_capacity(compound_arms.size_hint().0);
+@@ -254,6 +302,7 @@ pub(crate) fn prepare_select_plan_from_arms(
+             outer_query_refs,
+             query_destination.clone(),
+             connection,
++            false,
+         )?;
+     }
+ 
+@@ -311,6 +360,7 @@ fn prepare_one_select_plan(
+     outer_query_refs: &[OuterQueryReference],
+     query_destination: QueryDestination,
+     connection: &Arc<crate::Connection>,
++    is_insert_source: bool,
+ ) -> Result<SelectPlan> {
+     match select {
+         ast::OneSelect::Select {
+@@ -972,6 +1022,24 @@ fn prepare_one_select_plan(
+                 connection,
+             )?;
+ 
++            // The values of a column are one result, so they have one type.
++            // An INSERT converts each row to its target column, so its rows may differ in type.
++            if !is_insert_source {
++                let context = crate::translate::expr_context::ExprContext::new(
++                    Some(&table_references),
++                    resolver,
++                );
++                for column in 0..len {
++                    crate::translate::collate::check_comparable_results(
++                        values
++                            .iter()
++                            .filter_map(|row| row.get(column))
++                            .map(|v| v.as_ref()),
++                        &context,
++                    )?;
++                }
++            }
++
+             let plan = SelectPlan {
+                 join_order: vec![],
+                 table_references,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12107** (2026-11-19): postgres: add more known-gap tests against PostgreSQL (@dswbx)
-- **PR #12101** (2026-11-19): core, postgres: use less stack when preparing a statement (@jussisaurio)
-- **PR #12098** (2026-11-19): postgres/tests: expect 0A000 for refused table functions in the gap tests (@jussisaurio)
-- **PR #12097** (2026-11-19): Cut AGENTS.md and skills down to facts that match the code (@jussisaurio)
-- **PR #12093** (2026-11-19): postgres: move pg_query to 18.1 to parse PostgreSQL 18 (@glommer)
-- **PR #12090** (2026-11-19): core/schema: read the schema at reparse as a list of load steps (@pedrocarlo)
+- **PR #12264** (closed): core/translate/optimizer: use no index seek for IN (SELECT) across date/time types (@jussisaurio)
+- **PR #12233** (2026-11-22): bindings/javascript: stop storing unbindable values as text (@colinhacks)
+- **PR #12230** (2026-11-21): ci: make PR CI faster (@jussisaurio)
+- **PR #12229** (2026-11-21): core/vdbe: use the test dialect in test_serialize_array_from_blob (@jussisaurio)
+- **PR #12222** (2026-11-21): perf: fix make bench-tpc-c and remove the leftover checkpoint-bench file (@jussisaurio)
+- **PR #12221** (2026-11-21): ci: remove the GitHub-runner criterion benchmark job (@jussisaurio)
 
 ---
 
@@ -2131,42 +2153,33 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' 
+## X. Merge 'bindings/javascript: stop storing unbindable values as text' from Colin M
 
 **RULE**:
-When implementing operations in `core/dialect/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bindings/javascript/packages/common/promise.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1befb62a`: Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4468e50b`: Merge 'bindings/javascript: stop storing unbindable values as text' from Colin McDonnell. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/javascript/packages/common/promise.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Whether `sum()` and `avg()` count their infinite inputs apart from
-    /// the total of the finite ones.
-    ///
-    /// PostgreSQL does, so a moving window frame gives a finite result again
-    /// once its infinite values leave it. SQLite adds them to the total.
-    /// Removing a row from a window frame adds its negation, so once an
-    /// infinite value leaves, the total is `Inf - Inf`, which is NaN, and
-    /// the result stays NULL.
-    fn sum_counts_infinite_inputs(&self) -> bool {
-        false
-    }
-
+    ArrayBuffer.isView(value)
+  throw new TypeError("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    (ArrayBuffer.isView(value) && !(value instanceof DataView))
+  return String(value);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1befb62a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4468e50b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

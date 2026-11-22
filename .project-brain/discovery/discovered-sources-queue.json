@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T22:58:21.106Z",
+  "updated_at": "2026-11-22T23:16:24.705Z",
   "stats": {
-    "total_discovered": 7692,
-    "approved_pending_harvest": 7286,
+    "total_discovered": 7695,
+    "approved_pending_harvest": 7289,
     "harvested_count": 0,
     "rejected_count": 406,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7266,
+      "COMMUNITY_AND_EXPERT": 7269,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -166405,6 +166405,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-8770A8C8B794": {
+      "id": "SRC-8770A8C8B794",
+      "url": "https://codspeed.io/docs/troubleshooting",
+      "title": "https://codspeed.io/docs/troubleshooting",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:16:24.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+        "fileName": "tursodatabase-turso-learnings.md"
+      }
+    },
+    "SRC-CDFFF164D3AC": {
+      "id": "SRC-CDFFF164D3AC",
+      "url": "https://app.codspeed.io/tursodatabase/turso/branches/tz-in-subquery-index-cross-type?q=has%3Aoptimized_out",
+      "title": "https://app.codspeed.io/tursodatabase/turso/branches/tz-in-subquery-index-cross-type?q=has%3Aoptimized_out",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:16:24.637Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+        "fileName": "tursodatabase-turso-learnings.md"
+      }
+    },
+    "SRC-2D513A9210DF": {
+      "id": "SRC-2D513A9210DF",
+      "url": "https://github.com/tursodatabase/turso/pull/12233",
+      "title": "https://github.com/tursodatabase/turso/pull/12233",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:16:24.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+        "fileName": "tursodatabase-turso-learnings.md"
       }
     }
   }

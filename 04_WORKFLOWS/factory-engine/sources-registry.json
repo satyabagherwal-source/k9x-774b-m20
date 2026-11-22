@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T22:37:29.291Z",
-    "lastVerified": "2026-11-22T22:37:29.291Z",
+    "lastChecked": "2026-11-22T23:15:44.976Z",
+    "lastVerified": "2026-11-22T23:15:44.976Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T23:06:28.324Z",
-    "lastVerified": "2026-11-22T23:06:28.324Z",
+    "lastChecked": "2026-11-22T23:15:50.625Z",
+    "lastVerified": "2026-11-22T23:15:50.625Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -150,9 +150,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-22T18:44:09.157Z",
+    "lastChecked": "2026-11-22T23:15:39.934Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-22T18:44:09.157Z"
+    "lastVerified": "2026-11-22T23:15:39.934Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -1260,14 +1260,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T23:25:29.825Z",
-    "lastVerified": "2026-11-21T23:25:29.825Z",
+    "lastChecked": "2026-11-22T23:15:46.555Z",
+    "lastVerified": "2026-11-22T23:15:46.555Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "865e8ceb018de6172440a863c7b20fa0052e1ec429b60c389c41a9c1dda2cc0e",
+    "contentHash": "cb2622da3e8c77b2e715a4c670252e91c08ce5308a6ab90b3ad8137dcbef1093",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2524,9 +2524,9 @@
   "tach-org-tach": {
     "name": "tach",
     "officialUrl": "https://github.com/tach-org/tach",
-    "lastChecked": "2026-11-21T16:31:03.349Z",
+    "lastChecked": "2026-11-22T23:15:29.987Z",
     "revisionIdentifier": "7c27c816",
-    "lastVerified": "2026-11-21T16:31:03.349Z"
+    "lastVerified": "2026-11-22T23:15:29.987Z"
   },
   "hf-akhilaaa3-jev-omni": {
     "name": "akhilaaa3/Jev-Omni",
@@ -3125,9 +3125,9 @@
   "taubyte-tau": {
     "name": "tau",
     "officialUrl": "https://github.com/taubyte/tau",
-    "lastChecked": "2026-11-22T00:32:40.649Z",
+    "lastChecked": "2026-11-22T23:15:37.482Z",
     "revisionIdentifier": "59816f6f",
-    "lastVerified": "2026-11-22T00:32:40.649Z"
+    "lastVerified": "2026-11-22T23:15:37.482Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -3206,12 +3206,12 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T15:59:39.116Z",
-    "lastVerified": "2026-11-18T15:59:39.116Z",
+    "lastChecked": "2026-11-22T23:15:32.824Z",
+    "lastVerified": "2026-11-22T23:15:32.824Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "47a77635a1b42bf31ca496cb0dbb3693a9d68f2ebf050e4cfb61737e4608c776",
+    "contentHash": "4cc42b892be79f5b5ea60f7444ac0b98cbbc4f1d0aaa5ec19edb38cad6d6969d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9448,9 +9448,9 @@
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",
     "officialUrl": "https://github.com/ivanvorobei/SwiftUI",
-    "lastChecked": "2026-11-20T00:33:13.440Z",
+    "lastChecked": "2026-11-22T23:15:35.061Z",
     "revisionIdentifier": "b6cfb6d0",
-    "lastVerified": "2026-11-20T00:33:13.440Z"
+    "lastVerified": "2026-11-22T23:15:35.061Z"
   },
   "magnetoid-seo-crawler": {
     "name": "SEO-Crawler",
