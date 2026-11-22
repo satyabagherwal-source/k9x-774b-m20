@@ -12231,3 +12231,4 @@
 | `CYCLE-20261122-3423` | `2026-11-22T23:33:16.491Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`4243452e...`) |
 | `CYCLE-20261122-35CQ` | `2026-11-22T23:33:18.170Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`53a775f7...`) |
 | `CYCLE-20261122-3C1W` | `2026-11-22T23:33:26.852Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10005` | Yes (`5ce3561c...`) |
+| `CYCLE-20261122-DDFK` | `2026-11-22T23:41:15.200Z` | `HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md` | Yes (`4cf01de3...`) |

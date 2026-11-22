@@ -12264,3 +12264,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-22T23:33:16.495Z |
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `3ee61a86` | Multi-dimensional audit evidence | 2026-11-22T23:33:18.175Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0c30c6ea` | Multi-dimensional audit evidence | 2026-11-22T23:33:26.856Z |
+| `learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct` | `https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-22T23:41:15.205Z |

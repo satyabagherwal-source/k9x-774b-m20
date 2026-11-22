@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T23:33:33.505Z",
+  "last_updated": "2026-11-22T23:41:29.072Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d01aab3d2ed021d1c929839a3b005192e22c1c6c8996b98371542e688789f64",
+      "content_hash": "edddc80912d6250a5ba76d8d05ffcfb513136b0a351ef22891247918a6e8ee61",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:25:10.870Z"
+      "persisted_at": "2026-11-22T23:41:29.072Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "694bc362c53ff3fd3a4b51b529b9051cb4ffdc2184723593f62be01179e25cde",
+      "content_hash": "387f150c662939f7ddc29a0569f95603dbdfc3c4ce41a853126eacc70687465f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:37:32.098Z"
+      "persisted_at": "2026-11-22T23:41:27.933Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "26c8e5d4e2bbb2019e80d04ea0f059c6553b8a315760ed76c82c677f7909fdbb",
+      "content_hash": "8a4b3f91c12590a468d82fb857081828ff46ebdc792aac7f1adc2b5a20e989a0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:37:32.317Z"
+      "persisted_at": "2026-11-22T23:41:28.117Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -291910,7 +291910,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
       "source_version": "hf-huggingfacetb-smolvlm2-256m-video-instruct",
-      "content_hash": "5159fda85e55fb82a8aecf512688b78e8962bee711c40ab41214cd6c3a45231d",
+      "content_hash": "4cf01de3e7652f3106b2a38fe8d2f99f6979d2f3f1d3be63afcd3f63864cd57b",
       "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md",
       "promoted_rules": [],
@@ -291919,7 +291919,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:31:26.637Z",
+      "verified_at": "2026-11-22T23:41:14.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -291936,9 +291936,9 @@
       "title": "Research & Knowledge Intelligence: HuggingFaceTB/SmolVLM2-256M-Video-Instruct Core Invariants",
       "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
       "source_version": "hf-huggingfacetb-smolvlm2-256m-video-instruct",
-      "content_hash": "3401310cbfe282e31959228db3ce65e4f234c019d8ee9e65c228df13742577f9",
+      "content_hash": "2b43e4210de3ac64acce91168512dd938c9ee7d8e652cbdfabb85803c8c37298",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:31:27.159Z"
+      "persisted_at": "2026-11-22T23:41:15.412Z"
     },
     "rule-9257": {
       "learning_id": "rule-9257",
@@ -291974,9 +291974,9 @@
       "title": "Research & Knowledge Intelligence: hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings Core Invariants",
       "repository": "hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings",
       "source_version": "HEAD",
-      "content_hash": "05e1ea7f6b84377eb9eb9bc8763c9093335793363ef300869c6b0df716567efd",
+      "content_hash": "a52acb700e6e02c98cedbc0c62f3b47607e4a95ee9f21fd7818eec6da83c5f91",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:32:22.797Z"
+      "persisted_at": "2026-11-22T23:41:27.257Z"
     },
     "candidate_directive-pods-show-containers-waiting-on-podinitializing-as-starting-not-failed": {
       "item_id": "candidate_directive-pods-show-containers-waiting-on-podinitializing-as-starting-not-failed",
@@ -318751,13 +318751,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3FC7-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DN46-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "93aacf3b5560bf6cbcf34f59309f697f0a310d7e5fc1943007904a04f9dcea1f",
+      "content_hash": "527ce986bf1b4d4251cb3d7165e43dc0c3aef17c2d5cc9ede2d7b6ac95fd890c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:37:31.885Z"
+      "persisted_at": "2026-11-22T23:41:27.753Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-IBEO",
-    "timestamp": "2026-11-21T01:33:43.872Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "aa10ec227e0280275741e1f12de5a695a9f88bc02ebd973a1b7fbaf079ed361d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-JU6N",
     "timestamp": "2026-11-21T01:34:54.863Z",
     "repository": "mswjs/msw",
@@ -7492,6 +7477,21 @@
     "contentHash": "5ce3561cec9125fd809643d74560d6554a78a504db8350a479abd8f40b1c5876",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-DDFK",
+    "timestamp": "2026-11-22T23:41:15.200Z",
+    "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
+    "contentHash": "4cf01de3e7652f3106b2a38fe8d2f99f6979d2f3f1d3be63afcd3f63864cd57b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

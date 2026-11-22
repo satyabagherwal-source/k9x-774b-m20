@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T23:33:26.862Z",
-  "total_cycles_completed": 11629,
-  "total_learnings_persisted": 11629,
+  "last_updated": "2026-11-22T23:41:15.211Z",
+  "total_cycles_completed": 11630,
+  "total_learnings_persisted": 11630,
   "total_rules_promoted": 10831,
   "history": [
-    {
-      "timestamp": "2026-11-22T05:39:40.575Z",
-      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
-      "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T05:50:12.154Z",
       "repository": "VideoRebirthAI/hyperflow-h3-flash",
@@ -1403,6 +1396,13 @@
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T23:41:15.211Z",
+      "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+      "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

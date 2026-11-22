@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T23:33:30.218Z",
-    "lastVerified": "2026-11-22T23:33:30.218Z",
+    "lastChecked": "2026-11-22T23:41:26.900Z",
+    "lastVerified": "2026-11-22T23:41:26.900Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,8 +370,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T23:06:22.545Z",
-    "lastVerified": "2026-11-22T23:06:22.545Z",
+    "lastChecked": "2026-11-22T23:41:26.890Z",
+    "lastVerified": "2026-11-22T23:41:26.890Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -448,8 +448,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T19:09:49.608Z",
-    "lastVerified": "2026-11-22T19:09:49.608Z",
+    "lastChecked": "2026-11-22T23:41:21.771Z",
+    "lastVerified": "2026-11-22T23:41:21.771Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -1529,9 +1529,9 @@
   "valeriansaliou-sonic": {
     "name": "sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
-    "lastChecked": "2026-11-21T23:55:40.327Z",
+    "lastChecked": "2026-11-22T23:41:24.176Z",
     "revisionIdentifier": "f16560b6",
-    "lastVerified": "2026-11-21T23:55:40.327Z"
+    "lastVerified": "2026-11-22T23:41:24.176Z"
   },
   "hf-lightricks-ltx-2.5": {
     "name": "Lightricks/LTX-2.5",
@@ -2712,9 +2712,9 @@
   "sharkdp-hyperfine": {
     "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
-    "lastChecked": "2026-11-21T17:15:19.438Z",
+    "lastChecked": "2026-11-22T23:41:11.699Z",
     "revisionIdentifier": "c5161524",
-    "lastVerified": "2026-11-21T17:15:19.438Z"
+    "lastVerified": "2026-11-22T23:41:11.699Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -3291,9 +3291,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-22T01:23:49.966Z",
+    "lastChecked": "2026-11-22T23:41:19.204Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-22T01:23:49.966Z"
+    "lastVerified": "2026-11-22T23:41:19.204Z"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -3383,12 +3383,12 @@
     "officialUrl": "https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T16:31:26.068Z",
-    "lastVerified": "2026-11-18T16:31:26.068Z",
+    "lastChecked": "2026-11-22T23:41:14.527Z",
+    "lastVerified": "2026-11-22T23:41:14.527Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
-    "contentHash": "5159fda85e55fb82a8aecf512688b78e8962bee711c40ab41214cd6c3a45231d",
+    "contentHash": "4cf01de3e7652f3106b2a38fe8d2f99f6979d2f3f1d3be63afcd3f63864cd57b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9501,9 +9501,9 @@
   "bernaferrari-figmatocode": {
     "name": "FigmaToCode",
     "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
-    "lastChecked": "2026-11-20T01:12:36.781Z",
+    "lastChecked": "2026-11-22T23:41:16.826Z",
     "revisionIdentifier": "f5c4831d",
-    "lastVerified": "2026-11-20T01:12:36.781Z"
+    "lastVerified": "2026-11-22T23:41:16.826Z"
   },
   "crawlseo-crawlseo": {
     "name": "crawlseo",
