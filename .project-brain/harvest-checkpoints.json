@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T15:58:57.127Z",
+  "last_updated": "2026-11-22T16:12:33.220Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -52,14 +52,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
-      "content_hash": "4e5fa2f829b1d50ab87ac578bb4775a6554c99c5c6b2c9972e3e63bafa57ec4f",
-      "verified_at": "2026-11-18T09:48:15.078Z",
+      "content_hash": "ad47f7cf5e82ac2c941fddb464808b8af14b51f9281f1ff9d6c554a5b7a8bfa3",
+      "verified_at": "2026-11-22T16:12:17.989Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:48:15.078Z"
+      "last_updated": "2026-11-22T16:12:17.989Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "751fc3ec24c60e2a2d1fc328ef86c258fd65f294c0367001913bd542065ba94c",
-      "verified_at": "2026-11-21T13:05:33.539Z",
+      "content_hash": "37354a618c6bb86ee6afb7a8da4b86cdd460598646d61c721b1c488a7fdb3c01",
+      "verified_at": "2026-11-22T16:12:33.219Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T13:05:33.539Z"
+      "last_updated": "2026-11-22T16:12:33.219Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "4b1c9037083566c979d0cdfe73d04326373fd93dfa870761a26ae66fed439723",
-      "verified_at": "2026-11-21T03:15:32.164Z",
+      "content_hash": "ccfea3d53fda0162ab7b516cbec3ec7f4163bd5fa09f9bb4861eca27267ed7c2",
+      "verified_at": "2026-11-22T16:12:20.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T03:15:32.164Z"
+      "last_updated": "2026-11-22T16:12:20.766Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",

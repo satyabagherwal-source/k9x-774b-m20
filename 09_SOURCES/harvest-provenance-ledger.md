@@ -12145,3 +12145,6 @@ Every entry in this ledger must capture:
 | `learn-dom-h-833ac1df` | `project://hf-comfy-org-minimax-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | 2026-11-22T15:42:41.239Z |
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `675ba816` | Multi-dimensional audit evidence | 2026-11-22T15:55:53.159Z |
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-22T15:58:57.116Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-22T16:12:17.978Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `25c4fca9` | Multi-dimensional audit evidence | 2026-11-22T16:12:20.756Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `8a4e65a1` | Multi-dimensional audit evidence | 2026-11-22T16:12:33.209Z |

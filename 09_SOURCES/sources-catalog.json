@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "4e5fa2f829b1d50ab87ac578bb4775a6554c99c5c6b2c9972e3e63bafa57ec4f",
-    "lastHarvestedAt": "2026-11-18T09:48:15.071Z",
+    "contentHash": "ad47f7cf5e82ac2c941fddb464808b8af14b51f9281f1ff9d6c554a5b7a8bfa3",
+    "lastHarvestedAt": "2026-11-22T16:12:17.978Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "d24219e3",
+    "sourceVersion": "8a4e65a1",
     "license": "NOASSERTION",
-    "contentHash": "751fc3ec24c60e2a2d1fc328ef86c258fd65f294c0367001913bd542065ba94c",
-    "lastHarvestedAt": "2026-11-21T13:05:33.528Z",
+    "contentHash": "37354a618c6bb86ee6afb7a8da4b86cdd460598646d61c721b1c488a7fdb3c01",
+    "lastHarvestedAt": "2026-11-22T16:12:33.209Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "98eae327",
+    "sourceVersion": "25c4fca9",
     "license": "NOASSERTION",
-    "contentHash": "4b1c9037083566c979d0cdfe73d04326373fd93dfa870761a26ae66fed439723",
-    "lastHarvestedAt": "2026-11-21T03:15:32.156Z",
+    "contentHash": "ccfea3d53fda0162ab7b516cbec3ec7f4163bd5fa09f9bb4861eca27267ed7c2",
+    "lastHarvestedAt": "2026-11-22T16:12:20.756Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

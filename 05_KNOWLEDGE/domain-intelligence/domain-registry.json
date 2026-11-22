@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T15:59:05.203Z",
-  "total_records": 2359,
+  "last_updated": "2026-11-22T16:12:39.513Z",
+  "total_records": 2361,
   "domains": {
     "A": {
       "total": 19,
@@ -1095,7 +1095,7 @@
       ]
     },
     "G": {
-      "total": 391,
+      "total": 393,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1487,7 +1487,9 @@
         "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-xevrion-hatchzip-core-invariants",
         "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-sfu-db-connector-x-core-invariants"
+        "domain_intelligence-architecture-intelligence-sfu-db-connector-x-core-invariants",
+        "domain_intelligence-architecture-intelligence-oven-sh-bun-core-invariants",
+        "domain_intelligence-architecture-intelligence-oven-sh-bun-learnings-core-invariants"
       ]
     },
     "H": {
@@ -27310,8 +27312,8 @@
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "repository": "yugabyte/yugabyte-db",
-      "content_hash": "a9f931cd3b769b5e8b59c0a9f6b6ecada0fb13dde3c4b30fd3533d5226321a29",
-      "created_at": "2026-11-21T13:05:34.024Z"
+      "content_hash": "92b731fe5c7119f6a32dd10a0241746ec9d0f47289c5808ebbac38d79e09f8bc",
+      "created_at": "2026-11-22T16:12:33.723Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -29072,8 +29074,8 @@
       "title": "Research & Knowledge Intelligence: Edge0/Audio8-ASR-Infinite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-asr-infinite-research-knowledge-intelligence-edge0-audio8-asr-in.md",
       "repository": "Edge0/Audio8-ASR-Infinite",
-      "content_hash": "c311e9aa2ee2e623c305192358fc2093a04a5e98fafa2385a6fcdbdf90906a8f",
-      "created_at": "2026-11-18T09:48:15.244Z"
+      "content_hash": "b10f5bd8b98b978c639f984dbcc46daa93446bfb4d4006576a0ea52a7fc54d95",
+      "created_at": "2026-11-22T16:12:18.250Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-asr-infinite-learnings-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-asr-infinite-learnings-core-inva",
@@ -29081,8 +29083,8 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-audio8-asr-infinite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-asr-infinite-learnings-research-knowledge-intelligence-hf-edge0-.md",
       "repository": "hf-edge0-audio8-asr-infinite-learnings",
-      "content_hash": "f731129dd647914a5fe311ec8b74b7ea150f15a7afd97e0efa2af87da880d1ea",
-      "created_at": "2026-11-18T09:48:18.194Z"
+      "content_hash": "3a556a02b8466de0dbed366c62bc2710b8b3d5423d2bc51a0278ee528d536b80",
+      "created_at": "2026-11-22T16:12:38.459Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-gguf-lear": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-gguf-lear",
@@ -31015,8 +31017,8 @@
       "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-learnings-quality-verification-intelligence-yugabyte-yugaby.md",
       "repository": "yugabyte-yugabyte-db-learnings",
-      "content_hash": "6d8bda5edbca36e567d3ca1402f3d1e0fe878d54bc9498a7a067364ac18335e7",
-      "created_at": "2026-11-21T13:05:40.324Z"
+      "content_hash": "73a3ca7a7e6c8019e96e7587ba965ec236c4dcdeedd6f77191c31703be359a4c",
+      "created_at": "2026-11-22T16:12:39.513Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -39703,6 +39705,24 @@
       "repository": "hf-convaiinnovations-laya-learnings",
       "content_hash": "a5659ffadb119825ff1cc78e7008d27c1fb18faf48344fbd8b139361ba747ce3",
       "created_at": "2026-11-22T15:59:03.656Z"
+    },
+    "domain_intelligence-architecture-intelligence-oven-sh-bun-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-oven-sh-bun-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: oven-sh/bun Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-oven-sh-bun-architecture-intelligence-oven-sh-bun-core-invariants.md",
+      "repository": "oven-sh/bun",
+      "content_hash": "b5f3a5368f03d6bcc215ba7d0bd79216e816033f393422e1b429dfdb3194c618",
+      "created_at": "2026-11-22T16:12:21.273Z"
+    },
+    "domain_intelligence-architecture-intelligence-oven-sh-bun-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-oven-sh-bun-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: oven-sh-bun-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-oven-sh-bun-learnings-architecture-intelligence-oven-sh-bun-learnings-core-invar.md",
+      "repository": "oven-sh-bun-learnings",
+      "content_hash": "70a442b87c94522578e4bad2c0320fbf5d2a4b136eecb8af969c01c6d1417d07",
+      "created_at": "2026-11-22T16:12:37.571Z"
     }
   }
 }

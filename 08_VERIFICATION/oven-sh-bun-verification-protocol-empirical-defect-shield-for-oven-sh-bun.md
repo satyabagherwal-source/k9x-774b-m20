@@ -4,22 +4,22 @@
 {
   "source_repository": "oven-sh/bun",
   "source_url": "https://github.com/oven-sh/bun",
-  "source_version": "98eae327",
+  "source_version": "25c4fca9",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-21T03:15:32.362Z",
+  "timestamp": "2026-11-22T16:12:21.051Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-oven-sh-bun",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [oven-sh/bun](https://github.com/oven-sh/bun) (Revision: `98eae327`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-21T03:15:32.362Z`  
+> **Provenance**: Harvested from [oven-sh/bun](https://github.com/oven-sh/bun) (Revision: `25c4fca9`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-22T16:12:21.051Z`  
 > **Learning ID**: `learn-github-oven-sh-bun`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `oven-sh/bun` (Commit: `98eae327`)
+- **Target Repository**: `oven-sh/bun` (Commit: `25c4fca9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:15:31.011Z  
+> **Harvest Timestamp**: 2026-11-22T16:12:19.497Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96812 stars
+- **Stars / Engagement**: 96825 stars
 
 ---
 
@@ -989,11 +989,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49355** (2026-11-20): **`S3Client.presign(method: "HEAD")` produces URLs that Cloudflare R2 rejects with 403 AccessDenied; GET presigns work**
-  *Symptoms*: ### What version of Bun is running?  Bun 1.4.5  ### What platform is your computer?  Linux 6.12.86+deb13-amd64 x86_64 unknown  ### What steps can reproduce the bug?  When using with Cloudflare R2 storage. Bug report mostly written mostly by GLM 5.3.  Repro:   ```ts    import { S3Client } from "bun";     const client = new Bun.S3Client({      bucket: "my-bucket",      endpoint: "https://<account-hash>.r2.cloudflarestorage.com",      region: "auto",      accessKeyId: process.env.ACCESS_KEY_ID!,      secretAccessKey: process.env.SECRET_ACCESS_KEY!,    });     const key = "some/existing-object.txt";    await client.write(key, "hello world"); // works     // GET presign: works    const getUrl = client.presign(key, { method: "GET", expiresIn: 60 });    console.log("GET presign:", (await fetch(getUrl)).status); // 200     // HEAD presign: rejected    const headUrl = client.presign(key, { method: "HEAD", expiresIn: 60 });    console.log("HEAD presign:", (await fetch(headUrl, { method: "HEAD" })).status); // 403 AccessDenied  ```  ### What is the expected behavior?  ## Expected  SigV4 supports presigned HEAD requests; the presigned HEAD URL should be accepted by S3-compatible stores. (AWS S3 and most SigV4 implementations sign  X-Amz-SignedHeaders=host for HEAD the same as GET, so if the GET presign is accepted the HEAD presign should be too.)  ### What do you see instead?  ## Observed  - `presign(key, {method: "HEAD"})` → fetch returns 403 AccessDenied from R2, for both existing and 
+- **Issue #49421** (2026-11-22): **bun:test: setImmediate is starved while awaiting expect().rejects/.resolves when a Worker is alive (1.4.5)**
+  *Symptoms*: ### What version of Bun is running?  1.4.5 (a7733435c). Also checked 1.3.10 (30e609e0), which does not show the problem to the same degree.  ### What platform is your computer?  `Darwin 27.2.0 arm64 arm`  ### What steps can reproduce the bug?  In `bun test`, while a test awaits `expect(p).rejects` (or `.resolves`) and any `Worker` is alive in the process, `setImmediate` callbacks are only dispatched about once per 100 to 1000 ms. A promise that settles from `setImmediate` therefore takes about a second per `await expect(...)`. Awaiting the same promise directly is not affected. The worker does not need to be used by the test.  `echo-worker.ts` ```ts declare var self: Worker; self.onmessage = (e) => postMessage(e.data); ```  `with-worker.test.ts` ```ts import { test, expect, afterAll } from "bun:test";  // One idle worker, alive for the whole file. It is never used by the tests below. const worker = new Worker(new URL("./echo-worker.ts", import.meta.url).href); afterAll(() => worker.terminate());  const viaImmediate = () =>   new Promise<never>((_, reject) => setImmediate(() => reject(new Error("x"))));  const ROUNDS = 10;  test("A: expect(p).rejects x10", async () => {   const start = performance.now();   for (let i = 0; i < ROUNDS; i++) {     await expect(viaImmediate()).rejects.toThrow("x");   }   console.log(`A: ${(performance.now() - start).toFixed(0)} ms`); });  test("B: plain await x10", async () => {   const start = performance.now();   for (let i = 0; i < ROUNDS; i++)
 
-- **Issue #49297** (2026-11-19): **bun fmt: without semicolons a Vue inline handler with several statements no longer compiles**
-  *Symptoms*: ### What version of Bun is running?  1.4.5 (also 1.4.4)  ### What platform is your computer?  Darwin arm64  ### What steps can reproduce the bug?  `T.vue`:  ```vue <template>   <button @click="customRange = null; timeMenuOpen = false">x</button> </template> ```  ```sh bun fmt --no-config --no-semi T.vue ```  The same happens with `"semi": false` in `.prettierrc`.  ### What is the expected behavior?  The `;` between the statements of the handler stays, as it does with semicolons on:  ```vue <template>   <button     @click="       customRange = null;       timeMenuOpen = false;     "   >     x   </button> </template> ```  ### What do you see instead?  ```vue <template>   <button     @click="       customRange = null       timeMenuOpen = false     "   >     x   </button> </template> ```  This template no longer compiles. `@vue/compiler-dom` 3.5:  ``` Error parsing JavaScript expression: Unexpected token, expected "," ```  ### Additional information  Vue does not apply ASI to an inline handler. Its compiler takes a handler for several statements only when the text contains a `;` (the `v-on` transform of `compiler-core`); otherwise it wraps the text in parentheses and parses it as one expression. Statements separated by a line break alone were reported in vuejs/core#8854, which was closed as not planned, so the `;` is required syntax there whatever the JavaScript style is.  Prettier 2.8.8 and 3.10.1 print the same broken handler, so this matches Prettier byte for byte, but the out
+- **Issue #49373** (2026-11-21): **bun test --retry: a timed-out attempt that settles late passes the retried test**
+  *Symptoms*: ### What happens  With `--retry`, if one attempt of a test times out and its promise resolves (or its `done()` fires) later, bun gives that late result to the attempt that's running at that point. The retried test is then marked **passed**.  ```ts import { test } from "bun:test"; let n = 0; test("times out, resolves late", () => {   n++; console.log("attempt", n);   return new Promise<void>((r) => setTimeout(r, 150)); }, 100); test("filler", async () => { await new Promise((r) => setTimeout(r, 300)); }); ```  - `bun test repro.test.ts` gives 1 pass, 1 fail. That's correct. - `bun test --retry=2 repro.test.ts` gives 2 pass, 0 fail. That's wrong: attempt 1 resolves late, and that result counts for attempt 2. - A late `done()` does the same thing. - Attempt 2 can hang forever and the test still passes. - Nothing logs a timeout, and the JUnit testcase reads as passed.  ### Versions  - Broken: 1.4.4 (38afee6c8), 1.4.5 (a7733435c) - Fixed: 1.4.6-canary.1 (98eae327f)  PR #38876 described this same bug and was closed without merging.  ### Expected  Each attempt settles by itself. A timed-out attempt stays failed, and only the attempt that's running decides the result.  ### Ask  1. Can you confirm the fix ships in 1.4.6? 2. Can the fix come with a regression test? It should cover a late resolve, a late `done`, and a late reject, each counted against the next attempt. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1010,1259 +1010,307 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `74d8f30d` (2026-11-21)
-**Commit Message**: blob: three fixes to how a job waits for a descriptor (#49337)
+### Incident Patch 1: `4ba1e77d` (2026-11-22)
+**Commit Message**: threading: fix lost wake-ups in the futex Condition (#49365)
 
 ### What does this PR do?
 
-Three fixes, about 50 lines in `src`. #49352 kept these bugs on purpose.
-Three tests are for the fixes, the others pin what main does today.
+Fixes a deadlock in the futex `Condition` (all platforms but Windows):
+`notify_all()` after the unlock could leave a waiter asleep for good.
 
-| | before | after |
-| --- | --- | --- |
-| Linux: script closes a descriptor during a wait, a duplicate stays
-open, the job is cancelled | use-after-free when the pipe gets ready |
-epoll holds a ticket, and a stale one is ignored |
-| one `EAGAIN` from a regular file | spins for ever without calling
-`read()` again | `read()` is called again, or the job waits if `poll`
-says not ready |
-| Linux: a job has waited and every other pool thread is busy | pending
-until one is free | ends on its thread, as on kqueue |
+`wake()` reserves one signal per waiter, but signals have no owner. A
+thread that began to wait later could consume one, and the thread it was
+meant for went back to sleep. That also happened with the lock held, if
+the later thread timed out or got `EINTR`, and with `notify_one` and
+`notify_many`.
 
-The third row removes a trip through the IO thread. Linux x64 release,
-medians of 18 runs. The control is a copy of main.
+The fix:
 
-| | 1.4.5 | main | control | this PR |
-| --- | --- | --- | --- | --- |
-| one read wakes, 6 CPUs, µs | 42.2 | 46.0 | 44.2 | 41.8 |
-| same, 1 CPU | 31.4 | 31.6 | 31.6 | 21.7 |
-| one write wakes, 6 CPUs, µs | 49.5 | 54.1 | 52.2 | 49.8 |
-| **1,000 reads wake together, 6 CPUs, ms** | 3.46 | 3.31 | 3.22 |
-**3.52** |
-| same, 1 CPU | 3
+- `wait()` returns after any futex return, signal or not. The count only
+serves to skip syscalls.
+- The `wake()` that reserves the last waiter wakes every sleeper.
 
-**File**: `src/io/lib.rs` (modified, +42/-38)
+What callers see: more spurious returns (all loop), `Timeout` when a
+timeout races with a notify (all re-check), and on macOS `notify_many(n
+> 1)` lets all sleepers return.
+
+Deleted: `Futex::Deadline` and the always-`None` timeout of
+`ResetEvent`. No loop needs them now.
+
+### How did you verify your code works?
+
+- `cargo test -p bun_threading`, and Miri with 288 seeds. Three new
+tests fail on `main`, and undoing either half of the fix fails one.
+- Not committed: an exhaustive model check (
+
+**File**: `src/threading/Condition.rs` (modified, +135/-76)
 ```diff
-@@ -477,7 +477,7 @@ impl IoRequestLoop {
-             let epoll_fd = sys::File::from_fd(Fd::from_native(raw));
+@@ -337,83 +337,31 @@ impl FutexImpl {
+     const SIGNAL_MASK: u32 = 0xffff << 16;
  
-             {
--                // No data: `tick_epoll` skips an event without a `Poll`.
-+                // No data: no `Poll` has the ticket 0.
-                 let mut epoll: linux::epoll_event = bun_core::ffi::zeroed();
-                 epoll.events =
-                     linux::EPOLL_IN | linux::EPOLL_ET | linux::EPOLL_ERR | linux::EPOLL_HUP;
-@@ -613,6 +613,7 @@ impl IoRequestLoop {
+     fn wait(&self, mutex: &Mutex, timeout: Option<u64>) -> Result<(), TimeoutError> {
+-        // Observe the epoch, then check the state again to see if we should wake up.
+-        // The epoch must be observed before we check the state or we could potentially miss a wake() and deadlock:
+-        //
+-        // - T1: s = LOAD(&state)
+-        // - T2: UPDATE(&s, signal)
+-        // - T2: UPDATE(&epoch, 1) + FUTEX_WAKE(&epoch)
+-        // - T1: e = LOAD(&epoch) (was reordered after the state load)
+-        // - T1: s & signals == 0 -> FUTEX_WAIT(&epoch, e) (missed the state update + the epoch change)
+-        //
+-        // Acquire barrier to ensure the epoch load happens before the state load.
+-        let mut epoch = self.epoch.load(Ordering::Acquire);
+-        let mut state = self.state.fetch_add(Self::ONE_WAITER, Ordering::Relaxed);
++        // Acquire barrier ensures that a wake() which counts the waiter added below changes the epoch after this load.
++        let epoch = self.epoch.load(Ordering::Acquire);
++        let state = self.state.fetch_add(Self::ONE_WAITER, Ordering::Relaxed);
+         debug_assert!(state & Self::WAITER_MASK != Self::WAITER_MASK);
+-        state += Self::ONE_WAITER;
  
-     #[cfg(any(target_os = "linux", target_os = "android"))]
-     pub(crate) fn tick_epoll(&self) {
-+        let mut tickets = Tickets::default();
-         loop {
-             // Process pending requests
-             {
-@@ -632,6 +633,7 @@ impl IoRequestLoop {
-                             match readable.poll.register_for_epoll(
-                                 Flags::PollReadable,
-                                 readable.tag,
-+                                &mut tickets,
-                                 watcher_fd,
-                                 true,
-                                 readable.fd,
-@@ -646,6 +648,7 @@ impl IoRequestLoop {
-                             match writable.poll.register_for_epoll(
-                                 Flags::PollWritable,
-                                 writable.tag,
-+                                &mut tickets,
-                                 watcher_fd,
-                                 true,
-                                 writable.fd,
-@@ -662,12 +665,8 @@ impl IoRequestLoop {
-                                 close.fd,
-                                 close.poll.flags.contains(Flags::Registered)
-                             );
--                            // Only remove from the interest list if it was previously registered.
--                            // Otherwise, epoll gets confused.
--                            // This state can happen if polling for readable/writable previously failed.
--                            if close.poll.flags.contains(Flags::WasEverRegistered) {
--                                close.poll.unregister_with_fd(watcher_fd, close.fd);
--                            }
-+                            close.poll.unregister(close.fd);
-+                            tickets.armed.remove(&close.poll.ticket);
-                             (close.on_done)(close.ctx);
-                         }
-                     }
-@@ -700,12 +699,10 @@ impl IoRequestLoop {
-             }
+         mutex.unlock();
+-        // Re-acquire on every exit path (Ok and Err).
+-        // Condvar wait semantics (unlock, block, re-lock) are the inverse of MutexGuard,
+-        // so the re-lock is expressed as a one-off defer rather than an RAII guard type.
+-        scopeguard::defer! { mutex.lock(); }
  
-             for event in current_events {
--                let pollable = Pollable::from(event.u64);
--                // Null for the waker, which is edge-triggered: no need to read its counter.
--                let Some(poll) = core::ptr::NonNull::new(pollable.poll()) else {
--                    continue;
--                };
--                Poll::on_update_epoll(poll, pollable.tag(), *event);
-+                // None for the waker too, which is edge-triggered: no need to read its counter.
-+                if let Some((poll, tag)) = tickets.armed.remove(&{ event.u64 }) {
-+                    Poll::on_update_epoll(poll, tag, *event);
-+                }
-             }
-         }
-     }
-@@ -844,22 +841,6 @@ impl Request {
-             scheduled: false,
-         }
-     }
+-        let mut futex_deadline = Futex::Deadline::init(timeout);
 -
--    /// Atomic-ordered store of `callback`.
--    ///
--    /// The io thread reads `callback` after popping `self` from the MPSC
--    /// queue (which already provides acquire on `next`); this SeqCst fence
--    /// guarantees the callback write is visible to that read even when the
--    /// store happens on a different thread than the one that scheduled the
--    /// request. Rust has no `AtomicFnPtr`, so we lower to a volatile write
--    /// followed by a full fence.
--    #[inline]
--    pub fn store_callback_seq_cst(&mut self, cb: for<'a> fn(&'a mut Request) -> Action<'a>) {
--        // SAFETY: `callback` is a plain pointer-sized field on `self`;
--        // volatile write prevents the compiler from reordering or eliding it.
--        unsafe { core::ptr::write_volatile(&raw mut self.callback, cb) };
--        core::sync::atomic::fence(Ordering::SeqCst);
--    }
- }
- 
- /// For types that embed an intrusive `io_request: uv::fs_t` and recover the parent in
-@@ -960,20 +941,20 @@ pub enum PollableTag {
- 
- /// §Dispatch (PORTING.md): `bun.ptr.TaggedPointer` should normally be split
- /// into `(tag: u8, ptr: *mut ())`. Here the value must round-trip through a
--/// single `u64` (`epoll_event.data.u64` / `kevent.udata`), so we keep the
-+/// single `u64` (`kevent.udata`), so we keep the
- /// packed addr:49 + tag:15 layout locally.
--#[cfg(not(windows))]
-+#[cfg(any(target_os = "macos", target_os = "freebsd"))]
- #[derive(Clone, Copy)]
- struct Pollable {
-     value: u64,
- }
- 
--#[cfg(not(windows))]
-+#[cfg(any(target_os = "macos", target_os = "freebsd"))]
- const POLLABLE_ADDR_BITS: u64 = 49;
--#[cfg(not(windows))]
-+#[cfg(any(target_os = "macos", target_os = "freebsd"))]
- const POLLABLE_ADDR_MASK: u64 = (1u64 << POLLABLE_ADDR_BITS) - 1;
- 
+-        loop {
+-            match futex_deadline.wait(&self.epoch, epoch) {
+-                Ok(()) => {}
+-                // On timeout, we must decrement the waiter we added above.
+-                Err(crate::futex::TimeoutError::Timeout) => {
+-                    loop {
+-                        // If there's a signal when we're timing out, consume it and report being woken up instead.
+-                        // Acquire barrier ensures code before the wake() which added the signal happens before we decrement it and return.
+-                        while state & Self::SIGNAL_MASK != 0 {
+-                            let new_state = state - Self::ONE_WAITER - Self::ONE_SIGNAL;
+-                            state = match self.state.compare_exchange_weak(
+-                                state,
+-                                new_state,
+-                                Ordering::Acquire,
+-                                Ordering::Relaxed,
+-                            ) {
+-                                Ok(_) => return Ok(()),
+-                                Err(s) => s,
+-                            };
+-                        }
 -
-```
-
-**File**: `src/runtime/webcore/blob/fd_job.rs` (modified, +3/-16)
-```diff
-@@ -81,8 +81,6 @@ pub(crate) struct FdJob<Op: FdOp> {
-     pub(crate) io_poll: io::Poll,
-     io_request: io::Request,
-     io_parking: IoParking,
--    /// epoll keeps a one-shot entry that has fired, and only the IO thread removes it.
--    close_after_io: bool,
- }
- 
- impl<Op: FdOp> JobContext for FdJob<Op> {
-@@ -133,7 +131,6 @@ impl<Op: FdOp> FdJob<Op> {
-             io_poll: io::Poll::default(),
-             io_request: io::Request::new(Self::watch),
-             io_parking: IoParking::new(),
--            close_after_io: false,
-         };
-         Job::<Self>::schedule(cx, job, js);
-     }
-@@ -152,26 +149,22 @@ impl<Op: FdOp> FdJob<Op> {
-             },
-             Err(err) => Err(err),
-         };
--        if self.close_after_io {
--            self.io_request.store_callback_seq_cst(Self::unwatch);
--            IoRequestLoop::schedule(&mut self.io_request);
--        } else {
--            self.finish();
--        }
-+        self.finish();
-     }
- 
-     fn park(&mut self) -> bun_sys::Result<()> {
-         IoRequestLoop::ensure_init()?;
-         if !self.io_parking.park() {
-             return Err(Op::INTEREST.cancelled());
-         }
--        self.close_after_io = !bun_core::Environment::IS_KQUEUE;
-         IoRequestLoop::schedule(&mut self.io_request);
-         Ok(())
-     }
- 
-     fn finish(&mut self) {
-         if let Some((fd, done)) = self.open.take() {
-+            #[cfg(any(target_os = "linux", target_os = "android"))]
-+            self.io_poll.unregister(fd.get());
-             drop(fd);
-             done.finish();
-         }
-@@ -199,12 +192,6 @@ impl<Op: FdOp> FdJob<Op> {
-         }
-     }
- 
--    /// IO thread.
--    fn unwatch(request: &mut io::Request) -> io::Action<'_> {
--        // SAFETY: as `watch`.
--        unsafe { (*from_field_ptr!(Self, io_request, &raw mut *request)).close_action() }
--    }
--
-     fn close_action(&mut self) -> io::Action<'_> {
-         io::Action::Close(io::CloseAction {
-             // SAFETY: the `ctx` below.
-```
-
-**File**: `src/runtime/webcore/blob/read_file.rs` (modified, +1/-5)
-```diff
-@@ -289,11 +289,7 @@ impl FdOp for ReadFile {
-                     err.path = self.path_for_error();
-                     return Err(err);
-                 }
--                Err(_) if self.could_block => {}
--                // Never ends: https://github.com/oven-sh/bun/pull/49337
--                Err(_) => loop {
--                    core::hint::spin_loop();
--                },
-+                Err(_) => self.could_block = true,
-             }
-         }
-         if self.buffer.len() + 16_000 < self.buffer.capacity() {
-```
-
-**File**: `test/js/bun/http/serve-file-slice-read-error.test.ts` (modified, +12/-171)
-```diff
-@@ -12,178 +12,11 @@
- // (rustix linux_raw backend), so LD_PRELOAD cannot intercept it.
- import { afterAll, beforeAll, expect, test } from "bun:test";
- import { bunEnv, bunExe, isLinux, tempDir } from "harness";
-+import { constants } from "node:os";
- import { join } from "node:path";
- 
- const cc = Bun.which("cc") || Bun.which("gcc") || Bun.which("clang");
- 
--// Usage: fail-nth-read <path> <n> -- <cmd> [args...]
--// Makes the <n>th read() syscall whose fd refers to <path> return -EIO.
--const SUPERVISOR_C = /* c */ `
--#define _GNU_SOURCE
--#include <errno.h>
--#include <signal.h>
--#include <stdio.h>
--#include <stdlib.h>
--#include <string.h>
--#include <sys/ptrace.h>
--#include <sys/stat.h>
--#include <sys/types.h>
--#include <sys/user.h>
--#include <sys/wait.h>
--#include <unistd.h>
--
--#if defined(__aarch64__)
--  #include <linux/elf.h>
--  #include <sys/uio.h>
--#endif
--
--#if defined(__x86_64__)
--  #define SYS_READ_NR 0
--  typedef struct user_regs_struct regs_t;
--  static long reg_nr(regs_t *r) { return (long)r->orig_rax; }
--  static long reg_arg0(regs_t *r) { return (long)r->rdi; }
--  static void reg_set_ret(regs_t *r, long v) { r->rax = (unsigned long long)v; }
--  static int get_regs(pid_t t, regs_t *r) { return ptrace(PTRACE_GETREGS, t, 0, r); }
--  static int set_regs(pid_t t, regs_t *r) { return ptrace(PTRACE_SETREGS, t, 0, r); }
--#elif defined(__aarch64__)
--  #define SYS_READ_NR 63
--  typedef struct user_regs_struct regs_t;
--  static long reg_nr(regs_t *r) { return (long)r->regs[8]; }
--  static long reg_arg0(regs_t *r) { return (long)r->regs[0]; }
--  static void reg_set_ret(regs_t *r, long v) { r->regs[0] = (unsigned long long)v; }
--  static int get_regs(pid_t t, regs_t *r) {
--    struct iovec io = { r, sizeof(*r) };
--    return ptrace(PTRACE_GETREGSET, t, (void *)NT_PRSTATUS, &io);
--  }
--  static int set_regs(pid_t t, regs_t *r) {
--    struct iovec io = { r, sizeof(*r) };
--    return ptrace(PTRACE_SETREGSET, t, (void *)NT_PRSTATUS, &io);
--  }
--#else
--  #error unsupported arch
--#endif
--
--/* Per-tid syscall enter/exit toggle + pending-poison flag. */
--#define MAX_TIDS 256
--static pid_t tid_tab[MAX_TIDS];
--static unsigned char in_call[MAX_TIDS];
--static unsigned char poison[MAX_TIDS];
--static int slot(pid_t t) {
--  int i, free_i = -1;
--  for (i = 0; i < MAX_TIDS; i++) {
--    if (tid_tab[i] == t) return i;
--    if (tid_tab[i] == 0 && free_i < 0) free_i = i;
--  }
--  if (free_i >= 0) { tid_tab[free_i] = t; return free_i; }
--  return 0;
--}
--static void drop(pid_t t) {
--  int i;
--  for (i = 0; i < MAX_TIDS; i++) if (tid_tab[i] == t) {
--    tid_tab[i] = 0; in_call[i] = 0; poison[i] = 0;
--  }
--}
--
--int main(int argc, char **argv) {
--  if (argc < 5 || strcmp(argv[3], "--") != 0) {
--    fprintf(stderr, "usage: %s <path> <n> -- <cmd> [args...]\\n", argv[0]);
--    return 2;
--  }
--  const char *target_path = argv[1];
--  long fail_n = strtol(argv[2], NULL, 10);
--  char **cmd = &argv[4];
--
--  struct stat ts;
--  if (stat(target_path, &ts) != 0) { perror("stat target"); return 2; }
--
--  pid_t child = fork();
--  if (child < 0) { perror("fork"); return 2; }
--  if (child == 0) {
--    if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0) { perror("TRACEME"); _exit(126); }
--    raise(SIGSTOP);
--    execvp(cmd[0], cmd);
--    perror("execvp");
--    _exit(127);
--  }
--
--  int st;
--  if (waitpid(child, &st, 0) < 0) { perror("waitpid initial"); return 2; }
--  long opts = PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACECLONE | PTRACE_O_TRACEFORK |
--              PTRACE_O_TRACEVFORK | PTRACE_O_TRACEEXEC | PTRACE_O_EXITKILL;
--  if (ptrace(PTRACE_SETOPTIONS, child, 0, opts) != 0) { perror("SETOPTIONS"); return 2; }
--  if (ptrace(PTRACE_SYSCALL, child, 0, 0) != 0) { perror("SYSCALL initial"); return 2; }
--
--  long match_count = 0;
--  int exit_code = -1;
--
--  for (;;) {
--    pid_t t = waitpid(-1, &st, __WALL);
--    if (t < 0) {
--      if (errno == ECHILD) break;
--      if (errno == EINTR) continue;
--      perror("waitpid"); return 2;
--    }
--    if (WIFEXITED(st) || WIFSIGNALED(st)) {
--      if (t == child) {
--        exit_code = WIFEXITED(st) ? WEXITSTATUS(st) : 128 + WTERMSIG(st);
--      }
--      drop(t);
--      continue;
--    }
--    if (!WIFSTOPPED(st)) continue;
--
--    int sig = WSTOPSIG(st);
--    unsigned ev = (unsigned)(st >> 16);
--    if (ev == PTRACE_EVENT_CLONE || ev == PTRACE_EVENT_FORK || ev == PTRACE_EVENT_VFORK) {
--      ptrace(PTRACE_SYSCALL, t, 0, 0);
--      continue;
--    }
--    if (ev == PTRACE_EVENT_EXEC) {
--      /* execve's syscall-exit-stop follows; keep the toggle consistent. */
--      in_call[slot(t)] = 1;
--      poison[slot(t)] = 0;
--      ptrace(PTRACE_SYSCALL, t, 0, 0);
--      continue;
--    }
--    if (sig == (SIGTRAP | 0x80)) {
--      int s = slot(t);
--      in_call[s] ^= 1;
--      regs_t r;
--      if (get_regs(t, &r) != 0) { ptrace(PTRACE_SYSCALL, t, 0, 0); continue; }
--
--      if (in_call[s]) { /* syscall entry */
--        if (reg_nr(&r) == SYS_READ_NR) {
--          long fd = reg_arg0(&r);
--          char linkpath[64];
--          struct stat
-```
-
-**File**: `test/js/bun/io/bun-write.test.js` (modified, +77/-0)
-```diff
-@@ -8,16 +8,19 @@ import {
-   exampleSite,
-   gcTick,
-   isASAN,
-+  isLinux,
-   isMacOS,
-   isWindows,
-   tempDir,
-   withoutAggressiveGC,
- } from "harness";
-+import { mkfifo } from "mkfifo";
- import { once } from "node:events";
- import http from "node:http";
- import { finished } from "node:stream/promises";
- import path, { join } from "path";
- import { asyncIterableBodyShapes, settled as settledBody } from "../../web/streams/async-iterable-body-shapes";
-+import { drain, fill, openFifo, untilWatched } from "./fifo-helpers";
- 
- let i = 0;
- const IS_UV_FS_COPYFILE_DISABLED =
-@@ -1798,3 +1801,77 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice) {
-     expect(exitCode).toBe(0);
-   });
- });
-+
-+it.skipIf(isWindows)("Bun.write() goes on each time a pipe has room", async () => {
-+  using dir = tempDir("bun-write-pipe", {});
-+  using fifo = openFifo(String(dir));
-+  const room = fill(fifo.writer);
-+  const file = Bun.file(fifo.writer);
-+  file.size; // Finds out that it is not a regular file.
-+  const write = Bun.write(file, new Blob([Buffer.alloc(8 * room)]));
-+  let drained = 0;
-+  while (Bun.peek.status(write) === "pending") {
-+    await Bun.sleep(1);
-+    drained += drain(fifo.reader);
-+  }
-+  expect(await write).toBe(8 * room);
-+  expect(drained + drain(fifo.reader)).toBe(9 * room);
-+});
-+
-+describe.skipIf(!isLinux).concurrent("Bun.write() to a pipe that is full", () => {
-+  const data = new Blob([Buffer.alloc(1 << 20, "a")]);
-+  /** `.size` makes the file find out that it is not a regular one. */
-+  function knownPipe(fd) {
-+    const file = Bun.file(fd);
-+    file.size;
-+    return file;
-+  }
-+
-+  // The capacity of a pipe is fixed on Linux.
-+  it("waits for room after the last byte", async () => {
-+    using dir = tempDir("bun-write-pipe", {});
-+    using fifo = openFifo(String(dir));
-+    const room = fill(fifo.writer);
-+    drain(fifo.reader);
-+    const write = Bun.write(knownPipe(fifo.writer), data.slice(0, room));
-+    await untilWatched(fifo.writer);
-+    expect(Bun.peek.status(write)).toBe("pending");
-+    expect(drain(fifo.reader)).toBe(room);
-+    expect(await write).toBe(room);
-+  });
-+
-+  it("waits when the file finds out after the call that it is a pipe", async () => {
-+    using dir = tempDir("bun-write-pipe", {});
-+    mkfifo(join(String(dir), "hold-1"));
-+    mkfifo(join(String(dir), "hold-2"));
-+    const script = `
-+      import fs from "node:fs";
-+      import { drain, fill, openFifo, untilWatched } from ${JSON.stringify(join(import.meta.dir, "fifo-helpers.ts"))};
-+
-+      // readFile() has a thread of the pool from its open(), which ends the ENXIO, until the writer is closed.
-+      async function holdThread(path) {
-+        fs.promises.readFile(path);
-+        for (;;) {
-+          try {
-+            return fs.openSync(path, fs.constants.O_WRONLY | fs.constants.O_NONBLOCK);
-+          } catch (error) {
-+            if (error.code !== "ENXIO") throw error;
-+            await Bun.sleep(1);
-+          }
-+        }
-+      }
-+
-+      using fifo = openFifo(".");
-+      fill(fifo.writer);
-+      const held = [await holdThread("hold-1"), await holdThread("hold-2")];
-+      const file = Bun.file(fifo.writer);
-+      const write = Bun.write(file, new Blob(["a"]));
-+      file.size;
-+      held.forEach(fd => fs.closeSync(fd));
-+      await untilWatched(fifo.writer);
-+      drain(fifo.reader);
-+      console.log(await write);
-+    `;
-+    expect(await bunRun(["--cwd", String(dir), "-e", script], { UV_THREADPOOL_SIZE: "2" })).toSpawn("1");
-+  });
-+});
-```
-
-**File**: `test/js/bun/io/fail-nth-read.c` (added, +166/-0)
-```diff
-@@ -0,0 +1,166 @@
-+// Usage: fail-nth-read <path> <n> <errno> -- <cmd> [args...]
-+// Makes the <n>th read() syscall whose fd refers to <path> return -<errno>.
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ptrace.h>
-+#include <sys/stat.h>
-+#include <sys/types.h>
-+#include <sys/user.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#if defined(__aarch64__)
-+  #include <linux/elf.h>
-+  #include <sys/uio.h>
-+#endif
-+
-+#if defined(__x86_64__)
-+  #define SYS_READ_NR 0
-+  typedef struct user_regs_struct regs_t;
-+  static long reg_nr(regs_t *r) { return (long)r->orig_rax; }
-+  static long reg_arg0(regs_t *r) { return (long)r->rdi; }
-+  static void reg_set_ret(regs_t *r, long v) { r->rax = (unsigned long long)v; }
-+  static int get_regs(pid_t t, regs_t *r) { return ptrace(PTRACE_GETREGS, t, 0, r); }
-+  static int set_regs(pid_t t, regs_t *r) { return ptrace(PTRACE_SETREGS, t, 0, r); }
-+#elif defined(__aarch64__)
-+  #define SYS_READ_NR 63
-+  typedef struct user_regs_struct regs_t;
-+  static long reg_nr(regs_t *r) { return (long)r->regs[8]; }
-+  static long reg_arg0(regs_t *r) { return (long)r->regs[0]; }
-+  static void reg_set_ret(regs_t *r, long v) { r->regs[0] = (unsigned long long)v; }
-+  static int get_regs(pid_t t, regs_t *r) {
-+    struct iovec io = { r, sizeof(*r) };
-+    return ptrace(PTRACE_GETREGSET, t, (void *)NT_PRSTATUS, &io);
-+  }
-+  static int set_regs(pid_t t, regs_t *r) {
-+    struct iovec io = { r, sizeof(*r) };
-+    return ptrace(PTRACE_SETREGSET, t, (void *)NT_PRSTATUS, &io);
-+  }
-+#else
-+  #error unsupported arch
-+#endif
-+
-+/* Per-tid syscall enter/exit toggle + pending-poison flag. */
-+#define MAX_TIDS 256
-+static pid_t tid_tab[MAX_TIDS];
-+static unsigned char in_call[MAX_TIDS];
-+static unsigned char poison[MAX_TIDS];
-+static int slot(pid_t t) {
-+  int i, free_i = -1;
-+  for (i = 0; i < MAX_TIDS; i++) {
-+    if (tid_tab[i] == t) return i;
-+    if (tid_tab[i] == 0 && free_i < 0) free_i = i;
-+  }
-+  if (free_i >= 0) { tid_tab[free_i] = t; return free_i; }
-+  return 0;
-+}
-+static void drop(pid_t t) {
-+  int i;
-+  for (i = 0; i < MAX_TIDS; i++) if (tid_tab[i] == t) {
-+    tid_tab[i] = 0; in_call[i] = 0; poison[i] = 0;
-+  }
-+}
-+
-+int main(int argc, char **argv) {
-+  if (argc < 6 || strcmp(argv[4], "--") != 0) {
-+    fprintf(stderr, "usage: %s <path> <n> <errno> -- <cmd> [args...]\n", argv[0]);
-+    return 2;
-+  }
-+  const char *target_path = argv[1];
-+  long fail_n = strtol(argv[2], NULL, 10);
-+  long fail_errno = strtol(argv[3], NULL, 10);
-+  char **cmd = &argv[5];
-+
-+  struct stat ts;
-+  if (stat(target_path, &ts) != 0) { perror("stat target"); return 2; }
-+
-+  pid_t child = fork();
-+  if (child < 0) { perror("fork"); return 2; }
-+  if (child == 0) {
-+    if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0) { perror("TRACEME"); _exit(126); }
-+    raise(SIGSTOP);
-+    execvp(cmd[0], cmd);
-+    perror("execvp");
-+    _exit(127);
-+  }
-+
-+  int st;
-+  if (waitpid(child, &st, 0) < 0) { perror("waitpid initial"); return 2; }
-+  long opts = PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACECLONE | PTRACE_O_TRACEFORK |
-+              PTRACE_O_TRACEVFORK | PTRACE_O_TRACEEXEC | PTRACE_O_EXITKILL;
-+  if (ptrace(PTRACE_SETOPTIONS, child, 0, opts) != 0) { perror("SETOPTIONS"); return 2; }
-+  if (ptrace(PTRACE_SYSCALL, child, 0, 0) != 0) { perror("SYSCALL initial"); return 2; }
-+
-+  long match_count = 0;
-+  int exit_code = -1;
-+
-+  for (;;) {
-+    pid_t t = waitpid(-1, &st, __WALL);
-+    if (t < 0) {
-+      if (errno == ECHILD) break;
-+      if (errno == EINTR) continue;
-+      perror("waitpid"); return 2;
-+    }
-+    if (WIFEXITED(st) || WIFSIGNALED(st)) {
-+      if (t == child) {
-+        exit_code = WIFEXITED(st) ? WEXITSTATUS(st) : 128 + WTERMSIG(st);
-+      }
-+      drop(t);
-+      continue;
-+    }
-+    if (!WIFSTOPPED(st)) continue;
-+
-+    int sig = WSTOPSIG(st);
-+    unsigned ev = (unsigned)(st >> 16);
-+    if (ev == PTRACE_EVENT_CLONE || ev == PTRACE_EVENT_FORK || ev == PTRACE_EVENT_VFORK) {
-+      ptrace(PTRACE_SYSCALL, t, 0, 0);
-+      continue;
-+    }
-+    if (ev == PTRACE_EVENT_EXEC) {
-+      /* execve's syscall-exit-stop follows; keep the toggle consistent. */
-+      in_call[slot(t)] = 1;
-+      poison[slot(t)] = 0;
-+      ptrace(PTRACE_SYSCALL, t, 0, 0);
-+      continue;
-+    }
-+    if (sig == (SIGTRAP | 0x80)) {
-+      int s = slot(t);
-+      in_call[s] ^= 1;
-+      regs_t r;
-+      if (get_regs(t, &r) != 0) { ptrace(PTRACE_SYSCALL, t, 0, 0); continue; }
-+
-+      if (in_call[s]) { /* syscall entry */
-+        if (reg_nr(&r) == SYS_READ_NR) {
-+          long fd = reg_arg0(&r);
-+          char linkpath[64];
-+          struct stat fs;
-+          snprintf(linkpath, sizeof linkpath, "/proc/%d/fd/%ld", (int)t, fd);
-+          if (stat(linkpath, &fs) == 0 &&
-+              fs.st_dev == ts.st_dev && fs.st_ino == ts.st_ino) {
-+            match_count++;
-+            if (match_count == fail_n) poison[s] = 1;
-+          }
-+        }
-+     
-```
-
-**File**: `test/js/bun/io/fifo-helpers.ts` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+import { mkfifo } from "mkfifo";
-+import fs from "node:fs";
-+import { join } from "node:path";
-+
-+const { O_NONBLOCK, O_RDONLY, O_WRONLY } = fs.constants;
-+
-+/** Makes a FIFO in `dir` and opens both ends, non-blocking. */
-+export function openFifo(dir: string) {
-+  const path = join(dir, "fifo");
-+  mkfifo(path);
-+  const reader = fs.openSync(path, O_RDONLY | O_NONBLOCK);
-+  const writer = fs.openSync(path, O_WRONLY | O_NONBLOCK);
-+  const open = new Set([reader, writer]);
-+  const close = (fd: number) => void (open.delete(fd) && fs.closeSync(fd));
-+  return { path, reader, writer, close, [Symbol.dispose]: () => [...open].forEach(close) };
-+}
-+
-+function untilEAGAIN(step: () => number) {
-+  let total = 0;
-+  try {
-+    for (let n; (n = step());) total += n;
-+  } catch (e: any) {
-+    if (e.code !== "EAGAIN") throw e;
-+  }
-+  return total;
-+}
-+
-+/** Writes until the pipe is full. Returns how much that was. */
-+export function fill(writer: number) {
-+  const page = Buffer.alloc(4096, "x");
-+  return untilEAGAIN(() => fs.writeSync(writer, page));
-+}
-+
-+/** Reads until the pipe is empty. Returns how much that was. */
-+export function drain(reader: number) {
-+  const buffer = Buffer.alloc(65536);
-+  return untilEAGAIN(() => fs.readSync(reader, buffer));
-+}
-+
-+/** Linux: resolves when this process has asked epoll to tell it when `fd` is readable or writable. */
-+export async function untilWatched(fd: number) {
-+  const inode = fs.fstatSync(fd).ino;
-+  const deadline = Date.now() + 30_000;
-+  while (Date.now() < deadline) {
-+    for (const name of fs.readdirSync("/proc/self/fdinfo")) {
-+      let info = "";
-+      try {
-+        info = fs.readFileSync("/proc/self/fdinfo/" + name, "utf8");
-+      } catch {}
-+      for (const [, events, ino] of info.matchAll(/^tfd:.* events:\s*([0-9a-f]+) .* ino:([0-9a-f]+)/gm)) {
-+        // EPOLLIN | EPOLLOUT: a one-shot entry that has fired has neither.
-+        if (parseInt(ino, 16) === inode && parseInt(events, 16) & 0b101) return;
-+      }
-+    }
-+    await Bun.sleep(1);
-+  }
-+  throw new Error(`nothing waits for fd ${fd}`);
-+}
-```
-
-**File**: `test/js/bun/util/bun-file-fd-read.test.ts` (modified, +244/-5)
-```diff
-@@ -1,11 +1,13 @@
-+import { dlopen, ptr } from "bun:ffi";
- import { describe, expect, test } from "bun:test";
--import { closeSync, openSync } from "fs";
--import { isWindows, tempDir } from "harness";
-+import { closeSync, openSync, readSync, renameSync, writeSync } from "fs";
-+import { bunEnv, bunExe, isLinux, isWindows, libcPathForDlopen, tempDir } from "harness";
-+import { constants } from "os";
- import { join } from "path";
-+import { openFifo, untilWatched } from "../io/fifo-helpers";
- 
- // Reading a Bun.file() backed by a file descriptor goes through
--// ReadFile.runAsync -> getFd (opened_fd already set) -> runAsyncWithFD ->
--// resolveSizeAndLastModified, which derives total_size from fstat. That
-+// ReadFile::open, which derives the expected size from fstat. That
- // computation previously used @intCast to u52 guarded by a dead @truncate,
- // so an abnormal fstat size could trip integerOutOfBounds. Triggering that
- // directly requires fstat to report > 4.5 PB which is not achievable here,
-@@ -36,7 +38,7 @@ describe.skipIf(isWindows)("Bun.file(fd) read", () => {
-     using dir = tempDir("bun-file-fd-read", { "fd-slice.txt": "0123456789" });
-     const path = join(String(dir), "fd-slice.txt");
- 
--    // total_size should come from fstat (10), not from the requested slice
-+    // The expected size should come from fstat (10), not from the requested slice
-     // end, so the initial buffer allocation stays small.
-     expect(await withFd(path, fd => Bun.file(fd).slice(0, Number.MAX_SAFE_INTEGER).text())).toBe("0123456789");
-     expect(await withFd(path, fd => Bun.file(fd).slice(2, 5).text())).toBe("234");
-@@ -50,3 +52,240 @@ describe.skipIf(isWindows)("Bun.file(fd) read", () => {
-     expect((await withFd(path, fd => Bun.file(fd).arrayBuffer())).byteLength).toBe(0);
-   });
- });
-+
-+test.skipIf(!isLinux)("an empty read of a FIFO by path stays open until its writer has written", async () => {
-+  using dir = tempDir("bun-file-fd-read", {});
-+  using fifo = openFifo(String(dir));
-+  const text = Bun.file(fifo.path).slice(0, 0).text();
-+  await untilWatched(fifo.reader);
-+  fifo.close(fifo.reader);
-+  expect(writeSync(fifo.writer, "x")).toBe(1);
-+  expect(await text).toBe("");
-+});
-+
-+test.skipIf(isWindows)("a file that was empty and is a silent FIFO now reads as empty", async () => {
-+  using dir = tempDir("bun-file-fd-read", { file: "" });
-+  using fifo = openFifo(String(dir));
-+  const file = Bun.file(join(String(dir), "file"));
-+  expect(file.size).toBe(0);
-+  renameSync(fifo.path, file.name!);
-+  expect(await file.text()).toBe("");
-+});
-+
-+test.skipIf(isWindows)("a read of a pipe waits again after each chunk", async () => {
-+  using dir = tempDir("bun-file-fd-read", {});
-+  using fifo = openFifo(String(dir));
-+  const text = Bun.file(fifo.reader).slice(0, 30).text();
-+  for (let i = 0; i < 30; i++) {
-+    // A writer that keeps up, and one that does not.
-+    await Bun.sleep(i % 4);
-+    writeSync(fifo.writer, "x");
-+  }
-+  expect(await text).toBe(Buffer.alloc(30, "x").toString());
-+});
-+
-+// More than the thread that waits takes from the kernel at once.
-+describe.skipIf(isWindows).concurrent("300 reads wait", () => {
-+  async function run(script: string) {
-+    using dir = tempDir("bun-file-fd-read", {});
-+    const prelude = `
-+      import { openFifo } from ${JSON.stringify(join(import.meta.dir, "..", "io", "fifo-helpers.ts"))};
-+      import { closeSync, constants, mkdirSync, openSync, writeSync } from "node:fs";
-+      const open = dir => (mkdirSync(dir), openFifo(dir));
-+      using shared = open("shared");
-+      const readers = Array.from({ length: 300 }, () => openSync(shared.path, constants.O_RDONLY | constants.O_NONBLOCK));
-+      // Behind the others on the pool, so most of them wait by then.
-+      const fence = () => Bun.file(${JSON.stringify(import.meta.path)}).text();
-+    `;
-+    await using proc = Bun.spawn({
-+      cmd: [bunExe(), "-e", prelude + script],
-+      cwd: String(dir),
-+      env: bunEnv,
-+      stderr: "pipe",
-+    });
-+    const [stdout, stderr, exitCode] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
-+    return { stdout, stderr, exitCode };
-+  }
-+
-+  test("and get ready together", async () => {
-+    const result = await run(`
-+      const texts = readers.map(fd => Bun.file(fd).slice(0, 1).text());
-+      await fence();
-+      writeSync(shared.writer, Buffer.alloc(300, "x"));
-+      console.log((await Promise.all(texts)).join("").length);
-+    `);
-+    expect(result).toEqual({ stdout: "300\n", stderr: "", exitCode: 0 });
-+  });
-+
-+  test.each([false, true])("and are cancelled beside one that is not, fds closed: %p", async closed => {
-+    const result = await run(`
-+      using own = open("own");
-+      const graph = new Bun.ModuleGraph();
-+      for (const fd of readers) graph.run(() => void Bun.file(fd).text().catch(() => {}));
-+      for (const byte of "ab") {
-+        const text = Bun.file(own.reader).slice(0, 1).text();
-+        await fenc
-```
-
----
-
-### Incident Patch 2: `b116ab7b` (2026-11-20)
-**Commit Message**: Refuse --aot with --bytecode, and compiler fixes (#49336)
-
-Two groups of changes.
-
-**`--aot` with `--bytecode` is an error.** `bun build --compile --aot --bytecode` used to print a note and build with `--aot`. It now fails and asks for one of the two:
-
-```
-error: Cannot use both --aot and --bytecode. Choose --aot for machine code or --bytecode for bytecode
-```
-
-`bun compile --bytecode` fails the same way and names `--no-aot`. `Bun.build()` with `bytecode: true` and `compile.aot` throws. `--bytecode-depth`, `--bytecode-order` and `--no-optimize-bytecode` still only print their notes. The test harnesses that compile other suites ahead of time now leave `--bytecode` out.
-
-**Compiler fixes.** An import of a file that was required as a path gives the file's module, an uncalled constructor with a stored prototype no longer aborts the build, and a `var` named as its catch parameter in evaluated text is a global. The programs for oven-sh/WebKit#1082's fixes are here too. These passed on Linux x64 links of a nearby tree.
-
-
-Also fixed: `fs.rename` no longer looks up its source first in ordinary builds, and a compiled program lists an imported file that has the name of an entry point in `read
-
-**File**: `docs/compiler/compatibility.mdx` (modified, +1/-0)
-```diff
-@@ -373,4 +373,5 @@ Check `error.name` or use `instanceof`, not `error.message`.
- | Over 256 open `JSCallback`s, if the executable can't read its own file | Make the file readable, or `close()` some                                                |
- | Over 32 GB of objects in a thread                                      | `--aot-huge-heap`                                                                        |
- | A stack under 512 KB (`ulimit -s`)                                     | Give it more. `bun run` needs less                                                       |
-+| `import()` or `require()` with a `type` that isn't written out         | Write it out: `require("./a.json", { type: "file" })`                                    |
- | `with { type: "macro" }` on an import (`TS100053`)                     | Pass `--no-aot`                                                                          |
-```
-
-**File**: `docs/snippets/cli/build.mdx` (modified, +1/-1)
-```diff
-@@ -217,7 +217,7 @@ bun build <entry points>
- 
- <ParamField path="--aot" type="boolean">
-   Compile JavaScript and TypeScript to machine code at build time. Requires <code>--compile</code>.{" "}
--  <code>--format</code> and <code>--bytecode</code> have no effect with it
-+  <code>--format</code> has no effect with it, and it cannot be combined with <code>--bytecode</code>
- </ParamField>
- 
- <ParamField path="--explain" type="string">
-```
-
-**File**: `packages/bun-types/bun.d.ts` (modified, +1/-1)
-```diff
-@@ -4009,7 +4009,7 @@ declare module "bun" {
-     autoloadPackageJson?: boolean;
-     /**
-      * Compile the program's JavaScript and TypeScript to machine code at build time.
--     * `bytecode` has no effect with it.
-+     * It cannot be combined with `bytecode`.
-      *
-      * The executable has no JIT. Code that only exists at run time, such as a string passed to
-      * `eval()` or `new Function()`, runs in the interpreter.
-```
-
-**File**: `scripts/build/deps/webkit.sha256` (modified, +78/-78)
-```diff
-@@ -1,78 +1,78 @@
--db35656442eb1180ec115755550684a38d17189bcba810b75ef25667d481c188  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-aot-sources.tar.gz
--7626d0192cdc1ffddf147937715d9da032a088bc0d677a84fca2548c945e9c75  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-amd64-aot.tar.gz
--ce092ffead4d04efdd65ccf83fc80944cd597564b78e9087a4c79c5cd3027007  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-amd64-debug-aot.tar.gz
--0e784f5eb0acdbd9d8ca8e2a575aa28fe5f6d6ba173405ea2966aaf885f66801  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-amd64-lto-aot.tar.gz
--8014772ed4973e7bd33250cec43f0bfa97eca466986d23091c8e217ddea9524c  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-amd64-lto.tar.gz
--21672de13905722cb4b79000cd51c640a84f929da7a4a6677db97aa9543ec2ef  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-amd64.tar.gz
--e7b6d76cc1646361bc1b0d8355fea37760f61c3d1455f04bf605668b5fa3ec12  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-arm64-aot.tar.gz
--abf10c4f11dfbab6cf217761752004510763c125edb3fbb6a1585229b25b5065  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-arm64-debug-aot.tar.gz
--eed9d70c762b7fafc081e526ec3b7de36cc503d52069288dff5b2373331a5b35  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-arm64-lto-aot.tar.gz
--0fdcf73a3c98c3c47df043df901ff974c38fb4e3731be39113543f62c35131c0  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-arm64-lto.tar.gz
--1e152e3607cd1c669c38cc18cc97b04195cc363f854d90c93f92a4e8977990b9  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-freebsd-arm64.tar.gz
--4de64596a060ae3f068ff611256b75097c1ed99133aa526333b643d75c2483a6  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-android-aot.tar.gz
--7408df346a5e66eddbff318d02ce492fbaf10360b724ce70bfed5938d2fefbda  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-android-debug-aot.tar.gz
--68ed1a1b21dcdf42ec36d0ee2f1ed9764a5361fb07edb562a46661188cbd682b  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-android-lto-aot.tar.gz
--625fd672bfe0809c12213973c813854c59b2fc9b2f51ac860708c4bc0291a810  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-android-lto.tar.gz
--e20ce5cd0aac41b73f08ec117b1d2fe5523af5df22748c18629a2444e2ea8f8e  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-android.tar.gz
--d1141d96a819a7428b9016038976182d3fccff286541800d7fd873d540c53aa6  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-aot.tar.gz
--972c2734f8eb874593ba21a028586b89745a99966aaa9ef304eef24413e09b56  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-asan-aot.tar.gz
--a8bd8f9c63a246411163f38a0b7257a534fef4af894450b992a1d9aeda36de2f  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-assertions-aot.tar.gz
--8fb858a32c8798d176e9dc2fe49cc0e25bd61785f87cc161c131a60925c5b942  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-assertions-coverage-aot.tar.gz
--79e9ca87c72b36b58b11dc9c79d005fbdf559d1046f7462ce8e26a3348f1f85a  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-coverage-aot.tar.gz
--6a9ce7ceab3cf62245f42f82a1e26700ed9278c9fa265854830a082186ea7c2b  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-debug-aot.tar.gz
--7b2fd4ee16ca733f42b0dedd8bb78f08942600ef9d254da989f5b51119292241  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-debug-asan-aot.tar.gz
--d977d2b05907d89989ebc95526ec4fd8bc10e33cf2088e2f3dc4dffba1ea8c05  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-hardened-aot.tar.gz
--13ef954934d321fd8008b0c47857b329fd53c59a51291bde83c528beec3b9aff  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-lto-aot.tar.gz
--43a06ab317ec49e98def6ce3297fb86637f64574abcbd970a798141d55a9d1ba  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-lto-hardened-aot-no-webassembly.tar.gz
--a2e0e4e0ee8f9afc05a7ca20f1998636428d7ff125387d1b02873a454e930cc2  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-lto-hardened-aot.tar.gz
--5d6e96523173517e7025b6597b2228f783f342c34f774cc3f7696c91da27cdb8  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-lto-hardened.tar.gz
--3b8f8646016b603102f037ae4201945c8fb29bde5826906d5be1568d2c11d7d5  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-lto.tar.gz
--8f1deec78ad5855df8983bf0369404a3317c81f9d270e3312b99d460be83d0d7  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-musl-aot.tar.gz
--3b11f44b3be9dd851d7c95014f1ccf9d3dda9166cc7bd85cf852da5f27aff0a4  autobuild-cbf8d973991b8a341fe00fb65b9d99c57cde303e/bun-webkit-linux-amd64-musl-debug-aot.tar.gz
--7e5d7e514703379430daaa6530e89afaeb13daf4254711b7f8483e
-```
-
-**File**: `scripts/build/deps/webkit.ts` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-  * After changing it, run `bun run pin-webkit`: webkit.sha256 pins the sha256
-  * of this version's tarballs, and a build refuses one that is not in there.
-  */
--export const WEBKIT_VERSION = "cbf8d973991b8a341fe00fb65b9d99c57cde303e";
-+export const WEBKIT_VERSION = "499846f18f75962fd6e2ba01065d00305ce72c4a";
- 
- /**
-  * WebKit (JavaScriptCore) — the JS engine, with WTF and bmalloc.
-```
-
-**File**: `src/aot/lower/call/evaluated_text.rs` (modified, +5/-10)
-```diff
-@@ -1,9 +1,8 @@
- use bun_sema::atom::{Atom, known};
--use bun_sema::bind::{Binding, Decl, ScopeId, ScopeKind};
-+use bun_sema::bind::{Binding, BindingKind, Decl, ScopeId, ScopeKind};
- use bun_sema::fold::Constant;
- use bun_sema::hir::{
--    CallId, ExprId, ExprKind, FnKind, GlobalCode, KnownEvaluation, NodeData, PatId,
--    ReplacedEvaluation,
-+    CallId, ExprId, ExprKind, FnKind, GlobalCode, KnownEvaluation, NodeData, ReplacedEvaluation,
- };
- use rustc_hash::FxHashMap;
- 
-@@ -111,10 +110,10 @@ impl FileLowering<'_, '_, '_, '_> {
-                     Decl::Fn(function) => Some(hir[*function].start),
-                     _ => None,
-                 });
-+                // An initializer may store into a catch parameter of that name. The variable is there all the same.
-+                let is_variable = bound.binding_kind(symbol) == BindingKind::Var;
-                 let of_variable = decls().find_map(|decl| match decl {
--                    Decl::Var(pattern) if self.is_global_variable(*pattern) => {
--                        Some(hir[*pattern].pos)
+-                        // Remove the waiter we added and officially return timed out.
+-                        let new_state = state - Self::ONE_WAITER;
+-                        state = match self.state.compare_exchange_weak(
+-                            state,
+-                            new_state,
+-                            Ordering::Relaxed,
+-                            Ordering::Relaxed,
+-                        ) {
+-                            Ok(_) => return Err(TimeoutError::Timeout),
+-                            Err(s) => s,
+-                        };
 -                    }
-+                    Decl::Var(pattern) if is_variable => Some(hir[*pattern].pos),
-                     _ => None,
-                 });
-                 let position = of_function.or(of_variable)?;
-@@ -124,10 +123,6 @@ impl FileLowering<'_, '_, '_, '_> {
-         globals.sort_unstable_by_key(|it| it.0);
-         globals.into_iter().map(|it| (it.1, it.2)).collect()
-     }
+-                }
++        let result = match timeout {
++            Some(_) => Futex::wait(&self.epoch, epoch, timeout).map_err(|_| TimeoutError::Timeout),
++            None => {
++                Futex::wait_forever(&self.epoch, epoch);
++                Ok(())
+             }
 -
--    fn is_global_variable(&self, pattern: PatId) -> bool {
--        self.bound.initialized_binding(pattern) == Binding::Free
--    }
- }
- 
- impl FunctionLowering<'_, '_, '_, '_, '_> {
-```
-
-**File**: `src/aot/lower/known_call.rs` (modified, +41/-1)
-```diff
-@@ -1,6 +1,6 @@
- use bun_sema::atom::{Atom, known};
- use bun_sema::bind::{
--    Binding, BindingInitializer, Decl, InitialState, Parent, ScopeId, StoreKind, SymbolId,
-+    Binding, BindingInitializer, Decl, FnOwner, InitialState, Parent, ScopeId, StoreKind, SymbolId,
- };
- use bun_sema::check::aot::{FunctionRef, ObjectMemberKind};
- use bun_sema::hir::{
-@@ -1798,6 +1798,46 @@ fn is_lowered(file: &FileLowering<'_, '_, '_, '_>, home: FileId) -> bool {
-     file.inputs.files[home.idx()].is_some()
- }
- 
-+/// It is never made: it stands in a file, a function or a declaration that the executable leaves out.
-+pub(in crate::lower) fn is_left_out(
-+    file: &FileLowering<'_, '_, '_, '_>,
-+    home: FileId,
-+    function: FnId,
-+) -> bool {
-+    if !is_lowered(file, home) {
-+        return true;
-+    }
-+    let functions = file.inputs.library_functions;
-+    let declarations = functions.left_out_declarations();
-+    let bound = file.queries.files().bound(home);
-+    let is_node_left_out = |node: Parent| match node {
-+        Parent::FnBody(function) => functions.is_left_out(FunctionRef {
-+            file: home,
-+            function,
-+        }),
-+        Parent::Stmt(statement) => declarations.is_statement_left_out(home, statement),
-+        Parent::VarInit(declarator) => declarations.is_declarator_left_out(home, declarator),
-+        _ => false,
-+    };
-+    let mut nodes = core::iter::successors(Some(Parent::FnBody(function)), |&node| match node {
-+        Parent::Expr(expression) => Some(bound.parent_of_expr(expression)),
-+        Parent::Prop(property) => {
-+            let literal = bound.prop_owner[property.idx()].some()?;
-+            Some(bound.parent_of_expr(literal))
-+        }
-+        Parent::Stmt(statement) => Some(bound.parent_of_stmt(statement)),
-+        Parent::VarInit(declarator) => Some(Parent::Stmt(bound.var_stmt[declarator.idx()])),
-+        Parent::Case(case) => Some(Parent::Stmt(bound.case_stmt[case.idx()])),
-+        Parent::FnBody(function) => match bound.fns[function.idx()].owner {
-+            FnOwner::Expr(written) => Some(bound.parent_of_expr(written)),
-+            FnOwner::Stmt(statement) => Some(bound.parent_of_stmt(statement)),
-+            FnOwner::None | FnOwner::Member(_) | FnOwner::Type(_) => None,
-+        },
-+        _ => None,
-+    });
-+    nodes.any(is_node_left_out)
-+}
-+
- fn is_plain_call(file: &FileLowering<'_, '_, '_, '_>, site: Call) -> bool {
-     let hir = file.hir;
-     let mut arguments = hir.ids(site.args);
-```
-
-**File**: `src/aot/lower/layouts/classes.rs` (modified, +6/-2)
-```diff
-@@ -27,7 +27,9 @@ use crate::known_helpers::StateOwner;
- use crate::lower::class::ClassElement;
- use crate::lower::module::LibraryFunctionForm;
- use crate::lower::positions::is_made_by_its_file;
--use crate::lower::{CheckerTypeId, FileLowering, NameOfHeir, SourceKind, class, module};
-+use crate::lower::{
-+    CheckerTypeId, FileLowering, NameOfHeir, SourceKind, class, known_call, module,
-+};
- use crate::modules::{InnerModuleKind, ModuleRef};
- 
- type Supertypes = SmallVec<[LayoutId; 4]>;
-@@ -751,7 +753,9 @@ impl FileLowering<'_, '_, '_, '_> {
-     ) -> Option<LayoutId> {
-         let layout = self.declare_constructor_function_layout(function)?;
-         if function.file == self.file && !self.fragment.is_layout_defined(layout) {
--            let constructor = match self.decisions().is_dead_function(function.function) {
-+            let is_never_made = self.decisions().is_dead_function(function.function)
-+                || known_call::is_left_out(self, self.file, function.function);
-+            let constructor = match is_never_made {
-                 true => None,
-                 false => Some(self.reference_function(FunctionKey::Source(function))),
-             };
-```
-
----
-
-### Incident Patch 3: `7bb427f3` (2026-11-20)
-**Commit Message**: AOT: mocks of preloads beside resets and failures, diagnostics at once, and tests of the engine's fixes (#49145)
-
-Bun's side of fixes of the ahead-of-time compiler (`bun build --compile --aot` and `bun test
---aot`, both experimental), with their programs and test runs, and a change of the bundler. The
-JavaScriptCore side is oven-sh/WebKit#1069 and oven-sh/WebKit#1071, both merged. This follows
-oven-sh/bun#49108.
-
-- `bun test --aot`: mocks that preloads, hooks and test files lay run, wait and leave as in
-  `bun test`; built-in modules can be mocked by their original.
-- Compiled programs: wrong answers and stopped builds around loops, classes, decorators, module
-  objects, require.resolve() and files found by path.
-- Bun.resolve(), Bun.resolveSync() and import.meta.resolveSync() of an absolute path answer like
-  require.resolve().
-- `bun build --splitting` lists the imports of each file once.
-- Typed libraries keep the semantics of class fields and load what their JavaScript loads.
-
-**File**: `scripts/build/deps/webkit.sha256` (modified, +78/-78)
-```diff
-@@ -1,78 +1,78 @@
--cb16866ccf8e8d10140246e4112ea5a3ac568297881dba8df227151ea196fddf  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-aot-sources.tar.gz
--36c58f7b5b5737258150fc5a595b5520ce981e131536be9769c38e0caa3c8370  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-amd64-aot.tar.gz
--512897c6246547e9e2f279db923d4b904693fd2351f1e6aea4dc464d19fbf232  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-amd64-debug-aot.tar.gz
--900b6327ffa1043c2190244621acf1e5fe06586be0699623722d916449491e7c  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-amd64-lto-aot.tar.gz
--30765439418939190f7e3315a5857fd68b315518cb6c276147c813727f340cd8  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-amd64-lto.tar.gz
--458754e348fd0f01ff91a833831e90ec34db933feeedc3a056d7c6fed8f6532c  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-amd64.tar.gz
--ad3d2d8665b5215aa2b8bce167acb30add1ff447917984adaf72c8fc8d82f0d2  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-arm64-aot.tar.gz
--5cb910fc6c33b4b5419f0fd619760c804495ac32f722e6892bcf62ca3fe5f952  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-arm64-debug-aot.tar.gz
--f95743999d20d338ae3ebe6764bbd755427214e6be1add097203fc20a5abcac3  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-arm64-lto-aot.tar.gz
--84c38c11f2a0f72858c7037ec718ac37894accbf077cd34ba51f0ab7a5f2ef82  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-arm64-lto.tar.gz
--175c81ea988de2cc5570e9c91c05e6495fdf9dd55e138206eaa672faaf011562  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-freebsd-arm64.tar.gz
--e683571a0ce3638d71f438d7b639ad64c0b70e2ee908c5fed7de833f5af1c1fd  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-android-aot.tar.gz
--2586515598e7a03c961440b152605004f00b8a187d9c74f88edb75e040c581eb  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-android-debug-aot.tar.gz
--1ad8b79d3867e0b69ed5b88df8d3d1019ad00fa714f766f65fb0b82ecc66706a  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-android-lto-aot.tar.gz
--4aeebcde1ff3827f6744d15e579233e9acc5b7fbb2c860d83fad443980b0faf4  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-android-lto.tar.gz
--28c70bf660d15e4eee8fe0c8786138e6b72e0ef7c0da97496551105e9828189c  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-android.tar.gz
--f0ef89ed9447c245617a5379bbd85fbd26d7228ec0ea4f8597f3872a381beb47  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-aot.tar.gz
--593f4299dfcd59474f92675c67476b7e297b56542b3308b5665c89a9fecc8673  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-asan-aot.tar.gz
--043e9431e623ca1d34acd512bd6035a34bafd23234f7cb54663989d77778d7d4  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-assertions-aot.tar.gz
--e00984a923e988ef8fcf09d821da9eff1a8279da6d9613dd0e2e2520a19854ca  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-assertions-coverage-aot.tar.gz
--2ca66802c9b83fbe2d9c7d10969a3453755fcdfceb7e3415337ad27c5e4d6cfd  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-coverage-aot.tar.gz
--002cab13652a71986ed6f7e16b69115bf83959c278e8b8aa4a9af747e5517815  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-debug-aot.tar.gz
--755082c11586e4da524f1eecb76a00716b14add61121702b9f01ec4efacc8a34  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-debug-asan-aot.tar.gz
--fac1ad64ad1ed8307237b6c16560f3e5fc895c7e6a59fc642aed8ac8050eb636  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-hardened-aot.tar.gz
--47b4cedc7e636f88feec44a5644cdfb8d74307d1b96c4f8e31df078a9df29653  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-lto-aot.tar.gz
--0ef71a96f424a9aef3edfd6407291fde35d49d78ddac2c93f0af910b833932d1  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-lto-hardened-aot-no-webassembly.tar.gz
--a5d21f47a6490a77ab1aa00b6a927a77f8625627f9edb4c80740cfc32d72723e  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-lto-hardened-aot.tar.gz
--e0e1e6f4a874d4d847ecf13ed395534b971e78177635f6bcdd9c183449630ed9  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-lto-hardened.tar.gz
--c2892688efdad2c0c2b060df90743eb4b26020c1c6a8eebf7685d4f47ef456f6  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-lto.tar.gz
--08558d8e42286db0c785e7bf4a8356ce2b6bbb35e9e7b0911d57369e278af3a0  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-musl-aot.tar.gz
--507c3c56d11edd2484cfc868487f18a018363d585da5a8987f8715ff3d9617ee  autobuild-0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4/bun-webkit-linux-amd64-musl-debug-aot.tar.gz
--72f766986fa791a8390a849c021d5bb81f4d70151736cc6680c094
-```
-
-**File**: `scripts/build/deps/webkit.ts` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-  * After changing it, run `bun run pin-webkit`: webkit.sha256 pins the sha256
-  * of this version's tarballs, and a build refuses one that is not in there.
-  */
--export const WEBKIT_VERSION = "0befb64c5f30ae5af5137f31c1ebd4f7c3f908d4";
-+export const WEBKIT_VERSION = "cbf8d973991b8a341fe00fb65b9d99c57cde303e";
- 
- /**
-  * WebKit (JavaScriptCore) — the JS engine, with WTF and bmalloc.
-```
-
-**File**: `src/aot/builtins/resolve.rs` (modified, +0/-2)
-```diff
-@@ -312,7 +312,6 @@ pub struct ResolvedBuiltins {
-     mentioned: Box<[BuiltinId]>,
-     source_evaluator_escapes: bool,
-     may_call_unnamed_evaluator: bool,
--    #[cfg(test)]
-     exposed: Box<[BuiltinId]>,
-     uses: RuntimeUses,
-     loads_unknown_modules: bool,
-@@ -582,7 +581,6 @@ impl ResolvedBuiltins {
-         })
-     }
- 
--    #[cfg(test)]
-     pub fn exposed(&self) -> &[BuiltinId] {
-         &self.exposed
-     }
-```
-
-**File**: `src/aot/builtins/resolve/imports.rs` (modified, +19/-3)
-```diff
-@@ -255,6 +255,18 @@ impl Resolver<'_, '_> {
-         false
-     }
- 
-+    fn may_take_original(&self, mock: ExprId) -> bool {
-+        let hir = self.input.hir;
-+        let ExprKind::Call(call) = hir[mock].kind else {
-+            return false;
+-            epoch = self.epoch.load(Ordering::Acquire);
+-            state = self.state.load(Ordering::Relaxed);
+-
+-            // Try to wake up by consuming a signal and decremented the waiter we added previously.
+-            // Acquire barrier ensures code before the wake() which added the signal happens before we decrement it and return.
+-            while state & Self::SIGNAL_MASK != 0 {
+-                let new_state = state - Self::ONE_WAITER - Self::ONE_SIGNAL;
+-                state = match self.state.compare_exchange_weak(
+-                    state,
+-                    new_state,
+-                    Ordering::Acquire,
+-                    Ordering::Relaxed,
+-                ) {
+-                    Ok(_) => return Ok(()),
+-                    Err(s) => s,
+-                };
+-            }
+-        }
 +        };
-+        let factory = hir.ids(hir[call].args).nth(1);
-+        factory.is_none_or(|it| match hir[hir.skip_type_assertions(it)].kind {
-+            ExprKind::Fn(function) => hir[function].params.iter().next().is_some(),
-+            _ => true,
-+        })
-+    }
 +
-     fn find_runner_that_stub_answers(&self, callee: ExprId, stub: BuiltinId) -> Option<BuiltinId> {
-         if !table::stubs_global(stub) {
-             return None;
-@@ -276,7 +288,12 @@ impl Resolver<'_, '_> {
-             }
-             match site {
-                 ImportSiteKind::ImportCall(call) if self.is_import_awaited_at_once(call) => {}
--                ImportSiteKind::ImportCall(_) | ImportSiteKind::ExportStar(_) => {
-+                ImportSiteKind::MockModule(mock) if self.may_take_original(mock) => {
-+                    self.expose(table::canonical_id(namespace));
-+                }
-+                ImportSiteKind::ImportCall(_) | ImportSiteKind::ExportStar(_)
-+                | ImportSiteKind::ImportByTestRunner(_)
-+                | ImportSiteKind::RequireByTestRunner(_) => {
-                     self.expose(table::canonical_id(namespace));
-                 }
-                 ImportSiteKind::ExportFrom(export) => {
-@@ -296,8 +313,7 @@ impl Resolver<'_, '_> {
-                 | ImportSiteKind::ImportEquals(_) | ImportSiteKind::Require(_)
-                 | ImportSiteKind::RequireResolve(_) | ImportSiteKind::ImportMetaRequire(_)
-                 | ImportSiteKind::ImportMetaResolve(_) | ImportSiteKind::GetBuiltinModule(_)
--                | ImportSiteKind::MockModule(_) | ImportSiteKind::ImportByTestRunner(_)
--                | ImportSiteKind::RequireByTestRunner(_) => {}
-+                | ImportSiteKind::MockModule(_) => {}
-             }
++        // Never sleep again for lack of a signal: a thread that began to wait after the wake() may have consumed ours.
++        let leave = |state: u32| {
++            state - Self::ONE_WAITER - (state & Self::SIGNAL_MASK).min(Self::ONE_SIGNAL)
++        };
++        // Acquire barrier ensures code before the wake() which added the signal happens before we decrement it and return.
++        self.state
++            .update(Ordering::Acquire, Ordering:
+```
+
+**File**: `src/threading/Futex.rs` (modified, +0/-47)
+```diff
+@@ -408,50 +408,3 @@ mod wasm_impl {
+         let _ = woken_count; // can be 0 when linker flag 'shared-memory' is not enabled
+     }
+ }
+-
+-/// Deadline is used to wait efficiently for a pointer's value to change using Futex and a fixed timeout.
+-///
+-/// Futex's timedWait() api uses a relative duration which suffers from over-waiting
+-/// when used in a loop which is often required due to the possibility of spurious wakeups.
+-///
+-/// Deadline instead converts the relative timeout to an absolute one so that multiple calls
+-/// to Futex timedWait() can block for and report more accurate error.Timeouts.
+-pub(crate) struct Deadline {
+-    timeout: Option<u64>,
+-    started: std::time::Instant,
+-}
+-
+-impl Deadline {
+-    /// Create the deadline to expire after the given amount of time in nanoseconds passes.
+-    /// Pass in `null` to have the deadline call `Futex.wait()` and never expire.
+-    pub(crate) fn init(expires_in_ns: Option<u64>) -> Deadline {
+-        // `Instant::now()` is infallible and cheap, so always initialize
+-        // `started` (even when timeout is None) to avoid MaybeUninit gymnastics.
+-        Deadline {
+-            timeout: expires_in_ns,
+-            started: std::time::Instant::now(),
+-        }
+-    }
+-
+-    /// Wait until either:
+-    /// - the `ptr`'s value changes from `expect`.
+-    /// - `Futex.wake()` is called on the `ptr`.
+-    /// - A spurious wake occurs.
+-    /// - The deadline expires; In which case `error.Timeout` is returned.
+-    #[cold]
+-    pub(crate) fn wait(&mut self, ptr: &AtomicU32, expect: u32) -> Result<(), TimeoutError> {
+-        // Check if we actually have a timeout to wait until.
+-        // If not just wait "forever".
+-        let Some(timeout_ns) = self.timeout else {
+-            wait_forever(ptr, expect);
+-            return Ok(());
+-        };
+-
+-        // Get how much time has passed since we started waiting
+-        // then subtract that from the init() timeout to get how much longer to wait.
+-        // Use overflow to detect when we've been waiting longer than the init() timeout.
+-        let elapsed_ns = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+-        let until_timeout_ns = timeout_ns.saturating_sub(elapsed_ns);
+-        wait(ptr, expect, Some(until_timeout_ns))
+-    }
+-}
+```
+
+**File**: `src/threading/ResetEvent.rs` (modified, +27/-26)
+```diff
+@@ -8,7 +8,6 @@
+ use core::sync::atomic::{AtomicU32, Ordering};
+ 
+ use crate::Futex;
+-use crate::futex::TimeoutError;
+ 
+ pub struct ResetEvent {
+     state: AtomicU32,
+@@ -43,23 +42,14 @@ impl ResetEvent {
+     /// Blocks the calling thread until [`set`](Self::set) is called.
+     /// Effectively an efficient `while !is_set() {}`.
+     pub fn wait(&self) {
+-        match self.wait_inner(None) {
+-            Ok(()) => {}
+-            Err(TimeoutError::Timeout) => unreachable!(), // no timeout provided so we shouldn't have timed-out
+-        }
+-    }
+-
+-    #[inline]
+-    fn wait_inner(&self, timeout: Option<u64>) -> Result<(), TimeoutError> {
+         // Outline the slow path to allow is_set() to be inlined.
+         if !self.is_set() {
+-            return self.wait_until_set(timeout);
++            self.wait_until_set();
+         }
+-        Ok(())
+     }
+ 
+     #[cold]
+-    fn wait_until_set(&self, timeout: Option<u64>) -> Result<(), TimeoutError> {
++    fn wait_until_set(&self) {
+         // Try to set the state from `UNSET` to `WAITING` to indicate to set()
+         // that threads are blocked. Avoid strict barriers until we know the
+         // event is actually set.
+@@ -77,23 +67,12 @@ impl ResetEvent {
+         }
+ 
+         // Wait until the ResetEvent is set since the state is WAITING.
+-        if state == WAITING {
+-            let mut futex_deadline = Futex::Deadline::init(timeout);
+-            loop {
+-                let wait_result = futex_deadline.wait(&self.state, WAITING);
+-
+-                // Check if the ResetEvent was set before possibly reporting Timeout below.
+-                state = self.state.load(Ordering::Acquire);
+-                if state != WAITING {
+-                    break;
+-                }
+-
+-                wait_result?;
+-            }
++        while state == WAITING {
++            Futex::wait_forever(&self.state, WAITING);
++            state = self.state.load(Ordering::Acquire);
+         }
+ 
+         debug_assert!(state == IS_SET);
+-        Ok(())
+     }
+ 
+     /// Marks the event "set" and wakes all threads blocked in
+@@ -112,3 +91,25 @@ impl ResetEvent {
          }
      }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn wait_returns_once_it_is_set() {
++        let event = ResetEvent::new();
++        std::thread::scope(|scope| {
++            for _ in 0..3 {
++                scope.spawn(|| {
++                    event.wait();
++                    assert!(event.is_set());
++                });
++            }
++            while event.state.load(Ordering::Relaxed) != WAITING {
++                std::thread::yield_now();
++            }
++            event.set();
++        });
++    }
++}
 ```
 
-**File**: `src/aot/builtins/resolve/resolver.rs` (modified, +0/-1)
+**File**: `src/threading/lib.rs` (modified, +1/-1)
 ```diff
-@@ -1183,7 +1183,6 @@ impl<'a, 's> Resolver<'a, 's> {
-             mentioned,
-             source_evaluator_escapes,
-             may_call_unnamed_evaluator,
--            #[cfg(test)]
-             exposed,
-             uses,
-             loads_unknown_modules,
-```
-
-**File**: `src/aot/compile.rs` (modified, +4/-1)
-```diff
-@@ -50,7 +50,9 @@ use crate::ir::{Id, ModuleId, Program};
- use crate::known_helpers::KnownHelpers;
- use crate::link::{Leftovers, LinkedFunctions, run_beside, run_one_after_the_other};
- use crate::load::contents::ProgramContents;
--use crate::load::contents::entry_points::{join_below_root, name_from_working_directory};
-+use crate::load::contents::entry_points::{
-+    NameOfLoad, join_below_root, name_from_working_directory,
-+};
- use crate::load::contents::worker_entries::{find_file_named_as_in_executable, source_path_of};
- use crate::load::source_provider::{PathsOfProgram, SourceProvider};
- use crate::load::{PerProject, ProjectId, Sources, host_platform};
-@@ -121,6 +123,7 @@ pub(crate) struct StartedWorkers {
-     pub names: Vec<EntryPointPaths>,
-     pub followed_at: Vec<(Vec<u8>, u32)>,
-     pub named_at: Vec<(Vec<u8>, u32)>,
-+    pub names_of_loads: Vec<NameOfLoad>,
-     pub names_followed: Vec<FollowedName>,
-     pub names_plugin: bool,
-     /// What a warning says of names that lead out of the root directory.
-```
-
-**File**: `src/aot/compile/bind_stage.rs` (modified, +1/-0)
-```diff
-@@ -1759,6 +1759,7 @@ impl Build<'_> {
-                         view.files(),
-                         view.sources,
-                         &graph,
-+                        &self.started_workers.names_of_loads,
-                         &left_out.files,
-                         &in_parallel,
-                     );
-```
-
-**File**: `src/aot/compile/link_stage.rs` (modified, +8/-0)
-```diff
-@@ -13,6 +13,7 @@ use crate::link::{
-     self, LinkInput, LinkProject, LinkUnit, Linked, LinkedFunctions, ProgramModule,
-     run_steps_beside,
- };
-+use crate::load::contents::load_names::is_object_handed_on;
- use crate::load::runtime_roots::{StartOfRun, builtins_used_at_start};
- use crate::load::{ProgramFile, ProjectId};
- use crate::module_keys::{path_without_form, stamp_of_file};
-@@ -208,6 +209,13 @@ impl Build<'_> {
-                             .method_that_hands_out_global_object_may_come_out;
-                         let used_at_start =
-                             used_at_start.chain(comes_out.then_some(BuiltinId::GlobalThis));
-+                        let gives_loader = runs_tests
-+                            && is_object_handed_on(
-+                                application.loaded.files(),
-+                                BuiltinId::NodeModule,
-+                            );
-+                        let used_at_start =
-+                            used_at_start.chain(gives_loader.then_some(BuiltinId::NodeModule));
-                         program.builtins_used_at_start = used_at_start
-                             .map(|builtin| BuiltinUsedAtStart { builtin })
-                             .collect();
+@@ -27,7 +27,7 @@ pub mod wait_group;
+ 
+ pub use condition::{Condition, Condvar};
+ /// `Futex` re-exported as a capitalized module alias so callers can write
+-/// `Futex::wait`, `Futex::wake`, `Futex::Deadline`.
++/// `Futex::wait`, `Futex::wake`.
+ pub use futex as Futex;
+ pub use guarded::Guarded;
+ pub use mutex::{Mutex, MutexGuard};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49357** (2026-11-21): serve: HTTP/2 and HTTP/3 callbacks keep their ref guard in release (@dylan-conway)
-- **PR #49352** (2026-11-20): blob: reads and writes share one job (@alii)
-- **PR #49337** (2026-11-21): blob: three fixes to how a job waits for a descriptor (@alii)
-- **PR #49336** (2026-11-20): Refuse --aot with --bytecode, and compiler fixes (@Jarred-Sumner)
-- **PR #49332** (closed): bun test: add --reporter=ndjson, reporter modules and <file>:<line> (@ChildishForces)
-- **PR #49322** (2026-11-20): redis: the retry count lives in the states that can lead to a retry (@alii)
+- **PR #49418** (closed): test: temporary probe for operator new with a small alignment on macOS (not for merge) [macos tests] (@robobun)
+- **PR #49412** (closed): test: temporary probe for a server that Bun.gc(true) does not collect on Windows x64 (not for merge) (@robobun)
+- **PR #49411** (2026-11-22): resolver, yaml, test, install, jsc: state that is set for a scope has an owner (@dylan-conway)
+- **PR #49407** (2026-11-22): Callbacks are entered through a RefPtr: delete ThisPtr (@dylan-conway)
+- **PR #49372** (2026-11-21): URLPattern: port from C++ to Rust (@dylan-conway)
+- **PR #49369** (2026-11-22): icu: replace the C++ libraries with the parts that Bun uses, in Rust (@dylan-conway)
 
 ---
 
@@ -2282,63 +1330,67 @@ oven-sh/bun#49108.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. blob: three fixes to how a job waits for a descriptor
+## X. threading: fix lost wake-ups in the futex Condition
 
 **RULE**:
-When implementing operations in `src/io/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/threading/Condition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `74d8f30d`: blob: three fixes to how a job waits for a descriptor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ba1e77d`: threading: fix lost wake-ups in the futex Condition. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/io/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/threading/Condition.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // No data: no `Poll` has the ticket 0.
-        let mut tickets = Tickets::default();
-                                &mut tickets,
-                                &mut tickets,
-                            close.poll.unregister(close.fd);
-                            tickets.armed.remove(&close.poll.ticket);
-                // None for the waker too, which is edge-triggered: no need to read its counter.
-                if let Some((poll, tag)) = tickets.armed.remove(&{ event.u64 }) {
-                    Poll::on_update_epoll(poll, tag, *event);
-                }
-/// single `u64` (`kevent.udata`), so we keep the
-#[cfg(any(target_os = "macos", target_os = "freebsd"))]
-#[cfg(any(target_os = "macos", target_os = "freebsd"))]
-#[cfg(any(target_os = "macos", target_os = "freebsd"))]
+        // Acquire barrier ensures that a wake() which counts the waiter added below changes the epoch after this load.
+        let epoch = self.epoch.load(Ordering::Acquire);
+        let state = self.state.fetch_add(Self::ONE_WAITER, Ordering::Relaxed);
+        let result = match timeout {
+            Some(_) => Futex::wait(&self.epoch, epoch, timeout).map_err(|_| TimeoutError::Timeout),
+            None => {
+                Futex::wait_forever(&self.epoch, epoch);
+                Ok(())
+        };
+
+        // Never sleep again for lack of a signal: a thread that began to wait after the wake() may have consumed ours.
+        let leave = |state: u32| {
+            state - Self::ONE_WAITER - (state & Self::SIGNAL_MASK).min(Self::ONE_SIGNAL)
+        };
+        // Acquire barrier ensures code before the wake() which added the signal happens before we decrement it and return.
+        self.state
+            .update(Ordering::Acquire, Ordering:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                // No data: `tick_epoll` skips an event without a `Poll`.
-                            // Only remove from the interest list if it was previously registered.
-                            // Otherwise, epoll gets confused.
-                            // This state can happen if polling for readable/writable previously failed.
-                            if close.poll.flags.contains(Flags::WasEverRegistered) {
-                                close.poll.unregister_with_fd(watcher_fd, close.fd);
-                            }
-                let pollable = Pollable::from(event.u64);
-                // Null for the waker, which is edge-triggered: no need to read its counter.
-                let Some(poll) = core::ptr::NonNull::new(pollable.poll()) else {
-                    continue;
-                };
-                Poll::on_update_epoll(poll, pollable.tag(), *event);
+        // Observe the epoch, then check the state again to see if we should wake up.
+        // The epoch must be observed before we check the state or we could potentially miss a wake() and deadlock:
+        //
+        // - T1: s = LOAD(&state)
+        // - T2: UPDATE(&s, signal)
+        // - T2: UPDATE(&epoch, 1) + FUTEX_WAKE(&epoch)
+        // - T1: e = LOAD(&epoch) (was reordered after the state load)
+        // - T1: s & signals == 0 -> FUTEX_WAIT(&epoch, e) (missed the state update + the epoch change)
+        //
+        // Acquire barrier to ensure the epoch load happens before the state load.
+        let mut epoch = self.epoch.load(Ordering::Acquire);
+        let mut state = self.state.fetch_add(Self::ONE_WAITER, Ordering::Relaxed);
+        state += Self::ONE_WAITER;
+        // Re-acquire on every exit path (Ok and Err).
+        // Condvar wait semantics (unlock, block, re-lock) are the inverse of MutexGuard,
+        // so the re-lock is expressed as a one-off defer rather than an RAII guard type.
+        scopeguard::defer! { mutex.lock(); }
+        let mut futex_deadline = Futex::Deadline::init(timeout);
 
-    /// Atomic-ordered store of `callback`.
-    ///
-    /// The io thread reads `callback` after popping `self` from the MPSC
-    /// queue (which already provides acquire on `next`); this SeqCst fence
-    /// guarantees the callback write is visible to that read even when the
-    /// store happens on a dif
+        loop {
+            match futex_deadline.wait(&self.epoch, ep
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `74d8f30d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ba1e77d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

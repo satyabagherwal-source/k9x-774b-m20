@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T15:59:05.797Z",
+  "last_updated": "2026-11-22T16:12:39.925Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T14:17:31.887Z",
@@ -78,7 +78,7 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-21T03:15:42.474Z",
+      "processed_at": "2026-11-22T16:12:36.904Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -823,7 +823,7 @@
       "staged_for_review": 1
     },
     "yugabyte-yugabyte-db-learnings.md": {
-      "processed_at": "2026-11-21T13:05:38.992Z",
+      "processed_at": "2026-11-22T16:12:38.719Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1713,7 +1713,7 @@
       "staged_for_review": 1
     },
     "hf-edge0-audio8-asr-infinite-learnings.md": {
-      "processed_at": "2026-11-18T09:48:18.012Z",
+      "processed_at": "2026-11-22T16:12:38.195Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3718,7 +3718,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3138,
+  "total_dossiers_evaluated": 3141,
   "total_canonical_promoted": 474,
-  "total_staged_for_review": 2385
+  "total_staged_for_review": 2387
 }

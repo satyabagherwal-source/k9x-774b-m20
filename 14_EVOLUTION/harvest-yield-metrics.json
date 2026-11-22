@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T15:58:57.122Z",
-  "total_cycles_completed": 11516,
-  "total_learnings_persisted": 11516,
-  "total_rules_promoted": 10764,
+  "last_updated": "2026-11-22T16:12:33.215Z",
+  "total_cycles_completed": 11519,
+  "total_learnings_persisted": 11519,
+  "total_rules_promoted": 10766,
   "history": [
-    {
-      "timestamp": "2026-11-21T20:36:41.718Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T20:36:43.841Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T20:48:19.202Z",
-      "repository": "vcaesar/riot",
-      "learningId": "learn-github-vcaesar-riot",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T20:49:40.830Z",
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "convaiinnovations/laya",
       "learningId": "learn-huggingface-convaiinnovations-laya",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T16:12:17.985Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T16:12:20.762Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T16:12:33.215Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

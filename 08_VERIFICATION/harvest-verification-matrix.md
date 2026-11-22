@@ -12112,3 +12112,6 @@
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T15:42:41.239Z` | `hf-comfy-org-minimax-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-833AC1DF` [Domain H] | Yes (`d76f2bc5...`) |
 | `CYCLE-20261122-QWN6` | `2026-11-22T15:55:53.154Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9946` | Yes (`a5272a22...`) |
 | `CYCLE-20261122-UUL3` | `2026-11-22T15:58:57.111Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9947, Rule 9948, Rule 9949` | Yes (`b896dc97...`) |
+| `CYCLE-20261122-C0J5` | `2026-11-22T16:12:17.969Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`ad47f7cf...`) |
+| `CYCLE-20261122-C2OF` | `2026-11-22T16:12:20.751Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9950` | Yes (`ccfea3d5...`) |
+| `CYCLE-20261122-CCAC` | `2026-11-22T16:12:33.204Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9951` | Yes (`37354a61...`) |
