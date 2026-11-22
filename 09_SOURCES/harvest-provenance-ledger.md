@@ -11988,3 +11988,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-22T00:24:35.054Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `a5ac161f` | Multi-dimensional audit evidence | 2026-11-22T00:24:36.500Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `598cce81` | Multi-dimensional audit evidence | 2026-11-22T00:24:51.631Z |
+| `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-22T00:32:36.496Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `0581ada7` | Multi-dimensional audit evidence | 2026-11-22T00:32:38.935Z |

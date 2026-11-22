@@ -11955,3 +11955,5 @@
 | `CYCLE-20261122-H8TN` | `2026-11-22T00:24:35.051Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md` | Yes (`61105f69...`) |
 | `CYCLE-20261122-H9XT` | `2026-11-22T00:24:36.497Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9872` | Yes (`f229e00b...`) |
 | `CYCLE-20261122-HLM4` | `2026-11-22T00:24:51.628Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9873` | Yes (`dff9a277...`) |
+| `CYCLE-20261122-RKB0` | `2026-11-22T00:32:36.492Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md` | Yes (`5ecbc2f1...`) |
+| `CYCLE-20261122-RM6Q` | `2026-11-22T00:32:38.930Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9874` | Yes (`4009d31a...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T00:24:56.510Z",
+  "last_updated": "2026-11-22T00:32:49.980Z",
   "total_records": 2306,
   "domains": {
     "A": {
@@ -9039,8 +9039,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "05201284c4fc7265afb13e981e21cc0d05e66afa51fae86875a52ae6057d5147",
-      "created_at": "2026-11-21T23:56:19.868Z"
+      "content_hash": "cb3f8ad723bbc972a5c9538e6aff3ff266141b8cebd14ea6eaffa863458af337",
+      "created_at": "2026-11-22T00:32:49.980Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9822,8 +9822,8 @@
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "repository": "actix/actix-web",
-      "content_hash": "423087bc1ccc73e95c7cd2ca394c81c5796ef038fc95a4b59921d52738c3a564",
-      "created_at": "2026-11-18T21:23:16.172Z"
+      "content_hash": "7dc9f765e1b01a176c72a1f21d7cecaae053c7a4002bd58b7ee3454ff4dc8700",
+      "created_at": "2026-11-22T00:32:39.304Z"
     },
     "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
@@ -9891,8 +9891,8 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-learnings-technical-construction-intelligence-actix-actix-web-le.md",
       "repository": "actix-actix-web-learnings",
-      "content_hash": "7c49f72ea7fcdaacc6b09c40aa5bdfaa6f9db3a44c3e5e1a50ab8ddf7571f953",
-      "created_at": "2026-11-18T21:23:26.355Z"
+      "content_hash": "7adf56f8be969ce348056d9ec01de98b178528de203ecf1819dbfbcc1e6eacde",
+      "created_at": "2026-11-22T00:32:48.642Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -22155,8 +22155,8 @@
       "title": "Research & Knowledge Intelligence: pyannote/speaker-diarization-3.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-3-1-research-knowledge-intelligence-pyannote-spe.md",
       "repository": "pyannote/speaker-diarization-3.1",
-      "content_hash": "1320a50b0eefbf3f60691e05e503c311c1ffcfcb03df39ee5fab72acfec926db",
-      "created_at": "2026-11-15T19:12:00.825Z"
+      "content_hash": "2a4324503df0c8789f20484f6008feac2ca05cc0df75bb4b1a9f9bfd177fecab",
+      "created_at": "2026-11-22T00:32:36.700Z"
     },
     "DOM-D-6A7F4F3B": {
       "record_id": "DOM-D-6A7F4F3B",
@@ -22206,8 +22206,8 @@
       "title": "Research & Knowledge Intelligence: hf-pyannote-speaker-diarization-3.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-3-1-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-pyannote-speaker-diarization-3.1-learnings",
-      "content_hash": "afa9bc84b74919d8642585f0f3a874c20543337a93546592b3083002c1dc2921",
-      "created_at": "2026-11-15T19:12:44.875Z"
+      "content_hash": "8bcc8ec9480b9d61b281ced069e708f8e7bb751e25d96e3a2cc96d21743cf3a9",
+      "created_at": "2026-11-22T00:32:49.151Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-core-invariants",

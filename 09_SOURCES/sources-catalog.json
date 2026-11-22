@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "c795e295",
+    "sourceVersion": "0581ada7",
     "license": "Apache-2.0",
-    "contentHash": "4fa15a656fae7579273606790cab39137ddce2baaf601ca6a32ee1f3e921cf75",
-    "lastHarvestedAt": "2026-11-18T21:23:15.830Z",
+    "contentHash": "4009d31aa87203b57167a657ebbac220a66311c752d83c80db45b2c78f3bda93",
+    "lastHarvestedAt": "2026-11-22T00:32:38.935Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -11755,8 +11755,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-3.1",
     "sourceVersion": "hf-pyannote-speaker-diarization-3.1",
     "license": "Open-Source",
-    "contentHash": "894bfa8ae41ef18962f4e8b1e8f46a2875227fd8a9fd4017944b78c3afb1e9d2",
-    "lastHarvestedAt": "2026-11-15T19:12:00.644Z",
+    "contentHash": "5ecbc2f1ce49d7673d007f5ea6c2aff3a8ffec128b2ed20392a39484fe31443f",
+    "lastHarvestedAt": "2026-11-22T00:32:36.496Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1"
   },
   "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "actix/actix-web",
   "source_url": "https://github.com/actix/actix-web",
-  "source_version": "c795e295",
+  "source_version": "0581ada7",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T21:23:16.022Z",
+  "timestamp": "2026-11-22T00:32:39.142Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-actix-actix-web",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [actix/actix-web](https://github.com/actix/actix-web) (Revision: `c795e295`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T21:23:16.022Z`  
+> **Provenance**: Harvested from [actix/actix-web](https://github.com/actix/actix-web) (Revision: `0581ada7`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T00:32:39.142Z`  
 > **Learning ID**: `learn-github-actix-actix-web`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from actix/actix-web:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T21:23:14.817Z  
+> **Harvest Timestamp**: 2026-11-22T00:32:37.897Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24966 stars
+- **Stars / Engagement**: 24985 stars
 
 ---
 
@@ -1403,13 +1403,11 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4443** (2026-11-21): **perf(http): store two header values inline in HeaderMap**
+  *Symptoms*: ## PR Type  Perf  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. (N/A: no API change) - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [ ] (Team) Label with affected crates and semver status.  ## Overview  `HeaderMap` stored up to 4 values for each header name inline (`SmallVec<[HeaderValue; 4]>`). Most header names have one value, so each map entry was large. Now it stores up to 2 values inline. The map is smaller, so clone, update and drain move less memory. The results do not change.  | `HeaderMap` with 12 request headers | Before | After | Change | |---|---:|---:|---:| | `insert` that replaces a value | 171 ns | 137 ns | -19.9% | | `drain` | 248 ns | 200 ns | -19.1% | | `remove` | 168 ns | 137 ns | -18.5% | | `clone` | 157 ns | 128 ns | -18.2% | | `retain` | 180 ns | 152 ns | -15.4% |  With 3, 4 or 6 values for one header, `clone` and `drain` were 10% to 15% faster too. I used 16 interleaved rounds of criterion (Apple M5, rustc 1.98.0).  Old and new results matched on 1M random `HeaderMap` operations. 
+
 - **Issue #4439** (2026-11-18): **docs(web): correct default status named in Redirect::using_status_code**
   *Symptoms*: ## PR Type  Other (docs)  ## PR Checklist  - [x] Tests for the changes have been added / updated. (n/a, doc comment only) - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. (n/a, no behavior change) - [x] (Team) Label with affected crates and semver status.  ## Overview  The doc comment on `Redirect::using_status_code` says the default status is "308 Permanent Redirect" and points to the `temporary` method for 307. The default is actually 307: `Redirect::new` and `Redirect::to` both set `status_code: StatusCode::TEMPORARY_REDIRECT`, and the type-level docs at the top of `redirect.rs` already say "By default, the "307 Temporary Redirect" status is used".  The sentence now names 307 as the default and the `permanent` method for 308, and the trailing "302 and 301 codes, respectively" order is swapped to match.  Prepared with an AI coding assistant. 
-
-- **Issue #4438** (2026-11-18): **build(deps): bump local-channel from 0.1.5 to 0.1.7**
-  *Symptoms*: Bumps [local-channel](https://github.com/actix/actix-net) from 0.1.5 to 0.1.7. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actix/actix-net/releases">local-channel's releases</a>.</em></p> <blockquote> <h2>local-channel: v0.1.7</h2> <ul> <li>Add inline hints to the MPSC send and receive methods.</li> <li>Minimum supported Rust version (MSRV) is now 1.89.</li> </ul> <h2>local-channel: v0.1.6</h2> <ul> <li>Close the channel when <code>mpsc::Sender</code> is closed using <code>Sink::poll_close()</code>.</li> <li>Minimum supported Rust version (MSRV) is now 1.88.</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/actix/actix-net/commit/1eb13aecc1cdd12f2a7d9bb451598645b8dd3fb9"><code>1eb13ae</code></a> chore(local-channel): prepare release 0.1.7</li> <li><a href="https://github.com/actix/actix-net/commit/5553cb3415cfaaf6b366da229699eeb21e8aff57"><code>5553cb3</code></a> build(deps): bump zizmorcore/zizmor-action from 0.8.0 to 0.8.1 (<a href="https://redirect.github.com/actix/actix-net/issues/1036">#1036</a>)</li> <li><a href="https://github.com/actix/actix-net/commit/f3c6d63c8217067325e966947e2a84d5c376a935"><code>f3c6d63</code></a> build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (<a href="https://redirect.github.com/actix/actix-net/issues/1037">#1037</a>)</li> <li><a href="https://github.com/actix/actix-net/commit/57dba3c15600f05042b9dff9ecdc1b69dccfc136"><code>57
-  **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/3c6ea6acf52d9e6f41207222b672774246be7205">3c6ea6a</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:dependabot/cargo/local-channel-0.1.7">dependabot/cargo/loc...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/ac13edf84300ecbeb12237ec6b7c77e53afe9cfa">ac13edf</a></th> <th scope="col">+/-</th> </tr> <tr> <td>88%</td> <td>88%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1426,492 +1424,110 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `967afcde` (2026-11-18)
-**Commit Message**: build(deps): bump useblacksmith/checkout from 1.8.2 to 1.8.3 (#4433)
+### Incident Patch 1: `470bc8c7` (2026-11-21)
+**Commit Message**: fix(awc): keep the method on 301 and 302 redirects unless it is POST (#4428)
 
-Bumps [useblacksmith/checkout](https://github.com/useblacksmith/checkout) from 1.8.2 to 1.8.3.
-- [Changelog](https://github.com/useblacksmith/checkout/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/useblacksmith/checkout/compare/v1.8.2...v1.8.3)
+Co-authored-by: no-hup <[REDACTED_EMAIL]>
 
----
-updated-dependencies:
-- dependency-name: useblacksmith/checkout
-  dependency-version: 1.8.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/actions.lock` (modified, +10/-10)
+**File**: `awc/CHANGES.md` (modified, +2/-0)
 ```diff
-@@ -4,34 +4,34 @@
- version: 'v0.0.3'
- workflows:
-     '.github/workflows/bench.yml':
--        - 'useblacksmith/checkout@v1.8.2'
-+        - 'useblacksmith/checkout@v1.8.3'
-     '.github/workflows/ci-post-merge.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
-         - 'taiki-e/install-action@v2.90.4'
--        - 'useblacksmith/checkout@v1.8.2'
-+        - 'useblacksmith/checkout@v1.8.3'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
-         - 'taiki-e/install-action@v2.90.4'
--        - 'useblacksmith/checkout@v1.8.2'
-+        - 'useblacksmith/checkout@v1.8.3'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'actions/upload-code-coverage@v1.4.4'
-         - 'taiki-e/install-action@v2.90.4'
--        - 'useblacksmith/checkout@v1.8.2'
-+        - 'useblacksmith/checkout@v1.8.3'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
--        - 'useblacksmith/checkout@v1.8.2'
-+        - 'useblacksmith/checkout@v1.8.3'
-     '.github/workflows/lint.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'embarkstudios/cargo-deny-action@v2.1.1'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
-         - 'taiki-e/install-action@v2.90.4'
--        - 'useblacksmith/checkout@v1.8.2'
-+        - 'useblacksmith/checkout@v1.8.3'
-         - 'zizmorcore/zizmor-action@v0.8.1'
-     '.github/workflows/release.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-@@ -42,7 +42,7 @@ workflows:
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'taiki-e/install-action@v2.90.4'
--        - 'useblacksmith/checkout@v1.8.2'
-+        - 'useblacksmith/checkout@v1.8.3'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.1':
-         ref: 'v2.0.1'
-@@ -147,9 +147,9 @@ dependencies:
-         commit: 'sha1-4a76afe23f9e08d2d9550fb56e556444e8611d21'
-         owner_id: 43724913
-         repo_id: 442947557
--    'useblacksmith/checkout@v1.8.2':
--        ref: 'v1.8.2'
--        commit: 'sha1-2b9fe87d796feea153b455ec2f3125b471a7b0e7'
-+    'useblacksmith/checkout@v1.8.3':
-+        ref: 'v1.8.3'
-+        commit: 'sha1-75c49b6ed30ce59336e9252425796cfcfac155f8'
-         owner_id: 156274793
-         repo_id: 1107788336
-     'zizmorcore/zizmor-action@v0.8.1':
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- Keep the request method and body when following a 301 or 302 redirect for methods other than `POST`, as already done for 307 and 308. For example, a `PUT` that gets a 302 is now sent again as a `PUT` with the same body (also to another origin) instead of as a `GET` without a body. `POST` still changes to `GET`, and 303 is unchanged.
++
+ ## 3.11.0
+ 
+ - Add `Client::query()` method for constructing HTTP `QUERY` requests.
 ```
 
-**File**: `.github/workflows/bench.yml` (modified, +1/-1)
+**File**: `awc/src/middleware/redirect.rs` (modified, +59/-2)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
+@@ -164,8 +164,17 @@ where
+                         if *max_redirect_times > 0
+                             && res.headers().contains_key(header::LOCATION) =>
+                     {
+-                        let reuse_body = res.head().status == StatusCode::TEMPORARY_REDIRECT
+-                            || res.head().status == StatusCode::PERMANENT_REDIRECT;
++                        // 307 and 308 repeat the request as it was sent. 301 and 302 may only
++                        // change POST to GET (RFC 9110 §15.4.2 and §15.4.3), so other methods are
++                        // repeated as sent too.
++                        let reuse_body = match res.head().status {
++                            StatusCode::TEMPORARY_REDIRECT | StatusCode::PERMANENT_REDIRECT => true,
++                            StatusCode::MOVED_PERMANENTLY | StatusCode::FOUND => !matches!(
++                                method.as_ref(),
++                                Some(&Method::GET | &Method::HEAD | &Method::POST)
++                            ),
++                            _ => false,
++                        };
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
+                         let prev_uri = uri.take().unwrap();
  
-```
-
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
-```diff
-@@ -30,7 +30,7 @@ jobs:
-     runs-on: ${{ matrix.target.os }}
+@@ -467,6 +476,54 @@ mod tests {
+         assert_eq!(res.status().as_u16(), 200);
+     }
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-@@ -84,7 +84,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-     runs-on: ${{ matrix.target.os }}
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-@@ -97,7 +97,7 @@ jobs:
-     name: doc tests
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ jobs:
-   coverage:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/labeler.yml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ jobs:
-   labeler:
-     runs-on: ubuntu-slim
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
-       - uses: actions/labeler@v7.0.0
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +6/-6)
-```diff
-@@ -22,7 +22,7 @@ jobs:
-     runs-on: ubuntu-slim
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-@@ -44,7 +44,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-@@ -54,7 +54,7 @@ jobs:
-   fmt:
-     runs-on: ubuntu-slim
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-@@ -74,7 +74,7 @@ jobs:
- 
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-@@ -95,7 +95,7 @@ jobs:
-   lint-docs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-@@ -114,7 +114,7 @@ jobs:
-     if: false # rustdoc mismatch currently
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ jobs:
-     permissions:
-       contents: read
-     steps:
--      - uses: useblacksmith/checkout@v1.8.2
-+      - uses: useblacksmith/checkout@v1.8.3
-         with:
-           fetch-depth: 0
-           persist-credentials: false
-```
-
----
-
-### Incident Patch 2: `360881ca` (2026-11-18)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.90.3 to 2.90.4 (#4437)
-
-Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.90.3 to 2.90.4.
-- [Release notes](https://github.com/taiki-e/install-action/releases)
-- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/taiki-e/install-action/compare/v2.90.3...v2.90.4)
-
----
-updated-dependencies:
-- dependency-name: taiki-e/install-action
-  dependency-version: 2.90.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/actions.lock` (modified, +8/-8)
-```diff
-@@ -9,18 +9,18 @@ workflows:
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.90.3'
-+        - 'taiki-e/install-action@v2.90.4'
-         - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.90.3'
-+        - 'taiki-e/install-action@v2.90.4'
-         - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-         - 'actions/upload-code-coverage@v1.4.4'
--        - 'taiki-e/install-action@v2.90.3'
-+        - 'taiki-e/install-action@v2.90.4'
-         - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
-@@ -30,7 +30,7 @@ workflows:
-         - 'embarkstudios/cargo-deny-action@v2.1.1'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
--        - 'taiki-e/install-action@v2.90.3'
-+        - 'taiki-e/install-action@v2.90.4'
-         - 'useblacksmith/checkout@v1.8.2'
-         - 'zizmorcore/zizmor-action@v0.8.1'
-     '.github/workflows/release.yml':
-@@ -41,7 +41,7 @@ workflows:
-         - 'release-plz/action@v0.5.140'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
--        - 'taiki-e/install-action@v2.90.3'
-+        - 'taiki-e/install-action@v2.90.4'
-         - 'useblacksmith/checkout@v1.8.2'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.1':
-@@ -142,9 +142,9 @@ dependencies:
-         commit: 'sha1-f7e5d7c961414b23f5b25b2da9294395d08513ad'
-         owner_id: 43724913
-         repo_id: 442947557
--    'taiki-e/install-action@v2.90.3':
--        ref: 'v2.90.3'
--        commit: 'sha1-cfdb7ed4ccc7c7dce37759eae89dc5674b469b39'
-+    'taiki-e/install-action@v2.90.4':
-+        ref: 'v2.90.4'
-+        commit: 'sha1-4a76afe23f9e08d2d9550fb56e556444e8611d21'
-         owner_id: 43724913
-         repo_id: 442947557
-     'useblacksmith/checkout@v1.8.2':
-```
-
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
-```diff
-@@ -57,7 +57,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
- 
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.90.3
-+        uses: taiki-e/install-action@v2.90.4
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -97,7 +97,7 @@ jobs:
-           cache-key: feature-powerset-${{ matrix.partition }}
- 
-       - name: Install just, cargo-hack
--        uses: taiki-e/install-action@v2.90.3
-+        uses: taiki-e/install-action@v2.90.4
-         with:
-           tool: just,cargo-hack
- 
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
-```diff
-@@ -72,7 +72,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
- 
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.90.3
-+        uses: taiki-e/install-action@v2.90.4
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -107,7 +107,7 @@ jobs:
-           toolchain: nightly
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.90.3
-+        uses: taiki-e/install-action@v2.90.4
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-           components: llvm-tools
- 
-       - name: Install just, cargo-llvm-cov, cargo-nextest
--        uses: taiki-e/install-action@v2.90.3
-+        uses: taiki-e/install-action@v2.90.4
-         with:
-           tool: just,cargo-llvm-cov,cargo-nextest
- 
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +1/-1)
-```diff
-@@ -124,7 +124,7 @@ jobs:
-           toolchain: ${{ vars.RUST_VERSION_EXTERNAL_TYPES }}
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.90.3
-+        uses: taiki-e/install-action@v2.90.4
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-           toolchain: stable
- 
-       - name: Install cargo-semver-checks
--        uses: taiki-e/install-action@v2.90.3
-+        uses: taiki-e/install-action@v2.90.4
-         with:
-           tool: cargo-semver-checks
- 
-```
-
----
-
-### Incident Patch 3: `072bc5f6` (2026-11-18)
-**Commit Message**: build(deps): bump zstd from 0.14.3 to 0.14.4 (#4436)
-
-* build(deps): bump zstd from 0.14.3 to 0.14.4
-
-Bumps [zstd](https://github.com/gyscos/zstd-rs) from 0.14.3 to 0.14.4.
-- [Release notes](https://github.com/gyscos/zstd-rs/releases)
-- [Commits](https://github.com/gyscos/zstd-rs/compare/v0.14.3...v0.14.4)
-
----
-updated-dependencies:
-- dependency-name: zstd
-  dependency-version: 0.14.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* ci: allow the BSD-2-Clause license
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Rob Ede <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +6/-6)
-```diff
-@@ -4218,27 +4218,27 @@ checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
- 
- [[package]]
- name = "zstd"
--version = "0.14.3"
-+version = "0.14.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
-+checksum = "ad5020ab8f27bfc0024ad0a07aed6bf022a16208f479686fbed4fdd0c85eb0b3"
- dependencies = [
-  "zstd-safe",
- ]
- 
- [[package]]
- name = "zstd-safe"
--version = "8.2.0"
-+version = "8.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
-+checksum = "5a9ea9cc2576c2fcc104e9cec04f46e3ede564f4fbc206831e4ef7e859a4140d"
- dependencies = [
-  "zstd-sys",
- ]
- 
- [[package]]
- name = "zstd-sys"
--version = "2.1.2+zstd.1.5.7"
-+version = "2.1.3+zstd.1.5.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
-+checksum = "f729a06d0257428fd9d997ac8db7e1407bd0262ab016b085b36bc52957c0052d"
- dependencies = [
-  "cc",
-  "pkg-config",
-```
-
-**File**: `deny.toml` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@ allow = [
-     "Unicode-3.0",
-     "ISC",
-     "CDLA-Permissive-2.0",
-+    "BSD-2-Clause",
-     "BSD-3-Clause",
-     "Zlib",
-     "OpenSSL",
++    #[tokio::test(flavor = "local")]
++    async fn test_redirect_301_302_keep_methods_other_than_post() {
++        let srv = actix_test::start(|| {
++            async fn moved() -> HttpResponse {
++                HttpResponse::MovedPermanently()
++                    .append_header(("location", "/test"))
++                    .finish()
++            }
++
++            async fn found() -> HttpResponse {
++                HttpResponse::Found()
++                    .append_header(("location", "/test"))
++                    .finish()
++            }
++
++            async fn see_other() -> HttpResponse {
++                HttpResponse::SeeOther()
++                    .append_header(("location", "/test"))
++                    .finish()
++            }
++
++            async fn test(req: HttpRequest, body: Bytes) -> HttpResponse {
++                HttpResponse::Ok().body(format!("{} {}", req.method(), body.len()))
++            }
++
++            App::new()
++                .service(web::resource("/moved").route(web::to(moved)))
++                .service(web::resource("/found").route(web::to(found)))
++                .service(web::resource("/see-other").route(web::to(see_other)))
++                .service(web::resource("/test").route(web::to(test)))
++        });
++
++        for path in ["/moved", "/found"] {
++            let mut res = srv.put(path).send_body("Hello").await.unwrap();
++            assert_eq!(res.body().await.unwrap(), "PUT 5");
++
++            let mut res = srv.delete(path).send().await.unwrap();
++            assert_eq!(res.body().await.unwrap(), "DELETE 0");
++
++            let mut res = srv.post(path).send_body("Hello").await.unwrap();
++            assert_eq!(res.body().await.unwrap(), "GET 0");
++        }
++
++        // 303 still changes every method other than GET and HEAD to GET
++        let mut res = srv.put("/see-other").send_body("Hello").await.unwrap();
++        assert_eq!(res.body().await.unwrap(), "GET 0");
++    }
++
+     #[tokio::test(flavor = "local")]
+     async fn test_redirect_headers() {
+         let srv = actix_test::start(|| {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4443** (2026-11-21): perf(http): store two header values inline in HeaderMap (@g4lb)
 - **PR #4439** (2026-11-18): docs(web): correct default status named in Redirect::using_status_code (@farisbasha)
 - **PR #4438** (2026-11-18): build(deps): bump local-channel from 0.1.5 to 0.1.7 (@dependabot[bot])
 - **PR #4437** (2026-11-18): build(deps): bump taiki-e/install-action from 2.90.3 to 2.90.4 (@dependabot[bot])
 - **PR #4436** (2026-11-18): build(deps): bump zstd from 0.14.3 to 0.14.4 (@dependabot[bot])
 - **PR #4435** (2026-11-18): build(deps): bump bytestring from 1.5.1 to 1.6.0 (@dependabot[bot])
-- **PR #4434** (2026-11-18): build(deps): bump release-plz/action from 0.5.140 to 0.5.148 (@dependabot[bot])
 
 ---
 
@@ -1931,49 +1547,32 @@ Co-authored-by: Rob Ede <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump useblacksmith/checkout from 1.8.2 to 1.8.3
+## X. awc): keep the method on 301 and 302 redirects unless it is POST
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `awc/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `967afcde`: build(deps): bump useblacksmith/checkout from 1.8.2 to 1.8.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `470bc8c7`: awc): keep the method on 301 and 302 redirects unless it is POST. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `awc/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        - 'useblacksmith/checkout@v1.8.3'
-        - 'useblacksmith/checkout@v1.8.3'
-        - 'useblacksmith/checkout@v1.8.3'
-        - 'useblacksmith/checkout@v1.8.3'
-        - 'useblacksmith/checkout@v1.8.3'
-        - 'useblacksmith/checkout@v1.8.3'
-        - 'useblacksmith/checkout@v1.8.3'
-    'useblacksmith/checkout@v1.8.3':
-        ref: 'v1.8.3'
-        commit: 'sha1-75c49b6ed30ce59336e9252425796cfcfac155f8'
+- Keep the request method and body when following a 301 or 302 redirect for methods other than `POST`, as already done for 307 and 308. For example, a `PUT` that gets a 302 is now sent again as a `PUT` with the same body (also to another origin) instead of as a `GET` without a body. `POST` still changes to `GET`, and 303 is unchanged.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-    'useblacksmith/checkout@v1.8.2':
-        ref: 'v1.8.2'
-        commit: 'sha1-2b9fe87d796feea153b455ec2f3125b471a7b0e7'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `967afcde` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `470bc8c7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

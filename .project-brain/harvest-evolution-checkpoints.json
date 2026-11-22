@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T00:24:56.785Z",
+  "last_updated": "2026-11-22T00:32:50.303Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T00:10:00.333Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-21T23:56:19.144Z",
+      "processed_at": "2026-11-22T00:32:49.329Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -868,7 +868,7 @@
       "staged_for_review": 1
     },
     "actix-actix-web-learnings.md": {
-      "processed_at": "2026-11-18T21:23:25.260Z",
+      "processed_at": "2026-11-22T00:32:48.167Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3048,8 +3048,8 @@
       "staged_for_review": 2
     },
     "hf-pyannote-speaker-diarization-3.1-learnings.md": {
-      "processed_at": "2026-11-15T19:12:44.648Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T00:32:48.958Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md": {
@@ -3693,7 +3693,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2940,
+  "total_dossiers_evaluated": 2943,
   "total_canonical_promoted": 464,
-  "total_staged_for_review": 2250
+  "total_staged_for_review": 2252
 }

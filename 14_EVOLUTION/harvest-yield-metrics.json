@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T00:24:51.636Z",
-  "total_cycles_completed": 11369,
-  "total_learnings_persisted": 11369,
-  "total_rules_promoted": 10683,
+  "last_updated": "2026-11-22T00:32:38.940Z",
+  "total_cycles_completed": 11371,
+  "total_learnings_persisted": 11371,
+  "total_rules_promoted": 10684,
   "history": [
-    {
-      "timestamp": "2026-11-21T04:48:30.085Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T05:27:50.169Z",
-      "repository": "fastify/fastify",
-      "learningId": "learn-github-fastify-fastify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T05:27:53.625Z",
       "repository": "a2ui-project/a2ui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T00:24:51.636Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T00:32:36.502Z",
+      "repository": "pyannote/speaker-diarization-3.1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T00:32:38.940Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
