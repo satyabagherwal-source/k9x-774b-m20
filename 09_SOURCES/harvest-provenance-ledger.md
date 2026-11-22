@@ -12251,3 +12251,8 @@ Every entry in this ledger must capture:
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `a01bf36e` | Multi-dimensional audit evidence | 2026-11-22T22:49:27.306Z |
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-22T22:58:05.111Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `82e8fb92` | Multi-dimensional audit evidence | 2026-11-22T22:58:16.489Z |
+| `learn-huggingface-briaai-rmbg-3-0` | `https://huggingface.co/briaai/RMBG-3.0` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-22T23:06:10.752Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `a3399b9c` | Multi-dimensional audit evidence | 2026-11-22T23:06:17.029Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `d0957897` | Multi-dimensional audit evidence | 2026-11-22T23:06:21.271Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `340dc085` | Multi-dimensional audit evidence | 2026-11-22T23:06:25.102Z |
+| `learn-dom-d-8bd6649e` | `project://modelcontextprotocol-kotlin-sdk` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md` | 2026-11-22T23:06:58.222Z |

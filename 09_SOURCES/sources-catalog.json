@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "83f304b1",
+    "sourceVersion": "d0957897",
     "license": "AGPL-3.0",
-    "contentHash": "6b7cdb42d047bc5a9e8ceadc94168a44fabc4d3b0e3d73f7874d48c3fe6de5d0",
-    "lastHarvestedAt": "2026-11-20T21:38:58.025Z",
+    "contentHash": "216fd62523a0b44cc27b0110d492c875dd5a135a47afbe86d0aa05ae9c032295",
+    "lastHarvestedAt": "2026-11-22T23:06:21.271Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "c0f3122f",
+    "sourceVersion": "340dc085",
     "license": "NOASSERTION",
-    "contentHash": "f65c33024745ca8348063a7489b2ced05825a8c2190a32b8b92fc419fbb842dd",
-    "lastHarvestedAt": "2026-11-21T23:06:14.407Z",
+    "contentHash": "7ca7d5bbaeba1157457b04fc0a7d7187d2012f5159639d08722b382671a52236",
+    "lastHarvestedAt": "2026-11-22T23:06:25.102Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -8203,10 +8203,10 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "sourceVersion": "af5d784d",
+    "sourceVersion": "a3399b9c",
     "license": "NOASSERTION",
-    "contentHash": "753e4a1064160c57f6ab152f63a89647e2520964814fd49b204e3051b35babf1",
-    "lastHarvestedAt": "2026-11-15T20:41:58.083Z",
+    "contentHash": "c8fa450be9266d6745196e4382ed907569e8044ae9548dfa8db59c345dcdcb82",
+    "lastHarvestedAt": "2026-11-22T23:06:17.029Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   },
   "ivanvorobei-swiftui": {
@@ -12895,8 +12895,8 @@
     "sourceUrl": "https://huggingface.co/briaai/RMBG-3.0",
     "sourceVersion": "hf-briaai-rmbg-3.0",
     "license": "Open-Source",
-    "contentHash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
-    "lastHarvestedAt": "2026-11-18T16:00:07.214Z",
+    "contentHash": "13d01c85b6442bae76c8f667727a965944f3210273a74d1658c999b0229a386f",
+    "lastHarvestedAt": "2026-11-22T23:06:10.752Z",
     "learningId": "learn-huggingface-briaai-rmbg-3-0"
   },
   "hf-huggingfacetb-smolvlm2-256m-video-instruct": {

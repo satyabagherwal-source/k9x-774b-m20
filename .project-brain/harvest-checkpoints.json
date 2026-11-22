@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T22:58:16.502Z",
+  "last_updated": "2026-11-22T23:06:25.111Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "6b7cdb42d047bc5a9e8ceadc94168a44fabc4d3b0e3d73f7874d48c3fe6de5d0",
-      "verified_at": "2026-11-20T21:38:58.040Z",
+      "content_hash": "216fd62523a0b44cc27b0110d492c875dd5a135a47afbe86d0aa05ae9c032295",
+      "verified_at": "2026-11-22T23:06:21.279Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T21:38:58.040Z"
+      "last_updated": "2026-11-22T23:06:21.279Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "f65c33024745ca8348063a7489b2ced05825a8c2190a32b8b92fc419fbb842dd",
-      "verified_at": "2026-11-21T23:06:14.445Z",
+      "content_hash": "7ca7d5bbaeba1157457b04fc0a7d7187d2012f5159639d08722b382671a52236",
+      "verified_at": "2026-11-22T23:06:25.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:06:14.445Z"
+      "last_updated": "2026-11-22T23:06:25.110Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -12336,14 +12336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "content_hash": "753e4a1064160c57f6ab152f63a89647e2520964814fd49b204e3051b35babf1",
-      "verified_at": "2026-11-15T20:41:58.093Z",
+      "content_hash": "c8fa450be9266d6745196e4382ed907569e8044ae9548dfa8db59c345dcdcb82",
+      "verified_at": "2026-11-22T23:06:17.036Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T20:41:58.093Z"
+      "last_updated": "2026-11-22T23:06:17.036Z"
     },
     "ivanvorobei/SwiftUI": {
       "repository": "ivanvorobei/SwiftUI",
@@ -19431,14 +19431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-briaai-rmbg-3-0",
-      "content_hash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
-      "verified_at": "2026-11-18T16:00:07.223Z",
+      "content_hash": "13d01c85b6442bae76c8f667727a965944f3210273a74d1658c999b0229a386f",
+      "verified_at": "2026-11-22T23:06:10.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:00:07.223Z"
+      "last_updated": "2026-11-22T23:06:10.761Z"
     },
     "HuggingFaceTB/SmolVLM2-256M-Video-Instruct": {
       "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",

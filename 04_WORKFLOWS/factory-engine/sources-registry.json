@@ -20,9 +20,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-22T18:35:23.850Z",
+    "lastChecked": "2026-11-22T23:06:17.387Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-22T18:35:23.850Z"
+    "lastVerified": "2026-11-22T23:06:17.387Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T22:58:20.212Z",
-    "lastVerified": "2026-11-22T22:58:20.212Z",
+    "lastChecked": "2026-11-22T23:06:28.324Z",
+    "lastVerified": "2026-11-22T23:06:28.324Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -366,12 +366,12 @@
     "lastVerified": "2026-11-22T21:32:06.745Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T22:28:15.204Z",
-    "lastVerified": "2026-11-22T22:28:15.204Z",
+    "lastChecked": "2026-11-22T23:06:22.545Z",
+    "lastVerified": "2026-11-22T23:06:22.545Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -380,7 +380,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ee76a797"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1166,14 +1167,14 @@
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T23:06:13.901Z",
-    "lastVerified": "2026-11-21T23:06:13.901Z",
+    "lastChecked": "2026-11-22T23:06:24.055Z",
+    "lastVerified": "2026-11-22T23:06:24.055Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "f65c33024745ca8348063a7489b2ced05825a8c2190a32b8b92fc419fbb842dd",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "7ca7d5bbaeba1157457b04fc0a7d7187d2012f5159639d08722b382671a52236",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2434,12 +2435,12 @@
     "lastVerified": "2026-11-22T02:18:09.831Z"
   },
   "flox-flox": {
-    "name": "flox/flox",
+    "name": "flox",
     "officialUrl": "https://github.com/flox/flox",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T16:18:43.939Z",
-    "lastVerified": "2026-11-21T16:18:43.939Z",
+    "lastChecked": "2026-11-22T23:06:07.340Z",
+    "lastVerified": "2026-11-22T23:06:07.340Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flox-flox",
@@ -2448,7 +2449,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2130d6d7"
   },
   "hf-comfy-org-qwen-image-2.1": {
     "name": "Comfy-Org/Qwen-Image-2.1",
@@ -3056,22 +3058,21 @@
     "lastVerified": "2026-11-21T20:36:28.798Z"
   },
   "beclab-olares": {
-    "name": "Olares",
+    "name": "beclab/Olares",
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T00:24:39.237Z",
-    "lastVerified": "2026-11-22T00:24:39.237Z",
+    "lastChecked": "2026-11-22T23:06:20.228Z",
+    "lastVerified": "2026-11-22T23:06:20.228Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "6b7cdb42d047bc5a9e8ceadc94168a44fabc4d3b0e3d73f7874d48c3fe6de5d0",
+    "contentHash": "216fd62523a0b44cc27b0110d492c875dd5a135a47afbe86d0aa05ae9c032295",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "83f304b1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "xerj-org-xerj": {
     "name": "xerj-org/xerj",
@@ -3243,12 +3244,12 @@
     "officialUrl": "https://huggingface.co/briaai/RMBG-3.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T15:59:36.533Z",
-    "lastVerified": "2026-11-18T15:59:36.533Z",
+    "lastChecked": "2026-11-22T23:06:10.096Z",
+    "lastVerified": "2026-11-22T23:06:10.096Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-briaai-rmbg-3-0",
-    "contentHash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
+    "contentHash": "13d01c85b6442bae76c8f667727a965944f3210273a74d1658c999b0229a386f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9421,11 +9422,21 @@
     "lastVerified": "2026-11-20T00:24:10.887Z"
   },
   "modelcontextprotocol-kotlin-sdk": {
-    "name": "kotlin-sdk",
+    "name": "modelcontextprotocol/kotlin-sdk",
     "officialUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "lastChecked": "2026-11-20T00:24:13.379Z",
-    "revisionIdentifier": "af5d784d",
-    "lastVerified": "2026-11-20T00:24:13.379Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-22T23:06:16.531Z",
+    "lastVerified": "2026-11-22T23:06:16.531Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+    "contentHash": "c8fa450be9266d6745196e4382ed907569e8044ae9548dfa8db59c345dcdcb82",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",

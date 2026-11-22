@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-Q9LA",
-    "timestamp": "2026-11-21T00:43:55.534Z",
-    "repository": "neuron-core/neuron-ai",
-    "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "0ae4e690f4228f10a2f42a45edd00d2f2f5808b3b6fbc46429276cc7bdf15775",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-0K5W",
-    "timestamp": "2026-11-21T00:51:55.796Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "7940db42cb9e68e2ed864bf33c2702ff069232d7fb87562f8f67bf81c4043ae4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-0LY4",
-    "timestamp": "2026-11-21T00:51:58.108Z",
-    "repository": "QwikDev/qwik",
-    "learningId": "learn-github-qwikdev-qwik",
-    "contentHash": "25fe586776364bc2820e759a63cf06ec3798056175fc33366f225c7cc149e179",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-0RTD",
-    "timestamp": "2026-11-21T00:52:05.713Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "31728eab23f80bad0cdbab99d7985c16cfb3b709151b09c265c516ffbab13458",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-0UA9",
     "timestamp": "2026-11-21T00:52:08.913Z",
     "repository": "matrixorigin/matrixone",
@@ -7490,6 +7430,66 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "52c55fe59399325c9cd734b2e3294203b32970978c01a524a850d7dba44d490a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-49MJ",
+    "timestamp": "2026-11-22T23:06:10.747Z",
+    "repository": "briaai/RMBG-3.0",
+    "learningId": "learn-huggingface-briaai-rmbg-3-0",
+    "contentHash": "13d01c85b6442bae76c8f667727a965944f3210273a74d1658c999b0229a386f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-4EGW",
+    "timestamp": "2026-11-22T23:06:17.024Z",
+    "repository": "modelcontextprotocol/kotlin-sdk",
+    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+    "contentHash": "c8fa450be9266d6745196e4382ed907569e8044ae9548dfa8db59c345dcdcb82",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-4HQR",
+    "timestamp": "2026-11-22T23:06:21.267Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "216fd62523a0b44cc27b0110d492c875dd5a135a47afbe86d0aa05ae9c032295",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-4KP6",
+    "timestamp": "2026-11-22T23:06:25.098Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "7ca7d5bbaeba1157457b04fc0a7d7187d2012f5159639d08722b382671a52236",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

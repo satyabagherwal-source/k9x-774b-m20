@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T20:42:10.267Z",
+  "timestamp": "2026-11-22T23:06:58.408Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-modelcontextprotocol-kotlin-sdk-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [modelcontextprotocol-kotlin-sdk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T20:42:10.267Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T23:06:58.408Z`  
 > **Learning ID**: `LEARN-EVO-modelcontextprotocol-kotlin-sdk-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from modelcontextprotocol-kotlin-sdk-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source**: github ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
-> **Source Version**: `af5d784d`  
+> **Source Version**: `a3399b9c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T20:41:57.029Z  
+> **Timestamp**: 2026-11-22T23:06:16.535Z  
 > **Learning ID**: `learn-github-modelcontextprotocol-kotlin-sdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:41:57.022Z  
+> **Harvest Timestamp**: 2026-11-22T23:06:16.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The official Kotlin SDK for Model Context Protocol servers and clients. Maintained in collaboration with JetBrains
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1488 stars
+- **Stars / Engagement**: 1490 stars
 
 ---
 
@@ -202,6 +202,7 @@ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
 import io.modelcontextprotocol.kotlin.sdk.types.McpException
 import io.modelcontextprotocol.kotlin.sdk.types.RPCError.ErrorCode.CONNECTION_CLOSED
 import io.modelcontextprotocol.kotlin.sdk.types.RPCError.ErrorCode.INTERNAL_ERROR
+import kotlinx.coroutines.CompletableDeferred
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.coroutines.cancellation.CancellationException
@@ -234,6 +235,8 @@ public abstract class AbstractClientTransport : AbstractTransport() {
      * @see checkState
      */
     private val _state: AtomicReference<ClientTransportState> = AtomicReference(ClientTransportState.New)
+
+    private val operational = CompletableDeferred<Unit>()
 
     /**
      * Current transport state. Thread-safe via atomic reference.
@@ -332,10 +335,22 @@ public abstract class AbstractClientTransport : AbstractTransport() {
         try {
             initialize()
             stateTransition(from = ClientTransportState.Initializing, to = ClientTransportState.Operational)
+            operational.complete(Unit)
         } catch (e: Exception) {
             _state.store(ClientTransportState.InitializationFailed)
             closeResources()
             throw e
+        }
+    }
+
+    /**
+     * Registers [block] to handle inbound messages. Messages received before [start] completes
+     * are handed to [block] only once the transport is [ClientTransportState.Operational].
+     */
+    public override fun onMessage(block: suspend (JSONRPCMessage) -> Unit) {
+        super.onMessage { message ->
+            operational.await()
+            block(message)
         }
     }
 
@@ -394,18 +409,7 @@ public abstract class AbstractClientTransport : AbstractTransport() {
      * It is implemented by concrete subclasses of the transport to handle specific transmission
      * mechanisms.
      *
-     * Called by [send] after verifying transport [state].
-     *
-     * @param message The JSON-RPC message to be sent. Must comply with the JSON-RPC 2.0 specification.
-     * @param options Optional parameters that influence how the message is transmitted, such as
-     *                timeout settings or delivery guarantees. May be null if no specific options
-     *                are required.
-     * @see send
-     */
-    protected abstract suspend fun performSend(message: JSONRPCMessage, options: TransportSendOptions? = null)
-
-    /**
-     * Closes the client transport gracef
+     * Called by [send] after verifying transport
 ```
 
 ### Core Architecture Module: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/AbstractTransport.kt`
@@ -1083,11 +1087,11 @@ public open class TransportSendOptions(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1170** (2026-11-16): **Resuming a request stream cancels the other SSE streams in StreamableHttpClientTransport**
+  *Symptoms*: `StreamableHttpClientTransport` runs all its GET streams in one `sseJob`, and `startSseSession` cancels the running job before starting the next. So resuming a request stream (after the server closes it before the response, or via `resumptionToken`) cancels either the standalone GET stream for the rest of the session or another request's resumption, and that request times out. A resumption also ends only on a response, so after a request is cancelled the client keeps reconnecting until the transport closes.  #1091 brings this to TypeScript and Python SDK servers: once the client sends `MCP-Protocol-Version`, they can close request streams to make the client poll.
+
 - **Issue #1093** (2026-11-09): **stdio: the time to receive a message grows with the square of its size**
   *Symptoms*: **Describe the bug**  `ReadBuffer.readNextLine()` searches for the newline from the start of the buffer on every `readMessage()` call:  https://github.com/modelcontextprotocol/kotlin-sdk/blob/382e27b0ee5bfd3dad89c9fbc34fff1984e16ecd/kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBuffer.kt#L65-L72  The stdio transports read up to 8 KiB at a time and call `readMessage()` after each chunk, so the time to receive one message grows with the square of its size. A 15 MiB message arrives in at least 1,920 chunks, and about 14 GiB is searched in total.  **To Reproduce**  The snippet feeds one message to `ReadBuffer` in 8 KiB chunks, as the stdio transports do.  ```kotlin import io.modelcontextprotocol.kotlin.sdk.shared.ReadBuffer import kotlin.time.Duration import kotlin.time.measureTime  fun receive(sizeMiB: Int): Duration {     val data = "x".repeat(sizeMiB * 1024 * 1024)     val frame = """{"jsonrpc":"2.0","method":"notifications/message","params":{"level":"info","data":"$data"}}""" + "\n"     val bytes = frame.encodeToByteArray()     val readBuffer = ReadBuffer()     return measureTime {         for (offset in bytes.indices step 8192) {             readBuffer.append(bytes.copyOfRange(offset, minOf(offset + 8192, bytes.size)))             // null until the last chunk arrives; every call searches the buffer from the start             readBuffer.readMessage()         }     } }  fun main() {     receive(1) // warm-up     for (sizeMiB in listOf(1, 2
-
-- **Issue #1086** (2026-11-10): **A cancelled handler stops StdioServerTransport**
-  *Symptoms*: When a handler throws `CancellationException`, the `processorPump` of `StdioServerTransport` rethrows it. That ends the read loop, the `finally` block closes the write channel, and the transport fires `onClose` without `onError`. A single handler's cancellation, for example a cancelled request scope leaking out of a handler, therefore closes the whole connection. Other handler exceptions are logged and the loop continues.  **Expected:** treat a `CancellationException` that comes from a handler like any other handler failure, while the transport's own cancellation still stops it. They can be told apart, for example, with `currentCoroutineContext().isActive`. Update the test `should not invoke onError for CancellationException in handler`, which pins the current behavior.  Related: #518. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1104,527 +1108,235 @@ public open class TransportSendOptions(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70ad24e2` (2026-11-12)
-**Commit Message**: fix(server)!: return INVALID_PARAMS for unknown resources (#1172)
+### Incident Patch 1: `a3399b9c` (2026-11-20)
+**Commit Message**: fix(transport): hold inbound messages until the client transport is operational (#1207)
 
-Per SEP-2164, `resources/read` for an unknown URI now fails with
-`-32602` (Invalid Params) instead of `-32002`, on every protocol
-version. The error data still carries the `uri`.
+## Why
 
-## Breaking Changes
-`Client.readResource` for a missing resource throws `McpException` with
-`INVALID_PARAMS` instead of `RESOURCE_NOT_FOUND`. Clients matching on
-`-32002` should also accept `-32602`.
+Follow-up to #985. Goal: remove the CI flake that makes PRs on the
+stateless branch green only on rerun. `RequestScopedLifecycleTest` and
+`ResponseCacheTest` fail with "server/discover probe timed out" or
+"Expected 2026-07-28 but actual was null". Every failing log has `Error
+handling request: server/discover ... McpException: Transport is not
+ready` from `AbstractClientTransport.send`. The defect is on main.
 
-Closes #805
+`AbstractClientTransport.start()` runs `initialize()`, where transports
+start their readers, and only then moves to `Operational`. A reader can
+hand a request to `Protocol` in that window. The handler's reply hits
+the state check in `send()` and is dropped, so the peer waits out its
+timeout. Sometimes the error reply gets through instead, and the client
+reads it as a refusal and falls back to legacy. The integration tests
+start `server.createSession` and `client.connect` concurrently over
+`ChannelTransport`, and slow CI runners widen the window.
 
-**File**: `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/server/ServerFeaturesInvocationTest.kt` (modified, +1/-1)
+## What changed
+
+- `AbstractClientTransport` overrides `onMessage` so that handlers wait
+on a deferred that `start()` completes right af
+
+**File**: `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/integration/ProtocolConcurrencyIntegrationTest.kt` (modified, +0/-3)
 ```diff
-@@ -217,7 +217,7 @@ class ServerFeaturesInvocationTest : AbstractServerFeaturesTest() {
-             client.readResource(ReadResourceRequest(ReadResourceRequestParams("test://nonexistent")))
-         }
+@@ -73,9 +73,6 @@ class ProtocolConcurrencyIntegrationTest {
+         ),
+     )
  
--        exception.code shouldBe RPCError.ErrorCode.RESOURCE_NOT_FOUND
-+        exception.code shouldBe RPCError.ErrorCode.INVALID_PARAMS
-         exception.message shouldBe "Resource not found"
-         exception.data shouldBe buildJsonObject { put("uri", "test://nonexistent") }
-     }
+-    // ChannelTransport delivers inbound messages as soon as its read loop starts, which is before
+-    // start() marks it operational. Creating the session first keeps the client's initialize from
+-    // landing on a transport that would reject the session's response.
+     private suspend fun connect(
+         client: Client,
+         clientTransport: ChannelTransport,
 ```
 
-**File**: `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/server/ServerResourceTemplateTest.kt` (modified, +2/-2)
+**File**: `kotlin-sdk-core/api/kotlin-sdk-core.api` (modified, +1/-0)
 ```diff
-@@ -93,14 +93,14 @@ class ServerResourceTemplateTest : AbstractServerFeaturesTest() {
-     }
- 
-     @Test
--    fun `readResource should return RESOURCE_NOT_FOUND error when no template matches`() = runTest {
-+    fun `readResource should return INVALID_PARAMS error when no template matches`() = runTest {
-         server.addResourceTemplate("test://items/{itemId}", "Item") { _, _ -> ReadResourceResult(emptyList()) }
- 
-         val exception = shouldThrow<McpException> {
-             client.readResource(ReadResourceRequest(ReadResourceRequestParams("test://users/42")))
-         }
- 
--        exception.code shouldBe RPCError.ErrorCode.RESOURCE_NOT_FOUND
-+        exception.code shouldBe RPCError.ErrorCode.INVALID_PARAMS
-         exception.message shouldBe "Resource not found"
-         exception.data shouldBe buildJsonObject { put("uri", "test://users/42") }
-     }
+@@ -21,6 +21,7 @@ public abstract class io/modelcontextprotocol/kotlin/sdk/shared/AbstractClientTr
+ 	protected abstract fun getLogger ()Lio/github/oshai/kotlinlogging/KLogger;
+ 	protected final fun getState ()Lio/modelcontextprotocol/kotlin/sdk/shared/ClientTransportState;
+ 	protected abstract fun initialize (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
++	public fun onMessage (Lkotlin/jvm/functions/Function2;)V
+ 	protected abstract fun performSend (Lio/modelcontextprotocol/kotlin/sdk/types/JSONRPCMessage;Lio/modelcontextprotocol/kotlin/sdk/shared/TransportSendOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ 	public static synthetic fun performSend$default (Lio/modelcontextprotocol/kotlin/sdk/shared/AbstractClientTransport;Lio/modelcontextprotocol/kotlin/sdk/types/JSONRPCMessage;Lio/modelcontextprotocol/kotlin/sdk/shared/TransportSendOptions;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+ 	public fun send (Lio/modelcontextprotocol/kotlin/sdk/types/JSONRPCMessage;Lio/modelcontextprotocol/kotlin/sdk/shared/TransportSendOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 ```
 
-**File**: `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/Server.kt` (modified, +1/-1)
+**File**: `kotlin-sdk-core/api/kotlin-sdk-core.klib.api` (modified, +1/-0)
 ```diff
-@@ -717,7 +717,7 @@ public open class Server(
-             ?: run {
-                 logger.error { "Resource not found: $uri" }
-                 throw McpException(
--                    code = RPCError.ErrorCode.RESOURCE_NOT_FOUND,
-+                    code = RPCError.ErrorCode.INVALID_PARAMS,
-                     message = "Resource not found",
-                     data = buildJsonObject { put("uri", uri) },
-                 )
+@@ -661,6 +661,7 @@ abstract class io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport
+     final fun checkState(io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState, kotlin/Function1<io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState, kotlin/Any> = ...) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.checkState|checkState(io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState;kotlin.Function1<io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState,kotlin.Any>){}[0]
+     final fun stateTransition(io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState, io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.stateTransition|stateTransition(io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState;io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState){}[0]
+     final fun updateState(io.modelcontextprotocol.kotlin.sdk.shared/ClientTransportState) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.updateState|updateState(io.modelcontextprotocol.kotlin.sdk.shared.ClientTransportState){}[0]
++    open fun onMessage(kotlin.coroutines/SuspendFunction1<io.modelcontextprotocol.kotlin.sdk.types/JSONRPCMessage, kotlin/Unit>) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.onMessage|onMessage(kotlin.coroutines.SuspendFunction1<io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage,kotlin.Unit>){}[0]
+     open suspend fun close() // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.close|close(){}[0]
+     open suspend fun send(io.modelcontextprotocol.kotlin.sdk.types/JSONRPCMessage, io.modelcontextprotocol.kotlin.sdk.shared/TransportSendOptions?) // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.send|send(io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage;io.modelcontextprotocol.kotlin.sdk.shared.TransportSendOptions?){}[0]
+     open suspend fun start() // io.modelcontextprotocol.kotlin.sdk.shared/AbstractClientTransport.start|start(){}[0]
 ```
 
----
-
-### Incident Patch 2: `af5d784d` (2026-11-13)
-**Commit Message**: Fix Client.connect not sending negotiated MCP-Protocol-Version (#1091)
-
-Copy InitializeResult.protocolVersion onto StreamableHttpClientTransport
-before initialized so subsequent Streamable HTTP requests include the
-spec-required header.
-
-<!-- Provide a brief summary of your changes -->
-
-After `initialize` succeeds, `Client.connect` now assigns
-`InitializeResult.protocolVersion` to
-`StreamableHttpClientTransport.protocolVersion` before sending
-`notifications/initialized`. Subsequent Streamable HTTP requests then
-include `mcp-protocol-version`.
-
-## Motivation and Context
-<!-- Why is this change needed? What problem does it solve? -->
-
-The Streamable HTTP spec (2025-06-18 / 2025-11-25) requires clients to
-send the negotiated protocol version on HTTP requests after initialize.
-Servers that do not receive the header SHOULD assume `2025-03-26`.
-
-`StreamableHttpClientTransport` already appends `mcp-protocol-version`
-when `protocolVersion` is set, but `Client.connect` never copied the
-negotiated value, so the header was omitted unless callers set the field
-by hand.
-
-Fixes #1090
-
-## How Has This Been Tested?
-<!-- Have you tested this in a real application? Which scenarios were
-tested? -->
-
-
-
-**File**: `kotlin-sdk-client/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/client/Client.kt` (modified, +6/-0)
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/AbstractClientTransport.kt` (modified, +15/-0)
 ```diff
-@@ -222,6 +222,12 @@ public open class Client(private val clientInfo: Implementation, options: Client
-             serverVersion = result.serverInfo
-             serverInstructions = result.instructions
- 
-+            // Streamable HTTP MUST send MCP-Protocol-Version on requests after initialize.
-+            // The transport only adds the header when protocolVersion is set; copy the negotiated value.
-+            if (transport is StreamableHttpClientTransport) {
-+                transport.protocolVersion = result.protocolVersion
-+            }
-+
-             notification(InitializedNotification())
-             enableConcurrentDispatch()
-         } catch (error: Throwable) {
-```
-
-**File**: `kotlin-sdk-client/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/client/streamable/http/StreamableHttpClientTransportTest.kt` (modified, +68/-0)
-```diff
-@@ -21,9 +21,13 @@ import io.ktor.http.HttpStatusCode
- import io.ktor.http.content.TextContent
- import io.ktor.http.headersOf
- import io.ktor.utils.io.ByteReadChannel
-+import io.modelcontextprotocol.kotlin.sdk.client.Client
- import io.modelcontextprotocol.kotlin.sdk.client.StreamableHttpClientTransport
- import io.modelcontextprotocol.kotlin.sdk.client.StreamableHttpError
- import io.modelcontextprotocol.kotlin.sdk.shared.TooLongFrameException
-+import io.modelcontextprotocol.kotlin.sdk.types.EmptyResult
-+import io.modelcontextprotocol.kotlin.sdk.types.Implementation
-+import io.modelcontextprotocol.kotlin.sdk.types.InitializeResult
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCNotification
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
-@@ -32,7 +36,10 @@ import io.modelcontextprotocol.kotlin.sdk.types.McpException
- import io.modelcontextprotocol.kotlin.sdk.types.McpJson
- import io.modelcontextprotocol.kotlin.sdk.types.RPCError
- import io.modelcontextprotocol.kotlin.sdk.types.RequestId
-+import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
-+import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.test.runTest
-+import kotlinx.coroutines.withContext
- import kotlinx.serialization.json.buildJsonObject
- import kotlinx.serialization.json.put
- import kotlinx.serialization.json.putJsonObject
-@@ -126,6 +133,67 @@ class StreamableHttpClientTransportTest {
-         headers["mcp-protocol-version"] shouldBe "2025-06-18"
-     }
- 
-+    @Test
-+    fun `connect should apply the negotiated protocol version to subsequent streamable HTTP requests`() = runTest {
-+        val negotiated = "2025-03-26"
-+        val jsonHeaders = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-+        val transport = createTransport { data ->
-+            if (data.method != HttpMethod.Post) {
-+                return@createTransport respond("", HttpStatusCode.MethodNotAllowed)
-+            }
-+            when (val message = McpJson.decodeFromString<JSONRPCMessage>((data.body as TextContent).text)) {
-+                is JSONRPCRequest -> when (message.method) {
-+                    "initialize" -> respond(
-+                        McpJson.encodeToString(
-+                            JSONRPCMessage.serializer(),
-+                            JSONRPCResponse(
-+                                id = message.id,
-+                                result = InitializeResult(
-+                                    protocolVersion = negotiated,
-+                                    capabilities = ServerCapabilities(),
-+                                    serverInfo = Implementation("test-server", "1.0.0"),
-+                                ),
-+                            ),
-+                        ),
-+                        HttpStatusCode.OK,
-+                        jsonHeaders,
-+                    )
-+
-+                    "ping" -> respond(
-+                        McpJson.encodeToString(
-+                            JSONRPCMessage.serializer(),
-+                            JSONRPCResponse(id = message.id, result = EmptyResult()),
-+                        ),
-+                        HttpStatusCode.OK,
-+                        jsonHeaders,
-+                    )
-+
-+                    else -> respond("", HttpStatusCode.Accepted)
-+                }
-+
-+                else -> respond("", HttpStatusCode.Accepted)
-+            }
-+        }
-+
-+        // Protocol request timeouts use delay(); runTest would skip the 60s budget before MockEngine replies.
-+        withContext(Dispatchers.Default) {
-+            val client = Client(Implementation("test-client", "1.0.0"))
-+            try {
-+                client.connect(transport)
-+                transport.protocolVersion shouldBe negotiated
-+
-+                client.ping()
-+                val ping = requests.last { req ->
-+                    req.method == HttpMethod.Post &&
-+                        (req.body as TextContent).text.contains("\"method\":\"ping\"")
-+                }
-+                ping.headers["mcp-protocol-version"] shouldBe negotiated
-+            } finally {
-+                client.close()
-+            }
-+        }
-+    }
-+
-     @Test
-     fun `should send MCP method and name headers from name`() = runTest {
-         val headers = postHeaders(
-```
-
----
-
-### Incident Patch 3: `61500503` (2026-11-12)
-**Commit Message**: fix(client): resume Streamable HTTP SSE streams independently (#1171)
-
-Run the standalone GET stream and each resumed request stream in
-separate jobs, so resuming one no longer cancels the others. A
-resumption stops when its request is cancelled. `Protocol` no longer
-sends `notifications/cancelled` with the request's resumption token,
-which made the transport resume a stream instead of sending the cancel.
-
-fixes #1170
-
-## How Has This Been Tested?
-
-Integration tests against a scripted server: the GET stream survives a
-resumption, concurrent resumptions both complete, and a cancelled
-request stops resuming, both inline and with `resumptionToken`. A
-`Protocol` test checks the cancel options. Also checked against a
-TypeScript SDK 1.30.1 server with `MCP-Protocol-Version` set.
-
-## Breaking Changes
-
-None
-
-## Types of changes
-- [x] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing
-functionality to change)
-- [ ] Documentation update
-
-## Checklist
-- [x] I have read the [MCP
-Documentation](https://modelcontextprotocol.io)
-- [x] My code follows the repository's st
-
-**File**: `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/integration/streamablehttp/StreamableHttpClientTransportIntegrationTest.kt` (modified, +155/-4)
-```diff
-@@ -1,6 +1,7 @@
- package io.modelcontextprotocol.kotlin.sdk.integration.streamablehttp
- 
- import io.kotest.assertions.throwables.shouldThrow
-+import io.kotest.matchers.ints.shouldBeGreaterThan
- import io.kotest.matchers.shouldBe
- import io.ktor.client.HttpClient
- import io.ktor.client.plugins.sse.SSE
-@@ -25,17 +26,22 @@ import io.modelcontextprotocol.kotlin.sdk.server.mcpStreamableHttp
- import io.modelcontextprotocol.kotlin.sdk.shared.RequestOptions
- import io.modelcontextprotocol.kotlin.sdk.types.CallToolRequest
- import io.modelcontextprotocol.kotlin.sdk.types.CallToolRequestParams
-+import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
- import io.modelcontextprotocol.kotlin.sdk.types.Implementation
- import io.modelcontextprotocol.kotlin.sdk.types.LoggingMessageNotification
+@@ -6,6 +6,7 @@ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
  import io.modelcontextprotocol.kotlin.sdk.types.McpException
- import io.modelcontextprotocol.kotlin.sdk.types.Method
- import io.modelcontextprotocol.kotlin.sdk.types.RPCError
- import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
-+import io.modelcontextprotocol.kotlin.sdk.types.TextContent
- import io.modelcontextprotocol.kotlin.test.utils.actualPort
- import io.modelcontextprotocol.kotlin.test.utils.runIntegrationTest
- import kotlinx.coroutines.CompletableDeferred
-+import kotlinx.coroutines.async
-+import kotlinx.coroutines.awaitAll
- import kotlinx.coroutines.awaitCancellation
- import kotlinx.coroutines.channels.Channel
-+import kotlinx.coroutines.coroutineScope
- import kotlinx.coroutines.delay
- import kotlinx.coroutines.withTimeout
- import kotlinx.serialization.json.Json
-@@ -146,6 +152,122 @@ class StreamableHttpClientTransportIntegrationTest {
-         }
-     }
+ import io.modelcontextprotocol.kotlin.sdk.types.RPCError.ErrorCode.CONNECTION_CLOSED
+ import io.modelcontextprotocol.kotlin.sdk.types.RPCError.ErrorCode.INTERNAL_ERROR
++import kotlinx.coroutines.CompletableDeferred
+ import kotlin.concurrent.atomics.AtomicReference
+ import kotlin.concurrent.atomics.ExperimentalAtomicApi
+ import kotlin.coroutines.cancellation.CancellationException
+@@ -39,6 +40,8 @@ public abstract class AbstractClientTransport : AbstractTransport() {
+      */
+     private val _state: AtomicReference<ClientTransportState> = AtomicReference(ClientTransportState.New)
  
-+    @Test
-+    fun `client keeps the GET stream open while a request stream resumes`() {
-+        val sendNotification = CompletableDeferred<Unit>()
-+        val received = Channel<String>(Channel.UNLIMITED)
-+        withConnectedClient(
-+            postRoute = { mcpPostRoute { primingOnlyStream(it) } },
-+            getRoute = {
-+                get(MCP_PATH) {
-+                    val lastEventId = call.request.headers[LAST_EVENT_ID_HEADER]
-+                    call.response.header(SESSION_ID_HEADER, SESSION_ID)
-+                    call.respondTextWriter(contentType = ContentType.Text.EventStream) {
-+                        if (lastEventId == null) {
-+                            write(": open\n\n")
-+                            flush()
-+                            sendNotification.await()
-+                            write(sseEvent(id = "1", data = logNotification("after resumption")))
-+                            flush()
-+                            awaitCancellation()
-+                        } else {
-+                            write(sseEvent(id = "$lastEventId-1", data = toolResult(id = lastEventId)))
-+                            flush()
-+                        }
-+                    }
-+                }
-+            },
-+            configure = {
-+                setNotificationHandler<LoggingMessageNotification>(Method.Defined.NotificationsMessage) {
-+                    received.trySend(it.params.data.jsonPrimitive.content)
-+                    CompletableDeferred(Unit)
-+                }
-+            },
-+        ) { client ->
-+            client.callTool("poll", emptyMap()).text() shouldBe "polled"
++    private val operational = CompletableDeferred<Unit>()
 +
-+            sendNotification.complete(Unit)
-+            withTimeout(5.seconds) { received.receive() } shouldBe "after resumption"
-+        }
-+    }
-+
-+    @Test
-+    fun `client resumes concurrent request streams independently`() {
-+        val resumptions = AtomicInteger()
-+        val bothResumed = CompletableDeferred<Unit>()
-+        withConnectedClient(
-+            postRoute = { mcpPostRoute { primingOnlyStream(it) } },
-+            getRoute = {
-+                get(MCP_PATH) {
-+                    val lastEventId = call.request.headers[LAST_EVENT_ID_HEADER]
-+                    if (lastEventId == null) {
-+                        call.respondText("", ContentType.Text.EventStream, HttpStatusCode.MethodNotAllowed)
-+                        return@get
-+                    }
-+                    call.response.header(SESSION_ID_HEADER, SESSION_ID)
-+                    call.respondTextWriter(contentType = ContentType.Text.EventStream) {
-+                        write(": resumed\n\n")
-+                        flush()
-+                        // Answers only once both streams are resumed, so both must still be open.
-+                        if (resumptions.incrementAndGet() == 2) bothResumed.complete(Unit)
-+                        bothResumed.await()
-+                        write(sseEvent(id = "$lastEventId-1", data = toolResult(id = lastEventId)))
-+                        flush()
-+                    }
-+                }
-+            },
-+        ) { client ->
-+            val results = coroutineScope {
-+                List(2) {
-+                    async { client.callTool("poll", emptyMap(), options = RequestOptions(timeout = 5.seconds)) }
-+      
-```
-
-**File**: `kotlin-sdk-client/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/client/StreamableHttpClientTransport.kt` (modified, +102/-45)
-```diff
-@@ -32,20 +32,28 @@ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCNotification
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
- import io.modelcontextprotocol.kotlin.sdk.types.McpJson
-+import io.modelcontextprotocol.kotlin.sdk.types.Method
- import io.modelcontextprotocol.kotlin.sdk.types.RequestId
-+import kotlinx.atomicfu.atomic
-+import kotlinx.atomicfu.getAndUpdate
-+import kotlinx.atomicfu.update
-+import kotlinx.collections.immutable.persistentMapOf
- import kotlinx.coroutines.CancellationException
- import kotlinx.coroutines.CoroutineName
- import kotlinx.coroutines.CoroutineScope
-+import kotlinx.coroutines.CoroutineStart
- import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.Job
- import kotlinx.coroutines.SupervisorJob
--import kotlinx.coroutines.cancel
- import kotlinx.coroutines.cancelAndJoin
-+import kotlinx.coroutines.currentCoroutineContext
- import kotlinx.coroutines.delay
- import kotlinx.coroutines.isActive
-+import kotlinx.coroutines.job
- import kotlinx.coroutines.launch
- import kotlinx.serialization.json.JsonObject
- import kotlinx.serialization.json.JsonPrimitive
-+import kotlinx.serialization.json.decodeFromJsonElement
- import kotlin.io.encoding.Base64
- import kotlin.io.encoding.ExperimentalEncodingApi
- import kotlin.math.pow
-@@ -145,7 +153,11 @@ public class StreamableHttpClientTransport(
-     /** MCP protocol version negotiated with the server, or `null` before connection. */
-     public var protocolVersion: String? = null
- 
--    private var sseJob: Job? = null
-+    /** The GET stream for server-initiated messages, opened once the session is initialized. */
-+    private var standaloneSseJob: Job? = null
-+
-+    /** Request streams being resumed until they deliver their response, by request id. */
-+    private val resumedStreams = atomic(persistentMapOf<RequestId, Job>())
- 
-     private val scope by lazy { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
- 
-@@ -167,9 +179,14 @@ public class StreamableHttpClientTransport(
-     override suspend fun performSend(message: JSONRPCMessage, options: TransportSendOptions?) {
-         logger.debug { "Client sending message via POST to $url: ${McpJson.encodeToString(message)}" }
- 
-+        // A cancelled request is never answered, so its resumed stream would reconnect until the transport closes.
-+        message.cancelledRequestId()?.let { requestId ->
-+            resumedStreams.getAndUpdate { it.remove(requestId) }[requestId]?.cancel()
-+        }
-+
-         // If we have a resumption token, reconnect the SSE stream with it
-         options?.resumptionToken?.let { token ->
--            startSseSession(
-+            resumeStream(
-                 resumptionToken = token,
-                 onResumptionToken = options.onResumptionToken,
-                 replayMessageId = if (message is JSONRPCRequest) message.id else null,
-@@ -191,7 +208,7 @@ public class StreamableHttpClientTransport(
- 
-         if (response.status == HttpStatusCode.Accepted) {
-             if (message is JSONRPCNotification && message.method == "notifications/initialized") {
--                startSseSession(onResumptionToken = options?.onResumptionToken)
-+                openStandaloneStream(onResumptionToken = options?.onResumptionToken)
-             }
-             return
-         }
-@@ -216,7 +233,7 @@ public class StreamableHttpClientTransport(
-                 val replayMessageId = if (message is JSONRPCRequest) message.id else null
-                 val result = handleInlineSse(response, replayMessageId, options?.onResumptionToken)
-                 if (result.hasPrimingEvent && !result.receivedResponse) {
--                    startSseSession(
-+                    resumeStream(
-                         resumptionToken = result.lastEventId,
-                         replayMessageId = replayMessageId,
-                         onResumptionToken = options?.onResumptionToken,
-@@ -255,8 +272,7 @@ public class StreamableHttpClientTransport(
- 
-     override suspend fun closeResources() {
-         logger.debug { "Client transport closing." }
--        sseJob?.cancelAndJoin()
--        scope.cancel()
-+        scope.coroutineContext.job.cancelAndJoin()
-     }
- 
      /**
-@@ -285,56 +301,90 @@ public class StreamableHttpClientTransport(
-         logger.debug { "Session terminated successfully" }
+      * Current transport state. Thread-safe via atomic reference.
+      * Initial state is [ClientTransportState.New].
+@@ -136,13 +139,25 @@ public abstract class AbstractClientTransport : AbstractTransport() {
+         try {
+             initialize()
+             stateTransition(from = ClientTransportState.Initializing, to = ClientTransportState.Operational)
++            operational.complete(Unit)
+         } catch (e: Exception) {
+             _state.store(ClientTransportState.InitializationFailed)
+             closeResources()
+             throw e
+         }
      }
  
--    private fun startSseSession(
--        resumptionToken: String? = null,
--        replayMessageId: RequestId? = null,
--        onResumptionToken: ((String) -> Unit)? = null,
--        initialServerRetryDelay: Duration? = null,
--    ) {
-+    private fun openStandaloneStream(onResumptionToken: ((String) -> Unit)?) {
-         // Cancel-and-replace: cancel() signals the previous job, join() inside
-         // the new coroutine ensures it completes before we start collecting.
-         // This is intentionally non-suspend to avoid blocking performSend.
--        val previousJob = sseJob
-+        val previousJob 
++    /**
++     * Registers [block] to handle inbound messages. Messages received before [start] completes
++     * are handed to [block] only once the transport is [ClientTransportState.Operational].
++     */
++    public override fun onMessage(block: suspend (JSONRPCMessage) -> Unit) {
++        super.onMessage { message ->
++            operational.await()
++            block(message)
++        }
++    }
++
+     /**
+      * Sends a JSON-RPC message using the transport layer.
+      *
 ```
 
-**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/Protocol.kt` (modified, +3/-1)
+**File**: `kotlin-sdk-core/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/AbstractClientTransportTest.kt` (modified, +26/-0)
 ```diff
-@@ -843,7 +843,9 @@ public abstract class Protocol(@PublishedApi internal val options: ProtocolOptio
-                         reason = reason.message ?: "Unknown",
-                     ),
-                 )
--                transport.send(notification.toJSON(), options)
-+                // relatedRequestId only: given a resumption token, a transport resumes a stream instead of sending.
-+                val sendOptions = options?.relatedRequestId?.let { TransportSendOptions(relatedRequestId = it) }
-+                transport.send(notification.toJSON(), sendOptions)
-             }
- 
-             result.completeExceptionally(reason)
-```
-
-**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ProtocolOutboundCancellationTest.kt` (modified, +17/-0)
-```diff
-@@ -10,6 +10,7 @@ import io.modelcontextprotocol.kotlin.sdk.types.EmptyResult
- import io.modelcontextprotocol.kotlin.sdk.types.Implementation
- import io.modelcontextprotocol.kotlin.sdk.types.InitializeRequest
- import io.modelcontextprotocol.kotlin.sdk.types.InitializeRequestParams
-+import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCNotification
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
- import io.modelcontextprotocol.kotlin.sdk.types.LATEST_PROTOCOL_VERSION
+@@ -8,10 +8,14 @@ import io.kotest.matchers.string.shouldContain
+ import io.kotest.matchers.types.shouldBeSameInstanceAs
+ import io.modelcontextprotocol.kotlin.sdk.InternalMcpApi
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
++import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
  import io.modelcontextprotocol.kotlin.sdk.types.McpException
-@@ -49,6 +50,22 @@ class ProtocolOutboundCancellationTest {
-         cancelled.reason.shouldNotBeNull() shouldContain "timed out"
+ import io.modelcontextprotocol.kotlin.sdk.types.PingRequest
+ import io.modelcontextprotocol.kotlin.sdk.types.RPCError
+ import io.modelcontextprotocol.kotlin.sdk.types.toJSON
++import kotlinx.coroutines.CoroutineScope
++import kotlinx.coroutines.launch
++import kotlinx.coroutines.test.UnconfinedTestDispatcher
+ import kotlinx.coroutines.test.runTest
+ import org.junit.jupiter.api.Test
+ import org.junit.jupiter.params.ParameterizedTest
+@@ -136,6 +140,18 @@ class AbstractClientTransportTest {
+         transport.lastSendOptions shouldBeSameInstanceAs options
      }
  
 +    @Test
-+    fun `CancelledNotification keeps relatedRequestId but not the resumption token of the request`() = runTest {
-+        val (protocol, transport) = connectedProtocol()
++    fun `should answer a message received during initialization once OPERATIONAL`() = runTest {
++        val request = PingRequest().toJSON()
++        val response = JSONRPCResponse(request.id)
++        transport.onMessage { transport.send(response) }
++        transport.receiveDuringInitialize = request
 +
-+        shouldThrow<McpException> {
-+            protocol.request<EmptyResult>(
-+                PingRequest(),
-+                RequestOptions(relatedRequestId = RequestId(42L), resumptionToken = "tok", timeout = 5.seconds),
-+            )
-+        }
++        transport.start()
 +
-+        val options = transport.sentWithOptions.single { it.first is JSONRPCNotification }.second.shouldNotBeNull()
-+        options.relatedRequestId shouldBe RequestId(42L)
-+        options.resumptionToken shouldBe null
++        transport.sentMessages shouldBe listOf(response)
 +    }
 +
      @Test
-     fun `outer withTimeout around request propagates the original timeout exception and notifies the peer`() = runTest {
-         val (protocol, transport) = connectedProtocol()
+     fun `should throw when sending before start`() = runTest {
+         assertSendRejected()
+@@ -218,13 +234,23 @@ class AbstractClientTransportTest {
+         var initializeFailure: Exception? = null
+         var closeFailure: Exception? = null
+         var sendFailure: Exception? = null
++        var receiveDuringInitialize: JSONRPCMessage? = null
+ 
+         val currentState: ClientTransportState
+             get() = state
+ 
+         override suspend fun initialize() {
+             initializeCalled = true
+             initializeFailure?.let { throw it }
++            receiveDuringInitialize?.let { message ->
++                CoroutineScope(UnconfinedTestDispatcher()).launch {
++                    try {
++                        _onMessage(message)
++                    } catch (e: McpException) {
++                        _onError(e)
++                    }
++                }
++            }
+         }
+ 
+         override suspend fun performSend(message: JSONRPCMessage, options: TransportSendOptions?) {
+```
+
+**File**: `kotlin-sdk-testing/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/testing/ChannelTransportTest.kt` (modified, +28/-0)
+```diff
+@@ -5,9 +5,15 @@ import io.kotest.matchers.shouldBe
+ import io.modelcontextprotocol.kotlin.sdk.ExperimentalMcpApi
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
++import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
+ import io.modelcontextprotocol.kotlin.sdk.types.RequestId
+ import kotlinx.coroutines.CompletableDeferred
++import kotlinx.coroutines.ExperimentalCoroutinesApi
+ import kotlinx.coroutines.channels.Channel
++import kotlinx.coroutines.launch
++import kotlinx.coroutines.test.StandardTestDispatcher
++import kotlinx.coroutines.test.TestCoroutineScheduler
++import kotlinx.coroutines.test.runCurrent
+ import kotlinx.coroutines.test.runTest
+ import kotlin.test.Test
+ 
+@@ -27,6 +33,28 @@ class ChannelTransportTest {
+         sendChannel.receive() shouldBe message
+     }
+ 
++    @OptIn(ExperimentalCoroutinesApi::class)
++    @Test
++    fun `answers a request the peer sent before start returned`() = runTest {
++        val loopScheduler = TestCoroutineScheduler()
++        val sendChannel = Channel<JSONRPCMessage>(Channel.UNLIMITED)
++        val receiveChannel = Channel<JSONRPCMessage>(Channel.UNLIMITED)
++        val transport = ChannelTransport(sendChannel, receiveChannel, StandardTestDispatcher(loopScheduler))
++        val request = JSONRPCRequest(RequestId.NumberId(1), "ping")
++        val response = JSONRPCResponse(request.id)
++        transport.onMessage { transport.send(response) }
++        receiveChannel.send(request)
++
++        val start = launch { transport.start() }
++        runCurrent()
++        loopScheduler.runCurrent()
++        runCurrent()
++        loopScheduler.runCurrent()
++
++        start.isCompleted shouldBe true
++        sendChannel.tryReceive().getOrNull() shouldBe response
++    }
++
+     @Test
+     fun `start reads from receiveChannel and invokes onMessage`() = runTest {
+         val receiveChannel = Channel<JSONRPCMessage>(Channel.UNLIMITED)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1176** (2026-11-13): chore(deps): bump hono from 4.13.13 to 4.13.18 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
-- **PR #1174** (2026-11-13): chore(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
-- **PR #1172** (2026-11-12): fix(server)!: return INVALID_PARAMS for unknown resources (@devcrocod)
-- **PR #1171** (2026-11-12): fix(client): resume Streamable HTTP SSE streams independently (@devcrocod)
-- **PR #1169** (2026-11-09): chore(deps): bump github/codeql-action from 4.39.1 to 4.39.3 in the all-actions group (@dependabot[bot])
-- **PR #1168** (2026-11-09): chore(deps): bump org.jetbrains.dokka:dokka-gradle-plugin from 2.2.0 to 2.3.0 in the gradle-plugins group across 1 directory (@dependabot[bot])
+- **PR #1207** (2026-11-20): fix(transport): hold inbound messages until the client transport is operational (@e5l)
+- **PR #1206** (2026-11-20): fix(client): forget the discovery result when reconnecting (@e5l)
+- **PR #1201** (2026-11-20): fix(core): restore the pre-deprecation value of SUPPORTED_PROTOCOL_VERSIONS (@e5l)
+- **PR #1200** (2026-11-20): fix(client): bound the stdio discover probe before falling back (@e5l)
+- **PR #1198** (2026-11-20): fix(core): send resultType complete on every request-scoped result (@e5l)
+- **PR #1191** (2026-11-20): fix(server): refuse server-to-client requests on a modern response stream (@e5l)
 
 ---
 
@@ -1638,37 +1350,6 @@ Documentation](https://modelcontextprotocol.io)
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. server)!: return INVALID_PARAMS for unknown resources
-
-**RULE**:
-When implementing operations in `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/server/ServerFeaturesInvocationTest.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `70ad24e2`: server)!: return INVALID_PARAMS for unknown resources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/server/ServerFeaturesInvocationTest.kt`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```kotlin
-// Verified production-grade fix pattern:
-        exception.code shouldBe RPCError.ErrorCode.INVALID_PARAMS
-```
-
-**NEGATIVE CONSTRAINT**:
-```kotlin
-// Induced defect failure mode:
-        exception.code shouldBe RPCError.ErrorCode.RESOURCE_NOT_FOUND
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70ad24e2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

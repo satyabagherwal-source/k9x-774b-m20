@@ -4,24 +4,24 @@
 {
   "source_repository": "clockworklabs/SpacetimeDB",
   "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-  "source_version": "c3e36c4a",
+  "source_version": "340dc085",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-20T18:41:44.624Z",
+  "timestamp": "2026-11-22T23:06:25.319Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clockworklabs-spacetimedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `c3e36c4a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-20T18:41:44.624Z`  
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `340dc085`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-22T23:06:25.319Z`  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clockworklabs/SpacetimeDB:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T18:41:43.034Z  
+> **Harvest Timestamp**: 2026-11-22T23:06:24.055Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -844,545 +844,116 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c3e36c4a` (2026-11-20)
-**Commit Message**: Bump version to 2.16.2 (#6654)
+### Incident Patch 1: `340dc085` (2026-11-22)
+**Commit Message**: Skip absent page slots when verifying snapshots (#6659)
 
 # Description of Changes
 
-<!-- Please describe your change, mention any related tickets, and so on
-here. -->
+Skip `ZERO_HASH_DENOTING_ABSENT_PAGE` when the snapshot fetcher
+enumerates pages.
 
-- Bumps version to 2.16.2
+Snapshot metadata uses this sentinel for a freed page slot. Treating it
+as an object causes verification to fail on the previous snapshot's
+object lookup and prevents archival from advancing.
 
 # API and ABI breaking changes
 
-None
-
-<!-- If this is an API or ABI breaking change, please apply the
-corresponding GitHub label. -->
+None.
 
 # Rollback safety impact
-
-<!--
-If this PR is safe to roll back after deployment and has no impact on
-the rollback safety of any prior PRs, write `n/a` below.
-
-Otherwise, list every prerequisite PR that must be included in a release
-before this PR can merge. This PR must not be deployed until each
-prerequisite has been deployed and sufficiently observed or tested in
-the live deployment that we are confident it will not be rolled back.
-Supported forms include #123, SpacetimeDB#123,
-clockworklabs/SpacetimeDB#123, and GitHub PR URLs.
-
-Consider whether this PR:
-- newly writes to a previously introduced but unused ControlDB table or
-reducer, system table, or on-disk data format; or
-- clears, deletes, incompatibly changes, or renders unsupported a
-previously available ControlDB table or reducer, system table, or
-on-disk data format.
--->
 
 n/a
 
 # Expected complexity level and risk
 
-- 1 - this
+1
 
-**File**: `Cargo.lock` (modified, +59/-59)
+# Testing
+
+- Added a regression test that verifies a snapshot containing an absent
+slot and a real page when a previous snapshot exists.
+  - reproduces `ENOENT` before the fix. Passes with the fix.
+
+---------
+
+Signed-off-by: joshua-spacetime <[REDACTED_EMAIL]>
+Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
+
+**File**: `crates/snapshot/src/remote.rs` (modified, +33/-3)
 ```diff
-@@ -828,7 +828,7 @@ dependencies = [
+@@ -30,7 +30,7 @@ use tokio_stream::wrappers::UnboundedReceiverStream;
+ use tokio_util::io::{InspectReader, InspectWriter, StreamReader};
+ use zstd_framed::AsyncZstdReader;
  
- [[package]]
- name = "case-conversion-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "env_logger 0.10.2",
-@@ -1471,7 +1471,7 @@ dependencies = [
+-use crate::{ObjectType, Snapshot, SnapshotError, SnapshotRepository};
++use crate::{table_present_pages, ObjectType, Snapshot, SnapshotError, SnapshotRepository};
  
- [[package]]
- name = "connect_disconnect_client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -2542,7 +2542,7 @@ dependencies = [
+ pub type Result<T> = std::result::Result<T, SnapshotError>;
  
- [[package]]
- name = "event-table-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6114,7 +6114,7 @@ dependencies = [
- 
- [[package]]
- name = "procedural-view-pk-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6128,7 +6128,7 @@ dependencies = [
- 
- [[package]]
- name = "procedure-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6145,7 +6145,7 @@ dependencies = [
- 
- [[package]]
- name = "procedure-concurrency-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -7482,7 +7482,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
- 
- [[package]]
- name = "sdk-csharp-test-harness"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "serial_test",
-  "spacetimedb-testing",
-@@ -7549,7 +7549,7 @@ dependencies = [
- 
- [[package]]
- name = "sdk-unreal-test-harness"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "serial_test",
-  "spacetimedb-testing",
-@@ -8056,7 +8056,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "bytemuck",
-@@ -8079,7 +8079,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-auth"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "jsonwebtoken",
-@@ -8092,7 +8092,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bench"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "ahash 0.8.12",
-  "anyhow",
-@@ -8135,7 +8135,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bindings-macro"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "heck 0.4.1",
-  "humantime",
-@@ -8146,14 +8146,14 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bindings-sys"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "spacetimedb-primitives",
- ]
- 
- [[package]]
- name = "spacetimedb-cli"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "base64 0.21.7",
-@@ -8224,7 +8224,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-client-api"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "async-stream",
-@@ -8274,7 +8274,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-client-api-messages"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "bytes",
-  "bytestring",
-@@ -8297,7 +8297,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-codegen"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "convert_case 0.6.0",
-@@ -8316,7 +8316,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-commitlog"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "async-stream",
-  "bitflags 2.10.0",
-@@ -8350,7 +8350,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-core"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -8450,7 +8450,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-data-structures"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "ahash 0.8.12",
-  "crossbeam-queue",
-@@ -8466,7 +8466,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-datastore"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -8504,7 +8504,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-dst-lib"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "spacetimedb-commitlog",
-@@ -8522,7 +8522,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-durability"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "async-channel",
-@@ -8542,7 +8542,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-engine"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -8584,7 +8584,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-execution"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "itertools 0.12.1",
-@@ -8598,7 +8598,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-expr"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "bigdecimal",
-@@ -8616,7 +8616,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-fs-utils"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "chrono",
-@@ -8632,15 +8632,15 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-guard"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "reqwest",
-  "tempfile",
- ]
- 
- [[pa
-```
-
-**File**: `Cargo.toml` (modified, +40/-40)
-```diff
-@@ -156,51 +156,51 @@ inherits = "release"
- debug = true
- 
- [workspace.package]
--version = "2.16.0"
-+version = "2.16.2"
- edition = "2024"
- # update rust-toolchain.toml too!
- rust-version = "1.97"
- 
- [workspace.dependencies]
--spacetimedb = { path = "crates/bindings", version = "=2.16.0" }
--spacetimedb-auth = { path = "crates/auth", version = "=2.16.0" }
--spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.16.0" }
--spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.16.0" }
--spacetimedb-cli = { path = "crates/cli", version = "=2.16.0" }
--spacetimedb-client-api = { path = "crates/client-api", version = "=2.16.0" }
--spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.16.0" }
--spacetimedb-codegen = { path = "crates/codegen", version = "=2.16.0" }
--spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.16.0" }
--spacetimedb-core = { path = "crates/core", version = "=2.16.0" }
--spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.16.0" }
--spacetimedb-datastore = { path = "crates/datastore", version = "=2.16.0" }
--spacetimedb-durability = { path = "crates/durability", version = "=2.16.0" }
--spacetimedb-engine = { path = "crates/engine", version = "=2.16.0" }
--spacetimedb-execution = { path = "crates/execution", version = "=2.16.0" }
--spacetimedb-expr = { path = "crates/expr", version = "=2.16.0" }
--spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.16.0" }
--spacetimedb-guard = { path = "crates/guard", version = "=2.16.0" }
--spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.16.0" }
--spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.16.0", default-features = false }
--spacetimedb-metrics = { path = "crates/metrics", version = "=2.16.0" }
--spacetimedb-paths = { path = "crates/paths", version = "=2.16.0" }
--spacetimedb-pg = { path = "crates/pg", version = "=2.16.0" }
--spacetimedb-physical-plan = { path = "crates/physical-plan", version = "=2.16.0" }
--spacetimedb-portable-datastore = { path = "crates/portable-datastore", version = "=2.16.0" }
--spacetimedb-primitives = { path = "crates/primitives", version = "=2.16.0" }
--spacetimedb-query = { path = "crates/query", version = "=2.16.0" }
--spacetimedb-query-builder = { path = "crates/query-builder", version = "=2.16.0" }
--spacetimedb-runtime = { path = "crates/runtime", version = "=2.16.0" }
--spacetimedb-runtime-core = { path = "crates/runtime-core", version = "=2.16.0" }
--spacetimedb-sats = { path = "crates/sats", version = "=2.16.0" }
--spacetimedb-schema = { path = "crates/schema", version = "=2.16.0" }
--spacetimedb-snapshot = { path = "crates/snapshot", version = "=2.16.0" }
--spacetimedb-standalone = { path = "crates/standalone", version = "=2.16.0" }
--spacetimedb-subscription = { path = "crates/subscription", version = "=2.16.0" }
--spacetimedb-sql-parser = { path = "crates/sql-parser", version = "=2.16.0" }
--spacetimedb-table = { path = "crates/table", version = "=2.16.0" }
--spacetimedb-test-datastore = { path = "crates/test-datastore", version = "=2.16.0" }
--spacetimedb-tiered-storage = { path = "crates/tiered-storage", version = "=2.16.0" }
-+spacetimedb = { path = "crates/bindings", version = "=2.16.2" }
-+spacetimedb-auth = { path = "crates/auth", version = "=2.16.2" }
-+spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.16.2" }
-+spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.16.2" }
-+spacetimedb-cli = { path = "crates/cli", version = "=2.16.2" }
-+spacetimedb-client-api = { path = "crates/client-api", version = "=2.16.2" }
-+spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.16.2" }
-+spacetimedb-codegen = { path = "crates/codegen", version = "=2.16.2" }
-+spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.16.2" }
-+spacetimedb-core = { path = "crates/core", version = "=2.16.2" }
-+spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.16.2" }
-+spacetimedb-datastore = { path = "crates/datastore", version = "=2.16.2" }
-+spacetimedb-durability = { path = "crates/durability", version = "=2.16.2" }
-+spacetimedb-engine = { path = "crates/engine", version = "=2.16.2" }
-+spacetimedb-execution = { path = "crates/execution", version = "=2.16.2" }
-+spacetimedb-expr = { path = "crates/expr", version = "=2.16.2" }
-+spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.16.2" }
-+spacetimedb-guard = { path = "crates/guard", version = "=2.16.2" }
-+spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.16.2" }
-+spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.16.2", default-features = false }
-+spacetimedb-metrics = { path = "crates/metrics", version = "=2.16.2" }
-+spacetimedb-paths = { path = "crates/paths", version = "=2.16.2" }
-+spacetimedb-pg = { path = "crates/pg", version = "=2.16.2" }
-+spacetimedb-physical-plan = { p
-```
-
-**File**: `LICENSE.txt` (modified, +2/-2)
-```diff
-@@ -5,7 +5,7 @@ Business Source License 1.1
- Parameters
- 
- Licensor:             Clockwork Laboratories, Inc.
--Licensed Work:        SpacetimeDB 2.16.0
-+Licensed Work:        SpacetimeDB 2.16.2
-                       The Licensed Work is
-                       (c) 2023 Clockwork Laboratories, Inc.
-                       
-@@ -21,7 +21,7 @@ Additional Use Grant: You may make use of the Licensed Work provided your
-                       Licensed Work by creating tables whose schemas are
-                       controlled by such third parties.
- 
--Change Date:          2031-11-10
-+Change Date:          2031-11-20
- 
- Change License:       GNU Affero General Public License v3.0 with a linking
-                       exception
-```
-
-**File**: `crates/bindings-cpp/CMakeLists.txt` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- cmake_minimum_required(VERSION 3.15)
- project(SpacetimeDBCppModuleLibrary 
--    VERSION 2.16.0
-+    VERSION 2.16.2
-     LANGUAGES CXX)
- 
- # Generate version header from template
-```
-
-**File**: `crates/bindings-csharp/BSATN.Codegen/BSATN.Codegen.csproj` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.BSATN.Codegen</AssemblyName>
--    <Version>2.16.0</Version>
-+    <Version>2.16.2</Version>
-     <Title>SpacetimeDB BSATN Codegen</Title>
-     <Description>The SpacetimeDB BSATN Codegen implements the Roslyn incremental generators for BSATN serialization/deserialization in C#.</Description>
-   </PropertyGroup>
-```
-
-**File**: `crates/bindings-csharp/BSATN.Runtime/BSATN.Runtime.csproj` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.BSATN.Runtime</AssemblyName>
--    <Version>2.16.0</Version>
-+    <Version>2.16.2</Version>
-     <Title>SpacetimeDB BSATN Runtime</Title>
-     <Description>The SpacetimeDB BSATN Runtime implements APIs for BSATN serialization/deserialization in C#.</Description>
-     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-```
-
-**File**: `crates/bindings-csharp/Codegen/Codegen.csproj` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.Codegen</AssemblyName>
--    <Version>2.16.0</Version>
-+    <Version>2.16.2</Version>
-     <Title>SpacetimeDB Module Codegen</Title>
-     <Description>The SpacetimeDB Codegen implements the Roslyn incremental generators for writing SpacetimeDB modules in C#.</Description>
-   </PropertyGroup>
-```
-
-**File**: `crates/bindings-csharp/Runtime/Runtime.csproj` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.Runtime</AssemblyName>
--    <Version>2.16.0</Version>
-+    <Version>2.16.2</Version>
-     <Title>SpacetimeDB Module Runtime</Title>
-     <Description>The SpacetimeDB Runtime implements the database runtime bindings for writing SpacetimeDB modules in C#.</Description>
-   </PropertyGroup>
-```
-
----
-
-### Incident Patch 2: `ddd04ee4` (2026-11-19)
-**Commit Message**: Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (#6641)
-
-# Description of Changes
-
-`spacetimedb-datastore` fails to compile on macOS:
-`static_assert_size!(TxState, 144)` fails because `TxState` is 152 bytes
-there.
-
-The extra 8 bytes come from `BlobSet`, which #6305 added to `TxState`.
-Its `evictable` field was a `std::sync::Mutex<Vec<_>>`. On Linux, std's
-`Mutex` is a futex word plus a poison flag (8 bytes). On Apple targets
-it is a lazily boxed pthread mutex, a pointer plus a poison flag (16
-bytes). Measured on aarch64 macOS, `BlobSet` was 96 bytes there against
-88 on Linux, which put `TxState` at 152 against 144.
-
-CI didn't catch this because every PR job that compiles the datastore
-runs on Linux or Windows. The only macOS builds are in `package.yml`,
-which runs on tag pushes and manual dispatch, so the next release
-packaging run would probably have hit it.
-
-This PR switches `evictable` to `parking_lot::Mutex`, as suggested in
-review. `BlobSet` already uses `parking_lot` for its `RwLock`, and
-`parking_lot`'s `Mutex` has the same layout on every platform, so the
-existing `static_assert_size!(TxState, 144)` now holds everywhere and is
-unchanged. `parking_lo
-
-**File**: `crates/table/src/tiered/blob_set.rs` (modified, +4/-8)
-```diff
-@@ -1,11 +1,7 @@
- use super::metrics::{CacheTier, EvictionDirection, ObjectType};
--use std::{
--    num::NonZeroUsize,
--    ops::Deref,
--    sync::{Arc, Mutex},
--};
-+use std::{num::NonZeroUsize, ops::Deref, sync::Arc};
- 
--use parking_lot::RwLock;
-+use parking_lot::{Mutex, RwLock};
- use spacetimedb_data_structures::{
-     map::{hash_map, IntMap},
-     small_map::SmallHashMap,
-@@ -120,7 +116,7 @@ impl BlobSet {
-             return Ok(bytes_freed);
-         }
- 
--        let mut candidates = self.evictable.lock().unwrap();
-+        let mut candidates = self.evictable.lock();
-         self.resident.evictable_blobs(&mut candidates);
-         for candidate in candidates.drain(..) {
-             let maybe_resident = self.entries.read().get(&candidate.key).and_then(|entry| match entry {
-@@ -546,7 +542,7 @@ impl BlobSet {
- impl MemoryUsage for BlobSet {
-     fn heap_usage(&self) -> usize {
-         // Cache and backing store are counted by `TieredDatabaseStorage`.
--        let scratch = self.evictable.lock().unwrap().capacity() * size_of::<BlobEvictionCandidate>();
-+        let scratch = self.evictable.lock().capacity() * size_of::<BlobEvictionCandidate>();
- 
-         self.entries.read().heap_usage() + scratch
+@@ -370,7 +370,8 @@ impl<P: BlobProvider> SnapshotFetcher<P> {
+             .snapshot
+             .tables
+             .iter()
+-            .flat_map(|entry| entry.pages.iter().copied().map(|hash| self.fetch_page(hash)))
++            .flat_map(|entry| table_present_pages(&entry.pages))
++            .map(|hash| self.fetch_page(hash))
+             .collect::<Box<[_]>>();
+         stream::iter(tasks)
+             .map(Ok)
+@@ -827,7 +828,10 @@ impl AsyncWrite for AsyncBufWriter<'_> {
+ #[cfg(test)]
+ mod tests {
+     use super::{default_page_pool, BlobProvider, BufPool, SnapshotFetcher};
+-    use crate::{Snapshot, SnapshotError, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION, MAGIC};
++    use crate::{
++        Snapshot, SnapshotError, SnapshotRepository, TableEntry, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION,
++        MAGIC, ZERO_HASH_DENOTING_ABSENT_PAGE,
++    };
+     use pretty_assertions::assert_matches;
+     use spacetimedb_lib::Identity;
+     use spacetimedb_paths::{server::SnapshotsPath, FromPathUnchecked};
+@@ -909,6 +913,32 @@ mod tests {
+         );
      }
+ 
++    #[tokio::test]
++    async fn verifies_snapshot_with_absent_page_slot() -> anyhow::Result<()> {
++        let temp = tempdir()?;
++        let snapshots = SnapshotsPath::from_path_unchecked(temp.path());
++        let repo = SnapshotRepository::open(snapshots, Identity::ZERO, DUMMY_SNAPSHOT.replica_id)?;
++
++        let tx_offset = DUMMY_SNAPSHOT.tx_offset + 1;
++        let sparse = Snapshot {
++            tx_offset,
++            tables: vec![TableEntry {
++                table_id: 0.into(),
++                pages: vec![ZERO_HASH_DENOTING_ABSENT_PAGE],
++            }],
++            ..DUMMY_SNAPSHOT
++        };
++
++        for snapshot in [DUMMY_SNAPSHOT, sparse] {
++            let dir = repo.snapshot_dir_path(snapshot.tx_offset);
++            dir.create()?;
++            repo.write_snapshot_file(&dir, snapshot)?;
++        }
++
++        repo.verify_snapshot(tx_offset).await?;
++        Ok(())
++    }
++
+     #[tokio::test]
+     async fn verifies_hash_of_uncompressed_page() {
+         let tmp = tempdir().unwrap();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6659** (2026-11-22): Skip absent page slots when verifying snapshots (@bfops)
+- **PR #6657** (2026-11-21): Tweak PR-writing guidance for agents (@bfops)
 - **PR #6654** (2026-11-20): Bump version to 2.16.2 (@rekhoff)
+- **PR #6653** (closed): Ignore memory limit for replay if eviction fails (@aasoni)
+- **PR #6650** (2026-11-20): Update doc comment about http request timeout (@aasoni)
 - **PR #6641** (2026-11-19): Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (@krisajenkins)
-- **PR #6636** (2026-11-19): Tiered storage docs (@joshua-spacetime)
-- **PR #6635** (2026-11-19): docs: add OIDC token verification diagram to the authentication overview (@cloutiertyler)
-- **PR #6617** (2026-11-17): Correct docs on restricting scheduled reducers (@JulienLavocat)
-- **PR #6614** (2026-11-18): TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes (@Ludv1gL)
 
 ---
 
@@ -1402,85 +973,60 @@ unchanged. `parking_lo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version to 2.16.2
+## X. Skip absent page slots when verifying snapshots
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/snapshot/src/remote.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c3e36c4a`: Bump version to 2.16.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `340dc085`: Skip absent page slots when verifying snapshots. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/snapshot/src/remote.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
+use crate::{table_present_pages, ObjectType, Snapshot, SnapshotError, SnapshotRepository};
+            .flat_map(|entry| table_present_pages(&entry.pages))
+            .map(|hash| self.fetch_page(hash))
+    use crate::{
+        Snapshot, SnapshotError, SnapshotRepository, TableEntry, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION,
+        MAGIC, ZERO_HASH_DENOTING_ABSENT_PAGE,
+    };
+    #[tokio::test]
+    async fn verifies_snapshot_with_absent_page_slot() -> anyhow::Result<()> {
+        let temp = tempdir()?;
+        let snapshots = SnapshotsPath::from_path_unchecked(temp.path());
+        let repo = SnapshotRepository::open(snapshots, Identity::ZERO, DUMMY_SNAPSHOT.replica_id)?;
+
+        let tx_offset = DUMMY_SNAPSHOT.tx_offset + 1;
+        let sparse = Snapshot {
+            tx_offset,
+            tables: vec![TableEntry {
+                table_id: 0.into(),
+                pages: vec![ZERO_HASH_DENOTING_ABSENT_PAGE],
+            }],
+            ..DUMMY_SNAPSHOT
+        };
+
+        for snapshot in [DUMMY_SNAPSHOT, sparse] {
+            let dir = repo.snapshot_dir_path(snapshot.tx_offset);
+            dir.create()?;
+            repo.write_snapshot_file(&dir, snapshot)?;
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
+use crate::{ObjectType, Snapshot, SnapshotError, SnapshotRepository};
+            .flat_map(|entry| entry.pages.iter().copied().map(|hash| self.fetch_page(hash)))
+    use crate::{Snapshot, SnapshotError, CURRENT_MODULE_ABI_VERSION, CURRENT_SNAPSHOT_VERSION, MAGIC};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c3e36c4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `340dc085` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

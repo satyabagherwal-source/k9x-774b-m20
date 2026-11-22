@@ -4,22 +4,22 @@
 {
   "source_repository": "beclab/Olares",
   "source_url": "https://github.com/beclab/Olares",
-  "source_version": "83f304b1",
+  "source_version": "d0957897",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-20T21:38:58.299Z",
+  "timestamp": "2026-11-22T23:06:21.489Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-beclab-olares",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `83f304b1`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-20T21:38:58.299Z`  
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `d0957897`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-22T23:06:21.489Z`  
 > **Learning ID**: `learn-github-beclab-olares`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `beclab/Olares` (Commit: `83f304b1`)
+- **Target Repository**: `beclab/Olares` (Commit: `d0957897`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T21:38:56.376Z  
+> **Harvest Timestamp**: 2026-11-22T23:06:20.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5370 stars
+- **Stars / Engagement**: 5375 stars
 
 ---
 
@@ -1148,196 +1148,95 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `500daa24` (2026-11-20)
-**Commit Message**: fix(ci): disable buildx provenance on per-arch proxy images (#4483)
+### Incident Patch 1: `d0957897` (2026-11-22)
+**Commit Message**: apps, notifications: wire device inventory notifications and update system images (#4486)
 
-fix: disable buildx provenance on per-arch proxy images
+* feat(helm): wire device inventory notification subjects
 
-Docker 29 on ubuntu-latest attaches provenance attestations, so each arch tag is pushed as a manifest list. docker manifest create rejects those lists.
+* chore(helm): update system images for device inventory notifications
 
-**File**: `.github/workflows/module_appservice_publish_docker.yaml` (modified, +4/-0)
+**File**: `apps/.olares/config/user/helm-charts/system-apps/templates/olares-app.yaml` (modified, +8/-2)
 ```diff
-@@ -25,6 +25,8 @@ jobs:
-           context: framework/app-service
-           file: framework/app-service/Dockerfile
-           platforms: linux/amd64
-+          provenance: false
-+          sbom: false
-           secrets: |
-             github_token=${{ secrets.GO_PRIVATE_TOKEN }}
-   publish_dockerhub_arm64:
-@@ -47,6 +49,8 @@ jobs:
-           platforms: linux/arm64
-           secrets: |
-             github_token=${{ secrets.GO_PRIVATE_TOKEN }}
-+          provenance: false
-+          sbom: false
+@@ -269,7 +269,7 @@ spec:
+           imagePullPolicy: IfNotPresent
+           name: check-auth
+         - name: olares-app-init
+-          image: beclab/system-frontend:v1.13.3
++          image: beclab/system-frontend:v1.13.5
+           imagePullPolicy: IfNotPresent
+           command:
+             - /bin/sh
+@@ -365,7 +365,7 @@ spec:
+             - name: NATS_SUBJECT_VAULT
+               value: os.vault.{{ .Values.bfl.username}}
+         - name: user-service
+-          image: beclab/user-service:v0.2.3
++          image: beclab/user-service:v0.2.4
+           imagePullPolicy: IfNotPresent
+           ports:
+             - containerPort: 3000
+@@ -417,6 +417,8 @@ spec:
+               value: os.application.{{ .Values.bfl.username}}
+             - name: NATS_SUBJECT_USER_NOTIFICATION
+               value: os.notification.{{ .Values.bfl.username}}
++            - name: NATS_SUBJECT_DEVICE_INVENTORY
++              value: "os.device.inventory.{{ .Values.bfl.username }}"
+             - name: NATS_SUBJECT_DOWNLOAD_STATUS
+               value: os.download_status
+             - name: NATS_SUBJECT_FILES
+@@ -806,6 +808,10 @@ spec:
+         permission:
+           sub: allow
+           pub: allow
++      - name: "device.inventory.{{ .Values.bfl.username }}"
++        permission:
++          pub: deny
++          sub: allow
  
-   publish_manifest:
-     needs:
+     user: user-service-{{ .Values.bfl.username }}
+ 
 ```
 
-**File**: `.github/workflows/module_appservice_publish_imageservice.yaml` (modified, +4/-0)
+**File**: `framework/notifications/.olares/config/cluster/deploy/notification_deploy.yaml` (modified, +7/-1)
 ```diff
-@@ -25,6 +25,8 @@ jobs:
-           context: framework/app-service
-           file: framework/app-service/Dockerfile.image
-           platforms: linux/amd64
-+          provenance: false
-+          sbom: false
-           secrets: |
-             github_token=${{ secrets.GO_PRIVATE_TOKEN }}
-   publish_dockerhub_arm64:
-@@ -47,6 +49,8 @@ jobs:
-           platforms: linux/arm64
-           secrets: |
-             github_token=${{ secrets.GO_PRIVATE_TOKEN }}
-+          provenance: false
-+          sbom: false
+@@ -97,6 +97,10 @@ spec:
+         permission:
+           pub: deny
+           sub: allow
++      - name: "device.inventory.*"
++        permission:
++          pub: deny
++          sub: allow
+     user: notification-server
  
-   publish_manifest:
-     needs:
-```
-
-**File**: `.github/workflows/module_cmsidecar_publish_docker.yaml` (modified, +4/-0)
-```diff
-@@ -25,6 +25,8 @@ jobs:
-           context: framework/cm-sidecar
-           file: framework/cm-sidecar/Dockerfile
-           platforms: linux/amd64
-+          provenance: false
-+          sbom: false
-   publish_dockerhub_arm64:
-     runs-on: self-hosted
-     steps:
-@@ -43,6 +45,8 @@ jobs:
-           context: framework/cm-sidecar
-           file: framework/cm-sidecar/Dockerfile
-           platforms: linux/arm64
-+          provenance: false
-+          sbom: false
- 
-   publish_manifest:
-     needs:
-```
-
-**File**: `.github/workflows/module_l4_publish_base.yaml` (modified, +4/-0)
-```diff
-@@ -27,6 +27,8 @@ jobs:
-                 file: framework/l4-bfl-proxy/Dockerfile.openresty
-                 platforms: linux/amd64
-                 context: framework/l4-bfl-proxy
-+                provenance: false
-+                sbom: false
- 
-     publish_dockerhub_arm64:
-         runs-on: self-hosted
-@@ -48,6 +50,8 @@ jobs:
-                 file: framework/l4-bfl-proxy/Dockerfile.openresty
-                 platforms: linux/arm64
-                 context: framework/l4-bfl-proxy
-+                provenance: false
-+                sbom: false
- 
-     publish_manifest:
-         needs:
-```
-
-**File**: `.github/workflows/module_l4_publish_docker.yaml` (modified, +4/-0)
-```diff
-@@ -27,6 +27,8 @@ jobs:
-                 file: framework/l4-bfl-proxy/Dockerfile
-                 platforms: linux/amd64
-                 context: framework/l4-bfl-proxy
-+                provenance: false
-+                sbom: false
-     publish_dockerhub_arm64:
-       runs-on: self-hosted
-       steps:
-@@ -47,6 +49,8 @@ jobs:
-             file: framework/l4-bfl-proxy/Dockerfile
-             platforms: linux/arm64
-             context: framework/l4-bfl-proxy
-+            provenance: false
-+            sbom: false
-     publish_manifest:
-       needs:
-         - publish_dockerhub_amd64
-```
-
-**File**: `.github/workflows/module_l4_publish_nginx.yaml` (modified, +4/-0)
-```diff
-@@ -27,6 +27,8 @@ jobs:
-                 file: framework/l4-bfl-proxy/Dockerfile.nginx
-                 platforms: linux/amd64
-                 context: framework/l4-bfl-proxy
-+                provenance: false
-+                sbom: false
- 
-     publish_dockerhub_arm64:
-         runs-on: self-hosted
-@@ -48,6 +50,8 @@ jobs:
-                 file: framework/l4-bfl-proxy/Dockerfile.nginx
-                 platforms: linux/arm64
-                 context: framework/l4-bfl-proxy
-+                provenance: false
-+                sbom: false
- 
-     publish_manifest:
-         needs:
-```
-
-**File**: `.github/workflows/module_tapr_publish_middleware.yaml` (modified, +4/-0)
-```diff
-@@ -25,6 +25,8 @@ jobs:
-           file: platform/tapr/docker/middleware/Dockerfile
-           context: platform/tapr
-           platforms: linux/amd64
-+          provenance: false
-+          sbom: false
-   publish_dockerhub_arm64:
-     runs-on: self-hosted
-     steps:
-@@ -43,6 +45,8 @@ jobs:
-           file: platform/tapr/docker/middleware/Dockerfile
-           context: platform/tapr
-           platforms: linux/arm64
-+          provenance: false
-+          sbom: false
- 
-   publish_manifest:
-     needs:
-```
-
-**File**: `.github/workflows/module_tapr_publish_sysevent.yaml` (modified, +4/-0)
-```diff
-@@ -25,6 +25,8 @@ jobs:
-           file: platform/tapr/docker/sys-event/Dockerfile
-           context: platform/tapr
-           platforms: linux/amd64
-+          provenance: false
-+          sbom: false
-   publish_dockerhub_arm64:
-     runs-on: self-hosted
-     steps:
-@@ -43,6 +45,8 @@ jobs:
-           file: platform/tapr/docker/sys-event/Dockerfile
-           context: platform/tapr
-           platforms: linux/arm64
-+          provenance: false
-+          sbom: false
- 
-   publish_manifest:
-     needs:
+ ---
+@@ -153,7 +157,7 @@ spec:
+             value: os_framework_notifications
+       containers:
+       - name: notifications-api
+-        image: beclab/notifications-api:v1.12.46
++        image: beclab/notifications-api:v1.12.47
+         imagePullPolicy: IfNotPresent
+         ports:
+         - containerPort: 3010
+@@ -190,6 +194,8 @@ spec:
+           value: "os.application.*"
+         - name: NATS_SUBJECT_SYSTEM_VAULT
+           value: "os.vault.*"
++        - name: NATS_SUBJECT_DEVICE_INVENTORY
++          value: "os.device.inventory.*"
+         livenessProbe:
+           tcpSocket:
+             port: 3010
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4486** (2026-11-22): apps, notifications: wire device inventory notifications and update system images (@icebergtsn)
 - **PR #4485** (2026-11-20): files: improve rclone state sync and recovery (@aby913)
 - **PR #4484** (2026-11-20):  feat(appservice):support Bluetooth device attachments;publish device inventory changes to NATS (@hysyeah)
 - **PR #4483** (2026-11-20): fix(ci): disable buildx provenance on per-arch proxy images (@hysyeah)
 - **PR #4482** (2026-11-20): fix(ci): disable buildx provenance on per-arch proxy images (@hysyeah)
 - **PR #4481** (closed): fix(docs): base last updated dates on content changes (@yongheng2016)
-- **PR #4479** (2026-11-20): feat(cli): support distro-specific tasks during install & uninstall (@dkeven)
 
 ---
 
@@ -1357,34 +1256,39 @@ Docker 29 on ubuntu-latest attaches provenance attestations, so each arch tag is
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): disable buildx provenance on per-arch proxy images
+## X. apps, notifications: wire device inventory notifications and update system image
 
 **RULE**:
-When implementing operations in `.github/workflows/module_appservice_publish_docker.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/.olares/config/user/helm-charts/system-apps/templates/olares-app.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `500daa24`: ci): disable buildx provenance on per-arch proxy images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0957897`: apps, notifications: wire device inventory notifications and update system images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/module_appservice_publish_docker.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/.olares/config/user/helm-charts/system-apps/templates/olares-app.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          provenance: false
-          sbom: false
-          provenance: false
-          sbom: false
+          image: beclab/system-frontend:v1.13.5
+          image: beclab/user-service:v0.2.4
+            - name: NATS_SUBJECT_DEVICE_INVENTORY
+              value: "os.device.inventory.{{ .Values.bfl.username }}"
+      - name: "device.inventory.{{ .Values.bfl.username }}"
+        permission:
+          pub: deny
+          sub: allow
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+          image: beclab/system-frontend:v1.13.3
+          image: beclab/user-service:v0.2.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `500daa24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0957897` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

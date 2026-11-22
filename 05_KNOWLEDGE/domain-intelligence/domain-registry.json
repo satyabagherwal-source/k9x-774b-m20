@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T22:58:23.303Z",
-  "total_records": 2384,
+  "last_updated": "2026-11-22T23:06:59.256Z",
+  "total_records": 2385,
   "domains": {
     "A": {
       "total": 19,
@@ -64,7 +64,7 @@
       ]
     },
     "D": {
-      "total": 924,
+      "total": 925,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -989,7 +989,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor",
         "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants",
-        "DOM-D-9C50727D"
+        "DOM-D-9C50727D",
+        "DOM-D-8BD6649E"
       ]
     },
     "E": {
@@ -14768,8 +14769,8 @@
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "repository": "beclab/Olares",
-      "content_hash": "2b2a9ffbbc3d78a36953d869119eaa96e147331266763f62370e64385eae1385",
-      "created_at": "2026-11-20T21:38:58.517Z"
+      "content_hash": "2785ef1b252f4061cef97d2f3b75c01af3aae51679bce08581cbfb26fe9c9ba8",
+      "created_at": "2026-11-22T23:06:21.659Z"
     },
     "DOM-D-01385688": {
       "record_id": "DOM-D-01385688",
@@ -14828,8 +14829,8 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-learnings-technical-construction-intelligence-beclab-olares-learni.md",
       "repository": "beclab-olares-learnings",
-      "content_hash": "79e0a2e0ec4b25dbc759df467500a7346c8ea505afcfdfa8c28790dafdc253cd",
-      "created_at": "2026-11-20T21:39:02.256Z"
+      "content_hash": "01adfd979a02961080caec675e97744ff78e11484f585265b2721a5d4497b3f3",
+      "created_at": "2026-11-22T23:06:59.256Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
@@ -22416,8 +22417,8 @@
       "title": "Architecture Intelligence: modelcontextprotocol/kotlin-sdk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-architecture-intelligence-modelcontextprotocol-k.md",
       "repository": "modelcontextprotocol/kotlin-sdk",
-      "content_hash": "21c94cef2f0207c0601e582e34d12c140c51a88eba89d70fa93108375891c789",
-      "created_at": "2026-11-15T20:41:58.426Z"
+      "content_hash": "d1f817e43266f110eff0c497111687b2651fdf1eda6c87e75a49153bc7ba10d5",
+      "created_at": "2026-11-22T23:06:17.243Z"
     },
     "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria": {
       "record_id": "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria",
@@ -22425,8 +22426,8 @@
       "title": "Architecture Intelligence: modelcontextprotocol-kotlin-sdk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-learnings-architecture-intelligence-modelcontext.md",
       "repository": "modelcontextprotocol-kotlin-sdk-learnings",
-      "content_hash": "f5f1c5780d1ac2c31d8abe7b7a3843c1cd3c684ce45a8957fa4a05823a43e17d",
-      "created_at": "2026-11-15T20:42:10.505Z"
+      "content_hash": "4a68200e328a373a0c43c5e53b2d79df5026b88081abdba87d3667d16277839f",
+      "created_at": "2026-11-22T23:06:58.540Z"
     },
     "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants",
@@ -28658,8 +28659,8 @@
       "title": "Technical Construction Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-technical-construction-intelligence-clockworklabs-spac.md",
       "repository": "clockworklabs/SpacetimeDB",
-      "content_hash": "381447af043abc5e2ef73019bae74c53b47f1cf0d4caebe92fa1a34b8fe90e23",
-      "created_at": "2026-11-20T18:41:44.823Z"
+      "content_hash": "fcdf006ef7534a675618b7c97c8f7c36baac26aeda925e7113576a7a1a50f135",
+      "created_at": "2026-11-22T23:06:25.483Z"
     },
     "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
@@ -31846,8 +31847,8 @@
       "title": "Research & Knowledge Intelligence: briaai/RMBG-3.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-rmbg-3-0-research-knowledge-intelligence-briaai-rmbg-3-0-core-invarian.md",
       "repository": "briaai/RMBG-3.0",
-      "content_hash": "b06a5fbe31036759fcc3d2bed853e69cbcbe6adb763aa0a1265f77653cabe352",
-      "created_at": "2026-11-18T16:00:07.390Z"
+      "content_hash": "6e57a15940208ba5c70394dd330c31d3327a74e6918ebed83a3bb6755795dc15",
+      "created_at": "2026-11-22T23:06:10.964Z"
     },
     "DOM-D-EE4276B2": {
       "record_id": "DOM-D-EE4276B2",
@@ -31897,8 +31898,8 @@
       "title": "Research & Knowledge Intelligence: hf-briaai-rmbg-3.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-rmbg-3-0-learnings-research-knowledge-intelligence-hf-briaai-rmbg-3-0-.md",
       "repository": "hf-briaai-rmbg-3.0-learnings",
-      "content_hash": "f247e3e9b5f43aa04a68c5c356924d1f00f13d9b89a3193be67e51edd7b6f5ae",
-      "created_at": "2026-11-18T16:00:41.413Z"
+      "content_hash": "f893226af104ff9666da85fc9dd15f21b5db20dfcdb2af663bea957aef8a905f",
+      "created_at": "2026-11-22T23:06:28.672Z"
     },
     "DOM-L-902F756C": {
       "record_id": "DOM-L-902F756C",
@@ -40069,6 +40070,48 @@
       "repository": "hf-akhilaaa3-jev-omni-learnings",
       "content_hash": "978b94c8ae09bce14b9ee3981904e9115420a07e651589bffe31f679eaf50913",
       "created_at": "2026-11-22T21:14:46.267Z"
+    },
+    "DOM-D-8BD6649E": {
+      "record_id": "DOM-D-8BD6649E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): modelcontextprotocol/kotlin-sdk",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  \n> **Source**: github ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  \n> **Source Version**: `a3399b9c`  \n> **License**: NOASSERTION  \n>",
+      "content_hash": "bb8941beedb33fc18e9f9bac697580693014c0270fdb240281761095aec0df03",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  \n> **Source**: github ([https://githu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  \n> **Source**: github ([https://githu",
+      "provenance": {
+        "source_uri": "project://modelcontextprotocol-kotlin-sdk/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T23:06:28.852Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (modelcontextprotocol-kotlin-sdk)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of modelcontextprotocol-kotlin-sdk"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T23:06:58.193Z"
     }
   }
 }

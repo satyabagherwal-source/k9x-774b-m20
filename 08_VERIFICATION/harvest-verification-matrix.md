@@ -12218,3 +12218,8 @@
 | `CYCLE-20261122-IRD1` | `2026-11-22T22:49:27.302Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`fd1618c7...`) |
 | `CYCLE-20261122-TUWI` | `2026-11-22T22:58:05.106Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`9e1bbf74...`) |
 | `CYCLE-20261122-U3OK` | `2026-11-22T22:58:16.484Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10002` | Yes (`52c55fe5...`) |
+| `CYCLE-20261122-49MJ` | `2026-11-22T23:06:10.747Z` | `briaai/RMBG-3.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md` | Yes (`13d01c85...`) |
+| `CYCLE-20261122-4EGW` | `2026-11-22T23:06:17.024Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md` | Yes (`c8fa450b...`) |
+| `CYCLE-20261122-4HQR` | `2026-11-22T23:06:21.267Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10003` | Yes (`216fd625...`) |
+| `CYCLE-20261122-4KP6` | `2026-11-22T23:06:25.098Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10004` | Yes (`7ca7d5bb...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T23:06:58.222Z` | `modelcontextprotocol-kotlin-sdk` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8BD6649E` [Domain D] | Yes (`bb8941be...`) |
