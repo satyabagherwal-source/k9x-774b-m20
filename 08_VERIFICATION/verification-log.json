@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-1GAW",
-    "timestamp": "2026-11-20T16:56:43.976Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "74eb72d9f2de95d346a8e4d42f2d97cc61d15d081dcedac98d83f21376937396",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-LB9I",
-    "timestamp": "2026-11-20T17:12:10.566Z",
-    "repository": "fb55/htmlparser2",
-    "learningId": "learn-github-fb55-htmlparser2",
-    "contentHash": "afecf835e4df7f05c9fab40587fca10621ec0ea28472ae4e90117b1169e3c5ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-LD2M",
-    "timestamp": "2026-11-20T17:12:12.910Z",
-    "repository": "Louis-CFM/coucou",
-    "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "90b14faa35c2222adcc3105e2fc8f9a3775bc7b5f3107bf4ddd8ba92dff30483",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-LIGF",
     "timestamp": "2026-11-20T17:12:19.887Z",
     "repository": "VectifyAI/PageIndex",
@@ -7492,6 +7447,51 @@
     "contentHash": "1b13fd44792f683ec141973f3976844a10793b61324f608b4385a53c44674d24",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-TOH2",
+    "timestamp": "2026-11-22T17:22:01.382Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+    "contentHash": "ab711e34a7270d2552472eb0c7db455eec5942b34b1cf7ed1155c3c5d9e6468b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-TP8Q",
+    "timestamp": "2026-11-22T17:22:02.378Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "b320cb389986484614083aa9afaf2eaa4fc7f32f666573047e45895adc80cef2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-TTRD",
+    "timestamp": "2026-11-22T17:22:08.233Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "f0df1bc02fd0cfa453e463c4b308f14076190283133f476b86eaf2a62f30837e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

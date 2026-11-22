@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:14:08.486Z",
-  "total_cycles_completed": 11532,
-  "total_learnings_persisted": 11532,
-  "total_rules_promoted": 10775,
+  "last_updated": "2026-11-22T17:22:08.243Z",
+  "total_cycles_completed": 11535,
+  "total_learnings_persisted": 11535,
+  "total_rules_promoted": 10777,
   "history": [
-    {
-      "timestamp": "2026-11-21T21:48:54.577Z",
-      "repository": "LiquidAI/LFM3-Audio-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T21:49:08.219Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T21:57:51.033Z",
-      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T22:06:21.041Z",
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:22:01.392Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:22:02.388Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:22:08.243Z",
+      "repository": "meshtastic/Meshtastic-Android",
+      "learningId": "learn-github-meshtastic-meshtastic-android",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

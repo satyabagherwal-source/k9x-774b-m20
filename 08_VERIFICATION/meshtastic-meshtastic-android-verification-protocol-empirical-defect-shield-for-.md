@@ -4,22 +4,22 @@
 {
   "source_repository": "meshtastic/Meshtastic-Android",
   "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-  "source_version": "097f70bc",
+  "source_version": "836e48f7",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-19T15:58:52.275Z",
+  "timestamp": "2026-11-22T17:22:08.472Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meshtastic-meshtastic-android",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (Revision: `097f70bc`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-19T15:58:52.275Z`  
+> **Provenance**: Harvested from [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (Revision: `836e48f7`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-22T17:22:08.472Z`  
 > **Learning ID**: `learn-github-meshtastic-meshtastic-android`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `meshtastic/Meshtastic-Android` (Commit: `097f70bc`)
+- **Target Repository**: `meshtastic/Meshtastic-Android` (Commit: `836e48f7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:58:51.139Z  
+> **Harvest Timestamp**: 2026-11-22T17:22:07.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Android application for Meshtastic
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1940 stars
+- **Stars / Engagement**: 1942 stars
 
 ---
 
@@ -669,6 +669,43 @@ open class MeshUtilApplication :
      * Stops the background init launched by [startBackgroundIn
 ```
 
+### Core Architecture Module: `appShell/src/commonMain/kotlin/org/meshtastic/appshell/MeshServiceLifecycle.kt`
+```
+/*
+ * Copyright (c) 2026 Meshtastic LLC
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package org.meshtastic.appshell
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import org.koin.compose.koinInject
+import org.meshtastic.core.service.MeshServiceOrchestrator
+
+/** Starts [MeshServiceOrchestrator] on composition and stops it on disposal, for a host with no platform service. */
+@Composable
+fun MeshServiceLifecycle() {
+    val orchestrator = koinInject<MeshServiceOrchestrator>()
+    DisposableEffect(Unit) {
+        orchestrator.start()
+        onDispose { orchestrator.stop() }
+    }
+}
+
+```
+
 ### Core Architecture Module: `core/barcode/src/fdroid/kotlin/org/meshtastic/core/barcode/BarcodeAnalyzerFactory.kt`
 ```
 /*
@@ -822,20 +859,13 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -846,20 +876,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -871,12 +893,8 @@ import org.meshtastic.core.resources.Res
 import org.meshtastic.core.resources.camera_permission
 import org.meshtastic.core.resources.camera_permission_rationale
 import org.meshtastic.core.resources.camera_unavailable
-import org.meshtastic.core.resources.close
-import org.meshtastic.core.resources.error
-import org.meshtastic.core.resources.retry
+import org.meshtastic.core.ui.component.BarcodeScannerFrame
 import org.meshtastic.core.ui.component.PermissionRecoveryCard
-import org.meshtastic.core.ui.icon.Close
-import org.meshtastic.core.ui.icon.MeshtasticIcons
 import org.meshtastic.core.ui.util.BarcodeScanner
 import org.meshtastic.core.ui.util.PermissionStatus
 import org.meshtastic.core.ui.util.rememberCameraPermissionState
@@ -972,74 +990,93 @@ private fun BarcodeScannerDialog(onResult: (String?) -> Unit) {
         resultGate.tryDeliver(result) { value -> mainExecutor.execute { currentOnResult(value) } }
     }
 
-    Dialog(onDismissRequest = { deliverResult(null) }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            key(scannerAttempt) {
-                ScannerView(
-                    onResult = { deliverResult(it) },
-                    onCameraReady = {
-                        isCameraReady = it
-                        if (it) hasCameraError = false
-                    },
-                    onCameraError = {
-                        isCameraReady = false
-                        hasCameraError = true
-                    },
-                )
-            }
-            if (isCameraReady) {
-                ScannerReticule()
-            }
-            if (hasCameraError) {
-                ScannerErrorContent(
-                    onRetry = {
-                        hasCameraError = false
-                        scannerAttempt++
-                    },
-                    onClose = { deliverResult(null) },
-                    modifier = Modifier.align(Alignment.Center),
-                )
-            }
-            IconButton(
-                onClick = { deliverResult(null) },
-                modifier = Modifier.align(Alignment.TopStart).padding(16.dp),
-            ) {
-                Icon(
-                    imageVector = MeshtasticIcons.Close,
-                    contentDescription = stringResource(Res.string.close),
-                    tint = Color.White,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ScannerErrorContent(onRetry: () -> Unit, onClose: () -> Unit, modifier: Modifier = Modifier) {
-    Surface(modifier = modifier.padding(24.dp), shape = MaterialTheme.shapes.large) {
-        Column(
-            modifier = Modifier.padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = stringResource(Res.string.error),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.semantics { heading() },
+    BarcodeScannerFrame(
+        onClose = { deliverResult(null) },
+        showReticle = isCameraReady,
+        errorMessage = if (hasCameraError) stringResource(Res.string.camera_unavailable) else null,
+        onRetry = {
+            hasCameraError = false
+            scannerAttempt++
+        },
+    ) { _ ->
+        key(scannerAttempt) {
+            ScannerView(
+                onResult = { deliverResult(it) },
+                onCameraReady = {
+                    isCameraReady = it
+                    if (it) hasCameraError = false
+                },
+                onCameraError = {
+                    isCameraReady = false
+                    hasCameraError = true
+                },
             )
-            Text(text = stringResource(Res.string.camera_unavailable), style = MaterialTheme.typography.bodyMedium)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TextButton(onClick = onClose) { Text(text = stringResource(Res.string.close)) }
-                FilledTonalButton(onClick = onRetry) { Text(text = stringResource(Res.string.retry)) }
-            }
         }
     }
 }
 
-@Suppress("MagicNumber")
+@Suppress("LongMethod", "InjectDispatcher") // CameraX analysis wants an Executor; the default pool backs it
 @Composable
-private fun ScannerReticule() {
-    Canvas(modifier = Modifier.f
+private fun ScannerView(onResult: (String) -> Unit, onCameraReady: (Boolean) -> Unit, onCameraError: () -> Unit) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val cameraExecutor = remember { Dispatchers.Default.asExecutor() }
+    val currentOnResult by rememberUpdatedState(onResult)
+    val currentOnCameraReady by rememberUpdatedState(onCameraReady)
+    val currentOnCameraError by rememberUpdatedState(onCameraError)
+    val disposed = remember { AtomicBoolean(false) }
+    val boundCameraProvider = remember { mutableStateOf<ProcessCameraProvider?>(null) }
+    val boundPreview = remember { mutableStateOf<Preview?>(null) }
+    val boundImageAnalysis = remember { mutableStateOf<ImageAnalysis?>(null) }
+    var surfaceRequest by remember { mutableStateOf<SurfaceRequest?>(null) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            disposed.set(true)
+            surfaceRequest?.willNotProvideSurface()
+            surfaceRequest = null
+            cleanupCameraUseCases(
+                cameraProvider = boundCameraProvider.value,
+                preview = boundPreview.value,
+                imageAnalysis = boundImageAnalysis.value,
+            )
+            currentOnCameraReady(false)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        cameraProviderFuture.addListener(
+            {
+                if (disposed.get()) return@addListener
+
+                val cameraProvider = getCameraProvider(cameraProviderFuture)
+                if (cameraProvider == null) {
+                    if (!disposed.get()) currentOnCameraError()
+                    return@addListener
+                }
+
+                if (disposed.get()) return@addListener
+
+                val preview = Preview.Builder().build()
+                preview.setSurfaceProvider { request ->
+                    if (!disposed.get()) {
+                        surfaceRequest = request
+                        currentOnCameraReady(true)
+                    } else {
+                        request.willNotProvideSurface()
+                    }
+                }
+
+                val imageAnalysis =
+                    ImageAnalysis.Builder()
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
+                        .also { analysis ->
+                            analysis.setAnalyzer(cameraExecutor, createBarcodeAnalyzer { currentOnResult(it) })
+                        }
+
+                if (bindCameraUseCases(cameraProvider, lifec
 ```
 
 ### Core Architecture Module: `core/barcode/src/main/kotlin/org/meshtastic/core/barcode/SingleScanResultGate.kt`
@@ -1160,232 +1197,6 @@ internal actual fun createBleScanStartLimiter(): BleScanStartLimiter = processBl
 
 ```
 
-### Core Architecture Module: `core/ble/src/androidMain/kotlin/org/meshtastic/core/ble/AndroidBluetoothRepository.kt`
-```
-/*
- * Copyright (c) 2026 Meshtastic LLC
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-package org.meshtastic.core.ble
-
-import android.Manifest
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.coroutineScope
-import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
-import kotlinx.coroutines.withTimeoutOrNull
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
-import org.meshtastic.core.common.di.PROCESS_LIFECYCLE
-import org.meshtastic.core.common.hasBluetoothLe
-import org.meshtastic.core.di.CoroutineDispatchers
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-
-private val BOND_TIMEOUT = 30.seconds
-private val BOND_STATE_POLL_INTERVAL = 500.milliseconds
-
-// Fixed two-poll grace for slow BOND_NONE -> BOND_BONDING transitions after createBond() returns true.
-// Tune this or track observed transition latency if a specific OEM needs a longer window.
-private val CREATED_BOND_NONE_GRACE = BOND_STATE_POLL_INTERVAL + BOND_STATE_POLL_INTERVAL
-internal const val BOND_FAILED_OR_REJECTED_MESSAGE = "Bonding failed or rejected"
-
-/** Android implementation of [BluetoothRepository]. */
-@Suppress("TooManyFunctions")
-@Single
-class AndroidBluetoothRepository(
-    private val context: Context,
-    private val dispatchers: CoroutineDispatchers,
-    @Named(PROCESS_LIFECYCLE) private val processLifecycle: Lifecycle,
-) : BluetoothRepository {
-    private val bluetoothAdapter: BluetoothAdapter? =
-        (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
-
-    override val isSupported: Boolean = context.hasBluetoothLe()
-
-    private val _state = MutableStateFlow(BluetoothState(hasPermissions = hasBluetoothPermissions()))
-    override val state: StateFlow<BluetoothState> = _state.asStateFlow()
-
-    private val deviceCache = mutableMapOf<String, MeshtasticBleDevice>()
-
-    private val bondEvents = BondEventReceiver(context, processLifecycle.coroutineScope + dispatchers.default)
-
-    init {
-        processLifecycle.coroutineScope.launch(dispatchers.default) { updateBluetoothState() }
-    }
-
-    private fun hasBluetoothPermissions(): Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val hasConnect =
-            ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) ==
-                PackageManager.PERMISSION_GRANTED
-        val hasScan =
-            ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) ==
-                PackageManager.PERMISSION_GRANTED
-        hasConnect && hasScan
-    } else {
-        // Pre-Android 12: classic Bluetooth permissions are install-time.
-        true
-    }
-
-    override fun refreshState() {
-        processLifecycle.coroutineScope.launch(dispatchers.default) { updateBluetoothState() }
-    }
-
-    override fun isValid(bleAddress: String): Boolean = BluetoothAdapter.checkBluetoothAddress(bleAddress)
-
-    @Suppress("TooGenericExceptionThrown", "TooGenericExceptionCaught", "SwallowedException")
-    @SuppressLint("MissingPermission")
-    override suspend fun bond(device: BleDevice, pin: String?) {
-        val macAddress = device.address
-        bondEvents.watch(macAddress)
-        val remoteDevice =
-            bluetoothAdapter?.getRemoteDevice(macAddress) ?: throw Exception("Bluetooth adapter unavailable")
-
-        if (remoteDevice.bondState == android.bluetooth.BluetoothDevice.BOND_BONDED) {
-            updateBluetoothState()
-            return
-        }
-
-        try {
-            val bonded =
-                withTimeoutOrNull(BOND_TIMEOUT) {
-                    val result = CompletableDeferred<Unit>()
-                    val receiver = createBondReceiver(macAddress, result)
-
-                    val filter =
-                        android.content.IntentFilter(android.bluetooth.BluetoothDevice.ACTION_BOND_STATE_CHANGED)
-                    // The Bluetooth app sends this under its own uid, which a NOT_EXPORTED receiver refuses. It is a
-                    // protected broadcast, so exporting admits no other sender.
-                    ContextCompat.registerReceiver(context, receiver, filter, ContextCompat.RECEIVER_EXPORTED)
-
-                    var pinReceiver: android.content.BroadcastReceiver? = null
-                    try {
-                        // Registered before createBond() so the pairing request it triggers cannot slip past, and
-                        // inside the try so the PIN never outlives this bond attempt.
-                        pinReceiver = pin?.let { registerPairingPinReceiver(macAddress, it) }
-                        val start = startOrObserveBond(remoteDevice, result)
-                        awaitBondResult(remoteDevice, result, start)
-                    } finally {
-                        unregisterBondReceiver(receiver)
-                        pinReceiver?.let(::unregisterBondReceiver)
-                    }
-                    // Reaching here means the suspended bond wait completed before BOND_TIMEOUT.
-                    true
-                } ?: (remoteDevice.bondState == android.bluetooth.BluetoothDevice.BOND_BONDED)
-
-            if (!bonded) {
-                throw Exception("Timed out waiting for bonding to complete")
-            }
-        } finally {
-            updateBluetoothState()
-        }
-    }
-
-    @Suppress("TooGenericExceptionCaught")
-    @SuppressLint("MissingPermission")
-    private fun startOrObserveBond(
-        remoteDevice: android.bluetooth.BluetoothDevice,
-        result: CompletableDeferred<Unit>,
-    ): BondWaitStart {
-        var start = BondWaitStart()
-        try {
-            if (!result.isCompleted) {
-                if (remoteDevice.bondState == android.bluetooth.BluetoothDevice.BOND_BONDED) {
-                    result.complete(Unit)
-                } else if (remoteDevice.createBond()) {
-                    start = BondWaitStart(createdBond = true)
-                } else {
-                    // createBond() returns false when a bond is already in flight (a GATT operation on a
-                    // secured characteristic starts one) or already established, so bondState decides.
-                    when (remoteDevice.bondState) {
-                        android.bluetooth.BluetoothDevice.BOND_BONDED -> {
-                            result.complete(Unit)
-                        }
-
-                        android.bluetooth.BluetoothDevice.BOND_BONDING -> {
-                            // Bond already in progress; leave the receiver registered to resolve it on
-                            // the terminal BOND_BONDED / BOND_NONE transition instead of treating this
-                            // as a failure.
-                            Logger.d { "createBond() returned false but bonding is already in progress" }
-                            start = BondWaitStart(bondingObserved = true)
-                        }
-
-                        else -> {
-                            result.completeExceptionally(Exception("Failed to initiate bonding"))
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            result.completeExceptionally(e)
-        }
-        return start
-    }
-
-    private data class BondWaitStart(val bondingObserved: Boolean = false, val createdBond: Boolean = false)
-
-    @SuppressLint("MissingPermission")
-    private suspend fun awaitBondResult(
-        remoteDevice: android.bluetooth.BluetoothDevice,
-        result: CompletableDeferred<Unit>,
-        start: BondWaitStart,
-    ) {
-        var bondingWasInFlight = start.bondingObserved
-        // createBond() returning true only queues the request: BOND_BONDING can lag it, and a request the
-        // stack then fails stays BOND_NONE with no broadcast. Tolerate two polled BOND_NONE samples
-        // (polls 1-2), then fail on the third persistent BOND_NONE.
-        var createdBondNoneGraceRemaining =
-            if (start.createdBond) {
-                CREATED_BOND_NONE_GRACE
-            } else {
-                Duration.ZERO
-            }
-
-        while (!result.isCompleted) {
-            val completedFromReceiver =
-                withTimeoutOrNull(BOND_STATE_POLL_INTERVAL) {
-                    result.await()
-                    true
-                } == true
-
-            if (!completedFromReceiver) {
-                when (remoteDevice.bondState) {
-                    android.bluetooth.BluetoothDevice.BOND_BONDED -> {
-                        result.complete(Unit)
-                    }
-
-                    android.bluetooth.BluetoothDevice.BOND_BONDING -> {
-                        // Once polling observes BOND_BONDING, a later BOND_NONE is terminal. Keep this
-                        // defensive for any path that observes in-flight bonding outside the start state.
-                        bondingWasInFlight = true
-                        createdBondNon
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1413,386 +1224,739 @@ class AndroidBluetoothRepository(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e2539bc1` (2026-11-19)
-**Commit Message**: feat(desktop): add a debug-only loopback MCP server for agents (#8122)
+### Incident Patch 1: `de21f854` (2026-11-22)
+**Commit Message**: fix(ui): list every LoRa change and channel sharing flag when replacing from a channel link (#8214)
 
-**File**: `desktopApp/build.gradle.kts` (modified, +6/-0)
+**File**: `.skills/compose-ui/strings-index.txt` (modified, +26/-5)
 ```diff
-@@ -465,6 +465,12 @@ dependencies {
-     implementation(libs.ktor.client.logging)
-     implementation(libs.ktor.serialization.kotlinx.json)
+@@ -36,7 +36,6 @@ adc_voltage
+ ### ADD ###
+ add
+ add_a_note
+-add_channels_description
+ add_custom_tile_source
+ add_favorite
+ add_layer
+@@ -202,6 +201,16 @@ channel_7
+ channel_8
+ channel_already_on_radio
+ channel_features
++channel_import_add_description
++channel_import_confirm_add
++channel_import_confirm_replace
++channel_import_downlink
++channel_import_mode_label
++channel_import_position_approximate
++channel_import_position_precise
++channel_import_replace_description
++channel_import_title
++channel_import_uplink
+ channel_invalid
+ channel_name
+ channel_slots_full
+@@ -866,6 +875,7 @@ fr_HT
+ free_memory
+ free_memory_description
+ freq
++frequency_value_mhz
+ gas_resistance
+ generate_qr_code
+ ### GEOFENCE ###
+@@ -1101,11 +1111,24 @@ long_name
+ longitude
+ ### LORA ###
+ lora
++lora_change_spoken
++lora_change_values
++lora_changes_alert_description
++lora_changes_alert_heading
++lora_changes_heading
+ lora_config
+-lora_config_change_value
+-lora_config_changes
++lora_fem_lna_auto
++lora_fem_lna_not_present
++lora_field_fem_lna_mode
++lora_field_frequency_offset
++lora_field_modem_preset
++lora_field_serial_hal_only
++lora_field_transparent_mode
++lora_field_unrecognized
+ lora_preset_custom
+ lora_preset_region
++lora_value_none
++lora_value_not_used
+ low_battery
+ low_battery_message
+ low_battery_title
+@@ -1484,7 +1507,6 @@ neighbor_mean_snr_description
+ network
+ network_layer_url_hint
+ network_scan_unavailable
+-new_channel_rcvd
+ new_messages_below
+ new_node_seen
+ new_nodes
+@@ -1861,7 +1883,6 @@ remove_layer
+ remove_node_text
+ remove_nodes_text
+ replace
+-replace_channels_and_settings_description
+ reply
+ replying_to
+ report
+```
+
+**File**: `core/model/src/commonMain/kotlin/org/meshtastic/core/model/ChannelOption.kt` (modified, +12/-9)
+```diff
+@@ -23,6 +23,17 @@ import org.meshtastic.proto.Config.LoRaConfig.ModemPreset
+ import org.meshtastic.proto.Config.LoRaConfig.RegionCode
+ import kotlin.math.round
  
-+    // Debug-only agent MCP server (mcp/DesktopMcpServer.kt); the SDK ships no Ktor engine. The BOM lifts the
-+    // server modules the SDK pins to an older Ktor onto the repo's Ktor.
-+    implementation(platform(libs.ktor.bom))
-+    implementation(libs.mcp.kotlin.sdk.server)
-+    implementation(libs.ktor.server.cio)
-+
-     implementation(libs.androidx.paging.common)
-     implementation(libs.androidx.datastore.preferences)
-     implementation(libs.androidx.datastore)
-```
-
-**File**: `desktopApp/proguard-rules.pro` (modified, +8/-0)
-```diff
-@@ -157,3 +157,11 @@
- # the changed fields, and the SDK is rebuilt on each release. Suppress to avoid
- # blocking desktop builds while we coordinate proto alignment.
- -dontwarn org.meshtastic.tak.TakPacketV2Serializer
-+
-+# ---- Debug-only MCP server (mcp/DesktopMcpServer.kt) --------------------------
-+# A release build never starts it. kotlin-sdk's kotlin-logging ships optional logback
-+# and GraalVM bridges, and Ktor's OpenAPI routing references the JWT auth plugin;
-+# none of those are on the classpath.
-+-dontwarn io.github.oshai.kotlinlogging.logback.**
-+-dontwarn io.github.oshai.kotlinlogging.internal.Target_*
-+-dontwarn io.ktor.server.routing.openapi.**
-```
-
-**File**: `desktopApp/src/main/kotlin/org/meshtastic/desktop/Main.kt` (modified, +2/-0)
-```diff
-@@ -118,6 +118,7 @@ import org.meshtastic.desktop.data.DesktopPreferencesDataSource
- import org.meshtastic.desktop.di.DesktopKoinApp
- import org.meshtastic.desktop.map.DesktopTracerouteMap
- import org.meshtastic.desktop.map.desktopMapViewProvider
-+import org.meshtastic.desktop.mcp.DesktopMcpLifecycle
- import org.meshtastic.desktop.notification.DesktopOS
- import org.meshtastic.desktop.notification.NativeNotificationSender
- import org.meshtastic.desktop.tray.SniTrayEffect
-@@ -190,6 +191,7 @@ fun main(args: Array<String>) {
- 
-         DeepLinkHandler(args, uiViewModel, remember { koinApp.koin.get<LaunchOptions>() })
-         MeshServiceLifecycle()
-+        DesktopMcpLifecycle()
-         // Desktop has no WorkManager, so the hourly mesh log cleanup lives as long as the application composition.
-         LaunchedEffect(Unit) { withContext(ioDispatcher) { koinApp.koin.get<MeshLogCleanup>().runHourly() } }
-         ThemeAndLocaleProvider(uiViewModel)
-```
-
-**File**: `desktopApp/src/main/kotlin/org/meshtastic/desktop/mcp/DesktopMcpServer.kt` (added, +345/-0)
-```diff
-@@ -0,0 +1,345 @@
-+/*
-+ * Copyright (c) 2026 Meshtastic LLC
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, either version 3 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-+ */
-+package org.meshtastic.desktop.mcp
-+
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.DisposableEffect
-+import androidx.compose.runtime.remember
-+import co.touchlab.kermit.Logger
-+import io.ktor.server.cio.CIO
-+import io.ktor.server.engine.EmbeddedServer
-+import io.ktor.server.engine.embeddedServer
-+import io.modelcontextprotocol.kotlin.sdk.server.Server
-+import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
-+import io.modelcontextprotocol.kotlin.sdk.server.mcpStreamableHttp
-+import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
-+import io.modelcontextprotocol.kotlin.sdk.types.Implementation
-+import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
-+import io.modelcontextprotocol.kotlin.sdk.types.TextContent
-+import io.modelcontextprotocol.kotlin.sdk.types.ToolAnnotations
-+import io.modelcontextprotocol.kotlin.sdk.types.ToolSchema
-+import kotlinx.coroutines.delay
-+import kotlinx.coroutines.flow.first
-+import kotlinx.coroutines.withTimeoutOrNull
-+import kotlinx.serialization.json.JsonElement
-+import kotlinx.serialization.json.JsonNull
-+import kotlinx.serialization.json.JsonObject
-+import kotlinx.serialization.json.JsonPrimitive
-+import kotlinx.serialization.json.buildJsonArray
-+import kotlinx.serialization.json.buildJsonObject
-+import kotlinx.serialization.json.contentOrNull
-+import kotlinx.serialization.json.intOrNull
-+import kotlinx.serialization.json.jsonPrimitive
-+import kotlinx.serialization.json.put
-+import kotlinx.serialization.json.putJsonObject
-+import org.koin.compose.koinInject
-+import org.meshtastic.core.model.ConnectionState
-+import org.meshtastic.core.model.InterfaceId
-+import org.meshtastic.core.model.MessageStatus
-+import org.meshtastic.core.model.NodeAddress
-+import org.meshtastic.core.repository.NodeRepository
-+import org.meshtastic.core.repository.PacketRepository
-+import org.meshtastic.core.repository.RadioController
-+import org.meshtastic.core.repository.RadioInterfaceService
-+import org.meshtastic.core.repository.ServiceRepository
-+import org.meshtastic.core.repository.usecase.SendMessageOutcome
-+import org.meshtastic.core.repository.usecase.SendMessageUseCase
-+import org.meshtastic.desktop.DesktopBuildConfig
-+import kotlin.time.Duration.Companion.milliseconds
-+import kotlin.time.Duration.Companion.seconds
-+import kotlin.time.TimeSource
-+
-+/** Runs [DesktopMcpServer] for the life of the composition in a debug build with a configured port. */
-+@Composable
-+fun DesktopMcpLifecycle() {
-+    val port = remember { DesktopMcpServer.configuredPort()?.takeIf { DesktopBuildConfig.IS_DEBUG } } ?: return
-+    val serviceRepository = koinInject<ServiceRepository>()
-+    val radioController = koinInject<RadioController>()
-+    val radioInterfaceService = koinInject<RadioInterfaceService>()
-+    val nodeRepository = koinInject<NodeRepository>()
-+    val packetRepository = koinInject<PacketRepository>()
-+    val sendMessageUseCase = koinInject<SendMessageUseCase>()
-+    val server = remember {
-+        DesktopMcpServer(
-+            serviceRepository,
-+            radioController,
-+            radioInterfaceService,
-+            nodeRepository,
-+            packetRepository,
-+            sendMessageUseCase,
-+        )
-+    }
-+    DisposableEffect(port) {
-+        runCatching { server.start(port) }.onFailure { Logger.e(it) { "MCP server failed to start on $port" } }
-+        onDispose { server.stop() }
-+    }
++/** The bandwidth in MHz that a manual `LoRaConfig.bandwidth` wire code stands for in the slot math. */
++fun loraBandwidthMegahertz(code: Int): Float = when (code) {
++    31 -> .03125f
++    62 -> .0625f
++    200 -> .203125f
++    400 -> .40625f
++    800 -> .8125f
++    1600 -> 1.6250f
++    else -> code / 1000f
 +}
++
+ /**
+  * djb2 over the name's UTF-8 bytes, matching firmware `RadioInterface.cpp` `hash()`; hashing UTF-16 chars gives a
+  * different slot for any non-ASCII name.
+@@ -58,15 +69,7 @@ val ModemPreset?.snrLimit: Float
+ private fun LoRaConfig.bandwidth(regionInfo: RegionInfo?) = if (use_preset) {
+     modem_preset.bandwidth * if (regionInfo?.wideLora == true) 3.25f else 1f
+ } else {
+-    when (bandwidth) {
+-        31 -> .03125f
+-        62 -> .0625f
+-        200 -> .203125f
+-        400 -> .40625f
+-        800 -> .8125f
+-        1600 -> 1.6250f
+-        else -> bandwidth / 1000f
+-    }
++    loraBandwidthMegahertz(bandwidth)
+ }
+ 
+ /**
+```
+
+**File**: `core/model/src/commonTest/kotlin/org/meshtastic/core/model/ChannelOptionTest.kt` (modified, +11/-0)
+```diff
+@@ -117,6 +117,17 @@ class ChannelOptionTest {
+         assertEquals(manual, manual.normalizeCodingRateOverride())
+     }
+ 
++    // The slot math's mapping, pinned as it is: six special codes, and the code in kHz for any other.
++    @Test
++    fun a_bandwidth_code_maps_to_the_megahertz_the_slot_math_uses() {
++        val special = mapOf(31 to .03125f, 62 to .0625f, 200 to .203125f, 400 to .40625f, 800 to .8125f, 1600 to 1.625f)
++        for ((code, megahertz) in special) {
++            assertEquals(megahertz, loraBandwidthMegahertz(code), "bandwidth code $code")
++        }
++        assertEquals(.25f, loraBandwidthMegahertz(250))
++        assertEquals(.125f, loraBandwidthMegahertz(125))
++    }
++
+     private fun presetConfig(preset: ModemPreset, codingRate: Int) = LoRaConfig.Builder()
+         .also { wb ->
+             wb.use_preset = true
+```
+
+**File**: `core/resources/src/commonMain/composeResources/values-ar/strings.xml` (modified, +0/-1)
+```diff
+@@ -169,7 +169,6 @@
+     <string name="name">الاسم</string>
+     <string name="navigate_back">العودة إلى الخلف</string>
+     <!-- NEIGHBOR -->
+-    <string name="new_channel_rcvd">تم تلقي رابط القناة الجديدة</string>
+     <!-- NO -->
+     <!-- NODE -->
+     <string name="node_filter_include_unknown">عربي</string>
+```
+
+**File**: `core/resources/src/commonMain/composeResources/values-b+sr+Latn/strings.xml` (modified, +0/-1)
+```diff
+@@ -296,7 +296,6 @@
+     <string name="navigate_back">Иди назад</string>
+     <!-- NEIGHBOR -->
+     <string name="network">Мрежа</string>
+-    <string name="new_channel_rcvd">Primljen novi link kanala</string>
+     <!-- NO -->
+     <!-- NODE -->
+     <string name="node_filter_include_unknown">Uključi nepoznato</string>
+```
+
+**File**: `core/resources/src/commonMain/composeResources/values-bg/strings.xml` (modified, +0/-4)
+```diff
+@@ -48,7 +48,6 @@
+     <!-- ADD -->
+     <string name="add">Добавяне</string>
+     <string name="add_a_note">Добавяне на лична бележка...</string>
+-    <string name="add_channels_description">Следните канали бяха открити в QR кода. Изберете тези, които искате да добавите към устройството си. Съществуващите канали ще бъдат запазени.</string>
+     <string name="add_favorite">Добавяне към любими</string>
+     <string name="add_layer">Добавяне на слой</string>
+     <string name="add_local_mbtiles_file">Добавяне на локален MBTiles файл</string>
+@@ -700,7 +699,6 @@
+     <!-- LORA -->
+     <string name="lora">LoRa</string>
+     <string name="lora_config">LoRa</string>
+-    <string name="lora_config_change_value">%1$s: %2$s → %3$s</string>
+     <string name="lora_preset_region">%1$s · %2$s</string>
+     <string name="low_battery">Изтощена батерия</string>
+     <string name="low_battery_message">%1$sВъзела %1$s има слаба батерия (%2$d%)</string>
+@@ -885,7 +883,6 @@
+     <!-- NEIGHBOR -->
+     <string name="neighbor_count">Съседи</string>
+     <string name="network">Мрежа</string>
+-    <string name="new_channel_rcvd">Получен е URL адрес на нов канал</string>
+     <string name="new_messages_below">Нови съобщения по-долу</string>
+     <string name="new_node_seen">Видян нов възел: %1$s</string>
+     <string name="new_nodes">Нови възли</string>
+@@ -1128,7 +1125,6 @@
+     <string name="remove_layer">Премахване на слой</string>
+     <string name="remove_node_text">Този възел ще бъде премахнат от вашия списък, докато вашият възел не получи данни от него отново.</string>
+     <string name="replace">Замяна</string>
+-    <string name="replace_channels_and_settings_description">Този QR код съдържа пълна конфигурация. Той ще ЗАМЕНИ съществуващите ви канали и настройки на радиото. Всички съществуващи канали ще бъдат премахнати.</string>
+     <string name="reply">Отговор</string>
+     <string name="replying_to">Отговор на %1$s</string>
+     <string name="report">Докладвай</string>
+```
+
+**File**: `core/resources/src/commonMain/composeResources/values-ca/strings.xml` (modified, +0/-1)
+```diff
+@@ -155,7 +155,6 @@
+     <string name="mute_notifications">Silenciar notificacions</string>
+     <string name="name">Nom</string>
+     <!-- NEIGHBOR -->
+-    <string name="new_channel_rcvd">Nova URL de canal rebuda</string>
+     <!-- NO -->
+     <!-- NODE -->
+     <string name="node_filter_ignored">Estàs veient nodes ignorats, \n Prem per tornar al llistat de nodes</string>
+```
+
+**File**: `core/resources/src/commonMain/composeResources/values-cs/strings.xml` (modified, +0/-3)
+```diff
+@@ -50,7 +50,6 @@
+     <!-- ADD -->
+     <string name="add">Přidat</string>
+     <string name="add_a_note">Přidat soukromou poznámku…</string>
+-    <string name="add_channels_description">QR kód obsahuje následující kanály. Vyberte ty, které chcete přidat do zařízení. Stávající kanály zůstanou zachovány.</string>
+     <string name="add_favorite">Přidat do oblíbených</string>
+     <string name="add_layer">Přidat vrstvu</string>
+     <string name="add_network_device">Přidat</string>
+@@ -1180,7 +1179,6 @@
+     <string name="neighbor_info">Informace o sousedech</string>
+     <string name="neighbor_info_config">Nastavení informace o sousedech</string>
+     <string name="network">Síť</string>
+-    <string name="new_channel_rcvd">Nová URL kanálu přijata</string>
+     <string name="new_messages_below">Nové zprávy</string>
+     <string name="new_node_seen">Nově objevený uzel: %1$s</string>
+     <string name="new_nodes">Nové uzly</string>
+@@ -1489,7 +1487,6 @@
+     <string name="remove_layer">Odebrat vrstvu</string>
+     <string name="remove_node_text">Tento uzel bude odstraněn z vašeho seznamu, dokud z něj váš uzel znovu neobdrží data.</string>
+     <string name="replace">Nahradit</string>
+-    <string name="replace_channels_and_settings_description">Tento QR kód obsahuje kompletní konfiguraci. Tímto se NAHRADÍ vaše stávající kanály a nastavení rádia. Všechny existující kanály budou odstraněny.</string>
+     <string name="reply">Odpovědět</string>
+     <string name="replying_to">Odpověď na %1$s</string>
+     <string name="report">Odeslat chybové hlášení</string>
+```
+
+---
+
+### Incident Patch 2: `a8b533fb` (2026-11-21)
+**Commit Message**: fix(firmware): fail on a manifest mismatch, cap download size, pin bootloader release base (#8211)
+
+**File**: `feature/firmware/README.md` (modified, +1/-1)
+```diff
+@@ -123,7 +123,7 @@ A node that reports its bootloader (`DeviceMetadata.bootloader_version`, decoded
+ 
+ - `FirmwareUpdateManager.kt` / `DefaultFirmwareUpdateManager.kt`: Top-level orchestrator that routes an update to a handler by connection type and architecture.
+ - `FirmwareUpdateViewModel.kt`: UI state management (MVI pattern) for the firmware update screen.
+-- `FirmwareRetriever.kt`: Handles downloading and extracting firmware assets (ZIP/BIN/UF2) with manifest-based ESP32 resolution.
++- `FirmwareRetriever.kt`: Handles downloading and extracting firmware assets (ZIP/BIN/UF2) with manifest-based ESP32 resolution. An ESP32 image that fails its `.mt.json` size or md5 check is deleted and the retrieval fails with no fallback; the filename fallbacks apply only when no manifest, no `app0` entry, or no downloadable image exists. Bootloader images resolve only against `https://github.com/meshtastic/nRF52_Bootloader/releases/download/<tag>` (`isBootloaderReleaseBase`), and any single download stops and is deleted past `MAX_FIRMWARE_ZIP_BYTES`.
+ - `Esp32OtaUpdateHandler.kt`: Orchestrates the Unified OTA flow for ESP32 devices.
+ - `WifiOtaTransport.kt`: Implements the TCP transport logic for ESP32 OTA.
+ - `BleOtaTransport.kt`: Implements the BLE transport logic for ESP32 OTA using Kable.
+```
+
+**File**: `feature/firmware/src/commonMain/kotlin/org/meshtastic/feature/firmware/FirmwareRetriever.kt` (modified, +31/-13)
+```diff
+@@ -182,7 +182,10 @@ open class FirmwareRetriever(private val fileHandler: FirmwareFileHandler) {
+ 
+     /**
+      * Download the ESP32 OTA firmware binary. Tries in order:
+-     * 1. `.mt.json` manifest resolution (2.7.17+) — the authoritative `app0` partition image.
++     * 1. `.mt.json` manifest resolution (2.7.17+) — the authoritative `app0` partition image. When the manifest names
++     *    the image and the download fails its size or digest check, the file is deleted and `null` is returned with no
++     *    fallback. The fallbacks below apply only when no manifest is published, it has no `app0` entry, or the image
++     *    it names could not be downloaded.
+      * 2. `firmware-<target>-<version>-update.bin` — the bare app image. Preferred over the plain `.bin` because on
+      *    pre-2.7.17 releases (which ship no manifest) `firmware-<target>-<version>.bin` is a *merged* image
+      *    (bootloader + partition table + app); flashing that to the `app0` partition leaves it misaligned and the
+@@ -202,8 +205,10 @@ open class FirmwareRetriever(private val fileHandler: FirmwareFileHandler) {
+         val target = hardware.platformioTarget.ifEmpty { hardware.hwModelSlug }
+ 
+         // ── Primary: .mt.json manifest (2.7.17+) ────────────────────────────
+-        resolveFromManifest(version, target, release, hardware, onProgress)?.let {
+-            return it
++        when (val resolution = resolveFromManifest(version, target, release, hardware, onProgress)) {
++            is ManifestResolution.Verified -> return resolution.artifact
++            ManifestResolution.Rejected -> return null
++            ManifestResolution.Unavailable -> Unit
+         }
+ 
+         // ── Fallback 1: bare app image `-update.bin` (unambiguous OTA image when published; required for pre-2.7.17,
+@@ -247,34 +252,45 @@ open class FirmwareRetriever(private val fileHandler: FirmwareFileHandler) {
+ 
+     // ── Manifest resolution ──────────────────────────────────────────────────
+ 
++    private sealed interface ManifestResolution {
++        /** The manifest named the image and the download passed its checks. */
++        data class Verified(val artifact: FirmwareArtifact) : ManifestResolution
++
++        /** The manifest named the image and the download failed its checks; the file is already deleted. */
++        data object Rejected : ManifestResolution
++
++        /** No usable manifest entry, or its image could not be downloaded; the filename fallbacks apply. */
++        data object Unavailable : ManifestResolution
++    }
++
+     @Suppress("ReturnCount")
+     private suspend fun resolveFromManifest(
+         version: String,
+         target: String,
+         release: FirmwareRelease,
+         hardware: DeviceHardware,
+         onProgress: (Float) -> Unit,
+-    ): FirmwareArtifact? {
++    ): ManifestResolution {
+         val manifestUrl = "${release.artifactBaseUrl}/firmware-$target-$version.mt.json"
+ 
+         val text = fileHandler.fetchText(manifestUrl)
+         if (text == null) {
+             Logger.d { "Manifest not available at $manifestUrl — falling back to filename heuristics" }
+-            return null
++            return ManifestResolution.Unavailable
+         }
+ 
+         val manifest =
+             try {
+                 manifestJson.decodeFromString<FirmwareManifest>(text)
+             } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                 Logger.w(e) { "Failed to parse manifest from $manifestUrl" }
+-                return null
++                return ManifestResolution.Unavailable
+             }
+ 
+         val otaEntry = manifest.files.firstOrNull { it.partName == OTA_PART_NAME }
+         if (otaEntry == null) {
+             Logger.w { "Manifest has no '$OTA_PART_NAME' entry — files: ${manifest.files.map { it.partName }}" }
+-            return null
++            return ManifestResolution.Unavailable
+         }
+ 
+         Logger.i { "Manifest resolved OTA firmware: ${otaEntry.name} (${otaEntry.bytes} bytes, md5=${otaEntry.md5})" }
+@@ -287,13 +303,15 @@ open class FirmwareRetriever(private val fileHandler: FirmwareFileHandler) {
+                 fileSuffix = ".bin",
+                 internalFileExtension = ".bin",
+                 preferredFilename = otaEntry.name,
+-            ) ?: return null
++            ) ?: return ManifestResolution.Unavailable
+ 
+-        // Verify the download against the manifest before handing it to the OTA flow. On mismatch we return null so the
+-        // caller falls back to the filename heuristics (exactly like a missing/garbage manifest) — surfacing a bad
+-        // download here beats rebooting the device into OTA mode, which tears down the mesh link, only to fail
+-        // device-side hash verification mid-flash.
+-        return artifact.takeIf { verifyAgainstManifest(it, otaEntry) }
++        // A mismatch is terminal: no fallback may supply an image the manifest rejected. Failing here also beats
++        // rebooting the device into OTA mode, which tears down the
+```
+
+**File**: `feature/firmware/src/commonMain/kotlin/org/meshtastic/feature/firmware/MaintenanceUf2.kt` (modified, +11/-1)
+```diff
+@@ -72,6 +72,15 @@ internal data class MaintenanceUf2(
+  */
+ private val SAFE_UF2_FILE_NAME = Regex("""[A-Za-z0-9._-]+\.uf2""")
+ 
++private val OTAFIX_BASE = Regex("""https://github\.com/meshtastic/nRF52_Bootloader/releases/download/[A-Za-z0-9._-]+""")
 +
 +/**
-+ * Opt-in MCP server for agents, wired to the app's radio layer rather than its UI. Starts only when [PORT_ENV] or
-+ * [PORT_PROPERTY] names a port, and binds loopback only.
++ * True only for a bootloader release download base: `https://github.com/meshtastic/nRF52_Bootloader/releases/download/
++ * <tag>`. Matched against the whole string so a different scheme, host, repository, userinfo or trailing path never
++ * passes; a base that fails resolves no image.
 + */
-+class DesktopMcpServer(
-+    private val serviceRepository: ServiceRepository,
-+    private val radioController: RadioController,
-+    private val radioInterfaceService: RadioInterfaceService,
-+    private val nodeRepository: NodeRepository,
-+    private val packetRepository: PacketRepository,
-+    private val sendMessageUseCase: SendMessageUseCase,
-+) {
-+    private var engine: EmbeddedServer<*, *>? = null
++internal fun isBootloaderReleaseBase(base: String): Boolean = OTAFIX_BASE.matches(base)
 +
-+    fun start(port: Int) {
-+        engine =
-+            embeddedServer(CIO, host = LOOPBACK, port = port) { mcpStreamableHttp(path = "/mcp") { newSession() } }
-+                .start(wait = false)
-+        Logger.i { "MCP server li
+ /**
+  * Factory-erase images are now vendored and served by `meshtastic/api` (`resource/maintenanceUf2/asset/<fileName>`)
+  * rather than a commit-pinned URL into `meshtastic/web-flasher`'s `public/uf2/` — see `data/maintenanceUf2.json` in
+@@ -119,7 +128,7 @@ internal fun bootloaderEraseUf2For(manifest: MaintenanceUf2Manifest, volumeFamil
+  */
+ private fun MaintenanceUf2Manifest.otafixAssetOrNull(otafixBoardSlug: String, sha256: String): MaintenanceUf2? {
+     val name = "update-${otafixBoardSlug}_bootloader-${otafixReleaseTag}_nosd.uf2"
+-    if (!SAFE_UF2_FILE_NAME.matches(name)) return null
++    if (!isBootloaderReleaseBase(otafixBase) || !SAFE_UF2_FILE_NAME.matches(name)) return null
+     return MaintenanceUf2(url = "$otafixBase/$name", fileName = name, sha256 = sha256)
+ }
+ 
+@@ -159,6 +168,7 @@ internal fun bootloaderDfuZipFor(
+     val softDevice = SoftDeviceVariant.fromWire(row.softDevice) ?: return null
+     if (mappedSoftDevice != null && mappedSoftDevice != softDevice) return null
+     if (manifest.otafixReleaseTag.isBlank() || row.bleModel.isBlank()) return null
++    if (!isBootloaderReleaseBase(manifest.otafixBase)) return null
+     val name = "${row.otafixBoardSlug}_bootloader-${manifest.otafixReleaseTag}_s140_${row.softDevice}.zip"
+     if (!SAFE_DFU_ZIP_FILE_NAME.matches(name)) return null
+     return BootloaderDfuZip(
 ```
 
-**File**: `desktopApp/src/test/kotlin/org/meshtastic/desktop/mcp/DesktopMcpServerTest.kt` (added, +113/-0)
+**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/BleBootloaderUpgradeGateTest.kt` (modified, +15/-0)
 ```diff
-@@ -0,0 +1,113 @@
-+/*
-+ * Copyright (c) 2026 Meshtastic LLC
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, either version 3 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-+ */
-+package org.meshtastic.desktop.mcp
-+
-+import dev.mokkery.MockMode
-+import dev.mokkery.mock
-+import java.io.BufferedReader
-+import java.io.InputStreamReader
-+import java.net.ServerSocket
-+import java.net.Socket
-+import kotlin.test.AfterTest
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertNull
-+import kotlin.test.assertTrue
-+
-+class DesktopMcpServerTest {
-+
-+    private val server =
-+        DesktopMcpServer(
-+            serviceRepository = mock(MockMode.autofill),
-+            radioController = mock(MockMode.autofill),
-+            radioInterfaceService = mock(MockMode.autofill),
-+            nodeRepository = mock(MockMode.autofill),
-+            packetRepository = mock(MockMode.autofill),
-+            sendMessageUseCase = mock(MockMode.autofill),
+@@ -74,6 +74,21 @@ class BleBootloaderUpgradeGateTest {
+         assertEquals(SoftDeviceVariant.S140_6_1_1, zip.softDevice)
+     }
+ 
++    @Test
++    fun refusesAPackageBaseOffTheReleaseRepository() {
++        listOf(
++            "http://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
++            "https://example.invalid/nRF52_Bootloader/releases/download/2.6.0",
++            "https://github.com@example.invalid/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
 +        )
-+
-+    @AfterTest fun stop() = server.stop()
-+
-+    @Test
-+    fun `a port is parsed only when it is a number in range`() {
-+        assertEquals(8765, parseMcpPort(" 8765 "))
-+        assertNull(parseMcpPort(null))
-+        assertNull(parseMcpPort(""))
-+        assertNull(parseMcpPort("http"))
-+        assertNull(parseMcpPort("0"))
-+        assertNull(parseMcpPort("65536"))
-+    }
-+
-+    @Test
-+    fun `a bare MAC gets the Bluetooth prefix and other addresses pass through`() {
-+        assertEquals("x34:B7:DA:62:18:C5", normalizeMcpAddress(" 34:b7:da:62:18:c5 "))
-+        assertEquals("t192.168.1.20", normalizeMcpAddress("t192.168.1.20"))
-+        assertEquals("s/dev/ttyUSB0", normalizeMcpAddress("s/dev/ttyUSB0"))
-+    }
-+
-+    @Test
-+    fun `initialize succeeds on loopback`() {
-+        val port = freePort()
-+        server.start(port)
-+
-+        val status = post(port, host = "127.0.0.1:$port")
-+
-+        assertEquals(HTTP_OK, status)
-+    }
-+
-+    @Test
-+    fun `a request naming another host is refused`() {
-+        val port = freePort()
-+        server.start(port)
-+
-+        val status = post(port, host = "attacker.example")
-+
-+        assertTrue(status in HTTP_CLIENT_ERRORS, "expected a 4xx for a foreign Host, got $status")
-+    }
-+
-+    private fun freePort(): Int = ServerSocket(0).use { it.localPort }
-+
-+    /** Sends an MCP `initialize` with the given Host header over a raw socket and returns the HTTP status. */
-+    private fun post(port: Int, host: String): Int {
-+        val body =
-+            """{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25",""" +
-+                """"capabilities":{},"clientInfo":{"name":"test","version":"1"}}}"""
-+        Socket("127.0.0.1", port).use { socket ->
-+            socket.soTimeout = SOCKET_TIMEOUT_MS
-+            val request =
-+                "POST /mcp HTTP/1.1\r\n" +
-+                    "Host: $host\r\n" +
-+                    "Content-Type: application/json\r\n" +
-+                    "Accept: application/json, text/event-stream\r\n" +
-+                    "Content-Length: ${body.toByteArray().size}\r\n" +
-+                    "Connection: close\r\n\r\n" +
-+                    body
-+            socket.getOutputStream().apply {
-+                write(request.toByteArray())
-+                flush()
++            .forEach { base ->
++                assertNull(
++                    bootloaderDfuZipFor(manifest.copy(otafixBase = base), "rak4631", null),
++                    "package resolved for base '$base'",
++                )
 +            }
-+            val statusLine = BufferedReader(InputStreamReader(socket.getInputStream())).readLine()
-+            return statusLine.split(" ")[1].toInt()
-+        }
 +    }
 +
-+    private companion object {
-+        const val HTTP_OK = 200
-+        val HTTP_CLIENT_ERRORS = 400..499
-+        const val SOCKET_TIMEOUT_MS = 10_000
-+    }
-+}
+     @Test
+     fun offersForTheSharedLegacyVersion() {
+         assertNotNull(gate(BootloaderStatus(InstalledBootloader.OlderThanFirstNumbered, latest)))
 ```
 
-**File**: `gradle/libs.versions.toml` (modified, +4/-0)
+**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/CommonFirmwareRetrieverTest.kt` (modified, +30/-7)
 ```diff
-@@ -88,6 +88,7 @@ camerax = "1.7.0"
+@@ -26,6 +26,7 @@ import org.meshtastic.feature.firmware.ota.FirmwareHashUtil
+ import kotlin.test.Test
+ import kotlin.test.assertEquals
+ import kotlin.test.assertFailsWith
++import kotlin.test.assertFalse
+ import kotlin.test.assertNotNull
+ import kotlin.test.assertNull
+ import kotlin.test.assertTrue
+@@ -62,7 +63,7 @@ abstract class CommonFirmwareRetrieverTest {
+                 "files": [
+                     {
+                         "name": "firmware-heltec-v3-2.7.17.bin",
+-                        "md5": "abc123",
++                        "md5": "b2d1236c286a3c0704224fe4105eca49",
+                         "bytes": 2097152,
+                         "part_name": "app0"
+                     },
+@@ -92,6 +93,7 @@ abstract class CommonFirmwareRetrieverTest {
  
- # Networking
- ktor = "3.6.1"
-+mcp-kotlin-sdk = "0.16.0"
+         // Direct download of the manifest-resolved filename succeeds
+         handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.bin")
++        handler.fileBytes["firmware-heltec-v3-2.7.17.bin"] = ByteArray(2097152)
  
- # Other
- aboutlibraries = "15.3.0"
-@@ -270,13 +271,16 @@ pmtiles-reader = { module = "ch.poole.geo.pmtiles-reader:Reader", version = "0.3
+         val result = retriever.retrieveEsp32Firmware(TEST_RELEASE, TEST_HARDWARE) {}
  
- # Networking
- ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-+ktor-bom = { module = "io.ktor:ktor-bom", version.ref = "ktor" }
- ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
- ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
- ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
- ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
- ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
- ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
- ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-+ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
-+mcp-kotlin-sdk-server = { module = "io.modelcontextprotocol:kotlin-sdk-server", version.ref = "mcp-kotlin-sdk" }
+@@ -121,7 +123,7 @@ abstract class CommonFirmwareRetrieverTest {
+     }
  
- # Testing
- androidx-test-core = { module = "androidx.test:core", version = "1.8.0-alpha04" }
+     @Test
+-    fun `retrieveEsp32Firmware rejects manifest artifact on md5 mismatch and falls back`() = runTest {
++    fun `retrieveEsp32Firmware fails without fallback on md5 mismatch`() = runTest {
+         val handler = FakeFirmwareFileHandler()
+         val retriever = FirmwareRetriever(handler)
+ 
+@@ -131,17 +133,21 @@ abstract class CommonFirmwareRetrieverTest {
+             """{"files":[{"name":"$name","part_name":"app0","md5":"deadbeef","bytes":4}]}"""
+         handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/$name")
+         handler.fileBytes[name] = byteArrayOf(0x01, 0x02, 0x03, 0x04)
+-        // Heuristic fallback the rejection should land on.
+-        handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.bin")
++        // Fallbacks that must stay unreached once the manifest has rejected the image.
++        val fallbackUrl = "$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.bin"
++        handler.existingUrls.add(fallbackUrl)
++        handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17-update.bin")
+ 
+         val result = retriever.retrieveEsp32Firmware(TEST_RELEASE, TEST_HARDWARE) {}
+ 
+-        assertNotNull(result)
+-        assertEquals("firmware-heltec-v3-2.7.17.bin", result.fileName)
++        assertNull(result)
++        assertEquals(listOf(name), handler.deletedFiles.map { it.fileName })
++        assertFalse(fallbackUrl in handler.downloadedUrls, "a rejected manifest image must not reach a fallback")
++        assertEquals(1, handler.downloadedUrls.size)
+     }
+ 
+     @Test
+-    fun `retrieveEsp32Firmware rejects manifest artifact on size mismatch and falls back`() = runTest {
++    fun `retrieveEsp32Firmware fails without fallback on size mismatch`() = runTest {
+         val handler = FakeFirmwareFileHandler()
+         val retriever = FirmwareRetriever(handler)
+ 
+@@ -155,6 +161,23 @@ abstract class CommonFirmwareRetrieverTest {
+ 
+         val result = retriever.retrieveEsp32Firmware(TEST_RELEASE, TEST_HARDWARE) {}
+ 
++        assertNull(result)
++        assertEquals(listOf(name), handler.deletedFiles.map { it.fileName })
++        assertEquals(1, handler.downloadedUrls.size)
++    }
++
++    @Test
++    fun `retrieveEsp32Firmware falls back when the manifest image cannot be downloaded`() = runTest {
++        val handler = FakeFirmwareFileHandler()
++        val retriever = FirmwareRetriever(handler)
++
++        // The manifest names an image that is not published; nothing was downloaded, so nothing was rejected.
++        handler.textResponses["$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.mt.json"] =
++            """{"files":[{"name":"firmware-heltec-v3-2.7.17-app0.bin","part_name":"app0","md5":"deadbeef","bytes":4}]}"""
++        handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.bin")
++
++        val result = retriever.retrieveEsp32Firmware(TEST_RELEASE, TEST_HARDWARE) {}
++
+         assertNotNull(result)
+         assertEquals("firmware-heltec-v3-2.7.17.bin", result.fileName)
+     }
+```
+
+**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/CommonUsbPassWriterTest.kt` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ abstract class CommonUsbPassWriterTest {
+             {
+               "manifestVersion": 1,
+               "otafixReleaseTag": "0.9.2-OTAFIX2.3-BP1.5",
+-              "otafixBase": "https://example.invalid/otafix",
++              "otafixBase": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/0.9.2-OTAFIX2.3-BP1.5",
+               "erase": {
+                 "nrf52": {
+                   "6.1.1": { "fileName": "nrf_erase2.uf2", "sha256": "00", "expectedFirstTargetAddress": 155648 }
+```
+
+**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/FirmwareUpdateViewModelTest.kt` (modified, +1/-1)
+```diff
+@@ -982,7 +982,7 @@ class FirmwareUpdateViewModelTest {
+         everySuspend { maintenanceUf2Repository.getSnapshot() } returns
+             MaintenanceUf2Manifest(
+                 otafixReleaseTag = "2.6.0",
+-                otafixBase = "https://example.com",
++                otafixBase = "https://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
+                 otafixBleDfuByTarget =
+                 mapOf(
+                     "rak4631" to
+```
+
+**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/UsbMaintenanceGateTest.kt` (modified, +33/-1)
+```diff
+@@ -242,7 +242,7 @@ class UsbMaintenanceGateTest {
+                 """
+                 {
+                   "otafixReleaseTag": "../../../evil",
+-                  "otafixBase": "https://example.invalid/releases",
++                  "otafixBase": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.1",
+                   "otafixByBoardId": {
+                     "rak4631": { "otafixBoardSlug": "rak4631", "sha256": "00" }
+                   }
+@@ -506,6 +506,38 @@ class UsbMaintenanceGateTest {
+         }
+     }
+ 
++    @Test
++    fun `a bootloader base off the release repository yields no image`() {
++        val tag = testManifest.otafixReleaseTag
++        val release = "github.com/meshtastic/nRF52_Bootloader/releases/download/$tag"
++        listOf(
++            "http://$release",
++            "https://example.invalid/nRF52_Bootloader/releases/download/$tag",
++            "https://github.com/meshtastic/other-repo/releases/download/$tag",
++            "https://github.com.example.invalid/meshtastic/nRF52_Bootloader/releases/download/$tag",
++            "https://meshtastic@example.invalid/$release",
++            "https://github.com@example.invalid/meshtastic/nRF52_Bootloader/releases/download/$tag",
++            "https://$release/",
++            "https://$release/extra",
++            "",
++        )
++            .forEach { base ->
++                val manifest = testManifest.copy(otafixBase = base)
++                assertNull(otafixUf2ForBoardId(manifest, "WisBlock-RAK4631-Board"), "image resolved for base '$base'")
++            }
++    }
++
++    @Test
++    fun `the release repository base still composes the asset url`() {
++        val tag = testManifest.otafixReleaseTag
++        val image = assertNotNull(otafixUf2ForBoardId(testManifest, "WisBlock-RAK4631-Board"))
++
++        assertEquals(
++            "https://github.com/meshtastic/nRF52_Bootloader/releases/download/$tag/${image.fileName}",
++            image.url,
++        )
++    }
++
+     @Test
+     fun `board id selects the image rather than the build target`() {
+         val rak = otafixUf2ForBoardId(testManifest, "WisBlock-RAK4631-Board")
 ```
 
 ---
 
-### Incident Patch 2: `5f082db7` (2026-11-19)
-**Commit Message**: ci: run Predictive Test Selection on pull_request builds (#8117)
+### Incident Patch 3: `858a4ff5` (2026-11-22)
+**Commit Message**: fix(wifi-provision): let the user choose which device receives the Wi-Fi setup (#8218)
 
-**File**: `build-logic/convention/src/main/kotlin/org/meshtastic/buildlogic/ProjectExtensions.kt` (modified, +11/-0)
+**File**: `.skills/compose-ui/strings-index.txt` (modified, +12/-0)
 ```diff
-@@ -159,6 +159,17 @@ internal fun Project.configureTestOptions() {
- 
-     // Develocity-native test retry; findByType no-ops if the settings plugin isn't applied.
-     tasks.withType<Test>().configureEach {
-+        // Only jvmTest on pull requests into main skips tests: its agent kills the forked JVM of Android host
-+        // tests and breaks screenshot validation. Release-branch PRs, merge_group, main and local runs execute
-+        // every test.
-+        if (name == "jvmTest") {
-+            extensions.findByType(DevelocityTestConfiguration::class.java)?.predictiveTestSelection {
-+                val event = providers.environmentVariable("GITHUB_EVENT_NAME")
-+                val baseRef = providers.environmentVariable("GITHUB_BASE_REF")
-+                enabled.set(event.zip(baseRef) { e, b -> e == "pull_request" && b == "main" }.orElse(false))
-+                fallbackToRegularExecutionOnMissingPrerequisites.set(true)
-+            }
-+        }
-         extensions.findByType(DevelocityTestConfiguration::class.java)?.testRetry {
-             maxRetries.set(MAX_TEST_RETRIES)
-             maxFailures.set(MAX_TEST_FAILURES)
+@@ -2361,18 +2361,30 @@ wifi_ip
+ wifi_provision_available_networks
+ wifi_provision_choose_device
+ wifi_provision_choose_device_detail
++wifi_provision_confirm_compare
++wifi_provision_confirm_consequence
++wifi_provision_confirm_title
++wifi_provision_confirm_title_named
+ wifi_provision_connect_failed
+ wifi_provision_description
+ wifi_provision_device_found
+ wifi_provision_device_found_detail
++wifi_provision_device_not_found
+ wifi_provision_hidden_network
++wifi_provision_link_unsupported
+ wifi_provision_mpwrd_disclaimer
++wifi_provision_no_devices
++wifi_provision_no_devices_detail
+ wifi_provision_no_networks
++wifi_provision_no_response
++wifi_provision_pick_device
++wifi_provision_rescan
+ wifi_provision_scan_failed
+ wifi_provision_scan_networks
+ wifi_provision_scanning_ble
+ wifi_provision_scanning_wifi
+ wifi_provision_sending_credentials
++wifi_provision_signal_dbm
+ wifi_provision_signal_strength
+ wifi_provision_ssid_label
+ wifi_provision_ssid_placeholder
 ```
 
----
-
-### Incident Patch 3: `41c210a7` (2026-11-19)
-**Commit Message**: ci: run desktop ProGuard on one Linux runner for pull requests (#8127)
-
-**File**: `.github/workflows/reusable-check.yml` (modified, +4/-1)
+**File**: `core/ble/src/androidMain/kotlin/org/meshtastic/core/ble/KablePlatformSetup.kt` (modified, +2/-0)
 ```diff
-@@ -626,6 +626,8 @@ jobs:
-         # proguardReleaseJars is included because it is otherwise only exercised by the
-         # release workflow: jlink tolerates a jmods-less JDK (JEP 493) but ProGuard does
-         # not, so a broken packaging JDK would surface at release time instead of here.
-+        # Pull requests run it on ubuntu-24.04 only (it took 381 s on macOS); main runs it on
-+        # every OS, so a per-OS packaging JDK break surfaces there before a release.
-         # packageDistributionForCurrentOS (debug build type, no ProGuard) produces real
-         # installers (dmg/msi+exe/deb+rpm+AppImage-dir) so the snapshot release below can
-         # ship something testers can actually install, not just an unpacked app dir.
-@@ -646,7 +648,8 @@ jobs:
-         # needs Gradle 9.7+, so a pin-back below 9.7 has to revert this line with it.
-         # The daemon flag is quoted because PowerShell splits an unquoted -P argument at its first dot.
-         run: >
--          ./gradlew :desktopApp:packageDistributionForCurrentOS :desktopApp:proguardReleaseJars -Pci=true "-Pkotlin.daemon.useFallbackStrategy=false"
-+          ./gradlew :desktopApp:packageDistributionForCurrentOS -Pci=true "-Pkotlin.daemon.useFallbackStrategy=false"
-+          ${{ (github.event_name != 'pull_request' || matrix.os == 'ubuntu-24.04') && ':desktopApp:proguardReleaseJars' || '' }}
-           ${{ runner.os == 'Windows' && '--no-isolated-projects' || '' }}
+@@ -33,6 +33,8 @@ internal actual fun ScannerBuilder.platformScanConfig() {
+ /** Android's scanner filters on address in hardware, so Kable's `Filter.Address` works natively here. */
+ internal actual val supportsNativeAddressScanFilter: Boolean = true
  
-       # CMP's TargetFormat.AppImage is jpackage's "app-image" — an unpacked directory, not
++internal actual val bleAddressIsHardware: Boolean = true
++
+ /**
+  * Shared thread pool for Kable BLE connections.
+  *
+```
+
+**File**: `core/ble/src/commonMain/kotlin/org/meshtastic/core/ble/BleScanner.kt` (modified, +8/-0)
+```diff
+@@ -32,4 +32,12 @@ interface BleScanner {
+     /** True where a scan is a device chooser the user already picked from, so the device it emits is the selection. */
+     val picksDevice: Boolean
+         get() = false
++
++    /**
++     * True where [BleDevice.address] is a hardware (MAC) address the user can compare with a label or another device
++     * list, and where a MAC from outside the app can match a scanned device. False where it is an identifier only this
++     * host and app understand, such as a CoreBluetooth UUID or a browser device id.
++     */
++    val addressIsHardware: Boolean
++        get() = true
+ }
+```
+
+**File**: `core/ble/src/iosMain/kotlin/org/meshtastic/core/ble/NoopStubs.kt` (modified, +3/-0)
+```diff
+@@ -23,6 +23,9 @@ import com.juul.kable.ScannerBuilder
+ // Kable's `Filter.Address` throws UnsupportedOperationException on Apple.
+ internal actual val supportsNativeAddressScanFilter: Boolean = false
+ 
++// CoreBluetooth identifies a peripheral by a per-host UUID, never its MAC.
++internal actual val bleAddressIsHardware: Boolean = false
++
+ internal actual fun ScannerBuilder.platformScanConfig() {
+     // No-op: preConflate is Android-only.
+ }
+```
+
+**File**: `core/ble/src/jvmMain/kotlin/org/meshtastic/core/ble/KablePlatformSetup.kt` (modified, +5/-0)
+```diff
+@@ -29,6 +29,11 @@ internal actual fun ScannerBuilder.platformScanConfig() {
+ // nothing and the scan yields no advertisements at all.
+ internal actual val supportsNativeAddressScanFilter: Boolean = false
+ 
++// btleplug's CoreBluetooth backend (macOS) identifies a peripheral by an Apple UUID; its BlueZ backend (Linux) by a
++// path that carries the MAC.
++internal actual val bleAddressIsHardware: Boolean =
++    !System.getProperty("os.name").orEmpty().startsWith("Mac", ignoreCase = true)
++
+ internal actual fun createPeripheral(address: String, builderAction: PeripheralBuilder.() -> Unit): Peripheral =
+     com.juul.kable.Peripheral(address.toIdentifier(), builderAction)
+ 
+```
+
+**File**: `core/ble/src/nonWebMain/kotlin/org/meshtastic/core/ble/KableBleScanner.kt` (modified, +2/-0)
+```diff
+@@ -70,6 +70,8 @@ private fun Advertisement.toScanResult(): KableScanResult =
+ open class KableBleScanner(private val loggingConfig: BleLoggingConfig) : BleScanner {
+     private val scanStartLimiter = createBleScanStartLimiter()
+ 
++    override val addressIsHardware: Boolean = bleAddressIsHardware
++
+     internal open suspend fun reserveScanStart() = scanStartLimiter.reserveStart()
+ 
+     internal open fun advertisements(filter: KableScanFilter): Flow<KableScanResult> {
+```
+
+**File**: `core/ble/src/nonWebMain/kotlin/org/meshtastic/core/ble/KableScannerPlatformSetup.kt` (modified, +6/-0)
+```diff
+@@ -26,3 +26,9 @@ internal expect fun ScannerBuilder.platformScanConfig()
+  * the JVM/btleplug backend evaluates predicates with a hardcoded null address so it matches nothing.
+  */
+ internal expect val supportsNativeAddressScanFilter: Boolean
++
++/**
++ * Whether Kable's device identifier is a hardware MAC here. Android reports the MAC and Linux a BlueZ path that
++ * [normalizeBleAddress] reduces to it; Apple's CoreBluetooth hides the MAC behind a per-host UUID.
++ */
++internal expect val bleAddressIsHardware: Boolean
+```
+
+**File**: `core/ble/src/wasmJsMain/kotlin/org/meshtastic/core/ble/WebBleScanner.kt` (modified, +3/-0)
+```diff
+@@ -53,6 +53,9 @@ import kotlin.uuid.Uuid
+ class WebBleScanner(private val loggingConfig: BleLoggingConfig) : BleScanner {
+     override val picksDevice: Boolean = true
+ 
++    // A Web Bluetooth device id is opaque to the page and unrelated to the MAC.
++    override val addressIsHardware: Boolean = false
++
+     override fun scan(timeout: Duration, serviceUuid: Uuid?, address: String?): Flow<BleDevice> = flow {
+         val peripheral = if (address != null) granted(address) else pick(serviceUuid)
+         if (peripheral != null) emit(peripheral.toBleDevice())
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8132** (2026-11-19): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
-- **PR #8131** (2026-11-19): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
-- **PR #8129** (2026-11-19): chore: Scheduled updates (Graphs, Baseline Profile) (@jamesarich)
-- **PR #8127** (2026-11-19): ci: run desktop ProGuard on one Linux runner for pull requests (@jamesarich)
-- **PR #8126** (2026-11-19): fix(widget): carry the Meshtastic mark on the Telemetry widget (@jamesarich)
-- **PR #8125** (2026-11-18): chore(deps): update github-actions (@renovate[bot])
+- **PR #8225** (2026-11-22): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
+- **PR #8223** (2026-11-22): test: cover overlapping closes, missing network fields and a row after a deselected one (@jamesarich)
+- **PR #8222** (2026-11-22): chore: Scheduled updates (Graphs, Baseline Profile) (@jamesarich)
+- **PR #8221** (2026-11-22): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
+- **PR #8220** (2026-11-21): fix(schema-strings): give the protobufs version a line of its own and sync to 2.8.3 (@jamesarich)
+- **PR #8219** (closed): feat(data): name a virtual node's hardware without a catalog entry (@jamesarich)
 
 ---
 
@@ -1812,36 +1976,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): add a debug-only loopback MCP server for agents
+## X. ui): list every LoRa change and channel sharing flag when replacing from a chann
 
 **RULE**:
-When implementing operations in `desktopApp/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.skills/compose-ui/strings-index.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e2539bc1`: desktop): add a debug-only loopback MCP server for agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `de21f854`: ui): list every LoRa change and channel sharing flag when replacing from a channel link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktopApp/build.gradle.kts`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.skills/compose-ui/strings-index.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    // Debug-only agent MCP server (mcp/DesktopMcpServer.kt); the SDK ships no Ktor engine. The BOM lifts the
-    // server modules the SDK pins to an older Ktor onto the repo's Ktor.
-    implementation(platform(libs.ktor.bom))
-    implementation(libs.mcp.kotlin.sdk.server)
-    implementation(libs.ktor.server.cio)
-
+channel_import_add_description
+channel_import_confirm_add
+channel_import_confirm_replace
+channel_import_downlink
+channel_import_mode_label
+channel_import_position_approximate
+channel_import_position_precise
+channel_import_replace_description
+channel_import_title
+channel_import_uplink
+frequency_value_mhz
+lora_change_spoken
+lora_change_values
+lora_changes_alert_description
+lora_changes_alert_heading
+lora_changes_heading
+lora_fem_lna_auto
+lora_fem_lna_not_present
+lora_field_fem_lna_mode
+lora_field_frequency_offset
+lora_field_modem_preset
+lora_field_serial_hal_only
+lora_field_transparent_mode
+lora_field_unrecognized
+lora_value_none
+lora_value_not_used
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+add_channels_description
+lora_config_change_value
+lora_config_changes
+new_channel_rcvd
+replace_channels_and_settings_description
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e2539bc1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `de21f854` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

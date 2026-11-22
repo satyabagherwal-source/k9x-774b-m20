@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T17:14:08.491Z",
+  "last_updated": "2026-11-22T17:22:08.246Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -215,14 +215,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "299a5f5bb41bd28ecc555dd284df87b1ffd2433060d6ef1eb380be83f60d2dcd",
-      "verified_at": "2026-11-18T10:45:02.151Z",
+      "content_hash": "ab711e34a7270d2552472eb0c7db455eec5942b34b1cf7ed1155c3c5d9e6468b",
+      "verified_at": "2026-11-22T17:22:01.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:45:02.151Z"
+      "last_updated": "2026-11-22T17:22:01.395Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "7f0b01749f96a215dc99d037993c06bc107c144d458afbbfdeb236d03b5ab594",
-      "verified_at": "2026-11-21T04:20:35.701Z",
+      "content_hash": "b320cb389986484614083aa9afaf2eaa4fc7f32f666573047e45895adc80cef2",
+      "verified_at": "2026-11-22T17:22:02.391Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T04:20:35.701Z"
+      "last_updated": "2026-11-22T17:22:02.391Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
@@ -11751,14 +11751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshtastic-meshtastic-android",
-      "content_hash": "fee09e94c023447a320d64ea38d6e83bf6741a15d4c2c6c6f27272d3ab8c182f",
-      "verified_at": "2026-11-19T15:58:52.085Z",
+      "content_hash": "f0df1bc02fd0cfa453e463c4b308f14076190283133f476b86eaf2a62f30837e",
+      "verified_at": "2026-11-22T17:22:08.246Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:58:52.085Z"
+      "last_updated": "2026-11-22T17:22:08.246Z"
     },
     "astral-sh/uv": {
       "repository": "astral-sh/uv",

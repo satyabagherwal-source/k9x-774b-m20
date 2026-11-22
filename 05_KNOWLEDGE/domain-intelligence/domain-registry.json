@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T17:14:14.143Z",
-  "total_records": 2362,
+  "last_updated": "2026-11-22T17:22:16.293Z",
+  "total_records": 2366,
   "domains": {
     "A": {
       "total": 19,
@@ -29,7 +29,7 @@
       ]
     },
     "B": {
-      "total": 20,
+      "total": 22,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -50,7 +50,9 @@
         "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants",
         "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants",
         "DOM-B-2C8CFAB3",
-        "DOM-B-1A9A8A88"
+        "DOM-B-1A9A8A88",
+        "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-core-invariants",
+        "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants"
       ]
     },
     "C": {
@@ -1095,7 +1097,7 @@
       ]
     },
     "G": {
-      "total": 393,
+      "total": 395,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1489,7 +1491,9 @@
         "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-sfu-db-connector-x-core-invariants",
         "domain_intelligence-architecture-intelligence-oven-sh-bun-core-invariants",
-        "domain_intelligence-architecture-intelligence-oven-sh-bun-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-oven-sh-bun-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-google-tcmalloc-core-invariants",
+        "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants"
       ]
     },
     "H": {
@@ -29216,8 +29220,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-27b-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invari.md",
       "repository": "Qwen/Qwen3.8-27B",
-      "content_hash": "25e083339c634117fde65441af6ac9fd52300f7d0fd5db1d423731365548995a",
-      "created_at": "2026-11-18T10:45:02.341Z"
+      "content_hash": "fae2a08ac0b84dde4b360f392c3813a97e2d6b62c01ed7da43b09078e6cef843",
+      "created_at": "2026-11-22T17:22:01.608Z"
     },
     "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants",
@@ -29234,8 +29238,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-27b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-8-27.md",
       "repository": "hf-qwen-qwen3.8-27b-learnings",
-      "content_hash": "a342811fd53a30bc6a149bb0ad3c4b60a624d5cdc8867a56e58a67d25bcab4fb",
-      "created_at": "2026-11-18T10:45:15.979Z"
+      "content_hash": "a85b8cefbbd27e470d54639d895a3a23fc5527f4d18558b20fd59edac649d22e",
+      "created_at": "2026-11-22T17:22:14.576Z"
     },
     "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -39766,6 +39770,42 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-22T16:29:43.698Z"
+    },
+    "domain_intelligence-architecture-intelligence-google-tcmalloc-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-google-tcmalloc-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: google/tcmalloc Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-google-tcmalloc-architecture-intelligence-google-tcmalloc-core-invariants.md",
+      "repository": "google/tcmalloc",
+      "content_hash": "cd9817626a2605121b00a4500acf0ec275d9be868b42d832680318163ef74a39",
+      "created_at": "2026-11-22T17:22:02.780Z"
+    },
+    "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: meshtastic/Meshtastic-Android Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-meshtastic-meshtastic-android-product-intelligence-meshtastic-meshtastic-android.md",
+      "repository": "meshtastic/Meshtastic-Android",
+      "content_hash": "4c19d8a885d50a371fb2db5c80ee01e9bde34fa534ec911488bc77332a32a633",
+      "created_at": "2026-11-22T17:22:08.645Z"
+    },
+    "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: google-tcmalloc-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-google-tcmalloc-learnings-architecture-intelligence-google-tcmalloc-learnings-co.md",
+      "repository": "google-tcmalloc-learnings",
+      "content_hash": "2351bcac0a5d07f663b5c4b45405df97760e0151e0d65b459bfcfa21ac57f281",
+      "created_at": "2026-11-22T17:22:13.865Z"
+    },
+    "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: meshtastic-meshtastic-android-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-meshtastic-meshtastic-android-learnings-product-intelligence-meshtastic-meshtast.md",
+      "repository": "meshtastic-meshtastic-android-learnings",
+      "content_hash": "33d5538c9d8358c8232758d13948ec3e5858203741d3c8b9c11551c0a9243f6c",
+      "created_at": "2026-11-22T17:22:16.293Z"
     }
   }
 }

@@ -12162,3 +12162,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `57a7a48c` | Multi-dimensional audit evidence | 2026-11-22T16:57:39.952Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `062cc44c` | Multi-dimensional audit evidence | 2026-11-22T17:12:16.392Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-22T17:14:08.480Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-22T17:22:01.386Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `6aebbb38` | Multi-dimensional audit evidence | 2026-11-22T17:22:02.383Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `836e48f7` | Multi-dimensional audit evidence | 2026-11-22T17:22:08.237Z |

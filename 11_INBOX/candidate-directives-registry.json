@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:14:13.931Z",
+  "last_updated": "2026-11-22T17:22:16.120Z",
   "directives": [
     {
       "id": "CD-001",
@@ -46761,6 +46761,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A0A947-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-TXYT",
+      "directive_title": "Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.",
+      "source_repo": "google-tcmalloc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TXYT-add-2-line-write-prefetch-option-in-tcmalloc-per-cpu-slab-pop.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TTXX",
+      "directive_title": "list every LoRa change and channel sharing flag when replacing from a chann",
+      "source_repo": "meshtastic/Meshtastic-Android",
+      "source_commit": "836e48f7",
+      "staged_file": "11_INBOX/candidate-directives/CD-TTXX-list-every-lora-change-and-channel-sharing-flag-when-replacing-from-a-chann.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-5BBB07",
+      "directive_title": "Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "google-tcmalloc",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5BBB07-add-2-line-write-prefetch-option-in-tcma.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-TZUD",
+      "directive_title": "ui): list every LoRa change and channel sharing flag when replacing from a chann",
+      "source_repo": "meshtastic-meshtastic-android-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TZUD-ui-list-every-lora-change-and-channel-sharing-flag-when-replacing-from-a-chann.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "B"
     }
   ]
 }

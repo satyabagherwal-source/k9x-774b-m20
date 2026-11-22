@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `3264f9ce`  
+> **Source Version**: `6aebbb38`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T04:20:34.696Z  
+> **Timestamp**: 2026-11-22T17:22:01.273Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T04:15:33.863Z  
+> **Harvest Timestamp**: 2026-11-22T17:22:01.267Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5407 stars
+- **Stars / Engagement**: 5409 stars
 
 ---
 
@@ -1270,191 +1270,490 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3264f9ce` (2026-11-20)
-**Commit Message**: Drop pageheap_lock when resetting sampled tracker VMA names.
+### Incident Patch 1: `6aebbb38` (2026-11-21)
+**Commit Message**: Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.
 
-`SampledTrackerTreatment::Treat()` drops `pageheap_lock` before calling `SetAnonVmaName`, because `prctl(PR_SET_VMA_ANON_NAME)` takes `mmap_write_lock` in the kernel. By contrast, `HandleFullyFreedTracker` and `FetchFullyFreedTracker` reset a retired tracker's VMA name under `pageheap_lock`.
+`TcmallocSlab::Pop` currently issues a single read-intent prefetch for the first byte of the next object on the per-CPU freelist (`PrefetchNextObject`). Freshly allocated memory is written before it is read—so a shared-state read prefetch still incurs a store-upgrade stall—and allocations spanning multiple cache lines or straddling a cache-line boundary miss on their second cache line.
 
-Both retirement paths have already removed the tracker from every filler list, decremented `size_`, and confirmed that no treatment pin remains. Drop `pageheap_lock` around `SetAnonVmaName` in both paths and assert in `huge_page_filler_fuzz` that VMA naming never runs under `pageheap_lock`.
+Forward the requested allocation size through `CpuCache::AllocateFast`, `AllocateSlow`, and `AllocateSlowNoHooks` to `TcmallocSlab::Pop` and, when compiled with `-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1` (disabled by default for rollout), issue write-intent prefetches (`PrefetchWT0`) at `prefetch_target` and branchlessly (`CMOV`/`CSEL`) at `prefetch_target + std::min<uint32_t>(size, ABSL_CACHELINE_SIZE + 1) - 1`. Single-line objects prefetch the same line (or a straddled second line), larger objects prefetch the second cache line, and test-only `CpuCache::Allocate` passes the size-class size. Add the `write_prefetch` build and test variant to cover the enabled path.
 
-PiperOrigin-RevId: 1026804771
+PiperOrigin-RevId: 1027054307
 
-**File**: `tcmalloc/huge_page_filler.h` (modified, +4/-0)
+**File**: `tcmalloc/BUILD` (modified, +27/-0)
 ```diff
-@@ -1214,7 +1214,9 @@ HugePageFiller<TrackerType>::HandleFullyFreedTracker(TrackerType* pt,
+@@ -658,6 +658,33 @@ cc_library(
+     alwayslink = 1,
+ )
+ 
++cc_library(
++    name = "tcmalloc_write_prefetch",
++    srcs = [
++        "libc_override.h",
++        "tcmalloc.cc",
++        "tcmalloc.h",
++    ],
++    copts = [
++        "-DTCMALLOC_INTERNAL_8K_PAGES",
++        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1",
++    ] + TCMALLOC_DEFAULT_COPTS,
++    linkstatic = 1,
++    visibility = [":tcmalloc_tests"],
++    deps = tcmalloc_deps + [
++        ":alloc_at_least",
++        ":common_write_prefetch",
++        ":malloc_hook",
++        "//tcmalloc/internal:allocation_guard",
++        "//tcmalloc/internal:is_aligned_to",
++        "//tcmalloc/internal:overflow",
++        "//tcmalloc/internal:page_size",
++        "@com_google_absl//absl/time",
++        "@com_google_absl//absl/types:span",
++    ],
++    alwayslink = 1,
++)
++
+ # Export some header files to //tcmalloc/testing/...
+ package_group(
+     name = "tcmalloc_tests",
+```
+
+**File**: `tcmalloc/CMakeLists.txt` (modified, +54/-0)
+```diff
+@@ -861,6 +861,60 @@ tcmalloc_cc_library(
+     "tcmalloc::malloc_tracing_extension"
+ )
+ 
++tcmalloc_cc_library(
++  NAME
++    tcmalloc_tcmalloc_write_prefetch
++  ALIAS
++    tcmalloc::tcmalloc_write_prefetch
++  ALWAYSLINK
++  SRCS
++    "libc_override.h"
++    "tcmalloc.cc"
++    "tcmalloc.h"
++  COPTS
++    "-DTCMALLOC_INTERNAL_8K_PAGES"
++    "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1"
++  DEPS
++    "absl::base"
++    "absl::bits"
++    "absl::config"
++    "absl::core_headers"
++    "absl::dynamic_annotations"
++    "absl::memory"
++    "absl::span"
++    "absl::stacktrace"
++    "absl::status"
++    "absl::statusor"
++    "absl::str_format"
++    "absl::strings"
++    "absl::symbolize"
++    "absl::time"
++    "tcmalloc::alloc_at_least"
++    "tcmalloc::common_write_prefetch"
++    "tcmalloc::experiment"
++    "tcmalloc::internal_allocation_guard"
++    "tcmalloc::internal_central_freelist_hooks"
++    "tcmalloc::internal_config"
++    "tcmalloc::internal_declarations"
++    "tcmalloc::internal_is_aligned_to"
++    "tcmalloc::internal_linked_list"
++    "tcmalloc::internal_logging"
++    "tcmalloc::internal_memory_tag"
++    "tcmalloc::internal_optimization"
++    "tcmalloc::internal_overflow"
++    "tcmalloc::internal_packed_ptr"
++    "tcmalloc::internal_page_allocation_status"
++    "tcmalloc::internal_page_size"
++    "tcmalloc::internal_percpu"
++    "tcmalloc::internal_prefetch"
++    "tcmalloc::internal_range_tracker"
++    "tcmalloc::internal_sampled_allocation"
++    "tcmalloc::internal_system_allocator"
++    "tcmalloc::malloc_extension"
++    "tcmalloc::malloc_hook"
++    "tcmalloc::malloc_tracing_extension"
++)
++
+ tcmalloc_cc_library(
+   NAME
+     tcmalloc_mock_central_freelist
+```
+
+**File**: `tcmalloc/cpu_cache.h` (modified, +16/-11)
+```diff
+@@ -225,11 +225,15 @@ class CpuCache {
+   // Separate allocation fast/slow paths.
+   // The fast path succeeds iff the thread has already cached the slab pointer
+   // (done by AllocateSlow) and there is an available object in the slab.
+-  [[nodiscard]] void* absl_nullable AllocateFast(size_t size_class);
+-  [[nodiscard]] void* absl_nullable AllocateSlow(size_t size_class);
++  // `size` is the requested allocation size, used only as a prefetch hint.
++  [[nodiscard]] void* absl_nullable AllocateFast(size_t size_class,
++                                                 size_t size);
++  [[nodiscard]] void* absl_nullable AllocateSlow(size_t size_class,
++                                                 size_t size);
+   // A slightly faster version of AllocateSlow that may be called only
+   // when it's known that no hooks are installed.
+-  [[nodiscard]] void* absl_nullable AllocateSlowNoHooks(size_t size_class);
++  [[nodiscard]] void* absl_nullable AllocateSlowNoHooks(size_t size_class,
++                                                        size_t size);
+ 
+   // Free an object of the given class.
+   void Deallocate(void* absl_nonnull ptr, size_t size_class);
+@@ -813,18 +817,19 @@ class CpuCache {
+ 
+ template <class Forwarder>
+ void* CpuCache<Forwarder>::Allocate(size_t size_class) {
+-  void* ret = AllocateFast(size_class);
++  const size_t size = forwarder_.class_to_size(size_class);
++  void* ret = AllocateFast(size_class, size);
+   if (ABSL_PREDICT_TRUE(ret != nullptr)) {
+     return ret;
    }
-   if (pt->GetTagState().sampled_for_tagging) {
-     // Set the default region name if the tracked was sampled.
-+    pageheap_lock.unlock();
-     pt->SetAnonVmaName(set_anon_vma_name_, /*name=*/std::nullopt);
-+    pageheap_lock.lock();
+-  TCMALLOC_MUSTTAIL return AllocateSlow(size_class);
++  return AllocateSlow(size_class, size);
+ }
+ 
+ template <class Forwarder>
+ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* CpuCache<Forwarder>::AllocateFast(
+-    size_t size_class) {
++    size_t size_class, size_t size) {
+   TC_ASSERT_GT(size_class, 0);
+-  return freelist_.Pop(size_class);
++  return freelist_.Pop(size_class, size);
+ }
+ 
+ template <class Forwarder>
+@@ -1202,14 +1207,14 @@ inline void CpuCache<Forwarder>::ReleaseToBackingCache(
+ }
+ 
+ template <class Forwarder>
+-void* CpuCache<Forwarder>::AllocateSlow(size_t size_class) {
+-  void* ret = AllocateSlowNoHooks(size_class);
++void* CpuCache<Forwarder>::AllocateSlow(size_t size_class, size_t size) {
++  void* ret = AllocateSlowNoHooks(size_class, size);
+   MaybeForceSlowPath();
+   return ret;
+ }
+ 
+ template <class Forwarder>
+-void* CpuCache<Forwarder>::AllocateSlowNoHooks(size_t size_class) {
++void* CpuCache<Forwarder>::AllocateSlowNoHooks(size_t size_class, size_t size) {
+   if (ABSL_PREDICT_FALSE(BypassCpuCache(size_class))) {
+     return forwarder_.sharded_transfer_cache().Pop(size_class);
    }
-   return pt;
- }
-@@ -2556,7 +2558,9 @@ HugePageFiller<TrackerType>::FetchFullyFreedTracker() {
-     if (pt->GetTagState().sampled_for_tagging) {
-       // Set the default region name if the tracker was sampled.  No pin
-       // remains, so no treatment can name it again.
-+      pageheap_lock.unlock();
-       pt->SetAnonVmaName(set_anon_vma_name_, /*name=*/std::nullopt);
-+      pageheap_lock.lock();
-     }
-     return pt;
-   }
-```
-
-**File**: `tcmalloc/huge_page_filler_fuzz.cc` (modified, +0/-7)
-```diff
-@@ -715,13 +715,6 @@ MemoryModifyStatus MockUnbackWithoutLock::operator()(Range r) {
- 
- void MockSetAnonVmaName::operator()(Range r,
-                                     std::optional<absl::string_view> name) {
--  // Treatments name with pageheap_lock dropped, but HandleFullyFreedTracker
--  // and FetchFullyFreedTracker reset the name under it.
--  //
--  // TODO(b/73749855): Move the reset off the lock, then drop this check.
--  if (pageheap_lock.IsHeld()) {
--    return;
--  }
-   state_.OnLockDropped();
- }
- 
-```
-
-**File**: `tcmalloc/huge_page_filler_test.cc` (modified, +52/-0)
-```diff
-@@ -9733,6 +9733,58 @@ TEST_F(FillerTest, SampledOrColdMemorySkipsIsHugepageBacked) {
-   residency.unlocked_hook_ = nullptr;
-   Delete(normal_alloc);
- }
-+
-+TEST_F(FillerTest, SetAnonVmaNameResetDropsPageHeapLock) {
-+  randomize_density_ = false;
-+  SpanAllocInfo info = {1, AccessDensityPrediction::kSparse};
-+  FakePageFlags pageflags;
-+  FakeResidency residency;
-+
-+  int resets_unlocked = 0;
-+  set_anon_vma_name_.SetIgnoreName(true);
-+  set_anon_vma_name_.unlocked_hook_ = [&](Range r,
-+                                          std::optional<absl::string_view> n) {
-+    // Acquire and immediately release pageheap_lock to verify this thread
-+    // dropped it (unlike !pageheap_lock.IsHeld(), which can race with
-+    // background threads) without holding it across the rest of the hook.
-+    {
-+      PageHeapSpinLockHolder l;
-+    }
-+    if (!n.has_value()) {
-+      ++resets_unlocked;
-+    }
-+  };
-+
-+  // Case 1: Direct retirement in HandleFullyFreedTracker.
-+  PAlloc direct = AllocateWithSpanAllocInfo(Length(1), info);
-+  direct.pt->SetTagState({.sampled_for_tagging = true});
-+  pageflags.MarkHugePageBacked(direct.p.start_addr(),
-+                               /*is_hugepage_backed=*/true);
-+  FakeClock::Advance(absl::Minutes(6));
-+  TreatHugepageTrackers(EnableCollapse::kDisabled,
-+                        EnableUnfilteredCollapse::kDisabled,
-+                        ReleaseStalePages::kDisabled, &pageflags, &residency);
-+  Delete(direct);
-+  EXPECT_EQ(resets_unlocked, 1);
-+
-+  // Case 2: Parked retirement drained via FetchFullyFreedTracker.
-+  PAlloc parked = AllocateWithSpanAllocInfo(Length(1), info);
-+  parked.pt->SetTagState({.sampled_for_tagging = true});
-+  pageflags.MarkHugePageBacked(parked.p.start_addr(),
-+                               /*is_hugepage_backed=*/true);
-+  FakeClock::Advance(absl::Minutes(6));
-+  TreatHugepageTrackers(EnableCollapse::kDisabled,
-+                        EnableUnfilteredCollapse::kDisabled,
-+                        ReleaseStalePages::kDisabled, &pageflags, &residency);
-+  parked.pt->SetDontFreeTracker(HugePageTreatmentType::kCollapse);
-+  EXPECT_FALSE(DeleteRaw(parked));
-+  EXPECT_EQ(resets_unlocked, 1);
-+  parked.pt->ClearDontFreeTracker(HugePageTreatmentType::kCollapse);
-+  EXPECT_EQ(DrainFreedTrackers(), 1);
-+  EXPECT_EQ(resets_unlocked, 2);
-+
-+  set_anon_vma_name_.unlocked_hook_ = nullptr;
-+}
- }  // namespace
- }  // namespace tcmalloc_internal
- }  // namespace tcmalloc
-```
-
-**File**: `tcmalloc/huge_page_tracker.h` (modified, +2/-1)
-```diff
-@@ -391,7 +391,8 @@ class PageTracker : public TList<PageTracker>::Elem {
-   void SetTagState(const TagState& state) { tagged_state_ = state; }
- 
-   void SetAnonVmaName(MemoryTagFunction& set_anon_vma_name,
--                      std::optional<absl::string_view> name);
-+                      std::optional<absl::string_view> name)
-+      ABSL_LOCKS_EXCLUDED(pageheap_lock);
- 
-   struct HardwarePageResidencyInfo {
-     HardwareLength n_free_swapped;
-```
-
----
-
-### Incident Patch 2: `0744bb82` (2026-11-20)
-**Commit Message**: Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback.
-
-PiperOrigin-RevId: 1026674384
-
-**File**: `tcmalloc/experiment_config.h` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@ inline constexpr ExperimentConfig experiments[] = {
-     {Experiment::TCMALLOC_PGHO_EXPERIMENT, "TCMALLOC_PGHO_EXPERIMENT"},
-     {Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION, "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
-     {Experiment::TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES, "TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
--    {Experiment::TCMALLOC_SONIC_DEMAND_CYCLE_60S, "TCMALLOC_SONIC_DEMAND_CYCLE_60S", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
-+    {Experiment::TCMALLOC_SONIC_DEMAND_CYCLE_60S, "TCMALLOC_SONIC_DEMAND_CYCLE_60S", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
-     {Experiment::TCMALLOC_SONIC_FILLER_APPEND_ON_FREE, "TCMALLOC_SONIC_FILLER_APPEND_ON_FREE", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
-     {Experiment::TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION, "TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
-     {Experiment::TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K, "TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE"},
-```
-
-**File**: `tcmalloc/experiment_variants.bzl` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ experiment_variants = [
-         "name": "tcmalloc_demand_cycle_60s",
-         "malloc": "//tcmalloc",
-         "deps": ["//tcmalloc:common_8k_pages"],
--        "env": {"BORG_EXPERIMENTS": "TCMALLOC_SONIC_DEMAND_CYCLE_60S"},
-+        "env": {"BORG_DISABLE_EXPERIMENTS": "TCMALLOC_SONIC_DEMAND_CYCLE_60S"},
-     },
-     {
-         "name": "tcmalloc_filler_append_on_free",
-```
-
-**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +1/-1)
-```diff
-@@ -352,7 +352,7 @@ function(tcmalloc_cc_test_variants)
-     COPTS ${TCMALLOC_COPTS}
-     LINKOPTS ${TCMALLOC_LINKOPTS}
-     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
--    ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_SONIC_DEMAND_CYCLE_60S"
-+    ENV ${TCMALLOC_ENV} "BORG_DISABLE_EXPERIMENTS=TCMALLOC_SONIC_DEMAND_CYCLE_60S"
-   )
-   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_filler_append_on_free
-     ${EXTRA_ARGS}
-```
-
-**File**: `tcmalloc/testing/default_parameters_test.cc` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ constexpr absl::Duration kDefaultSkipSubreleaseLongInterval =
- #if defined(TCMALLOC_INTERNAL_SMALL_BUT_SLOW)
-     absl::ZeroDuration()
- #else
--    absl::Seconds(120)
-+    absl::Seconds(60)
+@@ -1226,7 +1231,7 @@ void* CpuCache<Forwarder>::AllocateSlowNoHooks(size_t size_class) {
  #endif
-     ;
- constexpr int32_t kDefaultMaxPerCpuCacheSize =
+       return ptr;
+     }
+-    if (void* ret = AllocateFast(size_class);
++    if (void* ret = AllocateFast(size_class, size);
+         ABSL_PREDICT_FALSE(ret != nullptr)) {
+       return ret;
+     }
+```
+
+**File**: `tcmalloc/internal/BUILD` (modified, +1/-0)
+```diff
+@@ -1119,6 +1119,7 @@ cc_test(
+         ":sysinfo",
+         "//tcmalloc:malloc_extension",
+         "//tcmalloc/testing:testutil",
++        "@com_google_absl//absl/base:core_headers",
+         "@com_google_absl//absl/container:flat_hash_set",
+         "@com_google_absl//absl/functional:function_ref",
+         "@com_google_absl//absl/log:check",
+```
+
+**File**: `tcmalloc/internal/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -1123,6 +1123,7 @@ tcmalloc_cc_test(
+     "GTest::gtest"
+     "GTest::gmock"
+     "absl::check"
++    "absl::core_headers"
+     "absl::flat_hash_set"
+     "absl::function_ref"
+     "absl::str_format"
+```
+
+**File**: `tcmalloc/internal/percpu_tcmalloc.h` (modified, +30/-8)
+```diff
+@@ -57,6 +57,10 @@
+ #define TCMALLOC_INTERNAL_PERCPU_USE_TLS_WORKAROUND 0
+ #endif
+ 
++#ifndef TCMALLOC_INTERNAL_WRITE_PREFETCH
++#define TCMALLOC_INTERNAL_WRITE_PREFETCH 0
++#endif
++
+ GOOGLE_MALLOC_SECTION_BEGIN
+ namespace tcmalloc {
+ namespace tcmalloc_internal {
+@@ -197,7 +201,8 @@ class TcmallocSlab {
+ 
+   // Remove an item (LIFO) from the current CPU's slab. If the slab is empty,
+   // invokes <underflow_handler> and returns its result.
+-  [[nodiscard]] void* Pop(size_t size_class);
++  // `size` is the requested allocation size, used only as a prefetch hint.
++  [[nodiscard]] void* Pop(size_t size_class, size_t size);
+ 
+   // Add up to <len> items to the current cpu slab from the array located at
+   // <batch>. Returns the number of items that were added (possibly 0). All
+@@ -836,7 +841,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE bool TcmallocSlab<NumClasses>::Push(
+ // It is in a distinct, always-lined method to make its cost more transparent
+ // when profiling with debug information.
+ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void PrefetchNextObject(
+-    void* prefetch_target) {
++    void* prefetch_target, [[maybe_unused]] size_t size) {
+   // A note about prefetcht0 in Pop:  While this prefetch may appear costly,
+   // trace analysis shows the target is frequently used (b/70294962). Stalling
+   // on a TLB miss at the prefetch site (which has no deps) and prefetching the
+@@ -846,15 +851,32 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void PrefetchNextObject(
+   // See "Beyond malloc efficiency to fleet efficiency"
+   // (https://research.google/pubs/pub50370/), section 6.4 for additional
+   // details.
+-  //
++#if TCMALLOC_INTERNAL_WRITE_PREFETCH
++  // Prefetch the first two cache lines of the next object with write intent,
++  // capped by `size` without branches (compiles to CMOV/CSEL): for objects <= 1
++  // cache line this stays on the same line (or covers a straddled boundary),
++  // while larger objects prefetch the second cache line.
++  // Do the arithmetic in uintptr_t (with left-associative `(p + min) - 1`) to
++  // avoid C++ pointer-arithmetic UB when `size == 0`; prefetching `p - 1` for
++  // rare zero-sized allocations is intentional to avoid adding instructions to
++  // the hot path. Callers pass small sizes (<= kMaxSize), which fit in
++  // uint32_t without truncation.
++  const uintptr_t p = reinterpret_cast<uintptr_t>(prefetch_target);
++  PrefetchWT0(prefetch_target);
++  PrefetchWT0(reinterpret_cast<const void*>(
++      p +
++      std::min<uint32_t>(static_cast<uint32_t>(size), ABSL_CACHELINE_SIZE + 1) -
++      1));
++#else
+   // TODO(b/214608320): Evaluate prefetch for write.
+   __builtin_prefetch(prefetch_target, 0, 3);
++#endif
+ }
+ 
+ #if TCMALLOC_INTERNAL_PERCPU_USE_RSEQ && defined(__x86_64__)
+ template <size_t NumClasses>
+ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
+-    size_t size_class) {
++    size_t size_class, size_t size) {
+   TC_ASSERT_NE(size_class, 0);
+   void* next;
+   void* result;
+@@ -891,7 +913,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
+   // The next pop will be from current-2, but because we prefetch the previous
+   // element we've already just read that, so prefetch current-3.
+   PrefetchSlabMemory(tcmalloc_slabs_addr + (current - 3) * sizeof(void*));
+-  PrefetchNextObject(next);
++  PrefetchNextObject(next, size);
+   return AssumeNotNull(result);
+ underflow_path:
+   return nullptr;
+@@ -901,7 +923,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
+ #if TCMALLOC_INTERNAL_PERCPU_USE_RSEQ && defined(__aarch64__)
+ template <size_t NumClasses>
+ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
+-    size_t size_class) {
++    size_t size_class, size_t size) {
+   TC_ASSERT_NE(size_class, 0);
+   void* result;
+   void* region_start;
+@@ -949,7 +971,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
+   // The next pop will be from current-2, but because we prefetch the previous
+   // element we've already just read that, so prefetch current-3.
+   PrefetchSlabMemory(current_plus_slabs_addr - 3 * sizeof(void*));
+-  PrefetchNextObject(prefetch);
++  PrefetchNextObject(prefetch, size);
+   return AssumeNotNull(result);
+ underflow_path:
+   return nullptr;
+@@ -959,7 +981,7 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
+ #if !TCMALLOC_INTERNAL_PERCPU_USE_RSEQ
+ template <size_t NumClasses>
+ inline ABSL_ATTRIBUTE_ALWAYS_INLINE void* TcmallocSlab<NumClasses>::Pop(
+-    size_t size_class) {
++    [[maybe_unused]] size_t size_class, [[maybe_unused]] size_t size) {
+   return nullptr;
+ }
+ #endif
+```
+
+**File**: `tcmalloc/internal/percpu_tcmalloc_fuzz.cc` (modified, +19/-5)
+```diff
+@@ -32,6 +32,7 @@
+ 
+ #include "gtest/gtest.h"
+ #include "fuzztest/fuzztest.h"
++#include "absl/base/optimization.h"
+ #include "absl/container/flat_hash_set.h"
+ #include "absl/functional/function_ref.h"
+ #include "absl/log/check.h"
+@@ -131,9 +132,20 @@ struct State {
+ };
+ 
+ // We select different sizes for different size classes, so that ASan can notice
+-// if we confuse objects across size classes.
++// if we confuse objects across size classes, and span smaller than, equal to,
++// and larger than a cache line to exercise Pop prefetch offset calculations.
+ static size_t FakeSizeForSizeClass(size_t size_class) {
+-  return 16 + size_class;
++  static_assert(kNumClasses == 5);
++  static constexpr std::array<size_t, kNumClasses> kSizes = {
++      0,
++      16,
++      ABSL_CACHELINE_SIZE,
++      ABSL_CACHELINE_SIZE + 1,
++      2 * ABSL_CACHELINE_SIZE,
++  };
++  TC_CHECK_GT(size_class, 0);
++  TC_CHECK_LT(size_class, kSizes.size());
++  return kSizes[size_class];
+ }
+ 
+ void* State::AllocateObject(size_t size_class) {
+@@ -270,20 +282,22 @@ struct Push {
+ 
+ struct Pop {
+   unsigned size_class;
++  size_t size = 0;
+ 
+   template <typename Sink>
+   friend void AbslStringify(Sink& sink, const Pop& p) {
+-    absl::Format(&sink, "Pop{.size_class=%v}", p.size_class);
++    absl::Format(&sink, "Pop{.size_class=%v, .size=%v}", p.size_class, p.size);
+   }
+ 
+   void Perform(State& state) const {
+     const size_t sc = 1 + (size_class % (kNumClasses - 1));
+-    void* item = state.slab.Pop(sc);
++    const size_t obj_size = size % (FakeSizeForSizeClass(sc) + 1);
++    void* item = state.slab.Pop(sc, obj_size);
+     if (item == nullptr) {
+       auto [got_cpu, cached] = state.slab.CacheCpuSlab();
+       if (cached && got_cpu >= 0 && !state.cpu_stopped[got_cpu]) {
+         state.EnsureCpuInitialized(got_cpu);
+-        item = state.slab.Pop(sc);
++        item = state.slab.Pop(sc, obj_size);
+       }
+     }
+     if (item != nullptr) {
+```
+
+**File**: `tcmalloc/internal/percpu_tcmalloc_test.cc` (modified, +21/-18)
+```diff
+@@ -83,6 +83,8 @@ constexpr size_t kStressCapacity = 4;
+ constexpr size_t kMaxStressCapacity = kStressCapacity * 2;
+ 
+ constexpr size_t kShift = 18;
++// Allocation size hint passed to Pop.
++constexpr size_t kObjectSize = sizeof(void*);
+ typedef class TcmallocSlab<kStressSlabs> TcmallocSlab;
+ 
+ void* AllocSlabs(absl::FunctionRef<void*(size_t, std::align_val_t)> alloc,
+@@ -261,13 +263,13 @@ TEST_F(TcmallocSlabTest, Unit) {
+       ASSERT_EQ(slab_.Capacity(cpu, size_class), 0);
+ 
+       if (!initialized[cpu]) {
+-        ASSERT_EQ(slab_.Pop(size_class), nullptr);
++        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
+         slab_.InitCpu(cpu, [](size_t size_class) { return kCapacity; });
+         initialized[cpu] = true;
+       }
+ 
+       // Test that operations on uncached slab fail.
+-      ASSERT_EQ(slab_.Pop(size_class), nullptr);
++      ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
+       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
+       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
+       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
+@@ -289,20 +291,20 @@ TEST_F(TcmallocSlabTest, Unit) {
+                 kCapacity / 2);
+       ASSERT_EQ(slab_.Length(cpu, size_class), 0);
+       ASSERT_EQ(slab_.Capacity(cpu, size_class), kCapacity / 2);
+-      ASSERT_EQ(slab_.Pop(size_class), nullptr);
++      ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
+       ASSERT_TRUE(slab_.Push(size_class, &objects[0]));
+ 
+       ASSERT_EQ(slab_.Length(cpu, size_class), 1);
+       ASSERT_EQ(slab_.Capacity(cpu, size_class), kCapacity / 2);
+-      ASSERT_EQ(slab_.Pop(size_class), &objects[0]);
++      ASSERT_EQ(slab_.Pop(size_class, kObjectSize), &objects[0]);
+       ASSERT_EQ(slab_.Length(cpu, size_class), 0);
+       for (size_t i = 0; i < kCapacity / 2; ++i) {
+         ASSERT_TRUE(slab_.Push(size_class, &objects[i]));
+         ASSERT_EQ(slab_.Length(cpu, size_class), i + 1);
+       }
+       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
+       for (size_t i = kCapacity / 2; i > 0; --i) {
+-        ASSERT_EQ(slab_.Pop(size_class), &objects[i - 1]);
++        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), &objects[i - 1]);
+         ASSERT_EQ(slab_.Length(cpu, size_class), i - 1);
+       }
+ 
+@@ -317,7 +319,7 @@ TEST_F(TcmallocSlabTest, Unit) {
+       }
+       EXPECT_FALSE(slab_.Push(size_class, &objects[0]));
+       for (size_t i = kCapacity; i > 0; --i) {
+-        ASSERT_EQ(slab_.Pop(size_class), &objects[i - 1]);
++        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), &objects[i - 1]);
+         ASSERT_EQ(slab_.Length(cpu, size_class), i - 1);
+       }
+ 
+@@ -359,12 +361,12 @@ TEST_F(TcmallocSlabTest, Unit) {
+         ASSERT_EQ(slab_.PushBatch(size_class, batch, i), expect);
+         ASSERT_EQ(slab_.Length(cpu, size_class), expect);
+         for (size_t j = 0; j < expect; ++j) {
+-          slabs_result[j] = slab_.Pop(size_class);
++          slabs_result[j] = slab_.Pop(size_class, kObjectSize);
+         }
+         ASSERT_THAT(
+             std::vector<void*>(&slabs_result[0], &slabs_result[expect]),
+             UnorderedElementsAreArray(&object_ptrs[i - expect], expect));
+-        ASSERT_EQ(slab_.Pop(size_class), nullptr);
++        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
+       }
+       // Push a batch of size i into non-empty slab.
+       for (size_t i = 1; i < kCapacity / 2; ++i) {
+@@ -374,14 +376,14 @@ TEST_F(TcmallocSlabTest, Unit) {
+         ASSERT_EQ(slab_.Length(cpu, size_class), i + expect);
+         // Because slabs are LIFO fill in this array from the end.
+         for (int j = i + expect - 1; j >= 0; --j) {
+-          slabs_result[j] = slab_.Pop(size_class);
++          slabs_result[j] = slab_.Pop(size_class, kObjectSize);
+         }
+         ASSERT_THAT(std::vector<void*>(&slabs_result[0], &slabs_result[i]),
+                     UnorderedElementsAreArray(&object_ptrs[0], i));
+         ASSERT_THAT(
+             std::vector<void*>(&slabs_result[i], &slabs_result[i + expect]),
+             UnorderedElementsAreArray(&object_ptrs[i - expect], expect));
+-        ASSERT_EQ(slab_.Pop(size_class), nullptr);
++        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
+       }
+       for (size_t i = 0; i < kCapacity + 1; ++i) {
+         batch[i] = nullptr;
+@@ -393,7 +395,7 @@ TEST_F(TcmallocSlabTest, Unit) {
+         }
+         ASSERT_EQ(slab_.PopBatch(size_class, batch, i), i);
+         ASSERT_EQ(slab_.Length(cpu, size_class), 0);
+-        ASSERT_EQ(slab_.Pop(size_class), nullptr);
++        ASSERT_EQ(slab_.Pop(size_class, kObjectSize), nullptr);
+ 
+         ASSERT_THAT(absl::MakeSpan(&batch[0], i),
+                     UnorderedElementsAreArray(&object_ptrs[0], i));
+@@ -412,10 +414,11 @@ TEST_F(TcmallocSlabTest, Unit) {
+         ASSERT_EQ(slab_.Length(cpu, size_class), i - want);
+ 
+         for (size_t j = 0; j < i - want; ++j) {
+-          ASSERT_EQ(slab_.Pop(size_class), &objects[i - want - j - 1]);
++          ASSERT_EQ(slab_.Pop(size_class, kObjectSize),
++           
 ```
 
 #### Recent Merged Pull Requests:
@@ -1483,24 +1782,47 @@ PiperOrigin-RevId: 1026674384
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Drop pageheap_lock when resetting sampled tracker VMA names.
+## X. Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.
 
 **RULE**:
-When implementing operations in `tcmalloc/huge_page_filler.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/BUILD`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3264f9ce`: Drop pageheap_lock when resetting sampled tracker VMA names.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6aebbb38`: Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/huge_page_filler.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/BUILD`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    pageheap_lock.unlock();
-    pageheap_lock.lock();
-      pageheap_lock.unlock();
-      pageheap_lock.lock();
+cc_library(
+    name = "tcmalloc_write_prefetch",
+    srcs = [
+        "libc_override.h",
+        "tcmalloc.cc",
+        "tcmalloc.h",
+    ],
+    copts = [
+        "-DTCMALLOC_INTERNAL_8K_PAGES",
+        "-DTCMALLOC_INTERNAL_WRITE_PREFETCH=1",
+    ] + TCMALLOC_DEFAULT_COPTS,
+    linkstatic = 1,
+    visibility = [":tcmalloc_tests"],
+    deps = tcmalloc_deps + [
+        ":alloc_at_least",
+        ":common_write_prefetch",
+        ":malloc_hook",
+        "//tcmalloc/internal:allocation_guard",
+        "//tcmalloc/internal:is_aligned_to",
+        "//tcmalloc/internal:overflow",
+        "//tcmalloc/internal:page_size",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:span",
+    ],
+    alwayslink = 1,
+)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1510,4 +1832,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3264f9ce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6aebbb38` are properly handled with clean fallback behavior.

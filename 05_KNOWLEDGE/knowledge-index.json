@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T17:14:14.538Z",
+  "last_updated": "2026-11-22T17:22:16.470Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23663,
+  "total_items": 23674,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -235939,8 +235939,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "3264f9ce",
-      "content_hash": "7f0b01749f96a215dc99d037993c06bc107c144d458afbbfdeb236d03b5ab594",
+      "source_version": "6aebbb38",
+      "content_hash": "b320cb389986484614083aa9afaf2eaa4fc7f32f666573047e45895adc80cef2",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -235968,6 +235968,11 @@
           "number": 9727,
           "title": "Drop pageheap_lock when resetting sampled tracker VMA names.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9961,
+          "title": "Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235975,7 +235980,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T04:20:35.500Z",
+      "verified_at": "2026-11-22T17:22:02.160Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236029,10 +236034,10 @@
       "relative_path": "08_VERIFICATION/google-tcmalloc-verification-protocol-empirical-defect-shield-for-google-tcmallo.md",
       "title": "Verification Protocol: Empirical Defect Shield for google/tcmalloc",
       "repository": "google/tcmalloc",
-      "source_version": "3264f9ce",
-      "content_hash": "4e9080cf72b801e9ce4ba8bde2904de28b9f2b468fe7b9d2da50e1bbecb2eda0",
+      "source_version": "6aebbb38",
+      "content_hash": "3fa3bcd22490dc95c0f9a9beac814fe8caef32c191feac3a0e02eb3ec8c191cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T04:20:36.188Z"
+      "persisted_at": "2026-11-22T17:22:03.128Z"
     },
     "learn-github-open-ani-animeko": {
       "learning_id": "learn-github-open-ani-animeko",
@@ -236159,9 +236164,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for google-tcmalloc-learnings",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "119a4b0812beb58a8e48b0b29069008c379cf8a8b7e08a17655857ec86485ebb",
+      "content_hash": "fe46f3aa72b0016d0f021e70ed833a6d4c9b67c97170b29c92e8498240c59d0f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T04:20:39.622Z"
+      "persisted_at": "2026-11-22T17:22:14.195Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
@@ -246421,8 +246426,8 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "097f70bc",
-      "content_hash": "fee09e94c023447a320d64ea38d6e83bf6741a15d4c2c6c6f27272d3ab8c182f",
+      "source_version": "836e48f7",
+      "content_hash": "f0df1bc02fd0cfa453e463c4b308f14076190283133f476b86eaf2a62f30837e",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
@@ -246445,6 +246450,11 @@
           "number": 9399,
           "title": "add a debug-only loopback MCP server for agents",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9962,
+          "title": "list every LoRa change and channel sharing flag when replacing from a chann",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246452,7 +246462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:58:51.902Z",
+      "verified_at": "2026-11-22T17:22:08.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246558,10 +246568,10 @@
       "relative_path": "08_VERIFICATION/meshtastic-meshtastic-android-verification-protocol-empirical-defect-shield-for-.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshtastic/Meshtastic-Android",
       "repository": "meshtastic/Meshtastic-Android",
-      "source_version": "097f70bc",
-      "content_hash": "d07083e4402fb71538a74d40caeffc139a82767c329bebeebcc1936eb39bc2f4",
+      "source_version": "836e48f7",
+      "content_hash": "675758555b35db1a538cce58e4db76baa2cde923a72a2fcc98aa7b3525802743",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:58:52.552Z"
+      "persisted_at": "2026-11-22T17:22:08.821Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-learnings-core": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-learnings-core",
@@ -246583,9 +246593,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshtastic-meshtastic-android-learnings",
       "repository": "meshtastic-meshtastic-android-learnings",
       "source_version": "HEAD",
-      "content_hash": "d69c5418ae7482bef47036f47bc9c7f303442df82ef8ea8038d8235a1227bb18",
+      "content_hash": "14ddd469643eb6ffe1ed2c185828a02c1cca66cf99e7fbda24dd42ec3e1fb2e0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:59:29.385Z"
+      "persisted_at": "2026-11-22T17:22:16.470Z"
     },
     "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-learnings-core-invariants",
@@ -281435,7 +281445,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "299a5f5bb41bd28ecc555dd284df87b1ffd2433060d6ef1eb380be83f60d2dcd",
+      "content_hash": "ab711e34a7270d2552472eb0c7db455eec5942b34b1cf7ed1155c3c5d9e6468b",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [],
@@ -281444,7 +281454,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:45:01.907Z",
+      "verified_at": "2026-11-22T17:22:01.141Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281461,9 +281471,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-27B Core Invariants",
       "repository": "Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "25e083339c634117fde65441af6ac9fd52300f7d0fd5db1d423731365548995a",
+      "content_hash": "fae2a08ac0b84dde4b360f392c3813a97e2d6b62c01ed7da43b09078e6cef843",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T10:45:02.341Z"
+      "persisted_at": "2026-11-22T17:22:01.608Z"
     },
     "rule-9071": {
       "learning_id": "rule-9071",
@@ -281563,9 +281573,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-27b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3.8-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "a342811fd53a30bc6a149bb0ad3c4b60a624d5cdc8867a56e58a67d25bcab4fb",
+      "content_hash": "a85b8cefbbd27e470d54639d895a3a23fc5527f4d18558b20fd59edac649d22e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T10:45:15.979Z"
+      "persisted_at": "2026-11-22T17:22:14.576Z"
     },
     "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -322019,6 +322029,142 @@
       "content_hash": "641090b2177708242562dfdbfcad53d8901672d168da4630bf8b0bf9fc92138b",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T17:14:12.164Z"
+    },
+    "rule-9961": {
+      "learning_id": "rule-9961",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9961,
+      "title": "Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "6aebbb38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T17:22:02.160Z"
+    },
+    "candidate_directive-add-2-line-write-prefetch-option-in-tcmalloc-per-cpu-slab-pop": {
+      "item_id": "candidate_directive-add-2-line-write-prefetch-option-in-tcmalloc-per-cpu-slab-pop",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TXYT-add-2-line-write-prefetch-option-in-tcmalloc-per-cpu-slab-pop.md",
+      "title": "Add 2-line write prefetch option in TCMalloc per-CPU slab Pop.",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f992a8da6b658eb15c69fe15e1a86a70a9e574e7a0e92a3ab382e1eedf71ce93",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T17:22:13.689Z"
+    },
+    "domain_intelligence-architecture-intelligence-google-tcmalloc-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-google-tcmalloc-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-google-tcmalloc-architecture-intelligence-google-tcmalloc-core-invariants.md",
+      "title": "Architecture Intelligence: google/tcmalloc Core Invariants",
+      "repository": "google/tcmalloc",
+      "source_version": "6aebbb38",
+      "content_hash": "cd9817626a2605121b00a4500acf0ec275d9be868b42d832680318163ef74a39",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T17:22:02.780Z"
+    },
+    "agent_contract-agent-contract-google-tcmalloc-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-google-tcmalloc-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/google-tcmalloc-agent-contract-google-tcmalloc-autonomous-specialist-persona.md",
+      "title": "Agent Contract: google/tcmalloc Autonomous Specialist Persona",
+      "repository": "google/tcmalloc",
+      "source_version": "6aebbb38",
+      "content_hash": "bf2fd3f5091be4454ddb601a2eaf629ed5b19de919aeea47fb2ba14c37318de1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T17:22:02.973Z"
+    },
+    "rule-9962": {
+      "learning_id": "rule-9962",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9962,
+      "title": "list every LoRa change and channel sharing flag when replacing from a chann",
+      "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+      "source_version": "836e48f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T17:22:08.017Z"
+    },
+    "candidate_directive-list-every-lora-change-and-channel-sharing-flag-when-replacing-from-a-chann": {
+      "item_id": "candidate_directive-list-every-lora-change-and-channel-sharing-flag-when-replacing-from-a-chann",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TTXX-list-every-lora-change-and-channel-sharing-flag-when-replacing-from-a-chann.md",
+      "title": "list every LoRa change and channel sharing flag when replacing from a chann",
+      "repository": "meshtastic/Meshtastic-Android",
+      "source_version": "836e48f7",
+      "content_hash": "0d3ddec63d49b30904dde8ca58be0eeb1c8dd22601e083c98c3eb127563c132e",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-22T17:22:08.473Z"
+    },
+    "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-meshtastic-meshtastic-android-product-intelligence-meshtastic-meshtastic-android.md",
+      "title": "Product Intelligence: meshtastic/Meshtastic-Android Core Invariants",
+      "repository": "meshtastic/Meshtastic-Android",
+      "source_version": "836e48f7",
+      "content_hash": "4c19d8a885d50a371fb2db5c80ee01e9bde34fa534ec911488bc77332a32a633",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-22T17:22:08.645Z"
+    },
+    "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-google-tcmalloc-learnings-architecture-intelligence-google-tcmalloc-learnings-co.md",
+      "title": "Architecture Intelligence: google-tcmalloc-learnings Core Invariants",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2351bcac0a5d07f663b5c4b45405df97760e0151e0d65b459bfcfa21ac57f281",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T17:22:13.865Z"
+    },
+    "agent_contract-agent-contract-google-tcmalloc-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-google-tcmalloc-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/google-tcmalloc-learnings-agent-contract-google-tcmalloc-learnings-autonomous-sp.md",
+      "title": "Agent Contract: google-tcmalloc-learnings Autonomous Specialist Persona",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b01be275790cc88a0cf04094f704edef52b5c924a5b0f3f55dc0daee9e032a7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T17:22:14.045Z"
+    },
+    "candidate_directive-ui-list-every-lora-change-and-channel-sharing-flag-when-replacing-from-a-chann": {
+      "item_id": "candidate_directive-ui-list-every-lora-change-and-channel-sharing-flag-when-replacing-from-a-chann",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZUD-ui-list-every-lora-change-and-channel-sharing-flag-when-replacing-from-a-chann.md",
+      "title": "ui): list every LoRa change and channel sharing flag when replacing from a chann",
+      "repository": "meshtastic-meshtastic-android-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eed6d18964977c6c27e29d35dd8a65daa12764f67ca05eb135ea51f967bfe10c",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-22T17:22:16.120Z"
+    },
+    "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-meshtastic-meshtastic-android-learnings-product-intelligence-meshtastic-meshtast.md",
+      "title": "Product Intelligence: meshtastic-meshtastic-android-learnings Core Invariants",
+      "repository": "meshtastic-meshtastic-android-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33d5538c9d8358c8232758d13948ec3e5858203741d3c8b9c11551c0a9243f6c",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-22T17:22:16.293Z"
     }
   },
   "ai-builder-brain": {

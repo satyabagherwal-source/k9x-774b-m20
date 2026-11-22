@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T16:48:25.566Z",
+  "updated_at": "2026-11-22T17:22:15.896Z",
   "stats": {
-    "total_discovered": 7568,
-    "approved_pending_harvest": 7167,
+    "total_discovered": 7588,
+    "approved_pending_harvest": 7185,
     "harvested_count": 0,
-    "rejected_count": 401,
+    "rejected_count": 403,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7142,
+      "COMMUNITY_AND_EXPERT": 7162,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -163712,6 +163712,432 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
         "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-44C8DD61951E": {
+      "id": "SRC-44C8DD61951E",
+      "url": "https://research.google/pubs/pub50370",
+      "title": "https://research.google/pubs/pub50370",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:13.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-B8CB00D3DE08": {
+      "id": "SRC-B8CB00D3DE08",
+      "url": "https://github.com/meshtastic/nRF52_Bootloader/releases/download",
+      "title": "https://github.com/meshtastic/nRF52_Bootloader/releases/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:14.919Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-5A1D2FDB2779": {
+      "id": "SRC-5A1D2FDB2779",
+      "url": "https://github/.com/meshtastic/nRF52_Bootloader/releases/download/[A-Za-z0-9._-",
+      "title": "https://github/.com/meshtastic/nRF52_Bootloader/releases/download/[A-Za-z0-9._-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:14.971Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-E6E864D3B904": {
+      "id": "SRC-E6E864D3B904",
+      "url": "http://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
+      "title": "http://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-22T17:22:15.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-E080E6749B1D": {
+      "id": "SRC-E080E6749B1D",
+      "url": "https://example.invalid/nRF52_Bootloader/releases/download/2.6.0",
+      "title": "https://example.invalid/nRF52_Bootloader/releases/download/2.6.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.078Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-B6ACCB5AC6AB": {
+      "id": "SRC-B6ACCB5AC6AB",
+      "url": "https://github.com@example.invalid/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
+      "title": "https://github.com@example.invalid/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-130A69F5BF6F": {
+      "id": "SRC-130A69F5BF6F",
+      "url": "https://example.invalid/otafix",
+      "title": "https://example.invalid/otafix",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.183Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-EF1074383533": {
+      "id": "SRC-EF1074383533",
+      "url": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/0.9.2-OTAFIX2.3-BP1.5",
+      "title": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/0.9.2-OTAFIX2.3-BP1.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.236Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-9579064990B8": {
+      "id": "SRC-9579064990B8",
+      "url": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
+      "title": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-DEA8CD61EF03": {
+      "id": "SRC-DEA8CD61EF03",
+      "url": "https://example.invalid/releases",
+      "title": "https://example.invalid/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.362Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-7A58765E5D12": {
+      "id": "SRC-7A58765E5D12",
+      "url": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.1",
+      "title": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.417Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-C9DA55097725": {
+      "id": "SRC-C9DA55097725",
+      "url": "http://$release/",
+      "title": "http://$release/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-22T17:22:15.469Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-9EB6BCF75993": {
+      "id": "SRC-9EB6BCF75993",
+      "url": "https://example.invalid/nRF52_Bootloader/releases/download/$tag",
+      "title": "https://example.invalid/nRF52_Bootloader/releases/download/$tag",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.523Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-FEA0F7A3AB82": {
+      "id": "SRC-FEA0F7A3AB82",
+      "url": "https://github.com/meshtastic/other-repo/releases/download/$tag",
+      "title": "https://github.com/meshtastic/other-repo/releases/download/$tag",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-C1292ADDEE1B": {
+      "id": "SRC-C1292ADDEE1B",
+      "url": "https://github.com.example.invalid/meshtastic/nRF52_Bootloader/releases/download/$tag",
+      "title": "https://github.com.example.invalid/meshtastic/nRF52_Bootloader/releases/download/$tag",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-05B3592CA7CC": {
+      "id": "SRC-05B3592CA7CC",
+      "url": "https://meshtastic@example.invalid/$release",
+      "title": "https://meshtastic@example.invalid/$release",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.682Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-D29532775C4C": {
+      "id": "SRC-D29532775C4C",
+      "url": "https://github.com@example.invalid/meshtastic/nRF52_Bootloader/releases/download/$tag",
+      "title": "https://github.com@example.invalid/meshtastic/nRF52_Bootloader/releases/download/$tag",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.737Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-313B5334A728": {
+      "id": "SRC-313B5334A728",
+      "url": "https://$release/",
+      "title": "https://$release/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.789Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-87ACE8DD1F17": {
+      "id": "SRC-87ACE8DD1F17",
+      "url": "https://$release/extra",
+      "title": "https://$release/extra",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.844Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-6F1AD70BD065": {
+      "id": "SRC-6F1AD70BD065",
+      "url": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/$tag/$%7Bimage.fileName",
+      "title": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/$tag/$%7Bimage.fileName",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:22:15.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
       }
     }
   }

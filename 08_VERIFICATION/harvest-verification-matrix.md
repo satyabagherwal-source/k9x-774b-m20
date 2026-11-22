@@ -12129,3 +12129,6 @@
 | `CYCLE-20261122-YCTO` | `2026-11-22T16:57:39.948Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9959` | Yes (`d685cb4a...`) |
 | `CYCLE-20261122-H538` | `2026-11-22T17:12:16.388Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9960` | Yes (`56084d04...`) |
 | `CYCLE-20261122-JJKR` | `2026-11-22T17:14:08.475Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`1b13fd44...`) |
+| `CYCLE-20261122-TOH2` | `2026-11-22T17:22:01.382Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`ab711e34...`) |
+| `CYCLE-20261122-TP8Q` | `2026-11-22T17:22:02.378Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9961` | Yes (`b320cb38...`) |
+| `CYCLE-20261122-TTRD` | `2026-11-22T17:22:08.233Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9962` | Yes (`f0df1bc0...`) |
