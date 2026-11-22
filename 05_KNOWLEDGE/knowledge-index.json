@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T20:17:14.579Z",
-  "total_verified_learnings": 9074,
+  "last_updated": "2026-11-22T20:27:51.242Z",
+  "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23757,
+  "total_items": 23765,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112830,13 +112830,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "165a8ee8",
-      "content_hash": "2b47fa5c6e2da408942d4928468ac56b3bbc343e76587f597499580c432ae265",
+      "source_version": "ef68e680",
+      "content_hash": "c4320de1cefea77b01fd7d6ffc6a9699e21599c6f19faef94041d500d73d3735",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:21:29.724Z"
+      "persisted_at": "2026-11-22T20:27:44.094Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -113110,9 +113110,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "305e7eb6ebcdc12eef731c68271fe8a1c20d205dd2923e13ce9f67bbf0bd2f68",
+      "content_hash": "1f80fec818201b85048898c956fbd569b69468c20e0e76debd32584d07a0b7cb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T13:46:52.369Z"
+      "persisted_at": "2026-11-22T20:27:31.305Z"
     },
     "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099": {
       "item_id": "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099",
@@ -113194,9 +113194,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc6db90fc9bbfa15498ab7b8b110a62bddc2151b712d8043418ff0cfe2d1e5bd",
+      "content_hash": "b5cde790620015b044a20ac42efdf029df82b6ae45fe7b7cfc50c0389e6c220e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T13:47:11.405Z"
+      "persisted_at": "2026-11-22T20:27:48.964Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
@@ -215883,13 +215883,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "165a8ee8",
-      "content_hash": "e51366b40d5800addb303ba2b5081d3a82b352bbed86e90ef4480acb046eb50f",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ef68e680",
+      "content_hash": "909e6d02dd5c99dffa3d6a30ef85bd5032ae38b970ef451616a72b8c4240be82",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215992,7 +215992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T18:21:28.522Z",
+      "verified_at": "2026-11-22T20:27:42.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220182,9 +220182,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff35105a3257c052ab8b0f381050784bc8019254cd4cc2abeaea0236acd4e7dd",
+      "content_hash": "0da262e782c81ebded4aa9a76936bcfef261e6a5ad52aae8a0353d4cbdfe5ebd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:29:38.645Z"
+      "persisted_at": "2026-11-22T20:27:51.242Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -234679,8 +234679,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "1fa59ea0",
-      "content_hash": "0200bc03ade79e4add922572786686ed59484444732f9b6b42bd9501694285fd",
+      "source_version": "1b1094b3",
+      "content_hash": "708cb774249b8f0704502791e4905cf86fd6079281f54df2a7c26ac3a4b12e55",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -234713,6 +234713,11 @@
           "number": 9834,
           "title": "Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9988,
+          "title": "Opt-in parallel HNSW graph build for small segments",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234720,7 +234725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:25:05.111Z",
+      "verified_at": "2026-11-22T20:27:44.718Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234774,10 +234779,10 @@
       "relative_path": "08_VERIFICATION/apache-pinot-verification-protocol-empirical-defect-shield-for-apache-pinot.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/pinot",
       "repository": "apache/pinot",
-      "source_version": "1fa59ea0",
-      "content_hash": "cf72e96d16fd6b5fd48700de5dd35f1c2889e367ddca20ef6b725daf07d45b98",
+      "source_version": "1b1094b3",
+      "content_hash": "0db01f01302085c632a2824ae49eb279f5d8a0b9626fc8b5b07c753d53d68f08",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T20:25:06.054Z"
+      "persisted_at": "2026-11-22T20:27:45.715Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -265065,38 +265070,38 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8826,
       "title": "Empirical Invariant Guard in ci.yml",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "165a8ee8",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ef68e680",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-22T18:21:28.522Z"
+      "verified_at": "2026-11-22T20:27:42.878Z"
     },
     "candidate_directive-empirical-invariant-guard-in-ci-yml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-ci-yml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YDBQ-empirical-invariant-guard-in-ci-yml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GN9T-empirical-invariant-guard-in-ci-yml.md",
       "title": "Empirical Invariant Guard in ci.yml",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "b70b24d467ccda126c000e55221b00d2d4a0bbcacb5c743390e9fc2d4138e284",
+      "content_hash": "d736336c671ff3e1cc8d9e91f8e2cf9a437b51e09c041100a4a3e0da8f41157d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T18:21:39.450Z"
+      "persisted_at": "2026-11-22T20:27:50.616Z"
     },
     "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "165a8ee8",
-      "content_hash": "b4eed1507ea4f3d30e4f2cb231397ac6dcdc57f3c76381e94184478b3d524f11",
+      "source_version": "ef68e680",
+      "content_hash": "1aaf8d410c9fef9e68ee94c4b613d15a4a18d148ded68455eba1f290b9394208",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:21:29.569Z"
+      "persisted_at": "2026-11-22T20:27:43.894Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -284534,7 +284539,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "f1bcf5d292138c263765e075f786c382ea61bfe94664a8839de4c2783c7e4342",
+      "content_hash": "464fa7e99c897d7164b46a88e9eb50d6dc505178a777582194eb289be4501c76",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [],
@@ -284543,7 +284548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:46:51.892Z",
+      "verified_at": "2026-11-22T20:27:30.744Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -302851,13 +302856,13 @@
       "item_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-aleo-labs-protocol-snarkos-quality-verification-intelligence-aleo-labs-protocol-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-provablehq-snarkos-quality-verification-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Quality & Verification Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "165a8ee8",
-      "content_hash": "f2bac51e1740d4dc048fc43e5d6e237a7f23b81246a7359c02bfae2a2964bbd0",
+      "source_version": "ef68e680",
+      "content_hash": "3f96688d321d22d7b5d08204625c481d2acee5c045e623315442e0ee6a5ec462",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:21:29.381Z"
+      "persisted_at": "2026-11-22T20:27:43.664Z"
     },
     "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva": {
       "item_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
@@ -307336,9 +307341,9 @@
       "title": "Quality & Verification Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "c006e7885f1a42b71fdedafe43ec17f5ed1fc832e72938e6889414a17ec41e01",
+      "content_hash": "3aae7512cdd7f9c0e9179cb63e745efcd6267efc3bafa74673e22d6f3dfb3bc8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:21:17.992Z"
+      "persisted_at": "2026-11-22T20:27:50.833Z"
     },
     "agent_contract-agent-contract-provablehq-snarkos-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-provablehq-snarkos-learnings-autonomous-specialist-persona",
@@ -307348,9 +307353,9 @@
       "title": "Agent Contract: provablehq-snarkos-learnings Autonomous Specialist Persona",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "812729307f5785cb05c2bc9b08456568cf17676bb6cff392c30e21d478a998ee",
+      "content_hash": "37598e0da305b8cc0b51fd0c3f2cbd7bb7eff7f4e0f824e868f35ec0a7867ca7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:21:18.128Z"
+      "persisted_at": "2026-11-22T20:27:51.060Z"
     },
     "candidate_directive-reduce-handshake-future-sizes-the-handshake-timeout-and-connect-wrappers-and-r": {
       "item_id": "candidate_directive-reduce-handshake-future-sizes-the-handshake-timeout-and-connect-wrappers-and-r",
@@ -323382,6 +323387,125 @@
       "content_hash": "7658e5213ce8a5f69597445ce46cbdd81a37294665ee9cf8ad8a4dd1904e11c1",
       "domain_letter": "D",
       "persisted_at": "2026-11-22T20:17:13.131Z"
+    },
+    "learn-github-twostraws-controlroom": {
+      "learning_id": "learn-github-twostraws-controlroom",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "twostraws/ControlRoom",
+      "repository": "twostraws/ControlRoom",
+      "slug": "twostraws-controlroom",
+      "platform": "github",
+      "source_url": "https://github.com/twostraws/ControlRoom",
+      "source_version": "9f063621",
+      "content_hash": "8f16a21cd7a72cc7a00406389f41407a8ddff9ff9bcec7df6d51167cafa303e3",
+      "dossier_path": "07_PROJECT_LEARNING/twostraws-controlroom-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/twostraws-controlroom-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8826,
+          "title": "Empirical Invariant Guard in ci.yml",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T20:27:36.586Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-architecture-intelligence-twostraws-controlroom-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-twostraws-controlroom-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-twostraws-controlroom-architecture-intelligence-twostraws-controlroom-core-invar.md",
+      "title": "Architecture Intelligence: twostraws/ControlRoom Core Invariants",
+      "repository": "twostraws/ControlRoom",
+      "source_version": "9f063621",
+      "content_hash": "a12076d7cb10be23932ae6482605ccd651484c4e734b616a7f82aaaec69aad3a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T20:27:37.353Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-twostraws-controlroom": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-twostraws-controlroom",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/twostraws-controlroom-verification-protocol-empirical-defect-shield-for-twostraw.md",
+      "title": "Verification Protocol: Empirical Defect Shield for twostraws/ControlRoom",
+      "repository": "twostraws/ControlRoom",
+      "source_version": "9f063621",
+      "content_hash": "a9ca470111390d477024fbb5b3e13748157496dfff730d5a225f8b57a34698bf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T20:27:37.600Z"
+    },
+    "rule-9988": {
+      "learning_id": "rule-9988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9988,
+      "title": "Opt-in parallel HNSW graph build for small segments",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "1b1094b3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T20:27:44.718Z"
+    },
+    "candidate_directive-opt-in-parallel-hnsw-graph-build-for-small-segments": {
+      "item_id": "candidate_directive-opt-in-parallel-hnsw-graph-build-for-small-segments",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GJ5N-opt-in-parallel-hnsw-graph-build-for-small-segments.md",
+      "title": "Opt-in parallel HNSW graph build for small segments",
+      "repository": "apache/pinot",
+      "source_version": "1b1094b3",
+      "content_hash": "f461b87c1311fc01e0bb892b052a717b921f486f6cde305d0cdb4b398353bd29",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T20:27:45.282Z"
+    },
+    "domain_intelligence-architecture-intelligence-apache-pinot-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-apache-pinot-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-apache-pinot-architecture-intelligence-apache-pinot-core-invariants.md",
+      "title": "Architecture Intelligence: apache/pinot Core Invariants",
+      "repository": "apache/pinot",
+      "source_version": "1b1094b3",
+      "content_hash": "0f0192a2a8bec0d8a1e26a4e755ab671bebc4e68b42e9935d0438e5f787ddf09",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T20:27:45.495Z"
+    },
+    "domain_intelligence-architecture-intelligence-twostraws-controlroom-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-twostraws-controlroom-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-twostraws-controlroom-learnings-architecture-intelligence-twostraws-controlroom-.md",
+      "title": "Architecture Intelligence: twostraws-controlroom-learnings Core Invariants",
+      "repository": "twostraws-controlroom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3211e438cde6f0bff53da60dae8f687d75b9bede9d0940ec8c160e8348f3fd7f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T20:27:49.750Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-twostraws-controlroom-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-twostraws-controlroom-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/twostraws-controlroom-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for twostraws-controlroom-learnings",
+      "repository": "twostraws-controlroom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a9a0499d9be77eb9584073d3949c32cba4d35cc32ffdfc00b263f53309aa0a40",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T20:27:49.986Z"
     }
   },
   "ai-builder-brain": {

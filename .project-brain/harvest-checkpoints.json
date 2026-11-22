@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T20:17:09.475Z",
+  "last_updated": "2026-11-22T20:27:44.990Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -530,14 +530,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "f1bcf5d292138c263765e075f786c382ea61bfe94664a8839de4c2783c7e4342",
-      "verified_at": "2026-11-18T13:46:52.154Z",
+      "content_hash": "464fa7e99c897d7164b46a88e9eb50d6dc505178a777582194eb289be4501c76",
+      "verified_at": "2026-11-22T20:27:31.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:46:52.154Z"
+      "last_updated": "2026-11-22T20:27:31.034Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "e51366b40d5800addb303ba2b5081d3a82b352bbed86e90ef4480acb046eb50f",
-      "verified_at": "2026-11-22T18:21:28.915Z",
+      "content_hash": "909e6d02dd5c99dffa3d6a30ef85bd5032ae38b970ef451616a72b8c4240be82",
+      "verified_at": "2026-11-22T20:27:43.145Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:21:28.915Z"
+      "last_updated": "2026-11-22T20:27:43.145Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -12111,14 +12111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-twostraws-controlroom",
-      "content_hash": "ae834b67d89a949a183b464a22e9ec6b05049de9de5059dc1cacd0850067a16e",
-      "verified_at": "2026-10-21T00:36:21.429Z",
+      "content_hash": "8f16a21cd7a72cc7a00406389f41407a8ddff9ff9bcec7df6d51167cafa303e3",
+      "verified_at": "2026-11-22T20:27:36.860Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:36:21.429Z"
+      "last_updated": "2026-11-22T20:27:36.860Z"
     },
     "jacklandrin/OnlySwitch": {
       "repository": "jacklandrin/OnlySwitch",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "0200bc03ade79e4add922572786686ed59484444732f9b6b42bd9501694285fd",
-      "verified_at": "2026-11-21T20:25:05.365Z",
+      "content_hash": "708cb774249b8f0704502791e4905cf86fd6079281f54df2a7c26ac3a4b12e55",
+      "verified_at": "2026-11-22T20:27:44.989Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T20:25:05.365Z"
+      "last_updated": "2026-11-22T20:27:44.989Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

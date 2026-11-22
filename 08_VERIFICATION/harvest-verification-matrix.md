@@ -12183,3 +12183,7 @@
 | `CYCLE-20261122-2P25` | `2026-11-22T20:16:59.741Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9986` | Yes (`c9d24a11...`) |
 | `CYCLE-20261122-2U6W` | `2026-11-22T20:17:06.392Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`daa3c384...`) |
 | `CYCLE-20261122-2WK6` | `2026-11-22T20:17:09.462Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9987` | Yes (`82c32f3c...`) |
+| `CYCLE-20261122-G85M` | `2026-11-22T20:27:31.018Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`464fa7e9...`) |
+| `CYCLE-20261122-GCNG` | `2026-11-22T20:27:36.844Z` | `twostraws/ControlRoom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`8f16a21c...`) |
+| `CYCLE-20261122-GHI1` | `2026-11-22T20:27:43.129Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`909e6d02...`) |
+| `CYCLE-20261122-GIX9` | `2026-11-22T20:27:44.973Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9988` | Yes (`708cb774...`) |

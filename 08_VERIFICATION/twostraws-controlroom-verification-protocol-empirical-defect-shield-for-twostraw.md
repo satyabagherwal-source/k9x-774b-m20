@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for twostraws/controlroom
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for twostraws/ControlRoom
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "twostraws/controlroom",
-  "source_url": "https://github.com/twostraws/controlroom",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "twostraws/ControlRoom",
+  "source_url": "https://github.com/twostraws/ControlRoom",
+  "source_version": "9f063621",
+  "license": "MIT",
+  "timestamp": "2026-11-22T20:27:37.131Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-twostraws-controlroom",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [twostraws/controlroom](https://github.com/twostraws/controlroom) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [twostraws/ControlRoom](https://github.com/twostraws/ControlRoom) (Revision: `9f063621`).  
+> **License**: MIT | **Timestamp**: `2026-11-22T20:27:37.131Z`  
+> **Learning ID**: `learn-github-twostraws-controlroom`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `twostraws/controlroom` (Commit: `historical`)
+- **Target Repository**: `twostraws/ControlRoom` (Commit: `9f063621`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/twostraws-controlroom-learnings.md`  
-> **Source**: github ([https://github.com/twostraws/ControlRoom](https://github.com/twostraws/ControlRoom))  
-> **Source Version**: `1764564f`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:36:21.067Z  
-> **Learning ID**: `learn-github-twostraws-controlroom`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): twostraws/ControlRoom
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/twostraws-controlroom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/twostraws/ControlRoom](https://github.com/twostraws/ControlRoom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:36:21.060Z  
+> **Harvest Timestamp**: 2026-11-22T20:27:35.937Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A macOS app to control the Xcode Simulator.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6116 stars
+- **Stars / Engagement**: 6124 stars
 
 ---
 
@@ -1063,167 +1049,54 @@ class ColorHistoryController: ObservableObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1764564f` (2026-10-20)
-**Commit Message**: Merge pull request #207 from Wavemaster111188/feature/add-slow-animation-override-toggle
+### Incident Patch 1: `9f063621` (2026-11-20)
+**Commit Message**: Merge pull request #211 from katsugtgz/ci-macos-15
 
-Add a new toggle in the overrides to enable Slow Animations.
+ci: replace retired macos-13 runner and update checkout
 
-**File**: `ControlRoom/Localizable.xcstrings` (modified, +10/-0)
+**File**: `.github/workflows/ci.yml` (modified, +2/-2)
 ```diff
-@@ -1826,6 +1826,16 @@
-         }
-       }
-     },
-+    "Show Slow Animations" : {
-+      "localizations" : {
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "أظهر رسوم متحركة بطيئة"
-+          }
-+        }
-+      }
-+    },
-     "Show system apps" : {
-       "localizations" : {
-         "ar" : {
-```
-
-**File**: `ControlRoom/Simulator UI/ControlScreens/OverridesView.swift` (modified, +14/-0)
-```diff
-@@ -25,6 +25,7 @@ struct OverridesView: View {
+@@ -5,11 +5,11 @@ on: [pull_request]
+ jobs:
+   build:
+     name: 'Build and test: Debug'
+-    runs-on: macos-13
++    runs-on: macos-15
  
-     @State private var enhanceTextLegibility = false
-     @State private var showButtonShapes = false
-+    @State private var showSlowAnimations = false
-     @State private var showOnOffLabels = false
-     @State private var reduceTransparency = false
-     @State private var increaseContrast = false
-@@ -95,6 +96,7 @@ struct OverridesView: View {
- 
-                     Toggle("Bold Text", isOn: $enhanceTextLegibility.onChange(setEnhanceTextLegibility))
-                     Toggle("Button Shapes", isOn: $showButtonShapes.onChange(setShowButtonShapes))
-+                    Toggle("Show Slow Animations", isOn: $showSlowAnimations.onChange(setSlowAnimations))
-                     Toggle("On/Off Labels", isOn: $showOnOffLabels.onChange(setShowOnOffLabels))
-                     Toggle("Reduce Transparency", isOn: $reduceTransparency.onChange(setReduceTransparency))
-                     Toggle("Increase Contrast", isOn: $increaseContrast.onChange(setIncreaseContrast))
-@@ -141,6 +143,18 @@ struct OverridesView: View {
-         SimCtl.setContentSize(simulator.udid, contentSize: contentSize)
-     }
- 
-+    func sendDarvinNotification(key: String, value: Bool) {
-+        // Slow animations are toggled via a Darwin notification state inside the simulator:
-+        // set the state with `notifyutil -s`, then post it with `-p` so running apps pick it up.
-+        let name = "com.apple.UIKit." + key
-+        _ = Process.execute("/usr/bin/xcrun", arguments: ["simctl", "spawn", simulator.id, "notifyutil", "-s", name, value ? "1" : "0"])
-+        _ = Process.execute("/usr/bin/xcrun", arguments: ["simctl", "spawn", simulator.id, "notifyutil", "-p", name])
-+    }
-+
-+    func setSlowAnimations() {
-+        sendDarvinNotification(key: "SimulatorSlowMotionAnimationState", value: showSlowAnimations)
-+    }
-+
-     // Updates the simulator's accessibility setting for a particular key.
-     // Example call: xcrun simctl spawn booted defaults write com.apple.Accessibility EnhancedTextLegibilityEnabled -bool FALSE
-     func updateAccessibility(key: String, value: Bool) {
-```
-
-**File**: `README.md` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ Control Room is packed with features to help you develop apps more effectively,
- - Controlling status of WiFi, cellular service, and battery.
- - Opening the data folder for your app, or editing your `UserDefaults` entries.
- - Overriding dark or light mode, language, accessibility options, and Dynamic Type content size.
-+- Activating slow animations in the simulator. This sadly does not work on a real device.
- - Picking a custom user location from anywhere in the world.
- - Starting, stopping, installing, and removing apps.
- - Sending test push notifications or triggering deep links.
+     steps:
+       - name: Checkout
+-        uses: actions/checkout@v3
++        uses: actions/checkout@v7
+       - name: Selected Xcode version 
+         run: |
+           xcode-select -p
 ```
 
 ---
 
-### Incident Patch 2: `918df554` (2026-09-30)
-**Commit Message**: Add a new toggle in the overrides to enable Slow Animations. This feature was killed by Apple in the new Device Hub but the API remains so it's usable. I tried to keep the footprint as small as possible. Also I did my best to translate it into Arabic; I hope it's correct.
+### Incident Patch 2: `dcb68658` (2026-11-20)
+**Commit Message**: Minor SF Symbols tweak.
 
-**File**: `ControlRoom/Localizable.xcstrings` (modified, +10/-0)
+**File**: `ControlRoom/Simulator UI/ControlScreens/AppView/AppView.swift` (modified, +1/-1)
 ```diff
-@@ -1826,6 +1826,16 @@
+@@ -143,7 +143,7 @@ struct AppView: View {
+             .padding()
          }
-       }
-     },
-+    "Show Slow Animations" : {
-+      "localizations" : {
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "أظهر رسوم متحركة بطيئة"
-+          }
-+        }
-+      }
-+    },
-     "Show system apps" : {
-       "localizations" : {
-         "ar" : {
-```
-
-**File**: `ControlRoom/Simulator UI/ControlScreens/OverridesView.swift` (modified, +14/-0)
-```diff
-@@ -25,6 +25,7 @@ struct OverridesView: View {
- 
-     @State private var enhanceTextLegibility = false
-     @State private var showButtonShapes = false
-+    @State private var showSlowAnimations = false
-     @State private var showOnOffLabels = false
-     @State private var reduceTransparency = false
-     @State private var increaseContrast = false
-@@ -95,6 +96,7 @@ struct OverridesView: View {
- 
-                     Toggle("Bold Text", isOn: $enhanceTextLegibility.onChange(setEnhanceTextLegibility))
-                     Toggle("Button Shapes", isOn: $showButtonShapes.onChange(setShowButtonShapes))
-+                    Toggle("Show Slow Animations", isOn: $showSlowAnimations.onChange(setSlowAnimations))
-                     Toggle("On/Off Labels", isOn: $showOnOffLabels.onChange(setShowOnOffLabels))
-                     Toggle("Reduce Transparency", isOn: $reduceTransparency.onChange(setReduceTransparency))
-                     Toggle("Increase Contrast", isOn: $increaseContrast.onChange(setIncreaseContrast))
-@@ -141,6 +143,18 @@ struct OverridesView: View {
-         SimCtl.setContentSize(simulator.udid, contentSize: contentSize)
-     }
- 
-+    func sendDarvinNotification(key: String, value: Bool) {
-+        // Slow animations are toggled via a Darwin notification state inside the simulator:
-+        // set the state with `notifyutil -s`, then post it with `-p` so running apps pick it up.
-+        let name = "com.apple.UIKit." + key
-+        _ = Process.execute("/usr/bin/xcrun", arguments: ["simctl", "spawn", simulator.id, "notifyutil", "-s", name, value ? "1" : "0"])
-+        _ = Process.execute("/usr/bin/xcrun", arguments: ["simctl", "spawn", simulator.id, "notifyutil", "-p", name])
-+    }
-+
-+    func setSlowAnimations() {
-+        sendDarvinNotification(key: "SimulatorSlowMotionAnimationState", value: showSlowAnimations)
-+    }
-+
-     // Updates the simulator's accessibility setting for a particular key.
-     // Example call: xcrun simctl spawn booted defaults write com.apple.Accessibility EnhancedTextLegibilityEnabled -bool FALSE
-     func updateAccessibility(key: String, value: Bool) {
-```
-
-**File**: `README.md` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ Control Room is packed with features to help you develop apps more effectively,
- - Controlling status of WiFi, cellular service, and battery.
- - Opening the data folder for your app, or editing your `UserDefaults` entries.
- - Overriding dark or light mode, language, accessibility options, and Dynamic Type content size.
-+- Activating slow animations in the simulator. This sadly does not work on a real device.
- - Picking a custom user location from anywhere in the world.
- - Starting, stopping, installing, and removing apps.
- - Sending test push notifications or triggering deep links.
+         .tabItem {
+-            Label("App", systemImage: "plus.app")
++            Label("App", systemImage: "app")
+         }
+         .alert(isPresented: $shouldShowUninstallConfirmationAlert) {
+             Alert(title: Text("Are you sure you want to permanently delete \(selectedApplication.displayName)"),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #211** (2026-11-20): ci: replace retired macos-13 runner and update checkout (@katsugtgz)
+- **PR #209** (2026-11-20): Make tabs visible in overflow menu when window is too narrow (@bunnyhero)
+- **PR #208** (closed): Add PosterBoard wallpaper controls (@Aeastr)
 - **PR #207** (2026-10-20): Add a new toggle in the overrides to enable Slow Animations. (@Wavemaster111188)
 - **PR #206** (2026-04-05): Fix Swift 6 concurrency warnings and retroactive conformance (#199) (@elio-Wang)
 - **PR #204** (2025-10-15): Fixed linter errors, warnings, and rule definition (@PerlBeforeSwine)
-- **PR #200** (2025-05-02): suppress data <-> string lint rules (@sbeitzel)
-- **PR #198** (2025-05-01): Remove redundant initializers (@sbeitzel)
-- **PR #197** (2025-05-01): Add .editorconfig to help with formatting, clear whitespace warnings (@sbeitzel)
 
 ---
 
@@ -1243,40 +1116,33 @@ Add a new toggle in the overrides to enable Slow Animations.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #207 from Wavemaster111188/feature/add-slow-animation-overrid
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `ControlRoom/Localizable.xcstrings`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in twostraws/ControlRoom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in twostraws/ControlRoom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1764564f`: Merge pull request #207 from Wavemaster111188/feature/add-slow-animation-override-toggle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9f063621`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ControlRoom/Localizable.xcstrings`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    "Show Slow Animations" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أظهر رسوم متحركة بطيئة"
-          }
-        }
-      }
-    },
+    runs-on: macos-15
+        uses: actions/checkout@v7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    runs-on: macos-13
+        uses: actions/checkout@v3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1764564f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9f063621` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

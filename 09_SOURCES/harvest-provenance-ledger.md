@@ -12216,3 +12216,7 @@ Every entry in this ledger must capture:
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `2507448a` | Multi-dimensional audit evidence | 2026-11-22T20:16:59.745Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `e6dc9714` | Multi-dimensional audit evidence | 2026-11-22T20:17:06.396Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e0086dfb` | Multi-dimensional audit evidence | 2026-11-22T20:17:09.467Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-22T20:27:31.023Z |
+| `learn-github-twostraws-controlroom` | `https://github.com/twostraws/ControlRoom` | `9f063621` | Multi-dimensional audit evidence | 2026-11-22T20:27:36.849Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ef68e680` | Multi-dimensional audit evidence | 2026-11-22T20:27:43.134Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `1b1094b3` | Multi-dimensional audit evidence | 2026-11-22T20:27:44.978Z |

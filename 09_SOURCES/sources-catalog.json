@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "f1bcf5d292138c263765e075f786c382ea61bfe94664a8839de4c2783c7e4342",
-    "lastHarvestedAt": "2026-11-18T13:46:52.144Z",
+    "contentHash": "464fa7e99c897d7164b46a88e9eb50d6dc505178a777582194eb289be4501c76",
+    "lastHarvestedAt": "2026-11-22T20:27:31.023Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "ff15a1de",
+    "sourceVersion": "ef68e680",
     "license": "Apache-2.0",
-    "contentHash": "9809a2d21f8433e6f2466e52bed27c5a76e95eba7febf9c44424697814a8f7ef",
-    "lastHarvestedAt": "2026-11-22T02:29:30.104Z",
+    "contentHash": "909e6d02dd5c99dffa3d6a30ef85bd5032ae38b970ef451616a72b8c4240be82",
+    "lastHarvestedAt": "2026-11-22T20:27:43.134Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -8053,10 +8053,10 @@
     "repository": "twostraws/ControlRoom",
     "platform": "github",
     "sourceUrl": "https://github.com/twostraws/ControlRoom",
-    "sourceVersion": "1764564f",
+    "sourceVersion": "9f063621",
     "license": "MIT",
-    "contentHash": "ae834b67d89a949a183b464a22e9ec6b05049de9de5059dc1cacd0850067a16e",
-    "lastHarvestedAt": "2026-10-21T00:36:21.421Z",
+    "contentHash": "8f16a21cd7a72cc7a00406389f41407a8ddff9ff9bcec7df6d51167cafa303e3",
+    "lastHarvestedAt": "2026-11-22T20:27:36.849Z",
     "learningId": "learn-github-twostraws-controlroom"
   },
   "jacklandrin-onlyswitch": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "1fa59ea0",
+    "sourceVersion": "1b1094b3",
     "license": "Apache-2.0",
-    "contentHash": "0200bc03ade79e4add922572786686ed59484444732f9b6b42bd9501694285fd",
-    "lastHarvestedAt": "2026-11-21T20:25:05.355Z",
+    "contentHash": "708cb774249b8f0704502791e4905cf86fd6079281f54df2a7c26ac3a4b12e55",
+    "lastHarvestedAt": "2026-11-22T20:27:44.978Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

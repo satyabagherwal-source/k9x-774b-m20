@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `1fa59ea0`  
+> **Source Version**: `1b1094b3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T20:25:04.144Z  
+> **Timestamp**: 2026-11-22T20:27:43.689Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T20:25:04.137Z  
+> **Harvest Timestamp**: 2026-11-22T20:27:43.681Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1993,240 +1993,570 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fa59ea0` (2026-11-21)
-**Commit Message**: Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column (#20337)
+### Incident Patch 1: `59740fd2` (2026-11-22)
+**Commit Message**: Opt-in parallel HNSW graph build for small segments (#20072)
 
-* Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column
+* Build HNSW graphs in one pass and in parallel for small segments
 
-A BOOLEAN key is stored as INT 0/1, and the reconstruction behind SELECT
-open_struct_col hands back the stored number, so the document read
-{"flag":1} where col['flag'] returns true.
+* Test that every HNSW build mode keeps row doc ids and removes its per-thread directories
 
-ProjectionBlock now reads the materialized keys declared BOOLEAN from the
-per-key data sources and renders their 0/1 as false/true. A boolean that lives
-in the sparse blob is already a JSON boolean and is unchanged. The
-reconstruction shared with the seal path is not touched.
+* Validate and bound the HNSW build properties, merge graphs concurrently, and wait for part writers on failure
 
-* Render declared OPEN_STRUCT booleans consistently across storage tiers
+- VectorIndexConfigValidator accepts buildThreads (1-32), forceMerge (true/false) and parallelBuildMaxDocs, and
+  rejects bad values at table config time instead of at segment build; the creator also clamps buildThreads
+- The default parallelBuildMaxDocs is now as many vectors as fit in 64 MB (at most 50,000)
+- With forceMerge=true the final merge uses buildThreads Lucene merge workers
+- On a failed part, wait for the other part writers before closing and deleting their directories
 
-Handle sparse numeric values and multi-value children using the logical BOOLEAN result conversion. Size the dictionary reader buffer for a materialized multi-value child.
+* Merge parallel-built HNSW graphs on one thread by default, behind concurrentMerge
 
-Reproduce by selecting the whole OPEN_STRUCT column in ProjectionBlockOpenStructTest.testBooleanKeysInWholeDocument, which seals dense and sparse boolean fields in one segment.
+A concurrent merge makes the merged graph depend on thread timing, so replicas that each build the index can return
+different top-K for the same query. Keep the default forceMerge deterministic and make the concurrent merge opt-in.
 
----------
+* Wrap long lines in HnswVectorIndexCreator
 
-Co-authored-by: Xiang Fu <[REDACTED_EMAIL]>
+* Wrap the las
 
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java` (modified, +36/-11)
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/creator/impl/vector/HnswVectorIndexCreator.java` (modified, +182/-15)
 ```diff
-@@ -21,9 +21,11 @@
- import com.fasterxml.jackson.core.type.TypeReference;
- import java.io.IOException;
- import java.util.ArrayList;
-+import java.util.HashSet;
- import java.util.LinkedHashMap;
- import java.util.List;
- import java.util.Map;
-+import java.util.Set;
- import javax.annotation.Nullable;
- import org.apache.pinot.common.request.context.ExpressionContext;
- import org.apache.pinot.core.common.BlockValSet;
-@@ -35,7 +37,10 @@
- import org.apache.pinot.segment.spi.datasource.OpenStructDataSource;
- import org.apache.pinot.segment.spi.datasource.OpenStructDataSource.MapValueReader;
- import org.apache.pinot.spi.data.ComplexFieldSpec;
-+import org.apache.pinot.spi.data.FieldSpec;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
- import org.apache.pinot.spi.data.OpenStructKeyFlattener;
-+import org.apache.pinot.spi.utils.BooleanUtils;
- import org.apache.pinot.spi.utils.BytesUtils;
- import org.apache.pinot.spi.utils.JsonUtils;
+@@ -18,17 +18,29 @@
+  */
+ package org.apache.pinot.segment.local.segment.creator.impl.vector;
  
-@@ -93,10 +98,11 @@ private BlockValSet openStructDocuments(String column, OpenStructDataSource open
-     int numDocs = getNumDocs();
-     int[] docIds = getDocIds();
-     String[] documents = new String[numDocs];
-+    Set<String> booleanKeys = booleanKeys(openStructDataSource);
-     try (MapValueReader reader = openStructDataSource.openMapValueReader()) {
-       for (int i = 0; i < numDocs; i++) {
-         Map<String, Object> document = reader.getMapValue(docIds[i]);
--        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document));
-+        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document, booleanKeys));
-       }
-     } catch (IOException e) {
-       throw new RuntimeException("Failed to read OPEN_STRUCT column: " + column, e);
-@@ -111,16 +117,33 @@ private BlockValSet openStructDocuments(String column, OpenStructDataSource open
-   /// the shape the source had, so it wins and the paths into it are dropped. `.` is an ordinary key character with
-   /// no escape, and that is exactly what makes the container's own entry the thing that disambiguates: a dotted key
-   /// whose prefix is not itself a key was never a path, so it stays a key spelled with a dot.
--  private static Map<String, Object> renderDocument(Map<String, Object> document) {
-+  ///
-+  /// The top-level keys use the segment's declared types. Nested objects retain their original JSON types.
-+  private static Map<String, Object> renderDocument(Map<String, Object> document, Set<String> booleanKeys) {
-     Map<String, Object> rendered = new LinkedHashMap<>(document.size());
-     for (Map.Entry<String, Object> entry : document.entrySet()) {
--      if (!isPathIntoPresentObject(entry.getKey(), document)) {
--        rendered.put(entry.getKey(), renderValue(entry.getValue()));
-+      String key = entry.getKey();
-+      if (!isPathIntoPresentObject(key, document)) {
-+        rendered.put(key, renderValue(entry.getValue(), booleanKeys.contains(key)));
-       }
-     }
-     return rendered;
++import com.google.common.io.Closer;
+ import java.io.File;
+ import java.io.IOException;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Map;
++import java.util.concurrent.ExecutorCompletionService;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
+ import javax.annotation.Nullable;
+ import org.apache.commons.io.FileUtils;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.StoredField;
+ import org.apache.lucene.index.IndexWriter;
++import org.apache.lucene.index.MergePolicy;
++import org.apache.lucene.index.NoMergePolicy;
+ import org.apache.lucene.index.VectorSimilarityFunction;
+ import org.apache.lucene.store.Directory;
+ import org.apache.lucene.store.FSDirectory;
+ import org.apache.lucene.util.IOUtils;
++import org.apache.lucene.util.ThreadInterruptedException;
+ import org.apache.pinot.segment.local.segment.creator.impl.vector.lucene99.HnswVectorIndexCombined;
+ import org.apache.pinot.segment.local.segment.store.VectorIndexUtils;
+ import org.apache.pinot.segment.spi.V1Constants;
+@@ -43,6 +55,10 @@
+ public class HnswVectorIndexCreator implements VectorIndexCreator {
+   private static final Logger LOGGER = LoggerFactory.getLogger(HnswVectorIndexCreator.class);
+   public static final String VECTOR_INDEX_DOC_ID_COLUMN_NAME = "DocID";
++  /// Default heap budget for vectors buffered for a parallel build, so the default doc limit shrinks as the dimension
++  /// grows (about 10k docs at 1536 dims) instead of holding a fixed number of vectors of any size.
++  private static final long DEFAULT_PARALLEL_BUILD_MAX_BYTES = 64L * 1024 * 1024;
++  private static final int DEFAULT_PARALLEL_BUILD_MAX_DOCS = 50_000;
+ 
+   private final String _vectorColumn;
+   private final VectorSimilarityFunction _vectorSimilarityFunction;
+@@ -54,14 +70,41 @@ public class HnswVectorIndexCreator implements VectorIndexCreator {
+   private final Directory _indexDirectory;
+   private final IndexWriter _indexWriter;
+ 
++  private final int _buildThreads;
++  private final boolean _forceMerge;
++  private final boolean _concurrentMerge;
++  private final VectorIndexConfig _vectorIndexConfig;
++  /// Above this many vectors the buffered ones are indexed on the calling thread and buffering stops, so large
++  /// segments keep the single-writer path. Defaults to as many vectors as fit in 64 MB, at most 50,000. While
++  /// buffering, the build holds the vectors on heap plus up to one `maxBufferSizeMB` per thread.
++  private final int _parallelBuildMaxDocs;
++  /// Runs the graph merge workers on seal, when building in parallel with `forceMerge=true` and `concurrentMerge=true`
++  @Nullable
++  private final ExecutorService _mergeExecutor;
++  @Nullable
++  private List<float[]> _bufferedVectors;
++
+   private int _nextDocId = 0;
++  private boolean _sealed;
++  private boolean _failed;
+ 
+   public HnswVectorIndexCreator(String column, File segmentIndexDir, VectorIndexConfig vectorIndexConfig) {
+     _vectorColumn = column;
+     _vectorDimension = vectorIndexConfig.getVectorDimension();
+     _vectorSimilarityFunction = VectorIndexUtils.toSimilarityFunction(vectorIndexConfig.getVectorDistanceFunction());
+     _storeInSegmentFile = vectorIndexConfig.isStoreInSegmentFile();
+     _segmentIndexDir = segmentIndexDir;
++    Map<String, String> properties = vectorIndexConfig.getProperties();
++    _buildThreads = vectorIndexConfig.getHnswBuildThreads();
++    _forceMerge = vectorIndexConfig.isHnswForceMerge();
++    _concurrentMerge = vectorIndexConfig.isHnswConcurrentMerge();
++    String parallelBuildMaxDocs = properties != null ? properties.get("parallelBuildMaxDocs") : null;
++    _parallelBuildMaxDocs = parallelBuildMaxDocs != null ? Integer.parseInt(parallelBuildMaxDocs)
++        : (int) Math.max(1, Math.min(DEFAULT_PARALLEL_BUILD_MAX_DOCS,
++            DEFAULT_PARALLEL_BUILD_MAX_BYTES / ((long) Float.BYTES * _vectorDimension)));
++    _bufferedVectors = _buildThreads > 1 ? new ArrayList<>() : null;
++    _mergeExecutor = _concurrentMerge ? Executors.newFixedThreadPool(_buildThreads) : null;
++    _vectorIndexConfig = vectorIndexConfig;
+     // Segment generation is always in V1 and later we convert (as part of post creation processing) to V3 if
+     // segmentVersion is set to V3 in SegmentGeneratorConfig.
+     _hnswIndexDir =
+@@ -73,15 +116,18 @@ public HnswVectorIndexCreator(String column, File segmentIndexDir, VectorIndexCo
+       indexDirectory = FSDirectory.open(_hnswIndexDir.toPath());
+       LOGGER.info("Creating HNSW index for column: {} at path: {} with {} for segment: {}", column,
+           _hnswIndexDir.getAbsolutePath(), vectorIndexConfig.getProperties(), segmentIndexDir.getAbsolutePath());
+-      indexWriter = new IndexWriter(indexDirectory, VectorIndexUtils.getIndexWriterConfig(vectorIndexConfig,
+-          vectorIndexConfig.i
+```
+
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/creator/impl/vector/lucene99/HnswVectorsFormat.java` (modified, +17/-4)
+```diff
+@@ -20,6 +20,7 @@
+ 
+ import java.io.IOException;
+ import java.nio.file.Path;
++import java.util.concurrent.ExecutorService;
+ import javax.annotation.Nullable;
+ import org.apache.lucene.codecs.KnnVectorsFormat;
+ import org.apache.lucene.codecs.KnnVectorsReader;
+@@ -40,6 +41,7 @@ public final class HnswVectorsFormat extends KnnVectorsFormat {
+ 
+   private final int _maxDimensions;
+   private final Lucene99HnswVectorsFormat _delegate;
++  private final Lucene99HnswVectorsFormat _finalMergeDelegate;
+   private final int _maxConn;
+   private final int _beamWidth;
+   private final Path _mmapMergeDirectory;
+@@ -50,11 +52,18 @@ public final class HnswVectorsFormat extends KnnVectorsFormat {
+   /// @param beamWidth     the size of the queue maintained during graph construction.
+   /// @param maxDimensions the maximum number of dimensions supported by this format
+   public HnswVectorsFormat(int maxConn, int beamWidth, int maxDimensions) {
+-    this(maxConn, beamWidth, maxDimensions, null);
++    this(maxConn, beamWidth, maxDimensions, 1, null, null);
    }
  
-+  /// Both dense children and the sparse JSON can contain stored integers for declared BOOLEAN keys. On older
-+  /// segments a dense child can still report INT, which is also the type returned by a direct key projection.
-+  private static Set<String> booleanKeys(OpenStructDataSource openStructDataSource) {
-+    Set<String> booleanKeys = new HashSet<>();
-+    for (Map.Entry<String, FieldSpec> entry : openStructDataSource.getFieldSpec().getChildFieldSpecs().entrySet()) {
-+      String key = entry.getKey();
-+      if (entry.getValue().getDataType() == DataType.BOOLEAN && (!openStructDataSource.isMaterialized(key)
-+          || openStructDataSource.getDataSourceMetadata(key).getDataType() == DataType.BOOLEAN)) {
-+        booleanKeys.add(key);
-+      }
-+    }
-+    return booleanKeys;
+   /// Constructs a format with an optional scratch directory for the final forced merge.
+   public HnswVectorsFormat(int maxConn, int beamWidth, int maxDimensions, @Nullable Path mmapMergeDirectory) {
++    this(maxConn, beamWidth, maxDimensions, 1, null, mmapMergeDirectory);
 +  }
 +
-   /// Whether `key` is a path into an object that the document also carries whole. `configApi.timeTaken` is, when
-   /// `configApi` is an object of the document holding `timeTaken`; a key the document literally spells with a dot
-   /// is not.
-@@ -175,7 +198,7 @@ private static Object unwrapJsonText(String text) {
-       return text;
++  /// A final forced merge can use the supplied executor for heap-backed graph construction or a scratch
++  /// directory for mmap-backed construction. Ordinary merges use the default Lucene format.
++  public HnswVectorsFormat(int maxConn, int beamWidth, int maxDimensions, int numMergeWorkers,
++      @Nullable ExecutorService mergeExec, @Nullable Path mmapMergeDirectory) {
+     super("Lucene99HnswVectorsFormat");
+     if (maxDimensions <= 0 || maxDimensions > DEFAULT_MAX_DIMENSIONS) {
+       throw new IllegalArgumentException(
+@@ -64,6 +73,8 @@ public HnswVectorsFormat(int maxConn, int beamWidth, int maxDimensions, @Nullabl
+               + maxDimensions);
      }
-     try {
--      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE));
-+      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE), false);
-     } catch (IOException e) {
-       return text;
+     _delegate = new Lucene99HnswVectorsFormat(maxConn, beamWidth);
++    _finalMergeDelegate = numMergeWorkers > 1
++        ? new Lucene99HnswVectorsFormat(maxConn, beamWidth, numMergeWorkers, mergeExec) : _delegate;
+     _maxDimensions = maxDimensions;
+     _maxConn = maxConn;
+     _beamWidth = beamWidth;
+@@ -73,9 +84,11 @@ public HnswVectorsFormat(int maxConn, int beamWidth, int maxDimensions, @Nullabl
+   @Override
+   public KnnVectorsWriter fieldsWriter(SegmentWriteState state)
+       throws IOException {
+-    if (_mmapMergeDirectory != null && state.context.context == IOContext.Context.MERGE
+-        && state.context.mergeInfo.mergeMaxNumSegments == 1) {
+-      return new MmapHnswVectorsWriter(state, _mmapMergeDirectory, _maxConn, _beamWidth);
++    if (state.context.context == IOContext.Context.MERGE && state.context.mergeInfo.mergeMaxNumSegments == 1) {
++      if (_mmapMergeDirectory != null) {
++        return new MmapHnswVectorsWriter(state, _mmapMergeDirectory, _maxConn, _beamWidth);
++      }
++      return _finalMergeDelegate.fieldsWriter(state);
      }
-@@ -190,16 +213,18 @@ private static Map<String, Object> asStringKeyedMap(Map<?, ?> map) {
+     return _delegate.fieldsWriter(state);
    }
- 
-   /// Values as JSON renders them, recursing so a nested object is cleaned up the same way the top level is.
--  /// Only BYTES needs a hand: Jackson would base64 it, while every other way of reading this value out of Pinot
--  /// -- `col['key']` included -- gives hex.
-+  /// Numeric BOOLEAN values use Pinot's stored representation. BYTES values use the same hex encoding as key reads.
-   @Nullable
--  private static Object renderValue(@Nullable Object value) {
-+  private static Object renderValue(@Nullable Object v
 ```
 
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/operator/blocks/ProjectionBlockOpenStructTest.java` (modified, +65/-4)
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/store/VectorIndexUtils.java` (modified, +28/-9)
 ```diff
-@@ -18,18 +18,36 @@
-  */
- package org.apache.pinot.core.operator.blocks;
+@@ -26,7 +26,9 @@
+ import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.HashSet;
++import java.util.Map;
+ import java.util.Set;
++import java.util.concurrent.ExecutorService;
+ import javax.annotation.Nullable;
+ import org.apache.commons.io.FileUtils;
+ import org.apache.lucene.codecs.lucene912.Lucene912Codec;
+@@ -325,33 +327,50 @@ public static VectorSimilarityFunction toSimilarityFunction(
+   }
  
-+import java.io.File;
+   public static IndexWriterConfig getIndexWriterConfig(VectorIndexConfig vectorIndexConfig) {
+-    return getIndexWriterConfig(vectorIndexConfig, null);
++    return getIndexWriterConfig(vectorIndexConfig, 1, null, null);
+   }
+ 
+   public static IndexWriterConfig getIndexWriterConfig(VectorIndexConfig vectorIndexConfig,
+       @Nullable Path mmapMergeDirectory) {
++    return getIndexWriterConfig(vectorIndexConfig, 1, null, mmapMergeDirectory);
++  }
++
++  /// Configures the main immutable writer with the final merge mode selected by the table configuration.
++  public static IndexWriterConfig getImmutableIndexWriterConfig(VectorIndexConfig vectorIndexConfig, Path segmentDir,
++      @Nullable ExecutorService mergeExecutor) {
++    return getIndexWriterConfig(vectorIndexConfig, mergeExecutor != null ? vectorIndexConfig.getHnswBuildThreads() : 1,
++        mergeExecutor, vectorIndexConfig.isMmapGraphOnMerge() ? segmentDir : null);
++  }
++
++  private static IndexWriterConfig getIndexWriterConfig(VectorIndexConfig vectorIndexConfig, int numMergeWorkers,
++      @Nullable ExecutorService mergeExec, @Nullable Path mmapMergeDirectory) {
+     IndexWriterConfig indexWriterConfig = new IndexWriterConfig();
+ 
+-    double maxBufferSizeMB = Double.parseDouble(vectorIndexConfig.getProperties()
++    Map<String, String> properties = vectorIndexConfig.getProperties();
++    if (properties == null) {
++      properties = Map.of();
++    }
++    double maxBufferSizeMB = Double.parseDouble(properties
+         .getOrDefault("maxBufferSizeMB", String.valueOf(IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB)));
+-    boolean commit = Boolean.parseBoolean(vectorIndexConfig.getProperties()
++    boolean commit = Boolean.parseBoolean(properties
+         .getOrDefault("commit", String.valueOf(IndexWriterConfig.DEFAULT_COMMIT_ON_CLOSE)));
+-    boolean useCompoundFile = Boolean.parseBoolean(vectorIndexConfig.getProperties()
++    boolean useCompoundFile = Boolean.parseBoolean(properties
+         .getOrDefault("useCompoundFile", String.valueOf(IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM)));
+     indexWriterConfig.setRAMBufferSizeMB(maxBufferSizeMB);
+     indexWriterConfig.setCommitOnClose(commit);
+     indexWriterConfig.setUseCompoundFile(useCompoundFile);
+ 
+-    int maxCon = Integer.parseInt(vectorIndexConfig.getProperties()
++    int maxCon = Integer.parseInt(properties
+         .getOrDefault("maxCon", String.valueOf(Lucene99HnswVectorsFormat.DEFAULT_MAX_CONN)));
+-    int beamWidth = Integer.parseInt(vectorIndexConfig.getProperties()
++    int beamWidth = Integer.parseInt(properties
+         .getOrDefault("beamWidth", String.valueOf(Lucene99HnswVectorsFormat.DEFAULT_BEAM_WIDTH)));
+-    int maxDimensions = Integer.parseInt(vectorIndexConfig.getProperties()
++    int maxDimensions = Integer.parseInt(properties
+         .getOrDefault("maxDimensions", String.valueOf(HnswVectorsFormat.DEFAULT_MAX_DIMENSIONS)));
+ 
+-    HnswVectorsFormat knnVectorsFormat = new HnswVectorsFormat(maxCon, beamWidth, maxDimensions, mmapMergeDirectory);
++    HnswVectorsFormat knnVectorsFormat =
++        new HnswVectorsFormat(maxCon, beamWidth, maxDimensions, numMergeWorkers, mergeExec, mmapMergeDirectory);
+ 
+-    Lucene912Codec.Mode mode = Lucene912Codec.Mode.valueOf(vectorIndexConfig.getProperties()
++    Lucene912Codec.Mode mode = Lucene912Codec.Mode.valueOf(properties
+         .getOrDefault("mode", Lucene912Codec.Mode.BEST_SPEED.name()));
+     indexWriterConfig.setCodec(new HnswCodec(mode, knnVectorsFormat));
+     return indexWriterConfig;
+```
+
+**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/segment/index/creator/HnswVectorIndexCreatorTest.java` (modified, +126/-1)
+```diff
+@@ -18,17 +18,22 @@
+  */
+ package org.apache.pinot.segment.local.segment.index.creator;
+ 
++import com.google.common.base.Throwables;
+ import java.io.File;
+ import java.io.IOException;
 +import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.util.ArrayList;
+ import java.util.Arrays;
  import java.util.HashMap;
- import java.util.LinkedHashMap;
  import java.util.List;
  import java.util.Map;
-+import java.util.Set;
-+import org.apache.commons.io.FileUtils;
- import org.apache.pinot.core.common.BlockValSet;
- import org.apache.pinot.core.common.DataBlockCache;
- import org.apache.pinot.core.common.DataFetcher;
-+import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
-+import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
-+import org.apache.pinot.segment.local.segment.readers.PinotSegmentUtil;
-+import org.apache.pinot.segment.spi.ImmutableSegment;
- import org.apache.pinot.segment.spi.datasource.DataSource;
- import org.apache.pinot.segment.spi.datasource.DataSourceMetadata;
- import org.apache.pinot.segment.spi.datasource.OpenStructDataSource;
- import org.apache.pinot.segment.spi.index.reader.ForwardIndexReader;
--import org.apache.pinot.spi.data.FieldSpec;
-+import org.apache.pinot.spi.config.table.FieldConfig;
-+import org.apache.pinot.spi.config.table.TableConfig;
-+import org.apache.pinot.spi.config.table.TableType;
-+import org.apache.pinot.spi.data.ComplexFieldSpec;
-+import org.apache.pinot.spi.data.DimensionFieldSpec;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
-+import org.apache.pinot.spi.data.Schema;
-+import org.apache.pinot.spi.data.readers.GenericRow;
-+import org.apache.pinot.spi.utils.JsonUtils;
-+import org.apache.pinot.spi.utils.ReadMode;
-+import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
+ import java.util.Random;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
+ import org.apache.commons.io.FileUtils;
+ import org.apache.lucene.codecs.Codec;
++import org.apache.lucene.codecs.KnnVectorsFormat;
+ import org.apache.lucene.codecs.KnnVectorsWriter;
+ import org.apache.lucene.codecs.hnsw.HnswGraphProvider;
+ import org.apache.lucene.codecs.lucene99.Lucene99HnswVectorsWriter;
+@@ -39,6 +44,7 @@
+ import org.apache.lucene.index.SegmentReader;
+ import org.apache.lucene.index.SegmentWriteState;
+ import org.apache.lucene.store.ByteBuffersDirectory;
++import org.apache.lucene.store.Directory;
+ import org.apache.lucene.store.FSDirectory;
+ import org.apache.lucene.store.IOContext;
+ import org.apache.lucene.store.MergeInfo;
+@@ -47,21 +53,25 @@
+ import org.apache.lucene.util.Version;
+ import org.apache.lucene.util.hnsw.HnswGraph;
+ import org.apache.pinot.segment.local.segment.creator.impl.vector.HnswVectorIndexCreator;
++import org.apache.pinot.segment.local.segment.creator.impl.vector.lucene99.HnswCodec;
+ import org.apache.pinot.segment.local.segment.creator.impl.vector.lucene99.HnswVectorsFormat;
+ import org.apache.pinot.segment.local.segment.index.readers.vector.HnswVectorIndexReader;
++import org.apache.pinot.segment.local.segment.store.VectorIndexUtils;
+ import org.apache.pinot.segment.spi.V1Constants;
+ import org.apache.pinot.segment.spi.index.creator.VectorIndexConfig;
+ import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
+ import org.roaringbitmap.buffer.MutableRoaringBitmap;
+ import org.testng.Assert;
+ import org.testng.annotations.AfterMethod;
+ import org.testng.annotations.BeforeMethod;
++import org.testng.annotations.DataProvider;
  import org.testng.annotations.Test;
  
- import static org.mockito.Mockito.doReturn;
-@@ -54,7 +72,10 @@ public class ProjectionBlockOpenStructTest {
+ import static org.apache.lucene.search.DocIdSetIterator.NO_MORE_DOCS;
+ import static org.testng.Assert.assertEquals;
+ import static org.testng.Assert.assertFalse;
+ import static org.testng.Assert.assertTrue;
++import static org.testng.Assert.expectThrows;
  
-   /// OPEN_STRUCT parent: an empty index container, so {@code getForwardIndex()} is null.
-   private static OpenStructDataSource mockOpenStructDataSource() {
--    return mock(OpenStructDataSource.class);
-+    OpenStructDataSource dataSource = mock(OpenStructDataSource.class);
-+    when(dataSource.getFieldSpec()).thenReturn(new ComplexFieldSpec(OPEN_STRUCT_COLUMN, DataType.OPEN_STRUCT, true,
-+        Map.of()));
-+    return dataSource;
-   }
  
-   private static DataSource mockPlainDataSource() {
-@@ -64,7 +85,7 @@ private static DataSource mockPlainDataSource() {
-     doReturn(forwardIndex).when(dataSource).getForwardIndex();
-     DataSourceMetadata metadata = mock(DataSourceMetadata.class);
-     when(metadata.isSingleValue()).thenReturn(true);
--    when(metadata.getDataType()).thenReturn(FieldSpec.DataType.LONG);
-+    when(metadata.getDataType()).thenReturn(DataType.LONG);
-     when(dataSource.getDataSourceMetadata()).thenReturn(metadata);
-     return dataSource;
-   }
-@@ -128,7 +149,7 @@ public void testRegisteringSameColumnTwiceKeepsFirstReader() {
-   @Test
-   public void testSelectingOpenStructParentReadsTheWholeDocument() {
-     BlockValSet values = project(Map.of("errors", 3L));
--    assertEquals(values.getValueType(), FieldSpec.DataType.STRING);
-+    assertEquals(values.getValueType(), DataType.STRING);
-     assertTrue(values.isSingleValue());
-     assertEquals(values.getStringValuesSV()[0], "{\"errors\":3}");
-   }
-@@ -259,6 +280,46 @@ public void testListValuesAreRendered() {
-     assertEquals(project(Map.of("tags", List.of("a", "b"))).getStringValuesSV()[0], "{\"tags\":[\"a\",\"b\"]}");
+ public class HnswVectorIndexCreatorTest {
+@@ -111,7 +121,28 @@ public void testMmapWriterSelection()
+     assertTrue(usesHeapWriter(mmapFormat, new IOContext(new MergeInfo(4, 0, false, -1))));
    }
  
+-  private static boolean usesHeapWriter(HnswVectorsFormat format, IOContext context)
 +  @Test
-+  public void testBooleanKeysInWholeDocument()
-+      throws Exception {
-+    ComplexFieldSpec parent = new ComplexFieldSpec(OPEN_STRUCT_COLUMN, DataType.OPEN_STRUCT, true, Map.of(
-+        "flag", new DimensionFieldSpec("flag", DataType.BOOLEAN, true),
-+        "off", new DimensionFieldSpec("off", DataType.BOOLEAN, true),
-+        "noncanonical", new DimensionFieldSpec("noncanonical", DataType.BOOLEAN, true),
-+        "denseFlags", new DimensionFieldSpec("denseFlags", DataType.BOOLEAN, false),
-+        "sparseFlags", new DimensionFieldSpec("sparseFlags", DataType.BOOLEAN, false)));
-+    Schema schema = new Schema.SchemaBuilder().setSchemaName("bools").addField(parent).build();
-+    FieldConfig field = new FieldConfig.Builder(OPEN_STRUCT_COLUMN).withIndexes(JsonUtils.objectToJsonNode(
-+        Map.of("open_struct", Map.of("maxDenseKeys", 3, "denseKeys", List.of("flag", "noncanonical", "denseFlags")))))
-+        .build();
-+    TableConfig table = new TableConfigBuilder(TableType.OFFLINE).setTableName("bools")
-+        .setFieldConfigList(List.of(field)).build();
-+    GenericRow row = new GenericRow();
-+    row.putValue(OPEN_STRUCT_COLUMN, Map.of("flag", true, "off", false, "noncanonical", 2,
-+        "denseFlags", List.of(true, false), "sparseFlags", List.of(false, true), "count", 1,
-+        "nested", Map.of("flag", 0)));
++  public void testConcurrentMergeWriterSelection()
++      throws IOException {
++    Map<String, String> properties = new HashMap<>(Map.of("vectorDimension", "8", "buildThreads", "2",
++        "concurrentMerge", "true"));
++    IOContext forcedMerge = new IOContext(new MergeInfo(4, 0, false, 1));
++    try (ExecutorService executor = Executors.newFixedThreadPool(2)) {
++      for (String mmap : new String[]{null, "false", "true"}) {
++        if (mmap != null) {
++          properties.put(VectorIndexConfig.MMAP_GRAPH_ON_MERGE, mmap);
++        }
++        VectorIndexConfig config = new VectorIndexConfig(properties);
++        boolean expectConcurrent = !"true".equals(mmap);
++        assertEquals(config.isHnswConcurrentMerge(), expectConcurrent);
++        HnswCodec codec = (HnswCodec) VectorIndexUtils.getImmutableIndexWriterConfig(config, INDEX_DIR.toPath(),
++            config.isHnswConcurrentMerge() ? executor : null).getCodec();
++        assertEquals(usesHeapWriter(codec.getKnnVectorsFormatForField("foo"), forcedMerge), expectConcurrent);
++      }
++    }
++  }
 +
-+    File tempDir = Files.createTempDirectory("openStructBoolean").toFile();
-+    try {
-+      File indexDir = PinotSegmentUtil.createSegment(table, schema, "bools", tempDir.getAbsolutePath(),
-+          new GenericRowRecordReader(List.of
++  private static boolean usesHeapWriter(KnnVectorsFormat format, IOContext context)
+       throws IOException {
+     try (ByteBuffersDirectory directory = new ByteBuffersDirectory()) {
+       SegmentInfo segmentInfo = new SegmentInfo(directory, Version.LATEST, Version.LATEST, "_0", 4, false, false,
+@@ -306,4 +337,98 @@ public void testRuntimeControlDebugInfoReflectsOverrides()
+           "Debug info must report the reader's actual pre-filter capability, not a hardcoded literal");
+     }
+   }
++
++  @DataProvider
++  public Object[][] parallelBuilds() {
++    // buildThreads, forceMerge, concurrentMerge, parallelBuildMaxDocs: the last case outgrows the buffer and falls back
++    // to one writer
++    return new Object[][]{
++        {1, true, false, 50_000}, {4, true, false, 50_000}, {4, true, true, 50_000}, {16, false, false, 50_000},
++        {3, false, false, 100}
++    };
++  }
++
++  /// Every build mode, including the default single writer, must index each row under its own doc id: searching for a
++  /// stored vector finds that row.
++  @Test(dataProvider = "parallelBuilds")
++  public void testParallelBuildKeepsDocIds(int buildThreads, boolean forceMerge, boolean concurrentMerge,
++      int parallelBuildMaxDocs)
++      throws IOException {
++    F
 ```
 
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/index/openstruct/ImmutableOpenStructDataSource.java` (modified, +3/-1)
+**File**: `pinot-segment-spi/src/main/java/org/apache/pinot/segment/spi/index/creator/VectorBackendType.java` (modified, +13/-0)
 ```diff
-@@ -313,8 +313,10 @@ private PinotSegmentColumnReader createReader(String key, DataSource dataSource)
-       if (fwdReader == null) {
-         return null;
-       }
-+      int maxNumValues = !fwdReader.isSingleValue() && fwdReader.isDictionaryEncoded()
-+          ? dataSource.getDataSourceMetadata().getMaxNumValuesPerMVEntry() : 0;
-       return new PinotSegmentColumnReader(key, fwdReader, dataSource.getDictionary(),
--          dataSource.getNullValueVector(), 0);
-+          dataSource.getNullValueVector(), maxNumValues);
-     }
+@@ -42,6 +42,19 @@ public enum VectorBackendType {
+   /// - `maxBufferSizeMB` - Lucene RAM buffer size
+   /// - `useCompoundFile` - whether to use compound file format
+   /// - `mode` - Lucene codec mode (BEST_SPEED or BEST_COMPRESSION)
++  ///
++  /// Immutable segment build settings:
++  ///
++  /// - `buildThreads` - number of part writers (1 to 32, default 1). Each writer has its own Lucene RAM buffer.
++  /// - `parallelBuildMaxDocs` - maximum vectors buffered for the parallel build. The default is the smaller of
++  ///   50,000 and the number of vectors whose float values fit in 64 MiB. Larger segments use a single writer.
++  /// - `forceMerge` - merge to one Lucene segment on seal (default true). Disabling it can reduce build time and
++  ///   increase query latency as searches visit each remaining segment. A part can flush multiple segments.
++  /// - `concurrentMerge` - use heap-backed graph construction with `buildThreads` workers during the final merge
++  ///   when `buildThreads` exceeds 1 and `forceMerge` is true (default false). Thread scheduling can change recall
++  ///   and produce different nearest neighbors across replicas.
++  /// - `mmapGraphOnMerge` - use a single-threaded, mmap-backed final merge. This is the default unless concurrent
++  ///   merging is enabled. Setting this property explicitly to true takes priority over `concurrentMerge`.
+   HNSW("Hierarchical Navigable Small World graph (Lucene-based)"),
  
-     @Override
+   /// Inverted File with flat (uncompressed) vectors.
+```
+
+**File**: `pinot-segment-spi/src/main/java/org/apache/pinot/segment/spi/index/creator/VectorIndexConfig.java` (modified, +26/-3)
+```diff
+@@ -173,12 +173,35 @@ public boolean isStoreInSegmentFile() {
+     return value == null ? DEFAULT_STORE_IN_SEGMENT_FILE : Boolean.parseBoolean(value);
+   }
+ 
++  /// Number of part writers used when building an immutable HNSW index.
++  @JsonIgnore
++  public int getHnswBuildThreads() {
++    // Existing table configurations may have been stored before this property was validated.
++    return _properties == null ? 1 : Math.min(VectorIndexConfigValidator.MAX_HNSW_BUILD_THREADS,
++        Math.max(1, Integer.parseInt(_properties.getOrDefault("buildThreads", "1"))));
++  }
++
++  /// Whether to force the immutable HNSW index into one Lucene segment at seal time.
++  @JsonIgnore
++  public boolean isHnswForceMerge() {
++    return _properties == null || Boolean.parseBoolean(_properties.getOrDefault("forceMerge", "true"));
++  }
++
++  /// Whether the final forced merge uses Lucene's concurrent, heap-backed graph construction.
++  /// An explicit mmap request takes priority.
++  @JsonIgnore
++  public boolean isHnswConcurrentMerge() {
++    return _properties != null && Boolean.parseBoolean(_properties.get("concurrentMerge"))
++        && !Boolean.parseBoolean(_properties.get(MMAP_GRAPH_ON_MERGE)) && isHnswForceMerge()
++        && getHnswBuildThreads() > 1;
++  }
++
+   /// Whether to use mmap-backed graph construction during the immutable HNSW index's final merge.
+-  /// Defaults to true and uses scratch space in the segment build directory. Set to false in the
+-  /// `properties` map to use Lucene's heap-backed merge.
++  /// The default uses scratch space in the segment build directory unless concurrent graph construction is requested.
+   @JsonIgnore
+   public boolean isMmapGraphOnMerge() {
+-    return _properties == null || Boolean.parseBoolean(_properties.getOrDefault(MMAP_GRAPH_ON_MERGE, "true"));
++    return _properties == null || (Boolean.parseBoolean(_properties.getOrDefault(MMAP_GRAPH_ON_MERGE, "true"))
++        && !isHnswConcurrentMerge());
+   }
+ 
+   /// Resolves the [VectorBackendType] for this config. If `vectorIndexType` is null or empty,
+```
+
+**File**: `pinot-segment-spi/src/main/java/org/apache/pinot/segment/spi/index/creator/VectorIndexConfigValidator.java` (modified, +31/-4)
+```diff
+@@ -43,7 +43,12 @@ public final class VectorIndexConfigValidator {
+   static final Set<String> HNSW_PROPERTIES = Collections.unmodifiableSet(new HashSet<>(
+       Arrays.asList("maxCon", "beamWidth", "maxDimensions", "maxBufferSizeMB",
+           "useCompoundFile", "mode", "commit", "commitIntervalMs", "commitDocs",
+-          "refreshMinIntervalMs", "refreshWaitTimeoutMs", VectorIndexConfig.MMAP_GRAPH_ON_MERGE)));
++          "refreshMinIntervalMs", "refreshWaitTimeoutMs", VectorIndexConfig.MMAP_GRAPH_ON_MERGE, "buildThreads",
++          "forceMerge", "concurrentMerge", "parallelBuildMaxDocs")));
++
++  /// Upper bound for the HNSW `buildThreads` property: each thread opens its own Lucene IndexWriter and directory
++  /// during segment build, so an unbounded value can exhaust threads and file handles.
++  public static final int MAX_HNSW_BUILD_THREADS = 32;
+ 
+   // IVF_FLAT-specific property keys
+   static final Set<String> IVF_FLAT_PROPERTIES = Collections.unmodifiableSet(new HashSet<>(
+@@ -261,6 +266,15 @@ private static void validateHnswProperties(Map<String, String> properties) {
+     validatePositiveIntProperty(properties, "beamWidth", "HNSW beamWidth");
+     validatePositiveIntProperty(properties, "maxDimensions", "HNSW maxDimensions");
+     validatePositiveDoubleProperty(properties, "maxBufferSizeMB", "HNSW maxBufferSizeMB");
++    // Parsed at segment build (commit or reload), where a bad value would fail the build instead of the table config
++    int buildThreads = parsePositiveInt(properties.getOrDefault("buildThreads", "1"), "HNSW buildThreads");
++    if (buildThreads > MAX_HNSW_BUILD_THREADS) {
++      throw new IllegalArgumentException(
++          "HNSW buildThreads must be <= " + MAX_HNSW_BUILD_THREADS + ", got: " + buildThreads);
++    }
++    validatePositiveIntProperty(properties, "parallelBuildMaxDocs", "HNSW parallelBuildMaxDocs");
++    validateBooleanProperty(properties, "forceMerge", "HNSW forceMerge");
++    validateBooleanProperty(properties, "concurrentMerge", "HNSW concurrentMerge");
+     // Rejected here rather than only in MutableVectorIndex: the constructor guard runs when a consuming segment is
+     // created on the server, which would stop ingestion for the partition instead of failing the table config.
+     validateLongProperty(properties, "refreshMinIntervalMs", "HNSW refreshMinIntervalMs", 0L);
+@@ -361,6 +375,18 @@ private static void validatePositiveIntProperty(Map<String, String> properties,
+     parsePositiveIntProperty(properties, key, displayName);
+   }
+ 
++  /// Validates that an optional property, if present, is `true` or `false` (any case), the only values
++  /// `Boolean.parseBoolean` does not silently read as `false`.
++  private static void validateBooleanProperty(Map<String, String> properties, String key, String displayName) {
++    if (!properties.containsKey(key)) {
++      return;
++    }
++    String value = properties.get(key);
++    if (!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value)) {
++      throw new IllegalArgumentException(displayName + " must be true or false, got: '" + value + "'");
++    }
++  }
++
+   /// Validates that an optional property, if present, is a positive double.
+   private static void validatePositiveDoubleProperty(Map<String, String> properties, String key, String displayName) {
+     String value = properties.get(key);
+@@ -379,9 +405,10 @@ private static void validatePositiveDoubleProperty(Map<String, String> propertie
+ 
+   private static Integer parsePositiveIntProperty(Map<String, String> properties, String key, String displayName) {
+     String value = properties.get(key);
+-    if (value == null) {
+-      return null;
+-    }
++    return value == null ? null : parsePositiveInt(value, displayName);
++  }
++
++  private static int parsePositiveInt(String value, String displayName) {
+     try {
+       int intValue = Integer.parseInt(value);
+       if (intValue <= 0) {
+```
+
+**File**: `pinot-segment-spi/src/test/java/org/apache/pinot/segment/spi/index/creator/VectorIndexConfigValidatorTest.java` (modified, +34/-0)
+```diff
+@@ -20,12 +20,14 @@
+ 
+ import java.util.HashMap;
+ import java.util.Map;
++import org.testng.annotations.DataProvider;
+ import org.testng.annotations.Test;
+ 
+ import static org.testng.Assert.assertEquals;
+ import static org.testng.Assert.assertFalse;
+ import static org.testng.Assert.assertNotNull;
+ import static org.testng.Assert.assertTrue;
++import static org.testng.Assert.fail;
+ 
+ 
+ /// Tests for [VectorIndexConfigValidator].
+@@ -105,12 +107,44 @@ public void testValidHnswConfigWithAllProperties() {
+     properties.put("useCompoundFile", "true");
+     properties.put("mode", "BEST_SPEED");
+     properties.put(VectorIndexConfig.MMAP_GRAPH_ON_MERGE, "false");
++    properties.put("buildThreads", "4");
++    properties.put("forceMerge", "FALSE");
++    properties.put("concurrentMerge", "true");
++    properties.put("parallelBuildMaxDocs", "20000");
+ 
+     VectorIndexConfig config = new VectorIndexConfig(properties);
+     VectorIndexConfigValidator.validate(config);
+     assertFalse(config.isMmapGraphOnMerge());
+   }
+ 
++  @DataProvider
++  public Object[][] invalidHnswBuildProperties() {
++    return new Object[][]{
++        {"buildThreads", null, ".*buildThreads must be a valid integer.*"},
++        {"buildThreads", "four", ".*buildThreads must be a valid integer.*"},
++        {"buildThreads", "0", ".*buildThreads must be a positive integer.*"},
++        {"buildThreads", "2000", ".*buildThreads must be <= 32.*"},
++        {"parallelBuildMaxDocs", "-1", ".*parallelBuildMaxDocs must be a positive integer.*"},
++        {"forceMerge", "yes", ".*forceMerge must be true or false.*"},
++        {"concurrentMerge", "1", ".*concurrentMerge must be true or false.*"}
++    };
++  }
++
++  @Test(dataProvider = "invalidHnswBuildProperties")
++  public void testRejectsInvalidHnswBuildProperty(String key, String value, String messageRegex) {
++    Map<String, String> properties = new HashMap<>();
++    properties.put("vectorIndexType", "HNSW");
++    properties.put("vectorDimension", "128");
++    properties.put("vectorDistanceFunction", "COSINE");
++    properties.put(key, value);
++    try {
++      VectorIndexConfigValidator.validate(new VectorIndexConfig(properties));
++      fail("Expected " + key + "=" + value + " to be rejected");
++    } catch (IllegalArgumentException e) {
++      assertTrue(e.getMessage().matches(messageRegex), e.getMessage());
++    }
++  }
++
+   @Test
+   public void testValidHnswConfigMinimal() {
+     // Minimal config: only required fields
 ```
 
 #### Recent Merged Pull Requests:
@@ -2255,52 +2585,50 @@ Co-authored-by: Xiang Fu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column
+## X. Opt-in parallel HNSW graph build for small segments
 
 **RULE**:
-When implementing operations in `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/creator/impl/vector/HnswVectorIndexCreator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fa59ea0`: Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59740fd2`: Opt-in parallel HNSW graph build for small segments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/creator/impl/vector/HnswVectorIndexCreator.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.pinot.spi.data.FieldSpec;
-import org.apache.pinot.spi.data.FieldSpec.DataType;
-import org.apache.pinot.spi.utils.BooleanUtils;
-    Set<String> booleanKeys = booleanKeys(openStructDataSource);
-        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document, booleanKeys));
-  ///
-  /// The top-level keys use the segment's declared types. Nested objects retain their original JSON types.
-  private static Map<String, Object> renderDocument(Map<String, Object> document, Set<String> booleanKeys) {
-      String key = entry.getKey();
-      if (!isPathIntoPresentObject(key, document)) {
-        rendered.put(key, renderValue(entry.getValue(), booleanKeys.contains(key)));
-  /// Both dense children and the sparse JSON can contain stored integers for declared BOOLEAN keys. On older
-  /// segments a dense child can still report INT, which is also the type returned by a direct key projection.
-  private static Set<String> booleanKeys(OpenStructDataSource openStructDataSource) {
-    Set<String> booleanKeys = new HashSet<>();
-    for (Map.Entry<String, FieldSpec> entry : openStructDataSource.getFieldSpe
+import com.google.common.io.Closer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.apache.lucene.index.MergePolicy;
+import org.apache.lucene.index.NoMergePolicy;
+import org.apache.lucene.util.ThreadInterruptedException;
+  /// Default heap budget for vectors buffered for a parallel build, so the default doc limit shrinks as the dimension
+  /// grows (about 10k docs at 1536 dims) instead of holding a fixed number of vectors of any size.
+  private static final long DEFAULT_PARALLEL_BUILD_MAX_BYTES = 64L * 1024 * 1024;
+  private static final int DEFAULT_PARALLEL_BUILD_MAX_DOCS = 50_000;
+  private final int _buildThreads;
+  private final boolean _forceMerge;
+  private final boolean _concurrentMerge;
+  private final VectorIndexConfig _vectorIndexConfig;
+  /// Above this many vectors the buffered ones are indexed on the calling thread and buffering stops, so large
+  /// segments keep the single-writer path. Defaults to as many vectors as fit in 64 MB, at most 50
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document));
-  private static Map<String, Object> renderDocument(Map<String, Object> document) {
-      if (!isPathIntoPresentObject(entry.getKey(), document)) {
-        rendered.put(entry.getKey(), renderValue(entry.getValue()));
-      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE));
-  /// Only BYTES needs a hand: Jackson would base64 it, while every other way of reading this value out of Pinot
-  /// -- `col['key']` included -- gives hex.
-  private static Object renderValue(@Nullable Object value) {
+      indexWriter = new IndexWriter(indexDirectory, VectorIndexUtils.getIndexWriterConfig(vectorIndexConfig,
+          vectorIndexConfig.i
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fa59ea0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59740fd2` are properly handled with clean fallback behavior.

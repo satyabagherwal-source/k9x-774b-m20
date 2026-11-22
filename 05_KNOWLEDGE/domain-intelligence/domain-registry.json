@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T20:17:14.423Z",
-  "total_records": 2377,
+  "last_updated": "2026-11-22T20:27:50.833Z",
+  "total_records": 2380,
   "domains": {
     "A": {
       "total": 19,
@@ -1101,7 +1101,7 @@
       ]
     },
     "G": {
-      "total": 400,
+      "total": 403,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1502,7 +1502,10 @@
         "domain_intelligence-architecture-intelligence-baarai-artex-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-sxyazi-yazi-core-invariants",
         "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-core-invariants",
-        "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-twostraws-controlroom-core-invariants",
+        "domain_intelligence-architecture-intelligence-apache-pinot-core-invariants",
+        "domain_intelligence-architecture-intelligence-twostraws-controlroom-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8666,8 +8669,8 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-ista-das.md",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "content_hash": "305e7eb6ebcdc12eef731c68271fe8a1c20d205dd2923e13ce9f67bbf0bd2f68",
-      "created_at": "2026-11-18T13:46:52.369Z"
+      "content_hash": "1f80fec818201b85048898c956fbd569b69468c20e0e76debd32584d07a0b7cb",
+      "created_at": "2026-11-22T20:27:31.305Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants",
@@ -8735,8 +8738,8 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
-      "content_hash": "fc6db90fc9bbfa15498ab7b8b110a62bddc2151b712d8043418ff0cfe2d1e5bd",
-      "created_at": "2026-11-18T13:47:11.405Z"
+      "content_hash": "b5cde790620015b044a20ac42efdf029df82b6ae45fe7b7cfc50c0389e6c220e",
+      "created_at": "2026-11-22T20:27:48.964Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
@@ -35236,10 +35239,10 @@
       "record_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "K",
       "title": "Quality & Verification Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-aleo-labs-protocol-snarkos-quality-verification-intelligence-aleo-labs-protocol-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-provablehq-snarkos-quality-verification-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "f2bac51e1740d4dc048fc43e5d6e237a7f23b81246a7359c02bfae2a2964bbd0",
-      "created_at": "2026-11-22T18:21:29.381Z"
+      "content_hash": "3f96688d321d22d7b5d08204625c481d2acee5c045e623315442e0ee6a5ec462",
+      "created_at": "2026-11-22T20:27:43.664Z"
     },
     "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva": {
       "record_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
@@ -36590,8 +36593,8 @@
       "title": "Quality & Verification Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-provablehq-snarkos-learnings-quality-verification-intelligence-provablehq-snarko.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "c006e7885f1a42b71fdedafe43ec17f5ed1fc832e72938e6889414a17ec41e01",
-      "created_at": "2026-11-20T17:21:17.992Z"
+      "content_hash": "3aae7512cdd7f9c0e9179cb63e745efcd6267efc3bafa74673e22d6f3dfb3bc8",
+      "created_at": "2026-11-22T20:27:50.833Z"
     },
     "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-learnings-core-invariants",
@@ -39949,6 +39952,33 @@
       "repository": "siteline-swiftui-introspect-learnings",
       "content_hash": "cf7d7abdd3cc0907167e2606474c103b1fbc92d4fd8e4eb083e61d4780798e1d",
       "created_at": "2026-11-22T20:00:30.103Z"
+    },
+    "domain_intelligence-architecture-intelligence-twostraws-controlroom-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-twostraws-controlroom-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: twostraws/ControlRoom Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-twostraws-controlroom-architecture-intelligence-twostraws-controlroom-core-invar.md",
+      "repository": "twostraws/ControlRoom",
+      "content_hash": "a12076d7cb10be23932ae6482605ccd651484c4e734b616a7f82aaaec69aad3a",
+      "created_at": "2026-11-22T20:27:37.353Z"
+    },
+    "domain_intelligence-architecture-intelligence-apache-pinot-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-apache-pinot-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: apache/pinot Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-apache-pinot-architecture-intelligence-apache-pinot-core-invariants.md",
+      "repository": "apache/pinot",
+      "content_hash": "0f0192a2a8bec0d8a1e26a4e755ab671bebc4e68b42e9935d0438e5f787ddf09",
+      "created_at": "2026-11-22T20:27:45.495Z"
+    },
+    "domain_intelligence-architecture-intelligence-twostraws-controlroom-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-twostraws-controlroom-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: twostraws-controlroom-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-twostraws-controlroom-learnings-architecture-intelligence-twostraws-controlroom-.md",
+      "repository": "twostraws-controlroom-learnings",
+      "content_hash": "3211e438cde6f0bff53da60dae8f687d75b9bede9d0940ec8c160e8348f3fd7f",
+      "created_at": "2026-11-22T20:27:49.750Z"
     }
   }
 }

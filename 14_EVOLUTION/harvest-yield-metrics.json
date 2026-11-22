@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T20:17:09.472Z",
-  "total_cycles_completed": 11585,
-  "total_learnings_persisted": 11585,
-  "total_rules_promoted": 10805,
+  "last_updated": "2026-11-22T20:27:44.985Z",
+  "total_cycles_completed": 11589,
+  "total_learnings_persisted": 11589,
+  "total_rules_promoted": 10808,
   "history": [
-    {
-      "timestamp": "2026-11-22T02:09:09.114Z",
-      "repository": "ZSeven-W/openpencil",
-      "learningId": "learn-github-zseven-w-openpencil",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T02:09:16.608Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T02:18:00.280Z",
-      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T02:18:07.374Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T02:18:08.974Z",
       "repository": "PeerDB-io/peerdb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-22T20:17:09.472Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:27:31.030Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:27:36.856Z",
+      "repository": "twostraws/ControlRoom",
+      "learningId": "learn-github-twostraws-controlroom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:27:43.141Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:27:44.985Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

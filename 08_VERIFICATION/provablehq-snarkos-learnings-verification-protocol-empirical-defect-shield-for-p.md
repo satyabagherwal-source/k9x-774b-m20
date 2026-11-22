@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T02:29:38.175Z",
+  "timestamp": "2026-11-22T20:27:50.484Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T02:29:38.175Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T20:27:50.484Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `ff15a1de`  
+> **Source Version**: `ef68e680`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T02:29:29.380Z  
+> **Timestamp**: 2026-11-22T20:27:42.193Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:29:29.371Z  
+> **Harvest Timestamp**: 2026-11-22T20:27:42.185Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1277,7 +1277,7 @@ pub const CURRENT_PROPOSAL_CACHE_FILE: &str = "current-proposal-cache";
 pub const REQUIRED_CONSENSUS_UPGRADE_FILE: &str = "required-consensus-upgrade";
 
 /// The filename used to persist the hotswapped dev committee's starting round.
-#[cfg(feature = "test_network")]
+#[cfg(feature = "dev-network")]
 pub const DEV_COMMITTEE_STATE_FILE: &str = "dev-committee-state";
 
 /// The filename of the JWT secret for a given address.
@@ -1350,7 +1350,7 @@ impl NodeDataDir {
     }
 
     /// The location used to persist the hotswapped dev committee's starting round.
-    #[cfg(feature = "test_network")]
+    #[cfg(feature = "dev-network")]
     pub fn dev_committee_state_path(&self) -> PathBuf {
         self.path.join(DEV_COMMITTEE_STATE_FILE)
     }
@@ -1904,437 +1904,219 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ff15a1de` (2026-11-21)
-**Commit Message**: Merge pull request #4752 from aleo-labs-protocol/locktick-reexport
+### Incident Patch 1: `bea875ce` (2026-11-22)
+**Commit Message**: Merge pull request #4756 from aleo-labs-protocol/ci/share-node-test-build
 
-**File**: `Cargo.lock` (modified, +62/-62)
+**File**: `.github/workflows/ci.yml` (modified, +14/-10)
 ```diff
-@@ -5755,16 +5755,16 @@ name = "snarkos-utilities"
- version = "4.13.1"
- dependencies = [
-  "anyhow",
-- "locktick",
-  "parking_lot",
-+ "snarkvm",
-  "tokio",
-  "tracing",
- ]
+@@ -220,9 +220,11 @@ jobs:
+         run: cargo locktick-clippy -q -p snarkos-utilities --message-format=json | grep '"name":"locktick"' > /dev/null
+       - run: cargo locktick-clippy --workspace --all-targets --all-features -- -D warnings
  
- [[package]]
- name = "snarkvm"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "anyhow",
-  "rand 0.10.3",
-@@ -5783,7 +5783,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "ahash",
-  "anyhow",
-@@ -5810,7 +5810,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms-cuda"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "blst",
-  "cc",
-@@ -5823,7 +5823,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-account",
-  "snarkvm-circuit-algorithms",
-@@ -5837,7 +5837,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-account"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-network",
-  "snarkvm-circuit-types",
-@@ -5847,7 +5847,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-algorithms"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-types",
-  "snarkvm-console-algorithms",
-@@ -5857,7 +5857,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-collections"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-types",
-@@ -5867,7 +5867,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "anyhow",
-  "indexmap 2.14.2",
-@@ -5887,12 +5887,12 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment-witness"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- 
- [[package]]
- name = "snarkvm-circuit-network"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-collections",
-@@ -5903,7 +5903,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-program"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb
-```
-
-**File**: `Cargo.toml` (modified, +1/-4)
-```diff
-@@ -45,7 +45,7 @@ members = [
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "1757a9b84ac0da2e55da11fbb10f0f5cd63f0240" #staging
-+rev = "5dc3edd5a74b22df7e9880607becb648fd477ecb" #staging
- #version = "=4.12.0"
- default-features = false
- 
-@@ -99,9 +99,6 @@ version = "0.3"
- [workspace.dependencies.futures-util]
- version = "0.3"
- 
--[workspace.dependencies.locktick]
--version = "0.6"
--
- [workspace.dependencies.lru]
- version = "0.19.0"
+-  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+-  # features of a and b, and several crates enable features on their
+-  # dependencies that change what those dependencies do:
++  # Each line of `runs` is one cargo command. Lines with the same `-p` set and
++  # cargo flags share one build; nextest's `-E` and `--no-tests` are not cargo
++  # flags. `cargo test -p a -p b` unifies the features of a and b, and several
++  # crates enable features on their dependencies that change what those
++  # dependencies do:
+   # `snarkos-node-router/test-helpers`, `snarkos-node-network/test-helpers` and
+   # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
+   # other code paths. Crates share a line only where that unification enables
+@@ -327,11 +329,16 @@ jobs:
+       matrix:
+         include:
+           - name: services
++            runs: nextest run -p snarkos-node-consensus -p snarkos-cli
++          # Both lines name the same packages, so they share one build, and the
++          # filters split the run in two. A package named in `-p` but in neither
++          # filter is built and never tested. `--no-tests=fail` makes a filter
++          # that stops matching fail. Builds RocksDB, whose bindings need
++          # libclang, which hosted runners lack.
++          - name: node-rest-distribution
+             runs: |
+-              nextest run -p snarkos-node-consensus -p snarkos-cli
+-              nextest run -p snarkos-node-rest
+-          - name: node
+-            runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service
++              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node)|package(=snarkos-node-bft-storage-service) --no-tests=fail
++              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node-rest)|package(=snarkos-ledger-distribution) --no-tests=fail
+           # Both lines use `metrics`, which the `snarkos` binary enables by
+           # default. `helpers::telemetry` compiles only under it, and a line
+           # without it rebuilds the snarkvm and bft crates. nextest skips the
+@@ -349,9 +356,6 @@ jobs:
+             runs: |
+               nextest run -p snarkos-node-router
+               nextest run -p snarkos-node-sync
+-          # Builds RocksDB, whose bindings need libclang, which hosted runners lack.
+-          - name: ledger-distribution
+-            runs: nextest run -p snarkos-ledger-distribution
+     name: test (${{ matrix.name }})
+     steps: *test-steps
  
 ```
 
-**File**: `utilities/Cargo.toml` (modified, +2/-2)
+**File**: `CI.md` (modified, +10/-6)
 ```diff
-@@ -33,9 +33,9 @@ workspace = true
- [dependencies.parking_lot]
- workspace = true
+@@ -79,8 +79,8 @@ jobs run on every event.
+ | `test (light)` | hosted | all | 90 | `snarkos-account`, `-utilities`, `-node-tcp`, `-node-sync-locators`, `-node-network` |
+ | `test (cdn)` | hosted | all | 90 | `snarkos-node-cdn` |
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+-| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli`; then `-node-rest` |
+-| `test (node)` | `cpu` | all | 90 | `snarkos-node`, `-node-bft-storage-service` |
++| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli` |
++| `test (node-rest-distribution)` | `cpu` | all | 90 | `snarkos-node`, `-node-bft-storage-service`; then `-node-rest`, `snarkos-ledger-distribution`; one build |
+ | `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
+ | `test (router-sync)` | `cpu` | all | 90 | `snarkos-node-router`; then `-node-sync` |
+ | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
+@@ -110,8 +110,11 @@ such a pull request cannot merge until a workflow reports that check for it.
  
--[target.'cfg(locktick)'.dependencies.locktick]
-+[target.'cfg(locktick)'.dependencies.snarkvm]
- workspace = true
--features = [ "parking_lot", "tokio" ]
-+features = [ "utilities" ]
+ ## Test groups
  
- [dev-dependencies.tokio]
- workspace = true
-```
-
-**File**: `utilities/src/locks.rs` (modified, +10/-5)
-```diff
-@@ -19,6 +19,11 @@
- //! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
- //! defines the cargo aliases that set the cfg.
- //!
-+//! `locktick` comes from snarkVM's re-export, `snarkvm::utilities::locktick`, so these locks and
-+//! snarkVM's register with one copy of the crate, and [`spawn_lock_reporter`] logs both. Hazard: a
-+//! direct dependency on `locktick` can build a second copy, whose `lock_snapshots` misses
-+//! snarkVM's locks.
-+//!
- //! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
- //! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
- //! that dereferences to the plain guard. Code that passes a guard to an associated function of
-@@ -33,16 +38,16 @@
- #[cfg(not(locktick))]
- type Guard<G> = G;
- #[cfg(locktick)]
--type Guard<G> = ::locktick::LockGuard<G>;
-+type Guard<G> = ::snarkvm::utilities::locktick::LockGuard<G>;
+-Each line of a `test` entry is one cargo build. `cargo test -p a -p b` unifies
+-the features of `a` and `b`, and several crates enable features on their
++Each line of a `test` entry is one cargo command. Lines with the same `-p` set
++and cargo flags share one build, as the two lines of
++`test (node-rest-distribution)` do: nextest's `-E` filters split that build's
++tests between them. `cargo test -p a -p b` unifies the features of `a` and
++`b`, and several crates enable features on their
+ dependencies that change what those dependencies do, such as
+ `snarkos-node-router/test-helpers` and `snarkvm-ledger-block/test`. So crates
+ share a line only where that unification enables no such feature on any crate.
+@@ -123,8 +126,9 @@ this before moving a crate between lines, for example by comparing
  
- /// Synchronous locks from `parking_lot`.
- pub mod parking_lot {
-     use super::Guard;
+ `test (bft)` runs with `metrics`, which the `snarkos` binary enables by
+ default, so the tests in `helpers::telemetry` compile. The `each-feature` job
+-checks the crate without `metrics`. The `simple_node` line passes
+-`--no-tests=fail`, because the step otherwise lets a command match no tests.
++checks the crate without `metrics`. The `simple_node` line and the two
++`node-rest-distribution` lines pass `--no-tests=fail`, because the step
++otherwise lets a command match no tests.
  
--    #[cfg(locktick)]
--    use ::locktick::parking_lot as backend;
-     #[cfg(not(locktick))]
-     use ::parking_lot as backend;
-+    #[cfg(locktick)]
-+    use ::snarkvm::utilities::locktick::parking_lot as backend;
- 
-     pub type Mutex<T> = backend::Mutex<T>;
-     pub type RwLock<T> = backend::RwLock<T>;
-@@ -56,7 +61,7 @@ pub mod tokio {
-     use super::Guard;
- 
-     #[cfg(locktick)]
--    use ::locktick::tokio as backend;
-+    use ::snarkvm::utilities::locktick::tokio as backend;
-     #[cfg(not(locktick))]
-     use ::tokio::sync as backend;
- 
-@@ -75,7 +80,7 @@ pub fn spawn_lock_reporter() {
-         loop {
-             tracing::info!("[locktick] checking for active lock guards");
-             let ts = std::time::Instant::now();
--            let mut infos = ::locktick::lock_snapshots();
-+            let mut infos = ::snarkvm::utilities::locktick::lock_snapshots();
-             infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
- 
-             for lock in infos {
+ [`.config/nextest.toml`](.config/nextest.toml) sets two test threads, which
+ the hosted entries use. The fleet entries run 16 tests at a time through
 ```
 
 ---
 
-### Incident Patch 2: `5c417e57` (2026-11-21)
-**Commit Message**: Take locktick from snarkVM's re-export
+### Incident Patch 2: `42927119` (2026-11-22)
+**Commit Message**: Test node, rest and ledger-distribution from one build
 
-Under cfg(locktick), snarkos-utilities reaches locktick through
-snarkvm::utilities::locktick instead of its own locktick dependency, and
-the root workspace no longer declares locktick. With a separate
-requirement in each repo, a version drift would build two locktick
-crates with separate lock registries, and spawn_lock_reporter would
-silently stop listing snarkVM's locks. Now the snarkVM rev alone picks
-the one locktick in the build.
+The new test (node-rest-distribution) leg replaces test (node), the
+second line of test (services) and test (ledger-distribution). Its two
+lines name the same four packages, so cargo builds once and the second
+line's build is fresh. nextest filters split the run: snarkos-node and
+snarkos-node-bft-storage-service in the first line, snarkos-node-rest
+and snarkos-ledger-distribution in the second.
 
-The dependency is the existing snarkvm workspace entry with only its
-utilities feature, so the bump-snarkvm job's single rev keeps covering
-it. It exists only under cfg(locktick), so the default build graph of
-snarkos-utilities is unchanged.
+The merged build enables the same features on every snarkos and snarkvm
+crate as the separate commands did, checked with --unit-graph. Only
+third-party crates such as tokio, regex and time gain features.
 
-This bumps snarkVM to staging 5dc3edd5a, which includes the re-export
-(snarkVM #3900).
+This drops one fleet job and two of the leg's three snarkvm builds.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmPXcqUXUXgnbBMbC5a
 
-**File**: `Cargo.lock` (modified, +62/-62)
+**File**: `.github/workflows/ci.yml` (modified, +14/-10)
 ```diff
-@@ -5755,16 +5755,16 @@ name = "snarkos-utilities"
- version = "4.13.1"
- dependencies = [
-  "anyhow",
-- "locktick",
-  "parking_lot",
-+ "snarkvm",
-  "tokio",
-  "tracing",
- ]
+@@ -220,9 +220,11 @@ jobs:
+         run: cargo locktick-clippy -q -p snarkos-utilities --message-format=json | grep '"name":"locktick"' > /dev/null
+       - run: cargo locktick-clippy --workspace --all-targets --all-features -- -D warnings
  
- [[package]]
- name = "snarkvm"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "anyhow",
-  "rand 0.10.3",
-@@ -5783,7 +5783,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "ahash",
-  "anyhow",
-@@ -5810,7 +5810,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms-cuda"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "blst",
-  "cc",
-@@ -5823,7 +5823,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-account",
-  "snarkvm-circuit-algorithms",
-@@ -5837,7 +5837,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-account"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-network",
-  "snarkvm-circuit-types",
-@@ -5847,7 +5847,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-algorithms"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-types",
-  "snarkvm-console-algorithms",
-@@ -5857,7 +5857,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-collections"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-types",
-@@ -5867,7 +5867,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "anyhow",
-  "indexmap 2.14.2",
-@@ -5887,12 +5887,12 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment-witness"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- 
- [[package]]
- name = "snarkvm-circuit-network"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-collections",
-@@ -5903,7 +5903,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-program"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb
-```
-
-**File**: `Cargo.toml` (modified, +1/-4)
-```diff
-@@ -45,7 +45,7 @@ members = [
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "1757a9b84ac0da2e55da11fbb10f0f5cd63f0240" #staging
-+rev = "5dc3edd5a74b22df7e9880607becb648fd477ecb" #staging
- #version = "=4.12.0"
- default-features = false
- 
-@@ -99,9 +99,6 @@ version = "0.3"
- [workspace.dependencies.futures-util]
- version = "0.3"
- 
--[workspace.dependencies.locktick]
--version = "0.6"
--
- [workspace.dependencies.lru]
- version = "0.19.0"
+-  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+-  # features of a and b, and several crates enable features on their
+-  # dependencies that change what those dependencies do:
++  # Each line of `runs` is one cargo command. Lines with the same `-p` set and
++  # cargo flags share one build; nextest's `-E` and `--no-tests` are not cargo
++  # flags. `cargo test -p a -p b` unifies the features of a and b, and several
++  # crates enable features on their dependencies that change what those
++  # dependencies do:
+   # `snarkos-node-router/test-helpers`, `snarkos-node-network/test-helpers` and
+   # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
+   # other code paths. Crates share a line only where that unification enables
+@@ -327,11 +329,16 @@ jobs:
+       matrix:
+         include:
+           - name: services
++            runs: nextest run -p snarkos-node-consensus -p snarkos-cli
++          # Both lines name the same packages, so they share one build, and the
++          # filters split the run in two. A package named in `-p` but in neither
++          # filter is built and never tested. `--no-tests=fail` makes a filter
++          # that stops matching fail. Builds RocksDB, whose bindings need
++          # libclang, which hosted runners lack.
++          - name: node-rest-distribution
+             runs: |
+-              nextest run -p snarkos-node-consensus -p snarkos-cli
+-              nextest run -p snarkos-node-rest
+-          - name: node
+-            runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service
++              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node)|package(=snarkos-node-bft-storage-service) --no-tests=fail
++              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node-rest)|package(=snarkos-ledger-distribution) --no-tests=fail
+           # Both lines use `metrics`, which the `snarkos` binary enables by
+           # default. `helpers::telemetry` compiles only under it, and a line
+           # without it rebuilds the snarkvm and bft crates. nextest skips the
+@@ -349,9 +356,6 @@ jobs:
+             runs: |
+               nextest run -p snarkos-node-router
+               nextest run -p snarkos-node-sync
+-          # Builds RocksDB, whose bindings need libclang, which hosted runners lack.
+-          - name: ledger-distribution
+-            runs: nextest run -p snarkos-ledger-distribution
+     name: test (${{ matrix.name }})
+     steps: *test-steps
  
 ```
 
-**File**: `utilities/Cargo.toml` (modified, +2/-2)
+**File**: `CI.md` (modified, +10/-6)
 ```diff
-@@ -33,9 +33,9 @@ workspace = true
- [dependencies.parking_lot]
- workspace = true
+@@ -79,8 +79,8 @@ jobs run on every event.
+ | `test (light)` | hosted | all | 90 | `snarkos-account`, `-utilities`, `-node-tcp`, `-node-sync-locators`, `-node-network` |
+ | `test (cdn)` | hosted | all | 90 | `snarkos-node-cdn` |
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+-| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli`; then `-node-rest` |
+-| `test (node)` | `cpu` | all | 90 | `snarkos-node`, `-node-bft-storage-service` |
++| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli` |
++| `test (node-rest-distribution)` | `cpu` | all | 90 | `snarkos-node`, `-node-bft-storage-service`; then `-node-rest`, `snarkos-ledger-distribution`; one build |
+ | `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
+ | `test (router-sync)` | `cpu` | all | 90 | `snarkos-node-router`; then `-node-sync` |
+ | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
+@@ -110,8 +110,11 @@ such a pull request cannot merge until a workflow reports that check for it.
  
--[target.'cfg(locktick)'.dependencies.locktick]
-+[target.'cfg(locktick)'.dependencies.snarkvm]
- workspace = true
--features = [ "parking_lot", "tokio" ]
-+features = [ "utilities" ]
+ ## Test groups
  
- [dev-dependencies.tokio]
- workspace = true
-```
-
-**File**: `utilities/src/locks.rs` (modified, +10/-5)
-```diff
-@@ -19,6 +19,11 @@
- //! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
- //! defines the cargo aliases that set the cfg.
- //!
-+//! `locktick` comes from snarkVM's re-export, `snarkvm::utilities::locktick`, so these locks and
-+//! snarkVM's register with one copy of the crate, and [`spawn_lock_reporter`] logs both. Hazard: a
-+//! direct dependency on `locktick` can build a second copy, whose `lock_snapshots` misses
-+//! snarkVM's locks.
-+//!
- //! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
- //! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
- //! that dereferences to the plain guard. Code that passes a guard to an associated function of
-@@ -33,16 +38,16 @@
- #[cfg(not(locktick))]
- type Guard<G> = G;
- #[cfg(locktick)]
--type Guard<G> = ::locktick::LockGuard<G>;
-+type Guard<G> = ::snarkvm::utilities::locktick::LockGuard<G>;
+-Each line of a `test` entry is one cargo build. `cargo test -p a -p b` unifies
+-the features of `a` and `b`, and several crates enable features on their
++Each line of a `test` entry is one cargo command. Lines with the same `-p` set
++and cargo flags share one build, as the two lines of
++`test (node-rest-distribution)` do: nextest's `-E` filters split that build's
++tests between them. `cargo test -p a -p b` unifies the features of `a` and
++`b`, and several crates enable features on their
+ dependencies that change what those dependencies do, such as
+ `snarkos-node-router/test-helpers` and `snarkvm-ledger-block/test`. So crates
+ share a line only where that unification enables no such feature on any crate.
+@@ -123,8 +126,9 @@ this before moving a crate between lines, for example by comparing
  
- /// Synchronous locks from `parking_lot`.
- pub mod parking_lot {
-     use super::Guard;
+ `test (bft)` runs with `metrics`, which the `snarkos` binary enables by
+ default, so the tests in `helpers::telemetry` compile. The `each-feature` job
+-checks the crate without `metrics`. The `simple_node` line passes
+-`--no-tests=fail`, because the step otherwise lets a command match no tests.
++checks the crate without `metrics`. The `simple_node` line and the two
++`node-rest-distribution` lines pass `--no-tests=fail`, because the step
++otherwise lets a command match no tests.
  
--    #[cfg(locktick)]
--    use ::locktick::parking_lot as backend;
-     #[cfg(not(locktick))]
-     use ::parking_lot as backend;
-+    #[cfg(locktick)]
-+    use ::snarkvm::utilities::locktick::parking_lot as backend;
- 
-     pub type Mutex<T> = backend::Mutex<T>;
-     pub type RwLock<T> = backend::RwLock<T>;
-@@ -56,7 +61,7 @@ pub mod tokio {
-     use super::Guard;
- 
-     #[cfg(locktick)]
--    use ::locktick::tokio as backend;
-+    use ::snarkvm::utilities::locktick::tokio as backend;
-     #[cfg(not(locktick))]
-     use ::tokio::sync as backend;
- 
-@@ -75,7 +80,7 @@ pub fn spawn_lock_reporter() {
-         loop {
-             tracing::info!("[locktick] checking for active lock guards");
-             let ts = std::time::Instant::now();
--            let mut infos = ::locktick::lock_snapshots();
-+            let mut infos = ::snarkvm::utilities::locktick::lock_snapshots();
-             infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
- 
-             for lock in infos {
+ [`.config/nextest.toml`](.config/nextest.toml) sets two test threads, which
+ the hosted entries use. The fleet entries run 16 tests at a time through
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4758** (2026-11-22): Bump snarkVM to a33f170b2 and rename test_network to dev-network (@cbeck88)
+- **PR #4757** (2026-11-22): Take the metrics crate from snarkVM's re-export (@cbeck88)
+- **PR #4756** (2026-11-22): CI: test node, rest and ledger-distribution from one build (@cbeck88)
 - **PR #4754** (2026-11-21): Check staging on a 6-hourly schedule instead of on every push (@cbeck88)
 - **PR #4753** (2026-11-21): Bump snarkVM to aleo-labs-protocol/snarkVM@1757a9b84 (@cbeck88)
 - **PR #4752** (2026-11-21): Take locktick from snarkVM's re-export (@cbeck88)
-- **PR #4751** (2026-11-21): CI: remove the start-runner job and fork-pr-runners.yml (@cbeck88)
-- **PR #4750** (2026-11-21): Keep block sync quiet while the tip block is in flight (@eranrund)
-- **PR #4749** (closed): Deserialize snarkVM Data on the blocking pool in snarkOS (@cbeck88)
 
 ---
 
@@ -2354,47 +2136,53 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ff15a1de`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bea875ce`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "snarkvm",
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880607becb648fd477ecb"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5dc3edd5a74b22df7e9880607becb648fd477ecb#5dc3edd5a74b22df7e9880
+  # Each line of `runs` is one cargo command. Lines with the same `-p` set and
+  # cargo flags share one build; nextest's `-E` and `--no-tests` are not cargo
+  # flags. `cargo test -p a -p b` unifies the features of a and b, and several
+  # crates enable features on their dependencies that change what those
+  # dependencies do:
+            runs: nextest run -p snarkos-node-consensus -p snarkos-cli
+          # Both lines name the same packages, so they share one build, and the
+          # filters split the run in two. A package named in `-p` but in neither
+          # filter is built and never tested. `--no-tests=fail` makes a filter
+          # that stops matching fail. Builds RocksDB, whose bindings need
+          # libclang, which hosted runners lack.
+          - name: node-rest-distribution
+              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node)|package(=snarkos-node-bft-storage-service) --no-tests=fail
+              nextest run -p snarkos-node -p snarkos-node-bft-storage-service -p snarkos-node-rest -p snarkos-ledger-distribution -E package(=snarkos-node-rest)|package(=snarkos-le
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "locktick",
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da11fbb10f0f5cd63f0240"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1757a9b84ac0da2e55da11fbb10f0f5cd63f0240#1757a9b84ac0da2e55da1
+  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+  # features of a and b, and several crates enable features on their
+  # dependencies that change what those dependencies do:
+              nextest run -p snarkos-node-consensus -p snarkos-cli
+              nextest run -p snarkos-node-rest
+          - name: node
+            runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service
+          # Builds RocksDB, whose bindings need libclang, which hosted runners lack.
+          - name: ledger-distribution
+            runs: nextest run -p snarkos-ledger-distribution
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ff15a1de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bea875ce` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
