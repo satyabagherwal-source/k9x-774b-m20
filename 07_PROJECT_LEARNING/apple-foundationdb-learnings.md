@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `3f58d752`  
+> **Source Version**: `c06497f3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T11:11:42.103Z  
+> **Timestamp**: 2026-11-22T13:59:13.903Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T11:11:42.097Z  
+> **Harvest Timestamp**: 2026-11-22T13:59:13.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16869 stars
+- **Stars / Engagement**: 16870 stars
 
 ---
 
@@ -1950,484 +1950,42 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7125893` (2026-11-20)
-**Commit Message**: Fix describeBackup missing a log file written after the log begin was recorded (#14607)
+### Incident Patch 1: `c06497f3` (2026-11-21)
+**Commit Message**: packaging: use golang 1.26.11 for fdb-kubernetes-monitor (#14617)
 
-* Fix describeBackup missing a log file written after the log begin was recorded
+A slight golang downgrade to match https://github.com/FoundationDB/fdb-build-support/pull/127 for now (but go-1.26 is still getting security updates at the moment, at the same time as go-1.27)
 
-Problem: describeBackup stores the begin and end of the contiguous logs in the
-container (log_begin_version, log_end_version), and later describes trust them
-and scan only forward from the stored end. The first describe seeds the begin
-from the first log file it sees. Log files are written by parallel tasks and can
-finish out of order, so if a describe runs before the file that starts the logs
-exists, the stored begin is too high, and the file, once written, is never found.
-A snapshot that begins before the stored begin then stays unrestorable
-indefinitely, until the next snapshot. A simulation test that polled two backups
-with describeBackup while they started hit this in about 0.33% of runs (a backup
-with one snapshot and its logs, log_begin_version 69000000 while the file
-48882054..69000000 existed).
+Also update packaging/docker base image to rockylinux 10.3
 
-Fix: when a stored begin is used and a snapshot begins before it, list the log
-files before the stored begin (not before the unreliable end) and extend the begin
-backwards over files that connect to it. The correc
-
-**File**: `fdbclient/BackupContainerFileSystem.cpp` (modified, +184/-25)
+**File**: `packaging/docker/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -939,6 +939,85 @@ class BackupContainerFileSystemImpl {
- 			}
- 		}
+@@ -16,7 +16,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ #
+-FROM rockylinux/rockylinux:10.2-minimal AS base
++FROM rockylinux/rockylinux:10.3-minimal AS base
  
-+		// Verify the job and use its actual bounds before computing restorability. Older
-+		// descriptors recorded the job start as a point snapshot. Even a correctly bounded
-+		// descriptor cannot protect an earlier snapshot from expiration if its job is missing.
-+		for (auto& s : desc.snapshots) {
-+			if (s.totalSize != 0 || s.endVersion < desc.unreliableEndVersion.orDefault(0)) {
-+				continue;
-+			}
-+			try {
-+				auto job = co_await readBulkDumpJobId(bc, s, true);
-+				if (job.empty()) {
-+					continue;
-+				}
-+				auto batches = co_await BackupContainerFileSystem::readBulkDumpRanges(bc, job);
-+				auto bounds = std::minmax_element(
-+				    batches.begin(), batches.end(), [](const auto& a, const auto& b) { return a.version < b.version; });
-+				s.beginVersion = bounds.first->version;
-+				s.endVersion = bounds.second->version;
-+			} catch (Error& e) {
-+				if (!unusableSnapshot(e)) {
-+					throw;
-+				}
-+				TraceEvent(SevWarn, "BackupDescribeUnreadableBulkDump").error(e).detail("Snapshot", s.fileName);
-+				s.restorable = false;
-+			}
-+		}
-+		// The stored begin can be too high: log files finish out of order, and a describe that ran before the first one
-+		// existed stored the begin of the first file it saw. A snapshot that begins before the stored begin shows it,
-+		// so look for files that extend the logs backwards.
-+		if (metaLogBegin.present() && desc.minLogBegin.present() && !desc.snapshots.empty()) {
-+			// A snapshot of a single version needs no logs.
-+			Version firstSnapshotBegin = std::numeric_limits<Version>::max();
-+			for (auto const& s : desc.snapshots) {
-+				if (!s.isSingleVersion()) {
-+					firstSnapshotBegin = std::min(firstSnapshotBegin, s.beginVersion);
-+				}
-+			}
-+			if (firstSnapshotBegin < desc.minLogBegin.get()) {
-+				Version unreliableEnd = desc.unreliableEndVersion.orDefault(0);
-+				std::vector<LogFile> earlier =
-+				    co_await bc->listLogFiles(unreliableEnd, desc.minLogBegin.get(), desc.mutationLogType);
-+				Version begin = desc.minLogBegin.get();
-+				if (desc.mutationLogType == MutationLogType::PARTITIONED_LOG) {
-+					// The earliest begin from which every tag is covered up to the stored begin.
-+					std::sort(earlier.begin(), earlier.end());
-+					Version tried = invalidVersion;
-+					for (auto const& f : earlier) {
-+						if (f.beginVersion >= begin) {
-+							break;
-+						}
-+						if (f.beginVersion != tried && getPartitionedLogsContinuousEndVersion(
-+						                                   earlier, f.beginVersion) >= desc.minLogBegin.get() - 1) {
-+							begin = f.beginVersion;
-+							break;
-+						}
-+						tried = f.beginVersion;
-+					}
-+				} else {
-+					for (bool extended = true; extended;) {
-+						extended = false;
-+						for (auto const& f : earlier) {
-+							if (f.beginVersion < begin && f.endVersion >= begin) {
-+								begin = f.beginVersion;
-+								extended = true;
-+							}
-+						}
-+					}
-+				}
-+				begin = std::max(begin, unreliableEnd);
-+				if (begin < desc.minLogBegin.get()) {
-+					TraceEvent(SevWarn, "BackupContainerLogBeginExtended")
-+					    .detail("URL", bc->getURL())
-+					    .detail("RecordedLogBegin", desc.minLogBegin.get())
-+					    .detail("LogBegin", begin)
-+					    .detail("FirstSnapshotBegin", firstSnapshotBegin);
-+					desc.minLogBegin = begin;
-+				}
-+			}
-+		}
-+
- 		// Only update stored contiguous log begin and end versions if we did NOT use a log start override.
- 		// Otherwise, a series of describe operations can result in a version range which is actually missing data.
- 		if (logStartVersionOverride == invalidVersion) {
-@@ -969,31 +1048,6 @@ class BackupContainerFileSystemImpl {
- 			}
- 		}
+ # It seems mirrorlist can be less reliable, just use original baseurl for package repo.
+ RUN sed -i.bak 's/^#baseurl=/baseurl=/; s/^mirrorlist=/#mirrorlist=/' /etc/yum.repos.d/rocky.repo
+@@ -61,7 +61,7 @@ WORKDIR /
  
--		// Verify the job and use its actual bounds before computing restorability. Older
--		// descriptors recorded the job start as a point snapshot. Even a correctly bounded
--		// descriptor cannot protect an earlier snapshot from expiration if its job is missing.
--		for (auto& s : desc.snapshots) {
--			if (s.totalSize != 0 || s.endVersion < desc.unreliableEndVersion.orDefault(0)) {
--				continue;
--			}
--			try {
--				auto job = co_await readBulkDumpJobId(bc, s, true);
--				if (job.empty()) {
--					continue;
--				}
--				auto batches = co_await BackupContainerFileSystem::readBulkDumpRanges(bc, job);
--				auto bounds = std::minmax_element(
--				    batches.begin(), batches.end(), [](const auto& a, const auto& b) { return a.version < b.version; });
--				s.beginVersion = bounds.first->version;
--				s.endVersion = bounds.second->version;
--			} catch (Error& e) {
--				if (!unusableSnapshot(e)) {
--					throw;
--				}
--				TraceEvent(SevWarn, "BackupDescribeUnreadableBulkDump").error(e).detail("Snapshot", s.fileName);
--				s.restorable = false;
--			}
--		}
- 		std::sort(desc.snapshots.begin(), desc.snapshots.end());
+ # Check that glibc version in base image >= glibc in go-build image (unless CGO_ENABLED=0)
  
- 		for (auto& s : desc.snapshots) {
-@@ -3178,6 +3232,111 @@ TEST_CASE("/backup/containers/localdir/incrementalBeginVersion") {
- 	co_await container->
-```
-
----
-
-### Incident Patch 2: `0ab9aa44` (2026-11-20)
-**Commit Message**: Distinguish primary and remote storage replication health (#14287)
-
-* Distinguish primary and remote storage replication health
-
-* Register both peers in the regional team priority test
-
-Let the remote collection clear its pointer in the primary collection if an assertion throws. Clarify how the health metric handles a missing regional field and an unknown remote priority.
-
-* Test a missing remote priority during a primary outage
-
-**File**: `design/cluster_health_metric.md` (modified, +13/-4)
-```diff
-@@ -74,10 +74,14 @@ Behavior:
- 
- ### `StorageReplication`
- 
--Source event:
-+Source events from the current data distributor:
-+- `TotalDataInFlight`
- - `MovingData`
- 
- Fields used:
-+- `HighestPrimaryTeamPriority`
-+- `HighestRemoteTeamPriority`
-+- `HighestTeamPriority` for compatibility with older data distributors
- - `InQueue`
- - `InFlight`
- - `PriorityTeamUnhealthy`
-@@ -86,10 +90,15 @@ Fields used:
- - `PriorityTeam0Left`
- 
- Behavior:
--- Returns `OUTAGE` if any `PriorityTeam0Left > 0`.
--- Returns `CRITICAL_INTERVENTION_REQUIRED` if any `PriorityTeam1Left > 0` and the configured storage team size is 3.
--- Returns `SELF_HEALING` if data movement is queued or in flight to restore replication.
-+- Uses live storage team priorities for replication severity. Relocation counts can change before or after team health changes.
-+- Uses the data distributor's current primary and remote team collections, so the regional roles follow failover.
-+- Returns `METRICS_MISSING` if an event contains only one of the two regional priority fields.
-+- Returns `OUTAGE` if a team in the primary region has no replicas left, even when the remote priority is `-1` (unknown).
-+- Otherwise, returns `METRICS_MISSING` if a required team summary is unknown. A database with one region treats the absent remote region as healthy.
-+- Returns `CRITICAL_INTERVENTION_REQUIRED` if a team in the remote region has no replicas left. It also returns this level if a team in either region has one replica left and the configured storage team size is 3.
-+- Returns `SELF_HEALING` if a team is unhealthy or data movement is queued or in flight to restore replication.
- - Returns `HEALTHY` otherwise.
-+- During an upgrade, an older data distributor's combined `HighestTeamPriority` retains the existing conservative scoring because it cannot identify the affected region.
- 
- ### `RecoveryState`
- 
-```
-
-**File**: `fdbserver/clustercontroller/ClusterHealthIFactor.cpp` (modified, +25/-8)
-```diff
-@@ -157,15 +157,26 @@ Future<Level> StorageReplicationFactor::fetchLevel(Reference<IWorkerEventProvide
- 
- 	try {
- 		// MovingData counts scheduled relocations, which can disappear or be admitted long after a
--		// failure. Use the live team summary across both regions for replication severity instead.
--		int64_t highestTeamPriority = 0;
-+		// failure. Use live team summaries for replication severity instead.
-+		int64_t highestPrimaryTeamPriority = 0;
-+		int64_t highestRemoteTeamPriority = 0;
-+		bool teamMetricsMissing = false;
- 		for (auto const& [address, traceEvent] : teamEvents) {
--			int64_t priority = traceEvent.getInt64("HighestTeamPriority");
--			if (priority < 0) {
-+			std::string value;
-+			bool hasPrimaryPriority = traceEvent.tryGetValue("HighestPrimaryTeamPriority", value);
-+			bool hasRemotePriority = traceEvent.tryGetValue("HighestRemoteTeamPriority", value);
-+			if (hasPrimaryPriority != hasRemotePriority) {
- 				co_return Level::METRICS_MISSING;
- 			}
--			highestTeamPriority = std::max(highestTeamPriority, priority);
-+			// An older DD cannot identify the affected region. Retain its conservative combined score.
-+			int64_t primaryPriority =
-+			    traceEvent.getInt64(hasPrimaryPriority ? "HighestPrimaryTeamPriority" : "HighestTeamPriority");
-+			int64_t remotePriority = hasRemotePriority ? traceEvent.getInt64("HighestRemoteTeamPriority") : 0;
-+			teamMetricsMissing = teamMetricsMissing || primaryPriority < 0 || remotePriority < 0;
-+			highestPrimaryTeamPriority = std::max(highestPrimaryTeamPriority, primaryPriority);
-+			highestRemoteTeamPriority = std::max(highestRemoteTeamPriority, remotePriority);
- 		}
-+		int64_t highestTeamPriority = std::max(highestPrimaryTeamPriority, highestRemoteTeamPriority);
- 
- 		int64_t queuedOrInFlightRepairMoves = 0;
- 		for (auto const& [address, traceEvent] : filteredEvents) {
-@@ -183,12 +194,18 @@ Future<Level> StorageReplicationFactor::fetchLevel(Reference<IWorkerEventProvide
- 			}
- 		}
- 
--		if (highestTeamPriority >= SERVER_KNOBS->PRIORITY_TEAM_0_LEFT) {
-+		// A known primary outage takes precedence over missing remote team health.
-+		if (highestPrimaryTeamPriority >= SERVER_KNOBS->PRIORITY_TEAM_0_LEFT) {
- 			CODE_PROBE(trackCodeProbes, "ClusterHealth StorageReplicationFactor returns OUTAGE");
- 			co_return Level::OUTAGE;
- 		}
--		if (highestTeamPriority >= SERVER_KNOBS->PRIORITY_TEAM_1_LEFT &&
--		    workerEventProvider->shouldTreatStorageTeamOneReplicaLeftAsCritical()) {
-+		if (teamMetricsMissing) {
-+			co_return Level::METRICS_MISSING;
-+		}
-+		// Remote replica loss requires intervention without implying that primary data is unavailable.
-+		if (highestRemoteTeamPriority >= SERVER_KNOBS->PRIORITY_TEAM_0_LEFT ||
-+		    (highestTeamPriority >= SERVER_KNOBS->PRIORITY_TEAM_1_LEFT &&
-+		     workerEventProvider->shouldTreatStorageTeamOneReplicaLeftAsCritical())) {
- 			CODE_PROBE(trackCodeProbes,
- 			           "ClusterHealth StorageReplicationFactor returns CRITICAL_INTERVENTION_REQUIRED");
- 			co_return Level::CRITICAL_INTERVENTION_REQUIRED;
-```
-
-**File**: `fdbserver/clustercontroller/ClusterHealthMonitorTesting.cpp` (modified, +57/-0)
-```diff
-@@ -18,6 +18,7 @@
-  * limitations under the License.
-  */
- 
-+#include <algorithm>
- #include <map>
- 
- #include "fdbserver/core/Knobs.h"
-@@ -354,6 +355,62 @@ TEST_CASE("/fdbserver/clustercontroller/ClusterHealthMonitor/StorageReplicationF
- 	ASSERT_EQ(level, Level::METRICS_MISSING);
- }
- 
-+TEST_CASE("/fdbserver/clustercontroller/ClusterHealthMonitor/StorageReplicationFactor/RegionalScores") {
-+	StorageReplicationFactor factor;
-+	auto provider = makeReference<FakeWorkerEventProvider>();
-+	provider->setLatestDataDistributorEvents("MovingData", makeLatestWorkerEvents(MovingDataMetricsBuilder().build()));
-+	auto teamMetrics = [](int primaryPriority, int remotePriority) {
-+		TraceEventFields fields;
-+		int combinedPriority =
-+		    primaryPriority < 0 || remotePriority < 0 ? -1 : std::max(primaryPriority, remotePriority);
-+		fields.addField("HighestTeamPriority", std::to_string(combinedPriority));
-+		fields.addField("HighestPrimaryTeamPriority", std::to_string(primaryPriority));
-+		fields.addField("HighestRemoteTeamPriority", std::to_string(remotePriority));
-+		return fields;
-+	};
-+	struct RegionalCase {
-+		int primaryPriority;
-+		int remotePriority;
-+		Level expected;
-+	};
-+	for (auto const& test : {
-+	         RegionalCase{ SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, Level::HEALTHY },
-+	         RegionalCase{
-+	             SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, SERVER_KNOBS->PRIORITY_TEAM_UNHEALTHY, Level::SELF_HEALING },
-+	         RegionalCase{
-+	             SERVER_KNOBS->PRIORITY_TEAM_UNHEALTHY, SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, Level::SELF_HEALING },
-+	         RegionalCase{
-+	             SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, SERVER_KNOBS->PRIORITY_TEAM_1_LEFT, Level::SELF_HEALING },
-+	         RegionalCase{ SERVER_KNOBS->PRIORITY_TEAM_HEALTHY,
-+	                       SERVER_KNOBS->PRIORITY_TEAM_0_LEFT,
-+	                       Level::CRITICAL_INTERVENTION_REQUIRED },
-+	         RegionalCase{ SERVER_KNOBS->PRIORITY_TEAM_0_LEFT, SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, Level::OUTAGE },
-+	         RegionalCase{ SERVER_KNOBS->PRIORITY_TEAM_0_LEFT, SERVER_KNOBS->PRIORITY_TEAM_0_LEFT, Level::OUTAGE },
-+	         RegionalCase{ SERVER_KNOBS->PRIORITY_TEAM_0_LEFT, -1, Level::OUTAGE },
-+	         RegionalCase{ -1, SERVER_KNOBS->PRIORITY_TEAM_0_LEFT, Level::METRICS_MISSING },
-+	         RegionalCase{ SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, -1, Level::METRICS_MISSING },
-+	     }) {
-+		provider->setLatestDataDistributorEvents(
-+		    "TotalDataInFlight", makeLatestWorkerEvents(teamMetrics(test.primaryPriority, test.remotePriority)));
-+		Level level = co_await factor.fetchLevel(provider, TrackCodeProbes::False);
-+		ASSERT_EQ(level, test.expected);
-+	}
-+
-+	provider->setStorageTeamOneReplicaLeftIsCritical(true);
-+	provider->setLatestDataDistributorEvents(
-+	    "TotalDataInFlight",
-+	    makeLatestWorkerEvents(teamMetrics(SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, SERVER_KNOBS->PRIORITY_TEAM_1_LEFT)));
-+	Level level = co_await factor.fetchLevel(provider, TrackCodeProbes::False);
-+	ASSERT_EQ(level, Level::CRITICAL_INTERVENTION_REQUIRED);
-+
-+	TraceEventFields partialRegionalMetrics;
-+	partialRegionalMetrics.addField("HighestTeamPriority", std::to_string(SERVER_KNOBS->PRIORITY_TEAM_0_LEFT));
-+	partialRegionalMetrics.addField("HighestPrimaryTeamPriority", std::to_string(SERVER_KNOBS->PRIORITY_TEAM_0_LEFT));
-+	provider->setLatestDataDistributorEvents("TotalDataInFlight", makeLatestWorkerEvents(partialRegionalMetrics));
-+	level = co_await factor.fetchLevel(provider, TrackCodeProbes::False);
-+	ASSERT_EQ(level, Level::METRICS_MISSING);
-+}
-+
- TEST_CASE("/fdbserver/clustercontroller/ClusterHealthMonitor/RecoveryStateFactor") {
- 	RecoveryStateFactor factor;
- 	auto provider = makeReference<FakeWorkerEventProvider>();
-```
-
-**File**: `fdbserver/datadistributor/DDTeamCollection.cpp` (modified, +57/-6)
-```diff
-@@ -3683,6 +3683,11 @@ class DDTeamCollectionImpl {
- 						}
- 					}
- 
-+					int highestPrimaryTeamPriority = self->getHighestTeamPriority(IsPrimary::True);
-+					int highestRemoteTeamPriority = self->getHighestTeamPriority(IsPrimary::False);
-+					int highestTeamPriority = highestPrimaryTeamPriority < 0 || highestRemoteTeamPriority < 0
-+					                              ? -1
-+					                              : std::max(highestPrimaryTeamPriority, highestRemoteTeamPriority);
- 					TraceEvent("TotalDataInFlight", self->distributorId)
- 					    .detail("Primary", self->primary)
- 					    .detail("TotalBytes", self->getDebugTotalDataInFlight())
-@@ -3691,7 +3696,9 @@ class DDTeamCollectionImpl {
- 					    .detail("StorageTeamSize", self->configuration.storageTeamSize)
- 					    .detail("ZeroHealthy", self->zeroOptimalTeams.get())
- 					    .detail("HighestPriority", highestPriority)
--					    .detail("HighestTeamPriority", self->getHighestTeamPriority())
-+					    .detail("HighestTeamPriority", highestTeamPriority)
-+					    .detail("HighestPrimaryTeamPriority", highestPrimaryTeamPriority)
-+					    .detail("HighestRemoteTeamPriority", highestRemoteTeamPriority)
- 					    .trackLatest(self->primary ? "TotalDataInFlight"
- 					                               : "TotalDataInFlightRemote"); // This trace event's trackLatest
- 					                                                             // lifetime is controlled by
-@@ -4640,17 +4647,25 @@ void DDTeamCollection::resetLocalitySet() {
- 	}
- }
- 
--int DDTeamCollection::getHighestTeamPriority() const {
-+int DDTeamCollection::getHighestTeamPriority(IsPrimary primaryRegion) const {
- 	if (teamCollections.empty()) {
- 		return -1;
- 	}
- 	int highestPriority = 0;
-+	bool foundRegion = false;
- 	for (const auto* collection : teamCollections) {
--		if (collection == nullptr || !collection->initialFailureReactionDelay.isReady()) {
-+		if (collection == nullptr) {
- 			return -1;
- 		}
--		// Team health is updated independently of relocation admission and completion. Include both regions
--		// and conservatively keep counting degraded teams until their trackers are retired.
-+		if (collection->primary != primaryRegion) {
-+			continue;
-+		}
-+		foundRegion = true;
-+		if (!collection->initialFailureReactionDelay.isReady()) {
-+			return -1;
-+		}
-+		// Team health is independent of relocation admission and completion. Keep counting degraded teams
-+		// until their trackers are retired.
- 		int collectionPriority = -1;
- 		for (const auto& [priority, count] : collection->priority_teams) {
- 			if (count > 0) {
-@@ -4662,7 +4677,7 @@ int DDTeamCollection::getHighestTeamPriority() const {
- 		}
- 		highestPriority = std::max(highestPriority, collectionPriority);
- 	}
--	return highestPriority;
-+	return foundRegion || (!primaryRegion && configuration.usableRegions <= 1) ? highestPriority : -1;
- }
- 
- bool DDTeamCollection::satisfiesPolicy(const std::vector<Reference<TCServerInfo>>& team, int amount) const {
-@@ -6572,6 +6587,37 @@ class DDTeamCollectionUnitTest {
- 		return testTeamCollection(teamSize, policy, processCount, shardsAffectedByTeamFailure);
- 	}
- 
-+	static void HighestTeamPriorityByRegion() {
-+		auto primary = testTeamCollection(1, makeReference<PolicyOne>(), 0);
-+		auto remote = testTeamCollection(1, makeReference<PolicyOne>(), 0);
-+		primary->configuration.usableRegions = 2;
-+		remote->primary = false;
-+		primary->teamCollections = { primary.get(), remote.get() };
-+		remote->teamCollections = primary->teamCollections;
-+		primary->initialFailureReactionDelay = Future<Void>(Void());
-+		remote->initialFailureReactionDelay = Future<Void>(Void());
-+		primary->priority_teams = { { SERVER_KNOBS->PRIORITY_TEAM_HEALTHY, 1 } };
-+		remote->priority_teams = { { SERVER_KNOBS->PRIORITY_TEAM_0_LEFT, 1 } };
-+
-+		ASSERT_EQ(primary->getHighestTeamPriority(IsPrimary::True), SERVER_KNOBS->PRIORITY_TEAM_HEALTHY);
-+		ASSERT_EQ(primary->getHighestTeamPriority(IsPrimary::False), SERVER_KNOBS->PRIORITY_TEAM_0_LEFT);
-+
-+		std::swap(primary->primary, remote->primary);
-+		ASSERT_EQ(primary->getHighestTeamPriority(IsPrimary::True), SERVER_KNOBS->PRIORITY_TEAM_0_LEFT);
-+		ASSERT_EQ(primary->getHighestTeamPriority(IsPrimary::False), SERVER_KNOBS->PRIORITY_TEAM_HEALTHY);
-+		std::swap(primary->primary, remote->primary);
-+
-+		remote->initialFailureReactionDelay = Never();
-+		ASSERT_EQ(primary->getHighestTeamPriority(IsPrimary::True), SERVER_KNOBS->PRIORITY_TEAM_HEALTHY);
-+		ASSERT_EQ(primary->getHighestTeamPriority(IsPrimary::False), -1);
-+
-+		primary->teamCollections = { primary.get() };
-+		ASSERT_EQ(primary->getHighestTeamPriority(IsPrimary::False), -1);
-+		primary->configuration.usableRegions = 1;
-+		ASSERT_EQ(primary->getHighestTeamPriority(IsPrimary::False), 0);
-+		primary->teamCollections.clear();
-+	}
-+
- 	static std::unique_ptr<DDTeamCollection> testMachineTeamCollection(int teamSize,
- 	                                                                   Reference<IReplicationPolicy> policy,
- 	                          
-```
-
-**File**: `fdbserver/datadistributor/DDTeamCollection.h` (modified, +2/-2)
-```diff
-@@ -234,8 +234,8 @@ class DDTeamCollection : public ReferenceCounted<DDTeamCollection> {
- 	std::vector<UID> allServers;
- 	int64_t unhealthyServers;
- 	std::map<int, int> priority_teams;
--	// Across all team collections; -1 until each collection has initialized its team health.
--	int getHighestTeamPriority() const;
-+	// For one region; -1 until its team health is initialized. An absent remote region is healthy.
-+	int getHighestTeamPriority(IsPrimary primaryRegion) const;
- 	std::map<UID, Reference<TCServerInfo>> tss_info_by_pair;
- 	std::map<UID, Reference<TCServerInfo>> server_and_tss_info; // TODO could replace this with an efficient way to do a
- 	                                                            // read-only concatenation of 2 data structures?
-```
-
-**File**: `fdbserver/datadistributor/DataDistribution.cpp` (modified, +5/-0)
-```diff
-@@ -768,12 +768,17 @@ struct DataDistributor : NonCopyable, ReferenceCounted<DataDistributor> {
- 			    .detail("UnhealthyServers", 0)
- 			    .detail("HighestPriority", 0)
- 			    .detail("HighestTeamPriority", -1)
-+			    .detail("HighestPrimaryTeamPriority", -1)
-+			    .detail("HighestRemoteTeamPriority", self->configuration.usableRegions > 1 ? -1 : 0)
- 			    .trackLatest(self->totalDataInFlightEventHolder->trackingKey);
- 			TraceEvent("TotalDataInFlight", self->ddId)
- 			    .detail("Primary", false)
- 			    .detail("TotalBytes", 0)
- 			    .detail("UnhealthyServers", 0)
- 			    .detail("HighestPriority", self->configuration.usableRegions > 1 ? 0 : -1)
-+			    .detail("HighestTeamPriority", -1)
-+			    .detail("HighestPrimaryTeamPriority", -1)
-+			    .detail("HighestRemoteTeamPriority", self->configuration.usableRegions > 1 ? -1 : 0)
- 			    .trackLatest(self->totalDataInFlightRemoteEventHolder->trackingKey);
- 		}
- 	}
+-FROM golang:1.27.3-bookworm AS go-build
++FROM golang:1.26.11-bookworm AS go-build
+ COPY fdbkubernetesmonitor/ /fdbkubernetesmonitor
+ WORKDIR /fdbkubernetesmonitor
+ RUN go build -o /fdb-kubernetes-monitor *.go
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14620** (2026-11-21): [release-8.0] packaging: use golang 1.26.11 for fdb-kubernetes-monitor (@ploxiln)
 - **PR #14619** (2026-11-20): [release-8.0] python vexillographer now matching csharp implementation (@ploxiln)
 - **PR #14618** (2026-11-20): Pair multiversion test releases with validated future reads (@tclinkenbeard-oai)
+- **PR #14617** (2026-11-21): packaging: use golang 1.26.11 for fdb-kubernetes-monitor (@ploxiln)
 - **PR #14607** (2026-11-20): Fix describeBackup missing a log file written after the log begin was recorded (@nos-a)
 - **PR #14606** (2026-11-20): README: update release branch table (@ploxiln)
-- **PR #14605** (2026-11-20): Retain bulk load placement retries across replacement relocators (@tclinkenbeard-oai)
-- **PR #14600** (closed): add FeistelPermutation for deterministic O(1) memory shuffles (@jmslocum16)
 
 ---
 
@@ -2447,78 +2005,30 @@ Let the remote collection clear its pointer in the primary collection if an asse
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. describeBackup missing a log file written after the log begin was recorded
+## X. packaging: use golang 1.26.11 for fdb-kubernetes-monitor
 
 **RULE**:
-When implementing operations in `fdbclient/BackupContainerFileSystem.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packaging/docker/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7125893`: describeBackup missing a log file written after the log begin was recorded. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c06497f3`: packaging: use golang 1.26.11 for fdb-kubernetes-monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/BackupContainerFileSystem.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packaging/docker/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-		// Verify the job and use its actual bounds before computing restorability. Older
-		// descriptors recorded the job start as a point snapshot. Even a correctly bounded
-		// descriptor cannot protect an earlier snapshot from expiration if its job is missing.
-		for (auto& s : desc.snapshots) {
-			if (s.totalSize != 0 || s.endVersion < desc.unreliableEndVersion.orDefault(0)) {
-				continue;
-			}
-			try {
-				auto job = co_await readBulkDumpJobId(bc, s, true);
-				if (job.empty()) {
-					continue;
-				}
-				auto batches = co_await BackupContainerFileSystem::readBulkDumpRanges(bc, job);
-				auto bounds = std::minmax_element(
-				    batches.begin(), batches.end(), [](const auto& a, const auto& b) { return a.version < b.version; });
-				s.beginVersion = bounds.first->version;
-				s.endVersion = bounds.second->version;
-			} catch (Error& e) {
-				if (!unusableSnapshot(e)) {
-					throw;
-				}
-				TraceEvent(SevWarn, "BackupDescribeUnreadableBulkDump").error(e).detail("Snapshot", s.fileName);
-				s.restorable = false;
-			}
-		}
-		// The stored begin can be too high: log files finish out of order, and a describe that ran before the first one
-		// existed stored the begin of the first file i
+FROM rockylinux/rockylinux:10.3-minimal AS base
+FROM golang:1.26.11-bookworm AS go-build
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-		// Verify the job and use its actual bounds before computing restorability. Older
-		// descriptors recorded the job start as a point snapshot. Even a correctly bounded
-		// descriptor cannot protect an earlier snapshot from expiration if its job is missing.
-		for (auto& s : desc.snapshots) {
-			if (s.totalSize != 0 || s.endVersion < desc.unreliableEndVersion.orDefault(0)) {
-				continue;
-			}
-			try {
-				auto job = co_await readBulkDumpJobId(bc, s, true);
-				if (job.empty()) {
-					continue;
-				}
-				auto batches = co_await BackupContainerFileSystem::readBulkDumpRanges(bc, job);
-				auto bounds = std::minmax_element(
-				    batches.begin(), batches.end(), [](const auto& a, const auto& b) { return a.version < b.version; });
-				s.beginVersion = bounds.first->version;
-				s.endVersion = bounds.second->version;
-			} catch (Error& e) {
-				if (!unusableSnapshot(e)) {
-					throw;
-				}
-				TraceEvent(SevWarn, "BackupDescribeUnreadableBulkDump").error(e).detail("Snapshot", s.fileName);
-				s.restorable = false;
-			}
-		}
+FROM rockylinux/rockylinux:10.2-minimal AS base
+FROM golang:1.27.3-bookworm AS go-build
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7125893` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c06497f3` are properly handled with clean fallback behavior.

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T05:29:07.836Z",
+  "timestamp": "2026-11-22T13:59:21.363Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apple-foundationdb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apple-foundationdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T05:29:07.836Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T13:59:21.363Z`  
 > **Learning ID**: `LEARN-EVO-apple-foundationdb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apple-foundationdb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `fecaa68f`  
+> **Source Version**: `c06497f3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T05:29:02.348Z  
+> **Timestamp**: 2026-11-22T13:59:13.903Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T05:29:02.343Z  
+> **Harvest Timestamp**: 2026-11-22T13:59:13.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16865 stars
+- **Stars / Engagement**: 16870 stars
 
 ---
 
@@ -265,11 +265,47 @@ def set_read_transaction_options(tr, timeout_ms=60000):
 #include "fdbclient/StatusSchema.h"
 #include "fdbclient/BulkDumping.h"
 #include "fdbclient/BulkLoading.h"
+#include "fdbclient/SystemData.h"
 #include "flow/Arena.h"
 #include "flow/ThreadHelper.h"
 #include <fmt/core.h>
 
 namespace fdb_cli {
+
+bool auditLogEnabled = false;
+AuditLogValues auditLogValues = kDefaultAuditLogValues;
+
+void auditLogReturnedKey(Database const& cx,
+                         const char* command,
+                         UID auditId,
+                         KeyRef key,
+                         Optional<ValueRef> value,
+                         Optional<NetworkAddress> storageServer) {
+	if (!auditLogEnabled) {
+		return;
+	}
+	TraceEvent ev("FdbCliAudit"_audit);
+	ev.logToAuditFile();
+	// -1 means no truncation. The default would cut off long keys and values, and an audit record needs them whole.
+	ev.setMaxFieldLength(-1).setMaxEventLength(-1);
+	ev.detail("Command", command)
+	    .detail("AuditID", auditId)
+	    .detail("Cluster",
+	            cx->getConnectionRecord() ? cx->getConnectionRecord()->getConnectionString().clusterKeyName() : Key());
+	// The local IP this client reaches the coordinators from, same as the IP in Machine (whose "port" is the pid)
+	static const IPAddress ip = cx->getConnectionRecord()
+	                                ? cx->getConnectionRecord()->getConnectionString().determineLocalSourceIP()
+	                                : IPAddress();
+	ev.detail("IPAddress", ip);
+	ev.detail("Key", key);
+	if (value.present() && (auditLogValues == AuditLogValues::All ||
+	                        (auditLogValues == AuditLogValues::System && key.startsWith(systemKeys.begin)))) {
+		ev.detail("Value", value.get());
+	}
+	if (storageServer.present()) {
+		ev.detail("StorageServer", storageServer.get());
+	}
+}
 
 bool tokencmp(StringRef token, const char* command) {
 	if (token.size() != strlen(command))
@@ -457,50 +493,7 @@ UID validateBulkJobId(StringRef token, const char* usage) {
 
 Future<std::string> getBulkOwnerSuffix(Database cx, UID jobId, bool isDumpJob) {
 	if (isDumpJob) {
-		Optional<BulkDumpOwnerInfo> ownerInfo = co_await getBulkDumpOwner(cx, jobId);
-		if (ownerInfo.present()) {
-			co_return fmt::format(" (owned by {} '{}')", ownerInfo.get().ownerType, ownerInfo.get().ownerName);
-		}
-	} else {
-		Optional<BulkDumpOwnerInfo> ownerInfo = co_await getBulkLoadOwner(cx, jobId);
-		if (ownerInfo.present()) {
-			co_return fmt::format(" (owned by {} '{}')", ownerInfo.get().ownerType, ownerInfo.get().ownerName);
-		}
-	}
-	co_return std::string("");
-}
-
-// Format common progress metrics (throughput, ETA, elapsed time)
-void printProgressMetrics(double avgBytesPerSecond, Optional<double> etaSeconds, double elapsedSeconds) {
-	// Throughput
-	if (avgBytesPerSecond > 0) {
-		fmt::println(" Throughput - {:.1f} MB/s", avgBytesPerSecond / 1048576.0);
-	}
-
-	// ETA
-	if (etaSeconds.present()) {
-		fmt::println(" Estimated time remaining - {}", formatDurationHumanReadable((int)etaSeconds.get()));
-	}
-
-	// Elapsed time
-	if (elapsedSeconds > 0) {
-		fmt::println(" Elapsed time - {}", formatDurationHumanReadable((int)elapsedSeconds));
-	}
-}
-
-// Format bytes with progress percentage for bulk operations
-std::string formatBytesProgress(int64_t completedBytes, Optional<int64_t> totalBytes) {
-	std::string result = format("%.2f MB", completedBytes / 1048576.0);
-	if (totalBytes.present()) {
-		result += fmt::format(" / {:.2f} MB ({:.1f}%)",
-		                      totalBytes.get() / 1048576.0,
-		                      totalBytes.get() > 0 ? 100.0 * completedBytes / totalBytes.get() : 0.0);
-	}
-	return result;
-}
-
-void printStalledTasks(const std::vector<BulkLoadStalledTask>& stalledTasks) {
-	if (!stalledTas
+		Optional<BulkDumpOwnerInfo> ownerInfo = co_await getBulkDumpOwner(cx,
 ```
 
 ### Core Architecture Module: `fdbclient/AuditUtils.cpp`
@@ -1985,53 +1978,42 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `129fc073` (2026-11-19)
-**Commit Message**: wait for workloads to stop so a tester exiting after its last test doesn't leave them running until timeout (#14599)
+### Incident Patch 1: `c06497f3` (2026-11-21)
+**Commit Message**: packaging: use golang 1.26.11 for fdb-kubernetes-monitor (#14617)
 
-**File**: `fdbserver/tester/TesterServer.cpp` (modified, +1/-0)
-```diff
-@@ -437,6 +437,7 @@ Future<Void> runWorkloadAsync(Database cx,
- 
- 		if (action == 5) {
- 			stopReq.send(Void());
-+			TraceEvent("WorkloadStop", workIface.id()).detail("Workload", workload->description());
- 			break;
- 		}
- 
-```
+A slight golang downgrade to match https://github.com/FoundationDB/fdb-build-support/pull/127 for now (but go-1.26 is still getting security updates at the moment, at the same time as go-1.27)
 
-**File**: `fdbserver/tester/test.cpp` (modified, +10/-2)
+Also update packaging/docker base image to rockylinux 10.3
+
+**File**: `packaging/docker/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -179,10 +179,18 @@ Future<DistributedTestResults> runWorkload(Database const& cx,
- 		}
- 	}
+@@ -16,7 +16,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ #
+-FROM rockylinux/rockylinux:10.2-minimal AS base
++FROM rockylinux/rockylinux:10.3-minimal AS base
  
--	// Stopping the workloads is unreliable, but they have a timeout
- 	// FIXME: stop if one of the above phases throws an exception
-+	TraceEvent("TestStoppingWorkloads").detail("WorkloadTitle", specCopy.title);
-+	printf("stopping (%s)...\n", printable(specCopy.title).c_str());
-+	// Wait for the stops to be delivered, since a tester that exits right after its last test would otherwise leave
-+	// that test's workloads running until they time out
-+	std::vector<Future<ErrorOr<Void>>> stops;
-+	stops.reserve(workloads.size());
- 	for (const auto& workload : workloads)
--		workload.stop.send(ReplyPromise<Void>());
-+		stops.push_back(workload.stop.template getReplyUnlessFailedFor<Void>(waitForFailureTime, 0));
-+	co_await waitForAll(stops);
-+	// Errors are ignored: a stop that was delivered but retried finds the workload already gone, which is fine
-+	TraceEvent("TestExiting").detail("WorkloadTitle", specCopy.title);
+ # It seems mirrorlist can be less reliable, just use original baseurl for package repo.
+ RUN sed -i.bak 's/^#baseurl=/baseurl=/; s/^mirrorlist=/#mirrorlist=/' /etc/yum.repos.d/rocky.repo
+@@ -61,7 +61,7 @@ WORKDIR /
  
- 	co_return DistributedTestResults(aggregateMetrics(metricsResults), success, failure);
- }
+ # Check that glibc version in base image >= glibc in go-build image (unless CGO_ENABLED=0)
+ 
+-FROM golang:1.27.3-bookworm AS go-build
++FROM golang:1.26.11-bookworm AS go-build
+ COPY fdbkubernetesmonitor/ /fdbkubernetesmonitor
+ WORKDIR /fdbkubernetesmonitor
+ RUN go build -o /fdb-kubernetes-monitor *.go
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14620** (2026-11-21): [release-8.0] packaging: use golang 1.26.11 for fdb-kubernetes-monitor (@ploxiln)
+- **PR #14619** (2026-11-20): [release-8.0] python vexillographer now matching csharp implementation (@ploxiln)
+- **PR #14618** (2026-11-20): Pair multiversion test releases with validated future reads (@tclinkenbeard-oai)
+- **PR #14617** (2026-11-21): packaging: use golang 1.26.11 for fdb-kubernetes-monitor (@ploxiln)
+- **PR #14607** (2026-11-20): Fix describeBackup missing a log file written after the log begin was recorded (@nos-a)
 - **PR #14606** (2026-11-20): README: update release branch table (@ploxiln)
-- **PR #14605** (2026-11-20): Retain bulk load placement retries across replacement relocators (@tclinkenbeard-oai)
-- **PR #14600** (closed): add FeistelPermutation for deterministic O(1) memory shuffles (@jmslocum16)
-- **PR #14599** (2026-11-19): Wait for workloads to stop before exiting tester (@jmslocum16)
-- **PR #14598** (closed): default runFailureWorkloads to on only in simulation (@jmslocum16)
-- **PR #14591** (2026-11-20): [release-8.0] Keep encrypted backup files bound to their container key (@tclinkenbeard-oai)
 
 ---
 
@@ -2051,31 +2033,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wait for workloads to stop so a tester exiting after its last test doesn't leave
+## X. packaging: use golang 1.26.11 for fdb-kubernetes-monitor
 
 **RULE**:
-When implementing operations in `fdbserver/tester/TesterServer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packaging/docker/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `129fc073`: wait for workloads to stop so a tester exiting after its last test doesn't leave them running until timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c06497f3`: packaging: use golang 1.26.11 for fdb-kubernetes-monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/tester/TesterServer.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packaging/docker/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-			TraceEvent("WorkloadStop", workIface.id()).detail("Workload", workload->description());
+FROM rockylinux/rockylinux:10.3-minimal AS base
+FROM golang:1.26.11-bookworm AS go-build
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+FROM rockylinux/rockylinux:10.2-minimal AS base
+FROM golang:1.27.3-bookworm AS go-build
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `129fc073` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c06497f3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

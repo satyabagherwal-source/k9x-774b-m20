@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T13:20:26.080Z",
+  "last_updated": "2026-11-22T13:59:15.191Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "fe2805634b582407b8279afc83ab4156a833f61a22e8f02783df6cc3c66254b0",
-      "verified_at": "2026-11-21T11:11:43.149Z",
+      "content_hash": "7c79b813caaf32ed7cf3fb86975eceb454b3ba8bdcdcbaa7fec7e38152f42212",
+      "verified_at": "2026-11-22T13:59:15.190Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T11:11:43.149Z"
+      "last_updated": "2026-11-22T13:59:15.190Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "ca3c84c83e33f9b8c52c0c7436566a30ee2b34b41e11c232fa33e19f879e1d10",
-      "verified_at": "2026-11-18T07:56:25.846Z",
+      "content_hash": "21204bd230a767f4dcc1854f04d5d5c3c7659078f5627bbbc87830e396b7f361",
+      "verified_at": "2026-11-22T13:59:08.177Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:56:25.846Z"
+      "last_updated": "2026-11-22T13:59:08.177Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",
@@ -19296,14 +19296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b",
-      "content_hash": "a26e8e39aeec134b66f5c690ad0fbdedf881753836da0b1455b309fdf72e3815",
-      "verified_at": "2026-11-17T16:46:31.211Z",
+      "content_hash": "a60b99ba0b8e6da729877a812e737911451263b4e16bf2201c90b2f2d7aef380",
+      "verified_at": "2026-11-22T13:59:00.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:46:31.211Z"
+      "last_updated": "2026-11-22T13:59:00.539Z"
     },
     "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored": {
       "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T13:20:39.303Z",
+  "last_updated": "2026-11-22T13:59:21.495Z",
   "directives": [
     {
       "id": "CD-001",
@@ -46219,6 +46219,48 @@
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E45D46-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-L0X9",
+      "directive_title": "Apply origin policy checks when a same-origin request is redirected to another o",
+      "source_repo": "microsoft-react-native-windows-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-L0X9-apply-origin-policy-checks-when-a-same-origin-request-is-redirected-to-another-o.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-KX6P",
+      "directive_title": "use golang 1.26.11 for fdb-kubernetes-monitor",
+      "source_repo": "apple/foundationdb",
+      "source_commit": "c06497f3",
+      "staged_file": "11_INBOX/candidate-directives/CD-KX6P-use-golang-1-26-11-for-fdb-kubernetes-monitor.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-5037DA",
+      "directive_title": "Apply origin policy checks when a same-origin request is redirected to another o",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microsoft-react-native-windows",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5037DA-apply-origin-policy-checks-when-a-same-o.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-L1U9",
+      "directive_title": "packaging: use golang 1.26.11 for fdb-kubernetes-monitor",
+      "source_repo": "apple-foundationdb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-L1U9-packaging-use-golang-1-26-11-for-fdb-kubernetes-monitor.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "K"
     }
   ]
 }

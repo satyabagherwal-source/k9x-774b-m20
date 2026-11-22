@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-VZXN",
-    "timestamp": "2026-11-20T13:08:32.555Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "157b2e6dc980518a86f078026975acc0411fb9c3ff067537a5aa83aaeb0c5380",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-24ZE",
-    "timestamp": "2026-11-20T13:13:19.034Z",
-    "repository": "embassy-rs/embassy",
-    "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "3aeebfc7d3635449d655fe54e84fa0f1130a6f5dfeeec9f97cfb61908c83f76c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-J2LZ",
-    "timestamp": "2026-11-20T13:26:29.111Z",
-    "repository": "itsdecodingai/llm-twin-course",
-    "learningId": "learn-github-itsdecodingai-llm-twin-course",
-    "contentHash": "88cb5eafc4071c60e9a8ef7d3ef1eb78092e6e89c6624408cd37ac2649486f06",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-J5DS",
     "timestamp": "2026-11-20T13:26:32.704Z",
     "repository": "microsoft/Aion-1.0-Instruct-2.3B",
@@ -7492,6 +7447,51 @@
     "contentHash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-KLNV",
+    "timestamp": "2026-11-22T13:59:00.523Z",
+    "repository": "sensenova/SenseNova-Loop-9B",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
+    "contentHash": "a60b99ba0b8e6da729877a812e737911451263b4e16bf2201c90b2f2d7aef380",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-KRK2",
+    "timestamp": "2026-11-22T13:59:08.162Z",
+    "repository": "microsoft/react-native-windows",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "21204bd230a767f4dcc1854f04d5d5c3c7659078f5627bbbc87830e396b7f361",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-KWYV",
+    "timestamp": "2026-11-22T13:59:15.175Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "7c79b813caaf32ed7cf3fb86975eceb454b3ba8bdcdcbaa7fec7e38152f42212",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

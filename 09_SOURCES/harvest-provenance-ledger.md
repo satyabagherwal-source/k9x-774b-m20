@@ -12124,3 +12124,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bda125f2` | Multi-dimensional audit evidence | 2026-11-22T12:57:04.123Z |
 | `learn-huggingface-internlm-sage-s2-1-flash` | `https://huggingface.co/internlm/Sage-S2.1-Flash` | `hf-internl` | Multi-dimensional audit evidence | 2026-11-22T13:01:50.772Z |
 | `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-22T13:20:26.067Z |
+| `learn-huggingface-sensenova-sensenova-loop-9b` | `https://huggingface.co/sensenova/SenseNova-Loop-9B` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-22T13:59:00.528Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `aea3f3ad` | Multi-dimensional audit evidence | 2026-11-22T13:59:08.167Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `c06497f3` | Multi-dimensional audit evidence | 2026-11-22T13:59:15.180Z |

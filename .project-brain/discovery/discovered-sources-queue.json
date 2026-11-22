@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T12:19:31.108Z",
+  "updated_at": "2026-11-22T13:59:21.218Z",
   "stats": {
-    "total_discovered": 7529,
-    "approved_pending_harvest": 7128,
+    "total_discovered": 7535,
+    "approved_pending_harvest": 7134,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7104,
+      "COMMUNITY_AND_EXPERT": 7110,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -162854,6 +162854,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
         "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-2305B45A35CF": {
+      "id": "SRC-2305B45A35CF",
+      "url": "https://github.com/babel/babel/tree/HEAD/packages/babel-preset-env",
+      "title": "https://github.com/babel/babel/tree/HEAD/packages/babel-preset-env",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T13:59:19.712Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-774B1D805FC1": {
+      "id": "SRC-774B1D805FC1",
+      "url": "https://github.com/babel/babel/tree/HEAD/packages/babel-runtime",
+      "title": "https://github.com/babel/babel/tree/HEAD/packages/babel-runtime",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T13:59:19.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-9DF46F70EBDE": {
+      "id": "SRC-9DF46F70EBDE",
+      "url": "https://github.com/babel/babel/commits/v7.29.14/packages/babel-generator",
+      "title": "https://github.com/babel/babel/commits/v7.29.14/packages/babel-generator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T13:59:19.902Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-EB4B2947A7B7": {
+      "id": "SRC-EB4B2947A7B7",
+      "url": "https://github.com/babel/babel/commits/v7.29.14/packages/babel-preset-env",
+      "title": "https://github.com/babel/babel/commits/v7.29.14/packages/babel-preset-env",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T13:59:19.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-47E2C7C7F333": {
+      "id": "SRC-47E2C7C7F333",
+      "url": "https://github.com/babel/babel/commits/v7.29.14/packages/babel-runtime",
+      "title": "https://github.com/babel/babel/commits/v7.29.14/packages/babel-runtime",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T13:59:20.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-D0D7F73F0BFD": {
+      "id": "SRC-D0D7F73F0BFD",
+      "url": "https://github.com/FoundationDB/fdb-build-support/pull/127",
+      "title": "https://github.com/FoundationDB/fdb-build-support/pull/127",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T13:59:21.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+        "fileName": "apple-foundationdb-learnings.md"
       }
     }
   }

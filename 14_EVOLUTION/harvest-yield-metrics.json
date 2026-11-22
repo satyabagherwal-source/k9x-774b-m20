@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T13:20:26.074Z",
-  "total_cycles_completed": 11496,
-  "total_learnings_persisted": 11496,
-  "total_rules_promoted": 10746,
+  "last_updated": "2026-11-22T13:59:15.186Z",
+  "total_cycles_completed": 11499,
+  "total_learnings_persisted": 11499,
+  "total_rules_promoted": 10748,
   "history": [
-    {
-      "timestamp": "2026-11-21T18:44:18.299Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T18:52:07.033Z",
-      "repository": "LiquidAI/LFM3-1.7B",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T18:52:24.398Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T18:52:24.400Z",
       "repository": "tursodatabase/turso",
@@ -1403,6 +1382,27 @@
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
       "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T13:59:00.535Z",
+      "repository": "sensenova/SenseNova-Loop-9B",
+      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T13:59:08.173Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T13:59:15.186Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

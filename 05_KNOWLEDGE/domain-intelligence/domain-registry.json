@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T13:20:40.313Z",
+  "last_updated": "2026-11-22T13:59:21.709Z",
   "total_records": 2354,
   "domains": {
     "A": {
@@ -16378,8 +16378,8 @@
       "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
       "repository": "apple/foundationdb",
-      "content_hash": "9a340e3af947b325cbd6d6949707aef2ef0e4b2f4bac28b4c38a94f14ff36841",
-      "created_at": "2026-11-21T11:11:43.490Z"
+      "content_hash": "cd6ae65c79c246a45d7ca6f04dfb88dcddf2511fad236c15f997368d8b1fea72",
+      "created_at": "2026-11-22T13:59:15.681Z"
     },
     "DOM-F-0C4992D6": {
       "record_id": "DOM-F-0C4992D6",
@@ -16480,8 +16480,8 @@
       "title": "Quality & Verification Intelligence: apple-foundationdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-learnings-quality-verification-intelligence-apple-foundationd.md",
       "repository": "apple-foundationdb-learnings",
-      "content_hash": "5c265c2d7a900a4ba487d66b0c0e913f34731b7e5c215f244e7cfad3fb0055eb",
-      "created_at": "2026-11-20T05:29:08.100Z"
+      "content_hash": "dfe4626324f408b87f5d7450dbbb3f68aaa14902bde63db0f56430ea6d098ac9",
+      "created_at": "2026-11-22T13:59:21.709Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants",
@@ -19907,8 +19907,8 @@
       "title": "Technical Construction Intelligence: microsoft/react-native-windows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-technical-construction-intelligence-microsoft-rea.md",
       "repository": "microsoft/react-native-windows",
-      "content_hash": "54019d8576d8849472b82cbc4e24df04f2c35aa759bb3de4a362ecf5b7c71d37",
-      "created_at": "2026-11-18T07:56:26.130Z"
+      "content_hash": "3ec80eab6dc30cb43a7d0873980b645f7f2910870633982e614f686b287a8b20",
+      "created_at": "2026-11-22T13:59:08.671Z"
     },
     "DOM-D-31A60A1E": {
       "record_id": "DOM-D-31A60A1E",
@@ -20009,8 +20009,8 @@
       "title": "Technical Construction Intelligence: microsoft-react-native-windows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-learnings-technical-construction-intelligence-mic.md",
       "repository": "microsoft-react-native-windows-learnings",
-      "content_hash": "17e30236fd22dc0b2424a490d49a6c10bfb324c7c3265c61e063ea0324d598d7",
-      "created_at": "2026-11-18T07:56:38.189Z"
+      "content_hash": "415823ea324af845405e2f6836170f8c01a5c95e8d050f558fa26e4b525fca15",
+      "created_at": "2026-11-22T13:59:20.524Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants",
@@ -28379,8 +28379,8 @@
       "title": "Research & Knowledge Intelligence: sensenova/SenseNova-Loop-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-research-knowledge-intelligence-sensenova-senseno.md",
       "repository": "sensenova/SenseNova-Loop-9B",
-      "content_hash": "8d1e407d867fcc47ce21cf2a7549050a4fd32e042487e6d4933113333335fdf7",
-      "created_at": "2026-11-17T16:46:31.378Z"
+      "content_hash": "cf40aa686ab32776090b4d0d4fcefdefe319e0b45ea772ead51e87176419997f",
+      "created_at": "2026-11-22T13:59:00.815Z"
     },
     "domain_intelligence-research-knowledge-intelligence-internscience-sage-a1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-internscience-sage-a1-5-core-invariants",
@@ -28448,8 +28448,8 @@
       "title": "Research & Knowledge Intelligence: hf-sensenova-sensenova-loop-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-learnings-research-knowledge-intelligence-hf-sens.md",
       "repository": "hf-sensenova-sensenova-loop-9b-learnings",
-      "content_hash": "61035c6a312363e362d3f6f5d6019a959c935956a09d63dc12753478caeb6af1",
-      "created_at": "2026-11-17T16:47:25.237Z"
+      "content_hash": "bb8a7f0fc9409d48ee2e00209649d22634f392b787656d2cec2851f23183177b",
+      "created_at": "2026-11-22T13:59:19.105Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari",

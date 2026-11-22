@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T07:56:37.980Z",
+  "timestamp": "2026-11-22T13:59:20.176Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-microsoft-react-native-windows-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [microsoft-react-native-windows-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T07:56:37.980Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T13:59:20.176Z`  
 > **Learning ID**: `LEARN-EVO-microsoft-react-native-windows-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
-> **Source Version**: `1ed932d5`  
+> **Source Version**: `aea3f3ad`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T07:56:24.965Z  
+> **Timestamp**: 2026-11-22T13:59:06.919Z  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:56:24.960Z  
+> **Harvest Timestamp**: 2026-11-22T13:59:06.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A framework for building native Windows apps with React.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17381 stars
+- **Stars / Engagement**: 17383 stars
 
 ---
 
@@ -324,7 +324,7 @@ import HMRClient from '../../Utilities/HMRClient';
 import getDevServer from './getDevServer';
 
 declare var global: {
-  globalEvalWithSourceUrl?: (string, string) => unknown,
+  globalEvalWithSourceUrl?: (v0: string, v1: string) => unknown,
   __BUNDLE_LOADER_REPORTER__?: {
     onStart: (url: string | URL) => void,
     onSuccess: (url: string | URL) => void,
@@ -367,7 +367,7 @@ export class LoadBundleFromServerRequestError extends LoadBundleFromServerError 
 
 function asyncRequest(
   url: string,
-): Promise<{body: string, headers: {[string]: string}}> {
+): Promise<{body: string, headers: {[key: string]: string}}> {
   let id = null;
   let responseText = null;
   let headers = null;
@@ -375,7 +375,7 @@ function asyncRequest(
   let completeListener;
   let responseListener;
   let incrementalDataListener;
-  return new Promise<{body: string, headers: {[string]: string}}>(
+  return new Promise<{body: string, headers: {[key: string]: string}}>(
     (resolve, reject) => {
       dataListener = Networking.addListener(
         'didReceiveNetworkData',
@@ -1598,176 +1598,523 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4463b281` (2026-11-17)
-**Commit Message**: Fix use-after-free when a task destroys the dispatch queue it was posted to (#16620)
+### Incident Patch 1: `aea3f3ad` (2026-11-20)
+**Commit Message**: Apply origin policy checks when a same-origin request is redirected to another origin (#16631)
 
-* Keep the dispatch queue scheduler alive across Post and pending callbacks
-
-QueueService::Post and Resume read m_scheduler after releasing m_mutex. Once the
-task is enqueued, the queue's worker can run it. If the task drops the last outside
-reference to the queue (as ActiveObjectDeleter's Finalize task does when it destroys
-the queue's owner), the worker destroys the queue, and ~QueueService destroys
-m_scheduler, before the posting thread calls m_scheduler->Post(). Copy the scheduler
-into a local while the lock is held.
-
-ThreadPoolSchedulerWin::~ThreadPoolSchedulerWin skips waiting for callbacks when it
-runs on its own callback thread, so a callback that another thread had already
-submitted could run on the freed scheduler. Post now takes a reference per submitted
-callback, and WorkCallback adopts it.
+* Apply origin policy checks when a same-origin request is redirected to another origin
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Copilot-Session: d6c44fcc-b095-4d25-8f92-aed85921fe83
+
+Copilot-Session: 6571d0a2-c95e-4c83-8fb7-82debbd8de73
 
 * Change files
 
+* Check cross-origin redirects before each hop is sent
+
+- Apply the configured origin policy in OnRedirecting, before the request
+  leaves the original origin, using the method and body of the next hop
+  (301/302/303 rewrites). Rejected redirects are not sent.
+- Check the redirect response of each cross-origin hop, and validate the
+  final response with CORS when any hop left the original origin, even if
+  the chain ends on the original origin.
+- Ignore the default User-Agent and Origin headers added by the filter
+  chain when deciding whether a redirected request is simple.
+- Send the Origin header on the first cross-origin hop, and keep it when
+  the redirect filter rebuilds the request.
+- Document GetCrossOriginRedirectPolicy.
+
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Copilot-Session: d6c44fcc-b095-4d25-8f92-aed85921fe83
+Copilot-Session: 6571d0a2-c95e-4c83-8fb7-82debbd8de73
 
----------
+* Address review comments on redirect checks
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Copilot-Session: d6c44fcc-b095-4d
+- Skip the chec
 
-**File**: `change/react-native-windows-a9d8e7cf-7a98-4a5d-9d25-56cbb2423abc.json` (added, +7/-0)
+**File**: `change/react-native-windows-0630ea41-5851-45c7-b799-906060c3589c.json` (added, +7/-0)
 ```diff
 @@ -0,0 +1,7 @@
 +{
 +  "type": "prerelease",
-+  "comment": "Fix a use-after-free when a dispatch queue is destroyed while a task is being posted to it",
++  "comment": "Apply origin policy checks when a same-origin request is redirected to another origin",
 +  "packageName": "react-native-windows",
-+  "email": "tiagoma@microsoft.com",
++  "email": "anuagra@microsoft.com",
 +  "dependentChangeType": "patch"
 +}
 ```
 
-**File**: `vnext/Mso/src/dispatchQueue/queueService.cpp` (modified, +13/-5)
+**File**: `vnext/Desktop.UnitTests/OriginPolicyHttpFilterTest.cpp` (modified, +459/-5)
 ```diff
-@@ -24,7 +24,11 @@ void QueueService::Post(DispatchTask &&task) noexcept {
-   VerifyElseCrashSz(task, "The task is empty");
+@@ -415,6 +415,7 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
+   /// </summary>
+   struct ServerParams {
+     wstring Host; // Host name used to route requests to this endpoint (e.g. L"mockserver.rnw").
++    wstring Path; // Optional path used to route requests. Empty matches any path on Host.
+     wstring WideUrl; // Wide URL form, used as Location / Access-Control-Allow-Origin header values.
+     string Url; // Narrow URL form, used for runtime options and request URLs.
  
-   bool isShutdown = false;
--  bool shouldSchedule = false;
+@@ -425,11 +426,28 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
+     std::map<wstring, wstring> ResponseHeaders;
+     wstring ResponseContent{L"RESPONSE_CONTENT"};
+ 
+-    ServerParams(wstring host) : Host{std::move(host)}, WideUrl{L"http://" + Host}, Url{winrt::to_string(WideUrl)} {
++    ServerParams(wstring host, wstring path = {})
++        : Host{std::move(host)},
++          Path{std::move(path)},
++          WideUrl{L"http://" + Host + Path},
++          Url{winrt::to_string(WideUrl)} {
+       PreflightHeaders[s_accessControlAllowMethods] = L"GET, POST, DELETE, PATCH";
+     }
+   };
+ 
++  // A request as received by the mocked network.
++  struct SentRequest {
++    wstring Host;
++    wstring Method;
++    wstring Origin;
++  };
 +
-+  // Once m_mutex is released, another thread can run the task, and the task can drop the last outside
-+  // reference to this queue (e.g. ActiveObjectDeleter posts a task that destroys the queue's owner); the
-+  // worker then destroys the queue. Don't touch members after the unlock: keep the scheduler alive in a local.
-+  Mso::CntPtr<IDispatchQueueScheduler> scheduler;
++  // Requests received by the mocked network during the current test.
++  std::vector<SentRequest> m_sentRequests;
++
++  // Default User-Agent the redirect filter adds to every hop. Empty means none.
++  winrt::hstring m_userAgent;
++
+   struct ClientParams {
+     wstring Method;
+     std::vector<std::pair<wstring, wstring>> Headers;
+@@ -452,8 +470,7 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
+   /// supplied mock filter instead of the live network stack. Reads the same runtime options.
+   /// </summary>
+   HttpClient MakeMockedClient(IHttpFilter const &innerMock) {
+-    auto redirFilter =
+-        winrt::make<RedirectHttpFilter>(IHttpFilter{innerMock}, IHttpFilter{innerMock}, winrt::hstring{});
++    auto redirFilter = winrt::make<RedirectHttpFilter>(IHttpFilter{innerMock}, IHttpFilter{innerMock}, m_userAgent);
  
-   {
-     std::lock_guard lock{m_mutex};
-@@ -35,13 +39,15 @@ void QueueService::Post(DispatchTask &&task) noexcept {
-       isShutdown = m_shutdownAction.has_value();
-       if (!isShutdown) {
-         m_queue.Enqueue(std::move(task));
--        shouldSchedule = (m_suspendCounter == 0);
-+        if (m_suspendCounter == 0) {
-+          scheduler = m_scheduler;
-+        }
-       }
-     }
+     if (static_cast<OriginPolicy>(GetRuntimeOptionInt("Http.OriginPolicy")) == OriginPolicy::None) {
+       return HttpClient{redirFilter};
+@@ -498,12 +515,19 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
+       std::vector<ServerParams *> const &servers, ClientParams const &client, string const &requestUrl) {
+     auto mockFilter = winrt::make<MockHttpBaseFilter>();
+     mockFilter.as<MockHttpBaseFilter>()->Mocks.SendRequestAsync =
+-        [&servers](HttpRequestMessage const &request) -> ResponseOperation {
++        [&servers, this](HttpRequestMessage const &request) -> ResponseOperation {
+       HttpResponseMessage response{};
+ 
++      auto origin = request.Headers().TryLookup(L"Origin");
++      m_sentRequests.push_back(
++          {wstring{request.RequestUri().Host()},
++           wstring{request.Method().ToString()},
++           origin ? wstring{*origin} : wstring{}});
++
+       ServerParams const *match = nullptr;
+       for (auto *server : servers) {
+-        if (request.RequestUri().Host() == server->Host) {
++        if (request.RequestUri().Host() == server->Host &&
++            (server->Path.empty() || request.RequestUri().Path() == server->Path)) {
+           match = server;
+           break;
+         }
+@@ -592,6 +616,8 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
+     SetRuntimeOptionInt("Http.OriginPolicy", static_cast<int32_t>(OriginPolicy::None));
+     SetRuntimeOptionString("Http.GlobalOrigin", {});
+     SetRuntimeOptionBool("Http.OmitCredentials", false);
++    m_userAgent = {};
++    m_sentRequests.clear();
    }
  
--  if (shouldSchedule) {
--    m_scheduler->Post();
-+  if (scheduler) {
-+    scheduler->Post();
-   } else if (isShutdown) {
-     CancelTask(std::move(task));
-   }
-@@ -150,18 +156,20 @@ void QueueService::Suspend() noexcept {
+   BEGIN_TEST_METHOD_ATTRIBUTE(NoCorsForbiddenMethodSucceeds)
+@@ -878,6 +904,434 @@ TEST_CLASS (OriginPolicyHttpFilterTest) {
+     TestOriginPolicyWithRedirect(serverArgs, redirServerArgs, clientArgs, true /*shouldSucceed*/);
+   } // FullCorsSameOriginToCrossOriginRedirectSucceeds
  
- void QueueService::Resume() noexcept {
-   size_t postCount{0};
-+  Mso::CntPtr<IDispatchQueueScheduler> scheduler; // See Post: no member access after the unlock.
- 
-   {
-     std::lock_guard lock{m_mutex};
-     VerifyElseCrashSz(m_suspendCounter > 0, "m_suspendCounter must not be negative");
- 
-     if (--m_suspendCounter == 0) {
-       postCount = m_queue.Size();
-+      scheduler = m_scheduler;
-     }
-   }
- 
-   for (size_t i = 0; i < postCount; ++i) {
--    m_scheduler->Post();
-+    scheduler->Post();
-   }
- }
- 
++  // A same-origin request redirected to another origin must pass the CORS checks of the final origin.
++  BEGIN_TEST_METHOD_ATTRIBUTE(FullCorsSameOriginToCrossOriginRedirectWithoutCorsHeadersFails)
++  END_TEST_METHOD_ATTRIBUTE()
++  TEST_METHOD(FullCorsSameOriginToCrossOriginRedirectWithoutCorsHeadersFails) {
++    ServerParams serverArgs(s_mockServerHost);
++    ServerParams redirServerArgs(s_redirectServerHost);
++
++    serverArgs.ResponseStatus = HttpStatusCode::MovedPermanently;
++    serverArgs.ResponseHeaders[s_location] = redirServerArgs.WideUrl;
++
++    // Server2 does not allow the original origin
++    redirServerArgs.ResponseStatus = HttpStatusCode::Accepted;
++
++    ClientParams clientArgs(L"GET", {{L"Content-Type", L"application/text"}});
++
++    SetRuntimeOptionString("Http.GlobalOrigin", serverArgs.Url.c_str());
++    SetRuntimeOptionInt("Http.OriginPolicy", static_cast<int32_t>(OriginPolicy::CrossOriginResourceSharing));
++
++    TestOriginPolicyWithRedirect(serverArgs, redirServerArgs, clientArgs, false /*shouldSucceed*/);
++  } // FullCorsSameOriginToCrossOriginRedirectWithoutCorsHeadersFails
++
++  BE
 ```
 
-**File**: `vnext/Mso/src/dispatchQueue/threadPoolScheduler_win.cpp` (modified, +6/-1)
+**File**: `vnext/Shared/Networking/OriginPolicyHttpFilter.cpp` (modified, +165/-0)
 ```diff
-@@ -116,10 +116,14 @@ ThreadPoolSchedulerWin::~ThreadPoolSchedulerWin() noexcept {
-     _Inout_ PTP_CALLBACK_INSTANCE /*instance*/,
-     _Inout_opt_ PVOID context,
-     _Inout_ PTP_WORK /*work*/) {
--  // The ThreadPoolSchedulerWin is alive here because m_threadPoolWork must be completed before it is destroyed.
-   ThreadPoolSchedulerWin *self = static_cast<ThreadPoolSchedulerWin *>(context);
-   ThreadPoolSchedulerWinContext schedulerContext(self);
- 
-+  // Adopt the reference that Post() took for this callback: a callback can still be pending when the last other
-+  // reference goes away, e.g. when an earlier callback destroys the queue and so the scheduler. Declared after
-+  // schedulerContext so that a final release here sees CurrentScheduler() == self and doesn't wait for itself.
-+  Mso::CntPtr<ThreadPoolSchedulerWin> keepAlive{self, Mso::AttachTag};
-+
-   if (auto queue = self->m_queue.GetStrongPtr()) {
-     auto endTime = std::chrono::steady_clock::now() + 100ms;
-     DispatchTask task;
-@@ -162,6 +166,7 @@ void ThreadPoolSchedulerWin::Post() noexcept {
-   } while (!m_usedThreads.compare_exchange_weak(
-       usedThreads, usedThreads + 1, std::memory_order_release, std::memory_order_relaxed));
- 
-+  AddRef(); // Owned by the callback; see WorkCallback.
-   ::SubmitThreadpoolWork(m_threadPoolWork.get());
+@@ -700,11 +700,159 @@ ResponseOperation OriginPolicyHttpFilter::SendPreflightAsync(HttpRequestMessage
+   co_return {co_await m_innerFilter.SendRequestAsync(preflightRequest)};
  }
  
++/*static*/ bool OriginPolicyHttpFilter::IsSimpleCorsRedirectRequest(
++    HttpRequestMessage const &request,
++    HttpMethod const &method,
++    bool includeContent) noexcept {
++  bool callerSetUserAgent = false;
++  if (auto reqArgs = request.Properties().TryLookup(L"RequestArgs")) {
++    for (auto const &header : reqArgs.as<RequestArgs>()->Headers) {
++      if (boost::iequals(header.first, "User-Agent")) {
++        callerSetUserAgent = true;
++        break;
++      }
++    }
++  }
++
++  for (const auto &header : request.Headers()) {
++    // The redirect filter adds a default User-Agent and this filter manages Origin. Neither comes from the caller.
++    if ((!callerSetUserAgent && boost::iequals(header.Key(), L"User-Agent")) || boost::iequals(header.Key(), L"Origin"))
++      continue;
++
++    // The redirect filter removes these before sending a hop to another origin.
++    if (boost::iequals(header.Key(), L"Authorization") || boost::iequals(header.Key(), L"Cookie") ||
++        boost::iequals(header.Key(), L"Cookie2"))
++      continue;
++
++    if (s_simpleCorsRequestHeaderNames.find(header.Key().c_str()) == s_simpleCorsRequestHeaderNames.cend())
++      return false;
++  }
++
++  if (auto content = request.Content(); content && includeContent) {
++    for (const auto &header : content.Headers()) {
++      if (s_simpleCorsRequestHeaderNames.find(header.Key().c_str()) == s_simpleCorsRequestHeaderNames.cend() &&
++          !boost::iequals(header.Key(), "Content-Length"))
++        return false;
++
++      if (boost::iequals(header.Key(), L"Content-Type") &&
++          s_simpleCorsContentTypeValues.find(header.Value().c_str()) == s_simpleCorsContentTypeValues.cend())
++        return false;
++    }
++  }
++
++  return s_simpleCorsMethods.find(method.ToString().c_str()) != s_simpleCorsMethods.cend();
++}
++
++OriginPolicy OriginPolicyHttpFilter::GetCrossOriginRedirectPolicy(
++    HttpRequestMessage const &request,
++    HttpMethod const &method,
++    bool includeContent) const {
++  auto configuredPolicy =
++      static_cast<OriginPolicy>(request.Properties().Lookup(L"OriginPolicy").as<IPropertyValue>().GetUInt64());
++  bool isSimple = IsSimpleCorsRedirectRequest(request, method, includeContent);
++
++  switch (configuredPolicy) {
++    case OriginPolicy::SimpleCrossOriginResourceSharing:
++      if (!isSimple)
++        throw hresult_error{
++            E_INVALIDARG,
++            L"The redirected request does not meet the requirements for Simple Cross-Origin resource sharing"};
++      return OriginPolicy::SimpleCrossOriginResourceSharing;
++
++    case OriginPolicy::CrossOriginResourceSharing:
++      return isSimple ? OriginPolicy::SimpleCrossOriginResourceSharing : OriginPolicy::CrossOriginResourceSharing;
++
++    default:
++      throw hresult_error{E_INVALIDARG, L"SOP (same-origin policy) is enforced"};
++  }
++}
++
++void OriginPolicyHttpFilter::ValidateRedirectScheme(IMap<hstring, IInspectable> const &props, Uri const &nextUri)
++    const {
++  if (m_origin.SchemeName() == nextUri.SchemeName())
++    return;
++
++  // Same scheme rules as ValidateRequest applies to a direct request.
++  auto configuredPolicy = static_cast<OriginPolicy>(props.Lookup(L"OriginPolicy").as<IPropertyValue>().GetUInt64());
++  if (configuredPolicy == OriginPolicy::CrossOriginResourceSharing ||
++      (configuredPolicy == OriginPolicy::SimpleCrossOriginResourceSharing &&
++       GetRuntimeOptionBool("Http.BlockMixedContentSimpleCors")))
++    throw hresult_error{E_INVALIDARG, L"The origin and request URLs must have the same scheme"};
++}
++
++void OriginPolicyHttpFilter::CheckRedirectFromOriginalOrigin(
++    HttpRequestMessage const &request,
++    HttpResponseMessage const &response) const {
++  using winrt::Windows::Web::Http::HttpStatusCode;
++
++  auto props = request.Properties();
++  auto nextUri = Uri{response.Headers().Location().AbsoluteUri()};
++
++  // RedirectHttpFilter does not follow these redirects and returns the response as is.
++  auto nextScheme = nextUri.SchemeName();
++  if ((nextScheme != L"http" && nextScheme != L"https") ||
++      (request.RequestUri().SchemeName() == L"https" && nextScheme == L"http"))
++    return;
++
++  // See https://fetch.spec.whatwg.org/#http-redirect-fetch
++  if (!IsSameOrigin(m_origin, nextUri) && (!nextUri.UserName().empty() || !nextUri.Password().empty()))
++    throw hresult_error{E_INVALIDARG, L"A cross-origin redirect URL can not include credentials"};
++
++  if (props.HasKey(L"CrossOriginRedirect") || !IsSameOrigin(m_origin, request.RequestUri())) {
++    // The chain already left the original origin. Every later redirect response must pass CORS before it is
++    // followed, even when this hop is back on the original origin.
++    auto controlValues = ExtractAccessControlValues(response.Headers());
++    ValidateAllowOrigin(controlValues.AllowedOrigin, controlV
+```
+
+**File**: `vnext/Shared/Networking/OriginPolicyHttpFilter.h` (modified, +27/-0)
+```diff
+@@ -59,6 +59,14 @@ class OriginPolicyHttpFilter
+ 
+   static bool IsSimpleCorsRequest(winrt::Windows::Web::Http::HttpRequestMessage const &request) noexcept;
+ 
++  // Like IsSimpleCorsRequest, but for a redirected hop: uses the given method, optionally ignores the body,
++  // ignores the User-Agent and Origin headers added by the filter chain, and ignores the credential headers
++  // (Authorization, Cookie, Cookie2) the redirect filter removes before a cross-origin hop.
++  static bool IsSimpleCorsRedirectRequest(
++      winrt::Windows::Web::Http::HttpRequestMessage const &request,
++      winrt::Windows::Web::Http::HttpMethod const &method,
++      bool includeContent) noexcept;
++
+   static bool AreSafeRequestHeaders(
+       winrt::Windows::Web::Http::Headers::HttpRequestHeaderCollection const &headers) noexcept;
+ 
+@@ -91,6 +99,25 @@ class OriginPolicyHttpFilter
+       winrt::Windows::Web::Http::HttpResponseMessage const &response,
+       const OriginPolicy effectivePolicy) const;
+ 
++  // Returns the policy (Simple CORS or CORS) for a request that a redirect moved off the original origin.
++  // Uses the method and body the next hop will be sent with. Throws if the configured policy does not allow it.
++  OriginPolicy GetCrossOriginRedirectPolicy(
++      winrt::Windows::Web::Http::HttpRequestMessage const &request,
++      winrt::Windows::Web::Http::HttpMethod const &method,
++      bool includeContent) const;
++
++  // Throws if a redirect to nextUri breaks the scheme rules ValidateRequest applies to direct requests.
++  void ValidateRedirectScheme(
++      winrt::Windows::Foundation::Collections::IMap<winrt::hstring, winrt::Windows::Foundation::IInspectable> const
++          &props,
++      winrt::Windows::Foundation::Uri const &nextUri) const;
++
++  // Checks a redirect of a request that started on the original origin, before the next hop is sent.
++  // Throws if the redirect must not be followed.
++  void CheckRedirectFromOriginalOrigin(
++      winrt::Windows::Web::Http::HttpRequestMessage const &request,
++      winrt::Windows::Web::Http::HttpResponseMessage const &response) const;
++
+   void ValidateAllowOrigin(
+       winrt::hstring const &allowedOrigin,
+       winrt::hstring const &allowCredentials,
+```
+
+**File**: `vnext/Shared/Networking/RedirectHttpFilter.cpp` (modified, +15/-2)
+```diff
+@@ -276,8 +276,9 @@ ResponseOperation RedirectHttpFilter::SendRequestAsync(HttpRequestMessage const
+       throw winrt::hresult_error{HRESULT_FROM_WIN32(ERROR_HTTP_REDIRECT_FAILED), L"Too many redirects"};
+     }
+ 
+-    // Call event source's OnRedirecting before modifying request parameters.
+-    if (coEventSrc && !coEventSrc->OnRedirecting(coRequest, response)) {
++    // Check whether the redirect will be followed before notifying the event source, so it only sees hops that are
++    // actually sent.
++    if (!coAllowAutoRedirect) {
+       break;
+     }
+ 
+@@ -295,6 +296,11 @@ ResponseOperation RedirectHttpFilter::SendRequestAsync(HttpRequestMessage const
+       break;
+     }
+ 
++    // Call event source's OnRedirecting before modifying request parameters.
++    if (coEventSrc && !coEventSrc->OnRedirecting(coRequest, response)) {
++      break;
++    }
++
+     // See https://fetch.spec.whatwg.org/#http-redirect-fetch
+     // 301/302 change POST to GET; 303 changes any method other than GET/HEAD to GET.
+     // 307/308 (and other redirect statuses) keep the method and body.
+@@ -311,12 +317,19 @@ ResponseOperation RedirectHttpFilter::SendRequestAsync(HttpRequestMessage const
+     }
+ 
+     if (auto requestFactory = coRequestFactory.lock()) {
++      // The factory rebuilds headers from the original arguments. Keep the Origin header set by the origin policy.
++      auto origin = coRequest.Headers().TryLookup(L"Origin");
++
+       coRequest = co_await requestFactory->CreateRequest(
+           HttpMethod{method}, Uri{redirectUri}, coRequest.Properties(), /*includeContent*/ !removeBody);
+ 
+       if (!coRequest) {
+         throw winrt::hresult_error{E_INVALIDARG, L"Invalid request handle"};
+       }
++
++      if (origin) {
++        coRequest.Headers().Insert(L"Origin", *origin);
++      }
+     } else {
+       coRequest.Method(method);
+       coRequest.RequestUri(redirectUri);
 ```
 
 ---
 
-### Incident Patch 2: `1ed932d5` (2026-11-17)
-**Commit Message**: Fix dead rnw-dependencies links in contributor docs (#16635)
+### Incident Patch 2: `9ff3a931` (2026-11-20)
+**Commit Message**: 📦 [main]: Bump the all-dependencies group with 3 updates (#16644)
 
-The website no longer serves a docs/next/ version, so the
-rnw-dependencies links in CONTRIBUTING.md and docs/building-rnw.md
-return 404. Link the current docs/rnw-dependencies page instead.
+Bumps the all-dependencies group with 3 updates: [@babel/generator](https://github.com/babel/babel/tree/HEAD/packages/babel-generator), [@babel/preset-env](https://github.com/babel/babel/tree/HEAD/packages/babel-preset-env) and [@babel/runtime](https://github.com/babel/babel/tree/HEAD/packages/babel-runtime).
 
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+
+Updates `@babel/generator` from 7.29.13 to 7.29.14
+- [Release notes](https://github.com/babel/babel/releases)
+- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/babel/babel/commits/v7.29.14/packages/babel-generator)
+
+Updates `@babel/preset-env` from 7.29.7 to 7.29.14
+- [Release notes](https://github.com/babel/babel/releases)
+- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/babel/babel/commits/v7.29.14/packages/babel-preset-env)
+
+Updates `@babel/runtime` from 7.29.13 to 7.29.14
+- [Release notes](https://github.com/babel/babel/releases)
+- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/babel/babel/commits/v7.29.14/packages/babel-runtime)
+
+---
+updated-dependencies
+
+**File**: `yarn.lock` (modified, +176/-69)
 ```diff
-@@ -75,7 +75,7 @@ For a primer on our codebase, see ["Repository Contents"](https://github.com/mic
+@@ -78,16 +78,16 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- ## 👨‍💻 Development
+-"@babel/generator@npm:^7.25.0, @babel/generator@npm:^7.29.0, @babel/generator@npm:^7.29.1, @babel/generator@npm:^7.29.12, @babel/generator@npm:^7.29.13, @babel/generator@npm:^7.29.7, @babel/generator@npm:^7.7.2":
+-  version: 7.29.13
+-  resolution: "@babel/generator@npm:7.29.13"
++"@babel/generator@npm:^7.25.0, @babel/generator@npm:^7.29.0, @babel/generator@npm:^7.29.1, @babel/generator@npm:^7.29.12, @babel/generator@npm:^7.29.13, @babel/generator@npm:^7.29.14, @babel/generator@npm:^7.29.7, @babel/generator@npm:^7.7.2":
++  version: 7.29.14
++  resolution: "@babel/generator@npm:7.29.14"
+   dependencies:
+-    "@babel/parser": "npm:^7.29.13"
+-    "@babel/types": "npm:^7.29.11"
++    "@babel/parser": "npm:^7.29.14"
++    "@babel/types": "npm:^7.29.14"
+     "@jridgewell/gen-mapping": "npm:^0.3.12"
+     "@jridgewell/trace-mapping": "npm:^0.3.28"
+     jsesc: "npm:^3.0.2"
+-  checksum: 10c0/3b6318f59aeaffe9305b1e4a8e3035f6223c808e961459945d896ba3c6f9dccb1e95d477b73d8e00b21d972b389292478dd1a50e8917d1629cd3c52005a64594
++  checksum: 10c0/39db746c47e0b80290b727e64025dd0ee9060f346271b5ca75ba07485df05f704a74358910bbe8e9f6e2a8fca62ac98f886640d2c84e7740af5fec42fbe0b71a
+   languageName: node
+   linkType: hard
  
--> **System Requirements:** Contributing to this project requires a Windows machine, see [rnw-dependencies](https://microsoft.github.io/react-native-windows/docs/next/rnw-dependencies) for more info on this and the script for installing required dependencies.
-+> **System Requirements:** Contributing to this project requires a Windows machine, see [rnw-dependencies](https://microsoft.github.io/react-native-windows/docs/rnw-dependencies) for more info on this and the script for installing required dependencies.
+@@ -165,6 +165,23 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- ### 🚧 Fork, Clone, Branch and Create your PR
++"@babel/helper-create-class-features-plugin@npm:^7.29.13":
++  version: 7.29.13
++  resolution: "@babel/helper-create-class-features-plugin@npm:7.29.13"
++  dependencies:
++    "@babel/helper-annotate-as-pure": "npm:^7.29.7"
++    "@babel/helper-member-expression-to-functions": "npm:^7.29.7"
++    "@babel/helper-optimise-call-expression": "npm:^7.29.7"
++    "@babel/helper-replace-supers": "npm:^7.29.7"
++    "@babel/helper-skip-transparent-expression-wrappers": "npm:^7.29.13"
++    "@babel/traverse": "npm:^7.29.13"
++    semver: "npm:^6.3.1"
++  peerDependencies:
++    "@babel/core": ^7.0.0
++  checksum: 10c0/c6d7ba6f3df266e04acbe44ec0626101d599d0928d64a9565fbbcab51d377e41f3a0bd3f3192dd529826af498d675c1d32e229382405ee8603171c8cd66cef8d
++  languageName: node
++  linkType: hard
++
+ "@babel/helper-create-class-features-plugin@npm:^7.29.7":
+   version: 7.29.7
+   resolution: "@babel/helper-create-class-features-plugin@npm:7.29.7"
+@@ -303,6 +320,19 @@ __metadata:
+   languageName: node
+   linkType: hard
  
-```
-
-**File**: `docs/building-rnw.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
++"@babel/helper-module-transforms@npm:^7.29.14":
++  version: 7.29.14
++  resolution: "@babel/helper-module-transforms@npm:7.29.14"
++  dependencies:
++    "@babel/helper-module-imports": "npm:^7.29.7"
++    "@babel/helper-validator-identifier": "npm:^7.29.7"
++    "@babel/traverse": "npm:^7.29.14"
++  peerDependencies:
++    "@babel/core": ^7.0.0
++  checksum: 10c0/5ca8b9c36d5b9656196c758df1dc10148086b232f3df43d932a66d84f46faf93da7096667903c1f652539759789dc1ef5fbff0569baeabb110dce27faa988250
++  languageName: node
++  linkType: hard
++
+ "@babel/helper-module-transforms@npm:^7.29.7":
+   version: 7.29.7
+   resolution: "@babel/helper-module-transforms@npm:7.29.7"
+@@ -410,6 +440,16 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- # Building React-Native-Windows
++"@babel/helper-skip-transparent-expression-wrappers@npm:^7.29.13":
++  version: 7.29.13
++  resolution: "@babel/helper-skip-transparent-expression-wrappers@npm:7.29.13"
++  dependencies:
++    "@babel/traverse": "npm:^7.29.13"
++    "@babel/types": "npm:^7.29.11"
++  checksum: 10c0/7ee6a71df0e921666b308e0c9ffa9b36961df8b7164f46d241885478b24195e506e4d9a0aff9bcd76c09eb27628a7f87af73f04b953b66714ec288d578047b7d
++  languageName: node
++  linkType: hard
++
+ "@babel/helper-skip-transparent-expression-wrappers@npm:^7.29.7":
+   version: 7.29.7
+   resolution: "@babel/helper-skip-transparent-expression-wrappers@npm:7.29.7"
+@@ -434,6 +474,13 @@ __metadata:
+   languageName: node
+   linkType: hard
  
--- Make sure you have installed [dependencies](https://microsoft.github.io/react-native-windows/docs/next/rnw-dependencies). Just run `vnext\scripts\rnw-dependencies.ps1` in an elevated PowerShell session.
-+- Make sure you have installed [dependencies](https://microsoft.github.io/react-native-windows/docs/rnw-dependencies). Just run `vnext\scripts\rnw-dependencies.ps1` in an elevated PowerShell session.
- - Install [Git](https://git-scm.com/download/win) if you don't have it installed in your development machine
++"@babel/helper-string-parser@npm:^7.29.14":
++  version: 7.29.14
++  resolution: "@babel/helper-string-parser@npm:7.29.14"
++  checksum: 10c0/7e296ef8457872da9f9306ef29a67470505bca7f21728ff4fede08746eac2bb122a3a3be39135d337a9c56985bae24e4c2dd8f13896afe64a32e9251363ed7bd
++  languageName: node
++  linkType: hard
++
+ "@babel/helper-string-parser@npm:^7.29.7":
+   version: 7.29.7
+   resolution: "@babel/helper-string-parser@npm:7.29.7"
+@@ -534,6 +581,17 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- ## Build Steps
++"@babel/parser@npm:^7.29.14":
++  version: 7.29.14
++  resolution: "@babel/parser@npm:7.29.14"
++  dependencies:
++    "@babel/types": "npm:^7.29.14"
++  bin:
++    parser: ./bin/babel-parser.js
++  checksum: 10c0/5d76040cb386915a5086c864b5966a08bada9fa6074fa2b16cce42ed78ecae309003d3362fef88a96b9a40afc9761604502db93f7cea9db59af077d1ff2109f4
++  languageName: node
++  linkType: hard
++
+ "@babel/parser@npm:^7.29.7":
+   version: 7.29.7
+   resolution: "@babel/parser@npm:7.29.7"
+@@ -590,15 +648,15 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@babel/plugin-bugfix-safari-rest-destructuring-rhs-array@npm:^7.29.7":
+-  version: 7.29.7
+-  resolution: "@babel/plugin-bugfix-safari-rest-destructuring-rhs-array@npm
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16635** (2026-11-17): Fix dead rnw-dependencies links in contributor docs (@farisbasha)
-- **PR #16634** (2026-11-17): [0.85] Fix use-after-free when a task destroys the dispatch queue it was posted to (@tiagomacarios)
-- **PR #16633** (2026-11-17): [0.81] Fix use-after-free when a task destroys the dispatch queue it was posted to (@tiagomacarios)
-- **PR #16632** (2026-11-17): 🚀 [main]: Release 10 packages (@azure-pipelines[bot])
-- **PR #16630** (2026-11-17): 🚀 [0.81]: Release 13 packages (@azure-pipelines[bot])
-- **PR #16628** (2026-11-16): [0.81] Update node-api-jsi to pick up the BigInt::toString fix (@anuagragith)
+- **PR #16644** (2026-11-20): 📦 [main]: Bump the all-dependencies group with 3 updates (@dependabot[bot])
+- **PR #16643** (2026-11-20): 🚀 [0.81]: Release 13 packages (@azure-pipelines[bot])
+- **PR #16642** (2026-11-20): [0.81] Add opt-in V8 JSI ABI runtime that loads v8jsi2.dll (@vmoroz)
+- **PR #16641** (2026-11-20): 🚀 [main]: Release 15 packages (@azure-pipelines[bot])
+- **PR #16639** (2026-11-19): Integrate React Native November 10, 2026 nightly (@anuagragith)
+- **PR #16638** (2026-11-18): 🚀 [0.81]: Release 13 packages (@azure-pipelines[bot])
 
 ---
 
@@ -1787,25 +2134,25 @@ return 404. Link the current docs/rnw-dependencies page instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use-after-free when a task destroys the dispatch queue it was posted to
+## X. Apply origin policy checks when a same-origin request is redirected to another o
 
 **RULE**:
-When implementing operations in `change/react-native-windows-a9d8e7cf-7a98-4a5d-9d25-56cbb2423abc.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `change/react-native-windows-0630ea41-5851-45c7-b799-906060c3589c.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4463b281`: use-after-free when a task destroys the dispatch queue it was posted to. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aea3f3ad`: Apply origin policy checks when a same-origin request is redirected to another origin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/react-native-windows-a9d8e7cf-7a98-4a5d-9d25-56cbb2423abc.json`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/react-native-windows-0630ea41-5851-45c7-b799-906060c3589c.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
 {
   "type": "prerelease",
-  "comment": "Fix a use-after-free when a dispatch queue is destroyed while a task is being posted to it",
+  "comment": "Apply origin policy checks when a same-origin request is redirected to another origin",
   "packageName": "react-native-windows",
-  "email": "tiagoma@microsoft.com",
+  "email": "anuagra@microsoft.com",
   "dependentChangeType": "patch"
 }
 ```
@@ -1817,7 +2164,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4463b281` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aea3f3ad` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

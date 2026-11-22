@@ -12091,3 +12091,6 @@
 | `CYCLE-20261122-CY2F` | `2026-11-22T12:57:04.119Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9931` | Yes (`bcaae78f...`) |
 | `CYCLE-20261122-J38W` | `2026-11-22T13:01:50.768Z` | `internlm/Sage-S2.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | Yes (`22a5bf26...`) |
 | `CYCLE-20261122-6ZTA` | `2026-11-22T13:20:26.062Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md` | Yes (`c8d18720...`) |
+| `CYCLE-20261122-KLNV` | `2026-11-22T13:59:00.523Z` | `sensenova/SenseNova-Loop-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md` | Yes (`a60b99ba...`) |
+| `CYCLE-20261122-KRK2` | `2026-11-22T13:59:08.162Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9932` | Yes (`21204bd2...`) |
+| `CYCLE-20261122-KWYV` | `2026-11-22T13:59:15.175Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9933` | Yes (`7c79b813...`) |

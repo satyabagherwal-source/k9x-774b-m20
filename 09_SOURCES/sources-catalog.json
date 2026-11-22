@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "3f58d752",
+    "sourceVersion": "c06497f3",
     "license": "Apache-2.0",
-    "contentHash": "fe2805634b582407b8279afc83ab4156a833f61a22e8f02783df6cc3c66254b0",
-    "lastHarvestedAt": "2026-11-21T11:11:43.141Z",
+    "contentHash": "7c79b813caaf32ed7cf3fb86975eceb454b3ba8bdcdcbaa7fec7e38152f42212",
+    "lastHarvestedAt": "2026-11-22T13:59:15.180Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "1ed932d5",
+    "sourceVersion": "aea3f3ad",
     "license": "NOASSERTION",
-    "contentHash": "ca3c84c83e33f9b8c52c0c7436566a30ee2b34b41e11c232fa33e19f879e1d10",
-    "lastHarvestedAt": "2026-11-18T07:56:25.840Z",
+    "contentHash": "21204bd230a767f4dcc1854f04d5d5c3c7659078f5627bbbc87830e396b7f361",
+    "lastHarvestedAt": "2026-11-22T13:59:08.167Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {
@@ -12805,8 +12805,8 @@
     "sourceUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B",
     "sourceVersion": "hf-sensenova-sensenova-loop-9b",
     "license": "Open-Source",
-    "contentHash": "a26e8e39aeec134b66f5c690ad0fbdedf881753836da0b1455b309fdf72e3815",
-    "lastHarvestedAt": "2026-11-17T16:46:31.203Z",
+    "contentHash": "a60b99ba0b8e6da729877a812e737911451263b4e16bf2201c90b2f2d7aef380",
+    "lastHarvestedAt": "2026-11-22T13:59:00.528Z",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b"
   },
   "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored": {
