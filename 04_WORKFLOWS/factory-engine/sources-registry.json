@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T03:46:25.623Z",
-    "lastVerified": "2026-11-22T03:46:25.623Z",
+    "lastChecked": "2026-11-22T03:54:16.872Z",
+    "lastVerified": "2026-11-22T03:54:16.872Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,12 +354,12 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T03:11:39.598Z",
-    "lastVerified": "2026-11-22T03:11:39.598Z",
+    "lastChecked": "2026-11-22T03:54:16.862Z",
+    "lastVerified": "2026-11-22T03:54:16.862Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -368,7 +368,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0127a257"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1806,8 +1807,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T22:40:10.973Z",
-    "lastVerified": "2026-11-21T22:40:10.973Z",
+    "lastChecked": "2026-11-22T03:54:11.932Z",
+    "lastVerified": "2026-11-22T03:54:11.932Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2996,9 +2997,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-20T23:29:57.409Z",
+    "lastChecked": "2026-11-22T03:54:14.391Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-20T23:29:57.409Z"
+    "lastVerified": "2026-11-22T03:54:14.391Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -4153,9 +4154,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-21T00:32:37.398Z",
+    "lastChecked": "2026-11-22T03:54:09.384Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-21T00:32:37.398Z"
+    "lastVerified": "2026-11-22T03:54:09.384Z"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -5386,9 +5387,9 @@
   "benoitvallon-react-native-nw-react-calculator": {
     "name": "react-native-nw-react-calculator",
     "officialUrl": "https://github.com/benoitvallon/react-native-nw-react-calculator",
-    "lastChecked": "2026-11-18T23:18:11.545Z",
+    "lastChecked": "2026-11-22T03:54:06.927Z",
     "revisionIdentifier": "4f9628fa",
-    "lastVerified": "2026-11-18T23:18:11.545Z"
+    "lastVerified": "2026-11-22T03:54:06.927Z"
   },
   "bridgecrewio-checkov": {
     "name": "checkov",
@@ -5793,8 +5794,8 @@
     "officialUrl": "https://github.com/Xudong-Huang/may",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T17:37:04.868Z",
-    "lastVerified": "2026-11-20T17:37:04.868Z",
+    "lastChecked": "2026-11-22T03:54:01.879Z",
+    "lastVerified": "2026-11-22T03:54:01.879Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xudong-huang-may",
@@ -13545,6 +13546,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
     "contentHash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-baidu-ernie-5.5-flash-base": {
+    "name": "baidu/ERNIE-5.5-Flash-Base",
+    "officialUrl": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T03:54:04.742Z",
+    "lastVerified": "2026-11-22T03:54:04.742Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
+    "contentHash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

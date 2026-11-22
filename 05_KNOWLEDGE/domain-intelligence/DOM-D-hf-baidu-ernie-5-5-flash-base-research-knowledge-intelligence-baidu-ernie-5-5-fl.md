@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
   "source_version": "hf-baidu-ernie-5.5-flash-base",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T03:37:02.282Z",
+  "timestamp": "2026-11-22T03:54:05.608Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-baidu-ernie-5-5-flash-base",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [baidu/ERNIE-5.5-Flash-Base](https://huggingface.co/baidu/ERNIE-5.5-Flash-Base) (Revision: `hf-baidu-e`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T03:37:02.282Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T03:54:05.608Z`  
 > **Learning ID**: `learn-huggingface-baidu-ernie-5-5-flash-base`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/baidu/ERNIE-5.5-Flash-Base](https://huggingface.co/baidu/ERNIE-5.5-Flash-Base))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:37:01.637Z  
+> **Harvest Timestamp**: 2026-11-22T03:54:04.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3914 downloads | 323 likes
+- **Stars / Engagement**: 5237 downloads | 346 likes
 
 ---
 

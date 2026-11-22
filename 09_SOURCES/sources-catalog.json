@@ -12085,8 +12085,8 @@
     "sourceUrl": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
     "sourceVersion": "hf-baidu-ernie-5.5-flash-base",
     "license": "Open-Source",
-    "contentHash": "989f221e8be0e63edfcced41bdff45289f24d5334ebad8c9f9661ad80845e992",
-    "lastHarvestedAt": "2026-11-16T03:37:02.115Z",
+    "contentHash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
+    "lastHarvestedAt": "2026-11-22T03:54:05.405Z",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base"
   },
   "github-squad": {

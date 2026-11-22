@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:46:15.201Z",
-  "total_cycles_completed": 11409,
-  "total_learnings_persisted": 11409,
+  "last_updated": "2026-11-22T03:54:05.411Z",
+  "total_cycles_completed": 11410,
+  "total_learnings_persisted": 11410,
   "total_rules_promoted": 10702,
   "history": [
-    {
-      "timestamp": "2026-11-21T11:38:38.960Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T11:38:41.870Z",
       "repository": "argoproj/argo-workflows",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-22T03:46:15.201Z",
       "repository": "ntex-rs/ntex",
       "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:54:05.411Z",
+      "repository": "baidu/ERNIE-5.5-Flash-Base",
+      "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

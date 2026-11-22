@@ -12000,3 +12000,4 @@
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T03:38:25.449Z` | `lingodotdev-lingo.dev` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6CF392AE` [Domain H] | Yes (`2bf9f28b...`) |
 | `CYCLE-20261122-OKJ5` | `2026-11-22T03:46:14.129Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | Yes (`0c3aafca...`) |
 | `CYCLE-20261122-OLBM` | `2026-11-22T03:46:15.154Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`fb3fb9fa...`) |
+| `CYCLE-20261122-YO61` | `2026-11-22T03:54:05.401Z` | `baidu/ERNIE-5.5-Flash-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | Yes (`eb5085b7...`) |

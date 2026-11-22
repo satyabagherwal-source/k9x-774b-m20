@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T03:37:29.850Z",
+  "timestamp": "2026-11-22T03:54:17.099Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-baidu-ernie-5.5-flash-base-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-baidu-ernie-5.5-flash-base-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T03:37:29.850Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T03:54:17.099Z`  
 > **Learning ID**: `LEARN-EVO-hf-baidu-ernie-5.5-flash-base-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-baidu-ern`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T03:37:01.754Z  
+> **Timestamp**: 2026-11-22T03:54:04.913Z  
 > **Learning ID**: `learn-huggingface-baidu-ernie-5-5-flash-base`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/baidu/ERNIE-5.5-Flash-Base](https://huggingface.co/baidu/ERNIE-5.5-Flash-Base))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:37:01.637Z  
+> **Harvest Timestamp**: 2026-11-22T03:54:04.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3914 downloads | 323 likes
+- **Stars / Engagement**: 5237 downloads | 346 likes
 
 ---
 

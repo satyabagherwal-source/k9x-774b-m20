@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-ZV5L",
-    "timestamp": "2026-11-20T02:27:41.817Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "1f6db0bd43c635b69c9d727cf77145c04b0963930efbc47c84152d43f7ec65df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-01NZ",
     "timestamp": "2026-11-20T02:27:50.255Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7475,21 @@
     "repository": "ntex-rs/ntex",
     "learningId": "learn-github-ntex-rs-ntex",
     "contentHash": "fb3fb9fa38f4b1f28d6a33c394bc4ac2c3525a445e2f615c3568ce8bc1d39d6e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-YO61",
+    "timestamp": "2026-11-22T03:54:05.401Z",
+    "repository": "baidu/ERNIE-5.5-Flash-Base",
+    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
+    "contentHash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
