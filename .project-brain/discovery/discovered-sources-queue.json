@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T07:37:23.674Z",
+  "updated_at": "2026-11-22T07:56:47.732Z",
   "stats": {
-    "total_discovered": 7468,
-    "approved_pending_harvest": 7067,
+    "total_discovered": 7471,
+    "approved_pending_harvest": 7070,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7046,
+      "COMMUNITY_AND_EXPERT": 7049,
       "OFFICIAL_DOCUMENTATION": 243,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -161512,6 +161512,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
         "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-23FA9553F0FC": {
+      "id": "SRC-23FA9553F0FC",
+      "url": "https://github.com/dbunit/dbunit-extension",
+      "title": "https://github.com/dbunit/dbunit-extension",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T07:56:47.635Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-53EE3FF94F0D": {
+      "id": "SRC-53EE3FF94F0D",
+      "url": "https://github.com/dbunit/dbunit-extension/releases",
+      "title": "https://github.com/dbunit/dbunit-extension/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T07:56:47.683Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-0AF6E53A003E": {
+      "id": "SRC-0AF6E53A003E",
+      "url": "https://github.com/dbunit/dbunit-extension/compare/dbunit-3.5.2...dbunit-3.5.3",
+      "title": "https://github.com/dbunit/dbunit-extension/compare/dbunit-3.5.2...dbunit-3.5.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T07:56:47.732Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
       }
     }
   }

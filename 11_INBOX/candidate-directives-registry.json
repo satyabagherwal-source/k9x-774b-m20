@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:48:40.176Z",
+  "last_updated": "2026-11-22T07:56:47.931Z",
   "directives": [
     {
       "id": "CD-001",
@@ -45604,6 +45604,55 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AC4ABD-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-MRO7",
+      "directive_title": "Refactoring Index::for_each_record in join command",
+      "source_repo": "medialab-xan-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MRO7-refactoring-index-for_each_record-in-join-command.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-MSOQ",
+      "directive_title": "build(deps): bump org.dbunit:dbunit",
+      "source_repo": "gocd-gocd-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MSOQ-build-deps-bump-org-dbunit-dbunit.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-A6625D",
+      "directive_title": "Refactoring Index::for_each_record in join command",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "medialab-xan",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A6625D-refactoring-index-for-each-record-in-joi.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-098FB7",
+      "directive_title": "Forensic Learning Record (Deep Inspection): chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-098FB7-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-DE8D30",
+      "directive_title": "build(deps): bump org.dbunit:dbunit",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gocd-gocd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DE8D30-build-deps-bump-org-dbunit-dbunit.md",
       "staged_date": "2026-11-22"
     }
   ]

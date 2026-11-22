@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-9CS7",
-    "timestamp": "2026-11-20T07:15:00.727Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "f89a56be80377a11670eee46a482b9fc0a3af1936d72e46582ed8ab4c394d5f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-09PA",
-    "timestamp": "2026-11-20T07:35:56.446Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "82637fe01b7493f03326b5e828d4108cbfffbed8526a0d728064c6412db6ea89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-0DB0",
-    "timestamp": "2026-11-20T07:36:01.116Z",
-    "repository": "JuulLabs/kable",
-    "learningId": "learn-github-juullabs-kable",
-    "contentHash": "af7bab64cdef4af4aaedb59f591e79af64c07b89c2e925de86351403ef103d35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-0ERR",
     "timestamp": "2026-11-20T07:36:03.015Z",
     "repository": "open-policy-agent/opa",
@@ -7492,6 +7447,51 @@
     "contentHash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-MHIZ",
+    "timestamp": "2026-11-22T07:56:33.467Z",
+    "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
+    "contentHash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-MIQM",
+    "timestamp": "2026-11-22T07:56:35.038Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "6e4f879ed8a0413f6e9395f2b74eb9e64f6d3e6ac99b745bc25346b189d68b86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-MOWV",
+    "timestamp": "2026-11-22T07:56:43.039Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "907683a1b31e27aa9eab5909f865dfb112e5585cbb8e9ac454aec2ec7258538a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

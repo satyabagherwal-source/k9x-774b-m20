@@ -12051,3 +12051,6 @@
 | `CYCLE-20261122-XK7H` | `2026-11-22T07:37:10.541Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9907` | Yes (`1064a47b...`) |
 | `CYCLE-20261122-XQ38` | `2026-11-22T07:37:18.164Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9908` | Yes (`788ad3da...`) |
 | `CYCLE-20261122-C7ZW` | `2026-11-22T07:48:34.556Z` | `meituan-longcat/LongCat-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9909, Rule 9910, Rule 9911` | Yes (`de5ad174...`) |
+| `CYCLE-20261122-MHIZ` | `2026-11-22T07:56:33.467Z` | `chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md` | Yes (`ddc37c57...`) |
+| `CYCLE-20261122-MIQM` | `2026-11-22T07:56:35.038Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9912` | Yes (`6e4f879e...`) |
+| `CYCLE-20261122-MOWV` | `2026-11-22T07:56:43.039Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9913` | Yes (`907683a1...`) |

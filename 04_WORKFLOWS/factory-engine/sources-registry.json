@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T07:48:38.054Z",
-    "lastVerified": "2026-11-22T07:48:38.054Z",
+    "lastChecked": "2026-11-22T07:56:46.224Z",
+    "lastVerified": "2026-11-22T07:56:46.224Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T07:14:01.508Z",
+    "lastChecked": "2026-11-22T07:56:45.121Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T07:14:01.508Z"
+    "lastVerified": "2026-11-22T07:56:45.121Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1502,9 +1502,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-22T03:11:31.573Z",
+    "lastChecked": "2026-11-22T07:56:40.072Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-22T03:11:31.573Z"
+    "lastVerified": "2026-11-22T07:56:40.072Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4393,12 +4393,12 @@
     "lastVerified": "2026-11-22T05:04:32.431Z"
   },
   "trailbaseio-trailbase": {
-    "name": "trailbaseio/trailbase",
+    "name": "trailbase",
     "officialUrl": "https://github.com/trailbaseio/trailbase",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T03:44:46.120Z",
-    "lastVerified": "2026-11-21T03:44:46.120Z",
+    "lastChecked": "2026-11-22T07:56:42.535Z",
+    "lastVerified": "2026-11-22T07:56:42.535Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trailbaseio-trailbase",
@@ -4407,7 +4407,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b9e8acb7"
   },
   "wasm-bindgen-wasm-pack": {
     "name": "wasm-pack",
@@ -5514,14 +5515,14 @@
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-21T05:27:55.425Z",
-    "lastVerified": "2026-11-21T05:27:55.425Z",
+    "lastChecked": "2026-11-22T07:56:42.060Z",
+    "lastVerified": "2026-11-22T07:56:42.060Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
+    "contentHash": "907683a1b31e27aa9eab5909f865dfb112e5585cbb8e9ac454aec2ec7258538a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6834,9 +6835,9 @@
   "iconoir-icons-iconoir": {
     "name": "iconoir",
     "officialUrl": "https://github.com/iconoir-icons/iconoir",
-    "lastChecked": "2026-11-19T05:06:06.581Z",
+    "lastChecked": "2026-11-22T07:56:35.112Z",
     "revisionIdentifier": "39834e3f",
-    "lastVerified": "2026-11-19T05:06:06.582Z"
+    "lastVerified": "2026-11-22T07:56:35.112Z"
   },
   "opentofu-opentofu": {
     "name": "opentofu/opentofu",
@@ -7344,22 +7345,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "medialab-xan": {
-    "name": "xan",
+    "name": "medialab/xan",
     "officialUrl": "https://github.com/medialab/xan",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T22:39:32.404Z",
-    "lastVerified": "2026-11-20T22:39:32.404Z",
+    "lastChecked": "2026-11-22T07:56:34.032Z",
+    "lastVerified": "2026-11-22T07:56:34.032Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-medialab-xan",
-    "contentHash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
-    "promotedRulesCount": 3,
+    "contentHash": "6e4f879ed8a0413f6e9395f2b74eb9e64f6d3e6ac99b745bc25346b189d68b86",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7e357947"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",
@@ -13993,6 +13993,23 @@
     "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
     "contentHash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
     "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized": {
+    "name": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "officialUrl": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T07:56:32.833Z",
+    "lastVerified": "2026-11-22T07:56:32.833Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
+    "contentHash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

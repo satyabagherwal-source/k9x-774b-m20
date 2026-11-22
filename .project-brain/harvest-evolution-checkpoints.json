@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:48:41.010Z",
+  "last_updated": "2026-11-22T07:56:48.395Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T06:27:39.447Z",
@@ -1098,7 +1098,7 @@
       "staged_for_review": 1
     },
     "gocd-gocd-learnings.md": {
-      "processed_at": "2026-11-21T05:28:02.065Z",
+      "processed_at": "2026-11-22T07:56:47.451Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1258,9 +1258,9 @@
       "staged_for_review": 1
     },
     "medialab-xan-learnings.md": {
-      "processed_at": "2026-11-19T07:43:16.188Z",
-      "promoted_canonical": 2,
-      "staged_for_review": 0
+      "processed_at": "2026-11-22T07:56:46.358Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "yshrsmz-buildkonfig-learnings.md": {
       "processed_at": "2026-11-20T07:04:35.109Z",
@@ -2378,7 +2378,7 @@
       "staged_for_review": 1
     },
     "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md": {
-      "processed_at": "2026-11-14T04:06:20.475Z",
+      "processed_at": "2026-11-22T07:56:47.090Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3713,7 +3713,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3060,
+  "total_dossiers_evaluated": 3063,
   "total_canonical_promoted": 473,
-  "total_staged_for_review": 2329
+  "total_staged_for_review": 2332
 }

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
   "source_version": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T04:06:06.308Z",
+  "timestamp": "2026-11-22T07:56:33.668Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized](https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized) (Revision: `hf-chatrla`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T04:06:06.308Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T07:56:33.668Z`  
 > **Learning ID**: `learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized](https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T04:06:05.497Z  
+> **Harvest Timestamp**: 2026-11-22T07:56:32.833Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 68096 downloads | 239 likes
+- **Stars / Engagement**: 339903 downloads | 749 likes
 
 ---
 

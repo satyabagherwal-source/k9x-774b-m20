@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:48:34.564Z",
-  "total_cycles_completed": 11456,
-  "total_learnings_persisted": 11456,
-  "total_rules_promoted": 10726,
+  "last_updated": "2026-11-22T07:56:43.048Z",
+  "total_cycles_completed": 11459,
+  "total_learnings_persisted": 11459,
+  "total_rules_promoted": 10728,
   "history": [
-    {
-      "timestamp": "2026-11-21T15:31:25.376Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T15:31:35.701Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T15:48:50.037Z",
-      "repository": "pubkey/rxdb",
-      "learningId": "learn-github-pubkey-rxdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T15:48:58.577Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1382,27 @@
       "repository": "meituan-longcat/LongCat-2.5",
       "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:56:33.476Z",
+      "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:56:35.046Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:56:43.048Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

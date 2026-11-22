@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T07:48:34.567Z",
+  "last_updated": "2026-11-22T07:56:43.051Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
-      "verified_at": "2026-11-21T05:27:56.177Z",
+      "content_hash": "907683a1b31e27aa9eab5909f865dfb112e5585cbb8e9ac454aec2ec7258538a",
+      "verified_at": "2026-11-22T07:56:43.050Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T05:27:56.177Z"
+      "last_updated": "2026-11-22T07:56:43.050Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
-      "verified_at": "2026-11-19T07:41:45.173Z",
+      "content_hash": "6e4f879ed8a0413f6e9395f2b74eb9e64f6d3e6ac99b745bc25346b189d68b86",
+      "verified_at": "2026-11-22T07:56:35.049Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T07:41:45.173Z"
+      "last_updated": "2026-11-22T07:56:35.049Z"
     },
     "onejs/one": {
       "repository": "onejs/one",
@@ -18801,14 +18801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
-      "content_hash": "6c59e1f427690f627ad9493f95c2deaf677683908cd397e694f6ec42ca8886d0",
-      "verified_at": "2026-11-14T04:06:06.119Z",
+      "content_hash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
+      "verified_at": "2026-11-22T07:56:33.479Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T04:06:06.119Z"
+      "last_updated": "2026-11-22T07:56:33.479Z"
     },
     "Edge0/Edge0-145B-NVFP4": {
       "repository": "Edge0/Edge0-145B-NVFP4",

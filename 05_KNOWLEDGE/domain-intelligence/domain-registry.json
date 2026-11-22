@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T07:48:40.866Z",
-  "total_records": 2340,
+  "last_updated": "2026-11-22T07:56:48.102Z",
+  "total_records": 2342,
   "domains": {
     "A": {
       "total": 17,
@@ -992,7 +992,7 @@
       ]
     },
     "F": {
-      "total": 89,
+      "total": 91,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1082,7 +1082,9 @@
         "domain_intelligence-design-intelligence-diffuspace-clover-35b-a3b-preview-core-invariants",
         "domain_intelligence-design-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-core-invarian",
         "domain_intelligence-design-intelligence-meituan-longcat-longcat-2-5-core-invariants",
-        "domain_intelligence-design-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-medialab-xan-core-invariants",
+        "domain_intelligence-design-intelligence-medialab-xan-learnings-core-invariants"
       ]
     },
     "G": {
@@ -8734,8 +8736,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "5d1db3c50e348237ae44d679f7d473ae4ac873ab1f1d3788add140242ea2fdad",
-      "created_at": "2026-11-21T05:27:56.557Z"
+      "content_hash": "4ed45f53c8a8eab0920d82b56c366e56d72acd687a6bd73bad732f9c4ac79f78",
+      "created_at": "2026-11-22T07:56:43.409Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -8812,8 +8814,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "60db5392ed31304e9626c562447d66b72ed4076882202291b2e9f2cd59ad6fad",
-      "created_at": "2026-11-21T05:28:02.991Z"
+      "content_hash": "e43d894b358693f1fe49582d8445f5746dfc186dd6d5eaf12cc6c35aba57c49c",
+      "created_at": "2026-11-22T07:56:48.102Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -13368,8 +13370,8 @@
       "title": "Research & Knowledge Intelligence: chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quantized-research-knowledge-intelli.md",
       "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
-      "content_hash": "27f0cc7494f6171043af80580202548dba54c4f3030989cecdee8cfa6718108d",
-      "created_at": "2026-11-14T04:06:06.309Z"
+      "content_hash": "a0896fc54e22245d66f73bf2b5712f55fe4f05d4aefbd135b53c29e58bbd5afd",
+      "created_at": "2026-11-22T07:56:33.668Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-chat-hf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-chat-hf-core-invariants",
@@ -13386,8 +13388,8 @@
       "title": "Research & Knowledge Intelligence: hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quantized-learnings-research-knowled.md",
       "repository": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings",
-      "content_hash": "d10d8677de5918ac2c2fdc99aeaa5c61fb11e65576a9cdf6274f0913d98413bb",
-      "created_at": "2026-11-14T04:06:20.691Z"
+      "content_hash": "30f478002ac91fb4a187a78480336390b7331e14668019e0f1165a068817c946",
+      "created_at": "2026-11-22T07:56:47.277Z"
     },
     "DOM-J-2672FCA2": {
       "record_id": "DOM-J-2672FCA2",
@@ -39488,6 +39490,24 @@
       "repository": "hf-meituan-longcat-longcat-2.5-learnings",
       "content_hash": "6092c00fc33d6db275d34711cecbda56e9a1d62950875ba34f52a87fd31dc05c",
       "created_at": "2026-11-22T07:48:38.858Z"
+    },
+    "domain_intelligence-design-intelligence-medialab-xan-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-medialab-xan-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: medialab/xan Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-medialab-xan-design-intelligence-medialab-xan-core-invariants.md",
+      "repository": "medialab/xan",
+      "content_hash": "a6fa8c19c74cd49577a7cedc1a3e0af29850b7f0c4b5825af956381b3bb55298",
+      "created_at": "2026-11-22T07:56:35.411Z"
+    },
+    "domain_intelligence-design-intelligence-medialab-xan-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-medialab-xan-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: medialab-xan-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-medialab-xan-learnings-design-intelligence-medialab-xan-learnings-core-invariant.md",
+      "repository": "medialab-xan-learnings",
+      "content_hash": "f68df0bccd6025c364b8a5d4f6d05b635c243b17d59967ef33b4e8118c16264f",
+      "created_at": "2026-11-22T07:56:46.779Z"
     }
   }
 }

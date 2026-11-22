@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T07:48:40.866Z",
+  "last_updated": "2026-11-22T07:56:48.265Z",
   "total_verified_learnings": 9070,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23518,
+  "total_items": 23524,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113289,10 +113289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "2addd4f0",
-      "content_hash": "5d1db3c50e348237ae44d679f7d473ae4ac873ab1f1d3788add140242ea2fdad",
+      "source_version": "6b628d04",
+      "content_hash": "4ed45f53c8a8eab0920d82b56c366e56d72acd687a6bd73bad732f9c4ac79f78",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:27:56.557Z"
+      "persisted_at": "2026-11-22T07:56:43.409Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113301,10 +113301,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "2addd4f0",
-      "content_hash": "8d8c1e1f87fdefa482dfa3f8db565559f400a4164f64be212a79625c2b49a353",
+      "source_version": "6b628d04",
+      "content_hash": "8a2cb48b772da27a4fe8920f181c12e2bcbb0d9c055ab11581814a6b64e5b14d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T05:27:56.721Z"
+      "persisted_at": "2026-11-22T07:56:43.561Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113362,9 +113362,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "60db5392ed31304e9626c562447d66b72ed4076882202291b2e9f2cd59ad6fad",
+      "content_hash": "e43d894b358693f1fe49582d8445f5746dfc186dd6d5eaf12cc6c35aba57c49c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:28:02.991Z"
+      "persisted_at": "2026-11-22T07:56:48.102Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113374,9 +113374,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "b61e98975c5b6944be2c94489402098e7f14746772b450149890a86fb2a8b9d9",
+      "content_hash": "daf47daa5eafc70ff4fb056b17d0c5e53cad575a0e38478e0b31bc12beaf3e7c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T05:28:03.156Z"
+      "persisted_at": "2026-11-22T07:56:48.265Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -224078,7 +224078,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
       "source_version": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
-      "content_hash": "6c59e1f427690f627ad9493f95c2deaf677683908cd397e694f6ec42ca8886d0",
+      "content_hash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
       "dossier_path": "07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md",
       "promoted_rules": [],
@@ -224087,7 +224087,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T04:06:05.932Z",
+      "verified_at": "2026-11-22T07:56:33.258Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224104,9 +224104,9 @@
       "title": "Research & Knowledge Intelligence: chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized Core Invariants",
       "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
       "source_version": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
-      "content_hash": "27f0cc7494f6171043af80580202548dba54c4f3030989cecdee8cfa6718108d",
+      "content_hash": "a0896fc54e22245d66f73bf2b5712f55fe4f05d4aefbd135b53c29e58bbd5afd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T04:06:06.309Z"
+      "persisted_at": "2026-11-22T07:56:33.668Z"
     },
     "learn-huggingface-meta-llama-llama-2-7b-chat-hf": {
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
@@ -224155,9 +224155,9 @@
       "title": "Research & Knowledge Intelligence: hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings Core Invariants",
       "repository": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings",
       "source_version": "HEAD",
-      "content_hash": "d10d8677de5918ac2c2fdc99aeaa5c61fb11e65576a9cdf6274f0913d98413bb",
+      "content_hash": "30f478002ac91fb4a187a78480336390b7331e14668019e0f1165a068817c946",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T04:06:20.691Z"
+      "persisted_at": "2026-11-22T07:56:47.277Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-",
@@ -238752,8 +238752,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "2addd4f0",
-      "content_hash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
+      "source_version": "6b628d04",
+      "content_hash": "907683a1b31e27aa9eab5909f865dfb112e5585cbb8e9ac454aec2ec7258538a",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -238791,6 +238791,11 @@
           "number": 9300,
           "title": "remove hack for registry mirror login",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9913,
+          "title": "build(deps): bump org.dbunit:dbunit",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238798,7 +238803,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T05:27:55.953Z",
+      "verified_at": "2026-11-22T07:56:42.854Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253972,8 +253977,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "7e357947",
-      "content_hash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
+      "source_version": "cca1cceb",
+      "content_hash": "6e4f879ed8a0413f6e9395f2b74eb9e64f6d3e6ac99b745bc25346b189d68b86",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -254001,6 +254006,11 @@
           "number": 9353,
           "title": "Floating-Point Integer Downgrade Epsilon Window Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9912,
+          "title": "Refactoring Index::for_each_record in join command",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254008,7 +254018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T07:41:45.000Z",
+      "verified_at": "2026-11-22T07:56:34.843Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254062,10 +254072,10 @@
       "relative_path": "08_VERIFICATION/medialab-xan-verification-protocol-empirical-defect-shield-for-medialab-xan.md",
       "title": "Verification Protocol: Empirical Defect Shield for medialab/xan",
       "repository": "medialab/xan",
-      "source_version": "7e357947",
-      "content_hash": "c9602b919327472d57dfa8bfe0748742b9e684ee7e1156696fd069ce69ecf201",
+      "source_version": "cca1cceb",
+      "content_hash": "f6d7901ffe0c478c4c4578899fba7bf3d5de864655b6430217f0fbbaa710fa85",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:41:45.950Z"
+      "persisted_at": "2026-11-22T07:56:35.572Z"
     },
     "learn-github-rickclephas-kmp-nativecoroutines": {
       "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
@@ -254196,9 +254206,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for medialab-xan-learnings",
       "repository": "medialab-xan-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6143ff4eb43cfcb1c829341e1451b03d5b60d1cd4e091c8b82acb72d0452852",
+      "content_hash": "eac1cdf5f7f220a3fecce8927712b6cda2daa6167fc93c03fc63ecdc306587f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:43:17.098Z"
+      "persisted_at": "2026-11-22T07:56:46.941Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
@@ -319918,6 +319928,82 @@
       "content_hash": "20a10d413c23f2bba8468c9a0fa5a97f35a1f9f3cfcd1f73eddf0a416ecb97c1",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T07:48:39.004Z"
+    },
+    "rule-9912": {
+      "learning_id": "rule-9912",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9912,
+      "title": "Refactoring Index::for_each_record in join command",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "cca1cceb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T07:56:34.843Z"
+    },
+    "candidate_directive-refactoring-index-for_each_record-in-join-command": {
+      "item_id": "candidate_directive-refactoring-index-for_each_record-in-join-command",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MRO7-refactoring-index-for_each_record-in-join-command.md",
+      "title": "Refactoring Index::for_each_record in join command",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4292f3e9cbfbb6f37360912cc1910ea54cdd012c4c30eee43209c5cde9b6516f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T07:56:46.619Z"
+    },
+    "domain_intelligence-design-intelligence-medialab-xan-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-medialab-xan-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-medialab-xan-design-intelligence-medialab-xan-core-invariants.md",
+      "title": "Design Intelligence: medialab/xan Core Invariants",
+      "repository": "medialab/xan",
+      "source_version": "cca1cceb",
+      "content_hash": "a6fa8c19c74cd49577a7cedc1a3e0af29850b7f0c4b5825af956381b3bb55298",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T07:56:35.411Z"
+    },
+    "rule-9913": {
+      "learning_id": "rule-9913",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9913,
+      "title": "build(deps): bump org.dbunit:dbunit",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "6b628d04",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T07:56:42.854Z"
+    },
+    "candidate_directive-build-deps-bump-org-dbunit-dbunit": {
+      "item_id": "candidate_directive-build-deps-bump-org-dbunit-dbunit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MSOQ-build-deps-bump-org-dbunit-dbunit.md",
+      "title": "build(deps): bump org.dbunit:dbunit",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c03deeddc7383853ed24a808af484ac42bf8334b71e0955f980de3b41c78c5d2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T07:56:47.931Z"
+    },
+    "domain_intelligence-design-intelligence-medialab-xan-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-medialab-xan-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-medialab-xan-learnings-design-intelligence-medialab-xan-learnings-core-invariant.md",
+      "title": "Design Intelligence: medialab-xan-learnings Core Invariants",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f68df0bccd6025c364b8a5d4f6d05b635c243b17d59967ef33b4e8118c16264f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T07:56:46.779Z"
     }
   },
   "ai-builder-brain": {

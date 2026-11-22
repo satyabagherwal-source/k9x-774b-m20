@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "2addd4f0",
+    "sourceVersion": "6b628d04",
     "license": "Apache-2.0",
-    "contentHash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
-    "lastHarvestedAt": "2026-11-21T05:27:56.168Z",
+    "contentHash": "907683a1b31e27aa9eab5909f865dfb112e5585cbb8e9ac454aec2ec7258538a",
+    "lastHarvestedAt": "2026-11-22T07:56:43.043Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "7e357947",
+    "sourceVersion": "cca1cceb",
     "license": "Unlicense",
-    "contentHash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
-    "lastHarvestedAt": "2026-11-19T07:41:45.167Z",
+    "contentHash": "6e4f879ed8a0413f6e9395f2b74eb9e64f6d3e6ac99b745bc25346b189d68b86",
+    "lastHarvestedAt": "2026-11-22T07:56:35.041Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -12495,8 +12495,8 @@
     "sourceUrl": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
     "sourceVersion": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
     "license": "Open-Source",
-    "contentHash": "6c59e1f427690f627ad9493f95c2deaf677683908cd397e694f6ec42ca8886d0",
-    "lastHarvestedAt": "2026-11-14T04:06:06.109Z",
+    "contentHash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
+    "lastHarvestedAt": "2026-11-22T07:56:33.471Z",
     "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized"
   },
   "hf-edge0-edge0-145b-nvfp4": {
