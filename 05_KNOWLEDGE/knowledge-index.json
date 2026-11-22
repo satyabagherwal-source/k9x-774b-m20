@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T06:19:35.742Z",
+  "last_updated": "2026-11-22T06:27:40.085Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f5ce5aab74987348e386bbed5888efdff496dd4dcd31ffd3b743d9cb317714c",
+      "content_hash": "091e8f54d574906027c9a29293be0272211956c22c8d14e0d71b445818919c6d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T06:03:36.202Z"
+      "persisted_at": "2026-11-22T06:27:40.085Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -236634,8 +236634,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "8c164554",
-      "content_hash": "3843f9903b278b88fa44be264f546aa10c9ba624743c455aa200e6fb4488f40f",
+      "source_version": "5efdf449",
+      "content_hash": "753576834f41445dadab7c94ddfb97ca5001bcbbae1d2027c4bed0d38d8926fd",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -236675,7 +236675,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:15:39.016Z",
+      "verified_at": "2026-11-22T06:27:34.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236717,10 +236717,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "repository": "pulumi/pulumi",
-      "source_version": "8c164554",
-      "content_hash": "9224364590e5a06c6500b1bdca5af046babbe51ae6bc89e9d5f576161b2cecfb",
+      "source_version": "5efdf449",
+      "content_hash": "bba026ec9dfe2dee3817d97e58e4e30f77f444dfad93adbd96e448c8ae12b8cb",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T03:15:39.550Z"
+      "persisted_at": "2026-11-22T06:27:34.918Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi",
@@ -236729,10 +236729,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "8c164554",
-      "content_hash": "9b5fcf7e2cf1ceae67827c8e014e1f1d9b69708bcf66c166888d3fa03b510460",
+      "source_version": "5efdf449",
+      "content_hash": "1a1cbc6824c2bb5e3adf090b7bd1ceb106a61de49355912c77d0f6de3aaa8045",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:15:39.702Z"
+      "persisted_at": "2026-11-22T06:27:35.082Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -236862,9 +236862,9 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "39edf96ffaa287cf65f826ec6d797576028e8fc5565368157cda8963c8c7a8c0",
+      "content_hash": "8939814ae00db20420cdfb5040e0384ae3e3369e0f8ec6414d782248bb323bb0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T02:27:55.167Z"
+      "persisted_at": "2026-11-22T06:27:39.155Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings",
@@ -236874,9 +236874,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e1309648b1060fe9e495b900d3ba9e2a07ef406d87227a9d3d02eaf9045c05f",
+      "content_hash": "800f21be7f1aa25556814c4b3a0bb10297c74b366b0b29fc954dc07c5fe44dd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:27:55.315Z"
+      "persisted_at": "2026-11-22T06:27:39.296Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -251444,7 +251444,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Woof",
       "source_version": "hf-conwayresearch-underdog-woof",
-      "content_hash": "17c29779d963d6ea395847223ef8f0f9746186378bda9823f517836aba27c98e",
+      "content_hash": "e09e6f57912a0b62d4a34c3c07551691269c085b41c7f413318e5937f59f18d5",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
       "promoted_rules": [],
@@ -251453,7 +251453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T22:14:46.370Z",
+      "verified_at": "2026-11-22T06:27:27.459Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251470,9 +251470,9 @@
       "title": "Research & Knowledge Intelligence: ConwayResearch/Underdog-Woof Core Invariants",
       "repository": "ConwayResearch/Underdog-Woof",
       "source_version": "hf-conwayresearch-underdog-woof",
-      "content_hash": "bd5f3a1d52e15eaef1692728657a90ad77525c4282420ba4cead8d477b4831cd",
+      "content_hash": "b389103b21a757485a68e3c81fb60c68859cfe4bdef2cebba2288339aa660b8e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T22:14:46.739Z"
+      "persisted_at": "2026-11-22T06:27:27.832Z"
     },
     "learn-github-fabio-rovai-open-ontologies": {
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
@@ -251580,9 +251580,9 @@
       "title": "Research & Knowledge Intelligence: hf-conwayresearch-underdog-woof-learnings Core Invariants",
       "repository": "hf-conwayresearch-underdog-woof-learnings",
       "source_version": "HEAD",
-      "content_hash": "962b2d1d72b9cff59b83ff5db12304a62fd85867ca64794db5a78cae641a6d40",
+      "content_hash": "bbd399d3f000890d36f8e77d0223382ff0e3ddc1e4f3182fa9e745a2bac26d1d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T22:15:23.031Z"
+      "persisted_at": "2026-11-22T06:27:38.044Z"
     },
     "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants",
@@ -255084,13 +255084,13 @@
       "item_id": "candidate_directive-update-vulnerable-dependencies-security",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HVVG-update-vulnerable-dependencies-security.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-G5FO-update-vulnerable-dependencies-security.md",
       "title": "Update vulnerable dependencies [SECURITY]",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "768e058c70bb45c587e60642eb3f1df958676ce385e7776a94c412af14c6e6a3",
+      "content_hash": "9ba187fabdd7f5b8fc8460628de04d1309b70330db2bc20445121c1317834186",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T06:50:18.654Z"
+      "persisted_at": "2026-11-22T06:27:39.015Z"
     },
     "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings": {
       "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings",

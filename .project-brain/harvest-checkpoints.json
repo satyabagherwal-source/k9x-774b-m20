@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T06:19:21.789Z",
+  "last_updated": "2026-11-22T06:27:34.559Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "3843f9903b278b88fa44be264f546aa10c9ba624743c455aa200e6fb4488f40f",
-      "verified_at": "2026-11-21T03:15:39.209Z",
+      "content_hash": "753576834f41445dadab7c94ddfb97ca5001bcbbae1d2027c4bed0d38d8926fd",
+      "verified_at": "2026-11-22T06:27:34.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T03:15:39.209Z"
+      "last_updated": "2026-11-22T06:27:34.559Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -18576,14 +18576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-conwayresearch-underdog-woof",
-      "content_hash": "17c29779d963d6ea395847223ef8f0f9746186378bda9823f517836aba27c98e",
-      "verified_at": "2026-11-15T22:14:46.577Z",
+      "content_hash": "e09e6f57912a0b62d4a34c3c07551691269c085b41c7f413318e5937f59f18d5",
+      "verified_at": "2026-11-22T06:27:27.642Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T22:14:46.577Z"
+      "last_updated": "2026-11-22T06:27:27.642Z"
     },
     "CaviraOSS/LongMemory": {
       "repository": "CaviraOSS/LongMemory",

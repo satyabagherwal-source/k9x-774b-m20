@@ -4,22 +4,22 @@
 {
   "source_repository": "pulumi/pulumi",
   "source_url": "https://github.com/pulumi/pulumi",
-  "source_version": "8c164554",
+  "source_version": "5efdf449",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T03:15:39.400Z",
+  "timestamp": "2026-11-22T06:27:34.765Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pulumi-pulumi",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `8c164554`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T03:15:39.400Z`  
+> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `5efdf449`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T06:27:34.765Z`  
 > **Learning ID**: `learn-github-pulumi-pulumi`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `pulumi/pulumi` (Commit: `8c164554`)
+- **Target Repository**: `pulumi/pulumi` (Commit: `5efdf449`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:15:38.245Z  
+> **Harvest Timestamp**: 2026-11-22T06:27:33.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25927 stars
+- **Stars / Engagement**: 25932 stars
 
 ---
 
@@ -1721,33 +1721,181 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e30f6891` (2026-11-20)
-**Commit Message**: Fix data race in TestInvokeSourceContext (#25801)
+### Incident Patch 1: `5efdf449` (2026-11-21)
+**Commit Message**: Update vulnerable dependencies [SECURITY] (#25811)
 
-The registration for hte root stack reads the monitor and
-parentStackTrace handle. Wait for root stack registration to finish
-before changing them to prevent a data race.
+> ℹ️ **Note**
+> 
+> This PR body was truncated due to platform limits.
 
-**File**: `sdk/go/pulumi/context_test.go` (modified, +2/-0)
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[github.com/go-git/go-git/v5](https://redirect.github.com/go-git/go-git)
+| `v5.19.1` → `v5.19.2` |
+![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-git%2fgo-git%2fv5/v5.19.2?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-git%2fgo-git%2fv5/v5.19.1/v5.19.2?slim=true)
+|
+|
+[github.com/klauspost/compress](https://redirect.github.com/klauspost/compress)
+| `v1.18.0` → `v1.20.2` |
+![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.0/v1.20.2?slim=true)
+|
+|
+[go.opentelemetry.io/otel](https://redirect.github.com/open-telemetry/opentelemetry-go)
+| `v1.43.0` → `v1.44.0` |
+![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io
+
+**File**: `tests/integration/shutdown_cleanup/go/go.mod` (modified, +23/-22)
 ```diff
-@@ -1391,6 +1391,8 @@ func TestInvokeSourceContext(t *testing.T) {
- 				requests := make(chan *pulumirpc.ResourceInvokeRequest, 1)
- 				var sourceLine int
- 				err := RunErr(func(ctx *Context) error {
-+					_, _, _, _, err := await(ctx.state.stack.URN())
-+					require.NoError(t, err)
- 					ctx.state.monitor = &invokeSourceMonitor{ctx.state.monitor, requests}
- 					ctx.state.parentStackTraceHandle = handle
- 					_, _, line, _ := runtime.Caller(0)
+@@ -35,14 +35,14 @@ require (
+ 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
+ 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
+ 	github.com/go-git/go-billy/v5 v5.9.0 // indirect
+-	github.com/go-git/go-git/v5 v5.19.1 // indirect
+-	github.com/go-logr/logr v1.4.3 // indirect
++	github.com/go-git/go-git/v5 v5.19.2 // indirect
++	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/gogo/protobuf v1.3.2 // indirect
+ 	github.com/golang/glog v1.2.5 // indirect
+ 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
++	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
+ 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 // indirect
+ 	github.com/hashicorp/errwrap v1.1.0 // indirect
+ 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+@@ -52,7 +52,7 @@ require (
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+-	github.com/klauspost/compress v1.18.0 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
+ 	github.com/lucasb-eyer/go-colorful v1.3.0 // indirect
+ 	github.com/mattn/go-isatty v0.0.20 // indirect
+@@ -90,27 +90,28 @@ require (
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.opentelemetry.io/collector/featuregate v1.53.0 // indirect
+ 	go.opentelemetry.io/collector/pdata v1.53.0 // indirect
+-	go.opentelemetry.io/otel v1.43.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.41.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.41.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.43.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.43.0 // indirect
+-	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
++	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.50.0 // indirect
++	golang.org/x/crypto v0.59.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+-	golang.org/x/mod v0.35.0 // indirect
+-	golang.org/x/net v0.53.0 // indirect
+-	golang.org/x/sync v0.20.0 // indirect
+-	golang.org/x/sys v0.43.0 // indirect
+-	golang.org/x/term v0.42.0 // indirect
+-	golang.org/x/text v0.36.0 // indirect
+-	golang.org/x/tools v0.44.0 // indirect
+-	google.golang.org/genproto/googleapis/api v0.0.0-20260226221140-a57be14db171 // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
+-	google.golang.org/grpc v1.80.0 // indirect
++	golang.org/x/mod v0.42.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
++	golang.org/x/sync v0.25.0 // indirect
++	golang.org/x/sys v0.50.0 // indirect
++	golang.org/x/term v0.48.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
++	golang.org/x/tools v0.52.0 // indirect
++	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
++	google.golang.org/grpc v1.83.1 // indirect
+ 	google.golang.org/protobuf v1.36.11 // indirect
+ 	gopkg.in/warnings.v0 v0.1.2 // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+```
+
+**File**: `tests/integration/shutdown_cleanup/go/go.sum` (modified, +52/-49)
+```diff
+@@ -78,11 +78,11 @@ github.com/go-git/go-billy/v5 v5.9.0 h1:jItGXszUDRtR/AlferWPTMN4j38BQ88XnXKbilmm
+ github.com/go-git/go-billy/v5 v5.9.0/go.mod h1:jCnQMLj9eUgGU7+ludSTYoZL/GGmii14RxKFj7ROgHw=
+ github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399 h1:eMje31YglSBqCdIqdhKBW8lokaMrL3uTkpGYlE2OOT4=
+ github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399/go.mod h1:1OCfN199q1Jm3HZlxleg+Dw/mwps2Wbk9frAWm+4FII=
+-github.com/go-git/go-git/v5 v5.19.1 h1:nX27AnaU43/K5bKktKwgBmR9lawoYVe1Ckg0rgzzN00=
+-github.com/go-git/go-git/v5 v5.19.1/go.mod h1:Pb1v0c7/g8aGQJwx9Us09W85yGoyvSwuhEGMH7zjDKQ=
++github.com/go-git/go-git/v5 v5.19.2 h1:wkfn7vOlUBu8ivAWKBWisTiwJK4jYHzTF8Ndv1LyGqY=
++github.com/go-git/go-git/v5 v5.19.2/go.mod h1:QqCBE1EFN5ddFmrliLQ3/ntRCUjZU3EJuwuB/jWEHjk=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+-github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
+-github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
++github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
++github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+ github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
+ github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
+ github.com/gogo/protobuf v1.3.1/go.mod h1:SlYgWuQ5SjCEi6WLHjHCa1yvBfUnHcTbrrZtXPKa29o=
+@@ -99,8 +99,8 @@ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX
+ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
+ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+-github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 h1:HWRh5R2+9EifMyIHV7ZV+MIZqgz+PMpZ14Jynv3O2Zs=
+-github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0/go.mod h1:JfhWUomR1baixubs02l85lZYYOm7LV6om4ceouMv45c=
++github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 h1:5VipnvEpbqr2gA2VbM+nYVbkIF28c5ZQfqCBQ5g2xfk=
++github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0/go.mod h1:Hyl3n6Twe1hvtd9XUXDec4pTvgMSEixRuQKPTMH2bNs=
+ github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 h1:MJG/KsmcqMwFAkh8mTnAwhyKoB+sTAnY4CACC110tbU=
+ github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645/go.mod h1:6iZfnjpejD4L/4DwD7NryNaJyCQdzwWwH2MWhCA90Kw=
+ github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
+@@ -123,8 +123,8 @@ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
+-github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
+ github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+@@ -181,7 +181,6 @@ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+ github.com/pkg/term v1.1.0 h1:xIAAdCMh3QIAy+5FrE8Ad8XoDhEU4ufwbaSozViP9kk=
+ github.com/pkg/term v1.1.0/go.mod h1:E25nymQcrSllhX42Ok8MRm1+hyBdHY0dCeiKZ9jpNGw=
+-github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+ github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435cARxCW6q9gc0S/Yxz7Mkd38pOb0=
+ github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
+@@ -212,8 +211,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
+ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+ github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
+ github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
+-github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
+-github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
++github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
++github.com/stretchr/testify
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #25813** (2026-11-20): Use the Cloud SDK enum values directly for update status and capabilities (@flostadler)
+- **PR #25811** (2026-11-21): Update vulnerable dependencies [SECURITY] (@pulumi-renovate[bot])
 - **PR #25804** (2026-11-20): python conformance: share mypy cache (@tgummerer)
 - **PR #25803** (2026-11-20): improve TestNodeOOM (@tgummerer)
 - **PR #25801** (2026-11-20): Fix data race in TestInvokeSourceContext (@julienp)
 - **PR #25799** (2026-11-20): Update transforms in lifecycle tests to use property.Map (@Frassle)
-- **PR #25796** (2026-11-20): Capture runtime errors in conformance tests. (@julienp)
 
 ---
 
@@ -1767,32 +1915,74 @@ before changing them to prevent a data race.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. data race in TestInvokeSourceContext
+## X. Update vulnerable dependencies [SECURITY]
 
 **RULE**:
-When implementing operations in `sdk/go/pulumi/context_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/integration/shutdown_cleanup/go/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e30f6891`: data race in TestInvokeSourceContext. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5efdf449`: Update vulnerable dependencies [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/pulumi/context_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/integration/shutdown_cleanup/go/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					_, _, _, _, err := await(ctx.state.stack.URN())
-					require.NoError(t, err)
+	github.com/go-git/go-git/v5 v5.19.2 // indirect
+	github.com/go-logr/logr v1.4.4 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
+	github.com/klauspost/compress v1.20.2 // indirect
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+	golang.org/x/crypto v0.59.0 // indirect
+	golang.org/x/mod v0.42.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
+	golang.org/x/sync v0.25.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
+	golang.org/x/term v0.48.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
+	golang.org/x/tools v0.52.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+	google.golang.org/grpc v1.83.1 // indirec
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	github.com/go-git/go-git/v5 v5.19.1 // indirect
+	github.com/go-logr/logr v1.4.3 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
+	go.opentelemetry.io/otel v1.43.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.41.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.41.0 // indirect
+	go.opentelemetry.io/otel/metric v1.43.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
+	go.opentelemetry.io/otel/trace v1.43.0 // indirect
+	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
+	golang.org/x/crypto v0.50.0 // indirect
+	golang.org/x/mod v0.35.0 // indirect
+	golang.org/x/net v0.53.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
+	golang.org/x/term v0.42.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
+	golang.org/x/tools v0.44.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260226221140-a57be14db171 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
+	google.golang.org/grpc v1.80.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e30f6891` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5efdf449` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

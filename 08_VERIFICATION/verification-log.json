@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-H3DU",
-    "timestamp": "2026-11-20T05:29:03.330Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "dbb84cb214426b9a6bdffdfa0a5165f180f864b5e63f399972190ff1c48dd650",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-RD8G",
-    "timestamp": "2026-11-20T05:37:02.656Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "047f275e4387c006e87343c72d8c85355c27c22be01d4c80dc2a0a05d241ec14",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-A8XE",
     "timestamp": "2026-11-20T05:51:43.538Z",
     "repository": "trinodb/trino",
@@ -7492,6 +7462,36 @@
     "contentHash": "7b048fea474a6d7750ef86947c6201c8a9fd037e8556352a56378ad1b0b3f8ba",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-FWNJ",
+    "timestamp": "2026-11-22T06:27:27.631Z",
+    "repository": "ConwayResearch/Underdog-Woof",
+    "learningId": "learn-huggingface-conwayresearch-underdog-woof",
+    "contentHash": "e09e6f57912a0b62d4a34c3c07551691269c085b41c7f413318e5937f59f18d5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-G1ZO",
+    "timestamp": "2026-11-22T06:27:34.548Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "753576834f41445dadab7c94ddfb97ca5001bcbbae1d2027c4bed0d38d8926fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

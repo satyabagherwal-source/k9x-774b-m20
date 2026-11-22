@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T05:28:21.991Z",
+  "updated_at": "2026-11-22T06:27:38.793Z",
   "stats": {
-    "total_discovered": 7451,
-    "approved_pending_harvest": 7050,
+    "total_discovered": 7457,
+    "approved_pending_harvest": 7056,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7030,
+      "COMMUNITY_AND_EXPERT": 7036,
       "OFFICIAL_DOCUMENTATION": 242,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -161138,6 +161138,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
         "fileName": "matrixorigin-matrixone-learnings.md"
+      }
+    },
+    "SRC-7C94C12D9DC3": {
+      "id": "SRC-7C94C12D9DC3",
+      "url": "https://redirect.github.com/go-git/go-git",
+      "title": "https://redirect.github.com/go-git/go-git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T06:27:38.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-8D1F4D4D2182": {
+      "id": "SRC-8D1F4D4D2182",
+      "url": "https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-git%2fgo-git%2fv5/v5.19.2?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-git%2fgo-git%2fv5/v5.19.2?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T06:27:38.569Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-FCDBC201639D": {
+      "id": "SRC-FCDBC201639D",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-git%2fgo-git%2fv5/v5.19.1/v5.19.2?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-git%2fgo-git%2fv5/v5.19.1/v5.19.2?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T06:27:38.615Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-BA1F862E932C": {
+      "id": "SRC-BA1F862E932C",
+      "url": "https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T06:27:38.678Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-BE991EE5F224": {
+      "id": "SRC-BE991EE5F224",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.0/v1.20.2?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.0/v1.20.2?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T06:27:38.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-90510DA1D743": {
+      "id": "SRC-90510DA1D743",
+      "url": "https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io",
+      "title": "https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T06:27:38.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
       }
     }
   }

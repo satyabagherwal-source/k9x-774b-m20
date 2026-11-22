@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T06:19:35.742Z",
+  "last_updated": "2026-11-22T06:27:40.085Z",
   "total_records": 2330,
   "domains": {
     "A": {
@@ -8145,8 +8145,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "3f5ce5aab74987348e386bbed5888efdff496dd4dcd31ffd3b743d9cb317714c",
-      "created_at": "2026-11-22T06:03:36.202Z"
+      "content_hash": "091e8f54d574906027c9a29293be0272211956c22c8d14e0d71b445818919c6d",
+      "created_at": "2026-11-22T06:27:40.085Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -17737,8 +17737,8 @@
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "repository": "pulumi/pulumi",
-      "content_hash": "9224364590e5a06c6500b1bdca5af046babbe51ae6bc89e9d5f576161b2cecfb",
-      "created_at": "2026-11-21T03:15:39.550Z"
+      "content_hash": "bba026ec9dfe2dee3817d97e58e4e30f77f444dfad93adbd96e448c8ae12b8cb",
+      "created_at": "2026-11-22T06:27:34.918Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -17806,8 +17806,8 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-learnings-content-information-intelligence-pulumi-pulumi-learnings.md",
       "repository": "pulumi-pulumi-learnings",
-      "content_hash": "39edf96ffaa287cf65f826ec6d797576028e8fc5565368157cda8963c8c7a8c0",
-      "created_at": "2026-11-20T02:27:55.167Z"
+      "content_hash": "8939814ae00db20420cdfb5040e0384ae3e3369e0f8ec6414d782248bb323bb0",
+      "created_at": "2026-11-22T06:27:39.155Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -22665,8 +22665,8 @@
       "title": "Research & Knowledge Intelligence: ConwayResearch/Underdog-Woof Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-woof-research-knowledge-intelligence-conwayresearch-u.md",
       "repository": "ConwayResearch/Underdog-Woof",
-      "content_hash": "bd5f3a1d52e15eaef1692728657a90ad77525c4282420ba4cead8d477b4831cd",
-      "created_at": "2026-11-15T22:14:46.739Z"
+      "content_hash": "b389103b21a757485a68e3c81fb60c68859cfe4bdef2cebba2288339aa660b8e",
+      "created_at": "2026-11-22T06:27:27.832Z"
     },
     "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants",
@@ -22725,8 +22725,8 @@
       "title": "Research & Knowledge Intelligence: hf-conwayresearch-underdog-woof-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-woof-learnings-research-knowledge-intelligence-hf-con.md",
       "repository": "hf-conwayresearch-underdog-woof-learnings",
-      "content_hash": "962b2d1d72b9cff59b83ff5db12304a62fd85867ca64794db5a78cae641a6d40",
-      "created_at": "2026-11-15T22:15:23.031Z"
+      "content_hash": "bbd399d3f000890d36f8e77d0223382ff0e3ddc1e4f3182fa9e745a2bac26d1d",
+      "created_at": "2026-11-22T06:27:38.044Z"
     },
     "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants",

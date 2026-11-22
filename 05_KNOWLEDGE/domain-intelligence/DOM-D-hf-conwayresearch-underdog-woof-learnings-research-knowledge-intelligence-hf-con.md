@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T22:15:22.936Z",
+  "timestamp": "2026-11-22T06:27:37.947Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-conwayresearch-underdog-woof-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-conwayresearch-underdog-woof-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T22:15:22.936Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T06:27:37.947Z`  
 > **Learning ID**: `LEARN-EVO-hf-conwayresearch-underdog-woof-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-conwayres`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T22:14:46.143Z  
+> **Timestamp**: 2026-11-22T06:27:27.176Z  
 > **Learning ID**: `learn-huggingface-conwayresearch-underdog-woof`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ConwayResearch/Underdog-Woof](https://huggingface.co/ConwayResearch/Underdog-Woof))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T22:14:41.350Z  
+> **Harvest Timestamp**: 2026-11-22T06:27:25.083Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 10 downloads | 270 likes
+- **Stars / Engagement**: 10 downloads | 267 likes
 
 ---
 
