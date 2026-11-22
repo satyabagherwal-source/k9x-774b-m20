@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:11:45.296Z",
+  "last_updated": "2026-11-22T03:25:07.095Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T01:59:00.350Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-22T02:53:23.800Z",
+      "processed_at": "2026-11-22T03:25:05.222Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-21T22:06:34.943Z",
+      "processed_at": "2026-11-22T03:25:06.261Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3078,7 +3078,7 @@
       "staged_for_review": 1
     },
     "hf-microsoft-florence-2-base-learnings.md": {
-      "processed_at": "2026-11-15T22:58:50.106Z",
+      "processed_at": "2026-11-22T03:25:04.843Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3698,7 +3698,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2982,
+  "total_dossiers_evaluated": 2985,
   "total_canonical_promoted": 468,
-  "total_staged_for_review": 2277
+  "total_staged_for_review": 2279
 }

@@ -11994,3 +11994,4 @@
 | `CYCLE-20261122-FT5C` | `2026-11-22T03:11:25.776Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9889` | Yes (`bd927176...`) |
 | `CYCLE-20261122-G2YO` | `2026-11-22T03:11:38.496Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9890` | Yes (`74f622be...`) |
 | `CYCLE-20261122-G473` | `2026-11-22T03:11:40.095Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`eff88fc1...`) |
+| `CYCLE-20261122-X42N` | `2026-11-22T03:24:53.087Z` | `microsoft/Florence-2-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | Yes (`f6055a80...`) |

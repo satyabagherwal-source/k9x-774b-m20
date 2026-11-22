@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:11:40.105Z",
-  "total_cycles_completed": 11404,
-  "total_learnings_persisted": 11404,
+  "last_updated": "2026-11-22T03:24:53.096Z",
+  "total_cycles_completed": 11405,
+  "total_learnings_persisted": 11405,
   "total_rules_promoted": 10701,
   "history": [
-    {
-      "timestamp": "2026-11-21T11:11:36.367Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T11:11:43.146Z",
       "repository": "apple/foundationdb",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-22T03:11:40.105Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:24:53.096Z",
+      "repository": "microsoft/Florence-2-base",
+      "learningId": "learn-huggingface-microsoft-florence-2-base",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

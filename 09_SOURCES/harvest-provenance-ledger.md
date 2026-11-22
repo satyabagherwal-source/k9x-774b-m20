@@ -12027,3 +12027,4 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `754b6d10` | Multi-dimensional audit evidence | 2026-11-22T03:11:25.781Z |
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `7d277196` | Multi-dimensional audit evidence | 2026-11-22T03:11:38.501Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0127a257` | Multi-dimensional audit evidence | 2026-11-22T03:11:40.100Z |
+| `learn-huggingface-microsoft-florence-2-base` | `https://huggingface.co/microsoft/Florence-2-base` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-22T03:24:53.091Z |

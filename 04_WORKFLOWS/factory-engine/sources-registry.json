@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T02:40:18.733Z",
-    "lastVerified": "2026-11-22T02:40:18.733Z",
+    "lastChecked": "2026-11-22T03:25:04.709Z",
+    "lastVerified": "2026-11-22T03:25:04.709Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T03:11:43.022Z",
-    "lastVerified": "2026-11-22T03:11:43.022Z",
+    "lastChecked": "2026-11-22T03:25:04.717Z",
+    "lastVerified": "2026-11-22T03:25:04.717Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1546,9 +1546,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-21T22:06:27.819Z",
+    "lastChecked": "2026-11-22T03:24:59.647Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-21T22:06:27.819Z"
+    "lastVerified": "2026-11-22T03:24:59.647Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2809,9 +2809,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-20T23:05:32.829Z",
+    "lastChecked": "2026-11-22T03:25:02.119Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-20T23:05:32.829Z"
+    "lastVerified": "2026-11-22T03:25:02.119Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -3956,9 +3956,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-20T23:56:15.629Z",
+    "lastChecked": "2026-11-22T03:24:57.170Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-20T23:56:15.629Z"
+    "lastVerified": "2026-11-22T03:24:57.170Z"
   },
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
@@ -5190,9 +5190,9 @@
   "flipkart-recyclerlistview": {
     "name": "recyclerlistview",
     "officialUrl": "https://github.com/Flipkart/recyclerlistview",
-    "lastChecked": "2026-11-18T22:30:30.571Z",
+    "lastChecked": "2026-11-22T03:24:54.776Z",
     "revisionIdentifier": "3485036e",
-    "lastVerified": "2026-11-18T22:30:30.571Z"
+    "lastVerified": "2026-11-22T03:24:54.776Z"
   },
   "encoredev-encore": {
     "name": "encore",
@@ -5596,8 +5596,8 @@
     "officialUrl": "https://github.com/mlua-rs/mlua",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T17:12:02.561Z",
-    "lastVerified": "2026-11-20T17:12:02.561Z",
+    "lastChecked": "2026-11-22T03:24:49.619Z",
+    "lastVerified": "2026-11-22T03:24:49.619Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mlua-rs-mlua",
@@ -13484,6 +13484,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
     "contentHash": "1b047ef18cca3cd94e25a2b7523d3ff06b42686134bfab49118768de9c1e541f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-microsoft-florence-2-base": {
+    "name": "microsoft/Florence-2-base",
+    "officialUrl": "https://huggingface.co/microsoft/Florence-2-base",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T03:24:52.476Z",
+    "lastVerified": "2026-11-22T03:24:52.476Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-microsoft-florence-2-base",
+    "contentHash": "f6055a802ae01b888da45218e374a6243d4ea6153229c000b53b1c6f8be74a43",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

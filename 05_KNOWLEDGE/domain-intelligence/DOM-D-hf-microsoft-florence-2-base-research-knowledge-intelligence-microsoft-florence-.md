@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/microsoft/Florence-2-base",
   "source_version": "hf-microsoft-florence-2-base",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T22:58:35.526Z",
+  "timestamp": "2026-11-22T03:24:53.271Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-microsoft-florence-2-base",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [microsoft/Florence-2-base](https://huggingface.co/microsoft/Florence-2-base) (Revision: `hf-microso`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T22:58:35.526Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T03:24:53.271Z`  
 > **Learning ID**: `learn-huggingface-microsoft-florence-2-base`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/microsoft/Florence-2-base](https://huggingface.co/microsoft/Florence-2-base))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T22:58:34.885Z  
+> **Harvest Timestamp**: 2026-11-22T03:24:52.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 16610529 downloads | 440 likes
+- **Stars / Engagement**: 21318167 downloads | 443 likes
 
 ---
 

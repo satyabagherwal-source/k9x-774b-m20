@@ -12055,8 +12055,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Florence-2-base",
     "sourceVersion": "hf-microsoft-florence-2-base",
     "license": "Open-Source",
-    "contentHash": "c4682ca23ba016bfff7372e12e8c640f2a386cf4110c92b146f0901518a0aef0",
-    "lastHarvestedAt": "2026-11-15T22:58:35.366Z",
+    "contentHash": "f6055a802ae01b888da45218e374a6243d4ea6153229c000b53b1c6f8be74a43",
+    "lastHarvestedAt": "2026-11-22T03:24:53.091Z",
     "learningId": "learn-huggingface-microsoft-florence-2-base"
   },
   "hf-webai-official-twil-8b": {
