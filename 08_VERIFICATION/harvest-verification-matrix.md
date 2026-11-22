@@ -12153,3 +12153,6 @@
 | `CYCLE-20261122-FX2O` | `2026-11-22T18:35:18.192Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9972` | Yes (`03e3f96a...`) |
 | `CYCLE-20261122-R5SY` | `2026-11-22T18:44:02.722Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`62f5458d...`) |
 | `CYCLE-20261122-R8KK` | `2026-11-22T18:44:06.308Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9973` | Yes (`635b355e...`) |
+| `CYCLE-20261122-26FJ` | `2026-11-22T18:52:36.751Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`b7310708...`) |
+| `CYCLE-20261122-281D` | `2026-11-22T18:52:38.833Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9974` | Yes (`66deb77a...`) |
+| `CYCLE-20261122-2HI3` | `2026-11-22T18:52:51.099Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9975` | Yes (`68199002...`) |

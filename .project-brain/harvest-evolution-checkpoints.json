@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T18:44:17.759Z",
+  "last_updated": "2026-11-22T18:52:58.096Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T17:53:17.348Z",
@@ -958,7 +958,7 @@
       "staged_for_review": 0
     },
     "redisearch-redisearch-learnings.md": {
-      "processed_at": "2026-11-20T12:07:30.046Z",
+      "processed_at": "2026-11-22T18:52:57.161Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1828,7 +1828,7 @@
       "staged_for_review": 1
     },
     "hf-contrastive-lm-clm-v0.1-8b-learnings.md": {
-      "processed_at": "2026-11-18T12:16:16.833Z",
+      "processed_at": "2026-11-22T18:52:56.773Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3153,7 +3153,7 @@
       "staged_for_review": 0
     },
     "folkbench-folkbench-learnings.md": {
-      "processed_at": "2026-11-21T06:45:24.351Z",
+      "processed_at": "2026-11-22T18:52:54.519Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3723,7 +3723,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3180,
+  "total_dossiers_evaluated": 3183,
   "total_canonical_promoted": 475,
-  "total_staged_for_review": 2412
+  "total_staged_for_review": 2414
 }

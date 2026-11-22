@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T18:44:16.976Z",
+  "last_updated": "2026-11-22T18:52:57.603Z",
   "directives": [
     {
       "id": "CD-001",
@@ -47077,6 +47077,46 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DF80ED-benchmarks-report-gold-coverage-across-r.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-2LHJ",
+      "directive_title": "新增 Folkbench Pelican Database 开源发布博客（12 语种）并修复 Windows 路径校验兼容",
+      "source_repo": "folkbench-folkbench-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2LHJ-folkbench-pelican-database-12-windows.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-2MIO",
+      "directive_title": "[MOD-20697] Stop vector queries on memory pressure",
+      "source_repo": "redisearch-redisearch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2MIO-mod-20697-stop-vector-queries-on-memory-pressure.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-95DE61",
+      "directive_title": "新增 Folkbench Pelican Database 开源发布博客（12 语种）并修复 Windows 路径校验兼容",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "folkbench-folkbench",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-95DE61--folkbench-pelican-database-12-windows-.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-5D3DB4",
+      "directive_title": "[MOD-20697] Stop vector queries on memory pressure",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "redisearch-redisearch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5D3DB4--mod-20697-stop-vector-queries-on-memory.md",
       "staged_date": "2026-11-22"
     }
   ]

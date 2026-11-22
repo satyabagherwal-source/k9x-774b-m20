@@ -12186,3 +12186,6 @@ Every entry in this ledger must capture:
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `8779794b` | Multi-dimensional audit evidence | 2026-11-22T18:35:18.197Z |
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-22T18:44:02.726Z |
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `d7dac153` | Multi-dimensional audit evidence | 2026-11-22T18:44:06.313Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-22T18:52:36.756Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `f0856c35` | Multi-dimensional audit evidence | 2026-11-22T18:52:38.838Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `3357e86a` | Multi-dimensional audit evidence | 2026-11-22T18:52:51.104Z |

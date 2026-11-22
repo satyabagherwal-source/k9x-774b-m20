@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T18:44:17.189Z",
+  "last_updated": "2026-11-22T18:52:57.775Z",
   "total_records": 2370,
   "domains": {
     "A": {
@@ -23838,8 +23838,8 @@
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "repository": "Folkbench/folkbench",
-      "content_hash": "0340477277d52ee91b46280b53d674aa83f26367965e80949059ec22fa535544",
-      "created_at": "2026-11-21T06:42:15.419Z"
+      "content_hash": "85a869ce78986966a7986134a8e0e25f9ea96602e176dd28064c1e1ca2666d8b",
+      "created_at": "2026-11-22T18:52:39.243Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
@@ -23856,8 +23856,8 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
       "repository": "folkbench-folkbench-learnings",
-      "content_hash": "2512fd4189a18c22ccc09dc1deca4a2f911e8d21b08ef2a2318859d655ad8d6e",
-      "created_at": "2026-11-21T06:45:25.632Z"
+      "content_hash": "0fb8f86bfae5b297bafcbb2efd9ccad4c10bdbe2c933f61bd19172b0373be1be",
+      "created_at": "2026-11-22T18:52:56.438Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -27921,8 +27921,8 @@
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "repository": "RediSearch/RediSearch",
-      "content_hash": "3b443369b7ac7bf2cb980a8d51e6029d0c8d9d4dedd63a44414917b769123090",
-      "created_at": "2026-11-20T12:07:25.821Z"
+      "content_hash": "e5130088507e0afb7c28982e126293745f365cc6ab8eb02bbff60ae9905efdea",
+      "created_at": "2026-11-22T18:52:51.510Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
@@ -29611,8 +29611,8 @@
       "title": "Research & Knowledge Intelligence: Contrastive-LM/CLM-v0.1-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-research-knowledge-intelligence-contrastive-lm-clm.md",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "content_hash": "ca3dab70881d643b67d62634b028fbf6e214c0b7d6d31a2c5447faafdf1cd611",
-      "created_at": "2026-11-18T12:15:59.392Z"
+      "content_hash": "220923c8c4ca5ae9adfc43019bea15c857825880ac6f1ad4ea1d10bba3e6de82",
+      "created_at": "2026-11-22T18:52:36.971Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv",
@@ -29620,8 +29620,8 @@
       "title": "Research & Knowledge Intelligence: hf-contrastive-lm-clm-v0.1-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-learnings-research-knowledge-intelligence-hf-contr.md",
       "repository": "hf-contrastive-lm-clm-v0.1-8b-learnings",
-      "content_hash": "f00c82f3114df27fcbb7e24e51dc02e006cab5d5bacd15e2ce5dfda5d6bbbb00",
-      "created_at": "2026-11-18T12:16:17.001Z"
+      "content_hash": "3bed8d9f3075b6570398555064c8524a5c004eb36461dfcebae9fbc76066e053",
+      "created_at": "2026-11-22T18:52:56.970Z"
     },
     "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants",
@@ -36046,8 +36046,8 @@
       "title": "Architecture Intelligence: redisearch-redisearch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-learnings-architecture-intelligence-redisearch-redisearch-.md",
       "repository": "redisearch-redisearch-learnings",
-      "content_hash": "315eb94ce42998c55c677010b9b46bbe92d9599ec4150ac22beb221a43798920",
-      "created_at": "2026-11-20T12:07:30.399Z"
+      "content_hash": "c1a8e23f69b20d3938df87f07f03b35743a98d1428bc60484e79d30984dfd448",
+      "created_at": "2026-11-22T18:52:57.775Z"
     },
     "DOM-J-FBEC7580": {
       "record_id": "DOM-J-FBEC7580",

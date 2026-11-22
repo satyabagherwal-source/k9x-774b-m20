@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T18:44:06.320Z",
-  "total_cycles_completed": 11556,
-  "total_learnings_persisted": 11556,
-  "total_rules_promoted": 10790,
+  "last_updated": "2026-11-22T18:52:51.109Z",
+  "total_cycles_completed": 11559,
+  "total_learnings_persisted": 11559,
+  "total_rules_promoted": 10792,
   "history": [
-    {
-      "timestamp": "2026-11-21T23:27:18.744Z",
-      "repository": "pimalaya/himalaya",
-      "learningId": "learn-github-pimalaya-himalaya",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T23:39:37.320Z",
-      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T23:39:44.388Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T23:47:32.635Z",
       "repository": "LiquidAI/d1-2B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-22T18:44:06.320Z",
       "repository": "tuist/tuist",
       "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:52:36.761Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:52:38.844Z",
+      "repository": "Folkbench/folkbench",
+      "learningId": "learn-github-folkbench-folkbench",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:52:51.109Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

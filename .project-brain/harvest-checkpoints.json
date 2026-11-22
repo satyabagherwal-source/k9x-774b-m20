@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T18:44:06.324Z",
+  "last_updated": "2026-11-22T18:52:51.113Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "c2bd952c89c95f9ef43bf9fc90691d87c49cd404bab9aa1efdfd7efad82f01e3",
-      "verified_at": "2026-11-18T12:15:59.157Z",
+      "content_hash": "b7310708f163ff873e2c39a84d60db2ef537b61257d3b5924fd69082307233ad",
+      "verified_at": "2026-11-22T18:52:36.764Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:15:59.157Z"
+      "last_updated": "2026-11-22T18:52:36.764Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "e7c8068e36d43ce7469b67ff4395560324a87a2184f67b9e6d7f11aaf71e8cc5",
-      "verified_at": "2026-11-20T12:07:25.502Z",
+      "content_hash": "681990028914b65910c1956508ac3c7a35268279c83f10882544f52427efe1fb",
+      "verified_at": "2026-11-22T18:52:51.112Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T12:07:25.502Z"
+      "last_updated": "2026-11-22T18:52:51.112Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -19116,14 +19116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-folkbench-folkbench",
-      "content_hash": "a84b8da6455c1030e7ae0bd980a8a3c0ae0d992e614592250409d8e0b8c585f7",
-      "verified_at": "2026-11-21T06:42:14.951Z",
+      "content_hash": "66deb77ab1b9237fda041d06fed28db992f2c8a49d855578a24b27481dbadf26",
+      "verified_at": "2026-11-22T18:52:38.846Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T06:42:14.951Z"
+      "last_updated": "2026-11-22T18:52:38.846Z"
     },
     "IFM/PAN2": {
       "repository": "IFM/PAN2",
