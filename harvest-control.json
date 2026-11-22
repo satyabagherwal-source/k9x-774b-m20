@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-11-22T01:58:53.242Z",
+  "lastUpdated": "2026-11-22T02:09:14.078Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:35.824Z",
+        "lastActiveAt": "2026-11-22T02:08:56.277Z",
         "lastHarvestedAt": "2026-11-20T13:26:32.355Z",
         "totalHarvested": 1165,
         "lastError": null
@@ -198,7 +198,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:38.454Z",
+        "lastActiveAt": "2026-11-22T02:08:58.840Z",
         "lastHarvestedAt": "2026-11-18T05:10:32.382Z",
         "totalHarvested": 1437,
         "lastError": null
@@ -208,7 +208,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:38.403Z",
+        "lastActiveAt": "2026-11-22T02:08:58.846Z",
         "lastHarvestedAt": "2026-11-22T01:32:26.779Z",
         "totalHarvested": 2525,
         "lastError": null
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:44.673Z",
-        "lastHarvestedAt": "2026-11-22T01:58:44.673Z",
-        "totalHarvested": 6827,
+        "lastActiveAt": "2026-11-22T02:09:04.963Z",
+        "lastHarvestedAt": "2026-11-22T02:09:04.963Z",
+        "totalHarvested": 6828,
         "lastError": null
       },
       {
@@ -228,9 +228,9 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:43.496Z",
-        "lastHarvestedAt": "2026-11-22T00:09:56.287Z",
-        "totalHarvested": 2263,
+        "lastActiveAt": "2026-11-22T02:09:12.177Z",
+        "lastHarvestedAt": "2026-11-22T02:09:12.177Z",
+        "totalHarvested": 2264,
         "lastError": null
       },
       {
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:45.940Z",
+        "lastActiveAt": "2026-11-22T02:09:06.438Z",
         "lastHarvestedAt": "2026-11-22T01:44:05.262Z",
         "totalHarvested": 2326,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:48.382Z",
+        "lastActiveAt": "2026-11-22T02:09:08.888Z",
         "lastHarvestedAt": "2026-11-21T23:47:47.381Z",
         "totalHarvested": 1783,
         "lastError": null
@@ -258,9 +258,9 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:58.833Z",
-        "lastHarvestedAt": "2026-11-22T01:58:58.833Z",
-        "totalHarvested": 2470,
+        "lastActiveAt": "2026-11-22T02:09:19.679Z",
+        "lastHarvestedAt": "2026-11-22T02:09:19.679Z",
+        "totalHarvested": 2471,
         "lastError": null
       },
       {
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-22T01:58:53.396Z",
+        "lastActiveAt": "2026-11-22T02:09:13.909Z",
         "lastHarvestedAt": "2026-11-22T01:44:12.149Z",
         "totalHarvested": 1480,
         "lastError": null
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4944,
+      "remaining": 4926,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T01:58:55.543Z",
+  "last_updated": "2026-11-22T02:09:16.610Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8001,14 +8001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zseven-w-openpencil",
-      "content_hash": "1988674fdfd049579bf54afb9247ce0a83b4c7b63bd76addb16a4cf33ec52fd7",
-      "verified_at": "2026-11-07T04:37:03.291Z",
+      "content_hash": "6c8f5d65be97114fd685e57d24d27ae03695590c6ab70835fecd338c85850ea4",
+      "verified_at": "2026-11-22T02:09:09.116Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:37:03.291Z"
+      "last_updated": "2026-11-22T02:09:09.116Z"
     },
     "diggerhq/digger": {
       "repository": "diggerhq/digger",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "c0d96992f1d9b7149227f8c920ba5576cb066710f7db31bfb6e9d81bccc400ae",
-      "verified_at": "2026-11-20T21:55:15.556Z",
+      "content_hash": "ea7bef097757f303d61d7fe42df1fa2321a8f3bec6676a41df2917e669ddd502",
+      "verified_at": "2026-11-22T02:09:16.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T21:55:15.556Z"
+      "last_updated": "2026-11-22T02:09:16.610Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -17901,14 +17901,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-      "content_hash": "756c0ea6ed39ae8fcf64132830c573d2e9722f474c7afebd5859ab2d4cb7b065",
-      "verified_at": "2026-11-17T15:16:54.355Z",
+      "content_hash": "e3f190a4e4f84536f900f3b5c330dba5d702c20e8f3c1ab664ab6c6ad5915442",
+      "verified_at": "2026-11-22T02:09:02.132Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:16:54.355Z"
+      "last_updated": "2026-11-22T02:09:02.132Z"
     },
     "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",

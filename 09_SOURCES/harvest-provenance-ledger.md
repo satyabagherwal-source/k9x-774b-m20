@@ -12005,3 +12005,6 @@ Every entry in this ledger must capture:
 | `learn-dom-k-8ab33baa` | `project://skyhook-io-radar` | `c0f594ca` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-22T01:44:40.946Z |
 | `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-22T01:58:41.687Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `f469c616` | Multi-dimensional audit evidence | 2026-11-22T01:58:55.533Z |
+| `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-22T02:09:02.126Z |
+| `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `4110b3e0` | Multi-dimensional audit evidence | 2026-11-22T02:09:09.110Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `82d66f9e` | Multi-dimensional audit evidence | 2026-11-22T02:09:16.603Z |

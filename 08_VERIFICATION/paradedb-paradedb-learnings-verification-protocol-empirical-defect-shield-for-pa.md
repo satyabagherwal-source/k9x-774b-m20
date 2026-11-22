@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T21:55:20.584Z",
+  "timestamp": "2026-11-22T02:09:20.928Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-paradedb-paradedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [paradedb-paradedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T21:55:20.584Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T02:09:20.928Z`  
 > **Learning ID**: `LEARN-EVO-paradedb-paradedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `dec61535`  
+> **Source Version**: `82d66f9e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T21:55:14.974Z  
+> **Timestamp**: 2026-11-22T02:09:15.801Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T21:55:14.968Z  
+> **Harvest Timestamp**: 2026-11-22T02:09:15.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9550 stars
+- **Stars / Engagement**: 9554 stars
 
 ---
 
@@ -2051,6 +2051,7 @@ use crate::postgres::customscan::mpp::interrupt::PgTokioRuntime;
 use crate::postgres::customscan::projections::{PlaceholderColumn, PlaceholderProjection};
 use crate::postgres::customscan::solve_expr::SolvePostgresExpressions;
 use crate::postgres::heap::VisibilityStats;
+use crate::query::SearchQueryInput;
 use crate::query::tid_bitmap_stream::BitmapCell;
 use std::ptr::NonNull;
 
@@ -2066,6 +2067,15 @@ pub enum ExecutionState {
     NotStarted,
     Emitting(std::vec::IntoIter<AggregationResultsRow>),
     Completed,
+}
+
+/// Pristine pre-solve copy of the DataFusion aggregate's query-bearing fields, kept only when
+/// runtime expressions or parameters are present so rescans re-solve from the original trees
+/// (mirrors `base_aggregate_clause` and `JoinScanState::base_join_clause`).
+pub struct DataFusionAggBase {
+    pub plan: RelNode,
+    pub targetlist: JoinAggregateTargetList,
+    pub having_filter: Option<FilterExpr>,
 }
 
 /// State for the DataFusion aggregate execution backend.
@@ -2102,6 +2112,12 @@ pub struct DataFusionAggState {
     pub custom_scan_tlist: *mut pg_sys::List,
     /// HAVING clause filter applied after aggregation.
     pub having_filter: Option<FilterExpr>,
+    /// Pristine pre-solve snapshot for rescans when runtime expressions or parameters exist.
+    pub base: Option<DataFusionAggBase>,
+    /// Dedicated context where this DataFusion aggregate solves runtime expressions and
+    /// parameters; `None` when there is nothing to solve. Separate from `ps_ExprContext`, which
+    /// is reset per emitted row: see the rules in `solve_expr.rs`.
+    pub runtime_context: Option<NonNull<pg_sys::ExprContext>>,
     /// Mapping from `group_columns[i]` to its 0-based column index in DataFusion's
     /// output RecordBatch. Needed because DataFusion deduplicates grouping
     /// expressions (e.g. metadata.brand).
@@ -2127,101 +2143,98 @@ pub struct DataFusionAggState {
     pub spilled: std::sync::Arc<std::sync::atomic::AtomicBool>,
 }
 
+impl DataFusionAggState {
+    /// Visit every `SearchQueryInput` reachable from this aggregate: scan queries in `plan`,
+    /// per-aggregate `FILTER` predicates in `targetlist`, and `having_filter`.
+    /// `FilterExpr::SearchTag` locates its tag column by comparing its query against the scan's
+    /// tagged copy, so both copies must be visited and solved together.
+    pub fn visit_queries(&self, f: &mut impl FnMut(&SearchQueryInput)) {
+        self.plan.visit_queries(f);
+        for agg in &self.targetlist.aggregates {
+            if let Some(filter) = agg.filter.as_ref() {
+                filter.visit_queries(f);
+            }
+        }
+        if let Some(having) = self.having_filter.as_ref() {
+            having.visit_queries(f);
+        }
+    }
+
+    /// Mutable counterpart of [`Self::visit_queries`].
+    pub fn visit_queries_mut(&mut self, f: &mut impl FnMut(&mut SearchQueryInput)) {
+        self.plan.visit_queries_mut(f);
+        for agg in &mut self.targetlist.aggregates {
+            if let Some(filter) = agg.filter.as_mut() {
+                filter.visit_queries_mut(f);
+            }
+        }
+        if let Some(having) = self.having_filter.as_mut() {
+            having.visit_queries_mut(f);
+        }
+    }
+
+    pub fn has_postgres_expressions(&self) -> bool {
+        let mut found = false;
+        self.visit_queries(&mut |q| {
+            if q.has_postgres_expressions() {
+                found = true;
+            }
+        });
+        found
+    }
+
+    pub fn has_parameters(&self) -> bool {
+        let mut found = false;
+        self.visit_queries(&mut |q| {
+            if q.has_parameters() {
+                found = true;
+            }
+        });
+        found
+    }
+}
+
+/// Solves runtime Postgres expressions and parameters for the DataFusion aggregate path before
+/// any execution or `PgTokioRuntime::block_on` entry (see `solve_expr.rs`).
+impl SolvePostgresExpressions for DataFusionAggState {
+    fn has_postgres_expressions(&mut self) -> bool {
+        DataFusionAggState::has_postgres_expressions(self)
+    }
+
+    fn has_parameters(&mut self) -> bool {
+        DataFusionAggState::has_parameters(self)
+    }
+
+    fn init_search_query_input(&mut self) {
+        if let Some(base) = &self.base {
+            self.plan = base.plan.clone();
+            self.targetlist = base.targetlist.clone();
+            self.having_filter = base.having_filter.clone();
+        }
+    }
+
+    fn init_postgres_expressions(&mut self, planstate: *mut pg_sys::PlanState) {
+        self.visit_queries_mut(&mut |q| {
+            q.init_postgres_expressions(planstate);
+        });
+    }
+
+    /// Resets `expr_context` once, then solves every query and `FILTER` without resetting
+    /// (rule 2 in `solve_expr.rs`): a reset per query would free the trees solved before it.
+    fn solve_postgres_expressions(&mut self, expr_context: *mut pg_sys::ExprContext) {
+        assert!(
+            !expr_context.is_null(),
+            "expr_context was never initialized"
+        );
+        unsafe { pg_sys::MemoryContextReset((*expr_context).ecxt_per_tuple_memory) };
+        self.visit_queries_mut(&mut |q| {
+            q.solve_postgres_expressions_no_reset(expr_context);
+        });
+    }
+}
+
 /// State for projecting wrapped aggregate expressions through Postgres' own
-/// `ExecBuildProjectionInfo`.
-///
-/// When the targetlist contains aggregates wrapped in `FuncExpr` calls, we
-/// build a copy of the targetlist with each `FuncExpr`'s aggregate replaced by
-/// a placeholder, and project that copy. Before each per-row projection we
-/// write the live aggregate values into the placeholder columns.
-pub struct WrappedAggregateProjection {
-    /// Projection of the targetlist copy, built one time for the scan.
-    pub projection: PlaceholderProjection,
-    /// The placeholder column and its type, indexed by target entry position
-    /// (0-based). `None` for entries without a placeholder.
-    pub placeholders: Vec<Option<(PlaceholderColumn, pg_sys::Oid)>>,
-}
-
-#[derive(Default)]
-pub struct AggregateScanState {
-    pub state: ExecutionState,
-    /// DataFusion backend state. When `Some`, the DataFusion path is active
-    /// and the Tantivy-specific fields are unused. Declared before `source_manifests`,
-    /// `bitmap_cell`, `bitmap_exec`, and `indexrel` so streams/runtime drop first.
-    pub datafusion_state: Option<DataFusionAggState>,
-
-    pub segment_pruning: SegmentPruningEstimate,
-    pub visibility_stats: VisibilityStats,
-    pub parallelism: Option<AggregateParallelism>,
-    pub execution_rti: pg_sys::Index,
-    pub aggregate_clause: AggregateCSClause,
-    pub base_aggregate_clause: Option<AggregateCSClause>,
-    /// Where the Tantivy path solves `aggregate_clause`; `None` when it has nothing to solve.
-    /// Separate from `ps_ExprContext`, which wrapped-aggregate projection resets per row: see the
-    /// rules in `solve_expr.rs`. Unused on the DataFusion path.
-    pub runtime_context: Option<NonNull<pg_sys::ExprContext>>,
-
-    /// Wrapped-aggregate projection state. `Some` only when the targetlist
-    /// has aggregates inside `FuncExpr` wrappers that need per-row projection.
-    pub wrapped_projection: Option<WrappedAggregateProjection>,
-
-    /// Tantivy-only reusable tuple slot for aggregate result rows.
-    /// Created once during begin_custom_scan and cleared/reused for each row
-    /// to avoid per-row memory allocation and leaks
-    pub scan_slot: Option<*mut pg_sys::TupleTableSlot>,
-
-    /// Execution state for the child bitmap scan, if a bitmap intersection source was
-    /// harvested at plan time.
-    pub bitmap_cell: Option<BitmapCell>,
-    pub bitmap_exec: Option<BitmapExec>,
-
-    /// MPP-only: captured source manifests held by the leader. Serves two
-    /// purposes (mirrors JoinScan):
-    /// 1. Provides segment counts for DSM sizing in `estimate_dsm_custom_scan`
-    ///    and segment readers for DSM population in `initialize_dsm_custom_scan`.
-    /// 2. Keeps Tantivy buffer pins alive through `exec_custom_scan` so
-    ///    background merges don't recycle the canonical segments before
-    ///    workers can open them via `MvccSatisfies::ParallelWorker(ids)`.
-    pub source_manifests: Vec<SearchIndexManifest>,
-
-    pub indexrelid: pg_sys::Oid,
-    pub indexrel: Option<(pg_sys::LOCKMODE, PgSearchRelation)>,
-
-    /// A collection of things needed for result-rewriting decisions that
-    /// are expensive to look up.
-    precomputed_index_info: Option<AggIndexInfo>,
-}
-
-impl AggregateScanState {
-    pub fn open_relations(&mut self, lockmode: pg_sys::LOCKMODE) {
-        self.indexrel = Some((
-            lockmode,
-            PgSearchRelation::with_lock(self.indexrelid, lockmode),
-        ));
-        self.precomputed_index_info = Some(AggIndexInfo::from(self.indexrel()))
-    }
-
-    #[inline(always)]
-    pub fn indexrel(&self) -> &PgSearchRelation {
-        self.indexrel
-            .as_ref()
-            .map(|(_, rel)| rel)
-            .expect("BaseScanState: indexrel should be initialized")
-    }
-
-    /// Returns true if the DataFusion backend is active.
-    pub fn is_datafusion_backend(&self) -> bool {
-        self.datafusion_state.is_some()
-    }
-
-    pub fn precomputed_index_info(&self) -> Option<&AggIndexInfo> {
-        self.precomputed_index_info.as_ref()
-    }
-}
-
-impl CustomScanState for AggregateScanState {
-    fn init_exec_method(&mut self, _cstate: *mut pg_sys::CustomScanState) {
-        // TODO: Unu
+/// `ExecBuildProjection
 ```
 
 
@@ -2230,11 +2243,11 @@ impl CustomScanState for AggregateScanState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7593** (2026-11-21): **`pg_search 0.27.0`: SELECT DISTINCT fails with es_query_dsa when term_set uses a parallel subquery**
+  *Symptoms*: ### What happens?  A `SELECT DISTINCT` query fails when `pdb.term_set` receives an array from a nested BM25 query. The outer query uses a ParadeDB Aggregate Scan. The nested query uses a parallel ParadeDB Base Scan in an `InitPlan`.  **Expected:** The query returns IDs `1` and `2`.  **Actual:** The query returns SQLSTATE `XX000`:  ```text ERROR: es_query_dsa must be set during parallel initialization or execution ```  The error reproduced in three out of three fresh connections. Passing the same IDs as a literal array returns both rows. Disabling `paradedb.enable_aggregate_custom_scan` also returns both rows without changing the parallel worker limit.  ### To Reproduce  Run this in a sandbox database with `pg_search` 0.27.0 installed. Use `psql` with autocommit enabled.  ```sql create schema bm25_repro; set search_path = bm25_repro, public;  create table documents (id integer primary key); insert into documents values (1), (2), (3); create index documents_search on documents using bm25 (id); analyze documents;  -- Allow a parallel plan on the three-row table. set max_parallel_workers_per_gather = 1; set debug_parallel_query = on; set paradedb.enable_aggregate_custom_scan = on;  -- Control: returns IDs 1 and 2. select distinct id from documents where (id @@@ pdb.term_set(array[1, 2]));  -- Reproduction: fails with SQLSTATE XX000. select distinct id from documents where (     id @@@ pdb.term_set(array(         select id         from documents         where (id @@@ pdb.term_set(
+
 - **Issue #7564** (2026-11-19): **`pg_search 0.23.5 → 0.27.0` upgrade leaves a stale version_info() signature**
   *Symptoms*: ### What happens?  `ALTER EXTENSION pg_search UPDATE TO '0.27.0'` succeeds on a database created with `pg_search` 0.23.5, but the SQL catalog still declares three result columns for `paradedb.version_info()`: `version`, `githash`, and `build_mode`. The 0.27.0 binary returns only `version` and `build_mode`. In our test, the version check after the successful upgrade terminated the PostgreSQL backend with `SIGSEGV`.  [#4956](https://github.com/paradedb/paradedb/pull/4956) removed `githash`. In the 0.27.0 package, the SQL change is in the `0.23.2 → 0.23.3` migration. Databases that start on 0.23.5 skip that migration. We verified that replacing the old signature in the final upgrade step fixes the direct upgrade.  **Expected:** After `ALTER EXTENSION` succeeds, the function signature matches a fresh 0.27.0 installation.  ### To Reproduce  1. Create a fresh database with `pg_search` 0.23.5. 2. Start the official 0.27.0 image with the same data directory and complete the documented extension upgrade. 3. Check the installed version and SQL signature without calling the function:  ```sql SELECT extversion,        pg_get_function_result('paradedb.version_info()'::regprocedure) FROM pg_extension WHERE extname = 'pg_search'; ```  **Actual:** `0.27.0` and `TABLE(version text, githash text, build_mode text)`   **Expected:** `0.27.0` and `TABLE(version text, build_mode text)`  ### OS:  Debian 13 (Trixie), x86_64  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();
-
-- **Issue #7433** (2026-11-12): **CI: Citus 13 build fails on PostgreSQL 15.20 with a redeclared `have_createdb_privilege`**
-  *Symptoms*: # What happens?  Since PostgreSQL 15.20 reached `apt.postgresql.org` on 2026-11-12, the `Build & install Citus 13 (PG 15)` step of `Test pg_search` fails.  ``` citus/src/include/pg_version_compat.h:604:1: error: static declaration of ‘have_createdb_privilege’ follows non-static declaration /usr/include/postgresql/15/server/commands/dbcommands.h:33:13: note: previous declaration of ‘have_createdb_privilege’ with type ‘_Bool(void)’ ```  PostgreSQL 15.20 exports `have_createdb_privilege` from `commands/dbcommands.h` (postgres/postgres@98ec97f673). Citus 13 has a `static inline` copy of it for PostgreSQL versions before 16 in `src/include/pg_version_compat.h`, so the two declarations collide. `v13.4.0` and `v13.5.0` have the same copy, so a newer 13.x tag doesn't help.  The last green run of this job installed `postgresql-server-dev-15` `15.19-1.pgdg26.04+2`. The red runs install `15.20-1.pgdg26.04+1`. PostgreSQL 16 to 18 aren't affected, because those jobs build Citus 14.  These runs fail at the same step.  - https://github.com/paradedb/paradedb/actions/runs/43280487148/job/131400357675 (#7430) - https://github.com/paradedb/paradedb/actions/runs/43272838607 - https://github.com/paradedb/paradedb/actions/runs/43267298415 - https://github.com/paradedb/paradedb/actions/runs/43266693756  ## To Reproduce  Run this on Ubuntu with the PGDG apt repository.  ```bash sudo apt-get install -y postgresql-15 postgresql-server-dev-15 git clone --depth 1 --branch v13.3.0 https://github.com/citu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2251,775 +2264,820 @@ impl CustomScanState for AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1601cdcd` (2026-11-19)
-**Commit Message**: docs(changelog): require a vector index rebuild on 0.27.0 (#7581)
+### Incident Patch 1: `9e0eeecd` (2026-11-21)
+**Commit Message**: fix: Solve AggregateScan parameters before entering a runtime. (#7605)
+
+# Ticket(s) Closed
+
+- Closes #7593
+
+## What
+
+Fixes DataFusion `AggregateScan` queries (`SELECT DISTINCT`, `GROUP BY`,
+`FILTER`) whose predicates evaluate an `InitPlan` containing a ParadeDB
+`BaseScan` (parallel or serial). Previously, parallel `InitPlan`s failed
+with `es_query_dsa must be set during parallel initialization or
+execution`, and serial `ColumnarExecState` `InitPlan`s panicked with
+`Cannot start a runtime from within a runtime`. Also fixes
+parallel-aware `BaseScan` queries with a bitmap intersection child
+failing outside parallel mode (e.g., PL/pgSQL `SELECT INTO`), and makes
+`pdb.agg(..., 'threshold')` with runtime expressions resolve against the
+solved row estimate.
 
 ## Why
 
-The goal is to make the 0.27.0 changelog state plainly that vector index
-on-disk format changes are backwards incompatible and that users must
-rebuild those indexes after upgrading.
+Unlike `BaseScan`, Tantivy `AggregateScan`, and `JoinScan`, the
+DataFusion `AggregateScan` path left runtime Postgres expressions
+unsolved until `PgSearchTableProvider::scan`, which runs inside
+`PgTokioRuntime::block_on`. Inside `block_on`, `HeldInterrupts` forces
+PostgreSQL's `InitializeParallelDSM` into its private-memory fallback
+(`es_query_dsa == NULL`), and an active Tokio runtime panics if an
+`InitPlan` itself enters `bl
 
-The published notes hid that rebuild in two bullets, and one of those
-bullets said only IVF indexes need `REINDEX`.
-
-## What changed
-
-`docs/project/changelog/0.27.0.mdx` now leads Breaking Changes with a
-short note. 0.27.0 changes the on-disk format, older formats are not
-supported, and upgrading requires `REINDEX`. Vector searches fail with
-`index "<index_name>" has an unsupported vector storage format` until
-the rebuild.
-
-## Scope
-
-The 0.27.0 changelog page only. The other 0.27.0 bullets are unchanged.
-
-## Blast Radius
-
-Docs only. No index format or runtime change.
-
-## Verification
-
-The v0.27.0 tag locks tantivy `58fd4384`, which reads `.vec` version 6
-and `.centroids` version 5 only. 0.26.5 through 0.26.8 wrote version 4
-and version 3. The quoted error matches `vector_format_error_report` in
-`index_read/src/index/reader/index.rs`.
-
-**File**: `docs/project/changelog/0.27.0.mdx` (modified, +6/-0)
+**File**: `basescan/src/postgres/customscan/basescan/mod.rs` (modified, +18/-12)
 ```diff
-@@ -13,6 +13,12 @@ High availability and read replicas have always been ParadeDB Enterprise feature
+@@ -139,8 +139,10 @@ impl BaseScan {
+     ///    segment view with `MvccSatisfies::ParallelWorker`.
+     ///
+     /// 2. **Serial or Replicated Scan** (no `parallel_state`):
+-    ///    Either the main backend running a serial path, or a `parallel_safe` but not
+-    ///    `parallel_aware` scan inside a worker (e.g. the inner side of a Parallel Hash Join).
++    ///    Either the main backend running a serial path, a `parallel_safe` but not
++    ///    `parallel_aware` scan inside a worker (e.g. the inner side of a Parallel Hash Join),
++    ///    or a `parallel_aware` scan running locally on the leader when `es_use_parallel_mode`
++    ///    is false or `InitializeParallelDSM` falls back to private memory (`es_query_dsa == NULL`).
+     ///    Each such scan reads the full data set on its own, so it opens with
+     ///    `MvccSatisfies::Snapshot`. The leader's very first open falls here too: it runs from
+     ///    `estimate_dsm_custom_scan`, before any DSM is attached, and it is the open the
+@@ -238,16 +240,6 @@ impl BaseScan {
+         state.custom_state_mut().search_reader = Some(search_reader);
+         state.custom_state_mut().score_explanation_weight.take();
  
- Upgrade standbys before the primary: the primary now writes a ParadeDB WAL record during `CREATE INDEX`, `VACUUM`, and `ANALYZE` on indexed tables, and a standby running an earlier release shuts down when replaying that record.
+-        let parallel_aware = unsafe { (*(*state.planstate()).plan).parallel_aware };
+-        if !parallel_aware
+-            && let Some(cell) = state.custom_state().bitmap_cell.clone()
+-            && cell.get().is_none()
+-            && let Some(bitmap_exec) = state.custom_state_mut().bitmap_exec.as_mut()
+-            && let Some(source) = unsafe { bitmap_exec.private_source() }
+-        {
+-            cell.fill(source);
+-        }
+-
+         let csstate = addr_of_mut!(state.csstate);
+         state.custom_state_mut().init_exec_method(csstate);
  
-+### Vector index format {#vector-index-format}
+@@ -2208,6 +2200,20 @@ impl CustomScan for BaseScan {
+         if state.custom_state().search_reader.is_none() {
+             Self::init_search_reader(state);
+         }
++        // Populate the private bitmap cursor source when running without attached parallel DSM
++        // state. Handling this here (rather than gating on `!plan.parallel_aware` in
++        // `init_search_reader`) covers both genuinely serial scans and `parallel_aware` scans
++        // that fell back to leader-only local execution (e.g. `es_use_parallel_mode = false` or
++        // PostgreSQL's `InitializeParallelDSM` private-memory fallback with `es_query_dsa == NULL`),
++        // without eagerly building a private bitmap during `estimate_dsm_custom_scan`.
++        if state.custom_state().parallel.is_none()
++            && let Some(cell) = state.custom_state().bitmap_cell.clone()
++            && cell.get().is_none()
++            && let Some(bitmap_exec) = state.custom_state_mut().bitmap_exec.as_mut()
++            && let Some(source) = unsafe { bitmap_exec.private_source() }
++        {
++            cell.fill(source);
++        }
+         // Build the leader's routing plan on first execution; workers wait for publication
+         // only when they need the plan, after evaluating their segment filters.
+         if state.custom_state().vector_routing_pending {
+```
+
+**File**: `basescan/src/postgres/customscan/basescan/parallel.rs` (modified, +35/-13)
+```diff
+@@ -130,6 +130,16 @@ impl ParallelQueryCapable for BaseScan {
+         pcxt: *mut pg_sys::ParallelContext,
+         coordinate: *mut c_void,
+     ) {
++        let Some(area) = try_query_area(state) else {
++            // PostgreSQL's `InitializeParallelDSM` fell back to backend-private memory
++            // (`pcxt->seg == NULL`, `pcxt->nworkers == 0`, `pei->area == NULL`), e.g. due to
++            // DSM exhaustion or held interrupts. No workers will launch, so leave `parallel`
++            // unattached and let the leader run serially (matching PostgreSQL's
++            // `ExecBitmapHeapInitializeDSM`).
++            debug_assert!(unsafe { (*pcxt).seg.is_null() && (*pcxt).nworkers == 0 });
++            return;
++        };
 +
-+0.27.0 changes the on-disk format of vector indexes. Older formats are not supported and must be rebuilt with `REINDEX` when upgrading to 0.27.0.
-+
-+Vector searches fail with `index "<index_name>" has an unsupported vector storage format` until the index is rebuilt.
-+
- ### Other Changes
+         let args = state.custom_state().parallel_scan_args();
  
- - Adding a vector to an L2 (`vector_l2_ops`) or inner-product (`vector_ip_ops`) field of a ParadeDB index now fails when the vector's magnitude (its length from the origin) is above about 6.5e18, and searching such a field with a query vector above that magnitude fails too. Vectors that large overflowed the index's single-precision arithmetic. Cosine fields accept any finite vector. Vectors already in an index are not re-checked, but `REINDEX` of an index holding one fails.
+         unsafe {
+@@ -139,7 +149,7 @@ impl ParallelQueryCapable for BaseScan {
+             state
+                 .custom_state_mut()
+                 .attach_parallel(pscan_state, ParallelRole::Leader);
+-            leader_publish_query(state, &mut *pscan_state);
++            leader_publish_query(state, &mut *pscan_state, area);
+ 
+             if !(*pcxt).seg.is_null()
+                 && let Some(trace) = state.custom_state().io_trace.clone()
+@@ -162,7 +172,6 @@ impl ParallelQueryCapable for BaseScan {
+             let planned_workers = (*pcxt).nworkers as u32;
+             (*pscan_state).bitmap_slots = planned_workers + 1;
+             leader_publish_bitmap(state, pscan_state);
+-            let area = query_area(state);
+             state
+                 .custom_state_mut()
+                 .leader_publish_vector_routing_plan(area, pg_sys::parallel_leader_participation);
+@@ -173,6 +182,14 @@ impl ParallelQueryCapable for BaseScan {
+         state: &mut CustomScanStateWrapper<Self>,
+         coordinate: *mut c_void,
+     ) {
++        let Some(area) = try_query_area(state) else {
++            // Same private-memory fallback as `initialize_dsm_custom_scan` (matching
++            // PostgreSQL's `ExecBitmapHeapReInitializeDSM`): no workers will launch, and
++            // `rescan_custom_scan` resets local state because `parallel` is `None`.
++            debug_assert!(state.custom_state().parallel.is_none());
++            return;
++        };
++
+         // The one place the shared segment work queue is reset for a rescan.
+         // PostgreSQL guarantees this runs while no workers are attached (see
+         // nodeGather.c: "ReInitializeDSM should reset only shared state, ReScan
+@@ -205,10 +222,9 @@ impl ParallelQueryCapable for BaseScan {
+         if state.custom_state().needs_vector_routing() {
+             BaseScan::init_search_reader(state);
+         }
+-        unsafe { leader_publish_query(state, pscan_state) };
++        unsafe { leader_publish_query(state, pscan_state, area) };
+         unsafe { leader_publish_bitmap(state, pscan_state) };
+         unsafe {
+-            let area = query_area(state);
+             state
+                 .custom_state_mut()
+                 .leader_publish_vector_routing_plan(area, pg_sys::parallel_leader_participation)
+@@ -238,25 +254,31 @@ impl ParallelQueryCapable for BaseScan {
+     }
+ }
+ 
+-/// The parallel query's DSA area. Postgres installs it on the EState around the DSM
+-/// callbacks and local execution in the leader, and for the whole run in a worker.
+-pub(super) fn query_area(state: &CustomScanStateWrapper<BaseScan>) -> *mut dsa_area {
++/// The parallel query's DSA area, if Postgres created a DSM segment for this parallel context.
++/// Returns `None` when `InitializeParallelDSM` fell back to backend-private memory
++/// (`pcxt->seg == NULL`, `pcxt->nworkers == 0`, `pei->area == NULL`).
++pub(super) fn try_query_area(state: &CustomScanStateWrapper<BaseScan>) -> Option<*mut dsa_area> {
+     let area = unsafe { (*state.csstate.ss.ps.state).es_query_dsa };
+-    assert!(
+-        !area.is_null(),
+-        "es_query_dsa must be set during parallel initialization or execution"
+-    );
+-    area
++    (!area.is_null()).then_some(area)
++}
++
++/// The parallel query's DSA area, required for workers and leader paths that attached parallel
++/// DSM state. Leader DSM init/reinit use [`try_query_area`] because PostgreSQL's private-memory
++/// fallback leaves `es_query_dsa` null.
++pub(super) fn query_area(state: &CustomScanStateWrapper<BaseScan>) -> *mut dsa_area {
++    try_query_area(state)
++        .expect("es_query_dsa must be set during parallel initialization or execution")
+ }
+ 
+ /// Leader-only: hand the coming round's workers the solved query.
+ unsafe fn leader_publish_query(
+     state: &mut CustomScanStateWrapper<BaseScan>,
+     pscan_state: &mut ParallelScanState,
++    area: *mut dsa_area,
+ ) {
+     let query = serde_json::to_vec(&state.custom_state().search_query_input())
+         .expect("should be able to serialize query");
+-    unsafe { pscan_state.publish_query(query_area(state), &query) };
++    unsafe { pscan_state.publish_query(area, &query) };
+ }
+ 
+ /// Leader-only: ensure th
+```
+
+**File**: `basescan/src/postgres/customscan/basescan/scan_state.rs` (modified, +4/-3)
+```diff
+@@ -698,9 +698,10 @@ impl SolvePostgresExpressions for BaseScanState {
+     }
+ 
+     /// Install the late-bound source cell. Workers attach the published claim
+-    /// table immediately; the leader's (or a serial scan's) cell is filled after
+-    /// its reader opens (serial: privately in `init_search_reader`; parallel:
+-    /// with the shared view at DSM initialization).
++    /// table immediately; the leader's (or a serial scan's) cell is filled once
++    /// its reader opens (parallel with attached DSM: with the shared view at
++    /// DSM initialization; serial or local fallback without attached DSM:
++    /// privately in `exec_custom_scan`).
+     fn bitmap_source_cell(&mut self, _planstate: *mut pg_sys::PlanState) -> Option<BitmapCell> {
+         self.bitmap_exec.as_ref()?;
+         let cell = self
+```
+
+**File**: `docs/project/changelog/unreleased/7605.bugfix.mdx` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++- Fixed aggregate and `DISTINCT` queries with subqueries in search predicates failing at execution time (#7593), and resolved runtime predicates before evaluating `pdb.agg(..., 'threshold')` visibility. Also fixed parallel search queries with bitmap intersection failing when run outside parallel mode.
+```
+
+**File**: `index_read/src/postgres/customscan/solve_expr.rs` (modified, +6/-5)
+```diff
+@@ -34,7 +34,7 @@
+ //! | Context | Created | Per-tuple memory reset | Use it for |
+ //! |---|---|---|---|
+ //! | `ps_ExprContext` | PostgreSQL, in `ExecInitCustomScan` | by the scan, per row | evaluating heap filters, snippets, projection |
+-//! | runtime context (`BaseScanState::runtime_context`, `AggregateScanState::runtime_context`) | [`SolvePostgresExpressions::init_expr_context`], only when the base query has something to solve | once, at the start of each solve | the solved query |
++//! | runtime context (`BaseScanState::runtime_context`, `AggregateScanState::runtime_context`, `DataFusionAggState::runtime_context`) | [`SolvePostgresExpressions::init_expr_context`], only when the base query has something to solve | once, at the start of each solve | the solved query |
+ //!
+ //! Both live in the EState's per-query memory and are freed with it.
+ //!
+@@ -50,6 +50,10 @@
+ //! 3. Nothing else resets the runtime context between solves.
+ //! 4. Before solving again (rescan), drop everything that still points into the old solved
+ //!    query: the reader and its scorers. The new solve starts with a reset that frees it.
++//! 5. Solve on the Postgres main thread before entering `PgTokioRuntime::block_on`. Evaluating
++//!    an `InitPlan` inside `block_on` runs under `HeldInterrupts` (forcing PostgreSQL's
++//!    `InitializeParallelDSM` into its private-memory fallback with `es_query_dsa == NULL`) and
++//!    panics if the `InitPlan` itself enters `block_on`.
+ //!
+ //! # Why a second context
+ //!
+@@ -63,10 +67,7 @@
+ //! # Scans outside this trait
+ //!
+ //! JoinScan solves `JoinCSClause` in `ps_ExprContext`, which it never resets per row because
+-//! DataFusion produces its rows. The DataFusion aggregate does reset `ps_ExprContext` per row,
+-//! so it cannot solve there; each source solves in `PgSearchTableProvider::scan` into a context
+-//! created for that source alone (`aggregatescan/datafusion_exec.rs`), so one source's reset
+-//! cannot free another's query.
++//! DataFusion produces its rows (and still solves before entering `PgTokioRuntime::block_on`).
+ 
+ use crate::api::operator::searchqueryinput_typoid;
+ use crate::nodecast;
+```
+
+**File**: `index_read/src/scan/info.rs` (modified, +0/-21)
+```diff
+@@ -265,27 +265,6 @@ impl ScanMode {
+     pub fn has_parameters(&self) -> bool {
+         self.queries().any(|q| q.has_parameters())
+     }
+-
+-    /// Initialize runtime `PostgresExpression` nodes in this scan mode against `planstate`.
+-    pub fn init_postgres_expressions(&mut self, planstate: *mut pg_sys::PlanState) {
+-        for q in self.queries_mut() {
+-            q.init_postgres_expressions(planstate);
+-        }
+-    }
+-
+-    /// Solve all runtime `PostgresExpression` and parameterized heap filters in this scan mode.
+-    /// Resets `ecxt_per_tuple_memory` once up front, then solves each query with the no-reset
+-    /// variant (rule 2 in `solve_expr.rs`).
+-    pub fn solve_postgres_expressions(&mut self, expr_context: *mut pg_sys::ExprContext) {
+-        assert!(
+-            !expr_context.is_null(),
+-            "expr_context was never initialized"
+-        );
+-        unsafe { pg_sys::MemoryContextReset((*expr_context).ecxt_per_tuple_memory) };
+-        for q in self.queries_mut() {
+-            q.solve_postgres_expressions_no_reset(expr_context);
+-        }
+-    }
+ }
+ 
+ /// Information about a scan of a ParadeDB table.
+```
+
+**File**: `joinscan/src/postgres/customscan/aggregatescan/datafusion_exec.rs` (modified, +19/-29)
+```diff
+@@ -141,7 +141,7 @@ pub async fn build_join_aggregate_plan(
+         custom_exprs,
+         custom_scan_tlist,
+         expr_context,
+-        planstate,
++        planstate.is_none(),
+         mpp_manifests,
+     )
+     .await?;
+@@ -637,11 +637,8 @@ fn build_pdb_aggregate_plan(
+ 
+     let mut level_plans = Vec::with_capacity(groups.len());
+ 
+-    // Cloned union groups must not share a provider's runtime state: each group needs its own
+-    // `ExprContext` (solving parameters resets per-tuple memory), and under MPP each scan claims
+-    // segments from the pool its `source_idx` names (clones sharing the original's indexes would
+-    // split every pool between them, so groups past the first get pools one source list apart,
+-    // matching the launch's `i % sources` manifest replay).
++    // Under MPP, cloned union groups must not share segment pools: each group past the first gets
++    // pools one source list apart (matching the launch's `i % sources` manifest replay).
+     let pool_stride = plan.sources().len();
+     for (group_idx, (needed_keys, levels_in_group)) in groups.into_iter().enumerate() {
+         let mut level_plan = if group_idx == 0 {
+@@ -772,8 +769,8 @@ fn build_pdb_aggregate_plan(
+     }
+ }
+ 
+-/// Give every `PgSearchTableProvider` in a cloned union group its own runtime `ExprContext`
+-/// and, under MPP, move its segment claims to the pool `offset` past its own.
++/// Under MPP, move every `PgSearchTableProvider` in a cloned union group to the segment pool
++/// `offset` past its own.
+ fn isolate_cloned_sources(plan: LogicalPlan, offset: usize) -> Result<LogicalPlan> {
+     plan.transform(|node| {
+         let LogicalPlan::TableScan(mut scan) = node else {
+@@ -782,11 +779,11 @@ fn isolate_cloned_sources(plan: LogicalPlan, offset: usize) -> Result<LogicalPla
+         let Some(provider) = pg_search_provider_from_scan(&scan) else {
+             return Ok(Transformed::no(LogicalPlan::TableScan(scan)));
+         };
++        let Some(idx) = provider.source_idx() else {
++            return Ok(Transformed::no(LogicalPlan::TableScan(scan)));
++        };
+         let mut provider = provider.clone();
+-        if let Some(idx) = provider.source_idx() {
+-            provider.set_source_idx(idx + offset);
+-        }
+-        provider.ensure_own_expr_context();
++        provider.set_source_idx(idx + offset);
+         scan.source = Arc::new(DefaultTableSource::new(Arc::new(provider)));
+         Ok(Transformed::yes(LogicalPlan::TableScan(scan)))
+     })
+@@ -1070,7 +1067,7 @@ fn build_relnode_df<'a>(
+     custom_exprs: *mut pg_sys::List,
+     custom_scan_tlist: *mut pg_sys::List,
+     expr_context: Option<*mut pg_sys::ExprContext>,
+-    planstate: Option<*mut pg_sys::PlanState>,
++    explain_only: bool,
+     mpp_manifests: Option<&'a [SearchIndexManifest]>,
+ ) -> LocalBoxFuture<'a, Result<DataFrame>> {
+     async move {
+@@ -1083,7 +1080,7 @@ fn build_relnode_df<'a>(
+                     top_level_plan,
+                     plan_position,
+                     expr_context,
+-                    planstate,
++                    explain_only,
+                     mpp_manifests,
+                 )
+                 .await?;
+@@ -1099,7 +1096,7 @@ fn build_relnode_df<'a>(
+                     custom_exprs,
+                     custom_scan_tlist,
+                     expr_context,
+-                    planstate,
++                    explain_only,
+                     mpp_manifests,
+                 )
+                 .await?;
+@@ -1110,7 +1107,7 @@ fn build_relnode_df<'a>(
+                     custom_exprs,
+                     custom_scan_tlist,
+                     expr_context,
+-                    planstate,
++                    explain_only,
+                     mpp_manifests,
+                 )
+                 .await?;
+@@ -1127,7 +1124,7 @@ fn build_relnode_df<'a>(
+                     custom_exprs,
+                     custom_scan_tlist,
+                     expr_context,
+-                    planstate,
++                    explain_only,
+                     mpp_manifests,
+                 )
+                 .await?;
+@@ -1180,7 +1177,7 @@ fn build_relnode_df<'a>(
+                     custom_exprs,
+                     custom_scan_tlist,
+                     expr_context,
+-                    planstate,
++                    explain_only,
+                     mpp_manifests,
+                 )
+                 .await?;
+@@ -1427,7 +1424,7 @@ async fn build_source_df(
+     plan: &RelNode,
+     plan_position: usize,
+     expr_context: Option<*mut pg_sys::ExprContext>,
+-    planstate: Option<*mut pg_sys::PlanState>,
++    explain_only: bool,
+     mpp_manifests: Option<&[SearchIndexManifest]>,
+ ) -> Result<DataFrame> {
+     let scan_info = source.scan_info.clone();
+@@ -1461,17 +1458,10 @@ async fn build_source_df(
+             provider.add_match_tag_column(&tq.tag_name);
+         }
+     }
+-    // HeapFilter queries (e.g. `=` on a column indexed via a
+-    // `pdb.literal` cast) compile to runtime Postgres expressions
+```
+
+**File**: `joinscan/src/postgres/customscan/aggregatescan/mod.rs` (modified, +34/-10)
+```diff
+@@ -961,13 +961,15 @@ impl CustomScan for AggregateScan {
+                     let cscan = builder.args().cscan;
+                     ((*cscan).custom_exprs, (*cscan).custom_scan_tlist)
+                 };
+-                builder.custom_state().datafusion_state = Some(scan_state::DataFusionAggState {
++                let mut df_state = scan_state::DataFusionAggState {
+                     plan,
+                     targetlist,
+                     topk,
+                     custom_exprs,
+                     custom_scan_tlist,
+                     having_filter,
++                    base: None,
++                    runtime_context: None,
+                     runtime: None,
+                     physical_plan: None,
+                     stream: None,
+@@ -981,7 +983,15 @@ impl CustomScan for AggregateScan {
+                     mpp: MppLifecycle::from_plan(parallel_mode_ok),
+                     launch_timing: None,
+                     spilled: Arc::new(AtomicBool::new(false)),
+-                });
++                };
++                if df_state.has_postgres_expressions() || df_state.has_parameters() {
++                    df_state.base = Some(scan_state::DataFusionAggBase {
++                        plan: df_state.plan.clone(),
++                        targetlist: df_state.targetlist.clone(),
++                        having_filter: df_state.having_filter.clone(),
++                    });
++                }
++                builder.custom_state().datafusion_state = Some(df_state);
+                 builder.build()
+             }
+         }
+@@ -1197,10 +1207,15 @@ impl CustomScan for AggregateScan {
+         estate: *mut pg_sys::EState,
+         eflags: i32,
+     ) {
+-        if state.custom_state().is_datafusion_backend() {
++        if let Some(df_state) = state.custom_state_mut().datafusion_state.as_mut() {
+             // DataFusion logical/physical planning and any MPP manifest pinning / worker launch
+             // happen lazily on first `exec_custom_scan`, once `ExecutePlan` has initialized
+-            // `estate->es_use_parallel_mode`.
++            // `estate->es_use_parallel_mode`. Only allocate the dedicated `runtime_context`
++            // (separate from `ps_ExprContext`, which is reset per emitted row) when the query
++            // has runtime expressions or parameters to solve.
++            if eflags & (pg_sys::EXEC_FLAG_EXPLAIN_ONLY as i32) == 0 {
++                df_state.runtime_context = unsafe { df_state.init_expr_context(estate) };
++            }
+             return;
+         }
+ 
+@@ -2228,12 +2243,9 @@ impl AggregateScan {
+             "aggregate scan slot must be initialized"
+         );
+ 
+-        // Capture before the mutable borrow on `datafusion_state`. Threaded
+-        // down to each `PgSearchTableProvider` so HeapFilter queries (`=`
+-        // on a `pdb.literal`-cast column, etc.) can resolve their runtime
+-        // expressions. A provider with something to solve gets a context of its
+-        // own from the planstate (see `build_source_df` in datafusion_exec.rs);
+-        // `ps_ExprContext` is what every provider's reader evaluates in.
++        // Capture before the mutable borrow on `datafusion_state`. `ps_ExprContext` is
++        // threaded down to each `PgSearchTableProvider` for per-row heap filter evaluation;
++        // runtime expressions and parameters are pre-solved below into `runtime_context`.
+         let ps_expr_context = state.csstate.ss.ps.ps_ExprContext;
+         let runtime_expr_context = (!ps_expr_context.is_null()).then_some(ps_expr_context);
+         let ps = state.planstate();
+@@ -2247,6 +2259,18 @@ impl AggregateScan {
+ 
+         // First call: build and execute the DataFusion plan
+         if first_call {
++            // Solve all runtime Postgres expressions and parameters on the main thread before
++            // entering `PgTokioRuntime::block_on` (#7593): `block_on` holds `HeldInterrupts`
++            // (breaking parallel InitPlan DSM allocation) and installs a Tokio runtime context
++            // (panicking if an InitPlan itself calls `block_on`).
++            let df_state = state
++                .custom_state_mut()
++                .datafusion_state
++                .as_mut()
++                .expect("DataFusion state must be initialized");
++            let runtime_context = df_state.runtime_context;
++            df_state.prepare_query_for_execution(ps, runtime_context);
++
+             let runtime = PgTokioRuntime::new()
+                 .unwrap_or_else(|e| pgrx::error!("Failed to create tokio runtime: {}", e));
+ 
 ```
 
 ---
 
-### Incident Patch 2: `dec61535` (2026-11-20)
-**Commit Message**: fix: handle parameter null tests in generic search plans (#7536)
-
-# Ticket(s) Closed
-
-- Closes #7533
+### Incident Patch 2: `5dd2b5bd` (2026-11-20)
+**Commit Message**: chore: Add UUID primary / foreign keys for stackoverflow (#7608)
 
 ## What
 
-Keep score-ordered prepared queries with optional filters working when
-PostgreSQL switches to a generic plan, including null checks on cast
-parameters.
+Adds generated `UUID` join keys (`users.user_uuid`,
+`stackoverflow_posts.owner_user_uuid`, `badges.user_uuid`) and `_uuid`
+variants of `join_permissioned_search_*` and
+`join_aggregate_topk_count_*` to `benchmarks/datasets/stackoverflow/`.
 
 ## Why
 
-Generic plans retain parameter null tests instead of simplifying them
-with bound values. Qual extraction does not recognize these guards, so
-the OR condition prevents a Base Scan path from being generated. The
-resulting ordinary index scan cannot project `pdb.score()`.
+Existing Stack Overflow join benchmarks only join on `INTEGER` keys and
+do not cover `UUID` / `StrColumn` dynamic filter pushdown, hash joins,
+or `RankJoinExec` term-dictionary lookups.
 
 ## How
 
-Use the existing `contains_param()` helper to recognize parameters
-recursively in `NullTest` arguments, including through casts. Evaluate
-the null test through the existing `HeapExpr` path, following the
-handling of parameter-only `OpExpr` predicates.
+- Adds `STORED` generated `md5(...)::uuid` columns in
+`create_tables.sql` and indexes them in `indexes/bm25.sql` (leaving S3
+CSVs and existing integer `partition_by` clauses unchanged).
+- Mirrors the six join query tiers under `*_uuid/` without
+`range_partitioned` variants.
 
 ## Tests
 
-- Built and tested on PostgreSQL 16.14, based on main at
-`b2eb4729af36020b49a9fdb82528410631739727`.
-- `issue_7533` fails on unmodified main and passes with the fix. Custom
-and generic plans have matching rows, scores, and ordering; the
-regression includes NULL, non-NULL, unmatched, and changing parameter
-values.
-- Two additional cast cases (`text` to `varchar` and `varchar(10)`) fai
+Tested locally. After this merges we'll need to rebuild the heap
+snapshots.
 
-**File**: `docs/project/changelog/unreleased/7536.bugfix.mdx` (added, +5/-0)
+**File**: `benchmarks/datasets/stackoverflow/create_tables.sql` (modified, +10/-3)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
-+
-+- Fixed score-ordered prepared queries with optional filters failing after switching to a generic plan when a filter tests a parameter with `IS NULL`.
-```
-
-**File**: `pg_search/tests/pg_regress/expected/issue_7533.out` (added, +136/-0)
-```diff
-@@ -0,0 +1,136 @@
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+CREATE TABLE issue_7533_docs (id int PRIMARY KEY, body text, category text);
-+INSERT INTO issue_7533_docs VALUES
-+    (1, 'hello', 'a'), (2, 'hello', 'b'), (3, 'hello', NULL),
-+    (4, 'other', 'a'), (5, 'hello hello', 'a');
-+CREATE INDEX issue_7533_idx ON issue_7533_docs
-+USING paradedb (id, body);
-+ANALYZE issue_7533_docs;
-+-- The same parameter controls the optional filter and its value.
-+PREPARE issue_7533(text, text) AS
-+SELECT id, pdb.score(id) AS score FROM issue_7533_docs
-+WHERE body ||| $1 AND ($2 IS NULL OR category = $2)
-+ORDER BY pdb.score(id) DESC, id LIMIT 2;
-+-- Generic plans must return the same ids, scores and order as these custom plans.
-+SET plan_cache_mode = force_custom_plan;
-+EXPLAIN (COSTS OFF) EXECUTE issue_7533('hello', 'a');
-+                                                                                                                                                                  QUERY PLAN                                                                                                                                                                  
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Limit
-+   ->  Custom Scan (ParadeDB Base Scan) on issue_7533_docs
-+         Table: issue_7533_docs
-+         Index: issue_7533_idx
-+         Exec Method: TopKScanExecState
-+         Scores: true
-+            TopK Order By: pdb.score() desc, id asc
-+            TopK Limit: 2
-+         Tantivy Query: {"boolean":{"must":[{"heap_filter":{"indexed_query":{"boolean":{"must":[{"with_index":{"query":{"match":{"field":"body","value":"hello","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}]}},"always_filters":[{"heap_filter":"(category = 'a'::text)"}]}}]}}
-+(9 rows)
-+
-+EXECUTE issue_7533('hello', 'a');
-+ id |   score   
-+----+-----------
-+  5 | 0.3331056
-+  1 |  0.308732
-+(2 rows)
-+
-+EXECUTE issue_7533('hello', NULL);
-+ id |   score   
-+----+-----------
-+  5 | 0.3331056
-+  1 |  0.308732
-+(2 rows)
-+
-+EXECUTE issue_7533('hello', 'b');
-+ id |  score   
-+----+----------
-+  2 | 0.308732
-+(1 row)
-+
-+EXECUTE issue_7533('hello', 'missing');
-+ id | score 
-+----+-------
-+(0 rows)
-+
-+SET plan_cache_mode = force_generic_plan;
-+EXPLAIN (COSTS OFF) EXECUTE issue_7533('hello', 'a');
-+                                                                                                                                                                                                         QUERY PLAN                                                                                                                                                                                                         
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Limit
-+   ->  Custom Scan (ParadeDB Base Scan) on issue_7533_docs
-+         Table: issue_7533_docs
-+         Index: issue_7533_idx
-+         Exec Method: TopKScanExecState
-+         Scores: true
-+            TopK Order By: pdb.score() desc, id asc
-+            TopK Limit: 2
-+         Tantivy Query: {"boolean":{"must":[{"postgres_expression":{"expr":{"expr_desc":"paradedb.with_index('issue_7533_idx'::regclass, paradedb.match_disjunction('body'::paradedb.fieldname, $1))"}}},{"boolean":{"should":[{"heap_filter":{"indexed_query":"all","always_filters":[{"heap_filter":"($2 IS NULL)"}]}},{"heap_filter":{"indexed_query":"all","always_filters":[{"heap_filter":"(category = $2)"}]}}]}}]}}
-+(9 rows)
-+
-+EXECUTE issue_7533('hello', 'a');
-+ id |   score   
-+----+-----------
-+  5 | 0.3331056
-+  1 |  0.308732
-+(2 rows)
-+
-+EXECUTE issue_7533('hello', NULL);
-+ id |   score   
-+----+-----------
-+  5 | 0.3331056
-+  1 |  0.308732
-+(2 rows)
-+
-+EXECUTE issue_7533('hello', 'b');
-+ id |  score   
-+----+----------
-+  2 | 0.308732
-+(1 row)
-+
-+EXECUTE issue_7533('hello', 'missing');
-+ id | score 
-+----+-------
-+(0 rows)
-+
-+EXECUTE issue_7533('hello', 'a');
-+ id |   score   
-+----+-----------
-+  5 | 0.3331056
-+  1 |  0.308732
-+(2 rows)
-+
-+EXECUTE issue_7533('hello', NULL);
-+ id |   score   
-+----+-----------
-+  5 | 0.3331056
-+  1 |  0.308732
-+(2 rows)
-+
-+-- text -> varchar wraps the parameter in a RelabelType.
-+PREPARE issue_7533_relabel(text, text) AS
-+SELECT id, pdb.score(id) AS score FROM issue_7533_docs
-+WHERE body ||| $1 AND (($2::varchar)
-```
-
-**File**: `pg_search/tests/pg_regress/sql/issue_7533.sql` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+
-+CREATE TABLE issue_7533_docs (id int PRIMARY KEY, body text, category text);
-+INSERT INTO issue_7533_docs VALUES
-+    (1, 'hello', 'a'), (2, 'hello', 'b'), (3, 'hello', NULL),
-+    (4, 'other', 'a'), (5, 'hello hello', 'a');
-+CREATE INDEX issue_7533_idx ON issue_7533_docs
-+USING paradedb (id, body);
-+ANALYZE issue_7533_docs;
-+
-+-- The same parameter controls the optional filter and its value.
-+PREPARE issue_7533(text, text) AS
-+SELECT id, pdb.score(id) AS score FROM issue_7533_docs
-+WHERE body ||| $1 AND ($2 IS NULL OR category = $2)
-+ORDER BY pdb.score(id) DESC, id LIMIT 2;
-+
-+-- Generic plans must return the same ids, scores and order as these custom plans.
-+SET plan_cache_mode = force_custom_plan;
-+EXPLAIN (COSTS OFF) EXECUTE issue_7533('hello', 'a');
-+EXECUTE issue_7533('hello', 'a');
-+EXECUTE issue_7533('hello', NULL);
-+EXECUTE issue_7533('hello', 'b');
-+EXECUTE issue_7533('hello', 'missing');
-+
-+SET plan_cache_mode = force_generic_plan;
-+EXPLAIN (COSTS OFF) EXECUTE issue_7533('hello', 'a');
-+EXECUTE issue_7533('hello', 'a');
-+EXECUTE issue_7533('hello', NULL);
-+EXECUTE issue_7533('hello', 'b');
-+EXECUTE issue_7533('hello', 'missing');
-+EXECUTE issue_7533('hello', 'a');
-+EXECUTE issue_7533('hello', NULL);
-+
-+-- text -> varchar wraps the parameter in a RelabelType.
-+PREPARE issue_7533_relabel(text, text) AS
-+SELECT id, pdb.score(id) AS score FROM issue_7533_docs
-+WHERE body ||| $1 AND (($2::varchar) IS NULL OR category = $2)
-+ORDER BY pdb.score(id) DESC, id LIMIT 2;
-+EXECUTE issue_7533_relabel('hello', 'b');
-+
-+-- A varchar length limit adds a FuncExpr around the parameter.
-+PREPARE issue_7533_typmod(text, text) AS
-+SELECT id, pdb.score(id) AS score FROM issue_7533_docs
-+WHERE body ||| $1 AND (($2::varchar(10)) IS NULL OR category = $2)
-+ORDER BY pdb.score(id) DESC, id LIMIT 2;
-+EXECUTE issue_7533_typmod('hello', NULL);
-+
-+DEALLOCATE issue_7533;
-+DEALLOCATE issue_7533_relabel;
-+DEALLOCATE issue_7533_typmod;
-+
-+RESET plan_cache_mode;
-+DROP TABLE issue_7533_docs;
-```
-
-**File**: `planner/src/postgres/customscan/qual_inspect.rs` (modified, +11/-0)
-```diff
-@@ -1209,6 +1209,17 @@ pub fn extract_quals(
+@@ -30,7 +30,10 @@ CREATE TABLE stackoverflow_posts (
+     -- format. Generated so the sampled CSVs stay unchanged: COPY skips
+     -- generated columns. amount78 mimics uint256-style token amounts.
+     amount15 NUMERIC(15, 2) GENERATED ALWAYS AS (view_count::numeric / 100) STORED,
+-    amount78 NUMERIC(78, 0) GENERATED ALWAYS AS ('1e70'::numeric + view_count) STORED
++    amount78 NUMERIC(78, 0) GENERATED ALWAYS AS ('1e70'::numeric + view_count) STORED,
++    -- Deterministic full-entropy UUID join key mirroring owner_user_id.
++    -- Explicit ::text cast avoids STABLE textanycat; preserves NULL when owner_user_id IS NULL.
++    owner_user_uuid UUID GENERATED ALWAYS AS (md5('user-' || owner_user_id::text)::uuid) STORED
+ );
  
-         pg_sys::NodeTag::T_NullTest => {
-             let nulltest = unsafe { nodecast!(NullTest, node) }?;
-+            // Generic plans keep optional-filter guards as parameter expressions,
-+            // which can include casts. Evaluate them at execution like OpExpr predicates.
-+            if unsafe { (*nulltest).arg.contains_param() } {
-+                state.uses_heap_expr = true;
-+                state.uses_tantivy_to_query = true;
-+                return Some(Qual::HeapExpr {
-+                    expr_node: node,
-+                    expr_desc: deparse_expr(Some(context), indexrel, node),
-+                    search_query_input: Box::new(SearchQueryInput::All),
-+                });
-+            }
-             // Note: PushdownField::try_new requires PlannerInfo
-             if let Some(root) = context.planner_info() {
-                 if let Some(field) =
+ CREATE TABLE badges (
+@@ -39,7 +42,9 @@ CREATE TABLE badges (
+     date TIMESTAMP,
+     user_id INTEGER,
+     class INTEGER,
+-    tag_based BOOLEAN
++    tag_based BOOLEAN,
++    -- Deterministic full-entropy UUID join key mirroring user_id.
++    user_uuid UUID GENERATED ALWAYS AS (md5('user-' || user_id::text)::uuid) STORED
+ );
+ 
+ CREATE TABLE comments (
+@@ -65,5 +70,7 @@ CREATE TABLE users (
+     down_votes INTEGER,
+     views INTEGER,
+     profile_image_url VARCHAR,
+-    website_url VARCHAR
++    website_url VARCHAR,
++    -- Deterministic full-entropy UUID join key mirroring id.
++    user_uuid UUID GENERATED ALWAYS AS (md5('user-' || id::text)::uuid) STORED
+ );
+```
+
+**File**: `benchmarks/datasets/stackoverflow/indexes/bm25.sql` (modified, +4/-1)
+```diff
+@@ -15,7 +15,8 @@ USING bm25 (
+     amount15,
+     amount78,
+     (owner_display_name::pdb.unicode_words('columnar=true')),
+-    owner_user_id
++    owner_user_id,
++    owner_user_uuid
+ ) WITH (
+     -- Join keys: comments.post_id = id, users.id = owner_user_id.
+     -- TODO: Explore removing multi-key partitioning in the future once range-partitioning
+@@ -30,6 +31,7 @@ USING bm25 (
+     (name::pdb.unicode_words('columnar=true')),
+     date,
+     user_id,
++    user_uuid,
+     class,
+     tag_based
+ ) WITH (
+@@ -53,6 +55,7 @@ USING bm25 (
+ CREATE INDEX users_idx ON users
+ USING bm25 (
+     id,
++    user_uuid,
+     (about_me::pdb.unicode_words('columnar=true')),
+     (display_name::pdb.unicode_words('columnar=true')),
+     reputation
+```
+
+**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_high_selectivity_uuid/README.md` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++# TopK Aggregate on JOIN, High Selectivity (DataFusion, UUID Join Key)
++
++- Join: `stackoverflow_posts -> badges` over unpartitioned full-entropy `UUID` keys (`badges.user_uuid = stackoverflow_posts.owner_user_uuid`)
++- Description: Mirrors `join_aggregate_topk_count_high_selectivity` with deterministic `md5(...)::uuid` join keys (`GROUP BY badges.name`, `ORDER BY COUNT(*) DESC LIMIT 10`).
++
++## Query Info (statistics from 20m dataset):
++
++- `'postgres'` selectivity on `stackoverflow_posts.body`: ~0.13% (~26K matches).
++  Under database convention, this narrow filter represents high selectivity (filters out ~99.87% of rows).
++  Without range co-partitioning on the UUID join keys, build-side cardinality (~26K rows) exercises small/medium UUID hash joins above the `InList` cap (and cross-process dynamic filter pushdown once supported).
++
++## Variant Omissions
++
++- `range_partitioned.sql` is omitted because the BM25 indexes are not range-partitioned on the UUID columns.
++- Native PostgreSQL aggregation and `basescan.sql` are omitted for the same reasons noted in `../join_aggregate_topk_count_high_selectivity/README.md`.
+```
+
+**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_high_selectivity_uuid/hash_partitioned.sql` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++-- DataFusion TopK aggregate scan
++SET work_mem TO '8GB'; SET paradedb.enable_aggregate_custom_scan TO on; SET paradedb.enable_range_partitioned_join TO off; SELECT
++    b.name,
++    COUNT(*)
++FROM stackoverflow_posts p
++JOIN badges b ON b.user_uuid = p.owner_user_uuid
++WHERE
++    p.body ||| 'postgres'
++GROUP BY
++    b.name
++ORDER BY
++    COUNT(*) DESC
++LIMIT 10;
+```
+
+**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_low_selectivity_uuid/README.md` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++# TopK Aggregate on JOIN, Low Selectivity (DataFusion, UUID Join Key)
++
++- Join: `stackoverflow_posts -> badges` over unpartitioned full-entropy `UUID` keys (`badges.user_uuid = stackoverflow_posts.owner_user_uuid`)
++- Description: Mirrors `join_aggregate_topk_count_low_selectivity` with deterministic `md5(...)::uuid` join keys (`GROUP BY badges.name`, `ORDER BY COUNT(*) DESC LIMIT 10`).
++
++## Query Info (statistics from 20m dataset):
++
++- `'javascript'` selectivity on `stackoverflow_posts.body`: ~4.05% (~811K matches, fanning out to ~149M joined badge rows).
++  Without range co-partitioning on the UUID join keys, build-side cardinality (~811K rows) exercises very large UUID hash joins with high fanout (and cross-process dynamic filter pushdown once supported).
++
++## Variant Omissions
++
++- `range_partitioned.sql` is omitted because the BM25 indexes are not range-partitioned on the UUID columns.
++- Native PostgreSQL aggregation and `basescan.sql` are omitted for the same reasons noted in `../join_aggregate_topk_count_low_selectivity/README.md`.
+```
+
+**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_low_selectivity_uuid/hash_partitioned.sql` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++-- DataFusion TopK aggregate scan
++SET work_mem TO '8GB'; SET paradedb.enable_aggregate_custom_scan TO on; SET paradedb.enable_range_partitioned_join TO off; SELECT
++    b.name,
++    COUNT(*)
++FROM stackoverflow_posts p
++JOIN badges b ON b.user_uuid = p.owner_user_uuid
++WHERE
++    p.body ||| 'javascript'
++GROUP BY
++    b.name
++ORDER BY
++    COUNT(*) DESC
++LIMIT 10;
+```
+
+**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_medium_selectivity_uuid/README.md` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++# TopK Aggregate on JOIN, Medium Selectivity (DataFusion, UUID Join Key)
++
++- Join: `stackoverflow_posts -> badges` over unpartitioned full-entropy `UUID` keys (`badges.user_uuid = stackoverflow_posts.owner_user_uuid`)
++- Description: Mirrors `join_aggregate_topk_count_medium_selectivity` with deterministic `md5(...)::uuid` join keys (`GROUP BY badges.name`, `ORDER BY COUNT(*) DESC LIMIT 10`).
++
++## Query Info (statistics from 20m dataset):
++
++- `'regex'` selectivity on `stackoverflow_posts.body`: ~0.90% (~179K matches).
++  Without range co-partitioning on the UUID join keys, build-side cardinality (~179K rows) exercises medium/large UUID hash joins (and cross-process dynamic filter pushdown once supported).
++
++## Variant Omissions
++
++- `range_partitioned.sql` is omitted because the BM25 indexes are not range-partitioned on the UUID columns.
++- Native PostgreSQL aggregation and `basescan.sql` are omitted for the same reasons noted in `../join_aggregate_topk_count_medium_selectivity/README.md`.
+```
+
+**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_medium_selectivity_uuid/hash_partitioned.sql` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++-- DataFusion TopK aggregate scan
++SET work_mem TO '8GB'; SET paradedb.enable_aggregate_custom_scan TO on; SET paradedb.enable_range_partitioned_join TO off; SELECT
++    b.name,
++    COUNT(*)
++FROM stackoverflow_posts p
++JOIN badges b ON b.user_uuid = p.owner_user_uuid
++WHERE
++    p.body ||| 'regex'
++GROUP BY
++    b.name
++ORDER BY
++    COUNT(*) DESC
++LIMIT 10;
 ```
 
 ---
 
-### Incident Patch 3: `63b86be8` (2026-11-19)
-**Commit Message**: fix: accept constant output columns in the Tantivy AggregateScan (#7120)
-
-# Ticket(s) Closed
-
-- Closes #7028
+### Incident Patch 3: `d9317887` (2026-11-21)
+**Commit Message**: fix: select EF Core docs smoke snippets by command (#7615)
 
 ## What
 
-A constant output column next to an aggregate no longer breaks the
-Tantivy AggregateScan. `SELECT 'constant',
-pdb.agg('{"value_count":{"field":"score"}}') FROM logs WHERE description
-@@@ 'error'` now returns `constant | {"value": 3.0}` instead of failing
-in both `EXPLAIN` and execution with `Cannot execute pdb.agg: Expression
-is neither a grouping column nor a single Aggref`.
+Select the EF Core setup commands by their contents and explicitly run
+the optional VectorData install snippet.
 
 ## Why
 
-`TargetList::from_pg` only knew about grouping columns and aggregates,
-so any other target expression made the scan decline. For ordinary
-aggregates that just meant falling back to Postgres aggregation, but
-`pdb.agg()` can't run outside AggregateScan, so the decline turns into a
-hard error.
+Adding the VectorData callout shifted the Bash snippet positions. The
+docs smoke test installed the package where it expected to create the
+migration, then raised `StopIteration` while looking for the missing
+migration file.
 
-## How
+[Failed PostgreSQL 18 docs smoke
+test](https://github.com/paradedb/paradedb/actions/runs/44724576728/job/136248903688?pr=7601)
 
-`AggregateScan` previously rejected any output column that was neither a
-grouping column nor an aggregate. An output column is now accepted if it
-has no column references, aggregates, window functions, set-returning
-functions or SubPlans, and nothing volatile in it. That covers `Const`,
-`Param`, stable function calls, correlated `LATERAL` references, and
-uncorrelated scalar subqueries, whi
+## Tests
 
-**File**: `docs/project/changelog/unreleased/7120.bugfix.mdx` (added, +5/-0)
+- Exercised `setup_efcore` against the current docs with mocked shell
+execution. Verified command order, migration seed insertion, and setup
+coverage.
+- Ran `git diff --check`.
+
+**File**: `.github/scripts/smoke_test_getting_started.py` (modified, +26/-6)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
-+
-+- Selecting a constant, a prepared-statement parameter, or another non-volatile expression that uses no columns next to an aggregate, such as `SELECT 'label', pdb.agg(...)`, no longer fails with `Expression is neither a grouping column nor a single Aggref`.
-```
-
-**File**: `joinscan/src/postgres/customscan/aggregatescan/mod.rs` (modified, +15/-1)
-```diff
-@@ -1241,6 +1241,17 @@ impl CustomScan for AggregateScan {
-             let mut columns = PlaceholderColumns::default();
-             let (placeholder_tlist, placeholders, needs_projection) =
-                 create_placeholder_targetlist(plan_targetlist, &mut columns);
-+            // Constant entries are evaluated by the projection (via ExecProject) so that
-+            // Params and other row-independent expressions are resolved at execution time.
-+            assert!(
-+                needs_projection
-+                    || !state
-+                        .custom_state()
-+                        .aggregate_clause
-+                        .entries()
-+                        .any(|e| matches!(e, TargetListEntry::Constant)),
-+                "constant output columns require the wrapped projection"
-+            );
-             if needs_projection && !placeholder_tlist.is_null() {
-                 let projection = columns.build_projection(
-                     placeholder_tlist,
-@@ -2189,7 +2200,7 @@ impl AggregateScan {
-                         None => (pg_sys::Datum::null(), true),
-                     }
-                 }
--                TargetListEntry::GroupingColumn(_) => {
-+                TargetListEntry::GroupingColumn(_) | TargetListEntry::Constant => {
-                     debug_assert!(
-                         i < natts,
-                         "aggregate clause entry index out of bounds for tuple descriptor"
-@@ -2692,6 +2703,8 @@ unsafe fn aggregate_value_to_datum(
- ///    NULL sentinels and ISO-8601 datetime parsing) via [`group_key_to_datum`].
- /// 2. `GroupingColumn` with an empty row → NULL.
- /// 3. `Aggregate` (any row) → delegate to [`aggregate_value_to_datum`].
-+/// 4. `Constant` (any row) → NULL placeholder; the real value is computed by the
-+///    wrapped projection (see `create_placeholder_targetlist`).
- ///
- /// Finalizes by setting `tts_flags` and `tts_nvalid` so the slot is in the
- /// "virtual tuple stored" state.
-@@ -2748,6 +2761,7 @@ unsafe fn fill_slot_from_row(
-                     index_info,
-                 )
-             }
-+            TargetListEntry::Constant => None,
-         };
+@@ -56,11 +56,22 @@ def run(command, cwd, env, source=None):
+     subprocess.run(command, cwd=cwd, env=env, input=source, text=True, check=True)
  
-         if let Some(datum) = datum {
-```
-
-**File**: `pg_search/tests/pg_regress/expected/issue_7028.out` (added, +487/-0)
-```diff
-@@ -0,0 +1,487 @@
-+\i common/common_setup.sql
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- Disable parallel workers to avoid differences in plans
-+SET max_parallel_workers_per_gather = 0;
-+SET enable_indexscan to OFF;
-+SET paradedb.enable_columnar_exec = true;
-+-- A constant output column next to pdb.agg() must not make AggregateScan fail.
-+-- https://github.com/paradedb/paradedb/issues/7028
-+SET paradedb.enable_aggregate_custom_scan = on;
-+SET paradedb.global_mutable_segment_rows = 0;
-+DROP TABLE IF EXISTS issue_7028_logs CASCADE;
-+CREATE TABLE issue_7028_logs (id int PRIMARY KEY, description text, score int);
-+INSERT INTO issue_7028_logs VALUES
-+  (1, 'error in application', 10),
-+  (2, 'error in database', 20),
-+  (3, 'warning message', 30),
-+  (4, 'error in network', 40);
-+CREATE TABLE issue_7028_outer (id int PRIMARY KEY);
-+INSERT INTO issue_7028_outer VALUES (1), (2);
-+CREATE INDEX issue_7028_logs_idx ON issue_7028_logs USING paradedb (id, description, score);
-+ANALYZE issue_7028_logs;
-+-- Control: pdb.agg() alone.
-+EXPLAIN (COSTS OFF)
-+SELECT pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+                                                                      QUERY PLAN                                                                      
-+------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Aggregate Scan) on issue_7028_logs
-+   Index: issue_7028_logs_idx
-+   Tantivy Query: {"with_index":{"query":{"parse_with_field":{"field":"description","query_string":"error","lenient":null,"conjunction_mode":null}}}}
-+     Applies to Aggregates: CUSTOM_AGG({"value_count":{"field":"score"}})
-+     Aggregate Definition: {"0":{"value_count":{"field":"score","missing":null}}}
-+(5 rows)
-+
-+SELECT pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+      agg       
-+----------------
-+ {"value": 3.0}
-+(1 row)
-+
-+-- A constant before pdb.agg().
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT 'constant', pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+                                                                      QUERY PLAN                                                                      
-+------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Aggregate Scan) on public.issue_7028_logs
-+   Output: 'constant'::text, pdb.agg_fn('pdb.agg'::text)
-+   Index: issue_7028_logs_idx
-+   Tantivy Query: {"with_index":{"query":{"parse_with_field":{"field":"description","query_string":"error","lenient":null,"conjunction_mode":null}}}}
-+     Applies to Aggregates: CUSTOM_AGG({"value_count":{"field":"score"}})
-+     Aggregate Definition: {"0":{"value_count":{"field":"score","missing":null}}}
-+(6 rows)
-+
-+SELECT 'constant', pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+ ?column? |      agg       
-+----------+----------------
-+ constant | {"value": 3.0}
-+(1 row)
-+
-+-- A constant after pdb.agg(), and constants of other types including NULL.
-+SELECT pdb.agg('{"value_count":{"field":"score"}}'), 42, NULL::text, true
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+      agg       | ?column? | text | ?column? 
-+----------------+----------+------+----------
-+ {"value": 3.0} |       42 |      | t
-+(1 row)
-+
-+-- A constant next to a wrapped pdb.agg() goes through the wrapped projection.
-+SELECT 'constant', jsonb_pretty(pdb.agg('{"value_count":{"field":"score"}}'))
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+ ?column? |   jsonb_pretty   
-+----------+------------------
-+ constant | {               +
-+          |     "value": 3.0+
-+          | }
-+(1 row)
-+
-+-- Constants next to a grouping column and plain aggregates.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT 'bucket', score, COUNT(*), 7
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY score ORDER BY score;
-+                                                                      QUERY PLAN                                                                      
-+------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Aggregate Scan) on public.issue_7028_logs
-+   Output: 'bucket'::text, score, pdb.agg_fn('COUNT(*)'::text), 7
-+   Index: issue_7028_logs_idx
-+   Tantivy Query: {"with_index":{"query":{"parse_with_field":{"field":"description","query_string":"error","lenient":null,"conjunction_mode":null}}}}
-+     Applies to Aggregates: COUNT(*)
-+     Group By: score
-+     Aggregate Definition: {"grouped":{"terms":{"field":"score","order":{"_key":"asc"},"segment_size":65000,"size":65000}}}
-+(7 rows)
-+
-+SELECT 'bucket', score, COUNT(*)
-```
-
-**File**: `pg_search/tests/pg_regress/expected/lateral-join.out` (modified, +2/-2)
-```diff
-@@ -609,7 +609,7 @@ LEFT JOIN LATERAL (
- WHERE a.content ||| 'encryption'
- ORDER BY paradedb.score(a.id) DESC
- LIMIT 5;
--WARNING:  Aggregate Scan not used: Expression is neither a grouping column nor a single Aggref. To disable this warning: SET paradedb.planner_warnings = 'off' (table: comments)
-+WARNING:  Aggregate Scan not used: HAVING clause is not supported (see https://github.com/paradedb/paradedb/issues/4206). To disable this warning: SET paradedb.planner_warnings = 'off' (table: comments)
-                                                                                                    QUERY PLAN                                                                                                   
- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Limit
-@@ -646,7 +646,7 @@ LEFT JOIN LATERAL (
- WHERE a.content ||| 'encryption'
- ORDER BY paradedb.score(a.id) DESC
- LIMIT 5;
--WARNING:  Aggregate Scan not used: Expression is neither a grouping column nor a single Aggref. To disable this warning: SET paradedb.planner_warnings = 'off' (table: comments)
-+WARNING:  Aggregate Scan not used: HAVING clause is not supported (see https://github.com/paradedb/paradedb/issues/4206). To disable this warning: SET paradedb.planner_warnings = 'off' (table: comments)
-  id |          title          | has_comments | comment_count 
- ----+-------------------------+--------------+---------------
-  14 | Encryption Fundamentals | t            |             6
-```
-
-**File**: `pg_search/tests/pg_regress/sql/issue_7028.sql` (added, +182/-0)
-```diff
-@@ -0,0 +1,182 @@
-+\i common/common_setup.sql
-+
-+-- A constant output column next to pdb.agg() must not make AggregateScan fail.
-+-- https://github.com/paradedb/paradedb/issues/7028
-+
-+SET paradedb.enable_aggregate_custom_scan = on;
-+SET paradedb.global_mutable_segment_rows = 0;
-+
-+DROP TABLE IF EXISTS issue_7028_logs CASCADE;
-+CREATE TABLE issue_7028_logs (id int PRIMARY KEY, description text, score int);
-+INSERT INTO issue_7028_logs VALUES
-+  (1, 'error in application', 10),
-+  (2, 'error in database', 20),
-+  (3, 'warning message', 30),
-+  (4, 'error in network', 40);
-+CREATE TABLE issue_7028_outer (id int PRIMARY KEY);
-+INSERT INTO issue_7028_outer VALUES (1), (2);
-+CREATE INDEX issue_7028_logs_idx ON issue_7028_logs USING paradedb (id, description, score);
-+ANALYZE issue_7028_logs;
-+
-+-- Control: pdb.agg() alone.
-+EXPLAIN (COSTS OFF)
-+SELECT pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+
-+SELECT pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+
-+-- A constant before pdb.agg().
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT 'constant', pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+
-+SELECT 'constant', pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+
-+-- A constant after pdb.agg(), and constants of other types including NULL.
-+SELECT pdb.agg('{"value_count":{"field":"score"}}'), 42, NULL::text, true
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+
-+-- A constant next to a wrapped pdb.agg() goes through the wrapped projection.
-+SELECT 'constant', jsonb_pretty(pdb.agg('{"value_count":{"field":"score"}}'))
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+
-+-- Constants next to a grouping column and plain aggregates.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT 'bucket', score, COUNT(*), 7
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY score ORDER BY score;
-+
-+SELECT 'bucket', score, COUNT(*), 7
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY score ORDER BY score;
-+
-+-- No matching rows: the constant is still returned with the aggregate.
-+SELECT 'constant', COUNT(*), pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'nomatch';
-+
-+-- Skew the per-score counts: 10 -> 3 rows, 20 -> 2 rows, 40 -> 1 row.
-+INSERT INTO issue_7028_logs VALUES
-+  (5, 'error in cache', 10),
-+  (6, 'error in queue', 10),
-+  (7, 'error in disk', 20);
-+
-+-- GROUP BY a constant by position.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT 'x' AS c, score, COUNT(*)
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY 1, 2 ORDER BY 2;
-+
-+SELECT 'x' AS c, score, COUNT(*)
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY 1, 2 ORDER BY 2;
-+
-+-- ORDER BY a constant first, with a LIMIT.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT 'x', score, COUNT(*)
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY score ORDER BY 1, score LIMIT 2;
-+
-+SELECT 'x', score, COUNT(*)
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY score ORDER BY 1, score LIMIT 2;
-+
-+-- A by-reference (jsonb) constant read by a Sort above the scan.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT * FROM (
-+  SELECT '{"k":[1]}'::jsonb j, score, COUNT(*) n
-+  FROM issue_7028_logs WHERE description @@@ 'error'
-+  GROUP BY score
-+) s ORDER BY n DESC, score;
-+
-+SELECT * FROM (
-+  SELECT '{"k":[1]}'::jsonb j, score, COUNT(*) n
-+  FROM issue_7028_logs WHERE description @@@ 'error'
-+  GROUP BY score
-+) s ORDER BY n DESC, score;
-+
-+-- HAVING still declines the scan; PostgreSQL computes the result.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT 'x', score, COUNT(*)
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY score HAVING COUNT(*) > 1 ORDER BY score;
-+
-+SELECT 'x', score, COUNT(*)
-+FROM issue_7028_logs WHERE description @@@ 'error'
-+GROUP BY score HAVING COUNT(*) > 1 ORDER BY score;
-+
-+-- Parameters and other row-independent expressions are evaluated at execution time, so they
-+-- keep working in prepared statements, including once PostgreSQL switches to a generic plan.
-+SET plan_cache_mode = force_generic_plan;
-+PREPARE issue_7028_param(text, int) AS
-+SELECT $1, $2 + 1, pdb.agg('{"value_count":{"field":"score"}}')
-+FROM issue_7028_logs WHERE description @@@ 'error';
-+
-+EXPLAIN (COSTS OFF, VERBOSE) EXECUTE issue_7028_param('first', 1);
-+EXECUTE issue_7028_param('first', 1);
-+EXECUTE issue_7028_param('second', 41);
-+EXECUTE issue_7028_param(NULL, NULL);
-+DEALLOCATE issue_7028_param;
-+
-+-- Default plan_cache_mode: the first five runs use custom plans, the sixth may use a generic one.
-+RESET plan_cache_mode;
-+PREPARE issue_7028_param(text) AS
-+SELECT $1, pdb.agg('{"value_count":{"field":"score"}}') FROM issue_7028_logs WHERE description @@@ 'error';
-+EXECUTE issue_7028_param('a');
-+EXECUTE issue_7028_param('b');
-+EXECUTE issue_7028_param('c');
-+EXECUTE issue_7028_param('d');
-+EXECUTE issue_7028_param('e');
-```
-
-**File**: `planner/src/postgres/customscan/aggregatescan/targetlist.rs` (modified, +22/-2)
-```diff
-@@ -35,6 +35,9 @@ pub enum TargetListEntry {
-     // so we store the index of the grouping column in the GROUP BY list
-     GroupingColumn(usize),
-     Aggregate(AggregateType),
-+    // a row-independent output column, such as `'label'` or a prepared-statement parameter in
-+    // `SELECT 'label', pdb.agg(...)`; its value is computed by the output projection
-+    Constant,
- }
  
- #[derive(Default, Debug, Clone, serde::Serialize, serde::Deserialize)]
-@@ -57,14 +60,14 @@ impl TargetList {
-     pub fn aggregates(&self) -> impl Iterator<Item = &AggregateType> {
-         self.entries.iter().filter_map(|entry| match entry {
-             TargetListEntry::Aggregate(aggregate) => Some(aggregate),
--            TargetListEntry::GroupingColumn(_) => None,
-+            TargetListEntry::GroupingColumn(_) | TargetListEntry::Constant => None,
-         })
-     }
+-def block(target, info=None, index=0):
+-    """Read a numbered fence from a getting-started language tab."""
++def block(target, info=None, index=0, *, command=None):
++    """Read a fence from a getting-started language tab."""
+     fences = FENCE_PATTERN.findall(TABS[LABELS[target]])
+     if info is not None:
+         fences = [(label, body) for label, body in fences if label == info]
++    if command is not None:
++        fences = [
++            (label, body)
++            for label, body in fences
++            if any(
++                line == command or line.startswith(command + " ")
++                for line in map(str.strip, body.splitlines())
++            )
++        ]
++        if len(fences) != 1:
++            raise ValueError(f"Expected one {target} fence containing {command!r}")
+     info, body = fences[index]
+     CONSUMED_FENCES.add(fence_digest(info, body))
+     return body
+@@ -288,11 +299,20 @@ def setup_rails(cwd, env):
  
-     pub fn aggregates_mut(&mut self) -> impl Iterator<Item = &mut AggregateType> {
-         self.entries.iter_mut().filter_map(|entry| match entry {
-             TargetListEntry::Aggregate(aggregate) => Some(aggregate),
--            TargetListEntry::GroupingColumn(_) => None,
-+            TargetListEntry::GroupingColumn(_) | TargetListEntry::Constant => None,
-         })
-     }
+ def setup_efcore(cwd, env):
+     """Execute EF Core migration creation, seed insertion and tutorial query."""
+-    shell(block("efcore", "bash", 0), cwd, env)
++    shell(block("efcore", "bash", command="dotnet new tool-manifest"), cwd, env)
++    shell(
++        block("efcore", "bash", command="dotnet add package ParadeDB.VectorData"),
++        cwd,
++        env,
++    )
+     (cwd / "Program.cs").write_text(
+         connection_text(block("efcore", "cs Program.cs"), env)
+     )
+-    shell(block("efcore", "bash", 1), cwd, env)
++    shell(
++        block("efcore", "bash", command="dotnet ef migrations add CreateMockItems"),
++        cwd,
++        env,
++    )
+     migration = next((cwd / "Migrations").glob("*_CreateMockItems.cs"))
+     source = migration.read_text()
+     # Insert exactly where the prose requests: at the end of Up, before Down.
+@@ -303,7 +323,7 @@ def setup_efcore(cwd, env):
+     ).start() + source.index("protected override void Up")
+     source = source[:end] + block("efcore", "cs", 1) + "\n" + source[end:]
+     migration.write_text(source)
+-    shell(block("efcore", "bash", 2), cwd, env)
++    shell(block("efcore", "bash", command="dotnet ef database update"), cwd, env)
+     program = cwd / "Program.cs"
+     source = program.read_text().replace(
+         "// Replace this with the query you want to run.",
+@@ -319,7 +339,7 @@ def setup_efcore(cwd, env):
+         ),
+     )
+     program.write_text(source)
+-    shell(block("efcore", "bash", 3), cwd, env)
++    shell(block("efcore", "bash", command="dotnet run"), cwd, env)
  
-@@ -188,6 +191,10 @@ impl CustomScanClause for TargetList {
-                 }
  
-                 entries.push(TargetListEntry::Aggregate(aggregate));
-+            } else if unsafe { is_row_independent(expr) } {
-+                // Does not depend on the aggregation, so every output row carries the same
-+                // value. It is evaluated at execution time (a Param may be bound late).
-+                entries.push(TargetListEntry::Constant);
-             } else {
-                 return Err("Expression is neither a grouping column nor a single Aggref".into());
-             }
-@@ -200,3 +207,16 @@ impl CustomScanClause for TargetList {
-         })
-     }
- }
-+
-+/// True if `expr` does not depend on the row or the aggregation: no column references, aggregates, window
-+/// functions, set-returning functions or SubPlans, and not volatile. Uncorrelated scalar subqueries
-+/// reach us as InitPlan Params and are accepted.
-+unsafe fn is_row_independent(expr: *mut pg_sys::Expr) -> bool {
-+    let node = expr.cast::<pg_sys::Node>();
-+    !pg_sys::contain_var_clause(node)
-+        && !pg_sys::contain_agg_clause(node)
-+        && !pg_sys::contain_window_function(node)
-+        && !pg_sys::contain_volatile_functions(node)
-+        && !pg_sys::contain_subplans(node)
-+        && !pg_sys::expression_returns_set(node)
-+}
-```
-
-**File**: `planner/src/postgres/customscan/projections.rs` (modified, +14/-7)
-```diff
-@@ -56,6 +56,11 @@ pub fn placeholder_procid() -> pg_sys::Oid {
-     }
- }
- 
-+/// True for expressions with no column references, such as a `Const` or a `Param`.
-+fn has_no_vars(expr: *mut pg_sys::Expr) -> bool {
-+    unsafe { !pg_sys::contain_var_clause(expr.cast()) }
-+}
-+
- /// Create a placeholder target list for aggregate custom scans.
- ///
- /// This is called AFTER `replace_aggrefs_in_target_list` has replaced Aggrefs with FuncExprs.
-@@ -103,7 +108,10 @@ pub fn create_placeholder_targetlist(
-         let is_top_level_placeholder = unsafe { (*te.expr).type_ } == pg_sys::NodeTag::T_FuncExpr
-             && unsafe { (*(te.expr as *mut pg_sys::FuncExpr)).funcid } == placeholder_funcid;
- 
--        !is_top_level_placeholder && te.expr.contains_functions(&[placeholder_funcid])
-+        // A wrapped placeholder, or an expression without columns (e.g. a Const or Param) that
-+        // the projection evaluates.
-+        !is_top_level_placeholder
-+            && (te.expr.contains_functions(&[placeholder_funcid]) || has_no_vars(te.expr))
-     });
- 
-     if !needs_projection {
-@@ -211,12 +219,8 @@ pub fn create_placeholder_targetlist(
- 
-         ctx.current_te_idx = i;
- 
--        // AggregateScan assumes a contiguous, non-resjunk targetlist.
--        // Wrapper support doesn't change this assumption.
--        debug_assert!(
--            !te.resjunk,
--            "AggregateScan does not support resjunk target entries"
--        );
-+        // The plan target list may end with resjunk entries (e.g. a GROUP BY key that is not
-+        // selected); they come after all real columns, so resnos stay contiguous.
-         debug_assert!(
-             te.resno as usize == i + 1,
-             "AggregateScan expects contiguous resno values (1, 2, 3, ...)"
-@@ -236,6 +240,9 @@ pub fn create_placeholder_targetlist(
-             let ctx_ptr = &mut ctx as *mut PlaceholderContext as *mut core::ffi::c_void;
-             let new_expr = unsafe { placeholder_mutator(te.expr as *mut pg_sys::Node, ctx_ptr) };
-             unsafe { (*new_te).expr = new_expr as *mut pg_sys::Expr };
-+        } else if has_no_vars(te.expr) {
-+            // No Vars and no placeholders: keep the expression so ExecProject evaluates it
-+            // (resolving Params at execution time).
-         } else {
-             // It's a grouping column!
-             // The value for this column will be placed directly in the scan_slot at attribute (i + 1).
+ def validate_setup_coverage(target):
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7606** (2026-11-20): docs: Share analytics choices with the website and Cloud (@philippemnoel)
-- **PR #7598** (2026-11-20): ci: publish beta Debian packages for all PostgreSQL majors (@paradedb-github-bot[bot])
-- **PR #7597** (2026-11-20): ci: publish beta Debian packages for all PostgreSQL majors (@philippemnoel)
-- **PR #7591** (2026-11-19): test: skip the plan check of `generated_rank_join` when the lead sort key is a constant (@paradedb-github-bot[bot])
-- **PR #7590** (closed): test: skip the plan check of `generated_rank_join` when the lead sort key is a constant (@paradedb-github-bot[bot])
-- **PR #7588** (2026-11-20): docs: Document the EF Core VectorData adapter (@philippemnoel)
+- **PR #7620** (2026-11-22): docs: Remove completed native vector search roadmap item (@philippemnoel)
+- **PR #7618** (2026-11-21): docs: update ORM release versions and dependencies (@philippemnoel)
+- **PR #7616** (2026-11-21): docs: Clarify that search runs in the same Postgres database (@philippemnoel)
+- **PR #7615** (2026-11-21): fix: select EF Core docs smoke snippets by command (@philippemnoel)
+- **PR #7612** (2026-11-21): fix: Solve AggregateScan parameters before entering a runtime. (@paradedb-github-bot[bot])
+- **PR #7608** (2026-11-20): chore: Add UUID primary / foreign keys for stackoverflow (@stuhood)
 
 ---
 
@@ -3039,36 +3097,56 @@ uncorrelated scalar subqueries, whi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): require a vector index rebuild on 0.27.0
+## X. Solve AggregateScan parameters before entering a runtime.
 
 **RULE**:
-When implementing operations in `docs/project/changelog/0.27.0.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `basescan/src/postgres/customscan/basescan/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1601cdcd`: docs(changelog): require a vector index rebuild on 0.27.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e0eeecd`: Solve AggregateScan parameters before entering a runtime.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/0.27.0.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `basescan/src/postgres/customscan/basescan/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Vector index format {#vector-index-format}
-
-0.27.0 changes the on-disk format of vector indexes. Older formats are not supported and must be rebuilt with `REINDEX` when upgrading to 0.27.0.
-
-Vector searches fail with `index "<index_name>" has an unsupported vector storage format` until the index is rebuilt.
-
+    ///    Either the main backend running a serial path, a `parallel_safe` but not
+    ///    `parallel_aware` scan inside a worker (e.g. the inner side of a Parallel Hash Join),
+    ///    or a `parallel_aware` scan running locally on the leader when `es_use_parallel_mode`
+    ///    is false or `InitializeParallelDSM` falls back to private memory (`es_query_dsa == NULL`).
+        // Populate the private bitmap cursor source when running without attached parallel DSM
+        // state. Handling this here (rather than gating on `!plan.parallel_aware` in
+        // `init_search_reader`) covers both genuinely serial scans and `parallel_aware` scans
+        // that fell back to leader-only local execution (e.g. `es_use_parallel_mode = false` or
+        // PostgreSQL's `InitializeParallelDSM` private-memory fallback with `es_query_dsa == NULL`),
+        // without eagerly building a private bitmap during `estimate_dsm_custom_scan`.
+        if state.custom_state().parallel.is_none()
+            && let Some(cell) = state.custom_state().bitmap_cell.clone()
+            && cell.get().is_none()
+            && let Some(bitmap_exec) = state.custom_state_mut().bitmap_exec.as_mut()
+            &
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    ///    Either the main backend running a serial path, or a `parallel_safe` but not
+    ///    `parallel_aware` scan inside a worker (e.g. the inner side of a Parallel Hash Join).
+        let parallel_aware = unsafe { (*(*state.planstate()).plan).parallel_aware };
+        if !parallel_aware
+            && let Some(cell) = state.custom_state().bitmap_cell.clone()
+            && cell.get().is_none()
+            && let Some(bitmap_exec) = state.custom_state_mut().bitmap_exec.as_mut()
+            && let Some(source) = unsafe { bitmap_exec.private_source() }
+        {
+            cell.fill(source);
+        }
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1601cdcd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e0eeecd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T01:59:01.202Z",
-  "total_verified_learnings": 9064,
+  "last_updated": "2026-11-22T02:09:21.262Z",
+  "total_verified_learnings": 9065,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23392,
+  "total_items": 23399,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "001f724f1adb4d54b9991d2cd262316e42e3dbfaf13b4017a865bb1e62d8f532",
+      "content_hash": "f42633de40065e2846a315b06b44b2759feb4fd9d7fa122078501b1d0f9490c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T01:07:39.450Z"
+      "persisted_at": "2026-11-22T02:09:20.492Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f947e47646a065ae813af1a64d82fd868103db379f7af69ad7c9e2d1c72cdf1d",
+      "content_hash": "672ac1e66726b314dbe3e54c098005f6afe8cbed91b36c0c15959ca4e1d9dfea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:07:39.592Z"
+      "persisted_at": "2026-11-22T02:09:20.636Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -217899,8 +217899,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "dec61535",
-      "content_hash": "c0d96992f1d9b7149227f8c920ba5576cb066710f7db31bfb6e9d81bccc400ae",
+      "source_version": "82d66f9e",
+      "content_hash": "ea7bef097757f303d61d7fe42df1fa2321a8f3bec6676a41df2917e669ddd502",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -217933,6 +217933,11 @@
           "number": 9420,
           "title": "retry background merges without blocking the sweep or VACUUM",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9880,
+          "title": "Solve AggregateScan parameters before entering a runtime.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217940,7 +217945,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T21:55:15.271Z",
+      "verified_at": "2026-11-22T02:09:16.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217994,10 +217999,10 @@
       "relative_path": "08_VERIFICATION/paradedb-paradedb-verification-protocol-empirical-defect-shield-for-paradedb-par.md",
       "title": "Verification Protocol: Empirical Defect Shield for paradedb/paradedb",
       "repository": "paradedb/paradedb",
-      "source_version": "dec61535",
-      "content_hash": "95791c6e9bc8e8774be063501ead2b21ec39b8e70276551e920e7040a307719e",
+      "source_version": "82d66f9e",
+      "content_hash": "f58b4d3f4f69e2af1a2ead0dfd56591638b2bb558a94dbbf9cbc05f73128a039",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:55:16.136Z"
+      "persisted_at": "2026-11-22T02:09:17.035Z"
     },
     "learn-huggingface-amazon-chronos-2": {
       "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -246989,10 +246994,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "repository": "paradedb/paradedb",
-      "source_version": "dec61535",
-      "content_hash": "71f164e7257dad7cec396f122a82592751f71036a8347b1320306e45d3339ef6",
+      "source_version": "82d66f9e",
+      "content_hash": "30a52fefd63ad7dece1b281b3fa174fb4d19faeda4cece2f258d4933d48191a0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T21:55:15.981Z"
+      "persisted_at": "2026-11-22T02:09:16.907Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
@@ -262150,9 +262155,9 @@
       "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
       "repository": "paradedb-paradedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "69de61aadd5a5219aa0d878a0df0fd3d33cb7757302174b621bc30aa64f0bb30",
+      "content_hash": "14002608dd3728f03b00e1d82750938bc7f549f70f0a34d0961300ba76ffee5f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T21:55:20.859Z"
+      "persisted_at": "2026-11-22T02:09:21.134Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb-learnings",
@@ -262162,9 +262167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for paradedb-paradedb-learnings",
       "repository": "paradedb-paradedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0b0e9228281f87071b3cbcff29545d2bef9d4bdbc9fa36d3bad66c2fb7f093a",
+      "content_hash": "c3d71facebf2e149299d3d070930a80a1810fc007cf13bf2b491c4840dea0945",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:55:21.014Z"
+      "persisted_at": "2026-11-22T02:09:21.262Z"
     },
     "rule-8794": {
       "learning_id": "rule-8794",
@@ -275411,7 +275416,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
       "source_version": "hf-moonshotai-kimi-k3.1-pro",
-      "content_hash": "756c0ea6ed39ae8fcf64132830c573d2e9722f474c7afebd5859ab2d4cb7b065",
+      "content_hash": "e3f190a4e4f84536f900f3b5c330dba5d702c20e8f3c1ab664ab6c6ad5915442",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
       "promoted_rules": [],
@@ -275420,7 +275425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:16:54.182Z",
+      "verified_at": "2026-11-22T02:09:01.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275437,9 +275442,9 @@
       "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3.1-Pro Core Invariants",
       "repository": "moonshotai/Kimi-K3.1-Pro",
       "source_version": "hf-moonshotai-kimi-k3.1-pro",
-      "content_hash": "bcbdfb42890c3c825c720fb97e1b6ea4368a10886fe368ae56251a4b58a63600",
+      "content_hash": "2a4c34f19c79db9b6223c1b7d3c06c147dfba2c2266babd944a4f281fe21c185",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T15:16:54.521Z"
+      "persisted_at": "2026-11-22T02:09:02.294Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar",
@@ -275449,9 +275454,9 @@
       "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3.1-pro-learnings Core Invariants",
       "repository": "hf-moonshotai-kimi-k3.1-pro-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7e7fcc7c0fe2ca86c97919c611b2353a1eee1cc08c634518e62be8981c391c8",
+      "content_hash": "d086a60e81ef7f3fd893eb7cfe9b840a7d436e851824dd6d89f13926f4a79027",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T15:16:57.502Z"
+      "persisted_at": "2026-11-22T02:09:19.980Z"
     },
     "candidate_directive-gateway-fix-deleteobjects-losing-keys-and-errors-from-multi-delete-responses": {
       "item_id": "candidate_directive-gateway-fix-deleteobjects-losing-keys-and-errors-from-multi-delete-responses",
@@ -318074,6 +318079,115 @@
       "content_hash": "bae6cbe90b1638961237710284ca8fd531cbb518379a7c0ee35c9f6241810ea0",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T01:58:59.783Z"
+    },
+    "learn-github-zseven-w-openpencil": {
+      "learning_id": "learn-github-zseven-w-openpencil",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ZSeven-W/openpencil",
+      "repository": "ZSeven-W/openpencil",
+      "slug": "zseven-w-openpencil",
+      "platform": "github",
+      "source_url": "https://github.com/ZSeven-W/openpencil",
+      "source_version": "4110b3e0",
+      "content_hash": "6c8f5d65be97114fd685e57d24d27ae03695590c6ab70835fecd338c85850ea4",
+      "dossier_path": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9879,
+          "title": "test(collab): write trust fixtures with explicit 0644 permissions",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T02:09:08.942Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9879": {
+      "learning_id": "rule-9879",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9879,
+      "title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "source_url": "https://github.com/ZSeven-W/openpencil",
+      "source_version": "4110b3e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T02:09:08.942Z"
+    },
+    "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions": {
+      "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7YLR-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "repository": "zseven-w-openpencil-learnings",
+      "source_version": "HEAD",
+      "content_hash": "86dbd7ea62c190bcdb29c5f462d5ca1e11692de346ef7abf087e09c2635c7085",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T02:09:20.372Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-technical-construction-intelligence-zseven-w-openpencil-core.md",
+      "title": "Technical Construction Intelligence: ZSeven-W/openpencil Core Invariants",
+      "repository": "ZSeven-W/openpencil",
+      "source_version": "4110b3e0",
+      "content_hash": "3e68038ae8a3746c8707c7f637a85b90f49cd2522d57a38378b7da67edc9d231",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:09:09.418Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zseven-w-openpencil-verification-protocol-empirical-defect-shield-for-zseven-w-o.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ZSeven-W/openpencil",
+      "repository": "ZSeven-W/openpencil",
+      "source_version": "4110b3e0",
+      "content_hash": "50126d96d05d45dfdf1286eb426743acc2f6800e83d639a9f7123ba499fdfe22",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T02:09:09.547Z"
+    },
+    "rule-9880": {
+      "learning_id": "rule-9880",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9880,
+      "title": "Solve AggregateScan parameters before entering a runtime.",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "82d66f9e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T02:09:16.426Z"
+    },
+    "candidate_directive-solve-aggregatescan-parameters-before-entering-a-runtime": {
+      "item_id": "candidate_directive-solve-aggregatescan-parameters-before-entering-a-runtime",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7Z3K-solve-aggregatescan-parameters-before-entering-a-runtime.md",
+      "title": "Solve AggregateScan parameters before entering a runtime.",
+      "repository": "paradedb-paradedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61716c42b68d96f6db47d297baacad9bb8b4c6e829b1eed0dfc3e65edeb67559",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:09:21.013Z"
     }
   },
   "ai-builder-brain": {

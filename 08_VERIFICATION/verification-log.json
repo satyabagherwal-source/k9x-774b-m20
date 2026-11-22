@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-51XJ",
-    "timestamp": "2026-11-19T23:15:46.567Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "af512c456cd655a4382669d5a3054a3a4f8939f8671ef632a46dd32b46e5d5aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-THVE",
-    "timestamp": "2026-11-19T23:34:46.970Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "91892fe6f2ce0b66da3d19562a7a4d5e4cfdd9cef0c98664018cf76a1695c6b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-4ILH",
-    "timestamp": "2026-11-19T23:43:21.125Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "dbe136b4b70ab5708f4921cd5a53d2599d96435d3a29f36ba136d0c5e8d6e410",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-4N9A",
     "timestamp": "2026-11-19T23:43:27.166Z",
     "repository": "krakend/krakend-ce",
@@ -7490,6 +7445,51 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-7KIZ",
+    "timestamp": "2026-11-22T02:09:02.123Z",
+    "repository": "moonshotai/Kimi-K3.1-Pro",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+    "contentHash": "e3f190a4e4f84536f900f3b5c330dba5d702c20e8f3c1ab664ab6c6ad5915442",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-7PWJ",
+    "timestamp": "2026-11-22T02:09:09.091Z",
+    "repository": "ZSeven-W/openpencil",
+    "learningId": "learn-github-zseven-w-openpencil",
+    "contentHash": "6c8f5d65be97114fd685e57d24d27ae03695590c6ab70835fecd338c85850ea4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-7VP4",
+    "timestamp": "2026-11-22T02:09:16.600Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "ea7bef097757f303d61d7fe42df1fa2321a8f3bec6676a41df2917e669ddd502",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

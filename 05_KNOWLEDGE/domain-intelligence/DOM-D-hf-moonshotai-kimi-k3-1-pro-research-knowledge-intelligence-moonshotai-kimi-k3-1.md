@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
   "source_version": "hf-moonshotai-kimi-k3.1-pro",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:16:54.521Z",
+  "timestamp": "2026-11-22T02:09:02.293Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-moonshotai-kimi-k3-1-pro",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [moonshotai/Kimi-K3.1-Pro](https://huggingface.co/moonshotai/Kimi-K3.1-Pro) (Revision: `hf-moonsho`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:16:54.521Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T02:09:02.293Z`  
 > **Learning ID**: `learn-huggingface-moonshotai-kimi-k3-1-pro`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/moonshotai/Kimi-K3.1-Pro](https://huggingface.co/moonshotai/Kimi-K3.1-Pro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:16:25.029Z  
+> **Harvest Timestamp**: 2026-11-22T02:09:01.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 53224 downloads | 2185 likes
+- **Stars / Engagement**: 68001 downloads | 2348 likes
 
 ---
 

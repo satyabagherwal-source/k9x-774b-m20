@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T01:07:39.218Z",
+  "timestamp": "2026-11-22T02:09:20.291Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zseven-w-openpencil-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zseven-w-openpencil-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T01:07:39.218Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T02:09:20.291Z`  
 > **Learning ID**: `LEARN-EVO-zseven-w-openpencil-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source**: github ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
-> **Source Version**: `2bbc658c`  
+> **Source Version**: `4110b3e0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:37:01.753Z  
+> **Timestamp**: 2026-11-22T02:09:08.309Z  
 > **Learning ID**: `learn-github-zseven-w-openpencil`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:37:00.109Z  
+> **Harvest Timestamp**: 2026-11-22T02:09:08.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7093 stars
+- **Stars / Engagement**: 7313 stars
 
 ---
 
@@ -961,6 +961,8 @@ pub(super) async fn run_anthropic_agent_loop_inner(
     let mut write_retry = CorrectiveWriteRetry::default();
     let turn_cap = cfg.max_turns.max(1);
     let mut turn = 0usize;
+    let mut timing = crate::loop_timing::LoopTiming::from_env("anthropic");
+    let cache_prompt = crate::prompt_cache::enabled_for(&cfg.url);
     loop {
         // A failed design write gets one model-authored correction request,
         // even when that failure consumed the final ordinary turn. This is a
@@ -1025,9 +1027,7 @@ pub(super) async fn run_anthropic_agent_loop_inner(
         }
         // Turn OFF hidden reasoning for the families that can express it on
         // this wire — the empty-canvas postmortem: the OpenAI-compat loop
-        // applied this control and the Anthropic loop did not, so a
-        // reasoning model on its Anthropic-compatible endpoint burned the
-        // whole turn bu
+        // applied this c
 ```
 
 ### Core Architecture Module: `crates/op-chat-agent/src/chat_agent_loop/openai.rs`
@@ -1127,6 +1127,7 @@ pub(super) async fn run_openai_agent_loop_inner(
     let mut write_retry = CorrectiveWriteRetry::default();
     let turn_cap = cfg.max_turns.max(1);
     let mut turn = 0usize;
+    let mut timing = crate::loop_timing::LoopTiming::from_env("openai-compatible");
     loop {
         // See the Anthropic path above: this one-shot request is model-authored
         // correction, not a blind replay, and owns its own hard budget.
@@ -1194,6 +1195,7 @@ pub(super) async fn run_openai_agent_loop_inner(
         // to post raw, so a provider rate limit killed the design run with
         // no retries and a raw JSON error (measured: glm-5.2, 429
         // AccountRateLimitExceeded, 2026-07-12).
+        timing.request(&body);
         let client = crate::provider_dial::client_for(cfg.dial_policy, &cfg.url).await?;
         let (max_retries, min_gap) = crate::chat_builtin_http::default_backoff_knobs();
         let resp = crate::chat_builtin_http::send_with_backoff(
@@ -1204,6 +1206,7 @@ pub(super) async fn run_openai_agent_loop_inner(
             || client.post(&cfg.url).bearer_auth(&cfg.api_key).json(&body),
         )
         .await?;
+        timing.headers();
         let mut collector = OpenAiCollector::default();
         pump_sse(resp, tx, &mut collector).await?;
         if tx.is_closed() {
@@ -1215,6 +1218,7 @@ pub(super) async fn run_openai_agent_loop_inner(
             return Err(BuiltinHttpError::StreamReported(err));
         }
         let calls = collector.pending_calls();
+        timing.response(calls.iter().map(|call| call.1.name.as_str()));
         if calls.is_empty() {
             if corrective_write_round {
                 let _ = tx
@@ -1241,10 +1245,7 @@ pub(super) async fn run_openai_agent_loop_inner(
                 continue;
             }
             // Model voluntarily stopped, still within ordinary budget. Try
-            // one dedicated fill round for any committed screen that's
-            // still eligible — NOT gated by remaining turn budget (only by
-            // the per-screen cap above).
-            let report = check_unfilled(&cfg.executor, cfg.finalize_on_
+            // one dedicated fill round for any 
 ```
 
 ### Core Architecture Module: `crates/op-chat-agent/src/chat_agent_loop_blockers.rs`
@@ -1575,250 +1576,218 @@ mod tests;
 
 ```
 
-### Core Architecture Module: `crates/op-chrome-extension-core/src/account.rs`
+### Core Architecture Module: `crates/op-chat-agent/src/loop_timing.rs`
 ```
-//! The account surface: regions, hub origins, hub URLs, session parsing.
+//! `OPENPENCIL_DEBUG_TIMING=1` timeline for the built-in tool loop.
 //!
-//! Signing in is **optional** and changes nothing about the local import
-//! path. What it adds is an identity the popup can show and — once the Hub
-//! grows an inbox API (see `docs/hub-inbox-api-proposal.md`) — a second
-//! delivery target. See [`crate::delivery`].
+//! The orchestrator's `timing_log` wraps `Orchestrator::run`; the design-agent
+//! loop never goes through it, so a loop-generated screen printed no timing
+//! at all. This is the same switch and the same `[TIMING]` stderr channel for
+//! the loop: one line per model request (payload size, time to response
+//! headers, stream time, tools called), one per tool execution, the token
+//! usage the provider reports (which is where a prompt-cache hit shows up),
+//! and the moment the first write lands on the canvas.
 //!
-//! # The trust model this module encodes
-//!
-//! The extension is a **public client**. It holds no SSO client secret, no
-//! authorization code, no refresh token, and no session token. The whole
-//! flow is:
-//!
-//! 1. the popup opens `GET <hub>/api/v1/auth/login?return_to=/account` in a
-//!    normal tab, and the user signs in on the Hub's own origin;
-//! 2. the Hub sets its first-party `op_hub_session` cookie (`HttpOnly`,
-//!    `Secure`, `SameSite=Lax`, `Path=/`) — a cookie the extension cannot
-//!    read, and deliberately does not ask to;
-//! 3. the popup reads `GET <hub>/api/v1/session` with `credentials:
-//!    'include'` and renders the JSON it gets back.
-//!
-//! So the only credential material that exists anywhere is the cookie, and it
-//! lives in the browser's cookie jar under the Hub's origin. The one value
-//! that crosses into extension memory is the session's `csrf_token`, which is
-//! required on the Hub's mutating endpoints (`POST /api/v1/auth/logout`);
-//! [`parse_session`] therefore validates it hard enough to be safe as an HTTP
-//! header value, and the popup keeps it in memory only — never in
-//! `chrome.storage`.
-//!
-//! # Why the origins are compiled in rather than typed
-//!
-//! Chrome resolves `host_permissions` from the manifest at install time, so a
-//! hub origin the user could type would not be reachable anyway without a
-//! runtime `chrome.permissions.request`. Pinning the two published origins
-//! here — and asserting in the tests that `manifest.json` grants exactly them
-//! — makes the reachable set of hosts a compile-time fact instead of a
-//! storage value an attacker-influenced code path could steer.
+//! Disabled, every method returns immediately and nothing is measured.
 
-use crate::endpoint::normalize_endpoint;
-use crate::js_text::{js_trim, truncate_utf16};
+use std::sync::OnceLock;
+use std::time::{Duration, Instant};
 
-/// Consumer portal origin of the China region.
-///
-/// The public hostname is the one the Hub's own ICP filing check keys on
-/// (`op-hub/frontend/src/components/domestic-filing-link.tsx`), and it is the
-/// `op.` sibling of the SSO service's `sso.zseven.cn`.
-pub const HUB_ORIGIN_CN: &str = "https://op.zseven.cn";
+use op_orchestrator::timing_log::secs;
+use serde_json::Value;
 
-/// Consumer portal origin of the Global region — the `.tech` sibling, exactly
-/// as `zseven-sso` pairs `sso.zseven.cn` with `sso.zseven.tech`.
-pub const HUB_ORIGIN_GLOBAL: &str = "https://op.zseven.tech";
-
-/// Session probe. Answers `200` with the session envelope, or `401`.
-const SESSION_PATH: &str = "/api/v1/session";
-/// Login entry point. Opened in a TAB, never fetched.
-const LOGIN_PATH: &str = "/api/v1/auth/login";
-/// Session teardown. `POST`, needs the CSRF header.
-const LOGOUT_PATH: &str = "/api/v1/auth/logout";
-/// The portal page a user lands on, and the only `return_to` we ask for.
-const ACCOUNT_PATH: &str = "/account";
-
-/// Longest display name rendered in the popup's 340 px header, in UTF-16
-/// code units. A display name is user-chosen text from another user's
-/// account; it must not be able to push the sign-out control off-screen.
-const MAX_NAME_UNITS: usize = 48;
-
-/// Longest `avatar_url` accepted. Chrome would not fetch a longer one
-/// usefully, and the value is rendered into an `<img src>`.
-const MAX_AVATAR_BYTES: usize = 2048;
-
-/// Longest `csrf_token` accepted. The Hub mints 43-character base64url
-/// tokens; the cap is generous so a rotation to a longer token does not
-/// break the client, and the charset check below is what actually matters.
-const MAX_CSRF_BYTES: usize = 256;
-
-/// Longest failure text echoed into the popup's status line.
-const MAX_DETAIL_UNITS: usize = 200;
-
-/// Milliseconds before a hub request is abandoned.
-///
-/// Deliberately shorter than the snapshot import's 15 s: a session probe
-/// carries no payload and runs while the user is looking at an empty account
-/// row, so a hub that is slow or unreachable has to fall back to "signed out
-/// / unavailable" quickly rather than holding the row blank. A capture, by
-/// contrast, is worth waiting for.
-pub const REQUEST_TIMEOUT_MS: u32 = 8_000;
-
-/// Which regional deployment the account lives in.
-///
-/// Mirrors the product's own built-in dual-region design
-/// (`CollabRelayRegion` in `op-editor-core`, `RelayRegion` on the collab
-/// wire) down to the persisted spelling, so a user who picked "China" for
-/// collaboration sees the same word here.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum Region {
-    /// China. The product's default, matching `CollabRelayRegion::default()`.
-    #[default]
-    Cn,
-    /// Everywhere else.
-    Global,
+fn enabled() -> bool {
+    static ON: OnceLock<bool> = OnceLock::new();
+    *ON.get_or_init(op_orchestrator::timing_log::enabled)
 }
 
-impl Region {
-    /// Persisted spelling, shared with the collaboration bootstrap document.
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Region::Cn => "cn",
-            Region::Global => "global",
+/// One loop run's timeline.
+pub(crate) struct LoopTiming {
+    on: bool,
+    wire: &'static str,
+    started: Instant,
+    requests: usize,
+    request_started: Instant,
+    headers_after: Duration,
+    first_write_seen: bool,
+}
+
+impl LoopTiming {
+    pub(crate) fn from_env(wire: &'static str) -> Self {
+        Self::new(wire, enabled())
+    }
+
+    fn new(wire: &'static str, on: bool) -> Self {
+        let now = Instant::now();
+        let timing = Self {
+            on,
+            wire,
+            started: now,
+            requests: 0,
+            request_started: now,
+            headers_after: Duration::ZERO,
+            first_write_seen: false,
+        };
+        timing.line(format_args!("loop start wire={wire}"));
+        timing
+    }
+
+    fn line(&self, message: std::fmt::Arguments<'_>) {
+        if self.on {
+            eprintln!("{}", self.render(message));
         }
     }
 
-    /// Parse a stored value. Anything unrecognised — including a value left
-    /// by a future version — falls back to the default rather than failing,
-    /// because a popup that will not open is a worse outcome than a popup
-    /// pointing at the default region.
-    pub fn from_stored(raw: &str) -> Region {
-        match js_trim(raw) {
-            "global" => Region::Global,
-            _ => Region::Cn,
+    fn render(&self, message: std::fmt::Arguments<'_>) -> String {
+        format!("[TIMING] +{} {message}", secs(self.started.elapsed()))
+    }
+
+    /// A model request is about to be sent.
+    pub(crate) fn request(&mut self, body: &Value) {
+        if !self.on {
+            return;
+        }
+        self.requests += 1;
+        self.request_started = Instant::now();
+        let bytes = serde_json::to_vec(body).map_or(0, |v| v.len());
+        let messages = body
+            .get("messages")
+            .and_then(Value::as_array)
+            .map_or(0, Vec::len);
+        self.line(format_args!(
+            "req#{} start in={} messages={messages}",
+            self.requests,
+            kb(bytes)
+        ));
+    }
+
+    /// Response headers arrived (throttle gap + connect + time to first byte).
+    pub(crate) fn headers(&mut self) {
+        if self.on {
+            self.headers_after = self.request_started.elapsed();
         }
     }
 
-    /// The region's published hub origin.
-    pub fn hub_origin(self) -> &'static str {
-        match self {
-            Region::Cn => HUB_ORIGIN_CN,
-            Region::Global => HUB_ORIGIN_GLOBAL,
+    /// The response stream ended; `tools` are the calls it asked for.
+    pub(crate) fn response<'a>(&self, tools: impl Iterator<Item = &'a str>) {
+        if !self.on {
+            return;
         }
+        let total = self.request_started.elapsed();
+        let names: Vec<&str> = tools.collect();
+        self.line(format_args!(
+            "req#{} end headers={} stream={} total={} tools=[{}]",
+            self.requests,
+            secs(self.headers_after),
+            secs(total.saturating_sub(self.headers_after)),
+            secs(total),
+            names.join(",")
+        ));
+    }
+
+    /// One tool finished. `wrote` = a write-level tool that succeeded.
+    pub(crate) fn tool(&mut self, name: &str, took: Duration, wrote: bool, is_error: bool) {
+        if !self.on {
+            return;
+        }
+        let first = wrote && !self.first_write_seen;
+        self.first_write_seen |= wrote;
+        self.line(format_args!(
+            "tool {name} took={}{}{}",
+            secs(took),
+            if is_error { " error" } else { "" },
+            if first {
+                " (first write on canvas)"
+            } else {
+                ""
+            }
+        ));
     }
 }
 
-/// The hub origin to talk to: the region's published one, unless a loopback
-/// development origin has been stored.
-///
-/// The override exists so `OP_HUB_PUBLIC_URL=http://127.0.0.1:18081` (the
-/// Hub's documented development invocation) can be driven from the same
-/// popup. It is accepted **only** when it normalizes to a loopback
-/// `host:port` — the exact rule [`crate::endpoint`] applies to the local
-/// editor, and the reason no new host permission is needed for it: the
-/// manifest already grants `http://127.0.0.1/*`.
-///
-/// Anything else — a public hostname, an `https://` URL, a path — is ignored
-/// in favour of the region's origin. There is no code path in which a stored
-/// value can point the session probe at an arbitrary host.
-pub fn hub_origin(region: Region, override_raw: &str) -> String {
-    if let Some(dev) = dev_origin(override_raw) {
-        return dev;
+impl Drop for LoopTiming {
+    fn drop(&mut self) {
+        self.line(format_args!(
+            "loop end wire={} total={} requests={}",
+            self.wire,
+            secs(self.started.elapsed()),
+            self.requests
+        ));
     }
-    region.hub_origin().to_owned()
 }
 
-/// A loopback development hub origin, or `None`.
-fn dev_origin(raw: &str) -> Option<String> {
-    let trimmed = js_trim(raw);
-    if trimmed.is_empty() {
-        return None;
+/// Print the token usage an SSE event carries, if any. Anthropic reports it
+/// under `message.usage` (start) and `usage` (final delta), OpenAI-compatible
+/// endpoints under `usage` on the last chunk.
+pub(crate) fn note_usage(event_data: &str) {
+    if !enabled() || !event_data.contains("\"usage\"") {
+        return;
     }
-    // `https://127.0.0.1:8443` is not a development Hub — the Hub only
-    // serves plaintext when `OP_HUB_PUBLIC_URL` is `http://`, and accepting
-    // both would mean two spellings of one thing. `get` rather than a slice
-    // index: byte 8 can land inside a multi-byte character.
-    if trimmed
-        .get(..8)
-        .is_some_and(|head| head.eq_ignore_ascii_case("https://"))
-    {
-        return None;
+    if let Some(usage) = usage_of(event_data) {
+        eprintln!("[TIMING] usage {usage}");
     }
-    normalize_endpoint(trimmed).map(|endpoint| format!("http://{endpoint}"))
 }
 
-/// The URL to OPEN IN A TAB to sign in.
-///
-/// `return_to` must be one of the Hub's exact allowlisted portal routes and
-/// the request must carry that one query parameter and nothing else — both
-/// are enforced server-side, so the string is built here rather than
-/// assembled by the caller.
-pub fn login_url(origin: &str) -> String {
-    format!("{origin}{LOGIN_PATH}?return_to={ACCOUNT_PATH}")
+fn usage_of(event_data: &str) -> Option<String> {
+    let value: Value = serde_json::from_str(event_data).ok()?;
+    let usage = value
+        .get("usage")
+        .or_else(|| value.get("message").and_then(|m| m.get("usage")))
+        .filter(|usage| usage.is_object())?;
+    Some(usage.to_string())
 }
 
-/// The session probe URL.
-pub fn session_url(origin: &str) -> String {
-    format!("{origin}{SESSION_PATH}")
+fn kb(bytes: usize) -> String {
+    format!("{:.1}KB", bytes as f64 / 1024.0)
 }
 
-/// The logout URL.
-pub fn logout_url(origin: &str) -> String {
-    format!("{origin}{LOGOUT_PATH}")
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn usage_is_found_in_both_wire_shapes() {
+        let start = json!({"type":"message_start","message":{"usage":{"input_tokens":12,"cache_read_input_tokens":9000}}});
+        assert!(usage_of(&start.to_string())
+            .unwrap()
+            .contains("cache_read_input_tokens"));
+        let delta = json!({"type":"message_delta","usage":{"output_tokens":7}});
+        assert_eq!(
+            usage_of(&delta.to_string()).unwrap(),
+            r#"{"output_tokens":7}"#
+        );
+        assert!(usage_of(r#"{"choices":[],"usage":null}"#).is_none());
+        assert!(usage_of("not json").is_none());
+    }
+
+    #[test]
+    fn disabled_timing_measures_nothing() {
+        let mut timing = LoopTiming::new("test", false);
+        timing.request(&json!({"messages":[1,2]}));
+        timing.headers();
+        timing.tool("batch_design", Duration::from_secs(1), true, false);
+        assert_eq!(timing.requests, 0);
+        assert_eq!(timing.headers_after, Duration::ZERO);
+        assert!(!timing.first_write_seen);
+    }
+
+    #[test]
+    fn enabled_timing_counts_requests_and_flags_the_first_write_once() {
+        let mut timing = LoopTiming::new("test", true);
+        timing.request(&json!({"messages":[1,2]}));
+        timing.request(&json!({"messages":[1,2,3]}));
+        assert_eq!(timing.requests, 2);
+        timing.tool("get_editor_state", Duration::ZERO, false, false);
+        assert!(!timing.first_write_seen);
+        timing.tool("batch_design", Duration::ZERO, true, false);
+        assert!(timing.first_write_seen);
+        assert!(timing
+            .render(format_args!("x"))
+            .starts_with("[TIMING] +0.0s x"));
+    }
 }
 
-/// The portal page, opened in a tab as the sign-out fallback.
-pub fn account_url(origin: &str) -> String {
-    format!("{origin}{ACCOUNT_PATH}")
-}
-
-/// The `host_permissions` match pattern a hub origin needs.
-///
-/// Kept here so the manifest and this module cannot drift apart — the test
-/// module asserts the shipped `manifest.json` grants exactly these two.
-pub fn host_permission(origin: &str) -> String {
-    format!("{origin}/*")
-}
-
-/// What `GET /api/v1/session` said.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SessionView {
-    /// A usable session. Everything here is safe to render as *text*.
-    SignedIn(Account),
-    /// No session — the ordinary state, not an error.
-    SignedOut,
-    /// The Hub answered something we cannot act on.
-    Unavailable { detail: String },
-}
-
-/// The renderable half of a Hub session.
-///
-/// Deliberately does NOT carry `primary_email` or `roles`. The popup shows
-/// who you are, not what you may do, and an email address is the one field
-/// in the envelope whose leak into a screenshot would matter.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Account {
-    /// Stable SSO subject. Used only to notice that the account changed.
-    pub user_id: String,
-    /// The name to render: `display_name` when it has one, else `username`.
-    pub display_name: String,
-    /// An `https://` avatar, or `None`. Never a `data:` or relative URL.
-    pub avatar_url: Option<String>,
-    /// Session CSRF token, required by the Hub's mutating endpoints.
-    pub csrf_token: String,
-}
-
-/// Classify a reply from `GET /api/v1/session`.
-///
-/// The shape is pinned by the Hub's `auth_routes.go` session handler:
-/// `{"user":{"id","username","display_name","avatar_url","primary_email",
-/// "roles"},"csrf_token","capabilities"}`, where the three middle user fields
-/// may be `null`.
-///
-/// A `401` is the signed-out answer, and the only status that is not a
-/// problem. Everything else — a `503` from a Hub whose Redis is down, an
-/// HTML error page from a captive portal, a body that will not parse — is
-/// [`S
 ```
 
 
@@ -1830,8 +1799,8 @@ pub struct Account {
 - **Issue #280** (2026-11-06): **Memory cross-boundary**
   *Symptoms*: ### Version  0.16  ### Platform  Web (browser)  ### Bug Description  macOS desktop client, codex often encounters memory over-boundary errors when calling mcp.  ### Steps to Reproduce  1. open openpencil 2. codex connects mcp for design   ### Expected Behavior  macOS desktop client, codex often encounters memory over-boundary errors when calling mcp.  ### Screenshots / Recordings  _No response_  ### Additional Context  _No response_
 
-- **Issue #267** (2026-10-31): **bug: duplicate BRUSH resource keys prevent a .fig file from opening**
-  *Symptoms*: Sorry, I opened this issue in the wrong repository. Closing it now.
+- **Issue #271** (2026-11-21): **[Bug] Layer blur stays off after scroll-panning the canvas**
+  *Symptoms*: ### Version  0.8.5  ### Platform  macOS (native desktop)  ### Bug Description  After scrolling to pan the editor canvas, text inside frames with layer blur becomes sharp and stays sharp for at least 10 seconds with no further input. Clicking an empty area of the canvas restores the blur.  I reproduced this in both an existing 22,834-node document and a minimal four-node document containing an outer board, a blurred card, a text node, and a rectangle. The minimal document uses a blur radius of 5 and reproduces the issue at both 41% and 100% zoom.  ### Steps to Reproduce  1. Extract the attached ZIP and open blur-pan-repro.op. 2. Set zoom to 100% (41% also reproduces) and bring the card into view. Confirm that its text and edges look blurred. 3. Scroll over the canvas to pan it a short distance, keeping the card visible. 4. Stop scrolling and send no further pointer or keyboard input for 10 seconds. The text and rectangle remain sharp. 5. Click an empty area of the canvas. The blur returns without changing any effect settings.  The ZIP contains only the minimal .op document, with no external assets, scripts, or executables.  [blur-pan-repro.zip](https://github.com/user-attachments/files/34356926/blur-pan-repro.zip)  ### Expected Behavior  After scrolling stops, the blur should return automatically without requiring another pointer event.  ### Screenshots / Recordings  <img width="1280" height="220" alt="Image" src="https://github.com/user-attachments/assets/a57f0d12-782b-4639-8
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1848,319 +1817,419 @@ pub struct Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be4cf9c8` (2026-10-29)
-**Commit Message**: fix(editor): add scoped ios account deletion
+### Incident Patch 1: `1c7f0448` (2026-11-19)
+**Commit Message**: test(collab): write trust fixtures with explicit 0644 permissions
 
-**File**: `crates/op-auth-bridge/src/hosted_access_tests.rs` (modified, +10/-0)
+The trust-root reader rejects group-writable files, so fixtures written under a 0002 umask failed spuriously. The locator HSM stub also blocked forever in accept when the check failed before signing; it now gives up after a deadline so the test reports the real error.
+
+**File**: `crates/op-collab-relay-locator-server/src/production/production_check_tests.rs` (modified, +27/-5)
 ```diff
-@@ -20,6 +20,7 @@ fn fixture() -> Value {
-         "issued_at_unix": NOW,
-         "expires_at_unix": NOW + 300,
-         "gateway_base_url": "https://gateway.example.test/v1",
-+        "product": "openpencil",
-     })
+@@ -7,7 +7,7 @@ use std::{
+     os::unix::net::UnixListener,
+     path::Path,
+     thread,
+-    time::Duration,
++    time::{Duration, Instant},
+ };
+ 
+ use ed25519_dalek::{Signer as _, SigningKey};
+@@ -124,7 +124,7 @@ fn run_check_with_inputs(
+     let policy_path = directory.path().join("policy.json");
+     let public_keys_path = directory.path().join("locator-public-keys.json");
+     let socket_path = directory.path().join("signer.sock");
+-    std::fs::write(&policy_path, policy_body).expect("policy file");
++    write_public_fixture(&policy_path, policy_body);
+     write_public_keys(&public_keys_path, published_seed);
+ 
+     let hsm = exercise_hsm.then(|| {
+@@ -162,7 +162,22 @@ fn policy_sha256() -> String {
  }
  
-@@ -237,3 +238,12 @@ fn development_v4_exports_fail_closed_before_runtime_initialization() {
-     ));
-     provider.cancel(id);
+ fn serve_one_signature(listener: UnixListener, signer_seed: [u8; 32]) {
+-    let (mut stream, _) = listener.accept().expect("HSM accept");
++    listener
++        .set_nonblocking(true)
++        .expect("HSM listener non-blocking");
++    let deadline = Instant::now() + Duration::from_secs(10);
++    let mut stream = loop {
++        match listener.accept() {
++            Ok((stream, _)) => break stream,
++            Err(error)
++                if error.kind() == std::io::ErrorKind::WouldBlock && Instant::now() < deadline =>
++            {
++                thread::sleep(Duration::from_millis(10));
++            }
++            Err(_) => return,
++        }
++    };
++    stream.set_nonblocking(false).expect("HSM stream blocking");
+     let mut request = Vec::new();
+     stream.read_to_end(&mut request).expect("HSM request");
+     assert_eq!(request.len(), HSM_SIGN_REQUEST_BYTES);
+@@ -203,8 +218,15 @@ fn write_public_keys(path: &Path, seed: [u8; 32]) {
+             "public_key_ed25519": URL_SAFE_NO_PAD.encode(verifying_key.as_bytes()),
+         }],
+     });
+-    std::fs::write(path, serde_json::to_vec(&body).expect("public keys JSON"))
+-        .expect("public keys file");
++    write_public_fixture(path, &serde_json::to_vec(&body).expect("public keys JSON"));
++}
++
++fn write_public_fixture(path: &Path, body: &[u8]) {
++    use std::os::unix::fs::PermissionsExt as _;
++
++    std::fs::write(path, body).expect("public fixture file");
++    std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o644))
++        .expect("public fixture permissions");
+ }
+ 
+ fn current_peer() -> ExpectedUnixPeer {
+```
+
+**File**: `crates/op-collab-relay-server/src/production_auth_tests.rs` (modified, +14/-5)
+```diff
+@@ -578,7 +578,7 @@ fn authentication_debug_output_is_anonymous() {
+ fn pinned_policy_fetcher_reads_regular_files_with_a_strict_bound() {
+     let fixture = TempFixture::new();
+     let path = fixture.path().join("operator-secret-policy.json");
+-    fs::write(&path, b"{\"keys\":[]}").expect("write policy fixture");
++    write_public_fixture(&path, b"{\"keys\":[]}");
+     let config = TestCollabIssuer::verifier_config().expect("test config");
+     let fetcher = PinnedPolicyFileFetcher::new(
+         &config,
+@@ -681,14 +681,23 @@ fn write_locator_key_file(
+             "public_key_ed25519": URL_SAFE_NO_PAD.encode(signing_key.verifying_key().to_bytes()),
+         }],
+     });
+-    fs::write(
++    write_public_fixture(
+         &path,
+-        serde_json::to_vec(&body).expect("serialize key file"),
+-    )
+-    .expect("write verifier key file");
++        &serde_json::to_vec(&body).expect("serialize key file"),
++    );
+     path
+ }
+ 
++fn write_public_fixture(path: &Path, body: &[u8]) {
++    fs::write(path, body).expect("write public fixture");
++    #[cfg(unix)]
++    {
++        use std::os::unix::fs::PermissionsExt as _;
++        fs::set_permissions(path, fs::Permissions::from_mode(0o644))
++            .expect("public fixture permissions");
++    }
++}
++
+ fn write_x25519_key_file(fixture: &TempFixture, filename: &str) -> PathBuf {
+     let path = fixture.path().join(filename);
+     let body = serde_json::json!({
+```
+
+**File**: `crates/op-collab-relay-server/src/production_check_tests.rs` (modified, +18/-10)
+```diff
+@@ -35,11 +35,10 @@ fn production_check_rejects_a_policy_with_a_rewritten_signature() {
+         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     );
+     let rewritten_policy = serde_json::to_vec(&policy).expect("policy JSON");
+-    std::fs::write(
+-        fixture.directory.path().join("policy.json"),
++    write_public_fixture(
++        &fixture.directory.path().join("policy.json"),
+         &rewritten_policy,
+-    )
+-    .expect("rewrite policy");
++    );
+     assert_eq!(
+         check_production_config_at(
+             &fixture.config(),
+@@ -113,7 +112,7 @@ struct Fixture {
+ impl Fixture {
+     fn new() -> Self {
+         let directory = tempfile::tempdir().expect("temporary directory");
+-        std::fs::write(directory.path().join("policy.json"), POLICY).expect("policy file");
++        write_public_fixture(&directory.path().join("policy.json"), POLICY);
+         write_locator_keys(directory.path());
+         write_x25519_keys(directory.path());
+         Self { directory }
+@@ -141,11 +140,20 @@ fn write_locator_keys(directory: &Path) {
+             "public_key_ed25519": URL_SAFE_NO_PAD.encode(key.verifying_key().as_bytes()),
+         }],
+     });
+-    std::fs::write(
+-        directory.join("locator-keys.json"),
+-        serde_json::to_vec(&body).expect("locator keys JSON"),
+-    )
+-    .expect("locator keys file");
++    write_public_fixture(
++        &directory.join("locator-keys.json"),
++        &serde_json::to_vec(&body).expect("locator keys JSON"),
++    );
++}
++
++fn write_public_fixture(path: &Path, body: &[u8]) {
++    std::fs::write(path, body).expect("public fixture file");
++    #[cfg(unix)]
++    {
++        use std::os::unix::fs::PermissionsExt as _;
++        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o644))
++            .expect("public fixture permissions");
++    }
+ }
+ 
+ fn write_x25519_keys(directory: &Path) {
+```
+
+---
+
+### Incident Patch 2: `0c4bb995` (2026-11-19)
+**Commit Message**: fix(renderer): reject cpu frame strides whose buffer size overflows
+
+op_frame_cpu multiplied the caller's height and stride unchecked. A huge stride wrapped to a small value in release builds, passed the buffer-length check, and the row copies then wrote outside the caller's buffer. Saturate the product so the existing length check rejects it with InvalidArg.
+
+**File**: `crates/op-engine-ffi/src/lifecycle.rs` (modified, +1/-1)
+```diff
+@@ -672,7 +672,7 @@ impl Session {
+                 "frame stride is smaller than the physical row",
+             ));
+         }
+-        let required = height as usize * stride;
++        let required = (height as usize).saturating_mul(stride); // a wrap would pass the check
+         if buffer_len < required {
+             return Err(FfiError::invalid(format!(
+                 "frame buffer covers {buffer_len} bytes but {required} are required"
+```
+
+**File**: `crates/op-engine-ffi/tests/abi.rs` (modified, +13/-0)
+```diff
+@@ -165,6 +165,19 @@ fn engine_is_bound_to_its_creator_thread() {
+     assert_eq!(status, OpStatus::Ok);
+ }
+ 
++#[test]
++fn frame_cpu_rejects_a_stride_whose_buffer_size_overflows() {
++    let engine = create_engine(200.0, 200.0, 1.0).expect("engine creation");
++    // 200 rows × 2^63 wraps to 0 in an unchecked multiply, which would pass
++    // the buffer-length check and send the row copies out of bounds.
++    let stride = usize::MAX / 2 + 1;
++    let mut buffer = vec![0u8; 16];
++    let status = unsafe { op_frame_cpu(engine, 0, buffer.as_mut_ptr(), buffer.len(), stride) };
++    assert_eq!(status, OpStatus::InvalidArg, "{}", last_error(engine));
++    assert!(buffer.iter().all(|&byte| byte == 0));
++    assert_eq!(unsafe { op_destroy(engine) }, OpStatus::Ok);
++}
++
+ #[test]
+ fn resize_updates_pixel_size() {
+     let engine = create_engine(300.0, 400.0, 1.0).expect("engine creation");
+```
+
+---
+
+### Incident Patch 3: `70d66e0e` (2026-11-20)
+**Commit Message**: feat(renderer): add lottie motion export
+
+Export sampled motion and outlined text through the editor, CLI and MCP. Embed raster fallbacks for unsupported paint and composite fades. Keep changing path topology in discrete layers to prevent playback flicker.
+
+**File**: `Cargo.lock` (modified, +2/-0)
+```diff
+@@ -5036,7 +5036,9 @@ dependencies = [
+  "png 0.18.1",
+  "rusty_h264-common",
+  "rusty_h264-decoder",
++ "serde_json",
+  "skia-safe",
++ "usvg",
+  "zip",
+ ]
+ 
+```
+
+**File**: `crates/op-chat-agent/src/tool_schemas.rs` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ pub const TOOL_SCHEMAS: &[&str] = &[
+     r#"{"name":"set_node_transition","description":"Set a layer's property transition, or pass null to clear it.","inputSchema":{"type":"object","properties":{"nodeId":{"type":"string","description":"Node id on the active page"},"transition":{"type":["object","null"],"description":"Transition with durationMs, easing, and optional properties array"}},"required":["nodeId","transition"]}}"#,
+     r#"{"name":"set_motion_preference","description":"Set the document-level motion preference.","inputSchema":{"type":"object","properties":{"value":{"type":"string","enum":["full","reduced"]}},"required":["value"]}}"#,
+     r#"{"name":"get_motion_frames","description":"Render exact clip samples into a PNG contact sheet. Cells are ordered left to right and top to bottom. The accompanying metadata maps each sample timestamp to its pixel bounds.","inputSchema":{"type":"object","properties":{"rootId":{"type":"string","description":"Authored root layer or board node id"},"trigger":{"type":"string","enum":["mount","inView","manual"],"description":"Defaults to manual with clipId, otherwise mount"},"clipId":{"type":"string","description":"Named manual animation id"},"scale":{"type":"number","exclusiveMinimum":0},"timesMs":{"type":"array","items":{"type":"integer","minimum":0},"minItems":1,"maxItems":8}},"required":["rootId","timesMs"]}}"#,
+-    r#"{"name":"export_motion","description":"Export an animation as base64 GIF, APNG, a ZIP of PNG frames, or H.264 MP4 when the server has an encoder. Supply durationMs for a fully looping clip.","inputSchema":{"type":"object","properties":{"rootId":{"type":"string","description":"Authored root layer or board node id"},"trigger":{"type":"string","enum":["mount","inView","manual"],"description":"Defaults to manual with clipId, otherwise mount"},"clipId":{"type":"string","description":"Named manual animation id"},"scale":{"type":"number","exclusiveMinimum":0},"format":{"type":"string","enum":["gif","apng","png-seq","mp4"]},"fps":{"type":"integer","minimum":1,"maximum":60},"durationMs":{"type":"integer","minimum":0},"background":{"type":"string","enum":["transparent","white"]},"reducedMotion":{"type":"boolean","description":"Override the document's reduced-motion preference for this export."}},"required":["rootId","format"]}}"#,
++    r#"{"name":"export_motion","description":"Export an animation as base64 GIF, APNG, a ZIP of PNG frames, Lottie JSON, or H.264 MP4 when the server has an encoder. Supply durationMs for a fully looping clip.","inputSchema":{"type":"object","properties":{"rootId":{"type":"string","description":"Authored root layer or board node id"},"trigger":{"type":"string","enum":["mount","inView","manual"],"description":"Defaults to manual with clipId, otherwise mount"},"clipId":{"type":"string","description":"Named manual animation id"},"scale":{"type":"number","exclusiveMinimum":0},"format":{"type":"string","enum":["gif","apng","png-seq","mp4","lottie"]},"fps":{"type":"integer","minimum":1,"maximum":60},"durationMs":{"type":"integer","minimum":0},"background":{"type":"string","enum":["transparent","white"]},"reducedMotion":{"type":"boolean","description":"Override the document's reduced-motion preference for this export."}},"required":["rootId","format"]}}"#,
+     r#"{"name":"export_nodes","description":"Export one or more nodes to base64-encoded image/PDF bytes. format is one of png|jpeg|webp|pdf.","inputSchema":{"type":"object","properties":{"nodeIds":{"type":"array","items":{"type":"string"}},"format":{"type":"string","enum":["png","jpeg","webp","pdf"]},"scale":{"type":"number"}},"required":["nodeIds","format"]}}"#,
+     r#"{"name":"export_deck","description":"Export the active page's boards as a presentation deck in PowerPoint, self-contained HTML, or PDF. Writes a file at outputPath; use export_item/export_nodes for base64 node-level exports.","inputSchema":{"type":"object","properties":{"format":{"type":"string","enum":["pptx","html","pdf"]},"outputPath":{"type":"string","description":"Destination file path for the deck"}},"required":["format","outputPath"]}}"#,
+     r#"{"name":"export_frames","description":"Export every top-level frame on the active page into a directory, one image per frame, using the editor's own file naming.","inputSchema":{"type":"object","properties":{"outputDir":{"type":"string","description":"Destination directory; created if absent"},"format":{"type":"string","enum":["png","jpeg","webp"],"default":"png"}},"required":["outputDir"]}}"#,
+```
+
+**File**: `crates/op-cli/src/cli_export_tests.rs` (modified, +31/-0)
+```diff
+@@ -364,3 +364,34 @@ fn motion_export_can_inherit_or_override_the_document_preference() {
+         );
+     }
  }
 +
 +#[test]
-+fn legacy_or_other_product_access_cannot_bypass_product_deletion() {
-+    let mut payload = fixture();
-+    payload.as_object_mut().unwrap().remove("product");
-+    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
-+    payload["product"] = json!("another-product");
-+    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
++fn lottie_export_uses_the_motion_flags_and_json_destination() {
++    let parsed = parse_args(&args(&[
++        "export",
++        "--item",
++        "board",
++        "--output",
++        "board.json",
++        "--format",
++        "lottie",
++        "--fps",
++        "24",
++        "--duration-ms",
++        "5000",
++    ]))
++    .unwrap();
++    let Command::Export {
++        format,
++        output,
++        motion: Some(motion),
++        ..
++    } = parsed.command
++    else {
++        panic!("expected Lottie export");
++    };
++    assert_eq!(format, "lottie");
++    assert_eq!(output, "board.json");
++    assert_eq!(motion.arguments()["fps"], serde_json::json!(24));
++    assert_eq!(motion.arguments()["durationMs"], serde_json::json!(5000));
 +}
 ```
 
-**File**: `crates/op-auth-bridge/src/hosted_access_wire.rs` (modified, +4/-0)
+**File**: `crates/op-cli/src/export_cli.rs` (modified, +3/-3)
 ```diff
-@@ -16,6 +16,9 @@ struct AccessWire<'a> {
-     token_type: &'a str,
-     issuer: &'a str,
-     subject: &'a str,
-+    // Mandatory for this consumer: an older signed runtime must not silently
-+    // fall back to shared credentials when product deletion is enforced.
-+    product: &'a str,
-     audience: &'a str,
-     scopes: [&'a str; 2],
-     issued_at_unix: u64,
-@@ -37,6 +40,7 @@ pub(crate) fn decode(bytes: &[u8], now: u64) -> Result<HostedAccess, HostedAcces
-         serde_json::from_slice(bytes).map_err(|_| HostedAccessError::InvalidPayload)?;
-     let lifetime = wire.expires_at_unix.checked_sub(wire.issued_at_unix);
-     if wire.version != 1
-+        || wire.product != "openpencil"
-         || wire.token_type != "Bearer"
-         || wire.audience != "llm-gateway"
-         || wire.scopes != ["llm:models", "llm:invoke"]
-```
-
-**File**: `crates/op-auth-bridge/src/real.rs` (modified, +1/-0)
-```diff
-@@ -102,6 +102,7 @@ pub(crate) fn init(config: &AuthInitConfig) -> bool {
-         "device_name": config.device_name,
-         "platform": crate::platform_id(),
-         "app_version": config.app_version,
-+        "hosted_product": "openpencil",
-     })
-     .to_string();
-     // SAFETY: pointer/length describe the live `json` buffer.
-```
-
-**File**: `crates/op-hosted-models/src/tests.rs` (modified, +1/-1)
-```diff
-@@ -280,7 +280,7 @@ impl op_auth_bridge::HostedAccessProvider for ReadyAfterSwitch {
-             "issuer":"https://sso.example.test", "subject":"01234567-89ab-cdef-0123-456789abcdef",
-             "audience":"llm-gateway", "scopes":["llm:models","llm:invoke"],
-             "issued_at_unix":now, "expires_at_unix":now+300,
--            "gateway_base_url":"https://gateway.example.test/v1"})
-+            "gateway_base_url":"https://gateway.example.test/v1", "product":"openpencil"})
-         .to_string()
-         .into_bytes();
-         Ok(HostedAccessPoll::Ready(HostedAccess::from_provider_json(
-```
-
-**File**: `packaging/ios/ACCOUNT_DELETION.md` (added, +116/-0)
-```diff
-@@ -0,0 +1,116 @@
-+# OpenPencil account deletion
-+
-+This feature deletes the OpenPencil product account. It preserves the shared
-+ZSeven sign-in identity and other ZSeven products. Local source validation is
-+not evidence that the new service endpoints or the replacement app build are
-+deployed.
-+
-+## User flow
-+
-+1. In the iOS editor, open **More > Account > Delete OpenPencil Account**.
-+2. Read the cloud and local deletion scope. The app opens the dedicated SSO
-+   page in an in-app Safari sheet. Sign in again when recent authentication
-+   is required, verify the displayed account, and confirm deletion.
-+3. The service records a durable deletion job and blocks new OpenPencil
-+   access. Both regional services must acknowledge cleanup. Previously
-+   issued collaboration credentials require a 16-minute drain interval.
-+   Outages can extend processing; an accepted request is not completion.
-+4. The app verifies completion over HTTPS with its private receipt before
-+   removing app-owned local data. Closing Safari, signing out, a callback,
-+   an expired receipt, or an HTTP error cannot authorize local erasure.
-+5. After cleanup, the app shows a completion/restart screen. Relaunch it
-+   normally to start with clean local storage. The app never calls `exit(0)`.
-+
-+The pending receipt survives app restarts. An expired receipt can be renewed
-+through identity verification without canceling or recreating the server
-+job. A partial local cleanup retains its recovery marker and blocks editor
-+startup until cleanup succeeds.
-+
-+## Data boundary
-+
-+| Removed or disabled | Preserved |
-+| --- | --- |
-+| Regional Hub session/profile copies, capture inbox, access-statistics profile, MCP credentials, explicitly OpenPencil-scoped Hosted credentials | Shared ZSeven user, email, password, linked identity providers, and other product sessions |
-+| New OpenPencil collaboration and product-scoped Hosted access | Shared wallet, financial records, generic shared-service authorization and usage records |
-+| This installation's OpenPencil-managed documents, autosaves, settings, bookmarks, local credentials and caches | Files exported outside this app's container, collaborators' copies, and files on other devices |
-+
-+A minimal product tombstone remains to reject old OpenPencil access; normal
-+sign-in must not silently recreate the deleted product account. Shared
-+identity and provider bindings are deliberately not deleted or globally
-+revoked. Historical LLM tokens lack product ownership, so they cannot be
-+bulk-erased without affecting other products. Older released clients can
-+still use that generic shared-service path; do not describe it as revoked.
-+
-+## Completion contract
-+
-+- Native creation sends the current device ID and SHA-256 of a random
-+  receipt secret to `/api/v1/openpencil/deletion-requests`. Only the hash
-+  is stored server-side. The secret never appears in a URL or log.
-+- The web review/confirmation routes check device ownership against the
-+  authenticated SSO user and require authentication within 15 minutes for
-+  confirmation. The confirmation literal is `DELETE_OPENPENCIL`.
-+- Native status requests carry the receipt secret in `Authorization`.
-+  Response request ID, device ID, scope and pinned origin must all match.
-+  Only `state: deleted` authorizes local cleanup.
-+- Unconfirmed requests last 30 minutes; confirmation extends the receipt
-+  to seven days. New verified receipts can bind the same existing job.
-+- Regional cleanup acknowledgements must match the exact subject, job,
-+  scope and region. A redirect, partial response or one successful region
-+  is insufficient.
-+- Hub write permits stop new writes and drain admitted writes before
-+  cleanup. Permits have no timeout that could let a slow writer resurrect
-+  deleted data. Crash recovery requires the documented reconciliation tool
-+  and proof that the exact recorded process has stopped.
-+- Local cleanup stops all editor scenes and pending save work before
-+  removing files. It must not follow symlinks into external storage or
-+  delete shared browser cookies.
-+
-+## Release dependencies
-+
-+Complete these steps in the service repositories before submitting a build:
-+
-+1. Apply SSO migration `000010_openpencil_accounts` before deploying the
-+   product guards. Existing shared-identity tables remain intact.
-+2. Deploy the SSO status reader and the CN/Global Hub cleanup handlers with
-+   dedicated mounted status/cleanup credentials. Verify exact region
-+   acknowledgements and partial-failure recovery. Do not reuse billing,
-+   canvas, LLM issuer, or user credentials.
-+3. Deploy the Gateway change that bounds inference by credential expiry,
-+   and the product-scoped Hosted endpoint/token implementation.
-+4. Enable new deletion intake only after both cleanup services are ready.
-+   Disabling intake must preserve existing tombstones, status checks and
-+   job retries. Follow the service-specific configuration/runbooks.
-+5. Rebuild, audit, sign an
-```
-
-**File**: `packaging/ios/AppReviewNotes.txt` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+DRAFT — DO NOT SUBMIT YET. Fill and verify every bracketed field. Deletion is implemented in source; service deployment, a new signed auth matrix/build, physical-device QA, video, reviewer credentials, commercial details and rights evidence remain required. This draft is not a completion claim.
-+
-+Hello App Review,
-+
-+Here are the six items requested under Guideline 2.1, also provided in App Review Information > Notes.
-+
-+1. Recording and physical-device QA
-+Video: [ACCESSIBLE URL / ATTACHMENT]
-+App version/build: [VERSION (BUILD)]
-+Device, latest OS and test date: [IPHONE MODEL / OS / DATE]
-+Other supported-device testing: [IPAD RESULTS]
-+The video begins with launch and demonstrates editing, save/reopen/export, registration/login, deletion, AI and applicable sharing/paid-feature flows. [ADD VERIFIED TIMESTAMPS.]
-+
-+2. Purpose and audience
-+OpenPencil is a vector design app for designers, developers and visual-document creators. It provides editable layouts, text, shapes, templates and exports. Optional AI helps create or revise designs. Local editing does not require an account; online features require sign-in.
-+
-+3. Access and main features
-+Use More > New File or Open File. Save the attached [SAMPLE FILENAME] to Files, open it, edit text/shapes, then Save/Save As or Export to PNG, JPEG, SVG or PDF.
-+Sign in through More > Sign In with the demo credentials in the private review fields. Region/account type: [DETAILS]. Other account types: [ACCESS DETAILS IF ANY].
-+More > AI: select [VERIFIED MODEL], enter [PROMPT]; the demo account has [VERIFIED QUOTA/ENTITLEMENT]. Paid access/purchase method: [ACTUAL BUSINESS MODEL AND IAP IDS IF APPLICABLE].
-+More > Account > Delete OpenPencil Account opens identity verification and confirmation. Both service regions are cleaned before verified local erasure. A 16-minute credential drain and any service outage can delay completion. Shared ZSeven identity, other products, shared billing/usage records and externally saved copies remain. [CONFIRM DEPLOYED BUILD AND DEVICE TEST.]
-+Private collaboration uses invitations/addresses and owner-approved editor/viewer access. [DESCRIBE THE BUILD'S SHARING/REPORT/BLOCK CONTROLS; REPORT/BLOCK UI IS CURRENTLY MISSING.]
-+
-+4. External services
-+ZSeven SSO provides authentication. Regional OpenPencil Hub services provide service discovery and collaboration support; Hosted AI uses a ZSeven gateway. Optional image search uses Openverse and Wikimedia.
-+AI upstreams/models, collaboration infrastructure and payment/entitlement providers: [VERIFIED LIST AND ROLES]. Sign-in providers are listed below. [CONFIRM IMAGE ATTRIBUTION.]
-+
-+5. Regional differences
-+The local editor is shared across regions. Mainland China uses sso.zseven.cn with WeChat, Alipay and Douyin; Global uses sso.zseven.tech with Apple, GitHub and Google. Saved choice or network/locale detection selects the region; changes apply on the next launch. Hosted models/entitlements depend on the regional service. [CONFIRM AI/CONTENT/COMMERCIAL DIFFERENCES.]
-+
-+6. Regulated services and protected material
-+[CONFIRM REGULATED-SERVICE APPLICABILITY; ATTACH AUTHORIZATION IF APPLICABLE.]
-+[LIST APPLICABLE FONT/ICON/TEMPLATE/SDK/OTHER MATERIAL LICENSES AND AUTHORIZATION ATTACHMENTS.]
-+
-+Thank you.
-```
-
-**File**: `packaging/ios/AppReviewRecordingChecklist.md` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+# iOS Guideline 2.1 补充材料与真机录屏
-+
-+对应英文回复及 Notes 草稿：[AppReviewNotes.txt](AppReviewNotes.txt)。必须按实际提交的构建补全，不能把源码检查或模拟器运行写成真机验收。当前这份文件是执行清单，不是已经完成的验收记录。
-+
-+## 当前阻塞项
-+
-+| 项目 | 当前证据与所需动作 |
-+| --- | --- |
-+| 真机 QA 与录屏 | 本次仅检测到模拟器。需要实际 iPhone 和 iPad 测试记录；录屏设备运行 Apple 要求的最新正式系统。 |
-+| 账户删除 | 已按“仅注销 OpenPencil，保留共享 ZSeven 身份及其他产品”实现源代码；仍需部署两区服务、数据库迁移及新签名认证库，再用新构建完成端到端真机验收。详见 [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md)。 |
-+| 审核登录 | 尚无已验证的审核账号。准备可持续使用且有足够权限/额度的账号，凭证只填 App Store Connect 的审核字段，不提交到 Git。 |
-+| Hosted AI / 付费 | 源码有 Hosted 账号权益访问，iOS 未实现 StoreKit 购买流程。必须确认实际收费与权益来源、适用的购买方式以及审核账号访问，不得写成“没有付费功能”。 |
-+| 协作与用户内容 | 通过邀请/地址加入，所有者接受或拒绝编辑者/查看者，访客确认所有者；未发现公开信息流。目前没有举报、屏蔽或移除已加入参与者的 UI。需要核对适用要求并补齐，不能直接填写“不适用”。 |
-+| 第三方材料 | 已有项目和字体许可证文件，但尚未完成随包字体、图标、模板、SDK 及其他材料的完整授权核对。可选图片搜索使用 Openverse / Wikimedia；搜索来源不能代替每张图片的许可及署名核对。 |
-+
-+## 录制前
-+
-+- 安装将提交审核的同一版本和 build，记录 TestFlight 构建号、设备型号、系统版本和测试日期。代码修复必须进入新构建；旧构建不会随源码更新。
-+- iPhone、iPad 都在当前支持范围内。分别测试启动、编辑、键盘、文件选择/保存/导出、登录、旋转及后台返回；保留结果和失败复现步骤。
-+- 先按删除功能发布依赖完成部署，再用一次性测试账号验证。保持审核账号可用，勿用审核账号演示删除。用户将用 iPhone 录制；iPad 仍需独立真机测试。
-+- 将 [Resources/sample.op](Resources/sample.op) 作为审核附件或提供可直接下载的地址，并在真机“文件”中准备好。该示例不会在正常启动时自动显示；通过 More > Open File 打开。
-+- 审核账号在录屏地区可登录，并实际完成一次 Hosted AI 请求；仅看到模型列表不足以证明可以调用。
-+- 本次源码验证 `bash packaging/ios/Tests/validate_sources.sh` 已通过；未生成新的 app/archive，也未做真机 QA。两地区隐私政策网页已返回 HTTP 200，内容一致；仍要在新构建中实测打开。
-+- 不在录像里暴露密码、验证码、恢复码或私人设计。输入敏感信息时使用适当遮挡，但保留完整操作顺序和成功/失败结果。
-+
-+## 一次典型流程的录屏顺序
-+
-+1. 从设备主屏幕开始录制，点击 OpenPencil 图标，等待真实启动完成。记录语言和登录地区；不要从已打开的画布或模拟器开始。
-+2. 打开 More > New File，创建文本和形状，修改文字、颜色或位置，演示撤销/重做与缩放。若实际启动进入其他首页，先录出进入编辑器的真实路径，并同步修改英文步骤。
-+3. More > Save / Save As，通过系统“文件”保存；More > Open File 再次打开，确认内容一致。再打开提供给审核员的 `sample.op`。
-+4. More > Export，选择 PNG、JPEG、SVG 或 PDF，展示系统保存界面和导出结果。iOS 不提供 WebP；iPad 额外测试其 Code 面板，别把桌面专属功能写进 iPhone 流程。
-+5. More > Sign In，展示隐私政策入口、创建账户、验证邮箱及成功登录。用一次性邮箱完成注册；另演示已有审核账号的登录路径和 More > Account。若第三方登录在该地区提供，测试其实际返回流程。
-+6. More > AI，选取该账号实际可用的 Hosted 模型，输入简短设计请求，等待真实结果，并展示结果可编辑。录出收费/权益入口及访问付费功能的实际步骤；若没有购买入口，说明其真实业务模式，不虚构 IAP 或绕过要求。
-+7. 如果本构建允许用户向他人分享内容或协作，展示完整加入/共享流程和对应权限；根据适用情况录制举报内容、屏蔽用户及处理结果。相关能力欠缺时先修复，勿用文字代替未实现的机制。
-+8. 用一次性测试账号，从 More > Account > Delete OpenPencil Account 进入删除流程，展示范围提示、身份确认、最终确认、“处理中”及完成结果。旧协作凭据需要 16 分钟失效等待，两区清理失败时可能更久；可以提供有时间标记的补充录像。确认 OpenPencil 专用账户及数据已清理，同时共享 ZSeven 身份、其他产品和钱包仍可用。不要声称通用共享 LLM 权限也已撤销。
-+9. 重新启动应用，确认删除后的本地功能仍正常。展示任何需要联网/账号的功能如何提示用户。
-+
-+可以按设备或区域提供补充录像，但每段都标明对应 build、设备和系统。最终视频必须是实际设备操作记录；链接应能直接播放，不要求审核员注册额外账号。
-+
-+## 验收记录（完成后填写）
-+
-+| 设备 / 系统 | 版本 / build | 地区 | 启动编辑与文件 | 注册登录删除 | Hosted / 付费访问 | 协作 | 证据 |
-+| --- | --- | --- | --- | --- | --- | --- | --- |
-+| iPhone：待填 | 待填 | 待填 | 未测 | 未测 | 未测 | 未测 | 视频/日志待填 |
-+| iPad：待填 | 待填 | 待填 | 未测 | 未测 | 未测 | 未测 | 视频/日志待填 |
-+
-+如某项不适用，写出提交构建中的依据及复核人，不把“未测”改写成“不适用”。模型、地区和权益由服务端决定时记录测试日期及所用账号类型，不将敏感凭证写入表格。
-+
-+## 填写与提交
-+
-+1. 补全英文草稿六项，删除所有占位符与草稿警告；每个“已完成”都要能对应上面的证据。
-+2. 将相同内容填入 App Store Connect 的审核回复和 App Review Information > Notes。登录凭证填专用审核字段；多个账号类型需要分别提供访问说明。
-+3. 上传/链接真机录屏、示例文件，以及适用的资质或授权材料。核对链接在未登录浏览器可访问。
-+4. 选择包含修复的构建，检查实际界面截图和购买项目配置，再进行提审。上传成功、提交成功、等待审核和审核通过是不同状态，应分别记录。
-+
-+## 证据入口
-+
-+- [Apple App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)：2.1 完整性/审核访问、2.3.3 截图、3.1.1 购买及 5.1.1 隐私。
-+- [Apple 账户删除说明](https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion)：支持创建账户时需提供应用内发起删除的路径；若网站完成删除，应直达删除页面。
-+- [iOS README](README.md)：构建、认证依赖、文件操作与验证边界。
-+- [设备支持配置](project.yml)：`TARGETED_DEVICE_FAMILY: "1,2"`。
-+- [More 菜单](../../crates/op-editor-ui/src/widgets/mobile_more_panel.rs) 与 [触摸入口处理](../../crates/op-host-native/src/widget_host/press_chrome_tiers.rs)：文件、AI、登录/账户及协作入口。
-+- [地区配置](Sources/SsoRegion.swift)、[SSO 客户端](Sources/SsoAuthClient.swift)、[账户页](Sources/AccountCenterViewController.swift)、[注册页](Sources/RegisterViewController.swift)：地区、登录注册及账户操作的源码依据。
-+- [Hosted 运行时](../../crates/op-hosted-models/src/lib.rs) 与 [Hosted 认证桥](../../crates/op-auth-bridge/src/real_hosted_access.rs)：登录账号提供访问与模型服务，不能从公开源码推断某个付费账号已获授权。
-+- [图片搜索](../../crates/op-engine-ffi/src/editor_image_search.rs)：可选 Openverse / Wikimedia 图片来源。
-+- [项目许可证](../../LICENSE)、[字体声明](../shared/fonts/NOTICE.txt)、[私有认证桥声明](../../crates/op-auth-bridge/NOTICE)：授权核对起点，不代表全部第三方材料已审计完成。
-```
-
-**File**: `packaging/ios/README.md` (modified, +14/-0)
-```diff
-@@ -10,6 +10,11 @@ Gestures are interpreted by the engine, not the shell: single-finger tap selects
+@@ -41,7 +41,7 @@ impl MotionExportFlags {
+ }
  
- Sign-in is platform-native: the engine's device-login flow hands its verification URL to a UIKit screen that performs email/password sign-in against the regional SSO JSON API and approves the pairing directly, while third-party providers stay inside the app: Apple runs the native AuthenticationServices sheet and exchanges its nonce-bound identity token at `POST /api/v1/auth/providers/apple/native-login` (a failure surfaces an inline error — the web page is never involved), and the other providers open the pairing login page in an in-app Safari sheet deep-linked to the tapped provider — the running pairing is approved there. Registration and password recovery are native sibling screens. The Account tile opens a native account center backed by the engine's read-only profile snapshot (the private auth runtime never exposes its device token). The third-party buttons are region-accurate: the login screen fetches `GET /api/v1/auth/providers?channel=web_mobile` from the pairing's origin, so the mainland site lists WeChat / Alipay / Douyin and the global site lists Apple / GitHub / Google without a hardcoded table. The sign-in region (Mainland China `sso.zseven.cn` / Global `sso.zseven.tech`) resolves from a persisted user choice, then an IP-informed probe of the global gateway's mainland redirect, then the device locale; changes apply on the next launch because the auth runtime initializes once per process.
+ fn motion_flags(flags: &Flags, format: &str) -> Result<Option<MotionExportFlags>, CliError> {
+-    let enabled = matches!(format, "gif" | "apng" | "png-seq" | "mp4");
++    let enabled = matches!(format, "gif" | "apng" | "png-seq" | "mp4" | "lottie");
+     if !enabled {
+         if [
+             "fps",
+@@ -55,7 +55,7 @@ fn motion_flags(flags: &Flags, format: &str) -> Result<Option<MotionExportFlags>
+         .any(|name| flags.contains_key(name))
+         {
+             return Err(CliError::usage(
+-                "motion options require gif, apng, png-seq, or mp4 export",
++                "motion options require gif, apng, png-seq, mp4, or lottie export",
+             ));
+         }
+         return Ok(None);
+@@ -136,7 +136,7 @@ pub(crate) fn map_export(flags: &Flags) -> Result<Command, CliError> {
+     let format = format_flag.or(formats_flag).unwrap_or_else(|| "png".into());
+     if !matches!(
+         format.as_str(),
+-        "png" | "jpeg" | "jpg" | "webp" | "pdf" | "gif" | "apng" | "png-seq" | "mp4"
++        "png" | "jpeg" | "jpg" | "webp" | "pdf" | "gif" | "apng" | "png-seq" | "mp4" | "lottie"
+     ) {
+         return Err(CliError::Usage(format!(
+             "unsupported export format {format:?}"
+```
+
+**File**: `crates/op-cli/src/usage.txt` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ COMMON COMMANDS:
+                                           export a page, arbitrary node, or the
+                                           current Live Canvas selection; omitting
+                                           --item is equivalent to --selection
+-  op export --item ID --output PATH --format gif|apng|png-seq|mp4 [--fps N]
++  op export --item ID --output PATH --format gif|apng|png-seq|mp4|lottie [--fps N]
+             [--duration-ms N] [--trigger mount|inView|manual] [--clip ID]
+             [--background transparent|white] [--reduced-motion [true|false]]
+                                           export a node's motion (PNG sequence
+```
+
+**File**: `crates/op-editor-core/src/motion_export.rs` (modified, +10/-1)
+```diff
+@@ -29,17 +29,25 @@ pub enum MotionExportFormat {
+     #[serde(rename = "png-seq")]
+     PngSequence,
+     Mp4,
++    Lottie,
+ }
  
-+The login, registration, and account screens expose the regional iOS privacy
-+policy in an in-app Safari sheet. Account management and privacy links follow
-+the active authentication region even after the user saves a different
-+next-launch preference. Region selection does not terminate the app.
-+
- ## Build inputs
+ impl MotionExportFormat {
+-    pub const ALL: [Self; 4] = [Self::Gif, Self::Apng, Self::PngSequence, Self::Mp4];
++    pub const ALL: [Self; 5] = [
++        Self::Gif,
++        Self::Apng,
++        Self::PngSequence,
++        Self::Mp4,
++        Self::Lottie,
++    ];
  
- From the repository root, build the archive matching the destination if it is
-@@ -71,6 +76,15 @@ hardening change requires a newly signed matrix and reviewed policy adoption.
+     pub const fn label(self) -> &'static str {
+         match self {
+             Self::Gif => "GIF",
+             Self::Apng => "APNG",
+             Self::PngSequence => "PNG ZIP",
+             Self::Mp4 => "MP4",
++            Self::Lottie => "Lottie",
+         }
+     }
  
- ## App Store / TestFlight release
+@@ -53,6 +61,7 @@ impl MotionExportFormat {
+             Self::Apng => "apng",
+             Self::PngSequence => "zip",
+             Self::Mp4 => "mp4",
++            Self::Lottie => "json",
+         }
+     }
+ }
+```
+
+**File**: `crates/op-editor-ui/src/widgets/canvas_viewport_text.rs` (modified, +1/-1)
+```diff
+@@ -275,7 +275,7 @@ fn decorate_slice(
+ /// translucent bar ("greeking") instead of running the full layout.
+ const GREEK_TEXT_MAX_DEVICE_PX: f32 = 3.0;
  
-+For Guideline 2.1 responses, fill in [AppReviewNotes.txt](AppReviewNotes.txt)
-+and follow [AppReviewRecordingChecklist.md](AppReviewRecordingChecklist.md).
-+These are preparation documents, not evidence of a completed review or
-+physical-device QA. [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md) describes the
-+OpenPencil-only deletion flow, preserved shared ZSeven data, and required
-+service/auth-matrix rollout. That rollout and the missing review evidence
-+must be completed before resubmission; source validation alone does not
-+establish App Store readiness.
-+
- The formal `v*` Rust release calls `.github/workflows/ios-app-store.yml` with
- the exact release ref and source commit. The iOS upload is intentionally
- independent of the GitHub Release asset job: an App Store Connect or review
+-pub(crate) fn paint_text_node(
++pub fn paint_text_node(
+     cx: &mut PaintCx<'_>,
+     node: &SceneNode,
+     world_rect: Rect,
+```
+
+**File**: `crates/op-editor-ui/src/widgets/export_dialog_motion.rs` (modified, +20/-0)
+```diff
+@@ -455,4 +455,24 @@ mod tests {
+             }
+         }
+     }
++    #[test]
++    fn lottie_is_selectable_and_fits_the_motion_format_row() {
++        let mut state = state();
++        let dialog = ExportDialog::for_editor(&state, 1000.0, 900.0);
++        let (rect, hit) = dialog
++            .motion_formats()
++            .find(|(_, hit)| *hit == ExportDialogHit::MotionFormat(MotionExportFormat::Lottie))
++            .unwrap();
++        assert!(rect.origin.x + rect.size.x <= dialog.rect.origin.x + dialog.rect.size.x - PAD);
++        assert!(dialog.motion_hit_enabled(hit, &state.editor_ui));
++        select(&mut state, hit);
++        let choices = motion_export_choices(&state);
++        let request = state
++            .editor_ui
++            .motion_export
++            .request(&choices, 1.0)
++            .unwrap();
++        assert_eq!(request.format, MotionExportFormat::Lottie);
++        assert_eq!(request.format.extension(), "json");
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #264** (2026-10-29): fix(install): fall back to the newest release when no stable release exists (@PerryLink)
-- **PR #262** (2026-10-27): chore(nix): update release manifest to v0.8.5 (@Kayshen-X)
-- **PR #260** (2026-11-05): fix(codegen): export a text node's fill as its color (@jayhemnani9910)
-- **PR #256** (closed): feat(canvas): bind a time uniform to shader fills (@kemalcalak)
-- **PR #252** (2026-10-08): fix(web): isolate managed editor config and repair native CI (@finiking)
-- **PR #251** (closed): feat(mcp): show agent cursor presence for client canvas writes (@gnoviawan)
+- **PR #293** (2026-11-20): fix(agent): find a brief's opening sentence at any sentence boundary (@wilderchavezl)
+- **PR #292** (2026-11-20): fix(renderer): reject cpu frame strides whose buffer size overflows (@wilderchavezl)
+- **PR #291** (2026-11-20): test(renderer): read gpu probe pixels in bottom-left gl rows (@wilderchavezl)
+- **PR #290** (2026-11-20): test(collab): write trust fixtures with explicit 0644 permissions (@wilderchavezl)
+- **PR #286** (2026-11-17): fix(desktop): fall back to visual-agnostic gl configs on nvidia egl (@wilderchavezl)
+- **PR #282** (2026-11-08): fix(mcp): accept fractional geometry in update_node and U() updates (@1AbdullahButt)
 
 ---
 
@@ -2180,40 +2249,61 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. editor): add scoped ios account deletion
+## X. test(collab): write trust fixtures with explicit 0644 permissions
 
 **RULE**:
-When implementing operations in `crates/op-auth-bridge/src/hosted_access_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/op-collab-relay-locator-server/src/production/production_check_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be4cf9c8`: editor): add scoped ios account deletion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c7f0448`: test(collab): write trust fixtures with explicit 0644 permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-auth-bridge/src/hosted_access_tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-collab-relay-locator-server/src/production/production_check_tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "product": "openpencil",
-
-#[test]
-fn legacy_or_other_product_access_cannot_bypass_product_deletion() {
-    let mut payload = fixture();
-    payload.as_object_mut().unwrap().remove("product");
-    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
-    payload["product"] = json!("another-product");
-    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
+    time::{Duration, Instant},
+    write_public_fixture(&policy_path, policy_body);
+    listener
+        .set_nonblocking(true)
+        .expect("HSM listener non-blocking");
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let mut stream = loop {
+        match listener.accept() {
+            Ok((stream, _)) => break stream,
+            Err(error)
+                if error.kind() == std::io::ErrorKind::WouldBlock && Instant::now() < deadline =>
+            {
+                thread::sleep(Duration::from_millis(10));
+            }
+            Err(_) => return,
+        }
+    };
+    stream.set_nonblocking(false).expect("HSM stream blocking");
+    write_public_fixture(path, &serde_json::to_vec(&body).expect("public keys JSON"));
 }
+
+fn write_public_fixture(path: &Path, body: &[u8]) {
+    use std::os::unix::fs::PermissionsExt as _;
+
+    std::fs::write(path, body).expect("public fixture file");
+    std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o644))
+        .expect("public fixture permissions");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    time::Duration,
+    std::fs::write(&policy_path, policy_body).expect("policy file");
+    let (mut stream, _) = listener.accept().expect("HSM accept");
+    std::fs::write(path, serde_json::to_vec(&body).expect("public keys JSON"))
+        .expect("public keys file");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be4cf9c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c7f0448` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

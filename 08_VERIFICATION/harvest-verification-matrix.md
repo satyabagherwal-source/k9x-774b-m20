@@ -11972,3 +11972,6 @@
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T01:44:40.946Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-8AB33BAA` [Domain K] | Yes (`aef740a0...`) |
 | `CYCLE-20261122-U9SI` | `2026-11-22T01:58:41.682Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md` | Yes (`d27eb2ba...`) |
 | `CYCLE-20261122-UKH5` | `2026-11-22T01:58:55.529Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9878` | Yes (`c337eb06...`) |
+| `CYCLE-20261122-7KIZ` | `2026-11-22T02:09:02.123Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | Yes (`e3f190a4...`) |
+| `CYCLE-20261122-7PWJ` | `2026-11-22T02:09:09.091Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9879` | Yes (`6c8f5d65...`) |
+| `CYCLE-20261122-7VP4` | `2026-11-22T02:09:16.600Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9880` | Yes (`ea7bef09...`) |

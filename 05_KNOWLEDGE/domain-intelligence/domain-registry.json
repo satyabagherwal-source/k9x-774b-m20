@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T01:59:01.202Z",
-  "total_records": 2308,
+  "last_updated": "2026-11-22T02:09:21.134Z",
+  "total_records": 2309,
   "domains": {
     "A": {
       "total": 17,
@@ -1466,7 +1466,7 @@
       ]
     },
     "H": {
-      "total": 547,
+      "total": 548,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2014,7 +2014,8 @@
         "domain_intelligence-technical-construction-intelligence-edge0-audio8-tts-realistic-air-core-invarian",
         "DOM-H-A2EA49E2",
         "DOM-H-149B3A5C",
-        "domain_intelligence-technical-construction-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-"
+        "domain_intelligence-technical-construction-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-",
+        "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants"
       ]
     },
     "I": {
@@ -9041,8 +9042,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "001f724f1adb4d54b9991d2cd262316e42e3dbfaf13b4017a865bb1e62d8f532",
-      "created_at": "2026-11-22T01:07:39.450Z"
+      "content_hash": "f42633de40065e2846a315b06b44b2759feb4fd9d7fa122078501b1d0f9490c0",
+      "created_at": "2026-11-22T02:09:20.492Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -21124,8 +21125,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "71f164e7257dad7cec396f122a82592751f71036a8347b1320306e45d3339ef6",
-      "created_at": "2026-11-20T21:55:15.981Z"
+      "content_hash": "30a52fefd63ad7dece1b281b3fa174fb4d19faeda4cece2f258d4933d48191a0",
+      "created_at": "2026-11-22T02:09:16.907Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -24896,8 +24897,8 @@
       "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-learnings-architecture-intelligence-paradedb-paradedb-learning.md",
       "repository": "paradedb-paradedb-learnings",
-      "content_hash": "69de61aadd5a5219aa0d878a0df0fd3d33cb7757302174b621bc30aa64f0bb30",
-      "created_at": "2026-11-20T21:55:20.859Z"
+      "content_hash": "14002608dd3728f03b00e1d82750938bc7f549f70f0a34d0961300ba76ffee5f",
+      "created_at": "2026-11-22T02:09:21.134Z"
     },
     "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants",
@@ -28027,8 +28028,8 @@
       "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3.1-Pro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-1-pro-research-knowledge-intelligence-moonshotai-kimi-k3-1.md",
       "repository": "moonshotai/Kimi-K3.1-Pro",
-      "content_hash": "bcbdfb42890c3c825c720fb97e1b6ea4368a10886fe368ae56251a4b58a63600",
-      "created_at": "2026-11-17T15:16:54.521Z"
+      "content_hash": "2a4c34f19c79db9b6223c1b7d3c06c147dfba2c2266babd944a4f281fe21c185",
+      "created_at": "2026-11-22T02:09:02.294Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar",
@@ -28036,8 +28037,8 @@
       "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3.1-pro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-1-pro-learnings-research-knowledge-intelligence-hf-moonsho.md",
       "repository": "hf-moonshotai-kimi-k3.1-pro-learnings",
-      "content_hash": "c7e7fcc7c0fe2ca86c97919c611b2353a1eee1cc08c634518e62be8981c391c8",
-      "created_at": "2026-11-17T15:16:57.502Z"
+      "content_hash": "d086a60e81ef7f3fd893eb7cfe9b840a7d436e851824dd6d89f13926f4a79027",
+      "created_at": "2026-11-22T02:09:19.980Z"
     },
     "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants",
@@ -38945,6 +38946,15 @@
       "confidence": 0.64,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-22T01:44:40.918Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ZSeven-W/openpencil Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-technical-construction-intelligence-zseven-w-openpencil-core.md",
+      "repository": "ZSeven-W/openpencil",
+      "content_hash": "3e68038ae8a3746c8707c7f637a85b90f49cd2522d57a38378b7da67edc9d231",
+      "created_at": "2026-11-22T02:09:09.418Z"
     }
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T01:32:33.724Z",
+  "updated_at": "2026-11-22T02:09:20.841Z",
   "stats": {
-    "total_discovered": 7394,
-    "approved_pending_harvest": 6995,
+    "total_discovered": 7397,
+    "approved_pending_harvest": 6998,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6975,
+      "COMMUNITY_AND_EXPERT": 6978,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -159898,6 +159898,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
         "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-E0EBB8DACA42": {
+      "id": "SRC-E0EBB8DACA42",
+      "url": "https://github.com/user-attachments/files/34356926/blur-pan-repro.zip",
+      "title": "https://github.com/user-attachments/files/34356926/blur-pan-repro.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T02:09:20.161Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-875BCB6F709F": {
+      "id": "SRC-875BCB6F709F",
+      "url": "https://github.com/user-attachments/assets/a57f0d12-782b-4639-8",
+      "title": "https://github.com/user-attachments/assets/a57f0d12-782b-4639-8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T02:09:20.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
+        "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-1F0CDD4BA771": {
+      "id": "SRC-1F0CDD4BA771",
+      "url": "https://github.com/paradedb/paradedb/actions/runs/44724576728/job/136248903688?pr=7601",
+      "title": "https://github.com/paradedb/paradedb/actions/runs/44724576728/job/136248903688?pr=7601",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T02:09:20.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
       }
     }
   }

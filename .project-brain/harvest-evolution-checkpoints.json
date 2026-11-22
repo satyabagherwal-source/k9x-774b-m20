@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T01:59:01.379Z",
+  "last_updated": "2026-11-22T02:09:21.372Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T01:59:00.350Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-22T01:07:38.874Z",
+      "processed_at": "2026-11-22T02:09:20.124Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1298,7 +1298,7 @@
       "staged_for_review": 1
     },
     "paradedb-paradedb-learnings.md": {
-      "processed_at": "2026-11-20T21:55:20.153Z",
+      "processed_at": "2026-11-22T02:09:20.755Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1453,7 +1453,7 @@
       "staged_for_review": 1
     },
     "hf-moonshotai-kimi-k3.1-pro-learnings.md": {
-      "processed_at": "2026-11-17T15:16:57.317Z",
+      "processed_at": "2026-11-22T02:09:19.797Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3693,7 +3693,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2961,
+  "total_dossiers_evaluated": 2964,
   "total_canonical_promoted": 466,
-  "total_staged_for_review": 2263
+  "total_staged_for_review": 2265
 }
