@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T07:06:00.467Z",
+  "last_updated": "2026-11-22T07:13:49.946Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18681,14 +18681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam-3d-body-dinov3",
-      "content_hash": "e7764f574f5ce0415090edb814a76487afafd1a031b18a3b0331299d08a5e487",
-      "verified_at": "2026-11-17T07:20:03.072Z",
+      "content_hash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
+      "verified_at": "2026-11-22T07:13:49.945Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:20:03.072Z"
+      "last_updated": "2026-11-22T07:13:49.945Z"
     },
     "agentes-chat/agentes-chat": {
       "repository": "agentes-chat/agentes-chat",

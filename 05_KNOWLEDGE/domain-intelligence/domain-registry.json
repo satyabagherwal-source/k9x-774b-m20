@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T07:06:11.220Z",
+  "last_updated": "2026-11-22T07:14:03.301Z",
   "total_records": 2333,
   "domains": {
     "A": {
@@ -9066,8 +9066,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4ff9aec30e556721cfb32c60258ae6fe75f8cb69c4725255ddfffb3765bac683",
-      "created_at": "2026-11-22T05:39:53.390Z"
+      "content_hash": "98039e73a9352804e18ec3493584caf6c297bf976a8e9df2c93990c1dd5cb5d7",
+      "created_at": "2026-11-22T07:14:03.301Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11724,8 +11724,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "048b34abbad3d6609a0e6d86f885ae7f86882d5798418fa1facfb9d3a16dda0b",
-      "created_at": "2026-11-22T06:58:11.346Z"
+      "content_hash": "9fcb578ac9ad177917ad82aee83899d4b2de4052ed348b2f47aad5764e273797",
+      "created_at": "2026-11-22T07:14:02.508Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -26463,8 +26463,8 @@
       "title": "Research & Knowledge Intelligence: facebook/sam-3d-body-dinov3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam-3d-body-dinov3-research-knowledge-intelligence-facebook-sam-3d-b.md",
       "repository": "facebook/sam-3d-body-dinov3",
-      "content_hash": "4142e1ef399229459d92b5cb02261adadbfc6879ce6ad16d11dc7959469779b5",
-      "created_at": "2026-11-17T07:20:03.226Z"
+      "content_hash": "45c56aeddc18cd0f291d3fc0a2fcf66011af3d51f066d32f94a76967dcefc46a",
+      "created_at": "2026-11-22T07:13:50.144Z"
     },
     "domain_intelligence-architecture-intelligence-storybookjs-storybook-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-storybookjs-storybook-core-invariants",
@@ -26481,8 +26481,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebook-sam-3d-body-dinov3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam-3d-body-dinov3-learnings-research-knowledge-intelligence-hf-face.md",
       "repository": "hf-facebook-sam-3d-body-dinov3-learnings",
-      "content_hash": "51b2b2ba8ac4b2a7d47652a22ca1ee191b6e0c41cfde0d2ee584bb1225ef4cbd",
-      "created_at": "2026-11-17T07:20:22.879Z"
+      "content_hash": "79b109d2078f3e89dabd0ecc00398f87e7906cd60a36436c52a673ea82c28532",
+      "created_at": "2026-11-22T07:14:01.873Z"
     },
     "DOM-H-F8265FBB": {
       "record_id": "DOM-H-F8265FBB",

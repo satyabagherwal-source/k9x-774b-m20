@@ -12040,3 +12040,4 @@
 | `CYCLE-20261122-JB9H` | `2026-11-22T06:58:06.149Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9902` | Yes (`170aee8e...`) |
 | `CYCLE-20261122-TF3Q` | `2026-11-22T07:05:57.686Z` | `facebook/dinov3-vitl16-pretrain-lvd1689m` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md` | Yes (`c7bb55d0...`) |
 | `CYCLE-20261122-TH8O` | `2026-11-22T07:06:00.456Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9903` | Yes (`1c9471c7...`) |
+| `CYCLE-20261122-3JHO` | `2026-11-22T07:13:49.932Z` | `facebook/sam-3d-body-dinov3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md` | Yes (`2990c101...`) |

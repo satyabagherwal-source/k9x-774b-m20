@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-A4KZ",
-    "timestamp": "2026-11-20T06:19:37.523Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "5a465d28b97bfb4649ecd6fb1cef650ab0c34c7ab58cdfc28e1eff9e4884afed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-X01M",
     "timestamp": "2026-11-20T06:37:24.730Z",
     "repository": "tmolavi/siteprobe",
@@ -7492,6 +7477,21 @@
     "contentHash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-3JHO",
+    "timestamp": "2026-11-22T07:13:49.932Z",
+    "repository": "facebook/sam-3d-body-dinov3",
+    "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
+    "contentHash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

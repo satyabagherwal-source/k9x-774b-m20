@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:06:00.464Z",
-  "total_cycles_completed": 11446,
-  "total_learnings_persisted": 11446,
+  "last_updated": "2026-11-22T07:13:49.942Z",
+  "total_cycles_completed": 11447,
+  "total_learnings_persisted": 11447,
   "total_rules_promoted": 10718,
   "history": [
-    {
-      "timestamp": "2026-11-21T14:27:48.352Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T14:27:55.223Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1396,13 @@
       "repository": "apache/maka",
       "learningId": "learn-github-apache-maka",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:13:49.942Z",
+      "repository": "facebook/sam-3d-body-dinov3",
+      "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:06:11.078Z",
+  "last_updated": "2026-11-22T07:14:03.135Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-JF5F",
+      "id": "CD-3T25",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-JF5F-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-3T25-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-QQ5X",
+      "id": "CD-3TOC",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-QQ5X-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-3TOC-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -45442,6 +45442,24 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A5104E-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-27C9E1",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-27C9E1-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-66D751",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-66D751-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-22"
     }
   ]

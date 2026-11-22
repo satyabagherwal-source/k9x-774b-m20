@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T07:06:09.537Z",
-    "lastVerified": "2026-11-22T07:06:09.537Z",
+    "lastChecked": "2026-11-22T07:14:01.518Z",
+    "lastVerified": "2026-11-22T07:14:01.518Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T06:36:18.638Z",
+    "lastChecked": "2026-11-22T07:14:01.508Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T06:36:18.638Z"
+    "lastVerified": "2026-11-22T07:14:01.508Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1127,12 +1127,12 @@
     "revisionIdentifier": "877521d6"
   },
   "provablehq-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T02:29:29.371Z",
-    "lastVerified": "2026-11-22T02:29:29.371Z",
+    "lastChecked": "2026-11-22T07:13:56.562Z",
+    "lastVerified": "2026-11-22T07:13:56.562Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1141,7 +1141,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ff15a1de"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -4163,9 +4164,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-21T02:57:49.009Z",
+    "lastChecked": "2026-11-22T07:13:58.957Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-21T02:57:49.009Z"
+    "lastVerified": "2026-11-22T07:13:58.957Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -5265,12 +5266,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "crossplane-crossplane": {
-    "name": "crossplane/crossplane",
+    "name": "crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T04:15:40.978Z",
-    "lastVerified": "2026-11-21T04:15:40.978Z",
+    "lastChecked": "2026-11-22T07:13:54.032Z",
+    "lastVerified": "2026-11-22T07:13:54.032Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -5279,7 +5280,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2088737a"
   },
   "sqlpage-sqlpage": {
     "name": "SQLPage",
@@ -6587,12 +6589,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqldelight-sqldelight": {
-    "name": "sqldelight/sqldelight",
+    "name": "sqldelight",
     "officialUrl": "https://github.com/sqldelight/sqldelight",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-19T03:39:13.553Z",
-    "lastVerified": "2026-11-19T03:39:13.553Z",
+    "lastChecked": "2026-11-22T07:13:51.619Z",
+    "lastVerified": "2026-11-22T07:13:51.619Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqldelight-sqldelight",
@@ -6601,7 +6603,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "74b446bc"
   },
   "databricks-click": {
     "name": "click",
@@ -7079,9 +7082,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-11-20T21:54:57.764Z",
+    "lastChecked": "2026-11-22T07:13:46.628Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-11-20T21:54:57.764Z"
+    "lastVerified": "2026-11-22T07:13:46.628Z"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
@@ -13896,6 +13899,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 18,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-facebook-sam-3d-body-dinov3": {
+    "name": "facebook/sam-3d-body-dinov3",
+    "officialUrl": "https://huggingface.co/facebook/sam-3d-body-dinov3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T07:13:49.291Z",
+    "lastVerified": "2026-11-22T07:13:49.291Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
+    "contentHash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

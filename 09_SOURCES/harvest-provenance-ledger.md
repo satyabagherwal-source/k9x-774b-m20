@@ -12073,3 +12073,4 @@ Every entry in this ledger must capture:
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `056c7016` | Multi-dimensional audit evidence | 2026-11-22T06:58:06.153Z |
 | `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m` | `https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-22T07:05:57.690Z |
 | `learn-github-apache-maka` | `https://github.com/apache/maka` | `ac52d482` | Multi-dimensional audit evidence | 2026-11-22T07:06:00.460Z |
+| `learn-huggingface-facebook-sam-3d-body-dinov3` | `https://huggingface.co/facebook/sam-3d-body-dinov3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-22T07:13:49.937Z |

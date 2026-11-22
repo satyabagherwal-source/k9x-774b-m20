@@ -12415,8 +12415,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam-3d-body-dinov3",
     "sourceVersion": "hf-facebook-sam-3d-body-dinov3",
     "license": "Open-Source",
-    "contentHash": "e7764f574f5ce0415090edb814a76487afafd1a031b18a3b0331299d08a5e487",
-    "lastHarvestedAt": "2026-11-17T07:20:03.065Z",
+    "contentHash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
+    "lastHarvestedAt": "2026-11-22T07:13:49.937Z",
     "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3"
   },
   "agentes-chat-agentes-chat": {
