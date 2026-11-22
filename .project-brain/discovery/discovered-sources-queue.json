@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T10:04:02.060Z",
+  "updated_at": "2026-11-22T11:14:27.683Z",
   "stats": {
-    "total_discovered": 7480,
-    "approved_pending_harvest": 7079,
+    "total_discovered": 7485,
+    "approved_pending_harvest": 7084,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7057,
+      "COMMUNITY_AND_EXPERT": 7062,
       "OFFICIAL_DOCUMENTATION": 244,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -161776,6 +161776,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
         "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-65719AAE4F74": {
+      "id": "SRC-65719AAE4F74",
+      "url": "https://github.com/abue-ammar/tinycast",
+      "title": "https://github.com/abue-ammar/tinycast",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T11:14:27.485Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
+        "fileName": "abue-ammar-tinycast-learnings.md"
+      }
+    },
+    "SRC-C04CDAAABF44": {
+      "id": "SRC-C04CDAAABF44",
+      "url": "https://github.com/abue-ammar/tinycast/discussions/1956",
+      "title": "https://github.com/abue-ammar/tinycast/discussions/1956",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T11:14:27.536Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
+        "fileName": "abue-ammar-tinycast-learnings.md"
+      }
+    },
+    "SRC-C5706C046980": {
+      "id": "SRC-C5706C046980",
+      "url": "https://github.com/abue-ammar/tinycast/discussions/1891",
+      "title": "https://github.com/abue-ammar/tinycast/discussions/1891",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T11:14:27.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
+        "fileName": "abue-ammar-tinycast-learnings.md"
+      }
+    },
+    "SRC-018A55CF636E": {
+      "id": "SRC-018A55CF636E",
+      "url": "https://github.com/user-attachments/assets/f4a697aa-3bf3-4970-ab3e-f0bd8d7d334a",
+      "title": "https://github.com/user-attachments/assets/f4a697aa-3bf3-4970-ab3e-f0bd8d7d334a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T11:14:27.634Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
+        "fileName": "abue-ammar-tinycast-learnings.md"
+      }
+    },
+    "SRC-D5A115FF05B0": {
+      "id": "SRC-D5A115FF05B0",
+      "url": "https://github.com/user-attachments/assets/c141556f-af94-475b-9580-e39a48729bdf",
+      "title": "https://github.com/user-attachments/assets/c141556f-af94-475b-9580-e39a48729bdf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T11:14:27.683Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
+        "fileName": "abue-ammar-tinycast-learnings.md"
       }
     }
   }

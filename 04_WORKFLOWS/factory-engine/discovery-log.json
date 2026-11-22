@@ -21916,5 +21916,20 @@
     "downloads": 0,
     "qualityScore": 1050,
     "discoveredAt": "2026-11-22T07:25:12.019Z"
+  },
+  {
+    "name": "tinycast",
+    "fullName": "abue-ammar/tinycast",
+    "url": "https://github.com/abue-ammar/tinycast",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A native macOS launcher for everyday productivity. Lightweight and open source.",
+    "stars": 9693,
+    "forks": 617,
+    "openIssues": 1,
+    "language": "Swift",
+    "qualityScore": 5284,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-22T11:12:08.902Z"
   }
 ]

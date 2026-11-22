@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T10:55:08.618Z",
-  "total_records": 2346,
+  "last_updated": "2026-11-22T11:14:29.462Z",
+  "total_records": 2348,
   "domains": {
     "A": {
       "total": 17,
@@ -994,7 +994,7 @@
       ]
     },
     "F": {
-      "total": 91,
+      "total": 93,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1086,7 +1086,9 @@
         "domain_intelligence-design-intelligence-meituan-longcat-longcat-2-5-core-invariants",
         "domain_intelligence-design-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-invariants",
         "domain_intelligence-design-intelligence-medialab-xan-core-invariants",
-        "domain_intelligence-design-intelligence-medialab-xan-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-medialab-xan-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants",
+        "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants"
       ]
     },
     "G": {
@@ -8161,8 +8163,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "75a5f3bf920f28153601230eb92afd0ae58bbc8c2f10913c05d719771979a1fe",
-      "created_at": "2026-11-22T10:18:09.076Z"
+      "content_hash": "7f50a8d1ead5cf9c59724395dad91f24c4c0cab91212e8e662f74bd410b9951f",
+      "created_at": "2026-11-22T11:14:29.462Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -24517,8 +24519,8 @@
       "title": "Research & Knowledge Intelligence: n4ze3m/tiny-voca Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-n4ze3m-tiny-voca-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invari.md",
       "repository": "n4ze3m/tiny-voca",
-      "content_hash": "f61e941878899ae71ddf252493dfe6d46beac6f136e1c6b9c0019a9471d50e27",
-      "created_at": "2026-11-16T18:01:34.948Z"
+      "content_hash": "943827916fc0e7307e7993e12e28ad2318158c70ea9a48d453e2875923433936",
+      "created_at": "2026-11-22T11:14:15.877Z"
     },
     "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-yazinsai-openoats-core-invariants",
@@ -24577,8 +24579,8 @@
       "title": "Research & Knowledge Intelligence: hf-n4ze3m-tiny-voca-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-n4ze3m-tiny-voca-learnings-research-knowledge-intelligence-hf-n4ze3m-tiny-voc.md",
       "repository": "hf-n4ze3m-tiny-voca-learnings",
-      "content_hash": "40d397d9aaec84ee39a918043dc65538d8767c9d526fb7f27581369dd353fe65",
-      "created_at": "2026-11-16T18:02:18.773Z"
+      "content_hash": "dc4b0e5c389f77d9f87ad8acb64a22768c43df8a1c345113f369ad72c9eea323",
+      "created_at": "2026-11-22T11:14:28.583Z"
     },
     "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants",
@@ -39548,6 +39550,24 @@
       "repository": "xevrion-hatchzip-learnings",
       "content_hash": "6472e6eef950379910f1456575169ea0f1e597e94ed863fcf081458fe341522b",
       "created_at": "2026-11-22T10:30:02.903Z"
+    },
+    "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: abue-ammar/tinycast Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-abue-ammar-tinycast-design-intelligence-abue-ammar-tinycast-core-invariants.md",
+      "repository": "abue-ammar/tinycast",
+      "content_hash": "4e9370ea5da4b34cbc743a14526298f3ef786a0c843f459fe167d798d62222b8",
+      "created_at": "2026-11-22T11:14:17.602Z"
+    },
+    "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: abue-ammar-tinycast-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-abue-ammar-tinycast-learnings-design-intelligence-abue-ammar-tinycast-learnings-.md",
+      "repository": "abue-ammar-tinycast-learnings",
+      "content_hash": "2bb21afdd82abdad35128802ed58dae6d6e7f09d963c14e1417e10998ff70143",
+      "created_at": "2026-11-22T11:14:28.065Z"
     }
   }
 }

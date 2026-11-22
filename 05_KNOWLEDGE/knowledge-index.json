@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T10:55:08.988Z",
-  "total_verified_learnings": 9070,
+  "last_updated": "2026-11-22T11:14:29.462Z",
+  "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23550,
+  "total_items": 23558,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "75a5f3bf920f28153601230eb92afd0ae58bbc8c2f10913c05d719771979a1fe",
+      "content_hash": "7f50a8d1ead5cf9c59724395dad91f24c4c0cab91212e8e662f74bd410b9951f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T10:18:09.076Z"
+      "persisted_at": "2026-11-22T11:14:29.462Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -260005,7 +260005,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/n4ze3m/tiny-voca",
       "source_version": "hf-n4ze3m-tiny-voca",
-      "content_hash": "abdfd71d8a7453ad86f44304e9cd79d05affff37bf328761db55a28439946fa0",
+      "content_hash": "4b264235e1fb10c6991ee890d0b72f61bb69a4b5654e5d7fbde32c64adde8048",
       "dossier_path": "07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md",
       "promoted_rules": [],
@@ -260014,7 +260014,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:01:34.656Z",
+      "verified_at": "2026-11-22T11:14:15.458Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260031,9 +260031,9 @@
       "title": "Research & Knowledge Intelligence: n4ze3m/tiny-voca Core Invariants",
       "repository": "n4ze3m/tiny-voca",
       "source_version": "hf-n4ze3m-tiny-voca",
-      "content_hash": "f61e941878899ae71ddf252493dfe6d46beac6f136e1c6b9c0019a9471d50e27",
+      "content_hash": "943827916fc0e7307e7993e12e28ad2318158c70ea9a48d453e2875923433936",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T18:01:34.948Z"
+      "persisted_at": "2026-11-22T11:14:15.877Z"
     },
     "learn-github-yazinsai-openoats": {
       "learning_id": "learn-github-yazinsai-openoats",
@@ -260167,9 +260167,9 @@
       "title": "Research & Knowledge Intelligence: hf-n4ze3m-tiny-voca-learnings Core Invariants",
       "repository": "hf-n4ze3m-tiny-voca-learnings",
       "source_version": "HEAD",
-      "content_hash": "40d397d9aaec84ee39a918043dc65538d8767c9d526fb7f27581369dd353fe65",
+      "content_hash": "dc4b0e5c389f77d9f87ad8acb64a22768c43df8a1c345113f369ad72c9eea323",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T18:02:18.773Z"
+      "persisted_at": "2026-11-22T11:14:28.583Z"
     },
     "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-yazinsai-openoats-learnings-core-invariants",
@@ -320379,6 +320379,125 @@
       "content_hash": "618566750b2e83bff951e4f15dcd5b7a852e4e6c9ac0a2ae9efcb484b40137da",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T10:55:06.756Z"
+    },
+    "learn-github-abue-ammar-tinycast": {
+      "learning_id": "learn-github-abue-ammar-tinycast",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "abue-ammar/tinycast",
+      "repository": "abue-ammar/tinycast",
+      "slug": "abue-ammar-tinycast",
+      "platform": "github",
+      "source_url": "https://github.com/abue-ammar/tinycast",
+      "source_version": "876b61dc",
+      "content_hash": "7a2fa35dee8ed7a427981124efdfcec0ab92532d19ace20fd350bab362b01f7c",
+      "dossier_path": "07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9923,
+          "title": "stop re-checking access every minute without a grant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T11:14:17.036Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9923": {
+      "learning_id": "rule-9923",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9923,
+      "title": "stop re-checking access every minute without a grant",
+      "source_url": "https://github.com/abue-ammar/tinycast",
+      "source_version": "876b61dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T11:14:17.036Z"
+    },
+    "candidate_directive-stop-re-checking-access-every-minute-without-a-grant": {
+      "item_id": "candidate_directive-stop-re-checking-access-every-minute-without-a-grant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ORTV-stop-re-checking-access-every-minute-without-a-grant.md",
+      "title": "stop re-checking access every minute without a grant",
+      "repository": "abue-ammar/tinycast",
+      "source_version": "876b61dc",
+      "content_hash": "fb26f92f9f716b4da9e3feba79e3f6754580c4a5726f21d49f19927e006d65d0",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T11:14:17.447Z"
+    },
+    "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-abue-ammar-tinycast-design-intelligence-abue-ammar-tinycast-core-invariants.md",
+      "title": "Design Intelligence: abue-ammar/tinycast Core Invariants",
+      "repository": "abue-ammar/tinycast",
+      "source_version": "876b61dc",
+      "content_hash": "4e9370ea5da4b34cbc743a14526298f3ef786a0c843f459fe167d798d62222b8",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T11:14:17.602Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-abue-ammar-tinycast": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-abue-ammar-tinycast",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/abue-ammar-tinycast-verification-protocol-empirical-defect-shield-for-abue-ammar.md",
+      "title": "Verification Protocol: Empirical Defect Shield for abue-ammar/tinycast",
+      "repository": "abue-ammar/tinycast",
+      "source_version": "876b61dc",
+      "content_hash": "4c1306d2015e74c04201cfce3d0acb477c4337fa559cb25a1bb38bfb2063a407",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T11:14:17.765Z"
+    },
+    "candidate_directive-calendar-stop-re-checking-access-every-minute-without-a-grant": {
+      "item_id": "candidate_directive-calendar-stop-re-checking-access-every-minute-without-a-grant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OZWJ-calendar-stop-re-checking-access-every-minute-without-a-grant.md",
+      "title": "calendar): stop re-checking access every minute without a grant",
+      "repository": "abue-ammar-tinycast-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3631002c36d84234b20bf75e4353d7bdd5e408a4b5eb74a79ac8fc9ac98945eb",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T11:14:27.910Z"
+    },
+    "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-abue-ammar-tinycast-learnings-design-intelligence-abue-ammar-tinycast-learnings-.md",
+      "title": "Design Intelligence: abue-ammar-tinycast-learnings Core Invariants",
+      "repository": "abue-ammar-tinycast-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2bb21afdd82abdad35128802ed58dae6d6e7f09d963c14e1417e10998ff70143",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T11:14:28.065Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-abue-ammar-tinycast-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-abue-ammar-tinycast-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/abue-ammar-tinycast-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for abue-ammar-tinycast-learnings",
+      "repository": "abue-ammar-tinycast-learnings",
+      "source_version": "HEAD",
+      "content_hash": "40d82c2099fc0de3109e57463406bf7beec93ce733d2ac2370db332ba2e90d2c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T11:14:28.234Z"
     }
   },
   "ai-builder-brain": {

@@ -12075,3 +12075,5 @@
 | `CYCLE-20261122-3SNA` | `2026-11-22T10:29:59.110Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9921` | Yes (`83ebdd27...`) |
 | `CYCLE-20261122-ZRD0` | `2026-11-22T10:54:50.436Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9922` | Yes (`05d2cf3a...`) |
 | `CYCLE-20261122-017R` | `2026-11-22T10:55:03.207Z` | `HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf-learnings.md` | Yes (`a0049ab9...`) |
+| `CYCLE-20261122-OQGT` | `2026-11-22T11:14:15.677Z` | `n4ze3m/tiny-voca` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md` | Yes (`4b264235...`) |
+| `CYCLE-20261122-ORNV` | `2026-11-22T11:14:17.227Z` | `abue-ammar/tinycast` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9923` | Yes (`7a2fa35d...`) |

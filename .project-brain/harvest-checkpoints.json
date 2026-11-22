@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T10:55:03.222Z",
+  "last_updated": "2026-11-22T11:14:17.240Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19161,14 +19161,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
-      "content_hash": "abdfd71d8a7453ad86f44304e9cd79d05affff37bf328761db55a28439946fa0",
-      "verified_at": "2026-11-16T18:01:34.813Z",
+      "content_hash": "4b264235e1fb10c6991ee890d0b72f61bb69a4b5654e5d7fbde32c64adde8048",
+      "verified_at": "2026-11-22T11:14:15.689Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:01:34.813Z"
+      "last_updated": "2026-11-22T11:14:15.689Z"
     },
     "yazinsai/OpenOats": {
       "repository": "yazinsai/OpenOats",
@@ -19889,6 +19889,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-22T07:28:23.470Z"
+    },
+    "abue-ammar/tinycast": {
+      "repository": "abue-ammar/tinycast",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-abue-ammar-tinycast",
+      "content_hash": "7a2fa35dee8ed7a427981124efdfcec0ab92532d19ace20fd350bab362b01f7c",
+      "verified_at": "2026-11-22T11:14:17.239Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-22T11:14:17.239Z"
     }
   },
   "repos": {

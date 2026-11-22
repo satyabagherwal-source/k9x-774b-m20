@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-E8YT",
-    "timestamp": "2026-11-20T11:30:45.605Z",
-    "repository": "touchlab/Kermit",
-    "learningId": "learn-github-touchlab-kermit",
-    "contentHash": "688b612d2e6ae14d071eda6f2095c5c431d04213691815c7cd64fcb64aa4c947",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-EBPK",
-    "timestamp": "2026-11-20T11:30:49.160Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "079cb7008f85d94f92e6e9c7d7e939281396da52bed046b0746b08d1c4afd9a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-EDCX",
     "timestamp": "2026-11-20T11:30:51.297Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7492,6 +7462,36 @@
     "contentHash": "a0049ab9f1f541048aad2a734fccd4a2900a8bd80145239a8e4df04e9bea215f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-OQGT",
+    "timestamp": "2026-11-22T11:14:15.677Z",
+    "repository": "n4ze3m/tiny-voca",
+    "learningId": "learn-huggingface-n4ze3m-tiny-voca",
+    "contentHash": "4b264235e1fb10c6991ee890d0b72f61bb69a4b5654e5d7fbde32c64adde8048",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-ORNV",
+    "timestamp": "2026-11-22T11:14:17.227Z",
+    "repository": "abue-ammar/tinycast",
+    "learningId": "learn-github-abue-ammar-tinycast",
+    "contentHash": "7a2fa35dee8ed7a427981124efdfcec0ab92532d19ace20fd350bab362b01f7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

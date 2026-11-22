@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T10:55:03.218Z",
-  "total_cycles_completed": 11480,
-  "total_learnings_persisted": 11480,
-  "total_rules_promoted": 10737,
+  "last_updated": "2026-11-22T11:14:17.237Z",
+  "total_cycles_completed": 11482,
+  "total_learnings_persisted": 11482,
+  "total_rules_promoted": 10738,
   "history": [
-    {
-      "timestamp": "2026-11-21T17:28:08.249Z",
-      "repository": "XHToken/Spark-X2.6-4B-GGUF",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T17:28:16.863Z",
-      "repository": "open-policy-agent/gatekeeper",
-      "learningId": "learn-github-open-policy-agent-gatekeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T17:41:46.157Z",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
@@ -1403,6 +1389,20 @@
       "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
       "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T11:14:15.687Z",
+      "repository": "n4ze3m/tiny-voca",
+      "learningId": "learn-huggingface-n4ze3m-tiny-voca",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T11:14:17.237Z",
+      "repository": "abue-ammar/tinycast",
+      "learningId": "learn-github-abue-ammar-tinycast",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
