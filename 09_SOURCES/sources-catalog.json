@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "6ec93e8ff27f909ed04c68725ea90ffcff0dbad10ce2f447a2c7ba067b689b76",
-    "lastHarvestedAt": "2026-11-18T14:24:06.805Z",
+    "contentHash": "8e0c09941b93b70a9deb05fe8291100e14d1c8c2e94fc5726d8fd0658aba97d6",
+    "lastHarvestedAt": "2026-11-22T21:13:17.212Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "6c211938",
+    "sourceVersion": "d5abe4bf",
     "license": "MIT",
-    "contentHash": "18275a11a81b54d76ee74bc37e36fdc497ae34384a1cf12bef3ecf2cd9446034",
-    "lastHarvestedAt": "2026-11-21T12:37:57.313Z",
+    "contentHash": "b243dab580568dc3c7438581e494927dcecdf693eda2684f7d7e9bdfdf5e6200",
+    "lastHarvestedAt": "2026-11-22T21:09:19.237Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-7QU2",
-    "timestamp": "2026-11-20T23:05:32.570Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "969daa4f4c7371a00518595a1f1cb7a11c8a9e0ec05e83fa79d7e07ceb7a1df0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-7T9Z",
-    "timestamp": "2026-11-20T23:05:35.735Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "0cda0857631848867ec9438ded6730d1d7c75ce53c0aa8ac2f6b7fc010099c0b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-HZCM",
     "timestamp": "2026-11-20T23:13:30.166Z",
     "repository": "sveltejs/svelte",
@@ -7492,6 +7462,36 @@
     "contentHash": "7256a66047c0283109c84d18fcde2393dd8c0b2a6c4f45338847ea5719e4c63b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-XZI7",
+    "timestamp": "2026-11-22T21:09:19.231Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "b243dab580568dc3c7438581e494927dcecdf693eda2684f7d7e9bdfdf5e6200",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-334N",
+    "timestamp": "2026-11-22T21:13:17.207Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "8e0c09941b93b70a9deb05fe8291100e14d1c8c2e94fc5726d8fd0658aba97d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

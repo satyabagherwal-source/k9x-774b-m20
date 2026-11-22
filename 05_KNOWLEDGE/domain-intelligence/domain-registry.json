@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T20:56:17.954Z",
-  "total_records": 2380,
+  "last_updated": "2026-11-22T21:14:47.872Z",
+  "total_records": 2384,
   "domains": {
     "A": {
       "total": 19,
@@ -1001,7 +1001,7 @@
       ]
     },
     "F": {
-      "total": 95,
+      "total": 97,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1097,11 +1097,13 @@
         "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants",
         "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants",
         "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants",
-        "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-akhilaaa3-jev-omni-core-invariants",
+        "DOM-F-892076A7"
       ]
     },
     "G": {
-      "total": 403,
+      "total": 404,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1505,11 +1507,12 @@
         "domain_intelligence-architecture-intelligence-yashabcyber7-nexadroid-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-twostraws-controlroom-core-invariants",
         "domain_intelligence-architecture-intelligence-apache-pinot-core-invariants",
-        "domain_intelligence-architecture-intelligence-twostraws-controlroom-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-twostraws-controlroom-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 570,
+      "total": 571,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2080,7 +2083,8 @@
         "domain_intelligence-technical-construction-intelligence-comfy-org-minimax-h3-core-invariants",
         "DOM-H-833AC1DF",
         "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar",
-        "DOM-H-17797BC1"
+        "DOM-H-17797BC1",
+        "DOM-H-7A8AC6A4"
       ]
     },
     "I": {
@@ -8150,8 +8154,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "828bfd356b4cdd844f2faca7e71a093df4289c1ffb4d76014ae4b964bf5545f5",
-      "created_at": "2026-11-22T20:56:17.954Z"
+      "content_hash": "ec7c2a4e8745795b784bd65433d5d8aa935b1254485f5b104d27980b8b1756c9",
+      "created_at": "2026-11-22T21:14:47.872Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -16219,10 +16223,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "4d103cb65c6325ac8efa9b08e75ab05640437f5a826865917ce93fe6c2dda4f0",
-      "created_at": "2026-11-22T14:17:17.656Z"
+      "content_hash": "37017655d8dfbece6fe7cf1743c9a9d474aa89664cb9438b98f4d4aaef9207cf",
+      "created_at": "2026-11-22T21:09:19.767Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -18712,8 +18716,8 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
       "repository": "hmbown-codewhale-learnings",
-      "content_hash": "ccede5c5c058474693da24426807f7926e67c93fbda81e848efd426f0a922142",
-      "created_at": "2026-11-21T12:38:14.036Z"
+      "content_hash": "c69423a2be6b3dbce1a567d750da38bd3b36883a7be179748408ba9cea288396",
+      "created_at": "2026-11-22T21:13:21.968Z"
     },
     "DOM-D-D6B073D5": {
       "record_id": "DOM-D-D6B073D5",
@@ -39979,6 +39983,92 @@
       "repository": "twostraws-controlroom-learnings",
       "content_hash": "3211e438cde6f0bff53da60dae8f687d75b9bede9d0940ec8c160e8348f3fd7f",
       "created_at": "2026-11-22T20:27:49.750Z"
+    },
+    "domain_intelligence-design-intelligence-akhilaaa3-jev-omni-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-akhilaaa3-jev-omni-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: akhilaaa3/Jev-Omni Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-akhilaaa3-jev-omni-design-intelligence-akhilaaa3-jev-omni-core-invariants.md",
+      "repository": "akhilaaa3/Jev-Omni",
+      "content_hash": "661237a56d236b8e9c7f76b8c9d979a532259c959659f73ad27e78d374b46dee",
+      "created_at": "2026-11-22T21:13:17.817Z"
+    },
+    "DOM-F-892076A7": {
+      "record_id": "DOM-F-892076A7",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Boundary Token Leakage in Autoregressive Sampling (BUG-JEV-01)",
+      "content": "Special tokens demarcating structural multimodal blocks must be hard-suppressed via runtime logit processors during inference.",
+      "content_hash": "81ac23b0296024e27b2b976e4d7bf92e52e077058a40199594071772e422b088",
+      "summary": "The unified vocabulary encompasses all multimodal tokens. Because the underlying cross-entropy loss during pretraining penalizes the model f -> Special tokens demarcating structural multimodal blocks must be hard-suppressed via runtime logit processors during inference.",
+      "provenance": {
+        "source_uri": "project://hf-akhilaaa3-jev-omni/hf-akhilaaa3-jev-omni-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T21:13:22.592Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-akhilaaa3-jev-omni)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`generation_config.json` explicitly mandates:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T21:14:00.052Z"
+    },
+    "DOM-H-7A8AC6A4": {
+      "record_id": "DOM-H-7A8AC6A4",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Infinite Audio Attention Memory Depletion (BUG-JEV-02)",
+      "content": "High-capacity multi-modal transformers must implement hard frontend ingestion clamps prior to token embedding.",
+      "content_hash": "f5d7f8b5b455da2fb26d5079adc7a4eb69d7f8960ef2eb6086212d9f6f21eb84",
+      "summary": "The quadratic $O(L^2)$ attention mechanism in the periodic full-attention layers (every 6th layer) experiences explosive memory growth when  -> High-capacity multi-modal transformers must implement hard frontend ingestion clamps prior to token embedding.",
+      "provenance": {
+        "source_uri": "project://hf-akhilaaa3-jev-omni/hf-akhilaaa3-jev-omni-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T21:13:22.592Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-akhilaaa3-jev-omni)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Documentation invariant in `README.md`: *\"Audio is capped at 30 seconds; video uses 16 frames.\"* Audio config dictates `audio_samples_per_token: 640`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T21:14:45.118Z"
+    },
+    "domain_intelligence-architecture-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: hf-akhilaaa3-jev-omni-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hf-akhilaaa3-jev-omni-learnings-architecture-intelligence-hf-akhilaaa3-jev-omni-.md",
+      "repository": "hf-akhilaaa3-jev-omni-learnings",
+      "content_hash": "978b94c8ae09bce14b9ee3981904e9115420a07e651589bffe31f679eaf50913",
+      "created_at": "2026-11-22T21:14:46.267Z"
     }
   }
 }

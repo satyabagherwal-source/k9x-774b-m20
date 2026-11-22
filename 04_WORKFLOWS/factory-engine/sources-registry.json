@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T20:27:42.733Z",
-    "lastVerified": "2026-11-22T20:27:42.733Z",
+    "lastChecked": "2026-11-22T21:09:26.996Z",
+    "lastVerified": "2026-11-22T21:09:26.996Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T20:56:14.165Z",
-    "lastVerified": "2026-11-22T20:56:14.165Z",
+    "lastChecked": "2026-11-22T21:13:21.159Z",
+    "lastVerified": "2026-11-22T21:13:21.159Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -259,9 +259,9 @@
   "pathwaycom-llm-app": {
     "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-11-21T21:19:42.819Z",
+    "lastChecked": "2026-11-22T21:09:24.480Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-21T21:19:42.819Z"
+    "lastVerified": "2026-11-22T21:09:24.480Z"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -1454,14 +1454,14 @@
     "officialUrl": "https://github.com/Hmbown/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T12:37:56.277Z",
-    "lastVerified": "2026-11-21T12:37:56.277Z",
+    "lastChecked": "2026-11-22T21:09:17.776Z",
+    "lastVerified": "2026-11-22T21:09:17.776Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "18275a11a81b54d76ee74bc37e36fdc497ae34384a1cf12bef3ecf2cd9446034",
+    "contentHash": "b243dab580568dc3c7438581e494927dcecdf693eda2684f7d7e9bdfdf5e6200",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1521,9 +1521,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-22T16:28:17.527Z",
+    "lastChecked": "2026-11-22T21:09:22.175Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-22T16:28:17.527Z"
+    "lastVerified": "2026-11-22T21:09:22.175Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2340,8 +2340,8 @@
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T22:16:19.603Z",
-    "lastVerified": "2026-11-21T22:16:19.603Z",
+    "lastChecked": "2026-11-22T21:09:19.558Z",
+    "lastVerified": "2026-11-22T21:09:19.558Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
@@ -2529,13 +2529,13 @@
     "officialUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T14:24:06.042Z",
-    "lastVerified": "2026-11-18T14:24:06.042Z",
+    "lastChecked": "2026-11-22T21:09:14.643Z",
+    "lastVerified": "2026-11-22T21:09:14.643Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "6ec93e8ff27f909ed04c68725ea90ffcff0dbad10ce2f447a2c7ba067b689b76",
-    "promotedRulesCount": 0,
+    "contentHash": "8e0c09941b93b70a9deb05fe8291100e14d1c8c2e94fc5726d8fd0658aba97d6",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -9225,9 +9225,9 @@
   "apppear-chartview": {
     "name": "ChartView",
     "officialUrl": "https://github.com/AppPear/ChartView",
-    "lastChecked": "2026-11-19T22:05:01.596Z",
+    "lastChecked": "2026-11-22T21:09:16.964Z",
     "revisionIdentifier": "df0b2641",
-    "lastVerified": "2026-11-19T22:05:01.596Z"
+    "lastVerified": "2026-11-22T21:09:16.964Z"
   },
   "serpapi-google-search-results-ruby": {
     "name": "google-search-results-ruby",

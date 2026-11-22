@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T12:38:13.761Z",
+  "timestamp": "2026-11-22T21:13:21.597Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hmbown-codewhale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hmbown-codewhale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T12:38:13.761Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T21:13:21.597Z`  
 > **Learning ID**: `LEARN-EVO-hmbown-codewhale-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `6c211938`  
+> **Source Version**: `d5abe4bf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:37:56.283Z  
+> **Timestamp**: 2026-11-22T21:09:17.930Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:37:56.277Z  
+> **Harvest Timestamp**: 2026-11-22T21:09:17.776Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41193 stars
+- **Stars / Engagement**: 41197 stars
 
 ---
 
@@ -1991,11 +1991,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7452** (2026-11-22): **fix(tui): keep a streamed delta in the cell its own kind owns**
+  *Symptoms*: fix(tui): keep a streamed delta in the cell its own kind owns  ## What and why  A block's kind is decided by its start event alone. When a gateway opens a text block in the middle of a thinking stream and then keeps sending thinking deltas, block 0 stays marked text: `commit_streaming_display_tick` reads `block_is_thinking(0)`, gets false, and writes the reasoning into the assistant body. One reasoning sentence is then split across the thinking card and the prose that follows it.  This is the same visible defect as #7123, with the two block kinds swapped: the PR that fixed #7123 taught the display beat to route by the block's own kind, but the kind itself is only ever set by a start event, so a gateway that starts a block of the other kind mid-stream poisons it.  `StreamingState::set_block_kind` relabels one live block in place. Unlike `reset` it leaves every other block and both accumulated counters alone. `streaming_thinking::resync_block_kind` delivers the pending tail to the cell the old kind owned first, then relabels; a relabel away from thinking also finalizes the reasoning card and stashes its text, so the spinner stops and replay still has the words. Both delta handlers call it before pushing, so the normal Anthropic ordering returns after one comparison.  ## Issue  Refs #7123  ## How I tested it  - `cargo fmt --all -- --check` — clean. - `cargo check -p codewhale-tui --tests --lib -p codewhale-tui-kit` — clean. - `cargo test -p codewhale-tui-kit --lib` — `test resul
+
 - **Issue #7449** (2026-11-21): **fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842)**
   *Symptoms*: ## What and why  The `.late-usage/<id>.json` ledger keeps a 1 MiB bound and refused the whole write when adding a record would cross it. Diagnostic-only receipts — the route-decision evidence written by `persist_late_decision_receipt` — carry no spend, but they count toward that bound and can fill it on their own.  This makes the write compact instead of refusing: when a candidate would exceed 1 MiB, drop the oldest diagnostic-only records until it fits, and keep every spend-bearing record (settled or unresolved) unchanged. Replay still dedupes by `source_fingerprint`, so no spend is forgotten or double-counted.  ## Where this came from  Refs #6842. This is the sidecar half of the issue; bounding the unordered replay index (`usage_source_fingerprints`) and the retained journal archive policy remain open there.  ## How I tested it  - `cargo test -p codewhale-engine --lib oversized_ledger_compacts_diagnostic_receipts_before_failing` — 1 passed (the new fixture builds a ledger over 1 MiB with diagnostic + spend records; after the write, all spend records survive, the diagnostic count shrinks, and the file is within the bound) - The existing bound tests still pass: a ledger made only of spend-bearing records still returns `InvalidData` rather than silently truncating a receipt. - `cargo fmt --all -- --check` — passed - The `Behaviour:` line is in the commit body; `scripts/check-behaviour-line.py` arrives with #7445 and is not on this branch yet.  ## Checklist  - [x] One focused c
-
-- **Issue #7431** (2026-11-21): **fix(engine): classify local read-only deferred tools as Safe in get_tool_category**
-  *Symptoms*: ## What and why  `crates/engine/src/core/authority.rs` `get_tool_category()` still left a number of registered `ToolCapability::ReadOnly` local tools, canonical read-action targets, and legacy `tool_search` spellings unclassified, so they fell through to `ToolCategory::Unknown` and Auto-Review routed every call to `AskUser` (`auto_review.rs:1582`).  Each candidate tool from #7407 was audited individually against its implementation and capabilities before classifying:  ### Classified as `ToolCategory::Safe`  | Tool / Target | Rationale | | --- | --- | | `is_tool_search_tool(name)` (`tool_search`, `tool_search_tool_regex`, `tool_search_tool_bm25`) | Replaces the literal `"tool_search"` arm with the shared `codewhale_tools::names::is_tool_search_tool` helper so legacy dispatchable spellings (`turn_loop.rs:1136-1146`, `:2238`) also classify as `Safe`. | | `context_archive_get`, `context_archive_search` | `ReadOnly` / `Auto`. Bounded, secret-scrubbed in-process reads of the current session's compaction archive. | | `session_get`, `session_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of prior session metadata/tails. | | `memory_get`, `memory_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of `NativeMemoryStore`. | | `project_map` | `ReadOnly`, `Sandboxable` / `Auto`. In-process directory walk (`"project"` was already in `Safe`, while the registered tool name is `"project_map"`). | | `validate_data` | `ReadOnly`, `Sandboxable` /
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2012,510 +2012,978 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a98c8010` (2026-11-21)
-**Commit Message**: fix(engine): retain every diagnostic that fits the usage ledger
+### Incident Patch 1: `7b246b2d` (2026-11-22)
+**Commit Message**: fix(stream): retry a request once when no response headers arrive
 
-Measure serialized records and their array separators in insertion order before pruning. A large old record can free enough space by itself. Check every surviving record against the expected ledger, including unresolved usage.
+A provider held one request's response headers past the 180s
+`stream.open_timeout_secs` wait in the middle of a long turn (0.10.3,
+thinking high). The turn ended with `llm_network_error ... did not receive
+response headers after 180s`, nothing was sent again, and the person had to
+notice and resend. The phase log also said `bound_secs=690` for "waiting for
+the model's first response" while the request was cut at 180s. (CW-8323)
 
-Behaviour: preserve the newest routing diagnostics when an oversized ledger contains records of different lengths. An exhaustive probe of the production retention block passed 15,408 serialized cases. Formatting and release-version checks passed.
+Retry. The turn loop already owns re-sending a request whose stream never
+opened: `StreamRetryBudget` plus `PhaseResult::Retry` in the model step,
+until now only for proven pre-dispatch connection failures
+(`stream.max_resumes`). A header timeout goes through the same owner with a
+second budget, `stream.open_retries` (default 1, 0 disables, at most 3). It
+resets when a stream opens, so each request gets its own retry. No retry
+loop was added to the client: `open_sse_response` and the HTTP retry loop
+still send a header-stalled request once.
 
-**File**: `CHANGELOG.md` (modified, +3/-1)
+The turn loop has to know a header timeout by type, not by message text, so
+`open_sse_response` now returns `LlmError::HeaderTimeout { waited, http1,
+re
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -621,6 +621,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ### Fixed
  
-+- Large session usage ledgers keep settled and unresolved usage and discard only the oldest routing diagnostics needed to stay within the storage limit. Thanks [@donglovejava](https://github.com/donglovejava) ([#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
-+
- - **Shell policy:** statically available AWK and sed programs are scanned for shell commands. AWK analysis that exceeds its scan budget is treated as unresolved. (CW-8300)
- - **Sub-agent budget-stop receipts show clipped output:** the receipt gives the character count and points to the retained child transcript. It also keeps the workspace preservation receipt visible when the partial output is long. Thanks [@7jrxt42BxFZo4iAnN4CX](https://github.com/7jrxt42BxFZo4iAnN4CX) for [issue 7434](https://github.com/codewhale-hq/Codewhale/issues/7434). (CW-8317)
- - **TUI command input:** while the terminal’s raw-paste fallback detects a possible paste, Enter inserts a newline before slash completion can change the draft. This also applies to fast typing that matches the paste cadence. After the brief paste window passes, Enter can submit the command. (CW-8301)
-@@ -1327,7 +1329,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
++- **A model request that gets no response is retried once:** when a provider sends no response headers within `stream.open_timeout_secs` (180 seconds by default), Codewhale sends the request again instead of ending the turn, and the transcript says so (`Retry attempt: stream-open-timeout 1/1; provider sent no response headers in 180s; sending the request again`). If the retry also times out, the turn fails with the same error, which now says a retry was already attempted. `stream.open_retries` sets the count (default `1`, `0` turns it off, at most `3`). The provider may have processed and billed the first request, so its usage stays recorded as unknown. Agents a session starts follow the configured `[stream]` retry counts too. In the turn log, `bound_secs` for "waiting for the model's first response" is now the timeout that request is under, and the watchdog ceiling is logged separately as `stall_after_secs`. (CW-8323)
+ - **Narrow terminals keep the working clock:** at 80 and 60 columns the status row under the composer keeps `working 3s` / `using tool 12s` while a turn runs. The `Shift+Tab to change` hint, then `Esc to interrupt`, stand down first, and a connector notice shortens (`MCP · 1 failed · /mcp`) instead of taking the clock's place. (CW-8264)
+ - The Resume confirmation no longer draws its border over the composer on a 60x20 terminal, and the Plugins panel footer always keeps `Esc close`, dropping the per-row hints first at 80 columns.
  
- - **[@swf1996120](https://github.com/swf1996120)** — reported that the PR review prompt discouraged checking callers with the available source tools ([issue 7435](https://github.com/codewhale-hq/Codewhale/issues/7435)).
- - **[@BX166](https://github.com/BX166)** — clarified the AICraft provider setup for mainland China and international users ([#7421](https://github.com/codewhale-hq/CodeWhale/pull/7421)).
--- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
-+- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
- - **[@gabsferreira](https://github.com/gabsferreira)** added the SearchApi web search provider ([#7410](https://github.com/codewhale-hq/Codewhale/pull/7410)).
- - **[@cmdcorp6534](https://github.com/cmdcorp6534)** — reported the Chinese input-method candidate window appearing away from the field being typed into ([#2323](https://github.com/codewhale-hq/Codewhale/issues/2323)).
- - **[@Asteria1028](https://github.com/Asteria1028)** — reported pasted clipboard images piling up with no way to remove them ([#7221](https://github.com/codewhale-hq/Codewhale/issues/7221)).
 ```
 
-**File**: `crates/engine/src/session_manager.rs` (modified, +33/-42)
+**File**: `config.example.toml` (modified, +1/-0)
 ```diff
-@@ -3021,64 +3021,55 @@ impl SessionManager {
-     fn write_late_usage_ledger(path: &Path, ledger: &LateUsageLedger) -> io::Result<()> {
-         let mut bytes = serde_json::to_vec(ledger)
-             .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
--        if u64::try_from(bytes.len()).unwrap_or(u64::MAX) > MAX_LATE_USAGE_LEDGER_BYTES {
--            // Diagnostic-only receipts (route decisions) are evidence, not spend.
--            // Drop the oldest ones until the ledger fits; spend-bearing records
--            // stay untouched so a replay cannot double-count a source.
--            let mut compacted = ledger.clone();
--            let mut pruned = 0usize;
--            while u64::try_from(bytes.len()).unwrap_or(u64::MAX) > MAX_LATE_USAGE_LEDGER_BYTES {
--                let diagnostic = compacted
--                    .records
--                    .iter()
--                    .filter(|record| record.diagnostic_only)
--                    .count();
--                if diagnostic == 0 {
-+        let limit = usize::try_from(MAX_LATE_USAGE_LEDGER_BYTES).unwrap_or(usize::MAX);
-+        if bytes.len() > limit {
-+            let mut remaining_bytes = bytes.len();
-+            let mut pruned = 0;
-+            for record in ledger
-+                .records
-+                .iter()
-+                .filter(|record| record.diagnostic_only)
-+            {
-+                let record_len = serde_json::to_vec(record)
-+                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?
-+                    .len();
-+                pruned += 1;
-+                let comma = usize::from(pruned < ledger.records.len());
-+                remaining_bytes -= record_len + comma;
-+                if remaining_bytes <= limit {
-                     break;
-                 }
--                let overflow = bytes.len().saturating_sub(
--                    usize::try_from(MAX_LATE_USAGE_LEDGER_BYTES).unwrap_or(usize::MAX),
--                );
--                let average = (bytes.len() / compacted.records.len().max(1)).max(1);
--                let remove = (overflow / average).max(1).min(diagnostic);
--                let mut remaining = remove;
--                compacted.records.retain(|record| {
--                    if remaining > 0 && record.diagnostic_only {
--                        remaining -= 1;
--                        false
--                    } else {
--                        true
--                    }
--                });
--                pruned += remove - remaining;
--                bytes = serde_json::to_vec(&compacted)
--                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
--            }
--            if pruned > 0 {
--                tracing::warn!(
--                    pruned,
--                    "compacted late usage diagnostic receipts to fit the ledger bound"
--                );
-             }
--            if u64::try_from(bytes.len()).unwrap_or(u64::MAX) > MAX_LATE_USAGE_LEDGER_BYTES {
-+            if remaining_bytes > limit {
-                 return Err(io::Error::new(
-                     io::ErrorKind::InvalidData,
-                     "late usage ledger exceeds its size bound",
-                 ));
-             }
-+            let mut compacted = ledger.clone();
-+            let mut remaining = pruned;
-+            compacted.records.retain(|record| {
-+                if record.diagnostic_only && remaining > 0 {
-+                    remaining -= 1;
-+                    return false;
-+                }
-+                true
-+            });
-+            bytes = serde_json::to_vec(&compacted)
-+                .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
-+            tracing::warn!(
-+                pruned,
-+                "compacted late usage diagnostic receipts to fit the ledger bound"
-+            );
-         }
--        Self::write_late_usage_ledger_bytes(path, &bytes)
--    }
--
--    fn write_late_usage_ledger_bytes(path: &Path, bytes: &[u8]) -> io::Result<()> {
-         let parent = path.parent().ok_or_else(|| {
-             io::Error::new(io::ErrorKind::InvalidInput, "usage ledger has no parent")
-         })?;
-         let name = path.file_name().ok_or_else(|| {
-             io::Error::new(io::ErrorKind::InvalidInput, "usage ledger has no basename")
-         })?;
-         codewhale_util::files::WorkspaceFile::open_resolved_root(parent, Path::new(name), false)?
--            .replace(bytes)?;
-+            .replace(&bytes)?;
-         Self::sync_late_usage_ledger(path)
+@@ -1194,6 +1194,7 @@ base_url = "https://api.deepseek.com/beta"
+ # Legacy [tui] stream_* keys remain fallbacks when a canonical field is absent.
+ [stream]
+ open_timeout_secs = 180     # response headers, including connect (0 = env/default, 5-600)
++open_retries = 1            # re-sends after no response headers arrived in time (0 = off, 0-3)
+ chunk_timeout_secs = 900    # per-SSE-chunk idle bound (0 = default, 1-3600)
+ max_resumes = 3             # proven pre-dispatch connection recovery (0 = off, 0-10)
+ max_transparent_retries = 2 # compatibility value; interrupted streams never reissue
+```
+
+**File**: `crates/config/src/config_resolve.rs` (modified, +4/-1)
+```diff
+@@ -539,7 +539,10 @@ impl ConfigToml {
+                 // are u64. Reject invalid types before touching the document.
+                 let max = if matches!(
+                     field,
+-                    "max_resumes" | "max_transparent_retries" | "max_stream_errors"
++                    "open_retries"
++                        | "max_resumes"
++                        | "max_transparent_retries"
++                        | "max_stream_errors"
+                 ) {
+                     i64::from(u32::MAX)
+                 } else {
+```
+
+**File**: `crates/config/src/settings_schema.rs` (modified, +1/-0)
+```diff
+@@ -1416,6 +1416,7 @@ pub const SETTINGS_SCHEMA: &[SettingDef] = &[
+     def("stream_chunk_timeout_secs", SettingKind::Int, "900", None),
+     // Canonical transport keys. Runtime resolution stays in TUI Config.
+     def("stream.open_timeout_secs", SettingKind::Int, "180", None),
++    def("stream.open_retries", SettingKind::Int, "1", None),
+     def("stream.chunk_timeout_secs", SettingKind::Int, "900", None),
+     def("stream.max_resumes", SettingKind::Int, "3", None),
+     def(
+```
+
+**File**: `crates/config/src/tests.rs` (modified, +1/-0)
+```diff
+@@ -10955,6 +10955,7 @@ fn stream_settings_are_typed_nested_and_fail_without_mutation() {
+     for (key, value) in [
+         ("stream.max_resumes", "-1"),
+         ("stream.max_resumes", "4294967296"),
++        ("stream.open_retries", "4294967296"),
+         ("stream.force_http1", "flase"),
+         ("stream.tcp_keepalive_secs", "1.5"),
+         ("stream.open_timout_secs", "45"),
+```
+
+**File**: `crates/engine/src/client.rs` (modified, +6/-4)
+```diff
+@@ -5412,7 +5412,10 @@ fn retry_reason_label_and_human(err: &LlmError) -> (&'static str, String) {
+     // The variant, never the payload. Every `LlmError` variant carries the raw
+     // provider HTTP body verbatim, and a 400 from a content filter routinely
+     // echoes the prompt.
+-    if matches!(err, LlmError::NetworkError(_) | LlmError::Timeout(_)) {
++    if matches!(
++        err,
++        LlmError::NetworkError(_) | LlmError::HeaderTimeout { .. } | LlmError::Timeout(_)
++    ) {
+         codewhale_telemetry::session_counters()
+             .bump_error(codewhale_telemetry::ErrorCounter::NetworkError);
      }
+@@ -5426,7 +5429,7 @@ fn retry_reason_label_and_human(err: &LlmError) -> (&'static str, String) {
+             ("rate_limited", human)
+         }
+         LlmError::ServerError { status, .. } => ("server_error", format!("upstream {status}")),
+-        LlmError::NetworkError(_) => (
++        LlmError::NetworkError(_) | LlmError::HeaderTimeout { .. } => (
+             "network_error",
+             "network error; request outcome unknown".to_string(),
+         ),
+@@ -7414,9 +7417,8 @@ pub fn stream_first_response_bound(open: Duration, idle: Duration) -> Duration {
+         .saturating_add(stream_entry::first_byte_timeout(idle))
+ }
  
+-#[cfg(test)]
+ pub use stream_entry::first_byte_timeout as stream_first_byte_timeout;
+-pub use stream_entry::is_stream_open_transport_failure;
++pub use stream_entry::{is_stream_open_transport_failure, stream_open_header_timeout};
+ pub mod wire;
+ 
+ // Retain the crate-visible accounting helpers at the existing client seam.
 ```
 
-**File**: `crates/engine/src/session_manager/test_cases_01.rs` (modified, +37/-28)
+**File**: `crates/engine/src/client/stream_entry.rs` (modified, +24/-16)
 ```diff
-@@ -1921,34 +1921,48 @@
-             diagnostic_only: false,
-         };
-         let diagnostic = LateUsageRecord {
-+            source_fingerprint: crate::cost_status::usage_source_fingerprint("small"),
-+            usage: None,
-             diagnostic_only: true,
-             ..spend.clone()
-         };
--        let empty_bytes = serde_json::to_vec(&LateUsageLedger::default()).unwrap().len();
--        let diagnostic_bytes = serde_json::to_vec(&diagnostic).unwrap().len() + 1;
--        let real_count = 4usize;
--        let diagnostic_count =
--            (usize::try_from(MAX_LATE_USAGE_LEDGER_BYTES).unwrap() - empty_bytes)
--                / diagnostic_bytes
--                + 1;
--        let mut records: Vec<LateUsageRecord> =
--            (0..diagnostic_count).map(|_| diagnostic.clone()).collect();
--        for index in 0..real_count {
--            records.push(LateUsageRecord {
-+        let mut decision = crate::cost_status::decision_receipt_fixture("oldest");
-+        for index in 0..40 {
-+            decision
-+                .evidence
-+                .probabilities_bp
-+                .insert(format!("{index:0120}"), 100);
-+        }
-+        assert!(decision.is_bounded());
-+        let oldest = LateUsageRecord {
-+            source_fingerprint: crate::cost_status::usage_source_fingerprint("oldest"),
-+            decision: Some(decision),
-+            ..diagnostic.clone()
-+        };
-+        let unresolved = LateUsageRecord {
-+            source_fingerprint: crate::cost_status::usage_source_fingerprint("unresolved"),
-+            usage: None,
-+            ..spend.clone()
-+        };
-+        let mut expected = LateUsageLedger {
-+            records: vec![spend, unresolved],
-+            ..Default::default()
-+        };
-+        let limit = usize::try_from(MAX_LATE_USAGE_LEDGER_BYTES).unwrap();
-+        let record_bytes = serde_json::to_vec(&diagnostic).unwrap().len() + 1;
-+        let room = limit - serde_json::to_vec(&expected).unwrap().len();
-+        for index in 0..room / record_bytes {
-+            expected.records.push(LateUsageRecord {
-                 source_fingerprint: crate::cost_status::usage_source_fingerprint(&format!(
--                    "spend-{index}"
-+                    "small-{index}"
-                 )),
--                ..spend.clone()
-+                ..diagnostic.clone()
-             });
+@@ -305,13 +305,14 @@ fn is_protocol_or_tls_failure(detail: &str) -> bool {
+             .any(|needle| lower.contains(needle))
+ }
+ 
+-/// Added to a response-header timeout (#6889). A provider prefilling a large
+-/// or high-thinking request or loading a cold model can hold headers back
+-/// longer than this wait, and transport advice alone makes that read as a
+-/// broken connection.
+-const COLD_MODEL_HINT: &str = "The provider may still be prefilling a large or high-thinking \
+-     request or loading a cold model: wait a moment and send the message again, or allow a \
+-     longer wait with `codewhale config set stream.open_timeout_secs 300` (up to 600).";
++#[must_use]
++pub fn stream_open_header_timeout(err: &anyhow::Error) -> Option<Duration> {
++    err.chain()
++        .find_map(|cause| match cause.downcast_ref::<LlmError>() {
++            Some(LlmError::HeaderTimeout { waited, .. }) => Some(*waited),
++            _ => None,
++        })
++}
+ 
+ pub async fn open_sse_response<F, Fut>(
+     open_req: &StreamOpenRequest,
+@@ -334,10 +335,11 @@ where
+             }
          }
--        let oversized = LateUsageLedger {
--            records,
--            ..Default::default()
--        };
--        assert!(
--            u64::try_from(serde_json::to_vec(&oversized).unwrap().len()).unwrap()
--                > MAX_LATE_USAGE_LEDGER_BYTES
--        );
-+        let mut oversized = expected.clone();
-+        oversized.records.insert(1, oldest);
-+        assert!(serde_json::to_vec(&expected).unwrap().len() <= limit);
-+        assert!(serde_json::to_vec(&oversized).unwrap().len() > limit + 2 * record_bytes);
+         Err(_) => {
+-            return Err(anyhow::Error::new(LlmError::NetworkError(format!(
+-                "SSE stream request did not receive response headers after {}s; request outcome unknown. {COLD_MODEL_HINT}",
+-                open_req.open_timeout.as_secs()
+-            ))));
++            return Err(anyhow::Error::new(LlmError::HeaderTimeout {
++                waited: open_req.open_timeout,
++                http1: false,
++                retried: 0,
++            }));
+         }
+     }
+     let h1_req = open_req.clone().with_h1_only();
+@@ -347,10 +349,11 @@ where
+     {
+         Ok(Ok(response)) => Ok(response),
+         Ok(Err(err)) => Err(h1_fallback_error(err)),
+-        Err(_) => Err(anyhow::Error::new(LlmError::NetworkError(format!(
+-            "SSE stream request did not receive response headers after {}s on HTTP/1.1; request outcome unknown. {COLD_MODEL_HINT}",
+-            h1_req.open_timeout.as_secs()
+-        )))),
++        Err(_) => Err(anyhow::Error::new(LlmError::HeaderTimeout {
++            waited: h1_req.open_timeout,
++            http1: true,
++            retried: 0,
++        })),
+     }
+ }
  
-         let (path, _) = manager
-             .ensure_late_usage_paths("compact-diagnostics")
-@@ -1957,14 +1971,9 @@
- 
-         let loaded = manager.load_late_usage("compact-diagnostics").unwrap();
-         assert_eq!(
--            loaded
--                .records
--                .iter()
--                .filter(|record| !record.diagnostic_only)
--                .count(),
--            real_count
-+            serde_json::to_value(loaded).unwrap(),
-+            serde_json::to_value(expected).unwrap()
+@@ -578,7 +581,12 @@ force_http1 = {pinned}
+             .expect("header stall must be a typed LlmError");
+         assert!(
+             !classified.is_retryable(),
+-            "header stall must not be replayable: {classified:?}"
++            "the HTTP retry loop must not replay a header stall: {classified:?}"
++        );
++        assert_eq!(
++            stream_open_header_timeout(&err.context("adapter context")),
++            Some(Duration::from_millis(100)),
++            "the turn loop recognizes the header timeout by type"
          );
--        assert!(loaded.records.len() < oversized.records.len());
-         assert!(fs::metadata(&path).unwrap().len() <= MAX_LATE_USAGE_LEDGER_BYTES);
-     }
- 
+         assert!(text.contains("outcome unknown"), "{text}");
+         assert!(
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +3/-1)
+**File**: `crates/engine/src/client/system_one.rs` (modified, +1/-0)
 ```diff
-@@ -621,6 +621,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- 
- ### Fixed
- 
-+- Large session usage ledgers keep settled and unresolved usage and discard only the oldest routing diagnostics needed to stay within the storage limit. Thanks [@donglovejava](https://github.com/donglovejava) ([#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
-+
- - **Shell policy:** statically available AWK and sed programs are scanned for shell commands. AWK analysis that exceeds its scan budget is treated as unresolved. (CW-8300)
- - **Sub-agent budget-stop receipts show clipped output:** the receipt gives the character count and points to the retained child transcript. It also keeps the workspace preservation receipt visible when the partial output is long. Thanks [@7jrxt42BxFZo4iAnN4CX](https://github.com/7jrxt42BxFZo4iAnN4CX) for [issue 7434](https://github.com/codewhale-hq/Codewhale/issues/7434). (CW-8317)
- - **TUI command input:** while the terminal’s raw-paste fallback detects a possible paste, Enter inserts a newline before slash completion can change the draft. This also applies to fast typing that matches the paste cadence. After the brief paste window passes, Enter can submit the command. (CW-8301)
-@@ -1327,7 +1329,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- 
- - **[@swf1996120](https://github.com/swf1996120)** — reported that the PR review prompt discouraged checking callers with the available source tools ([issue 7435](https://github.com/codewhale-hq/Codewhale/issues/7435)).
- - **[@BX166](https://github.com/BX166)** — clarified the AICraft provider setup for mainland China and international users ([#7421](https://github.com/codewhale-hq/CodeWhale/pull/7421)).
--- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
-+- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
- - **[@gabsferreira](https://github.com/gabsferreira)** added the SearchApi web search provider ([#7410](https://github.com/codewhale-hq/Codewhale/pull/7410)).
- - **[@cmdcorp6534](https://github.com/cmdcorp6534)** — reported the Chinese input-method candidate window appearing away from the field being typed into ([#2323](https://github.com/codewhale-hq/Codewhale/issues/2323)).
- - **[@Asteria1028](https://github.com/Asteria1028)** — reported pasted clipboard images piling up with no way to remove them ([#7221](https://github.com/codewhale-hq/Codewhale/issues/7221)).
-```
-
-**File**: `docs/CONTRIBUTORS.md` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ changelog or release notes, and this contributor record.
- **Contributions**
- 
- - **[BX166](https://github.com/BX166)** — clarified the AICraft provider setup for mainland China and international users ([#7421](https://github.com/codewhale-hq/CodeWhale/pull/7421)).
--- **[donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
-+- **[donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
- - **[gabsferreira](https://github.com/gabsferreira)** added Google organic search results through the SearchApi provider ([#7410](https://github.com/codewhale-hq/Codewhale/pull/7410)).
- - **[zhuowp](https://github.com/zhuowp)** (git author `z27014`) — added bounded HTTP rate-limit recovery and corrected retry deadlines, quota guidance and recovery receipts ([#7220](https://github.com/codewhale-hq/Codewhale/pull/7220)).
- - **[printf033](https://github.com/printf033)** — enabled exclusive rename on Android so Fleet publication does not fall back to SELinux-denied hard links (`fbe9f24ee`).
+@@ -547,6 +547,7 @@ pub fn router_failure_from_error(error: &anyhow::Error) -> AutoRouterFailure {
+                 AutoRouterFailure::Http { status }
+             }),
+         LlmError::NetworkError(_)
++        | LlmError::HeaderTimeout { .. }
+         | LlmError::ConnectError { .. }
+         | LlmError::Timeout(_)
+         | LlmError::ParseError(_) => AutoRouterFailure::Transport,
 ```
 
 ---
 
-### Incident Patch 2: `6c211938` (2026-11-21)
-**Commit Message**: Sync the packaged TUI changelog for the notice correction
+### Incident Patch 2: `76af39a5` (2026-11-22)
+**Commit Message**: fix(tui): keep the working clock and dialog chrome whole on narrow terminals
 
-Regenerated the existing release-note projection with scripts/sync-changelog.sh. The version drift check now passes locally with 40 feature issue references.
+Four narrow-terminal defects from the bc58781ba10c acceptance captures
+(CW/artifacts/tui-acceptance-bc58781-20261122).
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
+B-D1 / B-D2 (CW-8264, a working session looks dead). The posture bar's
+shed ladder dropped the turn clock first (#5914 kept the hint and counts
+over the stopwatch), and the right notice was sized against the
+permission chip alone. At 80 columns a failed-connector notice therefore
+took the row from `working Ns`, and at 60 columns `Shift+Tab to change`
+and `Esc to interrupt` did even with no notice. The kit ladder now sheds
+session clock, permission key, hint, counts, and only then the turn
+clock (cap warning and mode still outrank it; the compact preset still
+starts past everything live), and the right notice is clipped against
+permission plus the turn clock. The host budgets the notice the same
+way: while a turn runs it first takes the notice text or a fallback
+that fits whole beside clock and hint (`MCP · 1 failed · /mcp`), and
+otherwise fits it against what the clock alone leaves, so the hint
+stands down before the notice and the notice before the clock. The
+#6084 turn-only rung is gon
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ## [Unreleased]
  
-+- Native release bundles, the Windows installer, npm packages and published crates include the Codewhale license and both third-party notice documents.
++### Fixed
 +
- - Stopping an external agent while it waits for approval now records the turn as interrupted even when the agent replies that it finished. (CW-7965)
++- **Narrow terminals keep the working clock:** at 80 and 60 columns the status row under the composer keeps `working 3s` / `using tool 12s` while a turn runs. The `Shift+Tab to change` hint, then `Esc to interrupt`, stand down first, and a connector notice shortens (`MCP · 1 failed · /mcp`) instead of taking the clock's place. (CW-8264)
++- The Resume confirmation no longer draws its border over the composer on a 60x20 terminal, and the Plugins panel footer always keeps `Esc close`, dropping the per-row hints first at 80 columns.
++
+ ## [0.10.3] - 2026-11-21
  
- - The Simplified Chinese telemetry guide now explains which files each process keeps, how much disk space they use and when old files are removed. (CW-7987)
+ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features] plugin_creator`) and unmodified DeepSeek Harness (`@deepseek-ai/dsh-*`) plugin compatibility, an upgraded Auto-Review guardian with workspace boundaries, soft rules, sub-agent return review, and one-use retry approvals, and a single `Shift+Tab` permission dial defaulting to Accept Edits (`Ask → Accept Edits → Plan → Auto-Review → Full Access`). It moves the ACP server and external-agent sessions (including Qwen Code and GitHub Copilot CLI) onto the official Agent Client Protocol SDK, publishes native signed HarmonyOS ARM64 release assets, adds a verified signed model-and-provider registry channel alongside unified model-ID resolution and managed `/v1/models` pricing, updates design tokens to `5.4.0` with a docked single-line approval strip, folded turn activity, live working-row light sweeps and 13 hex-lattice dot-whale forms, adds `claude-org` billing auth, `show_data` transcript charts, `codewhale sessions migrate`, DeepSeek Chatbot web search and speech tools, receipted self-updates and `codewhale uninstall`, and lands reliability, CJK/Unicode, Windows, and sandbox security fixes.
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +5/-0)
+```diff
+@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++### Fixed
++
++- **Narrow terminals keep the working clock:** at 80 and 60 columns the status row under the composer keeps `working 3s` / `using tool 12s` while a turn runs. The `Shift+Tab to change` hint, then `Esc to interrupt`, stand down first, and a connector notice shortens (`MCP · 1 failed · /mcp`) instead of taking the clock's place. (CW-8264)
++- The Resume confirmation no longer draws its border over the composer on a 60x20 terminal, and the Plugins panel footer always keeps `Esc close`, dropping the per-row hints first at 80 columns.
++
+ ## [0.10.3] - 2026-11-21
+ 
+ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features] plugin_creator`) and unmodified DeepSeek Harness (`@deepseek-ai/dsh-*`) plugin compatibility, an upgraded Auto-Review guardian with workspace boundaries, soft rules, sub-agent return review, and one-use retry approvals, and a single `Shift+Tab` permission dial defaulting to Accept Edits (`Ask → Accept Edits → Plan → Auto-Review → Full Access`). It moves the ACP server and external-agent sessions (including Qwen Code and GitHub Copilot CLI) onto the official Agent Client Protocol SDK, publishes native signed HarmonyOS ARM64 release assets, adds a verified signed model-and-provider registry channel alongside unified model-ID resolution and managed `/v1/models` pricing, updates design tokens to `5.4.0` with a docked single-line approval strip, folded turn activity, live working-row light sweeps and 13 hex-lattice dot-whale forms, adds `claude-org` billing auth, `show_data` transcript charts, `codewhale sessions migrate`, DeepSeek Chatbot web search and speech tools, receipted self-updates and `codewhale uninstall`, and lands reliability, CJK/Unicode, Windows, and sandbox security fixes.
+```
+
+**File**: `crates/tui/src/tui/goldens/footer_80x24.txt` (modified, +1/-1)
+```diff
+@@ -21,4 +21,4 @@
+                                                                                 
+                                                                                 
+                                                                                 
+- ● ask  Shift+Tab to change   2 agents   worked 41m 12s   Esc to interrupt      
++ ● ask  Shift+Tab to change   working 1m 15s   2 agents   Esc to interrupt      
+```
+
+**File**: `crates/tui/src/tui/launch_resume_confirm.rs` (modified, +41/-1)
+```diff
+@@ -19,6 +19,9 @@ use crate::tui::views::{ModalKind, ModalView, ViewAction, ViewEvent, centered_mo
+ use codewhale_localization::{Locale, MessageId, tr};
+ use codewhale_palette as palette;
+ 
++const MIN_HEIGHT: u16 = 7;
++pub(crate) const MIN_CANVAS_HEIGHT: u16 = MIN_HEIGHT + 2;
++
+ pub struct LaunchResumeConfirmView {
+     session_id: String,
+     title: String,
+@@ -126,7 +129,7 @@ impl ModalView for LaunchResumeConfirmView {
+     }
+ 
+     fn occupied_region(&self, area: Rect) -> Rect {
+-        centered_modal_area(area, 64, 11, 32, 7)
++        centered_modal_area(area, 64, 11, 32, MIN_HEIGHT)
+     }
+ 
+     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+@@ -337,6 +340,43 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn the_popup_stays_above_the_composer_on_a_short_terminal() {
++        let area = Rect::new(0, 0, 60, 20);
++        let composer_top = 14;
++        let mut stack = crate::tui::views::ViewStack::new();
++        stack.push(view());
++        assert_eq!(
++            stack.top_occupied_region(area).map(|popup| popup.bottom()),
++            Some(15),
++            "centered in the whole frame, the popup's border lands on the composer's"
++        );
++        stack.set_composer_top(Some(composer_top));
++        let popup = stack.top_occupied_region(area).expect("a popup is open");
++        assert!(popup.bottom() <= composer_top, "{popup:?}");
++        let mut buf = Buffer::empty(area);
++        stack.render(area, &mut buf);
++        for y in composer_top..area.height {
++            let row: String = (0..area.width).map(|x| buf[(x, y)].symbol()).collect();
++            assert!(row.trim().is_empty(), "row {y} is the composer's: {row:?}");
++        }
++        let painted: String = (0..composer_top)
++            .flat_map(|y| (0..area.width).map(move |x| (x, y)))
++            .map(|at| buf[at].symbol())
++            .collect();
++        assert!(
++            painted.contains("12 msgs") && painted.contains("Esc"),
++            "{painted}"
++        );
++
++        stack.set_composer_top(Some(MIN_CANVAS_HEIGHT - 1));
++        assert_eq!(
++            stack.top_occupied_region(area).map(|popup| popup.bottom()),
++            Some(15),
++            "too little room above the composer keeps the popup readable over it"
++        );
++    }
++
+     #[test]
+     fn the_popup_names_the_session_it_is_asking_about() {
+         let confirm = view();
+```
+
+**File**: `crates/tui/src/tui/phase_strip.rs` (modified, +18/-3)
+```diff
+@@ -1146,10 +1146,18 @@ pub(crate) fn tideline_footer_from_app(app: &mut App, width: u16) -> TidelineFoo
+     // The right slot: the live status toast if one is owed, else the compact
+     // MCP or plugin boot chip, else the remote-control state when it is on.
+     // Clause-shed against half the row — the posture facts own the other
+-    // half.
++    // half — and, while a turn runs, against what the turn clock leaves.
+     let notice_budget = (usize::from(width) / 2)
+         .max(8)
+         .min(usize::from(width).saturating_sub(permission_chip.0.width() + 5));
++    let (turn_clock, session_clock) = working_clock(app, phase, &phase_label);
++    let beside_clock = turn_clock.as_ref().map(|(clock, _)| {
++        usize::from(width).saturating_sub(permission_chip.0.width() + clock.width() + 8)
++    });
++    let beside_hint = beside_clock.zip(hint.as_ref()).map(|(budget, (hint, _))| {
++        notice_budget.min(budget.saturating_sub(hint.width() + ITEM_SEPARATOR_WIDTH))
++    });
++    let notice_budget = beside_clock.map_or(notice_budget, |budget| notice_budget.min(budget));
+     let right = selected_notice(app.active_status_toast(phase), &phase_label)
+         .map(|(text, fallbacks, ink, urgent)| {
+             (
+@@ -1180,7 +1188,15 @@ pub(crate) fn tideline_footer_from_app(app: &mut App, width: u16) -> TidelineFoo
+                 .map(|chip| (chip.text, Vec::new(), boot_activity_ink(chip.level), false))
+         })
+         .and_then(|(text, fallbacks, ink, urgent)| {
+-            fit_notice_candidates(&text, &fallbacks, notice_budget, urgent)
++            beside_hint
++                .and_then(|budget| {
++                    std::iter::once(&text)
++                        .chain(&fallbacks)
++                        .map(|candidate| candidate.trim())
++                        .find(|candidate| !candidate.is_empty() && candidate.width() <= budget)
++                        .map(str::to_string)
++                })
++                .or_else(|| fit_notice_candidates(&text, &fallbacks, notice_budget, urgent))
+                 .map(|fitted| (fitted, ink))
+         })
+         .or_else(|| {
+@@ -1196,7 +1212,6 @@ pub(crate) fn tideline_footer_from_app(app: &mut App, width: u16) -> TidelineFoo
+             }
+         });
+ 
+-    let (turn_clock, session_clock) = working_clock(app, phase, &phase_label);
+     let (counts, count_actions) = live_counts(app, tier);
+     TidelineFooterFacts {
+         permission_chip,
+```
+
+**File**: `crates/tui/src/tui/phase_strip/tideline_tests.rs` (modified, +55/-40)
+```diff
+@@ -172,14 +172,13 @@ fn posture_bar_pins_notice_or_remote_control_right() {
+     assert!(narrow.contains(" ask"), "{narrow}");
+ }
+ 
+-/// Shed ladder, most expendable first: the turn clock, the session clock,
+-/// the permission key (a binding reminder, and the widest optional item),
+-/// the hint, the counts. The permission chip
+-/// never sheds (#5796); the clock is what a glance wants and the hint and
+-/// counts are what a keystroke wants, so on a row too narrow for both the
+-/// clock goes (#5914).
++/// Shed ladder, most expendable first: the session clock, the permission
++/// key (a binding reminder, and the widest optional item), the hint, the
++/// counts, the turn clock. The permission chip never sheds (#5796), and the
++/// turn clock is the last live fact to go: a row that drops it for a static
++/// hint leaves a working session looking dead (CW-8264).
+ #[test]
+-fn posture_bar_sheds_the_clocks_then_the_hint_and_counts() {
++fn posture_bar_sheds_static_hints_before_the_turn_clock() {
+     let fixture = working();
+     let narrowest_showing = |needle: &str| -> u16 {
+         (8..=160u16)
+@@ -193,10 +192,10 @@ fn posture_bar_sheds_the_clocks_then_the_hint_and_counts() {
+     let counts = narrowest_showing("2 agents");
+     let permission_key = narrowest_showing("Shift+Tab to change");
+     assert!(
+-        turn_clock > session_clock
+-            && session_clock > permission_key
++        session_clock > permission_key
+             && permission_key > hint
+-            && hint > counts,
++            && hint > counts
++            && counts > turn_clock,
+         "turn_clock@{turn_clock} session_clock@{session_clock} hint@{hint} counts@{counts} permission_key@{permission_key}"
+     );
+     for w in 8..=160u16 {
+@@ -665,43 +664,16 @@ fn a_session_that_has_not_worked_states_no_clock() {
+     );
+ }
+ 
+-/// #6084: when the session half will not paint, the shed ladder must not
+-/// drop the turn clock at the turn-only rung — that would leave no clock
+-/// at all. Find a width where both-clocks already sheds the turn half while
+-/// keeping the session half; with only the turn clock, that width must keep
+-/// it (shed at the session-clock rung instead).
+-#[test]
+-fn absent_session_clock_keeps_turn_past_the_turn_only_rung() {
+-    let mut first_turn = working();
+-    first_turn.session_clock = None;
+-    let both = working();
+-    let width = (8..=160u16)
+-        .find(|&w| {
+-            let text = draw(w, 3, &both.widget(&UI_THEME));
+-            text.contains("worked 41m 12s") && !text.contains("working 1m 15s")
+-        })
+-        .expect("both-clocks fixture must shed turn before session at some width");
+-    let text = draw(width, 3, &first_turn.widget(&UI_THEME));
+-    assert!(
+-        text.contains("working 1m 15s"),
+-        "{width}: with no session half, the turn clock must survive the turn-only shed rung (#6084): {text}"
+-    );
+-}
+-
+-/// Narrow terminals shed both clock halves before the hint and the counts,
+-/// the turn half before the session half, and neither reading is ever
++/// Narrow terminals shed the session clock, then the hint, then the counts,
++/// and the turn clock only after all of them; neither reading is ever
+ /// painted half-truncated.
+ #[test]
+-fn narrow_widths_shed_the_clocks_before_the_hint_and_counts() {
++fn narrow_widths_keep_the_turn_clock_past_the_hint_and_counts() {
+     let fixture = working();
+     for w in 8..=160u16 {
+         let text = draw(w, 3, &fixture.widget(&UI_THEME));
+         let turn = text.contains("working 1m 15s");
+         let session = text.contains("worked 41m 12s");
+-        assert!(
+-            !turn || session,
+-            "{w} kept the turn clock and dropped the session clock: {text}"
+-        );
+         assert!(
+             !session || text.contains("Esc to interrupt"),
+             "{w} kept the session clock and dropped the hint: {text}"
+@@ -710,6 +682,10 @@ fn narrow_widths_shed_the_clocks_before_the_hint_and_counts() {
+             !text.contains("Esc to interrupt") || text.contains("2 agents"),
+             "{w} kept the hint and dropped the counts: {text}"
+         );
++        assert!(
++            !text.contains("2 agents") || turn,
++            "{w} kept the counts and dropped the turn clock: {text}"
++        );
+         // Whole readings or none: a clipped duration is a lie.
+         assert!(
+             !text.contains("working 1m") || turn,
+@@ -722,6 +698,45 @@ fn narrow_widths_shed_the_clocks_before_the_hint_and_counts() {
+     }
+ }
+ 
++#[test]
++fn a_working_turn_keeps_its_clock_on_narrow_rows() {
++    use crate::tui::app::{StatusToast, StatusToastLevel};
++    let footer = |width: u16, notice: bool| {
++        let mut app = session_app();
++        app.ui_locale = codewhale_localization::Locale::En;
++        app.approval_mode = codewhale_execpolicy::ApprovalMode::Bypass;
++        app.is_loading = true;
++        app.turn_started_at = Some(Instant::now() - Duration::from_secs(3));
++        if notice {
++            app.push_status_to
+```
+
+**File**: `crates/tui/src/tui/ui/frame.rs` (modified, +2/-0)
+```diff
+@@ -2123,6 +2123,8 @@ pub(crate) fn render(f: &mut Frame, app: &mut App, _config: &Config) -> Option<(
+     };
+     let cursor_pos = composer_plan.cursor.map(|pos| (pos.x, pos.y));
+     app.viewport.last_composer_area = Some(body_chunks[composer_slot]);
++    app.view_stack
++        .set_composer_top(Some(body_chunks[composer_slot].y));
+     app.viewport.last_composer_content = Some(composer_plan.geometry.inner);
+     app.viewport.last_composer_scroll_offset = composer_plan.scroll_offset;
+     app.viewport.last_composer_top_padding = composer_plan.top_padding;
+```
+
+**File**: `crates/tui/src/tui/ui/frame/one_owner_tests.rs` (modified, +20/-29)
+```diff
+@@ -173,12 +173,12 @@ fn composed_frame_paints_each_fact_in_exactly_one_row() {
+             ("permission chip", format!("● {permission}")),
+             ("model", model),
+             ("cost", super::session_cost_label(&app)),
+-            ("agent count", "2 agents".to_string()),
+             ("ttft", "ttft 400ms".to_string()),
+         ];
+         facts.push(("context reading", format!("context {pct}%")));
+         facts.push(("output rate", "40 avg tok/s".to_string()));
+         if width >= 120 {
++            facts.push(("agent count", "2 agents".to_string()));
+             facts.push((
+                 "help hint",
+                 crate::tui::shell_key_routing::info_help_hint(app.ui_locale),
+@@ -225,30 +225,25 @@ fn composed_frame_paints_each_fact_in_exactly_one_row() {
+         );
+         // The bar carries the working clock (#5914) — how long the current
+         // turn has been doing what it is doing, and how long the session has
+-        // worked. Both halves shed before the hint and the counts, so a
+-        // narrow row keeps the affordances and drops the stopwatch. When
+-        // both would paint, the session half needs ~125 columns here (the
+-        // running hint also names the agent arrows, `← for agents · ↓ to
+-        // manage`) and the turn half ~200; each paints in exactly one row wherever it
+-        // paints. The metrics line carries no repository, branch or provider.
++        // worked. The turn half is the last live fact to shed (CW-8264), so
++        // it paints at every width here; against this fixture's pinned scope
++        // notice the counts need 120 columns beside it. The session half
++        // sheds first and needs ~175 with the running hint, which also names
++        // the agent arrows (`← for agents · ↓ to manage`). Each paints in
++        // exactly one row wherever it paints. The metrics line carries no
++        // repository, branch or provider.
+         // First turn: the turn half names the phase and stays; the session
+         // reading is the identical duration, so it is suppressed rather than
+-        // stated twice (#6041). With no session half to paint, the turn
+-        // clock sheds at the session rung (#6084) rather than first — but
+-        // against this fixture's pinned scope notice, turn+counts+hint is
+-        // still just over a 120-column budget, so the hint wins here and
+-        // the turn half needs ~160. The shed-order contract itself lives
+-        // in tideline_tests.
++        // stated twice (#6041). The shed-order contract itself lives in
++        // tideline_tests.
+         let turn_needle = "agents underway 1m 15s";
+-        if width >= 160 {
+-            assert!(rows[posture].contains(turn_needle), "{}", rows[posture]);
+-            assert_eq!(
+-                count_rows_containing(&rows, turn_needle),
+-                1,
+-                "{width}x{height}: {turn_needle:?} paints in exactly one row:\n{}",
+-                rows.join("\n")
+-            );
+-        }
++        assert!(rows[posture].contains(turn_needle), "{}", rows[posture]);
++        assert_eq!(
++            count_rows_containing(&rows, turn_needle),
++            1,
++            "{width}x{height}: {turn_needle:?} paints in exactly one row:\n{}",
++            rows.join("\n")
++        );
+         assert!(
+             !rows[posture].contains("worked 1m 15s"),
+             "{width}x{height}: the duplicate session reading must not be stated: {}",
+@@ -259,7 +254,7 @@ fn composed_frame_paints_each_fact_in_exactly_one_row() {
+         let mut worked = working_app();
+         worked.cumulative_turn_duration = Duration::from_secs(60);
+         let rows = draw(&mut worked, width, height);
+-        if width >= 160 {
++        if width >= 200 {
+             let worked_needle = "worked 2m 15s";
+             assert!(rows[posture].contains(worked_needle), "{}", rows[posture]);
+             assert_eq!(
+@@ -269,11 +264,7 @@ fn composed_frame_paints_each_fact_in_exactly_one_row() {
+                 rows.join("\n")
+             );
+         }
+-        // With both clock halves and the running arrow hints, the turn half
+-        // needs more than 160 columns.
+-        if width >= 200 {
+-            assert!(rows[posture].contains(turn_needle), "{}", rows[posture]);
+-        }
++        assert!(rows[posture].contains(turn_needle), "{}", rows[posture]);
+         assert!(!rows[metrics].contains('⑂'), "{}", rows[metrics]);
+         // No dead key hints anywhere in the frame.
+         for row in &rows {
+@@ -363,7 +354,7 @@ fn context_cap_warns_once_in_the_posture_bar() {
+ fn double_tap_window_shows_the_send_now_hint() {
+     let mut app = working_app();
+     app.arm_double_tap_window();
+-    let rows = draw(&mut app, 120, 32);
++    let rows = draw(&mut app, 160, 32);
+     let composer = app.viewport.last_composer_area.unwrap().bottom() as usize;
+     assert!(
+         rows[composer].contains("Enter again to send now · Ctrl+Enter steers"),
 ```
 
 ---
 
-### Incident Patch 3: `30ca06be` (2026-11-21)
-**Commit Message**: fix(release): preserve remaining ownership during partial command restore
+### Incident Patch 3: `78675c59` (2026-11-21)
+**Commit Message**: fix(tui): keep a streamed delta in the cell its own kind owns
 
-Keep validated ownership for untouched aliases when one restored command changes. Record the installed replacement digest when displacing a command so undo can distinguish its own unclaimed replacement from a later user edit. Historical four-column recovery manifests still work. All five release recovery tests passed locally, including partial restore and modified-command undo.
+A block's kind is decided by its start event alone. When a gateway opens a
+text block in the middle of a thinking stream and then keeps sending
+thinking deltas, block 0 stays marked text: `commit_streaming_display_tick`
+reads `block_is_thinking(0)`, gets false, and writes the reasoning into the
+assistant body. One reasoning sentence is then split across the thinking
+card and the prose that follows it (#7123 with the opposite ordering).
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+`StreamingState::set_block_kind` relabels one live block in place; unlike
+`reset` it leaves every other block and both accumulated counters alone.
+`streaming_thinking::resync_block_kind` delivers the pending tail to the
+cell the old kind owned first, then relabels. A relabel away from thinking
+also finalizes the reasoning card and stashes its text, so the spinner stops
+and replay still has the words. Both delta handlers call it before pushing,
+so the normal Anthropic ordering returns after one comparison.
+
+The provider's own content-block index is still ignored: the TUI keeps one
+active block, and a gateway that interleaves two live blocks can still
+misattribute. This fixes the kind, not
+
+**File**: `crates/tui-kit/src/streaming/mod.rs` (modified, +62/-9)
 ```diff
-@@ -282,7 +282,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- - **MCP catalogs stay fresh:** a server's tools, resources, prompts and skills are rediscovered on their own connection when an advertised `ttlMs` expires or the server sends a list-changed notice. A tool resolved against the old catalog is refused with "retry the call", a removed tool cannot run, and a failed refresh reconnects instead of serving stale entries. Catalogs are never shared across servers, credentials or reconnects.
- - **MCP Skills extension:** servers that advertise the published Skills extension have their skills listed in `list_mcp_resources`. Listing never activates a skill, and reading a skill file is refused unless its size and sha256 digest match the listing. MCP skills do not yet join `/skills`.
- - **Updates install themselves:** release-binary installs check for a new release every 6 hours (was 1), download and checksum-verify it in the background, and apply it the next time `codewhale` starts, never during a session. One line says `Updated to v… · What's new: … · Undo: codewhale update --rollback`. Until releases are signed, the download waits for your OK (one `[y/N]` question at the next start, or `/update install`); a release with a valid Ed25519 manifest signature applies on its own. `codewhale update --rollback` puts back the version the last update replaced and keeps the rolled-back version from returning automatically. Turn it down with `codewhale config set update.mode notify` (or `off`, or `CODEWHALE_UPDATE_MODE`); an organization's root-owned `policy.toml` overrides both. Offline and rate-limited checks retry about an hour later instead of on every launch. Package-manager and desktop-app copies only get their manager's command. Builds with the release key refuse a missing or invalid signature, and re-check the staged binary against the signed manifest at start. The checksum manifest now always comes from GitHub Releases; on Linux x64 the CNB mirror can still serve the binary, but only bytes that GitHub's manifest lists.
--- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo.
-+- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo. A partial restore retains ownership of unchanged commands.
- - **Uninstall guidance on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed, then a hidden PowerShell process deletes it after the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-da
-```
-
-**File**: `crates/release/src/installs.rs` (modified, +73/-10)
-```diff
-@@ -794,6 +794,10 @@ impl RecoveryBatch {
-     }
- 
-     pub fn move_in(&mut self, path: &Path) -> Result<RecoveryMove> {
-+        self.move_in_replaced(path, None)
-+    }
-+
-+    fn move_in_replaced(&mut self, path: &Path, replacement: Option<&str>) -> Result<RecoveryMove> {
-         let original = path.to_string_lossy();
-         if original.contains(['\t', '\n', '\r']) {
-             bail!(
-@@ -842,7 +846,10 @@ impl RecoveryBatch {
-                 format!("failed to move {} to {}", path.display(), to.display())
-             })?;
-         }
--        let line = format!("{original}\t{}\t{digest}\t{bytes}\n", to.display());
-+        let suffix = replacement
-+            .map(|digest| format!("\t{digest}"))
-+            .unwrap_or_default();
-+        let line = format!("{original}\t{}\t{digest}\t{bytes}{suffix}\n", to.display());
-         let mut manifest = fs::OpenOptions::new()
-             .create(true)
-             .append(true)
-@@ -889,6 +896,7 @@ pub struct RecoveryRecord {
-     pub stored: PathBuf,
-     pub sha256: Option<String>,
-     pub bytes: u64,
-+    pub replacement_sha256: Option<String>,
+@@ -15,10 +15,12 @@
+ //! What replaced it is not that policy: it takes a measured slice per beat
+ //! instead of deciding between two gears.
+ //!
+-//! Buffering never changes what the model emitted. `accumulated_text` and
+-//! `accumulated_thinking` always track the full raw stream, so anything
+-//! building API messages or retrying sees the whole receipt regardless of how
+-//! much of it is currently visible.
++//! Buffering never changes what the model emitted: a delta reaches a cell only
++//! when a commit beat takes it, but the bytes are never dropped. The
++//! `accumulated_text` / `accumulated_thinking` counters on [`StreamingState`]
++//! are diagnostic only — nothing in the product reads them — and
++//! [`StreamingState::reset`] clears them at a block boundary, so they describe
++//! the current block rather than the whole response.
+ //!
+ //! # Known limitations
+ //!
+@@ -329,9 +331,13 @@ pub struct StreamingState {
+     blocks: Vec<Option<BlockState>>,
+     /// Whether any stream is currently active
+     pub is_active: bool,
+-    /// Accumulated text for display
++    /// Per-kind byte totals for the current block. Diagnostic only: replay
++    /// reads `App::last_reasoning` and `current_streaming_text`, not these, and
++    /// `reset` clears them at every block boundary. A relabel leaves the bytes
++    /// already collected under the old kind, so after one they no longer match
++    /// the block's current kind.
+     pub accumulated_text: String,
+-    /// Accumulated thinking for display
++    /// See [`StreamingState::accumulated_text`].
+     pub accumulated_thinking: String,
  }
  
- #[derive(Debug, Clone)]
-@@ -957,6 +965,7 @@ fn read_manifest(dir: &Path) -> Vec<RecoveryRecord> {
-                 stored,
-                 sha256,
-                 bytes,
-+                replacement_sha256: fields.next().map(str::to_string),
-             })
-         })
-         .collect()
-@@ -1023,11 +1032,16 @@ fn verified_recovery_file(
-     Ok(meta)
- }
+@@ -366,9 +372,10 @@ impl StreamingState {
  
-+struct DisplacedReceipt {
-+    path: PathBuf,
-+    retained: Vec<(String, String)>,
-+}
-+
- fn command_receipt_to_displace(
-     directory: &Path,
-     records: &BTreeMap<&Path, &RecoveryRecord>,
-     owner: Option<u64>,
--) -> Result<Option<PathBuf>> {
-+) -> Result<Option<DisplacedReceipt>> {
-     let receipt = directory.join(RECEIPT_FILE);
-     let meta = match fs::symlink_metadata(&receipt) {
-         Ok(meta) => meta,
-@@ -1045,17 +1059,19 @@ fn command_receipt_to_displace(
-     }
-     let claims = parse_command_receipt(&read_small(&receipt, 512)?)?;
-     let mut changes_owned_bytes = false;
-+    let mut retained = Vec::new();
-     for name in RECEIPT_COMMANDS {
-         let command = directory.join(name);
--        if records.contains_key(command.as_path())
-+        if let Some(record) = records.get(command.as_path())
-+            && record.replacement_sha256.is_none()
-             && !claims.contains_key(*name)
-             && fs::symlink_metadata(&command).is_ok()
-         {
-             bail!("preserved unclaimed command {}", command.display());
+     /// Push content to a block.
+     ///
+-    /// `accumulated_text` / `accumulated_thinking` always track the full raw
+-    /// stream so callers building API messages or doing retries see exactly
+-    /// what the model emitted, regardless of UI pacing.
++    /// The bytes land in the display buffer and in the block's own accumulated
++    /// counter, which follows the routed kind. The counters are diagnostic —
++    /// replay reads `App::last_reasoning` and `current_streaming_text` — and
++    /// [`StreamingState::reset`] clears them at every block boundary.
+     pub fn push_content(&mut self, index: usize, content: &str) {
+         if let Some(Some(block)) = self.blocks.get_mut(index) {
+             if block.is_thinking {
+@@ -390,6 +397,27 @@ impl StreamingState {
          }
      }
-     for (name, expected) in claims {
--        let path = directory.join(name);
-+        let path = directory.join(&name);
-         match fs::symlink_metadata(&path) {
-             Ok(current)
-                 if current.is_file()
-@@ -1067,13 +1083,25 @@ fn command_receipt_to_displace(
-             _ => bail!("preserved modified command {}", path.display()),
-         }
-         if let Some(record) = records.get(path.as_path()) {
--            changes_owned_bytes |= match &record.sha256 {
-+            let changes = match &record.sha256 {
-                 Some(digest) => digest != &expected,
-                 None => file_sha256(&record.stored)? != expected,
-             };
-+            if changes {
-+                changes_owned_bytes = true;
-+                continue;
+ 
++    /// Re-label the block at `index` without disturbing anything else.
++    ///
++    /// A block's kind is normally decided by its start event, but a gateway
++    /// can open a text block inside a thinking stream (or the reverse) and
++    /// keep sending deltas of the first kind. `reset` clears every block and
++    /// both accumulated counters; a relabel touches one block's routed kind and
++    /// replaces its pending buffer. The caller must deliver that pending tail
++    /// to the cell the old kind owned first: it is discarded here.
++    pub fn set_block_kind(&mut self, index: usize, is_thinking: bool) {
++        self.ensure_capacity(index);
++        match self.blocks.get_mut(index) {
++            Some(Some(block)) => {
++                block.is_thinking = is_thinking;
++                block.is_streaming = true;
++                block.buffer = StreamBuffer::new();
++                self.is_active = true;
 +            }
-         }
-+        retained.push((name, expected));
-+    }
-+    let saved = records.contains_key(receipt.as_path());
-+    if saved {
-+        retained.clear();
-     }
--    Ok((changes_owned_bytes || records.contains_key(receipt.as_path())).then_some(receipt))
-+    Ok((changes_owned_bytes || saved).then_some(DisplacedReceipt {
-+        path: receipt,
-+        retained,
-+    }))
- }
- 
- fn validate_saved_command_receipt(
-@@ -1134,6 +1162,21 @@ pub fn restore(home: &Path, stamp: Option<&str>) -> Result<(String, RestoreRepor
-             })
-         })
-         .collect();
-+    for record in records.values() {
-+        if let Some(expected) = &record.replacement_sha256 {
-+            let current = match fs::symlink_metadata(&record.original) {
-+                Ok(meta) => meta,
-+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
-+                Err(error) => return Err(error.into()),
-+            };
-+            if !current.is_file()
-+                || !owned_by(&current, owner_id(home))
-+                || file_sha256(&record.original)? != *expected
-+            {
-+                bail!("preserved modified command {}", record.original.display());
-+            }
++            _ => self.start_block(index, is_thinking),
 +        }
 +    }
-     let mut receipts = Vec::new();
-     for dir in directories {
-         let receipt = dir.join(RECEIPT_FILE);
-@@ -1163,7 +1206,15 @@ pub fn restore(home: &Path, stamp: Option<&str>) -> Result<(String, RestoreRepor
-     if !receipts.is_empty() {
-         let mut batch = RecoveryBatch::open(home)?;
-         for receipt in receipts {
--            batch.move_in(&receipt)?;
-+            batch.move_in(&rec
++
+     /// Whether the block at `index` carries reasoning text.
+     ///
+     /// Display beats must route a committed delta by the block's own kind.
+@@ -456,6 +484,31 @@ impl StreamingState {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn set_block_kind_reroutes_the_next_delta() {
++        let mut state = StreamingState::new();
++        state.start_text(0);
++        state.push_content(0, "prose ");
++        assert!(!state.block_is_thinking(0));
++
++        // The caller delivers the pending tail to the cell the old kind owned
++        // before relabeling; the relabel installs a fresh buffer and routes the
++        // next delta to the other kind.
++        assert_eq!(state.finalize_block_text(0), "prose ");
++        state.set_block_kind(0, true);
++        assert!(state.block_is_thinking(0));
++
++        state.push_content(0, "reasoning");
++        assert_eq!(state.commit_text(0, usize::MAX), "reasoning");
++
++        // And back again: prose after an interposed thinking block.
++        assert_eq!(state.finalize_block_text(0), "");
++        state.set_block_kind(0, false);
++        assert!(!state.block_is_thinking(0));
++        state.push_content(0, "tail");
++        assert_eq!(state.commit_text(0, usize::MAX), "tail");
++    }
++
+     #[test]
+     fn assistant_text_streams_before_newline() {
+         let mut state = StreamingState::new();
 ```
 
-**File**: `crates/release/tests/recovery_records.rs` (modified, +44/-0)
+**File**: `crates/tui/src/tui/streaming_thinking.rs` (modified, +63/-0)
 ```diff
-@@ -164,3 +164,47 @@ fn command_restore_preserves_ownership_and_undo() {
-         assert_eq!(fs::read(unrelated).unwrap(), b"keep me");
-     }
+@@ -250,6 +250,69 @@ fn flush_pending_text_tail(app: &mut App) {
+     crate::tui::ui::frame::accrue_streaming_token_estimate(app, &remaining);
+ }
+ 
++/// Re-establish the block kind the arriving delta actually carries.
++///
++/// A block's kind is set by its start event alone, so a gateway that opens a
++/// text block inside a thinking stream leaves block 0 marked text. The
++/// reasoning that follows would then be committed into the prose body, and one
++/// sentence would be split across the thinking card and the answer that
++/// follows it — the #7123 split with the opposite ordering. The pending tail
++/// goes to the cell its old kind owned first, then the block takes the new
++/// kind.
++///
++/// A flip closes the reasoning card and starts a fresh one on the way back, so
++/// a gateway that flips twice renders one passage as two cards, the second
++/// without a duration stamp. That is the honest reading of a stream that
++/// really did interleave, not a display defect.
++///
++/// Returns whether the kind changed.
++pub(super) fn resync_block_kind(app: &mut App, is_thinking: bool) -> bool {
++    if app.streaming_state.block_is_thinking(0) == is_thinking {
++        return false;
++    }
++    if is_thinking {
++        flush_pending_text_tail(app);
++    } else if !app.translation_enabled && app.streaming_thinking_active_entry.is_some() {
++        // The prose that interrupted the reasoning closes its card. Leaving
++        // the entry streaming would keep the spinner turning and stamp a
++        // duration that grows until the next finalize; stashing the buffer
++        // matches what `MessageStarted` does, so replay still has the text.
++        //
++        // Skipped under translation so this branch does not clear the entry or
++        // the buffer before `ThinkingComplete` reads them. It cannot make the
++        // card fill in: `MessageDelta` calls `flush_active_cell` immediately
++        // after the resync, which takes the entry regardless. What the guard
++        // buys is that the reasoning text stays in `reasoning_buffer` for
++        // replay, and that fixing the index is left to `ThinkingComplete`.
++        finalize_current(app);
++        stash_reasoning_buffer_into_last_reasoning(app);
++    } else {
++        drain_thinking_tail_into_entry(app);
++    }
++    app.streaming_state.set_block_kind(0, is_thinking);
++    true
++}
++
++/// Deliver a live reasoning block's uncommitted tail into its own card.
++///
++/// The mirror of `flush_pending_text_tail`. Only reached when the entry was
++/// already finalized, so there is usually nothing buffered; when there is, the
++/// bytes also live in `reasoning_buffer` and `set_block_kind` discards this
++/// copy on the next line.
++fn drain_thinking_tail_into_entry(app: &mut App) {
++    if app.translation_enabled
++        || !app.streaming_state.block_is_thinking(0)
++        || app.streaming_state.pending_len(0) == 0
++    {
++        return;
++    }
++    let entry_idx = ensure_active_entry(app);
++    let tail = app.streaming_state.finalize_block_text(0);
++    if !tail.is_empty() {
++        append(app, entry_idx, &tail);
++    }
++}
++
+ /// Finalize the currently-streaming thinking entry: drain the pending
+ /// state buffer, compute elapsed duration, stop the spinner.
+ pub(super) fn finalize_current(app: &mut App) -> bool {
+```
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +8/-0)
+```diff
+@@ -2940,6 +2940,10 @@ pub(crate) async fn run_event_loop(
+                         if sanitized.is_empty() {
+                             continue;
+                         }
++                        // A gateway can open a text block inside a
++                        // thinking stream; a live reasoning tail must reach
++                        // its card before this block is relabeled text.
++                        streaming_thinking::resync_block_kind(app, false);
+                         // First delta of a fresh stream has no streaming
+                         // cell yet; flush active so the tool group settles
+                         // before the assistant prose appears below it.
+@@ -3089,6 +3093,10 @@ pub(crate) async fn run_event_loop(
+                             app.reasoning_header = extract_reasoning_header(&app.reasoning_buffer);
+                         }
+ 
++                        // The kind comes from the start event alone, so a
++                        // gateway that opened a text block mid-reasoning
++                        // leaves block 0 marked text (#7123).
++                        streaming_thinking::resync_block_kind(app, true);
+                         streaming_thinking::ensure_active_entry(app);
+                         app.streaming_state.push_content(0, &sanitized);
+                         stream_display_clock.note_delta(Instant::now());
+```
+
+**File**: `crates/tui/src/tui/ui/tests.rs` (modified, +232/-0)
+```diff
+@@ -37633,3 +37633,235 @@ async fn approval_prompt_docks_one_row_and_emits_settled_receipt() {
+     assert!(!rendered_line.contains('\u{202e}'), "{rendered_line:?}");
+     assert!(rendered_line.contains("RLO"), "{rendered_line:?}");
  }
 +
++/// A gateway can open a text block inside a thinking stream. The reasoning
++/// that arrives afterwards must return to a thinking card, not continue
++/// inside the prose body (#7123, opposite ordering).
 +#[test]
-+fn partial_restore_keeps_other_claims_and_only_undoes_its_own_replacement() {
-+    use codewhale_release::installs::{
-+        RECEIPT_COMMANDS, RECEIPT_FILE, parse_command_receipt, sha256_hex,
++fn reasoning_after_an_interposed_text_block_returns_to_a_thinking_card() {
++    use crate::tui::ui::frame::{
++        append_streaming_text, commit_streaming_display_tick,
++        ensure_streaming_assistant_history_cell,
 +    };
-+    let home = tempfile::tempdir().unwrap();
-+    let dir = home.path();
-+    let prior = dir.join(RECEIPT_COMMANDS[0]);
-+    let untouched = dir.join(RECEIPT_COMMANDS[1]);
-+    let receipt = dir.join(RECEIPT_FILE);
-+    let original_claims = [RECEIPT_COMMANDS[0], RECEIPT_COMMANDS[1]]
-+        .map(|name| format!("{}  {name}\n", sha256_hex(b"new")))
-+        .concat();
-+    fs::write(&prior, b"old").unwrap();
-+    let mut batch = RecoveryBatch::open(dir).unwrap();
-+    let stamp = batch.stamp.clone();
-+    batch.move_in(&prior).unwrap();
-+    batch.finish();
-+    fs::write(&prior, b"new").unwrap();
-+    fs::write(&untouched, b"new").unwrap();
-+    fs::write(&receipt, &original_claims).unwrap();
-+    let (_, report) = restore(dir, Some(&stamp)).unwrap();
-+    assert!(report.skipped.is_empty());
-+    let retained = parse_command_receipt(&fs::read_to_string(&receipt).unwrap()).unwrap();
-+    assert_eq!(retained.len(), 1);
-+    assert_eq!(retained[RECEIPT_COMMANDS[1]], sha256_hex(b"new"));
-+    assert_eq!(fs::read(&prior).unwrap(), b"old");
-+    assert_eq!(fs::read(&untouched).unwrap(), b"new");
-+    let undo = report.displaced.unwrap();
-+    fs::write(&prior, b"my changes").unwrap();
-+    assert!(restore(dir, Some(&undo)).is_err());
-+    assert_eq!(fs::read(&prior).unwrap(), b"my changes");
-+    assert_eq!(
-+        retained,
-+        parse_command_receipt(&fs::read_to_string(&receipt).unwrap()).unwrap()
++    use codewhale_tui_kit::streaming::StreamDisplayClock;
++
++    let mut app = create_test_app();
++    let mut clock = StreamDisplayClock::new(Duration::from_millis(33));
++
++    // 1. The first half of the sentence reaches its card the way a delta does:
++    //    buffered, then taken by a display beat.
++    app.streaming_state.reset();
++    app.streaming_state.start_thinking(0);
++    let first_entry = crate::tui::streaming_thinking::ensure_active_entry(&mut app);
++    app.streaming_state.push_content(0, "first half. ");
++    let now = Instant::now();
++    clock.note_delta(now);
++    let _ = commit_streaming_display_tick(&mut app, &mut clock, now + Duration::from_millis(50));
++
++    // 2. The gateway opens a text block mid-reasoning: MessageStarted
++    //    finalizes the live entry and starts a text block.
++    crate::tui::streaming_thinking::finalize_current(&mut app);
++    app.streaming_state.reset();
++    app.streaming_state.start_text(0);
++
++    // 3. The rest of the reasoning arrives. Without the resync it would be
++    //    committed into the prose body, because block 0 is marked text.
++    assert!(
++        crate::tui::streaming_thinking::resync_block_kind(&mut app, true),
++        "the block kind must be taken back"
 +    );
-+    fs::write(&prior, b"old").unwrap();
-+    let (_, report) = restore(dir, Some(&undo)).unwrap();
-+    assert!(report.skipped.is_empty());
-+    assert_eq!(fs::read(&prior).unwrap(), b"new");
-+    assert_eq!(fs::read(&untouched).unwrap(), b"new");
-+    assert_eq!(fs::read_to_string(&receipt).unwrap(), original_claims);
++    let second_entry = crate::tui::streaming_thinking::ensure_active_entry(&mut app);
++    app.streaming_state.push_content(0, "second half.");
++    let now = Instant::now();
++    clock.note_delta(now);
++    let _ = commit_streaming_display_tick(&mut app, &mut clock, now + Duration::from_millis(50));
++
++    let first = match app
++        .active_cell
++        .as_ref()
++        .and_then(|active| active.entries().get(first_entry))
++    {
++        Some(HistoryCell::Thinking { content, .. }) => content.clone(),
++        other => panic!("expected a thinking entry at {first_entry}: {other:?}"),
++    };
++    let second = match app
++        .active_cell
++        .as_ref()
++        .and_then(|active| active.entries().get(second_entry))
++    {
++        Some(HistoryCell::Thinking { content, .. }) => content.clone(),
++        other => panic!("expected a thinking entry at {second_entry}: {other:?}"),
++    };
++    assert_eq!(first, "first half. ", "the first half keeps its card");
++    assert_eq!(
++        second, "second half.",
++        "reasoning after an interposed text block must stay in a thinking cell"
++    );
++
++    // 4. Commit the active cell to history and verify the split did not happen
++    //    there: a real assistant cell exists, and it holds no reasoning.
++    app.flush_active_cell();
++    let message_index = ensure_streaming_assistant_history_cell(&mut app);
++    append_streaming_text(&mut app, message_index, "answer");
++    assert!(
++        app.history.iter().any(|cell| {
++            matches!(cell, HistoryCell::Assistant { content, .. } if content.contains("answer"))
++        }),
++        "the assistant cell must hold the answer"
++    );
++    let prose_has_reasoning = app.history.iter().any(|cell| {
++        matches!(cell, HistoryCell::Assistant { content, .. } if content.contains("second half."))
++    });
++    assert!(
++        !prose_has_reasoning,
++        "the assistant cell must not absorb reasoning text"
++    );
 +}
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -282,7 +282,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- - **MCP catalogs stay fresh:** a server's tools, resources, prompts and skills are rediscovered on their own connection when an advertised `ttlMs` expires or the server sends a list-changed notice. A tool resolved against the old catalog is refused with "retry the call", a removed tool cannot run, and a failed refresh reconnects instead of serving stale entries. Catalogs are never shared across servers, credentials or reconnects.
- - **MCP Skills extension:** servers that advertise the published Skills extension have their skills listed in `list_mcp_resources`. Listing never activates a skill, and reading a skill file is refused unless its size and sha256 digest match the listing. MCP skills do not yet join `/skills`.
- - **Updates install themselves:** release-binary installs check for a new release every 6 hours (was 1), download and checksum-verify it in the background, and apply it the next time `codewhale` starts, never during a session. One line says `Updated to v… · What's new: … · Undo: codewhale update --rollback`. Until releases are signed, the download waits for your OK (one `[y/N]` question at the next start, or `/update install`); a release with a valid Ed25519 manifest signature applies on its own. `codewhale update --rollback` puts back the version the last update replaced and keeps the rolled-back version from returning automatically. Turn it down with `codewhale config set update.mode notify` (or `off`, or `CODEWHALE_UPDATE_MODE`); an organization's root-owned `policy.toml` overrides both. Offline and rate-limited checks retry about an hour later instead of on every launch. Package-manager and desktop-app copies only get their manager's command. Builds with the release key refuse a missing or invalid signature, and re-check the staged binary against the signed manifest at start. The checksum manifest now always comes from GitHub Releases; on Linux x64 the CNB mirror can still serve the binary, but only bytes that GitHub's manifest lists.
--- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo.
-+- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo. A partial restore retains ownership of unchanged commands.
- - **Uninstall guidance on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed, then a hidden PowerShell process deletes it after the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-da
++
++/// A kind change inside one live block closes the reasoning card: the spinner
++/// must not keep turning, and the reasoning must survive for replay.
++#[test]
++fn a_relabel_to_text_finishes_the_reasoning_card() {
++    let mut app = create_test_app();
++
++    // `ThinkingDelta` records the text in `reasoning_buffer` and then buffers
++    // it for display; both are needed for `last_reasoning` to be populated.
++    app.streaming_state.reset();
++    app.streaming_state.start_thinking(0);
++    let entry = crate::tui::streaming_thinking::ensure_active_entry(&mut app);
++    app.reasoning_buffer.push_str("reasoning");
++    app.streaming_state.push_content(0, "reasoning");
++
++    // Prose arrives with no MessageStarted between: a gateway switching kinds
++    // inside one block.
++    assert!(
++        crate::tui::streaming_thinking::resync_block_kind(&mut app, false),
++        "the block kind must be taken back"
++    );
++
++    assert_eq!(
++        app.streaming_thinking_active_entry, None,
++        "the reasoning entry must be finalized"
++    );
++    let streaming = match app
++       
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7456** (2026-11-22): chore(web): record v0.10.3 as the published release (@Hmbown)
+- **PR #7452** (2026-11-22): fix(tui): keep a streamed delta in the cell its own kind owns (@SparkofSpike)
 - **PR #7450** (2026-11-21): feat: add LLMTR as an OpenAI-compatible provider (@knowhycodata)
 - **PR #7449** (2026-11-21): fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842) (@donglovejava)
 - **PR #7448** (2026-11-21): Show request transmission on provider errors (@deosiree)
 - **PR #7444** (2026-11-21): test(tui): guard all four paste-burst chunk-flush sites (@donglovejava)
-- **PR #7431** (2026-11-21): fix(engine): classify local read-only deferred tools as Safe in get_tool_category (@NieZhuZhu)
-- **PR #7430** (2026-11-21): fix(execpolicy): scan static awk and sed program payloads (@NieZhuZhu)
 
 ---
 
@@ -2535,13 +3003,13 @@ Keep validated ownership for untouched aliases when one restored command changes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): retain every diagnostic that fits the usage ledger
+## X. stream): retry a request once when no response headers arrive
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a98c8010`: engine): retain every diagnostic that fits the usage ledger. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b246b2d`: stream): retry a request once when no response headers arrive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2549,19 +3017,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Large session usage ledgers keep settled and unresolved usage and discard only the oldest routing diagnostics needed to stay within the storage limit. Thanks [@donglovejava](https://github.com/donglovejava) ([#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
-
-- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
+- **A model request that gets no response is retried once:** when a provider sends no response headers within `stream.open_timeout_secs` (180 seconds by default), Codewhale sends the request again instead of ending the turn, and the transcript says so (`Retry attempt: stream-open-timeout 1/1; provider sent no response headers in 180s; sending the request again`). If the retry also times out, the turn fails with the same error, which now says a retry was already attempted. `stream.open_retries` sets the count (default `1`, `0` turns it off, at most `3`). The provider may have processed and billed the first request, so its usage stays recorded as unknown. Agents a session starts follow the configured `[stream]` retry counts too. In the turn log, `bound_secs` for "waiting for the model's first response" is now the timeout that request is under, and the watchdog ceiling is logged separately as `stall_after_secs`. (CW-8323)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a98c8010` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b246b2d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

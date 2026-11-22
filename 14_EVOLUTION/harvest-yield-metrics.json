@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T20:56:10.704Z",
-  "total_cycles_completed": 11595,
-  "total_learnings_persisted": 11595,
-  "total_rules_promoted": 10811,
+  "last_updated": "2026-11-22T21:13:17.219Z",
+  "total_cycles_completed": 11597,
+  "total_learnings_persisted": 11597,
+  "total_rules_promoted": 10815,
   "history": [
-    {
-      "timestamp": "2026-11-22T02:42:05.503Z",
-      "repository": "PrunaAI/P-Image-OSS-Comfy",
-      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T02:53:11.671Z",
-      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T03:03:12.862Z",
       "repository": "ricursiveAI/Ripple-65B-Preview",
@@ -1403,6 +1389,20 @@
       "repository": "chaos-mesh/chaos-mesh",
       "learningId": "learn-github-chaos-mesh-chaos-mesh",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:09:19.244Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:13:17.219Z",
+      "repository": "akhilaaa3/Jev-Omni",
+      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T20:56:18.349Z",
+  "last_updated": "2026-11-22T21:14:48.340Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23772,
+  "total_items": 23785,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "828bfd356b4cdd844f2faca7e71a093df4289c1ffb4d76014ae4b964bf5545f5",
+      "content_hash": "ec7c2a4e8745795b784bd65433d5d8aa935b1254485f5b104d27980b8b1756c9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T20:56:17.954Z"
+      "persisted_at": "2026-11-22T21:14:47.872Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a2ea537a20f1469a7b7d18157c152ea9d1cc93c3d1d537073e59099122f8bab",
+      "content_hash": "fef7fa5674f31e790fe7ac03d43ccf8ea1667ec10fc1fee9eb79bbb2521a7b2d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T20:56:18.174Z"
+      "persisted_at": "2026-11-22T21:14:48.130Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1639530e7a2662a17d3cc722939a8fda1934e8af8754730b1ada6c75728b4cc9",
+      "content_hash": "c781b7cd7bb22c6ab63e1cdcc92ac769342fd9b6f51b9b6c6999dbe7de79b6dd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:56:18.349Z"
+      "persisted_at": "2026-11-22T21:14:48.340Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -231706,13 +231706,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "bc58781b",
-      "content_hash": "fc3e2e777f9d8a0aac84d8f2df3d0c0d8d9fad2421a3fdae906164e2e1253424",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "d5abe4bf",
+      "content_hash": "b243dab580568dc3c7438581e494927dcecdf693eda2684f7d7e9bdfdf5e6200",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -231773,6 +231773,11 @@
           "number": 9934,
           "title": "Sync the packaged TUI changelog for the notice correction",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9991,
+          "title": "retry a request once when no response headers arrive",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231780,7 +231785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T14:17:17.036Z",
+      "verified_at": "2026-11-22T21:09:18.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231819,37 +231824,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "bc58781b",
-      "content_hash": "4d103cb65c6325ac8efa9b08e75ab05640437f5a826865917ce93fe6c2dda4f0",
+      "source_version": "d5abe4bf",
+      "content_hash": "37017655d8dfbece6fe7cf1743c9a9d474aa89664cb9438b98f4d4aaef9207cf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T14:17:17.656Z"
+      "persisted_at": "2026-11-22T21:09:19.767Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "bc58781b",
-      "content_hash": "75f644d3b9f653a79d4264fe1b1608a99d38d889fdce27e90f52c49240c55498",
+      "source_version": "d5abe4bf",
+      "content_hash": "242f1b7b9acf0cc87923f6dd0d2f41bf5c77b603949646681d08424460acac3f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T14:17:17.826Z"
+      "persisted_at": "2026-11-22T21:09:19.996Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
+      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "bc58781b",
-      "content_hash": "f42725739b1285b3e7f896c15cdf9c40c1d79b1623eae3133aa7cb5e1fc54ac4",
+      "source_version": "d5abe4bf",
+      "content_hash": "0f3fc950047bd778b1893be02bbba27864cf87b836bd6d3aade81945f1fb0220",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T14:17:17.990Z"
+      "persisted_at": "2026-11-22T21:09:20.219Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -240164,9 +240169,9 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "ccede5c5c058474693da24426807f7926e67c93fbda81e848efd426f0a922142",
+      "content_hash": "c69423a2be6b3dbce1a567d750da38bd3b36883a7be179748408ba9cea288396",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T12:38:14.036Z"
+      "persisted_at": "2026-11-22T21:13:21.968Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings",
@@ -240188,9 +240193,9 @@
       "title": "Agent Contract: hmbown-codewhale-learnings Autonomous Specialist Persona",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "04134c0915f2c98899cf4aa64a3c4fa64f6faae5f58882dfcf4b8d43eb09c6c8",
+      "content_hash": "005de00f78610c789780d4b941b9cebf5508e71d1c4e76ecf8ff58de9e5e1b38",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T12:38:14.314Z"
+      "persisted_at": "2026-11-22T21:13:22.193Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings",
@@ -240200,9 +240205,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hmbown-codewhale-learnings",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "25c98c1d5d13e3181a9d9b22e072a362afbd0c6463a693a4974f89dc15e025b5",
+      "content_hash": "bbae5d6303d925002cd37f8a2a59b0c793670647be20d58947ceb6073d1305da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:38:14.443Z"
+      "persisted_at": "2026-11-22T21:13:22.383Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
@@ -284936,16 +284941,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "6ec93e8ff27f909ed04c68725ea90ffcff0dbad10ce2f447a2c7ba067b689b76",
+      "content_hash": "8e0c09941b93b70a9deb05fe8291100e14d1c8c2e94fc5726d8fd0658aba97d6",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9992,
+          "title": "Zero-Generation Decoupled Classification Head Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9993,
+          "title": "Bidirectional Boundary Invariant for Multimodal Sequence Masking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9994,
+          "title": "Left-Padding Invariant for Causal Decoder Batch Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:24:06.554Z",
+      "verified_at": "2026-11-22T21:13:16.947Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -309878,13 +309899,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H8I2-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-50VL-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce657b341b8307728874f3ac557c1638583a11ea76487ca9b53e52a3b52c9f44",
+      "content_hash": "d11727ee0aaf405b9484c94103a5dfe9f6a1b9f9ddb107fdeafe728c561da8ec",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T20:56:17.741Z"
+      "persisted_at": "2026-11-22T21:14:47.620Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -323609,6 +323630,170 @@
       "content_hash": "cf5738d8167d1bb2ceb2a0d035e92fb24331078dcb64d089de36f914086fa42a",
       "domain_letter": "I",
       "persisted_at": "2026-11-22T20:56:16.363Z"
+    },
+    "rule-9991": {
+      "learning_id": "rule-9991",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9991,
+      "title": "retry a request once when no response headers arrive",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "d5abe4bf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T21:09:18.959Z"
+    },
+    "candidate_directive-retry-a-request-once-when-no-response-headers-arrive": {
+      "item_id": "candidate_directive-retry-a-request-once-when-no-response-headers-arrive",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XZQP-retry-a-request-once-when-no-response-headers-arrive.md",
+      "title": "retry a request once when no response headers arrive",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "d5abe4bf",
+      "content_hash": "91be008dcf99128bd91a9cde771522d895343ce8cc314facc32860674460a66e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T21:09:19.545Z"
+    },
+    "rule-9992": {
+      "learning_id": "rule-9992",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9992,
+      "title": "Zero-Generation Decoupled Classification Head Pattern",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T21:13:16.947Z"
+    },
+    "rule-9993": {
+      "learning_id": "rule-9993",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9993,
+      "title": "Bidirectional Boundary Invariant for Multimodal Sequence Masking",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T21:13:16.947Z"
+    },
+    "rule-9994": {
+      "learning_id": "rule-9994",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9994,
+      "title": "Left-Padding Invariant for Causal Decoder Batch Inference",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T21:13:16.947Z"
+    },
+    "domain_intelligence-design-intelligence-akhilaaa3-jev-omni-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-akhilaaa3-jev-omni-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-akhilaaa3-jev-omni-design-intelligence-akhilaaa3-jev-omni-core-invariants.md",
+      "title": "Design Intelligence: akhilaaa3/Jev-Omni Core Invariants",
+      "repository": "akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "content_hash": "661237a56d236b8e9c7f76b8c9d979a532259c959659f73ad27e78d374b46dee",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T21:13:17.817Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-akhilaaa3-jev-omni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-akhilaaa3-jev-omni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-akhilaaa3-jev-omni-verification-protocol-empirical-defect-shield-for-akhilaaa.md",
+      "title": "Verification Protocol: Empirical Defect Shield for akhilaaa3/Jev-Omni",
+      "repository": "akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "content_hash": "b893fdf9d377fb8afc254083dcf947c83718ef401a619332ccead319e377c2ae",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T21:13:18.043Z"
+    },
+    "candidate_directive-stream-retry-a-request-once-when-no-response-headers-arrive": {
+      "item_id": "candidate_directive-stream-retry-a-request-once-when-no-response-headers-arrive",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-36MC-stream-retry-a-request-once-when-no-response-headers-arrive.md",
+      "title": "stream): retry a request once when no response headers arrive",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0b99e6b8735f8284107471f4b3d6e932349e231cd9379cf0d0ed920a91571459",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T21:13:21.739Z"
+    },
+    "candidate_directive-zero-generation-decoupled-classification-head-pattern": {
+      "item_id": "candidate_directive-zero-generation-decoupled-classification-head-pattern",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4Z8N-zero-generation-decoupled-classification-head-pattern.md",
+      "title": "Zero-Generation Decoupled Classification Head Pattern",
+      "repository": "hf-akhilaaa3-jev-omni-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8863c32799d719883cc0b55dd7b6038eeb6ea7df97d7af750040a19fd9e5b79a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T21:14:45.481Z"
+    },
+    "candidate_directive-bidirectional-boundary-invariant-for-multimodal-sequence-masking": {
+      "item_id": "candidate_directive-bidirectional-boundary-invariant-for-multimodal-sequence-masking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4Z8O-bidirectional-boundary-invariant-for-multimodal-sequence-masking.md",
+      "title": "Bidirectional Boundary Invariant for Multimodal Sequence Masking",
+      "repository": "hf-akhilaaa3-jev-omni-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1ee056743f88805c0760c2aee36ab59d1516b9774fc10774bf5adcd996e90639",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T21:14:45.754Z"
+    },
+    "candidate_directive-left-padding-invariant-for-causal-decoder-batch-inference": {
+      "item_id": "candidate_directive-left-padding-invariant-for-causal-decoder-batch-inference",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4Z8O-left-padding-invariant-for-causal-decoder-batch-inference.md",
+      "title": "Left-Padding Invariant for Causal Decoder Batch Inference",
+      "repository": "hf-akhilaaa3-jev-omni-learnings",
+      "source_version": "HEAD",
+      "content_hash": "732ca0b17468a45d643cb43a181f68470efe8241ecec7d50484181473c2dd3f4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T21:14:46.008Z"
+    },
+    "domain_intelligence-architecture-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hf-akhilaaa3-jev-omni-learnings-architecture-intelligence-hf-akhilaaa3-jev-omni-.md",
+      "title": "Architecture Intelligence: hf-akhilaaa3-jev-omni-learnings Core Invariants",
+      "repository": "hf-akhilaaa3-jev-omni-learnings",
+      "source_version": "HEAD",
+      "content_hash": "978b94c8ae09bce14b9ee3981904e9115420a07e651589bffe31f679eaf50913",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T21:14:46.267Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-akhilaaa3-jev-omni-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-akhilaaa3-jev-omni-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-akhilaaa3-jev-omni-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-akhilaaa3-jev-omni-learnings",
+      "repository": "hf-akhilaaa3-jev-omni-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8cac8a0bdc863c99f3559c71ecefa3b6edd0c83151c00c09bfa57f680883695e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T21:14:46.525Z"
     }
   },
   "ai-builder-brain": {

@@ -2,19 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-22T19:44:11.723Z",
+  "updated_at": "2026-11-22T21:14:45.149Z",
   "statistics": {
-    "total_nodes": 474,
+    "total_nodes": 476,
     "total_edges": 202,
     "domain_distribution": {
       "D": 290,
       "M": 1,
-      "H": 83,
+      "H": 84,
       "J": 22,
       "K": 29,
       "L": 8,
       "G": 1,
-      "F": 25,
+      "F": 26,
       "B": 4,
       "E": 2,
       "I": 9
@@ -10592,6 +10592,50 @@
       ],
       "created_at": "2026-11-22T19:44:11.723Z",
       "updated_at": "2026-11-22T19:44:11.723Z"
+    },
+    "DOM-F-892076A7": {
+      "id": "DOM-F-892076A7",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Boundary Token Leakage in Autoregressive Sampling (BUG-JEV-01)",
+      "summary": "The unified vocabulary encompasses all multimodal tokens. Because the underlying cross-entropy loss during pretraining penalizes the model f -> Special tokens demarcating structural multimodal blocks must be hard-suppressed via runtime logit processors during inference.",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-akhilaaa3-jev-omni/hf-akhilaaa3-jev-omni-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T21:13:22.592Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-akhilaaa3-jev-omni)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-22T21:14:00.096Z",
+      "updated_at": "2026-11-22T21:14:00.096Z"
+    },
+    "DOM-H-7A8AC6A4": {
+      "id": "DOM-H-7A8AC6A4",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Infinite Audio Attention Memory Depletion (BUG-JEV-02)",
+      "summary": "The quadratic $O(L^2)$ attention mechanism in the periodic full-attention layers (every 6th layer) experiences explosive memory growth when  -> High-capacity multi-modal transformers must implement hard frontend ingestion clamps prior to token embedding.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-akhilaaa3-jev-omni/hf-akhilaaa3-jev-omni-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T21:13:22.592Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-akhilaaa3-jev-omni)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-22T21:14:45.149Z",
+      "updated_at": "2026-11-22T21:14:45.149Z"
     }
   },
   "edges": [

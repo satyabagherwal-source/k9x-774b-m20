@@ -12226,3 +12226,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-22T20:46:47.448Z |
 | `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-22T20:55:59.677Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `fdb9684b` | Multi-dimensional audit evidence | 2026-11-22T20:56:10.698Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `d5abe4bf` | Multi-dimensional audit evidence | 2026-11-22T21:09:19.237Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-22T21:13:17.212Z |
+| `learn-dom-f-892076a7` | `project://hf-akhilaaa3-jev-omni` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | 2026-11-22T21:14:00.100Z |
+| `learn-dom-h-7a8ac6a4` | `project://hf-akhilaaa3-jev-omni` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | 2026-11-22T21:14:45.153Z |
