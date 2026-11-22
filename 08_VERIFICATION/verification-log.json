@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-13GR",
-    "timestamp": "2026-11-20T16:56:27.339Z",
-    "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
-    "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
-    "contentHash": "7e8f55c0e8766dce5e7d51145608d4f0bc63b9b780187a413837aadf44abd3b5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-19KV",
-    "timestamp": "2026-11-20T16:56:35.263Z",
-    "repository": "0xCUB3/wBlock",
-    "learningId": "learn-github-0xcub3-wblock",
-    "contentHash": "dc663124afd300bf015d31a59c555823bc79a34c99eee3211f663c24193f0151",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-1GAW",
     "timestamp": "2026-11-20T16:56:43.976Z",
     "repository": "milvus-io/milvus",
@@ -7492,6 +7462,36 @@
     "contentHash": "d685cb4a70ab86429d5ec681987473339335b453e7f9b4c1c8674eb8e39f5a6b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-H538",
+    "timestamp": "2026-11-22T17:12:16.388Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "56084d044419f51127dc35e95c482d3a35272eedcd6146edfe4a8e7346432a25",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-JJKR",
+    "timestamp": "2026-11-22T17:14:08.475Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "1b13fd44792f683ec141973f3976844a10793b61324f608b4385a53c44674d24",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

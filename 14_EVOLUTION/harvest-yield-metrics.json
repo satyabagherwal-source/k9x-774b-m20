@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T16:57:39.958Z",
-  "total_cycles_completed": 11530,
-  "total_learnings_persisted": 11530,
-  "total_rules_promoted": 10774,
+  "last_updated": "2026-11-22T17:14:08.486Z",
+  "total_cycles_completed": 11532,
+  "total_learnings_persisted": 11532,
+  "total_rules_promoted": 10775,
   "history": [
-    {
-      "timestamp": "2026-11-21T21:40:22.611Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T21:40:28.746Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T21:48:54.577Z",
       "repository": "LiquidAI/LFM3-Audio-2B",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:12:16.400Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:14:08.486Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

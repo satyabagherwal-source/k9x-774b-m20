@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T16:57:45.109Z",
+  "last_updated": "2026-11-22T17:14:13.931Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-V0NL",
+      "id": "CD-JNS5",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-V0NL-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JNS5-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -46731,6 +46731,35 @@
       "source_repo": "simonschubert-linuxcommandlibrary",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6EDB67-clock-rs-config-example.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-JMF2",
+      "directive_title": "Fast checked_sub path in constexpr_sub_overflow_clamped",
+      "source_repo": "facebook-folly-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JMF2-fast-checked_sub-path-in-constexpr_sub_overflow_clamped.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-0AD36F",
+      "directive_title": "Fast checked_sub path in constexpr_sub_overflow_clamped",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "facebook-folly",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0AD36F-fast-checked-sub-path-in-constexpr-sub-o.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-A0A947",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A0A947-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-22"
     }
   ]

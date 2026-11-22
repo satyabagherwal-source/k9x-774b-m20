@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `27995cd3`  
+> **Source Version**: `062cc44c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T03:52:29.775Z  
+> **Timestamp**: 2026-11-22T17:12:15.139Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:52:29.598Z  
+> **Harvest Timestamp**: 2026-11-22T17:12:15.023Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30565 stars
+- **Stars / Engagement**: 30567 stars
 
 ---
 
@@ -2388,421 +2388,254 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7490bbd` (2026-11-19)
-**Commit Message**: Handle signed overflow in checked_div and checked_mod (#2742)
+### Incident Patch 1: `30c6bd46` (2026-11-21)
+**Commit Message**: Fast checked_sub path in constexpr_sub_overflow_clamped
 
 Summary:
-`checked_div` and `checked_mod` in `folly/lang/CheckedMath.h` only reject `divisor == 0`. For a signed built-in type at least as wide as `int` (no promotion), `min / -1` and `min % -1` are undefined behaviour (the quotient does not fit), so `checked_div(&r, INT64_MIN, int64_t{-1})` runs the division instead of returning `false`. UBSan reports `division of -9223372036854775808 by -1 cannot be represented in type 'long long'` at both call sites.
+Give `constexpr_sub_overflow_clamped` the same runtime fast path
+`constexpr_add_overflow_clamped` has: when not constant-evaluated, use
+`checked_sub` and saturate by the sign of `a`. Overflow implies differing
+signs, so `a < 0` saturates to `min` and `a >= 0` to `max`; unsigned saturates
+to `0` as before.
 
-Both functions now return `false` with `*result = {}` for that pair, the same way they handle a zero divisor. The check is under `if constexpr` for built-in signed integers only, using `folly::is_integral_v` and `folly::is_signed_v` so `__int128` is covered on standard libraries whose `std::` traits leave it out (libstdc++ in strict `-std=c++XX` mode). The minimum is computed from the sign bit via `folly::make_unsigned_t` rather than `std::numeric_limits`, so the guard also works where strict-mode libstdc++ (GCC 10.1 and 10.2) leaves `numeric_limits<__int128>` unspecialised, which would make `min()` return `0` and reject `0 / -1`. Class types keep their old behaviour. `c
+Measured (GCC 14 `-O2`, x86-64 and AArch64): the manual dispatch
+compiles to 2-3 branches; the builtin form is `sub` + flag-branch,
+matching the add path. Behavior is unchanged; the existing
+exhaustive `int8`/`uint8` runtime tests plus `int64` boundary tests
+exercise the new path, as do the `Histogram` suites that subtract
+heavily.
 
-**File**: `folly/lang/BUCK` (modified, +1/-0)
+Reviewed By: skrueger
+
+Differential Revision: D133585561
+
+fbshipit-source-id: e1c1633d32cda47dc4a5c4677d42d572ab6666ac
+
+**File**: `folly/ConstexprMath.h` (modified, +15/-0)
 ```diff
-@@ -137,6 +137,7 @@ fb_dirsync_cpp_library(
-     exported_deps = [
-         "//folly:c_portability",
-         "//folly:likely",
-+        "//folly:traits",
-     ],
- )
- 
-```
-
-**File**: `folly/lang/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -108,6 +108,7 @@ folly_add_library(
-   EXPORTED_DEPS
-     folly_c_portability
-     folly_likely
-+    folly_traits
- )
- 
- folly_add_library(
-```
-
-**File**: `folly/lang/CheckedMath.h` (modified, +26/-0)
-```diff
-@@ -28,6 +28,7 @@
- 
- #include <folly/CPortability.h>
- #include <folly/Likely.h>
-+#include <folly/Traits.h>
- 
- namespace folly {
- namespace detail {
-@@ -182,6 +183,17 @@ constexpr bool checked_div(T* result, T dividend, T divisor) {
-     *result = {};
-     return false;
-   }
-+  if constexpr (folly::is_integral_v<T> && folly::is_signed_v<T>) {
-+    constexpr auto kBits =
-+        sizeof(T) * std::numeric_limits<unsigned char>::digits;
-+    constexpr T kMin =
-+        static_cast<T>(folly::make_unsigned_t<T>{1} << (kBits - 1));
-+    constexpr T kMinusOne = static_cast<T>(-1);
-+    if (dividend == kMin && divisor == kMinusOne) [[unlikely]] {
-+      *result = {};
-+      return false;
+@@ -738,6 +738,21 @@ constexpr T constexpr_sub_overflow_clamped(T a, T b) {
+   static_assert(
+       !std::is_integral<T>::value || sizeof(T) <= sizeof(M),
+       "Integral type too large!");
++  if (!std::is_constant_evaluated()) {
++    if constexpr (std::is_integral_v<T>) {
++      T ret{};
++      if (!checked_sub(&ret, a, b)) [[unlikely]] {
++        if constexpr (std::is_unsigned_v<T>) {
++          return T(0);
++        } else {
++          // Overflow happens only when a and b have different signs, so the
++          // sign of a decides the saturation limit.
++          return (a < 0) ? L::min() : L::max();
++        }
++      }
++      return ret;
 +    }
 +  }
-   *result = dividend / divisor;
-   return true;
- }
-@@ -192,6 +204,20 @@ constexpr bool checked_mod(T* result, T dividend, T divisor) {
-     *result = {};
-     return false;
+   // clang-format off
+   return
+     // don't do anything special for non-integral types.
+```
+
+**File**: `folly/test/ConstexprMathTest.cpp` (modified, +64/-0)
+```diff
+@@ -1550,6 +1550,70 @@ TEST_F(ConstexprMathTest, constexpr_sub_overflow_clamped) {
+     }
    }
-+  using R = decltype(dividend % divisor);
-+  if constexpr (
-+      folly::is_integral_v<T> && folly::is_integral_v<R> &&
-+      folly::is_signed_v<R>) {
-+    constexpr auto kBits =
-+        sizeof(R) * std::numeric_limits<unsigned char>::digits;
-+    constexpr R kMin =
-+        static_cast<R>(folly::make_unsigned_t<R>{1} << (kBits - 1));
-+    constexpr T kMinusOne = static_cast<T>(-1);
-+    if (dividend == kMin && divisor == kMinusOne) [[unlikely]] {
-+      *result = {};
-+      return false;
-+    }
+ 
++  // Runtime wide-type boundaries. These operands are not constant
++  // expressions, so they exercise the checked_sub fast path
++  // (!is_constant_evaluated()) at full width. The constexpr cases below
++  // only cover the constant-evaluation fallback.
++  {
++    int64_t a = 23;
++    int64_t b = 12;
++    EXPECT_EQ(int64_t(11), folly::constexpr_sub_overflow_clamped(a, b));
 +  }
-   *result = dividend % divisor;
-   return true;
- }
-```
-
-**File**: `folly/lang/test/BUCK` (modified, +1/-0)
-```diff
-@@ -69,6 +69,7 @@ fb_dirsync_cpp_unittest(
-     name = "checked_math_test",
-     srcs = ["CheckedMathTest.cpp"],
-     deps = [
-+        "//folly:traits",
-         "//folly/lang:checked_math",
-         "//folly/lang:keep",
-         "//folly/portability:gtest",
-```
-
-**File**: `folly/lang/test/CheckedMathTest.cpp` (modified, +97/-1)
-```diff
-@@ -20,6 +20,7 @@
- #include <limits>
- #include <random>
- 
-+#include <folly/Traits.h>
- #include <folly/lang/Keep.h>
- #include <folly/portability/GTest.h>
- 
-@@ -229,10 +230,105 @@ TEST(CheckedMath, checkedModSafeDivisor) {
- TEST(CheckedMath, checkedModZeroDivisor) {
-   unsigned int a;
- 
--  EXPECT_FALSE(folly::checked_div(&a, 5u, 0u));
-+  EXPECT_FALSE(folly::checked_mod(&a, 5u, 0u));
-   EXPECT_EQ(a, {});
- }
- 
-+TEST(CheckedMath, checkedDivSignedOverflow) {
-+  int64_t result64 = 1;
-+  EXPECT_FALSE(
-+      folly::checked_div(
-+          &result64, std::numeric_limits<int64_t>::min(), int64_t{-1}));
-+  EXPECT_EQ(result64, 0);
++  {
++    int64_t a = 23;
++    int64_t b = kInt64Min;
++    EXPECT_EQ(kInt64Max, folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    int64_t a = kInt64Min;
++    int64_t b = 1;
++    EXPECT_EQ(kInt64Min, folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    int64_t a = kInt64Max;
++    int64_t b = -1;
++    EXPECT_EQ(kInt64Max, folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    int64_t a = kInt64Min;
++    int64_t b = kInt64Min;
++    EXPECT_EQ(int64_t(0), folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    int64_t a = -1;
++    int64_t b = kInt64Min;
++    EXPECT_EQ(kInt64Max, folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    int64_t a = -23;
++    int64_t b = kInt64Min;
++    EXPECT_EQ(kInt64Max - 22, folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    uint64_t a = 12;
++    uint64_t b = 23;
++    EXPECT_EQ(uint64_t(0), folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    uint64_t a = 0;
++    uint64_t b = kUInt64Max;
++    EXPECT_EQ(uint64_t(0), folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    int32_t a = std::numeric_limits<int32_t>::max();
++    int32_t b = -1;
++    EXPECT_EQ(
++        std::numeric_limits<int32_t>::max(),
++        folly::constexpr_sub_overflow_clamped(a, b));
++  }
++  {
++    int32_t a = std::numeric_limits<int32_t>::min();
++    int32_t b = 1;
++    EXPECT_EQ(
++        std::numeric_limits<int32_t>::min(),
++        folly::constexpr_sub_overflow_clamped(a, b));
++  }
 +
-+  int32_t result32 = 1;
-+  EXPECT_FALSE(
-+      folly::checked_div(
-+          &result32, std::numeric_limits<int32_t>::min(), int32_t{-1}));
-+  EXPECT_EQ(result32, 0);
-+}
-+
-+TEST(CheckedMath, checkedModSignedOverflow) {
-+  int64_t result64 = 1;
-+  EXPECT_FALSE(
-+      folly::checked_mod(
-+          &result64, std::numeric_limits<int64_t>::min(), int64_t{-1}));
-+  EXPECT_EQ(result64, 0);
-+
-+  int32_t result32 = 1;
-+  EXPECT_FALSE(
-+      folly::checked_mod(
-+          &result32, std::numeric_limits<int32_t>::min(), int32_t{-1}));
-+  EXPECT_EQ(result32, 0);
-+}
-+
-+TEST(CheckedMath, checkedDivNarrowSignedOverflow) {
-+  int8_t result8 = 1;
-+  EXPECT_FALSE(
-+      folly::checked_div(
-+          &result8, std::numeric_limits<int8_t>::min(), int8_t{-1}));
-+  EXPECT_EQ(result8, 0);
-+
-+  int16_t result16 = 1;
-+  EXPECT_FALSE(
-+      folly::checked_div(
-+          &result16, std::numeric_limits<int16_t>::min(), int16_t{-1}));
-+  EXPECT_EQ(result16, 0);
-+}
-+
-+#if FOLLY_HAVE_INT128_T
-+TEST(CheckedMath, checkedDivModInt128SignedOverflow) {
-+  constexpr auto min = folly::int128_t(folly::uint128_t{1} << 127);
-+  folly::int128_t result = 1;
-+  EXPECT_FALSE(folly::checked_div(&result, min, folly::int128_t{-1}));
-+  EXPECT_EQ(result, 0);
-+
-+  result = 1;
-+  EXPECT_FALSE(folly::checked_mod(&result, min, folly::int128_t{-1}));
-+  EXPECT_EQ(result, 0);
-+}
-+
-+TEST(CheckedMath, checkedDivModInt128ZeroDividend) {
-+  folly::int128_t result = 1;
-+  EXPECT_TRUE(
-+      folly::checked_div(&result, folly::int128_t{0}, folly::int128_t{-1}));
-+  EXPECT_EQ(result, 0);
-+
-+  result = 1;
-+  EXPECT_TRUE(
-+      folly::checked_mod(&result, folly::int128_t{0}, folly::int128_t{-1}));
-+  EXPECT_EQ(result, 0);
-+}
-+#endif
-+
-+TEST(CheckedMath, checkedDivSignedSafeDivisors) {
-+  int64_t result = 1;
-+  auto min = std::numeric_limits<int64_t>::min();
-+  EXPECT_TRUE(folly::checked_div(&result, min, int64_t{1}));
-+  EXPECT_EQ(result, min);
-+  EXPECT_TRUE(folly::checked_div(&result, min, int64_t{-2}));
-+  EXPECT_EQ(result, -(min / 2));
-+  EXPECT_TRUE(folly::checked_div(&result, int64_t{8}, int64_t{-1}));
-+  EXPECT_EQ(result, -8);
-+}
-+
-+TEST(CheckedMath, checkedModSignedSafeDivisors) {
-+  int8_t smallResult = 1;
-+  EXPECT_TRUE(
-+      folly::checked_mod(
-+          &smallResult, std::numeric_limits<int8_t>::min(), int8_t{-1}));
-+  EXPECT_EQ(smallResult, 0);
-+
-+  int64_t result = 1;
-+  auto min = std::numeric_limits<int64_t>::min();
-+  EXPECT_TRUE(folly::checked_mod(&result, min, int64_t{1}));
-+  EXPECT_EQ(result, 0);
-+  EXPECT_TRUE(folly::checked_mod(&result, min, int64_t{-2}));
-+  EXPECT_EQ(result, 0);
-+  EXPECT_TRUE(folly::checked_mod(&result, int64_t{8}, int64_t{-1}));
-+  EXPECT_EQ(result, 0);
-+}
-+
- TEST(CheckedMath, checkedMulNoOverflow) {
-   unsigned int a;
- 
+   constexpr auto v1 =
+       folly::constexpr_sub_overflow_clamped(int64_t(23), int64_t(12));
+   EXPECT_EQ(int64_t(11), v1);
 ```
 
 ---
 
-### Incident Patch 2: `ca7a6399` (2026-11-20)
-**Commit Message**: ez|fastio| allocate the ZCRX overflow queue before mapping
+### Incident Patch 2: `7064b87a` (2026-11-21)
+**Commit Message**: thread_local: debug set-consistency check with opt-out flag
 
 Summary:
-if
-```
-pendingBuffers_ = DynamicRingQueue<Buffer*>(
-      static_cast<uint32_t>(params.numBuffers * (bufferSize_ / kMTU)));
-```
-fails for any reason, then we don't `mmap()` (and needing to `munmap()` said memory which right now we don't do and would lead to a leak) and dtor cleans everything up.
+The debug-only `cachedInSetMatchesElementsArray` validation in `ThreadLocalPtr::get`
+takes two shared try-locks on every call, which is expensive on hot paths. It now
+runs by default, with `folly_thread_local_debug_disable_set_consistency_check`
+(default false) to opt out; setting the flag skips the check, leaving one bool
+load in debug builds. Non-debug builds are unchanged.
 
-previously if `DynamicRingQueue` fails to allocate because of memory pressure we had already mmap() the memory.
+A plain gflag (not a folly::settings flag) is deliberate: settings reads go through
+`ThreadLocalPtr::get`, so reading one inside this `DCHECK` would recurse.
 
-Reviewed By: yfeldblum
+Reviewed By: r-barnes
 
-Differential Revision: D133232919
+Differential Revision: D133628782
 
-fbshipit-source-id: 8a4d563837cd17e667979443759708ff0e8ae50a
+fbshipit-source-id: e6b4c9c420a94cbff5d7baf10b804632ab33c475
 
-**File**: `folly/io/async/IoUringZeroCopyBufferPool.cpp` (modified, +2/-2)
+**File**: `folly/detail/BUCK` (modified, +1/-0)
 ```diff
-@@ -336,11 +336,11 @@ IoUringZeroCopyBufferPoolImpl::IoUringZeroCopyBufferPoolImpl(
+@@ -280,6 +280,7 @@ fb_dirsync_cpp_library(
+         "//folly/hash:murmur_hash",
+         "//folly/lang:hint",
+         "//folly/memory:sanitize_leak",
++        "//folly/portability:gflags",
+         "//folly/random:hash",
+         "//folly/synchronization:call_once",
+     ],
+```
+
+**File**: `folly/detail/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -286,6 +286,7 @@ folly_add_library(
+     folly_hash_murmur_hash
+     folly_lang_hint
+     folly_memory_sanitize_leak
++    folly_portability_gflags
+     folly_random_hash
+     folly_synchronization_call_once
+     folly_utility
+```
+
+**File**: `folly/detail/ThreadLocalDetail.cpp` (modified, +10/-0)
+```diff
+@@ -27,9 +27,15 @@
+ #include <folly/hash/MurmurHash.h>
+ #include <folly/lang/Hint.h>
+ #include <folly/memory/SanitizeLeak.h>
++#include <folly/portability/GFlags.h>
+ #include <folly/random/hash.h>
+ #include <folly/synchronization/CallOnce.h>
+ 
++FOLLY_GFLAGS_DEFINE_bool(
++    folly_thread_local_debug_disable_set_consistency_check,
++    false,
++    "Disable the ThreadEntry set-consistency DCHECK in ThreadLocalPtr::get");
++
+ constexpr auto kSmallGrowthFactor = 1.1;
+ constexpr auto kBigGrowthFactor = 1.7;
+ 
+@@ -187,6 +193,10 @@ bool ThreadEntry::cachedInSetMatchesElementsArray(uint32_t id) {
+     return true;
    }
  
-   bufAreaSize_ = params.numBuffers * bufferSize_;
--  mapMemory();
--
-   pendingBuffers_ = DynamicRingQueue<Buffer*>(
-       static_cast<uint32_t>(params.numBuffers * (bufferSize_ / kMTU)));
- 
-+  mapMemory();
++  if (FLAGS_folly_thread_local_debug_disable_set_consistency_check) {
++    return true;
++  }
 +
-   if (!test) {
-     initialRegister(params, pageSize);
-   } else {
-```
-
-**File**: `folly/io/async/test/BUCK` (modified, +1/-0)
-```diff
-@@ -1378,6 +1378,7 @@ fb_dirsync_cpp_unittest(
-     target_compatible_with = ["ovr_config//runtime:fbcode"],
-     deps = [
-         "//folly/io/async:io_uring_zero_copy_buffer_pool",
-+        "//folly/portability:sys_mman",
-         "//folly/portability:unistd",
-     ],
- )
-```
-
-**File**: `folly/io/async/test/IoUringZeroCopyBufferPoolTest.cpp` (modified, +28/-0)
-```diff
-@@ -14,13 +14,15 @@
-  * limitations under the License.
-  */
- 
-+#include <cerrno>
- #include <thread>
- #include <utility>
- #include <vector>
- 
- #include <gtest/gtest.h>
- 
- #include <folly/io/async/IoUringZeroCopyBufferPool.h>
-+#include <folly/portability/SysMman.h>
- #include <folly/portability/Unistd.h>
- 
- using namespace ::testing;
-@@ -58,6 +60,32 @@ class IoUringZeroCopyBufferPoolTestHelper {
- 
- using namespace ::folly;
- 
-+TEST(IoUringZeroCopyBufferPoolTest, BufferKeepsMappingAliveAfterPoolDestroy) {
-+  IoUringZeroCopyBufferPool::Params params = {
-+      .ring = nullptr,
-+      .numBuffers = 32,
-+      .bufferSizeHint = 4096,
-+      .rqEntries = 8,
-+      .ifindex = 0,
-+      .queueId = 0,
-+  };
-+  auto pool = IoUringZeroCopyBufferPoolTestHelper::create(params);
-+  io_uring_cqe cqe{};
-+  cqe.res = 2048;
-+  io_uring_zcrx_cqe zcqe{};
-+  auto buffer = pool->getIoBuf(&cqe, &zcqe).buffer;
-+  ASSERT_NE(buffer, nullptr);
-+  auto* address = const_cast<uint8_t*>(buffer->data());
-+  const size_t pageSize = static_cast<size_t>(sysconf(_SC_PAGESIZE));
-+  unsigned char resident{};
-+
-+  pool.reset();
-+  EXPECT_EQ(::mincore(address, pageSize, &resident), 0);
-+  buffer.reset();
-+  EXPECT_EQ(::mincore(address, pageSize, &resident), -1);
-+  EXPECT_EQ(errno, ENOMEM);
-+}
-+
- // TODO: T264228475: remove this once liburing/uapi headers are updated.
- struct TestZcrxNotifStats {
-   uint64_t copy_count;
+   if (removed_) {
+     // Pointer in entry set and elements array need not match anymore.
+     return true;
 ```
 
 ---
 
-### Incident Patch 3: `c7716510` (2026-11-20)
-**Commit Message**: Fix Subprocess.cpp build with clang and glibc >= 2.40 fortify (#2757)
+### Incident Patch 3: `32d01805` (2026-11-21)
+**Commit Message**: Warm up `bcmp` in `UnsafeSelfAllocateStackTracePrinter`
 
 Summary:
-With glibc 2.40 or newer, clang and `_FORTIFY_SOURCE`, `bits/fcntl2.h` declares `open` and `openat` as `__attribute__((overloadable))` overload sets. The libc X-macros in `Subprocess.cpp` spell the field types as `decltype(&::open)` and deduce the loader's return type from `&::open`. Neither can pick an overload, so the build fails with "reference to overloaded function could not be resolved". GCC doesn't take that glibc path, so only clang builds break.
+The `small_sigaltstack` tests still failed after D133221885, now with
+`['bcmp'] != []` instead of `['memchr'] != []`.
 
-Now each X-macro entry carries its function type:
-- The other entries use `decltype(::func)`, so their types are unchanged.
-- `open` and `openat` use `subprocess_libc_open_t` and `subprocess_libc_openat_t`, their libc signatures. This also covers Bionic's `__open_real` and `__openat_real`.
-- The initializer does `static_cast<type*>(&::func)`, which picks the libc function out of the overload set.
+`std::string_view` equality, used for section-name lookup in
+`ElfFile::getSectionByName` and in `DwarfImpl::findLocation`, lowers to a
+`bcmp` call in opt builds. Nothing bound it before the crash, so the first
+trace lazily bound `bcmp` inside the signal handler.
 
-Fixes https://github.com/meta/folly/issues/2751.
+Evaluate an unpredictable `string_view` comparison during warm-up with the
+same `compiler_must_not_predict` / `compiler_must_not_elide` pattern, so the
+binding resolves at startup.
 
-Pull Request resolved: https://github.com/meta/folly/pull/2757
+Reviewed By: dtolnay
 
-Test Plan:
-On Debian trixie (glibc 2.41, clang 19), with `-O2 -D_FORTIFY_SOURCE=2`:
-- Before: `Subprocess.cpp` fails with the errors in https://g
+Differential Revision: D133689804
 
-**File**: `folly/Subprocess.cpp` (modified, +30/-22)
+fbshipit-source-id: e61aee25629571df3ebc154e9b4e1758fec8aec0
+
+**File**: `folly/debugging/symbolizer/Symbolizer.cpp` (modified, +8/-0)
 ```diff
-@@ -127,30 +127,37 @@ static Ret subprocess_libc_load(
-   return !kIsSanitize ? ptr : reinterpret_cast<Ret>(::dlsym(handle, name));
- }
+@@ -18,6 +18,7 @@
  
--#define FOLLY_DETAIL_SUBPROCESS_LIBC_X_BASE(X) \
--  X(_exit, _exit)                              \
--  X(close, close)                              \
--  X(dup2, dup2)                                \
--  X(fcntl, fcntl)                              \
--  X(pthread_sigmask, pthread_sigmask)          \
--  X(signal, signal)                            \
--  X(sprintf, sprintf)                          \
--  X(strtol, strtol)                            \
--  X(vfork, vfork)                              \
--  X(write, write)
-+#define FOLLY_DETAIL_SUBPROCESS_LIBC_X_BASE(X)                     \
-+  X(_exit, _exit, decltype(::_exit))                               \
-+  X(close, close, decltype(::close))                               \
-+  X(dup2, dup2, decltype(::dup2))                                  \
-+  X(fcntl, fcntl, decltype(::fcntl))                               \
-+  X(pthread_sigmask, pthread_sigmask, decltype(::pthread_sigmask)) \
-+  X(signal, signal, decltype(::signal))                            \
-+  X(sprintf, sprintf, decltype(::sprintf))                         \
-+  X(strtol, strtol, decltype(::strtol))                            \
-+  X(vfork, vfork, decltype(::vfork))                               \
-+  X(write, write, decltype(::write))
-+
-+//  open and openat are spelled with explicit types since some libcs declare
-+//  them as overload sets under fortify, e.g. glibc >= 2.40 with clang, where
-+//  decltype(::open) is ill-formed.
-+using subprocess_libc_open_t = int(char const*, int, ...);
-+using subprocess_libc_openat_t = int(int, char const*, int, ...);
+ #include <cstdlib>
+ #include <span>
++#include <string_view>
  
- #if defined(__BIONIC_INCLUDE_FORTIFY_HEADERS)
- #define FOLLY_DETAIL_SUBPROCESS_LIBC_X_OPEN(X) \
--  X(open, __open_real)                         \
--  X(openat, __openat_real)
-+  X(open, __open_real, subprocess_libc_open_t) \
-+  X(openat, __openat_real, subprocess_libc_openat_t)
- #else
- #define FOLLY_DETAIL_SUBPROCESS_LIBC_X_OPEN(X) \
--  X(open, open)                                \
--  X(openat, openat)
-+  X(open, open, subprocess_libc_open_t)        \
-+  X(openat, openat, subprocess_libc_openat_t)
+ #include <folly/Demangle.h>
+ #include <folly/FileUtil.h>
+@@ -731,6 +732,13 @@ UnsafeSelfAllocateStackTracePrinter::UnsafeSelfAllocateStackTracePrinter(int fd)
+     DwarfCursor cursor{terminated};
+     auto string = cursor.readCString();
+     compiler_must_not_elide(string);
++    // `std::string_view` equality (section-name lookup) lowers to `bcmp` in
++    // opt builds; resolve its binding before installing signal handlers.
++    const std::string_view nameA{".a"};
++    const std::string_view nameB{".b"};
++    compiler_must_not_predict(nameA);
++    compiler_must_not_predict(nameB);
++    compiler_must_not_elide(nameA == nameB);
  #endif
- 
- #if defined(__linux__)
--#define FOLLY_DETAIL_SUBPROCESS_LIBC_X_PRCTL(X) X(prctl, prctl)
-+#define FOLLY_DETAIL_SUBPROCESS_LIBC_X_PRCTL(X) \
-+  X(prctl, prctl, decltype(::prctl))
- #else
- #define FOLLY_DETAIL_SUBPROCESS_LIBC_X_PRCTL(X)
- #endif
-@@ -160,12 +167,13 @@ static Ret subprocess_libc_load(
-   FOLLY_DETAIL_SUBPROCESS_LIBC_X_OPEN(X)  \
-   FOLLY_DETAIL_SUBPROCESS_LIBC_X_PRCTL(X)
- 
--#define FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DECL(name, func) \
--  static decltype(&::func) name;
--#define FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DEFN(name, func) \
--  decltype(&::func) subprocess_libc::name;
--#define FOLLY_DETAIL_SUBPROCESS_LIBC_INIT(name, func) \
--  subprocess_libc::name = subprocess_libc_load(handle, &::func, #name);
-+#define FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DECL(name, func, type) \
-+  static type* name;
-+#define FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DEFN(name, func, type) \
-+  type* subprocess_libc::name;
-+#define FOLLY_DETAIL_SUBPROCESS_LIBC_INIT(name, func, type) \
-+  subprocess_libc::name =                                   \
-+      subprocess_libc_load(handle, static_cast<type*>(&::func), #name);
- 
- struct subprocess_libc {
-   FOLLY_DETAIL_SUBPROCESS_LIBC_X(FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DECL)
+     char demangled[8];
+     (void)folly::demangle("_Z1fv", demangled, sizeof(demangled));
 ```
 
 #### Recent Merged Pull Requests:
@@ -2831,21 +2664,35 @@ On Debian trixie (glibc 2.41, clang 19), with `-O2 -D_FORTIFY_SOURCE=2`:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Handle signed overflow in checked_div and checked_mod
+## X. Fast checked_sub path in constexpr_sub_overflow_clamped
 
 **RULE**:
-When implementing operations in `folly/lang/BUCK`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/ConstexprMath.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7490bbd`: Handle signed overflow in checked_div and checked_mod. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `30c6bd46`: Fast checked_sub path in constexpr_sub_overflow_clamped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/lang/BUCK`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/ConstexprMath.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        "//folly:traits",
+  if (!std::is_constant_evaluated()) {
+    if constexpr (std::is_integral_v<T>) {
+      T ret{};
+      if (!checked_sub(&ret, a, b)) [[unlikely]] {
+        if constexpr (std::is_unsigned_v<T>) {
+          return T(0);
+        } else {
+          // Overflow happens only when a and b have different signs, so the
+          // sign of a decides the saturation limit.
+          return (a < 0) ? L::min() : L::max();
+        }
+      }
+      return ret;
+    }
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2855,4 +2702,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7490bbd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `30c6bd46` are properly handled with clean fallback behavior.

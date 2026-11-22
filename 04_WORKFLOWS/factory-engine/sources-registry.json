@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T16:12:29.362Z",
-    "lastVerified": "2026-11-22T16:12:29.362Z",
+    "lastChecked": "2026-11-22T17:12:24.874Z",
+    "lastVerified": "2026-11-22T17:12:24.874Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T16:57:43.262Z",
-    "lastVerified": "2026-11-22T16:57:43.262Z",
+    "lastChecked": "2026-11-22T17:14:11.505Z",
+    "lastVerified": "2026-11-22T17:14:11.505Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -222,9 +222,9 @@
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
-    "lastChecked": "2026-11-21T16:31:10.634Z",
+    "lastChecked": "2026-11-22T17:12:17.724Z",
     "revisionIdentifier": "53625dfe",
-    "lastVerified": "2026-11-21T16:31:10.634Z"
+    "lastVerified": "2026-11-22T17:12:17.724Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -568,12 +568,12 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T10:32:26.093Z",
-    "lastVerified": "2026-11-18T10:32:26.093Z",
+    "lastChecked": "2026-11-22T17:12:12.464Z",
+    "lastVerified": "2026-11-22T17:12:12.464Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "1280dd32ee53d08f6102f21e7c788f6f3aa9dd22ff7afd0583f4c5c8a03e330f",
+    "contentHash": "1b13fd44792f683ec141973f3976844a10793b61324f608b4385a53c44674d24",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -1709,8 +1709,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T08:36:04.039Z",
-    "lastVerified": "2026-11-22T08:36:04.039Z",
+    "lastChecked": "2026-11-22T17:12:19.905Z",
+    "lastVerified": "2026-11-22T17:12:19.905Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -6320,9 +6320,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-11-21T14:49:39.504Z",
+    "lastChecked": "2026-11-22T17:12:22.367Z",
     "revisionIdentifier": "9092df94",
-    "lastVerified": "2026-11-21T14:49:39.504Z"
+    "lastVerified": "2026-11-22T17:12:22.367Z"
   },
   "yvgude-lean-ctx": {
     "name": "lean-ctx",
@@ -8324,9 +8324,9 @@
   "mohamedrejeb-compose-rich-editor": {
     "name": "compose-rich-editor",
     "officialUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
-    "lastChecked": "2026-11-19T15:50:47.491Z",
+    "lastChecked": "2026-11-22T17:12:14.877Z",
     "revisionIdentifier": "3254ff75",
-    "lastVerified": "2026-11-19T15:50:47.491Z"
+    "lastVerified": "2026-11-22T17:12:14.877Z"
   },
   "oxc-project-oxc": {
     "name": "oxc-project/oxc",
@@ -8691,14 +8691,14 @@
     "officialUrl": "https://github.com/facebook/folly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-21T03:52:29.598Z",
-    "lastVerified": "2026-11-21T03:52:29.598Z",
+    "lastChecked": "2026-11-22T17:12:15.023Z",
+    "lastVerified": "2026-11-22T17:12:15.023Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-folly",
-    "contentHash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
+    "contentHash": "56084d044419f51127dc35e95c482d3a35272eedcd6146edfe4a8e7346432a25",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 3,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

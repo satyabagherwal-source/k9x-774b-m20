@@ -12160,3 +12160,5 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `80a37645` | Multi-dimensional audit evidence | 2026-11-22T16:57:25.046Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `36cdd4ea` | Multi-dimensional audit evidence | 2026-11-22T16:57:29.345Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `57a7a48c` | Multi-dimensional audit evidence | 2026-11-22T16:57:39.952Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `062cc44c` | Multi-dimensional audit evidence | 2026-11-22T17:12:16.392Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-22T17:14:08.480Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T16:57:45.288Z",
+  "last_updated": "2026-11-22T17:14:14.143Z",
   "total_records": 2362,
   "domains": {
     "A": {
@@ -8132,8 +8132,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "a120d57295af2a7c4bdfc58a9652948ebb8d6c32971edbdf1c8d1ec0fed3b139",
-      "created_at": "2026-11-22T15:59:05.203Z"
+      "content_hash": "b0f6e8d5d58bd4a78c4113891fa77ed9ab63006076d8fb3299b78ef14da7156b",
+      "created_at": "2026-11-22T17:14:14.143Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -29198,8 +29198,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-small-en-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-small-en-v1-5-research-knowledge-intelligence-baai-bge-small-en-v1-5.md",
       "repository": "BAAI/bge-small-en-v1.5",
-      "content_hash": "4d980ed8d6c413d7c7087da884135b19139ae954f2f99c65ee415d651a49f0f8",
-      "created_at": "2026-11-18T10:32:26.922Z"
+      "content_hash": "173db57ddbc790b16fa4b3aa948052e924645739da3972e0197e2d933eb9766d",
+      "created_at": "2026-11-22T17:14:08.750Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria",
@@ -29207,8 +29207,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-small-en-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-small-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-.md",
       "repository": "hf-baai-bge-small-en-v1.5-learnings",
-      "content_hash": "6f44cdae146251f744bfe4105d6f308ef68ed1912e7e1b170b7ca35df5d6f256",
-      "created_at": "2026-11-18T10:32:39.555Z"
+      "content_hash": "895aa13c7ac447fadf9cab5c05384e79bf94273523d8c0f920e941c0202066b7",
+      "created_at": "2026-11-22T17:14:13.047Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants",
@@ -33996,8 +33996,8 @@
       "title": "Technical Construction Intelligence: meta/folly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-folly-technical-construction-intelligence-meta-folly-core-invariants.md",
       "repository": "meta/folly",
-      "content_hash": "fef47386ba9f115504fbaae0999f2b67dd29f4a4044fee75edea6359b9175dbe",
-      "created_at": "2026-11-21T03:52:31.070Z"
+      "content_hash": "2a2d78996623753f7839e3cc3f1e146fca35b1ca9de6e28b2f628c693a4ac839",
+      "created_at": "2026-11-22T17:12:16.906Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian",
@@ -34014,8 +34014,8 @@
       "title": "Technical Construction Intelligence: facebook-folly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-folly-learnings-technical-construction-intelligence-facebook-folly-lear.md",
       "repository": "facebook-folly-learnings",
-      "content_hash": "8a406685988a6433a5d7b2346245d848726bab32a696121ca01a55d2878fb68d",
-      "created_at": "2026-11-21T03:52:38.668Z"
+      "content_hash": "e70a920cd7e544644d639f3df84b75a42f4f037b5614f7132eba6ba6cbc39d85",
+      "created_at": "2026-11-22T17:14:12.376Z"
     },
     "DOM-D-6FA503EE": {
       "record_id": "DOM-D-6FA503EE",

@@ -12127,3 +12127,5 @@
 | `CYCLE-20261122-Y1BM` | `2026-11-22T16:57:25.042Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9957` | Yes (`b08ca115...`) |
 | `CYCLE-20261122-Y4N0` | `2026-11-22T16:57:29.340Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9958` | Yes (`5a359432...`) |
 | `CYCLE-20261122-YCTO` | `2026-11-22T16:57:39.948Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9959` | Yes (`d685cb4a...`) |
+| `CYCLE-20261122-H538` | `2026-11-22T17:12:16.388Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9960` | Yes (`56084d04...`) |
+| `CYCLE-20261122-JJKR` | `2026-11-22T17:14:08.475Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`1b13fd44...`) |

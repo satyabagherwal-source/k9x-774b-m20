@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "1280dd32ee53d08f6102f21e7c788f6f3aa9dd22ff7afd0583f4c5c8a03e330f",
-    "lastHarvestedAt": "2026-11-18T10:32:26.753Z",
+    "contentHash": "1b13fd44792f683ec141973f3976844a10793b61324f608b4385a53c44674d24",
+    "lastHarvestedAt": "2026-11-22T17:14:08.480Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "27995cd3",
+    "sourceVersion": "062cc44c",
     "license": "Apache-2.0",
-    "contentHash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
-    "lastHarvestedAt": "2026-11-21T03:52:30.737Z",
+    "contentHash": "56084d044419f51127dc35e95c482d3a35272eedcd6146edfe4a8e7346432a25",
+    "lastHarvestedAt": "2026-11-22T17:12:16.392Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {
