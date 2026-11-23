@@ -12245,3 +12245,6 @@
 | `CYCLE-20261123-G7SU` | `2026-11-23T00:39:27.102Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`569ffdd6...`) |
 | `CYCLE-20261123-RMQT` | `2026-11-23T00:48:19.685Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`c037330e...`) |
 | `CYCLE-20261123-RWU5` | `2026-11-23T00:48:32.765Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10007` | Yes (`71b2c75d...`) |
+| `CYCLE-20261123-1Y0H` | `2026-11-23T00:56:20.849Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`ff394461...`) |
+| `CYCLE-20261123-1ZCO` | `2026-11-23T00:56:22.584Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10012` | Yes (`2a92260a...`) |
+| `CYCLE-20261123-266F` | `2026-11-23T00:56:31.431Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10013` | Yes (`12e165f2...`) |

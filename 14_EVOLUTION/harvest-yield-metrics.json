@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T00:48:32.775Z",
-  "total_cycles_completed": 11643,
-  "total_learnings_persisted": 11643,
-  "total_rules_promoted": 10838,
+  "last_updated": "2026-11-23T00:56:31.441Z",
+  "total_cycles_completed": 11646,
+  "total_learnings_persisted": 11646,
+  "total_rules_promoted": 10840,
   "history": [
-    {
-      "timestamp": "2026-11-22T06:58:06.158Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T07:05:57.695Z",
-      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
-      "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T07:06:00.464Z",
-      "repository": "apache/maka",
-      "learningId": "learn-github-apache-maka",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T07:13:49.942Z",
       "repository": "facebook/sam-3d-body-dinov3",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T00:48:32.775Z",
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T00:56:20.859Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T00:56:22.593Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T00:56:31.441Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

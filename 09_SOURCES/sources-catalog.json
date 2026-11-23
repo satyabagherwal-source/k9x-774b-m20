@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "535ba67f34bc832e2152eca6b3ca28f1a347bd2a567474f4271a0f80e3f24978",
-    "lastHarvestedAt": "2026-11-18T17:27:58.155Z",
+    "contentHash": "ff3944616ea00a08972a7704ca581ad633416f088ad55fa178e532aa694b2e78",
+    "lastHarvestedAt": "2026-11-23T00:56:20.854Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {
@@ -3693,10 +3693,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "85c58cdb",
+    "sourceVersion": "5b9451b6",
     "license": "Apache-2.0",
-    "contentHash": "ae71d15abe0fffbdd14fa89a05b457a62f40fc28fbe1e66328c7c5ca4df1016a",
-    "lastHarvestedAt": "2026-11-22T02:40:18.506Z",
+    "contentHash": "12e165f285a1c4f2e6dd4a5047e61415af422c666be291b5e3618d75ad5f2890",
+    "lastHarvestedAt": "2026-11-23T00:56:31.435Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "gravitl-netmaker": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "d9a0f1d1",
+    "sourceVersion": "a3552b0d",
     "license": "MIT",
-    "contentHash": "1132ac05425a52d96fd0b97ded9e1d1e6bd850cc3a0a0877d1a2fe6018a32efb",
-    "lastHarvestedAt": "2026-11-21T19:27:20.204Z",
+    "contentHash": "2a92260ae0660503edf10432cf6174606874708ada762911e7be6952094ac525",
+    "lastHarvestedAt": "2026-11-23T00:56:22.588Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {

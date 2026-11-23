@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T00:48:36.008Z",
-    "lastVerified": "2026-11-23T00:48:36.008Z",
+    "lastChecked": "2026-11-23T00:56:34.690Z",
+    "lastVerified": "2026-11-23T00:56:34.690Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T00:07:55.844Z",
+    "lastChecked": "2026-11-23T00:56:32.661Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T00:07:55.844Z"
+    "lastVerified": "2026-11-23T00:56:32.661Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1063,9 +1063,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-22T20:16:58.754Z",
+    "lastChecked": "2026-11-23T00:56:27.395Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-22T20:16:58.754Z"
+    "lastVerified": "2026-11-23T00:56:27.395Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2114,9 +2114,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-22T01:32:31.012Z",
+    "lastChecked": "2026-11-23T00:56:29.922Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-22T01:32:31.012Z"
+    "lastVerified": "2026-11-23T00:56:29.922Z"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -3141,12 +3141,12 @@
     "officialUrl": "https://github.com/ClementTsang/bottom",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T19:27:18.732Z",
-    "lastVerified": "2026-11-21T19:27:18.732Z",
+    "lastChecked": "2026-11-23T00:56:21.522Z",
+    "lastVerified": "2026-11-23T00:56:21.522Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "1132ac05425a52d96fd0b97ded9e1d1e6bd850cc3a0a0877d1a2fe6018a32efb",
+    "contentHash": "2a92260ae0660503edf10432cf6174606874708ada762911e7be6952094ac525",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -3763,14 +3763,14 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T02:40:17.439Z",
-    "lastVerified": "2026-11-22T02:40:17.439Z",
+    "lastChecked": "2026-11-23T00:56:30.350Z",
+    "lastVerified": "2026-11-23T00:56:30.350Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "ae71d15abe0fffbdd14fa89a05b457a62f40fc28fbe1e66328c7c5ca4df1016a",
+    "contentHash": "12e165f285a1c4f2e6dd4a5047e61415af422c666be291b5e3618d75ad5f2890",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3794,12 +3794,12 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T17:27:57.537Z",
-    "lastVerified": "2026-11-18T17:27:57.537Z",
+    "lastChecked": "2026-11-23T00:56:20.196Z",
+    "lastVerified": "2026-11-23T00:56:20.196Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "535ba67f34bc832e2152eca6b3ca28f1a347bd2a567474f4271a0f80e3f24978",
+    "contentHash": "ff3944616ea00a08972a7704ca581ad633416f088ad55fa178e532aa694b2e78",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9609,9 +9609,9 @@
   "leetcode-mafia-cheetah": {
     "name": "cheetah",
     "officialUrl": "https://github.com/leetcode-mafia/cheetah",
-    "lastChecked": "2026-11-20T02:38:50.272Z",
+    "lastChecked": "2026-11-23T00:56:22.529Z",
     "revisionIdentifier": "e66db5be",
-    "lastVerified": "2026-11-20T02:38:50.272Z"
+    "lastVerified": "2026-11-23T00:56:22.529Z"
   },
   "searchsolved-search-solved-public-seo": {
     "name": "searchsolved/search-solved-public-seo",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T00:48:37.985Z",
+  "last_updated": "2026-11-23T00:56:36.893Z",
   "total_records": 2389,
   "domains": {
     "A": {
@@ -11108,8 +11108,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-m3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-m3-research-knowledge-intelligence-baai-bge-m3-core-invariants.md",
       "repository": "BAAI/bge-m3",
-      "content_hash": "10e3b5282b9df4ca98fa6742ccfa900e4fba7af249e1be08698e9a645d5311bb",
-      "created_at": "2026-11-18T17:27:58.337Z"
+      "content_hash": "80457639fcb1b26706168a6fb7465bad0d0c3bfdec85a6916eba6080f150f01d",
+      "created_at": "2026-11-23T00:56:21.070Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants",
@@ -11204,8 +11204,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-m3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-m3-learnings-research-knowledge-intelligence-hf-baai-bge-m3-learning.md",
       "repository": "hf-baai-bge-m3-learnings",
-      "content_hash": "7fbdc235c5082047bb83a8eb0114b9514dbe2212ff82b736c4e09fbcfae20292",
-      "created_at": "2026-11-18T17:28:19.270Z"
+      "content_hash": "00c128ad0fdf29fd4378a55f2b8858ad17f1402eea57bb83264d70f0c42b5d9b",
+      "created_at": "2026-11-23T00:56:36.066Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants",
@@ -15996,8 +15996,8 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-learnings-research-knowledge-intelligence-dosco-graphjin-learning.md",
       "repository": "dosco-graphjin-learnings",
-      "content_hash": "064b738d009e0ece24c27dedb2b1978468dd420686577013250b2120299ec254",
-      "created_at": "2026-11-22T02:42:33.614Z"
+      "content_hash": "0ee0544169d862ba054b4a65ec3f2412adc7013086f4a56ea332e81176576e80",
+      "created_at": "2026-11-23T00:56:36.893Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
@@ -20551,8 +20551,8 @@
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "repository": "ClementTsang/bottom",
-      "content_hash": "8f40c7147bf41edcb800bfc468eb84236d5a78242655fd5a5bad7e19ee8ce453",
-      "created_at": "2026-11-21T19:27:20.689Z"
+      "content_hash": "43d1a7a9b0e4518169d54c153eaf7ccb29171d440884e90096f0511f6d0cc04f",
+      "created_at": "2026-11-23T00:56:22.971Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
@@ -20560,8 +20560,8 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-learnings-architecture-intelligence-clementtsang-bottom-lear.md",
       "repository": "clementtsang-bottom-learnings",
-      "content_hash": "896d6fbd55a55b4eac736b9536c2fb12d4fc5fb06649c18196e7e04edf95f7f0",
-      "created_at": "2026-11-21T19:32:23.540Z"
+      "content_hash": "fdf8ca83a73a07f99f0500517054f85eefe6e25a43e43eb7454f0024b95223ed",
+      "created_at": "2026-11-23T00:56:35.533Z"
     },
     "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
@@ -39091,10 +39091,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "d245d02c15b4f2101cdb5ac3114c238e77c89426c76e54dbdacb85dd25dd1c68",
-      "created_at": "2026-11-22T04:51:24.164Z"
+      "content_hash": "9dd645ec6c5ae9cc5abdaa08bc010c3db91332ea995dd702f29e7d1b8cf26e4c",
+      "created_at": "2026-11-23T00:56:31.833Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",

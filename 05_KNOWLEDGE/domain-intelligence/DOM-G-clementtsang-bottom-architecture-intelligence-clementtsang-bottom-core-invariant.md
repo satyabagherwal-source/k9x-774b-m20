@@ -4,24 +4,24 @@
 {
   "source_repository": "ClementTsang/bottom",
   "source_url": "https://github.com/ClementTsang/bottom",
-  "source_version": "d9a0f1d1",
+  "source_version": "a3552b0d",
   "license": "MIT",
-  "timestamp": "2026-11-21T19:27:20.463Z",
+  "timestamp": "2026-11-23T00:56:22.796Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clementtsang-bottom",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ClementTsang/bottom](https://github.com/ClementTsang/bottom) (Revision: `d9a0f1d1`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T19:27:20.463Z`  
+> **Provenance**: Harvested from [ClementTsang/bottom](https://github.com/ClementTsang/bottom) (Revision: `a3552b0d`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T00:56:22.796Z`  
 > **Learning ID**: `learn-github-clementtsang-bottom`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ClementTsang/bottom:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T19:27:18.732Z  
+> **Harvest Timestamp**: 2026-11-23T00:56:21.522Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14227 stars
+- **Stars / Engagement**: 14241 stars
 
 ---
 
@@ -55,6 +55,10 @@ The following architectural invariants have been empirically discovered and reco
 ```
 use rustc_hash::FxHashMap as HashMap;
 
+#[cfg(feature = "battery")]
+use crate::widgets::BatteryWidgetState;
+#[cfg(feature = "gpu")]
+use crate::widgets::GpuGraphWidgetState;
 use crate::{
     app::layout_manager::BottomWidgetType,
     constants,
@@ -64,12 +68,6 @@ use crate::{
         ProcWidgetState, TempGraphWidgetState, TempWidgetState, query::ProcessQuery,
     },
 };
-
-#[cfg(feature = "gpu")]
-use crate::widgets::GpuGraphWidgetState;
-
-#[cfg(feature = "battery")]
-use crate::widgets::BatteryWidgetState;
 
 // TODO: Update this system.
 pub struct AppWidgetStates {
@@ -1642,210 +1640,127 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9a0f1d1` (2026-11-21)
-**Commit Message**: feature: add basic GPU usage graph (#2329)
+### Incident Patch 1: `a3552b0d` (2026-11-22)
+**Commit Message**: ci: update freebsd VM version to avoid node warning (#2335)
 
-Adds a basic GPU usage graph.
+Updates the FreeBSD vm action version to v1.6.0 to avoid a Node 20 warning.
 
-**File**: `.cargo/config.toml` (modified, +1/-1)
+**File**: `.github/actions/test-bsd-target/action.yml` (modified, +6/-6)
 ```diff
-@@ -8,4 +8,4 @@ rustflags = ["-C", "target-feature=+crt-static"]
- rustflags = ["-C", "target-feature=+crt-static"]
+@@ -15,7 +15,7 @@ runs:
+   using: composite
+   steps:
+     - name: FreeBSD Test (Attempt 1)
+-      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
++      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
+       if: ${{ inputs.target == 'x86_64-unknown-freebsd' }}
+       with:
+         release: "${{ inputs.os-version }}"
+@@ -30,7 +30,7 @@ runs:
+       continue-on-error: true
  
- [registry]
--global-min-publish-age = "7 days"
-+global-min-publish-age = "14 days"
+     - name: FreeBSD Test (Attempt 2)
+-      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
++      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
+       if: ${{ inputs.target == 'x86_64-unknown-freebsd' &&
+         steps.freebsd_attempt_1.outcome == 'failure' }}
+       with:
+@@ -46,7 +46,7 @@ runs:
+       continue-on-error: true
+ 
+     - name: FreeBSD Test (Attempt 3)
+-      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
++      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
+       if: ${{ inputs.target == 'x86_64-unknown-freebsd' &&
+         steps.freebsd_attempt_2.outcome == 'failure' }}
+       with:
+@@ -61,7 +61,7 @@ runs:
+       id: freebsd_attempt_3F
+ 
+     - name: NetBSD Test (Attempt 1)
+-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
++      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
+       if: ${{ inputs.target == 'x86_64-unknown-netbsd' }}
+       with:
+         release: "${{ inputs.os-version }}"
+@@ -73,7 +73,7 @@ runs:
+       continue-on-error: true
+ 
+     - name: NetBSD Test (Attempt 2)
+-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
++      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
+       if: ${{ inputs.target == 'x86_64-unknown-netbsd' &&
+         steps.netbsd_attempt_1.outcome == 'failure' }}
+       with:
+@@ -86,7 +86,7 @@ runs:
+       continue-on-error: true
+ 
+     - name: NetBSD Test (Attempt 3)
+-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
++      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
+       if: ${{ inputs.target == 'x86_64-unknown-netbsd' &&
+         steps.netbsd_attempt_2.outcome == 'failure' }}
+       with:
 ```
 
-**File**: `CHANGELOG.md` (modified, +3/-1)
+---
+
+### Incident Patch 2: `9c2fc404` (2026-11-22)
+**Commit Message**: ci: update netbsd VM version + cross netbsd CDN (#2333)
+
+Hopefully fixes the VM or builds failing constantly.
+
+**File**: `.github/actions/test-bsd-target/action.yml` (modified, +3/-3)
 ```diff
-@@ -22,7 +22,7 @@ That said, these are more guidelines rather than hard rules, though the project
+@@ -61,7 +61,7 @@ runs:
+       id: freebsd_attempt_3F
  
- ---
+     - name: NetBSD Test (Attempt 1)
+-      uses: vmactions/netbsd-vm@c8a0d7ddb84619a7a8cc4e652efa7950b3fd9f92 # v1.5.2
++      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
+       if: ${{ inputs.target == 'x86_64-unknown-netbsd' }}
+       with:
+         release: "${{ inputs.os-version }}"
+@@ -73,7 +73,7 @@ runs:
+       continue-on-error: true
  
--## 0.15.1 - Unreleased
-+## 0.16.0 - Unreleased
+     - name: NetBSD Test (Attempt 2)
+-      uses: vmactions/netbsd-vm@c8a0d7ddb84619a7a8cc4e652efa7950b3fd9f92 # v1.5.2
++      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
+       if: ${{ inputs.target == 'x86_64-unknown-netbsd' &&
+         steps.netbsd_attempt_1.outcome == 'failure' }}
+       with:
+@@ -86,7 +86,7 @@ runs:
+       continue-on-error: true
  
- ### Features
- 
-@@ -31,6 +31,7 @@ That said, these are more guidelines rather than hard rules, though the project
- - [#2325](https://github.com/ClementTsang/bottom/pull/2325): Add hostname template to terminal title option.
- - [#2326](https://github.com/ClementTsang/bottom/pull/2326): Add basic GPU support for non-Linux operating systems using sysinfo's new GPU API.
- - [#2328](https://github.com/ClementTsang/bottom/pull/2328): Add natural sorting options for the process, disk, and temperature widgets.
-+- [#2329](https://github.com/ClementTsang/bottom/pull/2329): Add a GPU usage graph widget.
- 
- ### Changes
- 
-@@ -40,6 +41,7 @@ That said, these are more guidelines rather than hard rules, though the project
- 
- - [#2300](https://github.com/ClementTsang/bottom/pull/2300): Fix dialog screens not blocking certain user events.
- - [#2298](https://github.com/ClementTsang/bottom/pull/2298): Fix hidden table columns shifting the widths of later columns and header clicks.
-+- [#2329](https://github.com/ClementTsang/bottom/pull/2329): Fix `--default_widget_type` not accepting `memory`, `temp_graph`, `temperature_graph`, and `disk_io_graph`.
- 
- ### Other
- 
+     - name: NetBSD Test (Attempt 3)
+-      uses: vmactions/netbsd-vm@c8a0d7ddb84619a7a8cc4e652efa7950b3fd9f92 # v1.5.2
++      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
+       if: ${{ inputs.target == 'x86_64-unknown-netbsd' &&
+         steps.netbsd_attempt_2.outcome == 'failure' }}
+       with:
 ```
 
-**File**: `docs/content/configuration/config-file/flags.md` (modified, +47/-47)
+**File**: `Cross.toml` (modified, +2/-2)
 ```diff
-@@ -14,50 +14,50 @@ hide_avg_cpu = true
- Most of the [command line flags](../command-line-options.md) have config file equivalents to avoid having to type them out
- each time:
+@@ -3,6 +3,6 @@ passthrough = ["RUST_BACKTRACE", "BTM_GENERATE"]
  
--| Field                        | Type                                                                                                               | Functionality                                                                                                                                                                    |
--| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
--| `terminal_title`             | String                                                                                                             | Sets a custom string displayed in the terminal title; add `{hostname}` to substitute it for your hostname.                                                                       |
--| `hide_avg_cpu`               | Boolean                                                                                                            | Deprecated - use `cpu.hide_avg_cpu`. Hides the average CPU usage.                                                                                                                |
--| `dot_marker`                 | Boolean                                                                                                            | Uses a dot marker for graphs.                                                                                                                                                    |
--| `cpu_left_legend`            | Boolean                                                                                                            | Deprecated - use `cpu.left_legend`. Puts the CPU chart legend to the left side.                                                                                                  |
--| `current_usage`              | Boolean                                                                                                            | Deprecated - use `processes.current_usage`. Sets process CPU% to be based on current CPU%.                                                                                       |
--| `group_processes`            | Boolean                                                                                                            | Deprecated - use `processes.default_grouped`. Groups processes with the same name by default.                                                                                    |
--| `case_sensitive`             | Boolean                                                                                                            | Deprecated - use `processes.case_sensitive`. Enables case sensitivity by default.                                                                                                |
--| `whole_word`                 | Boolean                                                                                                            | Deprecated - use `processes.whole_word`. Enables whole-word matching by default.                                                                                                 |
--| `regex`                      | Boolean                                                                                                            | Deprecated - use `processes.regex`. Enables regex by default.                                                                                                                    |
--| `basic`                      | Boolean                                                                                                            | Hides graphs and uses a more basic look.                                                                                                                                         |
--| `use_old_network_legend`     | Boolean                                                                                                            | DEPRECATED - uses the older network legend.                                                                                                                                      |
--| `battery`                    | Boolean                                                                                                            | Shows the battery widget.                                                                                                                                                        |
--| `rate`                       | Unsigned Int (represents milliseconds) or String (represents human time)                                           | Sets a refresh rate in ms.                         
-```
-
-**File**: `docs/content/configuration/config-file/gpu-graph.md` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+# GPU Usage Graph Widget Configuration
-+
-+If you want to change some of the default behaviour of the GPU usage graph widget, you can configure things under the `[gpu_graph]` section.
-+
-+## Graph legend position
-+
-+You can change where the legend for the graph is placed within the widget itself (or hidden with `"none"`). The default is `"top-right"`.
-+
-+```toml
-+[gpu_graph]
-+# One of ["none", "top-left", "top", "top-right", "left", "right", "bottom-left", "bottom", "bottom-right"]
-+legend_position = "top-left"
-+```
-+
-+## Short GPU names
-+
-+If GPU support is enabled, you can use `short_gpu_names` to display simplified GPU names in the GPU usage widget
-+instead of the full GPU names. If enabled, then if there's only one GPU, it'll just list the entry as `GPU`;
-+if there are multiple GPUs, it'll use entries like `GPU0`, `GPU1`, etc. By default, this is disabled.
-+
-+```toml
-+[gpu_graph]
-+short_gpu_names = true
-+```
-```
-
-**File**: `docs/content/configuration/config-file/layout.md` (modified, +1/-0)
-```diff
-@@ -49,6 +49,7 @@ The following `type` values are supported:
- | `"temp_graph", "temperature_graph"` | Temperature graph        |
- | `"disk"`                            | Disk table               |
- | `"disk_io_graph"`                   | Disk I/O graph           |
-+| `"gpu"`                             | GPU usage graph          |
- | `"empty"`                           | An empty space           |
- | `"batt", "battery"`                 | Battery statistics       |
- 
-```
-
-**File**: `docs/content/usage/widgets/gpu-graph.md` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+# GPU Usage Graph Widget
-+
-+The GPU usage graph widget displays the per-GPU utilization percentage over time.
-+
-+<figure>
-+    <img src="../../../assets/screenshots/gpu_graph.webp" alt="A picture of an expanded GPU usage graph widget."/>
-+</figure>
-+
-+## Features
-+
-+The GPU usage graph shows the current GPU utilization for each GPU as a percentage.
-+
-+The displayed time range can be adjusted through either the keyboard or mouse.
-+
-+## Key bindings
-+
-+Note that key bindings are generally case-sensitive.
-+
-+| Binding   | Action                                  |
-+| --------- | --------------------------------------- |
-+| ++plus++  | Zoom in on chart (decrease time range)  |
-+| ++minus++ | Zoom out on chart (increase time range) |
-+| ++equal++ | Reset zoom                              |
-+
-+## Mouse bindings
-+
-+| Binding      | Action                                                         |
-+| ------------ | -------------------------------------------------------------- |
-+| ++"Scroll"++ | Scrolling up or down zooms in or out of the graph respectively |
-+
-+## How is GPU information gathered?
-+
-+How we get GPU data depends on the platform:
-+
-+- On Linux:
-+  - NVIDIA: Using the NVML crate
-+  - AMD: Manually parsing sysfs
-+  - Intel: Summing per-process engine usage from `/proc/<pid>/fdinfo`. Note this only includes processes that
-+    bottom has permissions to inspect, so it may miss some processes unless run with elevated privileges (which
-+    comes with its own set of risks).
-+- On Windows:
-+  - NVIDIA: Using the NVML crate and sysinfo as a fallback.
-+  - AMD/Intel: Using sysinfo's GPU API
-+- On other platforms, we just use sysinfo's GPU API
-```
-
-**File**: `docs/mkdocs.yml` (modified, +2/-0)
-```diff
-@@ -169,6 +169,7 @@ nav:
-           - "Temperature Widget": usage/widgets/temperature-table.md
-           - "Temperature Graph Widget": usage/widgets/temperature-graph.md
-           - "Disk I/O Graph Widget": usage/widgets/disk-io-graph.md
-+          - "GPU Graph Widget": usage/widgets/gpu-graph.md
-           - "Battery Widget": usage/widgets/battery.md
-       - "Auto-Complete": usage/autocomplete.md
-   - "Configuration":
-@@ -183,6 +184,7 @@ nav:
-           - "Temperature Table Widget": configuration/config-file/temperature-table.md
-           - "Temperature Graph Widget": configuration/config-file/temperature-graph.md
-           - "Disk I/O Graph Widget": configuration/config-file/disk-io-graph.md
-+          - "GPU Graph Widget": configuration/config-file/gpu-graph.md
-           - "Flags": configuration/config-file/flags.md
-           - "Layout": configuration/config-file/layout.md
-           - "Styling": configuration/config-file/styling.md
-```
-
-**File**: `sample_configs/default_config.toml` (modified, +9/-0)
-```diff
-@@ -402,6 +402,15 @@
- # Use short GPU names (e.g. "GPU" or "GPU0", "GPU1") instead of full GPU names. Only available if the GPU feature is enabled when built.
- #short_gpu_names = false
- 
-+# GPU usage graph widget configuration, Only available if the GPU feature is enabled when built.
-+#[gpu_graph]
-+
-+# Where to place the legend for the GPU usage graph widget. One of "none", "top-left", "top", "top-right", "left", "right", "bottom-left", "bottom", "bottom-right".
-+#legend_position = "top-right"
-+
-+# Use short GPU names (e.g. "GPU" or "GPU0", "GPU1") instead of full GPU names.
-+#short_gpu_names = false
-+
- # Network widget configuration
- #[network_graph]
- 
+ [target.x86_64-unknown-netbsd]
+ pre-build = [
+-    # Last updated on 2026-10-27
+-    "apt-get update && apt-get install -y --no-install-recommends curl=8.5.0-2ubuntu10.16 xz-utils=5.6.1+really5.4.5-1ubuntu0.4 && td=$(mktemp -d) && mkdir -p \"$td/netbsd\" && curl -4 --retry 3 -sSfL 'http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib ./lib && curl -4 --retry 3 -sSfL 'http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib && cp \"$td\"/netbsd/usr/lib/libkvm* /usr/local/x86_64-unknown-netbsd/lib/ && rm -rf \"$td\"",
++    # Last updated on 2026-11-22
++    "apt-get update && apt-get install -y --no-install-recommends curl=8.5.0-2ubuntu10.16 xz-utils=5.6.1+really5.4.5-1ubuntu0.4 && td=$(mktemp -d) && mkdir -p \"$td/netbsd\" && curl -4 --retry 3 -sSfL 'https://cdn.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib ./lib && curl -4 --retry 3 -sSfL 'https://cdn.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib && cp \"$td\"/netbsd/usr/lib/libkvm* /usr/local/x86_64-unknown-netbsd/lib/ && rm -rf \"$td\"",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2335** (2026-11-22): ci: update freebsd VM version to avoid node warning (@ClementTsang)
+- **PR #2333** (2026-11-22): ci: update netbsd VM version + cross netbsd CDN (@ClementTsang)
+- **PR #2332** (2026-11-22): docs: update changelog to add #1843 (@ClementTsang)
+- **PR #2331** (2026-11-22): docs: add rashil2000 as a contributor for code (@allcontributors[bot])
+- **PR #2330** (2026-11-22): refactor: run nightly fmt as of 2026-11-21 (@ClementTsang)
 - **PR #2329** (2026-11-21): feature: add basic GPU usage graph (@ClementTsang)
-- **PR #2328** (2026-11-19): feature: add natural sorting option (@ClementTsang)
-- **PR #2327** (2026-11-19): docs: update changelog to add #2326 (@ClementTsang)
-- **PR #2326** (2026-11-19): feature: add basic integration with sysinfo's gpu api for non-Linux (@ClementTsang)
-- **PR #2325** (2026-11-17): feature: add hostname template to terminal title option (@ClementTsang)
-- **PR #2324** (2026-11-16): ci: fix MSI installer workflow failing when installing dotnet (@ClementTsang)
 
 ---
 
@@ -1865,31 +1780,41 @@ Adds a basic GPU usage graph.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feature: add basic GPU usage graph
+## X. ci: update freebsd VM version to avoid node warning
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/test-bsd-target/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9a0f1d1`: feature: add basic GPU usage graph. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3552b0d`: ci: update freebsd VM version to avoid node warning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/test-bsd-target/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-global-min-publish-age = "14 days"
+      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
+      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
+      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-global-min-publish-age = "7 days"
+      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
+      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
+      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9a0f1d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3552b0d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

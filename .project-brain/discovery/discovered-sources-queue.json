@@ -2,20 +2,20 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T00:31:38.114Z",
+  "updated_at": "2026-11-23T00:56:36.501Z",
   "stats": {
-    "total_discovered": 7728,
-    "approved_pending_harvest": 7315,
+    "total_discovered": 7737,
+    "approved_pending_harvest": 7321,
     "harvested_count": 0,
-    "rejected_count": 413,
+    "rejected_count": 416,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7301,
+      "COMMUNITY_AND_EXPERT": 7308,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 43,
       "LEGAL_AND_REGULATORY": 2,
-      "RESEARCH_AND_ACADEMIA": 7
+      "RESEARCH_AND_ACADEMIA": 9
     }
   },
   "sources": {
@@ -167148,6 +167148,183 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
         "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-F581BDED6FA9": {
+      "id": "SRC-F581BDED6FA9",
+      "url": "http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz",
+      "title": "http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T00:56:35.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-3E9A5C24E6E9": {
+      "id": "SRC-3E9A5C24E6E9",
+      "url": "http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz",
+      "title": "http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T00:56:35.053Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-19E6F9926639": {
+      "id": "SRC-19E6F9926639",
+      "url": "https://cdn.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz",
+      "title": "https://cdn.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T00:56:35.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-18F4B2E1F2E7": {
+      "id": "SRC-18F4B2E1F2E7",
+      "url": "https://cdn.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz",
+      "title": "https://cdn.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T00:56:35.149Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-6323667F4111": {
+      "id": "SRC-6323667F4111",
+      "url": "https://equixly.com/blog/2025/03/29/mcp-server-new-security-nightmare",
+      "title": "https://equixly.com/blog/2025/03/29/mcp-server-new-security-nightmare",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T00:56:36.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-017675303C0A": {
+      "id": "SRC-017675303C0A",
+      "url": "https://arxiv.org/abs/2505.03275",
+      "title": "https://arxiv.org/abs/2505.03275",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "RESEARCH_AND_ACADEMIA",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.95,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T00:56:36.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-94A1C139819B": {
+      "id": "SRC-94A1C139819B",
+      "url": "https://arxiv.org/abs/2411.07763",
+      "title": "https://arxiv.org/abs/2411.07763",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "RESEARCH_AND_ACADEMIA",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.95,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T00:56:36.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-792AF7B9D872": {
+      "id": "SRC-792AF7B9D872",
+      "url": "https://securitylabs.datadoghq.com/articles/mcp-vulnerability-case-study-SQL-injection-in-the-postgresql-mcp-server",
+      "title": "https://securitylabs.datadoghq.com/articles/mcp-vulnerability-case-study-SQL-injection-in-the-postgresql-mcp-server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T00:56:36.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-1CC5436330B0": {
+      "id": "SRC-1CC5436330B0",
+      "url": "https://deeporg.io/install.sh",
+      "title": "https://deeporg.io/install.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T00:56:36.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
       }
     }
   }

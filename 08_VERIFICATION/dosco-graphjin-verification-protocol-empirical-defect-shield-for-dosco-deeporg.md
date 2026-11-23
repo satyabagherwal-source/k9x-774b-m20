@@ -4,22 +4,22 @@
 {
   "source_repository": "dosco/deeporg",
   "source_url": "https://github.com/dosco/graphjin",
-  "source_version": "85c58cdb",
+  "source_version": "5b9451b6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T02:40:18.714Z",
+  "timestamp": "2026-11-23T00:56:31.667Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dosco-deeporg",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/graphjin) (Revision: `85c58cdb`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T02:40:18.714Z`  
+> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/graphjin) (Revision: `5b9451b6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T00:56:31.667Z`  
 > **Learning ID**: `learn-github-dosco-deeporg`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dosco/deeporg` (Commit: `85c58cdb`)
+- **Target Repository**: `dosco/deeporg` (Commit: `5b9451b6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:40:17.439Z  
+> **Harvest Timestamp**: 2026-11-23T00:56:30.350Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2563,790 +2563,825 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73d7188e` (2026-11-21)
-**Commit Message**: fix(serv): stop two replicas colliding on revision bumps and metric ticks
+### Incident Patch 1: `983527e4` (2026-11-22)
+**Commit Message**: ci: run the snowflake suite in three shards, TestSubscription on its own [skip-release]
 
-Two races between replicas that share one control store. Both showed up
-as intermittent failures of TestWatchScheduleTwoRunnersFireOncePerTick
-and TestMetricWatchFiresOnceOnCrossingAcrossReplicas.
+With the cache warm, snowflake was the only job over 6 minutes (10.4 min):
+its suite runs 578s under the simulator, 222s of it TestSubscription (99
+concurrent subscriptions). Round-robin shards can't fix that, since the
+shard holding TestSubscription stays heavy (2 shards: ~422s, 5: ~278s).
 
-Revision bump. bumpArtifactRevision read the revision and wrote it back.
-Two replicas bumping a domain that had no row yet both inserted it, and
-the second failed on the primary key (UNIQUE constraint failed:
-_graphjin_revisions.domain). A slow replica could also write an older
-number over a newer one. The bump is now a single
-UPDATE ... SET revision = revision + 1, with an INSERT only when the
-domain has no row, and the UPDATE again when that INSERT loses to
-another replica.
+scripts/test-shard.sh gains SHARD_SOLO (named tests get the last shard to
+themselves; a stale name leaves it empty and fails loudly), SHARD_LIST_RUN
+and SHARD_LIST_ARGS (so tests/ lists with -db=none and starts no database),
+and PRINT_REGEX (so a wrapper can keep its own retries).
+scripts/test-snowflake.sh runs one slice when DB_SHARD/DB_SHARDS are set,
+fixed before its retry loop.
 
-Metric watch reading. A tick's reading was saved on its own, before the
-clock moved. A replica that read the row in between saw the new state
-with the tick still due and folded the same tick in a second time. The
-reading is now stored by the statement that moves the clock
-(claimWatchScheduleTick), so one replica's reading is kept per tick. A
-replica that reported a breach but lost the clock to one that saw none
-still records its breach, so a
-
-**File**: `serv/artifacts.go` (modified, +47/-10)
-```diff
-@@ -1064,29 +1064,66 @@ func artifactStatus(status string) string {
- 	return status
- }
- 
-+// bumpArtifactRevision moves a domain's revision on by one.
-+//
-+// Several replicas bump the same domain at the same moment, so the increment
-+// is one statement that the database applies atomically. Direct SQL for the
-+// same reason as claimTaskVerification: the internal GraphQL mutation API
-+// cannot add to a column or report the affected-row count. Reading the
-+// revision and writing it back let two replicas both insert a domain's first
-+// row, and the second failed on the primary key; it also let a slow replica
-+// write an older number over a newer one.
- func (s *graphjinService) bumpArtifactRevision(ctx context.Context, domain string) error {
- 	if s == nil {
- 		return nil
- 	}
--	if _, _, _, ok := s.artifactDB(); !ok {
-+	db, dbType, _, ok := s.artifactDB()
-+	if !ok {
- 		return nil
- 	}
- 	domain = strings.TrimSpace(domain)
- 	if domain == "" {
- 		domain = "artifacts"
- 	}
--	now := time.Now().UTC().Format(time.RFC3339)
--	current, err := s.artifactRevision(ctx, domain)
--	if err != nil {
--		return err
-+	revisions := artifactTableName(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema, "revisions")
-+	domainCol := quoteStoreIdent(dbType, "domain")
-+	revisionCol := quoteStoreIdent(dbType, "revision")
-+	updatedAtCol := quoteStoreIdent(dbType, "updated_at")
-+	now := time.Now().UTC()
-+	var updatedAt any = now.Format(time.RFC3339)
-+	if dbType == "postgres" || dbType == "" {
-+		updatedAt = now
-+	}
-+	increment := func() (bool, error) {
-+		res, err := s.internalStoreExec(ctx, db, dbType,
-+			fmt.Sprintf("UPDATE %s SET %s = %s + 1, %s = %s WHERE %s = %s",
-+				revisions, revisionCol, revisionCol,
-+				updatedAtCol, taskVerifySQLPlaceholder(dbType, 1),
-+				domainCol, taskVerifySQLPlaceholder(dbType, 2)),
-+			updatedAt, domain)
-+		if err != nil {
-+			return false, err
-+		}
-+		affected, err := res.RowsAffected()
-+		return affected > 0, err
- 	}
--	input := map[string]any{"domain": domain, "revision": current + 1, "updated_at": now}
--	if current == 0 {
--		_, err = s.internalStoreMutationRows(ctx, "revisions", `insert: $input`, revisionStoreFields, map[string]any{"input": input})
-+	if done, err := increment(); err != nil || done {
- 		return err
- 	}
--	_, err = s.internalStoreMutationRows(ctx, "revisions", `where: { domain: { eq: $domain } }, update: $input`, revisionStoreFields, map[string]any{"domain": domain, "input": map[string]any{"revision": current + 1, "updated_at": now}})
--	return err
-+	// The domain has no row yet. If another replica inserts it first, this
-+	// insert fails on the primary key and the increment applies after all.
-+	_, insertErr := s.internalStoreExec(ctx, db, dbType,
-+		fmt.Sprintf("INSERT INTO %s (%s, %s, %s) VALUES (%s, 1, %s)",
-+			revisions, domainCol, revisionCol, updatedAtCol,
-+			taskVerifySQLPlaceholder(dbType, 1), taskVerifySQLPlaceholder(dbType, 2)),
-+		domain, updatedAt)
-+	if insertErr == nil {
-+		return nil
-+	}
-+	if done, err := increment(); err == nil && done {
-+		return nil
-+	}
-+	return insertErr
- }
- 
- func identityVarString(ctx context.Context, name string) (string, bool) {
-```
-
-**File**: `serv/control_store_internal.go` (modified, +23/-0)
-```diff
-@@ -2,6 +2,7 @@ package serv
- 
- import (
- 	"context"
-+	"database/sql"
- 	"encoding/json"
- 	"fmt"
- 	"strings"
-@@ -273,6 +274,28 @@ func (s *graphjinService) internalStoreGraphQL(ctx context.Context, query string
- 	return nil, fmt.Errorf("internal store SQLite retry exhausted")
- }
- 
-+// internalStoreExec runs one direct SQL statement against the control store
-+// with the SQLite busy retry internalStoreGraphQL applies, so a statement that
-+// needs direct SQL (an atomic increment, an affected-row count) is no more
-+// likely to fail under write contention than the GraphQL write it replaces.
-+// The statement must be safe to run again after a busy error, which every
-+// single autocommit statement is: a busy statement wrote nothing.
-+func (s *graphjinService) internalStoreExec(ctx context.Context, db *sql.DB, dbType, query string, args ...any) (sql.Result, error) {
-+	attempts := 1
-+	if dbType == "sqlite" {
-+		attempts = internalStoreSQLiteBusyMaxAttempts
-+	}
-+	for attempt := 0; ; attempt++ {
-+		res, err := db.ExecContext(ctx, query, args...)
-+		if err == nil || !isInternalStoreSQLiteBusyError(err) || attempt == attempts-1 {
-+			return res, err
-+		}
-+		if err := waitInternalStoreSQLiteRetry(ctx, internalStoreSQLiteBusyDelay(attempt)); err != nil {
-+			return nil, err
-+		}
-+	}
-+}
-+
- func (s *graphjinService) internalStoreGraphQLOnce(ctx context.Context, query string, raw json.RawMessage) (map[string]json.RawMessage, error) {
- 	res, err := s.gj.GraphQL(s.internalStoreContext(ctx), query, raw, nil)
- 	if err != nil {
-```
-
-**File**: `serv/metric_watch.go` (modified, +4/-0)
-```diff
-@@ -618,6 +618,10 @@ func (s *graphjinService) evaluateWatchMetricTick(
- 	return state, crossings, nil
- }
- 
-+// saveWatchMetricState stores a metric state whatever the schedule's clock
-+// says. A tick's reading normally goes in with the clock, through
-+// claimWatchScheduleTick; this is only for the replica that reported a breach
-+// and then found the clock already moved.
- func (s *graphjinService) saveWatchMetricState(ctx context.Context, id string, state watchMetricState, evalErr error) error {
- 	lastError := ""
- 	if evalErr != nil {
-```
-
-**File**: `serv/metric_watch_test.go` (modified, +87/-0)
-```diff
-@@ -417,6 +417,93 @@ func TestMetricWatchRecoversFromCrashBeforeStateSave(t *testing.T) {
- 	}
- }
- 
-+// staleMetricTick returns a metric watch with one tick due, and the row as a
-+// replica read it before any replica handled that tick.
-+func staleMetricTick(t *testing.T, db *sql.DB, svc *graphjinService, ctx context.Context, name string) (id string, stale map[string]any, due time.Time) {
-+	t.Helper()
-+	setOpenOrders(t, db, 1)
-+	row, err := insertMetricWatch(t, svc, ctx, name, nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	id = stringFromAny(row["id"])
-+	due = time.Now().UTC().Truncate(5 * time.Minute)
-+	setWatchNextFire(t, db, id, due)
-+	stale, err = svc.internalWatchStoreRow(ctx, id)
-+	if err != nil || stale == nil {
-+		t.Fatalf("read watch %s: %v", id, err)
-+	}
-+	return id, stale, due
-+}
-+
-+// One reading is kept per tick: a replica that read the watch before another
-+// replica finished the tick must not store its own reading over it.
-+func TestMetricWatchLateReplicaDoesNotOverwriteClaimedTick(t *testing.T) {
-+	db, replicas := newScheduleWatchReplicas(t, 2)
-+	first, late := replicas[0], replicas[1]
-+	ctx := artifactUserCtx("user_1")
-+	id, stale, due := staleMetricTick(t, db, late, ctx, "late_replica")
-+	sched := mustWatchSchedule(t, "*/5 * * * *", "UTC")
-+	now := due.Add(2 * time.Second)
-+
-+	setOpenOrders(t, db, 3)
-+	if sweep, err := first.sweepWatchSchedules(ctx, now); err != nil || sweep.Fired != 1 {
-+		t.Fatalf("first replica fired=%d err=%v", sweep.Fired, err)
-+	}
-+
-+	// The number moves again before the late replica runs its query.
-+	setOpenOrders(t, db, 0)
-+	fired, _, err := late.fireWatchSchedule(ctx, stale, sched, stringMapValue(stale, "next_fire_at"), due, now)
-+	if err != nil || fired {
-+		t.Fatalf("late replica fired=%v err=%v", fired, err)
-+	}
-+	st := metricWatchState(t, late, ctx, id)
-+	if st.LastValue != 3.0 || !st.Breached {
-+		t.Fatalf("the claimed tick's reading was overwritten: %+v", st)
-+	}
-+	if len(st.History) != 2 {
-+		t.Fatalf("history = %+v, want the probe plus one point for the tick", st.History)
-+	}
-+	if ids := watchEventIDs(t, db); len(ids) != 1 {
-+		t.Fatalf("events = %v, want 1", ids)
-+	}
-+}
-+
-+// The replica that reports a breach keeps it on record even when another
-+// replica, reading a moment earlier, moved the clock without seeing it.
-+// Otherwise a value that stays over the threshold fires again on the next tick.
-+func TestMetricWatchBreachStaysRecordedWhenAnotherReplicaClaimsTheTick(t *testing.T) {
-+	db, replicas := newScheduleWatchReplicas(t, 2)
-+	first, late := replicas[0], replicas[1]
-+	ctx := artifactUserCtx("user_1")
-+	id, stale, due := staleMetricTick(t, db, late, ctx, "late_breach")
-+	sched := mustWatchSchedule(t, "*/5 * * * *", "UTC")
-+	now := due.Add(2 * time.Second)
-+
-+	if sweep, err := first.sweepWatchSchedules(ctx, now); err != nil || sweep.Fired != 0 {
-+		t.Fatalf("first replica fired=%d err=%v", sweep.Fired, err)
-+	}
-+
-+	setOpenOrders(t, db, 3)
-+	fired, _, err := late.fireWatchSchedule(ctx, stale, sched, stringMapValue(stale, "next_fire_at"), due, now)
-+	if err != nil || !fired {
-+		t.Fatalf("late replica fired=%v err=%v, want the crossing reported", fired, err)
-+	}
-+	st := metricWatchState(t, first, ctx, id)
-+	if st.LastValue != 3.0 || !st.Breached {
-+		t.Fatalf("the reported breach is not on record: %+v", st)
-+	}
-+	if len(st.History) != 2 {
-+		t.Fatalf("history = %+v, want the probe plus one point for the tick", st.History)
-+	}
-+	if sweep, err := first.sweepWatchSchedules(ctx, due.Add(5*time.Minute+2*time.Second)); err != nil || sweep.Fired != 0 {
-+		t.Fatalf("next tick fired=%d err=%v; the breach was already reported", sweep.Fired, err)
-+	}
-+	if ids := watchEventIDs(t, db); len(ids) != 1 {
-+		t.Fatalf("events = %v, want 1", ids)
-+	}
-+}
-+
- // A failing query records the error and keeps the schedule moving.
- func TestMetricWatchQueryErrorKeepsSchedule(t *testing.T) {
- 	db, replicas := newScheduleWatchReplicas(t, 1)
-```
-
-**File**: `serv/revision_signal_test.go` (modified, +34/-0)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"context"
- 	"encoding/json"
- 	"strings"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -89,6 +90,39 @@ func TestRevisionSignalReadsPastGraphQLDefaultLimit(t *testing.T) {
- 	}
- }
- 
-+// Replicas bump a domain at the same moment, including the first bump, when the
-+// domain has no row yet. Every bump succeeds and every bump counts.
-+func TestBumpArtifactRevisionIsAtomicAcrossReplicas(t *testing.T) {
-+	_, replicas := newScheduleWatchReplicas(t, 2)
-+	ctx := context.Background()
-+	const perReplica = 4
-+	for _, domain := range []string{"watch_events", "tasks", "notifications", "first_bump"} {
-+		if base, err := replicas[0].artifactRevision(ctx, domain); err != nil || base != 0 {
-+			t.Fatalf("%s revision before any bump = %d err=%v, want 0", domain, base, err)
-+		}
-+		var wg sync.WaitGroup
-+		start := make(chan struct{})
-+		for _, svc := range replicas {
-+			for range perReplica {
-+				wg.Add(1)
-+				go func() {
-+					defer wg.Done()
-+					<-start
-+					if err := svc.bumpArtifactRevision(ctx, domain); err != nil {
-+						t.Errorf("bump %s: %v", domain, err)
-+					}
-+				}()
-+			}
-+		}
-+		close(start)
-+		wg.Wait()
-+		want := int64(len(replicas) * perReplica)
-+		if got, err := replicas[0].artifactRevision(ctx, domain); err != nil || got != want {
-+			t.Fatalf("%s revision = %d err=%v, want %d", domain, got, err, want)
-+		}
-+	}
-+}
-+
- func TestRevisionSignalSubscriptionMembersAreIsolated(t *testing.T) {
- 	svc := newRevisionSignalTestService(t)
- 	ctx, cancel := context.WithCancel(context.Background())
-```
-
-**File**: `serv/schedule_runner.go` (modified, +72/-29)
-```diff
-@@ -300,6 +300,9 @@ func (s *graphjinService) sweepWatchSchedules(ctx context.Context, now time.Time
- // leaves the tick due with its event already written; the next sweep, on any
- // replica, finds the event and only moves the clock on. A tick is neither lost
- // nor doubled, and no step holds a lock or needs Redis.
-+//
-+// The returned bool reports whether this call wrote the tick's event, also
-+// when a later step failed.
- func (s *graphjinService) fireWatchSchedule(
- 	ctx context.Context,
- 	row map[string]any,
-@@ -328,43 +331,51 @@ func (s *graphjinService) fireWatchSchedule(
- 	// shutdown from cutting the follow-up bookkeeping (enrichment, wake-ups)
- 	// short once the event exists.
- 	ctx = context.WithoutCancel(ctx)
-+	next := sched.next(now)
- 	var metricEvent map[string]any
--	var metricState *watchMetricState
-+	var reading *watchMetricReading
- 	if metric, metered := parseWatchMetricJSON(jsonMapString(row, "metric_json")); metered {
- 		// A metric watch fires only when its number crosses. The event still
- 		// goes in before the state and the clock move, so a replica that dies
- 		// part-way re-reads the tick and the event id stops a second fire.
-+		//
-+		// The reading is stored by the statement that moves the clock, so one
-+		// replica's reading is kept per tick. Stored on its own, ahead of the
-+		// clock, it was visible to a replica that read the row in between
-+		// with the tick still due, and that replica folded the same tick into
-+		// the state a second time.
- 		state, crossings, evalErr := s.evaluateWatchMetricTick(ownerCtx, row, def, metric, sched, now)
-+		reading = &watchMetricReading{State: state, Err: evalErr}
- 		if evalErr != nil || len(crossings) == 0 {
--			if err := s.saveWatchMetricState(ctx, def.ID, state, evalErr); err != nil {
--				return false, time.Time{}, err
--			}
--			next := sched.next(now)
--			if _, err := s.advanceWatchSchedule(ctx, def.ID, raw, due, next); err != nil {
-+			if _, err := s.claimWatchScheduleTick(ctx, def.ID, raw, due, next, reading); err != nil {
- 				return false, time.Time{}, err
- 			}
- 			return false, next, nil
- 		}
- 		metricEvent = watchMetricEventPayload(metric, state, crossings)
--		metricState = &state
- 	}
- 	inserted, err := s.insertWatchScheduleEvent(ctx, &def, proposal, sched, due, now, metricEvent)
- 	if err != nil {
--		// Nothing has moved: the tick stays due and the next sweep retries it.
--		return false, time.Time{}, err
--	}
--	if metricState != nil {
--		// Saved before the clock moves: a later tick must see this breach, or
--		// a value that stays over the threshold would fire again.
--		if err := s.saveWatchMetricState(ctx, def.ID, *metricState, nil); err != nil {
--			return inserted, time.Time{}, err
--		}
-+		// The clock has not moved: the tick stays due and the next sweep
-+		// retries it. inserted is true when the event went in and only its
-+		// follow-up failed; the retry then finds the event and finishes.
-+		return inserted, time.Time{}, err
- 	}
--	next := sched.next(now)
--	advanced, err := s.advanceWatchSchedule(ctx, def.ID, raw, due, next)
-+	// For a metric watch the breach is stored as the clock moves: a later
-+	// tick must see it, or a value that stays over the threshold would fire
-+	// again.
-+	advanced, err := s.claimWatchScheduleTick(ctx, def.ID, raw, due, next, reading)
- 	if err != nil {
- 		return inserted, time.Time{}, err
- 	}
-+	if inserted && !advanced && reading != nil {
-+		// Another replica moved the clock first and stored its own reading,
-+		// which need not show a breach when the number changed between the
-+		// two reads. This replica reported the breach, so its reading stands.
-+		if err := s.saveWatchMetricState(ctx, def.ID, reading.State, nil); err != nil {
-+			return inserted, next, err
-+		}
-+	}
- 	if !inserted && !advanced {
- 		// Another replica recorded this tick and moved the clock.
- 		return false, next, nil
-@@ -395,6 +406,22 @@ func (s *graphjinService) fireWatchSchedule(
- // reports whether this call made the move; of several replicas advancing the
- // same tick, exactly one does.
- func (s *graphjinService) advanceWatchSchedule(ctx context.Context, id, raw string, prev, next time.Time) (bool, error) {
-+	return s.claimWatchScheduleTick(ctx, id, raw, prev, next, nil)
-+}
-+
-+// watchMetricReading is what one replica read for a metric watch's tick: the
-+// state to store, and the query or path error when the read failed.
-+type watchMetricReading struct {
-+	State watchMetricState
-+	Err   error
-+}
-+
-+// claimWatchScheduleTick is advanceWatchSchedule that also stores a metric
-+// watch's reading, in the same statement. The reading and the clock move
-+// together or not at all, so the replica that claims a tick is the only one
-+// whose reading is kept, and no replica can read the new state with the tick
-+// still due.
-+func (s *graphjinService) claimWatchScheduleTick(ctx context.Context, id, raw string, prev, next time.Time, reading *watchMetricReading) (bool, error) {
- 	db, dbType, watches, _, ok := s.watchDB()
- 	if !ok 
-```
-
----
-
-### Incident Patch 2: `85c58cdb` (2026-11-22)
-**Commit Message**: ci: run each test suite as its own job, skip database suites when nothing they compile changed [skip-release]
-
-Build was one job: the twelve database suites ran two at a time in batches
-that each waited for their slowest suite (39 min), then the package tests
-ran after all of them (15 min, almost all cmd/v3). Runs took ~57 minutes.
-
-Now there is a Build job, a Package tests job, and one job per database,
-all side by side, so a run takes as long as its slowest job.
-
-The database jobs run only when a module the tests/ suite compiles in
-changes (core, conf, serv, agent, auth, codesql, plugin, the drivers,
-tests itself) or the test plumbing does. tests/ imports serv/v3, so
-gating them on core alone would let a serv change break them unseen.
-PRs that only touch website/** no longer run Build at all, matching push.
-
-setup-go now reads the Go version from go.work: the pinned 1.23.1 made
-every run download 1.25.5 anyway, and the extra actions/cache step
-collided with setup-go's own module cache ("tar: File exists").
-
-New make targets: test-packages and test-db DB=<name>. A single-suite
-run of scripts/test-parallel.sh streams its output instead of holding it
-back unless it fails.
-
-Co-Author
-
-**File**: `.github/workflows/build.yml` (modified, +115/-14)
-```diff
-@@ -3,38 +3,139 @@ name: Build
- on:
-   pull_request:
-     branches: [master]
--    paths-ignore: ["**.md", "docs/**"]
-+    paths-ignore:
-+      - "**.md"
-+      - "docs/**"
-+      - "website/**"
-   push:
-     branches: [master]
-     paths-ignore:
-       - "**.md"
-       - "docs/**"
-       - ".github/workflows/**"
-       - "website/**"
-+  # Runs every job, whatever changed. Pushes that only touch workflows don't
-+  # trigger Build, so this is how a workflow change gets its first run.
-+  # Auto Release only follows push runs, so a manual run never releases.
-+  workflow_dispatch:
-+
-+# Every suite is its own job so they run side by side. As one job the database
-+# suites ran two at a time and the package tests waited for all of them: ~57
-+# minutes. Now the run takes as long as its slowest job.
-+#
-+# Auto Release waits for this whole workflow to succeed, so every job here
-+# gates a release. A job skipped because nothing it tests changed counts as
-+# success.
- 
- jobs:
--  lint-and-test:
--    name: Lint and Test
-+  changes:
-+    name: Detect changes
-     runs-on: ubuntu-latest
-+    timeout-minutes: 5
-+    permissions:
-+      contents: read
-+      pull-requests: read
-+    outputs:
-+      db: ${{ steps.filter.outputs.db }}
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v4
- 
--      - name: Set up Go
--        uses: actions/setup-go@v4
-+      - name: Filter paths
-+        id: filter
-+        uses: dorny/paths-filter@v3
-         with:
--          go-version: "1.23.1"
-+          filters: |
-+            # Everything the tests/ module compiles in. Regenerate with:
-+            #   go list -deps -test -tags "mysql mariadb mssql sqlite fts5" ./tests | grep dosco/graphjin
-+            # tests/ imports serv/v3, which pulls in agent, auth and codesql,
-+            # so a change to any of them can break a database suite.
-+            db:
-+              - "core/**"
-+              - "conf/**"
-+              - "serv/**"
-+              - "agent/**"
-+              - "auth/**"
-+              - "codesql/**"
-+              - "plugin/**"
-+              - "mongodriver/**"
-+              - "bigquerydriver/**"
-+              - "cassandradriver/**"
-+              - "clickhousedriver/**"
-+              - "tests/**"
-+              - "go.work"
-+              - "go.work.sum"
-+              - "Makefile"
-+              - "scripts/test-*.sh"
-+              - ".github/workflows/build.yml"
- 
--      - name: Cache Go modules
--        uses: actions/cache@v3
-+  build:
-+    name: Build
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 20
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@v4
-+
-+      - name: Set up Go
-+        uses: actions/setup-go@v5
-         with:
--          path: ~/go/pkg/mod
--          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
--          restore-keys: |
--            ${{ runner.os }}-go-
-+          go-version-file: go.work
-+          cache-dependency-path: "**/go.sum"
- 
-       - name: Build
-         run: make build
- 
--      - name: Run Tests
--        run: make test
-+  packages:
-+    name: Package tests
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 45
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@v4
-+
-+      - name: Set up Go
-+        uses: actions/setup-go@v5
-+        with:
-+          go-version-file: go.work
-+          cache-dependency-path: "**/go.sum"
-+
-+      - name: Run package tests
-+        run: make test-packages
-+
-+  database:
-+    name: DB ${{ matrix.db }}
-+    needs: changes
-+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.db == 'true'
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 45
-+    strategy:
-+      # One failing database must not cancel the others' results.
-+      fail-fast: false
-+      matrix:
-+        # Keep in step with ALL_DBS in scripts/test-parallel.sh.
-+        db:
-+          - postgres
-+          - mysql
-+          - mariadb
-+          - sqlite
-+          - oracle
-+          - mssql
-+          - mongodb
-+          - cassandra
-+          - clickhouse
-+          - snowflake
-+          - bigquery
-+          - redshift
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@v4
-+
-+      - name: Set up Go
-+        uses: actions/setup-go@v5
-+        with:
-+          go-version-file: go.work
-+          cache-dependency-path: "**/go.sum"
-+
-+      - name: Run ${{ matrix.db }} tests
-+        run: make test-db DB=${{ matrix.db }}
-```
-
-**File**: `Makefile` (modified, +10/-1)
-```diff
-@@ -16,7 +16,7 @@ endif
- # Build-time Go variables
- BUILD_FLAGS ?= -ldflags '-s -w -X "main.version=${BUILD_VERSION}" -X "main.commit=${BUILD}" -X "main.date=${BUILD_DATE}" -X "github.com/dosco/graphjin/serv/v3.version=${BUILD_VERSION}"'
- 
--.PHONY: all download-tools build wasm-build gen config-schema agent-openapi clean tidy test test-parallel-dbs test-sequential test-norace run demo demo-agent demo-smoke demo-agent-smoke smoke-all smoke-default env-image env-image-smoke run-github-actions lint changlog release version help test-mongodb test-cassandra test-clickhouse $(PLATFORMS)
-+.PHONY: all download-tools build wasm-build gen config-schema agent-openapi clean tidy test test-parallel-dbs test-packages test-db test-sequential test-norace run demo demo-agent demo-smoke demo-agent-smoke smoke-all smoke-default env-image env-image-smoke run-github-actions lint changlog release version help test-mongodb test-cassandra test-clickhouse $(PLATFORMS)
- 
- tidy:
- 	@find . -name "go.mod" -execdir go mod tidy \;
-@@ -33,6 +33,15 @@ test: test-parallel-dbs
- test-parallel-dbs:
- 	@bash scripts/test-parallel.sh
- 
-+# The two halves of `make test`, run as separate jobs in CI (.github/workflows/build.yml).
-+test-packages:
-+	@go test -v -race -timeout $(GO_TEST_TIMEOUT) $(PACKAGES)
-+
-+# One database suite, e.g. `make test-db DB=postgres`.
-+test-db:
-+	@test -n "$(DB)" || { echo "usage: make test-db DB=<postgres|mysql|...>"; exit 2; }
-+	@PARALLEL_DBS="$(DB)" bash scripts/test-parallel.sh
-+
- test-sequential: test-postgres test-mysql test-mariadb test-sqlite test-oracle test-mssql test-mongodb test-cassandra test-clickhouse
- 	@go test -v -race -timeout $(GO_TEST_TIMEOUT) $(PACKAGES)
- 
-```
-
-**File**: `scripts/test-parallel.sh` (modified, +10/-1)
-```diff
-@@ -17,7 +17,7 @@ ALL_DBS="postgres mysql mariadb sqlite oracle mssql mongodb cassandra clickhouse
- # Allow caller to select a subset via env var
- DBS="${PARALLEL_DBS:-$ALL_DBS}"
- 
--# Max number of suites to run concurrently (default 4)
-+# Max number of suites to run concurrently (default 2)
- MAX_PARALLEL="${MAX_PARALLEL:-2}"
- 
- # Temp directory for per-suite output
-@@ -75,6 +75,15 @@ db_test_cmd() {
- DB_ARRAY=($DBS)
- DB_COUNT=${#DB_ARRAY[@]}
- 
-+# A single suite (one CI job per database) runs in the foreground so its
-+# output streams live instead of being held back unless it fails.
-+if [ "$DB_COUNT" -eq 1 ]; then
-+    cmd=$(db_test_cmd "${DB_ARRAY[0]}")
-+    echo "==> Running ${DB_ARRAY[0]}: $cmd"
-+    eval "$cmd"
-+    exit $?
-+fi
-+
- echo "==> Starting parallel DB test suites: $DBS"
- echo "==> Concurrency limit: $MAX_PARALLEL (total suites: $DB_COUNT)"
- echo ""
-```
-
----
-
-### Incident Patch 3: `dcaf384f` (2026-11-22)
-**Commit Message**: fix(core): refuse bulk update rows that set different fields
-
-The columns of a bulk update come from the first row, so a later row
-that left a field out set that column to NULL, and a field only a later
-row set was dropped. Both changed data the caller never asked to change.
-
-A bulk update now requires every row to be an object that sets the same
-fields as the first row, and names the row and the field when one does
-not. The whole update is refused, so no row changes. To clear a column,
-set it to null explicitly.
-
-The docs also note that the response returns at most default_limit rows.
+Checked locally: the three shards cover all 144 snowflake tests exactly
+once, each regex selects exactly its shard, and by the last run's timings
+they take ~152s, ~192s and ~222s. cmd shards are unchanged (111/111/110).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `core/internal/qcode/bulk_update_test.go` (modified, +18/-0)
+**File**: `.github/workflows/build.yml` (modified, +10/-2)
 ```diff
-@@ -104,6 +104,24 @@ func TestBulkUpdateRejectsUnmatchableRows(t *testing.T) {
- 			data: `[]`,
- 			want: "the list of rows is empty",
- 		},
-+		{
-+			name: "later row leaves out a field",
-+			gql:  `mutation { products(update: $data) { id } }`,
-+			data: `[{"id": 1, "name": "a", "price": 5}, {"id": 2, "price": 6}]`,
-+			want: `row 2 does not set "name", which the first row sets`,
-+		},
-+		{
-+			name: "later row sets an extra field",
-+			gql:  `mutation { products(update: $data) { id } }`,
-+			data: `[{"id": 1, "name": "a"}, {"id": 2, "name": "b"}, {"id": 3, "name": "c", "price": 6}]`,
-+			want: `row 3 sets "price", which the first row does not`,
-+		},
-+		{
-+			name: "row is not an object",
-+			gql:  `mutation { products(update: $data) { id } }`,
-+			data: `[{"id": 1, "name": "a"}, 2]`,
-+			want: "row 2 is not an object",
-+		},
- 		{
- 			name: "nested mutation",
- 			gql:  `mutation { products(update: $data) { id } }`,
+@@ -167,7 +167,7 @@ jobs:
+         run: make test-cmd-shard SHARD=${{ matrix.shard }} CMD_SHARDS=3
+ 
+   database:
+-    name: DB ${{ matrix.db }}
++    name: DB ${{ matrix.db }}${{ matrix.shard && format(' {0}/3', matrix.shard) || '' }}
+     needs: changes
+     if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.db == 'true'
+     runs-on: ubuntu-latest
+@@ -185,7 +185,12 @@ jobs:
+           - { db: mongodb, cache: db }
+           - { db: cassandra, cache: db }
+           - { db: clickhouse, cache: db }
+-          - { db: snowflake, cache: db }
++          # The simulator makes snowflake the slowest suite, so it runs in
++          # three shards; scripts/test-snowflake.sh gives TestSubscription the
++          # last one to itself. Keep the 3 in step with DB_SHARDS below.
++          - { db: snowflake, cache: db, shard: 1 }
++          - { db: snowflake, cache: db, shard: 2 }
++          - { db: snowflake, cache: db, shard: 3 }
+           - { db: bigquery, cache: db }
+           - { db: redshift, cache: db }
+           - { db: mysql, cache: db-mysql }
+@@ -216,4 +221,7 @@ jobs:
+           restore-keys: ${{ runner.os }}-go-${{ matrix.cache }}-race-
+ 
+       - name: Run ${{ matrix.db }} tests
++        env:
++          DB_SHARD: ${{ matrix.shard }}
++          DB_SHARDS: ${{ matrix.shard && '3' || '' }}
+         run: make test-db DB=${{ matrix.db }}
 ```
 
-**File**: `core/internal/qcode/mutate.go` (modified, +31/-0)
+**File**: `scripts/test-shard.sh` (modified, +30/-4)
 ```diff
-@@ -303,9 +303,40 @@ func (co *Compiler) checkBulkUpdateData(m Mutate) (withoutWhere bool, err error)
- 	if len(m.Ti.PrimaryCols) == 0 {
- 		return false, fmt.Errorf("bulk update: table %q has no primary key to match rows on", m.Ti.Name)
- 	}
-+	if err := checkBulkUpdateRowFields(m.Data.Children); err != nil {
-+		return false, err
-+	}
- 	return withoutWhere, nil
- }
+@@ -9,6 +9,14 @@
+ #   bash scripts/test-shard.sh ./cmd 1 3
+ #
+ # DRY_RUN=1 prints the shard's tests instead of running them.
++# PRINT_REGEX=1 prints only the shard's -run regex, for wrappers that run go
++#   test themselves (scripts/test-snowflake.sh keeps its retries that way).
++# SHARD_LIST_RUN narrows which tests are listed (default: all), e.g. '^Test'.
++# SHARD_LIST_ARGS are passed to the test binary while listing, e.g. -db=none
++#   so tests/'s TestMain lists without starting a database.
++# SHARD_SOLO names tests (space-separated) slow enough to need the last shard
++#   to themselves; the rest are dealt across the other shards. A named test
++#   that no longer exists leaves the last shard empty, which fails loudly.
+ #
+ # Every listed test lands in exactly one shard. A test added later is picked up
+ # by the next run's listing; nothing here needs updating.
+@@ -32,21 +40,34 @@ timeout="${GO_TEST_TIMEOUT:-30m}"
+ # -list compiles the same -race test binary the run below uses, so the second
+ # build is a cache hit. Test, Example and Fuzz (seed corpus) entries all run
+ # under plain `go test`; benchmarks do not, so leave them out.
+-list=$(go test -race -list '.*' "$pkg" | grep -E '^(Test|Example|Fuzz)' | LC_ALL=C sort)
++# SHARD_LIST_ARGS is deliberately unquoted: it holds zero or more flags.
++# shellcheck disable=SC2086
++list=$(go test -race -list "${SHARD_LIST_RUN:-.*}" "$pkg" ${SHARD_LIST_ARGS:-} | grep -E '^(Test|Example|Fuzz)' | LC_ALL=C sort)
  
-+// checkBulkUpdateRowFields requires every row of a bulk update to set the
-+// same fields as the first row. The columns to update come from the first
-+// row, so a later row that leaves a field out would set that column to NULL
-+// and a field only a later row sets would be dropped; both lose data the
-+// caller never meant to change.
-+func checkBulkUpdateRowFields(rows []*graph.Node) error {
-+	first := rows[0]
-+	for i, row := range rows {
-+		if row.Type != graph.NodeObj {
-+			return fmt.Errorf("bulk update: row %d is not an object", i+1)
-+		}
-+		if i == 0 {
-+			continue
-+		}
-+		for _, f := range first.Children {
-+			if _, ok := row.CMap[f.Name]; !ok {
-+				return fmt.Errorf("bulk update: row %d does not set %q, which the first row sets; every row must set the same fields", i+1, f.Name)
-+			}
-+		}
-+		for _, f := range row.Children {
-+			if _, ok := first.CMap[f.Name]; !ok {
-+				return fmt.Errorf("bulk update: row %d sets %q, which the first row does not; every row must set the same fields", i+1, f.Name)
-+			}
-+		}
-+	}
-+	return nil
+ total=$(printf '%s\n' "$list" | grep -c . || true)
+ if [ "$total" -eq 0 ]; then
+     echo "no tests listed in $pkg" >&2
+     exit 1
+ fi
+ 
+-mine=$(printf '%s\n' "$list" | awk -v s="$shard" -v n="$shards" '(NR - 1) % n == s - 1')
++solo="${SHARD_SOLO:-}"
++if [ -n "$solo" ] && [ "$shards" -gt 1 ]; then
++    solo_re="^($(printf '%s\n' $solo | paste -sd '|' -))\$"
++    if [ "$shard" -eq "$shards" ]; then
++        mine=$(printf '%s\n' "$list" | grep -E "$solo_re" || true)
++    else
++        mine=$(printf '%s\n' "$list" | grep -vE "$solo_re" | awk -v s="$shard" -v n="$((shards - 1))" '(NR - 1) % n == s - 1')
++    fi
++else
++    mine=$(printf '%s\n' "$list" | awk -v s="$shard" -v n="$shards" '(NR - 1) % n == s - 1')
++fi
+ count=$(printf '%s\n' "$mine" | grep -c . || true)
+ 
+-echo "==> $pkg shard $shard/$shards: $count of $total tests"
++echo "==> $pkg shard $shard/$shards: $count of $total tests" >&2
+ 
+ if [ "$count" -eq 0 ]; then
+-    exit 0
++    echo "shard $shard/$shards of $pkg is empty: use fewer shards, or check SHARD_SOLO (${solo:-unset}) still names real tests" >&2
++    exit 1
+ fi
+ 
+ if [ "${DRY_RUN:-}" = "1" ]; then
+@@ -57,4 +78,9 @@ fi
+ # Anchored, slash-free: matches these top-level names exactly; their subtests run.
+ regex="^($(printf '%s\n' "$mine" | paste -sd '|' -))\$"
+ 
++if [ "${PRINT_REGEX:-}" = "1" ]; then
++    printf '%s\n' "$regex"
++    exit 0
++fi
++
+ exec go test -v -race -timeout "$timeout" -run "$regex" "$@" "$pkg"
+```
+
+**File**: `scripts/test-snowflake.sh` (modified, +12/-1)
+```diff
+@@ -10,10 +10,21 @@ if [ "$GRAPHJIN_SNOWFLAKE_MOCK" = "1" ]; then
+ 	echo "Using Snowflake simulator (${GRAPHJIN_SNOWFLAKE_BACKEND} backend)"
+ fi
+ 
++# DB_SHARD/DB_SHARDS run one slice of the suite (CI splits it across jobs; the
++# simulator makes it the slowest database suite). The slice is fixed before the
++# retries, so a retry re-runs the same tests.
++RUN='^Test'
++if [ -n "${DB_SHARD:-}" ]; then
++	# TestSubscription is ~40% of the suite under the simulator (99 concurrent
++	# subscriptions), so it gets the last shard to itself.
++	RUN=$(SHARD_LIST_RUN='^Test' SHARD_LIST_ARGS='-db=none' SHARD_SOLO='TestSubscription' PRINT_REGEX=1 \
++		bash ../scripts/test-shard.sh . "$DB_SHARD" "${DB_SHARDS:?DB_SHARDS must be set with DB_SHARD}")
++fi
++
+ MAX_RETRIES=${SNOWFLAKE_TEST_RETRIES:-3}
+ 
+ for attempt in $(seq 1 "$MAX_RETRIES"); do
+-	if go test -v -timeout 30m -race -db=snowflake -run '^Test' "$@" .; then
++	if go test -v -timeout 30m -race -db=snowflake -run "$RUN" "$@" .; then
+ 		exit 0
+ 	fi
+ 
+```
+
+---
+
+### Incident Patch 2: `b5092def` (2026-11-23)
+**Commit Message**: docs(site): add per-database guides and comparison pages
+
+Add /guides/ with a page per database (PostgreSQL, MySQL/MariaDB, SQL
+Server, Oracle, MongoDB, SQLite, Snowflake, BigQuery, Cassandra) and
+/compare/ with DeepORG vs hand-built MCP tools and vs text-to-SQL. Each
+guide gives the connecting config, the MCP client setup, what the engine
+does with that dialect, and its limits, checked against the driver and
+dialect code.
+
+Database logos on the homepage and /why/every-system/ link to their
+guide, the footer links both sections, and the /why/ pages link to the
+comparisons. check-site.mjs fails when a page is missing from its index,
+lacks an h1 or pager, names GraphJin, or a logo links to an unbuilt guide.
+
+Also syncs the served install.sh with the root script (DeepORG rename).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `website/content/compare/_index.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++title: "Compare: DeepORG vs hand-built MCP tools and text-to-SQL"
++kicker: "Compare"
++group_title: "Comparisons"
++headline: "The other ways to connect an agent to your data."
++description: "How DeepORG compares with the usual ways of connecting an AI agent to company data: hand-built MCP tools, raw SQL MCP servers, and Vanna-style text-to-SQL. What each is good at and where each breaks."
++lede: "Most teams start with one of three approaches: a hand-written tool for each question, a server that hands the model a SQL prompt, or a text-to-SQL library. Each page says what the approach is good at, where it breaks, and when it is the better choice."
++also:
++  - /guides
++actions:
++  - label: "Try it in 2 minutes"
++    href: "/#quickstart"
++  - label: "Why DeepORG"
++    href: "/why/"
++cascade:
++  type: guides
++  landing: true
++  toc: false
++landing: true
++toc: false
++---
+```
+
+**File**: `website/content/compare/deeporg-vs-hand-built-mcp-tools.md` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++---
++title: "Why hand-built MCP tools break: DeepORG vs a tool for every question"
++nav_title: "vs hand-built MCP tools"
++summary: "A tool per question works for the first ten questions. What goes wrong after that, and what to use instead."
++headline: "Why hand-built MCP tools break, and what to do instead."
++description: "Hand-written MCP tools, one per question, are how most teams connect an AI agent to company data. Why they stop scaling: questions outside the menu, totals the model adds up itself, schema drift, permissions re-implemented in every tool, and tool lists that crowd the prompt. How DeepORG replaces them with a searchable map and compiled queries, and when hand-built tools are still the right call."
++lede: "The usual way to connect an agent to company data is to write a tool for each thing it might need: `get_customer`, `list_invoices`, `open_tickets_for_account`. It works for the first ten questions. This page is about what happens after that, and what to use instead."
++weight: 10
++actions:
++  - label: "Try it in 2 minutes"
++    href: "/#quickstart"
++  - label: "No hand-built tools"
++    href: "/why/no-hand-built-tools/"
++---
++
++{{< band label="The pattern" title="A tool for each question." >}}
++
++Each tool wraps one fixed query: a name, a description for the model, a few parameters, and code that runs the query and returns rows. The agent reads the list of tools and picks one.
++
++It is a reasonable start. The tools are easy to review, each does one thing, and the model cannot run anything that is not on the list. The trouble is that the list has to keep up with every question people ask and every change to the systems underneath, and it never does.
++
++{{< endband >}}
++
++{{< band label="Where it breaks" title="Five ways a tool list fails." >}}
++
++{{< grid >}}
++
++- **The question is not on the menu.** “Which accounts on the annual plan opened an urgent ticket this week?” needs a tool nobody wrote. The model answers with the nearest tool, or chains three and joins the results in its head.
++- **The model does the arithmetic.** A tool returns a page of 50 rows. Asked for a total over 2,000, the model sums the page and reports it, confidently. The database could have computed it exactly.
++- **The schema moves.** A column is renamed, a table is split, a status gains a value. Hand-written tools break, or worse, keep running and return nulls. Someone has to notice.
++- **Every tool is its own security review.** Each one decides who may see what, in its own code. 43% of MCP servers tested in one 2025 study shipped with command-injection flaws.<sup><a href="#sources">1</a></sup>
++- **The list crowds the prompt.** Every tool's name and description is sent with every request. In one 2025 study, a model choosing from a large pool of MCP tools picked the right one 13.62% of the time; narrowing the list first raised that to 43.13%.<sup><a href="#sources">2</a></sup>
++
++{{< endgrid >}}
++
++<p class="home-sources" id="sources">Sources: <a href="https://equixly.com/blog/2025/03/29/mcp-server-new-security-nightmare/" rel="nofollow">1. Equixly, 2025</a> · <a href="https://arxiv.org/abs/2505.03275" rel="nofollow">2. Gan and Sun, RAG-MCP, 2025</a></p>
++
++{{< endband >}}
++
++{{< band label="Instead" title="A map of everything, and the agent writes the query." >}}
++
++DeepORG gives the agent a searchable catalog of everything you connect: tables, columns, the values a status column can take, how tables join, and the paths that cross from one database to another. The agent searches it with the person's own words, reads the entries it needs, and writes its own query.
++
++The engine compiles that query into one database statement, with your access rules added while it compiles. The model plans; the database computes.
++
++{{< grid >}}
++
++- **A fixed set of tools.** Under ten MCP tools, the same for three tables or three thousand. New tables appear on the map, not in the tool list.
++- **Rules written once.** Roles, row filters and column lists live in config and apply to every query the agent writes, instead of being re-coded in each tool.
++- **Schema changes are discovered.** A renamed column is renamed on the map the next time the schema is read. A query that names the old one fails at compile time instead of returning nulls.
++- **Totals are exact.** Sums, counts and rankings compile into the statement, so the answer covers every row, not the first page.
++
++{{< endgrid >}}
++
++{{< endband >}}
++
++{{< band label="Side by side" title="The same jobs, two approaches." >}}
++
++| | Hand-built tools | DeepORG |
++| --- | --- | --- |
++| A new question | Write, review and ship a tool | The agent writes the query |
++| A new database | A new set of tools | A few lines of config |
++| A renamed column | Find and fix every tool that used it | Rediscovered; the old name fails loudly |
++| Who sees what | Re-implemented in each tool | Declared once, compiled into every query |
++| A total over many rows | The model adds up a pa
+```
+
+**File**: `website/content/compare/deeporg-vs-text-to-sql.md` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++---
++title: "Text-to-SQL vs an AI agent: DeepORG vs Vanna-style text-to-SQL"
++nav_title: "vs text-to-SQL"
++summary: "Text-to-SQL has the model write SQL from a schema it was shown. What changes when the model writes against a map and an engine writes the SQL."
++headline: "Text-to-SQL vs an agent: what changes when the model stops writing SQL."
++description: "Text-to-SQL tools such as Vanna retrieve schema, documentation and example queries, then have a model write SQL. How that compares with DeepORG, where the agent searches a catalog, writes a query the engine compiles into SQL with your access rules, and works across databases. Where text-to-SQL is the better choice, and where it breaks."
++lede: "Text-to-SQL hands a model your schema and asks it for SQL. Vanna made the approach popular: retrieve the table definitions, documentation and past queries closest to the question, then have the model write the statement. DeepORG takes a different line. The model writes against a map, and an engine writes the SQL."
++weight: 20
++actions:
++  - label: "Try it in 2 minutes"
++    href: "/#quickstart"
++  - label: "Answers with evidence"
++    href: "/why/answers-with-evidence/"
++---
++
++{{< band label="How text-to-SQL works" title="Retrieve context, write SQL, run it." >}}
++
++A Vanna-style system is trained, in its own sense of the word, by loading three kinds of context into a vector store: table definitions (DDL), free-text documentation of business terms, and pairs of questions with the SQL that answers them. When a question comes in, it retrieves the closest entries, puts them in the prompt, and the model writes a SQL statement. The application runs that statement on a database connection and shows the result, often as a table or a chart.
++
++It has real strengths. The database does the arithmetic. The SQL is there to read, so an analyst can check it or paste it somewhere else. And a good library of example queries goes a long way on a warehouse with a stable set of questions.
++
++The open-source Vanna repository has since been archived by its owners, but the approach is widespread and many tools work the same way.
++
++{{< endband >}}
++
++{{< band label="Where it breaks" title="The hard part is not the SQL syntax." >}}
++
++{{< grid >}}
++
++- **Real schemas are hard.** 21% is the best model's success rate on real enterprise text-to-SQL, down from 91% on academic benchmarks.<sup><a href="#sources">1</a></sup> Hundreds of tables, cryptic names and several dialects are the normal case, not the edge.
++- **Joins are guessed.** The model sees column names and infers which ones match. `orders.cust_id` to `customers.id` is a guess unless something says so.
++- **Permissions are the connection's.** The statement runs as whatever database user the tool holds. Restricting rows per person means building that yourself, around SQL the model wrote.
++- **Raw SQL is a wide door.** Read-only depends on the database user, or on a wrapper that inspects text. A wrapper that inspects text can be talked past.<sup><a href="#sources">2</a></sup>
++- **The examples go stale.** Question-and-SQL pairs encode the schema as it was. When it changes, the examples teach the model the old one.
++- **One database per question.** A question that needs the warehouse and the app database is two systems the model has to reconcile by itself.
++
++{{< endgrid >}}
++
++<p class="home-sources" id="sources">Sources: <a href="https://arxiv.org/abs/2411.07763" rel="nofollow">1. Spider 2.0, ICLR 2025</a> · <a href="https://securitylabs.datadoghq.com/articles/mcp-vulnerability-case-study-SQL-injection-in-the-postgresql-mcp-server/" rel="nofollow">2. Datadog Security Labs, 2025</a></p>
++
++{{< endband >}}
++
++{{< band label="What changes" title="The model plans. The engine writes the SQL." >}}
++
++In DeepORG the agent does not write SQL. It searches a catalog of everything you connect, reads the entries a question needs, and writes a GraphQL query against it. The engine compiles that query into one statement for whichever database holds the data, Postgres, SQL Server, Oracle, Snowflake or another, with your access rules added while it compiles.
++
++{{< grid >}}
++
++- **Joins come from the map.** Relationships are discovered from foreign keys or declared once in config. The agent follows a path that exists; it cannot invent one.
++- **Wrong names fail early.** An unknown table or column fails at compile time, with a pointer to the real one, before anything reaches the database.
++- **Rules belong to the person.** Identity comes from the caller's token, and their role's row filters and column lists are part of the statement.
++- **No SQL text to smuggle.** Values travel as parameters, and nothing in a query can append a second SQL statement.
++- **One question, several databases.** The engine runs each part where its data lives and joins the results.
++- **More than one shot.** The agent loop is discover, check, validate, act. A failed query comes back with a reason, and th
+```
+
+**File**: `website/content/guides/_index.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++title: "Guides: an AI agent and MCP server for your database"
++kicker: "Guides"
++group_title: "By database"
++headline: "Put an AI agent on the database you already run."
++description: "How to connect DeepORG to PostgreSQL, MySQL, SQL Server, Oracle, MongoDB, SQLite, Snowflake, BigQuery and Cassandra, as an MCP server for your AI client or as an agent of its own, and where each database's limits are."
++lede: "One page per database: the config that connects it, how to reach it from Claude, Codex or your own agent, what the engine does with that database's SQL, and the limits worth knowing before you start."
++also:
++  - /compare
++actions:
++  - label: "Try it in 2 minutes"
++    href: "/#quickstart"
++  - label: "Database support matrix"
++    href: "/reference/database-support/"
++cascade:
++  type: guides
++  landing: true
++  toc: false
++landing: true
++toc: false
++---
+```
+
+**File**: `website/content/guides/bigquery-ai-agent.md` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++---
++title: "BigQuery AI agent and MCP server: query BigQuery in plain language"
++nav_title: "BigQuery"
++summary: "Experimental and read-only. Application Default Credentials, a byte cap on every query, and totals computed in BigQuery."
++headline: "An AI agent for BigQuery with a cap on what each query may scan."
++description: "Connect an AI agent or MCP client to Google BigQuery with DeepORG. Experimental, read-only support: schema discovery of one dataset, Application Default Credentials, a max_bytes_billed cap on every query, aggregates computed in BigQuery, and access rules enforced by the engine."
++lede: "BigQuery bills by the bytes a query scans, which makes an agent that wanders through tables an expensive one. DeepORG reads one dataset, has BigQuery compute every total, and lets you cap the bytes any single query may bill. Support is experimental and read-only."
++weight: 80
++actions:
++  - label: "Connect your dataset"
++    href: "#connect"
++  - label: "Try the demo first"
++    href: "/#quickstart"
++---
++
++{{< band label="The short version" title="What you get on BigQuery." >}}
++
++{{< grid >}}
++
++- **Read-only by construction.** Schema discovery and queries. There are no writes, subscriptions or transactions on a BigQuery source.
++- **A byte cap per query.** Set `max_bytes_billed` and BigQuery refuses any query that would bill more, before it runs.
++- **BigQuery computes.** Sums, counts and grouping compile into the statement; nested results are built with `JSON_OBJECT` and `ARRAY_AGG`.
++- **Rules from the caller.** Row filters and column lists from the person's role are part of every statement.
++
++{{< endgrid >}}
++
++{{< endband >}}
++
++{{< band id="connect" label="Connect" title="Project, dataset, credentials." >}}
++
++```bash
++curl -fsSL https://deeporg.io/install.sh | bash
++```
++
++```yaml
++# config/dev.yml
++sources:
++  - name: analytics
++    kind: database
++    type: bigquery
++    default: true
++    connection_string: bigquery://my-project/my_dataset?location=EU&max_bytes_billed=10000000000
++```
++
++There is no host or password. Credentials come from Application Default Credentials: `GOOGLE_APPLICATION_CREDENTIALS`, the attached service account on Google Cloud, or `gcloud auth application-default login` on a workstation. Add `credentials_file=` to the connection string to use a service-account key instead.
++
++The account needs to run query jobs in the project and read the dataset, for example the BigQuery Job User and BigQuery Data Viewer roles.
++
++```bash
++deeporg serve
++```
++
++{{< endband >}}
++
++{{< band label="Your AI client" title="Add it to Claude Code or Codex." >}}
++
++```bash
++claude mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
++codex mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
++```
++
++Your client's model plans the queries; BigQuery runs them; DeepORG checks each one against your rules first.
++
++{{< endband >}}
++
++{{< band label="Limits" title="Experimental, and here is what that means." >}}
++
++{{< grid >}}
++
++- **One dataset per source.** Discovery covers the dataset in the connection string. Add a source for each dataset the agent should see.
++- **Profiling scans columns.** The catalog's sample values and value ranges come from queries that scan the columns they profile. Set `max_bytes_billed` on a large dataset.
++- **Row counts may be missing.** They come from `INFORMATION_SCHEMA.TABLE_STORAGE`; where the account cannot read that view, they are left out.
++- **A write preview fails.** Rehearsing a change depends on rolling back a transaction, which BigQuery does not have, so it fails instead of running.
++
++{{< endgrid >}}
++
++{{< note >}}
++
++**Demos do not touch BigQuery.** Under `deeporg serve --demo`, a `type: bigquery` source runs on a local simulator, so the [demos](/start/demos/) that include one need no Google Cloud project.
++
++{{< endnote >}}
++
++{{< endband >}}
++
++{{< band label="Go deeper" title="Related pages." >}}
++
++- [Snowflake AI agent](/guides/snowflake-ai-agent/): the same idea, with writes and key-pair sign-in.
++- [Multiple databases](/integrations/multi-database/): join BigQuery results to an operational database.
++- [Database config](/configure/database/): every connection option.
++- [Database support](/reference/database-support/): every dialect side by side.
++
++{{< endband >}}
+```
+
+**File**: `website/content/guides/cassandra-ai-agent.md` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++---
++title: "Cassandra and Amazon Keyspaces AI agent: query CQL tables in plain language"
++nav_title: "Cassandra and Keyspaces"
++summary: "CQL-native queries that stay inside a partition, single-row writes by primary key, and polling subscriptions bound to a partition."
++headline: "An AI agent for Cassandra that stays inside the partition."
++description: "Connect an AI agent or MCP client to Apache Cassandra or Amazon Keyspaces with DeepORG. CQL-native queries bounded by partition keys, single-table primary-key writes, partition-bound polling subscriptions, TLS for Keyspaces, and access rules enforced by the engine."
++lede: "Cassandra punishes the query a model would naturally write: a scan across every partition. DeepORG compiles the agent's questions into CQL that respects your primary keys, and refuses the shapes Cassandra cannot serve well instead of running them slowly."
++weight: 90
++actions:
++  - label: "Connect your cluster"
++    href: "#connect"
++  - label: "Try the demo first"
++    href: "/#quickstart"
++---
++
++{{< band label="The short version" title="What you get on Cassandra." >}}
++
++{{< grid >}}
++
++- **CQL-native queries.** A read pins the full partition key and filters clustering columns in key order, so Cassandra serves it from the partitions you named.
++- **Writes by primary key.** Insert, update and delete one table's rows by their full primary key.
++- **Joins by partition key.** A nested selection is fetched by the child table's full partition key, in bounded batches. Subscriptions poll a partition-bound query and report what changed.
++- **Refusals that say why.** A query Cassandra cannot serve fails with the reason, such as which partition-key column is not pinned, so the agent can correct it rather than guess.
++
++{{< endgrid >}}
++
++{{< endband >}}
++
++{{< band id="connect" label="Connect" title="Cassandra or Amazon Keyspaces." >}}
++
++```bash
++curl -fsSL https://deeporg.io/install.sh | bash
++```
++
++```yaml
++# config/dev.yml: Apache Cassandra
++database:
++  type: cassandra
++  connection_string: cassandra://10.0.0.1,10.0.0.2
++  dbname: shop                 # the keyspace
++  user: ${CASSANDRA_USER}
++  password: ${CASSANDRA_PASSWORD}
++  consistency: LOCAL_QUORUM    # the default
++```
++
++Amazon Keyspaces needs TLS on port 9142 and service-specific credentials. Its certificate authority is already in the system trust store:
++
++```yaml
++# config/dev.yml: Amazon Keyspaces
++database:
++  type: cassandra
++  host: cassandra.us-east-1.amazonaws.com
++  port: 9142
++  dbname: shop
++  user: ${KEYSPACES_USER}
++  password: ${KEYSPACES_PASSWORD}
++  enable_tls: true
++  consistency: LOCAL_QUORUM
++```
++
++```bash
++deeporg serve
++```
++
++{{< endband >}}
++
++{{< band label="Your AI client" title="Add it to Claude Code or Codex." >}}
++
++```bash
++claude mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
++codex mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
++```
++
++Your client's model does the reasoning; DeepORG supplies the catalog, checks each query and runs it.
++
++{{< endband >}}
++
++{{< band label="Limits" title="What Cassandra does not do, on purpose." >}}
++
++These are outside the query surface because Cassandra cannot serve them without a full scan:
++
++{{< grid >}}
++
++- **No aggregates.** Sums, counts and group-by belong in a warehouse or an operational SQL database.
++- **No full scans.** A read that does not pin the whole partition key is refused, not run across the cluster. A known-small table can opt in with `cassandra: { allow_filtering: true }`.
++- **No `or`, `not` or pattern matching.** A CQL `WHERE` is a conjunction of key conditions, so these are refused even on an opted-in table.
++- **No full-text or geo search.** Use a search index or a database that has one.
++
++{{< endgrid >}}
++
++{{< note >}}
++
++**Pair it with something that aggregates.** If you need totals over Cassandra data, keep a copy in a warehouse and connect both. The agent asks Cassandra for one partition and the warehouse for the totals.
++
++{{< endnote >}}
++
++The test suite runs against Cassandra 5.
++
++{{< endband >}}
++
++{{< band label="Go deeper" title="Related pages." >}}
++
++- [Snowflake AI agent](/guides/snowflake-ai-agent/): the warehouse side of the pairing.
++- [Multiple databases](/integrations/multi-database/): one query across several databases.
++- [Database support](/reference/database-support/): every dialect side by side.
++
++{{< endband >}}
+```
+
+**File**: `website/content/guides/mongodb-mcp-server.md` (added, +113/-0)
+```diff
+@@ -0,0 +1,113 @@
++---
++title: "MCP server for MongoDB: connect an AI agent to MongoDB and Atlas"
++nav_title: "MongoDB"
++summary: "MongoDB and Atlas. The agent writes the same queries it writes for SQL; the engine turns them into aggregation pipelines with $lookup."
++headline: "An AI agent for MongoDB that writes queries, not pipelines."
++description: "Connect Claude, Codex or any MCP client to MongoDB or Atlas with DeepORG. The agent writes one query language for every database; the engine translates it into MongoDB aggregation pipelines, joins collections with $lookup, and enforces access rules. Declared relationships, embedded documents, cursors and subscriptions."
++lede: "On MongoDB the agent writes the same queries it writes for Postgres. The engine turns each one into an aggregation pipeline: `$match` for filters, `$lookup` for relationships, `$project` for the fields asked for. One query language covers your documents and your SQL databases."
++weight: 50
++actions:
++  - label: "Connect your database"
++    href: "#connect"
++  - label: "Try the demo first"
++    href: "/#quickstart"
++---
++
++{{< band label="The short version" title="What you get on MongoDB." >}}
++
++{{< grid >}}
++
++- **Pipelines written by the engine.** Filters, ordering, limits, relationships and embedded arrays compile into one aggregation pipeline. The model never builds a pipeline by hand.
++- **Joins across collections.** A nested selection becomes a `$lookup` with its own pipeline. An array of ids joins with `$in`.
++- **One language across databases.** A question that spans MongoDB and Postgres is written once; the engine runs each part on its own database.
++- **Rules from the caller.** Row filters from the signed-in person's role are added to the `$match` stage.
++
++{{< endgrid >}}
++
++{{< endband >}}
++
++{{< band id="connect" label="Connect" title="Connection, database and relationships." >}}
++
++```bash
++curl -fsSL https://deeporg.io/install.sh | bash
++```
++
++```yaml
++# config/dev.yml
++sources:
++  - name: docs
++    kind: database
++    type: mongodb
++    default: true
++    # mongodb+srv://user:pass@cluster.example.net
++    connection_string: ${MONGODB_URI}
++    dbname: app                         # required: the database to read
++    read_only: true   # start read-only
++```
++
++Name the database in `dbname`; the one in the URI is not used. MongoDB has no foreign keys, so tell the engine how collections relate:
++
++```yaml
++tables:
++  - name: orders
++    columns:
++      - name: customer_id
++        foreign_key: customers.id
++```
++
++The agent then follows `orders → customer` as it would on any SQL database. Fields are addressed as `id`; the engine maps them to `_id`.
++
++```bash
++deeporg serve
++```
++
++{{< endband >}}
++
++{{< band label="Your AI client" title="Add it to Claude Code or Codex." >}}
++
++```bash
++claude mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
++codex mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
++```
++
++Your client's model does the reasoning. With a server already running, `deeporg mcp add claude http://localhost:8080` registers it over HTTP.
++
++{{< endband >}}
++
++{{< band label="What runs" title="A nested query becomes $lookup." >}}
++
++```graphql
++query {
++  orders(where: { status: { eq: "open" } }, order_by: { id: desc }, limit: 10) {
++    id
++    total
++    customer { id name }
++  }
 +}
++```
 +
- // checkBulkUpdateMutates verifies that each root bulk update carries the
- // primary key it is matched on and does not nest mutations of related tables.
- func checkBulkUpdateMutates(qc *QCode) error {
++The engine sends MongoDB one pipeline: a `$match` on status plus the role's filter, a `$sort` and `$limit`, and a `$lookup` into `customers` that projects only `id` and `name`. Embedded arrays queried as their own table use `$unwind` and `$group` so the parent document keeps its shape.
++
++{{< endband >}}
++
++{{< band label="Limits" title="Where MongoDB differs." >}}
++
++{{< grid >}}
++
++- **Some SQL features do not carry over.** Counts, sums and averages run as a `$group` stage, but analytics directives (window-style rankings) and database functions are SQL-only. Check before you rely on an aggregate-heavy question being portable.
++- **Relationships are declared.** Nothing is inferred from field names; a missing declaration means a missing join.
++- **No schema management.** Collections are discovered from your data; the engine does not create or migrate them.
++- **Tested version.** The test suite runs against MongoDB 7.
++
++{{< endgrid >}}
++
++{{< endband >}}
++
++{{< band label="Go deeper" title="Related pages." >}}
++
++- [MongoDB in the docs](/integrations/mongodb/): the pipeline format, cursors and ids.
++- [Multiple databases](/integrations/multi-database/): one query across MongoDB and SQL.
++- [DeepORG vs hand-built MCP tools](/compare/deeporg-vs-hand-built-mcp-tools/): why a tool per collection stops scaling.
++- [Database support](/reference/database-support/): every dialect side by side.
++
++{{< endband >}}
 ```
 
-**File**: `tests/update_test.go` (modified, +11/-0)
+**File**: `website/content/guides/mysql-mcp-server.md` (added, +104/-0)
 ```diff
-@@ -560,4 +560,15 @@ func TestBulkUpdateMatchesRowsByPrimaryKey(t *testing.T) {
- 		products(update: $data) { id }
- 	}`, json.RawMessage(`{ "data": [{ "name": "No Key" }] }`), nil)
- 	require.ErrorContains(t, err, `primary key "id"`)
+@@ -0,0 +1,104 @@
++---
++title: "MCP server for MySQL and MariaDB: connect an AI agent to MySQL"
++nav_title: "MySQL and MariaDB"
++summary: "MySQL 8.0+, MariaDB 10.2+, Aurora MySQL and Cloud SQL. Declare the joins your schema never wrote down, and the agent stops guessing them."
++headline: "An AI agent for MySQL and MariaDB that knows how your tables join."
++description: "Connect Claude, Codex or any MCP client to MySQL or MariaDB with DeepORG. Schema discovery, declared relationships for schemas without foreign keys, one parameterized statement per question, and access rules enforced by the engine. MySQL 8.0+, MariaDB 10.2+, Aurora MySQL and Cloud SQL."
++lede: "DeepORG connects to MySQL 8.0+ and MariaDB 10.2+, maps the schema into a catalog the agent can search, and runs each question as one parameterized statement. Many MySQL schemas never declared their foreign keys; you can name those joins once, in config, so the agent stops guessing them."
++weight: 20
++actions:
++  - label: "Connect your database"
++    href: "#connect"
++  - label: "Try the demo first"
++    href: "/#quickstart"
++---
 +
-+	// A row that leaves out a field the first row sets would set that column
-+	// to NULL, so the whole update is refused and no row changes.
-+	_, err = gj.GraphQL(ctx, `mutation {
-+		products(update: $data) { id }
-+	}`, json.RawMessage(`{ "data": [
-+		{ "id": 91, "name": "Partial Product 91", "price": 5 },
-+		{ "id": 92, "price": 6 }
-+	] }`), nil)
-+	require.ErrorContains(t, err, `row 2 does not set "name"`)
-+	require.Equal(t, map[float64]string{91: "Filtered Product 91", 92: "Bulk Product 92"}, stored())
- }
++{{< band label="The short version" title="What you get on MySQL." >}}
++
++{{< grid >}}
++
++- **A catalog, not a prompt full of DDL.** The agent searches for the tables a question needs and reads only those.
++- **One statement per question.** The engine compiles the agent's query into MySQL, with nested results built by `JSON_OBJECT` and `JSON_ARRAYAGG` inside the database.
++- **The agent never writes SQL.** It writes a GraphQL query; the engine writes the statement and hands values to the driver as parameters.
++- **Rules from the caller.** Row filters and column lists come from the signed-in person's role and are compiled into the statement.
++
++{{< endgrid >}}
++
++{{< endband >}}
++
++{{< band id="connect" label="Connect" title="Name the database in config." >}}
++
++```bash
++curl -fsSL https://deeporg.io/install.sh | bash
++```
++
++```yaml
++# config/dev.yml
++sources:
++  - name: app
++    kind: database
++    type: mysql                         # or mariadb
++    default: true
++    # user:pass@tcp(host:3306)/app?multiStatements=true&parseTime=true&interpolateParams=true
++    connection_string: ${MYSQL_DSN}
++    read_only: true   # start read-only
++```
++
++The connection string is the Go driver's DSN, with the parameters the engine expects. A `mysql://` prefix is accepted and stripped. Amazon Aurora MySQL, RDS for MySQL and Google Cloud SQL for MySQL connect the same way.
++
++```bash
++deeporg serve
++```
++
++{{< endband >}}
++
++{{< band label="Missing joins" title="Tell it the joins your schema never declared." >}}
++
++Plenty of MySQL applications enforce relationships in code and never create a foreign key. Without one, an agent has to guess that `orders.cust_id` points at `customers.id`, and a guess is where wrong answers start.
++
++Declare it once:
++
++```yaml
++tables:
++  - name: orders
++    columns:
++      - name: cust_id
++        foreign_key: customers.id
++```
++
++From then on the join is on the map, the agent can follow it, and the engine compiles it like any other relationship. A person can also pin a note to a column, such as which of two status columns is the real one, through [annotations](/agentic/annotations/).
++
++{{< endband >}}
++
++{{< band label="Your AI client" title="Add it to Claude Code or Codex." >}}
++
++```bash
++claude mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
++codex mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
++```
++
++That runs DeepORG over stdio with your config; your client's model does the reasoning. Against a running server, use `deeporg mcp add claude http://localhost:8080` instead.
++
++{{< endband >}}
++
++{{< band label="Limits" title="Where MySQL differs." >}}
++
++{{< grid >}}
++
++- **No array columns.** MySQL has none, so array filters and array joins are Postgres and MongoDB features.
++- **Writes run step by step.** MySQL has no `RETURNING`, so a nested insert runs as a short sequence of statements rather than a single one.
++- **Geo filters need MySQL 8.0.** MariaDB has them too. Full-text search works on both.
++- **Tested versions.** The test suite runs against MySQL 8.0 and MariaDB 10.11.
++
++{{< endgrid >}}
++
++{{< endband >}}
++
++{{< band label="Go deeper" title="Related pages." >}}
++
++- [MCP server for PostgreSQL](/guides/postgres-mcp-server/): the same setup, with the five questions to ask any database MCP server.
++- [DeepORG vs text-to-SQL](/compare/deeporg-vs-text-to-sql/): why a guessed join is the usual failure.
++- [Relationships](/core/relationships/): how nested queries become joins.
++- [Database support](/reference/database-support/): every dialect side by side.
++
++{{< endband >}}
 ```
 
-**File**: `website/content/core/mutations.md` (modified, +1/-1)
+---
+
+### Incident Patch 3: `88f0baa1` (2026-11-22)
+**Commit Message**: ci: skip the build cache for sqlite, which builds inside its own Docker image [skip-release]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/build.yml` (modified, +5/-1)
 ```diff
-@@ -146,7 +146,7 @@ mutation {
+@@ -190,7 +190,7 @@ jobs:
+           - { db: redshift, cache: db }
+           - { db: mysql, cache: db-mysql }
+           - { db: mariadb, cache: db-mariadb }
+-          - { db: sqlite, cache: db-sqlite }
++          - { db: sqlite, cache: none }
+           - { db: mssql, cache: db-mssql }
+     steps:
+       - name: Checkout
+@@ -202,7 +202,11 @@ jobs:
+           go-version-file: go.work
+           cache: false
  
- GraphJin joins each row to the table row with the same primary key. Because the list scopes the update, the `where` clause is optional on PostgreSQL, MySQL, MariaDB, and SQLite. A `where` clause, when given, further limits which listed rows may change. Snowflake also matches rows by primary key but still requires a `where` clause.
- 
--Every row must include the full primary key, and every row should carry the same fields: the columns to update come from the first row, and a field missing from a later row sets that column to `NULL` for that row. Rows whose key matches no table row are skipped. A bulk update must use a variable, not an inline list, and cannot nest writes to related tables. Other databases, including SQL Server, Oracle, and MongoDB, reject list updates.
-+Every row must include the full primary key and set the same fields as the first row. A row that leaves out a field, or adds one, is refused with an error that names the row and the field, and no row changes. To clear a column, set it to `null` explicitly. Rows whose key matches no table row are skipped. The response returns at most `default_limit` rows (20 unless configured), even when more rows were updated. A bulk update must use a variable, not an inline list, and cannot nest writes to related tables. Other databases, including SQL Server, Oracle, and MongoDB, reject list updates.
- 
- {{< verified by="TestBulkUpdateMatchesRowsByPrimaryKey" file="tests/update_test.go" line="490" >}}
- {{< verified by="TestBulkUpdateRejectsUnmatchableRows" file="core/internal/qcode/bulk_update_test.go" line="84" >}}
++      # sqlite builds inside its own Docker image (scripts/test-sqlite.sh,
++      # for SpatiaLite) with Docker volumes for its Go cache, so the runner's
++      # directories hold nothing for it.
+       - name: Cache Go build
++        if: matrix.db != 'sqlite'
+         uses: actions/cache@v4
+         with:
+           path: |
 ```
 
 #### Recent Merged Pull Requests:
@@ -3375,64 +3410,41 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serv): stop two replicas colliding on revision bumps and metric ticks
+## X. ci: run the snowflake suite in three shards, TestSubscription on its own [skip-r
 
 **RULE**:
-When implementing operations in `serv/artifacts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73d7188e`: serv): stop two replicas colliding on revision bumps and metric ticks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `983527e4`: ci: run the snowflake suite in three shards, TestSubscription on its own [skip-release]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `serv/artifacts.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// bumpArtifactRevision moves a domain's revision on by one.
-//
-// Several replicas bump the same domain at the same moment, so the increment
-// is one statement that the database applies atomically. Direct SQL for the
-// same reason as claimTaskVerification: the internal GraphQL mutation API
-// cannot add to a column or report the affected-row count. Reading the
-// revision and writing it back let two replicas both insert a domain's first
-// row, and the second failed on the primary key; it also let a slow replica
-// write an older number over a newer one.
-	db, dbType, _, ok := s.artifactDB()
-	if !ok {
-	revisions := artifactTableName(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema, "revisions")
-	domainCol := quoteStoreIdent(dbType, "domain")
-	revisionCol := quoteStoreIdent(dbType, "revision")
-	updatedAtCol := quoteStoreIdent(dbType, "updated_at")
-	now := time.Now().UTC()
-	var updatedAt any = now.Format(time.RFC3339)
-	if dbType == "postgres" || dbType == "" {
-		updatedAt = now
-	}
-	increment := func() (bool, error) {
-		res, err := s.internalStoreExec(ctx, db, dbType,
-			fmt.Sprintf("UPDATE %s SET %s = %s + 1, %s = %s WHERE %s = %s",
-				revisions, revisionCol, revisionCol,
-			
+    name: DB ${{ matrix.db }}${{ matrix.shard && format(' {0}/3', matrix.shard) || '' }}
+          # The simulator makes snowflake the slowest suite, so it runs in
+          # three shards; scripts/test-snowflake.sh gives TestSubscription the
+          # last one to itself. Keep the 3 in step with DB_SHARDS below.
+          - { db: snowflake, cache: db, shard: 1 }
+          - { db: snowflake, cache: db, shard: 2 }
+          - { db: snowflake, cache: db, shard: 3 }
+        env:
+          DB_SHARD: ${{ matrix.shard }}
+          DB_SHARDS: ${{ matrix.shard && '3' || '' }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if _, _, _, ok := s.artifactDB(); !ok {
-	now := time.Now().UTC().Format(time.RFC3339)
-	current, err := s.artifactRevision(ctx, domain)
-	if err != nil {
-		return err
-	input := map[string]any{"domain": domain, "revision": current + 1, "updated_at": now}
-	if current == 0 {
-		_, err = s.internalStoreMutationRows(ctx, "revisions", `insert: $input`, revisionStoreFields, map[string]any{"input": input})
-	_, err = s.internalStoreMutationRows(ctx, "revisions", `where: { domain: { eq: $domain } }, update: $input`, revisionStoreFields, map[string]any{"domain": domain, "input": map[string]any{"revision": current + 1, "updated_at": now}})
-	return err
+    name: DB ${{ matrix.db }}
+          - { db: snowflake, cache: db }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73d7188e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `983527e4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

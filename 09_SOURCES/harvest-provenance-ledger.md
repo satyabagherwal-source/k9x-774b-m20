@@ -12278,3 +12278,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T00:39:27.106Z |
 | `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T00:48:19.690Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `f38d42e9` | Multi-dimensional audit evidence | 2026-11-23T00:48:32.770Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-23T00:56:20.854Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `a3552b0d` | Multi-dimensional audit evidence | 2026-11-23T00:56:22.588Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `5b9451b6` | Multi-dimensional audit evidence | 2026-11-23T00:56:31.435Z |
