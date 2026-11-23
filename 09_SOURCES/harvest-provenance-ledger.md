@@ -12331,3 +12331,6 @@ Every entry in this ledger must capture:
 | `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `dc4cc9b5` | Multi-dimensional audit evidence | 2026-11-23T07:28:47.279Z |
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-23T07:36:43.897Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `f86cc46c` | Multi-dimensional audit evidence | 2026-11-23T07:37:00.645Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-23T07:44:58.993Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `2d8d2804` | Multi-dimensional audit evidence | 2026-11-23T07:45:06.602Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `d025cc57` | Multi-dimensional audit evidence | 2026-11-23T07:45:08.807Z |

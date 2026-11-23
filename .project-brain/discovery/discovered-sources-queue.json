@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T07:28:52.615Z",
+  "updated_at": "2026-11-23T07:45:12.908Z",
   "stats": {
-    "total_discovered": 7812,
-    "approved_pending_harvest": 7390,
+    "total_discovered": 7814,
+    "approved_pending_harvest": 7392,
     "harvested_count": 0,
     "rejected_count": 422,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7381,
+      "COMMUNITY_AND_EXPERT": 7383,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -168933,6 +168933,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
         "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-13B8BC0FCC3E": {
+      "id": "SRC-13B8BC0FCC3E",
+      "url": "https://hosted.weblate.org/projects/feedflow/app-strings/zh_Hans",
+      "title": "https://hosted.weblate.org/projects/feedflow/app-strings/zh_Hans",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:45:12.856Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-774A1A051EDC": {
+      "id": "SRC-774A1A051EDC",
+      "url": "https://hosted.weblate.org/projects/feedflow/glossary/ru",
+      "title": "https://hosted.weblate.org/projects/feedflow/glossary/ru",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:45:12.908Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
+        "fileName": "prof18-feed-flow-learnings.md"
       }
     }
   }

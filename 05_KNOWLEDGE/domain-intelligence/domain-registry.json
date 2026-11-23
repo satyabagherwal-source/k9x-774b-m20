@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T07:37:05.448Z",
-  "total_records": 2401,
+  "last_updated": "2026-11-23T07:45:14.099Z",
+  "total_records": 2403,
   "domains": {
     "A": {
       "total": 20,
@@ -1107,7 +1107,7 @@
       ]
     },
     "G": {
-      "total": 410,
+      "total": 412,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1518,7 +1518,9 @@
         "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-core-invariants",
         "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants",
-        "domain_intelligence-architecture-intelligence-xerj-org-xerj-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-xerj-org-xerj-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-prof18-feed-flow-core-invariants",
+        "domain_intelligence-architecture-intelligence-prof18-feed-flow-learnings-core-invariants"
       ]
     },
     "H": {
@@ -23476,8 +23478,8 @@
       "title": "Architecture Intelligence: saltstack/salt Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
       "repository": "saltstack/salt",
-      "content_hash": "822f5f7573d3671dd2b60afee4934d2d924cfff1d9b72f0d2be218c8731f881d",
-      "created_at": "2026-11-22T06:36:17.740Z"
+      "content_hash": "d805b911921b8664e59fa9458172088805b334763d5216c69c11c5a16496a1ab",
+      "created_at": "2026-11-23T07:45:09.206Z"
     },
     "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
@@ -23545,8 +23547,8 @@
       "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-learnings-architecture-intelligence-saltstack-salt-learnings-core.md",
       "repository": "saltstack-salt-learnings",
-      "content_hash": "540bba48b78058693d0f359addd32c2191a40912042702eaf984b732310ce629",
-      "created_at": "2026-11-22T06:41:12.338Z"
+      "content_hash": "846c94afbfb9bdb1eed2c8e6487d0c2a8ef498089d342eb07b56af37235bac16",
+      "created_at": "2026-11-23T07:45:14.099Z"
     },
     "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants",
@@ -32520,8 +32522,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-research-knowledge-intelligence-meta-llama-llama-2-7b-c.md",
       "repository": "meta-llama/Llama-2-7b",
-      "content_hash": "378d44dc3db57885bdac0fab6f5326f7173d2ab49125e9f50e2a8163a5f887f1",
-      "created_at": "2026-11-18T22:22:15.203Z"
+      "content_hash": "ecffd42908b52bb44a42cce38b3bf6d3131b3908b84421118af5a145a6214288",
+      "created_at": "2026-11-23T07:44:59.199Z"
     },
     "DOM-J-3CA866B9": {
       "record_id": "DOM-J-3CA866B9",
@@ -32577,8 +32579,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-learnings-research-knowledge-intelligence-hf-meta-llama.md",
       "repository": "hf-meta-llama-llama-2-7b-learnings",
-      "content_hash": "20a586670e0d96917fdbef2125e272d12c78ef3bff48f4640fe13f0e8de2eb99",
-      "created_at": "2026-11-18T22:22:51.999Z"
+      "content_hash": "cfb5d6e6efaeadca14b81ba24c3f5e6c2b23e0101ccb112b10e50191422d3068",
+      "created_at": "2026-11-23T07:45:12.538Z"
     },
     "DOM-H-DAFF8DAE": {
       "record_id": "DOM-H-DAFF8DAE",
@@ -40338,6 +40340,24 @@
       "repository": "matrixorigin-matrixone-learnings",
       "content_hash": "a09dea650cee7ba716c61e96683c8d2d3ee4def5a4a478117d5de46010cbdb1a",
       "created_at": "2026-11-23T07:37:04.754Z"
+    },
+    "domain_intelligence-architecture-intelligence-prof18-feed-flow-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-prof18-feed-flow-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: prof18/feed-flow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-prof18-feed-flow-architecture-intelligence-prof18-feed-flow-core-invariants.md",
+      "repository": "prof18/feed-flow",
+      "content_hash": "5d178bd0c3de6055f0f38cd40a8ffb9070062418cf38a0a324ef4b05be0df6a0",
+      "created_at": "2026-11-23T07:45:06.988Z"
+    },
+    "domain_intelligence-architecture-intelligence-prof18-feed-flow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-prof18-feed-flow-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: prof18-feed-flow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-prof18-feed-flow-learnings-architecture-intelligence-prof18-feed-flow-learnings-.md",
+      "repository": "prof18-feed-flow-learnings",
+      "content_hash": "fd17bb5a7532d74f73b735df33fc2456aa78843a55451e48b626c3f48f090477",
+      "created_at": "2026-11-23T07:45:13.291Z"
     }
   }
 }

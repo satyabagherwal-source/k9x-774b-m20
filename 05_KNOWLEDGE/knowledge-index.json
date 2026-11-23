@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T07:37:05.595Z",
+  "last_updated": "2026-11-23T07:45:14.413Z",
   "total_verified_learnings": 9078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23918,
+  "total_items": 23926,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224712,7 +224712,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "a66f4b68caa819fb648b40ab65220dbbe71efa3d045fb36075df4b076fc4e46e",
+      "content_hash": "92cd7973977098845a41b0492a13ae24d2c2d0e6b0ba04a86adc6236baa8d90c",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "promoted_rules": [
@@ -224737,7 +224737,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T22:22:14.855Z",
+      "verified_at": "2026-11-23T07:44:58.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255080,8 +255080,8 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "c955ae49",
-      "content_hash": "b66a05d572cb77a2d36e34dc10f1aad3696f9bcb65e9cf7b853799eff7190ae0",
+      "source_version": "d025cc57",
+      "content_hash": "d5194cd7c3eec226b2596295338394e1cacbafc313edf283980ec56630a49ae2",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
@@ -255094,6 +255094,11 @@
           "number": 9901,
           "title": "Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10038,
+          "title": "Restrict Dependabot to security-only updates on stable branches",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -255101,7 +255106,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T06:36:16.920Z",
+      "verified_at": "2026-11-23T07:45:08.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255117,10 +255122,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
       "title": "Architecture Intelligence: saltstack/salt Core Invariants",
       "repository": "saltstack/salt",
-      "source_version": "c955ae49",
-      "content_hash": "822f5f7573d3671dd2b60afee4934d2d924cfff1d9b72f0d2be218c8731f881d",
+      "source_version": "d025cc57",
+      "content_hash": "d805b911921b8664e59fa9458172088805b334763d5216c69c11c5a16496a1ab",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T06:36:17.740Z"
+      "persisted_at": "2026-11-23T07:45:09.206Z"
     },
     "rule-8693": {
       "learning_id": "rule-8693",
@@ -255216,9 +255221,9 @@
       "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
       "repository": "saltstack-salt-learnings",
       "source_version": "HEAD",
-      "content_hash": "540bba48b78058693d0f359addd32c2191a40912042702eaf984b732310ce629",
+      "content_hash": "846c94afbfb9bdb1eed2c8e6487d0c2a8ef498089d342eb07b56af37235bac16",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T06:41:12.338Z"
+      "persisted_at": "2026-11-23T07:45:14.099Z"
     },
     "candidate_directive-document-extended-dates-and-decimal-precision-for-hibernate-and-liquibase": {
       "item_id": "candidate_directive-document-extended-dates-and-decimal-precision-for-hibernate-and-liquibase",
@@ -255326,14 +255331,19 @@
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "bd4df02a",
-      "content_hash": "060ec8bd30d2eb6ba5a357d6df1b69341a2e4b6aee4d49b409986e7c8f7be75d",
+      "source_version": "2d8d2804",
+      "content_hash": "6f10eacecd6e91a1bf26ac51f96b44e564ab86a9c2cd35a554623dbbbb455615",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "promoted_rules": [
         {
           "number": 8695,
           "title": "Remove the desktop move-dialog Tab traversal test that times out on Windows CI",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10037,
+          "title": "Translated using Weblate (Chinese (Simplified Han script))",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -255342,7 +255352,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T06:45:13.236Z",
+      "verified_at": "2026-11-23T07:45:06.391Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255396,10 +255406,10 @@
       "relative_path": "08_VERIFICATION/prof18-feed-flow-verification-protocol-empirical-defect-shield-for-prof18-feed-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for prof18/feed-flow",
       "repository": "prof18/feed-flow",
-      "source_version": "bd4df02a",
-      "content_hash": "842fe45f739fce4c54bf7276f0cf4abd00a718c5b2bb062cbd76a8a1fc2b4ad0",
+      "source_version": "2d8d2804",
+      "content_hash": "a283e81df4ced052dfc0913500ad1563c1c2bc194773a7a07e1506a87e78e7dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:45:14.039Z"
+      "persisted_at": "2026-11-23T07:45:07.170Z"
     },
     "rule-8696": {
       "learning_id": "rule-8696",
@@ -255499,9 +255509,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for prof18-feed-flow-learnings",
       "repository": "prof18-feed-flow-learnings",
       "source_version": "HEAD",
-      "content_hash": "693a9bcff485d3e27e94ca5d5939ed04e80d6c56201869553630865bcfcfaef8",
+      "content_hash": "9dedd1c6fb6f3a3ea86abea88c17e6cda7c5d1a556e8e81baf8114a4e16c1ea7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:46:04.144Z"
+      "persisted_at": "2026-11-23T07:45:13.484Z"
     },
     "learn-github-crawlcove-robots-txt-tester": {
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
@@ -293721,9 +293731,9 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b Core Invariants",
       "repository": "meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "378d44dc3db57885bdac0fab6f5326f7173d2ab49125e9f50e2a8163a5f887f1",
+      "content_hash": "ecffd42908b52bb44a42cce38b3bf6d3131b3908b84421118af5a145a6214288",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T22:22:15.203Z"
+      "persisted_at": "2026-11-23T07:44:59.199Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-learnings-core-invarian",
@@ -293733,9 +293743,9 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-learnings Core Invariants",
       "repository": "hf-meta-llama-llama-2-7b-learnings",
       "source_version": "HEAD",
-      "content_hash": "20a586670e0d96917fdbef2125e272d12c78ef3bff48f4640fe13f0e8de2eb99",
+      "content_hash": "cfb5d6e6efaeadca14b81ba24c3f5e6c2b23e0101ccb112b10e50191422d3068",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T22:22:51.999Z"
+      "persisted_at": "2026-11-23T07:45:12.538Z"
     },
     "rule-9292": {
       "learning_id": "rule-9292",
@@ -302336,10 +302346,10 @@
       "relative_path": "08_VERIFICATION/saltstack-salt-verification-protocol-empirical-defect-shield-for-saltstack-salt.md",
       "title": "Verification Protocol: Empirical Defect Shield for saltstack/salt",
       "repository": "saltstack/salt",
-      "source_version": "c955ae49",
-      "content_hash": "a7361bd4f61d610036a27834f1d5402c3d195b5c609a841a3a9dad754a9cf436",
+      "source_version": "d025cc57",
+      "content_hash": "82afd2ea9d2de29e9fade983ef85f0004c683591febd39976530ba13956ba6f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:36:17.988Z"
+      "persisted_at": "2026-11-23T07:45:09.519Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-saltstack-salt-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-saltstack-salt-learnings",
@@ -302349,9 +302359,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for saltstack-salt-learnings",
       "repository": "saltstack-salt-learnings",
       "source_version": "HEAD",
-      "content_hash": "f76eb251431fcfd9ccb9ae787685d6e46bfba83b45bab7537aafcf21a75840c3",
+      "content_hash": "3066246a2e138d2b6bb9feff283e74ce7012f64fb6e37bcb94ee2dc77b224399",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:41:12.563Z"
+      "persisted_at": "2026-11-23T07:45:14.413Z"
     },
     "rule-9499": {
       "learning_id": "rule-9499",
@@ -325753,6 +325763,106 @@
       "content_hash": "a09dea650cee7ba716c61e96683c8d2d3ee4def5a4a478117d5de46010cbdb1a",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T07:37:04.754Z"
+    },
+    "rule-10037": {
+      "learning_id": "rule-10037",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10037,
+      "title": "Translated using Weblate (Chinese (Simplified Han script))",
+      "source_url": "https://github.com/prof18/feed-flow",
+      "source_version": "2d8d2804",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T07:45:06.391Z"
+    },
+    "candidate_directive-translated-using-weblate-chinese-simplified-han-script": {
+      "item_id": "candidate_directive-translated-using-weblate-chinese-simplified-han-script",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NR8E-translated-using-weblate-chinese-simplified-han-script.md",
+      "title": "Translated using Weblate (Chinese (Simplified Han script))",
+      "repository": "prof18-feed-flow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ce30d83684c300f8e6ea6aaa8d2960ca2daebb96a434623834e23ccee961ab11",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T07:45:13.119Z"
+    },
+    "domain_intelligence-architecture-intelligence-prof18-feed-flow-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-prof18-feed-flow-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-prof18-feed-flow-architecture-intelligence-prof18-feed-flow-core-invariants.md",
+      "title": "Architecture Intelligence: prof18/feed-flow Core Invariants",
+      "repository": "prof18/feed-flow",
+      "source_version": "2d8d2804",
+      "content_hash": "5d178bd0c3de6055f0f38cd40a8ffb9070062418cf38a0a324ef4b05be0df6a0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T07:45:06.988Z"
+    },
+    "rule-10038": {
+      "learning_id": "rule-10038",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10038,
+      "title": "Restrict Dependabot to security-only updates on stable branches",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "d025cc57",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T07:45:08.596Z"
+    },
+    "candidate_directive-restrict-dependabot-to-security-only-updates-on-stable-branches": {
+      "item_id": "candidate_directive-restrict-dependabot-to-security-only-updates-on-stable-branches",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NRUO-restrict-dependabot-to-security-only-updates-on-stable-branches.md",
+      "title": "Restrict Dependabot to security-only updates on stable branches",
+      "repository": "saltstack-salt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1717950ded80b5b6e0ffabea8c8c955b103a7ac9402cb01389847ae0c70e8d9b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T07:45:13.923Z"
+    },
+    "agent_contract-agent-contract-saltstack-salt-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-saltstack-salt-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/saltstack-salt-agent-contract-saltstack-salt-autonomous-specialist-persona.md",
+      "title": "Agent Contract: saltstack/salt Autonomous Specialist Persona",
+      "repository": "saltstack/salt",
+      "source_version": "d025cc57",
+      "content_hash": "e4e524bf4492cdcbec30dc72135cd14f38984377a27eeb35abd51eddadf80f2a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T07:45:09.377Z"
+    },
+    "domain_intelligence-architecture-intelligence-prof18-feed-flow-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-prof18-feed-flow-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-prof18-feed-flow-learnings-architecture-intelligence-prof18-feed-flow-learnings-.md",
+      "title": "Architecture Intelligence: prof18-feed-flow-learnings Core Invariants",
+      "repository": "prof18-feed-flow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fd17bb5a7532d74f73b735df33fc2456aa78843a55451e48b626c3f48f090477",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T07:45:13.291Z"
+    },
+    "agent_contract-agent-contract-saltstack-salt-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-saltstack-salt-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/saltstack-salt-learnings-agent-contract-saltstack-salt-learnings-autonomous-spec.md",
+      "title": "Agent Contract: saltstack-salt-learnings Autonomous Specialist Persona",
+      "repository": "saltstack-salt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2124f94493afd04a534a3051bdc7601dea37312fd6b14dab7b836e67f95808df",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T07:45:14.269Z"
     }
   },
   "ai-builder-brain": {

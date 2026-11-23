@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
   "source_version": "hf-meta-llama-llama-2-7b",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T22:22:15.202Z",
+  "timestamp": "2026-11-23T07:44:59.199Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meta-llama/Llama-2-7b](https://huggingface.co/meta-llama/Llama-2-7b) (Revision: `hf-meta-ll`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T22:22:15.202Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T07:44:59.199Z`  
 > **Learning ID**: `learn-huggingface-meta-llama-llama-2-7b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meta-llama/Llama-2-7b](https://huggingface.co/meta-llama/Llama-2-7b))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T22:22:14.511Z  
+> **Harvest Timestamp**: 2026-11-23T07:44:58.342Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 132 downloads | 4585 likes
+- **Stars / Engagement**: 128 downloads | 4587 likes
 
 ---
 

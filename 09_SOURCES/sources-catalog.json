@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "a66f4b68caa819fb648b40ab65220dbbe71efa3d045fb36075df4b076fc4e46e",
-    "lastHarvestedAt": "2026-11-18T22:22:15.037Z",
+    "contentHash": "92cd7973977098845a41b0492a13ae24d2c2d0e6b0ba04a86adc6236baa8d90c",
+    "lastHarvestedAt": "2026-11-23T07:44:58.993Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "c955ae49",
+    "sourceVersion": "d025cc57",
     "license": "Apache-2.0",
-    "contentHash": "b66a05d572cb77a2d36e34dc10f1aad3696f9bcb65e9cf7b853799eff7190ae0",
-    "lastHarvestedAt": "2026-11-22T06:36:17.197Z",
+    "contentHash": "d5194cd7c3eec226b2596295338394e1cacbafc313edf283980ec56630a49ae2",
+    "lastHarvestedAt": "2026-11-23T07:45:08.807Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "bd4df02a",
+    "sourceVersion": "2d8d2804",
     "license": "Apache-2.0",
-    "contentHash": "060ec8bd30d2eb6ba5a357d6df1b69341a2e4b6aee4d49b409986e7c8f7be75d",
-    "lastHarvestedAt": "2026-11-20T06:45:13.488Z",
+    "contentHash": "6f10eacecd6e91a1bf26ac51f96b44e564ab86a9c2cd35a554623dbbbb455615",
+    "lastHarvestedAt": "2026-11-23T07:45:06.602Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {

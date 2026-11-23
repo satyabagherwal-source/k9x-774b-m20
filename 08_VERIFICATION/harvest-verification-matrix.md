@@ -12298,3 +12298,6 @@
 | `CYCLE-20261123-2MJU` | `2026-11-23T07:28:47.274Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`545e9dab...`) |
 | `CYCLE-20261123-CUB8` | `2026-11-23T07:36:43.892Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`64e28e27...`) |
 | `CYCLE-20261123-D78I` | `2026-11-23T07:37:00.642Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10036` | Yes (`341eb1c8...`) |
+| `CYCLE-20261123-NGBX` | `2026-11-23T07:44:58.989Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`92cd7973...`) |
+| `CYCLE-20261123-NM7A` | `2026-11-23T07:45:06.598Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10037` | Yes (`6f10eace...`) |
+| `CYCLE-20261123-NNWI` | `2026-11-23T07:45:08.802Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10038` | Yes (`d5194cd7...`) |

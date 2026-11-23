@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T06:46:03.663Z",
+  "timestamp": "2026-11-23T07:45:13.007Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-prof18-feed-flow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [prof18-feed-flow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T06:46:03.663Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T07:45:13.007Z`  
 > **Learning ID**: `LEARN-EVO-prof18-feed-flow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source**: github ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
-> **Source Version**: `bd4df02a`  
+> **Source Version**: `2d8d2804`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T06:45:12.978Z  
+> **Timestamp**: 2026-11-23T07:45:05.558Z  
 > **Learning ID**: `learn-github-prof18-feed-flow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T06:45:12.973Z  
+> **Harvest Timestamp**: 2026-11-23T07:45:05.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1356 stars
+- **Stars / Engagement**: 1361 stars
 
 ---
 
@@ -709,92 +709,130 @@ private suspend fun revealInterruptibly(scroll: suspend () -> Unit) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9eaf5f8` (2026-11-19)
-**Commit Message**: Sign local Android release builds with secrets from 1Password
+### Incident Patch 1: `2d8d2804` (2026-11-22)
+**Commit Message**: Translated using Weblate (Chinese (Simplified Han script))
 
-**File**: `AGENTS.md` (modified, +4/-0)
+Currently translated at 100.0% (651 of 651 strings)
+
+Translation: FeedFlow/App Strings
+Translate-URL: https://hosted.weblate.org/projects/feedflow/app-strings/zh_Hans/
+
+**File**: `i18n/src/commonMain/resources/locale/values-zh-rCN/strings.xml` (modified, +21/-0)
 ```diff
-@@ -344,6 +344,10 @@ When creating commits:
- - The `flatpak=true` property in `desktopApp/src/jvmMain/resources/props.properties` is used to disable platform-specific features (e.g., Google Drive sync) in Flatpak builds
- - HiDPI scaling for the JVM uses `sun.java2d.uiScale` JVM argument. For local testing: `./gradlew --quiet --console=plain desktopApp:run -PjvmArgs="-Dsun.java2d.uiScale=2.0"`
- 
-+### Local Android release build
-+- CI signs releases from repository secrets. For a signed release on a local machine, run `tools/signing/build-release.sh [gradle task ...]` (default `:androidApp:bundleGooglePlayRelease`). It reads the signing values from the 1Password item named by `FEEDFLOW_SIGNING_ITEM`, writes a temporary `keystore.properties` for the build and restores the previous one afterwards.
-+- Never keep signing values in `keystore.properties` or a keystore in the repo; the local file holds only the debug keys. If `FEEDFLOW_SIGNING_ITEM` is unset in an agent shell, read it with `zsh -ic 'printf %s "$FEEDFLOW_SIGNING_ITEM"'`, and stop and ask if it is still empty. Verify the bundle with `jarsigner -verify` before using it.
-+
- ### CI/CD
- - CI config: `.github/workflows/code-checks.yaml`
- - Pipeline: every job starts in parallel. `checks` (macos-26) runs swiftlint, `allTests` without the JVM/Android suites (Kotlin/Native, cloud sync, Swift `CloudSyncTests`), `.scripts/ios-tests.sh` and the macOS desktop tests; `jvm-checks` (Linux) runs detekt and the Android host/unit tests; `tests-desktop` runs `jvmTest` on Linux and Windows; `build-android-app`, `build-desktop-app` and `build-ios-app` build the apps. PR runs cancel when a newer push arrives. macOS runners are the scarce, slow resource (7 GB RAM, few concurrent slots), so keep work that does not need macOS off the `checks` job. The iOS build job and the iOS release job run on GitHub's `xcode-27` runner (a preview image) and select Xcode 27.1 with `maxim-lobanov/setup-xcode`: the iPhone Duo layout uses iOS 27.1 SDK APIs, so Xcode 27.0 cannot build the app.
+@@ -630,4 +630,25 @@
+     <string name="settings_auto_delete_description">删除已读和未读文章。保留已加书签的文章。</string>
+     <string name="settings_save_reader_mode_content_description">您在阅读模式下打开的文章在离线状态下仍然可用。</string>
+     <string name="settings_prefetch_article_content_description">当订阅源刷新时，从每个网站获取完整文章。会使用更多数据。</string>
++    <string name="settings_read_articles_title">已读文章</string>
++    <string name="settings_read_articles_keep">保留在列表中</string>
++    <string name="settings_read_articles_hide_on_refresh">下次刷新时隐藏</string>
++    <string name="settings_read_articles_hide_right_away">立即隐藏</string>
++    <string name="settings_show_description">描述</string>
++    <string name="settings_show_images">图片</string>
++    <string name="settings_show_date">日期</string>
++    <string name="settings_show_unread_dot">未读指示器</string>
++    <string name="settings_show_feed_source">订阅源名称</string>
++    <string name="settings_requires_description">开启描述以更改此设置。</string>
++    <string name="settings_requires_date">开启日期以更改此设置。</string>
++    <string name="settings_feed_list_section_layout">布局</string>
++    <string name="settings_feed_list_section_show_in_list">在列表中显示</string>
++    <string name="settings_feed_list_section_date_time">日期和时间</string>
++    <string name="settings_feed_list_section_order">排序</string>
++    <string name="settings_feed_list_section_gestures">手势</string>
++    <string name="settings_feed_list_scale_default">默认</string>
++    <string name="settings_reading_title">阅读</string>
++    <string name="settings_read_articles_footer">当已读文章离开时间线时</string>
++    <string name="settings_read_articles_right_away_disabled">当“滚动时标记为已读”开启时不可用，因此当您滚动时文章会保持在原位。</string>
++    <string name="settings_read_articles_right_away_disabled_note">当“滚动时标记为已读”开启时立即隐藏不可用，因此当您滚动时文章会保持在原位。</string>
+ </resources>
 ```
 
-**File**: `tools/signing/build-release.sh` (added, +56/-0)
+---
+
+### Incident Patch 2: `e4b00591` (2026-11-21)
+**Commit Message**: Translated using Weblate (Russian)
+
+Currently translated at 100.0% (20 of 20 strings)
+
+Translation: FeedFlow/Glossary
+Translate-URL: https://hosted.weblate.org/projects/feedflow/glossary/ru/
+
+**File**: `i18n/glossary/ru.tbx` (modified, +20/-20)
 ```diff
-@@ -0,0 +1,56 @@
-+#!/usr/bin/env bash
-+# Builds a signed release locally with the signing secrets read from 1Password.
-+# Usage: FEEDFLOW_SIGNING_ITEM=op://<vault>/<item> tools/signing/build-release.sh [gradle task ...]
-+set -euo pipefail
-+
-+: "${FEEDFLOW_SIGNING_ITEM:?set FEEDFLOW_SIGNING_ITEM to the 1Password item reference}"
-+command -v op >/dev/null 2>&1 || { echo "error: the 1Password CLI (op) is not installed." >&2; exit 1; }
-+
-+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-+PROPS="$REPO_ROOT/keystore.properties"
-+TASKS=("${@:-:androidApp:bundleGooglePlayRelease}")
-+
-+umask 077
-+WORK_DIR="$(mktemp -d)"
-+HAD_PROPS=false
-+
-+cleanup() {
-+  if [[ "$HAD_PROPS" == true && -f "$WORK_DIR/backup" ]]; then
-+    mv -f "$WORK_DIR/backup" "$PROPS"
-+  else
-+    rm -f "$PROPS"
-+  fi
-+  rm -rf "$WORK_DIR"
-+}
-+trap cleanup EXIT
-+trap 'exit 130' INT TERM
-+
-+if [[ -f "$PROPS" ]]; then
-+  cp -p "$PROPS" "$WORK_DIR/backup"
-+  HAD_PROPS=true
-+fi
-+
-+read_field() {
-+  local value
-+  value="$(op read "$FEEDFLOW_SIGNING_ITEM/$1")"
-+  printf '%s' "${value//\\/\\\\}"
-+}
-+
-+op read --force --out-file "$WORK_DIR/release.jks" "$FEEDFLOW_SIGNING_ITEM/release.jks" >/dev/null
-+KEY_ALIAS="$(read_field key_alias)"
-+STORE_PASSWORD="$(read_field store_password)"
-+KEY_PASSWORD="$(read_field key_password)"
-+DROPBOX_KEY="$(read_field dropbox_key)"
-+REVENUECAT_KEY="$(read_field revenuecat_android_api_key)"
-+
-+cat > "$WORK_DIR/keystore.properties" <<EOF
-+storeFile=$WORK_DIR/release.jks
-+keyAlias=$KEY_ALIAS
-+storePassword=$STORE_PASSWORD
-+keyPassword=$KEY_PASSWORD
-+dropbox_key=$DROPBOX_KEY
-+revenuecat_android_api_key=$REVENUECAT_KEY
-+EOF
-+mv -f "$WORK_DIR/keystore.properties" "$PROPS"
-+
-+(umask 022 && cd "$REPO_ROOT" && ./gradlew "${TASKS[@]}")
+@@ -13,102 +13,102 @@
+             <termEntry weblate-flags="terminology">
+                 <descrip>A website's RSS, Atom or JSON feed that the user follows. Avoid: feed source, source, subscription, channel.</descrip>
+                 <langSet xml:lang="en"><tig><term>feed</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>лента</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>The list of all feeds the user follows, grouped by category (section and screen title). Avoid: Feed Sources.</descrip>
+                 <langSet xml:lang="en"><tig><term>Feeds</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>Ленты</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>Feeds and categories the user keeps at the top of the sidebar. Avoid: Pinned Feed Sources, favorites.</descrip>
+                 <langSet xml:lang="en"><tig><term>Pinned feeds</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>Закреплённые ленты</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>Only for OPML import and export: the feed list as stored in an OPML file. Everywhere else say feeds.</descrip>
+                 <langSet xml:lang="en"><tig><term>subscriptions</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>подписки</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>The title of a feed, shown on each article. Avoid: feed source.</descrip>
+                 <langSet xml:lang="en"><tig><term>feed name</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>название ленты</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>One entry of a feed: title, summary and link, which FeedFlow gets when it refreshes feeds. Avoid: item, post, entry, story.</descrip>
+                 <langSet xml:lang="en"><tig><term>article</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>статья</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>The whole text of an article's web page, which FeedFlow gets from the website for reader mode. Avoid: article content, web content.</descrip>
+                 <langSet xml:lang="en"><tig><term>full article</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>полная статья</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>A full article stored on the device so it can be read without a connection. Not the same as refreshing feeds. Avoid: download, save, prefetch, cache.</descrip>
+                 <langSet xml:lang="en"><tig><term>offline copy</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>офлайн-копия</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>Images stored on the device so they load faster. Only used for images.</descrip>
+                 <langSet xml:lang="en"><tig><term>image cache</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>кэш изображений</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>Check the feeds for new articles (Refresh feeds, Background refresh). Avoid: download, sync, reload.</descrip>
+                 <langSet xml:lang="en"><tig><term>refresh</term></tig></langSet>
+-                <langSet xml:lang="ru"><tig><term></term></tig></langSet>
++                <langSet xml:lang="ru"><tig><term>обновление</term></tig></langSet>
+             </termEntry>
+             <termEntry weblate-flags="terminology">
+                 <descrip>Keep feeds, read status and bookmarks the same across the user's devices through an account. Avoid: upload, refresh.</descrip>
+                 <langSet xml:lang="en"><tig><term>sync</term></tig></langSet>
+-                <langSet xml:la
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1710** (2026-11-19): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1703** (2026-11-19): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1700** (2026-11-16): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1699** (2026-11-16): Update dependency SwiftDraw to v0.30.0 (@renovate[bot])
-- **PR #1698** (2026-11-15): Show the database error window instead of crashing when the desktop database stops working at runtime (@prof18)
-- **PR #1697** (2026-11-15): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1727** (2026-11-22): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1726** (2026-11-21): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1725** (2026-11-21): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1724** (2026-11-21): Persist the desktop main window geometry with WinKeep (@prof18)
+- **PR #1723** (2026-11-21): Update dependency com.prof18:klead to v1.0.2 (@renovate[bot])
+- **PR #1720** (2026-11-20): Translations update from Hosted Weblate (@hosted-weblate[bot])
 
 ---
 
@@ -814,24 +852,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Sign local Android release builds with secrets from 1Password
+## X. Translated using Weblate (Chinese (Simplified Han script))
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `i18n/src/commonMain/resources/locale/values-zh-rCN/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9eaf5f8`: Sign local Android release builds with secrets from 1Password. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d8d2804`: Translated using Weblate (Chinese (Simplified Han script)). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `i18n/src/commonMain/resources/locale/values-zh-rCN/strings.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-### Local Android release build
-- CI signs releases from repository secrets. For a signed release on a local machine, run `tools/signing/build-release.sh [gradle task ...]` (default `:androidApp:bundleGooglePlayRelease`). It reads the signing values from the 1Password item named by `FEEDFLOW_SIGNING_ITEM`, writes a temporary `keystore.properties` for the build and restores the previous one afterwards.
-- Never keep signing values in `keystore.properties` or a keystore in the repo; the local file holds only the debug keys. If `FEEDFLOW_SIGNING_ITEM` is unset in an agent shell, read it with `zsh -ic 'printf %s "$FEEDFLOW_SIGNING_ITEM"'`, and stop and ask if it is still empty. Verify the bundle with `jarsigner -verify` before using it.
-
+    <string name="settings_read_articles_title">已读文章</string>
+    <string name="settings_read_articles_keep">保留在列表中</string>
+    <string name="settings_read_articles_hide_on_refresh">下次刷新时隐藏</string>
+    <string name="settings_read_articles_hide_right_away">立即隐藏</string>
+    <string name="settings_show_description">描述</string>
+    <string name="settings_show_images">图片</string>
+    <string name="settings_show_date">日期</string>
+    <string name="settings_show_unread_dot">未读指示器</string>
+    <string name="settings_show_feed_source">订阅源名称</string>
+    <string name="settings_requires_description">开启描述以更改此设置。</string>
+    <string name="settings_requires_date">开启日期以更改此设置。</string>
+    <string name="settings_feed_list_section_layout">布局</string>
+    <string name="settings_feed_list_section_show_in_list">在列表中显示</string>
+    <string name="settings_feed_list_section_date_time">日期和时间</string>
+    <string name="settings_feed_list_section_order">排序</string>
+    <string name="settings_feed_list_section_gestures">手势</string>
+    <string name="settings_feed_list_scale_default">默认</string>
+    <string name="settings_reading_title">阅读</string>
+    <string name="settings_read_articles_footer">当已读文章离开时
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -841,7 +894,7 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9eaf5f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d8d2804` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

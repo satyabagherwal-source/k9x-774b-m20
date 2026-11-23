@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-72MJ",
-    "timestamp": "2026-11-21T08:52:53.131Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "892d3af58ad6969e83b8523b4e74d797a80081ecdc6b53b1cdb99fab3a0d1191",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-9C9I",
-    "timestamp": "2026-11-21T08:54:38.934Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-    "contentHash": "d7187627183cdf41de8eda6ad72f68bf427be934a8dd2473fadecc2c7da0aa56",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-AQZL",
-    "timestamp": "2026-11-21T09:23:44.289Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "d9da591b9401b251de58827312c6aafac32c88ee205dc8b94ee63175bda469b4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-5A9X",
     "timestamp": "2026-11-21T09:47:28.965Z",
     "repository": "apache/shardingsphere",
@@ -7490,6 +7445,51 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "341eb1c87c94d5a6e048d37e9d165cdfe64ae8eafd9334fcf11120b7ead9f640",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-NGBX",
+    "timestamp": "2026-11-23T07:44:58.989Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "92cd7973977098845a41b0492a13ae24d2c2d0e6b0ba04a86adc6236baa8d90c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-NM7A",
+    "timestamp": "2026-11-23T07:45:06.598Z",
+    "repository": "prof18/feed-flow",
+    "learningId": "learn-github-prof18-feed-flow",
+    "contentHash": "6f10eacecd6e91a1bf26ac51f96b44e564ab86a9c2cd35a554623dbbbb455615",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-NNWI",
+    "timestamp": "2026-11-23T07:45:08.802Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "d5194cd7c3eec226b2596295338394e1cacbafc313edf283980ec56630a49ae2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

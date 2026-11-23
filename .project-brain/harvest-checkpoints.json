@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T07:37:00.653Z",
+  "last_updated": "2026-11-23T07:45:08.815Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1280,14 +1280,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
-      "content_hash": "a66f4b68caa819fb648b40ab65220dbbe71efa3d045fb36075df4b076fc4e46e",
-      "verified_at": "2026-11-18T22:22:15.044Z",
+      "content_hash": "92cd7973977098845a41b0492a13ae24d2c2d0e6b0ba04a86adc6236baa8d90c",
+      "verified_at": "2026-11-23T07:44:59.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T22:22:15.044Z"
+      "last_updated": "2026-11-23T07:44:59.002Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "b66a05d572cb77a2d36e34dc10f1aad3696f9bcb65e9cf7b853799eff7190ae0",
-      "verified_at": "2026-11-22T06:36:17.209Z",
+      "content_hash": "d5194cd7c3eec226b2596295338394e1cacbafc313edf283980ec56630a49ae2",
+      "verified_at": "2026-11-23T07:45:08.815Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T06:36:17.209Z"
+      "last_updated": "2026-11-23T07:45:08.815Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "060ec8bd30d2eb6ba5a357d6df1b69341a2e4b6aee4d49b409986e7c8f7be75d",
-      "verified_at": "2026-11-20T06:45:13.512Z",
+      "content_hash": "6f10eacecd6e91a1bf26ac51f96b44e564ab86a9c2cd35a554623dbbbb455615",
+      "verified_at": "2026-11-23T07:45:06.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:45:13.513Z"
+      "last_updated": "2026-11-23T07:45:06.610Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",

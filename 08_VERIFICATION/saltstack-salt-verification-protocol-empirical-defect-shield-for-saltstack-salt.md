@@ -4,22 +4,22 @@
 {
   "source_repository": "saltstack/salt",
   "source_url": "https://github.com/saltstack/salt",
-  "source_version": "c955ae49",
+  "source_version": "d025cc57",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T06:36:17.513Z",
+  "timestamp": "2026-11-23T07:45:09.038Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-saltstack-salt",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [saltstack/salt](https://github.com/saltstack/salt) (Revision: `c955ae49`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T06:36:17.513Z`  
+> **Provenance**: Harvested from [saltstack/salt](https://github.com/saltstack/salt) (Revision: `d025cc57`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T07:45:09.038Z`  
 > **Learning ID**: `learn-github-saltstack-salt`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `saltstack/salt` (Commit: `c955ae49`)
+- **Target Repository**: `saltstack/salt` (Commit: `d025cc57`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:36:15.573Z  
+> **Harvest Timestamp**: 2026-11-23T07:45:07.747Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2318,14 +2318,11 @@ def start(cmd, output="json", interval=1, onchange=False):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #70819** (2026-11-23): **[Bug]: manage.down <minion_id> deletes keys of all down minions: removekeys is the first positional arg**
+  *Symptoms*: ### What happened?  ### Description  `salt-run manage.down <minion_id>` deletes the keys of **every** down minion in the fleet.  `removekeys` is the first positional parameter of `manage.down`, and it is tested by truthiness:  ```python def down(     removekeys=False, tgt="*", tgt_type="glob", timeout=None, gather_job_timeout=None ):     ret = status(...).get("down", [])     for minion in ret:         if removekeys:             wheel = salt.wheel.Wheel(__opts__)             wheel.call_func("key.delete", match=minion)     return ret ```  So a positional argument meant as a target (a minion ID, a glob, a nodegroup name) binds to `removekeys`, is a non-empty string and therefore truthy, while `tgt` stays at its default `"*"`. The runner checks the whole fleet and calls `key.delete` on every minion that is down. Each deletion also rotates the master's AES key, forcing every minion in the fleet to re-authenticate.  Nothing validates the type and nothing asks for confirmation, so the command reads as a harmless status check for one host.  The neighbouring runners make the mistake easy. `manage.up` takes `tgt` as its first positional parameter, so `salt-run manage.up <minion_id>` does exactly what it looks like it does. The identical form on `manage.down` destroys keys instead. (`manage.status` has the same shape with a non-destructive first parameter, `output`, so `manage.status <minion_id>` silently ignores the intended target rather than deleting anything.)  ### Setup  Salt 3008.
+
 - **Issue #70793** (2026-11-19): **[Bug]: whitelist_modules / whitelist_state_modules cannot restrict to specific functions**
   *Symptoms*: ### What happened? `whitelist_modules` and `whitelist_state_modules` only accept bare module names. There is no way to allow a single function of a module while blocking its siblings -- e.g. "allow cmd.run but not cmd.shell / cmd.retcode / cmd.run_bg". Operators who want to give a minion access to one function of a module today have to allow the entire module, which widens the attack surface well beyond what the deployment actually needs.  Expected: entries of the form `module.func` are accepted and enforce function-level filtering. `[cmd]` still means "all functions of cmd"; `[cmd.run]` means "only cmd.run". Mixing (e.g. `[cmd, cmd.run]`) should narrow to the listed functions (dotted wins) so an existing whitelist can be tightened without first removing the broader entry.  Reproduce (any supported branch): ```yaml # /etc/salt/minion.d/whitelist.conf whitelist_modules:   - cmd.run ``` ``` $ salt-call cmd.run 'id' # fails: module `cmd` not in whitelist, because the loader only looks at the # part before the dot and the full `cmd.run` entry is not recognised. ```  Affects: 3006.x, 3007.x, 3008.x, master. Enforcement lives in `salt.loader.lazy.LazyLoader` so a single fix covers execution modules, state modules, and every other subsystem that uses it.  ### Type of salt install n/a -- configuration-level issue, affects all install types.  ### Major version 3006.x, 3007.x, 3008.x  ### What OS n/a -- not OS-specific.  ### salt --versions-report output n/a -- reproducible on any buil
-
-- **Issue #70789** (2026-11-19): **[Bug]: Scheduled returns scan all accepted minion keys causing extreme load**
-  *Symptoms*: ### What happened?  After upgrading a Salt master from 3006.28 to 3008.5, MWorker processes on the master overloaded causing master issues.  The master has approximately > 100K+ accepted minion keys and 128 MWorkers. It uses ZeroMQ, master_job_cache: local_cache, keys.cache_driver: localfs_key, and key_cache: sched. Async MWorkers are  disabled. PKI and the master cache are on local SSD-backed ZFS.  A three-second strace sample of one worker showed 58,821 lstat calls, accounting for 99.96% of its syscall time. Python stack samples from three separate MWorkers showed the same path:     AESFuncs._sync_return      → salt.utils.job.store_job      → salt.utils.job._store_job      → local_cache.save_load      → CkMinions.check_minions      → CkMinions._check_glob_minions      → Key.glob_match      → Key.list_keys      → localfs_key.list_all      → clean_path      → realpath / lstat  For a standalone or scheduled minion return with jid: req, _store_job sets:     load["tgt_type"] = "glob"    load["tgt"] = load["id"]  It then calls save_load without a precomputed minion list. local_cache.save_load resolves the returning minion’s ID as a glob, causing enumeration and path validation across the entire accepted-key inventory.  Expected behavior: caching a standalone return should not require discovering its target across all accepted minion keys. Passing minions=[load["id"]] to the initial save_load call avoids this lookup while preserving existing target metadata and cache layout.  ### 
-  **Post-Mortem & Fix Analysis**:
-  > Hi there! Welcome to the Salt Community! Thank you for making your first contribution. We have a lengthy process for issues and PRs. Someone from the Core Team will follow up as soon as possible. In the meantime, here's some information that may help as you continue your Salt journey. Please be sure to review our [Code of Conduct](https://github.com/saltstack/salt/blob/master/CODE_OF_CONDUCT.md). Also, check out some of our community resources including:    - [Salt's Contributor Guide](https://docs.saltproject.io/en/master/topics/development/contributing.html)   - [Join our Community Discord](https://discord.com/invite/J7b7EscrAs)   - [Salt Project YouTube channel](https://www.youtube.com/channel/UCpveTIucFx9ljGelW63-BWg)   - [GitHub Discussions](https://github.com/saltstack/salt/discussions)  There are lots of ways to get involved in our community. Every month, there are around a dozen opportunities to meet with other contributors and the Salt Core team and collaborate in real time. T
-  > Fixed by #70790; will ship in 3008.7.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2342,118 +2339,102 @@ def start(cmd, output="json", interval=1, onchange=False):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c955ae49` (2026-11-22)
-**Commit Message**: Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds (#70899)
+### Incident Patch 1: `61a49c41` (2026-11-23)
+**Commit Message**: Restrict Dependabot to security-only updates on stable branches (#70913)
 
-* Extract NSIS plugins without Expand-Archive
+Non-master branches (3006.x, 3007.x, 3008.x) now accept Dependabot PRs
+only for GHSA security advisories, not routine version bumps. Master
+keeps grouped weekly updates unchanged.
 
-On the windows-11-vs2026-arm64 runner image 20261112.217.1, Expand-Archive
-fails with 'Cannot find an overload for "ExtractToDirectory" and the
-argument count: "3"', breaking the arm64 source package build before it
-does anything else. The unchanged script worked on image 20261101.203.1,
-and amd64 on windows-2025-vs2026 20261103.298.1 still passes.
+Set open-pull-requests-limit: 0 on each stable-branch entry to disable
+version-update PRs; security updates continue to fire on their own
+internal limit of 10. Drop the all-pip-updates group from the stable
+branches since it only applies to version updates. Keep the vcert /
+pylint ignore entries so stable branches don't attempt those bumps
+even for security advisories.
 
-Call the two-argument System.IO.Compression.ZipFile.ExtractToDirectory
-directly through a small Expand-ZipFile helper, which exists in both
-Windows PowerShell 5.1 and PowerShell 7, so the build no longer depends on
-which Archive module gets loaded. Behaviour on an existing target file is
-unchanged: both error.
-
-* Add changelog for #70899
-
----------
-
-Co-authored-by: knightmare2600 <[REDACTED_EMAIL]>
-
-**File**: `changelog/70899.fixed.md` (added, +1/-0)
+**File**: `.github/dependabot.yml` (modified, +8/-15)
 ```diff
-@@ -0,0 +1 @@
-+Replaced the `Expand-Archive` calls in `pkg/windows/install_nsis.ps1` with a small `Expand-ZipFile` helper that invokes `System.IO.Compression.ZipFile.ExtractToDirectory` directly. Current GitHub Windows runner images ship a .NET bundle where `Expand-Archive` fails with "Cannot find an overload for 'ExtractToDirectory' and the argument count: '3'", breaking every Windows build job.
-```
-
-**File**: `pkg/windows/install_nsis.ps1` (modified, +17/-6)
-```diff
-@@ -38,6 +38,17 @@ function Write-Result($result, $ForegroundColor="Green") {
-     }
- }
+@@ -1,5 +1,6 @@
+ version: 2
+ updates:
++  # master: full version + security updates, grouped weekly
+   - package-ecosystem: "pip"
+     directories:
+       - "/"
+@@ -24,6 +25,8 @@ updates:
+         patterns:
+           - "*"
  
-+# Expand-Archive fails on the windows-11-vs2026-arm64 runner image from
-+# 20261112.217.1 onwards with 'Cannot find an overload for
-+# "ExtractToDirectory" and the argument count: "3"', while 20261101.203.1
-+# worked. Call the two-argument ZipFile.ExtractToDirectory directly, which
-+# exists in both Windows PowerShell 5.1 (.NET Framework) and PowerShell 7.
-+# Like Expand-Archive without -Force, it fails if a target file exists.
-+function Expand-ZipFile($Path, $DestinationPath) {
-+  Add-Type -AssemblyName System.IO.Compression.FileSystem
-+  [System.IO.Compression.ZipFile]::ExtractToDirectory($Path, $DestinationPath)
-+}
-+
- #-------------------------------------------------------------------------------
- # Script Variables
- #-------------------------------------------------------------------------------
-@@ -120,7 +131,7 @@ if ( Test-Path -Path $check_file ) {
-     }
++  # 3008.x: security advisories only. open-pull-requests-limit: 0 disables
++  # version-update PRs; security-update PRs still fire on GHSA advisories.
+   - package-ecosystem: "pip"
+     directories:
+       - "/"
+@@ -34,17 +37,14 @@ updates:
+     target-branch: 3008.x
+     labels:
+       - "test:full"
+-    open-pull-requests-limit: 5
++    open-pull-requests-limit: 0
+     ignore:
+       - dependency-name: "vcert"
+         versions: [">=0.10.0"]
+       - dependency-name: "pylint"
+         versions: [">=4.0.0"]
+-    groups:
+-      all-pip-updates:
+-        patterns:
+-          - "*"
  
-     Write-Host "Extracting NSIS NxS Unzip (ansi) Plugin: " -NoNewline
--    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP"
-+    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP"
-     if ( Test-Path -Path "$env:TEMP\nsisunz\Release\nsisunz.dll") {
-         Write-Result "Success" -ForegroundColor Green
-     } else {
-@@ -171,7 +182,7 @@ if ( Test-Path -Path $check_file ) {
-     }
++  # 3007.x: security advisories only.
+   - package-ecosystem: "pip"
+     directories:
+       - "/"
+@@ -55,17 +55,14 @@ updates:
+     target-branch: 3007.x
+     labels:
+       - "test:full"
+-    open-pull-requests-limit: 5
++    open-pull-requests-limit: 0
+     ignore:
+       - dependency-name: "vcert"
+         versions: [">=0.10.0"]
+       - dependency-name: "pylint"
+         versions: [">=4.0.0"]
+-    groups:
+-      all-pip-updates:
+-        patterns:
+-          - "*"
  
-     Write-Host "Extracting NSIS NxS Unzip (unicode) Plugin: " -NoNewline
--    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP"
-+    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP"
-     if ( Test-Path -Path "$env:TEMP\NSISunzU\Plugin unicode\nsisunz.dll") {
-         Write-Result "Success" -ForegroundColor Green
-     } else {
-@@ -227,7 +238,7 @@ if ( (Test-Path -Path $check_file_a) -and (Test-Path -Path $check_file_u) ) {
-     }
- 
-     Write-Host "Extracting NSIS EnVar Plugin: " -NoNewline
--    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP\nsisenvar\"
-+    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP\nsisenvar\"
-     if ( ! (Test-Path -Path "$env:TEMP\nsisenvar\Plugins\x86-ansi\EnVar.dll") ) {
-         Write-Result "Failed" -ForegroundColor Red
-         exit 1
-@@ -292,7 +303,7 @@ if ( (Test-Path -Path $check_file_a) -and (Test-Path -Path $check_file_u) ) {
-     }
- 
-     Write-Host "Extracting NSIS EnVar Plugin: " -NoNewline
--    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP\nsisaccesscontrol\"
-+    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP\nsisaccesscontrol\"
-     if ( ! (Test-Path -Path "$env:TEMP\nsisaccesscontrol\Plugins\i386-ansi\AccessControl.dll") ) {
-         Write-Result "Failed" -ForegroundColor Red
-         exit 1
-@@ -357,7 +368,7 @@ if ( (Test-Path -Path $check_file_a) -and (Test-Path -Path $check_file_u) ) {
-     }
- 
-     Write-Host "Extracting NSIS SimpleSC (ansi) Plugin: " -NoNewline
--    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP\nsisSimpleSC\"
-+    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP\nsisSimpleSC\"
-     if ( Test-Path -Path "$env:TEMP\nsisSimpleSC\SimpleSC.dll" ) {
-         Write-Result "Success" -ForegroundColor Green
-     } else {
-@@ -397,7 +408,7 @@ if ( (Test-Path -Path $check_file_a) -and (Test-Path -Path $check_file_u) ) {
-     }
- 
-     Write-Host "Extracting NSIS SimpleSC (unicode) Plugin: " -NoNewline
--    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP\nsisSimpleSCu\"
-+    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP\nsisSimpleSCu\"
-     if ( Test-Path -Path "$env:TEMP\nsisSimpleSCu\SimpleSC.dll" ) {
-         Write-Result "Success" -ForegroundColor Green
-     } else {
++  # 3006.x: security advisories only.
+   - package-ecosystem: "pip"
+     directories:
+       - "/"
+@@ -76,13 +73,9 @@ updates:
+     target-branch: 3006.x
+     labels:
+       - "test:full"
+-    open-pull-requests-limit: 5
++    open-pull-requests-limit: 0
+     ignore:
+       - dependency-name: "vcert"
+         versions: [">=0.10.0"]
+       - dependency-name: "pylint"
+         versions: [">=4.0.0"]
+-    groups:
+-      all-pip-updates:
+-        patterns:
+-          - "*"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #70899** (2026-11-22): Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds (@dwoz)
-- **PR #70898** (2026-11-22): Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds (@dwoz)
-- **PR #70887** (closed): Enable 7 Ruff checks for common mistakes that report nothing today (@charzl)
-- **PR #70886** (closed): Enable 6 Ruff pytest checks that report nothing today (@charzl)
-- **PR #70885** (closed): Enable 6 Ruff security checks that report nothing today (@charzl)
-- **PR #70877** (closed): Set stacklevel on warnings.warn calls (@charzl)
+- **PR #70917** (closed): Handle COM error when querying update download state in win_update.download (@LakshmikanthRaju)
+- **PR #70916** (closed): Handle COM error when querying update download state in win_update.download (@LakshmikanthRaju)
+- **PR #70915** (2026-11-23): Tighten Dependabot ignore list to respect documented version caps (@dwoz)
+- **PR #70914** (2026-11-23): Improve and validate Salt delta proxy minion documentation (#68285) (@dwoz)
+- **PR #70913** (2026-11-23): Restrict Dependabot to security-only updates on stable branches (@dwoz)
+- **PR #70909** (2026-11-22): Select all Ruff rules and list the ones not enabled yet (@charzl)
 
 ---
 
@@ -2473,31 +2454,52 @@ Co-authored-by: knightmare2600 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds
+## X. Restrict Dependabot to security-only updates on stable branches
 
 **RULE**:
-When implementing operations in `changelog/70899.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c955ae49`: Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61a49c41`: Restrict Dependabot to security-only updates on stable branches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/70899.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Replaced the `Expand-Archive` calls in `pkg/windows/install_nsis.ps1` with a small `Expand-ZipFile` helper that invokes `System.IO.Compression.ZipFile.ExtractToDirectory` directly. Current GitHub Windows runner images ship a .NET bundle where `Expand-Archive` fails with "Cannot find an overload for 'ExtractToDirectory' and the argument count: '3'", breaking every Windows build job.
+  # master: full version + security updates, grouped weekly
+  # 3008.x: security advisories only. open-pull-requests-limit: 0 disables
+  # version-update PRs; security-update PRs still fire on GHSA advisories.
+    open-pull-requests-limit: 0
+  # 3007.x: security advisories only.
+    open-pull-requests-limit: 0
+  # 3006.x: security advisories only.
+    open-pull-requests-limit: 0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    open-pull-requests-limit: 5
+    groups:
+      all-pip-updates:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 5
+    groups:
+      all-pip-updates:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 5
+    groups:
+      all-pip-updates:
+        patterns:
+          - "*"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c955ae49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61a49c41` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

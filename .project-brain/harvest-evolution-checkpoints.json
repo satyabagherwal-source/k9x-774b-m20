@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T07:37:05.729Z",
+  "last_updated": "2026-11-23T07:45:14.571Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T04:50:32.955Z",
@@ -1253,7 +1253,7 @@
       "staged_for_review": 1
     },
     "prof18-feed-flow-learnings.md": {
-      "processed_at": "2026-11-20T06:46:03.466Z",
+      "processed_at": "2026-11-23T07:45:12.731Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2398,8 +2398,8 @@
       "staged_for_review": 1
     },
     "hf-meta-llama-llama-2-7b-learnings.md": {
-      "processed_at": "2026-11-18T22:22:51.811Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-23T07:45:12.309Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "berty-berty-learnings.md": {
@@ -3133,7 +3133,7 @@
       "staged_for_review": 1
     },
     "saltstack-salt-learnings.md": {
-      "processed_at": "2026-11-22T06:41:11.639Z",
+      "processed_at": "2026-11-23T07:45:13.700Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3743,7 +3743,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3354,
+  "total_dossiers_evaluated": 3357,
   "total_canonical_promoted": 481,
-  "total_staged_for_review": 2527
+  "total_staged_for_review": 2529
 }
