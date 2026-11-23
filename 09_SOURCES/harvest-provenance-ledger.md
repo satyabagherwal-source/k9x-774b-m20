@@ -12480,3 +12480,6 @@ Every entry in this ledger must capture:
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `23cefad9` | Multi-dimensional audit evidence | 2026-11-23T19:51:23.132Z |
 | `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `42d1f169` | Multi-dimensional audit evidence | 2026-11-23T20:00:19.584Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `6775607e` | Multi-dimensional audit evidence | 2026-11-23T20:08:34.314Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-23T20:21:53.602Z |
+| `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `3d378017` | Multi-dimensional audit evidence | 2026-11-23T20:22:01.481Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `ec1c6cba` | Multi-dimensional audit evidence | 2026-11-23T20:22:09.307Z |

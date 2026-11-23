@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T20:08:40.460Z",
+  "last_updated": "2026-11-23T20:22:16.282Z",
   "total_records": 2444,
   "domains": {
     "A": {
@@ -18130,8 +18130,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "758e0ea2835d6956cf1ee8f6cb868e9cddf7dc62a1c178cf2a27409cadae5076",
-      "created_at": "2026-11-22T18:21:32.904Z"
+      "content_hash": "a3c57f91d4482d2a9ecab55628603aef54a78f21b0e0073a70d5e7a79d8ae8e1",
+      "created_at": "2026-11-23T20:22:09.741Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -18200,8 +18200,8 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-learnings-architecture-intelligence-vespa-engine-vespa-learni.md",
       "repository": "vespa-engine-vespa-learnings",
-      "content_hash": "fcbef968af86c9dc301c5eb06a21e96e356be325714f7018b8a31ffddeb195f2",
-      "created_at": "2026-11-19T04:36:39.558Z"
+      "content_hash": "eab9343f908eea44bd23cbda47a749838eafb2a5815efd3551a58bbacf2d76a7",
+      "created_at": "2026-11-23T20:22:16.282Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",
@@ -18287,8 +18287,8 @@
       "title": "Research & Knowledge Intelligence: Phocinae/Phocinae-Largha-150M-v1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-research-knowledge-intelligence-phocinae-pho.md",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "content_hash": "7b9dd30a291920258c11b28668723b70d90b4c98c026d2fbdf6ee22512fe060b",
-      "created_at": "2026-11-19T12:20:08.809Z"
+      "content_hash": "ec7e5dc9d4724852ab6d913722e2d051cddb300637d311ce7b33a6ec2aab30ab",
+      "created_at": "2026-11-23T20:21:53.842Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants",
@@ -18374,8 +18374,8 @@
       "title": "Research & Knowledge Intelligence: hf-phocinae-phocinae-largha-150m-v1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-phocinae-phocinae-largha-150m-v1-learnings",
-      "content_hash": "b0e4207aa8c7500f72b49ddc46e839387223e6e49f379cf754870603934bff14",
-      "created_at": "2026-11-19T12:20:11.789Z"
+      "content_hash": "9a7d12a15ae89bf33c6d291b801db76d2cd313cac135f67ee699b42159811c9e",
+      "created_at": "2026-11-23T20:22:13.210Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
@@ -25095,8 +25095,8 @@
       "title": "Architecture Intelligence: iPlug2/iPlug2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-architecture-intelligence-iplug2-iplug2-core-invariants.md",
       "repository": "iPlug2/iPlug2",
-      "content_hash": "ba781000d2b061d6bdbb689aa33e130cf018fce11f5243baf48e7cbcd7989da3",
-      "created_at": "2026-11-20T21:25:44.851Z"
+      "content_hash": "65787bcea067e834766c6a159dc2d343c49a1027685b78b700967bd5960c1b54",
+      "created_at": "2026-11-23T20:22:01.917Z"
     },
     "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants",
@@ -25131,8 +25131,8 @@
       "title": "Architecture Intelligence: iplug2-iplug2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-learnings-architecture-intelligence-iplug2-iplug2-learnings-core-i.md",
       "repository": "iplug2-iplug2-learnings",
-      "content_hash": "8b369896c7ea1f7f49da81cded0cf2ebf0663ebbf7467a94fd0af2147692cd6d",
-      "created_at": "2026-11-20T21:25:56.741Z"
+      "content_hash": "69410930187c4d63fd499df7628b365659915eba2947e80037b06a2f75250944",
+      "created_at": "2026-11-23T20:22:15.407Z"
     },
     "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants",

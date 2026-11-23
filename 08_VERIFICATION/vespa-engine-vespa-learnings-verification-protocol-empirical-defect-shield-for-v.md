@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T04:36:39.307Z",
+  "timestamp": "2026-11-23T20:22:15.991Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vespa-engine-vespa-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vespa-engine-vespa-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T04:36:39.307Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T20:22:15.991Z`  
 > **Learning ID**: `LEARN-EVO-vespa-engine-vespa-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `170c7d31`  
+> **Source Version**: `ec1c6cba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T04:36:33.943Z  
+> **Timestamp**: 2026-11-23T20:22:08.226Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T04:36:33.938Z  
+> **Harvest Timestamp**: 2026-11-23T20:22:08.220Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7185 stars
+- **Stars / Engagement**: 7198 stars
 
 ---
 
@@ -1090,705 +1090,445 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a98f585` (2026-11-18)
-**Commit Message**: Merge pull request #38571 from vespa-engine/toregge/add-trace-spans-for-attribute-vector-flush
+### Incident Patch 1: `ec1c6cba` (2026-11-23)
+**Commit Message**: Merge pull request #38633 from vespa-engine/revert-38616-renovate/maven-resolver.vespa.version
 
-Add trace spans for attribute vector flush.
+Revert "fix(deps): update maven-resolver.vespa.version to v2.0.26"
 
-**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp` (modified, +1/-0)
+**File**: `dependency-versions/pom.xml` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,7 @@ namespace vespa_opentelemetry::span_attribute_names {
- const std::string attribute("ai.vespa.searchlib.attribute");
- const std::string ddb_prev_state("ai.vespa.proton.ddb.prev_state");
- const std::string document_type("ai.vespa.document_type");
-+const std::string serial("ai.vespa.searchlib.serial");
- const std::string subdb("ai.vespa.proton.subdb");
- 
- } // namespace vespa_opentelemetry::span_attribute_names
+@@ -198,7 +198,7 @@
+         <maven-plugin-api.vespa.version>${maven-core.vespa.version}</maven-plugin-api.vespa.version>
+         <maven-plugin-tools.vespa.version>3.16.0</maven-plugin-tools.vespa.version>
+         <maven-resources-plugin.vespa.version>3.5.0</maven-resources-plugin.vespa.version>
+-        <maven-resolver.vespa.version>2.0.26</maven-resolver.vespa.version>
++        <maven-resolver.vespa.version>2.0.24</maven-resolver.vespa.version>
+         <maven-shade-plugin.vespa.version>3.5.3</maven-shade-plugin.vespa.version>
+         <maven-shared-utils.vespa.version>3.5.0</maven-shared-utils.vespa.version>
+         <maven-dependency-tree.vespa.version>3.3.0</maven-dependency-tree.vespa.version>
 ```
 
-**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.h` (modified, +1/-0)
+**File**: `maven-plugins/allowed-maven-dependencies.txt` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,7 @@ namespace vespa_opentelemetry::span_attribute_names {
- extern const std::string attribute;
- extern const std::string ddb_prev_state;
- extern const std::string document_type;
-+extern const std::string serial;
- extern const std::string subdb;
- 
- } // namespace vespa_opentelemetry::span_attribute_names
+@@ -79,6 +79,7 @@ org.opentest4j:opentest4j:${opentest4j.vespa.version}
+ org.ow2.asm:asm-commons:${asm.vespa.version}
+ org.ow2.asm:asm-tree:${asm.vespa.version}
+ org.ow2.asm:asm:${asm.vespa.version}
++org.slf4j:jcl-over-slf4j:${slf4j.vespa.version}
+ org.slf4j:slf4j-api:${slf4j.vespa.version}
+ org.tukaani:xz:1.12
+ org.twdata.maven:mojo-executor:${mojo-executor.vespa.version}
 ```
 
-**File**: `searchcore/src/tests/proton/attribute/attributeflush_test.cpp` (modified, +2/-2)
+**File**: `parent/pom.xml` (modified, +0/-15)
 ```diff
-@@ -346,8 +346,8 @@ TEST(AttributeFlushTest, require_that_cleanup_is_performed_after_flush) {
-     EXPECT_TRUE(info.save());
-     auto diskLayout = AttributeDiskLayout::create("flush");
- 
--    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), TuneFileAttributes(), f._fileHeaderContext,
--                          f._attributeFieldWriter, f._hwInfo);
-+    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), f._m.doc_type_and_subdb_name(), TuneFileAttributes(),
-+                          f._fileHeaderContext, f._attributeFieldWriter, f._hwInfo);
-     fa.initFlush(30, std::make_shared<search::FlushToken>())->run();
- 
-     EXPECT_TRUE(info.load());
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.cpp` (modified, +2/-2)
-```diff
-@@ -135,8 +135,8 @@ void AttributeManager::addAttribute(AttributeWrap attributeWrap, const ShrinkerS
-         // Flushing of extra attributes is handled elsewhere
-         AttributeVector* attributeP = attribute.get();
-         auto             flusher = std::make_shared<FlushableAttribute>(
--            std::move(attribute), _diskLayout->createAttributeDir(name), _tuneFileAttributes, _fileHeaderContext,
--            _attributeFieldWriter, _hwInfo);
-+            std::move(attribute), _diskLayout->createAttributeDir(name), _doc_type_and_subdb_name,
-+            _tuneFileAttributes, _fileHeaderContext, _attributeFieldWriter, _hwInfo);
-         _flushables[name] = FlushableWrap(flusher, shrinker);
-         _writableAttributes.push_back(attributeP);
-     }
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.h` (modified, +3/-0)
-```diff
-@@ -204,6 +204,9 @@ class AttributeManager : public proton::IAttributeManager {
- 
-     searchcorespi::common::ResourceUsage get_resource_usage() const override;
-     static uint64_t get_size_on_disk_overhead() noexcept;
-+    [[nodiscard]] const std::shared_ptr<const DocTypeAndSubDbName>& doc_type_and_subdb_name() const noexcept {
-+        return _doc_type_and_subdb_name;
-+    }
-     [[nodiscard]] const DocTypeName& doc_type_name() const noexcept {
-         return _doc_type_and_subdb_name->doc_type_name();
-     }
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.cpp` (modified, +43/-11)
-```diff
-@@ -6,7 +6,9 @@
- #include "attributedisklayout.h"
- 
- #include <vespa/check_require.h>
-+#include <vespa/opentelemetry/span_attribute_names.h>
- #include <vespa/searchcommon/attribute/config.h>
-+#include <vespa/searchcore/proton/common/tracing.h>
- #include <vespa/searchcorespi/common/resource_usage.h>
- #include <vespa/searchlib/attribute/attributefilesavetarget.h>
- #include <vespa/searchlib/attribute/attributememorysavetarget.h>
-@@ -29,6 +31,7 @@ LOG_SETUP(".proton.attribute.flushableattribute");
- 
- using namespace search;
- using namespace vespalib;
-+using opentelemetry::trace::Span;
- using search::common::CreateAndFreezeTimes;
- using search::common::FileHeaderContext;
- using search::common::SerialNumFileHeaderContext;
-@@ -48,6 +51,7 @@ class FlushableAttribute::Flusher : public Task {
-     uint64_t                                    _syncToken;
-     std::string                                 _flushFile;
-     std::unique_ptr<AttributeDirectory::Writer> _writer;
-+    std::shared_ptr<Span>                       _span;
- 
-     bool saveAttribute(); // not updating snap info.
- public:
-@@ -65,13 +69,28 @@ class FlushableAttribute::Flusher : public Task {
- 
- FlushableAttribute::Flusher::Flusher(FlushableAttribute& fattr, SerialNum syncToken,
-                                      std::unique_ptr<AttributeDirectory::Writer> writer)
--    : _fattr(fattr), _saveTarget(), _saver(), _syncToken(syncToken), _flushFile(""), _writer(std::move(writer)) {
--    fattr._attr->commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-+    : _fattr(fattr),
-+      _saveTarget(),
-+      _saver(),
-+      _syncToken(syncToken),
-+      _flushFile(""),
-+      _writer(std::move(writer)),
-+      _span() {
-     AttributeVector& attr = *_fattr._attr;
-+    auto             tracer = get_tracer();
-+    _span = tracer->StartSpan(
-+        "Flush attribute",
-+        {{vespa_opentelemetry::span_attribute_names::document_type,
-+          fattr._doc_type_and_subdb_name->doc_type_name().getName()},
-+         {vespa_opentelemetry::span_attribute_names::subdb, fattr._doc_type_and_subdb_name->subdb_name()},
-+         {vespa_opentelemetry::span_attribute_names::attribute, attr.getName()},
-+         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
-+    attr.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-     // Called by attribute field writer executor
-     _flushFile = _writer->getSnapshotDir(_syncToken) + "/" + attr.getName();
-     _saver = attr.initSave(_flushFile);
-     CHECK(_saver);
-+    _span->AddEvent("Done init flush");
- }
- 
- FlushableAttribute::Flusher::~Flusher() = default;
-@@ -134,9 +153,13 @@ bool FlushableAttribute::Flusher::cleanUp() {
- }
- 
- void FlushableAttribute::Flusher::run() {
-+    _span->AddEvent("Starting background flush");
-+    auto tracer = get_tracer();
-+    auto scope = tracer->WithActiveSpan(_span);
-     if (_syncToken <= _fattr.getFlushedSerialNum()) {
-         // another flusher has created an equal or better snapshot
-         // after this flusher was created
-+        _span->End();
-         return;
-     }
-     if (!flush()) {
-@@ -146,13 +169,15 @@ void FlushableAttribute::Flusher::run() {
-     if (!cleanUp()) {
-         // TODO (geirst): throw exception ?
-     }
-+    _span->End();
- }
- 
- FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
--                                       const TuneFileAttributes&         tuneFileAttributes,
--                                       const FileHeaderContext&          fileHeaderContext,
--                                       vespalib::ISequencedTaskExecutor& attributeFieldWriter,
--                                       const vespalib::HwInfo&           hwInfo)
-+                                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
-+                                       const TuneFileAttributes&                  tuneFileAttributes,
-+                                       const FileHeaderContext&                   fileHeaderContext,
-+                                       vespalib::ISequencedTaskExecutor&          attributeFieldWriter,
-+                                       const vespalib::HwInfo&                    hwInfo)
-     : LeafFlushTarget(make_string("attribute.flush.%s", attr->getName().c_str()), Type::SYNC, Component::ATTRIBUTE),
-       _attr(attr),
-       _cleanUpAfterFlush(true),
-@@ -162,6 +187,7 @@ FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared
-       _attributeFieldWriter(attributeFieldWriter),
-       _hwInfo(hwInfo),
-       _attrDir(attrDir),
-+      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)),
-       _replay_operation_cost(0.0),
-       _paged(_attr->getConfig().paged()) {
-     _lastStats.setPathElementsToLog(8);
-@@ -197,8 +223,11 @@ IFlushTarget::Time FlushableAttribute::getLastFlushTime() const {
-     return _attrDir->getLastFlushTime();
- }
- 
--void FlushableAttribut
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.h` (modified, +20/-14)
-```diff
-@@ -2,10 +2,13 @@
- 
- #pragma once
- 
-+#include <vespa/searchcore/proton/common/doc_type_and_subdb_name.h>
- #include <vespa/searchcorespi/flush/iflushtarget.h>
- #include <vespa/searchlib/common/tunefileinfo.h>
- #include <vespa/vespalib/util/hw_info.h>
- 
-+#include <opentelemetry/trace/span.h>
-+
- namespace search {
- class AttributeVector;
- }
-@@ -36,18 +39,20 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
-     using AttributeVectorSP = std::shared_ptr<search::AttributeVector>;
-     using FlushStats = searchcorespi::FlushStats;
- 
--    AttributeVectorSP                        _attr;
--    bool                                     _cleanUpAfterFlush;
--    FlushStats                               _lastStats;
--    const search::TuneFileAttributes         _tuneFileAttributes;
--    const search::common::FileHeaderContext& _fileHeaderContext;
--    vespalib::ISequencedTaskExecutor&        _attributeFieldWriter;
--    vespalib::HwInfo                         _hwInfo;
--    std::shared_ptr<AttributeDirectory>      _attrDir;
--    double                                   _replay_operation_cost;
--    bool                                     _paged;
--
--    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise);
-+    AttributeVectorSP                                _attr;
-+    bool                                             _cleanUpAfterFlush;
-+    FlushStats                                       _lastStats;
-+    const search::TuneFileAttributes                 _tuneFileAttributes;
-+    const search::common::FileHeaderContext&         _fileHeaderContext;
-+    vespalib::ISequencedTaskExecutor&                _attributeFieldWriter;
-+    vespalib::HwInfo                                 _hwInfo;
-+    std::shared_ptr<AttributeDirectory>              _attrDir;
-+    const std::shared_ptr<const DocTypeAndSubDbName> _doc_type_and_subdb_name;
-+    double                                           _replay_operation_cost;
-+    bool                                             _paged;
-+
-+    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise,
-+                             std::shared_ptr<opentelemetry::trace::Span> parent_span);
- 
- public:
-     using SP = std::shared_ptr<FlushableAttribute>;
-@@ -59,8 +64,9 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
-      * fileHeaderContext must be kept alive by caller.
-      **/
-     FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
--                       const search::TuneFileAttributes&        tuneFileAttributes,
--                       const search::common::FileHeaderContext& fileHeaderContext,
-+                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_sub_db_name_in,
-+                       const search::TuneFileAttributes&          tuneFileAttributes,
-+                       const search::common::FileHeaderContext&   fileHeaderContext,
-                        vespalib::ISequencedTaskExecutor& attributeFieldWriter, const vespalib::HwInfo& hwInfo);
- 
-     ~FlushableAttribute() override;
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/documentmetastore/documentmetastoreflushtarget.cpp` (modified, +26/-9)
-```diff
-@@ -5,8 +5,10 @@
- #include "documentmetastore.h"
- 
- #include <vespa/check_require.h>
-+#include <vespa/opentelemetry/span_attribute_names.h>
- #include <vespa/searchcore/proton/attribute/attribute_directory.h>
- #include <vespa/searchcore/proton/attribute/attributedisklayout.h>
-+#include <vespa/searchcore/proton/common/tracing.h>
- #include <vespa/searchcore/proton/server/itlssyncer.h>
- #include <vespa/searchcorespi/common/resource_usage.h>
- #include <vespa/searchlib/attribute/attributefilesavetarget.h>
-@@ -26,6 +28,7 @@ LOG_SETUP(".proton.documentmetastore.documentmetastoreflushtarget");
- 
- using namespace search;
- using namespace vespalib;
-+using opentelemetry::trace::Span;
- using search::common::CreateAndFreezeTimes;
- using search::common::FileHeaderContext;
- using search::common::SerialNumFileHeaderContext;
-@@ -45,6 +48,7 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
-     uint64_t                                    _syncToken;
-     std::string                                 _flushDir;
-     std::unique_ptr<AttributeDirectory::Writer> _writer;
-+    std::shared_ptr<Span>                       _span;
- 
-     bool saveDocumentMetaStore(); // not updating snap info.
- public:
-@@ -61,14 +65,23 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
- 
- DocumentMetaStoreFlushTarget::Flusher::Flusher(DocumentMetaStoreFlushTarget& dmsft, SerialNum syncToken,
-                                                std::unique_ptr<AttributeDirectory::Writer> writer)
--    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)) {
-+    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)), _span() {
-     // Called by document db main executor
-     DocumentMetaStore& dms = *_dmsft._dms;
-+    auto               tracer = get_tracer();
-+    _span = tracer->StartSpan(
-+        "Flush documentmetastore",
-+        {{vespa_opentelemetry::span_attribute_names::document_type,
-+          _dmsft._doc_type_and_subdb_name->doc_type_name().getName()},
-+         {vespa_opentelemetry::span_attribute_names::subdb, _dmsft._doc_type_and_subdb_name->subdb_name()},
-+         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
-+
-     dms.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-     _flushDir = _writer->getSnapshotDir(syncToken);
-     std::string newBaseFileName(_flushDir + "/" + dms.getName());
-     _saver = dms.initSave(newBaseFileName);
-     CHECK(_saver);
-+    _span->AddEvent("Done init flush");
- }
- 
- DocumentMetaStoreFlushTarget::Flusher::~Flusher() = default;
-@@ -141,9 +154,13 @@ bool DocumentMetaStoreFlushTarget::Flusher::cleanUp() {
- }
- 
- void DocumentMetaStoreFlushTarget::Flusher::run() {
-+    _span->AddEvent("Starting background flush");
-+    auto tracer = get_tracer();
-+    auto scope = tracer->WithActiveSpan(_span);
-     if (_syncToken <= _dmsft.getFlushedSerialNum()) {
-         // another flusher has created an equal or better snapshot
-         // after this flusher was created
-+        _span->End();
-         return;
-     }
-     if (!flush()) {
-@@ -153,13 +170,14 @@ void DocumentMetaStoreFlushTarget::Flusher::run() {
-     if (!cleanUp()) {
-         // TODO (geirst): throw exception ?
-     }
-+    _span->End();
- }
- 
--DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer,
--                                                           const std::string&        baseDir,
--                                                           const TuneFileAttributes& tuneFileAttributes,
--                                                           const FileHeaderContext&  fileHeaderContext,
--                                                           const vespalib::HwInfo&   hwInfo)
-+DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(
-+    const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer, const std::string& baseDir,
-+    std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
-+    const TuneFileAttributes& tuneFileAttributes, const FileHeaderContext& fileHeaderContext,
-+    const vespalib::HwInfo& hwInfo)
-     : LeafFlushTarget("documentmetastore.flush", Type::SYNC, Component::ATTRIBUTE),
-       _dms(dms),
-       _tlsSyncer(tlsSyncer),
-@@ -170,9 +188,8 @@ DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaSto
-       _fileHeaderContext(fileHeaderContext),
-       _hwInfo(hwInfo),
-       _diskLayout(AttributeDiskLayout::createSimple(baseDir)),
--      _dmsDir(_diskLayout->createAttributeDir(""))
--
--{
-+      _dmsDir(_diskLayout->createAttributeDir("")),
-+      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)) {
-     _lastStats.setPathElementsToLog(8);
- }
- 
+@@ -1156,11 +1156,6 @@
+                 <artifactId>maven-resolver-api</artifactId>
+                 <version>${maven-resolver.vespa.version}</version>
+             </dependency>
+-            <dependency>
+-                <groupId>org.apache.maven.resolver</groupId>
+-                <artifactId>maven-resolver-connector-basic</artifactId>
+-                <version>${maven-resolver.vespa.version}</version>
+-            </dependency>
+             <dependency>
+                 <groupId>org.apache.maven.resolver</groupId>
+                 <artifactId>maven-resolver-impl</artifactId>
+@@ -1176,16 +1171,6 @@
+                 <artifactId>maven-resolver-spi</artifactId>
+                 <version>${maven-resolver.vespa.version}</version>
+             </dependency>
+-            <dependency>
+-                <groupId>org.apache.maven.resolver</groupId>
+-                <artifactId>maven-resolver-transport-apache</artifactId>
+-                <version>${maven-resolver.vespa.version}</version>
+-            </dependency>
+-            <dependency>
+-                <groupId>org.apache.maven.resolver</groupId>
+-                <artifactId>maven-resolver-transport-file</artifactId>
+-                <version>${maven-resolver.vespa.version}</version>
+-            </dependency>
+             <dependency>
+                 <groupId>org.apache.maven.resolver</groupId>
+                 <artifactId>maven-resolver-util</artifactId>
 ```
 
 ---
 
-### Incident Patch 2: `38911c2f` (2026-11-18)
-**Commit Message**: Add trace spans for attribute vector flush.
+### Incident Patch 2: `ef306190` (2026-11-23)
+**Commit Message**: Revert "fix(deps): update maven-resolver.vespa.version to v2.0.26"
 
-**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp` (modified, +1/-0)
+**File**: `dependency-versions/pom.xml` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,7 @@ namespace vespa_opentelemetry::span_attribute_names {
- const std::string attribute("ai.vespa.searchlib.attribute");
- const std::string ddb_prev_state("ai.vespa.proton.ddb.prev_state");
- const std::string document_type("ai.vespa.document_type");
-+const std::string serial("ai.vespa.searchlib.serial");
- const std::string subdb("ai.vespa.proton.subdb");
- 
- } // namespace vespa_opentelemetry::span_attribute_names
+@@ -198,7 +198,7 @@
+         <maven-plugin-api.vespa.version>${maven-core.vespa.version}</maven-plugin-api.vespa.version>
+         <maven-plugin-tools.vespa.version>3.16.0</maven-plugin-tools.vespa.version>
+         <maven-resources-plugin.vespa.version>3.5.0</maven-resources-plugin.vespa.version>
+-        <maven-resolver.vespa.version>2.0.26</maven-resolver.vespa.version>
++        <maven-resolver.vespa.version>2.0.24</maven-resolver.vespa.version>
+         <maven-shade-plugin.vespa.version>3.5.3</maven-shade-plugin.vespa.version>
+         <maven-shared-utils.vespa.version>3.5.0</maven-shared-utils.vespa.version>
+         <maven-dependency-tree.vespa.version>3.3.0</maven-dependency-tree.vespa.version>
 ```
 
-**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.h` (modified, +1/-0)
+**File**: `maven-plugins/allowed-maven-dependencies.txt` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,7 @@ namespace vespa_opentelemetry::span_attribute_names {
- extern const std::string attribute;
- extern const std::string ddb_prev_state;
- extern const std::string document_type;
-+extern const std::string serial;
- extern const std::string subdb;
- 
- } // namespace vespa_opentelemetry::span_attribute_names
+@@ -79,6 +79,7 @@ org.opentest4j:opentest4j:${opentest4j.vespa.version}
+ org.ow2.asm:asm-commons:${asm.vespa.version}
+ org.ow2.asm:asm-tree:${asm.vespa.version}
+ org.ow2.asm:asm:${asm.vespa.version}
++org.slf4j:jcl-over-slf4j:${slf4j.vespa.version}
+ org.slf4j:slf4j-api:${slf4j.vespa.version}
+ org.tukaani:xz:1.12
+ org.twdata.maven:mojo-executor:${mojo-executor.vespa.version}
 ```
 
-**File**: `searchcore/src/tests/proton/attribute/attributeflush_test.cpp` (modified, +2/-2)
+**File**: `parent/pom.xml` (modified, +0/-15)
 ```diff
-@@ -346,8 +346,8 @@ TEST(AttributeFlushTest, require_that_cleanup_is_performed_after_flush) {
-     EXPECT_TRUE(info.save());
-     auto diskLayout = AttributeDiskLayout::create("flush");
- 
--    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), TuneFileAttributes(), f._fileHeaderContext,
--                          f._attributeFieldWriter, f._hwInfo);
-+    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), f._m.doc_type_and_subdb_name(), TuneFileAttributes(),
-+                          f._fileHeaderContext, f._attributeFieldWriter, f._hwInfo);
-     fa.initFlush(30, std::make_shared<search::FlushToken>())->run();
- 
-     EXPECT_TRUE(info.load());
+@@ -1156,11 +1156,6 @@
+                 <artifactId>maven-resolver-api</artifactId>
+                 <version>${maven-resolver.vespa.version}</version>
+             </dependency>
+-            <dependency>
+-                <groupId>org.apache.maven.resolver</groupId>
+-                <artifactId>maven-resolver-connector-basic</artifactId>
+-                <version>${maven-resolver.vespa.version}</version>
+-            </dependency>
+             <dependency>
+                 <groupId>org.apache.maven.resolver</groupId>
+                 <artifactId>maven-resolver-impl</artifactId>
+@@ -1176,16 +1171,6 @@
+                 <artifactId>maven-resolver-spi</artifactId>
+                 <version>${maven-resolver.vespa.version}</version>
+             </dependency>
+-            <dependency>
+-                <groupId>org.apache.maven.resolver</groupId>
+-                <artifactId>maven-resolver-transport-apache</artifactId>
+-                <version>${maven-resolver.vespa.version}</version>
+-            </dependency>
+-            <dependency>
+-                <groupId>org.apache.maven.resolver</groupId>
+-                <artifactId>maven-resolver-transport-file</artifactId>
+-                <version>${maven-resolver.vespa.version}</version>
+-            </dependency>
+             <dependency>
+                 <groupId>org.apache.maven.resolver</groupId>
+                 <artifactId>maven-resolver-util</artifactId>
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.cpp` (modified, +2/-2)
+---
+
+### Incident Patch 3: `f243d3e7` (2026-11-23)
+**Commit Message**: Merge pull request #38628 from vespa-engine/toregge/add-trace-spans-for-shrinking-attributes-document-metastore-and-docstore
+
+Add trace spans for shrinking attributes, document meta store and doc…
+
+**File**: `searchcore/src/tests/proton/documentdb/configurer_test.cpp` (modified, +4/-4)
 ```diff
-@@ -135,8 +135,8 @@ void AttributeManager::addAttribute(AttributeWrap attributeWrap, const ShrinkerS
-         // Flushing of extra attributes is handled elsewhere
-         AttributeVector* attributeP = attribute.get();
-         auto             flusher = std::make_shared<FlushableAttribute>(
--            std::move(attribute), _diskLayout->createAttributeDir(name), _tuneFileAttributes, _fileHeaderContext,
--            _attributeFieldWriter, _hwInfo);
-+            std::move(attribute), _diskLayout->createAttributeDir(name), _doc_type_and_subdb_name,
-+            _tuneFileAttributes, _fileHeaderContext, _attributeFieldWriter, _hwInfo);
-         _flushables[name] = FlushableWrap(flusher, shrinker);
-         _writableAttributes.push_back(attributeP);
-     }
+@@ -232,10 +232,10 @@ void Fixture::initViewSet(ViewSet& views) {
+         BASE_DIR, DocTypeAndSubDbName::create("test", "subdb"), TuneFileAttributes(), views._fileHeaderContext,
+         std::make_shared<search::attribute::Interlock>(), views._service.write().field_writer(),
+         views._service.write().shared(), views._hwInfo);
+-    auto summaryMgr =
+-        make_shared<SummaryManager>(_summaryExecutor, search::LogDocumentStore::Config(), search::GrowStrategy(),
+-                                    BASE_DIR, TuneFileSummary(), views._fileHeaderContext, views._noTlSyncer,
+-                                    search::IBucketizer::SP(), std::shared_ptr<const search::IDocumentIdProvider>());
++    auto summaryMgr = make_shared<SummaryManager>(
++        _summaryExecutor, search::LogDocumentStore::Config(), search::GrowStrategy(), BASE_DIR,
++        DocTypeAndSubDbName::create("test", "0.ready"), TuneFileSummary(), views._fileHeaderContext,
++        views._noTlSyncer, search::IBucketizer::SP(), std::shared_ptr<const search::IDocumentIdProvider>());
+     auto metaStore = make_shared<DocumentMetaStoreContext>(make_shared<bucketdb::BucketDBOwner>());
+     auto indexWriter = std::make_shared<IndexWriter>(indexMgr);
+     auto attrWriter = std::make_shared<AttributeWriter>(attrMgr);
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.h` (modified, +3/-0)
+**File**: `searchcore/src/tests/proton/documentmetastore/documentmetastore_test.cpp` (modified, +4/-5)
 ```diff
-@@ -204,6 +204,9 @@ class AttributeManager : public proton::IAttributeManager {
- 
-     searchcorespi::common::ResourceUsage get_resource_usage() const override;
-     static uint64_t get_size_on_disk_overhead() noexcept;
-+    [[nodiscard]] const std::shared_ptr<const DocTypeAndSubDbName>& doc_type_and_subdb_name() const noexcept {
-+        return _doc_type_and_subdb_name;
-+    }
-     [[nodiscard]] const DocTypeName& doc_type_name() const noexcept {
-         return _doc_type_and_subdb_name->doc_type_name();
-     }
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.cpp` (modified, +43/-11)
-```diff
-@@ -6,7 +6,9 @@
- #include "attributedisklayout.h"
- 
- #include <vespa/check_require.h>
-+#include <vespa/opentelemetry/span_attribute_names.h>
- #include <vespa/searchcommon/attribute/config.h>
-+#include <vespa/searchcore/proton/common/tracing.h>
- #include <vespa/searchcorespi/common/resource_usage.h>
+@@ -8,10 +8,11 @@
+ #include <vespa/searchcore/proton/bucketdb/bucketdbhandler.h>
+ #include <vespa/searchcore/proton/bucketdb/checksumaggregators.h>
+ #include <vespa/searchcore/proton/bucketdb/i_bucket_create_listener.h>
++#include <vespa/searchcore/proton/common/doc_type_and_subdb_name.h>
+ #include <vespa/searchcore/proton/documentmetastore/documentmetastore.h>
+ #include <vespa/searchcore/proton/documentmetastore/documentmetastoresaver.h>
+ #include <vespa/searchcore/proton/documentmetastore/operation_listener.h>
+-#include <vespa/searchcore/proton/flushengine/shrink_lid_space_flush_target.h>
++#include <vespa/searchcore/proton/documentmetastore/shrink_document_meta_store_lid_space_flush_target.h>
+ #include <vespa/searchcore/proton/server/itlssyncer.h>
  #include <vespa/searchlib/attribute/attributefilesavetarget.h>
- #include <vespa/searchlib/attribute/attributememorysavetarget.h>
-@@ -29,6 +31,7 @@ LOG_SETUP(".proton.attribute.flushableattribute");
+ #include <vespa/searchlib/attribute/search_context.h>
+@@ -1878,10 +1879,8 @@ TEST(DocumentMetaStoreTest, shrink_via_flush_target_works) {
+     DummyFileHeaderContext fileHeaderContext;
+     DummyTlsSyncer         dummyTlsSyncer;
+     HwInfo                 hwInfo;
+-    using Type = IFlushTarget::Type;
+-    using Component = IFlushTarget::Component;
+-    IFlushTarget::SP ft(std::make_shared<ShrinkLidSpaceFlushTarget>(
+-        "documentmetastore.shrink", Type::GC, Component::ATTRIBUTE, 0, IFlushTarget::Time(), dms));
++    IFlushTarget::SP       ft(std::make_shared<ShrinkDocumentMetaStoreLidSpaceFlushTarget>(
++        DocTypeAndSubDbName::create("test", "0.ready"), 0, IFlushTarget::Time(), dms));
+     populate(10, *dms);
  
- using namespace search;
- using namespace vespalib;
-+using opentelemetry::trace::Span;
- using search::common::CreateAndFreezeTimes;
- using search::common::FileHeaderContext;
- using search::common::SerialNumFileHeaderContext;
-@@ -48,6 +51,7 @@ class FlushableAttribute::Flusher : public Task {
-     uint64_t                                    _syncToken;
-     std::string                                 _flushFile;
-     std::unique_ptr<AttributeDirectory::Writer> _writer;
-+    std::shared_ptr<Span>                       _span;
- 
-     bool saveAttribute(); // not updating snap info.
- public:
-@@ -65,13 +69,28 @@ class FlushableAttribute::Flusher : public Task {
- 
- FlushableAttribute::Flusher::Flusher(FlushableAttribute& fattr, SerialNum syncToken,
-                                      std::unique_ptr<AttributeDirectory::Writer> writer)
--    : _fattr(fattr), _saveTarget(), _saver(), _syncToken(syncToken), _flushFile(""), _writer(std::move(writer)) {
--    fattr._attr->commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-+    : _fattr(fattr),
-+      _saveTarget(),
-+      _saver(),
-+      _syncToken(syncToken),
-+      _flushFile(""),
-+      _writer(std::move(writer)),
-+      _span() {
-     AttributeVector& attr = *_fattr._attr;
-+    auto             tracer = get_tracer();
-+    _span = tracer->StartSpan(
-+        "Flush attribute",
-+        {{vespa_opentelemetry::span_attribute_names::document_type,
-+          fattr._doc_type_and_subdb_name->doc_type_name().getName()},
-+         {vespa_opentelemetry::span_attribute_names::subdb, fattr._doc_type_and_subdb_name->subdb_name()},
-+         {vespa_opentelemetry::span_attribute_names::attribute, attr.getName()},
-+         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
-+    attr.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-     // Called by attribute field writer executor
-     _flushFile = _writer->getSnapshotDir(_syncToken) + "/" + attr.getName();
-     _saver = attr.initSave(_flushFile);
-     CHECK(_saver);
-+    _span->AddEvent("Done init flush");
- }
- 
- FlushableAttribute::Flusher::~Flusher() = default;
-@@ -134,9 +153,13 @@ bool FlushableAttribute::Flusher::cleanUp() {
- }
- 
- void FlushableAttribute::Flusher::run() {
-+    _span->AddEvent("Starting background flush");
-+    auto tracer = get_tracer();
-+    auto scope = tracer->WithActiveSpan(_span);
-     if (_syncToken <= _fattr.getFlushedSerialNum()) {
-         // another flusher has created an equal or better snapshot
-         // after this flusher was created
-+        _span->End();
-         return;
-     }
-     if (!flush()) {
-@@ -146,13 +169,15 @@ void FlushableAttribute::Flusher::run() {
-     if (!cleanUp()) {
-         // TODO (geirst): throw exception ?
-     }
-+    _span->End();
- }
- 
- FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
--                                       const TuneFileAttributes&         tuneFileAttributes,
--                                       const FileHeaderContext&          fileHeaderContext,
--                                       vespalib::ISequencedTaskExecutor& attributeFieldWriter,
--                                       const vespalib::HwInfo&           hwInfo)
-+                                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
-+                                       const TuneFileAttributes&                  tuneFileAttributes,
-+                                       const FileHeaderContext&                   fileHeaderContext,
-+                                       vespalib::ISequencedTaskExecutor&          attributeFieldWriter,
-+                                       const vespalib::HwInfo&                    hwInfo)
-     : LeafFlushTarget(make_string("attribute.flush.%s", attr->getName().c_str()), Type::SYNC, Component::ATTRIBUTE),
-       _attr(attr),
-       _cleanUpAfterFlush(true),
-@@ -162,6 +187,7 @@ FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared
-       _attributeFieldWriter(attributeFieldWriter),
-       _hwInfo(hwInfo),
-       _attrDir(attrDir),
-+      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)),
-       _replay_operation_cost(0.0),
-       _paged(_attr->getConfig().paged()) {
-     _lastStats.setPathElementsToLog(8);
-@@ -197,8 +223,11 @@ IFlushTarget::Time FlushableAttribute::getLastFlushTime() const {
-     return _attrDir->getLastFlushTime();
- }
- 
--void FlushableAttribut
+     uint32_t shrinkTarget = 5;
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.h` (modified, +20/-14)
+**File**: `searchcore/src/tests/proton/flushengine/shrink_lid_space_flush_target/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -2,10 +2,13 @@
- 
- #pragma once
+@@ -5,6 +5,7 @@ vespa_add_executable(searchcore_flushengine_shrink_lid_space_flush_target_test_a
+     DEPENDS
+     searchcorespi
+     searchcore_flushengine
++    searchcore_pcommon
+     GTest::gtest
+ )
+ vespa_add_test(
+```
+
+**File**: `searchcore/src/tests/proton/flushengine/shrink_lid_space_flush_target/shrink_lid_space_flush_target_test.cpp` (modified, +9/-3)
+```diff
+@@ -1,5 +1,6 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
  
 +#include <vespa/searchcore/proton/common/doc_type_and_subdb_name.h>
- #include <vespa/searchcorespi/flush/iflushtarget.h>
- #include <vespa/searchlib/common/tunefileinfo.h>
- #include <vespa/vespalib/util/hw_info.h>
+ #include <vespa/searchcore/proton/flushengine/shrink_lid_space_flush_target.h>
+ #include <vespa/searchlib/common/flush_token.h>
+ #include <vespa/searchlib/common/i_compactable_lid_space.h>
+@@ -37,6 +38,11 @@ class MyLidSpace : public search::common::ICompactableLidSpace {
+     void setCanFree(size_t canFree) { _canFree = canFree; }
+ };
  
-+#include <opentelemetry/trace/span.h>
++class MyShrinkLidSpaceFlushTarget : public ShrinkLidSpaceFlushTarget {
++    using ShrinkLidSpaceFlushTarget::ShrinkLidSpaceFlushTarget;
++    std::string_view trace_span_name() const noexcept override { return "shrink dummy lid space"; }
++};
 +
- namespace search {
- class AttributeVector;
+ class ShrinkLidSpaceFlushTargetTest : public ::testing::Test {
+ protected:
+     std::shared_ptr<MyLidSpace>                _lidSpace;
+@@ -48,9 +54,9 @@ class ShrinkLidSpaceFlushTargetTest : public ::testing::Test {
+ ShrinkLidSpaceFlushTargetTest::ShrinkLidSpaceFlushTargetTest()
+     : ::testing::Test(),
+       _lidSpace(std::make_shared<MyLidSpace>()),
+-      _ft(std::make_shared<ShrinkLidSpaceFlushTarget>("name", IFlushTarget::Type::GC,
+-                                                      IFlushTarget::Component::ATTRIBUTE, 10, vespalib::system_time(),
+-                                                      _lidSpace)) {
++      _ft(std::make_shared<MyShrinkLidSpaceFlushTarget>(
++          "name", IFlushTarget::Type::GC, IFlushTarget::Component::ATTRIBUTE,
++          DocTypeAndSubDbName::create("test", "0.ready"), 10, vespalib::system_time(), _lidSpace)) {
  }
-@@ -36,18 +39,20 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
-     using AttributeVectorSP = std::shared_ptr<search::AttributeVector>;
-     using FlushStats = searchcorespi::FlushStats;
  
--    AttributeVectorSP                        _attr;
--    bool                                     _cleanUpAfterFlush;
--    FlushStats                               _lastStats;
--    const search::TuneFileAttributes         _tuneFileAttributes;
--    const search::common::FileHeaderContext& _fileHeaderContext;
--    vespalib::ISequencedTaskExecutor&        _attributeFieldWriter;
--    vespalib::HwInfo                         _hwInfo;
--    std::shared_ptr<AttributeDirectory>      _attrDir;
--    double                                   _replay_operation_cost;
--    bool                                     _paged;
--
--    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise);
-+    AttributeVectorSP                                _attr;
-+    bool                                             _cleanUpAfterFlush;
-+    FlushStats                                       _lastStats;
-+    const search::TuneFileAttributes                 _tuneFileAttributes;
-+    const search::common::FileHeaderContext&         _fileHeaderContext;
-+    vespalib::ISequencedTaskExecutor&                _attributeFieldWriter;
-+    vespalib::HwInfo                                 _hwInfo;
-+    std::shared_ptr<AttributeDirectory>              _attrDir;
-+    const std::shared_ptr<const DocTypeAndSubDbName> _doc_type_and_subdb_name;
-+    double                                           _replay_operation_cost;
-+    bool                                             _paged;
-+
-+    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise,
-+                             std::shared_ptr<opentelemetry::trace::Span> parent_span);
- 
- public:
-     using SP = std::shared_ptr<FlushableAttribute>;
-@@ -59,8 +64,9 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
-      * fileHeaderContext must be kept alive by caller.
-      **/
-     FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
--                       const search::TuneFileAttributes&        tuneFileAttributes,
--                       const search::common::FileHeaderContext& fileHeaderContext,
-+                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_sub_db_name_in,
-+                       const search::TuneFileAttributes&          tuneFileAttributes,
-+                       const search::common::FileHeaderContext&   fileHeaderContext,
-                        vespalib::ISequencedTaskExecutor& attributeFieldWriter, const vespalib::HwInfo& hwInfo);
- 
-     ~FlushableAttribute() override;
+ ShrinkLidSpaceFlushTargetTest::~ShrinkLidSpaceFlushTargetTest() = default;
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/documentmetastore/documentmetastoreflushtarget.cpp` (modified, +26/-9)
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.cpp` (modified, +8/-9)
 ```diff
-@@ -5,8 +5,10 @@
- #include "documentmetastore.h"
- 
- #include <vespa/check_require.h>
-+#include <vespa/opentelemetry/span_attribute_names.h>
- #include <vespa/searchcore/proton/attribute/attribute_directory.h>
- #include <vespa/searchcore/proton/attribute/attributedisklayout.h>
-+#include <vespa/searchcore/proton/common/tracing.h>
- #include <vespa/searchcore/proton/server/itlssyncer.h>
- #include <vespa/searchcorespi/common/resource_usage.h>
- #include <vespa/searchlib/attribute/attributefilesavetarget.h>
-@@ -26,6 +28,7 @@ LOG_SETUP(".proton.documentmetastore.documentmetastoreflushtarget");
- 
- using namespace search;
- using namespace vespalib;
-+using opentelemetry::trace::Span;
- using search::common::CreateAndFreezeTimes;
- using search::common::FileHeaderContext;
- using search::common::SerialNumFileHeaderContext;
-@@ -45,6 +48,7 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
-     uint64_t                                    _syncToken;
-     std::string                                 _flushDir;
-     std::unique_ptr<AttributeDirectory::Writer> _writer;
-+    std::shared_ptr<Span>                       _span;
- 
-     bool saveDocumentMetaStore(); // not updating snap info.
- public:
-@@ -61,14 +65,23 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
- 
- DocumentMetaStoreFlushTarget::Flusher::Flusher(DocumentMetaStoreFlushTarget& dmsft, SerialNum syncToken,
-                                                std::unique_ptr<AttributeDirectory::Writer> writer)
--    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)) {
-+    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)), _span() {
-     // Called by document db main executor
-     DocumentMetaStore& dms = *_dmsft._dms;
-+    auto               tracer = get_tracer();
-+    _span = tracer->StartSpan(
-+        "Flush documentmetastore",
-+        {{vespa_opentelemetry::span_attribute_names::document_type,
-+          _dmsft._doc_type_and_subdb_name->doc_type_name().getName()},
-+         {vespa_opentelemetry::span_attribute_names::subdb, _dmsft._doc_type_and_subdb_name->subdb_name()},
-+         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
-+
-     dms.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-     _flushDir = _writer->getSnapshotDir(syncToken);
-     std::string newBaseFileName(_flushDir + "/" + dms.getName());
-     _saver = dms.initSave(newBaseFileName);
-     CHECK(_saver);
-+    _span->AddEvent("Done init flush");
+@@ -69,17 +69,15 @@ search::SerialNum estimateShrinkSerialNum(const AttributeVector& attr) {
+     return std::max(attr.getStatus().getLastSyncToken(), serialNum);
  }
  
- DocumentMetaStoreFlushTarget::Flusher::~Flusher() = default;
-@@ -141,9 +154,13 @@ bool DocumentMetaStoreFlushTarget::Flusher::cleanUp() {
- }
- 
- void DocumentMetaStoreFlushTarget::Flusher::run() {
-+    _span->AddEvent("Starting background flush");
-+    auto tracer = get_tracer();
-+    auto scope = tracer->WithActiveSpan(_span);
-     if (_syncToken <= _dmsft.getFlushedSerialNum()) {
-         // another flusher has created an equal or better snapshot
-         // after this flusher was created
-+        _span->End();
-         return;
-     }
-     if (!flush()) {
-@@ -153,13 +170,14 @@ void DocumentMetaStoreFlushTarget::Flusher::run() {
-     if (!cleanUp()) {
-         // TODO (geirst): throw exception ?
-     }
-+    _span->End();
- }
- 
--DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer,
--                                                           const std::string&        baseDir,
--                                                           const TuneFileAttributes& tuneFileAttributes,
--                                                           const FileHeaderContext&  fileHeaderContext,
--                                                           const vespalib::HwInfo&   hwInfo)
-+DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(
-+    const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer, const std::string& baseDir,
-+    std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
-+    const TuneFileAttributes& tuneFileAttributes, const FileHeaderContext& fileHeaderContext,
-+    const vespalib::HwInfo& hwInfo)
-     : LeafFlushTarget("documentmetastore.flush", Type::SYNC, Component::ATTRIBUTE),
-       _dms(dms),
-       _tlsSyncer(tlsSyncer),
-@@ -170,9 +188,8 @@ DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaSto
-       _fileHeaderContext(fileHeaderContext),
-       _hwInfo(hwInfo),
-       _diskLayout(AttributeDiskLayout::createSimple(baseDir)),
--      _dmsDir(_diskLayout->createAttributeDir(""))
+-std::shared_ptr<ShrinkLidSpaceFlushTarget> allocShrinker(const AttributeVector::SP&        attr,
+-                                                         vespalib::ISequencedTaskExecutor& executor,
+-                                                         AttributeDiskLayout&              diskLayout) {
+-    using Type = IFlushTarget::Type;
+-    using Component = IFlushTarget::Component;
 -
--{
-+      _dmsDir(_diskLayout->createAttributeDir("")),
-+      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)) {
-     _lastStats.setPathElementsToLog(8);
++std::shared_ptr<ShrinkLidSpaceFlushTarget>
++allocShrinker(const AttributeVector::SP& attr, vespalib::ISequencedTaskExecutor& executor,
++              AttributeDiskLayout&                              diskLayout,
++              const std::shared_ptr<const DocTypeAndSubDbName>& doc_type_and_subdb_name) {
+     const std::string& name = attr->getName();
+     auto               dir = diskLayout.createAttributeDir(name);
+     search::SerialNum  shrinkSerialNum = estimateShrinkSerialNum(*attr);
+     return std::make_shared<ShrinkAttributeLidSpaceFlushTarget>(
+-        name, Type::GC, Component::ATTRIBUTE, shrinkSerialNum, attr, executor,
++        doc_type_and_subdb_name, name, shrinkSerialNum, attr, executor,
+         executor.getExecutorIdFromName(attr->getNamePrefix()));
+ }
+ } // namespace
+@@ -118,7 +116,8 @@ AttributeVector::SP AttributeManager::internalAddAttribute(AttributeSpec&& spec,
+     AttributeInitializerResult result = initializer.init();
+     if (result) {
+         result.getAttribute()->setInterlock(_interlock);
+-        auto shrinker = allocShrinker(result.getAttribute(), _attributeFieldWriter, *_diskLayout);
++        auto shrinker =
++            allocShrinker(result.getAttribute(), _attributeFieldWriter, *_diskLayout, _doc_type_and_subdb_name);
+         addAttribute(AttributeWrap::normalAttribute(result.getAttribute()), shrinker);
+     }
+     return result.getAttribute();
+@@ -308,7 +307,7 @@ void AttributeManager::addInitializedAttributes(const std::vector<AttributeIniti
+             attr->setCreateSerialNum(serial_num);
+         }
+         attr->setInterlock(_interlock);
+-        auto shrinker = allocShrinker(attr, _attributeFieldWriter, *_diskLayout);
++        auto shrinker = allocShrinker(attr, _attributeFieldWriter, *_diskLayout, _doc_type_and_subdb_name);
+         addAttribute(AttributeWrap::normalAttribute(std::move(attr)), shrinker);
+     }
+ }
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/shrink_attribute_lid_space_flush_target.cpp` (modified, +31/-8)
+```diff
+@@ -2,16 +2,27 @@
+ 
+ #include "shrink_attribute_lid_space_flush_target.h"
+ 
++#include <vespa/searchcorespi/common/tracing.h>
++
++using searchcorespi::common::get_tracer;
++
+ namespace proton {
+ 
+-ShrinkAttributeLidSpaceFlushTarget::ShrinkAttributeLidSpaceFlushTarget(const std::string& name, Type type,
+-                                                                       Component component,
+-                                                                       SerialNum flushedSerialNum,
+-                                                                       std::shared_ptr<ICompactableLidSpace> target,
+-                                                                       ISequencedTaskExecutor&               executor,
+-                                                                       ISequencedTaskExecutor::ExecutorId executor_id)
+-    : ShrinkLidSpaceFlushTarget("attribute.shrink." + name, type, component, flushedSerialNum,
++namespace {
++
++const std::string shrink_attribute_lid_space_trace_span_name("Shrink attribute lid space");
++const std::string shrink_attribute_name_prefix("attribute.shrink.");
++
++} // namespace
++
++ShrinkAttributeLidSpaceFlushTarget::ShrinkAttributeLidSpaceFlushTarget(
++    std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in, const std::string& attribute_name_in,
++    SerialNum flushedSerialNum, std::shared_ptr<ICompactableLidSpace> target, ISequencedTaskExecutor& executor,
++    ISequencedTaskExecutor::ExecutorId executor_id)
++    : ShrinkLidSpaceFlushTarget(shrink_attribute_name_prefix + attribute_name_in, Type::GC, Component::ATTRIBUTE,
++                                std::move(doc_type_and_subdb_name_in), flushedSerialNum,
+                                 vespalib::system_clock::now(), std::move(target)),
++      _attribute_name(attribute_name_in),
+       _executor(executor),
+       _executor_id(executor_id) {
+ }
+@@ -22,13 +33,25 @@ void ShrinkAttributeLidSpaceFlushTarget::init_flush(SerialNum
+                                                     std::shared_ptr<search::IFlushToken> flush_token,
+                                                     TaskPromise                          task_promise) {
+     // Called by document db main executor.
++    auto        tracer = get_tracer();
++    auto        parent_span = tracer->GetCurrentSpan();
+     TaskPromise proxied_task_promise;
+     auto        future_flush_task = proxied_task_promise.get_future();
+     _executor.executeLambda(_executor_id, [this, currentSerial, flush_token(std::move(flush_token)),
+-                                           proxied_task_promise(std::move(proxied_task_promise))]() mutable {
++                                           proxied_task_promise(std::move(proxied_task_promise)),
++                                           tracer(std::move(tracer)), parent_span(std::move(parent_span))]() mutable {
++        auto scope = tracer->WithActiveSpan(parent_span);
+         ShrinkLidSpaceFlushTarget::init_flush(currentSerial, std::move(flush_token), std::move(proxied_task_promise));
+     });
+     task_promise.set_value(future_flush_task.get());
  }
  
++[[nodiscard]] std::string_view ShrinkAttributeLidSpaceFlushTarget::trace_span_name() const noexcept {
++    return shrink_attribute_lid_space_trace_span_name;
++}
++
++[[nodiscard]] std::string_view ShrinkAttributeLidSpaceFlushTarget::attribute_name() const noexcept {
++    return _attribute_name;
++}
++
+ } // namespace proton
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/shrink_attribute_lid_space_flush_target.h` (modified, +6/-3)
+```diff
+@@ -15,17 +15,20 @@ class ShrinkAttributeLidSpaceFlushTarget : public ShrinkLidSpaceFlushTarget {
+     using ICompactableLidSpace = search::common::ICompactableLidSpace;
+     using ISequencedTaskExecutor = vespalib::ISequencedTaskExecutor;
+ 
++    const std::string&                 _attribute_name; // string owned by target
+     ISequencedTaskExecutor&            _executor;
+     ISequencedTaskExecutor::ExecutorId _executor_id;
+ 
+ public:
+-    ShrinkAttributeLidSpaceFlushTarget(const std::string& name, Type type, Component component,
+-                                       SerialNum flushedSerialNum, std::shared_ptr<ICompactableLidSpace> target,
+-                                       ISequencedTaskExecutor&            executor,
++    ShrinkAttributeLidSpaceFlushTarget(std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
++                                       const std::string& attribute_name_in, SerialNum flushedSerialNum,
++                                       std::shared_ptr<ICompactableLidSpace> target, ISequencedTaskExecutor& executor,
+                                        ISequencedTaskExecutor::ExecutorId executor_id);
+     ~ShrinkAttributeLidSpaceFlushTarget() override;
+     void init_flush(SerialNum currentSerial, std::shared_ptr<search::IFlushToken> flush_token,
+                     TaskPromise task_promise) override;
++    [[nodiscard]] std::string_view trace_span_name() const noexcept override;
++    [[nodiscard]] std::string_view attribute_name() const noexcept override;
+ };
+ 
+ } // namespace proton
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/docsummary/shrink_summary_lid_space_flush_target.cpp` (modified, +25/-7)
+```diff
+@@ -2,18 +2,27 @@
+ 
+ #include "shrink_summary_lid_space_flush_target.h"
+ 
++#include <vespa/searchcorespi/common/tracing.h>
+ #include <vespa/vespalib/util/lambdatask.h>
+ 
++using searchcorespi::common::get_tracer;
+ using vespalib::makeLambdaTask;
+ 
+ namespace proton {
+ 
+-ShrinkSummaryLidSpaceFlushTarget::ShrinkSummaryLidSpaceFlushTarget(const std::string& name, Type type,
+-                                                                   Component component, SerialNum flushedSerialNum,
+-                                                                   vespalib::Executor& summaryService,
+-                                                                   std::shared_ptr<ICompactableLidSpace> target)
+-    : ShrinkLidSpaceFlushTarget(name, type, component, flushedSerialNum, vespalib::system_clock::now(),
+-                                std::move(target)),
++namespace {
++
++const std::string shrink_docstore_lid_space_trace_span_name("Shrink docstore lid space");
++const std::string shrink_summary_name("summary.shrink");
++
++} // namespace
++
++ShrinkSummaryLidSpaceFlushTarget::ShrinkSummaryLidSpaceFlushTarget(
++    std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in, SerialNum flushedSerialNum,
++    vespalib::Executor& summaryService, std::shared_ptr<ICompactableLidSpace> target)
++    : ShrinkLidSpaceFlushTarget(shrink_summary_name, Type::GC, Component::DOCUMENT_STORE,
++                                std::move(doc_type_and_subdb_name_in), flushedSerialNum,
++                                vespalib::system_clock::now(), std::move(target)),
+       _summaryService(summaryService) {
+ }
+ 
+@@ -23,13 +32,22 @@ void ShrinkSummaryLidSpaceFlushTarget::init_flush(SerialNum
+                                                   std::shared_ptr<search::IFlushToken> flush_token,
+                                                   TaskPromise                          task_promise) {
+     // Called by document db main executor.
++    auto        tracer = get_tracer();
++    auto        parent_span = tracer->GetCurrentSpan();
+     TaskPromise proxied_task_promise;
+     auto        future_flush_task = proxied_task_promise.get_future();
+     _summaryService.execute(makeLambdaTask([this, currentSerial, flush_token(std::move(flush_token)),
+-                                            proxied_task_promise(std::move(proxied_task_promise))]() mutable {
++                                            proxied_task_promise(std::move(proxied_task_promise)),
++                                            tracer(std::move(tracer)),
++                                            parent_span(std::move(parent_span))]() mutable {
++        auto scope = tracer->WithActiveSpan(parent_span);
+         ShrinkLidSpaceFlushTarget::init_flush(currentSerial, std::move(flush_token), std::move(proxied_task_promise));
+     }));
+     task_promise.set_value(future_flush_task.get());
+ }
+ 
++[[nodiscard]] std::string_view ShrinkSummaryLidSpaceFlushTarget::trace_span_name() const noexcept {
++    return shrink_docstore_lid_space_trace_span_name;
++}
++
+ } // namespace proton
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38572** (2026-11-18): Add -XX option (@hmusum)
-- **PR #38571** (2026-11-18): Add trace spans for attribute vector flush. (@toregge)
-- **PR #38570** (2026-11-18): add cache::read_no_populate() (@arnej27959)
-- **PR #38568** (closed): Revert "bypass summary cache on move and update" [MERGEOK] (@andreer)
-- **PR #38567** (2026-11-18): Add DocTypeAndSubDbName class. (@toregge)
-- **PR #38566** (2026-11-18): Don't move buckets from ready to notready when redundancy equals (@toregge)
+- **PR #38633** (2026-11-23): Revert "fix(deps): update maven-resolver.vespa.version to v2.0.26" (@hmusum)
+- **PR #38630** (2026-11-23): Collect content cluster allocation request in early provisioning (@hakonhall)
+- **PR #38628** (2026-11-23): Add trace spans for shrinking attributes, document meta store and doc… (@toregge)
+- **PR #38627** (2026-11-23): remove unused imports (@johansolbakken)
+- **PR #38626** (2026-11-23): rename cull_tombstones to cull_values (@johansolbakken)
+- **PR #38625** (2026-11-23): Remove FAIL_WHEN_CONFIGURING_INDEXED_MAP_OF_ARRAY flag and usage (@hmusum)
 
 ---
 
@@ -1808,31 +1548,31 @@ Add trace spans for attribute vector flush.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in span_attribute_names.cpp
+## X. Empirical Invariant Guard in pom.xml
 
 **RULE**:
-When implementing operations in `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dependency-versions/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a98f585`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec1c6cba`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `dependency-versions/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-const std::string serial("ai.vespa.searchlib.serial");
+        <maven-resolver.vespa.version>2.0.24</maven-resolver.vespa.version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        <maven-resolver.vespa.version>2.0.26</maven-resolver.vespa.version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a98f585` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec1c6cba` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

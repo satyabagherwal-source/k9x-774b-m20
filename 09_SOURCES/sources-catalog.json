@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "e4b57f4ac5bf51536c1d3839905642acd1e8f14dbccc44d66630f3dfac4ae3b2",
-    "lastHarvestedAt": "2026-11-19T12:20:08.633Z",
+    "contentHash": "b9e8e64a656e69e564f86b604c87a1f21da53e15f5129bc5f26971930cce2a85",
+    "lastHarvestedAt": "2026-11-23T20:21:53.602Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "318183b5",
+    "sourceVersion": "ec1c6cba",
     "license": "Apache-2.0",
-    "contentHash": "9ae6cc34159aa854f9d837846df5371bc8ca24b7ff95d04487b12b2931cc37df",
-    "lastHarvestedAt": "2026-11-22T18:21:32.476Z",
+    "contentHash": "7c1db1c42b197404adb50a56d67e4f7a909ea84842c96d85320da79ff79ac96c",
+    "lastHarvestedAt": "2026-11-23T20:22:09.307Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -9683,10 +9683,10 @@
     "repository": "iPlug2/iPlug2",
     "platform": "github",
     "sourceUrl": "https://github.com/iPlug2/iPlug2",
-    "sourceVersion": "e67ca638",
+    "sourceVersion": "3d378017",
     "license": "NOASSERTION",
-    "contentHash": "5c394fe65dc0fae067058f90934a4b44258490ea48632dc6cfab3d0adb8fde47",
-    "lastHarvestedAt": "2026-11-20T21:25:44.293Z",
+    "contentHash": "8117d3fb75c58f61618f03876459be9289a345f773cbed5726e7cd67f4f9972f",
+    "lastHarvestedAt": "2026-11-23T20:22:01.481Z",
     "learningId": "learn-github-iplug2-iplug2"
   },
   "digitalbazaar-jsonld.js": {

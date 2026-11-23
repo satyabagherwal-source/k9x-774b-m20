@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source**: github ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
-> **Source Version**: `e67ca638`  
+> **Source Version**: `3d378017`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T21:25:43.094Z  
+> **Timestamp**: 2026-11-23T20:22:00.422Z  
 > **Learning ID**: `learn-github-iplug2-iplug2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T21:25:42.854Z  
+> **Harvest Timestamp**: 2026-11-23T20:22:00.417Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2452 stars
+- **Stars / Engagement**: 2453 stars
 
 ---
 
@@ -193,226 +193,6 @@ void nvgluDeleteFramebuffer(NVGLUframebuffer* fb)
 }
 
 #endif // NANOVG_GL_IMPLEMENTATION
-
-```
-
-### Core Architecture Module: `Dependencies/IGraphics/yoga/yoga/Utils.cpp`
-```
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-#include "Utils.h"
-
-using namespace facebook;
-
-YGFlexDirection YGFlexDirectionCross(
-    const YGFlexDirection flexDirection,
-    const YGDirection direction) {
-  return YGFlexDirectionIsColumn(flexDirection)
-      ? YGResolveFlexDirection(YGFlexDirectionRow, direction)
-      : YGFlexDirectionColumn;
-}
-
-float YGFloatMax(const float a, const float b) {
-  if (!yoga::isUndefined(a) && !yoga::isUndefined(b)) {
-    return fmaxf(a, b);
-  }
-  return yoga::isUndefined(a) ? b : a;
-}
-
-float YGFloatMin(const float a, const float b) {
-  if (!yoga::isUndefined(a) && !yoga::isUndefined(b)) {
-    return fminf(a, b);
-  }
-
-  return yoga::isUndefined(a) ? b : a;
-}
-
-bool YGValueEqual(const YGValue& a, const YGValue& b) {
-  if (a.unit != b.unit) {
-    return false;
-  }
-
-  if (a.unit == YGUnitUndefined ||
-      (yoga::isUndefined(a.value) && yoga::isUndefined(b.value))) {
-    return true;
-  }
-
-  return fabs(a.value - b.value) < 0.0001f;
-}
-
-bool YGFloatsEqual(const float a, const float b) {
-  if (!yoga::isUndefined(a) && !yoga::isUndefined(b)) {
-    return fabs(a - b) < 0.0001f;
-  }
-  return yoga::isUndefined(a) && yoga::isUndefined(b);
-}
-
-float YGFloatSanitize(const float val) {
-  return yoga::isUndefined(val) ? 0 : val;
-}
-
-YGFloatOptional YGFloatOptionalMax(YGFloatOptional op1, YGFloatOptional op2) {
-  if (op1 >= op2) {
-    return op1;
-  }
-  if (op2 > op1) {
-    return op2;
-  }
-  return op1.isUndefined() ? op2 : op1;
-}
-
-```
-
-### Core Architecture Module: `Dependencies/IGraphics/yoga/yoga/Utils.h`
-```
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-#pragma once
-#include "YGNode.h"
-#include "Yoga-internal.h"
-#include "CompactValue.h"
-
-// This struct is an helper model to hold the data for step 4 of flexbox algo,
-// which is collecting the flex items in a line.
-//
-// - itemsOnLine: Number of items which can fit in a line considering the
-//   available Inner dimension, the flex items computed flexbasis and their
-//   margin. It may be different than the difference between start and end
-//   indicates because we skip over absolute-positioned items.
-//
-// - sizeConsumedOnCurrentLine: It is accumulation of the dimensions and margin
-//   of all the children on the current line. This will be used in order to
-//   either set the dimensions of the node if none already exist or to compute
-//   the remaining space left for the flexible children.
-//
-// - totalFlexGrowFactors: total flex grow factors of flex items which are to be
-//   layed in the current line
-//
-// - totalFlexShrinkFactors: total flex shrink factors of flex items which are
-//   to be layed in the current line
-//
-// - endOfLineIndex: Its the end index of the last flex item which was examined
-//   and it may or may not be part of the current line(as it may be absolutely
-//   positioned or including it may have caused to overshoot availableInnerDim)
-//
-// - relativeChildren: Maintain a vector of the child nodes that can shrink
-//   and/or grow.
-
-struct YGCollectFlexItemsRowValues {
-  uint32_t itemsOnLine;
-  float sizeConsumedOnCurrentLine;
-  float totalFlexGrowFactors;
-  float totalFlexShrinkScaledFactors;
-  uint32_t endOfLineIndex;
-  std::vector<YGNodeRef> relativeChildren;
-  float remainingFreeSpace;
-  // The size of the mainDim for the row after considering size, padding, margin
-  // and border of flex items. This is used to calculate maxLineDim after going
-  // through all the rows to decide on the main axis size of owner.
-  float mainDim;
-  // The size of the crossDim for the row after considering size, padding,
-  // margin and border of flex items. Used for calculating containers crossSize.
-  float crossDim;
-};
-
-bool YGValueEqual(const YGValue& a, const YGValue& b);
-inline bool YGValueEqual(
-    facebook::yoga::detail::CompactValue a,
-    facebook::yoga::detail::CompactValue b) {
-  return YGValueEqual((YGValue) a, (YGValue) b);
-}
-
-// This custom float equality function returns true if either absolute
-// difference between two floats is less than 0.0001f or both are undefined.
-bool YGFloatsEqual(const float a, const float b);
-
-float YGFloatMax(const float a, const float b);
-
-YGFloatOptional YGFloatOptionalMax(
-    const YGFloatOptional op1,
-    const YGFloatOptional op2);
-
-float YGFloatMin(const float a, const float b);
-
-// This custom float comparison function compares the array of float with
-// YGFloatsEqual, as the default float comparison operator will not work(Look
-// at the comments of YGFloatsEqual function).
-template <std::size_t size>
-bool YGFloatArrayEqual(
-    const std::array<float, size>& val1,
-    const std::array<float, size>& val2) {
-  bool areEqual = true;
-  for (std::size_t i = 0; i < size && areEqual; ++i) {
-    areEqual = YGFloatsEqual(val1[i], val2[i]);
-  }
-  return areEqual;
-}
-
-// This function returns 0 if YGFloatIsUndefined(val) is true and val otherwise
-float YGFloatSanitize(const float val);
-
-YGFlexDirection YGFlexDirectionCross(
-    const YGFlexDirection flexDirection,
-    const YGDirection direction);
-
-inline bool YGFlexDirectionIsRow(const YGFlexDirection flexDirection) {
-  return flexDirection == YGFlexDirectionRow ||
-      flexDirection == YGFlexDirectionRowReverse;
-}
-
-inline YGFloatOptional YGResolveValue(
-    const YGValue value,
-    const float ownerSize) {
-  switch (value.unit) {
-    case YGUnitPoint:
-      return YGFloatOptional{value.value};
-    case YGUnitPercent:
-      return YGFloatOptional{value.value * ownerSize * 0.01f};
-    default:
-      return YGFloatOptional{};
-  }
-}
-
-inline YGFloatOptional YGResolveValue(
-    yoga::detail::CompactValue value,
-    float ownerSize) {
-  return YGResolveValue((YGValue) value, ownerSize);
-}
-
-inline bool YGFlexDirectionIsColumn(const YGFlexDirection flexDirection) {
-  return flexDirection == YGFlexDirectionColumn ||
-      flexDirection == YGFlexDirectionColumnReverse;
-}
-
-inline YGFlexDirection YGResolveFlexDirection(
-    const YGFlexDirection flexDirection,
-    const YGDirection direction) {
-  if (direction == YGDirectionRTL) {
-    if (flexDirection == YGFlexDirectionRow) {
-      return YGFlexDirectionRowReverse;
-    } else if (flexDirection == YGFlexDirectionRowReverse) {
-      return YGFlexDirectionRow;
-    }
-  }
-
-  return flexDirection;
-}
-
-inline YGFloatOptional YGResolveValueMargin(
-    yoga::detail::CompactValue value,
-    const float ownerSize) {
-  return value.isAuto() ? YGFloatOptional{0} : YGResolveValue(value, ownerSize);
-}
 
 ```
 
@@ -1423,6 +1203,300 @@ if __name__ == '__main__':
 
 ```
 
+### Core Architecture Module: `Examples/IPlugConvoEngine/scripts/prepare_resources-mac.py`
+```
+#!/usr/bin/python3
+
+# this script will create/update info plist files based on config.h and copy resources to the ~/Music/PLUG_NAME folder or the bundle depending on PLUG_SHARED_RESOURCES
+
+kAudioUnitType_MusicDevice      = "aumu"
+kAudioUnitType_MusicEffect      = "aumf"
+kAudioUnitType_Effect           = "aufx"
+kAudioUnitType_MIDIProcessor    = "aumi"
+
+DONT_COPY = ("")
+
+import plistlib, os, datetime, fileinput, glob, sys, string, shutil
+
+scriptpath = os.path.dirname(os.path.realpath(__file__))
+projectpath = os.path.abspath(os.path.join(scriptpath, os.pardir))
+
+IPLUG2_ROOT = "../../.."
+
+sys.path.insert(0, os.path.join(os.getcwd(), IPLUG2_ROOT + '/Scripts'))
+
+from parse_config import parse_config, parse_xcconfig
+
+def copy_resources_to_destination(projectpath, dst, label=""):
+  """Copy image and font resources from project to destination folder."""
+  display_dst = label if label else dst
+
+  if os.path.exists(projectpath + "/resources/img/"):
+    for img in os.listdir(projectpath + "/resources/img/"):
+      print("copying " + img + " to " + display_dst)
+      shutil.copy(projectpath + "/resources/img/" + img, dst)
+
+  if os.path.exists(projectpath + "/resources/fonts/"):
+    for font in os.listdir(projectpath + "/resources/fonts/"):
+      print("copying " + font + " to " + display_dst)
+      shutil.copy(projectpath + "/resources/fonts/" + font, dst)
+
+def main():
+  config = parse_config(projectpath)
+  xcconfig = parse_xcconfig(os.path.join(os.getcwd(), IPLUG2_ROOT +  '/common-mac.xcconfig'))
+
+  CFBundleGetInfoString = config['BUNDLE_NAME'] + " v" + config['FULL_VER_STR'] + " " + config['PLUG_COPYRIGHT_STR']
+  CFBundleVersion = config['FULL_VER_STR']
+  CFBundlePackageType = "BNDL"
+  CSResourcesFileMapped = True
+  LSMinimumSystemVersion = xcconfig['DEPLOYMENT_TARGET']
+
+  print("Copying resources ...")
+
+  if config['PLUG_SHARED_RESOURCES']:
+    dst = os.path.expanduser("~") + "/Music/" + config['BUNDLE_NAME'] + "/Resources"
+  else:
+    dst = os.path.join(os.environ["TARGET_BUILD_DIR"], os.environ["UNLOCALIZED_RESOURCES_FOLDER_PATH"].lstrip('/'))
+
+  if os.path.exists(dst) == False:
+    os.makedirs(dst + "/", 0o0755 )
+
+  copy_resources_to_destination(projectpath, dst)
+
+  # Also copy resources to AUv3 Framework for macOS sandbox compatibility
+  # (AUv3 appex cannot access container app's resources in sandbox)
+  if not config['PLUG_SHARED_RESOURCES']:
+    target_build_dir = os.environ.get("TARGET_BUILD_DIR", "")
+    if target_build_dir:
+      framework_dst = os.path.join(target_build_dir, config['BUNDLE_NAME'] + ".app/Contents/Frameworks/AUv3Framework.framework/Versions/A/Resources")
+
+      if os.path.exists(os.path.dirname(framework_dst)):
+        if not os.path.exists(framework_dst):
+          os.makedirs(framework_dst, 0o0755)
+
+        copy_resources_to_destination(projectpath, framework_dst, "AUv3 Framework")
+
+  print("Processing Info.plist files...")
+
+# VST3
+
+  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-VST3-Info.plist"
+  with open(plistpath, 'rb') as fp:
+    vst3 = plistlib.load(fp)
+  vst3['CFBundleExecutable'] = config['BUNDLE_NAME']
+  vst3['CFBundleGetInfoString'] = CFBundleGetInfoString
+  vst3['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".vst3." + config['BUNDLE_NAME'] + ""
+  vst3['CFBundleName'] = config['BUNDLE_NAME']
+  vst3['CFBundleVersion'] = CFBundleVersion
+  vst3['CFBundleShortVersionString'] = CFBundleVersion
+  vst3['LSMinimumSystemVersion'] = LSMinimumSystemVersion
+  vst3['CFBundlePackageType'] = CFBundlePackageType
+  vst3['CFBundleSignature'] = config['PLUG_UNIQUE_ID']
+  vst3['CSResourcesFileMapped'] = CSResourcesFileMapped
+
+  with open(plistpath, 'wb') as fp:
+    plistlib.dump(vst3, fp)
+# VST2
+
+  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-VST2-Info.plist"
+  with open(plistpath, 'rb') as fp:
+    vst2 = plistlib.load(fp)
+  vst2['CFBundleExecutable'] = config['BUNDLE_NAME']
+  vst2['CFBundleGetInfoString'] = CFBundleGetInfoString
+  vst2['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".vst." + config['BUNDLE_NAME'] + ""
+  vst2['CFBundleName'] = config['BUNDLE_NAME']
+  vst2['CFBundleVersion'] = CFBundleVersion
+  vst2['CFBundleShortVersionString'] = CFBundleVersion
+  vst2['LSMinimumSystemVersion'] = LSMinimumSystemVersion
+  vst2['CFBundlePackageType'] = CFBundlePackageType
+  vst2['CFBundleSignature'] = config['PLUG_UNIQUE_ID']
+  vst2['CSResourcesFileMapped'] = CSResourcesFileMapped
+
+  with open(plistpath, 'wb') as fp:
+    plistlib.dump(vst2, fp)
+# AUDIOUNIT v2
+
+  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-AU-Info.plist"
+  with open(plistpath, 'rb') as fp:
+    auv2 = plistlib.load(fp)
+  auv2['CFBundleExecutable'] = config['BUNDLE_NAME']
+  auv2['CFBundleGetInfoString'] = CFBundleGetInfoString
+  auv2['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".audiounit." + config['BUNDLE_NAME'] + ""
+  auv2['CFBundleName'] = config['BUNDLE_NAME']
+  auv2['CFBundleVersion'] = CFBundleVersion
+  auv2['CFBundleShortVersionString'] = CFBundleVersion
+  auv2['LSMinimumSystemVersion'] = LSMinimumSystemVersion
+  auv2['CFBundlePackageType'] = CFBundlePackageType
+  auv2['CFBundleSignature'] = config['PLUG_UNIQUE_ID']
+  auv2['CSResourcesFileMapped'] = CSResourcesFileMapped
+
+  if config['PLUG_TYPE'] == 0:
+    if config['PLUG_DOES_MIDI_IN']:
+      COMPONENT_TYPE = kAudioUnitType_MusicEffect
+    else:
+      COMPONENT_TYPE = kAudioUnitType_Effect
+  elif config['PLUG_TYPE'] == 1:
+    COMPONENT_TYPE = kAudioUnitType_MusicDevice
+  elif config['PLUG_TYPE'] == 2:
+    COMPONENT_TYPE = kAudioUnitType_MIDIProcessor
+
+  auv2['AudioUnit Version'] = config['PLUG_VERSION_HEX']
+  auv2['AudioComponents'] = [{}]
+  auv2['AudioComponents'][0]['description'] = config['PLUG_NAME']
+  auv2['AudioComponents'][0]['factoryFunction'] = config['AUV2_FACTORY']
+  auv2['AudioComponents'][0]['manufacturer'] = config['PLUG_MFR_ID']
+  auv2['AudioComponents'][0]['name'] = config['PLUG_MFR'] + ": " + config['PLUG_NAME']
+  auv2['AudioComponents'][0]['subtype'] = config['PLUG_UNIQUE_ID']
+  auv2['AudioComponents'][0]['type'] = COMPONENT_TYPE
+  auv2['AudioComponents'][0]['version'] = config['PLUG_VERSION_INT']
+  auv2['AudioComponents'][0]['sandboxSafe'] = True
+
+  with open(plistpath, 'wb') as fp:
+    plistlib.dump(auv2, fp)
+# AUDIOUNIT v3
+
+  if config['PLUG_HAS_UI']:
+    NSEXTENSIONPOINTIDENTIFIER  = "com.apple.AudioUnit-UI"
+  else:
+    NSEXTENSIONPOINTIDENTIFIER  = "com.apple.AudioUnit"
+
+  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-macOS-AUv3-Info.plist"
+  with open(plistpath, 'rb') as fp:
+    auv3 = plistlib.load(fp)
+  auv3['CFBundleExecutable'] = config['BUNDLE_NAME']
+  auv3['CFBundleGetInfoString'] = CFBundleGetInfoString
+  auv3['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".app." + config['BUNDLE_NAME'] + ".AUv3"
+  auv3['CFBundleName'] = config['BUNDLE_NAME']
+  auv3['CFBundleVersion'] = CFBundleVersion
+  auv3['CFBundleShortVersionString'] = CFBundleVersion
+  auv3['LSMinimumSystemVersion'] = LSMinimumSystemVersion
+  auv3['CFBundlePackageType'] = "XPC!"
+  auv3['NSExtension'] = dict(
+  NSExtensionAttributes = dict(
+                               AudioComponentBundle = "com.AcmeInc.app." + config['BUNDLE_NAME'] + ".AUv3Framework",
+                               AudioComponents = [{}]),
+#                               NSExtensionServiceRoleType = "NSExtensionServiceRoleTypeEditor",
+  NSExtensionPointIdentifier = NSEXTENSIONPOINTIDENTIFIER,
+  NSExtensionPrincipalClass = "IPlugAUViewController_vIPlugConvoEngine"
+                             )
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'] = [{}]
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['description'] = config['PLUG_NAME']
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['manufacturer'] = config['PLUG_MFR_ID']
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['name'] = config['PLUG_MFR'] + ": " + config['PLUG_NAME']
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['subtype'] = config['PLUG_UNIQUE_ID']
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['type'] = COMPONENT_TYPE
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['version'] = config['PLUG_VERSION_INT']
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['sandboxSafe'] = True
+  auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['tags'] = [{}]
+
+  if config['PLUG_TYPE'] == 1:
+    auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['tags'][0] = "Synth"
+  else:
+    auv3['NSExtension']['NSExtensionAttributes']['AudioComponents'][0]['tags'][0] = "Effects"
+
+  with open(plistpath, 'wb') as fp:
+    plistlib.dump(auv3, fp)
+# AAX
+
+  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-AAX-Info.plist"
+  with open(plistpath, 'rb') as fp:
+    aax = plistlib.load(fp)
+  aax['CFBundleExecutable'] = config['BUNDLE_NAME']
+  aax['CFBundleGetInfoString'] = CFBundleGetInfoString
+  aax['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".aax." + config['BUNDLE_NAME'] + ""
+  aax['CFBundleName'] = config['BUNDLE_NAME']
+  aax['CFBundleVersion'] = CFBundleVersion
+  aax['CFBundleShortVersionString'] = CFBundleVersion
+  aax['LSMinimumSystemVersion'] = LSMinimumSystemVersion
+  aax['CSResourcesFileMapped'] = CSResourcesFileMapped
+
+  with open(plistpath, 'wb') as fp:
+    plistlib.dump(aax, fp)
+# APP
+
+  plistpath = projectpath + "/resources/" + config['BUNDLE_NAME'] + "-macOS-Info.plist"
+  with open(plistpath, 'rb') as fp:
+    macOSapp = plistlib.load(fp)
+  macOSapp['CFBundleExecutable'] = config['BUNDLE_NAME']
+  macOSapp['CFBundleGetInfoString'] = CFBundleGetInfoString
+  macOSapp['CFBundleIdentifier'] = config['BUNDLE_DOMAIN'] + "." + config['BUNDLE_MFR'] + ".app." + config['BUNDLE_NAME'] + ""
+  macOSapp['CFBundleName'] = config['BUNDLE_NAME']
+ 
+```
+
+### Core Architecture Module: `Examples/IPlugConvoEngine/scripts/prepare_resources-win.py`
+```
+#!/usr/bin/python3
+
+import plistlib, os, datetime, fileinput, glob, sys, string, shutil
+
+scriptpath = os.path.dirname(os.path.realpath(__file__))
+projectpath = os.path.abspath(os.path.join(scriptpath, os.pardir))
+
+IPLUG2_ROOT = "../../.."
+
+sys.path.insert(0, os.path.join(os.getcwd(), IPLUG2_ROOT + '/Scripts'))
+
+from parse_config import parse_config
+
+def main():
+  print("not modifying rc file");
+  # config = parse_config(projectpath)
+  
+  # rc = open(projectpath + "/resources/main.rc", "w")
+  
+  # rc.write("\n")
+  # rc.write("/////////////////////////////////////////////////////////////////////////////\n")
+  # rc.write("// Version\n")
+  # rc.write("/////////////////////////////////////////////////////////////////////////////\n")
+  # rc.write("VS_VERSION_INFO VERSIONINFO\n")
+  # rc.write("FILEVERSION " + config['MAJOR_STR'] + "," + config['MINOR_STR'] + "," + config['BUGFIX_STR'] + ",0\n")
+  # rc.write("PRODUCTVERSION " + config['MAJOR_STR'] + "," + config['MINOR_STR'] + "," + config['BUGFIX_STR'] + ",0\n")
+  # rc.write(" FILEFLAGSMASK 0x3fL\n")
+  # rc.write("#ifdef _DEBUG\n")
+  # rc.write(" FILEFLAGS 0x1L\n")
+  # rc.write("#else\n")
+  # rc.write(" FILEFLAGS 0x0L\n")
+  # rc.write("#endif\n")
+  # rc.write(" FILEOS 0x40004L\n")
+  # rc.write(" FILETYPE 0x1L\n")
+  # rc.write(" FILESUBTYPE 0x0L\n")
+  # rc.write("BEGIN\n")
+  # rc.write('    BLOCK "StringFileInfo"\n')
+  # rc.write("    BEGIN\n")
+  # rc.write('        BLOCK "040004e4"\n')
+  # rc.write("        BEGIN\n")
+  # rc.write('            VALUE "FileVersion", "' + config['FULL_VER_STR'] + '"\0\n')
+  # rc.write('            VALUE "ProductVersion", "' + config['FULL_VER_STR'] + '"0\n')
+  # rc.write("#ifdef VST2_API\n")
+  # rc.write('            VALUE "OriginalFilename", "' + config['BUNDLE_NAME'] + '.dll"\0\n')
+  # rc.write("#elif defined VST3_API\n")
+  # rc.write('            VALUE "OriginalFilename", "' + config['BUNDLE_NAME'] + '.vst3"\0\n')
+  # rc.write("#elif defined AAX_API\n")
+  # rc.write('            VALUE "OriginalFilename", "' + config['BUNDLE_NAME'] + '.aaxplugin"\0\n')
+  # rc.write("#elif defined APP_API\n")
+  # rc.write('            VALUE "OriginalFilename", "' + config['BUNDLE_NAME'] + '.exe"\0\n')
+  # rc.write("#endif\n")  
+  # rc.write('            VALUE "FileDescription", "' + config['PLUG_NAME'] + '"\0\n')
+  # rc.write('            VALUE "InternalName", "' + config['PLUG_NAME'] + '"\0\n')
+  # rc.write('            VALUE "ProductName", "' + config['PLUG_NAME'] + '"\0\n')
+  # rc.write('            VALUE "CompanyName", "' + config['PLUG_MFR'] + '"\0\n')
+  # rc.write('            VALUE "LegalCopyright", "' + config['PLUG_COPYRIGHT_STR'] + '"\0\n')
+  # rc.write('            VALUE "LegalTrademarks", "' + config['PLUG_TRADEMARKS'] + '"\0\n')
+  # rc.write("        END\n")
+  # rc.write("    END\n")
+  # rc.write('    BLOCK "VarFileInfo"\n')
+  # rc.write("    BEGIN\n")
+  # rc.write('        VALUE "Translation", 0x400, 1252\n')
+  # rc.write("    END\n")
+  # rc.write("END\n")
+  # rc.write("\n")
+
+if __name__ == '__main__':
+  main()
+
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1452,1269 +1526,609 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2fc55a78` (2026-11-18)
-**Commit Message**: WebView: add a WebKitGTK editor for CLAP and VST3 on Linux
+### Incident Patch 1: `4e118ffc` (2026-11-22)
+**Commit Message**: ARA: synchronize rendering with model edits and harden the example archive
 
-IWebView is implemented with WebKitGTK 4.1 in a GtkPlug, which embeds
-into the host's X11 window with XEmbed. GDK is restricted to its X11
-backend, since GtkPlug does not exist on Wayland, and GTK is told not to
-change the process locale.
+- Lock the playback and editor renderers out of the ARA model graph during host editing
+  cycles and sample access changes (as in Celemony's ARA test plug-in), so that sample cache
+  updates and region destruction cannot race with the audio thread. The audio thread never
+  blocks: while locked out it skips rendering for that block.
+- Balance analysis progress start/completion when an analysis is aborted.
+- Drop stale analysis results when the host reports changed audio source samples.
+- Version the document archive, write notes field by field rather than as raw structs, and
+  bound-check note counts and ID lengths against the remaining archive bytes. Bump the
+  example's archive ID accordingly.
+- Move the note/pitch detection into IPlugARAExample_Analysis.h.
+- Smooth the gain parameter, add missing includes and document nearest-sample rendering.
+- Log ignored ARA 1 binding attempts and clarify ARA_ANALYZEABLE_CONTENT_TYPES usage.
+- Add IPLUG2_ARA_FETCH_SDK to opt out of fetching the ARA SDK during configure.
 
-In the standalone app the parent window belongs to the process's own
-GDK, which GtkPlug cannot embed into, so a plain X11 child window is
-interposed below the menu bar. The view honours IPLUG2_SCREEN_SCALE
-there by zooming the difference from GDK's integer scale.
-
-GTK's main context is pumped from the plug-in's main-thread idle
-callback: a coalesced on_main_thread request in CLAP, the IRunLoop idle
-timer in VST3 and the SWELL timer in the standalone app.
-
-WEB_RESOURCES are staged in <name>.clap.resources/web for CLAP and in
-the bundle's Resources/web for VST3, and deployed with the binary.
-The WebView examples are built on Linux when
-IPLUG_LINUX_WEBVIEW_EXAMPLES is set. IWebViewControl and the REAPER
-WebView extension are not supported on Linux.
-
-Co-authored-by: Benjamin Reed <[REDACTED_EMAIL]>
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `Examples/CMakeLists.txt` (modified, +3/-3)
+**File**: `Examples/IPlugARAExample/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -22,12 +22,12 @@ add_subdirectory(IPlugVisualizer)
- 
- # WebView examples
- set(CMAKE_FOLDER "Examples/WebView")
--if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
--  message(STATUS "Skipping IPlugWebUI, IPlugP5js and IPlugSvelteUI: WebView is not implemented on Linux.")
--else()
-+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR IPLUG_LINUX_WEBVIEW_EXAMPLES)
-   add_subdirectory(IPlugWebUI)
-   add_subdirectory(IPlugP5js)
-   add_subdirectory(IPlugSvelteUI)
-+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-+  message(STATUS "Skipping WebView examples (enable IPLUG_LINUX_WEBVIEW_EXAMPLES and install WebKitGTK 4.1 to build).")
- endif()
- 
- # Swift/Cocoa examples (requires Xcode generator)
+@@ -20,6 +20,7 @@ iplug_add_plugin(${PROJECT_NAME}
+     IPlugARAExample.cpp
+     IPlugARAExample.h
+     IPlugARAExample_ARA.h
++    IPlugARAExample_Analysis.h
+     IPlugARAExample_Controls.h
+     config.h
+   RESOURCES
 ```
 
-**File**: `IPlug/APP/IPlugAPP.cpp` (modified, +6/-0)
+**File**: `Examples/IPlugARAExample/IPlugARAExample.cpp` (modified, +11/-3)
 ```diff
-@@ -15,6 +15,9 @@
+@@ -68,10 +68,18 @@ void IPlugARAExample::ProcessBlock(sample** inputs, sample** outputs, int nFrame
+   if (auto* pEditorRenderer = GetARAEditorRenderer<IPlugARAExampleEditorRenderer>())
+     pEditorRenderer->RenderPreview(outputs, nChans, GetSampleRate(), nFrames);
  
- #ifdef OS_LINUX
- #include "IPlugSWELLTimer.h"
-+#if defined WEBVIEW_EDITOR_DELEGATE
-+extern "C" void IPlugLinuxWebViewPump();
-+#endif
- #endif
- 
- #if defined OS_MAC || defined OS_LINUX
-@@ -46,6 +49,9 @@ IPlugAPP::IPlugAPP(const InstanceInfo& info, const Config& config)
-     CloseWindowIfRequested();
- #endif
-     OnTimer();
-+#if defined WEBVIEW_EDITOR_DELEGATE
-+    IPlugLinuxWebViewPump();
-+#endif
-   }, IDLE_TIMER_RATE));
- #else
-   CreateTimer();
-```
-
-**File**: `IPlug/CLAP/IPlugCLAP.cpp` (modified, +32/-1)
-```diff
-@@ -15,6 +15,9 @@
- #include "IPlugPluginBase.h"
- #include "plugin.hxx"
- #include "host-proxy.hxx"
-+#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
-+extern "C" void IPlugLinuxWebViewPump();
-+#endif
- #if defined OS_LINUX && !defined NO_IGRAPHICS
- #include "IGraphicsLinux.h"
- #endif
-@@ -64,6 +67,9 @@ IPlugCLAP::IPlugCLAP(const InstanceInfo& info, const Config& config)
- IPlugCLAP::~IPlugCLAP()
- {
- #ifdef OS_LINUX
-+#if defined WEBVIEW_EDITOR_DELEGATE
-+  mWebViewTimer.reset();
-+#endif
-   mTimer.reset();
- #ifndef NO_IGRAPHICS
-   mLinuxGuiTimer.reset();
-@@ -942,6 +948,10 @@ bool IPlugCLAP::guiCreate(const char* api, bool isFloating) noexcept
- 
- void IPlugCLAP::guiDestroy() noexcept
- {
-+#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
-+  mWebViewTimer.reset();
-+  mWebViewPending = false;
-+#endif
- #if defined OS_LINUX && !defined NO_IGRAPHICS
-   UnregisterLinuxHostCallbacks();
- #endif
-@@ -952,7 +962,7 @@ void IPlugCLAP::guiDestroy() noexcept
- 
- bool IPlugCLAP::guiShow() noexcept
- {
--#if defined OS_LINUX && !defined NO_IGRAPHICS
-+#if defined OS_LINUX && (defined WEBVIEW_EDITOR_DELEGATE || !defined NO_IGRAPHICS)
-   return HasUI() && (mGUIOpen || (mWindow && GUIWindowAttach(mWindow)));
- #else
-   if (HasUI() && !mGUIOpen)
-@@ -978,6 +988,10 @@ bool IPlugCLAP::guiShow() noexcept
- 
- bool IPlugCLAP::guiHide() noexcept
- {
-+#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
-+  mWebViewTimer.reset();
-+  mWebViewPending = false;
-+#endif
- #if defined OS_LINUX && !defined NO_IGRAPHICS
-   UnregisterLinuxHostCallbacks();
- #endif
-@@ -1052,6 +1066,18 @@ bool IPlugCLAP::GUIWindowAttach(void* pWindow) noexcept
- #endif
-     mWindow = pWindow;
-     mGUIOpen = true;
-+#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
-+    mWebViewTimer.reset(Timer::Create([this](Timer&) {
-+      if (!mWebViewPending.exchange(true))
-+        _host.requestCallback();
-+    }, 16));
-+    if (!mWebViewTimer)
-+    {
-+      CloseWindow();
-+      mGUIOpen = false;
-+      return false;
-+    }
-+#endif
- #if defined OS_LINUX && !defined NO_IGRAPHICS
-     // Switch to host-driven mode: stops the internal timer thread
-     // and lets the host drive rendering via onTimer / onPosixFd.
-@@ -1255,6 +1281,11 @@ void IPlugCLAP::onPosixFd(int fd, clap_posix_fd_flags_t flags) noexcept
- #if defined OS_LINUX
- void IPlugCLAP::onMainThread() noexcept
- {
-+#if defined WEBVIEW_EDITOR_DELEGATE
-+  mWebViewPending = false;
-+  if (mGUIOpen)
-+    IPlugLinuxWebViewPump();
-+#endif
-   if (mLinuxIdlePending.exchange(false))
-     OnTimer();
- #ifndef NO_IGRAPHICS
-```
-
-**File**: `IPlug/CLAP/IPlugCLAP.h` (modified, +4/-0)
-```diff
-@@ -185,6 +185,10 @@ class IPlugCLAP : public IPlugAPIBase
- #if defined OS_LINUX
-   void onMainThread() noexcept override;
-   std::atomic<bool> mLinuxIdlePending{false};
-+#if defined WEBVIEW_EDITOR_DELEGATE
-+  std::unique_ptr<Timer> mWebViewTimer;
-+  std::atomic<bool> mWebViewPending{false};
-+#endif
- #endif
- 
- #if defined OS_LINUX && !defined NO_IGRAPHICS
-```
-
-**File**: `IPlug/Extras/WebView/IPlugWebViewEditorDelegate.h` (modified, +1/-1)
-```diff
-@@ -225,7 +225,7 @@ class WebViewEditorDelegate : public IEditorDelegate
-    */
-   void LoadIndexHtml(const char* pathOfPluginSrc, const char* bundleid)
+-  for (int c = 0; c < nChans; c++)
++  for (int s = 0; s < nFrames; s++)
    {
--#if !defined OS_IOS && defined _DEBUG
-+#if !defined OS_IOS && defined _DEBUG && !defined OS_LINUX
-     namespace fs = std::filesystem;
-     
-     fs::path mainPath(pathOfPluginSrc);
-```
-
-**File**: `IPlug/Extras/WebView/IPlugWebView_linux.cpp` (added, +405/-0)
-```diff
-@@ -0,0 +1,405 @@
-+/*
-+ ==============================================================================
+-    for (int s = 0; s < nFrames; s++)
+-      outputs[c][s] *= gain;
++    const sample smoothedGain = mGainSmoother.Process(gain);
 +
-+ This file is part of the iPlug 2 library. Copyright (C) the iPlug 2 developers.
++    for (int c = 0; c < nChans; c++)
++      outputs[c][s] *= smoothedGain;
+   }
+ }
 +
-+ See LICENSE.txt for  more info.
-+
-+ ==============================================================================
-+*/
-+
-+#include "IPlugWebView.h"
-+#include "IPlugPaths.h"
-+#include <gtk/gtkx.h>
-+#include <gdk/gdkx.h>
-+#include <webkit2/webkit2.h>
-+#include <dlfcn.h>
-+#include <cmath>
-+#include <filesystem>
-+#include <algorithm>
-+#include <cstdint>
-+#include <memory>
-+#include <utility>
-+#include <cstring>
-+#include <cstdlib>
-+
-+// GTK is process-global. Host callbacks must run on the GUI/main thread.
-+extern "C" void IPlugLinuxWebViewPump()
++void IPlugARAExample::OnReset()
 +{
-+  for (int i = 0; i < 32 && g_main_context_pending(nullptr); ++i)
-+    g_main_context_iteration(nullptr, FALSE);
++  mGainSmoother.SetSmoothTime(20., GetSampleRate());
++  mGainSmoother.SetValue(GetParam(kGain)->Value() / 100.);
 +}
-+
-+// dladdr needs an address inside this module to resolve the module's path
-+static void IPlugLinuxWebViewModuleAnchor() {}
-+
-+BEGIN_IPLUG_NAMESPACE
-+
-+class IWebViewImpl
-+{
-+public:
-+  explicit IWebViewImpl(IWebView* pOwner)
-+    : mOwner(pOwner)
-+  {
-+  }
-+
-+  ~IWebViewImpl() { CloseWebView(); }
-+
-+  void* OpenWebView(void* pParent, float x, float y, float w, float h, float scale)
-+  {
-+    CloseWebView();
-+
-+    if (!pParent)
-+      return nullptr;
-+
-+    // GtkPlug is X11-only. In a Wayland session GDK would otherwise prefer the
-+    // Wayland backend even though the host window is an (XWayland) X11 window.
-+    // No effect if the process has already opened a GDK display.
-+    gdk_set_allowed_backends("x11");
-+
-+    // gtk_init_check() would otherwise call setlocale(LC_ALL, ""), changing
-+    // e.g. the decimal separator for the host and every other plugin.
-+    gtk_disable_setlocale();
-+
-+    if (!gtk_init_check(nullptr, nullptr))
-+      return nullptr;
-+
-+    // Reject stale/invalid XIDs before gtk_plug_new issues X requests. GDK's
-+    // own connection may otherwise turn a BadWindow into a process abort.
-+    GdkDisplay* pDisplay = gdk_display_get_default();
-+
-+    if (!GDK_IS_X11_DISPLAY(pDisplay))
-+      return nullptr;
-+
-+    Window parentXID = static_cast<Window>(reinterpret_cast<uintptr_t>(pParent));
-+    GdkWindow* pOwnWindow = gdk_x11_window_lookup_for_display(pDisplay, parentXID);
-+
-+    // GDK also caches foreign wrappers for host windows from earlier opens.
-+    if (pOwnWindow && gdk_window_get_window_type(pOwnWindow) != GDK_WINDOW_FOREIGN)
-+    {
-+      // The parent belongs to this process's GDK (standalone app). GtkPlug can
-+      // only embed into a foreign window, so interpose a plain X11 child that
-+      // GDK does not track, placed below the container's menu bar.
-+      const char* menuOffset = getenv("IPLUG2_MENU_OFFSET");
-+      mHostScale = std::max(1, gdk_window_get_scale_factor(pOwnWindow));
-+      Display* pXDisplay = gdk_x11_display_get_xdisplay(pDisplay);
-+      mHostChild = XCreateSimpleWindow(pXDisplay, parentXID, 0, menuOffset ? std::clamp(atoi(menuOffset), 0, 100) : 0, std::max(1, static_cast<int>(std::ceil(w * scale))) * mHostScale,
-+                                       std::max(1, static_cast<int>(std::ceil(h * scale))) * mHostScale, 0, 0, 0);
-+      XMapWindow(pXDisplay, mHostChild);
-+      XSync(pXDisplay, False);
-+      parentXID = mHostChild;
-+    }
-+
-+    GdkWindow* pHostWindow = gdk_x11_window_foreign_new_for_display(pDisplay, parentXID);
-+
-+    if (!pHostWindow)
-+    {
-+      CloseWebView();
-+      return nullptr;
-+    }
-+
-+    g_object_unref(pHostWindow);
-+    mPlug = gtk_plug_new(parentXID);
-+
-+    if (!mPlug)
-+    {
-+      CloseWebView();
-+      return nullptr;
-+    }
-+
-+    // GTK destroys the plug itself if the host destroys the parent window first
-+    g_signal_connect(mPlug, "destroy", G_CALLBACK(OnPlugDestroyed), this);
-+
-+    mView = webkit_web_view_new();
-+    auto* pManager = webkit_web_view_get_user_content_manager(WEBKIT_WEB_VIEW(mView));
-+    webkit_user_content_manager_register_script_message_handler(pManager, "iplug");
-+    g_signal_connect(pManager, "script-message-received::iplug", G_CALLBACK(OnScriptMessage), this);
-+
-+    auto* pBridge = webkit_user_script_new("window.IPlugSendMsg = function(msg) { window.webkit.messageHandlers.iplug.postMessage(JSON.stringify(msg)); };", WEBKIT_USER_CONTENT_INJECT_TOP_FRAME,
-+                                           WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START, nullptr, nullptr);
-+    webkit_user_content_manager_add_script(pManager, pBridge);
-+    webkit_user_script_unref(pBridge);
-+
-+    g_signal_connect(mView, "decide-policy", G_CALLBACK(OnDecidePolicy), this);
-+    g_signal_connect(mView, "load-changed", G_CALLBACK(OnLoadChanged), this);
-+    g_signal_connect(mView, "load-failed", G_CALLBACK(OnLoadFailed), this);
-+
-+    if (mHostChild)
-+    {
-+      // The standalone exports its effective UI scale (which may be fractional,
-+      // e.g. 1.5); GDK only renders at integer factors, so zoom the difference.
-+      const char* str = getenv("IPLUG2_SCREEN_S
-```
-
-**File**: `IPlug/VST3/IPlugVST3.cpp` (modified, +9/-1)
-```diff
-@@ -17,6 +17,9 @@
- #include "pluginterfaces/vst/ivstmidicontrollers.h"
- 
- #include "IPlugVST3.h"
-+#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
-+extern "C" void IPlugLinuxWebViewPump();
-+#endif
- 
- using namespace iplug;
- using namespace Steinberg;
-@@ -49,7 +52,12 @@ IPlugVST3::~IPlugVST3()
- bool IPlugVST3::EnsureLinuxIdleTimer(FUnknown* context)
- {
-   if (!mLinuxIdleTimer)
--    mLinuxIdleTimer = owned(new IPlugVST3Timer([this] { OnTimer(); }));
-+    mLinuxIdleTimer = owned(new IPlugVST3Timer([this] {
-+      OnTimer();
-+#if defined WEBVIEW_EDITOR_DELEGATE
-+      IPlugLinuxWebViewPump();
-+#endif
-+    }));
-   return mLinuxIdleTimer->Start(context);
- }
  #endif
 ```
 
-**File**: `Scripts/cmake/Deploy.cmake` (modified, +18/-0)
+**File**: `Examples/IPlugARAExample/IPlugARAExample.h` (modified, +6/-0)
 ```diff
-@@ -292,6 +292,24 @@ function(iplug_deploy_target target format project_name)
-     # Default to SYMLINK
-     _iplug_create_plugin_link(${target} "${source_path}" "${deploy_path}" "${plugin_name}")
-   endif()
-+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND format STREQUAL "CLAP")
-+    get_target_property(_has_web_resources ${target} IPLUG_LINUX_WEB_RESOURCES)
-+    if(_has_web_resources)
-+      set(_web_source "$<TARGET_FILE:${target}>.resources")
-+      set(_web_dest "${deploy_path}/${plugin_name}.resources")
-+      if(IPLUG_DEPLOY_METHOD STREQUAL "COPY")
-+        add_custom_command(TARGET ${target} POST_BUILD
-+          COMMAND ${CMAKE_COMMAND} -E rm -rf "${_web_dest}"
-+          COMMAND ${CMAKE_COMMAND} -E copy_directory "${_web_source}" "${_web_dest}"
-+          VERBATIM)
-+      else()
-+        add_custom_command(TARGET ${target} POST_BUILD
-+          COMMAND ${CMAKE_COMMAND} -E rm -rf "${_web_dest}"
-+          COMMAND ${CMAKE_COMMAND} -E create_symlink "${_web_source}" "${_web_dest}"
-+          VERBATIM)
-+      endif()
-+    endif()
-+  endif()
- endfunction()
+@@ -4,6 +4,7 @@
  
- #------------------------------------------------------------------------
-```
-
----
-
-### Incident Patch 2: `cdace167` (2026-11-18)
-**Commit Message**: IGraphics: prepare shared code for a Linux platform
-
-- Select glad and the NanoVG GL2/GL3 implementation on Linux, and
-  create IGraphicsLinux from MakeGraphics().
-- IGEditorDelegate gains a recursive graphics mutex on Linux, since
-  hosts call into the delegate from threads other than the one that
-  draws. PrepareGraphics() and SetHostScreenScale() let a host query
-  the editor size and set its scale before the window is attached, and
-  CloseWindowIfRequested() completes a close that was requested from
-  inside graphics dispatch. Other platforms are unchanged (the lock
-  macro expands to nothing).
-- IGraphics does not ask the host to resize while no window is open on
-  Linux, defaults to EUIResizerMode::Size there and does not attach the
-  corner resizer, because the host or window manager provides the
-  resize handle.
-- IGraphicsNanoVG tolerates a missing main framebuffer by drawing
-  directly to the window, and on Linux clears stale GL errors before
-  creating it (needed with llvmpipe).
-
-Co-authored-by: Benjamin Reed <[REDACTED_EMAIL]>
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `IGraphics/Drawing/IGraphicsNanoVG.cpp` (modified, +33/-3)
-```diff
-@@ -47,7 +47,13 @@
-       #error Define either IGRAPHICS_GL2 or IGRAPHICS_GL3 when using IGRAPHICS_GL and IGRAPHICS_NANOVG with OS_WIN
-     #endif
-   #elif defined OS_LINUX
--    #error NOT IMPLEMENTED
-+    #if defined IGRAPHICS_GL2
-+      #define NANOVG_GL2_IMPLEMENTATION
-+    #elif defined IGRAPHICS_GL3
-+      #define NANOVG_GL3_IMPLEMENTATION
-+    #else
-+      #error "Define either IGRAPHICS_GL2 or IGRAPHICS_GL3 when using IGRAPHICS_NANOVG with OS_LINUX"
-+    #endif
-   #elif defined OS_WEB
-     #if defined IGRAPHICS_GLES2
-       #define NANOVG_GLES2_IMPLEMENTATION
-@@ -488,14 +494,27 @@ void IGraphicsNanoVG::DrawResize()
-   ScopedGLContext scopedGLCtx {this};
+ #include "IPlug_include_in_plug_hdr.h"
+ #include "IPlugARAExample_ARA.h"
++#include "Smoothers.h"
  
-   if (mMainFrameBuffer != nullptr)
-+  {
-     nvgDeleteFramebuffer(mMainFrameBuffer);
-+    mMainFrameBuffer = nullptr;
-+  }
-   
-   if (mVG)
-   {
--    mMainFrameBuffer = nvgCreateFramebuffer(mVG, WindowWidth() * GetScreenScale(), WindowHeight() * GetScreenScale(), 0);
-+#if defined OS_LINUX && defined IGRAPHICS_GL
-+    // Flush and sync all pending GL commands, and drain any accumulated GL
-+    // errors, before creating the FBO. On llvmpipe/Xwayland, NanoVG shader
-+    // setup and font loading leave stale GL error state that causes
-+    // glCheckFramebufferStatus to fail unless cleared first.
-+    glFinish();
-+    while (glGetError() != GL_NO_ERROR) {}
-+#endif
-+    int w = (int)(WindowWidth() * GetScreenScale());
-+    int h = (int)(WindowHeight() * GetScreenScale());
-+    mMainFrameBuffer = nvgCreateFramebuffer(mVG, w, h, 0);
-   
-     if (mMainFrameBuffer == nullptr)
--      DBGMSG("Could not init FBO.\n");
-+      DBGMSG("Could not init FBO (w=%d h=%d).\n", w, h);
-   }
- }
+ const int kNumPresets = 1;
  
-@@ -520,6 +539,17 @@ void IGraphicsNanoVG::BeginFrame()
- void IGraphicsNanoVG::EndFrame()
- {
-   nvgEndFrame(mVG); // end main frame buffer update
-+
-+  // When the FBO is unavailable (e.g. llvmpipe/Xwayland software renderer),
-+  // BeginFrame rendered directly to the window framebuffer, so no compositing
-+  // pass is needed.  Skip the second nvgBeginFrame/EndFrame entirely.
-+  if (mMainFrameBuffer == nullptr)
-+  {
-+    mInDraw = false;
-+    ClearFBOStack();
-+    return;
-+  }
-+
-   nvgBindFramebuffer(nullptr);
-   nvgBeginFrame(mVG, WindowWidth(), WindowHeight(), GetScreenScale());
-   
-```
-
-**File**: `IGraphics/IGraphics.cpp` (modified, +26/-7)
-```diff
-@@ -80,7 +80,13 @@ void IGraphics::SetScreenScale(float scale)
-   
-   assert(windowWidth > 0 && windowHeight > 0 && "Window dimensions invalid");
+@@ -22,6 +23,7 @@ class IPlugARAExample final : public Plugin
  
--  bool parentResized = GetDelegate()->EditorResizeFromUI(windowWidth, windowHeight, true);
-+  bool parentResized = false;
-+#ifdef OS_LINUX
-+  if (!WindowIsOpen())
-+    GetDelegate()->SetEditorSize(windowWidth, windowHeight);
-+  else
-+#endif
-+    parentResized = GetDelegate()->EditorResizeFromUI(windowWidth, windowHeight, true);
-   PlatformResize(parentResized);
-   ForAllControls(&IControl::OnRescale);
-   SetAllControlsDirty();
-@@ -91,11 +97,10 @@ void IGraphics::Resize(int w, int h, float scale, bool needsPlatformResize)
- {
-   GetDelegate()->ConstrainEditorResize(w, h);
-   
--  scale = Clip(scale, mMinScale, mMaxScale);
-+  scale = ConstrainDrawScale(scale);
-   
-   if (w == Width() && h == Height() && scale == GetDrawScale()) return;
-   
--  //DBGMSG("resize %i, resize %i, scale %f\n", w, h, scale);
-   ReleaseMouseCapture();
- 
-   mDrawScale = scale;
-@@ -108,7 +113,13 @@ void IGraphics::Resize(int w, int h, float scale, bool needsPlatformResize)
-   int windowWidth = WindowWidth() * GetPlatformWindowScale();
-   int windowHeight = WindowHeight() * GetPlatformWindowScale();
- 
--  bool parentResized = GetDelegate()->EditorResizeFromUI(windowWidth, windowHeight, needsPlatformResize);
-+  bool parentResized = false;
-+#ifdef OS_LINUX
-+  if (!WindowIsOpen())
-+    GetDelegate()->SetEditorSize(windowWidth, windowHeight);
-+  else
-+#endif
-+    parentResized = GetDelegate()->EditorResizeFromUI(windowWidth, windowHeight, needsPlatformResize);
-   PlatformResize(parentResized);
-   ForAllControls(&IControl::OnResize);
-   SetAllControlsDirty();
-@@ -334,7 +345,17 @@ void IGraphics::AttachCornerResizer(EUIResizerMode sizeMode, bool layoutOnResize
- 
- void IGraphics::AttachCornerResizer(ICornerResizerControl* pControl, EUIResizerMode sizeMode, bool layoutOnResize)
- {
--#ifndef AUv3_API
-+#if defined(AUv3_API)
-+  DBGMSG("AttachCornerResizer() is disabled for AUv3");
-+#elif defined(OS_LINUX)
-+  // On Linux, the host (or window manager for standalone) provides
-+  // its own resize handle. The corner resizer conflicts because both
-+  // catch mouse events in the same region, causing feedback loops.
-+  // Still set the resize mode so Scale/Size mode works correctly.
-+  mGUISizeMode = sizeMode;
-+  mLayoutOnResize = layoutOnResize;
-+  delete pControl;
-+#else
-   assert(!mCornerResizer); // only want one corner resizer
- 
-   std::unique_ptr<ICornerResizerControl> control(pControl);
-@@ -346,8 +367,6 @@ void IGraphics::AttachCornerResizer(ICornerResizerControl* pControl, EUIResizerM
-     mLayoutOnResize = layoutOnResize;
-     mCornerResizer->SetDelegate(*GetDelegate());
-   }
--#else
--DBGMSG("AttachCornerResizer() is disabled for AUv3");
+ #if IPLUG_DSP
+   void ProcessBlock(sample** inputs, sample** outputs, int nFrames) override;
++  void OnReset() override;
  #endif
- }
  
-```
-
-**File**: `IGraphics/IGraphics.h` (modified, +9/-0)
-```diff
-@@ -1718,6 +1718,9 @@ class IGraphics
-   void ClearGestureRegions();
+   /** @return the last transport position seen by the audio thread, in seconds */
+@@ -31,6 +33,10 @@ class IPlugARAExample final : public Plugin
+   bool GetTransportWasRunning() const { return mTransportRunning.load(std::memory_order_relaxed); }
  
- protected:
-+  /** Apply the configured drawing-scale limits. */
-+  float ConstrainDrawScale(float scale) const { return Clip(scale, mMinScale, mMaxScale); }
-+
-   /** Drawing API method to load a bitmap, called internally
-    * @param fileNameOrResID A CString absolute path or resource ID
-    * @param scale Integer to identify the scale of the resource, for multi-scale bitmaps
-@@ -1871,7 +1874,13 @@ class IGraphics
-   bool mResizingInProcess = false;
-   bool mLayoutOnResize = false;
-   bool mEnableMultiTouch = false;
-+  // Native Linux host windows resize the layout unless a mode is explicitly
-+  // selected with AttachCornerResizer(), including for docked REAPER editors.
-+#ifdef OS_LINUX
-+  EUIResizerMode mGUISizeMode = EUIResizerMode::Size;
-+#else
-   EUIResizerMode mGUISizeMode = EUIResizerMode::Scale;
-+#endif
-   double mPrevTimestamp = 0.;
-   IKeyHandlerFunc mKeyHandlerFunc = nullptr;
-   IDisplayTickFunc mDisplayTickFunc = nullptr;
-```
-
-**File**: `IGraphics/IGraphicsEditorDelegate.cpp` (modified, +111/-1)
-```diff
-@@ -11,6 +11,16 @@
- #include "IGraphicsEditorDelegate.h"
- #include "IGraphics.h"
- #include "IControl.h"
-+#include <algorithm>
-+#include <cmath>
-+#include <climits>
-+
-+#ifdef OS_LINUX
-+#include "IGraphicsLinux.h"
-+#define IPLUG_GFX_LOCK std::lock_guard<std::recursive_mutex> gfxLock(mGfxMutex)
-+#else
-+#define IPLUG_GFX_LOCK ((void)0)
-+#endif
- 
- using namespace iplug;
- using namespace igraphics;
-@@ -26,25 +36,61 @@ IGEditorDelegate::~IGEditorDelegate()
- 
- void* IGEditorDelegate::OpenWindow(void* pParent)
- {
-+  IPLUG_GFX_LOCK;
-+#ifdef OS_LINUX
-+  if (mGraphics && static_cast<IGraphicsLinux*>(mGraphics.get())->IsInPlatformCallback())
-+  {
-+    fprintf(stderr, "Cannot reopen the Linux editor during graphics dispatch\n");
-+    return nullptr;
-+  }
-+#endif
-+#ifdef OS_LINUX
-+  if (!PrepareGraphics())
-+    return nullptr;
-+#else
-   if(!mGraphics)
-   {
-     mGraphics = std::unique_ptr<IGraphics>(CreateGraphics());
-     if (mLastWidth && mLastHeight && mLastScale)
-       GetUI()->Resize(mLastWidth, mLastHeight, mLastScale);
-   }
-+#endif
-   
-   if(mGraphics)
--    return mGraphics->OpenWindow(pParent);
-+  {
-+    void* window = mGraphics->OpenWindow(pParent);
-+#ifdef OS_LINUX
-+    if (!window)
-+      CloseWindow();
-+#endif
-+    return window;
-+  }
-   else
-     return nullptr;
- }
- 
- void IGEditorDelegate::CloseWindow()
- {
-+  IPLUG_GFX_LOCK;
-+#ifdef OS_LINUX
-+  if (!mGraphics)
-+    return;
-+  auto* graphics = static_cast<IGraphicsLinux*>(mGraphics.get());
-+  if (graphics->IsInPlatformCallback())
-+  {
-+    graphics->RequestWindowClose();
-+    return;
-+  }
-+#endif
-   if (!mClosing)
-   {
-     mClosing = true;
-+#ifdef OS_LINUX
-+    if (mGraphics->WindowIsOpen())
-+      IEditorDelegate::CloseWindow();
-+#else
-     IEditorDelegate::CloseWindow();
-+#endif
-   
-     if (mGraphics)
-     {
-@@ -59,23 +105,80 @@ void IGEditorDelegate::CloseWindow()
-   }
- }
- 
-+#ifdef OS_LINUX
-+bool IGEditorDelegate::PrepareGraphics()
-+{
-+  IPLUG_GFX_LOCK;
-+  if (!mGraphics)
-+  {
-+    mGraphics.reset(CreateGraphics());
-+    if (!mGraphics)
-+      return false;
-+    if (mLastWidth && mLastHeight && mLastScale)
-+      mGraphics->Resize(mLastWidth, mLastHeight, mLastScale);
-+    if (mHostScreenScale > 0.f)
-+      mGraphics->SetScreenScale(mHostScreenScale);
-+    SetEditorSize(mGraphics->WindowWidth() * mGraphics->GetScreenScale(),
-+                  mGraphics->WindowHeight() * mGraphics->GetScreenScale());
-+  }
-+  return true;
-+}
-+
-+bool IGEditorDelegate::SetHostScreenScale(float scale)
-+{
-+  IPLUG_GFX_LOCK;
-+  if (!std::isfinite(scale) || scale <= 0.f || !PrepareGraphics())
-+    return false;
-+  const double width = mGraphics->WindowWidth() * static_cast<double>(scale);
-+  const double height = mGraphics->WindowHeight() * static_cast<double>(scale);
-+  if (width < 1. || height < 1. || width >= INT_MAX || height >= INT_MAX)
-+    return false;
-+  mHostScreenScale = scale;
-+  static_cast<IGraphicsLinux*>(mGraphics.get())->SetScreenScaleFromHost(scale);
-+  return true;
-+}
-+
-+bool IGEditorDelegate::CloseWindowIfRequested()
-+{
-+  IPLUG_GFX_LOCK;
-+  if (mGraphics && !static_cast<IGraphicsLinux*>(mGraphics.get())->IsInPlatformCallback() &&
-+      static_cast<IGraphicsLinux*>(mGraphics.get())->WindowCloseRequested())
-+  {
-+    CloseWindow();
-+    return true;
-+  }
-+  return false;
-+}
-+#endif
-+
- void IGEditorDelegate::OnParentWindowResize(int width, int height)
- {
-+  IPLUG_GFX_LOCK;
-   if (auto* pGraphics = GetUI()) 
-   {
-+#ifdef OS_LINUX
-+    static_cast<IGraphicsLinux*>(pGraphics)->ResizeFromHost(width, height);
-+#else
-     const auto scale = pGraphics->GetPlatformWindowScale();
-     pGraphics->Resize(static_cast<int>(width / scale), static_cast<int>(height / scale), 1.0f, false);
-+#endif
-   }
- }
- 
- void IGEditorDelegate::SetScreenScale(float scale)
- {
-+  IPLUG_GFX_LOCK;
-+#ifdef OS_LINUX
-+  SetHostScreenScale(scale);
-+#else
-   if (GetUI())
-     mGraphics->SetScreenScale(scale);
-+#endif
- }
- 
- void IGEditorDelegate::SendControlValueFromDelegate(int ctrlTag, double normalizedValue)
- {
-+  IPLUG_GFX_LOCK;
-   if(!mGraphics)
-     return;
- 
-@@ -91,6 +194,7 @@ void IGEditorDelegate::SendControlValueFromDelegate(int ctrlTag, double normaliz
- 
- void IGEditorDelegate::SendControlMsgFromDelegate(int ctrlTag, int msgTag, int dataSize, const void* pData)
- {
-+  IPLUG_GFX_LOCK;
-   if(!mGraphics)
-     return;
-   
-@@ -106,6 +210,7 @@ void IGEditorDelegate::SendControlMsgFromDelegate(int ctrlTag, int msgTag, int d
- 
- void IGEditorDelegate::SendParameterValueFromDelegate(int paramIdx, double value, bool normalized)
- {
-+  IPLUG_GFX_LOCK;
-   if(mGraphics)
-   {
-     if (!normalized)
-@@ -134,6 +239,7 @@ void IGEditorDelegate::SendParameterValueFromDelegate(int paramIdx, double value
- 
- void IGEditorDelegate::SendMidiMsgFromDelegate(const IMidiMsg& msg)
- {
-+  IPLUG_GFX_LOCK;
-   if(mGraphics)
-   {
-     for (auto c = 0; c < mGraphics->NControls(); c++) // TODO: could keep a map
-@@ -152,6 +258,7 @@ void IGEditorDelegate::SendMidiMsgFromDelegate(const IMidiMsg& msg)
- 
- bool IGEditorDelegate::Ser
-```
-
-**File**: `IGraphics/IGraphicsEditorDelegate.h` (modified, +26/-0)
-```diff
-@@ -11,6 +11,9 @@
- #pragma once
- 
- #include <memory>
-+#ifdef OS_LINUX
-+#include <mutex>
-+#endif
- 
- #include "IPlugEditorDelegate.h"
- 
-@@ -90,15 +93,38 @@ class IGEditorDelegate : public IEditorDelegate
-    * @return The new chunk position (endPos) */
-   int UnserializeEditorSize(const IByteChunk& chunk, int startPos);
-     
-+#ifdef OS_LINUX
-+  /** Create the editor model before a host asks for its size, without opening a window. */
-+  bool PrepareGraphics();
-+  /** Apply and remember an explicit host scale, including before attachment. */
-+  bool SetHostScreenScale(float scale);
-+  bool HasHostScreenScale() const { return mHostScreenScale > 0.f; }
-+
-+  /** Complete a pending native close on the owner's main thread, outside graphics dispatch. */
-+  bool CloseWindowIfRequested();
-+
-+  /** Mutex protecting mGraphics access from concurrent threads on Linux.
-+   *  The host may call SendParameterValueFromDelegate, CloseWindow, etc.
-+   *  from any thread while the timer/draw thread is running. Recursive
-+   *  because resize and close paths re-enter (e.g. OnParentWindowResize
-+   *  and DrawResize may be called while the lock is held). */
-+  std::recursive_mutex& GfxMutex() { return mGfxMutex; }
-+#endif
-+
- protected:
-   std::function<IGraphics*()> mMakeGraphicsFunc = nullptr;
-   std::function<void(IGraphics* pGraphics)> mLayoutFunc = nullptr;
-+
  private:
-   std::unique_ptr<IGraphics> mGraphics;
-   int mLastWidth = 0;
-   int mLastHeight = 0;
-   float mLastScale = 0.f;
-   bool mClosing = false; // used to prevent re-entrancy on closing
-+#ifdef OS_LINUX
-+  mutable std::recursive_mutex mGfxMutex;
-+  float mHostScreenScale = 0.f;
++#if IPLUG_DSP
++  LogParamSmooth<sample> mGainSmoother {20., 1.};
 +#endif
++
+   std::atomic<double> mPlayheadPos {0.};
+   std::atomic<bool> mTransportRunning {false};
  };
+```
+
+**File**: `Examples/IPlugARAExample/IPlugARAExample_ARA.h` (modified, +250/-231)
+```diff
+@@ -2,14 +2,18 @@
  
- END_IGRAPHICS_NAMESPACE
+ #include <algorithm>
+ #include <atomic>
++#include <chrono>
+ #include <cmath>
++#include <cstdint>
+ #include <cstring>
+ #include <mutex>
+ #include <string>
+ #include <thread>
++#include <type_traits>
+ #include <vector>
+ 
+ #include "IPlugARA.h"
++#include "IPlugARAExample_Analysis.h"
+ 
+ 
+ /** Results of the (simulated) offline analysis of an audio source: an overall peak/RMS plus a list
+@@ -26,10 +30,10 @@ struct IPlugARAExampleAnalysisResult
+ /** An ARA audio source that caches all its samples in memory, so that the playback renderer
+  * can access them from the realtime audio thread, and runs a background analysis over that cache
+  * which produces the results persisted in the ARA document archive.
+- * N.B. for the sake of simplicity this example does not synchronize sample cache updates
+- * (main thread) with rendering (audio thread) - a real plug-in must add appropriate
+- * synchronization. The analysis results are properly guarded, since they are produced on a
+- * background thread. */
++ * The sample cache is only modified on the main thread while the document controller has locked
++ * the renderers out of the model graph (see IPlugARAExampleDocumentController::RendererAccess),
++ * and only after the analysis thread that reads it has been stopped. The analysis results are
++ * guarded by a mutex, since they are produced on the background thread. */
+ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
+ {
+ public:
+@@ -100,6 +104,15 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
+     return mAnalysis;
+   }
+ 
++  /** Discard the analysis results, e.g. because the audio source samples changed */
++  void ClearAnalysis()
++  {
++    mHasAnalysis.store(false, std::memory_order_release);
++
++    std::lock_guard<std::mutex> lock(mAnalysisMutex);
++    mAnalysis = IPlugARAExampleAnalysisResult();
++  }
++
+   /** Called when restoring from an archive - the archived results stand in for a re-analysis,
+    * which is the whole point of persisting them */
+   void SetAnalysis(const IPlugARAExampleAnalysisResult& result)
+@@ -123,6 +136,15 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
+ private:
+   void RunAnalysis()
+   {
++    // the ARA Library requires every progress start to be balanced by a completion, including
++    // when the analysis is aborted - otherwise the host may show the progress forever.
++    // N.B. unlike most document controller functions, the progress notifications may be called
++    // from any thread: the ARA Library queues them and sends them from notifyModelUpdates().
++    const auto finish = [this]() {
++      mAnalysing.store(false, std::memory_order_release);
++      getDocumentController()->notifyAudioSourceAnalysisProgressCompleted(this);
++    };
++
+     IPlugARAExampleAnalysisResult result;
+ 
+     const auto nChans = static_cast<int>(getChannelCount());
+@@ -152,7 +174,7 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
+     {
+       if (mAnalysisAbort.load(std::memory_order_relaxed))
+       {
+-        mAnalysing.store(false, std::memory_order_release);
++        finish();
+         return;
+       }
+ 
+@@ -184,7 +206,7 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
+ 
+     result.peak = peak;
+     result.rms = (nFrames > 0) ? std::sqrt(sumSq / (static_cast<double>(nFrames) * kFrame)) : 0.;
+-    result.notes = DetectNotes(mono, envelope, kHop, kFrame, sampleRate);
++    result.notes = IPlugARAExampleAnalysis::DetectNotes(mono, envelope, kHop, kFrame, sampleRate);
+ 
+     {
+       std::lock_guard<std::mutex> lock(mAnalysisMutex);
+@@ -193,151 +215,13 @@ class IPlugARAExampleAudioSource : public ARA::PlugIn::AudioSource
+ 
+     mAnalysisProgress.store(1.f, std::memory_order_relaxed);
+     mHasAnalysis.store(true, std::memory_order_release);
+-    mAnalysing.store(false, std::memory_order_release);
+-
+-    getDocumentController()->notifyAudioSourceAnalysisProgressCompleted(this);
++    finish();
+ 
+     // the content update itself must go out from the main thread - flag it for the document
+     // controller to pick up in willNotifyModelUpdates()
+     mAnalysisCompleted.store(true, std::memory_order_release);
+   }
+ 
+-  /** Segment the envelope into notes and estimate a pitch for each by autocorrelation.
+-   * Crude by design - it stands in for the real detection a pitch editor would perform. */
+-  static std::vector<ARA::ARAContentNote> DetectNotes(const std::vector<float>& mono, const std::vector<float>& envelope, int hop, int frame, double sampleRate)
+-  {
+-    std::vector<ARA::ARAContentNote> notes;
+-
+-    if (envelope.empty() || sampleRate <= 0.)
+-      return notes;
+-
+-    const float threshold = std::max(0.005f, *std::max_element(envelope.begin(), envelope.end()) * 0.2f);
+-
+-    int noteStartFrame = -1;
+-
+-    const auto emitNote = [&](int startFrame, int endFrame) {
+-      const auto startSample = static_cast<size_t>(startFrame) * static_cast<size_t>(hop);
+-      const auto endSample = static
 ```
 
-**File**: `IGraphics/IGraphicsPrivate.h` (modified, +3/-0)
+**File**: `Examples/IPlugARAExample/IPlugARAExample_Analysis.h` (added, +153/-0)
 ```diff
-@@ -73,6 +73,9 @@
- #elif defined OS_WIN
-   #include "wingdi.h"
-   #define FONT_DESCRIPTOR_TYPE HFONT
-+#elif defined OS_LINUX
-+  // Linux uses a path string to locate fonts (resolved via Fontconfig)
-+  #define FONT_DESCRIPTOR_TYPE WDL_String*
- #elif defined OS_WEB
-   #define FONT_DESCRIPTOR_TYPE std::pair<WDL_String, WDL_String>*
- #else 
+@@ -0,0 +1,153 @@
++#pragma once
++
++/** The (deliberately crude) signal analysis behind IPlugARAExample's note detection: onset
++ * segmentation of an RMS envelope plus a normalized-autocorrelation pitch estimate. It stands in
++ * for the real detection a pitch editor would perform, and is kept apart from the ARA model code
++ * because none of it is ARA specific. */
++
++#include <algorithm>
++#include <cmath>
++#include <vector>
++
++#include "ARA_API/ARAInterface.h"
++#include "IPlugUtilities.h"
++
++namespace IPlugARAExampleAnalysis
++{
++
++/** Normalized autocorrelation pitch estimate over one window,
++ * @return frequency in Hz, or 0 if the window has no clear pitch */
++inline double EstimatePitch(const std::vector<float>& mono, size_t start, size_t windowSize, double sampleRate)
++{
++  constexpr double kMinFreq = 50.;
++  constexpr double kMaxFreq = 2000.;
++  constexpr double kPeakThreshold = 0.85; // fraction of the best score a peak must reach to count
++
++  const auto minLag = static_cast<size_t>(sampleRate / kMaxFreq);
++  const auto maxLag = static_cast<size_t>(sampleRate / kMinFreq);
++
++  if (start + windowSize + maxLag > mono.size() || maxLag <= minLag)
++    return 0.;
++
++  double energy = 0.;
++  for (size_t i = 0; i < windowSize; i++)
++    energy += static_cast<double>(mono[start + i]) * mono[start + i];
++
++  if (energy <= 0.)
++    return 0.;
++
++  // normalized correlation per lag - dividing by the energy of the lagged window as well keeps
++  // the score comparable across lags, which matters for the peak picking below
++  std::vector<double> scores(maxLag - minLag + 1, 0.);
++
++  for (size_t lag = minLag; lag <= maxLag; lag++)
++  {
++    double corr = 0.;
++    double lagEnergy = 0.;
++
++    for (size_t i = 0; i < windowSize; i++)
++    {
++      const double a = mono[start + i];
++      const double b = mono[start + i + lag];
++      corr += a * b;
++      lagEnergy += b * b;
++    }
++
++    const double norm = std::sqrt(energy * lagEnergy);
++    scores[lag - minLag] = (norm > 0.) ? (corr / norm) : 0.;
++  }
++
++  const double maxScore = *std::max_element(scores.begin(), scores.end());
++
++  if (maxScore < 0.5)
++    return 0.;
++
++  // A periodic signal correlates just as well at every multiple of its period, so simply taking
++  // the highest score picks an arbitrary subharmonic (an octave-down error). Take the *first*
++  // local peak that gets close to the best score instead - that is the fundamental period.
++  for (size_t i = 1; i + 1 < scores.size(); i++)
++  {
++    if (scores[i] >= kPeakThreshold * maxScore && scores[i] >= scores[i - 1] && scores[i] >= scores[i + 1])
++    {
++      // parabolic interpolation around the peak for sub-sample period accuracy
++      const double s0 = scores[i - 1];
++      const double s1 = scores[i];
++      const double s2 = scores[i + 1];
++      const double denom = (2. * s1) - s0 - s2;
++      const double offset = (denom != 0.) ? (0.5 * (s0 - s2) / denom) : 0.;
++
++      const double lag = static_cast<double>(minLag + i) + iplug::Clip(offset, -1., 1.);
++      return (lag > 0.) ? (sampleRate / lag) : 0.;
++    }
++  }
++
++  return 0.;
++}
++
++/** Segment an RMS envelope (one value per hop) into notes and estimate a pitch for each */
++inline std::vector<ARA::ARAContentNote> DetectNotes(const std::vector<float>& mono, const std::vector<float>& envelope, int hop, int frame, double sampleRate)
++{
++  std::vector<ARA::ARAContentNote> notes;
++
++  if (envelope.empty() || sampleRate <= 0.)
++    return notes;
++
++  const float threshold = std::max(0.005f, *std::max_element(envelope.begin(), envelope.end()) * 0.2f);
++
++  int noteStartFrame = -1;
++
++  const auto emitNote = [&](int startFrame, int endFrame) {
++    const auto startSample = static_cast<size_t>(startFrame) * static_cast<size_t>(hop);
++    const auto endSample = static_cast<size_t>(endFrame) * static_cast<size_t>(hop);
++
++    if (endSample <= startSample || endSample > mono.size())
++      return;
++
++    ARA::ARAContentNote note {};
++    note.startPosition = static_cast<double>(startSample) / sampleRate;
++    note.noteDuration = static_cast<double>(endSample - startSample) / sampleRate;
++    note.signalDuration = note.noteDuration;
++    note.attackDuration = std::min(0.01, note.noteDuration);
++
++    float envPeak = 0.f;
++    for (int f = startFrame; f < endFrame && f < static_cast<int>(envelope.size()); f++)
++      envPeak = std::max(envPeak, envelope[static_cast<size_t>(f)]);
++
++    note.volume = std::min(1.f, envPeak);
++
++    const double freq = EstimatePitch(mono, startSample, static_cast<size_t>(frame), sampleRate);
++
++    if (freq > 0.)
++    {
++      note.frequency = static_cast<float>(freq);
++      note.pitchNumber = static_cast<ARA::ARAPitchNumber>(std::lround(69. + 12. * std::log2(freq / 440.)));
++    }
++    else
++    {
++      note.frequency = ARA::kARAInvalidFrequency;
++      note.pitchNumber = ARA::kARAInvalidPitchNumber;
++    }
++
++    notes.push_back(note);
++  };
++
++  for (int f = 0; f < static_cast<int>(envelope.size()); f++)
++  {
++   
 ```
 
-**File**: `IGraphics/IGraphics_include_in_plug_hdr.h` (modified, +2/-2)
+**File**: `Examples/IPlugARAExample/README.md` (modified, +14/-5)
 ```diff
-@@ -42,8 +42,8 @@
-     #elif defined IGRAPHICS_GL3
-       #include <OpenGL/gl3.h>
-     #endif
--  #else
--    #include <OpenGL/gl.h>
-+  #elif defined OS_LINUX
-+    #include <glad/glad.h>
-   #endif
+@@ -94,10 +94,16 @@ editor renderer, right-click to toggle the modification's reverse edit.
+ It also uses the `"Fx|OnlyARA"` VST3 subcategory, which marks a plug-in that requires ARA to
+ operate. Plug-ins that also work without ARA should use `"Fx|ARA"` instead.
+ 
+-N.B. For clarity this example does not synchronize ARA model edits (main thread) with rendering
+-(audio thread) - a real plug-in must do so. Its archive format is also simplified (native endian),
+-and the note detection is deliberately crude, standing in for the real analysis a pitch editor
+-would perform.
++**Synchronizing rendering with model edits.** The host edits the ARA model on the main thread
++while the renderers read it on the audio thread. Following Celemony's ARA test plug-in, the
++document controller locks the renderers out of the model for the duration of each host editing
++cycle (and while sample access is toggled). The audio thread never blocks - while locked out it
++outputs silence for that block. See `IPlugARAExampleDocumentController::RendererAccess`.
++
++N.B. The archive format is simplified (native endian, but versioned and bounds checked), and the
++note detection in `IPlugARAExample_Analysis.h` is deliberately crude, standing in for the real
++analysis a pitch editor would perform. Regions are rendered with nearest-sample lookup, so
++stretched regions alias.
+ 
+ ## Building
+ 
+@@ -109,7 +115,10 @@ cmake --build build --target IPlugARAExample-vst3-ara
+ The ARA SDK (`ARA_API` + `ARA_Library`, Apache 2.0 licensed) is fetched automatically via CMake
+ FetchContent, pinned to an ARA SDK release tag. To use a local copy instead, clone
+ [Celemony/ARA_SDK](https://github.com/Celemony/ARA_SDK) (with submodules) into
+-`Dependencies/IPlug/ARA_SDK`, or pass `-DARA_SDK_DIR=/path/to/ARA_SDK`.
++`Dependencies/IPlug/ARA_SDK`, or pass `-DARA_SDK_DIR=/path/to/ARA_SDK`. To configure without
++network access and without ARA targets, pass `-DIPLUG2_ARA_FETCH_SDK=OFF`.
++
++The example builds on macOS, Windows and Linux, and CI builds it on all three.
+ 
+ The VST3 SDK must be present in `Dependencies/IPlug/VST3_SDK` (see
+ `Dependencies/IPlug/download-vst3-sdk.sh`).
+```
+
+**File**: `Examples/IPlugARAExample/config.h` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@
+ 
+ #define ARA_DOC_CONTROLLER_CLASS IPlugARAExampleDocumentController
+ #define ARA_FACTORY_ID "com.AcmeInc.IPlugARAExample.arafactory"
+-#define ARA_DOC_ARCHIVE_ID "com.AcmeInc.IPlugARAExample.aradocumentarchive.2"
++#define ARA_DOC_ARCHIVE_ID "com.AcmeInc.IPlugARAExample.aradocumentarchive.3"
+ 
+ // This plug-in stretches playback regions to fit the borders the host gives them, so hosts may
+ // let the user drag a region's borders independently of its content
+```
+
+**File**: `IPlug/ARA/IPlugARA_include_in_plug_src.h` (modified, +4/-1)
+```diff
+@@ -38,7 +38,10 @@ DEF_CLASS_IID(ARA::IPlugInEntryPoint2)
  #endif
  
-```
-
-**File**: `IGraphics/IGraphics_include_in_plug_src.h` (modified, +5/-0)
-```diff
-@@ -88,6 +88,11 @@
-     RegisterGraphicsInstance(pGraphics);
-     return pGraphics;
-   }
-+  #elif defined OS_LINUX
-+  IGraphics* MakeGraphics(IGEditorDelegate& dlg, int w, int h, int fps = 0, float scale = 1.)
-+  {
-+    return new IGraphicsLinux(dlg, w, h, fps, scale);
-+  }
-   #else
-     #error "No OS defined!"
-   #endif
+ /** Comma separated list of ARA::ARAContentType values that the plug-in can analyze and then
+- * export to the host, e.g. ARA::kARAContentTypeNotes. Hosts use this both to decide which
++ * export to the host, without enclosing braces, e.g.
++ * #define ARA_ANALYZEABLE_CONTENT_TYPES ARA::kARAContentTypeNotes, ARA::kARAContentTypeKeySignatures
++ * The list is used to initialize an array, so if defined it must not be empty - leave the macro
++ * undefined if the plug-in does not analyze any content. Hosts use this both to decide which
+  * content to request and to show the plug-in's capabilities in their UI. */
+ #ifdef ARA_ANALYZEABLE_CONTENT_TYPES
+   #define ARA_HAS_ANALYZEABLE_CONTENT_TYPES 1
 ```
 
 ---
 
-### Incident Patch 3: `dc5464cf` (2026-11-19)
-**Commit Message**: IGraphics: remove the Linux graphics mutex and timer thread
+### Incident Patch 2: `c1245e20` (2026-11-21)
+**Commit Message**: Bump devalue from 5.8.1 to 5.9.4 in /Examples/IPlugSvelteUI/web-ui
 
-Every supported Linux format draws and idles on the host's main thread:
-VST3 through IRunLoop, CLAP through the host timer, posix-fd and
-main-thread callbacks, and the standalone app and REAPER extensions
-through a SWELL main-loop timer. The pthread display timer could only
-start in a build that was neither host-driven nor APP/ReaperExt, which
-no format is, so the recursive mutex in IGEditorDelegate had nothing to
-guard.
+Bumps [devalue](https://github.com/sveltejs/devalue) from 5.8.1 to 5.9.4.
+- [Release notes](https://github.com/sveltejs/devalue/releases)
+- [Changelog](https://github.com/sveltejs/devalue/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sveltejs/devalue/compare/v5.8.1...v5.9.4)
 
-Remove the mutex and its lock sites, the pthread timer fallback, and the
-IGraphicsLinux::DrawResize() override that only took the lock.
-StartTimer() now fails with a logged error if the editor is neither
-host-driven nor on a main-loop timer.
+---
+updated-dependencies:
+- dependency-name: devalue
+  dependency-version: 5.9.4
+  dependency-type: indirect
+...
 
-Checked with IPlugControls in REAPER 7.59 (VST3, CLAP) and Ardour 9.8
-(VST3): every lock site was reached only from the main thread.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `IGraphics/IGraphicsEditorDelegate.cpp` (modified, +0/-18)
+**File**: `Examples/IPlugSvelteUI/web-ui/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -17,9 +17,6 @@
- 
- #ifdef OS_LINUX
- #include "IGraphicsLinux.h"
--#define IPLUG_GFX_LOCK std::lock_guard<std::recursive_mutex> gfxLock(mGfxMutex)
--#else
--#define IPLUG_GFX_LOCK ((void)0)
- #endif
- 
- using namespace iplug;
-@@ -36,7 +33,6 @@ IGEditorDelegate::~IGEditorDelegate()
- 
- void* IGEditorDelegate::OpenWindow(void* pParent)
- {
--  IPLUG_GFX_LOCK;
- #ifdef OS_LINUX
-   if (mGraphics && static_cast<IGraphicsLinux*>(mGraphics.get())->IsInPlatformCallback())
-   {
-@@ -71,7 +67,6 @@ void* IGEditorDelegate::OpenWindow(void* pParent)
- 
- void IGEditorDelegate::CloseWindow()
- {
--  IPLUG_GFX_LOCK;
- #ifdef OS_LINUX
-   if (!mGraphics)
-     return;
-@@ -108,7 +103,6 @@ void IGEditorDelegate::CloseWindow()
- #ifdef OS_LINUX
- bool IGEditorDelegate::PrepareGraphics()
- {
--  IPLUG_GFX_LOCK;
-   if (!mGraphics)
-   {
-     mGraphics.reset(CreateGraphics());
-@@ -126,7 +120,6 @@ bool IGEditorDelegate::PrepareGraphics()
- 
- bool IGEditorDelegate::SetHostScreenScale(float scale)
- {
--  IPLUG_GFX_LOCK;
-   if (!std::isfinite(scale) || scale <= 0.f || !PrepareGraphics())
-     return false;
-   const double width = mGraphics->WindowWidth() * static_cast<double>(scale);
-@@ -140,7 +133,6 @@ bool IGEditorDelegate::SetHostScreenScale(float scale)
- 
- bool IGEditorDelegate::CloseWindowIfRequested()
- {
--  IPLUG_GFX_LOCK;
-   if (mGraphics && !static_cast<IGraphicsLinux*>(mGraphics.get())->IsInPlatformCallback() &&
-       static_cast<IGraphicsLinux*>(mGraphics.get())->WindowCloseRequested())
-   {
-@@ -153,7 +145,6 @@ bool IGEditorDelegate::CloseWindowIfRequested()
- 
- void IGEditorDelegate::OnParentWindowResize(int width, int height)
- {
--  IPLUG_GFX_LOCK;
-   if (auto* pGraphics = GetUI()) 
-   {
- #ifdef OS_LINUX
-@@ -167,7 +158,6 @@ void IGEditorDelegate::OnParentWindowResize(int width, int height)
- 
- void IGEditorDelegate::SetScreenScale(float scale)
- {
--  IPLUG_GFX_LOCK;
- #ifdef OS_LINUX
-   SetHostScreenScale(scale);
- #else
-@@ -178,7 +168,6 @@ void IGEditorDelegate::SetScreenScale(float scale)
- 
- void IGEditorDelegate::SendControlValueFromDelegate(int ctrlTag, double normalizedValue)
- {
--  IPLUG_GFX_LOCK;
-   if(!mGraphics)
-     return;
- 
-@@ -194,7 +183,6 @@ void IGEditorDelegate::SendControlValueFromDelegate(int ctrlTag, double normaliz
- 
- void IGEditorDelegate::SendControlMsgFromDelegate(int ctrlTag, int msgTag, int dataSize, const void* pData)
- {
--  IPLUG_GFX_LOCK;
-   if(!mGraphics)
-     return;
-   
-@@ -210,7 +198,6 @@ void IGEditorDelegate::SendControlMsgFromDelegate(int ctrlTag, int msgTag, int d
- 
- void IGEditorDelegate::SendParameterValueFromDelegate(int paramIdx, double value, bool normalized)
- {
--  IPLUG_GFX_LOCK;
-   if(mGraphics)
-   {
-     if (!normalized)
-@@ -239,7 +226,6 @@ void IGEditorDelegate::SendParameterValueFromDelegate(int paramIdx, double value
- 
- void IGEditorDelegate::SendMidiMsgFromDelegate(const IMidiMsg& msg)
- {
--  IPLUG_GFX_LOCK;
-   if(mGraphics)
-   {
-     for (auto c = 0; c < mGraphics->NControls(); c++) // TODO: could keep a map
-@@ -258,7 +244,6 @@ void IGEditorDelegate::SendMidiMsgFromDelegate(const IMidiMsg& msg)
- 
- bool IGEditorDelegate::SerializeEditorSize(IByteChunk& data) const
- {
--  IPLUG_GFX_LOCK;
-   bool savedOK = true;
-     
-   int width = mGraphics ? mGraphics->Width() : mLastWidth;
-@@ -274,7 +259,6 @@ bool IGEditorDelegate::SerializeEditorSize(IByteChunk& data) const
- 
- int IGEditorDelegate::UnserializeEditorSize(const IByteChunk& data, int startPos)
- {
--  IPLUG_GFX_LOCK;
-   int width = 0;
-   int height = 0;
-   float scale = 0.f;
-@@ -310,7 +294,6 @@ int IGEditorDelegate::UnserializeEditorState(const IByteChunk& chunk, int startP
- 
- bool IGEditorDelegate::OnKeyDown(const IKeyPress& key)
- {
--  IPLUG_GFX_LOCK;
-   IGraphics* pGraphics = GetUI();
-   
-   if (pGraphics)
-@@ -325,7 +308,6 @@ bool IGEditorDelegate::OnKeyDown(const IKeyPress& key)
- 
- bool IGEditorDelegate::OnKeyUp(const IKeyPress& key)
- {
--  IPLUG_GFX_LOCK;
-   IGraphics* pGraphics = GetUI();
- 
-   if (pGraphics)
+@@ -535,9 +535,9 @@
+       }
+     },
+     "node_modules/devalue": {
+-      "version": "5.8.1",
+-      "resolved": "https://registry.npmjs.org/devalue/-/devalue-5.8.1.tgz",
+-      "integrity": "sha512-4CXDYRBGqN+57wVJkuXBYmpAVUSg3L6JAQa/DFqm238G73E1wuyc/JhGQJzN7vUf/CMphYau2zXbfWzDR5aTEw==",
++      "version": "5.9.4",
++      "resolved": "https://registry.npmjs.org/devalue/-/devalue-5.9.4.tgz",
++      "integrity": "sha512-sPAT4pztbu6586/hrhOnMKS17IJrvg12mXiSPSS3W5qDeN2RGgvZ0diZCm31dBbnevfVmujNO3IM2wrS4Y2Rhg==",
+       "dev": true,
+       "license": "MIT"
+     },
 ```
 
-**File**: `IGraphics/IGraphicsEditorDelegate.h` (modified, +0/-11)
+---
+
+### Incident Patch 3: `ecd7309a` (2026-11-21)
+**Commit Message**: Bump vite from 8.1.4 to 8.3.8 in /Examples/IPlugSvelteUI/web-ui
+
+Bumps [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite) from 8.1.4 to 8.3.8.
+- [Release notes](https://github.com/vitejs/vite/releases)
+- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
+- [Commits](https://github.com/vitejs/vite/commits/v8.3.8/packages/vite)
+
+---
+updated-dependencies:
+- dependency-name: vite
+  dependency-version: 8.3.8
+  dependency-type: direct:development
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `Examples/IPlugSvelteUI/web-ui/package-lock.json` (modified, +200/-167)
 ```diff
-@@ -11,9 +11,6 @@
- #pragma once
- 
- #include <memory>
--#ifdef OS_LINUX
--#include <mutex>
--#endif
- 
- #include "IPlugEditorDelegate.h"
- 
-@@ -102,13 +99,6 @@ class IGEditorDelegate : public IEditorDelegate
- 
-   /** Complete a pending native close on the owner's main thread, outside graphics dispatch. */
-   bool CloseWindowIfRequested();
--
--  /** Mutex protecting mGraphics access from concurrent threads on Linux.
--   *  The host may call SendParameterValueFromDelegate, CloseWindow, etc.
--   *  from any thread while the timer/draw thread is running. Recursive
--   *  because resize and close paths re-enter (e.g. OnParentWindowResize
--   *  and DrawResize may be called while the lock is held). */
--  std::recursive_mutex& GfxMutex() { return mGfxMutex; }
- #endif
- 
- protected:
-@@ -122,7 +112,6 @@ class IGEditorDelegate : public IEditorDelegate
-   float mLastScale = 0.f;
-   bool mClosing = false; // used to prevent re-entrancy on closing
- #ifdef OS_LINUX
--  mutable std::recursive_mutex mGfxMutex;
-   float mHostScreenScale = 0.f;
- #endif
- };
+@@ -11,25 +11,25 @@
+         "@sveltejs/vite-plugin-svelte": "^7.1.2",
+         "@tsconfig/svelte": "^5.0.8",
+         "svelte": "^5.55.7",
+-        "vite": "^8.1.4"
++        "vite": "^8.3.8"
+       }
+     },
+     "node_modules/@emnapi/core": {
+-      "version": "1.11.1",
+-      "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.1.tgz",
+-      "integrity": "sha512-RSvbQmHzdKzNsLYa/wHrbc3KN4sYLKAdPZxqiM2HATqv/SBk2/ENSHpvXGaLOMcsAyz0poEGqkmmKYG3OWiJEQ==",
++      "version": "2.0.0-beta.2",
++      "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-2.0.0-beta.2.tgz",
++      "integrity": "sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A==",
+       "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "dependencies": {
+-        "@emnapi/wasi-threads": "1.2.2",
++        "@emnapi/wasi-threads": "2.2.0",
+         "tslib": "^2.4.0"
+       }
+     },
+     "node_modules/@emnapi/runtime": {
+-      "version": "1.11.1",
+-      "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.1.tgz",
+-      "integrity": "sha512-vgj7R3y3Wgx24IQaGPA/R6YFXLHVMOZ0uVEyIQPaWs+rd1AzfEMXlAC22FYwO1XkKR6NPsq7mUandH8oIRdZFw==",
++      "version": "2.0.0-beta.2",
++      "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-2.0.0-beta.2.tgz",
++      "integrity": "sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw==",
+       "dev": true,
+       "license": "MIT",
+       "optional": true,
+@@ -38,9 +38,9 @@
+       }
+     },
+     "node_modules/@emnapi/wasi-threads": {
+-      "version": "1.2.2",
+-      "resolved": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.2.tgz",
+-      "integrity": "sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA==",
++      "version": "2.2.0",
++      "resolved": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-2.2.0.tgz",
++      "integrity": "sha512-JP7OYH38Q7+pyTAe14raZHLQIK7BDKbdwji+Xi3pcd/6QkJYQH3SX4wu6EplGrGJWRepoNzedfm0G3B9Z4e9Rw==",
+       "dev": true,
+       "license": "MIT",
+       "optional": true,
+@@ -99,38 +99,58 @@
+       }
+     },
+     "node_modules/@napi-rs/wasm-runtime": {
+-      "version": "1.1.6",
+-      "resolved": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.6.tgz",
+-      "integrity": "sha512-ZLv/JdUfkvOy9eCnnBaGfiO+XimbjebAeO+MRQqD/B+FR1tnRN0tpKSJHRbE8sFfS6aqsXZ67TQjfwfsxULVbg==",
++      "version": "1.2.6",
++      "resolved": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.2.6.tgz",
++      "integrity": "sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw==",
+       "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "dependencies": {
+         "@tybys/wasm-util": "^0.10.3"
+       },
++      "engines": {
++        "node": "^20.19.0 || ^22.13.0 || >=23.5.0"
++      },
+       "funding": {
+         "type": "github",
+         "url": "https://github.com/sponsors/Brooooooklyn"
+       },
+       "peerDependencies": {
+-        "@emnapi/core": "^1.7.1",
+-        "@emnapi/runtime": "^1.7.1"
++        "@emnapi/core": "^1.7.1 || 2.0.0-beta.2",
++        "@emnapi/runtime": "^1.7.1 || 2.0.0-beta.2"
+       }
+     },
+     "node_modules/@oxc-project/types": {
+-      "version": "0.139.0",
+-      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.139.0.tgz",
+-      "integrity": "sha512-r9gHphtCs+1M7J0pw6Sn/hh/Wpa/iQrOOkrNAlVLF/gHq+/CJmHIWKKUUhdWjcD6CIa8idarspCsASiXCXvFUw==",
++      "version": "0.156.0",
++      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
++      "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
+       "dev": true,
+       "license": "MIT",
+       "funding": {
+-        "url": "https://github.com/sponsors/Boshen"
++        "url": "https://github.com/sponsors/oxc-project"
++      }
++    },
++    "node_modules/@rolldown/binding-android-arm-eabi": {
++      "version": "1.2.19",
++      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.19.tgz",
++      "integrity": "sha512-e+Ebe0WT+9tbXmNKPIiC8YrWAHYwug3m6i4p3rZGGulfZri1jtI4HslT+OZnFf/OIHowWF71DTlHwXBP2SiA7A==",
++      "cpu": [
++        "arm"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": "^20.19.0 || >=22.12.0"
+       }
+     },
+     "node_modules/@rolldown/binding-android-arm64": {
+-      "version": "1.1.5",
+-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.1.5.tgz",
+-      "integrity": "sha512-lZg8fqIv2v7FF237bwMgzGZEJvGL79/s5knJ/i6FmsGF4XXlzccZ4jb+TrFIxtSSxFtIpdsgrPZeMk1I9AFcyQ==",
++      "version": "1.2.19",
++      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.
 ```
 
-**File**: `IGraphics/Platforms/IGraphicsLinux.cpp` (modified, +3/-45)
+**File**: `Examples/IPlugSvelteUI/web-ui/package.json` (modified, +1/-1)
 ```diff
-@@ -62,9 +62,6 @@
- using namespace iplug;
- using namespace igraphics;
- 
--// Timer interval in microseconds (60 fps = ~16667 us)
--static constexpr int TIMER_INTERVAL_US = 16667;
--
- namespace
- {
- // Match WindowWidth()/WindowHeight() followed by the X11/display-scale conversion.
-@@ -1224,15 +1221,8 @@ void IGraphicsLinux::SetScreenScaleFromHost(float scale)
-   SetScreenScale(scale);
- }
- 
--void IGraphicsLinux::DrawResize()
--{
--  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
--  IGRAPHICS_DRAW_CLASS::DrawResize();
--}
--
- void IGraphicsLinux::ResizeFromHost(int width, int height)
- {
--  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
-   if (width <= 0 || height <= 0)
-     return;
- 
-@@ -1305,7 +1295,6 @@ void IGraphicsLinux::CalculateHostResize(int width, int height, int& designWidth
- 
- void IGraphicsLinux::ConstrainHostResize(int& width, int& height)
- {
--  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
-   int designWidth, designHeight;
-   float scale;
-   CalculateHostResize(width, height, designWidth, designHeight, scale);
-@@ -1699,7 +1688,6 @@ bool IGraphicsLinux::OpenURL(const char* url, const char* msgWindowTitle, const
- 
- bool IGraphicsLinux::GetTextFromClipboard(WDL_String& str)
- {
--  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
-   if (!mDisplay || !mPlugWnd || !mClipboardAtom)
-     return false;
- 
-@@ -1762,7 +1750,6 @@ bool IGraphicsLinux::GetTextFromClipboard(WDL_String& str)
- 
- bool IGraphicsLinux::SetTextInClipboard(const char* str)
- {
--  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
-   if (!mDisplay || !mPlugWnd || !mClipboardAtom)
-     return false;
- 
-@@ -2713,18 +2700,6 @@ void IGraphicsLinux::DispatchX11Events()
+@@ -12,6 +12,6 @@
+     "@sveltejs/vite-plugin-svelte": "^7.1.2",
+     "@tsconfig/svelte": "^5.0.8",
+     "svelte": "^5.55.7",
+-    "vite": "^8.1.4"
++    "vite": "^8.3.8"
    }
  }
- 
--void* IGraphicsLinux::TimerThreadProc(void* pParam)
--{
--  IGraphicsLinux* pGraphics = reinterpret_cast<IGraphicsLinux*>(pParam);
--  while (pGraphics->mTimerRunning)
--  {
--    usleep(TIMER_INTERVAL_US);
--    if (pGraphics->mTimerRunning)
--      pGraphics->OnDisplayTimer();
--  }
--  return nullptr;
--}
--
- bool IGraphicsLinux::StartTimer()
- {
-   if (mHostDriven || mTimerRunning)
-@@ -2740,40 +2715,23 @@ bool IGraphicsLinux::StartTimer()
-   mTimerRunning = true;
-   return true;
- #else
--  mTimerRunning = true;
--  const int error = pthread_create(&mTimerThread, nullptr, TimerThreadProc, this);
--  if (error)
--  {
--    mTimerRunning = false;
--    mTimerThread = 0;
--    fprintf(stderr, "Could not start Linux graphics timer: %s\n", strerror(error));
--    return false;
--  }
--
--  return true;
-+  // Plug-in editors are drawn from the host's run loop (see SetHostDriven).
-+  fprintf(stderr, "The Linux editor needs a host-driven display timer\n");
-+  return false;
- #endif
- }
- 
- void IGraphicsLinux::StopTimer()
- {
-   mTimerRunning = false;
-   mMainLoopTimer.reset();
--  if (mTimerThread && !pthread_equal(mTimerThread, pthread_self()))
--  {
--    pthread_join(mTimerThread, nullptr);
--    mTimerThread = 0;
--  }
- }
- 
- void IGraphicsLinux::OnDisplayTimer()
- {
-   if (IsInPlatformCallback())
-     return;
-   DispatchScope dispatch(mDispatchDepth);
--  // Teardown joins this timer while holding GfxMutex; skip busy frames instead of waiting.
--  std::unique_lock<std::recursive_mutex> lock(GetDelegate()->GfxMutex(), std::try_to_lock);
--  if (!lock.owns_lock())
--    return;
-   if (!mDisplay || !mPlugWnd || mCloseRequested)
-     return;
- 
-```
-
-**File**: `IGraphics/Platforms/IGraphicsLinux.h` (modified, +1/-5)
-```diff
-@@ -105,7 +105,6 @@ class IGraphicsLinux final : public IGRAPHICS_DRAW_CLASS
-   bool IsInPlatformCallback() const { return mDispatchDepth != 0; }
- 
-   void PlatformResize(bool parentHasResized) override;
--  void DrawResize() override;
-   /** Apply a new host scale without interpreting older native sizes at the new scale. */
-   void SetScreenScaleFromHost(float scale);
-   /** Apply a host/X11 size in physical pixels, preserving the configured resize mode. */
-@@ -206,13 +205,12 @@ class IGraphicsLinux final : public IGRAPHICS_DRAW_CLASS
-   float mTooltipX = 0.f, mTooltipY = 0.f;
-   unsigned long mTooltipHoverTime = 0;
-   bool mInputMethodDisconnected = false;
--  std::atomic<bool> mTimerRunning{false};
-+  bool mTimerRunning = false;
- 
-   float mHiddenCursorX = 0.f;
-   float mHiddenCursorY = 0.f;
-   Cursor mBlankCursor = 0; // cached invisible cursor for HideMouseCursor
-   bool mNeedsRedraw = false;
--  // Read by host threads while the display timer thread dispatches
-   std::atomic<bool> mCloseRequested{false};
-   std::atomic<int> mDispatchDepth{0};
-   unsigned long mLastLeftClickTime = 0; // X11 server timestamp of last left-button press
-@@ -230,8 +228,6 @@ class IGraphicsLinux final : public IGRAPHICS_DRAW_CLASS
-   bool StartTimer();
-   void StopTimer();
- 
--  static void* TimerThreadProc(void* pParam);
--  pthread_t mTimerThread = 0;
-   std::unique_ptr<Timer> mMainLoopTimer;
- };
- 
-```
-
-**File**: `IPlug/CLAP/IPlugCLAP.cpp` (modified, +1/-3)
-```diff
-@@ -1079,8 +1079,7 @@ bool IPlugCLAP::GUIWindowAttach(void* pWindow) noexcept
-     }
- #endif
- #if defined OS_LINUX && !defined NO_IGRAPHICS
--    // Switch to host-driven mode: stops the internal timer thread
--    // and lets the host drive rendering via onTimer / onPosixFd.
-+    // Host-driven mode: the host drives rendering via onTimer / onPosixFd.
-     static_cast<IGraphicsLinux*>(GetUI())->SetHostDriven(true);
-     if (!RegisterLinuxHostCallbacks())
-     {
-@@ -1269,7 +1268,6 @@ void IPlugCLAP::onPosixFd(int fd, clap_posix_fd_flags_t flags) noexcept
- {
-   if (mGUIOpen && fd == mLinuxFd && (flags & CLAP_POSIX_FD_READ))
-   {
--    std::lock_guard<std::recursive_mutex> lock(GfxMutex());
-     if (auto* pGraphics = static_cast<IGraphicsLinux*>(GetUI()))
-       pGraphics->ProcessX11Events();
-     CheckLinuxGuiClosed();
-```
-
-**File**: `IPlug/IPlugAPIBase.cpp` (modified, +0/-3)
-```diff
-@@ -146,9 +146,6 @@ void IPlugAPIBase::SendParameterValueFromAPI(int paramIdx, double value, bool no
- 
- void IPlugAPIBase::OnTimer()
- {
--#if defined OS_LINUX && IPLUG_EDITOR && !defined NO_IGRAPHICS
--  std::lock_guard<std::recursive_mutex> gfxLock(GfxMutex());
--#endif
- // VST3 ********************************************************************************
- #if defined VST3P_API || defined VST3_API
-   while (mMidiMsgsFromProcessor.ElementsAvailable())
-```
-
-**File**: `IPlug/VST3/IPlugVST3_View.h` (modified, +0/-1)
-```diff
-@@ -308,7 +308,6 @@ class IPlugVST3View : public Steinberg::CPluginView
-     if (fd == mLinuxFd && fd >= 0)
-     {
-       Steinberg::IPtr<IPlugVST3View> keepAlive(this);
--      std::lock_guard<std::recursive_mutex> lock(mOwner.GfxMutex());
-       if (auto* pGraphics = static_cast<iplug::igraphics::IGraphicsLinux*>(mOwner.GetUI()))
-       {
-         pGraphics->ProcessX11Events();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1479** (2026-11-20): MetalNanoVG: give textures made from a handle a sampler (@olilarkin)
-- **PR #1476** (2026-11-19): Update vendored Metal NanoVG (@olilarkin)
-- **PR #1475** (2026-11-18): VST3/CLAP: do not request an editor resize without a host frame (@olilarkin)
-- **PR #1474** (2026-11-18): APP: catch exceptions by const reference and report them (@olilarkin)
-- **PR #1473** (2026-11-18): NChanDelay: clear the allocated buffer size in ClearBuffer() (@olilarkin)
-- **PR #1472** (2026-11-18): IPluginBase: check file size and read result when loading FXP/FXB (@olilarkin)
+- **PR #1487** (2026-11-23): Update vendored Yoga to v3.2.2 (@olilarkin)
+- **PR #1486** (2026-11-22): cmake: RC_INCLUDE_DIRS option and Windows bundle folder icons (@olilarkin)
+- **PR #1484** (2026-11-21): Bump devalue from 5.8.1 to 5.9.4 in /Examples/IPlugSvelteUI/web-ui (@dependabot[bot])
+- **PR #1483** (2026-11-21): Bump vite from 8.1.4 to 8.3.8 in /Examples/IPlugSvelteUI/web-ui (@dependabot[bot])
+- **PR #1482** (2026-11-21): Bump source-map-js from 1.2.1 to 1.2.4 in /Examples/IPlugSvelteUI/web-ui (@dependabot[bot])
+- **PR #1480** (closed): Fixes to cmake scripts on Windows (resources and icons) (@pressplay-music)
 
 ---
 
@@ -2734,32 +2148,28 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. WebView: add a WebKitGTK editor for CLAP and VST3 on Linux
+## X. ARA: synchronize rendering with model edits and harden the example archive
 
 **RULE**:
-When implementing operations in `Examples/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Examples/IPlugARAExample/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2fc55a78`: WebView: add a WebKitGTK editor for CLAP and VST3 on Linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e118ffc`: ARA: synchronize rendering with model edits and harden the example archive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Examples/CMakeLists.txt`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Examples/IPlugARAExample/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR IPLUG_LINUX_WEBVIEW_EXAMPLES)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  message(STATUS "Skipping WebView examples (enable IPLUG_LINUX_WEBVIEW_EXAMPLES and install WebKitGTK 4.1 to build).")
+    IPlugARAExample_Analysis.h
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  message(STATUS "Skipping IPlugWebUI, IPlugP5js and IPlugSvelteUI: WebView is not implemented on Linux.")
-else()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2fc55a78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e118ffc` are properly handled with clean fallback behavior.

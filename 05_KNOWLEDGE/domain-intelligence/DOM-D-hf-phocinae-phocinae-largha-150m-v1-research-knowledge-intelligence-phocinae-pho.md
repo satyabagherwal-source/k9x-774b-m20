@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
   "source_version": "hf-phocinae-phocinae-largha-150m-v1",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T12:20:08.809Z",
+  "timestamp": "2026-11-23T20:21:53.841Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Phocinae/Phocinae-Largha-150M-v1](https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1) (Revision: `hf-phocina`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T12:20:08.809Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T20:21:53.841Z`  
 > **Learning ID**: `learn-huggingface-phocinae-phocinae-largha-150m-v1`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1](https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T12:15:07.304Z  
+> **Harvest Timestamp**: 2026-11-23T20:21:52.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 343 downloads | 28 likes
+- **Stars / Engagement**: 314 downloads | 28 likes
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:08:40.284Z",
+  "last_updated": "2026-11-23T20:22:16.097Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50814,6 +50814,48 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-99A02B-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-P0QQ",
+      "directive_title": "synchronize rendering with model edits and harden the example archive",
+      "source_repo": "iPlug2/iPlug2",
+      "source_commit": "3d378017",
+      "staged_file": "11_INBOX/candidate-directives/CD-P0QQ-synchronize-rendering-with-model-edits-and-harden-the-example-archive.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PBTS",
+      "directive_title": "Empirical Invariant Guard in pom.xml",
+      "source_repo": "vespa-engine-vespa-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PBTS-empirical-invariant-guard-in-pom-xml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-PB5L",
+      "directive_title": "ARA: synchronize rendering with model edits and harden the example archive",
+      "source_repo": "iplug2-iplug2-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PB5L-ara-synchronize-rendering-with-model-edits-and-harden-the-example-archive.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-1EF4A4",
+      "directive_title": "Empirical Invariant Guard in pom.xml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vespa-engine-vespa",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1EF4A4-empirical-invariant-guard-in-pom-xml.md",
       "staged_date": "2026-11-23"
     }
   ]

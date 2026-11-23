@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:08:40.784Z",
+  "last_updated": "2026-11-23T20:22:16.810Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T20:00:24.380Z",
@@ -933,7 +933,7 @@
       "staged_for_review": 1
     },
     "vespa-engine-vespa-learnings.md": {
-      "processed_at": "2026-11-19T04:36:39.153Z",
+      "processed_at": "2026-11-23T20:22:15.778Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1653,7 +1653,7 @@
       "staged_for_review": 0
     },
     "iplug2-iplug2-learnings.md": {
-      "processed_at": "2026-11-20T21:25:56.150Z",
+      "processed_at": "2026-11-23T20:22:13.415Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2753,7 +2753,7 @@
       "staged_for_review": 0
     },
     "hf-phocinae-phocinae-largha-150m-v1-learnings.md": {
-      "processed_at": "2026-11-19T12:20:11.613Z",
+      "processed_at": "2026-11-23T20:22:12.962Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3507,
+  "total_dossiers_evaluated": 3510,
   "total_canonical_promoted": 489,
-  "total_staged_for_review": 2631
+  "total_staged_for_review": 2633
 }

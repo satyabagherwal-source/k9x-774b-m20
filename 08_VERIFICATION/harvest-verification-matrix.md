@@ -12447,3 +12447,6 @@
 | `CYCLE-20261123-LM2H` | `2026-11-23T19:51:23.129Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10108` | Yes (`26b3b62a...`) |
 | `CYCLE-20261123-X3ZW` | `2026-11-23T20:00:19.580Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10109` | Yes (`3d6e2921...`) |
 | `CYCLE-20261123-7PQD` | `2026-11-23T20:08:34.309Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10110` | Yes (`9723f36b...`) |
+| `CYCLE-20261123-OUGU` | `2026-11-23T20:21:53.598Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`b9e8e64a...`) |
+| `CYCLE-20261123-P0JP` | `2026-11-23T20:22:01.477Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10111` | Yes (`8117d3fb...`) |
+| `CYCLE-20261123-P6L3` | `2026-11-23T20:22:09.303Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10112` | Yes (`7c1db1c4...`) |

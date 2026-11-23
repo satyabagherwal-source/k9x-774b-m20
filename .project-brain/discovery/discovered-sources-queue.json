@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T19:51:28.107Z",
+  "updated_at": "2026-11-23T20:22:14.988Z",
   "stats": {
-    "total_discovered": 7999,
-    "approved_pending_harvest": 7570,
+    "total_discovered": 8023,
+    "approved_pending_harvest": 7594,
     "harvested_count": 0,
     "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7564,
+      "COMMUNITY_AND_EXPERT": 7588,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -172998,6 +172998,534 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
         "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-F3908A253610": {
+      "id": "SRC-F3908A253610",
+      "url": "https://github.com/Celemony/ARA_SDK",
+      "title": "https://github.com/Celemony/ARA_SDK",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:13.624Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-494FBED9A67A": {
+      "id": "SRC-494FBED9A67A",
+      "url": "https://github.com/sveltejs/devalue",
+      "title": "https://github.com/sveltejs/devalue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:13.679Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-989FD70D7957": {
+      "id": "SRC-989FD70D7957",
+      "url": "https://github.com/sveltejs/devalue/releases",
+      "title": "https://github.com/sveltejs/devalue/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:13.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-F09987514383": {
+      "id": "SRC-F09987514383",
+      "url": "https://github.com/sveltejs/devalue/blob/main/CHANGELOG.md",
+      "title": "https://github.com/sveltejs/devalue/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:13.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-00C0BD10C72F": {
+      "id": "SRC-00C0BD10C72F",
+      "url": "https://github.com/sveltejs/devalue/compare/v5.8.1...v5.9.4",
+      "title": "https://github.com/sveltejs/devalue/compare/v5.8.1...v5.9.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:13.843Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-71E66DDEF339": {
+      "id": "SRC-71E66DDEF339",
+      "url": "https://registry.npmjs.org/devalue/-/devalue-5.8.1.tgz",
+      "title": "https://registry.npmjs.org/devalue/-/devalue-5.8.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:13.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-9CCC536CC417": {
+      "id": "SRC-9CCC536CC417",
+      "url": "https://registry.npmjs.org/devalue/-/devalue-5.9.4.tgz",
+      "title": "https://registry.npmjs.org/devalue/-/devalue-5.9.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:13.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-668FA3BDE2AC": {
+      "id": "SRC-668FA3BDE2AC",
+      "url": "https://github.com/vitejs/vite/commits/v8.3.8/packages/vite",
+      "title": "https://github.com/vitejs/vite/commits/v8.3.8/packages/vite",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.106Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-AC3361EACE1D": {
+      "id": "SRC-AC3361EACE1D",
+      "url": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.1.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-74F0A8B4B990": {
+      "id": "SRC-74F0A8B4B990",
+      "url": "https://registry.npmjs.org/@emnapi/core/-/core-2.0.0-beta.2.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/core/-/core-2.0.0-beta.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.220Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-61E94A058A3F": {
+      "id": "SRC-61E94A058A3F",
+      "url": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.1.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.275Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-528F601D3BBF": {
+      "id": "SRC-528F601D3BBF",
+      "url": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-2.0.0-beta.2.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-2.0.0-beta.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-B9BD8650780B": {
+      "id": "SRC-B9BD8650780B",
+      "url": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.2.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.386Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-A4818E5FB893": {
+      "id": "SRC-A4818E5FB893",
+      "url": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-2.2.0.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-2.2.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.438Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-30A38CD20E69": {
+      "id": "SRC-30A38CD20E69",
+      "url": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.6.tgz",
+      "title": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-F38E28F93404": {
+      "id": "SRC-F38E28F93404",
+      "url": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.2.6.tgz",
+      "title": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.2.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.545Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-2D6C36796BC7": {
+      "id": "SRC-2D6C36796BC7",
+      "url": "https://github.com/sponsors/Brooooooklyn",
+      "title": "https://github.com/sponsors/Brooooooklyn",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-1B46892C9535": {
+      "id": "SRC-1B46892C9535",
+      "url": "https://registry.npmjs.org/@oxc-project/types/-/types-0.139.0.tgz",
+      "title": "https://registry.npmjs.org/@oxc-project/types/-/types-0.139.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.653Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-9303D2765A8E": {
+      "id": "SRC-9303D2765A8E",
+      "url": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
+      "title": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.722Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-29CB4B44AE3E": {
+      "id": "SRC-29CB4B44AE3E",
+      "url": "https://github.com/sponsors/Boshen",
+      "title": "https://github.com/sponsors/Boshen",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.773Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-2CF2D8A0CBC4": {
+      "id": "SRC-2CF2D8A0CBC4",
+      "url": "https://github.com/sponsors/oxc-project",
+      "title": "https://github.com/sponsors/oxc-project",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.824Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-6FF02168DA74": {
+      "id": "SRC-6FF02168DA74",
+      "url": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.19.tgz",
+      "title": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.19.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.881Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-F92BBED62D7F": {
+      "id": "SRC-F92BBED62D7F",
+      "url": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.1.5.tgz",
+      "title": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.1.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.932Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-1C4F909D0397": {
+      "id": "SRC-1C4F909D0397",
+      "url": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2",
+      "title": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:22:14.988Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
       }
     }
   }
