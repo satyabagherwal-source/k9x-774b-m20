@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T23:40:00.009Z",
+  "updated_at": "2026-11-23T23:48:57.561Z",
   "stats": {
-    "total_discovered": 8097,
-    "approved_pending_harvest": 7665,
+    "total_discovered": 8101,
+    "approved_pending_harvest": 7669,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7651,
+      "COMMUNITY_AND_EXPERT": 7655,
       "OFFICIAL_DOCUMENTATION": 260,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -175133,6 +175133,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
         "fileName": "tokio-rs-tokio-learnings.md"
+      }
+    },
+    "SRC-0C33C65535F8": {
+      "id": "SRC-0C33C65535F8",
+      "url": "https://github.com/nodejs/node/blob/v26.3.0/lib/internal/child_process.js",
+      "title": "https://github.com/nodejs/node/blob/v26.3.0/lib/internal/child_process.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T23:48:56.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-870B78BE9850": {
+      "id": "SRC-870B78BE9850",
+      "url": "https://www.nvidia.com/en-us/geforce/laptops/compare",
+      "title": "https://www.nvidia.com/en-us/geforce/laptops/compare",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T23:48:57.464Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md",
+        "fileName": "beclab-olares-learnings.md"
+      }
+    },
+    "SRC-B80AE238E2B1": {
+      "id": "SRC-B80AE238E2B1",
+      "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090",
+      "title": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T23:48:57.511Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md",
+        "fileName": "beclab-olares-learnings.md"
+      }
+    },
+    "SRC-BD7062D7C670": {
+      "id": "SRC-BD7062D7C670",
+      "url": "https://www.olares.com/benchmarks/hardware/olares-one",
+      "title": "https://www.olares.com/benchmarks/hardware/olares-one",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T23:48:57.561Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md",
+        "fileName": "beclab-olares-learnings.md"
       }
     }
   }

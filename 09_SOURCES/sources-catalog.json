@@ -1665,8 +1665,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceVersion": "hf-nvidia-qwen3.8-flash-next-fp4-local",
     "license": "Open-Source",
-    "contentHash": "ae83d637cc71404086aa474abae54ea475720069dc29234185d64ed89ee7ee7a",
-    "lastHarvestedAt": "2026-11-19T18:06:13.553Z",
+    "contentHash": "f957a1b29908f297367dd92b825bc60869508e229cd40820193f440daf3027f7",
+    "lastHarvestedAt": "2026-11-23T23:48:40.851Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
   },
   "hf-openmoss-team-moss-image-base": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "d0957897",
+    "sourceVersion": "504582d8",
     "license": "AGPL-3.0",
-    "contentHash": "216fd62523a0b44cc27b0110d492c875dd5a135a47afbe86d0aa05ae9c032295",
-    "lastHarvestedAt": "2026-11-22T23:06:21.271Z",
+    "contentHash": "590e57421d7b210adf27d34329719bd4e0e0fbfedc359744676e6d6580406a21",
+    "lastHarvestedAt": "2026-11-23T23:48:52.621Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "25c4fca9",
+    "sourceVersion": "26f8a967",
     "license": "NOASSERTION",
-    "contentHash": "ccfea3d53fda0162ab7b516cbec3ec7f4163bd5fa09f9bb4861eca27267ed7c2",
-    "lastHarvestedAt": "2026-11-22T16:12:20.756Z",
+    "contentHash": "79f1776b2e74c74671a5f86906732d668f2aebaad41286262e0b32a473f540c1",
+    "lastHarvestedAt": "2026-11-23T23:48:43.975Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

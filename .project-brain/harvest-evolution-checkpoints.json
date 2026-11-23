@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T23:40:27.019Z",
+  "last_updated": "2026-11-23T23:48:58.210Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T22:33:11.973Z",
@@ -78,7 +78,7 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-22T16:12:36.904Z",
+      "processed_at": "2026-11-23T23:48:55.988Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -658,7 +658,7 @@
       "staged_for_review": 0
     },
     "beclab-olares-learnings.md": {
-      "processed_at": "2026-11-22T23:06:58.758Z",
+      "processed_at": "2026-11-23T23:48:57.368Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2878,7 +2878,7 @@
       "staged_for_review": 0
     },
     "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md": {
-      "processed_at": "2026-11-19T18:06:29.665Z",
+      "processed_at": "2026-11-23T23:48:56.979Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3788,7 +3788,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3573,
+  "total_dossiers_evaluated": 3576,
   "total_canonical_promoted": 492,
-  "total_staged_for_review": 2675
+  "total_staged_for_review": 2677
 }

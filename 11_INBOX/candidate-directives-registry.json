@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T23:40:00.244Z",
+  "last_updated": "2026-11-23T23:48:57.765Z",
   "directives": [
     {
       "id": "CD-001",
@@ -51683,6 +51683,50 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-2UJR",
+      "directive_title": "fifteen fixes to re-entry, handles and the lifetime of the channel",
+      "source_repo": "oven-sh/bun",
+      "source_commit": "26f8a967",
+      "staged_file": "11_INBOX/candidate-directives/CD-2UJR-fifteen-fixes-to-re-entry-handles-and-the-lifetime-of-the-channel.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-317O",
+      "directive_title": "fall back to default last updated dates on Vercel previews",
+      "source_repo": "beclab/Olares",
+      "source_commit": "504582d8",
+      "staged_file": "11_INBOX/candidate-directives/CD-317O-fall-back-to-default-last-updated-dates-on-vercel-previews.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-33XN",
+      "directive_title": "ipc: fifteen fixes to re-entry, handles and the lifetime of the channel",
+      "source_repo": "oven-sh-bun-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-33XN-ipc-fifteen-fixes-to-re-entry-handles-and-the-lifetime-of-the-channel.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-350L",
+      "directive_title": "docs): fall back to default last updated dates on Vercel previews",
+      "source_repo": "beclab-olares-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-350L-docs-fall-back-to-default-last-updated-dates-on-vercel-previews.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "L"
     }
   ]
 }

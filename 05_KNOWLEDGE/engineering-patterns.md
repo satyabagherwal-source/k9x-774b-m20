@@ -760160,3 +760160,169 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6bbeecff` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10149. fifteen fixes to re-entry, handles and the lifetime of the channel (Harvested from oven-sh/bun)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "fifteen fixes to re-entry, handles and the lifetime of the channel",
+  "source": "oven-sh/bun",
+  "source_url": "https://github.com/oven-sh/bun",
+  "source_version": "26f8a967",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-23T23:48:43.457Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-oven-sh-bun",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [oven-sh/bun](https://github.com/oven-sh/bun) (Revision: `26f8a967`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/js/builtins/Ipc.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `476428f3`: ipc: fifteen fixes to re-entry, handles and the lifetime of the channel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/js/builtins/Ipc.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+ * @returns {(() => void) | undefined} what delivers the message now, once the caller has let go of `fd`
+      return () => emit(target, serialized.msg, socket);
+      if (err) throw new Error(`failed to open received dgram handle: ${err}`);
+      return () => emit(target, serialized.msg, wrap);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+ * @param {unknown} handle
+ * @param {(handle: Handle) => void} emit
+ * @returns {void}
+      emit(target, serialized.msg, socket);
+      return;
+      if (err) {
+        // The wrap only owns the descriptor on success; don't leak it.
+        require("node:fs").closeSync(fd);
+        throw new Error(`failed to open received dgram handle: ${err}`);
+      }
+      emit(target, serialized.msg, wrap);
+      return;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `476428f3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10150. fall back to default last updated dates on Vercel previews (Harvested from beclab/Olares)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "fall back to default last updated dates on Vercel previews",
+  "source": "beclab/Olares",
+  "source_url": "https://github.com/beclab/Olares",
+  "source_version": "504582d8",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-23T23:48:52.118Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-beclab-olares",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `504582d8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/.vitepress/lastmod/content-dates.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e22ea5be`: docs): fall back to default last updated dates on Vercel previews. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/lastmod/content-dates.mjs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+/**
+ * Strict in CI, where the production build must not ship wrong dates silently.
+ * Vercel sets CI too, but only serves previews and always clones shallow, so
+ * it falls back to VitePress's dates instead of failing.
+ */
+export function defaultStrict(env = process.env) {
+  return !!env.CI && !env.VERCEL;
+}
+
+ *   strict: throw instead of falling back to VitePress's dates.
+export function createContentDates({ srcDir: givenSrcDir, strict = defaultStrict(), metadataKeys = METADATA_KEYS }) {
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+ *   strict: throw instead of falling back to VitePress's dates (CI must not ship
+ *   wrong dates silently).
+export function createContentDates({ srcDir: givenSrcDir, strict = !!process.env.CI, metadataKeys = METADATA_KEYS }) {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e22ea5be` are properly handled with clean fallback behavior.

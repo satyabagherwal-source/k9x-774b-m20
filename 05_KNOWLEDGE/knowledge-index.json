@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T23:40:26.828Z",
+  "last_updated": "2026-11-23T23:48:58.084Z",
   "total_verified_learnings": 9087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24275,
+  "total_items": 24281,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228140,8 +228140,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "d0957897",
-      "content_hash": "216fd62523a0b44cc27b0110d492c875dd5a135a47afbe86d0aa05ae9c032295",
+      "source_version": "504582d8",
+      "content_hash": "590e57421d7b210adf27d34329719bd4e0e0fbfedc359744676e6d6580406a21",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -228174,6 +228174,11 @@
           "number": 10003,
           "title": "apps, notifications: wire device inventory notifications and update system image",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10150,
+          "title": "fall back to default last updated dates on Vercel previews",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228181,7 +228186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:06:21.060Z",
+      "verified_at": "2026-11-23T23:48:52.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228209,10 +228214,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "d0957897",
-      "content_hash": "2785ef1b252f4061cef97d2f3b75c01af3aae51679bce08581cbfb26fe9c9ba8",
+      "source_version": "504582d8",
+      "content_hash": "fa3556f8bc8d4c4d2d5d63980265548700b9826525d4ab109cd34bbfbc46172f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:06:21.659Z"
+      "persisted_at": "2026-11-23T23:48:52.999Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -228221,10 +228226,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "d0957897",
-      "content_hash": "a6573bb8c674e5afd29349175d064b181e196f79e353503f750f55b81ad4a189",
+      "source_version": "504582d8",
+      "content_hash": "20ed46bba272320c27de06d2c291e1225bee7e06b4be082a89128a6816022f02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:06:21.839Z"
+      "persisted_at": "2026-11-23T23:48:53.162Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -228258,9 +228263,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "01adfd979a02961080caec675e97744ff78e11484f585265b2721a5d4497b3f3",
+      "content_hash": "f27d5858d4b133c06ca90ee3945c685b8305864af9adcfb17a754004370837a3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:06:59.256Z"
+      "persisted_at": "2026-11-23T23:48:57.926Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -228270,9 +228275,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "56c4c77b912b280c0f06112f9c0f71eadd61bde917610a8a46935c9f421c4670",
+      "content_hash": "5c23991ee0f21d8f6dfd90a19c020ce825f333f01ae822c588f6fb6a3e2eef27",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:06:59.455Z"
+      "persisted_at": "2026-11-23T23:48:58.084Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -234691,8 +234696,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "25c4fca9",
-      "content_hash": "ccfea3d53fda0162ab7b516cbec3ec7f4163bd5fa09f9bb4861eca27267ed7c2",
+      "source_version": "26f8a967",
+      "content_hash": "79f1776b2e74c74671a5f86906732d668f2aebaad41286262e0b32a473f540c1",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -234720,6 +234725,11 @@
           "number": 9950,
           "title": "fix lost wake-ups in the futex Condition",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10149,
+          "title": "fifteen fixes to re-entry, handles and the lifetime of the channel",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234727,7 +234737,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:12:20.502Z",
+      "verified_at": "2026-11-23T23:48:43.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234743,10 +234753,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "repository": "oven-sh/bun",
-      "source_version": "98eae327",
-      "content_hash": "816269d4c37c53cb9e8d3b856215516bb259d52a5f37c56b8a00da0dbd3b9bc7",
+      "source_version": "26f8a967",
+      "content_hash": "e79145128597333b7071240ae46468b557b226f8288ec0736f0bebee285058f7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T03:15:32.511Z"
+      "persisted_at": "2026-11-23T23:48:44.372Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun",
@@ -234755,10 +234765,10 @@
       "relative_path": "12_DECISIONS/ADR-oven-sh-bun-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "25c4fca9",
-      "content_hash": "4800541a09e3284ba5720bff5f7b168e46c8585a5fee730ba9851308170272d1",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-22T16:12:21.507Z"
+      "source_version": "26f8a967",
+      "content_hash": "a65023eaffb8a1775eb6574adbb94fd8c2a2dc5d153e00d70b49c5da19925bc6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:48:44.561Z"
     },
     "learn-huggingface-autotrust-gev-26b-decide": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
@@ -234807,9 +234817,9 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd26d14075a214aa77623b5dc6c5d0f7bb7fbab4eab7e2d76005524d15a9b048",
+      "content_hash": "c5e1ae33807a183602db4d05e34109ba25aa4697510a2024dd193b471296e07d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T03:15:42.959Z"
+      "persisted_at": "2026-11-23T23:48:56.530Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings",
@@ -234819,9 +234829,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "a94d6125fd1e2db3a23914c710befe9603f9cdf19fa9662f4caf22950586fbf9",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-22T16:12:37.800Z"
+      "content_hash": "bc09d7cac0eb289b48186295776c152e8c435e6f07cb14a759892b41ffc746ec",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:48:56.685Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
@@ -244466,7 +244476,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "ae83d637cc71404086aa474abae54ea475720069dc29234185d64ed89ee7ee7a",
+      "content_hash": "f957a1b29908f297367dd92b825bc60869508e229cd40820193f440daf3027f7",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "promoted_rules": [],
@@ -244475,7 +244485,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T18:06:13.348Z",
+      "verified_at": "2026-11-23T23:48:40.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244492,9 +244502,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/Qwen3.8-Flash-Next-FP4-Local Core Invariants",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "04dab9c676fb631d1965492ed7967ea56ed46db7bf784f96adf500cb49d3e3fc",
+      "content_hash": "e327fc4a1c925bdc4c9b23b28f2b17c9c2bd01491e0e55b11712031cfa5252ac",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T18:06:13.729Z"
+      "persisted_at": "2026-11-23T23:48:41.082Z"
     },
     "learn-github-microsoft-react-native-windows": {
       "learning_id": "learn-github-microsoft-react-native-windows",
@@ -244597,9 +244607,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-qwen3.8-flash-next-fp4-local-learnings Core Invariants",
       "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
       "source_version": "HEAD",
-      "content_hash": "63c95764f266fed17472abc077a60f4a80c0f1b263db1c71372aae5970f541ab",
+      "content_hash": "296bcac2f9c5d274a5a36d6baf406dee3037765ad60d3910efe559989bda7008",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T18:06:29.841Z"
+      "persisted_at": "2026-11-23T23:48:57.181Z"
     },
     "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor": {
       "item_id": "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor",
@@ -258594,10 +258604,10 @@
       "relative_path": "08_VERIFICATION/oven-sh-bun-verification-protocol-empirical-defect-shield-for-oven-sh-bun.md",
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "25c4fca9",
-      "content_hash": "a40e451128e091de8d32988f269e49d07491270bed7d2b146235d6462ac6bf5e",
+      "source_version": "26f8a967",
+      "content_hash": "3c040eae75e25e8ef0f39a773e1be39b1f98ecf21ce26b0ee758a66e23d4f2ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:12:21.706Z"
+      "persisted_at": "2026-11-23T23:48:44.716Z"
     },
     "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners": {
       "item_id": "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners",
@@ -258619,9 +258629,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "7eeda6395291954cff9a075d358776b46978b337d48fe0359349a3960956171b",
+      "content_hash": "dac5c30f593762f5e3d721db8fc0e52a147eb5124547d87bbf4aa5ccff5dd4cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:12:37.983Z"
+      "persisted_at": "2026-11-23T23:48:56.816Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
@@ -331002,6 +331012,82 @@
       "content_hash": "5e3d6a12265b180bda52553f3fd95d1e01f7bd4fe5d7edfc5d4b1141ccf5072c",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T23:40:00.244Z"
+    },
+    "rule-10149": {
+      "learning_id": "rule-10149",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10149,
+      "title": "fifteen fixes to re-entry, handles and the lifetime of the channel",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "26f8a967",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:48:43.764Z"
+    },
+    "candidate_directive-fifteen-fixes-to-re-entry-handles-and-the-lifetime-of-the-channel": {
+      "item_id": "candidate_directive-fifteen-fixes-to-re-entry-handles-and-the-lifetime-of-the-channel",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2UJR-fifteen-fixes-to-re-entry-handles-and-the-lifetime-of-the-channel.md",
+      "title": "fifteen fixes to re-entry, handles and the lifetime of the channel",
+      "repository": "oven-sh/bun",
+      "source_version": "26f8a967",
+      "content_hash": "ba1b627c66aa0a39b15a07ce9035e0f8b0ab4477360e0ebea17ddf597e98e2b6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:48:44.203Z"
+    },
+    "rule-10150": {
+      "learning_id": "rule-10150",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10150,
+      "title": "fall back to default last updated dates on Vercel previews",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "504582d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:48:52.417Z"
+    },
+    "candidate_directive-fall-back-to-default-last-updated-dates-on-vercel-previews": {
+      "item_id": "candidate_directive-fall-back-to-default-last-updated-dates-on-vercel-previews",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-317O-fall-back-to-default-last-updated-dates-on-vercel-previews.md",
+      "title": "fall back to default last updated dates on Vercel previews",
+      "repository": "beclab/Olares",
+      "source_version": "504582d8",
+      "content_hash": "266baed42b82e3cde1a6787c89d28a625729e2a1bee1340a43911a77304fe68e",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T23:48:52.839Z"
+    },
+    "candidate_directive-ipc-fifteen-fixes-to-re-entry-handles-and-the-lifetime-of-the-channel": {
+      "item_id": "candidate_directive-ipc-fifteen-fixes-to-re-entry-handles-and-the-lifetime-of-the-channel",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-33XN-ipc-fifteen-fixes-to-re-entry-handles-and-the-lifetime-of-the-channel.md",
+      "title": "ipc: fifteen fixes to re-entry, handles and the lifetime of the channel",
+      "repository": "oven-sh-bun-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33361c2ffb908502132b9e872e00880ae42601196a107df7e5502dfea6fb8a96",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T23:48:56.367Z"
+    },
+    "candidate_directive-docs-fall-back-to-default-last-updated-dates-on-vercel-previews": {
+      "item_id": "candidate_directive-docs-fall-back-to-default-last-updated-dates-on-vercel-previews",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-350L-docs-fall-back-to-default-last-updated-dates-on-vercel-previews.md",
+      "title": "docs): fall back to default last updated dates on Vercel previews",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f57e08d1dd51fab3a74920f2c6c70e64bb7076d9406fc73b0842663ee4fc02b1",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T23:48:57.765Z"
     }
   },
   "ai-builder-brain": {

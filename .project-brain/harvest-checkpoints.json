@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T23:39:56.846Z",
+  "last_updated": "2026-11-23T23:48:52.629Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2631,14 +2631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "content_hash": "ae83d637cc71404086aa474abae54ea475720069dc29234185d64ed89ee7ee7a",
-      "verified_at": "2026-11-19T18:06:13.561Z",
+      "content_hash": "f957a1b29908f297367dd92b825bc60869508e229cd40820193f440daf3027f7",
+      "verified_at": "2026-11-23T23:48:40.860Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:06:13.561Z"
+      "last_updated": "2026-11-23T23:48:40.860Z"
     },
     "OpenMOSS-Team/MOSS-Image-Base": {
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "216fd62523a0b44cc27b0110d492c875dd5a135a47afbe86d0aa05ae9c032295",
-      "verified_at": "2026-11-22T23:06:21.279Z",
+      "content_hash": "590e57421d7b210adf27d34329719bd4e0e0fbfedc359744676e6d6580406a21",
+      "verified_at": "2026-11-23T23:48:52.628Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:06:21.279Z"
+      "last_updated": "2026-11-23T23:48:52.628Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "ccfea3d53fda0162ab7b516cbec3ec7f4163bd5fa09f9bb4861eca27267ed7c2",
-      "verified_at": "2026-11-22T16:12:20.766Z",
+      "content_hash": "79f1776b2e74c74671a5f86906732d668f2aebaad41286262e0b32a473f540c1",
+      "verified_at": "2026-11-23T23:48:43.983Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:12:20.766Z"
+      "last_updated": "2026-11-23T23:48:43.983Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",

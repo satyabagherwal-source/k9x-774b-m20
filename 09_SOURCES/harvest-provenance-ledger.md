@@ -12550,3 +12550,6 @@ Every entry in this ledger must capture:
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `6bbeecff` | Multi-dimensional audit evidence | 2026-11-23T23:39:47.584Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `da6276d7` | Multi-dimensional audit evidence | 2026-11-23T23:39:56.838Z |
 | `learn-dom-d-e322f459` | `project://tailscale-tailscale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | 2026-11-23T23:40:26.571Z |
+| `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-23T23:48:40.851Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `26f8a967` | Multi-dimensional audit evidence | 2026-11-23T23:48:43.975Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `504582d8` | Multi-dimensional audit evidence | 2026-11-23T23:48:52.621Z |

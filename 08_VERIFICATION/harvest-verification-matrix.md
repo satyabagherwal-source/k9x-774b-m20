@@ -12517,3 +12517,6 @@
 | `CYCLE-20261123-RCHO` | `2026-11-23T23:39:47.580Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10148` | Yes (`b5ffca28...`) |
 | `CYCLE-20261123-RJMQ` | `2026-11-23T23:39:56.834Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | Yes (`e134d954...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T23:40:26.571Z` | `tailscale-tailscale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E322F459` [Domain D] | Yes (`9c96e5ad...`) |
+| `CYCLE-20261123-2RYM` | `2026-11-23T23:48:40.846Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`f957a1b2...`) |
+| `CYCLE-20261123-2UDF` | `2026-11-23T23:48:43.971Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10149` | Yes (`79f1776b...`) |
+| `CYCLE-20261123-311L` | `2026-11-23T23:48:52.617Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10150` | Yes (`590e5742...`) |

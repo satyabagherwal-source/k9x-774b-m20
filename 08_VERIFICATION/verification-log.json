@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-G473",
-    "timestamp": "2026-11-22T03:11:40.095Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "eff88fc1735fc20bb861873fcac9234039aff78d2e338f4b9c6ee1e0c80d3576",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-X42N",
-    "timestamp": "2026-11-22T03:24:53.087Z",
-    "repository": "microsoft/Florence-2-base",
-    "learningId": "learn-huggingface-microsoft-florence-2-base",
-    "contentHash": "f6055a802ae01b888da45218e374a6243d4ea6153229c000b53b1c6f8be74a43",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-DMXZ",
-    "timestamp": "2026-11-22T03:37:44.039Z",
-    "repository": "webAI-Official/TwIL-8B",
-    "learningId": "learn-huggingface-webai-official-twil-8b",
-    "contentHash": "79dc532c3182f3f55b44076b734484e5babf402361f6b847bf57ed5f7fefc01d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-DRPS",
     "timestamp": "2026-11-22T03:37:50.224Z",
     "repository": "lingodotdev/lingo.dev",
@@ -7492,6 +7447,51 @@
     "contentHash": "e134d954b7e12ccc9076a4cec0b3d20df16bc34bdb8e78e52b7740f59bc69328",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-2RYM",
+    "timestamp": "2026-11-23T23:48:40.846Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "f957a1b29908f297367dd92b825bc60869508e229cd40820193f440daf3027f7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-2UDF",
+    "timestamp": "2026-11-23T23:48:43.971Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "79f1776b2e74c74671a5f86906732d668f2aebaad41286262e0b32a473f540c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-311L",
+    "timestamp": "2026-11-23T23:48:52.617Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "590e57421d7b210adf27d34329719bd4e0e0fbfedc359744676e6d6580406a21",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

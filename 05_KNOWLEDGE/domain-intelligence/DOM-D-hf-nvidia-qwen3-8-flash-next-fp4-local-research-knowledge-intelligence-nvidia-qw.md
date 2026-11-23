@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
   "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T18:06:13.729Z",
+  "timestamp": "2026-11-23T23:48:41.081Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia/Qwen3.8-Flash-Next-FP4-Local](https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local) (Revision: `hf-nvidia-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T18:06:13.729Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T23:48:41.081Z`  
 > **Learning ID**: `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local](https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T18:06:12.978Z  
+> **Harvest Timestamp**: 2026-11-23T23:48:40.184Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 41192 downloads | 425 likes
+- **Stars / Engagement**: 37590 downloads | 434 likes
 
 ---
 
