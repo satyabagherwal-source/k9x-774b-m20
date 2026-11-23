@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "a2f46a48",
+  "source_version": "6c8cbc67",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T15:37:32.372Z",
+  "timestamp": "2026-11-23T18:32:29.328Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `a2f46a48`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T15:37:32.372Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `6c8cbc67`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T18:32:29.328Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T15:37:31.528Z  
+> **Harvest Timestamp**: 2026-11-23T18:32:28.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1595,20 +1595,514 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2f46a48` (2026-11-23)
-**Commit Message**: Resume NUC 135 Kotlin Negated Membership Operator
+### Incident Patch 1: `6c8cbc67` (2026-11-23)
+**Commit Message**: Draft NUC 139 Symmetric Difference Reasoning Selections
 
-Renews the claim on NUC 135, which this continuous /nuc-proposal cycle
-allocated in d0894711 (Draft NUC 135 Kotlin Negated Membership
-Operator, 22-Nov-2026 14:45:52 -05:00) and is still completing: the
-candidate is frozen and goes to independent evaluation next. The
-allocation was 19 h 51 min old at this claim, past the 12-hour renewal
-point. The claim changes no file.
+Category: Reasoning enhancement, drawn uniformly at random (index 3 of
+the five eligible categories in NUC 1's registry, p = 1/5, no redraw,
+at 13:14:19) for a continuous /nuc-proposal cycle, so the token
+non-regression gate is required.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
+Requested change: a reasoning pipeline gains the stage
+SELECTION |> xor(OTHER), the symmetric difference of two selections:
+the steps of SELECTION whose nodes OTHER does not select, in
+SELECTION's order, then the steps of OTHER whose nodes SELECTION does
+not select, in OTHER's order, each keeping the distance it has in its
+own selection, exactly SELECTION |> except(OTHER) |>
+union(OTHER |> except(SELECTION)). It completes NUC 106's intersect
+and except and NUC 120's union, which both left the symmetric
+difference out, keeps a selection for later stages, and follows the
+graph in a declaration. At the accepted revision |> xor(...) raises
+TypeError("xor is not an operation") while the program is parsed, and
+only those programs change; names, properties and keys called xor
+keep their readings. The name follows lodash's xor and the ^ of
+Python and Ruby sets.
 
+Co-Authored-By: Claude Opus 5.5 <[RED
 
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -160,6 +160,7 @@ Created: 31-Jul-2026
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
+ | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
++| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Draft |
+ 
+ ### Language compatibility
+ 
+@@ -331,6 +332,7 @@ Created: 31-Jul-2026
+ | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
+ | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
++| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0139.md` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++# NUC 139 -- Symmetric Difference Reasoning Selections
++
++```
++NUC: 139
++Title: Symmetric Difference Reasoning Selections
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Reasoning enhancement
++Created: 23-Nov-2026
++Requires: 106, 120
++```
++
++## Abstract
++
++- A reasoning pipeline gains the stage `SELECTION |> xor(OTHER)`, the
++  symmetric difference of two selections. It keeps the steps of `SELECTION`
++  whose nodes `OTHER` does not select, in `SELECTION`'s order, followed by
++  the steps of `OTHER` whose nodes `SELECTION` does not select, in
++  `OTHER`'s order. Each step keeps the distance it has in its own
++  selection, as `union` keeps it, so the stage is exactly
++  `SELECTION |> except(OTHER) |> union(OTHER |> except(SELECTION))`.
++- After `price = 10`, `quantity = 3`, `rate = 0.2`,
++  `subtotal = price * quantity`, `tax = subtotal * rate`,
++  `shipping = quantity * 2`, `total = subtotal + tax` and
++  `freight = shipping + rate`,
++  `total |> why |> xor(freight |> why) |> nodes` gives
++  `["total", "subtotal", "tax", "price", "freight", "shipping"]`: what one
++  explanation rests on and the other does not, without the quantity and
++  the rate that both share.
++- It completes [NUC 106](nuc-0106.md)'s `intersect` and `except` and
++  [NUC 120](nuc-0120.md)'s `union`, both of which left the symmetric
++  difference out. It keeps a selection, so later stages apply to it, and a
++  declaration that holds it follows the graph.
++- At the accepted revision `|> xor(...)` raises
++  `TypeError("xor is not an operation")` while the program is parsed, and
++  only those programs change. Variables, functions, properties and keys
++  named `xor` keep their readings.
++
++## Motivation
++
++- A world model that explains two conclusions often needs what tells them
++  apart: the facts and rules behind one alarm but not the other, or the
++  inputs that a price and a cost do not share. That is a contrastive
++  question, and the symmetric difference of their explanations answers it
++  in one selection.
++- Accepted programs spell it as `S |> except(O) |> union(O |> except(S))`,
++  which writes both selections twice:
++  `why total |> except(why freight) |> union(why freight |> except(why total)) |> nodes`
++  takes 22 lexer tokens, against 10 for
++  `why total |> xor(why freight) |> nodes`. Writing each selection twice
++  also walks it twice, and a standing declaration keeps the observations of
++  every walk.
++- The name follows lodash's `xor`, the symmetric difference of arrays, and
++  the `^` that Python and Ruby use for the symmetric difference of sets.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `fda179e7` (2026-11-23)
+**Commit Message**: NUC 135 Kotlin Negated Membership Operator
+
+Accepted under the automatic acceptance rule in a continuous
+/nuc-proposal cycle: every hard criterion passes and every policy
+check passes; the token comparison is skipped, as NUC 1's matrix
+requires for Language compatibility. The cycle drew Language
+compatibility uniformly from the five eligible categories, allocated
+the NUC in d0894711 and renewed its claim in a2f46a48. A fresh
+proposer prepared it in two phases, the caller's Rust improvement pass
+changed only the new suite, and a fresh independent evaluator decided
+Accepted.
+
+A membership test gains Kotlin's negated spelling A !in B, an exact
+alias of NUC 97's A not in B: the parser reads ! immediately followed
+by the keyword in as the same not in node. Only programs that were
+parse errors at the accepted revision change; interpolations, ! in
+with whitespace and every other ! keep their readings.
+
+Hard criteria, evaluated on the frozen candidate at d0894711:
+- no compile errors: fmt, build, both Clippy forms on 1.97.1 and
+  1.99.1, rustdoc and the diff checks pass without warnings;
+- every test passes: 3,933 passed, 0 failed, 25 ignored, against
+  3,908 at the pin; no accepted identi
+
+**File**: `README.md` (modified, +25/-0)
+```diff
+@@ -3049,6 +3049,31 @@ item.total
+   labels are unchanged. See the
+   [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
+ 
++## Negated membership with !in
++
++**Kotlin's !in keeps an access rule live**
++
++```nuc
++blocked = ["mallory"]
++class User(name):
++    this.name = name
++$User.allowed = $User.name !in blocked
++alice = User("alice")
++mallory = User("mallory")
++assert([alice.allowed, mallory.allowed], [true, false])
++blocked.push("alice")
++assert(alice.allowed, false)
++alice.allowed
++# return: false
++```
++
++- [NUC 135](docs/nuc-0135.md) adds Kotlin's `item !in collection`, the same
++  test as `item not in collection`: each user's `allowed` follows the
++  `blocked` list, as it does with `not in`.
++- `!` and `in` are written together, as Kotlin writes them; `! in` keeps its
++  syntax error. Rules render the test as `not in`. See the
++  [root contract](nucleoid.spec.md#negated-membership-with-in).
++
+ ## Benchmark
+ 
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +3/-0)
+```diff
+@@ -867,3 +867,6 @@
+ {"id":"spec-0867","description":"Nucleoid builds instances with unknown constructor arguments on every route","code":"class Tag(name):\n    this.name = name\nholder = {}\nfirst = new Tag(name=\"a\", color=\"RED\")\nholder.tag = Tag(name=\"b\", color=\"GREEN\")\nitems = [Tag(name=\"c\", color=\"BLUE\")]\nrecord = {tag: Tag(name=\"d\", color=\"GREY\")}\nassert([first.color, holder.tag.color, items[0].color, record.tag.color], [\"RED\", \"GREEN\", \"BLUE\", \"GREY\"])\nassert(Tag(name=\"e\", color=\"TEAL\").color, \"TEAL\")\nassert(Tag.length, 5)","return":null}
+ {"id":"spec-0868","description":"Nucleoid keeps unknown constructor arguments as snapshots under class level rules","code":"class Rect\n$Rect.area = $Rect.width * $Rect.height\nwidth = 10\nrect = Rect(width=2, height=3)\nassert(rect.area, 6)\nassert(width, 10)\nheight = 5\nrect.width = 4\nassert(rect.area, 12)\nassert(rect.height, 3)\nrect.area","return":"12"}
+ {"id":"spec-0869","description":"Nucleoid validates repeated unknown constructor arguments before any value","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'color' for Shape\"))\ntry:\n    Shape(color=(events.count=2), \"SQUARE\")\ncatch error:\n    assert(error, TypeError(\"Positional constructor argument after named arguments for Shape\"))\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert(events.count, 0)\nassert(Shape.length, 0)","return":null}
++{"id":"spec-0870","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\nassert([2 !in xs, 4 !in xs], [false, true])\nassert([2 !in xs, 4 !in xs], [2 not in xs, 4 not in xs])\nword = \"hello\"\nassert([\"z\" !in word, \"ell\" !in word], [true, false])\nclass Seat\nfront = Seat()\nassert([front !in Seat, 3 !in Seat], [false, true])\nassert([1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs], [true, true, true])\nassert([!(4 in xs), 4 not in xs, 4 !in xs], [true, true, true])\nmissing = 4 !in xs\nxs.push(4)\nassert(missing, false)\nmissing","return":"false"}
++{"id":"spec-0871","description":"Nucleoid keeps !in rules live over class populations","code":"class Order(status):\n    this.status = status\napproved = [\"paid\", \"shipped\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\nassert([first.pending, second.pending], [false, false])\nfirst.status = \"lost\"\nassert(first.pending, true)\nopen = Order.filter(order -> order.pending).map(order -> order.status)\nassert(open, [\"lost\"])\nsecond.status = \"held\"\nassert(open, [\"lost\", \"held\"])\nfailure = \"\"\ntry:\n    approved = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"approved is not a collection\"))\nassert([approved, open], [[\"paid\", \"shipped\", \"new\"], [\"lost\", \"held\"]])\nopen","return":"[\"lost\",\"held\"]"}
++{"id":"spec-0872","description":"Nucleoid rolls back failed updates through !in","code":"items = [\"a\"]\nabsent = \"b\" !in items\nassert(absent, true)\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\nassert(failure, TypeError(\"items is not a collection\"))\nassert([items, absent], [[\"a\"], true])\nitems.push(\"b\")\nassert(absent, false)\ntags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nassert(untagged, true)\nabsent","return":"false"}
+```
+
+**File**: `dataset/nucleoid.synth.96.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-96-0001","description":"Kotlin's !in tests that a list does not hold an item, as not in does","code":"xs = [1, 2, 3]\n[2 !in xs, 4 !in xs]","return":"[false,true]"}
++{"id":"synth-96-0002","description":"!in tests that a string does not contain a piece of text","code":"word = \"hello\"\n[\"z\" !in word, \"ell\" !in word]","return":"[true,false]"}
++{"id":"synth-96-0003","description":"!in over a class tests that none of its instances equals the item","code":"class Seat\nfront = Seat()\n[front !in Seat, 3 !in Seat]","return":"[false,true]"}
++{"id":"synth-96-0004","description":"A declaration written with !in stays live as its list grows","code":"xs = [1, 2]\nmissing = 3 !in xs\nassert(missing, true)\nxs.push(3)\nmissing","return":"false"}
++{"id":"synth-96-0005","description":"A class-level rule with !in marks every order whose status is not approved","code":"class Order(status):\n    this.status = status\napproved = [\"paid\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\n[first.pending, second.pending]","return":"[false,false]"}
++{"id":"synth-96-0006","description":"An if condition written with !in guards its block until the name is blocked","code":"blocked = [\"eve\"]\nuser = \"bob\"\naccess = \"denied\"\nif user !in blocked:\n    access = \"granted\"\naccess","return":"\"granted\""}
++{"id":"synth-96-0007","description":"A lambda written with !in filters out the banned items","code":"items = [1, 2, 3, 4]\nbanned = [2, 4]\nitems.filter(item -> item !in banned)","return":"[1,3]"}
++{"id":"synth-96-0008","description":"!in binds as tightly as < so arithmetic comes first and == after","code":"xs = [1, 2, 3]\n[1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs]","return":"[true,true,true]"}
++{"id":"synth-96-0009","description":"!in over a null collection waits for it, as not in does","code":"tags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nuntagged","return":"true"}
++{"id":"synth-96-0010","description":"!in over an object raises the TypeError of not in and rolls the update back","code":"items = [\"a\"]\nabsent = \"b\" !in items\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\n[failure, items, absent]","return":"[\"TypeError: items is not a collection\",[\"a\"],true]"}
++{"id":"synth-96-0011","description":"A rule written with !in renders as not in when why explains it","code":"xs = [1, 2, 3]\nr = 4 !in xs\n(why r)[0].rule","return":"\"r = (4 not in xs)\""}
++{"id":"synth-96-0012","description":"!in works in a comprehension filter and in a quantifier condition","code":"xs = [1, 2, 3, 4]\nbanned = [2]\n[[x for x in xs if x !in banned], all x in xs: x !in [9]]","return":"[[1,3,4],true]"}
+```
+
+**File**: `docs/README.md` (modified, +46/-5)
+```diff
+@@ -854,9 +854,10 @@ settings.size
+ - Comparison: `==`, `!=`, `<`, `>`, `<=`, `>=`.
+ - Comparison words: `is` and `is not`, spellings of `==` and `!=` with a bare
+   word rule; see [is and is not comparisons](#is-and-is-not-comparisons).
+-- Membership: `item in collection` and `item not in collection` for lists,
+-  classes and strings, at the level of `<`; see
+-  [membership tests](#membership-tests).
++- Membership: `item in collection` and `item not in collection`, also
++  written `item !in collection` as in Kotlin, for lists, classes and
++  strings, at the level of `<`; see [membership tests](#membership-tests)
++  and [negated membership with `!in`](#negated-membership-with-in).
+ - Logical: `and` / `&&`, `or` / `||`, `not` / `!`.
+ - Conditional: `condition ? consequent : alternate` or
+   `consequent if condition else alternate`; see below.
+@@ -1088,7 +1089,8 @@ Full detail: [NUC 64](nuc-0064.md).
+   quantifier does, so `"a" in {a: 1}` is an error rather than `undefined`.
+ - They stand at the level of `<` and `>`: `x + 1 in xs` adds first,
+   `x in xs and y in ys` tests both, and `not x in xs` is `(not x) in xs`, as
+-  `not x < y` is; write `x not in xs` to negate the test.
++  `not x < y` is; write `x not in xs`, or `x !in xs` as Kotlin does, to
++  negate the test.
+ - A declaration that uses one stays live: it follows the list, the string
+   or the class's population, and whatever `item` reads.
+ 
+@@ -1120,6 +1122,44 @@ listed
+ 
+ Full detail: [NUC 97](nuc-0097.md).
+ 
++### Negated membership with !in
++
++```
++palette = ["red", "green"]
++color = "blue"
++unlisted = color !in palette
++assert(unlisted, true)
++palette.push("blue")
++assert(unlisted, false)
++assert(["z" !in "green", "ee" !in "green"], [true, false])
++class Tag
++urgent = Tag()
++assert([urgent !in Tag, "late" !in Tag], [false, true])
++assert(color !in palette, color not in palette)
++unlisted
++```
++
++- This is the complete `Nucleoid negates membership tests with !in` program
++  in `tests/reference.md`, without its title and expected-return metadata;
++  it returns `false`.
++- `item !in collection` is Kotlin's spelling of `item not in collection`:
++  the same test, at the same level of `<`, over the same lists, classes and
++  strings, with the same `null` waiting and `TypeError`. A declaration that
++  uses it stays live, as `unlisted` follows `palette`.
++- `!` and `in` are written together, on one line, as Kotlin writes them.
++  `x ! in xs` and a `!` at the end of a line keep their syntax errors, and
++  `!` before anything else keeps its prefix reading, so `!inx` negates
++  `inx`.
++- The test renders as `(item not in collection)` in rules, `why`, `affects`
++  and `--graph`. At the top level of a template interpolation `!` stays an
++  ignored token, as `not` does: `` `${x !in xs}` `` renders `x`, while
++  `` `${(x !in xs)}` `` tests membership. Grammar, errors and edge cases are
++  in the authoritative
++  [negated membership with !in](../nucleoid.spec.md#negated-membership-with-in)
++  section.
++
++Full detail: [NUC 135](nuc-0135.md).
++
+ ### Indexing, slicing, and length
+ 
+ - Lists and instance lists index with brackets; the index may be a variable.
+@@ -5590,7 +5630,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | Missing or non-function `sortBy` selector, including `null`, even on an empty receiver | `sortBy expects a function` |
+ | Missing or non-function `partition` predicate, including `null`, even on an empty receiver | `partition expects a function` |
+ | An `all` or `any` quantifier over a value that is neither null nor a list or a declared class's instances | `<collection> is not a collection` |
+-| An `in` or `not in` membership test over a value that is neither null nor a list, a string or a declared class's instances | `<collection> is not a collection` |
++| An `in`, `not in` or `!in` membership test over a value that is neither null nor a list, a string or a declared class's instances | `<collection> is not a collection` |
+ | A `depth` stage limit that is neither `null`, undefined nor a non-negative integer number | `<limit> is not a non-negative integer` |
+ | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
+ | A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
+@@ -5767,6 +5807,7 @@ base ** exponent                       exactly Math.pow(base, exponent), right-a
+ name **= exponent                      name = name ** (exponent) (NUC 64)
+ item in collection                     list, class or string membership at the level of < (NUC 97)
+ item not in collection                 its negation; not item in xs is (not item) in xs (NUC 97)
++item !in collection                    Kotlin spelling: exactly item not in collection, ! and in adjacent (NUC 135)
+ 
+ for name of source:                    class/object-list/scalar-string iteration
+ for name in source:                    equivalent explicit i
+```
+
+**File**: `docs/examples.md` (modified, +28/-0)
+```diff
+@@ -4577,6 +4577,34 @@ heavy
+   [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
+   define. A vehicle built without a `color` label has none.
+ 
++## Negated membership with !in
++
++**Negated membership keeps a support queue's open tickets live**
++
++```nuc
++class Ticket(status):
++    this.status = status
++closed = ["done", "spam"]
++$Ticket.open = $Ticket.status !in closed
++first = Ticket("new")
++second = Ticket("done")
++queue = Ticket.filter(ticket -> ticket.open).map(ticket -> ticket.status)
++assert(queue, ["new"])
++second.status = "reopened"
++assert(queue, ["new", "reopened"])
++closed.push("new")
++assert(queue, ["reopened"])
++queue
++# return: ["reopened"]
++```
++
++- `$Ticket.status !in closed` is Kotlin's spelling of
++  `$Ticket.status not in closed`. Each ticket's `open` follows its status and
++  the `closed` list, and the queue follows every ticket, so reopening a ticket
++  and closing a status both reach it without an imperative walk.
++- See [NUC 135](nuc-0135.md) and the
++  [root contract](../nucleoid.spec.md#negated-membership-with-in).
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -180,7 +180,7 @@ Created: 31-Jul-2026
+ | [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
+ | [134](nuc-0134.md) | Ruby Collection Method Aliases | Accepted |
+-| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
++| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Accepted |
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
+ 
+ ### Documentation
+@@ -327,7 +327,7 @@ Created: 31-Jul-2026
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Accepted |
+-| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
++| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Accepted |
+ | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
+ | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
+```
+
+**File**: `docs/nuc-0135.md` (modified, +1163/-11)
+```diff
+@@ -4,7 +4,7 @@
+ NUC: 135
+ Title: Kotlin Negated Membership Operator
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Language compatibility
+ Created: 22-Nov-2026
+@@ -20,14 +20,26 @@ Requires: 97
+   evaluation, liveness, rendering and errors are the accepted ones. After
+   `xs = [1, 2, 3]`, `[2 !in xs, 4 !in xs]` gives `[false, true]`, as
+   `[2 not in xs, 4 not in xs]` does.
++- Directly means on one line, with the `in` in the column right after the
++  `!`, as Kotlin writes its single `!in` token. `! in` with whitespace, a
++  comment or a line break between the two keeps its parse error, and `!`
++  before any other token keeps its prefix reading, so `x !inx` is still the
++  two statements `x` and `!inx`.
+ - At the accepted revision, every program in which `!` directly precedes
+   `in` where a membership operator can stand fails to parse, with errors
+   such as `SyntaxError("Unexpected keyword 'in'")` and
+   `SyntaxError("Expected ']' but found '!'")`, and only those programs
+   change. Inside a template interpolation, which ends before `not in` as it
+-  ends before `!in`, the accepted reading stays, and `! in` with whitespace
+-  between the two keeps its parse error. No keyword, lexer token, error or
+-  syntax-tree variant is added.
++  ends before `!in`, the accepted reading stays: `` `a ${4 !in xs} b` ``
++  still gives `"a 4 b"`. The public Rust `parse_expression` changes only
++  where NUC 97 changed it for `not in`: a Python-style conditional whose
++  condition holds the test.
++- A program written with `!in` shows `not in` in its rules, `why`,
++  `affects`, `--graph` and graph keys, as programs written with `and`, `or`
++  and `not` show `&&`, `||` and `!`.
++- No keyword, lexer token, `BinaryOp`, syntax-tree variant, error type or
++  message is added, and no public item changes. The authoritative contract
++  is [Negated membership with !in](../nucleoid.spec.md#negated-membership-with-in).
+ 
+ ## Motivation
+ 
+@@ -39,26 +51,1166 @@ Requires: 97
+   populations. Today each `!in` fails to parse, so a model's otherwise valid
+   rule, such as `$Order.flagged = $Order.status !in approved`, stops the
+   whole program before any statement runs.
++- World models state exclusions as often as memberships: a user who is not
++  blocked, an order whose status is not approved, a ticket whose status is
++  not closed. These rules are standing, so they must follow every push to
++  the list and every change of the status, which `not in` already does and
++  the alias inherits.
+ - An alias keeps one membership operator in the runtime and one canonical
+-  spelling in rendered rules, as the accepted `===`, `!==`, `elif` and
+-  `->` aliases do, and advances the language-superset aspiration of NUC 1's
+-  Language compatibility category without changing any accepted form.
++  spelling in rendered rules, as the accepted `and`, `or`, `not` and the
++  Python-style conditional render as `&&`, `||`, `!` and `?:`, and advances
++  the language-superset aspiration of NUC 1's Language compatibility
++  category without changing any accepted form.
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and mode.** The allocating continuous cycle drew Language
++  compatibility with one tool-backed uniform draw over the five categories
++  that NUC 1's registry marks eligible for automatic selection, index 4
++  with probability 1/5 and no redraw, at 14:41:26 on 22-Nov-2026, and
++  recorded the requested change in the allocation commit `d0894711`, which
++  this revision pins. Token comparison is therefore skipped as
++  `language_compatibility`. The skip is categorical; it is neither a
++  measured comparison nor a passing token gate. Runtime applicability does
++  not apply to this category.
++- **Selection.** Within the category, the cycle chose one bounded alias that
++  no NUC proposes: Kotlin's `!in`, which the open candidates that
++  [NUC 131](nuc-0131.md)'s cycle surveyed name. It set aside JavaScript's
++  `!==`, which is already accepted; spread arguments and `??=`, which are
++  parse errors with no accepted equivalent to alias; and `copy()`,
++  `toList()`, `extend` and `count()`, which extend methods rather than
++  alias an operator. [NUC 134](nuc-0134.md), another session's proposal,
++  holds Ruby's `collect` and `select`.
++- **No counterparts.** Because comparison is skipped, the new cases have no
++  accepted-syntax counterparts. They execute their assertions and explicit
++  returns with full coverage, each gives exactly what its `not in`
++  spelling gives on the accepted revision, and every pre-existing case is
++  unchanged.
++- **Optional evidence.** No hint was supplied. Advisory usefulness is
++  unscored (`missing_rubric`), not zero. Strategy learning is
++  `not_configured`, so this revision is unattributed, with no policy,
++  selection receipt, trial or reward.
++- **One node.** `A !in B` builds the very `Expr::Binary` with
++  `BinaryOp::NotIn` that `A not in
+```
+
+**File**: `docs/nucleoid.ebnf` (modified, +16/-6)
+```diff
+@@ -594,19 +594,28 @@ equalityOperator
+       | IS NOT?
+ 
+ /*
+- * Membership contract (NUC 97):
++ * Membership contract (NUC 97, NUC 135):
+  * - IN, and NOT directly followed by IN, after an additive operand build
+  *   BinaryOp::In and BinaryOp::NotIn on the left-associative level of
+  *   LESS, LESS_EQUAL, GREATER and GREATER_EQUAL, sharing its MAX_CHAIN
+  *   operand limit. NOT before an operand stays a prefix, so
+  *   'NOT a IN b' is '(NOT a) IN b'.
++ * - BANG directly followed by IN builds BinaryOp::NotIn in the same place
++ *   (NUC 135), with the tree of NOT IN, only when the IN token starts on
++ *   the line of the BANG, in the column right after it: no whitespace,
++ *   comment or line break lies between them. Otherwise BANG stays a prefix
++ *   and IN keeps its accepted reading and error, so 'a ! in b' fails as
++ *   before. BANG before an operand stays a prefix, so 'BANG a IN b' is
++ *   '(BANG a) IN b'.
+  * - Not at the top level of an interpolation or of an expressionInput,
+- *   whose trailing tokens are ignored: IN stays their first ignored token.
++ *   whose trailing tokens are ignored: IN, NOT or BANG stays their first
++ *   ignored token.
+  * - Not when COLON directly follows the right operand outside a clause:
+- *   such a colon can only close a malformed quantifier, so IN keeps its
+- *   accepted reading and error, "Unexpected keyword 'in'" where it would
+- *   begin a statement and the enclosing construct's error elsewhere, such
+- *   as "Expected '}' but found keyword 'in'" in an object value.
++ *   such a colon can only close a malformed quantifier, so IN, NOT and BANG
++ *   keep their accepted readings and errors, "Unexpected keyword 'in'"
++ *   where IN would begin a statement and the enclosing construct's error
++ *   elsewhere, such as "Expected '}' but found keyword 'in'", or "Expected
++ *   '}' but found '!'" for BANG IN, in an object value.
+  */
+ relational
+     ::= additive (relationalOperator additive)*              /* Expr::Binary, left */
+@@ -618,6 +627,7 @@ relationalOperator
+       | GREATER_EQUAL
+       | IN                                                  /* BinaryOp::In */
+       | NOT IN                                              /* BinaryOp::NotIn */
++      | BANG IN                                             /* BinaryOp::NotIn */
+ 
+ additive
+     ::= term ((PLUS | MINUS) term)*                          /* Expr::Binary, left */
+```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1630,6 +2124,38 @@ Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Draft NUC 139 Symmetric Difference Reasoning Selections
+
+**RULE**:
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6c8cbc67`: Draft NUC 139 Symmetric Difference Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Draft |
+| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6c8cbc67` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

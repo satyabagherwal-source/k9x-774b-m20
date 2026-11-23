@@ -12415,3 +12415,5 @@
 | `CYCLE-20261123-6ZE9` | `2026-11-23T18:16:01.713Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10090` | Yes (`6c7439ef...`) |
 | `CYCLE-20261123-GYYT` | `2026-11-23T18:23:47.717Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`104ed466...`) |
 | `CYCLE-20261123-HBHH` | `2026-11-23T18:24:03.941Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10091` | Yes (`a0b8f3fd...`) |
+| `CYCLE-20261123-RRUP` | `2026-11-23T18:32:11.713Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`8834d809...`) |
+| `CYCLE-20261123-S59M` | `2026-11-23T18:32:29.098Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10092` | Yes (`8dae7bf3...`) |

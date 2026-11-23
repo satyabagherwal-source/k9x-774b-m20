@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T18:24:09.416Z",
+  "last_updated": "2026-11-23T18:32:34.674Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24103,
+  "total_items": 24105,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c30e2d803adc2460c6ace0cb33bf944a8ce511ea0c4cd88cbe23dc0d7530c883",
+      "content_hash": "5620c7ffaed295a2b087fbfe2320bf7becadc81997c4419b957349964a9e8b85",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:54:20.566Z"
+      "persisted_at": "2026-11-23T18:32:34.674Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -229935,8 +229935,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5779103e",
-      "content_hash": "39713a76e7f5a733ba8c20d70c85f3d97a1a80161f1bd78cc6aa8fa67f266040",
+      "source_version": "6c8cbc67",
+      "content_hash": "8dae7bf3e901cd82db9715e5459b41b226c4f25dcc1450bc8176e9bc1c96f919",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230189,6 +230189,11 @@
           "number": 10011,
           "title": "Draft NUC 138 Reactive Secant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10092,
+          "title": "Draft NUC 139 Symmetric Difference Reasoning Selections",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230196,7 +230201,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T13:23:39.777Z",
+      "verified_at": "2026-11-23T18:32:28.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230238,10 +230243,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "5779103e",
-      "content_hash": "dfa05567875f5dccfe620a374d4f726638ffbaa22a09459336ff58efea3b1e5e",
+      "source_version": "6c8cbc67",
+      "content_hash": "2d3985473e43a1ecb7b2378ad0f9736795fa2e754c565f8f707e4e0458572fe8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T13:23:40.607Z"
+      "persisted_at": "2026-11-23T18:32:29.500Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230250,10 +230255,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "5779103e",
-      "content_hash": "fcb354070a23f66733ef2be1e280e9ca97703954962162b36102f88dfeb0ce53",
+      "source_version": "6c8cbc67",
+      "content_hash": "869b911c9693b9af5d8eedafc5c29512c16d2303f7fbf21d065ad9ea3c6e6186",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:23:41.058Z"
+      "persisted_at": "2026-11-23T18:32:29.674Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -231351,9 +231356,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "043d4f9a08d42de2e064926f60006ce0583c9dfb86bd617ab04043b41220e15d",
+      "content_hash": "9aa4db9959e7e71b8b14f5685ae5874e11a938bfb801fe04a53b885813bb067e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T15:38:08.983Z"
+      "persisted_at": "2026-11-23T18:32:33.584Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -231363,9 +231368,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "9afc986767d0e3d24eee56bf92839c5a98de4ad6e8650515f7303580d2354763",
+      "content_hash": "3d4f754b37632e2474c141e09629e07736c0c3a285ca8bd0836438a311f529e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:31:38.833Z"
+      "persisted_at": "2026-11-23T18:32:33.759Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -235497,7 +235502,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "d232a01eaf74d991ec746010cdeb188d2aae9daa34e611bb8f9b8a078c013f2e",
+      "content_hash": "8834d8093e5fdd4d3c81cacce058191b0922d23b224cb1850c0fe244dda6ef83",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [],
@@ -235506,7 +235511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T07:42:19.848Z",
+      "verified_at": "2026-11-23T18:32:11.491Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235523,9 +235528,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/embeddinggemma-2-GGUF Core Invariants",
       "repository": "unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "3bf9cb517487fd712e797b5d15be2caca818314b94a09b937c309ec4554ac56e",
+      "content_hash": "d6aecaeeba5e704557db6975a1f5ff12f74cab35a3958b3f76c39e108fe5da07",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T07:42:20.196Z"
+      "persisted_at": "2026-11-23T18:32:11.933Z"
     },
     "learn-github-apache-arrow": {
       "learning_id": "learn-github-apache-arrow",
@@ -235782,9 +235787,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-embeddinggemma-2-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-embeddinggemma-2-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc099f1c93df0d02c7927c2fce0522c6615b423227af5d56475b1d6b6da864fb",
+      "content_hash": "e3c4925b9600918dba9ecca2c413922fce6586962066e0ccd018935e4da06af1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T07:43:17.426Z"
+      "persisted_at": "2026-11-23T18:32:32.733Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants",
@@ -328473,6 +328478,32 @@
       "content_hash": "a35271681aeccb6ca3f983ed20bad020d9881676a0221be40969a4b5702cef4c",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T18:24:08.246Z"
+    },
+    "rule-10092": {
+      "learning_id": "rule-10092",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10092,
+      "title": "Draft NUC 139 Symmetric Difference Reasoning Selections",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "6c8cbc67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T18:32:28.891Z"
+    },
+    "candidate_directive-draft-nuc-139-symmetric-difference-reasoning-selections": {
+      "item_id": "candidate_directive-draft-nuc-139-symmetric-difference-reasoning-selections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S8LL-draft-nuc-139-symmetric-difference-reasoning-selections.md",
+      "title": "Draft NUC 139 Symmetric Difference Reasoning Selections",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "adae47ba321f7bc27b75b4cd1593004c1b4065928f5512fe03735cf36e60bbd1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T18:32:33.420Z"
     }
   },
   "ai-builder-brain": {

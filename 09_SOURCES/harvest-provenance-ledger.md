@@ -12448,3 +12448,5 @@ Every entry in this ledger must capture:
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `6002095f` | Multi-dimensional audit evidence | 2026-11-23T18:16:01.718Z |
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-23T18:23:47.722Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `520e2886` | Multi-dimensional audit evidence | 2026-11-23T18:24:03.946Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-23T18:32:11.718Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6c8cbc67` | Multi-dimensional audit evidence | 2026-11-23T18:32:29.102Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T18:24:09.249Z",
+  "last_updated": "2026-11-23T18:32:34.674Z",
   "total_records": 2438,
   "domains": {
     "A": {
@@ -8253,8 +8253,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c30e2d803adc2460c6ace0cb33bf944a8ce511ea0c4cd88cbe23dc0d7530c883",
-      "created_at": "2026-11-23T17:54:20.566Z"
+      "content_hash": "5620c7ffaed295a2b087fbfe2320bf7becadc81997c4419b957349964a9e8b85",
+      "created_at": "2026-11-23T18:32:34.674Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -15517,8 +15517,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "b2bb64dce88468e383046b30af21089e3024b9d92bee0faa6c3cb2fa1f19a719",
-      "created_at": "2026-11-23T15:37:32.377Z"
+      "content_hash": "2d3985473e43a1ecb7b2378ad0f9736795fa2e754c565f8f707e4e0458572fe8",
+      "created_at": "2026-11-23T18:32:29.500Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15967,8 +15967,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "043d4f9a08d42de2e064926f60006ce0583c9dfb86bd617ab04043b41220e15d",
-      "created_at": "2026-11-23T15:38:08.983Z"
+      "content_hash": "9aa4db9959e7e71b8b14f5685ae5874e11a938bfb801fe04a53b885813bb067e",
+      "created_at": "2026-11-23T18:32:33.584Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -17407,8 +17407,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/embeddinggemma-2-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-embeddinggemma-2-gguf-research-knowledge-intelligence-unsloth-embeddi.md",
       "repository": "unsloth/embeddinggemma-2-GGUF",
-      "content_hash": "3bf9cb517487fd712e797b5d15be2caca818314b94a09b937c309ec4554ac56e",
-      "created_at": "2026-11-19T07:42:20.196Z"
+      "content_hash": "d6aecaeeba5e704557db6975a1f5ff12f74cab35a3958b3f76c39e108fe5da07",
+      "created_at": "2026-11-23T18:32:11.933Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants",
@@ -17485,8 +17485,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-embeddinggemma-2-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-embeddinggemma-2-gguf-learnings-research-knowledge-intelligence-hf-un.md",
       "repository": "hf-unsloth-embeddinggemma-2-gguf-learnings",
-      "content_hash": "dc099f1c93df0d02c7927c2fce0522c6615b423227af5d56475b1d6b6da864fb",
-      "created_at": "2026-11-19T07:43:17.426Z"
+      "content_hash": "e3c4925b9600918dba9ecca2c413922fce6586962066e0ccd018935e4da06af1",
+      "created_at": "2026-11-23T18:32:32.733Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants",
