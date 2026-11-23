@@ -12435,3 +12435,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-23T17:37:46.143Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `a5022ef6` | Multi-dimensional audit evidence | 2026-11-23T17:37:58.657Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `b0a4509e` | Multi-dimensional audit evidence | 2026-11-23T17:38:00.214Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T17:46:11.625Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `1ab7cfb2` | Multi-dimensional audit evidence | 2026-11-23T17:46:15.357Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `1ba7ecf8` | Multi-dimensional audit evidence | 2026-11-23T17:46:21.159Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `5d881b7e` | Multi-dimensional audit evidence | 2026-11-23T17:46:25.606Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `0da7627b` | Multi-dimensional audit evidence | 2026-11-23T17:46:27.441Z |

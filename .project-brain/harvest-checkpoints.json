@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T17:38:00.223Z",
+  "last_updated": "2026-11-23T17:46:27.449Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "433dd0742bb8c0a7fd0baa947385e2162f6e9c8048942c24e85838d8ace66ff2",
-      "verified_at": "2026-11-23T13:23:35.423Z",
+      "content_hash": "462dfe686b5b89849aea3af8f18b007116e83dbd75b11a03b877254a4fb216d8",
+      "verified_at": "2026-11-23T17:46:25.614Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T13:23:35.423Z"
+      "last_updated": "2026-11-23T17:46:25.614Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "be099813a8bb20e468b0d79ed97d8dc427af04ef516b8a256f8591d5018d1025",
-      "verified_at": "2026-11-21T11:38:46.726Z",
+      "content_hash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
+      "verified_at": "2026-11-23T17:46:27.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T11:38:46.726Z"
+      "last_updated": "2026-11-23T17:46:27.449Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -9606,14 +9606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ataraxy-labs-sem",
-      "content_hash": "d57b19c73fe4a1d1d53ad8a8d88b45d825d2864b29a1ab86f8a4a0ba39095cab",
-      "verified_at": "2026-11-15T23:25:57.116Z",
+      "content_hash": "3653a1032fb920de821f1a7a0086b57178fbf3ac6ac8b29ddee98c746ba7db7a",
+      "verified_at": "2026-11-23T17:46:15.365Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T23:25:57.116Z"
+      "last_updated": "2026-11-23T17:46:15.365Z"
     },
     "komi-store/komi-store": {
       "repository": "komi-store/komi-store",
@@ -17211,14 +17211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
-      "content_hash": "d6e5f2e38511b789cd59c086387bbbea68394ef5b88eb44c8b39fb08f6da781f",
-      "verified_at": "2026-11-21T15:31:25.379Z",
+      "content_hash": "fda432b09445dd883eb8096608b5809c7a206a933df752e5fd557a4bc1d8afd1",
+      "verified_at": "2026-11-23T17:46:21.168Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T15:31:25.379Z"
+      "last_updated": "2026-11-23T17:46:21.168Z"
     },
     "LiquidAI/LFM3-VL-2B": {
       "repository": "LiquidAI/LFM3-VL-2B",
@@ -18950,15 +18950,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
-      "content_hash": "0695461a09fbf4caf98fe5293ffa519a561ab7ae2718b067feb9fb02dc95a6f4",
-      "verified_at": "2026-11-22T10:17:55.635Z",
+      "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
+      "content_hash": "10ac85247d9a564117431ff24affc71a7f8ad06149f6b7fe2c7340fa584aef78",
+      "verified_at": "2026-11-23T17:46:11.633Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:17:55.635Z"
+      "last_updated": "2026-11-23T17:46:11.633Z"
     },
     "autotrust/AutoTrust-Decider-Pro-35B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",

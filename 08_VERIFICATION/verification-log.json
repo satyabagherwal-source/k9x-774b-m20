@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-KD3J",
-    "timestamp": "2026-11-21T18:23:05.551Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "2c8a5b5e90132b903a11c5026b22df38b1e3a2f8f6071cd36673778b5efacf91",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-KDBE",
-    "timestamp": "2026-11-21T18:23:05.834Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-BMG4",
-    "timestamp": "2026-11-21T18:44:17.380Z",
-    "repository": "ccore/Qwen3.5-4B-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-    "contentHash": "1b8e7b0e162e5aba76f13ff8a2f6819dd0c05ce2a561bb94de7a0991c63c5f46",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-BN5C",
-    "timestamp": "2026-11-21T18:44:18.288Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "7174f376cf202eac6c4c7de804a96fb65f691c031a1b4d0d147462ac7f19e8a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-LOTR",
-    "timestamp": "2026-11-21T18:52:07.023Z",
-    "repository": "LiquidAI/LFM3-1.7B",
-    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-    "contentHash": "91d14176c4153ccca17c2b845ec706d09053b82776514df5a9587f182dae2a99",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-M285",
     "timestamp": "2026-11-21T18:52:24.389Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7415,81 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "c61f317cd54780d63a787c7772270b3c8936017cf1a8ce45668a3998d1a45c61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-4M5H",
+    "timestamp": "2026-11-23T17:46:11.621Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "10ac85247d9a564117431ff24affc71a7f8ad06149f6b7fe2c7340fa584aef78",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-4P15",
+    "timestamp": "2026-11-23T17:46:15.353Z",
+    "repository": "Ataraxy-Labs/sem",
+    "learningId": "learn-github-ataraxy-labs-sem",
+    "contentHash": "3653a1032fb920de821f1a7a0086b57178fbf3ac6ac8b29ddee98c746ba7db7a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-4TIB",
+    "timestamp": "2026-11-23T17:46:21.155Z",
+    "repository": "fabio-rovai/open-ontologies",
+    "learningId": "learn-github-fabio-rovai-open-ontologies",
+    "contentHash": "fda432b09445dd883eb8096608b5809c7a206a933df752e5fd557a4bc1d8afd1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-4WXU",
+    "timestamp": "2026-11-23T17:46:25.602Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "462dfe686b5b89849aea3af8f18b007116e83dbd75b11a03b877254a4fb216d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-4YCS",
+    "timestamp": "2026-11-23T17:46:27.436Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T17:38:03.473Z",
-    "lastVerified": "2026-11-23T17:38:03.473Z",
+    "lastChecked": "2026-11-23T17:46:30.697Z",
+    "lastVerified": "2026-11-23T17:46:30.697Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T17:11:56.809Z",
+    "lastChecked": "2026-11-23T17:46:22.703Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T17:11:56.809Z"
+    "lastVerified": "2026-11-23T17:46:22.703Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1240,14 +1240,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T13:23:34.102Z",
-    "lastVerified": "2026-11-23T13:23:34.102Z",
+    "lastChecked": "2026-11-23T17:46:24.519Z",
+    "lastVerified": "2026-11-23T17:46:24.519Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "433dd0742bb8c0a7fd0baa947385e2162f6e9c8048942c24e85838d8ace66ff2",
+    "contentHash": "462dfe686b5b89849aea3af8f18b007116e83dbd75b11a03b877254a4fb216d8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5699,22 +5699,21 @@
     "lastVerified": "2026-11-23T14:21:06.605Z"
   },
   "arangodb-arangodb": {
-    "name": "arangodb",
+    "name": "arangodb/arangodb",
     "officialUrl": "https://github.com/arangodb/arangodb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-22T14:17:23.522Z",
-    "lastVerified": "2026-11-22T14:17:23.522Z",
+    "lastChecked": "2026-11-23T17:46:26.379Z",
+    "lastVerified": "2026-11-23T17:46:26.379Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "be099813a8bb20e468b0d79ed97d8dc427af04ef516b8a256f8591d5018d1025",
+    "contentHash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6276e6f3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cloudwego-volo": {
     "name": "volo",
@@ -6486,11 +6485,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ataraxy-labs-sem": {
-    "name": "sem",
+    "name": "Ataraxy-Labs/sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
-    "lastChecked": "2026-11-22T05:39:37.276Z",
-    "revisionIdentifier": "5d74e1fe",
-    "lastVerified": "2026-11-22T05:39:37.276Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-23T17:46:14.257Z",
+    "lastVerified": "2026-11-23T17:46:14.257Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-ataraxy-labs-sem",
+    "contentHash": "3653a1032fb920de821f1a7a0086b57178fbf3ac6ac8b29ddee98c746ba7db7a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-google-vit-base-patch16-224": {
     "name": "google/vit-base-patch16-224",
@@ -7153,13 +7162,13 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T06:30:02.311Z",
-    "lastVerified": "2026-11-19T06:30:02.311Z",
+    "lastChecked": "2026-11-23T17:46:10.924Z",
+    "lastVerified": "2026-11-23T17:46:10.924Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "61c889413ad5d0b4ff1852d264671acc1154712698d4cf65a91a360409b7831c",
-    "promotedRulesCount": 3,
+    "contentHash": "10ac85247d9a564117431ff24affc71a7f8ad06149f6b7fe2c7340fa584aef78",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -7248,22 +7257,21 @@
     "lastVerified": "2026-11-22T09:25:50.799Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "open-ontologies",
+    "name": "fabio-rovai/open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T16:12:22.062Z",
-    "lastVerified": "2026-11-22T16:12:22.062Z",
+    "lastChecked": "2026-11-23T17:46:20.393Z",
+    "lastVerified": "2026-11-23T17:46:20.393Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "d6e5f2e38511b789cd59c086387bbbea68394ef5b88eb44c8b39fb08f6da781f",
+    "contentHash": "fda432b09445dd883eb8096608b5809c7a206a933df752e5fd557a4bc1d8afd1",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c2b64e1b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "libsql-libsql": {
     "name": "libsql",
@@ -10866,9 +10874,9 @@
   "relatedcode-progresshud": {
     "name": "ProgressHUD",
     "officialUrl": "https://github.com/relatedcode/ProgressHUD",
-    "lastChecked": "2026-11-20T17:29:04.754Z",
+    "lastChecked": "2026-11-23T17:46:12.665Z",
     "revisionIdentifier": "25471d6e",
-    "lastVerified": "2026-11-20T17:29:04.754Z"
+    "lastVerified": "2026-11-23T17:46:12.665Z"
   },
   "cheeriojs-dom-serializer": {
     "name": "cheeriojs/dom-serializer",

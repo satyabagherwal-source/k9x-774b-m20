@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T22:15:23.335Z",
+  "timestamp": "2026-11-23T17:46:32.566Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-fabio-rovai-open-ontologies-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fabio-rovai-open-ontologies-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T22:15:23.335Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T17:46:32.566Z`  
 > **Learning ID**: `LEARN-EVO-fabio-rovai-open-ontologies-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), E (Creative Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from fabio-rovai-open-ontologies-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source**: github ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
-> **Source Version**: `214e948e`  
+> **Source Version**: `1ba7ecf8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T22:14:49.647Z  
+> **Timestamp**: 2026-11-23T17:46:20.400Z  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T22:14:49.642Z  
+> **Harvest Timestamp**: 2026-11-23T17:46:20.393Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2905 stars
+- **Stars / Engagement**: 2950 stars
 
 ---
 
@@ -1754,11 +1754,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #398** (2026-11-13): **MCP handshake reports serverInfo as rmcp 3.9.0 instead of open-ontologies and its version**
-  *Symptoms*: ## What happens  Over MCP the server introduces itself as `rmcp`, with rmcp's version, instead of as Open Ontologies. `ServerHandler::get_info` in `src/server.rs` builds its `ServerConfig` without setting the server's name and version, so rmcp fills in its own crate name and version.  ## Repro  Start `open-ontologies serve` and send over stdio:  ```json {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"1"}}} ```  ## Expected  `result.serverInfo` names this server and its release, for example `{"name":"open-ontologies","version":"2.1.0"}`.  ## Actual  On `fe1e32b8`, release build, default features:  ```json {"name":"rmcp","version":"3.9.0"} ```  ## Why it matters  Clients show this name in their server lists and logs, and a bug report that quotes the handshake carries the SDK's version, not the engine's. Nothing in `src/` or `tests/` mentions `serverInfo`, so nothing would catch a change either way.  ## Suggested fix  Set the implementation name to `open-ontologies` and the version to `env!("CARGO_PKG_VERSION")` in `get_info`, and add a handshake test that pins both. 
+- **Issue #436** (2026-11-23): **Front-page knowledge-graph figure: labels sit on nodes, arrows and the panel border**
+  *Symptoms*: The front-page figure `docs/assets/knowledge-graph.svg` (and the zh-CN variant) is crowded, and several labels are printed on top of other things drawn:  - The amber `returned unasked · Accent is a Concept, never a class` badge runs through a row of graph nodes. - The 無 glyph lands on the nodes beside `Property`. - `this line is forged` and its red ring sit on nodes. - `exit 1, rdfs11 step refused`, `oo-resolution` and `FusionOfIntegralParts` cross the border of the ontology panel. - `problem.tsv` is crossed by the dotted curves that run back from the provers. - `Activity` covers the node beside it.  Every test passes, because `no_two_labels_sit_on_top_of_each_other` compares labels with labels only. The placement code in `docs/assets/knowledge-graph.py` checks a candidate against `placed` (other labels) and never against node circles, pipeline arrows or the panel edge. Badges rest at opacity 0.4, so whatever is under them shows through.  Expected: no label box intersects a node circle, a pipeline arrow, or the panel border, in either language, and a test fails when one does. 
 
-- **Issue #395** (2026-11-13): **stats: individuals count includes property declarations, datatypes and axiom nodes**
-  *Symptoms*: ## What happens  `stats` / `onto_stats` reports `individuals` as the number of distinct subjects that have any `rdf:type` other than `owl:Class`, `rdfs:Class`, `owl:ObjectProperty`, `owl:DatatypeProperty` or `owl:Ontology` (`individual_query` in `GraphStore::get_stats`, `src/graph.rs`). The filter runs per type triple, so a subject with one excluded type and one other type still counts.  Property declarations, datatypes and axiom nodes are therefore counted as individuals.  ## Repro  `stats_repro.ttl`:  ```turtle @prefix ex: <https://example.org/> . @prefix owl: <http://www.w3.org/2002/07/owl#> . @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .  ex:Person a owl:Class ;     rdfs:subClassOf [ a owl:Restriction ;         owl:onProperty ex:partOf ;         owl:someValuesFrom ex:Org ] . ex:Org a owl:Class .  ex:partOf a owl:ObjectProperty, owl:TransitiveProperty . ex:hasId a owl:DatatypeProperty, owl:FunctionalProperty . ex:note a owl:AnnotationProperty . ex:Code a rdfs:Datatype .  [] a owl:AllDisjointClasses ;     owl:members ( ex:Person ex:Org ) .  [] a owl:Axiom ;     owl:annotatedSource ex:Person ;     owl:annotatedProperty rdfs:subClassOf ;     owl:annotatedTarget ex:Org ;     rdfs:comment "an annotated axiom" .  ex:Alice a owl:NamedIndividual, ex:Person . ```  ```sh printf 'load stats_repro.ttl\nstats\n' | open-ontologies batch --no-connect - ```  ## Expected  `"individuals": 1` (only `ex:Alice`).  ## Actual  On main `fe1e32b8`, release build:  ```json {"classes":2,"d
+- **Issue #432** (2026-11-23): **vocab-check accepts a declared class used as a predicate, and a declared property used as rdf:type**
+  *Symptoms*: `vocab-check` checks whether a term is declared in the loaded ontology, but not whether it is used in the role it was declared in. A declared class used as a predicate, or a declared property used as the object of `rdf:type`, passes with `conforms: true`.  Repro (`3fd98f50`):  ``` # ont.ttl @prefix ex: <http://example.org/o/> . @prefix owl: <http://www.w3.org/2002/07/owl#> . ex:Sensor a owl:Class . ex:observes a owl:ObjectProperty .  # data.ttl @prefix ex: <http://example.org/o/> . @prefix d: <http://example.org/d/> . d:s1 a ex:observes . d:s2 ex:Sensor d:x . ```  ``` printf 'load ont.ttl\nvocab-check data.ttl\n' | open-ontologies batch --no-connect ```  Result: `"conforms": true, "hallucinated_terms": []`.  Expected: both terms reported. `ex:observes` is not a class and `ex:Sensor` is not a property, so neither use is declared. Reporting them under a separate field (for example `wrong_role_terms`) would keep the "not declared at all" case distinguishable.  Related asymmetry seen in the same run: a term declared only as an individual (for example `ex:UAV a skos:Concept`) used as `rdf:type` is reported in `hallucinated_terms`, so individuals are already treated as "not a class". Classes used as predicates and properties used as classes should get the same treatment. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1775,389 +1775,467 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d49478c` (2026-11-13)
-**Commit Message**: One changelog entry under Unreleased Fixed covers #382 and #402, including blank headers
+### Incident Patch 1: `1ba7ecf8` (2026-11-23)
+**Commit Message**: Merge pull request #437 from fabio-rovai/fix/hero-svg-crowding
 
-#402 added its entry under Added. Both changes are unreleased and
-describe one behaviour, so #382's entry now covers XLSX and the
-blank-header rule, and #402's line is gone from Added.
+No label on the front-page figure sits on a node, an arrow or the panel border (#436)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +9/-6)
+**File**: `CHANGELOG.md` (modified, +15/-0)
 ```diff
-@@ -6,8 +6,6 @@ All notable changes to Open Ontologies are documented here.
+@@ -192,6 +192,21 @@ All notable changes to Open Ontologies are documented here.
  
- ### Added
+ ### Fixed
  
--- **XLSX ingestion rejects duplicate headers instead of silently overwriting earlier columns.**
++- **No label on the front-page figure sits on a node, an arrow or the panel
++  border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
++  against other labels only, so the unasked-question badge ran through a row of
++  classes, the forged-line badge and the 無 glyph sat on nodes, three labels
++  crossed the ontology panel's border and the provers' dotted curves cut through
++  `problem.tsv`, while every test passed. Placement now goes through one `fits`
++  check (labels, node discs, pipeline arrows, the forged and unasked lines, the
++  panel edge); a badge with no clear candidate searches outward (the two beat badges in
++  the panel then get a leader back to their line), and the generator refuses to
++  draw if nothing fits. The canvas is
++  1200 x 830 (was 1100 x 780) so the panel has room, the forged line is marked
++  with a capsule instead of a circle that took in its neighbours, and
++  `no_label_sits_on_a_node_an_arrow_or_the_panel_edge` checks both languages
++  (30 violations on the old English figure, 0 now).
++
+ - **`vocab-check` checks that each term is used in the role it is declared in**
+   (#432). A class used as a predicate, or a property used as the object of
+   `rdf:type`, passed with `conforms: true` because the check only asked whether
+```
+
+**File**: `docs/assets/knowledge-graph.py` (modified, +337/-210)
+```diff
+@@ -94,7 +94,13 @@
+ #   + rdf:type                      5
+ #   + rdfs:domain, rdfs:range       1, and the file's own header
+ LINKING = (SUBCLASS, TYPE, DOMAIN, RANGE)
+-W, H = 1100, 780
++# 1200 x 830, up from 1100 x 780 (#436). At 1100 the pipeline's right-hand
++# labels ran into the ontology panel and the panel was too short for its 233
++# terms, so badges had nowhere to land that was not on a node. The extra width
++# goes to the gap between the pipeline and the panel, the extra height to the
++# panel; the pipeline itself stays where it was, because hero.js scales it from
++# these coordinates.
++W, H = 1200, 830
+ SEED = 20260919
+ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
+@@ -574,7 +580,9 @@ def lay(members):
+     # the rectangle the same way along its longer side, recurse. It fills the
+     # region with no leftover, which is the point — the earlier layout left the
+     # bottom-right of the canvas empty while fragments crowded the middle.
+-    OL, OR_, T, B = 470, W - 34, 138, H - 246
++    # The panel starts at 566 so its border (550) clears the widest label of
++    # the pipeline, `oo-resolution`, which ends near 533.
++    OL, OR_, T, B = 566, W - 34, 138, H - 246
+ 
+     def split(items, rect):
+         if len(items) == 1:
+@@ -784,7 +792,10 @@ def off_segment(k, i, j):
+         LEAN: (318, 168),
+         "Isabelle/HOL": (318, 250),
+         "Vampire": (318, 336),
+-        FORES: (420, 336),
++        # 444, not 420: the arrow from Vampire now starts after Vampire's name
++        # instead of running under it, and needs the length. hero.js pushes
++        # this node clear of that name on its own, so its layout is unchanged.
++        FORES: (444, 336),
+         "E": (318, 384),
+         "Z3": (318, 432),
+         "Mace4": (318, 480),
+@@ -926,6 +937,8 @@ def rad(i):
+     order = sorted(range(len(edges)), key=lambda e: (depth[edges[e][0]] + depth[edges[e][1]]) / 2)
+ 
+     layers = {"asserted": [], "certified": [], "rejected": []}
++    # Every pipeline arrow as drawn, tip included, so no label is placed on one.
++    pipe_segs = []
+     for e in order:
+         i, j, w = edges[e]
+         d = (depth[i] + depth[j]) / 2
+@@ -947,8 +960,14 @@ def rad(i):
+             vx, vy = bx - ax, by - ay
+             L = math.hypot(vx, vy) or 1.0
+             ux_, uy_ = vx / L, vy / L
+-            ax, ay = ax + ux_ * (rad(i) + 4.0), ay + uy_ * (rad(i) + 4.0)
++            lead_ = rad(i) + 4.0
++            if nodes[i] in PROGRAMS and nodes[j] in PROGRAMS and abs(ay - by) < 0.5:
++                # A judge feeding the judge beside it: the arrow leaves after the
++                # first one's name, which is drawn on that side, not under it.
++                lead_ = rad(i) + 1 + len(nodes[i]) * (10.5 * 0.55) + 8 + 4.0
++            ax, ay = ax + ux_ * lead_, ay + uy_ * lead_
+             bx, by = bx - ux_ * (rad(j) + 8.5), by - uy_ * (rad(j) + 8.5)
++            pipe_segs.append(((ax, ay), (bx + ux_ * 7.0, by + uy_ * 7.0)))
+         head = (f'<line x1="{ax:.1f}" y1="{ay:.1f}" x2="{bx:.1f}" y2="{by:.1f}" '
+                 f'stroke="{COLOR[w]}" stroke-width="{WIDTH[w] * (0.7 + 0.8 * d):.2f}" '
+                 f'opacity="{op:.2f}"')
+@@ -1051,67 +1070,164 @@ def rad(i):
+     # is to show who judged what. Ontology classes get a label only if they are
+     # busy and the chip lands clear, the way the component shows one on hover
+     # rather than all at once: a label per node is a grey wall.
+-    placed = []
 -
- - **`serve-http` can accept Host names other than localhost on `/mcp`.**
-   rmcp's Host check, which blocks DNS rebinding, has refused every `Host`
-   header except `localhost`, `127.0.0.1` and `::1` with 403 since rmcp 1.4.
-@@ -231,10 +229,15 @@ All notable changes to Open Ontologies are documented here.
-   Names that were already valid local names, including non-ASCII letters and
-   a leading digit, keep the IRIs they had.
- 
--- **CSV ingestion rejects a repeated header instead of dropping a column**
--  (#382). Each row became a map keyed by header, so a later column with the
--  same header overwrote the earlier one. The error names the header and its
--  column number.
-+- **CSV and XLSX ingestion reject a repeated header instead of dropping a
-+  column** (#382, #402). Each row became a map keyed by header, so a later
-+  column with the same header overwrote the earlier one. The error names the
-+  header and its column number. A blank header names no column, so blank
-+  headers are not duplicates: a file whose lines end in empty columns, as
-+  spreadsheet exports such as `name,,` do, still loads, with the empty
-+  columns skipped and left out of the column list that mapping generation
-+  reads. A value under a blank header has no name to go under and is refused
-+  with its column number.
- 
- - **OWL-DL reports name `owl:NegativePropertyAssertion` as unmodelled**
-   (#376). The tableau never read negative property assertions, so a
+-    def chip(i, label, color, size, weight, insist=False):
+-        """Place a label, trying a few positions before giving up.
+-
+-        `insist` is for the verification layer. An ontology class that cannot
+-        find room simply goes unlabelled, which is the right trade in a dense
+-        graph. A judge that goes unlabelled defeats the purpose of drawing the
+-        layer at all, so those get every candidate position and then take the
+-        last one regardless. Dropping `Isabelle/HOL` off the picture because a
+-        blue dot was in the way is not a tidier drawing, it is a wrong one."""
++    #
++    # WHERE A LABEL MAY GO (#436). Every label used to be checked against the
++    # other labels and against nothing else, and the figure passed every test
++    # while the amber badge ran through a row of nine classes, the forged-line
++    # badge sat on more, three labels straddled the panel's border and the
++    # dotted curves from the provers cut through `problem.tsv`. A badge rests at
++    # 0.4, so whatever it covers shows through it. Now `fits` refuses a box that
++    # touches another label, a node, an arrow of the pipeline, the forged line or
++    # the unasked question, or that crosses the panel's border. Nothing is placed
++    # blind: a label with no clear candidate searches outward from where it
++    # belongs, and if that fails too the figure is not drawn.
++    # `no_label_sits_on_a_node_an_arrow_or_
+```
+
+**File**: `tests/knowledge_graph_asset_test.rs` (modified, +208/-41)
+```diff
+@@ -668,56 +668,223 @@ fn the_unasked_beat_comes_from_the_mu_run() {
+ /// stricter rule is a few pixels of layout freedom.
+ #[test]
+ fn no_two_labels_sit_on_top_of_each_other() {
+-    let s = svg();
+-    let mut boxes: Vec<(f64, f64, f64, f64)> = Vec::new();
++    for name in FIGURES {
++        let s = figure(name);
++        let boxes = label_boxes(&s);
++        assert!(
++            boxes.len() > 20,
++            "{name}: only {} label boxes were found, so this test is not looking at the \
++             labels and cannot fail",
++            boxes.len()
++        );
++        let mut clashes = Vec::new();
++        for (i, a) in boxes.iter().enumerate() {
++            for b in &boxes[i + 1..] {
++                let ix = a.2.min(b.2) - a.0.max(b.0);
++                let iy = a.3.min(b.3) - a.1.max(b.1);
++                if ix > 0.5 && iy > 0.5 {
++                    clashes.push(format!(
++                        "  {:?} and {:?} share {ix:.0}x{iy:.0} pixels",
++                        a, b
++                    ));
++                }
++            }
++        }
++        assert!(
++            clashes.is_empty(),
++            "{name}: {} pair(s) of labels overlap, so the drawing prints two sentences \
++             through each other:\n{}\n\nEvery badge is placed by trying candidate positions \
++             against `placed`; one that overlaps is one that was placed blind.",
++            clashes.len(),
++            clashes.join("\n")
++        );
++    }
++}
++
++/// Both published figures. The Chinese one is laid out by the same code with
++/// wider strings, so it is where a badge runs out of room first.
++const FIGURES: [&str; 2] = ["knowledge-graph.svg", "knowledge-graph.zh-CN.svg"];
++
++fn figure(name: &str) -> String {
++    std::fs::read_to_string(repo().join("docs/assets").join(name))
++        .unwrap_or_else(|_| panic!("read docs/assets/{name}"))
++}
++
++/// Every opening tag `<name ...>` in the document, attributes included.
++fn open_tags<'a>(s: &'a str, name: &str) -> Vec<&'a str> {
++    let pat = format!("<{name} ");
++    let mut out = Vec::new();
+     let mut at = 0usize;
+-    while let Some(i) = s[at..].find("<rect x=\"") {
++    while let Some(i) = s[at..].find(&pat) {
+         let start = at + i;
+-        let Some(end) = s[start..].find("/>") else { break };
+-        let tag = &s[start..start + end + 2];
+-        at = start + end + 2;
+-        // Label chips and badges only: the legend panel and the colour swatches
+-        // are neither rounded nor this colour.
+-        if !tag.contains("fill=\"#020617\"") || !tag.contains("rx=\"") {
+-            continue;
++        let Some(end) = s[start..].find('>') else { break };
++        out.push(&s[start..start + end + 1]);
++        at = start + end + 1;
++    }
++    out
++}
++
++/// A numeric attribute. Matched with the leading space, so `x` never reads the
++/// `x` inside `rx` and `r` never reads the one inside `cx`.
++fn num_attr(tag: &str, k: &str) -> Option<f64> {
++    let key = format!(" {k}=\"");
++    let i = tag.find(&key)? + key.len();
++    tag[i..].split('"').next()?.parse().ok()
++}
++
++/// The box of every label chip and badge: a rounded `#020617` rectangle with
++/// text over it. The legend panel and the colour swatches are neither. Plus
++/// the 無 of the sixth beat, which is writing without a box: one em wide, its
++/// ink from 0.9 em above the baseline to 0.15 below.
++fn label_boxes(s: &str) -> Vec<(f64, f64, f64, f64)> {
++    let mut out: Vec<(f64, f64, f64, f64)> = open_tags(s, "rect")
++        .into_iter()
++        .filter(|t| t.contains("fill=\"#020617\"") && t.contains(" rx=\""))
++        .filter_map(|t| {
++            let (x, y) = (num_attr(t, "x")?, num_attr(t, "y")?);
++            Some((x, y, x + num_attr(t, "width")?, y + num_attr(t, "height")?))
++        })
++        .collect();
++    if let Some(end) = s.find("無</text>") {
++        let start = s[..end].rfind("<text ").expect("the 無 is in a <text>");
++        let tag = &s[start..start + s[start..].find('>').unwrap()];
++        let (x, y, f) = (
++            num_attr(tag, "x").expect("無 x"),
++            num_attr(tag, "y").expect("無 y"),
++            num_attr(tag, "font-size").expect("無 font-size"),
++        );
++        out.push((x - f * 0.6, y - f * 0.9, x + f * 0.6, y + f * 0.15));
++    }
++    out
++}
++
++/// Points along every arrow of the pipeline, sampled every two units: the
++/// straight `<line>`s and the dotted `Q` curves that run back from the provers
++/// to the certificate. The pipeline is everything left of the ontology panel
++/// and above its bottom edge; the step rail and the legend sit below that.
++fn pipeline_points(s: &str, panel: (f64, f64, f64, f64)) -> Vec<(f64, f64)> {
++    let (panel_x0, bottom) = (panel.0, panel.3);
++    let mut pts = Vec::new();
++    let mut run = |a: (f64, f64), b: (f64, f64), c: Option<(f64, f64)>| {
++        let n = (((b.0 - a.0).hypot(b.1 - a.1)) / 2.0).ceil().max(1.0) as usize;
++        for k in 0..=n {
++            let t = k as f64 / n as f64;
++            pts.pu
 ```
 
 ---
 
-### Incident Patch 2: `d64e867d` (2026-11-15)
-**Commit Message**: Merge PR #404 (dajiaohuang): Fix embedded label extraction
+### Incident Patch 2: `fc6215f2` (2026-11-23)
+**Commit Message**: Merge pull request #434 from fabio-rovai/fix/vocab-check-role-432
 
-**File**: `CHANGELOG.md` (modified, +4/-0)
+vocab-check reports a declared term used in the wrong role (#432)
+
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -165,6 +165,10 @@ All notable changes to Open Ontologies are documented here.
+@@ -192,6 +192,16 @@ All notable changes to Open Ontologies are documented here.
  
  ### Fixed
  
-+- **`onto_embed` uses the lexical value of an RDF label.** Language tags and
-+  escaped quotes are no longer passed to the embedding model as part of the
-+  label text.
++- **`vocab-check` checks that each term is used in the role it is declared in**
++  (#432). A class used as a predicate, or a property used as the object of
++  `rdf:type`, passed with `conforms: true` because the check only asked whether
++  the term was declared at all. Declared terms are now kept per role (typed
++  classes and subjects of `rdfs:subClassOf`; typed properties and subjects of
++  `rdfs:domain`, `rdfs:range` and `rdfs:subPropertyOf`), and a declared term used
++  in the other role is reported under a new `wrong_role_terms` field and fails
++  the check. Undeclared terms stay in `hallucinated_terms`, so the two cases
++  remain distinguishable. A term declared in both roles is accepted in both.
 +
- - **`stats` counts individuals by their type vocabulary, in both engines**
-   (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
-   `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
+ - **`reason --certificate` writes the same `derivations.tsv` on every run over
+   the same store** (#427). The conclusions were always the same set, but the
+   premises a step recorded (which intermediate class justifies a transitive
 ```
 
-**File**: `src/graph.rs` (modified, +34/-0)
+**File**: `src/output.rs` (modified, +37/-0)
 ```diff
-@@ -605,6 +605,40 @@ impl GraphStore {
-         self.select_with_dataset(query, true)
+@@ -694,6 +694,15 @@ fn render_vocab_check(v: &Value) -> String {
+         ));
+         push_lines(&mut out, terms, text);
+     }
++    let wrong_role = items(v, "wrong_role_terms");
++    if !wrong_role.is_empty() {
++        out.push_str(&format!(
++            "\n{} term(s) the ontology declares in the other role \
++             (a class used as a predicate, or a property used as a type):",
++            wrong_role.len()
++        ));
++        push_lines(&mut out, wrong_role, text);
++    }
+     out.push_str(&format!(
+         "\nChecked {} predicate(s) and {} type(s) against {} ontology term(s); namespaces policed: {}.",
+         text(&v["predicates_checked"]),
+@@ -1469,6 +1478,34 @@ mod tests {
+         assert!(render("load", payload).contains("Loaded 3 triple(s)"));
      }
  
-+    /// Run a SELECT over the union dataset and return its RDF terms without
-+    /// serialising them to display strings. Callers that consume lexical values
-+    /// (for example, labels used as embedding input) must not parse RDF syntax
-+    /// back out of `Term::to_string()`.
-+    pub fn sparql_select_union_terms(
-+        &self,
-+        query: &str,
-+    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
-+        let store = &self.store;
-+        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
-+        prepared.dataset_mut().set_default_graph_as_union();
-+        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
-+            anyhow::bail!("term selection needs a SELECT query");
-+        };
-+
-+        let vars: Vec<String> = solutions
-+            .variables()
-+            .iter()
-+            .map(|v| v.as_str().to_string())
-+            .collect();
-+        let mut rows = Vec::new();
-+        for solution in solutions {
-+            let solution = solution?;
-+            let mut row = std::collections::HashMap::new();
-+            for var in &vars {
-+                if let Some(term) = solution.get(var.as_str()) {
-+                    row.insert(var.clone(), term.clone());
-+                }
-+            }
-+            rows.push(row);
-+        }
-+        Ok(rows)
++    #[test]
++    fn vocab_check_lists_wrong_role_terms_apart_from_undeclared_ones() {
++        let rendered = render(
++            "vocab-check",
++            json!({
++                "conforms": false,
++                "hallucinated_terms": ["http://example.org/o#Persn"],
++                "wrong_role_terms": ["http://example.org/o#worksFor"],
++                "checked_namespaces": ["http://example.org/o#"],
++                "predicates_checked": 1,
++                "types_checked": 2,
++                "ontology_terms": 4
++            }),
++        );
++        assert!(
++            rendered
++                .contains("1 term(s) the ontology does not declare:\n  http://example.org/o#Persn"),
++            "got: {rendered}"
++        );
++        assert!(
++            rendered.contains(
++                "1 term(s) the ontology declares in the other role \
++                 (a class used as a predicate, or a property used as a type):\n  http://example.org/o#worksFor"
++            ),
++            "got: {rendered}"
++        );
 +    }
 +
-     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
-     /// union dataset. Returns the solutions per term, in the order given.
-     ///
+     #[test]
+     fn both_spellings_of_a_batch_command_find_one_renderer() {
+         assert!(renderer_for("vocab_check").is_some());
 ```
 
-**File**: `src/server.rs` (modified, +20/-21)
+**File**: `src/server.rs` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,8 @@
- 
- use std::sync::Arc;
- 
-+#[cfg(feature = "embeddings")]
-+use oxigraph::model::Term;
- use rmcp::{
-     ServerHandler, tool, tool_handler, tool_router,
-     prompt, prompt_handler, prompt_router,
-@@ -3196,31 +3198,28 @@ impl OpenOntologiesServer {
- 
-         // Enumerating the store's classes is a question about the whole store,
-         // so read the union of all graphs, not the default graph alone.
--        let result = match self.graph.sparql_select_union(classes_query) {
--            Ok(r) => r,
--            Err(e) => return Self::err_json(e),
--        };
--
--        let parsed: serde_json::Value = match serde_json::from_str(&result) {
--            Ok(v) => v,
-+        let rows = match self.graph.sparql_select_union_terms(classes_query) {
-+            Ok(rows) => rows,
-             Err(e) => return Self::err_json(e),
-         };
- 
-         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
--        if let Some(rows) = parsed["results"].as_array() {
--            for row in rows {
--                if let Some(iri) = row["class"].as_str() {
--                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
--                    let label = row["label"].as_str()
--                        .map(|s| s.trim_matches('"').to_string())
--                        .unwrap_or_else(|| {
--                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
--                                .map(|(_, n)| n.to_string())
--                                .unwrap_or_else(|| iri.clone())
--                        });
--                    class_labels.insert(iri, label);
--                }
--            }
-+        for row in rows {
-+            let Some(Term::NamedNode(class)) = row.get("class") else {
-+                continue;
-+            };
-+            let iri = class.as_str().to_string();
-+            let fallback = || {
-+                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
-+                    .map(|(_, n)| n.to_string())
-+                    .unwrap_or_else(|| iri.clone())
-+            };
-+            let label = match row.get("label") {
-+                Some(Term::Literal(label)) => label.value().to_string(),
-+                Some(other) => other.to_string(),
-+                None => fallback(),
-+            };
-+            class_labels.insert(iri, label);
-         }
- 
-         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
-```
-
-**File**: `tests/embedding_label_literal_test.rs` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+use open_ontologies::graph::GraphStore;
-+use oxigraph::model::Term;
-+
-+#[test]
-+fn union_term_query_keeps_label_lexical_value_and_language() {
-+    let graph = GraphStore::new();
-+    graph
-+        .load_turtle(
-+            r#"@prefix : <http://example.org/> .
-+               @prefix owl: <http://www.w3.org/2002/07/owl#> .
-+               @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+               :Canid a owl:Class ; rdfs:label "A \"quoted\" label"@en ."#,
-+            None,
-+        )
-+        .unwrap();
-+
-+    let rows = graph
-+        .sparql_select_union_terms(
-+            r#"SELECT DISTINCT ?class ?label WHERE {
-+                ?class a <http://www.w3.org/2002/07/owl#Class> .
-+                OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }
-+                FILTER(isIRI(?class))
-+            }"#,
-+        )
-+        .unwrap();
-+
-+    assert_eq!(rows.len(), 1);
-+    let label = match rows[0].get("label") {
-+        Some(Term::Literal(label)) => label,
-+        other => panic!("expected RDF literal, got {other:?}"),
-+    };
-+    assert_eq!(label.value(), "A \"quoted\" label");
-+    assert_eq!(label.language(), Some("en"));
-+}
-```
-
----
-
-### Incident Patch 3: `dd88f9b0` (2026-11-14)
-**Commit Message**: Fix embedded label extraction
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -165,6 +165,10 @@ All notable changes to Open Ontologies are documented here.
- 
- ### Fixed
- 
-+- **`onto_embed` uses the lexical value of an RDF label.** Language tags and
-+  escaped quotes are no longer passed to the embedding model as part of the
-+  label text.
-+
- - **`stats` counts individuals by their type vocabulary, in both engines**
-   (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
-   `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
-```
-
-**File**: `src/graph.rs` (modified, +34/-0)
-```diff
-@@ -605,6 +605,40 @@ impl GraphStore {
-         self.select_with_dataset(query, true)
+@@ -1554,7 +1554,7 @@ impl OpenOntologiesServer {
+             .unwrap_or_else(Self::err_json)
      }
  
-+    /// Run a SELECT over the union dataset and return its RDF terms without
-+    /// serialising them to display strings. Callers that consume lexical values
-+    /// (for example, labels used as embedding input) must not parse RDF syntax
-+    /// back out of `Term::to_string()`.
-+    pub fn sparql_select_union_terms(
-+        &self,
-+        query: &str,
-+    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
-+        let store = &self.store;
-+        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
-+        prepared.dataset_mut().set_default_graph_as_union();
-+        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
-+            anyhow::bail!("term selection needs a SELECT query");
-+        };
-+
-+        let vars: Vec<String> = solutions
-+            .variables()
-+            .iter()
-+            .map(|v| v.as_str().to_string())
-+            .collect();
-+        let mut rows = Vec::new();
-+        for solution in solutions {
-+            let solution = solution?;
-+            let mut row = std::collections::HashMap::new();
-+            for var in &vars {
-+                if let Some(term) = solution.get(var.as_str()) {
-+                    row.insert(var.clone(), term.clone());
-+                }
-+            }
-+            rows.push(row);
-+        }
-+        Ok(rows)
-+    }
-+
-     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
-     /// union dataset. Returns the solutions per term, in the order given.
-     ///
+-    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology. Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. Returns {conforms, hallucinated_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
++    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology, and declared in that role (a class used as a predicate, or a property used as rdf:type, is reported under wrong_role_terms). Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. Returns {conforms, hallucinated_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
+     async fn onto_vocab_check(&self, Parameters(input): Parameters<OntoVocabCheckInput>) -> String {
+         let data = if input.inline.unwrap_or(false) {
+             input.data.clone()
 ```
 
-**File**: `src/server.rs` (modified, +20/-21)
+**File**: `src/vocab_check.rs` (modified, +219/-29)
 ```diff
-@@ -3,6 +3,8 @@
+@@ -12,8 +12,12 @@
+ //!
+ //! `check_data_vocab` runs the complementary CLOSED-WORLD gate: every predicate
+ //! and every `rdf:type` object in the data whose namespace belongs to the ontology
+-//! must be *declared* in the ontology. Standard `rdf`/`rdfs`/`owl`/`xsd`/`sh`
+-//! vocabulary and the caller's own instance-data IRIs are never policed.
++//! must be *declared* in the ontology, and declared in the role it is used in: a
++//! predicate must be declared as a property and an `rdf:type` object as a class.
++//! An undeclared term is reported in `hallucinated_terms`; a declared term used in
++//! the other role (a class as a predicate, a property as a type) in
++//! `wrong_role_terms` (#432). Standard `rdf`/`rdfs`/`owl`/`xsd`/`sh` vocabulary and
++//! the caller's own instance-data IRIs are never policed.
+ //!
+ //! This mirrors `shacl::check_shapes` (which checks that proposed SHACL references
+ //! real terms) but points the same idea at generated data instead of shapes.
+@@ -35,10 +39,13 @@ const STD_NS: &[&str] = &[
  
- use std::sync::Arc;
+ #[derive(Serialize)]
+ pub struct VocabReport {
+-    /// True iff an ontology was present AND no hallucinated terms were found.
++    /// True iff an ontology was present AND no hallucinated or wrong-role terms were found.
+     pub conforms: bool,
+     /// Terms used in the data, in a policed namespace, but not declared in the ontology.
+     pub hallucinated_terms: Vec<String>,
++    /// Terms the ontology declares, used in the other role: a class used as a
++    /// predicate, or a property used as the object of `rdf:type` (#432).
++    pub wrong_role_terms: Vec<String>,
+     /// The namespaces that were policed (ontology's own namespaces + any caller-supplied).
+     pub checked_namespaces: Vec<String>,
+     pub predicates_checked: usize,
+@@ -90,22 +97,49 @@ fn select_iris(graph: &Arc<GraphStore>, query: &str, var: &str) -> anyhow::Resul
+     Ok(out)
+ }
  
-+#[cfg(feature = "embeddings")]
-+use oxigraph::model::Term;
- use rmcp::{
-     ServerHandler, tool, tool_handler, tool_router,
-     prompt, prompt_handler, prompt_router,
-@@ -3196,31 +3198,28 @@ impl OpenOntologiesServer {
- 
-         // Enumerating the store's classes is a question about the whole store,
-         // so read the union of all graphs, not the default graph alone.
--        let result = match self.graph.sparql_select_union(classes_query) {
--            Ok(r) => r,
--            Err(e) => return Self::err_json(e),
--        };
--
--        let parsed: serde_json::Value = match serde_json::from_str(&result) {
--            Ok(v) => v,
-+        let rows = match self.graph.sparql_select_union_terms(classes_query) {
-+            Ok(rows) => rows,
-             Err(e) => return Self::err_json(e),
-         };
- 
-         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
--        if let Some(rows) = parsed["results"].as_array() {
--            for row in rows {
--                if let Some(iri) = row["class"].as_str() {
--                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
--                    let label = row["label"].as_str()
--                        .map(|s| s.trim_matches('"').to_string())
--                        .unwrap_or_else(|| {
--                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
--                                .map(|(_, n)| n.to_string())
--                                .unwrap_or_else(|| iri.clone())
--                        });
--                    class_labels.insert(iri, label);
--                }
--            }
-+        for row in rows {
-+            let Some(Term::NamedNode(class)) = row.get("class") else {
-+                continue;
-+            };
-+            let iri = class.as_str().to_string();
-+            let fallback = || {
-+                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
-+                    .map(|(_, n)| n.to_string())
-+                    .unwrap_or_else(|| iri.clone())
-+            };
-+            let label = match row.get("label") {
-+                Some(Term::Literal(label)) => label.value().to_string(),
-+                Some(other) => other.to_string(),
-+                None => fallback(),
-+            };
-+            class_labels.insert(iri, label);
-         }
- 
-         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
-```
-
-**File**: `tests/embedding_label_literal_test.rs` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+use open_ontologies::graph::GraphStore;
-+use oxigraph::model::Term;
+-const CLASS_OR_PROP_FILTER: &str = r#"FILTER(
++const CLASS_FILTER: &str = r#"FILTER(
+     ?k = <http://www.w3.org/2002/07/owl#Class>
+- || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>
+- || ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
++ || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>)"#;
 +
-+#[test]
-+fn union_term_query_keeps_label_lexical_value_and_language() {
-+    let graph = GraphStore::new();
-+    graph
-+        .load_turtle(
-+            r#"@prefix : <http://example.org/> .
-+               @prefix owl: <http://www.w3.org/2002/07/owl#> .
-+               @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+               :Canid a owl:Class ; rdfs:label "A \"quoted\" label"@en ."#,
-+            None,
-+        )
-+        .unwrap();
++const PROPERTY_FILTER: &str = r#"FILTER(
++    ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#DatatypeProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#AnnotationProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#FunctionalProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#InverseFunctionalProperty>
+  || ?k = <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>)"#;
+ 
+-const DEFINED_BY_AXIOM_FILTER: &str = r#"FILTER(
++/// A subject of `rdfs:subClassOf` is a class.
++const CLASS_AXIOM_FILTER: &str =
++    r#"FILTER(?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>)"#;
 +
-+    let rows = graph
-+        .sparql_select_union_terms(
-+            r#"SELECT DISTINCT ?class ?label WHERE {
-+                ?class a <http://www.w3.org/2002/07/owl#Class> .
-+                OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }
-+                FILTER(isIRI(?class))
-+            }"#,
-+        )
-+        .unwrap();
-+
-+    assert_eq!(rows.len(), 1);
-+    let label = match rows[0].get("label") {
-+        Some(Term::Literal(label)) => label,
-+        other => panic!("expected RDF literal, got {other:?}"),
-+    };
-+    assert_eq!(label.value(), "A \"quoted\" label");
-+    assert_eq!(label.language(), Some("en"));
++/// A subject of `rdfs:domain`, `rdfs:range` or `rdfs:subPropertyOf` is a property.
++const PROPERTY_AXIOM_FILTER: &str = r#"FILTER(
+     ?p = <http://www.w3.org/2000/01/rdf-schema#domain>
+  || ?p = <http://www.w3.org/2000/01/rdf-schema#range>
+- || ?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>
+  || ?p = <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>)"#;
+ 
++/// Terms the ontology declares in one role: typed with one of `type_filter`'s
++/// kinds, or the subject of one of `axiom_filter`'s axioms.
++fn declared(
++    onto: &Arc<GraphStore>,
++    type_filter: &str,
++    axiom_filter: &str,
++) -> anyhow::Result<BTreeSet<String>> {
++    let mut out: BTreeSet<String> = BTreeSet::new();
++    out.extend(select_iris(
++        onto,
++        &format!("SELECT DISTINCT ?t WHERE {{ ?t a ?k . {type_filter} }}"),
++        "t",
++    )?);
++    out.extend(select_iris(
++        onto,
++        &format!("SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {axiom_filter} }}"),
++        "t",
++    )?);
++    Ok(out)
 +}
++
+ /// Closed-world vocabulary check of `data_ttl` against the loaded ontology `onto`.
+ /// `extra_ns` adds namespaces to police beyond the ontology's own.
+ /// Returns a JSON `VocabReport`.
+@@ -119,30 +153,20 @@ pub fn check_data_vocab(
+     data.load_turtle(data_ttl, None)
+         .map_err(|e| anyhow::anyhow!("data failed to parse as Turtle: {e}"))?;
+ 
+-    // 2. The ontology's declared vocabulary (full IRIs): typed classes/properties
+-    //    plus anything given a domain/range/subClassOf/subPropertyOf axiom.
+-    let mut onto_terms: BTreeSet<String> = BTreeSet::new();
+-    for t in select_iris(
+-        onto,
+-        &format!("SELECT DISTINCT ?t WHERE {{ ?t a ?k . {CLASS_OR_PROP_FILTER} }}"),
+-        "t",
+-    )? {
+-        onto_terms.insert(t);
+-    }
+-    for t in select_iris(
+-        onto,
+-        &format!("SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {DEFINED_BY_AXIOM_FILTER} }}"),
+-        "t",
+-    )? {
+-        onto_terms.insert(t);
+-    }
++    // 2. The ontology's declared vocabulary (full IRIs), kept per role: typed
++    //    classes/properties plus anything given a subClassOf (class) or a
++    //    domain/range/subPropertyOf (p
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #407** (2026-11-15): Land #404 and #405 from @dajiaohuang (@fabio-rovai)
-- **PR #405** (2026-11-15): Serialize ontology load and unload transitions (@dajiaohuang)
-- **PR #404** (2026-11-15): Fix embedded label extraction (@dajiaohuang)
-- **PR #403** (2026-11-15): Land #402 from @dajiaohuang; blank headers are not duplicates (@fabio-rovai)
-- **PR #402** (2026-11-15): Reject duplicate XLSX headers (@dajiaohuang)
-- **PR #401** (2026-11-13): Land #399 and #400 from @dajiaohuang, and #397 (@fabio-rovai)
+- **PR #437** (2026-11-23): No label on the front-page figure sits on a node, an arrow or the panel border (#436) (@fabio-rovai)
+- **PR #434** (2026-11-23): vocab-check reports a declared term used in the wrong role (#432) (@fabio-rovai)
+- **PR #431** (2026-11-20): README front page shows the dark knowledge-graph figure; the hand-drawn version is linked (@fabio-rovai)
+- **PR #430** (2026-11-20): Certificates are byte-stable across runs (#427); the README figure's red edge is a forgery oo-cert really refused (#428) (@fabio-rovai)
+- **PR #429** (2026-11-20): The replay's 3D legend is true of its graph: a certified ies-core run three checkers judged (#425) (@fabio-rovai)
+- **PR #426** (2026-11-20): Errors are valid JSON everywhere; Studio refresh, findings, auto-save and live 3D fixes (#420 to #424) (@fabio-rovai)
 
 ---
 
@@ -2177,13 +2255,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. One changelog entry under Unreleased Fixed covers #382 and #402, including blank
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d49478c`: One changelog entry under Unreleased Fixed covers #382 and #402, including blank headers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ba7ecf8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2191,30 +2269,31 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **CSV and XLSX ingestion reject a repeated header instead of dropping a
-  column** (#382, #402). Each row became a map keyed by header, so a later
-  column with the same header overwrote the earlier one. The error names the
-  header and its column number. A blank header names no column, so blank
-  headers are not duplicates: a file whose lines end in empty columns, as
-  spreadsheet exports such as `name,,` do, still loads, with the empty
-  columns skipped and left out of the column list that mapping generation
-  reads. A value under a blank header has no name to go under and is refused
-  with its column number.
+- **No label on the front-page figure sits on a node, an arrow or the panel
+  border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
+  against other labels only, so the unasked-question badge ran through a row of
+  classes, the forged-line badge and the 無 glyph sat on nodes, three labels
+  crossed the ontology panel's border and the provers' dotted curves cut through
+  `problem.tsv`, while every test passed. Placement now goes through one `fits`
+  check (labels, node discs, pipeline arrows, the forged and unasked lines, the
+  panel edge); a badge with no clear candidate searches outward (the two beat badges in
+  the panel then get a leader back to their line), and the generator refuses to
+  draw if nothing fits. The canvas is
+  1200 x 830 (was 1100 x 780) so the panel has room, the forged line is marked
+  with a capsule instead of a circle that took in its neighbours, and
+  `no_label_sits_on_a_node_an_arrow_or_the_panel_edge` checks both languages
+  (30 violations on the old English figure, 0 now).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- **XLSX ingestion rejects duplicate headers instead of silently overwriting earlier columns.**
-
-- **CSV ingestion rejects a repeated header instead of dropping a column**
-  (#382). Each row became a map keyed by header, so a later column with the
-  same header overwrote the earlier one. The error names the header and its
-  column number.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d49478c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ba7ecf8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

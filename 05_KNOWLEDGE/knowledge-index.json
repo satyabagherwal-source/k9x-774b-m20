@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T17:38:05.502Z",
+  "last_updated": "2026-11-23T17:46:33.063Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24086,
+  "total_items": 24093,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "e655ebd9",
-      "content_hash": "7432ae12541000320d10c8c97de65760e79393182da7ea609a5af477cbb11ed0",
+      "source_version": "5d881b7e",
+      "content_hash": "3be8f85fd05695df28a81a235399206010510772230af2e31b1282fd394835d0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T13:23:35.930Z"
+      "persisted_at": "2026-11-23T17:46:26.017Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "e655ebd9",
-      "content_hash": "8cbb70d88b4f14296b368ece0313ca0321342efe5701e10902e50849b8a6c68a",
+      "source_version": "5d881b7e",
+      "content_hash": "6af94f45c377c902fda9325fb0235ef802b6f74b32df1a23e8ea060cd672188b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:23:36.158Z"
+      "persisted_at": "2026-11-23T17:46:26.193Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -220426,13 +220426,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-G0UM-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-52EO-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "mlua-rs-mlua-learnings",
+      "repository": "fabio-rovai-open-ontologies-learnings",
       "source_version": "HEAD",
-      "content_hash": "286965aa4b4224e3b6dfa3c99e8c492640ee9762c0794e51fcd08e31d8c5c250",
+      "content_hash": "128b97ebf82ab7e6e09bbc6c7d95a5c0f947fcfdca0b86c4d0310b7f67931aa4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T16:03:05.426Z"
+      "persisted_at": "2026-11-23T17:46:32.691Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -220571,8 +220571,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "e655ebd9",
-      "content_hash": "433dd0742bb8c0a7fd0baa947385e2162f6e9c8048942c24e85838d8ace66ff2",
+      "source_version": "5d881b7e",
+      "content_hash": "462dfe686b5b89849aea3af8f18b007116e83dbd75b11a03b877254a4fb216d8",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220690,6 +220690,11 @@
           "number": 10045,
           "title": "test(transport): give the QUIC breaker backoff tests their own state",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10086,
+          "title": "a failed secret read no longer reaches delegates as 'not found'",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220697,7 +220702,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T13:23:35.143Z",
+      "verified_at": "2026-11-23T17:46:25.389Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233033,8 +233038,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "6276e6f3",
-      "content_hash": "be099813a8bb20e468b0d79ed97d8dc427af04ef516b8a256f8591d5018d1025",
+      "source_version": "0da7627b",
+      "content_hash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -233077,6 +233082,11 @@
           "number": 9772,
           "title": "Empirical Invariant Guard in User.cpp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10087,
+          "title": "Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233084,7 +233094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:38:46.469Z",
+      "verified_at": "2026-11-23T17:46:27.228Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233126,10 +233136,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "repository": "arangodb/arangodb",
-      "source_version": "6276e6f3",
-      "content_hash": "4512afe82aaec654217c86d1184bd05f0f4695a778303194fcc720b625750545",
+      "source_version": "0da7627b",
+      "content_hash": "487c9f4ccdb6477420fee92419d72fe6fc23c085d0a0d1cda0d055d1b2a71feb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T11:38:47.181Z"
+      "persisted_at": "2026-11-23T17:46:27.844Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb",
@@ -233138,10 +233148,10 @@
       "relative_path": "08_VERIFICATION/arangodb-arangodb-verification-protocol-empirical-defect-shield-for-arangodb-ara.md",
       "title": "Verification Protocol: Empirical Defect Shield for arangodb/arangodb",
       "repository": "arangodb/arangodb",
-      "source_version": "6276e6f3",
-      "content_hash": "4810468e3c26cdb3c8948fb0e7792b829c1de9b61761f7fefd83459726b65d3f",
+      "source_version": "0da7627b",
+      "content_hash": "9c2a40716373092221d3f5cbe7fa6ee0fe4ecf5e2f74cccc25d5f8e9dee177f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:38:47.375Z"
+      "persisted_at": "2026-11-23T17:46:28.032Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -234400,7 +234410,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "61c889413ad5d0b4ff1852d264671acc1154712698d4cf65a91a360409b7831c",
+      "content_hash": "10ac85247d9a564117431ff24affc71a7f8ad06149f6b7fe2c7340fa584aef78",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -234425,7 +234435,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T06:33:00.091Z",
+      "verified_at": "2026-11-23T17:46:11.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234438,13 +234448,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-research-knowledge-intelligence-au.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-research-knowledge-intelligence-autotrust-autotrust-deci.md",
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "source_version": "hf-autotrust-autotrust-decider-pro-vision-27b",
-      "content_hash": "8c85fccfe535b2fb95d059cc659f6f26968d9548c9c7ee2cc6ee8f7dd48d8fe9",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "content_hash": "a5ceac28787979f14f6abbf82fb3e5ed40debfa957140e9933b6120d971d7ee9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T10:17:55.860Z"
+      "persisted_at": "2026-11-23T17:46:11.844Z"
     },
     "candidate_directive-ci-remove-atomics-flags-from-wasm32-wasip1-job": {
       "item_id": "candidate_directive-ci-remove-atomics-flags-from-wasm32-wasip1-job",
@@ -234490,9 +234500,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-27b-vl-learnings Core Invariants",
       "repository": "hf-autotrust-jev-27b-vl-learnings",
       "source_version": "HEAD",
-      "content_hash": "6cba7b1db1b8d4a59c311b2428d20a9a12690d7d7ac37d7422460f6e778521e5",
+      "content_hash": "c2f14d6eb51029684a22dfd6cd294c08a65c96689e6954bccc761607a707a33d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T16:43:51.275Z"
+      "persisted_at": "2026-11-23T17:46:32.095Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant",
@@ -240000,14 +240010,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "3ee61a86",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "1ba7ecf8",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-22T23:33:17.907Z"
+      "verified_at": "2026-11-23T17:46:20.957Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -252145,11 +252155,16 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "c2b64e1b",
-      "content_hash": "d6e5f2e38511b789cd59c086387bbbea68394ef5b88eb44c8b39fb08f6da781f",
+      "source_version": "1ba7ecf8",
+      "content_hash": "fda432b09445dd883eb8096608b5809c7a206a933df752e5fd557a4bc1d8afd1",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
+        {
+          "number": 8545,
+          "title": "Empirical Invariant Guard in CHANGELOG.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8659,
           "title": "One changelog entry under Unreleased Fixed covers #382 and #402, including blank",
@@ -252176,7 +252191,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:31:25.183Z",
+      "verified_at": "2026-11-23T17:46:20.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252218,10 +252233,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-fabio-rovai-open-ontologies-architecture-intelligence-fabio-rovai-open-ontologie.md",
       "title": "Architecture Intelligence: fabio-rovai/open-ontologies Core Invariants",
       "repository": "fabio-rovai/open-ontologies",
-      "source_version": "214e948e",
-      "content_hash": "3d2e1dbc0f4409c7964bab4ac46383d806ea9168db95a2ed276c1982aeaa279c",
+      "source_version": "1ba7ecf8",
+      "content_hash": "a7acbd977133c0cf45a1a0451875152434f94cd8542d175c3f4b2742d77c580c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:14:50.810Z"
+      "persisted_at": "2026-11-23T17:46:21.566Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fabio-rovai-open-ontologies": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fabio-rovai-open-ontologies",
@@ -252230,10 +252245,10 @@
       "relative_path": "08_VERIFICATION/fabio-rovai-open-ontologies-verification-protocol-empirical-defect-shield-for-fa.md",
       "title": "Verification Protocol: Empirical Defect Shield for fabio-rovai/open-ontologies",
       "repository": "fabio-rovai/open-ontologies",
-      "source_version": "c2b64e1b",
-      "content_hash": "f4348b82b7083ce78bbd8d9fd1eb55d36e5d68ab7516f7ba5c863302ec9a3ed3",
+      "source_version": "1ba7ecf8",
+      "content_hash": "0cdda82344da04b3ce394e9ddbd8a9e3cf13cba4e17c41fdb739d9b9379d195d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:31:25.848Z"
+      "persisted_at": "2026-11-23T17:46:21.743Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i",
@@ -252255,9 +252270,9 @@
       "title": "Architecture Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
       "repository": "fabio-rovai-open-ontologies-learnings",
       "source_version": "HEAD",
-      "content_hash": "e119d2ecada51b85838309228c74d3d23ab08f1da3c4c95f2187f6450155dfd4",
+      "content_hash": "d38da7c1afde01405b5a09af9225120b25275f40bce149110fe8d468fef7f90d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:15:23.574Z"
+      "persisted_at": "2026-11-23T17:46:32.882Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fabio-rovai-open-ontologies-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fabio-rovai-open-ontologies-le",
@@ -252267,9 +252282,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fabio-rovai-open-ontologies-learnings",
       "repository": "fabio-rovai-open-ontologies-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d11c61146c597ca0e631cdf121a7ab3d73b01523e7d76311b235e7fa4db9e68",
+      "content_hash": "95cc129a02b2ec8b807687be6f838d156b1a4e3b7212488308a825534c0354c6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:32:06.592Z"
+      "persisted_at": "2026-11-23T17:46:33.063Z"
     },
     "learn-huggingface-cactus-compute-mirage": {
       "learning_id": "learn-huggingface-cactus-compute-mirage",
@@ -252746,17 +252761,23 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "5d74e1fe",
-      "content_hash": "d57b19c73fe4a1d1d53ad8a8d88b45d825d2864b29a1ab86f8a4a0ba39095cab",
+      "source_version": "1ab7cfb2",
+      "content_hash": "3653a1032fb920de821f1a7a0086b57178fbf3ac6ac8b29ddee98c746ba7db7a",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 10085,
+          "title": "setup script (Rust stable, crates vendored for offline tests)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T23:25:56.948Z",
+      "verified_at": "2026-11-23T17:46:15.131Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252784,10 +252805,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-ataraxy-labs-sem-research-knowledge-intelligence-ataraxy-labs-sem-core-invariant.md",
       "title": "Research & Knowledge Intelligence: Ataraxy-Labs/sem Core Invariants",
       "repository": "Ataraxy-Labs/sem",
-      "source_version": "5d74e1fe",
-      "content_hash": "c38f80f824e019470aac4f8ba7aaa5008ec65301d3402447c951e898d5187ff4",
+      "source_version": "1ab7cfb2",
+      "content_hash": "6d0018460de0eedf1b46c7f6411bfaa3f1c4a6f31436ab235281c3bcd303e5a7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T23:25:57.389Z"
+      "persisted_at": "2026-11-23T17:46:15.770Z"
     },
     "agent_contract-agent-contract-ataraxy-labs-sem-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-ataraxy-labs-sem-autonomous-specialist-persona",
@@ -252796,10 +252817,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/ataraxy-labs-sem-agent-contract-ataraxy-labs-sem-autonomous-specialist-persona.md",
       "title": "Agent Contract: Ataraxy-Labs/sem Autonomous Specialist Persona",
       "repository": "Ataraxy-Labs/sem",
-      "source_version": "5d74e1fe",
-      "content_hash": "dd4b8e1b35940162493b5c2e0e3c19bb2abba6c5c1be21ef49d6a06ccee24f58",
+      "source_version": "1ab7cfb2",
+      "content_hash": "0035d96d7beb5b98a490ed98f1731771dd439c5b95364407a22ff1548281917a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T23:25:57.506Z"
+      "persisted_at": "2026-11-23T17:46:15.947Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ataraxy-labs-sem": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ataraxy-labs-sem",
@@ -252808,10 +252829,10 @@
       "relative_path": "08_VERIFICATION/ataraxy-labs-sem-verification-protocol-empirical-defect-shield-for-ataraxy-labs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ataraxy-Labs/sem",
       "repository": "Ataraxy-Labs/sem",
-      "source_version": "5d74e1fe",
-      "content_hash": "f56630ca5d797b86425fdefaff886d180bf628c64cd42498400c88d609021aa7",
+      "source_version": "1ab7cfb2",
+      "content_hash": "0a4dbde7e5ecbfa56ce3147c4cf0bcc9ba39cdd6292c2810f58090c690bdf551",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:25:57.609Z"
+      "persisted_at": "2026-11-23T17:46:16.094Z"
     },
     "rule-8665": {
       "learning_id": "rule-8665",
@@ -252897,9 +252918,9 @@
       "title": "Research & Knowledge Intelligence: ataraxy-labs-sem-learnings Core Invariants",
       "repository": "ataraxy-labs-sem-learnings",
       "source_version": "HEAD",
-      "content_hash": "7646d07bdfd83f33650451eb0d2945526a1460d18a0f0136f44acb84f10df7e3",
+      "content_hash": "49a9ce32b773da6661c281ab96568e9f63e04577387acf3b3dda34d17abf0529",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T23:26:08.915Z"
+      "persisted_at": "2026-11-23T17:46:31.386Z"
     },
     "agent_contract-agent-contract-ataraxy-labs-sem-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-ataraxy-labs-sem-learnings-autonomous-specialist-persona",
@@ -252909,9 +252930,9 @@
       "title": "Agent Contract: ataraxy-labs-sem-learnings Autonomous Specialist Persona",
       "repository": "ataraxy-labs-sem-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9e1711d22d84131644140f795fe3ceaf54f8d3e449ab6788f39ffb5b415a9e5",
+      "content_hash": "1370ca665eec3f65f23ca71f78c0a9574ea9a00240d1ae5222123f64af21e35d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T23:26:09.033Z"
+      "persisted_at": "2026-11-23T17:46:31.574Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ataraxy-labs-sem-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ataraxy-labs-sem-learnings",
@@ -252921,9 +252942,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ataraxy-labs-sem-learnings",
       "repository": "ataraxy-labs-sem-learnings",
       "source_version": "HEAD",
-      "content_hash": "c357b50609142e116b96ccfe4de1fdb2291e8d77d812eea1d270892628cda08a",
+      "content_hash": "8c78ac25e34f46c4fc427a3655413cf9d93897fa1c6781fb084b5bc4ba074f7c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:26:09.141Z"
+      "persisted_at": "2026-11-23T17:46:31.720Z"
     },
     "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings": {
       "item_id": "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings",
@@ -328214,6 +328235,96 @@
       "content_hash": "9506896ffaf90bc0ac430e022dd550c6a54a2375a0416a528e0beb64cd719bb8",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T17:38:04.484Z"
+    },
+    "rule-10085": {
+      "learning_id": "rule-10085",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10085,
+      "title": "setup script (Rust stable, crates vendored for offline tests)",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "1ab7cfb2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:46:15.131Z"
+    },
+    "candidate_directive-setup-script-rust-stable-crates-vendored-for-offline-tests": {
+      "item_id": "candidate_directive-setup-script-rust-stable-crates-vendored-for-offline-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4P7T-setup-script-rust-stable-crates-vendored-for-offline-tests.md",
+      "title": "setup script (Rust stable, crates vendored for offline tests)",
+      "repository": "Ataraxy-Labs/sem",
+      "source_version": "1ab7cfb2",
+      "content_hash": "bfb619d742e829e9674289257eb2a6593fb974e901b08ad0428807d399edb933",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T17:46:15.597Z"
+    },
+    "rule-10086": {
+      "learning_id": "rule-10086",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10086,
+      "title": "a failed secret read no longer reaches delegates as 'not found'",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "5d881b7e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:46:25.389Z"
+    },
+    "candidate_directive-a-failed-secret-read-no-longer-reaches-delegates-as-not-found": {
+      "item_id": "candidate_directive-a-failed-secret-read-no-longer-reaches-delegates-as-not-found",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4X4E-a-failed-secret-read-no-longer-reaches-delegates-as-not-found.md",
+      "title": "a failed secret read no longer reaches delegates as 'not found'",
+      "repository": "freenet/freenet-core",
+      "source_version": "5d881b7e",
+      "content_hash": "0c3faca45d5aac43bb6d6fcebeac333d1ab505edf1ddc662bf76ef5acdff7f2f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T17:46:25.842Z"
+    },
+    "rule-10087": {
+      "learning_id": "rule-10087",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10087,
+      "title": "Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "0da7627b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:46:27.228Z"
+    },
+    "candidate_directive-rebuild-included-rclone-v1-75-1-with-go1-26-11-and-non-vulnerable-dependencies": {
+      "item_id": "candidate_directive-rebuild-included-rclone-v1-75-1-with-go1-26-11-and-non-vulnerable-dependencies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4YJ7-rebuild-included-rclone-v1-75-1-with-go1-26-11-and-non-vulnerable-dependencies.md",
+      "title": "Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies",
+      "repository": "arangodb/arangodb",
+      "source_version": "0da7627b",
+      "content_hash": "9cdb382b7abf690932e869d6a16492033d49a3be9969435efc0efdf3c112aab0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T17:46:27.668Z"
+    },
+    "candidate_directive-land-setup-script-rust-stable-crates-vendored-for-offline-tests": {
+      "item_id": "candidate_directive-land-setup-script-rust-stable-crates-vendored-for-offline-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-519E-land-setup-script-rust-stable-crates-vendored-for-offline-tests.md",
+      "title": "land: setup script (Rust stable, crates vendored for offline tests)",
+      "repository": "ataraxy-labs-sem-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e998f48392ab4360d2d8d82f439fc04fcfc8bed9ff0ed7e19e7b8aeae53d5dc4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T17:46:31.207Z"
     }
   },
   "ai-builder-brain": {

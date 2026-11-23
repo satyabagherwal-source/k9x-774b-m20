@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T17:38:05.163Z",
+  "last_updated": "2026-11-23T17:46:32.691Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3678,11 +3678,11 @@
       "learning_id": "learn-github-prometheus-prometheus"
     },
     {
-      "id": "CD-G0UM",
+      "id": "CD-52EO",
       "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_repo": "mlua-rs-mlua-learnings",
+      "source_repo": "fabio-rovai-open-ontologies-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-G0UM-empirical-invariant-guard-in-changelog-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-52EO-empirical-invariant-guard-in-changelog-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -50172,6 +50172,59 @@
       "source_repo": "provablehq-snarkos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C1FDEF-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-4P7T",
+      "directive_title": "setup script (Rust stable, crates vendored for offline tests)",
+      "source_repo": "Ataraxy-Labs/sem",
+      "source_commit": "1ab7cfb2",
+      "staged_file": "11_INBOX/candidate-directives/CD-4P7T-setup-script-rust-stable-crates-vendored-for-offline-tests.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-4X4E",
+      "directive_title": "a failed secret read no longer reaches delegates as 'not found'",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "5d881b7e",
+      "staged_file": "11_INBOX/candidate-directives/CD-4X4E-a-failed-secret-read-no-longer-reaches-delegates-as-not-found.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-4YJ7",
+      "directive_title": "Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies",
+      "source_repo": "arangodb/arangodb",
+      "source_commit": "0da7627b",
+      "staged_file": "11_INBOX/candidate-directives/CD-4YJ7-rebuild-included-rclone-v1-75-1-with-go1-26-11-and-non-vulnerable-dependencies.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-519E",
+      "directive_title": "land: setup script (Rust stable, crates vendored for offline tests)",
+      "source_repo": "ataraxy-labs-sem-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-519E-land-setup-script-rust-stable-crates-vendored-for-offline-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-0C441E",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fabio-rovai-open-ontologies",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0C441E-empirical-invariant-guard-in-changelog-m.md",
       "staged_date": "2026-11-23"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
   "source_version": "hf-autotrust-jev-27b-vl",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T16:43:18.539Z",
+  "timestamp": "2026-11-23T17:46:11.843Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [autotrust/AutoTrust-Decider-Pro-Vision-27B](https://huggingface.co/autotrust/JEV-27B-VL) (Revision: `hf-autotru`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T16:43:18.539Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T17:46:11.843Z`  
 > **Learning ID**: `learn-huggingface-autotrust-jev-27b-vl`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T16:38:22.450Z  
+> **Harvest Timestamp**: 2026-11-23T17:46:10.924Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1462022 downloads | 4856 likes
+- **Stars / Engagement**: 595416 downloads | 6293 likes
 
 ---
 

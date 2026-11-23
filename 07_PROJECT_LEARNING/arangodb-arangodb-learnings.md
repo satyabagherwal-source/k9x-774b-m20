@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `6276e6f3`  
+> **Source Version**: `0da7627b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T11:38:45.528Z  
+> **Timestamp**: 2026-11-23T17:46:26.384Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T11:38:45.522Z  
+> **Harvest Timestamp**: 2026-11-23T17:46:26.379Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14300 stars
+- **Stars / Engagement**: 14303 stars
 
 ---
 
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23716** (2026-11-20): **[COR-1300] Replaced pseudo-random code with a more secure source.**
-  *Symptoms*: ### Scope & Purpose  Some of the User code was using a non-secure random source. Fixed that by routing it to RAND_bytes from OpenSSL.  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [x] :hammer: Refactoring/simplification  #### Related Information  - [ ] Docs PR:  - [ ] Enterprise PR: - [X] Jira ticket: https://arangodb.atlassian.net/browse/COR-1300 - [ ] Design document:  
+- **Issue #23730** (2026-11-23): **[3.12][COR-1295] Fix use-after-move issues**
+  *Symptoms*: ### Scope & Purpose  - [x] :hankey: Bugfix 
 
-- **Issue #23714** (2026-11-20): **Remove some obvious uses of date and includes**
-  *Symptoms*: ### Scope & Purpose  A collection of removals of including `date.h` and `using namespace date` which werent actually used alongside obvious replacements by the direct equivalents from std::chrono.
+- **Issue #23721** (2026-11-23): **QA-826: add support for bucketizing testsuite**
+  *Symptoms*: backport of:  https://github.com/arangodb/arangodb/pull/23683
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,287 +1662,215 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6276e6f3` (2026-11-20)
-**Commit Message**: Merge pull request #23716 from arangodb/chore/cor-1300/change-user-non-crypto-random
+### Incident Patch 1: `0da7627b` (2026-11-23)
+**Commit Message**: Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies
 
-[COR-1300] Replaced pseudo-random code with a more secure source.
-
-**File**: `arangod/Auth/User.cpp` (modified, +13/-9)
+**File**: `CHANGELOG` (modified, +3/-3)
 ```diff
-@@ -29,13 +29,10 @@
- #include "Basics/system-functions.h"
- #include "Basics/tri-strings.h"
- #include "Basics/tryEmplaceHelper.h"
--#include "Cluster/ServerState.h"
- #include "GeneralServer/GeneralServerFeature.h"
- #include "Logger/LogMacros.h"
- #include "Logger/Logger.h"
- #include "Logger/LoggerStream.h"
--#include "Random/UniformCharacter.h"
--#include "RestServer/DatabaseFeature.h"
- #include "Ssl/SslInterface.h"
- #include "Transaction/Helpers.h"
- #include "VocBase/LogicalCollection.h"
-@@ -49,10 +46,6 @@ using namespace arangodb;
- using namespace arangodb::basics;
- using namespace arangodb::rest;
+@@ -1,6 +1,9 @@
+ 4.0.0 (XXXX-XX-XX)
+ ------------------
  
--namespace {
--UniformCharacter UCR(20);
--}  // namespace
--
- // create a hash in _outHash_ given a method like "sha1" and an input string.
- static ErrorCode HexHashFromData(std::string_view hashMethod,
-                                  std::string const& str, std::string& outHash) {
-@@ -141,7 +134,12 @@ auth::User auth::User::newUser(std::string const& user,
-   entry._username = user;
-   entry._passwordMethod = "sha256";
- 
--  std::string salt = UniformCharacter(8, "0123456789abcdef").random();
-+  auto rand = SslInterface::sslRandBytes(16);
-+  if (!rand.has_value()) {
-+    THROW_ARANGO_EXCEPTION_MESSAGE(TRI_ERROR_INTERNAL,
-+                                   "Could not generate random data");
-+  }
-+  std::string const salt = StringUtils::encodeHex(rand.value());
-   std::string hash;
-   auto res = HexHashFromData("sha256", salt + password, hash);
-   if (res != TRI_ERROR_NO_ERROR) {
-@@ -462,13 +460,19 @@ Result auth::User::createAccessToken(std::string const& name, double validUntil,
-     active = false;
-   }
- 
-+  auto rand = SslInterface::sslRandBytes(32);
-+  if (!rand.has_value()) {
-+    THROW_ARANGO_EXCEPTION_MESSAGE(TRI_ERROR_INTERNAL,
-+                                   "Could not generate random data");
-+  }
++* Rebuilt included rclone v1.75.1 with go1.26.11 and non-vulnerable
++  dependencies.
 +
-   VPackBuilder jwt;
-   {
-     VPackObjectBuilder o(&jwt, true);
-     o->add("e", uint64_t(validUntil));
-     o->add("c", uint64_t(now));
-     o->add("u", _username);
--    o->add("r", UCR.random());
-+    o->add("r", StringUtils::encodeHex(rand.value()));
-   }
+ * Updated ArangoDB Starter to v0.20.0-preview-22.
  
-   StringBuffer buffer;
+ * BTS-2098: Fix arangorestore failing with "duplicate value for `id` or
+@@ -79,9 +82,6 @@
+  - qs to 6.16.1 to resolve CVE-2026-82417, CVE-2026-82562 and
+    CVE-2026-110816
+ 
+-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+-  dependencies.
+-
+ * Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
+   when used with LIMIT and {fullCount: true}. The single result row was counted
+   twice: once when produced and again during the fullCount skip phase.
+```
+
+**File**: `VERSIONS` (modified, +3/-3)
+```diff
+@@ -6,8 +6,8 @@ GCC_LINUX "14.3.0"
+ CLANG_LINUX "22.1.8"
+ OPENSSL_LINUX "3.5.9"
+ USE_RCLONE "true"
+-RCLONE_GO "1.26.10-3e15daf_20261109131457"
++RCLONE_GO "1.26.11-eca128a_20261123161518"
+ RCLONE_VERSION "1.75.1"
+-RCLONE_SHA256_AMD64 "1f107ab7dfd836ccc7748d42d80796537e308101ace8fd17ae85dbe78993965d"
+-RCLONE_SHA256_ARM64 "d195faf74a5fac20bba18eb1688bf0d0de35b3064f9b7416ca1c7538beba8ccc"
++RCLONE_SHA256_AMD64 "97a7bad0788729096697da4cfae4fb8e3a36c1ae7d066abf19b0f2a5438a1549"
++RCLONE_SHA256_ARM64 "58263ef8e9c68dd7e773acc525dc74e1d4b22eddc4dc1ed44d167c29b4a44d71"
+ MINIMAL_DEBUG_INFO "On"
 ```
 
 ---
 
-### Incident Patch 2: `cab0fad4` (2026-11-20)
-**Commit Message**: Merge branch 'devel' into chore/cor-1300/change-user-non-crypto-random
+### Incident Patch 2: `4126b8d6` (2026-11-23)
+**Commit Message**: QA-826: add support for bucketizing testsuite (#23683)
 
-**File**: `arangod/Aql/ExecutionNode/WindowNode.cpp` (modified, +2/-0)
+* waitdata and vector index made this testsuite take significantly longer - split it in two
+
+* add a way to split buckets in multi-testsuites
+
+* shuffle
+
+* revert bucketizing of the testsuite
+
+* more thorough value check
+
+* more thorough value check
+
+---------
+
+Co-authored-by: Vadim Kondratev <[REDACTED_EMAIL]>
+
+**File**: `.circleci/src/config_lib.py` (modified, +6/-5)
 ```diff
-@@ -38,6 +38,8 @@
- #include <velocypack/Builder.h>
- #include <velocypack/Value.h>
+@@ -647,12 +647,13 @@ def _validate_buckets_constraints(self):
+         """Validate buckets usage rules."""
+         job_buckets = self.options.buckets
  
-+#include <date/date.h>
+-        # Multi-suite jobs with explicit buckets must use "auto"
+-        if len(self.suites) > 1 and job_buckets is not None:
+-            if job_buckets != "auto":
++        # Multi-suite jobs distribute their suites over the buckets, so there
++        # can't be more buckets than suites ("auto" means one suite per bucket)
++        if len(self.suites) > 1 and isinstance(job_buckets, int):
++            if job_buckets > len(self.suites):
+                 raise ValueError(
+-                    f"TestJob '{self.name}': Multi-suite jobs with buckets must use buckets='auto', "
+-                    f"got: {job_buckets}"
++                    f"TestJob '{self.name}': Multi-suite jobs can't have more buckets "
++                    f"({job_buckets}) than suites ({len(self.suites)})"
+                 )
+ 
+         # Single-suite jobs cannot use "auto"
+```
+
+**File**: `.circleci/src/output_generators/circleci.py` (modified, +3/-0)
+```diff
+@@ -655,6 +655,9 @@ def _apply_job_overrides(
+ 
+         if job.options.buckets == "auto" and len(filtered_suites) != len(job.suites):
+             bucket_count = len(filtered_suites)
++        elif bucket_count and job.is_multi_suite():
++            # suites are distributed over the buckets, never leave one empty
++            bucket_count = min(bucket_count, len(filtered_suites))
+ 
+         if bucket_count and bucket_count != 1:
+             job_dict["buckets"] = bucket_count
+```
+
+**File**: `.circleci/tests_unit/test_circleci_generator.py` (modified, +22/-0)
+```diff
+@@ -882,6 +882,28 @@ def test_create_test_job_auto_buckets_with_filtering(self):
+         # Should have 2 buckets (2 PR suites remaining after filter)
+         assert job_data["buckets"] == 2
+ 
++    def test_create_test_job_fixed_buckets_with_filtering(self):
++        """Test that fixed multi-suite buckets never exceed the remaining suites."""
++        gen = self.create_generator(full=False)  # Only PR tests
++        job = TestJob(
++            name="test_job",
++            suites=[
++                SuiteConfig(name="pr_suite1", requires=TestRequirements(full=False)),
++                SuiteConfig(name="pr_suite2", requires=TestRequirements(full=False)),
++                SuiteConfig(name="full_suite", requires=TestRequirements(full=True)),
++            ],
++            options=TestOptions(buckets=3),
++        )
++        build_config = BuildConfig(architecture=Architecture.X64)
 +
- using namespace arangodb;
- using namespace arangodb::aql;
- 
++        result = gen._create_test_job(
++            job, DeploymentType.SINGLE, build_config, ["build-job"]
++        )
++
++        job_data = result["run-linux-tests"]
++        assert job_data["suites"] == "pr_suite1,pr_suite2"
++        assert job_data["buckets"] == 2
++
+     def test_create_test_job_time_limit(self):
+         """Test that time limit is included."""
+         gen = self.create_generator()
 ```
 
-**File**: `arangod/Cluster/HeartbeatThread.cpp` (modified, +0/-1)
+**File**: `.circleci/tests_unit/test_config_lib.py` (modified, +13/-1)
 ```diff
-@@ -55,7 +55,6 @@
- #include "Utils/ExecContext.h"
- #include "VocBase/vocbase.h"
+@@ -420,7 +420,7 @@ def test_multi_suite_job(self):
+             (
+                 [SuiteConfig(name="boost"), SuiteConfig(name="resilience")],
+                 TestOptions(buckets=5),
+-                "must use buckets='auto'",
++                "can't have more buckets",
+             ),
+             (
+                 [SuiteConfig(name="boost")],
+@@ -434,6 +434,18 @@ def test_job_validation_errors(self, suites, options, error_match):
+         with pytest.raises(ValueError, match=error_match):
+             TestJob(name="test", suites=suites, options=options or TestOptions())
  
--#include <date/date.h>
- #include <velocypack/Iterator.h>
- 
- using namespace arangodb;
++    def test_multi_suite_job_with_fixed_buckets(self):
++        job = TestJob(
++            name="test-multi",
++            suites=[
++                SuiteConfig(name="boost"),
++                SuiteConfig(name="resilience"),
++                SuiteConfig(name="replication2"),
++            ],
++            options=TestOptions(buckets=2),
++        )
++        assert job.get_bucket_count() == 2
++
+     def test_mixed_allows_suite_without_explicit_deployment_type(self):
+         """Test mixed jobs allow suites without explicit deployment type."""
+         job = TestJob(
 ```
 
-**File**: `arangod/Indexes/Index.cpp` (modified, +0/-2)
+**File**: `js/client/modules/@arangodb/testutils/testing.js` (modified, +6/-7)
 ```diff
-@@ -43,15 +43,13 @@
- #include "Enterprise/VocBase/VirtualClusterSmartEdgeCollection.h"
- #endif
- 
--#include <date/date.h>
- #include <velocypack/Iterator.h>
- #include <velocypack/Utf8Helper.h>
- 
- #include <iostream>
- #include <limits>
- 
- using namespace std::chrono;
--using namespace date;
- 
- namespace {
- 
-```
-
-**File**: `lib/Basics/TimeString.h` (modified, +4/-4)
-```diff
-@@ -22,13 +22,13 @@
- 
- #pragma once
- 
-+#include <format>
- #include <chrono>
--#include "date/date.h"
- 
- inline std::string timepointToString(
-     std::chrono::system_clock::time_point const& t) {
--  return date::format("%Y-%m-%dT%H:%M:%SZ",
--                      std::chrono::floor<std::chrono::seconds>(t));
-+  return std::format("{0:%F}T{0:%T}Z",
-+                     std::chrono::floor<std::chrono::seconds>(t));
- }
- 
- inline std::string timepointToString(
-@@ -41,7 +41,7 @@ inline std::chrono::system_clock::time_point stringToTimepoint(
-   // FIXME: now copy :(
-   auto in = std::istringstream{std::string{s}};
-   auto target = std::chrono::system_clock::time_point{};
--  in >> date::parse("%Y-%m-%dT%H:%M:%SZ", target);
-+  in >> std::chrono::parse("%Y-%m-%dT%H:%M:%SZ", target);
- 
-   // FIXME: error handling would be nice.
-   if (!in.fail()) {
-```
-
-**File**: `lib/Basics/datetime.cpp` (modified, +1/-11)
-```diff
-@@ -35,6 +35,7 @@
- #include <utility>
- #include <vector>
- 
-+#include <date/date.h>
- #include <date/iso_week.h>
- 
- #include "Basics/NumberUtils.h"
-@@ -689,17 +690,6 @@ bool arangodb::basics::parseDateTime(std::string_view dateTime,
+@@ -414,25 +414,24 @@ function iterateTests(cases, options) {
      }
    }
  
--  // LOG_TOPIC("51643", TRACE, Logger::FIXME)
--  //           << "year: " << result.year
--  //           << ", month: " << result.month
--  //           << ", day: " << result.day
--  //           << ", hour: " << result.hour
--  //           << ", minute: " << result.minute
--  //           << ", second: " << result.second
--  //           << ", millisecond: " << result.millisecond
--  //           << ", tz hour: " << result.tzOffsetHour
--  //           << ", tz minute: " << result.tzOffsetMinute;
--
-   return true;
- }
- 
-```
-
-**File**: `lib/Basics/datetime.h` (modified, +0/-2)
-```diff
-@@ -27,8 +27,6 @@
- #include <string>
- #include <string_view>
- 
--#include <date/date.h>
--
- namespace arangodb {
- 
- using tp_sys_clock_ms = std::chrono::time_point<std::chrono::system_clock,
-```
-
-**File**: `lib/Logger/LogTimeFormat.cpp` (modified, +3/-4)
-```diff
-@@ -115,7 +115,6 @@ TimeFormat formatFromName(std::string const& name) {
- void writeTime(std::string& out, TimeFormat format,
-                std::chrono::system_clock::time_point tp,
-                std::chrono::system_clock::time_point startTp) {
--  using namespace date;
-   using namespace std::chrono;
- 
-   if (format == TimeFormat::Uptime || format == TimeFormat::UptimeMillis ||
-@@ -170,15 +169,15 @@ void writeTime(std::string& out, TimeFormat format,
-       // UTC datestring with milliseconds
-       arangodb::tp_sys_clock_us secs(
-           duration_cast<microseconds>(tp.time_since_epoch()));
--      auto days = floor<date::days>(secs);
--      auto ymd = date::year_month_day(days);
-+      auto days = floor<std::chrono::days>(secs);
-+      auto ymd = std::chrono::year_month_day(days);
-       appendNumber(uint64_t(static_cast<int>(ymd.year())), out, 4);
-       out.push_back('-');
-       appendNumber(uint64_t(static_cast<unsigned>(ymd.month())), out, 2);
-       out.push_back('-');
-       appendNumber(uint64_t(static_cast<unsigned>(ymd.day())), out, 2);
-       out.push_back('T');
--      auto day_time = make_time(secs - days);
-+      auto day_time = std::chrono::hh_mm_ss(secs - days);
-       appendNumber(uint64_t(day_time.hours().count()), out, 2);
-       out.push_back(':');
-       appendNumber(uint64_t(day_time.minutes().count()), out, 2);
-```
-
-**File**: `tests/Basics/LoggerTest.cpp` (modified, +6/-7)
-```diff
-@@ -31,7 +31,6 @@
- #include "Logger/LogMessage.h"
- #include "Logger/Logger.h"
- 
--#include <date/date.h>
- #include <format>
- 
- #include <filesystem>
-@@ -193,14 +192,14 @@ TEST_F(LoggerTest, testTimeFormats) {
-     sys_seconds startTp;
-     {
-       std::istringstream in{"2016-12-11 13:59:55"};
--      in >> date::parse("%F %T", startTp);
-+      in >> std::chrono::parse("%F %T", startTp);
+-  let testSuiteStart = 0;
+-  let testSuiteEnd = caselist.length;
++  let suiteIndexes = _.range(caselist.length);
+   let nTests = optionsList.length;
+   if (nTests > 1) {
+     if (options.testBuckets !== undefined && options.testBuckets !== "1/0") {
+       let n = options.testBuckets.split('/');
+       let r = parseInt(n[0]);
+       let s = parseInt(n[1]);
+-      if (r !== nTests) {
+-        throw new Error(`Number of buckets (${r}) must be equal the number of suites to run (${nTests})`);
++      if (isNaN(r) || isNaN(s) || r < 1 || s < 0 || s >= r || r > nTests) {
++        throw new Error(`Number of buckets (${r}) must not exceed the number of suites to run (${nTests})`);
+       }
+-      testSuiteStart = s;
+-      testSuiteEnd = s + 1;
++      // distribute the suites round robin over the buckets, like splitBuckets() does with testcases
++      suiteIndexes = suiteIndexes.filter(i => i % r === s);
+       options.testBuckets = undefined;
      }
+   }
  
-     // time point we are testing
-     sys_seconds tp;
-     {
-       std::istringstream in{"2016-12-11 14:02:43"};
--      in >> date::parse("%F %T", tp);
-+      in >> std::chrono::parse("%F %T", tp);
-     }
+   // running all tests
+-  for (let n = testSuiteStart; n < testSuiteEnd; ++n) {
++  for (const n of suiteIndexes) {
+     // required, because each different test suite may operate with a different set of servers!
+     flushInstanceInfo();
  
-     std::string out;
-@@ -264,17 +263,17 @@ TEST_F(LoggerTest, testTimeFormats) {
- 
-   {
-     // server start time point
--    date::sys_time<milliseconds> startTp;
-+    std::chrono::sys_time<milliseconds> startTp;
-     {
-       std::istringstream in{"2020-12-02 11:57:02.701"};
--      in >> date::parse("%F %T", startTp);
-+      in >> std::chrono::parse("%F %T", startTp);
-     }
- 
-     // time point we are testing
--    date::sys_time<milliseconds> tp;
-+    std::chrono::sys_time<milliseconds> tp;
-     {
-       std::istringstream in{"2020-12-02 11:57:26.004"};
--      in >> date::parse("%F %T", tp);
-+      in >> std::chrono::parse("%F %T", tp);
-     }
- 
-     std::string out;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23730** (2026-11-23): [3.12][COR-1295] Fix use-after-move issues (@mpoeter)
+- **PR #23721** (2026-11-23): QA-826: add support for bucketizing testsuite (@dothebart)
 - **PR #23716** (2026-11-20): [COR-1300] Replaced pseudo-random code with a more secure source. (@johann-listunov)
 - **PR #23714** (2026-11-20): Remove some obvious uses of date and includes (@markuspf)
 - **PR #23713** (2026-11-20): Use std::chrono in Inspector library (@markuspf)
 - **PR #23712** (2026-11-19): [COR-1295] Fix use-after-move issues (@mpoeter)
-- **PR #23710** (2026-11-19): [COR-1294] JWT secret generation fallback should still use a secure random. (@johann-listunov)
-- **PR #23709** (2026-11-18): [COR-1288] Update abseil and switch from submodule to FetchContent (@mpoeter)
 
 ---
 
@@ -1962,48 +1890,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in User.cpp
+## X. Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies
 
 **RULE**:
-When implementing operations in `arangod/Auth/User.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6276e6f3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0da7627b`: Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Auth/User.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  auto rand = SslInterface::sslRandBytes(16);
-  if (!rand.has_value()) {
-    THROW_ARANGO_EXCEPTION_MESSAGE(TRI_ERROR_INTERNAL,
-                                   "Could not generate random data");
-  }
-  std::string const salt = StringUtils::encodeHex(rand.value());
-  auto rand = SslInterface::sslRandBytes(32);
-  if (!rand.has_value()) {
-    THROW_ARANGO_EXCEPTION_MESSAGE(TRI_ERROR_INTERNAL,
-                                   "Could not generate random data");
-  }
+* Rebuilt included rclone v1.75.1 with go1.26.11 and non-vulnerable
+  dependencies.
 
-    o->add("r", StringUtils::encodeHex(rand.value()));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-#include "Cluster/ServerState.h"
-#include "Random/UniformCharacter.h"
-#include "RestServer/DatabaseFeature.h"
-namespace {
-UniformCharacter UCR(20);
-}  // namespace
+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+  dependencies.
 
-  std::string salt = UniformCharacter(8, "0123456789abcdef").random();
-    o->add("r", UCR.random());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6276e6f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0da7627b` are properly handled with clean fallback behavior.

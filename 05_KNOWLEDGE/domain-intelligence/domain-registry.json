@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T17:38:05.329Z",
+  "last_updated": "2026-11-23T17:46:32.882Z",
   "total_records": 2437,
   "domains": {
     "A": {
@@ -9803,8 +9803,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "7432ae12541000320d10c8c97de65760e79393182da7ea609a5af477cbb11ed0",
-      "created_at": "2026-11-23T13:23:35.930Z"
+      "content_hash": "3be8f85fd05695df28a81a235399206010510772230af2e31b1282fd394835d0",
+      "created_at": "2026-11-23T17:46:26.017Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -16590,8 +16590,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "4512afe82aaec654217c86d1184bd05f0f4695a778303194fcc720b625750545",
-      "created_at": "2026-11-21T11:38:47.181Z"
+      "content_hash": "487c9f4ccdb6477420fee92419d72fe6fc23c085d0a0d1cda0d055d1b2a71feb",
+      "created_at": "2026-11-23T17:46:27.844Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -17005,10 +17005,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-research-knowledge-intelligence-au.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-research-knowledge-intelligence-autotrust-autotrust-deci.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "content_hash": "8c85fccfe535b2fb95d059cc659f6f26968d9548c9c7ee2cc6ee8f7dd48d8fe9",
-      "created_at": "2026-11-22T10:17:55.860Z"
+      "content_hash": "a5ceac28787979f14f6abbf82fb3e5ed40debfa957140e9933b6120d971d7ee9",
+      "created_at": "2026-11-23T17:46:11.844Z"
     },
     "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
@@ -17067,8 +17067,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-27b-vl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-learnings-research-knowledge-intelligence-hf-autotrust-j.md",
       "repository": "hf-autotrust-jev-27b-vl-learnings",
-      "content_hash": "6cba7b1db1b8d4a59c311b2428d20a9a12690d7d7ac37d7422460f6e778521e5",
-      "created_at": "2026-11-14T16:43:51.275Z"
+      "content_hash": "c2f14d6eb51029684a22dfd6cd294c08a65c96689e6954bccc761607a707a33d",
+      "created_at": "2026-11-23T17:46:32.095Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant",
@@ -22781,8 +22781,8 @@
       "title": "Architecture Intelligence: fabio-rovai/open-ontologies Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-fabio-rovai-open-ontologies-architecture-intelligence-fabio-rovai-open-ontologie.md",
       "repository": "fabio-rovai/open-ontologies",
-      "content_hash": "3d2e1dbc0f4409c7964bab4ac46383d806ea9168db95a2ed276c1982aeaa279c",
-      "created_at": "2026-11-15T22:14:50.810Z"
+      "content_hash": "a7acbd977133c0cf45a1a0451875152434f94cd8542d175c3f4b2742d77c580c",
+      "created_at": "2026-11-23T17:46:21.566Z"
     },
     "DOM-D-5FCF2E96": {
       "record_id": "DOM-D-5FCF2E96",
@@ -22841,8 +22841,8 @@
       "title": "Architecture Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-fabio-rovai-open-ontologies-learnings-architecture-intelligence-fabio-rovai-open.md",
       "repository": "fabio-rovai-open-ontologies-learnings",
-      "content_hash": "e119d2ecada51b85838309228c74d3d23ab08f1da3c4c95f2187f6450155dfd4",
-      "created_at": "2026-11-15T22:15:23.574Z"
+      "content_hash": "d38da7c1afde01405b5a09af9225120b25275f40bce149110fe8d468fef7f90d",
+      "created_at": "2026-11-23T17:46:32.882Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cactus-compute-mirage-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cactus-compute-mirage-core-invariants",
@@ -22940,8 +22940,8 @@
       "title": "Research & Knowledge Intelligence: Ataraxy-Labs/sem Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-ataraxy-labs-sem-research-knowledge-intelligence-ataraxy-labs-sem-core-invariant.md",
       "repository": "Ataraxy-Labs/sem",
-      "content_hash": "c38f80f824e019470aac4f8ba7aaa5008ec65301d3402447c951e898d5187ff4",
-      "created_at": "2026-11-15T23:25:57.389Z"
+      "content_hash": "6d0018460de0eedf1b46c7f6411bfaa3f1c4a6f31436ab235281c3bcd303e5a7",
+      "created_at": "2026-11-23T17:46:15.770Z"
     },
     "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-core-inva": {
       "record_id": "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-core-inva",
@@ -22958,8 +22958,8 @@
       "title": "Research & Knowledge Intelligence: ataraxy-labs-sem-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-ataraxy-labs-sem-learnings-research-knowledge-intelligence-ataraxy-labs-sem-lear.md",
       "repository": "ataraxy-labs-sem-learnings",
-      "content_hash": "7646d07bdfd83f33650451eb0d2945526a1460d18a0f0136f44acb84f10df7e3",
-      "created_at": "2026-11-15T23:26:08.915Z"
+      "content_hash": "49a9ce32b773da6661c281ab96568e9f63e04577387acf3b3dda34d17abf0529",
+      "created_at": "2026-11-23T17:46:31.386Z"
     },
     "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings": {
       "record_id": "domain_intelligence-content-information-intelligence-searchsolved-search-solved-public-seo-learnings",

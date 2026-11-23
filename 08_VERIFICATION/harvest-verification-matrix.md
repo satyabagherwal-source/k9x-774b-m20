@@ -12402,3 +12402,8 @@
 | `CYCLE-20261123-TS4B` | `2026-11-23T17:37:46.139Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`92b51908...`) |
 | `CYCLE-20261123-U1RX` | `2026-11-23T17:37:58.653Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10084` | Yes (`345d797a...`) |
 | `CYCLE-20261123-U2Z6` | `2026-11-23T17:38:00.210Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`c61f317c...`) |
+| `CYCLE-20261123-4M5H` | `2026-11-23T17:46:11.621Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`10ac8524...`) |
+| `CYCLE-20261123-4P15` | `2026-11-23T17:46:15.353Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10085` | Yes (`3653a103...`) |
+| `CYCLE-20261123-4TIB` | `2026-11-23T17:46:21.155Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`fda432b0...`) |
+| `CYCLE-20261123-4WXU` | `2026-11-23T17:46:25.602Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10086` | Yes (`462dfe68...`) |
+| `CYCLE-20261123-4YCS` | `2026-11-23T17:46:27.436Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10087` | Yes (`a713a164...`) |

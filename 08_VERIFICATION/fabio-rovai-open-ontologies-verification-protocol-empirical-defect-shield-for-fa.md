@@ -4,22 +4,22 @@
 {
   "source_repository": "fabio-rovai/open-ontologies",
   "source_url": "https://github.com/fabio-rovai/open-ontologies",
-  "source_version": "c2b64e1b",
+  "source_version": "1ba7ecf8",
   "license": "MIT",
-  "timestamp": "2026-11-21T15:31:25.566Z",
+  "timestamp": "2026-11-23T17:46:21.399Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fabio-rovai-open-ontologies",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `c2b64e1b`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T15:31:25.566Z`  
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `1ba7ecf8`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T17:46:21.399Z`  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `fabio-rovai/open-ontologies` (Commit: `c2b64e1b`)
+- **Target Repository**: `fabio-rovai/open-ontologies` (Commit: `1ba7ecf8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:31:24.413Z  
+> **Harvest Timestamp**: 2026-11-23T17:46:20.393Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2939 stars
+- **Stars / Engagement**: 2950 stars
 
 ---
 
@@ -1737,11 +1737,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #428** (2026-11-20): **README figure draws a genuinely certified edge as 'forged, the checker exited 1'; no forged line is ever checked**
-  *Symptoms*: ## What happens  `docs/assets/knowledge-graph.py` builds the README figure from a certified run over ies-core. Its fifth beat says "a line is forged, and the same checker refuses", and its legend row for the red edge says "forged. the checker exited 1 and named the rule".  The red edge is not a forgery. In "Which claim is the forged one" (around line 580 on main), the script takes one of the DERIVED subClassOf edges, all of which `oo-cert` accepted, picks it by where it lands in the layout, and relabels it `rejected`. No forged line is written and no checker is run on one, so the figure shows a true, certified entailment as refused, and states a refusal that never happened.  ## Expected  The red edge is a claim that really was forged and refused, drawn beside the certified ones rather than in place of one. `demo/build_certified_graph.py` (from #425's fix) already does this for the Studio replay: it appends a copy of a derived line with its conclusion changed to a class the closure does not reach, and requires `oo-cert` to exit 1 naming the rule (and `oo-horn` and the Isabelle checker to refuse the same forgery in the Horn certificate) before writing anything. The figure can take its forged edge from that run, and `tests/knowledge_graph_asset_test.rs` can require the red edge to be absent from the certificate's conclusions. 
+- **Issue #436** (2026-11-23): **Front-page knowledge-graph figure: labels sit on nodes, arrows and the panel border**
+  *Symptoms*: The front-page figure `docs/assets/knowledge-graph.svg` (and the zh-CN variant) is crowded, and several labels are printed on top of other things drawn:  - The amber `returned unasked · Accent is a Concept, never a class` badge runs through a row of graph nodes. - The 無 glyph lands on the nodes beside `Property`. - `this line is forged` and its red ring sit on nodes. - `exit 1, rdfs11 step refused`, `oo-resolution` and `FusionOfIntegralParts` cross the border of the ontology panel. - `problem.tsv` is crossed by the dotted curves that run back from the provers. - `Activity` covers the node beside it.  Every test passes, because `no_two_labels_sit_on_top_of_each_other` compares labels with labels only. The placement code in `docs/assets/knowledge-graph.py` checks a candidate against `placed` (other labels) and never against node circles, pipeline arrows or the panel edge. Badges rest at opacity 0.4, so whatever is under them shows through.  Expected: no label box intersects a node circle, a pipeline arrow, or the panel border, in either language, and a test fails when one does. 
 
-- **Issue #427** (2026-11-20): **reason --certificate writes a different derivations.tsv on every run over the same store (premises and line order vary)**
-  *Symptoms*: ## What happens  Two runs of the built-in certificate over the same file produce different `derivations.tsv` bytes. The conclusions are the same set every time; the premises recorded for an `rdfs11` step (which intermediate class justifies a transitive subClassOf) and the line order change from run to run. The Horn certificate over the built-in table does not have this problem: `horn.tsv` is byte-identical across runs, as `src/reason.rs` documents for that writer ("does not depend on hash iteration order").  ## Reproduce (main at 13bd71e3)  ```sh for i in 1 2 3; do   printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate /tmp/det%s\n' $i \     | open-ontologies --data-dir /tmp/d$i batch - --no-connect >/dev/null   shasum -a 256 /tmp/det$i/derivations.tsv              # differs every run   sort /tmp/det$i/derivations.tsv | shasum -a 256       # still differs: premises differ   cut -f1-4 /tmp/det$i/derivations.tsv | sort | shasum -a 256   # same: conclusions agree done ```  Example of one conclusion with two different premise sets across runs: `rdfs11 AccountClosure subClassOf FusionOfIntegralParts`, justified through a different intermediate class.  Every run's certificate is accepted by `oo-cert`, so this is not a soundness defect.  ## Why it matters  A certificate cannot be pinned by digest, compared between two machines, or regenerated as a byte-identical artefact (a committed certificate, a pack, a demo bundle that records its certificate's dige
+- **Issue #432** (2026-11-23): **vocab-check accepts a declared class used as a predicate, and a declared property used as rdf:type**
+  *Symptoms*: `vocab-check` checks whether a term is declared in the loaded ontology, but not whether it is used in the role it was declared in. A declared class used as a predicate, or a declared property used as the object of `rdf:type`, passes with `conforms: true`.  Repro (`3fd98f50`):  ``` # ont.ttl @prefix ex: <http://example.org/o/> . @prefix owl: <http://www.w3.org/2002/07/owl#> . ex:Sensor a owl:Class . ex:observes a owl:ObjectProperty .  # data.ttl @prefix ex: <http://example.org/o/> . @prefix d: <http://example.org/d/> . d:s1 a ex:observes . d:s2 ex:Sensor d:x . ```  ``` printf 'load ont.ttl\nvocab-check data.ttl\n' | open-ontologies batch --no-connect ```  Result: `"conforms": true, "hallucinated_terms": []`.  Expected: both terms reported. `ex:observes` is not a class and `ex:Sensor` is not a property, so neither use is declared. Reporting them under a separate field (for example `wrong_role_terms`) would keep the "not declared at all" case distinguishable.  Related asymmetry seen in the same run: a term declared only as an individual (for example `ex:UAV a skos:Concept`) used as `rdf:type` is reported in `hallucinated_terms`, so individuals are already treated as "not a class". Classes used as predicates and properties used as classes should get the same treatment. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1758,632 +1758,467 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2154f1bb` (2026-11-20)
-**Commit Message**: Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-cert really refused (#428)
+### Incident Patch 1: `1ba7ecf8` (2026-11-23)
+**Commit Message**: Merge pull request #437 from fabio-rovai/fix/hero-svg-crowding
 
-# Conflicts:
-#	CHANGELOG.md
+No label on the front-page figure sits on a node, an arrow or the panel border (#436)
 
-**File**: `CHANGELOG.md` (modified, +24/-0)
+**File**: `CHANGELOG.md` (modified, +15/-0)
 ```diff
-@@ -216,6 +216,30 @@ All notable changes to Open Ontologies are documented here.
-   `tests/certificate_determinism_test.rs` certifies one store three times in
-   three processes, under each profile, and requires identical bytes.
+@@ -192,6 +192,21 @@ All notable changes to Open Ontologies are documented here.
  
-+- **The README figure's red edge is a forged claim, and the refusal it
-+  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
-+  took one of the derived subClassOf edges, every one of which `oo-cert`
-+  accepts, chose it by where it landed in the layout and drew it as the
-+  forgery, so the figure painted a certified entailment red and stated a
-+  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
-+  class the closure does not reach from s, as `demo/build_certified_graph.py`
-+  does: a derived line of s is copied with its conclusion changed to X,
-+  appended to a copy of the certificate, and `oo-cert` is run on it
-+  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
-+  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
-+  naming the forged line and its rule, and the rule and exit code on the
-+  figure are read from that report. On ies-core the forgery is
-+  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
-+  step, drawn beside the 257 derived edges, which all stay certified. The
-+  legend counts the ontology's edges only, as the Studio legend has since
-+  #425: 420 asserted, 257 certified, 1 rejected, where it read 426 and 259 by
-+  taking in the pipeline's arrows. The certificate row states the 265 lines
-+  `oo-cert` read. Edges are sorted before the layout, so two certificates that
-+  differ only in premises (#427) draw byte-identical figures. Both languages'
-+  SVG, scene and WebP are regenerated, and
-+  `tests/knowledge_graph_asset_test.rs` checks the red edge and the certified
-+  edges against a live certificate.
+ ### Fixed
+ 
++- **No label on the front-page figure sits on a node, an arrow or the panel
++  border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
++  against other labels only, so the unasked-question badge ran through a row of
++  classes, the forged-line badge and the 無 glyph sat on nodes, three labels
++  crossed the ontology panel's border and the provers' dotted curves cut through
++  `problem.tsv`, while every test passed. Placement now goes through one `fits`
++  check (labels, node discs, pipeline arrows, the forged and unasked lines, the
++  panel edge); a badge with no clear candidate searches outward (the two beat badges in
++  the panel then get a leader back to their line), and the generator refuses to
++  draw if nothing fits. The canvas is
++  1200 x 830 (was 1100 x 780) so the panel has room, the forged line is marked
++  with a capsule instead of a circle that took in its neighbours, and
++  `no_label_sits_on_a_node_an_arrow_or_the_panel_edge` checks both languages
++  (30 violations on the old English figure, 0 now).
 +
- - **The replay demo's 3D legend is true of the graph under it** (#425). The
-   legend reads "ies-core.ttl · 1,083 triples" and names three warrants
-   (asserted, certified under `OOCert.certificate_sound`, forged and refused),
+ - **`vocab-check` checks that each term is used in the role it is declared in**
+   (#432). A class used as a predicate, or a property used as the object of
+   `rdf:type`, passed with `conforms: true` because the check only asked whether
 ```
 
-**File**: `README.md` (modified, +3/-3)
+**File**: `docs/assets/knowledge-graph.py` (modified, +337/-210)
 ```diff
-@@ -59,9 +59,9 @@
- </p>
- 
- <p align="center">
--  <sub><b>426 asserted, 259 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
--  checker then <i>proved</i> them. One certificate holds all 259, and one run of the checker accepts it.
--  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule.
-+  <sub><b>420 asserted, 257 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
-+  checker then <i>proved</i> them. One certificate holds all 257, and one run of the checker accepts it.
-+  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule (rdfs11).
-   The run supplies each count. Nobody writes a count into the caption.</sub>
- </p>
- 
-```
-
-**File**: `README.zh-CN.md` (modified, +3/-3)
-```diff
-@@ -57,9 +57,9 @@
- </p>
- 
- <p align="center">
--  <sub><b>426 条断言，259 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
--  检查器<i>证明</i>了它们。一份证书涵盖全部 259 条，检查器一次运行即可接受它。
--  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则。
-+  <sub><b>420 条断言，257 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
-+  检查器<i>证明</i>了它们。一份证书涵盖全部 257 条，检查器一次运行即可接受它。
-+  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则（rdfs11）。
-   每个数字都来自运行结果。没有人把数字写进说明文字。</sub>
- </p>
- 
-```
-
-**File**: `docs/assets/hand-drawn/hero.js` (modified, +5/-1)
-```diff
-@@ -189,7 +189,7 @@ function layout(){
-     const f=S.labels.forged;
-     const b=placeIn([textBox(mx+rx-10,my-ry-10,f,28,FONT.body),textBox(mx-rx+10-measure(f,28,FONT.body),my-ry-10,f,28,FONT.body),
-                      textBox(mx-measure(f,28,FONT.body)/2,my+ry+34,f,28,FONT.body)],'the forged-line note');
--    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26};
-+    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26,b};
-     const li=S.nodes.findIndex(n=>n.kind==='lean'), lab=LABELS.find(l=>l.i===li);
-     const rb=pick([textBox(lab.b[0]+4,P[li].y+48,S.labels.refused,24,FONT.body)],'the refusal');
-     REFUSED={x:rb[0]+4,y:P[li].y+48,li};
-@@ -394,6 +394,10 @@ function drawAt(t){
-   // beat 5: the forged line is named, and the checker refuses the certificate carrying it
-   if(litF>0&&FORGED){ const {mx,my,rx,ry}=FORGED;
-     circleAround(mx,my,rx,ry,PAL.red,clamp((t-F.t0)/0.7),litF);
-+    // paper under the note, as under beat six's: the forged line is wherever
-+    // the closure leaves room for one, and the note can land on the cloud
-+    const fb=FORGED.b;
-+    wash(ctx,[[fb[0],fb[1]],[fb[2],fb[1]],[fb[2],fb[3]],[fb[0],fb[3]]],PAL.paper,{alpha:0.9*litF,spread:2});
-     hand(ctx,S.labels.forged,FORGED.x,FORGED.y,28,{font:FONT.body,c:PAL.red,alpha:litF});
-     const li=REFUSED.li, cx=P[li].x, cy=P[li].y, st=clamp((t-F.t0-1.2)/0.4);
-     if(st>0){ const s=27*(1.25-0.25*st);
-```
-
-**File**: `docs/assets/knowledge-graph.py` (modified, +280/-63)
-```diff
-@@ -2,10 +2,18 @@
- """Regenerate docs/assets/knowledge-graph.svg from a real certified run.
- 
- Run:
-+    cargo build --release
-+    (cd lean && lake build oo-cert)
-     printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate DIR\n' \
--        | open-ontologies batch - --no-connect
-+        | target/release/open-ontologies batch - --no-connect
-     python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
--        docs/assets/knowledge-graph.svg
-+        docs/assets/knowledge-graph.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json en
-+    python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
-+        docs/assets/knowledge-graph.zh-CN.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json zh
-+
-+`--oo-cert PATH` names the checker; it defaults to lean/.lake/build/bin/oo-cert.
-+The figure cannot be drawn without it, because the fifth beat is a run of it
-+(see "The forgery" below).
- 
- `reason` takes no positional file. It reasons over the loaded store, so the
- graph has to be loaded first and the two have to be one batch: a second process
-@@ -33,6 +41,17 @@
- the edges cross in front of and behind one another the way they do on screen.
- Drawn far to near, painter's algorithm, because SVG has no z-buffer.
- 
-+THE FORGERY IS FORGED, AND THE REFUSAL IS A RUN. The red edge is a claim
-+`s subClassOf X` that the closure does not reach (not asserted, not derived),
-+drawn beside the certified edges and never in place of one. The generator
-+copies a derived line of `s`, changes its conclusion to X, appends it to a copy
-+of the certificate and runs `oo-cert` on that copy. Nothing is written unless
-+`oo-cert` accepts the honest certificate, then exits 1 on the forged one with
-+`ok: false`, the forged line as `first_rejected` and its rule named. The rule
-+and the exit code on the figure are read from that report. Until #428 the red
-+edge was one of the derived edges, all of which `oo-cert` accepts, relabelled
-+`rejected`: a true entailment painted red, and a refusal that never happened.
-+
- It is also ANIMATED, in four beats on one 14-second clock: the asserted graph
- arrives, the engine derives, Lean sweeps the derived edges, and a forged edge is
- drawn and then refused. That order is the argument the README makes, and a still
-@@ -55,9 +74,15 @@
- gives the same picture and a regeneration is a diff a reader can check rather
- than a new arrangement of the same facts.
- """
-+import argparse
-+import json
- import math
-+import os
- import random
-+import shutil
-+import subprocess
- import sys
-+import tempfile
- 
- SUBCLASS = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>"
- TYPE = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"
-@@ -71,6 +96,8 @@
+@@ -94,7 +94,13 @@
+ #   + rdf:type                      5
+ #   + rdfs:domain, rdfs:range       1, and the file's own header
  LINKING = (SUBCLASS, TYPE, DOMAIN, RANGE)
- W, H = 1100, 780
+-W, H = 1100, 780
++# 1200 x 830, up from 1100 x 780 (#436). At 1100 the pipeline's right-hand
++# labels ran into the ontology panel and the panel was too short for its 233
++# terms, so badges had nowhere to land that was not on a node. The extra width
++# goes to the gap between the pipeline and the panel, the extra height to the
++# panel; the pipeline itself stays where it was, because hero.js scales it from
++# these coordinates.
++W, H = 1200, 830
  SEED = 20260919
-+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-+OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
+ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
+@@ -574,7 +580,9 @@ def lay(members):
+     # the rectangle the same way along its longer side, recurse. It fills the
+     # region with no leftover, which is the point — the earlier layout left the
+     # bottom-right of the canvas empty while fragments crowded the middle.
+-    OL, OR_, T, B = 470, W - 34, 138, H - 246
++    # The panel starts at 566 so its border (550) clears the widest label of
++    # the pipeline, `oo-resolution`, which ends near 533.
++    OL, OR_, T, B = 566, W - 34, 138, H - 246
  
+     def split(items, rect):
+         if len(items) == 1:
+@@ -784,7 +792,10 @@ def off_segment(k, i, j):
+         LEAN: (318, 168),
+         "Isabelle/HOL": (318, 250),
+         "Vampire": (318, 336),
+-        FORES: (420, 336),
++        # 444, not 420: the arrow from Vampire now starts after Vampire's name
++        # instead of running under it, and needs the length. hero.js pushes
++        # this node clear of that name on its own, so its layout is unchanged.
++        FORES: (444, 336),
+         "E": (318, 384),
+         "Z3": (318, 432),
+         "Mace4": (318, 480),
+@@ -926,6 +937,8 @@ def rad(i):
+     order = sorted(range(len(edges)), key=lambda e: (depth[edges[e][0]] + depth[edges[e][1]]) / 2)
  
- def text_width(s, size):
-@@ -135,9 +162,57 @@ def read(path):
- 
- 
- 
--# Every word on the drawing, in each language it is published in. The NUMBERS
--# stay out of this table: they are computed from the run and formatted into
--# these strings, so a translation cannot state a count the data does not carry.
-+def oo_cert(checker, asserted_path, derivations_path):
-+    """Run the checker on one certificate: (exit code, its JSON report)."""
-+    proc = subprocess.run([checker, asserted_path, derivations_path],
-+                          capture_output=True, text=True)
-+    for line in reversed(proc.stdout.splitlines()):
-+        line = line.strip()
-+        if line.startswith("{"):
-+            return proc.returncode, json.loads(line)
-+    raise SystemExit(f"{checker} printed no JSON report (exit {proc.returncode}):\n"
-+                     f"{proc.stdout}{proc.stderr}")
-+
-+
-+def forge(checker, asserted_path, derivations_path, line, forged_to):
-+    """Run the checker on the certificate as the engine wrote it, then on a copy
-+    with one forged line appended: `line`, a derived line of the certificate,
-+    with its conclusion changed to `forged_to` and its rule and premises kept.
-+
-+    Refuses to go on unless the checker accepts the certificate and exits 1 on
-+    the copy, with `ok: false`, the appended line as `first_rejected` and that
-+    line's rule named. Returns both reports, which is where every word the
-+    figure says about the refusal comes from."""
-+    code_h, honest = oo_cert(checker, asserted_path, derivations_path)
-+    if not (code_h == 0 and honest.get("ok") is True
-+            and honest.get("theorem") == "OOCert.certificate_sound"):
-+        raise SystemExit(f"refusing to draw: oo-cert did not accept the certificate "
-+                         f"(exit {code_h}): {honest}")
-+    with open(derivations_path) as f:
-+        body = f.read()
-+    if body and not body.endswith("\n"):
-+        body += "\n"
-+    work = tempfile.mkdtemp(prefix="oo-kg-forged-")
+     layers = {"asserted": [], "certified": [], "rejected": []}
++    # Every pipeline arrow as drawn, tip included, so no label is placed on one.
++    pipe_segs = []
+     for e in order:
+         i, j, w = edges[e]
+         d = (depth[i] + depth[j]) / 2
+@@ -947,8 +960,14 @@ def rad(i):
+             vx, vy = bx - ax, by - ay
+             L = math.hypot(vx, vy) or 1.0
+             ux_, uy_ = vx / L, vy / L
+-            ax, ay = ax + ux_ * (rad(i) + 4.0), ay + uy_ * (rad(i) + 4.0)
++            lead_ = rad(i) + 4.0
++            if nodes[i] in PROGRAMS and nodes[j] in PROGRAMS and abs(ay - by) < 0.5:
++                # A judge feeding the judge beside it: the arrow leaves after the
++                # first one's name, which is drawn on that side, not under it.
++                lead_ = rad(i) + 1 + len(nodes[i]) * (10.5 * 0.55) + 8 + 4.0
++            ax, ay = ax + ux_ * lead_, ay + uy_ * lead_
+             bx, by = bx - ux_ * (rad(j) + 8.5), by - uy_ * (rad(j) + 8.5)
++            pipe_segs.append(((ax, ay), (bx + ux_ * 7.0, by + uy_ * 7.0)))
+         head = (f'<line x1="{ax:.1f}" y1="{ay:.1f}" x2="{bx:.1f}" y2="{by:.1f}" '
+                 f'stroke="{COLOR[w]}" stroke-width="{WIDTH[w] * (0.7 + 0.8 * d):.2f}" '
+                 f'opacity="{op:.2f}"')
+@@ -1051,67 +1070,164 @@ def rad(i):
+     # is to show who judged what. Ontology classes get a label only if they are
+     # busy and the chip lands clear, the way the component shows one on hover
+     # rather than all at once: a label per node is a grey wall.
+-    placed = []
+-
+-    def chip(i, label, color, size, weight, insist=False):
+-        """Place a label, trying a few positions before giving up.
+-
+-        `insist` is for the verification layer. An ontology class that cannot
+-        find room simply goes unlabelled, which is the right trade in a dense
+-        graph. A judge that goes unlabelled defeats the purpose of drawing the
+-        layer at all, so those get every candidate position and then take the
+-        last one regardless. Dropping `Isabelle/HOL` off the picture because a
+-        blue dot was in the way is not a tidier drawing, it is a wrong one."""
++    #
++    # WHERE A LABEL MAY GO (#436). Every label used to be checked against the
++    # other labels and against nothing else, and the figure passed every test
++    # while the amber badge ran through a row of nine classes, the forged-line
++    # badge sat on more, three labels straddled the panel's border and the
++    # dotted curves from the provers cut through `problem.tsv`. A badge rests at
++    # 0.4, so whatever it covers shows through it. Now `fits` refuses a box that
++    # touches another label, a node, an arrow of the pipeline, the forged line or
++    # the unasked question, or that crosses the panel's border. Nothing is placed
++    # blind: a label with no clear candidate searches outward from where it
++    # belongs, and if that fails too the figure is not drawn.
++    # `no_label_sits_on_a_node_an_arrow_or_
 ```
 
-**File**: `tests/knowledge_graph_asset_test.rs` (modified, +253/-0)
+**File**: `tests/knowledge_graph_asset_test.rs` (modified, +208/-41)
 ```diff
-@@ -19,6 +19,12 @@
- //! implementation of the same projection agreeing with the first says very
- //! little. The asserted and derived totals are the load-bearing numbers and
- //! they come straight from the engine.
-+//!
-+//! One projection is re-derived all the same, since #428: which edges are
-+//! green and which one is red. The generator once took a certified edge and
-+//! drew it as the forgery, and every count it printed stayed self-consistent
-+//! while it did. So the green edges are compared with the certificate's
-+//! subClassOf conclusions, and the red edge has to be absent from them.
- 
- use open_ontologies::graph::GraphStore;
- use open_ontologies::reason::{InferenceTarget, Reasoner};
-@@ -839,3 +845,250 @@ fn the_hand_drawn_animation_is_drawn_from_the_svgs_own_scene() {
-         );
-     }
- }
+@@ -668,56 +668,223 @@ fn the_unasked_beat_comes_from_the_mu_run() {
+ /// stricter rule is a few pixels of layout freedom.
+ #[test]
+ fn no_two_labels_sit_on_top_of_each_other() {
+-    let s = svg();
+-    let mut boxes: Vec<(f64, f64, f64, f64)> = Vec::new();
++    for name in FIGURES {
++        let s = figure(name);
++        let boxes = label_boxes(&s);
++        assert!(
++            boxes.len() > 20,
++            "{name}: only {} label boxes were found, so this test is not looking at the \
++             labels and cannot fail",
++            boxes.len()
++        );
++        let mut clashes = Vec::new();
++        for (i, a) in boxes.iter().enumerate() {
++            for b in &boxes[i + 1..] {
++                let ix = a.2.min(b.2) - a.0.max(b.0);
++                let iy = a.3.min(b.3) - a.1.max(b.1);
++                if ix > 0.5 && iy > 0.5 {
++                    clashes.push(format!(
++                        "  {:?} and {:?} share {ix:.0}x{iy:.0} pixels",
++                        a, b
++                    ));
++                }
++            }
++        }
++        assert!(
++            clashes.is_empty(),
++            "{name}: {} pair(s) of labels overlap, so the drawing prints two sentences \
++             through each other:\n{}\n\nEvery badge is placed by trying candidate positions \
++             against `placed`; one that overlaps is one that was placed blind.",
++            clashes.len(),
++            clashes.join("\n")
++        );
++    }
++}
 +
-+// ── The red edge is a forgery, drawn beside the certified edges ─────────
-+//
-+// The fifth beat says "a line is forged, and the same checker refuses", and the
-+// legend's REJECTED row says the checker exited 1 and named the rule. Until
-+// #428 neither was true. The generator took one of the DERIVED subClassOf
-+// edges, every one of which `oo-cert` accepts, chose it by where it landed in
-+// the layout, and relabelled it `rejected`. No forged line was written and no
-+// checker ran on one, so the figure painted a certified entailment red and
-+// reported a refusal that never happened.
-+//
-+// So the certificate is the referee here, not the generator: this test writes
-+// one from a live run and holds every published scene to it.
++/// Both published figures. The Chinese one is laid out by the same code with
++/// wider strings, so it is where a badge runs out of room first.
++const FIGURES: [&str; 2] = ["knowledge-graph.svg", "knowledge-graph.zh-CN.svg"];
 +
-+const SUBCLASS: &str = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>";
++fn figure(name: &str) -> String {
++    std::fs::read_to_string(repo().join("docs/assets").join(name))
++        .unwrap_or_else(|_| panic!("read docs/assets/{name}"))
++}
 +
-+/// The certificate a live run writes over ies-core: the rows of `asserted.tsv`
-+/// and of `derivations.tsv`, as `reason --profile rdfs --certificate` writes
-+/// them and as `docs/assets/knowledge-graph.py` reads them.
-+fn certificate_rows(tag: &str) -> (Vec<Vec<String>>, Vec<Vec<String>>) {
-+    let ttl = std::fs::read_to_string(
-+        repo()
-+            .join("benchmark")
-+            .join("reference")
-+            .join("ies-core.ttl"),
-+    )
-+    .expect("read ies-core.ttl");
-+    let graph = Arc::new(GraphStore::new());
-+    graph
-+        .load_turtle(&ttl, None)
-+        .expect("ies-core.ttl must parse");
-+    let dir = std::env::temp_dir().join(format!("oo-kg-{tag}-{}", std::process::id()));
-+    let _ = std::fs::remove_dir_all(&dir);
-+    std::fs::create_dir_all(&dir).expect("scratch dir");
-+    Reasoner::run_full(
-+        &graph,
-+        "rdfs",
-+        false,
-+        InferenceTarget::DefaultGraph,
-+        Some(dir.as_path()),
-+    )
-+    .expect("reason over ies-core.ttl");
-+    let rows = |name: &str| -> Vec<Vec<String>> {
-+        std::fs::read_to_string(dir.join(name))
-+            .unwrap_or_else(|_| panic!("the run wrote no {name}"))
-+            .lines()
-+            .filter(|l| !l.is_empty())
-+            .map(|l| l.split('\t').map(str::to_string).collect())
-+            .collect()
-+    };
-+    let out = (rows("asserted.tsv"), rows("derivations.tsv"));
-+    let _ = std::fs::remove_dir_all(&dir);
++/// Every opening tag `<name ...>` in the document, attributes included.
++fn open_tags<'a>(s: &'a str, name: &str) -> Vec<&'a str> {
++    let pat = format!("<{name} ");
++    let mut out = Vec::new();
+     let mut at = 0usize;
+-    while let Some(i) = s[at..].find("<rect x=\"") {
++    while let Some(i) = s[at..].find(&pat) {
+         let start = at + i;
+-        let Some(end) = s[start..].find("/>") else { break };
+-        let tag = &s[start..start + end + 2];
+-        at = start + end + 2;
+-        // Label chips and badges only: the legend panel and the colour swatches
+-        // are neither rounded nor this colour.
+-        if !tag.contains("fill=\"#020617\"") || !tag.contains("rx=\"") {
+-            continue;
++        let Some(end) = s[start..].find('>') else { break };
++        out.push(&s[start..start + end + 1]);
++        at = start + end + 1;
++    }
 +    out
 +}
 +
-+#[test]
-+fn the_red_edge_is_forged_beside_the_certified_ones_and_refused_by_a_real_run() {
-+    use std::collections::HashSet;
-+    let (asserted, derivations) = certificate_rows("forged");
-+    let derived: HashSet<(String, String)> = derivations
-+        .iter()
-+        .filter(|r| r.len() >= 4 && r[2] == SUBCLASS)
-+        .map(|r| (r[1].clone(), r[3].clone()))
-+        .collect();
-+    let asserted_sc: HashSet<(String, String)> = asserted
-+        .iter()
-+        .filter(|r| r.len() >= 3 && r[1] == SUBCLASS)
-+        .map(|r| (r[0].clone(), r[2].clone()))
-+        .collect();
-+    assert!(
-+        !derived.is_empty(),
-+        "the run derived no subClassOf edge, so this test checks nothing"
-+    );
++/// A numeric attribute. Matched with the leading space, so `x` never reads the
++/// `x` inside `rx` and `r` never reads the one inside `cx`.
++fn num_attr(tag: &str, k: &str) -> Option<f64> {
++    let key = format!(" {k}=\"");
++    let i = tag.find(&key)? + key.len();
++    tag[i..].split('"').next()?.parse().ok()
++}
 +
-+    for v in &VARIANTS {
-+        let scene: serde_json::Value = serde_json::from_slice(&asset(v.scene))
-+            .unwrap_or_else(|_| panic!("{} is not JSON", v.scene));
-+        let nodes = scene["nodes"].as_array().expect("nodes");
-+        let edges = scene["edges"].as_array().expect("edges");
-+        let name = |i: &serde_json::Value| -> String {
-+            nodes[i.as_u64().expect("node index") as usize]["name"]
-+                .as_str()
-+                .expect("node name")
-+                .to_string()
-+        };
-+        let is_class =
-+            |i: &serde_json::Value| nodes[i.as_u64().unwrap() as usize]["kind"] == "class";
++/// The box of every label chip and badge: a rounded `#020617` rectangle with
++/// text over it. The legend panel and the colour swatches are neither. Plus
++/// the 無 of the sixth beat, which is writing without a box: one em wide, its
++/// ink from 0.9 em above the baseline to 0.15 below.
++fn label_boxes(s: &str) -> Vec<(f64, f64, f64, f64)> {
++    let mut out: Vec<(f64, f64, f64, f64)> = open_tags(s, "rect")
++        .into_iter()
++        .filter(|t| t.contains("fill=\"#020617\"") && t.contains(" rx=\""))
++        .filter_map(|t| {
++            let (x, y) = (num_attr(t, "x")?, num_attr(t, "y")?);
++            Some((x, y, x + num_attr(t, "width")?, y + num_attr(t, "height")?))
++        })
++        .collect();
++    if let Some(end) = s.find("無</text>") {
++        let start = s[..end].rfind("<text ").expect("the 無 is in a <text>");
++        let tag = &s[start..start + s[start..].find('>').unwrap()];
++        let (x, y, f) = (
++            num_attr(tag, "x").expect("無 x"),
++            num_attr(tag, "y").expect("無 y"),
++            num_attr(tag, "font-size").expect("無 font-size"),
++        );
++        out.push((x - f * 0.6, y - f * 0.9, x + f * 0.6, y + f * 0.15));
++    }
++    out
++}
 +
-+        // 1. The red edge is not a conclusion the certificate carries, nor an
-+        //    asserted subclass edge: a claim the closure does not reach.
-+        let red: Vec<(usize, String, String)> = edges
-+            .iter()
-+            .enumerate()
-+            .filter(|(_, e)| e[2] == "rejected")
-+            .map(|(k, e)| (k, name(&e[0]), name(&e[1])))
-+            .collect();
-+        assert_eq!(
-+            red.len(),
-+            1,
-+            "{} draws {} red edges; the figure forges one",
-+        
-```
-
-**File**: `tests/readme_simplified_english_test.rs` (modified, +1/-1)
-```diff
-@@ -339,7 +339,7 @@ fn the_translated_page_carries_the_same_structure() {
-         assert!(zh.contains(link), "the translated page is missing {link:?}");
-     }
-     // The headline numbers are digits in both languages, so they can be compared.
--    for n in ["426", "259", "901", "23", "12", "13", "190", "39"] {
-+    for n in ["420", "257", "901", "23", "12", "13", "190", "39"] {
-         assert!(
-             zh.contains(n),
-             "the translated page does not state {n}, and the English page does. A number \
++/// Points along every arrow of the pipeline, sampled every two units: the
++/// straight `<line>`s and the dotted `Q` curves that run back from the provers
++/// to the certificate. The pipeline is everything left of the ontology panel
++/// and above its bottom edge; the step rail and the legend sit below that.
++fn pipeline_points(s: &str, panel: (f64, f64, f64, f64)) -> Vec<(f64, f64)> {
++    let (panel_x0, bottom) = (panel.0, panel.3);
++    let mut pts = Vec::new();
++    let mut run = |a: (f64, f64), b: (f64, f64), c: Option<(f64, f64)>| {
++        let n = (((b.0 - a.0).hypot(b.1 - a.1)) / 2.0).ceil().max(1.0) as usize;
++        for k in 0..=n {
++            let t = k as f64 / n as f64;
++            pts.pu
 ```
 
 ---
 
-### Incident Patch 2: `6f423fe2` (2026-11-20)
-**Commit Message**: Merge pull request #430 from fabio-rovai/fix/427-deterministic-certificate
+### Incident Patch 2: `fc6215f2` (2026-11-23)
+**Commit Message**: Merge pull request #434 from fabio-rovai/fix/vocab-check-role-432
 
-Certificates are byte-stable across runs (#427); the README figure's red edge is a forgery oo-cert really refused (#428)
+vocab-check reports a declared term used in the wrong role (#432)
 
-**File**: `CHANGELOG.md` (modified, +48/-0)
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -192,6 +192,54 @@ All notable changes to Open Ontologies are documented here.
+@@ -192,6 +192,16 @@ All notable changes to Open Ontologies are documented here.
  
  ### Fixed
  
-+- **`reason --certificate` writes the same `derivations.tsv` on every run over
-+  the same store** (#427). The conclusions were always the same set, but the
-+  premises a step recorded (which intermediate class justifies a transitive
-+  `rdfs11` step) and the order of the lines changed from run to run: the
-+  fixpoint walked its closure as a `HashSet` and recorded the first derivation
-+  it met, so three runs over `benchmark/reference/ies-core.ttl` wrote three
-+  different files. Every rule now walks a sorted copy of the closure, kept
-+  sorted by merging each round's new triples into it, which is how `run_horn`
-+  already kept `horn.tsv` stable, so the first derivation met is a function of
-+  the store. All three profiles had the defect and all three are fixed. The
-+  derivation DAG `onto_justify` and `onto_provenance` read, the derivation
-+  prefix of a `refutation.tsv` and `sample_inferences` follow the same order.
-+  Over the tracked corpus (307 files, three profiles, 921 certificates) the old
-+  binary wrote different bytes on two runs for 139 certificates and the fixed
-+  one for none, with the same conclusion set and line count as before for all
-+  921. It is faster, not slower: on LUBM(10) with a certificate, owl-rl-ext
-+  reasons in 6.3 s against 8.4 s, owl-rl in 4.4 s against 5.2 s and rdfs in
-+  3.3 s against 3.9 s. A file with anonymous blank nodes is still a new store
-+  on each load, because the parser mints fresh labels for them. The
-+  `onto_justify` caveat about its one non-monotone corner now says the value
-+  read is chosen by the engine's term numbering, not by hash order.
-+  `tests/certificate_determinism_test.rs` certifies one store three times in
-+  three processes, under each profile, and requires identical bytes.
++- **`vocab-check` checks that each term is used in the role it is declared in**
++  (#432). A class used as a predicate, or a property used as the object of
++  `rdf:type`, passed with `conforms: true` because the check only asked whether
++  the term was declared at all. Declared terms are now kept per role (typed
++  classes and subjects of `rdfs:subClassOf`; typed properties and subjects of
++  `rdfs:domain`, `rdfs:range` and `rdfs:subPropertyOf`), and a declared term used
++  in the other role is reported under a new `wrong_role_terms` field and fails
++  the check. Undeclared terms stay in `hallucinated_terms`, so the two cases
++  remain distinguishable. A term declared in both roles is accepted in both.
 +
-+- **The README figure's red edge is a forged claim, and the refusal it
-+  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
-+  took one of the derived subClassOf edges, every one of which `oo-cert`
-+  accepts, chose it by where it landed in the layout and drew it as the
-+  forgery, so the figure painted a certified entailment red and stated a
-+  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
-+  class the closure does not reach from s, as `demo/build_certified_graph.py`
-+  does: a derived line of s is copied with its conclusion changed to X,
-+  appended to a copy of the certificate, and `oo-cert` is run on it
-+  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
-+  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
-+  naming the forged line and its rule, and the rule and exit code on the
-+  figure are read from that report. On ies-core the forgery is
-+  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
-+  step, drawn beside the 257 derived edges, which all stay certified. The
-+  legend counts the ontology's edges only, as the Studio legend has since
-+  #425: 420 asserted, 257 certified, 1 rejected, where it read 426 and 259 by
-+  taking in the pipeline's arrows. The certificate row states the 265 lines
-+  `oo-cert` read. Edges are sorted before the layout, so two certificates that
-+  differ only in premises (#427) draw byte-identical figures. Both languages'
-+  SVG, scene and WebP are regenerated, and
-+  `tests/knowledge_graph_asset_test.rs` checks the red edge and the certified
-+  edges against a live certificate.
-+
- - **The replay demo's 3D legend is true of the graph under it** (#425). The
-   legend reads "ies-core.ttl · 1,083 triples" and names three warrants
-   (asserted, certified under `OOCert.certificate_sound`, forged and refused),
+ - **`reason --certificate` writes the same `derivations.tsv` on every run over
+   the same store** (#427). The conclusions were always the same set, but the
+   premises a step recorded (which intermediate class justifies a transitive
 ```
 
-**File**: `README.md` (modified, +3/-3)
+**File**: `src/output.rs` (modified, +37/-0)
 ```diff
-@@ -59,9 +59,9 @@
- </p>
+@@ -694,6 +694,15 @@ fn render_vocab_check(v: &Value) -> String {
+         ));
+         push_lines(&mut out, terms, text);
+     }
++    let wrong_role = items(v, "wrong_role_terms");
++    if !wrong_role.is_empty() {
++        out.push_str(&format!(
++            "\n{} term(s) the ontology declares in the other role \
++             (a class used as a predicate, or a property used as a type):",
++            wrong_role.len()
++        ));
++        push_lines(&mut out, wrong_role, text);
++    }
+     out.push_str(&format!(
+         "\nChecked {} predicate(s) and {} type(s) against {} ontology term(s); namespaces policed: {}.",
+         text(&v["predicates_checked"]),
+@@ -1469,6 +1478,34 @@ mod tests {
+         assert!(render("load", payload).contains("Loaded 3 triple(s)"));
+     }
  
- <p align="center">
--  <sub><b>426 asserted, 259 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
--  checker then <i>proved</i> them. One certificate holds all 259, and one run of the checker accepts it.
--  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule.
-+  <sub><b>420 asserted, 257 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
-+  checker then <i>proved</i> them. One certificate holds all 257, and one run of the checker accepts it.
-+  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule (rdfs11).
-   The run supplies each count. Nobody writes a count into the caption.</sub>
- </p>
- 
-```
-
-**File**: `README.zh-CN.md` (modified, +3/-3)
-```diff
-@@ -57,9 +57,9 @@
- </p>
- 
- <p align="center">
--  <sub><b>426 条断言，259 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
--  检查器<i>证明</i>了它们。一份证书涵盖全部 259 条，检查器一次运行即可接受它。
--  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则。
-+  <sub><b>420 条断言，257 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
-+  检查器<i>证明</i>了它们。一份证书涵盖全部 257 条，检查器一次运行即可接受它。
-+  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则（rdfs11）。
-   每个数字都来自运行结果。没有人把数字写进说明文字。</sub>
- </p>
- 
-```
-
-**File**: `demo/build_certified_graph.py` (modified, +4/-4)
-```diff
-@@ -278,10 +278,10 @@ def node(iri_term: str) -> dict:
-                     "derivations": len(derivations),
-                     "by_rule": dict(sorted(by_rule.items())),
-                     "asserted_sha256": sha256(b_dir / "asserted.tsv"),
--                    # Not the digest of derivations.tsv itself: the engine
--                    # records a different premise for some rdfs11 steps, in a
--                    # different order, on every run (#427). The conclusions
--                    # are the same set every time, so this digests those.
-+                    # The digest of each step's rule and conclusion, sorted,
-+                    # not of derivations.tsv itself, so this record does not
-+                    # depend on the order the engine writes its lines in or
-+                    # on which premises it records for a step.
-                     "conclusions_sha256": hashlib.sha256("".join(
-                         sorted("\t".join(r[:4]) + "\n" for r in derivations)).encode()).hexdigest(),
-                     "oo_cert": {"exit": 0, "ok": True, "theorem": cert["theorem"]},
-```
-
-**File**: `docs/assets/hand-drawn/hero.js` (modified, +5/-1)
-```diff
-@@ -189,7 +189,7 @@ function layout(){
-     const f=S.labels.forged;
-     const b=placeIn([textBox(mx+rx-10,my-ry-10,f,28,FONT.body),textBox(mx-rx+10-measure(f,28,FONT.body),my-ry-10,f,28,FONT.body),
-                      textBox(mx-measure(f,28,FONT.body)/2,my+ry+34,f,28,FONT.body)],'the forged-line note');
--    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26};
-+    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26,b};
-     const li=S.nodes.findIndex(n=>n.kind==='lean'), lab=LABELS.find(l=>l.i===li);
-     const rb=pick([textBox(lab.b[0]+4,P[li].y+48,S.labels.refused,24,FONT.body)],'the refusal');
-     REFUSED={x:rb[0]+4,y:P[li].y+48,li};
-@@ -394,6 +394,10 @@ function drawAt(t){
-   // beat 5: the forged line is named, and the checker refuses the certificate carrying it
-   if(litF>0&&FORGED){ const {mx,my,rx,ry}=FORGED;
-     circleAround(mx,my,rx,ry,PAL.red,clamp((t-F.t0)/0.7),litF);
-+    // paper under the note, as under beat six's: the forged line is wherever
-+    // the closure leaves room for one, and the note can land on the cloud
-+    const fb=FORGED.b;
-+    wash(ctx,[[fb[0],fb[1]],[fb[2],fb[1]],[fb[2],fb[3]],[fb[0],fb[3]]],PAL.paper,{alpha:0.9*litF,spread:2});
-     hand(ctx,S.labels.forged,FORGED.x,FORGED.y,28,{font:FONT.body,c:PAL.red,alpha:litF});
-     const li=REFUSED.li, cx=P[li].x, cy=P[li].y, st=clamp((t-F.t0-1.2)/0.4);
-     if(st>0){ const s=27*(1.25-0.25*st);
-```
-
-**File**: `docs/assets/knowledge-graph.py` (modified, +280/-63)
-```diff
-@@ -2,10 +2,18 @@
- """Regenerate docs/assets/knowledge-graph.svg from a real certified run.
- 
- Run:
-+    cargo build --release
-+    (cd lean && lake build oo-cert)
-     printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate DIR\n' \
--        | open-ontologies batch - --no-connect
-+        | target/release/open-ontologies batch - --no-connect
-     python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
--        docs/assets/knowledge-graph.svg
-+        docs/assets/knowledge-graph.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json en
-+    python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
-+        docs/assets/knowledge-graph.zh-CN.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json zh
++    #[test]
++    fn vocab_check_lists_wrong_role_terms_apart_from_undeclared_ones() {
++        let rendered = render(
++            "vocab-check",
++            json!({
++                "conforms": false,
++                "hallucinated_terms": ["http://example.org/o#Persn"],
++                "wrong_role_terms": ["http://example.org/o#worksFor"],
++                "checked_namespaces": ["http://example.org/o#"],
++                "predicates_checked": 1,
++                "types_checked": 2,
++                "ontology_terms": 4
++            }),
++        );
++        assert!(
++            rendered
++                .contains("1 term(s) the ontology does not declare:\n  http://example.org/o#Persn"),
++            "got: {rendered}"
++        );
++        assert!(
++            rendered.contains(
++                "1 term(s) the ontology declares in the other role \
++                 (a class used as a predicate, or a property used as a type):\n  http://example.org/o#worksFor"
++            ),
++            "got: {rendered}"
++        );
++    }
 +
-+`--oo-cert PATH` names the checker; it defaults to lean/.lake/build/bin/oo-cert.
-+The figure cannot be drawn without it, because the fifth beat is a run of it
-+(see "The forgery" below).
- 
- `reason` takes no positional file. It reasons over the loaded store, so the
- graph has to be loaded first and the two have to be one batch: a second process
-@@ -33,6 +41,17 @@
- the edges cross in front of and behind one another the way they do on screen.
- Drawn far to near, painter's algorithm, because SVG has no z-buffer.
- 
-+THE FORGERY IS FORGED, AND THE REFUSAL IS A RUN. The red edge is a claim
-+`s subClassOf X` that the closure does not reach (not asserted, not derived),
-+drawn beside the certified edges and never in place of one. The generator
-+copies a derived line of `s`, changes its conclusion to X, appends it to a copy
-+of the certificate and runs `oo-cert` on that copy. Nothing is written unless
-+`oo-cert` accepts the honest certificate, then exits 1 on the forged one with
-+`ok: false`, the forged line as `first_rejected` and its rule named. The rule
-+and the exit code on the figure are read from that report. Until #428 the red
-+edge was one of the derived edges, all of which `oo-cert` accepts, relabelled
-+`rejected`: a true entailment painted red, and a refusal that never happened.
-+
- It is also ANIMATED, in four beats on one 14-second clock: the asserted graph
- arrives, the engine derives, Lean sweeps the derived edges, and a forged edge is
- drawn and then refused. That order is the argument the README makes, and a still
-@@ -55,9 +74,15 @@
- gives the same picture and a regeneration is a diff a reader can check rather
- than a new arrangement of the same facts.
- """
-+import argparse
-+import json
- import math
-+import os
- import random
-+import shutil
-+import subprocess
- import sys
-+import tempfile
- 
- SUBCLASS = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>"
- TYPE = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"
-@@ -71,6 +96,8 @@
- LINKING = (SUBCLASS, TYPE, DOMAIN, RANGE)
- W, H = 1100, 780
- SEED = 20260919
-+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-+OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
- 
- 
- def text_width(s, size):
-@@ -135,9 +162,57 @@ def read(path):
- 
- 
- 
--# Every word on the drawing, in each language it is published in. The NUMBERS
--# stay out of this table: they are computed from the run and formatted into
--# these strings, so a translation cannot state a count the data does not carry.
-+def oo_cert(checker, asserted_path, derivations_path):
-+    """Run the checker on one certificate: (exit code, its JSON report)."""
-+    proc = subprocess.run([checker, asserted_path, derivations_path],
-+                          capture_output=True, text=True)
-+    for line in reversed(proc.stdout.splitlines()):
-+        line = line.strip()
-+        if line.startswith("{"):
-+            return proc.returncode, json.loads(line)
-+    raise SystemExit(f"{checker} printed no JSON report (exit {proc.returncode}):\n"
-+                     f"{proc.stdout}{proc.stderr}")
-+
-+
-+def forge(checker, asserted_path, derivations_path, line, forged_to):
-+    """Run the checker on the certificate as the engine wrote it, then on a copy
-+    with one forged line appended: `line`, a derived line of the certificate,
-+    with its conclusion changed to `forged_to` and its rule and premises kept.
-+
-+    Refuses to go on unless the checker accepts the certificate and exits 1 on
-+    the copy, with `ok: false`, the appended line as `first_rejected` and that
-+    line's rule named. Returns both reports, which is where every word the
-+    figure says about the refusal comes from."""
-+    code_h, honest = oo_cert(checker, asserted_path, derivations_path)
-+    if not (code_h == 0 and honest.get("ok") is True
-+            and honest.get("theorem") == "OOCert.certificate_sound"):
-+        raise SystemExit(f"refusing to draw: oo-cert did not accept the certificate "
-+                         f"(exit {code_h}): {honest}")
-+    with open(derivations_path) as f:
-+        body = f.read()
-+    if body and not body.endswith("\n"):
-+        body += "\n"
-+    work = tempfile.mkdtemp(prefix="oo-kg-forged-")
+     #[test]
+     fn both_spellings_of_a_batch_command_find_one_renderer() {
+         assert!(renderer_for("vocab_check").is_some());
 ```
 
-**File**: `docs/concurrency-inventory.md` (modified, +1/-1)
+**File**: `src/server.rs` (modified, +1/-1)
 ```diff
-@@ -259,7 +259,7 @@ A disables it again.
+@@ -1554,7 +1554,7 @@ impl OpenOntologiesServer {
+             .unwrap_or_else(Self::err_json)
+     }
  
- ### Defect D: the store can drift between hashing and reasoning. KNOWN, DOCUMENTED, OPEN.
- 
--`Reasoner::run_horn` takes `&Arc<GraphStore>` (`src/reason.rs:3107`) and reads the store at line 3134.
-+`Reasoner::run_horn` takes `&Arc<GraphStore>` (`src/reason.rs:3460`) and reads the store at line 3488.
- This is already
- [decision 0010](decisions/0010-the-input-is-a-value-and-not-a-store.md), which names it, calls the
- window a race in as many words, and specifies `CertifiedInput` to dissolve it by copying once. It is
+-    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology. Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. Returns {conforms, hallucinated_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
++    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology, and declared in that role (a class used as a predicate, or a property used as rdf:type, is reported under wrong_role_terms). Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. Returns {conforms, hallucinated_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
+     async fn onto_vocab_check(&self, Parameters(input): Parameters<OntoVocabCheckInput>) -> String {
+         let data = if input.inline.unwrap_or(false) {
+             input.data.clone()
 ```
 
-**File**: `docs/explanation.md` (modified, +3/-3)
+**File**: `src/vocab_check.rs` (modified, +219/-29)
 ```diff
-@@ -68,9 +68,9 @@ and still minimal, both re-run. It is an incomplete one, and it says so.
- Reiter's construction is complete for a monotone oracle. The rule table is monotone, in that no rule reads
- the ABSENCE of a triple, but two places in `src/reason.rs` are not. `owl:onProperty`,
- `owl:someValuesFrom`, `owl:allValuesFrom`, `owl:hasValue`, `rdf:first` and `rdf:rest` are read into
--maps keyed by the node, so a node carrying TWO values for one of them contributes one, chosen by
--hash order. Removing a triple can therefore change which value is read rather than only removing
--consequences.
-+maps keyed by the node, so a node carrying TWO values for one of them contributes one: the value the
-+engine's term numbering puts last, which follows store order (it was hash order until #427). Removing
-+a triple can therefore change which value is read rather than only removing consequences.
+@@ -12,8 +12,12 @@
+ //!
+ //! `check_data_vocab` runs the complementary CLOSED-WORLD gate: every predicate
+ //! and every `rdf:type` object in the data whose namespace belongs to the ontology
+-//! must be *declared* in the ontology. Standard `rdf`/`rdfs`/`owl`/`xsd`/`sh`
+-//! vocabulary and the caller's own instance-data IRIs are never policed.
++//! must be *declared* in the ontology, and declared in the role it is used in: a
++//! predicate must be declared as a property and an `rdf:type` object as a class.
++//! An undeclared term is reported in `hallucinated_terms`; a declared term used in
++//! the other role (a class as a predicate, a property as a type) in
++//! `wrong_role_terms` (#432). Standard `rdf`/`rdfs`/`owl`/`xsd`/`sh` vocabulary and
++//! the caller's own instance-data IRIs are never policed.
+ //!
+ //! This mirrors `shacl::check_shapes` (which checks that proposed SHACL references
+ //! real terms) but points the same idea at generated data instead of shapes.
+@@ -35,10 +39,13 @@ const STD_NS: &[&str] = &[
  
- Where that bites, the tree can MISS a justification. It cannot report a false one, because every
- reported set is verified by re-running the engine over it and over each of its subsets.
+ #[derive(Serialize)]
+ pub struct VocabReport {
+-    /// True iff an ontology was present AND no hallucinated terms were found.
++    /// True iff an ontology was present AND no hallucinated or wrong-role terms were found.
+     pub conforms: bool,
+     /// Terms used in the data, in a policed namespace, but not declared in the ontology.
+     pub hallucinated_terms: Vec<String>,
++    /// Terms the ontology declares, used in the other role: a class used as a
++    /// predicate, or a property used as the object of `rdf:type` (#432).
++    pub wrong_role_terms: Vec<String>,
+     /// The namespaces that were policed (ontology's own namespaces + any caller-supplied).
+     pub checked_namespaces: Vec<String>,
+     pub predicates_checked: usize,
+@@ -90,22 +97,49 @@ fn select_iris(graph: &Arc<GraphStore>, query: &str, var: &str) -> anyhow::Resul
+     Ok(out)
+ }
+ 
+-const CLASS_OR_PROP_FILTER: &str = r#"FILTER(
++const CLASS_FILTER: &str = r#"FILTER(
+     ?k = <http://www.w3.org/2002/07/owl#Class>
+- || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>
+- || ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
++ || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>)"#;
++
++const PROPERTY_FILTER: &str = r#"FILTER(
++    ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#DatatypeProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#AnnotationProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#FunctionalProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#InverseFunctionalProperty>
+  || ?k = <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>)"#;
+ 
+-const DEFINED_BY_AXIOM_FILTER: &str = r#"FILTER(
++/// A subject of `rdfs:subClassOf` is a class.
++const CLASS_AXIOM_FILTER: &str =
++    r#"FILTER(?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>)"#;
++
++/// A subject of `rdfs:domain`, `rdfs:range` or `rdfs:subPropertyOf` is a property.
++const PROPERTY_AXIOM_FILTER: &str = r#"FILTER(
+     ?p = <http://www.w3.org/2000/01/rdf-schema#domain>
+  || ?p = <http://www.w3.org/2000/01/rdf-schema#range>
+- || ?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>
+  || ?p = <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>)"#;
+ 
++/// Terms the ontology declares in one role: typed with one of `type_filter`'s
++/// kinds, or the subject of one of `axiom_filter`'s axioms.
++fn declared(
++    onto: &Arc<GraphStore>,
++    type_filter: &str,
++    axiom_filter: &str,
++) -> anyhow::Result<BTreeSet<String>> {
++    let mut out: BTreeSet<String> = BTreeSet::new();
++    out.extend(select_iris(
++        onto,
++        &format!("SELECT DISTINCT ?t WHERE {{ ?t a ?k . {type_filter} }}"),
++        "t",
++    )?);
++    out.extend(select_iris(
++        onto,
++        &format!("SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {axiom_filter} }}"),
++        "t",
++    )?);
++    Ok(out)
++}
++
+ /// Closed-world vocabulary check of `data_ttl` against the loaded ontology `onto`.
+ /// `extra_ns` adds namespaces to police beyond the ontology's own.
+ /// Returns a JSON `VocabReport`.
+@@ -119,30 +153,20 @@ pub fn check_data_vocab(
+     data.load_turtle(data_ttl, None)
+         .map_err(|e| anyhow::anyhow!("data failed to parse as Turtle: {e}"))?;
+ 
+-    // 2. The ontology's declared vocabulary (full IRIs): typed classes/properties
+-    //    plus anything given a domain/range/subClassOf/subPropertyOf axiom.
+-    let mut onto_terms: BTreeSet<String> = BTreeSet::new();
+-    for t in select_iris(
+-        onto,
+-        &format!("SELECT DISTINCT ?t WHERE {{ ?t a ?k . {CLASS_OR_PROP_FILTER} }}"),
+-        "t",
+-    )? {
+-        onto_terms.insert(t);
+-    }
+-    for t in select_iris(
+-        onto,
+-        &format!("SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {DEFINED_BY_AXIOM_FILTER} }}"),
+-        "t",
+-    )? {
+-        onto_terms.insert(t);
+-    }
++    // 2. The ontology's declared vocabulary (full IRIs), kept per role: typed
++    //    classes/properties plus anything given a subClassOf (class) or a
++    //    domain/range/subPropertyOf (p
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #437** (2026-11-23): No label on the front-page figure sits on a node, an arrow or the panel border (#436) (@fabio-rovai)
+- **PR #434** (2026-11-23): vocab-check reports a declared term used in the wrong role (#432) (@fabio-rovai)
 - **PR #431** (2026-11-20): README front page shows the dark knowledge-graph figure; the hand-drawn version is linked (@fabio-rovai)
 - **PR #430** (2026-11-20): Certificates are byte-stable across runs (#427); the README figure's red edge is a forgery oo-cert really refused (#428) (@fabio-rovai)
 - **PR #429** (2026-11-20): The replay's 3D legend is true of its graph: a certified ies-core run three checkers judged (#425) (@fabio-rovai)
 - **PR #426** (2026-11-20): Errors are valid JSON everywhere; Studio refresh, findings, auto-save and live 3D fixes (#420 to #424) (@fabio-rovai)
-- **PR #419** (2026-11-20): Land #410, #412, #415, #417, #418 and the Studio fixes for #413 and #414 (@fabio-rovai)
-- **PR #418** (2026-11-20): Execute every SHACL 2.3.1 property path form (@MatthewYe)
 
 ---
 
@@ -2403,13 +2238,13 @@ Certificates are byte-stable across runs (#427); the README figure's red edge is
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2154f1bb`: Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-cert really refused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ba7ecf8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2417,23 +2252,21 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **The README figure's red edge is a forged claim, and the refusal it
-  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
-  took one of the derived subClassOf edges, every one of which `oo-cert`
-  accepts, chose it by where it landed in the layout and drew it as the
-  forgery, so the figure painted a certified entailment red and stated a
-  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
-  class the closure does not reach from s, as `demo/build_certified_graph.py`
-  does: a derived line of s is copied with its conclusion changed to X,
-  appended to a copy of the certificate, and `oo-cert` is run on it
-  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
-  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
-  naming the forged line and its rule, and the rule and exit code on the
-  figure are read from that report. On ies-core the forgery is
-  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
-  step, drawn beside the 257 derived edges, which all stay certified. The
-  legend counts the ontology's edges only, as the Studio legend has since
-  #425: 420 asserted, 25
+- **No label on the front-page figure sits on a node, an arrow or the panel
+  border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
+  against other labels only, so the unasked-question badge ran through a row of
+  classes, the forged-line badge and the 無 glyph sat on nodes, three labels
+  crossed the ontology panel's border and the provers' dotted curves cut through
+  `problem.tsv`, while every test passed. Placement now goes through one `fits`
+  check (labels, node discs, pipeline arrows, the forged and unasked lines, the
+  panel edge); a badge with no clear candidate searches outward (the two beat badges in
+  the panel then get a leader back to their line), and the generator refuses to
+  draw if nothing fits. The canvas is
+  1200 x 830 (was 1100 x 780) so the panel has room, the forged line is marked
+  with a capsule instead of a circle that took in its neighbours, and
+  `no_label_sits_on_a_node_an_arrow_or_the_panel_edge` checks both languages
+  (30 violations on the old English figure, 0 now).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2443,7 +2276,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2154f1bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ba7ecf8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,17 +4,17 @@
 {
   "source_repository": "Ataraxy-Labs/sem",
   "source_url": "https://github.com/Ataraxy-Labs/sem",
-  "source_version": "5d74e1fe",
+  "source_version": "1ab7cfb2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T23:25:57.279Z",
+  "timestamp": "2026-11-23T17:46:15.596Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ataraxy-labs-sem",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem) (Revision: `5d74e1fe`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T23:25:57.279Z`  
+> **Provenance**: Harvested from [Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem) (Revision: `1ab7cfb2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:46:15.596Z`  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T23:25:56.568Z  
+> **Harvest Timestamp**: 2026-11-23T17:46:14.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3452 stars
+- **Stars / Engagement**: 3461 stars
 
 ---
 
@@ -1853,271 +1853,40 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d74e1fe` (2026-11-14)
-**Commit Message**: fix: sem update across filesystems, and sem find --text honors --in and --json (#550)
+### Incident Patch 1: `1ab7cfb2` (2026-11-22)
+**Commit Message**: land: setup script (Rust stable, crates vendored for offline tests)
 
-Fixes #549 and #548.
-
-**#549.** `sem update` extracted the release into the temp dir and
-renamed the binary from there onto the installed one, which fails with
-EXDEV (os error 18) when `/tmp` is tmpfs and the binary is on ext4,
-btrfs or xfs. The new binary is now copied next to the installed one
-first (`sem.new`, 0755), so the swap is two renames inside one
-directory. Rollback on failure is unchanged.
-
-**#548.** `sem find --text` and `sem entities --text` returned before
-reading `--in`, `--only`/`--except` and `--json`. The entities are now
-narrowed by path (a file or folder, from the repo root or a subfolder)
-and by kind, and `--json` prints `{text, total, hits: [{file, entity,
-type, line, text}]}`. The reproduction from the issue now returns only
-`src/a.rs::keep`, as JSON.
-
-Thanks @kevmoo for both reports and the clear reproductions.
-
----------
-
-Co-authored-by: Rohan Sharma <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
+**File**: `.land/setup.sh` (added, +28/-0)
 ```diff
-@@ -4,6 +4,11 @@ All notable changes to sem are documented in this file.
- 
- ## [Unreleased]
- 
-+### Fixed
-+
-+- `sem update` works when `/tmp` is on a different filesystem from the installed binary (tmpfs is common on Linux). It failed with `Invalid cross-device link (os error 18)`; the new binary is now copied next to the installed one before the swap. Thanks @kevmoo for the report (#549).
-+- `sem find --text` and `sem entities --text` honor `--in`, `--only`, `--except` and `--json`. They used to search the whole repository and always print text. With `--json` they now print `{text, total, hits: [{file, entity, type, line, text}]}`. Thanks @kevmoo for the report (#548).
-+
- ## [0.30.1] - 2026-11-11
- 
- ### Fixed
-```
-
-**File**: `crates/sem-cli/src/commands/entities.rs` (modified, +66/-1)
-```diff
-@@ -505,12 +505,62 @@ fn text_search(opts: &EntitiesOptions, needle: &str) {
-     );
-     let (_, all_entities) =
-         super::graph::get_or_build_graph(&root, &file_paths, &registry, false, source_scope);
-+
-+    // --in and --only/--except narrow the search exactly as they narrow a listing (#548).
-+    if !opts.only_kinds.is_empty() && !opts.except_kinds.is_empty() {
-+        eprintln!("{} --only and --except cannot be used together", "error:".red().bold());
-+        std::process::exit(2);
-+    }
-+    let scopes = text_scopes(&root, Path::new(&opts.cwd), &opts.paths);
-+    let entities: Vec<SemanticEntity> = all_entities
-+        .iter()
-+        .filter(|e| scopes.is_empty() || scopes.iter().any(|s| in_text_scope(&e.file_path, s)))
-+        .filter(|e| opts.only_kinds.is_empty() || opts.only_kinds.iter().any(|k| k == &e.entity_type))
-+        .filter(|e| !opts.except_kinds.iter().any(|k| k == &e.entity_type))
-+        .cloned()
-+        .collect();
-+
-+    if opts.json {
-+        let hits = sem_mcp::server::SemServer::collect_text_hits(&entities, needle, None);
-+        let rows: Vec<serde_json::Value> = hits
-+            .iter()
-+            .take(TEXT_SEARCH_LIMIT)
-+            .map(|(file, line, name, ty, text)| {
-+                serde_json::json!({"file": file, "entity": name, "type": ty, "line": line, "text": text.trim()})
-+            })
-+            .collect();
-+        let out = serde_json::json!({"text": needle, "total": hits.len(), "hits": rows});
-+        println!("{}", serde_json::to_string_pretty(&out).unwrap_or_default());
-+        return;
-+    }
-     print!(
-         "{}",
--        sem_mcp::server::SemServer::render_text_hits(&all_entities, needle, TEXT_SEARCH_LIMIT)
-+        sem_mcp::server::SemServer::render_text_hits(&entities, needle, TEXT_SEARCH_LIMIT)
-     );
- }
- 
-+/// The `--in` paths as repo-relative scopes (a file or a directory). Empty means
-+/// the whole repository, as does any path that resolves to the repository root.
-+fn text_scopes(root: &Path, cwd: &Path, paths: &[String]) -> Vec<String> {
-+    let root = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
-+    let mut scopes = Vec::new();
-+    for p in paths.iter().map(|p| p.trim()).filter(|p| !p.is_empty()) {
-+        let abs = cwd.join(p);
-+        let abs = abs.canonicalize().unwrap_or(abs);
-+        let rel = abs.strip_prefix(&root).map(|r| r.to_string_lossy().replace('\\', "/")).unwrap_or_else(|_| p.to_string());
-+        let rel = rel.trim_start_matches("./").trim_end_matches('/').to_string();
-+        if rel.is_empty() || rel == "." {
-+            return Vec::new();
-+        }
-+        scopes.push(rel);
-+    }
-+    scopes
-+}
-+
-+fn in_text_scope(file: &str, scope: &str) -> bool {
-+    file == scope || file.strip_prefix(scope).is_some_and(|rest| rest.starts_with('/'))
-+}
-+
- fn extract_file_entities(
-     full_path: &Path,
-     registry: &ParserRegistry,
-@@ -703,6 +753,21 @@ fn print_entity_row(
- mod tests {
-     use super::*;
- 
-+    /// Issue #548: `--in` scopes a text search to a file or a folder, from the repo
-+    /// root or from a subfolder, and the repo root itself means everything.
-+    #[test]
-+    fn text_search_scopes_follow_in_paths() {
-+        let root = std::env::temp_dir().join(format!("sem-text-scope-{}", std::process::id()));
-+        std::fs::create_dir_all(root.join("src")).unwrap();
-+        let s = |cwd: &Path, p: &[&str]| text_scopes(&root, cwd, &p.iter().map(|x| x.to_string()).collect::<Vec<_>>());
-+        assert_eq!(s(&root, &["src"]), vec!["src"]);
-+        assert_eq!(s(&root.join("src"), &["."]), vec!["src"]);
-+        assert!(s(&root, &["."]).is_empty() && s(&root, &[]).is_empty(), "the root is the whole repo");
-+        assert!(in_text_scope("src/a.rs", "src") && in_text_scope("src/a.rs", "src/a.rs"));
-+        assert!(!in_text_scope("srcx/a.rs", "src") && !in_text_scope("tests/b.rs", "src"));
-+        let _ = std::fs::remove_dir_all(&root);
-+    }
-+
-     fn entity(id: &str, parent_id: Option<&str>) -> SemanticEntity {
-         SemanticEntity {
-             id: id.to_string(),
-```
-
-**File**: `crates/sem-cli/src/commands/update.rs` (modified, +61/-10)
-```diff
-@@ -228,33 +228,42 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
- 
-     let new_binary = find_binary(&tmp).ok_or("No sem binary found in release archive")?;
- 
-+    // Stage the new binary beside the installed one first. The temp dir is often
-+    // on another filesystem (/tmp on tmpfs), where a rename fails with EXDEV
-+    // (os error 18); a copy works anywhere, and the swap below is then two
-+    // renames inside one directory.
-+    let staged = exe.with_extension("new");
-+    if let Err(e) = stage(&new_binary, &staged) {
-+        let _ = fs::remove_file(&staged);
-+        cleanup(&tmp);
-+        return Err(format!(
-+            "Cannot write next to {} ({e}). Try with elevated permissions, or reinstall:\n  curl -fsSL https://raw.githubusercontent.com/{REPO}/main/install.sh | sh",
-+            exe.display()
-+        )
-+        .into());
-+    }
-+    cleanup(&tmp);
-+
-     // Swap in place: move the running binary aside (allowed on Unix and
-     // Windows), then move the new one into its path.
-     let old = exe.with_extension("old");
-     let _ = fs::remove_file(&old);
-     if let Err(e) = fs::rename(&exe, &old) {
--        cleanup(&tmp);
-+        let _ = fs::remove_file(&staged);
-         return Err(format!(
-             "Cannot replace {} ({e}). Try with elevated permissions, or reinstall:\n  curl -fsSL https://raw.githubusercontent.com/{REPO}/main/install.sh | sh",
-             exe.display()
-         )
-         .into());
-     }
--    if let Err(e) = fs::rename(&new_binary, &exe) {
-+    if let Err(e) = fs::rename(&staged, &exe) {
-         // Roll back so the user still has a working sem.
-         let _ = fs::rename(&old, &exe);
--        cleanup(&tmp);
-+        let _ = fs::remove_file(&staged);
-         return Err(format!("Failed to install new binary: {e}").into());
-     }
- 
--    #[cfg(unix)]
--    {
--        use std::os::unix::fs::PermissionsExt;
--        let _ = fs::set_permissions(&exe, fs::Permissions::from_mode(0o755));
--    }
--
-     let _ = fs::remove_file(&old); // fails harmlessly on Windows while running
--    cleanup(&tmp);
- 
-     println!(
-         "{} Updated to v{latest} ({})",
-@@ -378,3 +387,45 @@ fn find_binary(dir: &Path) -> Option<PathBuf> {
- fn cleanup(tmp: &Path) {
-     let _ = fs::remove_dir_all(tmp);
- }
-+
-+/// Copy `from` to `to` (any filesystem) and make it executable.
-+fn stage(from: &Path, to: &Path) -> std::io::Result<()> {
-+    let _ = fs::remove_file(to);
-+    fs::copy(from, to)?;
-+    #[cfg(unix)]
-+    {
-+        use std::os::unix::fs::PermissionsExt;
-+        fs::set_permissions(to, fs::Permissions::from_mode(0o755))?;
-+    }
-+    Ok(())
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    /// Issue #549: the staged binary lands beside the installed one, executable, so
-+    /// the final swap never renames across filesystems.
-+    #[test]
-+    fn stage_copies_next_to_the_target_and_makes_it_executable() {
-+        let dir = std::env::temp_dir().join(format!("sem-stage-test-{}", std::process::id()));
-+        fs::create_dir_all(dir.join("download")).unwrap();
-+        let from = dir.join("download").join("sem");
-+        fs::write(&from, b"new sem").unwrap();
-+        let exe = dir.join("sem");
-+        let staged = exe.with_extension("new");
-+        fs::write(&staged, b"stale").unwrap();
-+
-+        stage(&from, &staged).unwrap();
-+        assert_eq!(fs::read(&staged).unwrap(), b"new sem");
-+        assert_eq!(staged.parent(), exe.parent());
-+        #[cfg(unix)]
-+        {
-+            use std::os::unix::fs::PermissionsExt;
-+            assert_eq!(fs::metadata(&staged).unwrap().permissions().mode() & 0o777, 0o755);
-+        }
-+        fs::rename(&staged, &exe).unwrap();
-+        assert_eq!(fs::read(&exe).unwrap(), b"new sem");
-+        let _ = fs::remove_dir_all(&dir);
-+    }
-+}
-```
-
-**File**: `crates/sem-cli/tests/fixtures/cli_simplify/entities_text_search_json.out` (modified, +13/-2)
-```diff
-@@ -1,2 +1,13 @@
--⊕ text "splitlines" · 1 hits · 1 files
--╰─▶ src/config.py: parse_config (L2): pairs = [line.split("=", 1) for line in text.splitlines() if line]
-+{
-+  "hits": [
-+    {
-+      "entity": "parse_config",
-+      "file": "src/config.py",
-+      "line": 2,
-+      "text": "pairs = [line.split(\"=\", 1) for line in text.splitlines() if line]",
-+      "type": "function"
-+    }
-+  ],
-+  "text": "splitlines",
-+  "total": 1
-+}
-```
-
-**File**: `crates/sem-mcp/src/server.rs` (modified, +1/-1)
-```diff
-@@ -1363,7 +1363,7 @@ impl SemServer {
-     /// both renderings of the entity-body text search: one hit per matching
-     /// line as `(file, line, entity name, entity type, line text)`, the
-     /// smallest-span (innermost) enclosing entity winning a contested line.
--    fn collect_text_hits<'a>(
-+    pub fn collect_text_hits<'a>(
-         all_entities: &'a [SemanticEntity],
-         needle: &str,
-         scope: Option<&str>,
+@@ -0,0 +1,28 @@
++#!/bin/bash
++# Rust stable (standalone, no rustup, so it works for any user and HOME), the packages sem's Dockerfile builds
++# with, and every crate vendored to /opt/cargo-vendor so the tests build and run offline.
++set -e
++export DEBIAN_FRONTEND=noninteractive
++apt-get update -qq
++apt-get install -y -qq --no-install-recommends curl ca-certificates xz-utils build-essential pkg-config \
++  libssl-dev cmake git
++v=1.100.0
++curl -fsSL https://static.rust-lang.org/dist/rust-$v-x86_64-unknown-linux-gnu.tar.xz | tar -xJ -C /tmp
++/tmp/rust-$v-x86_64-unknown-linux-gnu/install.sh --prefix=/usr/local \
++  --components=rustc,cargo,rust-std-x86_64-unknown-linux-gnu
++rm -rf /tmp/rust-$v-x86_64-unknown-linux-gnu
++export CARGO_HOME=/tmp/cargo-setup
++(cd crates && cargo vendor --locked --versioned-dirs /opt/cargo-vendor > /dev/null)
++rm -rf "$CARGO_HOME"
++# Found from any working directory (cargo walks up to /), independent of the test user's HOME.
++mkdir -p /.cargo
++cat > /.cargo/config.toml <<'CFG'
++[source.crates-io]
++replace-with = "vendored-sources"
++[source.vendored-sources]
++directory = "/opt/cargo-vendor"
++[net]
++offline = true
++CFG
++chmod -R a+rX /opt/cargo-vendor /.cargo
++cargo --version; rustc --version
 ```
 
 #### Recent Merged Pull Requests:
@@ -2146,25 +1915,48 @@ Co-authored-by: Rohan Sharma <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sem update across filesystems, and sem find --text honors --in and --json
+## X. land: setup script (Rust stable, crates vendored for offline tests)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.land/setup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d74e1fe`: sem update across filesystems, and sem find --text honors --in and --json. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ab7cfb2`: land: setup script (Rust stable, crates vendored for offline tests). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.land/setup.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-
-- `sem update` works when `/tmp` is on a different filesystem from the installed binary (tmpfs is common on Linux). It failed with `Invalid cross-device link (os error 18)`; the new binary is now copied next to the installed one before the swap. Thanks @kevmoo for the report (#549).
-- `sem find --text` and `sem entities --text` honor `--in`, `--only`, `--except` and `--json`. They used to search the whole repository and always print text. With `--json` they now print `{text, total, hits: [{file, entity, type, line, text}]}`. Thanks @kevmoo for the report (#548).
-
+#!/bin/bash
+# Rust stable (standalone, no rustup, so it works for any user and HOME), the packages sem's Dockerfile builds
+# with, and every crate vendored to /opt/cargo-vendor so the tests build and run offline.
+set -e
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+apt-get install -y -qq --no-install-recommends curl ca-certificates xz-utils build-essential pkg-config \
+  libssl-dev cmake git
+v=1.100.0
+curl -fsSL https://static.rust-lang.org/dist/rust-$v-x86_64-unknown-linux-gnu.tar.xz | tar -xJ -C /tmp
+/tmp/rust-$v-x86_64-unknown-linux-gnu/install.sh --prefix=/usr/local \
+  --components=rustc,cargo,rust-std-x86_64-unknown-linux-gnu
+rm -rf /tmp/rust-$v-x86_64-unknown-linux-gnu
+export CARGO_HOME=/tmp/cargo-setup
+(cd crates && cargo vendor --locked --versioned-dirs /opt/cargo-vendor > /dev/null)
+rm -rf "$CARGO_HOME"
+# Found from any working directory (cargo walks up to /), independent of the test user's HOME.
+mkdir -p /.cargo
+cat > /.cargo/config.toml <<'CFG'
+[source.crates-io]
+replace-with = "vendored-sources"
+[source.vendored-sources]
+directory = "/opt/cargo-vendor"
+[net]
+offline = true
+CFG
+chmod -R a+rX /opt/cargo-vendor /.cargo
+cargo --version; rustc --version
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2174,7 +1966,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d74e1fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ab7cfb2` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions
