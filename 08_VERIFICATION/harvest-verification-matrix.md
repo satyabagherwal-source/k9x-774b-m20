@@ -12307,3 +12307,4 @@
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T08:12:33.719Z` | `doobidoo-mcp-memory-service` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-9811BE70` [Domain H] | Yes (`1337d3dc...`) |
 | `CYCLE-20261123-DEJW` | `2026-11-23T08:33:09.356Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10040` | Yes (`8ec15bbd...`) |
 | `CYCLE-20261123-DGOY` | `2026-11-23T08:33:12.130Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`678114bd...`) |
+| `CYCLE-20261123-KH41` | `2026-11-23T09:06:38.881Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`37cc39b4...`) |

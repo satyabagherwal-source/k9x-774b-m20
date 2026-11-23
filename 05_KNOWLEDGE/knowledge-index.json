@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T08:33:18.535Z",
+  "last_updated": "2026-11-23T09:06:43.670Z",
   "total_verified_learnings": 9078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4512709cfd6b8e081c7f285e1c9756d8ff78dea03eba1f007812d1d95fb9054a",
+      "content_hash": "96702829daabde4a0e438de3d47fc3bac19b16a6acdaa1e3e24c9d9ab8788468",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T04:50:34.035Z"
+      "persisted_at": "2026-11-23T09:06:43.670Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1e1f4ebbb63b4bbb317b0d9c1b2031e94c16b693fd0740abe2b12f465883e51",
+      "content_hash": "d94eb4f10536acde17cd51620f74216cff4fc0979e2bc0e48021583c844cc883",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T08:33:18.315Z"
+      "persisted_at": "2026-11-23T09:06:42.685Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b295f3b751cac40403784484ef5d475bf90fe3aa0cc7a35d7f07d354944b0616",
+      "content_hash": "3437bfe5ad7c6fe5726769fcf63c800895ab662898ee5dcc83ebde8ad8c09554",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T08:33:18.535Z"
+      "persisted_at": "2026-11-23T09:06:42.839Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -225734,7 +225734,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "4b821d4ee420437b6e219470c6ec2521f38f9d976b7a2830eb2007f4c9625c56",
+      "content_hash": "37cc39b42dbe118639727c8e25e96105ba7ecdfec05cb8055a39a422abf437dd",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "promoted_rules": [],
@@ -225743,7 +225743,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:10:17.909Z",
+      "verified_at": "2026-11-23T09:06:38.664Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225760,9 +225760,9 @@
       "title": "Research & Knowledge Intelligence: Aleph-Alpha/Kolibri-1 Core Invariants",
       "repository": "Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "f15c2e5ad9f6cabef8b1b94ca3ff5be61d027ab2feb3dd4c3cb80bc72cf188e8",
+      "content_hash": "90df88ff1b1dafd5f776c86831759d04db7ec91d8c444f6200acf3e2c9483b06",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T23:10:18.310Z"
+      "persisted_at": "2026-11-23T09:06:39.084Z"
     },
     "learn-github-builderio-builder": {
       "learning_id": "learn-github-builderio-builder",
@@ -226010,9 +226010,9 @@
       "title": "Research & Knowledge Intelligence: hf-aleph-alpha-kolibri-1-learnings Core Invariants",
       "repository": "hf-aleph-alpha-kolibri-1-learnings",
       "source_version": "HEAD",
-      "content_hash": "35e93c9e12b8e15ee2f648955778dbbcb9e772b8733e787d2be689e5eb539112",
+      "content_hash": "3aecf9c06c1f12bf794cce854317a6291362cbe2b39c06df389aba376b435e20",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T23:10:36.444Z"
+      "persisted_at": "2026-11-23T09:06:42.118Z"
     },
     "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants",
@@ -318917,13 +318917,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DLA2-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KJXE-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3a7c2bfb82d5244c6354ffaad3dd4867f481f5e75380a008ff14aaa93c44730",
+      "content_hash": "bbed955c79d3bd7a3064e95f70d1f11108149b21c8ac5cb10586b901fc9e8b7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T08:33:18.080Z"
+      "persisted_at": "2026-11-23T09:06:42.533Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

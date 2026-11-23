@@ -12340,3 +12340,4 @@ Every entry in this ledger must capture:
 | `learn-dom-h-9811be70` | `project://doobidoo-mcp-memory-service` | `e4501cbf` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md` | 2026-11-23T08:12:33.719Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `a46ba6ab` | Multi-dimensional audit evidence | 2026-11-23T08:33:09.361Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-23T08:33:12.135Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-23T09:06:38.886Z |
