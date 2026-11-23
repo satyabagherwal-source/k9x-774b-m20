@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "04efd8a5e05dca6ea47b01b7c0f883d1beeb1c57f9da11d08c63d40dec3022c3",
-    "lastHarvestedAt": "2026-11-18T19:09:59.444Z",
+    "contentHash": "b69014412928ec67921ab96978d8198e7427cfc86d20ca3085083000f6b296e9",
+    "lastHarvestedAt": "2026-11-23T04:58:22.002Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -4243,10 +4243,10 @@
     "repository": "Kuberwastaken/claurst",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuberwastaken/claurst",
-    "sourceVersion": "e4228cc6",
+    "sourceVersion": "62b1b79f",
     "license": "GPL-3.0",
-    "contentHash": "faa726537fa2739e8e4ce4b9a20c237b465171c7c494798801711b34f147683f",
-    "lastHarvestedAt": "2026-10-26T18:25:28.380Z",
+    "contentHash": "3363025640c1745dc14c30fb5c9576d2f3972387d1839a358515ef28dccbe244",
+    "lastHarvestedAt": "2026-11-23T04:58:23.659Z",
     "learningId": "learn-github-kuberwastaken-claurst"
   },
   "aws-amplify-amplify-js": {

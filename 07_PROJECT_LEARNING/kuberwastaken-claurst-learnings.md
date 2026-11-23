@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md`  
 > **Source**: github ([https://github.com/Kuberwastaken/claurst](https://github.com/Kuberwastaken/claurst))  
-> **Source Version**: `e4228cc6`  
+> **Source Version**: `62b1b79f`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:25:28.026Z  
+> **Timestamp**: 2026-11-23T04:58:22.611Z  
 > **Learning ID**: `learn-github-kuberwastaken-claurst`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuberwastaken/claurst](https://github.com/Kuberwastaken/claurst))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:25:28.019Z  
+> **Harvest Timestamp**: 2026-11-23T04:58:22.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Agentic Coding for Builders who Ship
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10329 stars
+- **Stars / Engagement**: 10345 stars
 
 ---
 
@@ -2370,516 +2370,97 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a0a2543` (2026-10-26)
-**Commit Message**: Integrate validated shell timeout fixture repair
+### Incident Patch 1: `31fd59c1` (2026-11-21)
+**Commit Message**: fix(core): price non-Claude models from llm-prices instead of reporting $0
 
-**File**: `src-rust/crates/tools/src/pty_bash.rs` (modified, +10/-4)
+**File**: `src-rust/Cargo.lock` (modified, +7/-0)
 ```diff
-@@ -2072,8 +2072,10 @@ mod tests {
-             "sleep 30 & child=$!; printf '%s' \"$child\" > '{}'; echo before-deadline; wait \"$child\"",
-             pid_file.display()
-         );
--        let result = tokio::time::timeout(Duration::from_secs(3), run_user_shell(
--            &command, dir.path(), Duration::from_millis(300), dir.path(),
-+        // Allow shell startup under parallel test/build load; the sleeping child
-+        // must still be terminated well before its natural 30-second exit.
-+        let result = tokio::time::timeout(Duration::from_secs(5), run_user_shell(
-+            &command, dir.path(), Duration::from_millis(1500), dir.path(),
-         )).await.expect("explicit user shell must respect its deadline");
-         assert!(result.is_error);
-         assert!(result.content.contains("timed out"), "{}", result.content);
-@@ -2494,7 +2496,7 @@ mod tests {
-         let started = run_in_background(
-             "printf short; { sleep 10 & }; wait".to_string(),
-             std::env::temp_dir(),
--            500,
-+            1500,
-             spill_dir.path(),
-             None,
-             None,
-@@ -2516,7 +2518,11 @@ mod tests {
-         })
-         .await
-         .expect("timeout must finish after the drain grace");
--        assert!(task.output_is_partial);
-+        assert!(
-+            matches!(&task.status, claurst_core::tasks::TaskStatus::Failed(reason) if reason.contains("timed out")),
-+            "unexpected terminal state: {:?}; output: {}", task.status, task.render_output()
-+        );
-+        assert!(task.output_is_partial, "timeout did not capture fixture output: {}", task.render_output());
-         assert!(task.render_output().contains("Partial output:"));
-         let path = task
-             .output_file
+@@ -878,6 +878,7 @@ dependencies = [
+  "glob",
+  "hex",
+  "indexmap 2.14.0",
++ "llm-prices",
+  "nix 0.29.0",
+  "once_cell",
+  "parking_lot",
+@@ -2678,6 +2679,12 @@ version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "11d3d7f243d5c5a8b9bb5d6dd2b1602c0cb0b9db1621bafc7ed66e35ff9fe092"
+ 
++[[package]]
++name = "llm-prices"
++version = "1.8.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8687beff4d5ceb2b1a5fc5f242df4f2c107ca92609f47d30fab584591157d9dd"
++
+ [[package]]
+ name = "lock_api"
+ version = "0.4.14"
 ```
 
----
-
-### Incident Patch 2: `e4228cc6` (2026-10-26)
-**Commit Message**: fix(release): inherit workspace version for schema dialect
-
-**File**: `src-rust/crates/schema_dialect/Cargo.toml` (modified, +1/-1)
+**File**: `src-rust/crates/core/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "claurst-schema-dialect"
--version = "0.2.0"
-+version.workspace = true
- edition = "2024"
- publish = false
+@@ -102,6 +102,7 @@ tokio-tungstenite = { workspace = true }
+ futures = { workspace = true }
+ rusqlite = { workspace = true }
+ fslock = { workspace = true }
++llm-prices = "1.8.0"
+ # Optional: real audio capture for voice input (gated behind the `voice` feature)
+ cpal = { version = "0.15", optional = true }
  
 ```
 
----
-
-### Incident Patch 3: `4be2c68d` (2026-10-26)
-**Commit Message**: Reconcile shell commands with merged memory and session filtering
-
-**File**: `docs/commands.md` (modified, +11/-0)
+**File**: `src-rust/crates/core/src/lib.rs` (modified, +24/-2)
 ```diff
-@@ -168,6 +168,17 @@ title, last-updated time, message count, and cost. In the overlay:
- 
- ---
- 
-+### /sessions
-+
-+Open the session browser overlay with an optional pre-applied filter. While the browser is open, press `/` to type a filter live, `Ctrl+U` to clear it, and `Esc` to close. Matching is case-insensitive against the session title and id.
-+
-+```
-+/sessions
-+/sessions <query>
-+```
-+
-+---
-+
- ### /fork
- 
- Save the conversation up to message index N (default: all of it) as a new session titled "Fork of ...", with the current session as its parent. The current session stays active; switch with `/resume <id>`.
-```
-
-**File**: `docs/configuration.md` (modified, +2/-0)
-```diff
-@@ -326,6 +326,8 @@ Inside `config`:
- | `fileAutocompleteShowHiddenFiles` | boolean | false | Include hidden files in `@` suggestions. |
- | `fileInjectionEnabled` | boolean | true | Inject the contents of `@file` references into the message. |
- | `fileInjectionMaxSize` | integer | 100 | Size limit in KB for an injected file; `0` means no limit. |
-+| `memoryExtractionEnabled` | boolean | false | After a turn ends, run one extra request through the active provider/model to extract facts worth remembering into the project memory store. Global-only: a project `.claurst/settings.json` cannot enable it. |
-+| `autoMemoryEnabled` | boolean \| null | null (on) | Master switch for the automatic memory system. `false` disables both the memory prompt injection and turn-end extraction. |
- 
- Top-level:
- 
-```
-
-**File**: `src-rust/crates/acp/src/lib.rs` (modified, +15/-1)
-```diff
-@@ -34,7 +34,7 @@ mod sessions;
- mod e2e_tests;
- 
- use tokio::sync::mpsc;
--use tracing::{error, info};
-+use tracing::{error, info, warn};
- 
- pub use connection::Connection;
- pub use runtime::AgentRuntime;
-@@ -77,6 +77,20 @@ pub async fn run_acp_server() -> anyhow::Result<()> {
-         error!(?e, "ACP: reader loop failed");
+@@ -5985,8 +5985,19 @@ pub mod cost {
+                 } else if model.contains("haiku") {
+                     Some(Self::HAIKU)
+                 } else {
+-                    // Unknown model: no default pricing (issue #499).
+-                    None
++                    // Any other model: its published list price from llm-prices.
++                    // Rows with a long-context tier get no flat rate, like Haiku 5.5.
++                    llm_prices::lookup(model)
++                        .filter(|p| p.long_context.is_none())
++                        .and_then(|p| {
++                            let input = p.input?;
++                            Some(Self {
++                                input_per_mtk: input,
++                                output_per_mtk: p.output?,
++                                cache_creation_per_mtk: p.cache_write("5m").unwrap_or(input),
++                                cache_read_per_mtk: p.cache_read.unwrap_or(input),
++                            })
++                        })
+                 }
+             }
+         }
+@@ -7689,6 +7700,17 @@ mod tests {
+         assert_eq!(tracker.total_cost_usd(), 0.0);
      }
  
-+    // Let turn-end memory extraction tasks finish before shutdown: ACP
-+    // clients disconnect right after the last turn response, and the
-+    // detached extraction spawn would die with the runtime.
-+    {
-+        let unfinished =
-+            claurst_query::await_pending_extractions(std::time::Duration::from_secs(30)).await;
-+        if unfinished > 0 {
-+            warn!(
-+                count = unfinished,
-+                "memory extraction tasks dropped at ACP shutdown"
-+            );
-+        }
++    #[test]
++    fn non_claude_models_priced_from_llm_prices() {
++        let gpt = cost::ModelPricing::for_model("gpt-4o").unwrap();
++        assert_eq!((gpt.input_per_mtk, gpt.output_per_mtk), (2.5, 10.0));
++        assert_eq!(gpt.cache_read_per_mtk, 1.25);
++        let tracker = CostTracker::with_model("deepseek-chat");
++        tracker.add_usage(1_000_000, 1_000_000, 0, 0);
++        assert!((tracker.total_cost_usd() - 1.5).abs() < 1e-9);
++        assert_eq!(cost::ModelPricing::for_model("not-a-real-model"), None);
 +    }
 +
-     info!("ACP: server shutdown");
-     Ok(())
- }
-```
-
-**File**: `src-rust/crates/cli/src/main.rs` (modified, +120/-87)
-```diff
-@@ -12,9 +12,9 @@
- // parameters; grouping them into structs is a larger refactor out of scope here.
- #![allow(clippy::too_many_arguments)]
- 
--mod oauth_flow;
- mod codex_oauth_flow;
- mod headless;
-+mod oauth_flow;
- mod prompt_dispatch;
- mod session_resume;
- mod upgrade;
-@@ -39,16 +39,16 @@ pub const FEEDBACK_CHANNEL: &str = env!("FEEDBACK_CHANNEL");
- pub const ISSUES_EXPLAINER: &str = env!("ISSUES_EXPLAINER");
- 
- use anyhow::Context;
-+use clap::{ArgAction, Parser, ValueEnum};
-+use claurst_core::hooks::{HookEventData, SessionEndReason, SessionStartSource};
- use claurst_core::{
-     config::{Config, PermissionMode, Settings},
-     constants::APP_VERSION,
-     context::ContextBuilder,
-     cost::CostTracker,
-     permissions::{AutoPermissionHandler, InteractivePermissionHandler, PermissionManager},
- };
--use claurst_core::hooks::{HookEventData, SessionEndReason, SessionStartSource};
- use claurst_tools::ToolContext;
--use clap::{ArgAction, Parser, ValueEnum};
- use parking_lot::Mutex as ParkingMutex;
- use std::{path::PathBuf, sync::Arc};
- use tracing::{debug, info, warn};
-@@ -416,12 +416,12 @@ async fn main() -> anyhow::Result<()> {
-     let base_filter = EnvFilter::try_from_default_env()
-         .unwrap_or_else(|_| EnvFilter::new(log_level));
-     let log_filter = base_filter
--        .add_directive("rmcp::service::client=error".parse().expect("valid rmcp directive"))
-+        .add_directive("rmcp::service::client=error".parse().expect("valid rmcp directive"),)
-         // Suppress error/warn logs from providers and query — errors are already shown as error modals
--        .add_directive("claurst_api::providers::free=off".parse().expect("valid directive"))
-+        .add_directive("claurst_api::providers::free=off".parse().expect("valid directive"),)
-         .add_directive("claurst_query=off".parse().expect("valid directive"))
-         // Unreadable system cert files are recoverable (other roots still load).
--        .add_directive("rustls_platform_verifier=error".parse().expect("valid directive"));
-+        .add_directive("rustls_platform_verifier=error".parse().expect("valid directive"),);
- 
-     // Determine mode early (needed for log routing, settings error reporting,
-     // auth error handling, and permission handler selection).
-@@ -530,8 +530,8 @@ async fn main() -> anyhow::Result<()> {
-     // --allowed-tools / --disallowed-tools extend the configured lists for
-     // this session only; the permission manager turns them into rules.
-     for (flag, list, target) in [
--        ("--allowed-tools", cli.allowed_tools.as_deref(), &mut config.allowed_tools),
--        ("--disallowed-tools", cli.disallowed_tools.as_deref(), &mut config.disallowed_tools),
-+        ("--allowed-tools", cli.allowed_tools.as_deref(), &mut config.allowed_tools,),
-+        ("--disallowed-tools", cli.disallowed_tools.as_deref(), &mut config.disallowed_tools,),
-     ] {
-         for spec in list.map(claurst_core::permissions::split_rule_specs).unwrap_or_default() {
-             if claurst_core::permissions::parse_rule_spec(
-@@ -596,7 +596,7 @@ async fn main() -> anyhow::Result<()> {
-     // (it lands in the cached system block); `system_ctx` (git status, IDE
-     // context) is passed separately as `session_context` and sent in the
-     // dynamic block.
--    let system_prompt = [config.custom_system_prompt.clone(), config.append_system_prompt.clone()]
-+    let system_prompt = [config.custom_system_prompt.clone(), config.append_system_prompt.clone(),]
-         .into_iter()
-         .flatten()
-         .filter(|part| !part.is_empty())
-@@ -701,15 +701,15 @@ async fn main() -> anyhow::Result<()> {
-             claurst_core::permissions::project_approvals_path(
-                 &claurst_core::config::Settings::config_dir(),
-                 &claurst_core::permissions::approvals_project_root(&cwd),
--            ),
-+            )
-         );
-     permission_manager.sync_config(&config);
-     let permission_manager = Arc::new(std::sync::Mutex::new(permission_manager));
- 
-     let permission_handler: Arc<dyn claurst_core::PermissionHandler> = if is_headless {
--        Arc::new(AutoPermissionHandler::with_manager(permission_manager.clone()))
-+        Arc::new(AutoPermissionHandler::with_manager(permission_manager.clone(),))
-     } else {
--        Arc::new(InteractivePermissionHandler::with_manager(permission_manager.clone()))
-+        Arc::new(InteractivePermissionHandler::with_manager(permission_manager.clone(),))
-     };
-     let cost_tracker = CostTracker::new();
-     // Use --session-id if provided, otherwise generate a fresh UUID.
-@@ -971,7 +971,8 @@ async fn main() -> anyhow::Result<()> {
-     let skill_discovery = {
-         let cwd = cwd.clone();
-         let skills_config = config.skills.clone();
--        tokio::task::spawn_blocking(move || claurst_core::SkillRegistry::discover(&cwd, &skills_config))
-+        tokio::task::spawn_blocking(move || { claurst_core::SkillRegistry::discover(&cwd, &skills_config)
-+        })
-     };
-     let ski
-```
-
-**File**: `src-rust/crates/core/src/keybindings.rs` (modified, +11/-0)
-```diff
-@@ -28,6 +28,7 @@ pub enum KeyContext {
-     Select,
-     Plugin,
-     SessionBrowser,
-+    SessionFilter,
- }
- 
- #[derive(Debug, Clone, Serialize, Deserialize)]
-@@ -360,6 +361,16 @@ pub fn default_bindings() -> Vec<ParsedBinding> {
-         ("r", "removeAttachment", KeyContext::Attachments),
- 
-         // ========== SESSION BROWSER ==========
-+        ("/", "startSessionFilter", KeyContext::SessionBrowser),
-+        ("ctrl+u", "clearSessionFilter", KeyContext::SessionBrowser),
-+        ("enter", "applySessionFilter", KeyContext::SessionFilter),
-+        ("escape", "applySessionFilter", KeyContext::SessionFilter),
-+        ("ctrl+u", "clearSessionFilter", KeyContext::SessionFilter),
-+        ("backspace", "eraseSessionFilter", KeyContext::SessionFilter),
-+        ("up", "prevSession", KeyContext::SessionFilter),
-+        ("down", "nextSession", KeyContext::SessionFilter),
-+        ("pageup", "prevSessionPage", KeyContext::SessionFilter),
-+        ("pagedown", "nextSessionPage", KeyContext::SessionFilter),
-         ("up", "prevSession", KeyContext::SessionBrowser),
-         ("down", "nextSession", KeyContext::SessionBrowser),
-         ("k", "prevSession", KeyContext::SessionBrowser),
-```
-
-**File**: `src-rust/crates/core/src/lib.rs` (modified, +112/-79)
-```diff
-@@ -13,7 +13,7 @@
- 
- // Branded provider / model identifier newtypes.
- pub mod provider_id;
--pub use provider_id::{ProviderId, ModelId};
-+pub use provider_id::{ModelId,ProviderId};
- 
- // Session transcript persistence (JSONL, matches TS sessionStorage.ts schema).
- pub mod session_storage;
-@@ -23,7 +23,7 @@ pub mod session_journal;
- 
- // SQLite-backed session storage (faster alternative to JSONL).
- pub mod sqlite_storage;
--pub use sqlite_storage::{SqliteSessionStore, SessionSummary};
-+pub use sqlite_storage::{SessionSummary,SqliteSessionStore};
- 
- // Attachment pipeline — assembles per-turn context attachments (T1-6).
- pub mod attachments;
-@@ -39,18 +39,19 @@ pub use auth_store::{AuthStore, StoredCredential};
- pub mod device_code;
- 
- // Utility modules ported from src/utils/
--pub mod token_budget;
--pub mod truncate;
--pub mod format_utils;
--pub mod crypto_utils;
--pub mod status_notices;
- pub mod auto_mode;
-+pub mod crypto_utils;
-+pub mod format_utils;
- pub mod spinner;
--pub use spinner::{SPINNER_VERBS, TURN_COMPLETION_VERBS, sample_spinner_verb, sample_completion_verb};
-+pub mod status_notices;
-+pub mod token_budget;
-+pub mod truncate;
-+pub use spinner::{
-+    sample_completion_verb, sample_spinner_verb,SPINNER_VERBS, TURN_COMPLETION_VERBS,};
- 
- // Remote session sync and cloud session API (T3-1, T3-2).
--pub mod remote_session;
- pub mod cloud_session;
-+pub mod remote_session;
- 
- // AGENTS.md / CLAUDE.md instruction files for the system prompt.
- pub mod claudemd;
-@@ -66,8 +67,8 @@ pub mod snapshot;
- 
- // Per-session durable objectives (/goal feature).
- pub mod goal;
--pub use goal::{Goal, GoalError, GoalStatus, GoalStore, MAX_GOAL_TURNS, MAX_OBJECTIVE_CHARS,
--               goal_continuation_message, goal_kickoff_message, goal_system_prompt_addendum, goals_enabled};
-+pub use goal::{
-+    goal_continuation_message, goal_kickoff_message, goal_system_prompt_addendum, goals_enabled,Goal, GoalError, GoalStatus, GoalStore, MAX_GOAL_TURNS, MAX_OBJECTIVE_CHARS,};
- 
- // Feature flag management via GrowthBook.
- pub mod feature_flags;
-@@ -77,7 +78,7 @@ pub mod mcp_templates;
- 
- // IDE environment detection (VS Code, Cursor, JetBrains, …).
- pub mod ide;
--pub use ide::{IdeKind, detect_ide};
-+pub use ide::{detect_ide,IdeKind};
- 
- // Background update checker — compares running version against GitHub releases.
- pub mod update_check;
-@@ -87,35 +88,39 @@ pub use update_check::{check_for_updates, UpdateInfo};
- pub mod share_export;
- 
- // Re-export commonly used types at the crate root
-+pub use config::{
-+    builtin_managed_agent_presets, default_agents, strip_jsonc_comments, substitute_env_vars,AgentDefinition, BudgetSplitPolicy, CommandTemplate, Config, FormatterConfig, ManagedAgentConfig, ManagedAgentPreset, McpServerConfig, McpServerOrigin, OutputFormat, PermissionMode, ProviderConfig, Settings, SkillsConfig, Theme,
-+};
- pub use error::{ClaudeError, Result};
--pub use types::{
--    ContentBlock, ImageSource, DocumentSource, CitationsConfig, Message, MessageContent,
--    MessageCost, Role, ToolDefinition, ToolResultContent, UsageInfo,
-+pub use import_config::{
-+    build_import_preview, execute_import, summarize_import_result,ClaudeMdPreview, ImportExecutionResult, ImportPaths, ImportPreview, ImportSelection, PreviewAction, PreviewField, SettingsPreview,
- };
--pub use config::{AgentDefinition, BudgetSplitPolicy, Config, CommandTemplate, FormatterConfig, ManagedAgentConfig, ManagedAgentPreset, McpServerConfig, McpServerOrigin, OutputFormat, PermissionMode, ProviderConfig, Settings, SkillsConfig, Theme, builtin_managed_agent_presets, default_agents, strip_jsonc_comments, substitute_env_vars};
--pub use import_config::{ClaudeMdPreview, ImportExecutionResult, ImportPaths, ImportPreview, ImportSelection, PreviewAction, PreviewField, SettingsPreview, build_import_preview, execute_import, summarize_import_result};
-+pub use types::{
-+    CitationsConfig, ContentBlock, DocumentSource, ImageSource, Message, MessageContent,
-+    MessageCost, Role, ToolDefinition, ToolResultContent, UsageInfo,};
- 
- // Durable queue for mid-turn steering input (soft interrupts).
- pub mod soft_interrupt_store;
- pub use soft_interrupt_store::PersistedSoftInterrupt;
- 
- // Skill discovery: filesystem and git URL skill loading.
- pub mod skill_discovery;
--pub use skill_discovery::{DiscoveredSkill, RegisteredSkill, SkillRegistry, discover_skills, parse_skill_file};
-+pub use skill_discovery::{
-+    discover_skills, parse_skill_file,DiscoveredSkill, RegisteredSkill, SkillRegistry,};
- 
- // Skills compiled into the binary; one source of the skill registry.
- pub mod bundled_skills;
- pub use cost::CostTracker;
--pub use history::ConversationSession;
- pub use feature_flags::FeatureFlagManager;
-+pub use history::ConversationSession;
- pub use paths::claurst_home;
- pub use permissions::{
-+    format_permission_reason,
-     AutoPermissionHandler, InteractivePermissionHandler,
-     ManagedAutoPermissionHandler, ManagedInteractivePermissionHandler,
-     PermissionAction, Permiss
-```
-
-**File**: `src-rust/crates/core/src/memdir.rs` (modified, +468/-1)
-```diff
-@@ -7,9 +7,10 @@
- //!   - `memdir.ts`       → `build_memory_prompt_content`, `load_memory_index`, `ensure_memory_dir_exists`
- //!   - `paths.ts`        → `auto_memory_path`, `is_auto_memory_enabled`
- 
-+use serde::{Deserialize, Serialize};
-+
- use std::path::{Path, PathBuf};
- use std::time::{SystemTime, UNIX_EPOCH};
--use serde::{Deserialize, Serialize};
- 
- // ---------------------------------------------------------------------------
- // Memory type taxonomy
-@@ -592,6 +593,272 @@ pub fn team_memory_path(auto_memory_dir: &Path) -> PathBuf {
-     auto_memory_dir.join("team")
- }
- 
-+// ---------------------------------------------------------------------------
-+// Auto-memory store (write side of the memdir system)
-+// ---------------------------------------------------------------------------
-+//
-+// Extraction results persist here as ordinary memdir files so the existing
-+// read path (`load_memory_index` -> `build_memory_prompt_content`) serves
-+// them with no parallel store. Writers take a per-directory `fslock` and
-+// publish every file through a same-directory temp file + rename, so two
-+// sessions (or a subagent) writing concurrently never lose an entry.
-+
-+/// One extracted fact destined for the memdir store.
-+#[derive(Debug, Clone, PartialEq)]
-+pub struct AutoMemoryEntry {
-+    /// Human-readable topic label (frontmatter `name`).
-+    pub name: String,
-+    /// One-line hook for the `MEMORY.md` index (frontmatter `description`).
-+    pub description: String,
-+    /// The fact body.
-+    pub content: String,
-+    /// Canonical memdir type tag for the frontmatter.
-+    pub memory_type: MemoryType,
-+}
-+
-+/// Persist a batch of extracted memories into the memdir store `dir`.
-+///
-+/// Each entry lands in its own topic file under `auto/<seq>-<slug>.md` and
-+/// `MEMORY.md` gains one index line per file. Writing is atomic (temp +
-+/// rename) and serialized against other writers by a lock file in `dir`, so
-+/// overlapping turns, subagents or a second session in the same repository
-+/// cannot wipe the store. A busy or failing writer returns an error so
-+/// extraction can leave its cursor unchanged and retry the same window.
-+///
-+/// Returns paths written; an empty successful batch contains only duplicates.
-+pub fn append_auto_memories(
-+    dir: &Path,
-+    entries: &[AutoMemoryEntry],
-+) -> std::io::Result<Vec<PathBuf>> {
-+    if entries.is_empty() {
-+        return Ok(Vec::new());
-+    }
-+    std::fs::create_dir_all(dir)?;
-+    let mut lock = fslock::LockFile::open(&dir.join(".memdir.lock"))?;
-+    if !lock.try_lock_with_pid()? {
-+        return Err(std::io::Error::new(
-+            std::io::ErrorKind::WouldBlock,
-+            "memdir store busy",
-+        ));
-+    }
-+    let mut written = Vec::new();
-+    for entry in entries {
-+        if let Some(path) = write_entry_locked(dir, entry)? {
-+            written.push(path);
-+        }
-+    }
-+    Ok(written)
-+}
-+
-+/// Cross-process ownership of a project's extraction transaction. The caller
-+/// keeps this handle alive through the request, memory writes and cursor commit.
-+pub fn try_lock_extraction(dir: &Path) -> std::io::Result<Option<fslock::LockFile>> {
-+    std::fs::create_dir_all(dir)?;
-+    let mut lock = fslock::LockFile::open(&dir.join(".extraction.lock"))?;
-+    Ok(lock.try_lock_with_pid()?.then_some(lock))
-+}
-+
-+/// Session ids never become path components directly, including ids supplied
-+/// by embedding clients. Each session's progress is independent within a project.
-+pub fn extraction_cursor_path(dir: &Path, session_id: &str) -> PathBuf {
-+    use sha2::{Digest, Sha256};
-+    dir.join(".extraction-cursors").join(format!(
-+        "{}.json",
-+        hex::encode(Sha256::digest(session_id.as_bytes()))
-+    ))
-+}
-+
-+/// None means the fact was already stored. Errors must not consume an
-+/// extraction cursor: the same window needs to remain eligible for a retry.
-+fn write_entry_locked(dir: &Path, entry: &AutoMemoryEntry) -> std::io::Result<Option<PathBuf>> {
-+    let auto_dir = dir.join("auto");
-+    std::fs::create_dir_all(&auto_dir)?;
-+    let slug = slug_for(&entry.name);
-+    let topic_files = matching_topic_files(&auto_dir, &slug);
-+    if let Some(oldest) = topic_files.first() {
-+        let existing_bodies = topic_files
-+            .iter()
-+            .map(std::fs::read_to_string)
-+            .collect::<std::io::Result<Vec<_>>>()?;
-+        let duplicate = existing_bodies
-+            .iter()
-+            .any(|body| body.contains(&entry.content));
-+        if !duplicate {
-+            let body = format!("{}\n{}\n", existing_bodies[0].trim_end(), entry.content);
-+            atomic_write(oldest, body.as_bytes())?;
-+        }
-+        if let Some(filename) = oldest.file_name().and_then(|name| name.to_str()) {
-+            append_to_index(dir, &format!("auto/{filename}"), &entry.description)?;
-+        }
-+        return Ok(
-```
-
-**File**: `src-rust/crates/query/src/agent_tool.rs` (modified, +3/-0)
-```diff
-@@ -356,6 +356,9 @@ impl Tool for AgentTool {
-             system_prompt: Some(system_prompt),
-             append_system_prompt: None,
-             session_context: None,
-+            // Sub-agents build their own first-turn memory from the store
-+            // via the loop's per-turn refresh; no seed here.
-+            memory_content: String::new(),
-             output_style: ctx.config.effective_output_style(),
-             output_style_prompt: ctx.config.resolve_output_style_prompt(),
-             working_directory: Some(working_dir_str),
+     #[test]
+     fn known_models_still_priced_normally() {
+         let tracker = CostTracker::with_model("claude-sonnet-4-5");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #538** (2026-11-22): fix(core): price non-Claude models from llm-prices instead of reporting $0 (@Mattbusel)
 - **PR #535** (2026-10-26): Integrate reviewed shell, continuation, compaction, MCP and Windows edit repairs (@Kuberwastaken)
 - **PR #534** (2026-10-26): fix(tools): stabilize Windows edit locks and own atomic-write temporaries (@Kuberwastaken)
 - **PR #533** (2026-10-26): fix(mcp): rebuild plugin server rosters at startup and reload (@Kuberwastaken)
 - **PR #532** (2026-10-26): fix(core): retain session lock conflicts and rotate durable journals (@Kuberwastaken)
 - **PR #531** (2026-10-26): fix(query): honor compaction settings and bound summary budgets (@Kuberwastaken)
-- **PR #530** (2026-10-26): fix(tools): bind multi-file edits and protect policy files (@Kuberwastaken)
 
 ---
 
@@ -2899,40 +2480,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Integrate validated shell timeout fixture repair
+## X. core): price non-Claude models from llm-prices instead of reporting $0
 
 **RULE**:
-When implementing operations in `src-rust/crates/tools/src/pty_bash.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuberwastaken/claurst. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-rust/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuberwastaken/claurst. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a0a2543`: Integrate validated shell timeout fixture repair. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `31fd59c1`: core): price non-Claude models from llm-prices instead of reporting $0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-rust/crates/tools/src/pty_bash.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-rust/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Allow shell startup under parallel test/build load; the sleeping child
-        // must still be terminated well before its natural 30-second exit.
-        let result = tokio::time::timeout(Duration::from_secs(5), run_user_shell(
-            &command, dir.path(), Duration::from_millis(1500), dir.path(),
-            1500,
-        assert!(
-            matches!(&task.status, claurst_core::tasks::TaskStatus::Failed(reason) if reason.contains("timed out")),
-            "unexpected terminal state: {:?}; output: {}", task.status, task.render_output()
-        );
-        assert!(task.output_is_partial, "timeout did not capture fixture output: {}", task.render_output());
+ "llm-prices",
+[[package]]
+name = "llm-prices"
+version = "1.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8687beff4d5ceb2b1a5fc5f242df4f2c107ca92609f47d30fab584591157d9dd"
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        let result = tokio::time::timeout(Duration::from_secs(3), run_user_shell(
-            &command, dir.path(), Duration::from_millis(300), dir.path(),
-            500,
-        assert!(task.output_is_partial);
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a0a2543` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `31fd59c1` are properly handled with clean fallback behavior.

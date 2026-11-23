@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-6ST7",
-    "timestamp": "2026-11-21T03:44:44.635Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "5c2dfa7431af085cc9f45c96a3af6c4da578813539599a6c116f5ec0ce4baa33",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-6UPQ",
-    "timestamp": "2026-11-21T03:44:47.102Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "847c30c8b5a80db34ffaee204cd57deb3bf540259533ac405aa152b38752feb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-GSGE",
     "timestamp": "2026-11-21T03:52:30.734Z",
     "repository": "meta/folly",
@@ -7492,6 +7462,36 @@
     "contentHash": "0a37b9a2dff56b003c0194feb79df6980498ec977ea5a3402cbd7897ddbee0ce",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-P6LP",
+    "timestamp": "2026-11-23T04:58:21.997Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "b69014412928ec67921ab96978d8198e7427cfc86d20ca3085083000f6b296e9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-P7VR",
+    "timestamp": "2026-11-23T04:58:23.655Z",
+    "repository": "Kuberwastaken/claurst",
+    "learningId": "learn-github-kuberwastaken-claurst",
+    "contentHash": "3363025640c1745dc14c30fb5c9576d2f3972387d1839a358515ef28dccbe244",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

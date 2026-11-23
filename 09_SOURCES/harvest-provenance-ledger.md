@@ -12295,3 +12295,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-23T04:23:24.562Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `8c86bcb2` | Multi-dimensional audit evidence | 2026-11-23T04:24:03.652Z |
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-23T04:50:29.188Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-23T04:58:22.002Z |
+| `learn-github-kuberwastaken-claurst` | `https://github.com/Kuberwastaken/claurst` | `62b1b79f` | Multi-dimensional audit evidence | 2026-11-23T04:58:23.659Z |

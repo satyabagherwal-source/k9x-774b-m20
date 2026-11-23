@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T04:50:29.194Z",
-  "total_cycles_completed": 11660,
-  "total_learnings_persisted": 11660,
-  "total_rules_promoted": 10848,
+  "last_updated": "2026-11-23T04:58:23.664Z",
+  "total_cycles_completed": 11662,
+  "total_learnings_persisted": 11662,
+  "total_rules_promoted": 10849,
   "history": [
-    {
-      "timestamp": "2026-11-22T08:09:24.371Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T08:09:29.341Z",
-      "repository": "onejs/one",
-      "learningId": "learn-github-onejs-one",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T08:22:56.441Z",
       "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "hexgrad/Kokoro-82M",
       "learningId": "learn-huggingface-hexgrad-kokoro-82m",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T04:58:22.007Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T04:58:23.664Z",
+      "repository": "Kuberwastaken/claurst",
+      "learningId": "learn-github-kuberwastaken-claurst",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

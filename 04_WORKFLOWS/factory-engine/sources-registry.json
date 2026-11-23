@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T04:50:32.210Z",
-    "lastVerified": "2026-11-23T04:50:32.210Z",
+    "lastChecked": "2026-11-23T04:58:33.522Z",
+    "lastVerified": "2026-11-23T04:58:33.522Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -173,12 +173,12 @@
     "revisionIdentifier": "9a44a8e8"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T04:00:18.524Z",
-    "lastVerified": "2026-11-23T04:00:18.524Z",
+    "lastChecked": "2026-11-23T04:58:33.514Z",
+    "lastVerified": "2026-11-23T04:58:33.514Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -187,7 +187,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5915d306"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1666,9 +1667,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-22T21:40:55.762Z",
+    "lastChecked": "2026-11-23T04:58:28.529Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-22T21:40:55.762Z"
+    "lastVerified": "2026-11-23T04:58:28.529Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2630,8 +2631,8 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-22T02:53:20.587Z",
-    "lastVerified": "2026-11-22T02:53:20.587Z",
+    "lastChecked": "2026-11-23T04:58:31.116Z",
+    "lastVerified": "2026-11-23T04:58:31.116Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
@@ -3729,11 +3730,21 @@
     "lastVerified": "2026-11-22T05:59:41.939Z"
   },
   "kuberwastaken-claurst": {
-    "name": "claurst",
+    "name": "Kuberwastaken/claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
-    "lastChecked": "2026-11-21T21:19:30.309Z",
-    "revisionIdentifier": "e4228cc6",
-    "lastVerified": "2026-11-21T21:19:30.309Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-23T04:58:22.605Z",
+    "lastVerified": "2026-11-23T04:58:22.605Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kuberwastaken-claurst",
+    "contentHash": "3363025640c1745dc14c30fb5c9576d2f3972387d1839a358515ef28dccbe244",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-google-bert-bert-base-uncased": {
     "name": "google-bert/bert-base-uncased",
@@ -4182,9 +4193,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-22T03:54:09.384Z",
+    "lastChecked": "2026-11-23T04:58:26.113Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-22T03:54:09.384Z"
+    "lastVerified": "2026-11-23T04:58:26.113Z"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -4205,12 +4216,12 @@
     "officialUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T19:09:58.772Z",
-    "lastVerified": "2026-11-18T19:09:58.772Z",
+    "lastChecked": "2026-11-23T04:58:21.321Z",
+    "lastVerified": "2026-11-23T04:58:21.321Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "04efd8a5e05dca6ea47b01b7c0f883d1beeb1c57f9da11d08c63d40dec3022c3",
+    "contentHash": "b69014412928ec67921ab96978d8198e7427cfc86d20ca3085083000f6b296e9",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9728,9 +9739,9 @@
   "dimillian-redditos": {
     "name": "RedditOS",
     "officialUrl": "https://github.com/Dimillian/RedditOS",
-    "lastChecked": "2026-11-20T04:14:16.106Z",
+    "lastChecked": "2026-11-23T04:58:23.578Z",
     "revisionIdentifier": "525cd241",
-    "lastVerified": "2026-11-20T04:14:16.106Z"
+    "lastVerified": "2026-11-23T04:58:23.578Z"
   },
   "lifesciforge-seo-auditor": {
     "name": "seo-auditor",

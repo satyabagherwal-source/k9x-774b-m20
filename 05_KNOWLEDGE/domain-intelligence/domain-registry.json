@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T04:50:35.208Z",
-  "total_records": 2389,
+  "last_updated": "2026-11-23T04:58:35.918Z",
+  "total_records": 2391,
   "domains": {
     "A": {
       "total": 20,
@@ -2093,7 +2093,7 @@
       ]
     },
     "I": {
-      "total": 129,
+      "total": 131,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2223,7 +2223,9 @@
         "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-learnings-core-",
         "DOM-I-DBBC4693",
         "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants",
-        "domain_intelligence-content-information-intelligence-meshery-meshery-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-meshery-meshery-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants",
+        "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8159,8 +8161,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "8abab66095fef2a51f85d2ee2caef1891bc55b43722021c3665b5e3232134d67",
-      "created_at": "2026-11-23T04:50:35.208Z"
+      "content_hash": "e68ff7cc43939b67402367cc69e7cdf1e4c59d150418bffb8586a1ca8a566d8b",
+      "created_at": "2026-11-23T04:58:35.918Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -11894,8 +11896,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-research-knowledge-intelligence-meta-llama-meta-ll.md",
       "repository": "meta-llama/Meta-Llama-3-8B",
-      "content_hash": "cd10a885228b0906a7bd733ffe42b1fe313ca77662dc4e3a45f70914ebaec6e2",
-      "created_at": "2026-11-18T19:09:59.675Z"
+      "content_hash": "5ff14eebd9ce0aed08b1fa33420af64e0a3dec7ad1ee7028e8fcdbb6afb00d27",
+      "created_at": "2026-11-23T04:58:22.210Z"
     },
     "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants",
@@ -11960,8 +11962,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-learnings-research-knowledge-intelligence-hf-meta-.md",
       "repository": "hf-meta-llama-meta-llama-3-8b-learnings",
-      "content_hash": "00291d2d8fcce76711ed28e2eb61c7d149516b8d6b6a3813775674d15d7b8c39",
-      "created_at": "2026-11-18T19:10:12.939Z"
+      "content_hash": "055bba5073c098e62d27b6ce9e7318315c31834c3bd36c9e565fdb5ffb9cf961",
+      "created_at": "2026-11-23T04:58:35.063Z"
     },
     "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants",
@@ -40185,6 +40187,24 @@
       "repository": "buresdv-cork-learnings",
       "content_hash": "da81872a4cd2d666801cd6f6d6e3aabff53378596d2ab1bbe9a47f0ba58e0994",
       "created_at": "2026-11-22T23:57:30.894Z"
+    },
+    "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: Kuberwastaken/claurst Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kuberwastaken-claurst-content-information-intelligence-kuberwastaken-claurst-cor.md",
+      "repository": "Kuberwastaken/claurst",
+      "content_hash": "bd1865f47de3e64786d77fa444c22dc7670d363c091289202ddb79c966d93adb",
+      "created_at": "2026-11-23T04:58:24.056Z"
+    },
+    "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kuberwastaken-claurst-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kuberwastaken-claurst-learnings-content-information-intelligence-kuberwastaken-c.md",
+      "repository": "kuberwastaken-claurst-learnings",
+      "content_hash": "074c6d164694516c9b3161cc76daa6fa1eec467e41730d86a96d53ceac69a634",
+      "created_at": "2026-11-23T04:58:34.407Z"
     }
   }
 }

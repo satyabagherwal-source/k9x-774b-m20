@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T04:50:29.199Z",
+  "last_updated": "2026-11-23T04:58:23.668Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1055,14 +1055,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "content_hash": "04efd8a5e05dca6ea47b01b7c0f883d1beeb1c57f9da11d08c63d40dec3022c3",
-      "verified_at": "2026-11-18T19:09:59.454Z",
+      "content_hash": "b69014412928ec67921ab96978d8198e7427cfc86d20ca3085083000f6b296e9",
+      "verified_at": "2026-11-23T04:58:22.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T19:09:59.454Z"
+      "last_updated": "2026-11-23T04:58:22.010Z"
     },
     "hexgrad/Kokoro-82M": {
       "repository": "hexgrad/Kokoro-82M",
@@ -6486,14 +6486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuberwastaken-claurst",
-      "content_hash": "faa726537fa2739e8e4ce4b9a20c237b465171c7c494798801711b34f147683f",
-      "verified_at": "2026-10-26T18:25:28.387Z",
+      "content_hash": "3363025640c1745dc14c30fb5c9576d2f3972387d1839a358515ef28dccbe244",
+      "verified_at": "2026-11-23T04:58:23.667Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T18:25:28.387Z"
+      "last_updated": "2026-11-23T04:58:23.667Z"
     },
     "aws-amplify/amplify-js": {
       "repository": "aws-amplify/amplify-js",

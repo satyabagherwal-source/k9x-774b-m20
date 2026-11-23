@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T04:00:23.281Z",
+  "updated_at": "2026-11-23T04:58:33.994Z",
   "stats": {
-    "total_discovered": 7755,
-    "approved_pending_harvest": 7339,
+    "total_discovered": 7762,
+    "approved_pending_harvest": 7345,
     "harvested_count": 0,
-    "rejected_count": 416,
+    "rejected_count": 417,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7326,
+      "COMMUNITY_AND_EXPERT": 7333,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -167721,6 +167721,153 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
         "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-4147CDE54110": {
+      "id": "SRC-4147CDE54110",
+      "url": "https://github.com/Kuberwastaken/claurst",
+      "title": "https://github.com/Kuberwastaken/claurst",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:58:33.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+        "fileName": "kuberwastaken-claurst-learnings.md"
+      }
+    },
+    "SRC-AAA18FFA0283": {
+      "id": "SRC-AAA18FFA0283",
+      "url": "https://api.claude.ai/",
+      "title": "https://api.claude.ai/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:58:33.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+        "fileName": "kuberwastaken-claurst-learnings.md"
+      }
+    },
+    "SRC-08B587D71627": {
+      "id": "SRC-08B587D71627",
+      "url": "https://auth.openai.com/",
+      "title": "https://auth.openai.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:58:33.784Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+        "fileName": "kuberwastaken-claurst-learnings.md"
+      }
+    },
+    "SRC-0B25E9C0F351": {
+      "id": "SRC-0B25E9C0F351",
+      "url": "https://auth.openai.com/oauth/authorize",
+      "title": "https://auth.openai.com/oauth/authorize",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:58:33.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+        "fileName": "kuberwastaken-claurst-learnings.md"
+      }
+    },
+    "SRC-E43F515D88FD": {
+      "id": "SRC-E43F515D88FD",
+      "url": "https://auth.openai.com/oauth/token",
+      "title": "https://auth.openai.com/oauth/token",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:58:33.887Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+        "fileName": "kuberwastaken-claurst-learnings.md"
+      }
+    },
+    "SRC-1897FAF097DB": {
+      "id": "SRC-1897FAF097DB",
+      "url": "https://chatgpt.com/backend-api/codex/responses",
+      "title": "https://chatgpt.com/backend-api/codex/responses",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:58:33.948Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+        "fileName": "kuberwastaken-claurst-learnings.md"
+      }
+    },
+    "SRC-549C75A7F979": {
+      "id": "SRC-549C75A7F979",
+      "url": "http://localhost:1455/auth/callback",
+      "title": "http://localhost:1455/auth/callback",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T04:58:33.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+        "fileName": "kuberwastaken-claurst-learnings.md"
       }
     }
   }

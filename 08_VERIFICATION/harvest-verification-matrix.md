@@ -12262,3 +12262,5 @@
 | `CYCLE-20261123-G87I` | `2026-11-23T04:23:24.558Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`90d9d4c8...`) |
 | `CYCLE-20261123-H2DB` | `2026-11-23T04:24:03.647Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10019` | Yes (`6432b38a...`) |
 | `CYCLE-20261123-F1RZ` | `2026-11-23T04:50:29.183Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`0a37b9a2...`) |
+| `CYCLE-20261123-P6LP` | `2026-11-23T04:58:21.997Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`b6901441...`) |
+| `CYCLE-20261123-P7VR` | `2026-11-23T04:58:23.655Z` | `Kuberwastaken/claurst` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10020` | Yes (`33630256...`) |

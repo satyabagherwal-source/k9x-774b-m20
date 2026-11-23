@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T04:50:35.602Z",
-  "total_verified_learnings": 9076,
+  "last_updated": "2026-11-23T04:58:36.202Z",
+  "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23850,
+  "total_items": 23860,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8abab66095fef2a51f85d2ee2caef1891bc55b43722021c3665b5e3232134d67",
+      "content_hash": "e68ff7cc43939b67402367cc69e7cdf1e4c59d150418bffb8586a1ca8a566d8b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T04:50:35.208Z"
+      "persisted_at": "2026-11-23T04:58:35.918Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7f9dcac3dbff819048101840a3c3942cdff75a2986f5eab3d256741e9407396",
+      "content_hash": "4260a646e89517bbbc2e132df4c2a8ffe8a790e638574612372dc045e6129c95",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T04:50:35.427Z"
+      "persisted_at": "2026-11-23T04:58:36.076Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c40e173ffc97835c285b127ca370d08e41c2e38124def3d16b9a3f901ed916ce",
+      "content_hash": "d63c073b525fa7c21f3a65619756fa2725c7442eabd0249e3da5a8e036b32fec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T04:50:35.602Z"
+      "persisted_at": "2026-11-23T04:58:36.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -219442,7 +219442,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
       "source_version": "hf-meta-llama-meta-llama-3-8b",
-      "content_hash": "04efd8a5e05dca6ea47b01b7c0f883d1beeb1c57f9da11d08c63d40dec3022c3",
+      "content_hash": "b69014412928ec67921ab96978d8198e7427cfc86d20ca3085083000f6b296e9",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "promoted_rules": [],
@@ -219451,7 +219451,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T19:09:59.201Z",
+      "verified_at": "2026-11-23T04:58:21.771Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219468,9 +219468,9 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B Core Invariants",
       "repository": "meta-llama/Meta-Llama-3-8B",
       "source_version": "hf-meta-llama-meta-llama-3-8b",
-      "content_hash": "cd10a885228b0906a7bd733ffe42b1fe313ca77662dc4e3a45f70914ebaec6e2",
+      "content_hash": "5ff14eebd9ce0aed08b1fa33420af64e0a3dec7ad1ee7028e8fcdbb6afb00d27",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:09:59.675Z"
+      "persisted_at": "2026-11-23T04:58:22.210Z"
     },
     "learn-github-ontos-ai-knowhere": {
       "learning_id": "learn-github-ontos-ai-knowhere",
@@ -219588,9 +219588,9 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-learnings Core Invariants",
       "repository": "hf-meta-llama-meta-llama-3-8b-learnings",
       "source_version": "HEAD",
-      "content_hash": "00291d2d8fcce76711ed28e2eb61c7d149516b8d6b6a3813775674d15d7b8c39",
+      "content_hash": "055bba5073c098e62d27b6ce9e7318315c31834c3bd36c9e565fdb5ffb9cf961",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:10:12.939Z"
+      "persisted_at": "2026-11-23T04:58:35.063Z"
     },
     "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants",
@@ -310029,13 +310029,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-F69C-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PH7Q-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f61780b15a6eee799199672ed77f5c6c9475f7e7fa601cbee0e7e674ce730340",
+      "content_hash": "335ce431dd3b89c9a2e2845b8da5f546e2feaa1c1891227b1a161026203ed800",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T04:50:34.995Z"
+      "persisted_at": "2026-11-23T04:58:35.753Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -324780,6 +324780,149 @@
       "content_hash": "185bce1ad2f52d976d411069be3fbdf209ac6c742d2693080c52ce390ce8c131",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T04:24:07.555Z"
+    },
+    "learn-github-kuberwastaken-claurst": {
+      "learning_id": "learn-github-kuberwastaken-claurst",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Kuberwastaken/claurst",
+      "repository": "Kuberwastaken/claurst",
+      "slug": "kuberwastaken-claurst",
+      "platform": "github",
+      "source_url": "https://github.com/Kuberwastaken/claurst",
+      "source_version": "62b1b79f",
+      "content_hash": "3363025640c1745dc14c30fb5c9576d2f3972387d1839a358515ef28dccbe244",
+      "dossier_path": "07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10020,
+          "title": "price non-Claude models from llm-prices instead of reporting $0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T04:58:23.452Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10020": {
+      "learning_id": "rule-10020",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10020,
+      "title": "price non-Claude models from llm-prices instead of reporting $0",
+      "source_url": "https://github.com/Kuberwastaken/claurst",
+      "source_version": "62b1b79f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T04:58:23.452Z"
+    },
+    "candidate_directive-price-non-claude-models-from-llm-prices-instead-of-reporting-0": {
+      "item_id": "candidate_directive-price-non-claude-models-from-llm-prices-instead-of-reporting-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P825-price-non-claude-models-from-llm-prices-instead-of-reporting-0.md",
+      "title": "price non-Claude models from llm-prices instead of reporting $0",
+      "repository": "Kuberwastaken/claurst",
+      "source_version": "62b1b79f",
+      "content_hash": "49495a3556400a8daabb6398c6223f68d43297339d7c7bad926ecc78c541f10b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T04:58:23.889Z"
+    },
+    "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kuberwastaken-claurst-content-information-intelligence-kuberwastaken-claurst-cor.md",
+      "title": "Content & Information Intelligence: Kuberwastaken/claurst Core Invariants",
+      "repository": "Kuberwastaken/claurst",
+      "source_version": "62b1b79f",
+      "content_hash": "bd1865f47de3e64786d77fa444c22dc7670d363c091289202ddb79c966d93adb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T04:58:24.056Z"
+    },
+    "agent_contract-agent-contract-kuberwastaken-claurst-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-kuberwastaken-claurst-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/kuberwastaken-claurst-agent-contract-kuberwastaken-claurst-autonomous-specialist.md",
+      "title": "Agent Contract: Kuberwastaken/claurst Autonomous Specialist Persona",
+      "repository": "Kuberwastaken/claurst",
+      "source_version": "62b1b79f",
+      "content_hash": "ed5fb7bf22ea4af397a11606c048bf6645533a9420325179a1a1462858d32bd9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T04:58:24.228Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kuberwastaken-claurst": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kuberwastaken-claurst",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kuberwastaken-claurst-verification-protocol-empirical-defect-shield-for-kuberwas.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Kuberwastaken/claurst",
+      "repository": "Kuberwastaken/claurst",
+      "source_version": "62b1b79f",
+      "content_hash": "82d1399c4d4cc8fc9e26fbd67014a1b4b91f8f7d377c5e4479d473631e07c2d0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T04:58:24.371Z"
+    },
+    "candidate_directive-core-price-non-claude-models-from-llm-prices-instead-of-reporting-0": {
+      "item_id": "candidate_directive-core-price-non-claude-models-from-llm-prices-instead-of-reporting-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PG1R-core-price-non-claude-models-from-llm-prices-instead-of-reporting-0.md",
+      "title": "core): price non-Claude models from llm-prices instead of reporting $0",
+      "repository": "kuberwastaken-claurst-learnings",
+      "source_version": "HEAD",
+      "content_hash": "edc5d17526ede34aaec3870c2c4d77e459b7fb4dbf4cde06db84c2b37073d45d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T04:58:34.243Z"
+    },
+    "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kuberwastaken-claurst-learnings-content-information-intelligence-kuberwastaken-c.md",
+      "title": "Content & Information Intelligence: kuberwastaken-claurst-learnings Core Invariants",
+      "repository": "kuberwastaken-claurst-learnings",
+      "source_version": "HEAD",
+      "content_hash": "074c6d164694516c9b3161cc76daa6fa1eec467e41730d86a96d53ceac69a634",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T04:58:34.407Z"
+    },
+    "agent_contract-agent-contract-kuberwastaken-claurst-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-kuberwastaken-claurst-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/kuberwastaken-claurst-learnings-agent-contract-kuberwastaken-claurst-learnings-a.md",
+      "title": "Agent Contract: kuberwastaken-claurst-learnings Autonomous Specialist Persona",
+      "repository": "kuberwastaken-claurst-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c205ac65352c4a18f67671a1da1477ebba6351c0ddcc7394f756f6cbaeed6ab6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T04:58:34.581Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kuberwastaken-claurst-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kuberwastaken-claurst-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kuberwastaken-claurst-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kuberwastaken-claurst-learnings",
+      "repository": "kuberwastaken-claurst-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e8300070e70ea3352f3e7ffe96823cad30731edc7d27c61b11c2279cf40e6696",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T04:58:34.716Z"
     }
   },
   "ai-builder-brain": {
