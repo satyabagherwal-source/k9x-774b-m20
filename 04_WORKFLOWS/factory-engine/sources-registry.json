@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T03:47:01.598Z",
-    "lastVerified": "2026-11-23T03:47:01.598Z",
+    "lastChecked": "2026-11-23T04:45:02.071Z",
+    "lastVerified": "2026-11-23T04:45:02.071Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T04:24:06.810Z",
-    "lastVerified": "2026-11-23T04:24:06.810Z",
+    "lastChecked": "2026-11-23T04:50:32.210Z",
+    "lastVerified": "2026-11-23T04:50:32.210Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1566,9 +1566,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-22T21:32:04.248Z",
+    "lastChecked": "2026-11-23T04:44:57.058Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-22T21:32:04.248Z"
+    "lastVerified": "2026-11-23T04:44:57.058Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2572,9 +2572,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-11-22T02:40:16.196Z",
+    "lastChecked": "2026-11-23T04:44:59.550Z",
     "revisionIdentifier": "aec98ced",
-    "lastVerified": "2026-11-22T02:40:16.196Z"
+    "lastVerified": "2026-11-23T04:44:59.550Z"
   },
   "kuddev-pebrel": {
     "name": "pebrel",
@@ -3665,9 +3665,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-21T21:04:26.858Z",
+    "lastChecked": "2026-11-23T04:44:47.006Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-21T21:04:26.858Z"
+    "lastVerified": "2026-11-23T04:44:47.006Z"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -4117,8 +4117,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T03:46:18.170Z",
-    "lastVerified": "2026-11-22T03:46:18.170Z",
+    "lastChecked": "2026-11-23T04:44:54.506Z",
+    "lastVerified": "2026-11-23T04:44:54.506Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -4160,12 +4160,12 @@
     "officialUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T18:56:45.041Z",
-    "lastVerified": "2026-11-18T18:56:45.041Z",
+    "lastChecked": "2026-11-23T04:44:49.758Z",
+    "lastVerified": "2026-11-23T04:44:49.758Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "cb029b1d34e804ddc351c48f449a0dc78750cf0fb6fafc0cff67dcfa5a344f9f",
+    "contentHash": "0a37b9a2dff56b003c0194feb79df6980498ec977ea5a3402cbd7897ddbee0ce",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9714,9 +9714,9 @@
   "touchlab-skie": {
     "name": "SKIE",
     "officialUrl": "https://github.com/touchlab/SKIE",
-    "lastChecked": "2026-11-20T04:02:26.337Z",
+    "lastChecked": "2026-11-23T04:44:52.131Z",
     "revisionIdentifier": "25bb2b91",
-    "lastVerified": "2026-11-20T04:02:26.337Z"
+    "lastVerified": "2026-11-23T04:44:52.131Z"
   },
   "alfa546-crawler": {
     "name": "Crawler",

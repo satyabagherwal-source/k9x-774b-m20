@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T04:24:03.657Z",
-  "total_cycles_completed": 11659,
-  "total_learnings_persisted": 11659,
+  "last_updated": "2026-11-23T04:50:29.194Z",
+  "total_cycles_completed": 11660,
+  "total_learnings_persisted": 11660,
   "total_rules_promoted": 10848,
   "history": [
-    {
-      "timestamp": "2026-11-22T08:09:19.071Z",
-      "repository": "Edge0/Edge0-145B-NVFP4",
-      "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T08:09:24.371Z",
       "repository": "restatedev/restate",
@@ -1403,6 +1396,13 @@
       "repository": "infiniflow/infinity",
       "learningId": "learn-github-infiniflow-infinity",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T04:50:29.194Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

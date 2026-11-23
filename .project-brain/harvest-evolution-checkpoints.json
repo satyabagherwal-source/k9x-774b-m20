@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T04:24:09.028Z",
+  "last_updated": "2026-11-23T04:50:35.778Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-23T04:08:22.124Z",
+      "processed_at": "2026-11-23T04:50:32.955Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-23T04:24:08.034Z",
+      "processed_at": "2026-11-23T04:50:34.273Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2248,7 +2248,7 @@
       "staged_for_review": 0
     },
     "hf-hexgrad-kokoro-82m-learnings.md": {
-      "processed_at": "2026-11-18T18:56:57.632Z",
+      "processed_at": "2026-11-23T04:50:32.409Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3306,
+  "total_dossiers_evaluated": 3309,
   "total_canonical_promoted": 480,
-  "total_staged_for_review": 2496
+  "total_staged_for_review": 2498
 }

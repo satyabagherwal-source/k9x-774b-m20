@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-6RD0",
-    "timestamp": "2026-11-21T03:44:42.756Z",
-    "repository": "infracost/infracost",
-    "learningId": "learn-github-infracost-infracost",
-    "contentHash": "c56f0faba3229a943bd6b5254e9592e1a4bc74ab7f8ccd2255a3523fce226937",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-6ST7",
     "timestamp": "2026-11-21T03:44:44.635Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7477,21 @@
     "contentHash": "6432b38abb2d9dc3716c85d01b6e15d41c1e069597a7700582d39514a7f4f693",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-F1RZ",
+    "timestamp": "2026-11-23T04:50:29.183Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "0a37b9a2dff56b003c0194feb79df6980498ec977ea5a3402cbd7897ddbee0ce",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

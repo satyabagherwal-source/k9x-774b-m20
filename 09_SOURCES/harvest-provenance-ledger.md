@@ -12294,3 +12294,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-23T04:08:10.002Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-23T04:23:24.562Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `8c86bcb2` | Multi-dimensional audit evidence | 2026-11-23T04:24:03.652Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-23T04:50:29.188Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T04:24:08.631Z",
+  "last_updated": "2026-11-23T04:50:35.208Z",
   "total_records": 2389,
   "domains": {
     "A": {
@@ -8159,8 +8159,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "9ff3fc809800d2f4cd63d266301081cec70c23011b96e86cd01f0d1ccccae81c",
-      "created_at": "2026-11-23T04:24:08.631Z"
+      "content_hash": "8abab66095fef2a51f85d2ee2caef1891bc55b43722021c3665b5e3232134d67",
+      "created_at": "2026-11-23T04:50:35.208Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8204,8 +8204,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "59bedc4d2bd8f24887b62440f5645c3f1a724b604c2e0c8586493e2365979a25",
-      "created_at": "2026-11-23T04:08:22.798Z"
+      "content_hash": "4512709cfd6b8e081c7f285e1c9756d8ff78dea03eba1f007812d1d95fb9054a",
+      "created_at": "2026-11-23T04:50:34.035Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -11789,8 +11789,8 @@
       "title": "Research & Knowledge Intelligence: hexgrad/Kokoro-82M Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hexgrad-kokoro-82m-research-knowledge-intelligence-hexgrad-kokoro-82m-core-in.md",
       "repository": "hexgrad/Kokoro-82M",
-      "content_hash": "866b1a66dc85cbdd1941e71c96253b031b8169fe6a5c2b415f509eec72bd09f6",
-      "created_at": "2026-11-18T18:56:51.437Z"
+      "content_hash": "1c2fcaf829ce2fc94c91648c3179973eb509a87050535fac41589c0f248c64be",
+      "created_at": "2026-11-23T04:50:29.467Z"
     },
     "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants",
@@ -11876,8 +11876,8 @@
       "title": "Research & Knowledge Intelligence: hf-hexgrad-kokoro-82m-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hexgrad-kokoro-82m-learnings-research-knowledge-intelligence-hf-hexgrad-kokor.md",
       "repository": "hf-hexgrad-kokoro-82m-learnings",
-      "content_hash": "70c4d4d3eca86da0aa2945b94f229d86632df8cd1fb2653e3908728d89d2076f",
-      "created_at": "2026-11-18T18:56:57.808Z"
+      "content_hash": "118c94019a3409ea29a93bbffdeb558c2222a7f1715ecf1cdb035e39d27c6455",
+      "created_at": "2026-11-23T04:50:32.715Z"
     },
     "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria",
