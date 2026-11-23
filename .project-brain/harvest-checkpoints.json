@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T16:03:01.764Z",
+  "last_updated": "2026-11-23T16:11:49.544Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1625,14 +1625,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
-      "content_hash": "6fa625f199858babfae1e54e8860348cbc2d1d952f38a016ef67cc6c1b98b166",
-      "verified_at": "2026-11-19T03:14:38.804Z",
+      "content_hash": "2540dda827afcf223cc349f45dc1c97bc94c23c41afc0d5aafeedb582d6dfcb6",
+      "verified_at": "2026-11-23T16:11:39.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T03:14:38.804Z"
+      "last_updated": "2026-11-23T16:11:39.734Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "175b0fe40ecc1977628ba91513aafc510bef15b25f78f5034ebd2d61c105d9dc",
-      "verified_at": "2026-11-20T07:03:23.853Z",
+      "content_hash": "b29819a8396afe9e64c095838b8728986c931ce0be2b5186c092ebc9a2646a1d",
+      "verified_at": "2026-11-23T16:11:49.543Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T07:03:23.853Z"
+      "last_updated": "2026-11-23T16:11:49.543Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",

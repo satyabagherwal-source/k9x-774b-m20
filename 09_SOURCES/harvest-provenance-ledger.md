@@ -12396,3 +12396,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T16:02:49.921Z |
 | `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `cbd45a79` | Multi-dimensional audit evidence | 2026-11-23T16:02:52.407Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `a25c64b8` | Multi-dimensional audit evidence | 2026-11-23T16:03:01.755Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T16:11:39.721Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `6118713b` | Multi-dimensional audit evidence | 2026-11-23T16:11:49.532Z |

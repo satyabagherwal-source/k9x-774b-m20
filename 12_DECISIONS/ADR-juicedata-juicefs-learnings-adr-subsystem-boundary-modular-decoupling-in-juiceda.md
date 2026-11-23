@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T11:45:20.356Z",
+  "timestamp": "2026-11-23T16:11:54.292Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-juicedata-juicefs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [juicedata-juicefs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T11:45:20.356Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T16:11:54.292Z`  
 > **Learning ID**: `LEARN-EVO-juicedata-juicefs-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of juicedata-juicefs-learnings, modular boundaries, perfo
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `331de6ea`  
+> **Source Version**: `6118713b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T11:45:07.555Z  
+> **Timestamp**: 2026-11-23T16:11:48.246Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of juicedata-juicefs-learnings, modular boundaries, perfo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T11:45:02.607Z  
+> **Harvest Timestamp**: 2026-11-23T16:11:48.238Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of juicedata-juicefs-learnings, modular boundaries, perfo
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14740 stars
+- **Stars / Engagement**: 14771 stars
 
 ---
 
@@ -1188,11 +1188,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7857** (2026-11-16): **docs: clarify routing and concurrency for multiple gateways**
-  *Symptoms*: <!-- Keep the description proportional to the change. Small, self-explanatory fixes can be brief and do not need a separate issue. Remove optional sections that do not apply. Link existing discussions instead of repeating their full history. -->  ## Problem  Multi-gateway docs omit object routing recommendations and cross-instance concurrency limitations. Related to #7827.  ## Change  Update English and Chinese docs with object-based routing guidance and concurrency limitations.  ## Validation  <!-- List checks you actually ran and their results, including relevant versions or backends. For a bug fix, describe the before/after behavior and regression coverage. State what was not run and why; do not present suggested checks as completed. For documentation changes, describe the relevant content/link checks. -->  ## Risks and open questions (if applicable)  <!-- Note compatibility, persisted formats, mixed-version clients, backend parity, failure recovery, or performance tradeoffs only when relevant to this change. Identify decisions that need maintainer input and link user-facing doc updates. --> 
+- **Issue #7901** (2026-11-23): **meta: avoid mixed directory-stat snapshots during flushes**
+  *Symptoms*: ## Problem  `doFlushDirStat` detaches pending increments before persisting them. A `GetDirStat` read overlapping that flush can miss the increments. Initializing a directory quota in this window can omit a child; removing the child then leaves `UsedSpace=-4096`.  ## Change  Track the generation and number of active local flushes under the existing mutex. Rescan the requested directory when a read overlaps a flush, instead of combining inconsistent persisted and pending values. No persisted-format change.  ## Validation  Linux, Go 1.25.10, real SQLite/Badger/Redis, with `-race` and `-tags nogspt`:  - New deterministic regression: original **9 failures / 6 passes**, fixed **15 passes**, including two overlapping flushes. - Regression plus existing common suites: **299 reported test nodes passed, 2 existing SQL-only skips**. Redis constructors were bridged to a private Unix socket; production code and assertions were unchanged. - `go vet`, gofmt and project-config golangci-lint 2.6.2 passed.  Upstream CI also passed [metadata core](https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679383) (all 15 new cases), [non-core](https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679394), and [FoundationDB](https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679379) on this head.  Full multi-service `test.meta.core`, FoundationDB and FUSE were not run locally; this isolated route lacks MySQL/TiKV/FDB fixtures.  ## Tradeoff  Any
 
-- **Issue #7855** (2026-11-16): **object/sharding: do not format the endpoint query**
-  *Symptoms*: ## Problem  With `--shards`, `NewSharded` uses the whole bucket as a `fmt` format string, so any percent-encoded query value is taken as a verb. E.g. `jfs%d?auth-url=https%3A%2F%2Fa.com%2Fv3` becomes `jfs0?auth-url=https%!A(MISSING)%!F(MISSING)...`. `format` also re-encodes the query when `tls-insecure-skip-verify` is set, which produces such values. And a bucket without `%d` outside the query (e.g. `mybucket?x=a%2Fb`) passes the placeholder check, so all shards share one bucket. This becomes more likely with Swift Keystone settings in the bucket query (juicedata/juicefs#7833).  ## Change  Only format the part before `?` and append the query verbatim. A literal `%` in the host or path is still not supported.  ## Validation  - Extended `TestSharding`: per-shard endpoints keep an encoded query intact, and a bucket whose only `%` is in the query is rejected. It fails before the fix and passes after. - `go test ./pkg/object` passes.  ## Risks and open questions (if applicable)  A `%d` placed only in the query is no longer substituted; existing endpoints with `%` in the query were already mangled before this change. 
+- **Issue #7896** (2026-11-23): **object: reject keys that escape the root of path-based storages**
+  *Symptoms*: ## Problem  Object keys with a `..` element are mapped to paths outside the storage root on path-based storages (file, sftp, hdfs, nfs, gluster, cifs, webdav, jfs), e.g. `juicefs sync` from an untrusted source writing outside the destination dir. See #7582.  Fixes #7582. Supersedes #7891, which did the check in sync.  ## Change  - Add `utils.CheckKey`: rejects keys with a `..` element (also `\` on Windows) or NUL with `utils.ErrUnsafeKey`. - Call it in path-based storages before a key or prefix is used as a path. Symlink targets are not checked.  ## Validation  - `go test ./pkg/object/ ./pkg/utils/ ./pkg/sync/`; new `testUnsafeKeys` runs for every backend in `testFileSystem`, `TestWebDAV` and `TestJFS`. - Manual e2e on Linux (MinIO-backed source exposing `../` keys): before, file / webdav / jfs destinations got files written outside the target dir. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1209,54 +1209,918 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6185d131` (2026-11-16)
-**Commit Message**: ci: fix CImodel expectations and TiUP bootstrap failures (#7852)
+### Incident Patch 1: `6118713b` (2026-11-23)
+**Commit Message**: meta: keep an O_TMPFILE inode alive after linkat (#7724)
 
-**File**: `.github/scripts/start_meta_engine.sh` (modified, +3/-2)
+Signed-off-by: Xuhui zhang <[REDACTED_EMAIL]>
+Co-authored-by: ZitroSoftware <[REDACTED_EMAIL]>
+Co-authored-by: Xuhui zhang <[REDACTED_EMAIL]>
+
+**File**: `pkg/meta/base_test.go` (modified, +134/-0)
 ```diff
-@@ -124,7 +124,8 @@ install_tikv(){
-     # Pin 8.5.7: the tiup mirror currently serves tikv/pd tarballs for 8.5.3-8.5.6
-     # that no longer match their (republished) manifest checksums, so playground
-     # aborts with "sha256 checksum mismatch". 8.5.7 is consistent.
--    $tiup playground 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
-+    # Pin playground to skip the background update check racing with root manifest updates.
-+    $tiup playground:v1.17.1 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
-     pid=$!
-     timeout=60
-     count=0
-@@ -188,7 +189,7 @@ install_tidb(){
-     # manifest version instead of a pruned one, see https://github.com/pingcap/tiup/issues/2057
-     rm -f "$tiup_home/manifests/snapshot.json" "$tiup_home/manifests/timestamp.json"
-     # Pin 8.5.7, see the note in install_tikv (mirror checksum mismatch on 8.5.3-8.5.6).
--    $tiup playground 8.5.7 > tidb.log 2>&1  &
-+    $tiup playground:v1.17.1 8.5.7 > tidb.log 2>&1  &
-     pid=$!
-     timeout=60
-     count=0
+@@ -29,6 +29,7 @@ import (
+ 	"os"
+ 	"reflect"
+ 	"runtime"
++	"slices"
+ 	"sort"
+ 	"strconv"
+ 	"strings"
+@@ -179,6 +180,7 @@ func testMeta(t *testing.T, m Meta) {
+ 	testRenameOverRelinkedHardlink(t, m)
+ 	testParents(t, m)
+ 	testIsUnderRoot(t, m)
++	testLinkOpenUnlinkedFile(t, m)
+ 	testRemove(t, m)
+ 	testResolve(t, m)
+ 	testStickyBit(t, m)
+@@ -3342,6 +3344,138 @@ func testChownPermission(t *testing.T, m Meta) {
+ 	checkMode(0654)
+ }
+ 
++// testLinkOpenUnlinkedFile follows what O_TMPFILE and linkat do: the file
++// must keep its new name after the last close, and its length counts once,
++// in the directory it was linked into.
++func testLinkOpenUnlinkedFile(t *testing.T, m Meta) {
++	m.getBase().sid = 0
++	if err := m.NewSession(true); err != nil {
++		t.Fatalf("new session: %s", err)
++	}
++	defer m.CloseSession()
++	ctx := Background()
++	var tmpdir, dir, inode Ino
++	var attr = &Attr{}
++	if st := m.Mkdir(ctx, 1, "tmpdir", 0755, 022, 0, &tmpdir, attr); st != 0 {
++		t.Fatalf("mkdir tmpdir: %s", st)
++	}
++	if st := m.Mkdir(ctx, 1, "linkdir", 0755, 022, 0, &dir, attr); st != 0 {
++		t.Fatalf("mkdir linkdir: %s", st)
++	}
++	if st := m.Create(ctx, tmpdir, "tmpfile", 0644, 022, 0, &inode, attr); st != 0 {
++		t.Fatalf("create tmpfile: %s", st)
++	}
++	if st := m.Unlink(ctx, tmpdir, "tmpfile", true); st != 0 {
++		t.Fatalf("unlink tmpfile: %s", st)
++	}
++	var sliceId uint64
++	if st := m.NewSlice(ctx, &sliceId); st != 0 {
++		t.Fatalf("new slice: %s", st)
++	}
++	if st := m.Write(ctx, inode, 0, 0, Slice{Id: sliceId, Size: 8192, Len: 8192}, time.Now()); st != 0 {
++		t.Fatalf("write tmpfile: %s", st)
++	}
++	if st := m.SetXattr(ctx, inode, "user.tmp", []byte("v"), 0); st != 0 {
++		t.Fatalf("setxattr tmpfile: %s", st)
++	}
++	if st := m.Link(ctx, inode, dir, "linked", attr); st != 0 {
++		t.Fatalf("link linked -> tmpfile: %s", st)
++	}
++	if attr.Nlink != 1 || attr.Parent != dir {
++		t.Fatalf("expect nlink 1 and parent %d, but got nlink %d parent %d", dir, attr.Nlink, attr.Parent)
++	}
++	if s, err := m.GetSession(m.getBase().sid, true); err != nil || slices.Contains(s.Sustained, inode) {
++		t.Fatalf("expect inode %d not sustained after link, but got %+v: %v", inode, s, err)
++	}
++	if err := waitCheckResult(m, dirStat{0, 0, 0}, func() (*dirStat, syscall.Errno) {
++		return m.GetDirStat(ctx, tmpdir)
++	}); err != nil {
++		t.Fatalf("dir stat of tmpdir: %v", err)
++	}
++	if err := waitCheckResult(m, dirStat{8192, 8192, 1}, func() (*dirStat, syscall.Errno) {
++		return m.GetDirStat(ctx, dir)
++	}); err != nil {
++		t.Fatalf("dir stat of linkdir: %v", err)
++	}
++	if st := m.Close(ctx, inode); st != 0 {
++		t.Fatalf("close tmpfile: %s", st)
++	}
++	var ino Ino
++	if st := m.Lookup(ctx, dir, "linked", &ino, attr, true); st != 0 {
++		t.Fatalf("lookup linked: %s", st)
++	}
++	if ino != inode || attr.Nlink != 1 || attr.Length != 8192 {
++		t.Fatalf("expect inode %d with nlink 1 and length 8192, but got inode %d with nlink %d and length %d", inode, ino, attr.Nlink, attr.Length)
++	}
++	if ps := m.GetParents(ctx, inode); !reflect.DeepEqual(ps, map[Ino]int{dir: 1}) {
++		t.Fatalf("expect parents %v, but got %v", map[Ino]int{dir: 1}, ps)
++	}
++	var value []byte
++	if st := m.GetXattr(ctx, inode, "user.tmp", &value); st != 0 || string(value) != "v" {
++		t.Fatalf("getxattr linked: %q, %s; want %q", value, st, "v")
++	}
++
++	// Changelog replay keeps the hold under the source session, while the replayer has no session (sid 0).
++	base := m.getBase()
++	srcSid := base.sid
++	var inode2 Ino
++	if st := m.Create(ctx, tmpdir, "tmpfile2", 0644, 022, 0, &inode2, attr); st != 0 {
++		t.Fatalf("create tmpfile2: %s", st)
++	}
++	base.replay.Store(&replayState{Time: time.Now(), Sid: srcSid, Opened: map[Ino]bool{inode2: true}})
++	st := m.Unlink(ctx, tmpdir, "tmpfile2", true)
++	if st == 0 {
++		base.sid = 0
++		base.replay.Store(&replayState{Time: time.Now(), Sid: srcSid})
++		st = m.Link(ctx, inode2, dir, "linked2", attr)
++		base.sid = srcSid
++	}
++	base.replay.Store(nil)
++	if st != 0 {
++		t.Fatalf("replay unlink and link of tmpfile2: %s", st)
++	}
++	if s, err := m.GetSession(srcSid, true); err != nil || slices.Contains(s.Sustained, inode2) {
++		t.Fatalf("expect inode %d not sustained after replayed link, but got %+v: %v", inode2, s, err)
++	}
++	if st := m.Close(ctx, inode2); st != 0 {
++		t.Fatalf("close tmpfile2: %s", st)
++	}
++	if st := m.Unlink(ctx, dir, "linked2"); st != 0 {
++		t.Fatalf("unlink linked2: %s", st)
++	}
++
++	// juicefs gc still deletes a leaked inode that has links, through doDeleteSustainedInode with sid 0.
++	if r, ok := m.(*redisMeta); ok {
++		var leaked Ino
++		if st := m.Create(ctx, tmpdir, "leaked", 0644, 022, 0, &leaked, attr); st != 0 {
++			t.Fatalf("create leaked: %s", st)
++		}
++		_ = m.Close(ctx, leaked)
++		attr.Ctime = time.Now().Add(-2 * time.Hour).Unix()
++		bg := context.Background()
++		if err := r.rdb.Set(bg, r.inodeKey(leaked), r.marshal(attr), 0).Err(); err != nil {
++			t.Fatalf("age leaked: %s", err)
++		}
++		if err := r.rdb.HDel(bg, r.entryKey(tmpdir), "leaked").Err(); err != nil {
++	
 ```
 
-**File**: `pkg/meta/random_test.go` (modified, +2/-2)
+**File**: `pkg/meta/redis.go` (modified, +28/-4)
 ```diff
-@@ -1922,8 +1922,8 @@ func (m *fsMachine) chown(inode Ino, flag uint16, uid, gid uint32) syscall.Errno
- 	if n == nil {
- 		return syscall.ENOENT
- 	}
--	if flag&SetAttrUID != 0 && n.uid != uid {
--		if m.ctx.Uid() != 0 {
-+	if flag&SetAttrUID != 0 {
-+		if m.ctx.Uid() != 0 && (m.ctx.Uid() != n.uid || uid != n.uid) {
+@@ -2878,7 +2878,13 @@ func (m *redisMeta) doLink(ctx Context, inode, parent Ino, name string, attr *At
  			return syscall.EPERM
  		}
- 		n.uid = uid
+ 		oldParent := iattr.Parent
+-		iattr.Parent = 0
++		// an open inode with no links left (O_TMPFILE) becomes a plain single-parent file
++		unlinked := iattr.Nlink == 0
++		if unlinked {
++			iattr.Parent = parent
++		} else {
++			iattr.Parent = 0
++		}
+ 		iattr.Ctime = now.Unix()
+ 		iattr.Ctimensec = uint32(now.Nanosecond())
+ 		iattr.Nlink++
+@@ -2898,10 +2904,14 @@ func (m *redisMeta) doLink(ctx Context, inode, parent Ino, name string, attr *At
+ 				pipe.Set(ctx, m.inodeKey(parent), m.marshal(&pattr), 0)
+ 			}
+ 			pipe.Set(ctx, m.inodeKey(inode), m.marshal(&iattr), 0)
+-			if oldParent > 0 {
+-				pipe.HIncrBy(ctx, m.parentKey(inode), oldParent.String(), 1)
++			if unlinked {
++				pipe.SRem(ctx, m.sustained(m.sessionID()), strconv.Itoa(int(inode)))
++			} else {
++				if oldParent > 0 {
++					pipe.HIncrBy(ctx, m.parentKey(inode), oldParent.String(), 1)
++				}
++				pipe.HIncrBy(ctx, m.parentKey(inode), parent.String(), 1)
+ 			}
+-			pipe.HIncrBy(ctx, m.parentKey(inode), parent.String(), 1)
+ 			m.genLog(ctx, pipe, now, "LINK(%d,%d,%s,%t):%d", inode, parent, logEncode2(name), updateParent, iattr.Nlink)
+ 			return nil
+ 		})
+@@ -3142,6 +3152,20 @@ func (m *redisMeta) doDeleteSustainedInode(ctx Context, sid uint64, inode Ino) e
+ 			return err
+ 		}
+ 		m.parseAttr(a, &attr)
++		// linked again since the unlink (O_TMPFILE and linkat): keep the node, drop the hold.
++		// sid 0 holds nothing; it comes from cleanupLeakedInodes, which deletes an unreachable inode anyway.
++		if attr.Nlink > 0 && sid > 0 {
++			held, err := tx.SIsMember(ctx, m.sustained(sid), strconv.Itoa(int(inode))).Result()
++			if err != nil || !held {
++				return err
++			}
++			_, err = tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
++				pipe.SRem(ctx, m.sustained(sid), strconv.Itoa(int(inode)))
++				m.genLog(ctx, pipe, m.now(), "DELSUSTAINED(%d,%d)", sid, inode)
++				return nil
++			})
++			return err
++		}
+ 		newSpace = -align4K(attr.Length)
+ 		_, err = tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
+ 			pipe.ZAdd(ctx, m.delfiles(), redis.Z{Score: float64(m.now().Unix()), Member: m.toDelete(inode, attr.Length)})
+```
+
+**File**: `pkg/meta/sql.go` (modified, +20/-1)
+```diff
+@@ -2923,13 +2923,24 @@ func (m *dbMeta) doLink(ctx Context, inode, parent Ino, name string, attr *Attr)
+ 			pn.setCtime(now)
+ 			updateParent = true
+ 		}
+-		n.Parent = 0
++		// an open inode with no links left (O_TMPFILE) becomes a plain single-parent file
++		unlinked := n.Nlink == 0
++		if unlinked {
++			n.Parent = parent
++		} else {
++			n.Parent = 0
++		}
+ 		n.Nlink++
+ 		n.setCtime(now)
+ 
+ 		if err = mustInsert(s, &edge{Parent: parent, Name: []byte(name), Inode: inode, Type: n.Type}); err != nil {
+ 			return err
+ 		}
++		if unlinked {
++			if _, err = s.Delete(&sustained{Sid: m.sessionID(), Inode: inode}); err != nil {
++				return err
++			}
++		}
+ 		if _, err := s.Cols("nlink", "ctime", "ctimensec", "parent").Update(&n, node{Inode: inode}); err != nil {
+ 			return err
+ 		}
+@@ -3515,6 +3526,14 @@ func (m *dbMeta) doDeleteSustainedInode(ctx Context, sid uint64, inode Ino) erro
+ 		if !ok {
+ 			return nil
+ 		}
++		// linked again since the unlink (O_TMPFILE and linkat): keep the node, drop the hold
++		if n.Nlink > 0 && sid > 0 {
++			held, err := s.Delete(&sustained{Sid: sid, Inode: inode})
++			if err == nil && held > 0 {
++				m.genLog(Background(), s, m.now().UnixNano(), "DELSUSTAINED(%d,%d)", sid, inode)
++			}
++			return err
++		}
+ 		newSpace = -align4K(n.Length)
+ 		if err = mustInsert(s, &delfile{inode, n.Length, m.now().Unix()}); err != nil {
+ 			return err
+```
+
+**File**: `pkg/meta/tkv.go` (modified, +22/-4)
+```diff
+@@ -2572,7 +2572,13 @@ func (m *kvMeta) doLink(ctx Context, inode, parent Ino, name string, attr *Attr)
+ 			updateParent = true
+ 		}
+ 		oldParent := iattr.Parent
+-		iattr.Parent = 0
++		// an open inode with no links left (O_TMPFILE) becomes a plain single-parent file
++		unlinked := iattr.Nlink == 0
++		if unlinked {
++			iattr.Parent = parent
++		} else {
++			iattr.Parent = 0
++		}
+ 		iattr.Ctime = now.Unix()
+ 		iattr.Ctimensec = uint32(now.Nanosecond())
+ 		iattr.Nlink++
+@@ -2581,10 +2587,14 @@ func (m *kvMeta) doLink(ctx Context, inode, parent Ino, name string, attr *Attr)
+ 			tx.set(m.inodeKey(parent), m.marshal(&pattr))
+ 		}
+ 		tx.set(m.inodeKey(inode), m.marshal(&iattr))
+-		if oldParent > 0 {
+-			tx.incrBy(m.parentKey(inode, oldParent), 1)
++		if unlinked {
++			tx.delete(m.sustainedKey(m.sessionID(), inode))
++		} else {
++			if oldParent > 0 {
++				tx.incrBy(m.parentKey(inode, oldParent), 1)
++			}
++			tx.incrBy(m.parentKey(inode, parent), 1)
+ 		}
+-		tx.incrBy(m.parentKey(inode, parent), 1)
+ 		if attr != nil {
+ 			*attr = iattr
+ 		}
+@@ -2714,6 +2724,14 @@ func (m *kvMeta) doDeleteSustainedInode(ctx Context, sid uint64, inode Ino) erro
+ 			return nil
+ 		}
+ 		m.parseAttr(a, &attr)
++		// linked again since the unlink (O_TMPFILE and linkat): keep the node, drop the hold
++		if attr.Nlink > 0 && sid > 0 {
++			if tx.get(m.sustainedKey(sid, inode)) != nil {
++				tx.delete(m.sustainedKey(sid, inode))
++				m.genLog(tx, m.now(), "DELSUSTAINED(%d,%d)", sid, inode)
++			}
++			return nil
++		}
+ 		newSpace = -align4K(attr.Length)
+ 		tx.set(m.delfileKey(inode, attr.Length), m.packInt64(m.now().Unix()))
+ 		tx.delete(m.inodeKey(inode))
+```
+
+---
+
+### Incident Patch 2: `f395eda8` (2026-11-23)
+**Commit Message**: object: reject keys that escape the root of path-based storages (#7896)
+
+**File**: `cmd/object.go` (modified, +42/-0)
+```diff
+@@ -101,6 +101,9 @@ func (f *jFile) Close() error {
+ }
+ 
+ func (j *juiceFS) Get(rCtx context.Context, key string, off, limit int64, getters ...object.AttrGetter) (io.ReadCloser, error) {
++	if err := object.CheckKey(key); err != nil {
++		return nil, err
++	}
+ 	ctx := meta.WrapWithoutCancel(rCtx, pid, uid, []uint32{gid})
+ 	f, err := j.jfs.Open(ctx, j.path(key), vfs.MODE_MASK_R)
+ 	if err != 0 {
+@@ -123,6 +126,9 @@ var bufPool = sync.Pool{
+ }
+ 
+ func (j *juiceFS) Put(rCtx context.Context, key string, in io.Reader, getters ...object.AttrGetter) (err error) {
++	if err := object.CheckKey(key); err != nil {
++		return err
++	}
+ 	ctx := meta.WrapWithoutCancel(rCtx, pid, uid, []uint32{gid})
+ 	if vfs.IsSpecialName(key) {
+ 		return fmt.Errorf("skip special file %s for jfs: %w", key, utils.ErrSkipped)
+@@ -186,6 +192,9 @@ func (j *juiceFS) Put(rCtx context.Context, key string, in io.Reader, getters ..
+ }
+ 
+ func (j *juiceFS) Delete(rCtx context.Context, key string, getters ...object.AttrGetter) error {
++	if err := object.CheckKey(key); err != nil {
++		return err
++	}
+ 	ctx := meta.WrapWithoutCancel(rCtx, pid, uid, []uint32{gid})
+ 	if key == "" {
+ 		return nil
+@@ -221,6 +230,9 @@ func (o *jObj) StorageClass() string { return "" }
+ func (o *jObj) Status() string       { return "" }
+ 
+ func (j *juiceFS) Head(rCtx context.Context, key string) (object.Object, error) {
++	if err := object.CheckKey(key); err != nil {
++		return nil, err
++	}
+ 	ctx := meta.WrapWithoutCancel(rCtx, pid, uid, []uint32{gid})
+ 	errConv := func(eno syscall.Errno) error {
+ 		if errors.Is(eno, syscall.ENOENT) {
+@@ -244,6 +256,9 @@ func (j *juiceFS) Head(rCtx context.Context, key string) (object.Object, error)
+ }
+ 
+ func (j *juiceFS) List(ctx context.Context, prefix, marker, token, delimiter string, limit int64, followLink bool) ([]object.Object, bool, string, error) {
++	if err := object.CheckKey(prefix); err != nil {
++		return nil, false, "", err
++	}
+ 	if delimiter != "/" {
+ 		return nil, false, "", utils.ErrNotSUP
+ 	}
+@@ -342,6 +357,9 @@ func (j *juiceFS) readDirSorted(dirname string, followLink bool) ([]*mEntry, sys
+ }
+ 
+ func (j *juiceFS) Chtimes(key string, mtime time.Time) error {
++	if err := object.CheckKey(key); err != nil {
++		return err
++	}
+ 	f, err := j.jfs.Lopen(ctx, j.path(key), 0)
+ 	if err != 0 {
+ 		return err
+@@ -367,6 +385,9 @@ func syscallMode(i os.FileMode) (o uint32) {
+ }
+ 
+ func (j *juiceFS) Chmod(key string, mode os.FileMode) error {
++	if err := object.CheckKey(key); err != nil {
++		return err
++	}
+ 	f, err := j.jfs.Open(ctx, j.path(key), 0)
+ 	if err != 0 {
+ 		return err
+@@ -376,6 +397,9 @@ func (j *juiceFS) Chmod(key string, mode os.FileMode) error {
+ }
+ 
+ func (j *juiceFS) Chown(key string, owner, group string) error {
++	if err := object.CheckKey(key); err != nil {
++		return err
++	}
+ 	uid := utils.LookupUser(owner)
+ 	gid := utils.LookupGroup(group)
+ 	if uid == -1 || gid == -1 {
+@@ -390,6 +414,9 @@ func (j *juiceFS) Chown(key string, owner, group string) error {
+ }
+ 
+ func (j *juiceFS) Symlink(oldName, newName string) error {
++	if err := object.CheckKey(newName); err != nil {
++		return err
++	}
+ 	p := j.path(newName)
+ 	err := j.jfs.Symlink(ctx, oldName, p)
+ 	if err == syscall.ENOENT {
+@@ -402,6 +429,9 @@ func (j *juiceFS) Symlink(oldName, newName string) error {
+ }
+ 
+ func (j *juiceFS) Readlink(name string) (string, error) {
++	if err := object.CheckKey(name); err != nil {
++		return "", err
++	}
+ 	target, err := j.jfs.Readlink(ctx, j.path(name))
+ 	return string(target), toError(err)
+ }
+@@ -417,6 +447,9 @@ func (j *juiceFS) Limits() object.Limits {
+ }
+ 
+ func (j *juiceFS) CreateMultipartUpload(_ context.Context, key string) (*object.MultipartUpload, error) {
++	if err := object.CheckKey(key); err != nil {
++		return nil, err
++	}
+ 	if vfs.IsSpecialName(key) {
+ 		return nil, fmt.Errorf("skip special file %s for jfs: %w", key, utils.ErrSkipped)
+ 	}
+@@ -436,6 +469,9 @@ func (j *juiceFS) partDir(key, uploadID string) string {
+ }
+ 
+ func (j *juiceFS) UploadPartStream(key string, uploadID string, num int, in io.Reader) (*object.Part, error) {
++	if err := object.CheckKey(key); err != nil {
++		return nil, err
++	}
+ 	err := j.Put(context.Background(), path.Join(j.partDir(key, uploadID), strconv.Itoa(num)), in)
+ 	return &object.Part{
+ 		Num: num,
+@@ -447,11 +483,17 @@ func (j *juiceFS) UploadPart(ctx context.Context, key string, uploadID string, n
+ }
+ 
+ func (j *juiceFS) AbortUpload(rCtx context.Context, key string, uploadID string) {
++	if object.CheckKey(key) != nil {
++		return
++	}
+ 	ctx := meta.WrapWithoutCancel(rCtx, pid, uid, []uint32{gid})
+ 	_ = j.jfs.Rmr(ctx, j.path(j.partDir(key, uploadID)), true, meta.RmrDefaultThreads)
+ }
+ 
+ func (j *juiceFS) CompleteUpload(rCtx context.Context, key string, uploadID string, parts []*object.Part) (err error) {
++	if err := object.CheckKey(key); err != nil {
++		return err
++	}
+ 	ctx := meta.WrapWithoutCancel(rCtx, pid, uid, []uint32{gid})
+ 	tmp := j.path(path.Join(j.partDir(key, uploadID), "complete"))
+ 	f, eno := j.jfs
+```
+
+**File**: `cmd/object_test.go` (modified, +40/-0)
+```diff
+@@ -53,6 +53,45 @@ func testKeysEqual(objs []object.Object, expectedKeys []string) error {
+ 	return nil
+ }
+ 
++// copied from pkg/object/filesystem_test.go
++// testUnsafeKeys checks that keys escaping the root are rejected before touching the storage.
++func testUnsafeKeys(t *testing.T, s object.ObjectStorage) {
++	ctx := context.Background()
++	bad := "../unsafe"
++	unsafe := func(op string, err error) {
++		t.Helper()
++		if !errors.Is(err, utils.ErrUnsafeKey) {
++			t.Fatalf("%s: got %v, want ErrUnsafeKey", op, err)
++		}
++	}
++	optional := func(op string, err error) {
++		t.Helper()
++		if !errors.Is(err, utils.ErrNotSUP) {
++			unsafe(op, err)
++		}
++	}
++	_, err := s.Head(ctx, bad)
++	unsafe("Head", err)
++	_, err = s.Get(ctx, bad, 0, -1)
++	unsafe("Get", err)
++	unsafe("Put", s.Put(ctx, bad, bytes.NewReader(nil)))
++	unsafe("Put NUL", s.Put(ctx, "x/\x00", bytes.NewReader(nil)))
++	unsafe("Delete", s.Delete(ctx, bad))
++	_, _, _, err = s.List(ctx, "../", "", "", "/", 10, true)
++	unsafe("List", err)
++	optional("Copy", s.Copy(ctx, "copied", bad))
++	if fs, ok := s.(object.FileSystem); ok {
++		optional("Chmod", fs.Chmod(bad, 0755))
++		optional("Chown", fs.Chown(bad, "nobody", "nogroup"))
++		optional("Chtimes", fs.Chtimes(bad, time.Now()))
++	}
++	if ss, ok := s.(object.SupportSymlink); ok {
++		optional("Symlink", ss.Symlink("x/x.txt", bad))
++		_, err = ss.Readlink(bad)
++		optional("Readlink", err)
++	}
++}
++
+ // copied from pkg/object/filesystem_test.go
+ func testFileSystem(t *testing.T, s object.ObjectStorage) {
+ 	ctx := context.Background()
+@@ -76,6 +115,7 @@ func testFileSystem(t *testing.T, s object.ObjectStorage) {
+ 	} else if !f.IsDir() {
+ 		t.Fatalf("x/ should be a dir")
+ 	}
++	testUnsafeKeys(t, s)
+ 	// cleanup
+ 	defer func() {
+ 		// delete reversely, directory only can be deleted when it's empty
+```
+
+**File**: `pkg/object/cifs.go` (modified, +26/-0)
+```diff
+@@ -56,6 +56,11 @@ type cifsStore struct {
+ 	connIdleTimeout time.Duration
+ }
+ 
++// checkCifsKey also treats `\` as a separator, since SMB uses it regardless of the client OS.
++func checkCifsKey(key string) error {
++	return CheckKey(strings.ReplaceAll(key, "\\", "/"))
++}
++
+ // Chmod changes the mode of the file to mode.
+ //
+ // Note: SAMBA protocol has limited support for Unix file permissions.
+@@ -68,6 +73,9 @@ type cifsStore struct {
+ // The returned mode from Stat() will always be either 0666 (writable) or 0444 (read-only)
+ // regardless of the specific mode bits passed to this function.
+ func (c *cifsStore) Chmod(path string, mode os.FileMode) error {
++	if err := checkCifsKey(path); err != nil {
++		return err
++	}
+ 	return c.withConn(context.Background(), func(share *smb2.Share) error {
+ 		return share.Chmod(path, mode)
+ 	})
+@@ -80,6 +88,9 @@ func (c *cifsStore) Chown(path string, owner string, group string) error {
+ 
+ // Chtimes implements MtimeChanger.
+ func (c *cifsStore) Chtimes(path string, mtime time.Time) error {
++	if err := checkCifsKey(path); err != nil {
++		return err
++	}
+ 	return c.withConn(context.Background(), func(share *smb2.Share) error {
+ 		return share.Chtimes(path, time.Time{}, mtime)
+ 	})
+@@ -189,6 +200,9 @@ func (c *cifsStore) withConn(ctx context.Context, f func(*smb2.Share) error) (er
+ }
+ 
+ func (c *cifsStore) Head(ctx context.Context, key string) (oj Object, err error) {
++	if err = checkCifsKey(key); err != nil {
++		return nil, err
++	}
+ 	err = c.withConn(ctx, func(share *smb2.Share) error {
+ 		fi, err := share.Lstat(key)
+ 		if err != nil {
+@@ -222,6 +236,9 @@ func (r *cifsReadCloser) Close() error {
+ }
+ 
+ func (c *cifsStore) Get(ctx context.Context, key string, off, limit int64, getters ...AttrGetter) (io.ReadCloser, error) {
++	if err := checkCifsKey(key); err != nil {
++		return nil, err
++	}
+ 	if off < 0 {
+ 		off = 0
+ 	}
+@@ -277,6 +294,9 @@ func (c *cifsStore) Get(ctx context.Context, key string, off, limit int64, gette
+ }
+ 
+ func (c *cifsStore) Put(ctx context.Context, key string, in io.Reader, getters ...AttrGetter) (err error) {
++	if err = checkCifsKey(key); err != nil {
++		return err
++	}
+ 	return c.withConn(ctx, func(share *smb2.Share) error {
+ 		p := key
+ 		if strings.HasSuffix(key, dirSuffix) {
+@@ -337,6 +357,9 @@ func (c *cifsStore) Put(ctx context.Context, key string, in io.Reader, getters .
+ }
+ 
+ func (c *cifsStore) Delete(ctx context.Context, key string, getters ...AttrGetter) (err error) {
++	if err = checkCifsKey(key); err != nil {
++		return err
++	}
+ 	return c.withConn(ctx, func(share *smb2.Share) error {
+ 		p := strings.TrimRight(key, dirSuffix)
+ 		err = share.Remove(p)
+@@ -368,6 +391,9 @@ func (c *cifsStore) List(ctx context.Context, prefix, marker, token, delimiter s
+ 	if delimiter != "/" {
+ 		return nil, false, "", notSupported
+ 	}
++	if err := checkCifsKey(prefix); err != nil {
++		return nil, false, "", err
++	}
+ 
+ 	dir := prefix
+ 	var objs []Object
+```
+
+**File**: `pkg/object/file.go` (modified, +43/-11)
+```diff
+@@ -45,7 +45,10 @@ type filestore struct {
+ }
+ 
+ func (d *filestore) Symlink(oldName, newName string) error {
+-	p := d.path(newName)
++	p, err := d.path(newName)
++	if err != nil {
++		return err
++	}
+ 	if _, err := os.Stat(filepath.Dir(p)); err != nil && os.IsNotExist(err) {
+ 		if err := os.MkdirAll(filepath.Dir(p), os.FileMode(0777)); err != nil {
+ 			return err
+@@ -57,7 +60,11 @@ func (d *filestore) Symlink(oldName, newName string) error {
+ }
+ 
+ func (d *filestore) Readlink(name string) (string, error) {
+-	return os.Readlink(d.path(name))
++	p, err := d.path(name)
++	if err != nil {
++		return "", err
++	}
++	return os.Readlink(p)
+ }
+ 
+ func (d *filestore) String() string {
+@@ -67,15 +74,21 @@ func (d *filestore) String() string {
+ 	return "file://" + d.root
+ }
+ 
+-func (d *filestore) path(key string) string {
++func (d *filestore) path(key string) (string, error) {
++	if err := CheckKey(key); err != nil {
++		return "", err
++	}
+ 	if strings.HasSuffix(d.root, dirSuffix) {
+-		return filepath.Join(d.root, key)
++		return filepath.Join(d.root, key), nil
+ 	}
+-	return filepath.Clean(d.root + key)
++	return filepath.Clean(d.root + key), nil
+ }
+ 
+ func (d *filestore) Head(ctx context.Context, key string) (Object, error) {
+-	p := d.path(key)
++	p, err := d.path(key)
++	if err != nil {
++		return nil, err
++	}
+ 	fi, err := os.Lstat(p)
+ 	if err != nil {
+ 		return nil, err
+@@ -118,7 +131,10 @@ type SectionReaderCloser struct {
+ }
+ 
+ func (d *filestore) Get(ctx context.Context, key string, off, limit int64, getters ...AttrGetter) (io.ReadCloser, error) {
+-	p := d.path(key)
++	p, err := d.path(key)
++	if err != nil {
++		return nil, err
++	}
+ 
+ 	f, err := os.Open(p)
+ 	if err != nil {
+@@ -145,7 +161,10 @@ func (d *filestore) Get(ctx context.Context, key string, off, limit int64, gette
+ }
+ 
+ func (d *filestore) Put(ctx context.Context, key string, in io.Reader, getters ...AttrGetter) (err error) {
+-	p := d.path(key)
++	p, err := d.path(key)
++	if err != nil {
++		return err
++	}
+ 
+ 	if strings.HasSuffix(key, dirSuffix) || key == "" && strings.HasSuffix(d.root, dirSuffix) {
+ 		return os.MkdirAll(p, os.FileMode(0777))
+@@ -210,7 +229,11 @@ func (d *filestore) Copy(ctx context.Context, dst, src string) error {
+ }
+ 
+ func (d *filestore) Delete(ctx context.Context, key string, getters ...AttrGetter) error {
+-	err := os.Remove(d.path(key))
++	p, err := d.path(key)
++	if err != nil {
++		return err
++	}
++	err = os.Remove(p)
+ 	if err != nil && os.IsNotExist(err) {
+ 		err = nil
+ 	}
+@@ -290,6 +313,9 @@ func (d *filestore) List(ctx context.Context, prefix, marker, token, delimiter s
+ 	if delimiter != "/" {
+ 		return nil, false, "", notSupported
+ 	}
++	if err := CheckKey(prefix); err != nil {
++		return nil, false, "", err
++	}
+ 	var dir string = d.root + prefix
+ 	var objs []Object
+ 	if !strings.HasSuffix(dir, dirSuffix) {
+@@ -345,12 +371,18 @@ func (d *filestore) List(ctx context.Context, prefix, marker, token, delimiter s
+ }
+ 
+ func (d *filestore) Chmod(key string, mode os.FileMode) error {
+-	p := d.path(key)
++	p, err := d.path(key)
++	if err != nil {
++		return err
++	}
+ 	return os.Chmod(p, mode)
+ }
+ 
+ func (d *filestore) Chown(key string, owner, group string) error {
+-	p := d.path(key)
++	p, err := d.path(key)
++	if err != nil {
++		return err
++	}
+ 	uid := utils.LookupUser(owner)
+ 	gid := utils.LookupGroup(group)
+ 	if uid == -1 || gid == -1 {
+```
+
+**File**: `pkg/object/file_unix.go` (modified, +4/-1)
+```diff
+@@ -42,6 +42,9 @@ func getOwnerGroup(info os.FileInfo) (string, string) {
+ }
+ 
+ func (d *filestore) Chtimes(key string, mtime time.Time) error {
+-	p := d.path(key)
++	p, err := d.path(key)
++	if err != nil {
++		return err
++	}
+ 	return lchtimes(p, time.Time{}, mtime)
+ }
+```
+
+**File**: `pkg/object/file_windows.go` (modified, +4/-1)
+```diff
+@@ -34,6 +34,9 @@ func lookupGroup(name string) int {
+ }
+ 
+ func (d *filestore) Chtimes(key string, mtime time.Time) error {
+-	p := d.path(key)
++	p, err := d.path(key)
++	if err != nil {
++		return err
++	}
+ 	return os.Chtimes(p, time.Time{}, mtime)
+ }
+```
+
+**File**: `pkg/object/filesystem_test.go` (modified, +70/-0)
+```diff
+@@ -22,8 +22,12 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"os"
++	"runtime"
+ 	"strings"
+ 	"testing"
++	"time"
++
++	"github.com/juicedata/juicefs/pkg/utils"
+ )
+ 
+ func testKeysEqual(objs []Object, expectedKeys []string) error {
+@@ -83,6 +87,71 @@ func TestNFS2(t *testing.T) { //skip mutate
+ 	testFileSystem(t, b)
+ }
+ 
++func TestCheckKey(t *testing.T) {
++	for key, unsafe := range map[string]bool{
++		"":         false,
++		"a/b":      false,
++		"a/":       false,
++		"a//b":     false,
++		"./a":      false,
++		"x..y":     false,
++		"..a/b..":  false,
++		"/abs":     false,
++		"..":       true,
++		"../a":     true,
++		"a/../b":   true,
++		"a/..":     true,
++		"a/b\x00c": true,
++		"..\\a":    runtime.GOOS == "windows",
++		"a\\..\\b": runtime.GOOS == "windows",
++	} {
++		if err := CheckKey(key); (err != nil) != unsafe {
++			t.Errorf("CheckKey(%q) = %v, want unsafe=%v", key, err, unsafe)
++		}
++	}
++}
++
++// testUnsafeKeys checks that keys escaping the root are rejected before touching the storage.
++func testUnsafeKeys(t *testing.T, s ObjectStorage) {
++	ctx := context.Background()
++	bad := "../unsafe"
++	unsafe := func(op string, err error) {
++		t.Helper()
++		if !errors.Is(err, utils.ErrUnsafeKey) {
++			t.Fatalf("%s: got %v, want ErrUnsafeKey", op, err)
++		}
++	}
++	optional := func(op string, err error) {
++		t.Helper()
++		if !errors.Is(err, utils.ErrNotSUP) {
++			unsafe(op, err)
++		}
++	}
++	_, err := s.Head(ctx, bad)
++	unsafe("Head", err)
++	_, err = s.Get(ctx, bad, 0, -1)
++	unsafe("Get", err)
++	unsafe("Put", s.Put(ctx, bad, bytes.NewReader(nil)))
++	if _, ok := s.(*cifsStore); ok {
++		unsafe("Put SMB backslash", s.Put(ctx, `..\unsafe`, bytes.NewReader(nil)))
++	}
++	unsafe("Put NUL", s.Put(ctx, "x/\x00", bytes.NewReader(nil)))
++	unsafe("Delete", s.Delete(ctx, bad))
++	_, _, _, err = s.List(ctx, "../", "", "", "/", 10, true)
++	unsafe("List", err)
++	optional("Copy", s.Copy(ctx, "copied", bad))
++	if fs, ok := s.(FileSystem); ok {
++		optional("Chmod", fs.Chmod(bad, 0755))
++		optional("Chown", fs.Chown(bad, "nobody", "nogroup"))
++		optional("Chtimes", fs.Chtimes(bad, time.Now()))
++	}
++	if ss, ok := s.(SupportSymlink); ok {
++		optional("Symlink", ss.Symlink("x/x.txt", bad))
++		_, err = ss.Readlink(bad)
++		optional("Readlink", err)
++	}
++}
++
+ func testFileSystem(t *testing.T, s ObjectStorage) {
+ 	ctx := context.Background()
+ 	keys := []string{
+@@ -105,6 +174,7 @@ func testFileSystem(t *testing.T, s ObjectStorage) {
+ 	} else if !f.IsDir() {
+ 		t.Fatalf("x/ should be a dir")
+ 	}
++	testUnsafeKeys(t, s)
+ 	// cleanup
+ 	defer func() {
+ 		// delete reversely, directory only can be deleted when it's empty
+```
+
+**File**: `pkg/object/gluster.go` (modified, +18/-0)
+```diff
+@@ -58,6 +58,9 @@ func (g *gluster) vol() *gfapi.Volume {
+ }
+ 
+ func (g *gluster) Head(ctx context.Context, key string) (Object, error) {
++	if err := CheckKey(key); err != nil {
++		return nil, err
++	}
+ 	fi, err := g.vol().Stat(key)
+ 	if err != nil {
+ 		return nil, err
+@@ -88,6 +91,9 @@ func (g *gluster) toFile(key string, fi fs.FileInfo, isSymlink bool) *file {
+ }
+ 
+ func (g *gluster) Get(ctx context.Context, key string, off, limit int64, getters ...AttrGetter) (io.ReadCloser, error) {
++	if err := CheckKey(key); err != nil {
++		return nil, err
++	}
+ 	f, err := g.vol().Open(key)
+ 	if err != nil {
+ 		return nil, err
+@@ -113,6 +119,9 @@ func (g *gluster) Get(ctx context.Context, key string, off, limit int64, getters
+ }
+ 
+ func (g *gluster) Put(ctx context.Context, key string, in io.Reader, getters ...AttrGetter) error {
++	if err := CheckKey(key); err != nil {
++		return err
++	}
+ 	v := g.vol()
+ 	if strings.HasSuffix(key, dirSuffix) {
+ 		return v.MkdirAll(key, os.FileMode(0777))
+@@ -149,6 +158,9 @@ func (g *gluster) Put(ctx context.Context, key string, in io.Reader, getters ...
+ }
+ 
+ func (g *gluster) Delete(ctx context.Context, key string, getters ...AttrGetter) error {
++	if err := CheckKey(key); err != nil {
++		return err
++	}
+ 	v := g.vol()
+ 	err := v.Unlink(key)
+ 	if err != nil && strings.Contains(err.Error(), "is a directory") {
+@@ -212,6 +224,9 @@ func (g *gluster) List(ctx context.Context, prefix, marker, token, delimiter str
+ 	if delimiter != "/" {
+ 		return nil, false, "", notSupported
+ 	}
++	if err := CheckKey(prefix); err != nil {
++		return nil, false, "", err
++	}
+ 	var dir string = prefix
+ 	var objs []Object
+ 	if !strings.HasSuffix(dir, dirSuffix) {
+@@ -267,6 +282,9 @@ func (g *gluster) Chtimes(path string, mtime time.Time) error {
+ }
+ 
+ func (g *gluster) Chmod(path string, mode os.FileMode) error {
++	if err := CheckKey(path); err != nil {
++		return err
++	}
+ 	return g.vol().Chmod(path, mode)
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7857** (2026-11-16): docs: clarify routing and concurrency for multiple gateways (@myangitzh)
-- **PR #7855** (2026-11-16): object/sharding: do not format the endpoint query (@jiefenghuang)
-- **PR #7854** (2026-11-16): CI: delete the per-run tier test bucket after tier.sh (@mt5225)
-- **PR #7853** (2026-11-16): deps: update minio to reject dot path components in object names (@jiefenghuang)
-- **PR #7852** (2026-11-16): ci: fix CImodel expectations and TiUP bootstrap failures (@zxh326)
-- **PR #7848** (closed): meta: prevent directory cycles within rename transactions (@adenzhou1350)
+- **PR #7901** (closed): meta: avoid mixed directory-stat snapshots during flushes (@adenzhou1350)
+- **PR #7896** (2026-11-23): object: reject keys that escape the root of path-based storages (@zxh326)
+- **PR #7892** (2026-11-20): meta: stop charging an unlinked open file to its old directory (@jiefenghuang)
+- **PR #7891** (closed): pkg/sync: reject object keys with ".." elements or NUL (@zxh326)
+- **PR #7890** (2026-11-19): gateway: run expired temp file cleanup on start (@jiefenghuang)
+- **PR #7889** (2026-11-19): gateway: stop the cleanup goroutine on Shutdown (@jiefenghuang)
 
 ---
 
@@ -1276,34 +2140,64 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: fix CImodel expectations and TiUP bootstrap failures
+## X. meta: keep an O_TMPFILE inode alive after linkat
 
 **RULE**:
-When implementing operations in `.github/scripts/start_meta_engine.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/meta/base_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6185d131`: ci: fix CImodel expectations and TiUP bootstrap failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6118713b`: meta: keep an O_TMPFILE inode alive after linkat. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/start_meta_engine.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/base_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    # Pin playground to skip the background update check racing with root manifest updates.
-    $tiup playground:v1.17.1 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
-    $tiup playground:v1.17.1 8.5.7 > tidb.log 2>&1  &
+	"slices"
+	testLinkOpenUnlinkedFile(t, m)
+// testLinkOpenUnlinkedFile follows what O_TMPFILE and linkat do: the file
+// must keep its new name after the last close, and its length counts once,
+// in the directory it was linked into.
+func testLinkOpenUnlinkedFile(t *testing.T, m Meta) {
+	m.getBase().sid = 0
+	if err := m.NewSession(true); err != nil {
+		t.Fatalf("new session: %s", err)
+	}
+	defer m.CloseSession()
+	ctx := Background()
+	var tmpdir, dir, inode Ino
+	var attr = &Attr{}
+	if st := m.Mkdir(ctx, 1, "tmpdir", 0755, 022, 0, &tmpdir, attr); st != 0 {
+		t.Fatalf("mkdir tmpdir: %s", st)
+	}
+	if st := m.Mkdir(ctx, 1, "linkdir", 0755, 022, 0, &dir, attr); st != 0 {
+		t.Fatalf("mkdir linkdir: %s", st)
+	}
+	if st := m.Create(ctx, tmpdir, "tmpfile", 0644, 022, 0, &inode, attr); st != 0 {
+		t.Fatalf("create tmpfile: %s", st)
+	}
+	if st := m.Unlink(ctx, tmpdir, "tmpfile", true); st != 0 {
+		t.Fatalf("unlink tmpfile: %s", st)
+	}
+	var sliceId uint64
+	if st := m.NewSlice(ctx, &sliceId); st != 0 {
+		t.Fatalf("new slice: %s", st)
+	}
+	if st := m.Write(ctx, inode, 0, 0, Slice{Id: sliceId, Size: 8192, Len: 8192}, time.Now()); st != 0 {
+		t.Fatalf("write tmpfile: %s", st)
+	}
+	if st := m.SetXattr(ctx,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    $tiup playground 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
-    $tiup playground 8.5.7 > tidb.log 2>&1  &
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6185d131` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6118713b` are properly handled with clean fallback behavior.
 
 
 ## Consequences

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-FJNH",
-    "timestamp": "2026-11-21T15:31:23.069Z",
-    "repository": "react-navigation/react-navigation",
-    "learningId": "learn-github-react-navigation-react-navigation",
-    "contentHash": "16eb5f6dbee0360d3d8bd9dfec7a19257965a012c5c51993338dbeecd8bc88ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-FLFC",
-    "timestamp": "2026-11-21T15:31:25.368Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "d6e5f2e38511b789cd59c086387bbbea68394ef5b88eb44c8b39fb08f6da781f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-FTE4",
     "timestamp": "2026-11-21T15:31:35.692Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7490,6 +7460,36 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "80a08af9ecc02e1f95a6cc7a44dd1f9eabc2d00f17579685691dc9f28c00b7b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-R1OK",
+    "timestamp": "2026-11-23T16:11:39.716Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "2540dda827afcf223cc349f45dc1c97bc94c23c41afc0d5aafeedb582d6dfcb6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-R993",
+    "timestamp": "2026-11-23T16:11:49.527Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "b29819a8396afe9e64c095838b8728986c931ce0be2b5186c092ebc9a2646a1d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -12363,3 +12363,5 @@
 | `CYCLE-20261123-FOVX` | `2026-11-23T16:02:49.917Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`58eb9dc8...`) |
 | `CYCLE-20261123-FQSY` | `2026-11-23T16:02:52.402Z` | `mlua-rs/mlua` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md` | Yes (`9059a661...`) |
 | `CYCLE-20261123-FY0N` | `2026-11-23T16:03:01.751Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10063` | Yes (`80a08af9...`) |
+| `CYCLE-20261123-R1OK` | `2026-11-23T16:11:39.716Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`2540dda8...`) |
+| `CYCLE-20261123-R993` | `2026-11-23T16:11:49.527Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10064` | Yes (`b29819a8...`) |

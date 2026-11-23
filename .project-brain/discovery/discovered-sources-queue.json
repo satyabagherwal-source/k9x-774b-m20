@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T15:37:37.001Z",
+  "updated_at": "2026-11-23T16:11:54.140Z",
   "stats": {
-    "total_discovered": 7900,
-    "approved_pending_harvest": 7476,
+    "total_discovered": 7903,
+    "approved_pending_harvest": 7479,
     "harvested_count": 0,
     "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7466,
+      "COMMUNITY_AND_EXPERT": 7469,
       "OFFICIAL_DOCUMENTATION": 249,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -170855,6 +170855,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
         "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-DD3CA5AF0B97": {
+      "id": "SRC-DD3CA5AF0B97",
+      "url": "https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679383",
+      "title": "https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679383",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:11:54.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
+      }
+    },
+    "SRC-014C4EA64BA3": {
+      "id": "SRC-014C4EA64BA3",
+      "url": "https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679394",
+      "title": "https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679394",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:11:54.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
+      }
+    },
+    "SRC-8134DB845585": {
+      "id": "SRC-8134DB845585",
+      "url": "https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679379",
+      "title": "https://github.com/juicedata/juicefs/actions/runs/45119470242/job/137509679379",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T16:11:54.140Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
       }
     }
   }
