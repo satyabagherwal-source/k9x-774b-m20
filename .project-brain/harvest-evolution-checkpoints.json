@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:22:16.810Z",
+  "last_updated": "2026-11-23T20:30:50.102Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T20:00:24.380Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-23T20:08:38.631Z",
+      "processed_at": "2026-11-23T20:30:47.418Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2758,7 +2758,7 @@
       "staged_for_review": 0
     },
     "hf-microsoft-frognano-4b-2609-learnings.md": {
-      "processed_at": "2026-11-19T12:40:38.601Z",
+      "processed_at": "2026-11-23T20:30:48.663Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3438,7 +3438,7 @@
       "staged_for_review": 1
     },
     "smallstep-cli-learnings.md": {
-      "processed_at": "2026-11-18T14:40:49.985Z",
+      "processed_at": "2026-11-23T20:30:49.091Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3510,
+  "total_dossiers_evaluated": 3513,
   "total_canonical_promoted": 489,
-  "total_staged_for_review": 2633
+  "total_staged_for_review": 2635
 }

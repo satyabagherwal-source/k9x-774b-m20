@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T05:55:02.529Z",
+  "timestamp": "2026-11-23T20:30:47.786Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zvec-ai-zvec-grep-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zvec-ai-zvec-grep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T05:55:02.529Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T20:30:47.786Z`  
 > **Learning ID**: `LEARN-EVO-zvec-ai-zvec-grep-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zvec-ai-zvec-grep-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `75047201`  
+> **Source Version**: `2f18f2d9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T17:20:13.393Z  
+> **Timestamp**: 2026-11-23T20:30:32.117Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:20:13.387Z  
+> **Harvest Timestamp**: 2026-11-23T20:30:32.111Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4357 stars
+- **Stars / Engagement**: 4374 stars
 
 ---
 
@@ -1125,11 +1125,11 @@ def render_report(report: dict[str, Any]) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #397** (2026-11-12): **[Bug]: Strict rustdoc build fails on private links in GraphEdgeKind**
-  *Symptoms*: ### Description  `zg-engine` fails to build its public API documentation when rustdoc warnings are treated as errors. The public `GraphEdgeKind` docs link to `PendingRef` and `FileEdge`, which are both `pub(crate)` and omitted from the public docs.  Source: [`domain/graph.rs:28`](https://github.com/zvec-ai/zvec-grep/blob/074dc96967480ce7353b5cb8d8961a6d8d3c66bc/rust/crates/zg-engine/src/domain/graph.rs#L28).  ### Steps to Reproduce  From the repository root:  ```sh cd rust RUSTDOCFLAGS='-D warnings' cargo doc -p zg-engine --no-deps ```  **Actual:** Rustdoc reports `private_intra_doc_links`, and the strict build exits with an error.  **Expected:** The public API docs build without warnings.  ### Suggested Fix  Render `PendingRef` and `FileEdge` as inline code in the comment, preserving the explanation and the types' visibility.  ### Version and Diagnostics  - `zg-engine` 0.3.0, built from source - Rust 1.98.0 on macOS 15.7.5 (Apple Silicon) - Affected area: Rust API documentation
+- **Issue #442** (2026-11-19): **[Bug]: Python call graph leaves imported class constructor calls pending**
+  *Symptoms*: ### Description  In SQLFluff, `Rule_LT09._eval` calls the imported class `FunctionalContext` as `FunctionalContext(context).segment`. A fresh graph index finds the class definition, but the constructor call remains pending and is absent from callers/callees navigation. When the name binds to that class, the call should produce a resolved `Calls` edge to the class definition. [Import](https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/rules/layout/LT09.py#L9) · [Call site](https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/rules/layout/LT09.py#L86-L91) · [Class definition](https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/utils/functional/context.py#L7-L54)  ### Steps to reproduce  Set `ZG_BIN` to the absolute path of a release-built `zg` binary and run in a fresh checkout.  ```sh git clone https://github.com/sqlfluff/sqlfluff.git cd sqlfluff git checkout --detach db9801b7eb7fd014e765117f63ee1b0675fa9f87  "$ZG_BIN" --index --mode direct --graph --iglob '*.py' \   --embedding local/potion-code-16m-v2 --device cpu "$ZG_BIN" --status --check-ready --mode direct "$ZG_BIN" --callers FunctionalContext --mode direct \   --glob 'src/sqlfluff/utils/functional/context.py' ```  ### Version and diagnostics  Reproduced from a fresh Python-only graph index on macOS 27.0 arm64 with a `zg 0.3.1` release source build based on [cc3ff0fe](https://github.com/zvec
 
-- **Issue #382** (2026-11-10): **[Bug]: --preview full returns only the matched fragment for chunked Markdown/code entities**
-  *Symptoms*: ### Description  When an indexed Markdown/code entity is split into retrieval fragments, `--preview full` can display only the matched fragment, even though the result header identifies the complete entity.  The expected behavior is to show the entire matched **entity**, regardless of its internal fragment boundaries. This does not mean returning the entire file.  ### Steps to Reproduce  Observed in a local indexed Markdown workspace containing `katoann.md`, using `local/all-minilm-l6-v2`:  ```sh zg "How does KatoANN reduce memory traffic?" -t markdown --preview full --limit 1 --mode direct --refresh off ```  The result header is:  ```text #1 katoann.md:17-47 heading: 1 INTRODUCTION heading_level: 1 ```  However, the source body contains only lines **21–26**. Lines 17–20 and 27–47 from the same stored entity are absent. There is no error.  The reproduction requires an entity whose selected retrieval fragment covers only part of its content. An entity represented by a `Range::Full` fragment does not expose this issue. The concrete runtime reproduction above is Markdown; code entities share the same affected branch.  ### Expected Behavior  - `--preview full` returns all of the matched entity's stored content; in the observed case, lines **17–47**. - Fragment coordinates remain available as match evidence or a preview anchor, but do not cap the content available to full preview. - `none` and `short` remain bounded presentation modes. Their output should be selected by preview ru
+- **Issue #434** (2026-11-19): **[Bug]: Rust callers attributes a module-local save call to the top-level save**
+  *Symptoms*: ## Description  With the official `@zvec/zvec-grep@0.3.1` Linux x64 release, querying callers of the top-level `::save` correctly selects its definition, but also returns `storage::flush`, which calls the different function `storage::save`.  The call-site coordinates are accurate; **the call target is incorrectly attributed**. This is a false-positive relationship, separate from the argument-parsing problem in #426.  ## Reproduction case  Index the following complete `lib.rs` in a clean workspace. The observed workspace root was `/app`.  ```rust /// Normalize a value before storing it. pub fn normalize(value: i32) -> i32 { value.max(0) }  pub fn save(value: i32) -> i32 { normalize(value) }  pub fn import_record(value: i32) -> i32 { save(value) }  pub fn export_record(value: i32) -> i32 { save(value) }  /// A leaf with no resolved callers in this workspace. pub fn orphan_leaf(value: i32) -> i32 { value }  pub mod storage {     pub fn save(value: i32) -> i32 { super::normalize(value) }      pub fn flush(value: i32) -> i32 { save(value) } } ```  After indexing and initializing the published Rust HTTP `/mcp` endpoint, invoke `zvec_grep_callers` with:  ```json {"root":"/app","symbol":"::save"} ```  Use the actual workspace path if different. The complete [fixture](https://github.com/zhanglei1949/zvec-grep/blob/740f2a25715b4e1bc10c0cef59626022625e799e/benchmarks/swe-qa-bench/fixtures/caller-callee-dev/lib.rs) and [integration check](https://github.com/zhanglei1949/zvec-grep/blob/74
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1146,1449 +1146,672 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75047201` (2026-11-17)
-**Commit Message**: fix(rust): address the remaining issues in #418 (#427)
+### Incident Patch 1: `2f18f2d9` (2026-11-23)
+**Commit Message**: fix(rust): resolve python calls through annotated parameters and self members (#435)
 
-* perf(engine): compute graph facts only when the walk records them
+* fix(rust): bind python annotated parameters and self members
 
-A code index without graph support computed the resolver's facts on every
-entity and then dropped them, and an object literal was walked once per
-member entity it declared.
+A Python parameter states its type on the annotation rather than on an
+assignment, and a class states its attributes by assigning them on `self`
+from inside a method. Neither reached the graph, so a call through the
+parameter's declared contract (`index.create_variables()`) stayed pending,
+and a member one method writes was unknown to the methods beside it.
 
-- Gate the return-type, preprocessor and export-alias scans on
-  WalkContext::is_collecting(), and leave has_internal_linkage,
-  declares_type, alias_of, object_members and overwritten_by at their
-  defaults when the walk records nothing.
-- Read an object literal once (ObjectLiteral) and share the result with
-  every member entity the declaration produces.
-- Keep C/C++ text that no entity bounds in retrieval, as PHP already did;
-  JS/TS still indexes only uncovered callbacks.
-- Omit default graph facts from stored metadata so an index without them
-  keeps the earlier record shape, and records written before the fields
-  existed still decode to the defaults.
+- Read a typed parameter's annotation as the type the name holds for the
+  whole body: through the `type` wrapper, string annotations, `A | None`,
+  `Optional[…]`/`Union[…]`/`Annotated[…]` and their module-qualified
+  spellings. A container annotation stays unbound, since the members a
+  call reads there are the container's own.
+- Record `self.<member> = <value>` on the class entity, so every method
+  and every subclass reads the same member. The value is read where it is
+  written: `self.x = param` takes the parameter's annotation and
+  `self.x = state.x` a `member_of:(<type>,<member>)` step. A nested class
+  states `self` for its own members, not for the class around it.
 
-* fix(storage): replace stale graph index definitions on writable open
+* fix(
 
-CREATE INDEX IF NOT EXISTS takes an existing index of the name as done, so a
-definition that grew a predicate only applied to new or rebuilt databases.
-
-Compare t
-
-**File**: `rust/crates/zg-engine/src/domain/metadata.rs` (modified, +69/-6)
+**File**: `rust/crates/zg-engine/src/extraction/graph.rs` (modified, +43/-0)
 ```diff
-@@ -84,36 +84,36 @@ pub struct CodeMetadata {
-     /// unnamed namespace, or a file-scope `static` one. Such an entity has a
-     /// name in its own translation unit only, so a reference from another
-     /// file that matches it by name matched a different declaration.
--    #[serde(default)]
-+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-     pub has_internal_linkage: bool,
-     /// True for the entity that introduces a type's name (a class, struct,
-     /// interface, enum, or trait declaration). An `impl` block carries the
-     /// implemented type's name too, so a name index cannot tell the type from
-     /// its implementation without this fact; the resolver needs it to name the
-     /// one class a member call belongs to.
--    #[serde(default)]
-+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-     pub declares_type: bool,
-     /// Name this symbol is another spelling of, when its initializer is a bare
-     /// name (`export const dispatch = send`). A call through the symbol reaches
-     /// the aliased one, so an import that binds this symbol must follow the
-     /// alias rather than settle on it.
--    #[serde(default)]
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-     pub alias_of: Option<String>,
-     /// Properties an object literal initializer binds, in the literal's own
-     /// order, with a later property replacing an earlier one of its key
-     /// (`{ run() {}, run: right }` states `run -> right`). A member call on
-     /// this symbol reaches the value its key last named.
--    #[serde(default)]
-+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-     pub object_members: Vec<MemberAlias>,
-     /// Value a later property of the same key replaces this declaration with
-     /// (`{ run() {}, run: right }` states `right` on the method's entity). A
-     /// call through that key reaches the replacement, not this declaration.
--    #[serde(default)]
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-     pub overwritten_by: Option<String>,
-     /// Names an `export { local as exported }` clause republishes this
-     /// declaration under. The clause is a statement of its own, so this is the
-     /// only evidence that the exported name reaches this declaration.
--    #[serde(default)]
-+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-     pub exported_as: Vec<String>,
- }
+@@ -53,6 +53,27 @@ use crate::domain::{GraphEdgeKind, PreprocessorDirective};
+ /// allocated by [`WalkContext::next_entity_index`].
+ pub(crate) const FILE_SCOPE_INDEX: usize = usize::MAX;
  
-@@ -226,3 +226,66 @@ pub struct MarkdownMetadata {
- impl IndexedMetadata for MarkdownMetadata {
-     const INDEX_FIELDS: &'static [IndexField] = &[];
- }
++/// The bound type extraction records for a Python name a body rebinds to a
++/// value the index cannot place (`client = clients[0]`, `self.client = client`).
++///
++/// The write shadows what an earlier declaration stated — a parameter's
++/// annotation, a member's previous assignment — so the name holds no type from
++/// that line on. The resolver reads the sentinel as "stated, but undecided":
++/// the answer is not the type the name no longer holds, and a base class's
++/// member is not the answer either.
++pub(crate) const PYTHON_UNBOUND_TYPE: &str = "[[python_unbound]]";
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::{CodeMetadata, MemberAlias, SymbolType};
++/// The bound type extraction records for a Python member a class writes as
++/// `None` (`self.client = None`).
++///
++/// The write is a declaration of the member — the class chooses what the name
++/// holds, so a base class's member of the same name is not the answer — but it
++/// states no type. It differs from [`PYTHON_UNBOUND_TYPE`], which leaves the
++/// member undecided even beside a write that does state a type: an optional
++/// member (`__init__` writes `None`, another method stores the real value) is
++/// still typed by the write that states one.
++pub(crate) const PYTHON_NONE_TYPE: &str = "[[python_none]]";
 +
-+    /// The facts only the resolver reads. Retrieval never looks at them, so
-+    /// storing a default for each of them would cost every record the fields of
-+    /// the few files that use them.
-+    const GRAPH_FACTS: [&str; 6] = [
-+        "has_internal_linkage",
-+        "declares_type",
-+        "alias_of",
-+        "object_members",
-+        "overwritten_by",
-+        "exported_as",
-+    ];
-+
-+    #[test]
-+    fn graph_facts_are_stored_only_when_set() {
-+        let plain = serde_json::to_value(CodeMetadata::default()).expect("encode metadata");
-+        for field in GRAPH_FACTS {
-+            assert!(
-+                plain.get(field).is_none(),
-+                "{field} is omitted while it holds its default"
-+            );
-+        }
-+
-+        // A record written before the fields existed decodes to the defaults.
-+        let older: CodeMetadata = serde_json::from_value(serde_json::json!({"symbol_name": "run"}))
-+            .expect("decode an older record");
-+        assert_eq!(
-+            older,
-+            CodeMetadata {
-+                symbol_name: Some("run".to_owned()),
-+                ..CodeMetadata::default()
-+            }
-+        );
-+
-+        let stated = CodeMetadata {
-+            symbol_type: Some(SymbolType::Value),
-+            symbol_name: Some("api".to_owned()),
-+            has_internal_linkage: true,
-+            declares_type: true,
-+            alias_of: Some("send".to_owned()),
-+            object_members: vec![MemberAlias {
-+                name: "run".to_owned(),
-+                target: "right".to_owned(),
-+            }],
-+            overwritten_by: Some("right".to_owned()),
-+            exported_as: vec!["publicApi".to_owned()],
-+            ..CodeMetadata::default()
-+        };
-+        let encoded = serde_json::to_value(&stated).expect("encode stated metadata");
-+        for field in GRAPH_FACTS {
-+            assert!(encoded.get(field).is_some(), "{field} is stored when set");
-+        }
-+        assert_eq!(
-+            serde_json::from_value::<CodeMetadata>(encoded).expect("decode stated metadata"),
-+            stated,
-+            "a stored fact survives the round trip"
-+        );
-+    }
-+}
-```
-
-**File**: `rust/crates/zg-engine/src/extraction/code.rs` (modified, +297/-40)
-```diff
-@@ -14,8 +14,8 @@ use crate::{
- };
- 
- use self::adapter::{
--    LanguageAdapter, declares_type, named_children, object_member_aliases, overwritten_by,
--    php_declaration, resolve_adapter, text,
-+    LanguageAdapter, ObjectLiteral, declares_type, named_children, php_declaration,
-+    resolve_adapter, text,
- };
- use super::graph::{
-     WalkContext, alias_target_of, collect_import_edge, collect_inheritance_edges, is_import_node,
-@@ -119,12 +119,20 @@ fn extract_code(
-     };
-     // Factory return types register before the entity walk so a bare-call
-     // initializer binds its factory even when the factory is spelled after
--    // the caller in this file.
--    scan_return_types(tree.root_node(), bytes, code_format, &mut graph_context);
--    // Directives describe the file rather than any entity, so they are read
--    // once from the root: the resolver replays them to decide whether a call
--    // site's name was already a macro in that translation unit.
--    graph_context.register_preprocessor(scan_preprocessor(tree.root_node(), bytes, code_format));
-+    // the caller in this file. The scans below only feed the graph, so a walk
-+    // that records nothing skips them instead of computing dropped results —
-+    // and does not pay their recursion on the source's syntax tree.
-+    if graph_context.is_collecting() {
-+        scan_return_types(tree.root_node(), bytes, code_format, &mut graph_context);
-+        // Directives describe the file rather than any entity, so they are read
-+        // once from the root: the resolver replays them to decide whether a call
-+        // site's name was already a macro in that translation unit.
-+        graph_context.register_preprocessor(scan_preprocessor(
-+            tree.root_node(),
-+            bytes,
-+            code_format,
-+        ));
-+    }
-     walk_code_node(
-         tree.root_node(),
-         adapter,
-@@ -136,11 +144,36 @@ fn extract_code(
-     );
-     // `export { realImpl as aliasName }` renames a declaration from a
-     // statement of its own, so the walk cannot see it from the declaration.
--    attach_export_aliases(tree.root_node(), bytes, code_format, &mut entities);
-+    // The names it attaches serve import binding, which only the graph reads.
-+    if graph_context.is_collecting() {
-+        attach_export_aliases(tree.root_node(), bytes, code_format, &mut entities);
-+    }
- 
-+    Ok(assemble_output(
-+        source,
-+        &tree,
-+        &entities,
-+        graph_context,
-+        code_format,
-+        (max_chars, overlap_chars),
-+    ))
-+}
-+
-+/// Turns the walked entities into what retrieval indexes and the resolver
-+/// stores: their fragments in walk order, the gaps between them, and the
-+/// partitioned graph. Both consume the same walk, which is why the entity set
-+/// never depends on the graph setting.
-+fn assemble_output(
-+    source: &TextSource,
-+    tree: &tree_sitter::Tree,
-+    entities: &[CodeEntity<'_>],
-+    graph_context: WalkContext,
-+    code_format: FileFormat,
-+    (max_chars, overlap_chars): (usize, usize),
-+) -> ExtractionOutput {
-     let mut output = Vec::new();
-     let mut entity_heads = Vec::with_capacity(entities.len());
--    for entity in &entities {
-+    for entity in entities {
-         // Fragments are appended contiguously in walk order, so the output
-         // length before each append is that entity's head fragment index.
-         entity_heads.push(output.len());
-@@ -149,7 +182,7 @@ fn extract_code(
-     // Anonymous retrieval chunks follow the symbols, preserving graph ordinals.
-     append_code_gaps(
-         source,
--        &entities,
-+        entities,
-         tree.root_node(),
-         code_format,
-         max_chars,
-@@ -166,21 +199,20 @@ fn extract_code(
-             .is_collecting()
-             .then(|| partition_walk(graph_context, entity_heads))
-             .filter(|graph| !graph.directives.is_empty());
--        Ok(ExtractionOutput {
-+        return ExtractionOutput {
-             fragments: fallback(source, max_chars, overlap_chars),
-             graph: partitioned,
--        })
--    } else {
--        // The symbol table is complete now, so partitioning resolves forward
--        // references as readily as backward ones. A walk that recorded nothing
--        // produces no graph at all, so assembly skips it.
--        let partitioned = graph_context
--            .is_collecting()
--            .then(|| partition_walk(graph_context, entity_heads));
--        Ok(ExtractionOutput {
--            fragments: output,
--            graph: partitioned,
--        })
-+        };
-+    }
-+    // The symbol table is complete now, so partitioning resolves forward
-+    // references as readily as backward ones. A walk that recorded nothing
-+    // produces no graph at all, so assembly skips it.
-+    let partitioned = graph_context
-+        .is_collecting()
-+        .then(|| partition_walk(graph_context, entity_heads));
-+    ExtractionOutput {
-+        fragments: output,
-+        graph: partitioned,
+ /// An edge whose both endpoints are known at walk time. Only `contains`
+ /// qualifies: the target entity is created during the same walk, so its index
+ /// is available from the scope stack. Positions use one-based lines and
+@@ -527,6 +548,28 @@ impl WalkContext {
+         });
      }
- }
  
-@@
++    /// The type `owner_index` has stated for `name` at one point of its body:
++    /// the last declaration written before the position, which is what a copy
++    /// (`client = other`) takes with it.
++    pub(crate) fn declared_type_at(
++        &self,
++        owner_index: usize,
++        name: &str,
++        line: usize,
++        column: usize,
++    ) -> Option<&str> {
++        self.name_edges
++            .iter()
++            .rev()
++            .find(|edge| {
++                edge.ref_kind == GraphEdgeKind::Declares
++                    && edge.owner_index == owner_index
++                    && edge.ref_name == name
++                    && (edge.line, edge.column) < (line, column)
++            })
++            .and_then(|edge| edge.bound_type.as_deref())
++    }
++
+     pub(crate) fn add_scoped_binding(
+         &mut self,
+         owner: usize,
 ```
 
-**File**: `rust/crates/zg-engine/src/extraction/code/adapter.rs` (modified, +114/-70)
+**File**: `rust/crates/zg-engine/src/extraction/graph/collector.rs` (modified, +885/-1)
 ```diff
-@@ -1,3 +1,5 @@
+@@ -5,6 +5,8 @@
+ //! owning entity without a second full parse. Mirrors the TypeScript
+ //! `src/engine/extraction/graph/edge-collector.ts` implementation.
+ 
 +use std::collections::HashMap;
 +
  use tree_sitter::Node;
  
- use crate::domain::{FileFormat, Language, SymbolType};
-@@ -645,47 +647,103 @@ pub(super) fn named_children(node: Node<'_>) -> Vec<Node<'_>> {
-     node.named_children(&mut cursor).collect()
- }
+ use crate::domain::{FileFormat, GraphEdgeKind};
+@@ -14,7 +16,7 @@ use super::vocabulary::{
+     CALLEE_FIELDS, COMMON_CALL_TYPES, HeritageVocabulary, heritage_vocabulary_for,
+     import_vocabulary_for,
+ };
+-use super::{Constructs, FILE_SCOPE_INDEX, WalkContext};
++use super::{Constructs, FILE_SCOPE_INDEX, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, WalkContext};
  
--/// Property names an object literal binds to another value, in the order the
--/// literal states them.
--///
--/// `export const api = { run() {}, run: right }` answers `[("run", "right")]`:
--/// the later property overwrites the earlier one, so a call through `api.run`
--/// reaches `right` and never the method the same key described first. A
--/// property whose value is not a bare name — a method, a shorthand, a nested
--/// literal — states no value the index can follow, but it still overwrites the
--/// earlier binding of its key.
-+/// The properties one object literal spells, read once for the declaration
-+/// that initializes it and every member entity the declaration produces.
- ///
--/// Only a literal the initializer spells directly counts. A wrapper that hands
--/// the literal back unchanged (`({...})`, `Object.freeze({...})`) is peeled;
--/// anything else is left alone, because the properties of a value some call
--/// built are that call's business.
--pub(super) fn object_member_aliases(node: Node<'_>, source: &[u8]) -> Vec<(String, String)> {
--    let Some(literal) = initialized_object_literal(node, source) else {
--        return Vec::new();
--    };
--    let mut members: Vec<(String, String)> = Vec::new();
--    for property in named_children(literal) {
--        let key = match property.kind() {
--            "pair" => property.child_by_field_name("key"),
--            "method_definition" => property.child_by_field_name("name"),
--            // `{ run }` states the name alone; it holds the function of that
--            // name, which the name index already answers.
--            "shorthand_property_identifier" => Some(property),
--            // A spread contributes keys this literal cannot enumerate.
--            _ => None,
--        };
--        let Some(name) = key.and_then(|key| property_key(key, source)) else {
--            continue;
--        };
--        members.retain(|(existing, _)| *existing != name);
--        let value = property.child_by_field_name("value");
--        if property.kind() == "pair"
--            && let Some(value) = value.filter(|value| value.kind() == "identifier")
--        {
--            members.push((name, text(value, source).to_owned()));
-+/// Both facts a literal states — the value each key binds, and the property
-+/// that states each key last — come from the same children, so a literal with
-+/// many members is scanned once instead of once per member.
-+pub(super) struct ObjectLiteral<'tree> {
-+    /// The `variable_declarator` the literal initializes: the one entity that
-+    /// carries the literal's member aliases.
-+    declaration: Node<'tree>,
-+    /// Property names the literal binds to another value, in the order of the
-+    /// property that states each key last.
-+    ///
-+    /// `export const api = { run() {}, run: right }` answers `[("run",
-+    /// "right")]`: the later property overwrites the earlier one, so a call
-+    /// through `api.run` reaches `right` and never the method the same key
-+    /// described first. A property whose value is not a bare name — a method,
-+    /// a shorthand, a nested literal — states no value the index can follow,
-+    /// but it still overwrites the earlier binding of its key.
-+    aliases: Vec<(String, String)>,
-+    /// The last `pair` that assigns each key: where it starts, and the bare
-+    /// name its value spells when the value is one. A later property of the
-+    /// same key replaces the member it supersedes with this value.
-+    assignments: HashMap<String, (usize, Option<String>)>,
+ const MAX_CALLEE_TEXT_CHARS: usize = 180;
+ 
+@@ -578,6 +580,27 @@ pub(crate) fn scan_binding_declarations(
+         );
+     }
+     visit_for_bindings(entity_node, owner_index, source, format, context, boundary);
++    // A decorated class reaches this scan as its wrapper, whose body is the
++    // class's: a decorator that returns the class unchanged must not hide the
++    // instance members its methods state.
++    if format == FileFormat::Python
++        && let Some(class) =
++            python_inner_definition(entity_node).filter(|inner| inner.kind() == "class_definition")
++    {
++        collect_python_self_members(class, owner_index, source, context);
++    }
 +}
 +
-+impl<'tree> ObjectLiteral<'tree> {
-+    /// Reads the literal `declaration` initializes, or nothing when its
-+    /// initializer is no literal.
-+    ///
-+    /// Only a literal the initializer spells directly counts. A wrapper that
-+    /// hands the literal back unchanged (`({...})`, `Object.freeze({...})`) is
-+    /// peeled; anything else is left alone, because the properties of a value
-+    /// some call built are that call's business.
-+    pub(super) fn read(declaration: Node<'tree>, source: &[u8]) -> Option<Self> {
-+        let literal = initialized_object_literal(declaration, source)?;
-+        let mut stated: HashMap<String, (usize, Option<String>)> = HashMap::new();
-+        let mut assignments: HashMap<String, (usize, Option<String>)> = HashMap::new();
-+        for property in named_children(literal) {
-+            let Some(name) = member_key(property, source) else {
-+                continue;
-+            };
-+            // Only a `pair` whose value is a bare name states a value the
-+            // index can follow; every other property states its key alone.
-+            let value = (property.kind() == "pair")
-+                .then(|| property.child_by_field_n
-```
-
-**File**: `rust/crates/zg-engine/src/storage/graph/schema.rs` (modified, +60/-2)
-```diff
-@@ -1,4 +1,4 @@
--use rusqlite::{Connection, TransactionBehavior};
-+use rusqlite::{Connection, OptionalExtension, TransactionBehavior};
- 
- use super::{Error, Result};
- 
-@@ -80,12 +80,53 @@ pub(crate) fn initialize(connection: &mut Connection, allow_create: bool) -> Res
-     // the ones it was built without. A read-only open cannot write and only
-     // loses the index acceleration; the next writable open catches up.
-     tx.execute_batch(INDEXES)?;
-+    // An index whose definition changed keeps its name, so the addition above
-+    // left the older definition in place; the definitions that differ from the
-+    // ones below are replaced here instead of waiting for a rebuild.
-+    replace_stale_indexes(&tx)?;
-     tx.execute_batch(INVALIDATION)?;
-     tx.execute_batch(PREPROCESSOR)?;
-     tx.commit()?;
-     Ok(())
++/// The definition a Python declaration states. A decorator wraps the class or
++/// function it decorates, and the wrapper's own body is that definition's.
++fn python_inner_definition(node: Node<'_>) -> Option<Node<'_>> {
++    match node.kind() {
++        "class_definition" | "function_definition" => Some(node),
++        "decorated_definition" => named_children(node)
++            .into_iter()
++            .find(|child| matches!(child.kind(), "class_definition" | "function_definition")),
++        _ => None,
++    }
  }
  
-+/// Replaces the indexes an earlier binary created with a broader definition.
-+///
-+/// `CREATE INDEX IF NOT EXISTS` takes an existing index of the name as done, so
-+/// a definition that grew a predicate (`WHERE target IS NOT NULL`, a narrower
-+/// `name_tail` partial) would otherwise only apply to new or rebuilt databases.
-+/// The comparison is textual, which is enough: the statement is this file's own
-+/// and only its predicate ever changes.
-+fn replace_stale_indexes(connection: &Connection) -> Result<()> {
-+    for (name, definition) in REPLACED_INDEXES {
-+        let recorded: Option<String> = connection
-+            .query_row(
-+                "SELECT sql FROM sqlite_schema WHERE type = 'index' AND name = ?1",
-+                [name],
-+                |row| row.get(0),
-+            )
-+            .optional()?;
-+        if recorded.is_none_or(|recorded| normalized(&recorded) == *definition) {
-+            continue;
+ fn visit_for_bindings(
+@@ -662,6 +685,45 @@ fn visit_for_bindings(
+         }
+         return;
+     }
++    if format == FileFormat::Python
++        && node.kind() == "assignment"
++        && let Some(left) = node
++            .child_by_field_name("left")
++            .filter(|left| left.kind() == "identifier")
++    {
++        let name = node_text(left, source);
++        // `client: Left = …` states the type beside the name, whatever value
++        // the body stores in it.
++        if let Some(bound) = node
++            .child_by_field_name("type")
++            .and_then(|ty| python_annotation_name(ty, source))
++        {
++            context.add_declare_binding(owner_index, name, &bound, line, column, None);
++            return;
 +        }
-+        connection.execute_batch(&format!("DROP INDEX {name};"))?;
-+        connection.execute_batch(definition)?;
-+    }
-+    Ok(())
-+}
-+
-+/// The statement text with its whitespace and `IF NOT EXISTS` removed, so the
-+/// one-line definition this file states compares equal to a definition an older
-+/// binary wrote over several lines.
-+fn normalized(sql: &str) -> String {
-+    let collapsed = sql
-+        .replace("IF NOT EXISTS ", "")
-+        .split_whitespace()
-+        .collect::<Vec<_>>()
-+        .join(" ");
-+    collapsed.trim_end_matches(';').to_owned()
-+}
-+
- // Direct local edges and references share one table. Resolution fills the target
- // on the existing reference row; invalidation clears it and retains the evidence.
- // `failed` terminates import references whose specifier addresses modules
-@@ -126,7 +167,9 @@ CREATE TABLE edges (
- // Created on every writable open, not only when the table is: an index is
- // derived data, so a database built by an older binary gains the ones added
- // since without a rebuild. Required columns are validated before any additions,
--// including columns that these indexes do not use.
-+// including columns that these indexes do not use. A definition that changes
-+// under an existing name is listed in REPLACED_INDEXES; adding one here alone
-+// would leave the older definition in the databases that already have it.
- const INDEXES: &str = "
- CREATE INDEX IF NOT EXISTS edges_file ON edges(file_id);
- CREATE INDEX IF NOT EXISTS edges_source_kind ON edges(source, kind);
-@@ -142,6 +185,21 @@ CREATE INDEX IF NOT EXISTS edges_name_tail ON edges(name_tail)
-     WHERE reference_name IS NOT NULL AND status IN ('resolved', 'failed');
- ";
- 
-+/// Indexes whose definition an earlier binary did not write this way, keyed by
-+/// the name that definition was created under. Each entry repeats the current
-+/// definition exactly (see [`INDEXES`] for why it differs from the older one).
-+const REPLACED_INDEXES: &[(&str, &str)] = &[
-+    (
-+        "edges_target_kind",
-+        "CREATE INDEX edges_target_kind ON edges(target, kind) WHERE target IS NOT NULL",
-+    ),
-+    (
-+        "edges_name_tail",
-+        "CREATE INDEX edges_name_tail ON edges(name_tail) \
-+         WHERE reference_name IS NOT NULL AND status IN ('resolved', 'failed')",
-+    ),
-+];
-+
- // Evidence a pass recorded but has not requeued yet. It lives in the database
- // rather than in memory so that a pass which publishes files and then fails or
- // is cancelled before its sweep still repairs those resolutions on the next
-```
-
-**File**: `rust/crates/zg-engine/src/storage/graph/tests.rs` (modified, +90/-40)
-```diff
-@@ -484,6 +484,96 @@ fn writable_open_adds_indexes_and_invalidation_storage_a_database_was_built_with
-     );
- }
- 
-+#[test]
-+fn writable_open_replaces_indexes_an_earlier_binary_defined_differently() {
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let path = dir.path().join("graph.sqlite");
-+    let mut db = create(&path);
-+    db.write_file_graph(
-+        1,
-+        None,
-+        &graph(&["a"], vec![], vec![reference("a", "target")]),
-+        &[],
-+        false,
-+    )
-+    .expect("write");
-+    drop(db);
-+
-+    let index_sql = |raw: &Connection, name: &str| {
-+        raw.query_row(
-+            "SELECT sql FROM sqlite_schema WHERE type = 'index' AND name = ?1",
-+            [name],
-+            |row| row.get::<_, String>(0),
-+        )
-+        .expect("index exists")
-+    };
-+    let rows = |raw: &Connection| {
-+        raw.query_row("SELECT count(*) FROM edges", [], |row| row.get::<_, i64>(0))
-+            .expect("count edges")
-+    };
-+    let raw = Connection::open(&path).expect("inspect");
-+    // A fresh database is built with the current definitions, so the
-+    // replacement below must leave them alone.
-+    assert!(
-+        index_sql(&raw, "edges_target_kind").contains("target IS NOT NULL"),
-+        "fresh index covers non-NULL targets only"
-+    );
-+    assert!(
-+        index_sql(&raw, "edges_name_tail").contains("status IN"),
-+        "fresh index covers completed references only"
-+    );
-+    // The definitions before the partial predicates: same names, broader
-+    // indexes. `CREATE INDEX IF NOT EXISTS` takes an existing index as done.
-+    raw.execute_batch(
-+        "DROP INDEX edges_target_kind;
-+         DROP INDEX edges_name_tail;
-+         CREATE INDEX edges_target_kind ON edges(target, kind);
-+         CREATE INDEX edges_name_tail ON edges(name_tail);",
-+    )
-+    .expect("rewrite as the older definitions");
-+    let edges = rows(&raw);
-+    drop(raw);
-+
-+    let reader = SqliteGraphStorage::open(&path, OpenMode::ReadOnly).expect("read older graph");
-+    assert_eq!(
-+        reader.list_pending_refs(100, 0).expect("refs").refs.len(),
-+        1
-+    );
-+    reader.close().expect("close reader");
-+    let raw = Connection::open(&path).expect("inspect");
-+    assert!(
-+        !index_sql(&raw, "edges_name_tail").contains("WHERE"),
-+        "a read-only open writes nothing"
-+    );
-+    drop(raw);
-+
-+    let db = SqliteGraphStorage::open(&path, OpenMode::ReadWrite).expect("reopen writer");
-+    let raw = Connection::open(&path).expect("inspect");
-+    let target_kind = index_sql(&raw, "edges_target_kind");
-+    assert!(
-+        target_kind.contains("target IS NOT NULL"),
-+        "the narrower index replaces the one of the same name: {target_kind}"
-+    );
-+    let name_tail = index_sql(&raw, "edges_name_tail");
-+    assert!(
-+        name_tail.contains("reference_name IS NOT NULL")
-+            && name_tail.contains("status IN ('resolved', 'failed')"),
-+        "the completed-reference index replaces the broader one: {name_tail}"
-+    );
-+    assert_eq!(rows(&raw), edges, "replacing an index keeps the rows");
-+    drop(raw);
-+    drop(db);
-+
-+    // A later open finds the definitions already current and rewrites nothing.
-+    let _db = SqliteGraphStorage::open(&path, OpenMode::ReadWrite).expect("reopen writer");
-+    let raw = Connection::open(&path).expect("inspect");
-+    assert!(
-+        index_sql(&raw, "edges_name_tail").contains("status IN ('resolved', 'failed')"),
-+        "the replacement is stable"
-+    );
-+    assert_eq!(rows(&raw), edges, "rows survive every open");
-+}
-+
- #[test]
- fn requeue_matches_a_name_that_only_appears_as_the_receiver() {
-     let mut db = SqliteGraphStorage::in_memory().expect("open");
-@@ -1883,43 +1973,3 @@ fn pending_call_names_lists_only_bare_pending_calls() {
-         vec!["TRACE".to_owned()]
-     );
- }
--
--#[test]
--fn relationship_reads_and_invalidation_use_their_indexes() {
--    let db = SqliteGraphStorage::in_memory().expect("graph");
--    for (sql, index) in [
--        (
--            "SELECT source FROM edges WHERE target = 'target' AND status = 'resolved'",
--            "edges_target_kind",
--        ),
--        (
--            "SELECT source FROM edges WHERE (source = 'target' OR target = 'target') AND status = 'resolved'",
--            "edges_target_kind",
--        ),
--        (
--            "UPDATE edges SET status = 'pending', target = NULL, provenance = NULL
--         WHERE target IN ('target', 'other') AND file_id <> 1 AND reference_name IS NOT NULL",
--            "edges_target_kind",
--        ),
--        (
--            "UPDATE edges SET status = 'pending', target = NULL, provenance = NULL
--         WHERE status IN ('resolved', 'failed') AND reference_name IS NOT NULL
--           AND name_tail IN (SELECT name FROM zg_stale_names WHERE kind = 0)",
--            "edges_name_tail",
--        ),
--    ] {
--        let mut statement = db
--            .connection
--            .prepare(&format!("EXPLAIN QUERY PLAN {sql}"))
-
-```
-
----
-
-### Incident Patch 2: `c035a303` (2026-11-17)
-**Commit Message**: fix(ort): release environment before CUDA provider destructors (#424)
-
-**File**: `.github/workflows/rust-ci.yml` (modified, +15/-5)
-```diff
-@@ -127,7 +127,7 @@ jobs:
-       - name: Check packages independently
-         shell: bash
-         run: |
--          for package in zg-engine zg-daemon-protocol zg-cli zg-host-native zg-testkit zg-transport-mcp zg-daemon zg zg-zvec-fp16; do
-+          for package in zg-engine zg-daemon-protocol zg-cli zg-host-native zg-ort-native zg-testkit zg-transport-mcp zg-daemon zg zg-zvec-fp16; do
-             cargo check --locked --package "${package}" --all-targets
-           done
-       - name: Run Clippy
-@@ -271,6 +271,9 @@ jobs:
-             --env LLAMA_CPP_BUILD_MODE=prebuilt --env LLAMA_CPP_RUNTIME_CACHE=/work/rust/target/llama-runtimes \
-             --env RUST_BACKTRACE --env CARGO_TERM_COLOR --env SOURCE_SHA \
-             zvec-grep-cuda-ci bash -euo pipefail -c '
-+              # Docker does not populate USER. Workspace preferences and
-+              # persistent authorization require the actual container username.
-+              export USER="$(id -un)"
-               cargo nextest --version
-               python3 scripts/cuda/runtime.py --reset-cargo-cli target/debug
-               cargo build --locked --features cuda --message-format=json > target/cargo-cli.json
-@@ -790,6 +793,9 @@ jobs:
-           smoke = "models::tests::real_model_smoke::selected_local_model_downloads_loads_and_embeds"
-           cases = [
-               ("cuda-onnx", "zg_engine", smoke, "local/all-minilm-l6-v2", "onnx"),
-+              ("cuda-onnx-shutdown", "zg_engine",
-+               "models::backends::transformers::model::cuda_shutdown_tests::cached_minilm_cuda_sessions_exit_cleanly",
-+               None, "onnx"),
-               ("cuda-gguf", "zg_engine", smoke, "local/embeddinggemma-300m", "gguf"),
-               # The preceding smoke prepares the cache. Run the regression in a
-               # fresh process, with CUDA/offload evidence and no extra download.
-@@ -822,7 +828,7 @@ jobs:
-                          test, "--ignored", "--exact", "--nocapture"]
-               if not windows:
-                   image = ("nvidia/cuda:12.8.1-cudnn-runtime-ubuntu24.04@sha256:ac55d124da4882b497f732d8dfd9a702d5447a5f29d08d56da6f64f0a1eb34bc"
--                           if name == "cuda-onnx" else
-+                           if backend == "onnx" else
-                            "nvidia/cuda:13.1.1-runtime-ubuntu24.04@sha256:12e26235ebe186000d71f8e457a9ad2aed6c0cb743a7935f0443bacef206aa34")
-                   command = [
-                       "docker", "run", "--rm", "--gpus", "all", "--platform", "linux/amd64",
-@@ -834,11 +840,15 @@ jobs:
-                       'export LD_LIBRARY_PATH="/gpu-tests/lib:${LD_LIBRARY_PATH:-}"; '
-                       # The pinned image supplies CUDA. Restrict apt to Ubuntu
-                       # sources so NVIDIA mirror syncs cannot block certificates.
--                      'if [ "$1" = model ]; then '
-+                      'if [ "$1" = model ] || [ "$1" = shutdown ]; then '
-                       'apt_options=(-o Dir::Etc::sourcelist=sources.list.d/ubuntu.sources -o Dir::Etc::sourceparts=- -o APT::Update::Error-Mode=any -o Acquire::Retries=3); '
-                       'apt-get "${apt_options[@]}" update -qq; '
--                      'apt-get "${apt_options[@]}" install --yes --no-install-recommends ca-certificates >/dev/null; fi; '
--                      'shift; exec timeout 900 "$@"', "gpu-test", "model" if model else "c5", *command,
-+                      'packages=(ca-certificates); if [ "$1" = shutdown ]; then packages+=(valgrind); fi; '
-+                      'apt-get "${apt_options[@]}" install --yes --no-install-recommends "${packages[@]}" >/dev/null; fi; '
-+                      'mode="$1"; shift; if [ "$mode" = shutdown ]; then '
-+                      'exec timeout 900 valgrind --trace-children=yes --leak-check=no --undef-value-errors=no '
-+                      '--error-exitcode=77 "$@"; fi; exec timeout 900 "$@"',
-+                      "gpu-test", "shutdown" if name == "cuda-onnx-shutdown" else "model" if model else "c5", *command,
-                   ]
-               log_path = logs / f"{name}.log"
-               try:
-```
-
-**File**: `rust/CONTRIBUTING.md` (modified, +7/-0)
-```diff
-@@ -151,6 +151,13 @@ retained as `real-model-evidence-<platform>-<cuda|default>` for CPU build/test
- jobs and `real-model-evidence-<platform>-gpu` for GPU jobs, including on failure.
- Any failed model case or CUDA evidence assertion fails the platform job.
- 
-+Both GPU jobs also run `cached_minilm_cuda_sessions_exit_cleanly` in fresh
-+subprocesses. It checks failed CUDA model loads, recovery/reload, cancellation,
-+and two actual CUDA sessions per pool, including the final process exit status.
-+Linux repeats with heap perturbation and disabled tcache, and runs the parent
-+and its children under Valgrind Memcheck with an error exit code. This catches
-+invalid accesses during ORT/provider shutdown even when inference passes.
-+
- Both GPU jobs then explicitly run the ignored C5 tests from those same compiled
- test binaries, each in a fresh process: `cached_embeddinggemma_uses_cuda` verifies
- CPU inference followed by CUDA inference in one process, while
-```
-
-**File**: `rust/Cargo.lock` (modified, +9/-0)
-```diff
-@@ -4676,6 +4676,7 @@ dependencies = [
-  "zg-engine-macros",
-  "zg-host-native",
-  "zg-llama-native",
-+ "zg-ort-native",
-  "zg-zvec-fp16",
-  "zvec-rust",
- ]
-@@ -4712,6 +4713,14 @@ dependencies = [
-  "tempfile",
- ]
- 
-+[[package]]
-+name = "zg-ort-native"
-+version = "0.3.1"
-+dependencies = [
-+ "libc",
-+ "windows-sys 0.61.2",
-+]
-+
- [[package]]
- name = "zg-testkit"
- version = "0.3.1"
-```
-
-**File**: `rust/crates/zg-engine/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -13,6 +13,7 @@ default = []
- # configurations require source toolchains. Runtime CPU fallback is unchanged.
- cuda = [
-     "dep:zg-llama-native",
-+    "dep:zg-ort-native",
-     "llama-cpp-2/cuda",
-     "llama-cpp-2/dynamic-backends",
-     "ort/cuda",
-@@ -69,6 +70,7 @@ uuid.workspace = true
- zg-engine-macros = { path = "macros" }
- zg-host-native = { path = "../zg-host-native" }
- zg-llama-native = { path = "../zg-llama-native", optional = true }
-+zg-ort-native = { path = "../zg-ort-native", optional = true }
- zg-zvec-fp16 = { path = "../zg-zvec-fp16" }
- zvec-rust.workspace = true
- 
-```
-
-**File**: `rust/crates/zg-engine/src/models/backends/transformers/model.rs` (modified, +17/-5)
-```diff
-@@ -497,11 +497,20 @@ fn configure_webgpu(
- fn configure_cuda(
-     builder: ort::session::builder::SessionBuilder,
- ) -> Result<ort::session::builder::SessionBuilder, ModelError> {
--    builder
--        .with_execution_providers([ort::ep::CUDA::default().build().error_on_failure()])
--        .map_err(|error| {
--            ModelError::internal("Unable to configure CUDA ONNX embedding model").with_cause(error)
--        })
-+    // ORT must initialize the shared provider bridge before loading CUDA. Arm
-+    // shutdown after this attempt, even if registration failed after dlopen.
-+    let configured =
-+        builder.with_execution_providers([ort::ep::CUDA::default().build().error_on_failure()]);
-+    let shutdown = super::native_runtime::retain_cuda_for_shutdown();
-+    let builder = configured.map_err(|error| {
-+        ModelError::internal("Unable to configure CUDA ONNX embedding model").with_cause(error)
-+    })?;
-+    if !shutdown? {
-+        return Err(ModelError::internal(
-+            "Unable to retain the registered ONNX CUDA provider for shutdown",
-+        ));
-+    }
-+    Ok(builder)
- }
- 
- #[cfg(not(feature = "cuda"))]
-@@ -896,3 +905,6 @@ mod session;
- 
- #[cfg(test)]
- mod tests;
-+
-+#[cfg(all(test, feature = "cuda"))]
-+mod cuda_shutdown_tests;
-```
-
-**File**: `rust/crates/zg-engine/src/models/backends/transformers/model/cuda_shutdown_tests.rs` (added, +243/-0)
-```diff
-@@ -0,0 +1,243 @@
-+use super::*;
-+
-+const CHILD: &str = "ZG_TEST_ORT_CUDA_SHUTDOWN_CHILD";
-+
-+#[test]
-+#[ignore = "requires CUDA and ZVEC_GREP_TEST_MODEL_CACHE with pinned MiniLM; run by Rust CUDA CI"]
-+fn cached_minilm_cuda_sessions_exit_cleanly() {
-+    let scenarios: &[&str] = if cfg!(target_os = "linux") {
-+        &["load-failure", "reload", "split-reload"]
-+    } else {
-+        &["load-failure", "reload"]
-+    };
-+    run_shutdown_scenarios(
-+        concat!(module_path!(), "::cached_minilm_cuda_sessions_exit_cleanly"),
-+        scenarios,
-+    );
-+}
-+
-+// For manual runs, point ZVEC_GREP_TEST_CPU_ORT at a CPU-only core beside both
-+// CUDA provider libraries, with their dependencies on the system loader path.
-+#[test]
-+#[ignore = "requires mixed CPU/CUDA ORT fixture and ZVEC_GREP_TEST_MODEL_CACHE with pinned MiniLM"]
-+fn cpu_core_rejects_cuda_without_loading_provider() {
-+    run_shutdown_scenarios(
-+        concat!(
-+            module_path!(),
-+            "::cpu_core_rejects_cuda_without_loading_provider"
-+        ),
-+        &["early-failure"],
-+    );
-+}
-+
-+fn run_shutdown_scenarios(test: &str, scenarios: &[&str]) {
-+    if let Ok(scenario) = env::var(CHILD) {
-+        tracing_subscriber::fmt()
-+            .with_env_filter("warn,zg_engine=debug,ort=trace")
-+            .with_ansi(false)
-+            .with_writer(std::io::stderr)
-+            .try_init()
-+            .expect("retain CUDA graph placement evidence");
-+        tokio::runtime::Builder::new_current_thread()
-+            .enable_all()
-+            .build()
-+            .expect("test runtime")
-+            .block_on(exercise_shutdown(&scenario));
-+        println!("CUDA shutdown scenario completed: {scenario}");
++        // `client = clients[0]` states that the name no longer holds what the
++        // parameter declared. The index cannot place the value, so the name
++        // holds no type from this line on rather than keeping the annotation
++        // the parameter stated for the whole body.
++        //
++        // `client = other` is a copy of a name the body already types, and the
++        // copy holds that type: a receiver reads `other`'s type from this line
++        // on. A copy of a name the body states no type for leaves the name as
++        // undecided as any other value the index cannot place — the annotation
++        // described what the name held before the assignment, not after it.
++        let copied = node
++            .child_by_field_name("right")
++            .filter(|right| right.kind() == "identifier")
++            .and_then(|right| {
++                context
++                    .declared_type_at(owner_index, node_text(right, source), line, column)
++                    .map(str::to_owned)
++            })
++            .filter(|bound| !matches!(bound.as_str(), PYTHON_UNBOUND_TYPE | PYTHON_NONE_TYPE));
++        let bound = copied.as_deref().unwrap_or(PYTHON_UNBOUND_TYPE);
++        context.add_declare_binding(owner_index, name, bound, line, column, None);
 +        return;
 +    }
-+    // The test body can pass before an atexit callback corrupts the heap. Always
-+    // wait for a fresh process to exit; CI also runs these children in Memcheck.
-+    for scenario in scenarios {
-+        for perturb in [false, true] {
-+            let mut child =
-+                std::process::Command::new(env::current_exe().expect("test executable"));
-+            // libtest names omit the crate component in module_path!().
-+            child
-+                .args([
-+                    test.split_once("::").expect("crate prefix").1,
-+                    "--exact",
-+                    "--ignored",
-+                    "--nocapture",
-+                ])
-+                .env(CHILD, scenario)
-+                .env("ZVEC_GREP_ORT_THREAD_BUDGET", "2");
-+            let _fixture = configure_scenario(&mut child, scenario);
-+            if cfg!(target_os = "linux") {
-+                if perturb {
-+                    child
-+                        .env("MALLOC_PERTURB_", "165")
-+                        .env("GLIBC_TUNABLES", "glibc.malloc.tcache_count=0");
-+                } else {
-+                    child
-+                        .env_remove("MALLOC_PERTURB_")
-+                        .env_remove("GLIBC_TUNABLES");
-+                }
-+            }
-+            let output = child.output().expect("CUDA shutdown child");
-+            let stdout = String::from_utf8_lossy(&output.stdout);
-+            let stderr = String::from_utf8_lossy(&output.stderr);
-+            println!("scenario={scenario} perturb={perturb}\n{stdout}\n{stderr}");
-+            assert!(
-+                output.status.success(),
-+                "CUDA shutdown failed: {}",
-+                output.status
-+            );
-+            assert!(stdout.contains(&format!("CUDA shutdown scenario completed: {scenario}")));
-+        }
-+    }
-+}
-+
-+fn configure_scenario(
-+    child: &mut std::process::Command,
-+    scenario: &str,
-+) -> Option<tempfile::TempDir> {
-+    if scenario == "early-failure" {
-+        let core = PathBuf::from(env::var_os("ZVEC_GREP_TEST_CPU_ORT").expect("CPU ORT fixture"));
-+        let directory = core.parent().expect("CPU core directory");
-+        let provider = if cfg!(target_os = "windows") {
-+            "onnxruntime_providers_cuda.dll"
-+        } else {
-+            "libonnxruntime_providers_cuda.so"
-+        };
-+        assert!(
-+            directory.join(provider).is_file(),
-+            "CUDA provider beside CPU core"
-+        );
-+        child.env("ORT_DYLIB_PATH", &core);
-+        #[cfg(target_os = "linux")]
-+        // Expose Provider_GetHost with an uninitialized host, making an illicit
-+        // first load reach CUDA's constructor instead of failing symbol lookup.
-+        child.env(
-+            "LD_PRELOAD",
-+            directory.join("libonnxruntime_providers_shared.so"),
-+        );
-+    } else if scenario == "split-reload" {
-+        let core = PathBuf::from(env::var_os("ORT_DYLIB_PATH").expect("CUDA ORT core"));
-+        let fixture = tempfile::tempdir().expect("separate core directory");
-+        let relocated = fixture.path().join("libonnxruntime.so.1");
-+        std::fs::copy(core, &relocated).expect("relocate only the core library");
-+        assert!(
-+            !fixture
-+                
-```
-
-**File**: `rust/crates/zg-engine/src/models/backends/transformers/native_runtime.rs` (modified, +43/-8)
-```diff
-@@ -13,6 +13,8 @@ use crate::models::spi::ModelError;
- // then release it before the C++ globals initialized by loading the library.
- static RUNTIME: OnceLock<Result<(), String>> = OnceLock::new();
- static ENVIRONMENT: Mutex<Option<Environment>> = Mutex::new(None);
-+#[cfg(feature = "cuda")]
-+static CUDA_SHUTDOWN_REGISTERED: Mutex<bool> = Mutex::new(false);
- 
- extern "C" fn release_environment() {
-     // Do not log or panic from a C exit callback. Sessions keep their own clones.
-@@ -24,6 +26,15 @@ extern "C" fn release_environment() {
- }
- 
- pub(super) fn initialize() -> Result<Environment, ModelError> {
-+    initialize_runtime()?;
-+    ENVIRONMENT
-+        .lock()
-+        .unwrap_or_else(PoisonError::into_inner)
-+        .clone()
-+        .ok_or_else(|| ModelError::internal("ONNX Runtime has shut down"))
-+}
-+
-+fn initialize_runtime() -> Result<(), ModelError> {
-     RUNTIME.get_or_init(|| {
-         let path = runtime_path(
-             env::var_os("ORT_DYLIB_PATH").map(PathBuf::from),
-@@ -45,23 +56,47 @@ pub(super) fn initialize() -> Result<Environment, ModelError> {
-             .build()
-             .map_err(|error| format!("{}: {error}", path.display()))?;
-         *ENVIRONMENT.lock().unwrap_or_else(PoisonError::into_inner) = Some(environment);
--        // Register after dlopen/CreateEnv, not in a static .fini_array: callbacks
--        // run in reverse registration order, ahead of ORT's C++ destructors.
-+        // This covers the core library. CUDA is loaded lazily and needs a later
-+        // callback, registered after native provider registration is attempted.
-         if !shutdown_hooks::add_shutdown_hook(release_environment) {
-             release_environment();
-             return Err("Unable to register ONNX Runtime shutdown".to_owned());
-         }
-         tracing::debug!(path = %path.display(), "Packaged ONNX Runtime initialized");
-         Ok(())
--    }).as_ref().map_err(|error| {
-+    }).as_ref().copied().map_err(|error| {
-         ModelError::internal("Unable to load packaged ONNX Runtime; keep it under ../lib relative to zg or set ORT_DYLIB_PATH")
-             .with_cause(error)
--    })?;
--    ENVIRONMENT
-+    })
-+}
-+
-+#[cfg(feature = "cuda")]
-+pub(super) fn retain_cuda_for_shutdown() -> Result<bool, ModelError> {
-+    initialize_runtime()?;
-+    let mut loaded = CUDA_SHUTDOWN_REGISTERED
-         .lock()
--        .unwrap_or_else(PoisonError::into_inner)
--        .clone()
--        .ok_or_else(|| ModelError::internal("ONNX Runtime has shut down"))
-+        .unwrap_or_else(PoisonError::into_inner);
-+    if *loaded {
-+        return Ok(true);
-+    }
-+    // Registration can fail before ORT initializes its provider bridge (e.g.
-+    // with a CPU-only core). Never first-load CUDA here: its constructors would
-+    // dereference the uninitialized bridge. Retain the actual loaded module,
-+    // even when the system loader found it outside the core library's directory.
-+    if !zg_ort_native::retain_loaded_cuda_provider() {
-+        return Ok(false); // A later registration attempt may load it successfully.
-+    }
-+    // CUDA's global destructors are now registered. Register our callback after
-+    // them so ReleaseEnv/Shutdown runs first (atexit is LIFO), including after a
-+    // partially failed registration or model load. Keep one reference per process.
-+    if !shutdown_hooks::add_shutdown_hook(release_environment) {
-+        release_environment();
-+        return Err(ModelError::internal(
-+            "Unable to register ONNX CUDA shutdown",
-+        ));
-+    }
-+    *loaded = true;
-+    Ok(true)
- }
- 
- #[cfg(target_os = "windows")]
-```
-
-**File**: `rust/crates/zg-engine/tests/engine_storage.rs` (modified, +2/-1)
-```diff
-@@ -370,7 +370,8 @@ async fn unknown_extensions_are_indexed_and_searchable_as_text() -> TestResult {
-         fs::write(root.join(name), content)?;
+     for child in named_children(node) {
+         if boundary.is_some_and(|owns| owns(child)) {
+             continue;
+@@ -670,6 +732,361 @@ fn visit_for_bindings(
      }
-     fs::write(root.join("binary.bsl"), [0, 1, 2, 255])?;
--    fs::write(root.join("nul.bsl"), b"orchardguide\0binary")?;
-+    // NUL is a Windows device name even with a file extension.
-+    fs::write(root.join("embedded-nul.bsl"), b"orchardguide\0binary")?;
-     fs::write(root.join("empty.bsl"), "")?;
-     let expected = sources
-         .map(|(name, _)| PathBuf::from(name))
+ }
+ 
++/// Records what a Python class's `self.<member> = <value>` assignments state
++/// about the member.
++///
++/// A Python class body states its attributes by assigning them on `self` from
++/// inside a method, so the member a call reads through `self` — the
++/// `self.fontset.render_glyph(…)` of a sibling method — is only known by
++/// walking the methods. The binding belongs to the class: every method of the
++/// class and of a subclass that inherits it reads the same member. The value
++/// is read where it is written, so `self.fontset = fontset` takes the
++/// parameter's annotation and `self.fontset = state.fontset` steps through the
++/// member the parameter's own type states.
++fn collect_python_self_members(
++    class_node: Node<'_>,
++    owner_index: usize,
++    source: &[u8],
++    context: &mut WalkContext,
++) {
++    let class_name = class_node
++        .child_by_field_name("name")
++        .map(|name| node_text(name, source).to_owned());
++    // The met
+```
+
+**File**: `rust/crates/zg-engine/src/extraction/graph/partition.rs` (modified, +30/-14)
+```diff
+@@ -17,7 +17,7 @@ use std::collections::{HashMap, HashSet};
+ 
+ use crate::domain::{EdgeProvenance, GraphEdgeKind, PreprocessorDirective};
+ 
+-use super::{Constructs, NameEdge, WalkContext, WalkEdge};
++use super::{Constructs, NameEdge, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, WalkContext, WalkEdge};
+ 
+ /// A name reference resolved against this file's own symbol table.
+ #[derive(Clone, Debug, Eq, PartialEq)]
+@@ -142,6 +142,12 @@ fn states_a_placeable_value(bound: &str) -> bool {
+     !(bound == "?" || bound.starts_with("typeof "))
+ }
+ 
++/// Whether a binding is the sentinel a Python body writes when it rebinds a
++/// name to a value it cannot place or states only the name's absence.
++fn is_python_rebound(bound: &str) -> bool {
++    matches!(bound, PYTHON_UNBOUND_TYPE | PYTHON_NONE_TYPE)
++}
++
+ /// The entity the file declares exactly once under `name`; two same-named
+ /// declarations are not evidence for either.
+ fn unique_symbol(symbols: &HashMap<String, Vec<usize>>, name: &str) -> Option<usize> {
+@@ -346,20 +352,30 @@ fn in_file_target(edge: &NameEdge, shadowed: bool, tables: InFileTables<'_>) ->
+         // naming `run` does not see `A::run` just because the file declares it
+         // once. Without better evidence the reference stays pending for the
+         // cross-file resolver, which also weighs imports.
+-        GraphEdgeKind::Calls => match alias_at(aliases, edge) {
+-            // The binding states no value this file can place, so the spelled
+-            // name is not the answer: the resolver reads the declared binding
+-            // at the call's position and can still tell a parameter, a nested
+-            // definition or a later reassignment apart from the file's name.
+-            Some(bound) if !states_a_placeable_value(bound) => None,
+-            Some(bound) => unique_symbol(symbols, bound),
+-            None => {
+-                let value_alias = value_aliases
++        GraphEdgeKind::Calls => {
++            let value_alias = || {
++                value_aliases
+                     .get(&(edge.owner_index, edge.ref_name.clone()))
+                     .or_else(|| {
+                         value_aliases.get(&(super::FILE_SCOPE_INDEX, edge.ref_name.clone()))
+-                    });
+-                match value_alias {
++                    })
++            };
++            match alias_at(aliases, edge) {
++                // A Python body that rebinds a name states it holds no type
++                // the index can place (`client = clients[0]`), but a copy of
++                // another name is evidence of its own: `alias = target` still
++                // reaches `target` through the alias table.
++                Some(bound) if is_python_rebound(bound) => {
++                    value_alias().and_then(|bound| unique_symbol(symbols, bound))
++                }
++                // The binding states no value this file can place, so the
++                // spelled name is not the answer: the resolver reads the
++                // declared binding at the call's position and can still tell a
++                // parameter, a nested definition or a later reassignment apart
++                // from the file's name.
++                Some(bound) if !states_a_placeable_value(bound) => None,
++                Some(bound) => unique_symbol(symbols, bound),
++                None => match value_alias() {
+                     // A pair the walk recorded without a position of its own
+                     // (`x = y` where the declaration states no type) is the
+                     // only evidence there is.
+@@ -373,9 +389,9 @@ fn in_file_target(edge: &NameEdge, shadowed: bool, tables: InFileTables<'_>) ->
+                                 .then(|| unique_symbol(file_symbols, &edge.ref_name))
+                                 .flatten()
+                         }),
+-                }
++                },
+             }
+-        },
++        }
+         GraphEdgeKind::Extends | GraphEdgeKind::Implements => {
+             unique_symbol(symbols, &edge.ref_name)
+         }
+```
+
+**File**: `rust/crates/zg-engine/src/extraction/mod.rs` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ pub(crate) use spi::{ExtractedEntity, ExtractedEntityFragment, ExtractionOutput}
+ #[cfg(test)]
+ pub(crate) use graph::Constructs;
+ #[allow(unused_imports)]
+-pub(crate) use graph::{FILE_SCOPE_INDEX, PartitionedGraph};
++pub(crate) use graph::{FILE_SCOPE_INDEX, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, PartitionedGraph};
+ #[cfg(test)]
+ pub(crate) use graph::{PendingNameRef, ResolvedNameEdge};
+ 
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexing/graph_resolver.rs` (modified, +355/-35)
+```diff
+@@ -36,6 +36,7 @@ use crate::domain::{
+     EdgeProvenance, FileFormat, GraphEdgeKind, SymbolType, formats_for_path,
+     reference_compatible_with,
+ };
++use crate::extraction::{PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE};
+ use crate::storage::graph::{
+     DeclaredBinding, ImportReference, NameIndexEntry, Resolution, StoredPendingRef,
+ };
+@@ -2854,21 +2855,41 @@ fn receiver_path_type(
+         };
+         return Ok(step_type(marker, &inner_type));
+     }
+-    if let Some(bound) = declared_receiver_type(store, snapshot, stored, receiver, caches)? {
+-        // A loop or a placeholder declaration binds what the range or path it
+-        // was taken from holds, which is only known once that is read.
+-        if let Some((marker, inner)) = step_marker(&bound) {
+-            let Some(inner_type) =
+-                receiver_path_type(store, snapshot, stored, inner, caches, depth + 1)?
+-            else {
+-                return Ok(None);
+-            };
+-            return Ok(step_type(marker, &inner_type));
++    match declared_receiver_type(store, snapshot, stored, receiver, caches)? {
++        // The body rebound the name to a value it cannot type. The name holds
++        // no type, and the scopes below must not claim it back: `self =
++        // objects[0]` no longer names this class's instance.
++        ReceiverBinding::Undecided => return Ok(None),
++        ReceiverBinding::Known(bound) => {
++            // A member read the extraction could not type states the type stating
++            // it: `member_of:(ParserState,fontset)` is what `ParserState` says
++            // `fontset` holds.
++            if member_step(&bound).is_some() {
++                return resolve_member_steps(store, snapshot, stored, bound, caches, depth);
++            }
++            // A loop or a placeholder declaration binds what the range or path it
++            // was taken from holds, which is only known once that is read.
++            if let Some((marker, inner)) = step_marker(&bound) {
++                let Some(inner_type) =
++                    receiver_path_type(store, snapshot, stored, inner, caches, depth + 1)?
++                else {
++                    return Ok(None);
++                };
++                return Ok(step_type(marker, &inner_type));
++            }
++            // The spelling keeps the declarator's decorations: a pointer answers a
++            // subscript with what it points at, and the step that reads the value
++            // decides what the name itself denotes.
++            return Ok(Some(bound));
+         }
+-        // The spelling keeps the declarator's decorations: a pointer answers a
+-        // subscript with what it points at, and the step that reads the value
+-        // decides what the name itself denotes.
+-        return Ok(Some(bound));
++        ReceiverBinding::Absent => {}
++    }
++    // `self` and `cls` hold the enclosing class: a member read through them is
++    // a member that class or one of its bases states.
++    if is_self_receiver(&stored.language, receiver) {
++        return Ok(snapshot
++            .entity_record(&stored.reference.owner_id)
++            .and_then(|owner| enclosing_class_scope(snapshot, &owner.qualified_name)));
+     }
+     let Some((base, member)) = receiver.rsplit_once('.') else {
+         return Ok(None);
+@@ -2877,7 +2898,100 @@ fn receiver_path_type(
+     else {
+         return Ok(None);
+     };
+-    member_of_type(store, snapshot, stored, &base_type, member, caches, depth)
++    let Some(bound) = member_of_type(store, snapshot, stored, &base_type, member, caches, depth)?
++    else {
++        return Ok(None);
++    };
++    resolve_member_steps(store, snapshot, stored, bound, caches, depth)
++}
++
++/// The type a member read denotes, one step at a time.
++///
++/// The extraction states a member read it cannot look up as
++/// `member_of:(<type>,<member>)`; the member's own type may step again
++/// (`self.fontset = self.state.fontset`), so the steps are read until the
++/// type is one the member rule can search.
++///
++/// # Errors
++/// Propagates graph storage failures of the member reads.
++fn resolve_member_steps(
++    store: &IndexStore,
++    snapshot: &ResolutionSnapshot,
++    stored: &StoredPendingRef,
++    bound: String,
++    caches: &mut RuleCaches,
++    depth: usize,
++) -> crate::EngineResult<Option<String>> {
++    let mut bound = bound;
++    let mut depth = depth;
++    loop {
++        let Some((base, member)) = member_step(&bound) else {
++            return Ok(Some(bound));
++        };
++        if depth > MAX_TYPE_STEPS {
++            return Ok(None);
++        }
++        // What the member is read from may state a step of its own
++        // (`member_of:(member_of:(ParserState,state),fontset)`): the type the
++        // outer member belongs to is only known once that step is read.
++        let base = match member_step(base) {
++            Some(_) => {
++                let Some(resolved) = resolve_member_steps(
++                    store,
++                    snapsho
+```
+
+**File**: `rust/crates/zg-engine/tests/call_resolution_regressions.rs` (modified, +288/-0)
+```diff
+@@ -1228,3 +1228,291 @@ async fn rust_glob_imports_respect_local_types_and_explicit_imports() {
+         }).await;
+     }
+ }
++
++// A decorated class reaches the binding scan as its decorator's wrapper, and a
++// member one method writes is read by the methods beside it: the step is
++// stated as `member_of:(<type>,<member>)` and the resolver walks it.
++#[tokio::test]
++async fn python_self_member_chain_reaches_the_decorated_class_member() {
++    check_case(Case {
++        name: "python_self_member_chain_reaches_the_decorated_class_member",
++        files: vec![SourceFile {
++            path: "shapes.py",
++            source: "class Fonts:\n    def render_glyph(self):\n        return 1\n\n@dataclass\nclass ParserState:\n    def __init__(self, fontset: Fonts):\n        self.fontset = fontset\n\n@dataclass\nclass Char:\n    def __init__(self, state: ParserState):\n        self.inner = state.fontset\n\n    def render(self):\n        return self.inner.render_glyph()\n",
++        }],
++        queries: vec![
++            Query {
++                operation: "callees",
++                symbol: "render",
++                expected: json!([{"name": "Char::render", "edges": [
++                    {"symbol": {"name": "Fonts::render_glyph"}, "line": 16}
++                ]}]),
++                ..Query::default()
++            },
++            Query {
++                operation: "callers",
++                symbol: "render_glyph",
++                expected: json!([{"name": "Fonts::render_glyph", "edges": [
++                    {"symbol": {"name": "Char::render"}}
++                ]}]),
++                ..Query::default()
++            },
++        ],
++    })
++    .await;
++}
++
++// A bare name of a Python body is the parameter the body declares, not the
++// class member another method stated under the same name.
++#[tokio::test]
++async fn python_bare_parameter_does_not_read_the_class_member() {
++    check_case(Case {
++        name: "python_bare_parameter_does_not_read_the_class_member",
++        files: vec![SourceFile {
++            path: "parser.py",
++            source: "class Index:\n    def create_variables(self):\n        return 1\n\nclass Parser:\n    def __init__(self):\n        self.index = Index()\n\n    def run(self, index):\n        return index.create_variables()\n",
++        }],
++        queries: vec![Query {
++            operation: "callees",
++            symbol: "run",
++            expected: json!([{"name": "Parser::run", "edges": []}]),
++            ..Query::default()
++        }],
++    })
++    .await;
++}
++
++// A member a body writes with a value the index cannot place no longer holds
++// what an earlier write stated, so the call through it stays undecided instead
++// of answering with the type the constructor's first line named.
++#[tokio::test]
++async fn python_unknown_member_write_invalidates_the_earlier_type() {
++    check_case(Case {
++        name: "python_unknown_member_write_invalidates_the_earlier_type",
++        files: vec![SourceFile {
++            path: "use.py",
++            source: "class Left:\n    def work(self):\n        return 'left'\n\nclass Right:\n    def work(self):\n        return 'right'\n\nclass Runner:\n    def __init__(self, client):\n        self.client = Left()\n        self.client = client\n\n    def run(self):\n        return self.client.work()\n",
++        }],
++        queries: vec![Query {
++            operation: "callees",
++            symbol: "Runner::run",
++            expected: json!([{"name": "Runner::run", "edges": []}]),
++            ..Query::default()
++        }],
++    })
++    .await;
++}
++
++// `client: Left` states the parameter, and `client = clients[0]` takes it back:
++// the element a container holds is not the annotated type.
++#[tokio::test]
++async fn python_parameter_reassignment_invalidates_its_annotation() {
++    check_case(Case {
++        name: "python_parameter_reassignment_invalidates_its_annotation",
++        files: vec![SourceFile {
++            path: "use.py",
++            source: "class Left:\n    def work(self):\n        return 'left'\n\nclass Right:\n    def work(self):\n        return 'right'\n\ndef run(client: Left, clients):\n    client = clients[0]\n    return client.work()\n",
++        }],
++        queries: vec![Query {
++            operation: "callees",
++            symbol: "run",
++            expected: json!([{"name": "run", "edges": []}]),
++            ..Query::default()
++        }],
++    })
++    .await;
++}
++
++// A union arm the reader cannot name (`right.Right` is a module) is no evidence
++// that the arm it can name is the only shape the value takes.
++#[tokio::test]
++async fn python_union_with_an_unreadable_arm_stays_undecided() {
++    check_case(Case {
++        name: "python_union_with_an_unreadable_arm_stays_undecided",
++        files: vec![
++            SourceFile {
++                path: "right.py",
++                source: "class Right:\n    def send(self):\n        return 'right'\n",
++            },
++            SourceFile {
++                path: 
 ```
 
 ---
 
-### Incident Patch 3: `9bf8962c` (2026-11-16)
-**Commit Message**: fix(engine): Fix the correctness issue of the graph feature in the test cases. (#399)
+### Incident Patch 2: `8415f1be` (2026-11-23)
+**Commit Message**: fix(ci): support Cargo 1.100 CUDA fallback metadata (#449)
 
-**File**: `rust/Cargo.lock` (modified, +10/-0)
+**File**: `rust/scripts/cuda/build-fallback.py` (modified, +9/-3)
 ```diff
-@@ -1710,6 +1710,15 @@ dependencies = [
-  "wasm-bindgen",
- ]
- 
-+[[package]]
-+name = "jsonc-parser"
-+version = "0.34.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0ecded084f9b9a718d39668a42657c32253663d1f6afb3fbb9134f0305f73f48"
-+dependencies = [
-+ "serde",
-+]
-+
- [[package]]
- name = "jsonschema"
- version = "0.60.2"
-@@ -4633,6 +4642,7 @@ dependencies = [
-  "hyper",
-  "hyper-util",
-  "ignore",
-+ "jsonc-parser",
-  "llama-cpp-2",
-  "ort",
-  "rayon",
+@@ -25,9 +25,15 @@ def source_build(messages):
+     if len(builds) != 1:
+         raise RuntimeError("Expected one active llama sys build script in the primary Cargo messages")
+     # Cargo retains build-script stdout beside this invocation's OUT_DIR, also
+-    # on cache hits. The pinned sys crate records its verified source here;
+-    # custom metadata is not included in Cargo's JSON build-script record.
+-    output = Path(builds[0]["out_dir"]).parent / "output"
++    # on cache hits: output before 1.100, run/stdout in the new build-dir layout.
++    # The pinned sys crate records its verified source here; custom metadata is
++    # not included in Cargo's JSON build-script record.
++    directory = Path(builds[0]["out_dir"]).parent
++    candidates = [directory / "output", directory / "run" / "stdout"]
++    outputs = [path for path in candidates if path.is_file()]
++    if len(outputs) != 1:
++        raise RuntimeError(f"Missing or ambiguous build-script stdout for primary OUT_DIR: {candidates}")
++    output = outputs[0]
+     lines = output.read_text(encoding="utf-8").splitlines()
+     metadata = {}
+     for key in ("source_dir", "source_revision"):
 ```
 
-**File**: `rust/crates/zg-cli/src/render.rs` (modified, +2/-0)
+**File**: `rust/scripts/npm-local.test.mjs` (modified, +47/-18)
 ```diff
-@@ -1104,6 +1104,7 @@ mod output_tests {
-             is_exported: false,
-             is_declaration: false,
-             package: None,
-+            ..CodeMetadata::default()
-         }));
-         for source in [ContextSource::Index, ContextSource::Rg] {
-             result.source = source;
-@@ -1465,6 +1466,7 @@ mod output_tests {
-                 is_exported: false,
-                 is_declaration: false,
-                 package: None,
-+                ..CodeMetadata::default()
-             }));
-             let mut buffer = Vec::new();
-             write_item_preview(
-```
-
-**File**: `rust/crates/zg-engine/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -35,6 +35,7 @@ ignore.workspace = true
- httpdate = "1.0.3"
- hyper.workspace = true
- hyper-util = { workspace = true, features = ["client-legacy", "client-proxy"] }
-+jsonc-parser = { version = "0.34", features = ["serde"] }
- llama-cpp-2.workspace = true
- # Use the same pinned official runtime in Cargo tests and every native package.
- # API selection does not select the download version; build.rs owns that pin.
-```
-
-**File**: `rust/crates/zg-engine/src/domain/graph.rs` (modified, +43/-0)
-```diff
-@@ -128,6 +128,49 @@ pub(crate) struct FileGraphResult {
-     pub nodes: Vec<FileGraphNode>,
-     pub edges: Vec<FileEdge>,
-     pub pending_refs: Vec<PendingRef>,
-+    /// C/C++ preprocessor directives in source order, empty for every other
-+    /// language. The resolver replays them to learn which names a translation
-+    /// unit had already spelled as macros at a given line.
-+    pub directives: Vec<PreprocessorDirective>,
-+}
-+
-+/// One directive of a C/C++ translation unit, in the order the preprocessor
-+/// reads it: the file's own directives with each conditional's branches and
-+/// closing marker spelled out.
-+///
-+/// `#endif` is a token in the grammar rather than a node, so extraction
-+/// synthesises the [`PreprocessorKind::Endif`] marker at the conditional's end:
-+/// the replay needs the block boundaries, not just the openings.
-+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-+pub(crate) struct PreprocessorDirective {
-+    pub kind: PreprocessorKind,
-+    /// Macro the directive reads or writes: `#define`, `#undef`, `#ifdef`,
-+    /// `#ifndef`, and the guard an `#elifdef` tests.
-+    pub name: Option<String>,
-+    /// Operand text: the include specifier (`./x.h`, `<string>`), a macro body,
-+    /// or the whole `#if` condition.
-+    pub value: Option<String>,
-+    pub line: usize,
-+}
-+
-+/// The directives a replay distinguishes.
-+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
-+#[serde(rename_all = "snake_case")]
-+pub(crate) enum PreprocessorKind {
-+    Include,
-+    Define,
-+    Undef,
-+    PragmaOnce,
-+    /// `#if` with a condition expression in `value`.
-+    If,
-+    Ifdef,
-+    Ifndef,
-+    /// `#elif` with a condition expression in `value`.
-+    Elif,
-+    /// `#elifdef`/`#elifndef` guarded by `name`.
-+    Elifdef,
-+    Else,
-+    Endif,
- }
- 
- impl GraphEdgeKind {
-```
-
-**File**: `rust/crates/zg-engine/src/domain/metadata.rs` (modified, +48/-0)
-```diff
-@@ -44,6 +44,12 @@ impl IndexField {
- 
- // --- Code ---
- 
-+// Every flag here is an independent fact extraction decided once and the
-+// resolver reads directly; grouping them would hide which rule reads what.
-+#[expect(
-+    clippy::struct_excessive_bools,
-+    reason = "each flag is a separate extracted fact read by a different rule"
-+)]
- #[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
- pub struct CodeMetadata {
-     pub symbol_type: Option<SymbolType>,
-@@ -74,6 +80,48 @@ pub struct CodeMetadata {
-     /// `my.List` from `java.util.List`.
-     #[serde(default)]
-     pub package: Option<String>,
-+    /// True for a C/C++ declaration with internal linkage: a member of an
-+    /// unnamed namespace, or a file-scope `static` one. Such an entity has a
-+    /// name in its own translation unit only, so a reference from another
-+    /// file that matches it by name matched a different declaration.
-+    #[serde(default)]
-+    pub has_internal_linkage: bool,
-+    /// True for the entity that introduces a type's name (a class, struct,
-+    /// interface, enum, or trait declaration). An `impl` block carries the
-+    /// implemented type's name too, so a name index cannot tell the type from
-+    /// its implementation without this fact; the resolver needs it to name the
-+    /// one class a member call belongs to.
-+    #[serde(default)]
-+    pub declares_type: bool,
-+    /// Name this symbol is another spelling of, when its initializer is a bare
-+    /// name (`export const dispatch = send`). A call through the symbol reaches
-+    /// the aliased one, so an import that binds this symbol must follow the
-+    /// alias rather than settle on it.
-+    #[serde(default)]
-+    pub alias_of: Option<String>,
-+    /// Properties an object literal initializer binds, in the literal's own
-+    /// order, with a later property replacing an earlier one of its key
-+    /// (`{ run() {}, run: right }` states `run -> right`). A member call on
-+    /// this symbol reaches the value its key last named.
-+    #[serde(default)]
-+    pub object_members: Vec<MemberAlias>,
-+    /// Value a later property of the same key replaces this declaration with
-+    /// (`{ run() {}, run: right }` states `right` on the method's entity). A
-+    /// call through that key reaches the replacement, not this declaration.
-+    #[serde(default)]
-+    pub overwritten_by: Option<String>,
-+    /// Names an `export { local as exported }` clause republishes this
-+    /// declaration under. The clause is a statement of its own, so this is the
-+    /// only evidence that the exported name reaches this declaration.
-+    #[serde(default)]
-+    pub exported_as: Vec<String>,
-+}
-+
-+/// One property of an object literal and the value it binds.
-+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-+pub struct MemberAlias {
-+    pub name: String,
-+    pub target: String,
- }
- 
- impl CodeMetadata {
-```
-
-**File**: `rust/crates/zg-engine/src/domain/mod.rs` (modified, +3/-0)
-```diff
-@@ -36,6 +36,7 @@ pub use metadata::EntityMetadata;
- pub(crate) use metadata::IndexField;
- pub use metadata::Language;
- pub use metadata::MarkdownMetadata;
-+pub use metadata::MemberAlias;
- pub use metadata::SymbolType;
- // Visibility has no consumers yet.
- #[allow(unused_imports)]
-@@ -50,6 +51,8 @@ pub(crate) use graph::FileGraphResult;
- pub use graph::GraphEdgeKind;
- pub(crate) use graph::PendingRef;
- pub(crate) use graph::PendingRefStatus;
-+pub(crate) use graph::PreprocessorDirective;
-+pub(crate) use graph::PreprocessorKind;
- 
- // Models.
- pub(crate) use model::EmbeddingMetric;
-```
-
-**File**: `rust/crates/zg-engine/src/extraction/code.rs` (modified, +535/-116)
-```diff
-@@ -5,16 +5,22 @@ pub(crate) use outline::code_outline;
- 
- use tree_sitter::{Language, Node, Parser};
- 
-+use std::collections::HashMap;
-+
- use crate::{
-     EngineError,
--    domain::{CodeMetadata, Content, EntityMetadata, FileFormat, Range, SymbolType},
-+    domain::{CodeMetadata, Content, EntityMetadata, FileFormat, MemberAlias, Range, SymbolType},
-     utils::line_byte_offsets,
- };
- 
--use self::adapter::{LanguageAdapter, named_children, php_declaration, resolve_adapter};
-+use self::adapter::{
-+    LanguageAdapter, declares_type, named_children, object_member_aliases, overwritten_by,
-+    php_declaration, resolve_adapter, text,
-+};
- use super::graph::{
--    WalkContext, collect_import_edge, collect_inheritance_edges, is_import_node, partition_walk,
--    scan_binding_declarations, scan_call_edges, scan_return_types,
-+    WalkContext, alias_target_of, collect_import_edge, collect_inheritance_edges, is_import_node,
-+    partition_walk, scan_binding_declarations, scan_call_edges, scan_preprocessor,
-+    scan_return_types,
- };
- use super::{
-     ChunkOptions, ExtractedEntity, ExtractionOutput, TextRange, TextSource,
-@@ -91,24 +97,15 @@ fn extract_code(
-     let Some((adapter, language, code_format)) =
-         format.and_then(|format| Some((resolve_adapter(format)?, grammar(format, jsx)?, format)))
-     else {
--        return Ok(ExtractionOutput {
--            fragments: fallback(source, max_chars, overlap_chars),
--            graph: None,
--        });
-+        return Ok(fallback_output(source, max_chars, overlap_chars));
-     };
- 
-     let mut parser = Parser::new();
-     if parser.set_language(&language).is_err() {
--        return Ok(ExtractionOutput {
--            fragments: fallback(source, max_chars, overlap_chars),
--            graph: None,
--        });
-+        return Ok(fallback_output(source, max_chars, overlap_chars));
-     }
-     let Some(tree) = parser.parse(&source.text, None) else {
--        return Ok(ExtractionOutput {
--            fragments: fallback(source, max_chars, overlap_chars),
--            graph: None,
--        });
-+        return Ok(fallback_output(source, max_chars, overlap_chars));
-     };
-     let bytes = source.text.as_bytes();
-     let mut entities = Vec::new();
-@@ -124,6 +121,10 @@ fn extract_code(
-     // initializer binds its factory even when the factory is spelled after
-     // the caller in this file.
-     scan_return_types(tree.root_node(), bytes, code_format, &mut graph_context);
-+    // Directives describe the file rather than any entity, so they are read
-+    // once from the root: the resolver replays them to decide whether a call
-+    // site's name was already a macro in that translation unit.
-+    graph_context.register_preprocessor(scan_preprocessor(tree.root_node(), bytes, code_format));
-     walk_code_node(
-         tree.root_node(),
-         adapter,
-@@ -133,6 +134,9 @@ fn extract_code(
-         &mut graph_context,
-         code_format,
-     );
-+    // `export { realImpl as aliasName }` renames a declaration from a
-+    // statement of its own, so the walk cannot see it from the declaration.
-+    attach_export_aliases(tree.root_node(), bytes, code_format, &mut entities);
- 
-     let mut output = Vec::new();
-     let mut entity_heads = Vec::with_capacity(entities.len());
-@@ -142,14 +146,29 @@ fn extract_code(
-         entity_heads.push(output.len());
-         append_entity(source, entity, max_chars, overlap_chars, &mut output);
-     }
--    // Gap chunks follow every entity, so they leave the head indexes intact.
--    if code_format == FileFormat::Php && !output.is_empty() {
--        append_php_gaps(source, &entities, max_chars, overlap_chars, &mut output);
--    }
-+    // Anonymous retrieval chunks follow the symbols, preserving graph ordinals.
-+    append_code_gaps(
-+        source,
-+        &entities,
-+        tree.root_node(),
-+        code_format,
-+        max_chars,
-+        overlap_chars,
-+        &mut output,
-+    );
-     if output.is_empty() {
-+        // A file that declares no entity the walk could bound still describes
-+        // its translation units when it carries preprocessor directives — a
-+        // header of nothing but `#define`s and `#include`s is exactly that, and
-+        // the resolver needs those directives to read the includer's macro
-+        // state. The graph is therefore kept when the scan recorded one.
-+        let partitioned = graph_context
-+            .is_collecting()
-+            .then(|| partition_walk(graph_context, entity_heads))
-+            .filter(|graph| !graph.directives.is_empty());
-         Ok(ExtractionOutput {
-             fragments: fallback(source, max_chars, overlap_chars),
--            graph: None,
-+            graph: partitioned,
-         })
-     } else {
-         // The symbol table is complete now, so partitioning resolves forward
-@@ -203,6 +222,25 @@ fn fallback(source: &TextSource, max_chars: usize, overlap_chars: usize) -> Vec<
-     extract_plain_text_entities(source, max_chars, overlap_chars)
- }
- 
-+/// Wh
-```
-
-**File**: `rust/crates/zg-engine/src/extraction/code/adapter.rs` (modified, +368/-25)
-```diff
-@@ -41,6 +41,7 @@ const CPP: LanguageAdapter = LanguageAdapter {
-         "class_specifier",
-         "struct_specifier",
-         "union_specifier",
-+        "field_declaration",
-     ],
- };
- const GO: LanguageAdapter = LanguageAdapter {
-@@ -79,15 +80,25 @@ const JAVA: LanguageAdapter = LanguageAdapter {
- const JAVASCRIPT: LanguageAdapter = LanguageAdapter {
-     kind: Language::JavaScript,
-     entity_types: &[
-+        "class",
-+        "function_expression",
-         "class_declaration",
-+        "class_static_block",
-         "field_definition",
-         "function_declaration",
-         "generator_function_declaration",
-         "method_definition",
-         "pair",
-         "variable_declarator",
-     ],
--    scope_types: &["class_declaration", "function_declaration"],
-+    scope_types: &[
-+        "method_definition",
-+        "class",
-+        "function_expression",
-+        "class_declaration",
-+        "class_static_block",
-+        "function_declaration",
-+    ],
- };
- const PHP: LanguageAdapter = LanguageAdapter {
-     kind: Language::Php,
-@@ -146,9 +157,12 @@ const RUST: LanguageAdapter = LanguageAdapter {
- const TYPESCRIPT: LanguageAdapter = LanguageAdapter {
-     kind: Language::TypeScript,
-     entity_types: &[
-+        "class",
-+        "function_expression",
-         "abstract_class_declaration",
-         "abstract_method_signature",
-         "class_declaration",
-+        "class_static_block",
-         "enum_declaration",
-         "field_definition",
-         "function_declaration",
-@@ -166,8 +180,13 @@ const TYPESCRIPT: LanguageAdapter = LanguageAdapter {
-         "variable_declarator",
-     ],
-     scope_types: &[
-+        "method_definition",
-+        "class",
-+        "function_expression",
-+        "function_declaration",
-         "abstract_class_declaration",
-         "class_declaration",
-+        "class_static_block",
-         "internal_module",
-         "interface_declaration",
-         "module",
-@@ -210,8 +229,13 @@ impl LanguageAdapter {
-         if matches!(self.kind, Language::JavaScript | Language::TypeScript)
-             && node.kind() == "variable_declarator"
-         {
--            let entities = exported_object_function_entities(node, source);
-+            let mut entities = exported_object_function_entities(node, source);
-             if !entities.is_empty() {
-+                // Non-exported objects remain searchable values and own calls
-+                // in non-function initializers, alongside their member entities.
-+                if !self.is_exported(node, false) {
-+                    entities.insert(0, node);
-+                }
-                 return entities;
-             }
-         }
-@@ -223,6 +247,9 @@ impl LanguageAdapter {
- 
-     pub(super) fn enter_scope_node(self, node: Node<'_>) -> Node<'_> {
-         match self.kind {
-+            // A nested type's members belong to the type, whose own body is the
-+            // scope the walk has to read.
-+            Language::C | Language::Cpp => nested_type_specifier(node).unwrap_or(node),
-             Language::Go => node.child_by_field_name("type").unwrap_or(node),
-             Language::Python if node.kind() == "decorated_definition" => {
-                 inner_python_definition(node)
-@@ -235,7 +262,9 @@ impl LanguageAdapter {
- 
-     pub(super) fn extract_name(self, node: Node<'_>, source: &[u8]) -> Option<String> {
-         match self.kind {
--            Language::C | Language::Cpp => extract_c_family_name(node, source),
-+            Language::C | Language::Cpp => nested_type_specifier(node)
-+                .and_then(|specifier| extract_c_family_name(specifier, source))
-+                .or_else(|| extract_c_family_name(node, source)),
-             Language::Go => field_text(node, "name", source),
-             Language::Java
-                 if matches!(node.kind(), "field_declaration" | "constant_declaration") =>
-@@ -319,6 +348,7 @@ impl LanguageAdapter {
- 
-     pub(super) fn classify(self, node: Node<'_>) -> Option<SymbolType> {
-         match self.kind {
-+            Language::Cpp if cpp_initializer_entity(node) => Some(SymbolType::Value),
-             Language::C | Language::Cpp => classify_c_family(node),
-             Language::Go => classify_go(node),
-             Language::Java if node.kind() == "field_declaration" => Some(SymbolType::Value),
-@@ -383,10 +413,19 @@ impl LanguageAdapter {
-         match self.kind {
-             // Only function-shaped declarations (`void f(int);`, in-class
-             // member declarations, function-pointer variables) become
--            // entities; plain variable declarations stay unindexed.
-+            // entities; plain variable declarations stay unindexed. A member
-+            // that declares a nested type in place states that type, whose
-+            // name — not the first function its body happens to hold — is the
-+            // entity's.
-             Language::C | Language::Cpp => {
--                !matches!(node.kind(), "declaration" | "field_declaration
+@@ -1,7 +1,7 @@
+ import assert from "node:assert/strict";
+ import { spawnSync } from "node:child_process";
+ import test from "node:test";
+-import { chmod, lstat, mkdtemp, mkdir, readFile, rm, symlink, truncate, writeFile } from "node:fs/promises";
++import { chmod, copyFile, lstat, mkdtemp, mkdir, readFile, rm, symlink, truncate, writeFile } from "node:fs/promises";
+ import { tmpdir } from "node:os";
+ import { join } from "node:path";
+ import { fileURLToPath } from "node:url";
+@@ -492,6 +492,8 @@ test("CUDA fallback uses the primary Cargo source record, including cached build
+     await writeFile(join(directory, "CMakeLists.txt"), "# source path fixture\n");
+   }
+   await mkdir(join(project, "src"));
++  // This temporary project is outside the repository's toolchain scope.
++  await copyFile(new URL("../rust-toolchain.toml", import.meta.url), join(project, "rust-toolchain.toml"));
+   await writeFile(join(project, "Cargo.toml"),
+     '[package]\nname = "llama-cpp-sys-2"\nversion = "0.0.0"\nedition = "2021"\nlinks = "llama"\n');
+   await writeFile(join(project, "Cargo.lock"),
+@@ -530,35 +532,62 @@ messages = pathlib.Path(sys.argv[2])
+     const records = result.stdout.trim().split(/\r?\n/).map((line) => JSON.parse(line));
+     if (index === 1) assert.ok(records.some((r) => r.reason === "compiler-artifact" && r.fresh));
+     inspect(String.raw`
+-source, revision = fallback.source_build(messages)
+-assert source == pathlib.Path(sys.argv[3]), (source, sys.argv[3])
+-assert revision == sys.argv[4]
+-command = fallback.configure(source, source / "build", source / "cuda", fallback.DEFAULT_ARCHITECTURES)
+-assert command[command.index("-S") + 1] == str(source)
++build = next(r for r in fallback.cargo_records(messages) if r.get("reason") == "build-script-executed")
++directory = pathlib.Path(build["out_dir"]).parent
++outputs = [directory / "output", directory / "run" / "stdout"]
++actual = next(output for output in outputs if output.is_file())
++# Replay the real metadata in both Cargo layouts, restoring it before the next
++# build so Cargo's cache behavior is still exercised by Cargo itself.
++for output in outputs:
++    output.parent.mkdir(parents=True, exist_ok=True)
++    if output != actual:
++        actual.rename(output)
++    try:
++        source, revision = fallback.source_build(messages)
++        assert source == pathlib.Path(sys.argv[3]), (source, sys.argv[3])
++        assert revision == sys.argv[4]
++        command = fallback.configure(source, source / "build", source / "cuda", fallback.DEFAULT_ARCHITECTURES)
++        assert command[command.index("-S") + 1] == str(source)
++    finally:
++        if output != actual:
++            output.rename(actual)
+ `, source, revision);
+   }
+   inspect(String.raw`
+ records = fallback.cargo_records(messages)
+ build = next(r for r in records if r.get("reason") == "build-script-executed")
+-output = pathlib.Path(build["out_dir"]).parent / "output"
+-original = output.read_text(encoding="utf-8")
++directory = pathlib.Path(build["out_dir"]).parent
++outputs = [directory / "output", directory / "run" / "stdout"]
++actual = next(output for output in outputs if output.is_file())
++original = actual.read_text(encoding="utf-8")
+ def reject(expected):
+     try:
+         fallback.source_build(messages)
+     except RuntimeError as error:
+         assert expected in str(error), str(error)
+     else:
+         raise AssertionError("invalid primary source accepted")
+-for text, error in [
+-    ("cargo:source_revision=" + "a" * 40, "source_dir"),
+-    (original + "\ncargo:source_dir=/stale\n", "source_dir"),
+-    (original.replace(sys.argv[3], "relative/source"), "source is unavailable"),
+-    (original.replace(sys.argv[3], str(output.parent / "missing")), "source is unavailable"),
+-    (original.replace(sys.argv[4], "not-a-revision"), "source_revision"),
+-]:
+-    output.write_text(text, encoding="utf-8")
+-    reject(error)
+-output.write_text(original, encoding="utf-8")
++actual.unlink()
++reject("Missing or ambiguous build-script stdout")
++for output in outputs:
++    output.parent.mkdir(parents=True, exist_ok=True)
++    for text, error in [
++        ("cargo:source_revision=" + "a" * 40, "source_dir"),
++        (original + "\ncargo:source_dir=/stale\n", "source_dir"),
++        (original + "\ncargo:source_revision=" + "a" * 40, "source_revision"),
++        (original.replace(sys.argv[3], "relative/source"), "source is unavailable"),
++        (original.replace(sys.argv[3], str(directory / "missing")), "source is unavailable"),
++        (original.replace(sys.argv[4], "not-a-revision"), "source_revision"),
++    ]:
++        output.write_text(text, encoding="utf-8")
++        reject(error)
++    output.unlink()
++for output in outputs:
++    output.write_text(original, encoding="utf-8")
++reject("Missing or ambiguous build-script stdout")
++for output in outputs:
++    output.unlink()
++actual.write_text(original, encoding="utf-8")
+ for changed, error in [
+     (records[:-1], "finish successfully"),
+     ([*records[:-1], {"r
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #449** (2026-11-23): fix(ci): support Cargo 1.100 CUDA fallback metadata (@feihongxu0824)
+- **PR #441** (2026-11-23): feat(rust): expose opt-in retrieval stage diagnostics (@Cuiyus)
+- **PR #437** (2026-11-18): fix(build): restore ONNX Runtime downloads via npmmirror (@feihongxu0824)
+- **PR #435** (2026-11-23): fix(rust): resolve python calls through annotated parameters and self members (@lnfjpt)
 - **PR #427** (2026-11-17): fix(rust): address the remaining issues in #418 (@lnfjpt)
 - **PR #424** (2026-11-17): fix(ort): release environment before CUDA provider destructors (@feihongxu0824)
-- **PR #419** (2026-11-16): chore(rust): prepare 0.3.1 release (@egolearner)
-- **PR #409** (2026-11-16): fix(storage): upgrade zvec-rust to 0.8.1 with WAL recovery (@egolearner)
-- **PR #407** (2026-11-13): fix(engine): preserve v2 indexes and validate workspace recovery (@zhourrr)
-- **PR #405** (2026-11-15): fix(engine): recognize uv run script shebangs (@egolearner)
 
 ---
 
@@ -2608,69 +1831,52 @@ Compare t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust): address the remaining issues in #418
+## X. rust): resolve python calls through annotated parameters and self members
 
 **RULE**:
-When implementing operations in `rust/crates/zg-engine/src/domain/metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-engine/src/extraction/graph.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75047201`: rust): address the remaining issues in #418. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f18f2d9`: rust): resolve python calls through annotated parameters and self members. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-engine/src/domain/metadata.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-engine/src/extraction/graph.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+/// The bound type extraction records for a Python name a body rebinds to a
+/// value the index cannot place (`client = clients[0]`, `self.client = client`).
+///
+/// The write shadows what an earlier declaration stated — a parameter's
+/// annotation, a member's previous assignment — so the name holds no type from
+/// that line on. The resolver reads the sentinel as "stated, but undecided":
+/// the answer is not the type the name no longer holds, and a base class's
+/// member is not the answer either.
+pub(crate) const PYTHON_UNBOUND_TYPE: &str = "[[python_unbound]]";
 
-#[cfg(test)]
-mod tests {
-    use super::{CodeMetadata, MemberAlias, SymbolType};
+/// The bound type extraction records for a Python member a class writes as
+/// `None` (`self.client = None`).
+///
+/// The write is a declaration of the member — the class chooses what the name
+/// holds, so a base class's member of the same name is not the answer — but it
+/// states no type. It differs from [`PYTHON_UNBOUND_TYPE`], which leaves the
+/// member undecided even beside a write that does state a type: an optional
+/// member (`__init__` writes `None`, another method stores the real value) is
+/// still typed by the write that states one.
+pub(crate) const PYTHON_NONE_TYPE: &str = "[[python_none]]";
 
-    /// The facts only the resolver reads. Retrieval never looks at them, so
-    /// storing a default for each of them would cost every record the fields of
-    /// the few files that use them.
-    const GRAPH_FACTS: [&str; 6] = [
-        "has_internal_linkage",
-        "declares_type",
-        "alias_of",
-        "object_members",
-        "overwritten_by",
-        "exported_as",
-    ];
-
-    #[test]
-    fn graph_facts_are_stored_only_when_set() {
-        let plain = serde_json::to_value(CodeMetadata::default()).expect("encode metadata");
-        for field in GRAPH_FACTS {
-            assert!(
-                plain.get(field).is_none(),
-                "{field} is omitted while it holds its default"
-            );
-        }
-
-  
+    /// Th
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    #[serde(default)]
-    #[serde(default)]
-    #[serde(default)]
-    #[serde(default)]
-    #[serde(default)]
-    #[serde(default)]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75047201` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f18f2d9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

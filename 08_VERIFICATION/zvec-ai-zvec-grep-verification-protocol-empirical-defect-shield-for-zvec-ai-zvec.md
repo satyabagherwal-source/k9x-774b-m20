@@ -4,22 +4,22 @@
 {
   "source_repository": "zvec-ai/zvec-grep",
   "source_url": "https://github.com/zvec-ai/zvec-grep",
-  "source_version": "ad737d20",
+  "source_version": "2f18f2d9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T23:21:19.543Z",
+  "timestamp": "2026-11-23T20:30:33.471Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zvec-ai-zvec-grep",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `ad737d20`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T23:21:19.543Z`  
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `2f18f2d9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T20:30:33.471Z`  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zvec-ai/zvec-grep` (Commit: `ad737d20`)
+- **Target Repository**: `zvec-ai/zvec-grep` (Commit: `2f18f2d9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:21:18.126Z  
+> **Harvest Timestamp**: 2026-11-23T20:30:32.111Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4367 stars
+- **Stars / Engagement**: 4374 stars
 
 ---
 
@@ -1129,576 +1129,672 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad737d20` (2026-11-20)
-**Commit Message**: feat(benchmarks): report Gold coverage across retrieval stages (#417)
+### Incident Patch 1: `2f18f2d9` (2026-11-23)
+**Commit Message**: fix(rust): resolve python calls through annotated parameters and self members (#435)
 
-**File**: `.github/scripts/retrieval-pr-comment.mjs` (modified, +40/-7)
+* fix(rust): bind python annotated parameters and self members
+
+A Python parameter states its type on the annotation rather than on an
+assignment, and a class states its attributes by assigning them on `self`
+from inside a method. Neither reached the graph, so a call through the
+parameter's declared contract (`index.create_variables()`) stayed pending,
+and a member one method writes was unknown to the methods beside it.
+
+- Read a typed parameter's annotation as the type the name holds for the
+  whole body: through the `type` wrapper, string annotations, `A | None`,
+  `Optional[…]`/`Union[…]`/`Annotated[…]` and their module-qualified
+  spellings. A container annotation stays unbound, since the members a
+  call reads there are the container's own.
+- Record `self.<member> = <value>` on the class entity, so every method
+  and every subclass reads the same member. The value is read where it is
+  written: `self.x = param` takes the parameter's annotation and
+  `self.x = state.x` a `member_of:(<type>,<member>)` step. A nested class
+  states `self` for its own members, not for the class around it.
+
+* fix(
+
+**File**: `rust/crates/zg-engine/src/extraction/graph.rs` (modified, +43/-0)
 ```diff
-@@ -390,7 +390,14 @@ export function validateComparison(report, request) {
-   };
- }
+@@ -53,6 +53,27 @@ use crate::domain::{GraphEdgeKind, PreprocessorDirective};
+ /// allocated by [`WalkContext::next_entity_index`].
+ pub(crate) const FILE_SCOPE_INDEX: usize = usize::MAX;
  
--export function commentBody({ run, request, report, serverUrl, repository }) {
-+export function commentBody({
-+  run,
-+  request,
-+  report,
-+  serverUrl,
-+  repository,
-+  traceArtifactId,
-+}) {
-   const runUrl = `${serverUrl}/${repository}/actions/runs/${run.id}/attempts/${run.run_attempt}`;
-   let result;
-   if (run.conclusion === "success") {
-@@ -403,11 +410,14 @@ export function commentBody({ run, request, report, serverUrl, repository }) {
-   const body = [marker, versionMarker(run), "## ZG Retrieval Benchmark", ""];
-   if (result) {
-     body.push(
--      markdownVersionComparison({
--        ...result,
--        server_url: serverUrl,
--        run_url: runUrl,
--      }),
-+      markdownVersionComparison(
-+        { ...result, server_url: serverUrl, run_url: runUrl },
-+        {
-+          traceUrl: positiveInteger(traceArtifactId)
-+            ? `${serverUrl}/${repository}/actions/runs/${run.id}/artifacts/${traceArtifactId}`
-+            : undefined,
-+        },
-+      ),
-     );
-   } else {
-     const version = (side) => {
-@@ -438,7 +448,7 @@ export function commentBody({ run, request, report, serverUrl, repository }) {
- async function readJson(path) {
-   try {
-     const info = await lstat(path);
--    if (!info.isFile() || info.size > 128 * 1024) return null;
-+    if (!info.isFile() || info.size > 256 * 1024) return null;
-     return JSON.parse(await readFile(path, "utf8"));
-   } catch {
-     return null;
-@@ -522,12 +532,35 @@ export async function publish({ github, context, core, directory }) {
-     core.info("A newer run already published this PR's results.");
-     return;
-   }
-+  let traceArtifactId;
-+  if (run.conclusion === "success") {
-+    try {
-+      const artifacts = await github.paginate(
-+        github.rest.actions.listWorkflowRunArtifacts,
-+        { ...context.repo, run_id: run.id, per_page: 100 },
-+      );
-+      // Build the URL from GitHub metadata, never artifact-provided Markdown or URLs.
-+      traceArtifactId = artifacts.find(
-+        (artifact) =>
-+          artifact.name === "retrieval-trace.html" &&
-+          artifact.expired === false &&
-+          positiveInteger(artifact.id) &&
-+          artifact.workflow_run?.id === run.id &&
-+          artifact.workflow_run?.head_sha === run.head_sha,
-+      )?.id;
-+    } catch {
-+      core.info(
-+        "Stage trace artifact unavailable; omitting its download link.",
-+      );
++/// The bound type extraction records for a Python name a body rebinds to a
++/// value the index cannot place (`client = clients[0]`, `self.client = client`).
++///
++/// The write shadows what an earlier declaration stated — a parameter's
++/// annotation, a member's previous assignment — so the name holds no type from
++/// that line on. The resolver reads the sentinel as "stated, but undecided":
++/// the answer is not the type the name no longer holds, and a base class's
++/// member is not the answer either.
++pub(crate) const PYTHON_UNBOUND_TYPE: &str = "[[python_unbound]]";
++
++/// The bound type extraction records for a Python member a class writes as
++/// `None` (`self.client = None`).
++///
++/// The write is a declaration of the member — the class chooses what the name
++/// holds, so a base class's member of the same name is not the answer — but it
++/// states no type. It differs from [`PYTHON_UNBOUND_TYPE`], which leaves the
++/// member undecided even beside a write that does state a type: an optional
++/// member (`__init__` writes `None`, another method stores the real value) is
++/// still typed by the write that states one.
++pub(crate) const PYTHON_NONE_TYPE: &str = "[[python_none]]";
++
+ /// An edge whose both endpoints are known at walk time. Only `contains`
+ /// qualifies: the target entity is created during the same walk, so its index
+ /// is available from the scope stack. Positions use one-based lines and
+@@ -527,6 +548,28 @@ impl WalkContext {
+         });
+     }
+ 
++    /// The type `owner_index` has stated for `name` at one point of its body:
++    /// the last declaration written before the position, which is what a copy
++    /// (`client = other`) takes with it.
++    pub(crate) fn declared_type_at(
++        &self,
++        owner_index: usize,
++        name: &str,
++        line: usize,
++        column: usize,
++    ) -> Option<&str> {
++        self.name_edges
++            .iter()
++            .rev()
++            .find(|edge| {
++                edge.ref_kind == GraphEdgeKind::Declares
++                    && edge.owner_index == owner_index
++                    && edge.ref_name == name
++                    && (edge.line, edge.column) < (line, column)
++            })
++            .and_then(|edge| edge.bound_type.as_deref())
 +    }
-+  }
-   const body = commentBody({
-     run,
-     request,
-     report: await readJson(join(directory, "comparison/summary.json")),
-     serverUrl: context.serverUrl,
-     repository,
-+    traceArtifactId,
-   });
-   // Recheck after reading artifacts/comments so a push during publication
-   // cannot knowingly replace the current PR's result with an older version.
++
+     pub(crate) fn add_scoped_binding(
+         &mut self,
+         owner: usize,
 ```
 
-**File**: `.github/scripts/retrieval-pr-comment.test.mjs` (modified, +98/-3)
+**File**: `rust/crates/zg-engine/src/extraction/graph/collector.rs` (modified, +885/-1)
 ```diff
-@@ -134,12 +134,14 @@ async function fixture(t) {
-   };
-   const calls = [],
-     comments = [],
-+    artifacts = [],
-     info = [];
-   let prReads = 0;
--  const x = { context, directory, run, pr, calls, comments, info };
-+  const x = { context, directory, run, pr, calls, comments, artifacts, info };
-   x.github = {
-     rest: {
-       actions: {
-+        listWorkflowRunArtifacts() {},
-         async getWorkflowRun(input) {
-           assert.equal(input.run_id, 123);
-           return { data: run };
-@@ -173,8 +175,16 @@ async function fixture(t) {
-         },
-       },
-     },
--    async paginate(_method, input) {
-+    async paginate(method, input) {
-       calls.push(["list", input]);
-+      if (method === x.github.rest.actions.listWorkflowRunArtifacts) {
-+        assert.equal(input.run_id, run.id);
-+        assert.equal(input.owner, context.repo.owner);
-+        assert.equal(input.repo, context.repo.repo);
-+        if (x.artifactError) throw x.artifactError;
-+        return artifacts;
-+      }
-+      assert.equal(method, x.github.rest.issues.listComments);
-       return comments;
-     },
-   };
-@@ -246,6 +256,79 @@ test("the publisher labels validated full preview without relabeling historical
-     );
- });
+@@ -5,6 +5,8 @@
+ //! owning entity without a second full parse. Mirrors the TypeScript
+ //! `src/engine/extraction/graph/edge-collector.ts` implementation.
  
-+const traceArtifact = {
-+  id: 456,
-+  name: "retrieval-trace.html",
-+  expired: false,
-+  workflow_run: { id: 123, head_sha: head },
-+};
++use std::collections::HashMap;
 +
-+test("the publisher links the triggering run's HTML artifact using only GitHub metadata", async (t) => {
-+  const x = await fixture(t);
-+  // Older runs uploaded a ZIP under this name; never select it as direct HTML.
-+  x.artifacts.push({
-+    ...traceArtifact,
-+    id: 455,
-+    name: "retrieval-stage-trace",
-+  });
-+  x.artifacts.push({
-+    ...traceArtifact,
-+    archive_download_url: "https://untrusted.example/trace.html",
-+  });
-+  await x.write("comparison/summary.json", {
-+    ...report,
-+    trace_url: "https://untrusted.example/report.html",
-+    traceArtifactId: "[untrusted](https://untrusted.example)",
-+    baseline_gold_stages: "untrusted baseline <script>",
-+    candidate_gold_stages: { warning: "untrusted candidate <script>" },
-+  });
-+  await publish(x);
-+  const { body } = x.messages()[0][1];
-+  assert.match(
-+    body,
-+    /\[Download stage trace \(HTML\)\]\(https:\/\/github\.com\/Cuiyus\/zvec-grep\/actions\/runs\/123\/artifacts\/456\)/,
-+  );
-+  assert.doesNotMatch(
-+    body,
-+    /untrusted|<script>|Gold coverage by stage|Stage capture incomplete/,
-+  );
-+  assert.doesNotMatch(body, /\/artifacts\/455/);
-+});
-+
-+test("missing, expired, unrelated or invalid trace artifacts never produce a download link", async (t) => {
-+  for (const artifact of [
-+    null,
-+    { ...traceArtifact, expired: true },
-+    { ...traceArtifact, name: "retrieval-comparison" },
-+    { ...traceArtifact, name: "retrieval-stage-trace" },
-+    { ...traceArtifact, id: "456" },
-+    { ...traceArtifact, id: 0 },
-+    { ...traceArtifact, id: 1.5 },
-+    { ...traceArtifact, id: Number.MAX_SAFE_INTEGER + 1 },
-+    { ...traceArtifact, workflow_run: { id: 122, head_sha: head } },
-+    { ...traceArtifact, workflow_run: { id: 123, head_sha: base } },
-+    { ...traceArtifact, workflow_run: undefined },
-+  ]) {
-+    const x = await fixture(t);
-+    if (artifact) x.artifacts.push(artifact);
-+    await publish(x);
-+    const { body } = x.messages()[0][1];
-+    assert.match(body, /✅ Complete/);
-+    assert.doesNotMatch(body, /Download stage trace|\/artifacts\/456/);
-+  }
-+});
-+
-+test("an unavailable artifact listing preserves the validated quality comment", async (t) => {
-+  const x = await fixture(t);
-+  x.artifactError = new Error("artifact API unavailable");
-+  await publish(x);
-+  assert.match(x.messages()[0][1].body, /✅ Complete/);
-+  assert.doesNotMatch(x.messages()[0][1].body, /Download stage trace/);
-+  assert.ok(
-+    x.info.some((message) => message.includes("omitting its download link")),
-+  );
-+});
-+
- test("the publisher validates corpus totals and renders each suite once", async (t) => {
-   const x = await fixture(t);
-   const counts = countsFor("beir");
-@@ -643,11 +726,23 @@ test("missing, malformed or invalid comparison artifacts publish incomplete with
-   assert.match(x.messages()[0][1].body, /Failed \/ incomplete/);
- });
+ use tree_sitter::Node;
  
-+test("a valid comparison report above 128 KiB can publish within the 256 KiB limit", async (t) => {
-+  const x = await fixture(t);
-+  // JSON whitespace exercises the byte limit without pretending to be run evidence.
-+  const contents = JSON.stringify(report).padEnd(128 * 1024 + 1, " ");
-+  assert.ok(Buffer.byteLength(contents) > 128 * 1024);
-+  assert.ok(Buffer.byteLength(contents) < 256 * 1024);
-+  await writeFile(join(x.directory, "comparison/summary.json"), contents);
-+  await publish(x);
-+  const { body } = x.messages()[0][1];
-+  assert.match(body, /✅ Complete/);
-+});
-+
- test("oversized report data is withheld instead of being loaded into a PR comment", async (t) => {
-   const x = await fixture(t);
-   await writeFile(
-     join(x.directory, "co
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
-```diff
-@@ -23,6 +23,10 @@ on:
+ use crate::domain::{FileFormat, GraphEdgeKind};
+@@ -14,7 +16,7 @@ use super::vocabulary::{
+     CALLEE_FIELDS, COMMON_CALL_TYPES, HeritageVocabulary, heritage_vocabulary_for,
+     import_vocabulary_for,
+ };
+-use super::{Constructs, FILE_SCOPE_INDEX, WalkContext};
++use super::{Constructs, FILE_SCOPE_INDEX, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, WalkContext};
  
- permissions: {}
+ const MAX_CALLEE_TEXT_CHARS: usize = 180;
  
-+env:
-+  # Hosted jobs exercise CPU inference; do not fetch optional CUDA binaries.
-+  ONNXRUNTIME_NODE_INSTALL_CUDA: skip
-+
- concurrency:
-   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
-   cancel-in-progress: true
-```
-
-**File**: `.github/workflows/retrieval-comparison.yml` (modified, +15/-1)
-```diff
-@@ -27,6 +27,7 @@ jobs:
-       candidate_repository: ${{ inputs.baseline_repository }}
-       embedding: local
-       artifact_prefix: retrieval-base
-+      gold_stages: true
- 
-   candidate:
-     uses: ./.github/workflows/retrieval-only.yml
-@@ -35,6 +36,7 @@ jobs:
-       candidate_repository: ${{ inputs.candidate_repository }}
-       embedding: local
-       artifact_prefix: retrieval-head
-+      gold_stages: true
- 
-   compare:
-     needs: [baseline, candidate]
-@@ -80,7 +82,19 @@ jobs:
-         uses: actions/upload-artifact@v7
-         with:
-           name: retrieval-comparison
--          path: ${{ runner.temp }}/retrieval-comparison/
-+          path: |
-+            ${{ runner.temp }}/retrieval-comparison/summary.json
-+            ${{ runner.temp }}/retrieval-comparison/summary.md
-           if-no-files-found: error
-           overwrite: true
-           retention-days: 14
-+      - name: Preserve stage trace HTML
-+        if: always()
-+        uses: actions/upload-artifact@v7
-+        with:
-+          name: retrieval-trace.html
-+          path: ${{ runner.temp }}/retrieval-comparison/retrieval-trace.html
-+          archive: false
-+          if-no-files-found: warn
-+          overwrite: true
-+          retention-days: 14
-```
-
-**File**: `.github/workflows/retrieval-only.yml` (modified, +19/-4)
-```diff
-@@ -17,6 +17,9 @@ on:
-       artifact_prefix:
-         default: retrieval
-         type: string
-+      gold_stages:
-+        default: false
-+        type: boolean
-     secrets:
-       QWEN_EMBEDDING_API_KEY:
-         required: false
-@@ -35,6 +38,10 @@ on:
-         options:
-           - local
-           - remote
-+      gold_stages:
-+        description: Capture Gold coverage at search stages in all four suites
-+        type: boolean
-+        default: false
- 
- permissions:
-   contents: read
-@@ -157,7 +164,8 @@ jobs:
-             --output "$RUNNER_TEMP/sweqa" \
-             --corpus "$RUNNER_TEMP/corpus" \
-             --model-cache "$RUNNER_TEMP/model-cache" \
--            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
-+            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
-+            ${{ inputs.gold_stages && '--gold-stages' || '' }}
-       - name: Build the SWE-QA20 conclusion report
-         if: ${{ always() && steps.access.outcome == 'success' }}
-         run: |
-@@ -183,6 +191,7 @@ jobs:
-             ${{ runner.temp }}/sweqa/summary.json
-             ${{ runner.temp }}/sweqa/summary.md
-             ${{ runner.temp }}/sweqa/scores.jsonl
-+            ${{ runner.temp }}/sweqa/gold-stages.json
-           if-no-files-found: warn
-           retention-days: 14
-       - name: Preserve SWE-QA20 public evidence
-@@ -243,7 +252,8 @@ jobs:
-             --package "$RUNNER_TEMP/package/candidate.tgz" \
-             --output "$RUNNER_TEMP/beir" \
-             --model-cache "$RUNNER_TEMP/beir-model-cache" \
--            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
-+            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
-+            ${{ inputs.gold_stages && '--gold-stages' || '' }}
-       - name: Publish BEIR results for this job
-         if: ${{ always() && steps.access.outcome == 'success' }}
-         run: |
-@@ -260,6 +270,7 @@ jobs:
-           path: |
-             ${{ runner.temp }}/beir/report.json
-             ${{ runner.temp }}/beir/report.md
-+            ${{ runner.temp }}/beir/gold-stages.json
-           if-no-files-found: warn
-           retention-days: 14
-       - name: Preserve BEIR public evidence
-@@ -319,7 +330,8 @@ jobs:
-             --package "$RUNNER_TEMP/package/candidate.tgz" \
-             --output "$RUNNER_TEMP/duretrieval" \
-             --model-cache "$RUNNER_TEMP/duretrieval-model-cache" \
--            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
-+            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
-+            ${{ inputs.gold_stages && '--gold-stages' || '' }}
-       - name: Publish DuRetrieval results for this job
-         if: ${{ always() && steps.access.outcome == 'success' }}
-         run: |
-@@ -336,6 +348,7 @@ jobs:
-           path: |
-             ${{ runner.temp }}/duretrieval/report.json
-             ${{ runner.temp }}/duretrieval/report.md
-+            ${{ runner.temp }}/duretrieval/gold-stages.json
-           if-no-files-found: warn
-           retention-days: 14
-       - name: Preserve DuRetrieval public evidence
-@@ -388,7 +401,8 @@ jobs:
-             --package "$RUNNER_TEMP/package/candidate.tgz" \
-             --output "$RUNNER_TEMP/quarry" \
-             --model-cache "$RUNNER_TEMP/quarry-model-cache" \
--            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
-+            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
-+            ${{ inputs.gold_stages && '--gold-stages' || '' }}
-       - name: Publish Quarry results for this job
-         if: ${{ always() && steps.access.outcome == 'success' }}
-         run: |
-@@ -405,6 +419,7 @@ jobs:
-           path: |
-             ${{ runner.temp }}/quarry/report.json
-             ${{ runner.temp }}/quarry/report.md
-+            ${{ runner.temp }}/quarry/gold-stages.json
-           if-no-files-found: warn
-           retention-days: 14
-       - name: Preserve Quarry public evidence
-```
-
-**File**: `benchmarks/zg-retrieval/README.md` (modified, +100/-185)
-```diff
-@@ -1,177 +1,98 @@
- # ZG Retrieval-only benchmark
- 
--The workflow measures **zg-hybrid, zg-fts and zg-vector** on four independent suites. The original SWE-QA20 suite uses 20 unchanged questions and 11 pinned repositories from [Actions run 35206585943](https://github.com/Cuiyus/zvec-grep/actions/runs/35206585943). The exploratory suites contain 20 original BEIR queries across four datasets, ten DuRetrieval queries and 20 original Quarry queries across eight languages; see the [pilot design](expansion/README.md). Each mode calls the Rust public MCP search endpoint directly with `preview: "full"`. No answering agent, query rewriting, subquery generation or LLM judge participates. See the [SWE-QA20 design](./zg-retrieval-only-sweqa20-design.md) for its frozen protocol and scoring details.
-+Compare FTS, Vector and Hybrid search on four frozen suites. Each request uses the original question through the Rust public MCP search interface; there is no answering agent, query rewriting or LLM judge.
- 
--## Run CI and read the result
-+## Run
- 
--The [Retrieval-only workflow](../../.github/workflows/retrieval-only.yml) supports manual runs and reuse by the [PR version comparison](../../.github/workflows/retrieval-comparison.yml). For a manual single-version run, select **Retrieval-only → Run workflow**. Use GitHub's workflow-ref selector to choose the benchmark harness (`main` for the latest merged harness), then set `candidate_ref` to the branch, tag or commit containing the `rust/` workspace to compile. It defaults to `main`. The `embedding` choice defaults to `local`, which preserves each suite's configured local model. Select `remote` to run every suite with `qwen/qwen3.7-text-embedding`; this requires the repository secret `QWEN_EMBEDDING_API_KEY` and variable `QWEN_EMBEDDING_ENDPOINT`. Every run includes all three modes.
-+| Entry point | What to select |
-+| --- | --- |
-+| PR comparison | Opening, reopening or updating a PR compares its pinned base and head automatically. An authorized `@zg-bench` comment also requests a comparison. |
-+| [Manual single-version run](../../.github/workflows/retrieval-only.yml) | **Retrieval-only → Run workflow**. The workflow ref selects the harness; `candidate_ref` selects the Rust candidate and defaults to `main`. Enable `gold_stages` for traces. |
-+| [Manual paired comparison](../../.github/workflows/retrieval-pr.yml) | **Retrieval-only PR → Run workflow**. Supply full `baseline_sha` / `candidate_sha` and `baseline_repository` / `candidate_repository` (`owner/name`). This does not post a PR comment. |
-+
-+All runs include all three modes. Paired runs use the same harness and configured local models, build separate fresh indexes, and enable stage capture on both versions. They do not run answering-agent E2E tests or receive remote model credentials.
-+
-+Manual and comment runs require maintain/admin access for both the original actor and the re-run actor. See [benchmark setup](../README.md) for repository configuration. The [PR result publisher](../../.github/workflows/retrieval-pr-comment.yml) must be merged into the default branch before it can update comments; it ignores cancelled or outdated runs.
-+
-+## Read the results
- 
--PR creation, reopening and new commits automatically compare the frozen PR base and head through all four suites. An authorized `@zg-bench` PR comment requests the same comparison and posts its table. Both versions use the same harness and local models, with separate fresh indexes; neither receives remote embedding credentials. e2e is skipped by default. Comparison cells show percentages: identical baseline/candidate values appear once; differences use baseline → candidate. The JSON retains exact scores and deltas. Missing or invalid results make the comparison incomplete rather than zero. The default-branch [result publisher](../../.github/workflows/retrieval-pr-comment.yml) creates or updates one English PR comment with the table and run link, including for fork PRs. It skips cancelled or outdated runs, keeps benchmark execution read-only, and becomes active after its workflow is merged into the default branch. The `retrieval-comparison` artifact and Actions summary also retain the result; `retrieval-base-*` and `retrieval-head-*` retain the underlying reports. See [benchmark setup](../README.md).
-+The PR comment shows File/Entity quality tables and a **download link to `retrieval-trace.html`**. Download the HTML and open it locally: it is a single file, not a ZIP, and needs no server or external resources. It contains suite summaries, original questions, per-question FTS/Vector/Hybrid Recall, Gold IDs and stage ranks.
- 
--For a manual paired comparison without a PR comment, select **Retrieval-only PR → Run workflow** and supply full `baseline_sha` / `candidate_sha` commit identities and their `baseline_repository` / `candidate_repository` (`owner/name`). This uses the same local-only comparison and does not run e2e. Manual runs require maintain/admin access.
-+*
-```
-
-**File**: `benchmarks/zg-retrieval/core/gold-stage-capture.mjs` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+export const goldPaths = (pair) => [
-+  ...new Set(
-+    [...pair.file_targets, ...pair.entity_targets].map(({ path }) => path),
-+  ),
-+];
-+
-+// Set these before starting the isolated daemon. Only paths are sent to ZG;
-+// targets, matching rules and metric computation belong to the benchmark.
-+export function stageTraceEnvironment(enabled, pairs = []) {
-+  return {
-+    ZG_TRACE_STAGES: enabled ? "1" : "0",
-+    ZG_TRACE_PATHS: JSON.stringify(
-+      enabled ? [...new Set(pairs.flatMap(goldPaths))].sort() : [],
-+    ),
-+  };
-+}
-+
-+// MCP already binds this metadata to its request. No control files, sequence
-+// numbers or separate capture files are needed. Frozen suites use one group.
-+// Return malformed metadata as an Error value for the diagnostic scorer; do not
-+// throw here and invalidate an otherwise valid public search response.
-+export function readStageTrace(response) {
-+  if (response?.isError) return null;
-+  const metadata = response?._meta;
-+  if (!metadata || !Object.hasOwn(metadata, "zg_stage_trace")) return null;
-+  const traces = metadata.zg_stage_trace;
-+  if (!Array.isArray(traces))
-+    return new Error("stage metadata must be an array");
-+  if (traces.length !== 1)
-+    return new Error("expected one stage capture for Q1");
-+  if (traces[0]?.group_id !== "Q1")
-+    return new Error("unexpected stage capture group; expected Q1");
-+  return traces[0];
-+}
-```
-
-**File**: `benchmarks/zg-retrieval/engines/zg/report.mjs` (modified, +57/-0)
-```diff
-@@ -28,10 +28,14 @@ import {
-   summarizeRepeatedQuality,
- } from "../../metrics/repetitions.mjs";
- import { markdownReport } from "../../reports/zg.mjs";
-+import { readStageTrace } from "../../core/gold-stage-capture.mjs";
-+import { scoreGoldStages } from "../../metrics/gold-stages.mjs";
-+import { writeGoldStages } from "../../reports/gold-stages.mjs";
- import { summarizeIndexCounts } from "../../core/index-counts.mjs";
- import { summarizeIndexSettings } from "../../core/index-settings.mjs";
- import {
-   publicQaItems,
-+  qaEligibility,
-   scoreQaRetrieval,
-   summarizeRepeatedQaRetrieval,
-   summarizeQaRetrieval,
-@@ -72,6 +76,11 @@ function invalidate(score, reason) {
-   };
- }
- 
-+function goldStageQualification(pair) {
-+  const { status } = qaEligibility(pair);
-+  return status === "scored" ? "formal" : status;
-+}
-+
- export async function aggregate(directory, { expectedTasks } = {}) {
-   directory = resolve(directory);
-   const suite = await loadSuite();
-@@ -80,6 +89,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
-   const errors = [],
-     observations = [],
-     manifests = [];
-+  const goldStageCalls = new Map();
-   const runDirectories = await findRuns(directory);
-   const seen = new Set();
-   for (const runDirectory of runDirectories) {
-@@ -352,6 +362,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
-         callInvalid.push("incorrect quality repetition");
-       if (call.harness_error) callInvalid.push(call.harness_error);
-       let score;
-+      let stageCapture = null;
-       let visibleOutputBytes = null;
-       try {
-         assert.equal(
-@@ -367,6 +378,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
-           "raw response changed since capture",
+@@ -578,6 +580,27 @@ pub(crate) fn scan_binding_declarations(
          );
-         const response = await readJson(path);
-+        stageCapture = readStageTrace(response);
-         if (
-           Array.isArray(response?.content) &&
-           response.content.every(
-@@ -390,6 +402,23 @@ export async function aggregate(directory, { expectedTasks } = {}) {
-         callInvalid.push(error.message);
-       }
-       if (callInvalid.length) score = invalidate(score, callInvalid.join("; "));
-+      if (manifest.gold_stages) {
-+        const pair = suite.qa_pairs[call.task_id];
-+        const capture =
-+          score.execution_status === "success" ? stageCapture : null;
-+        goldStageCalls.set(
-+          `${call.task_id}/${call.mode}/${call.repetition}`,
-+          scoreGoldStages({
-+            capture,
-+            pair,
-+            items: score.items ?? [],
-+            taskId: call.task_id,
-+            mode: call.mode,
-+            repetition: call.repetition,
-+            qualification: goldStageQualification(pair),
-+          }),
-+        );
-+      }
-       observations.push({
-         ...call,
-         ...score,
-@@ -625,6 +654,34 @@ export async function aggregate(directory, { expectedTasks } = {}) {
-     repositories: manifests,
-     tasks: quality,
-   };
-+  if (manifests.some(({ gold_stages }) => gold_stages)) {
-+    const calls = [];
-+    for (const taskId of expected) {
-+      const pair = suite.qa_pairs[taskId];
-+      const qualification = goldStageQualification(pair);
-+      for (const mode of suite.protocol.modes) {
-+        for (
-+          let repetition = 1;
-+          repetition <= suite.protocol.repetitions;
-+          repetition++
-+        ) {
-+          calls.push(
-+            goldStageCalls.get(`${taskId}/${mode}/${repetition}`) ??
-+              scoreGoldStages({
-+                capture: null,
-+                pair,
-+                items: [],
-+                taskId,
-+                mode,
-+                repetition,
-+                qualification,
-+              }),
-+          );
-+        }
-+      }
+     }
+     visit_for_bindings(entity_node, owner_index, source, format, context, boundary);
++    // A decorated class reaches this scan as its wrapper, whose body is the
++    // class's: a decorator that returns the class unchanged must not hide the
++    // instance members its methods state.
++    if format == FileFormat::Python
++        && let Some(class) =
++            python_inner_definition(entity_node).filter(|inner| inner.kind() == "class_definition")
++    {
++        collect_python_self_members(class, owner_index, source, context);
 +    }
-+    report.gold_stages = await writeGoldStages(directory, calls);
-+  }
-   await writeFile(
-     join(directory, "scores.jsonl"),
-     observations.map((row) => JSON.stringify(row)).join("\n") + "\n",
++}
++
++/// The definition a Python declaration states. A decorator wraps the class or
++/// function it decorates, and the wrapper's own body is that definition's.
++fn python_inner_definition(node: Node<'_>) -> Option<Node<'_>> {
++    match node.kind() {
++        "class_definition" | "function_definition" => Some(node),
++        "decorated_definition" => named_children(node)
++            .into_iter()
++            .find(|child| matches!(child.kind(), "class_definition" | "function_definition")),
++        _ => None,
++    }
+ }
+ 
+ fn visit_for_bindings(
+@@ -662,6 +685,45 @@ fn visit_for_bindings(
+         }
+         return;
+     }
++    if format == FileFormat::Python
++        && node.kind() == "assignment"
++        && let Some(left) = node
++            .child_by_field_name("left")
++            .filter(|left| left.kind() == "identifier")
++    {
++        let name = node_text(left, source);
++        // `client: Left = …` states the type beside the name, whatever value
++        // the body stores in it.
++        if let Some(bound) = node
++            .child_by_field_name("type")
++            .and_then(|ty| python_annotation_name(ty, source))
++        {
++            context.add_declare_binding(owner_index, name, &bound, line, column, None);
++            return;
++        }
++        // `client = clients[0]` states that the name no longer holds what the
++        // parameter declared. The index cannot place the value, so the name
++        // holds no type from this line on rather than keeping the annotation
++        // the parameter stated for the whole body.
++        //
++        // `client = other` is a copy of a name the body already types, and the
++        // copy holds that type: a receiver reads `other`'s type from this line
++        // on. A copy of a name the body states no type for leaves the name as
++        // undecided as any other value the index cannot place — the annotation
++        // described what the name held before the assignment, not after it.
++        let copied = node
++            .child_by_field_name("right")
++            .filter(|right| right.kind() == "identifier")
++            .and_then(|right| {
++                context
++                    .declared_type_at(owner_index, node_text(right, source), line, column)
++                    .map(str::to_owned)
++            })
++            .filter(|bound| !matches!(bound.as_str(), PYTHON_UNBOUND_TYPE | PYTHON_NONE_TYPE));
++        let bound = copied.as_deref().unwrap_or(PYTHON_UNBOUND_TYPE);
++        context.add_declare_binding(owner_index, name, bound, line, column, None);
++        return;
++    }
+     for child in named_children(node) {
+         if boundary.is_some_and(|owns| owns(child)) {
+             continue;
+@@ -670,6 +732,361 @@ fn visit_for_bindings(
+     }
+ }
+ 
++/// Records what a Python class's `self.<member> = <value>` assignments state
++/// about the member.
++///
++/// A Python class body states its attributes by assigning them on `self` from
++/// inside a method, so the member a call reads through `self` — the
++/// `self.fontset.render_glyph(…)` of a sibling method — is only known by
++/// walking the methods. The binding belongs to the class: every method of the
++/// class and of a subclass that inherits it reads the same member. The value
++/// is read where it is written, so `self.fontset = fontset` takes the
++/// parameter's annotation and `self.fontset = state.fontset` steps through the
++/// member the parameter's own type states.
++fn collect_python_self_members(
++    class_node: Node<'_>,
++    owner_index: usize,
++    source: &[u8],
++    context: &mut WalkContext,
++) {
++    let class_name = class_node
++        .child_by_field_name("name")
++        .map(|name| node_text(name, source).to_owned());
++    // The met
+```
+
+**File**: `rust/crates/zg-engine/src/extraction/graph/partition.rs` (modified, +30/-14)
+```diff
+@@ -17,7 +17,7 @@ use std::collections::{HashMap, HashSet};
+ 
+ use crate::domain::{EdgeProvenance, GraphEdgeKind, PreprocessorDirective};
+ 
+-use super::{Constructs, NameEdge, WalkContext, WalkEdge};
++use super::{Constructs, NameEdge, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, WalkContext, WalkEdge};
+ 
+ /// A name reference resolved against this file's own symbol table.
+ #[derive(Clone, Debug, Eq, PartialEq)]
+@@ -142,6 +142,12 @@ fn states_a_placeable_value(bound: &str) -> bool {
+     !(bound == "?" || bound.starts_with("typeof "))
+ }
+ 
++/// Whether a binding is the sentinel a Python body writes when it rebinds a
++/// name to a value it cannot place or states only the name's absence.
++fn is_python_rebound(bound: &str) -> bool {
++    matches!(bound, PYTHON_UNBOUND_TYPE | PYTHON_NONE_TYPE)
++}
++
+ /// The entity the file declares exactly once under `name`; two same-named
+ /// declarations are not evidence for either.
+ fn unique_symbol(symbols: &HashMap<String, Vec<usize>>, name: &str) -> Option<usize> {
+@@ -346,20 +352,30 @@ fn in_file_target(edge: &NameEdge, shadowed: bool, tables: InFileTables<'_>) ->
+         // naming `run` does not see `A::run` just because the file declares it
+         // once. Without better evidence the reference stays pending for the
+         // cross-file resolver, which also weighs imports.
+-        GraphEdgeKind::Calls => match alias_at(aliases, edge) {
+-            // The binding states no value this file can place, so the spelled
+-            // name is not the answer: the resolver reads the declared binding
+-            // at the call's position and can still tell a parameter, a nested
+-            // definition or a later reassignment apart from the file's name.
+-            Some(bound) if !states_a_placeable_value(bound) => None,
+-            Some(bound) => unique_symbol(symbols, bound),
+-            None => {
+-                let value_alias = value_aliases
++        GraphEdgeKind::Calls => {
++            let value_alias = || {
++                value_aliases
+                     .get(&(edge.owner_index, edge.ref_name.clone()))
+                     .or_else(|| {
+                         value_aliases.get(&(super::FILE_SCOPE_INDEX, edge.ref_name.clone()))
+-                    });
+-                match value_alias {
++                    })
++            };
++            match alias_at(aliases, edge) {
++                // A Python body that rebinds a name states it holds no type
++                // the index can place (`client = clients[0]`), but a copy of
++                // another name is evidence of its own: `alias = target` still
++                // reaches `target` through the alias table.
++                Some(bound) if is_python_rebound(bound) => {
++                    value_alias().and_then(|bound| unique_symbol(symbols, bound))
++                }
++                // The binding states no value this file can place, so the
++                // spelled name is not the answer: the resolver reads the
++                // declared binding at the call's position and can still tell a
++                // parameter, a nested definition or a later reassignment apart
++                // from the file's name.
++                Some(bound) if !states_a_placeable_value(bound) => None,
++                Some(bound) => unique_symbol(symbols, bound),
++                None => match value_alias() {
+                     // A pair the walk recorded without a position of its own
+                     // (`x = y` where the declaration states no type) is the
+                     // only evidence there is.
+@@ -373,9 +389,9 @@ fn in_file_target(edge: &NameEdge, shadowed: bool, tables: InFileTables<'_>) ->
+                                 .then(|| unique_symbol(file_symbols, &edge.ref_name))
+                                 .flatten()
+                         }),
+-                }
++                },
+             }
+-        },
++        }
+         GraphEdgeKind::Extends | GraphEdgeKind::Implements => {
+             unique_symbol(symbols, &edge.ref_name)
+         }
+```
+
+**File**: `rust/crates/zg-engine/src/extraction/mod.rs` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ pub(crate) use spi::{ExtractedEntity, ExtractedEntityFragment, ExtractionOutput}
+ #[cfg(test)]
+ pub(crate) use graph::Constructs;
+ #[allow(unused_imports)]
+-pub(crate) use graph::{FILE_SCOPE_INDEX, PartitionedGraph};
++pub(crate) use graph::{FILE_SCOPE_INDEX, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, PartitionedGraph};
+ #[cfg(test)]
+ pub(crate) use graph::{PendingNameRef, ResolvedNameEdge};
+ 
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexing/graph_resolver.rs` (modified, +355/-35)
+```diff
+@@ -36,6 +36,7 @@ use crate::domain::{
+     EdgeProvenance, FileFormat, GraphEdgeKind, SymbolType, formats_for_path,
+     reference_compatible_with,
+ };
++use crate::extraction::{PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE};
+ use crate::storage::graph::{
+     DeclaredBinding, ImportReference, NameIndexEntry, Resolution, StoredPendingRef,
+ };
+@@ -2854,21 +2855,41 @@ fn receiver_path_type(
+         };
+         return Ok(step_type(marker, &inner_type));
+     }
+-    if let Some(bound) = declared_receiver_type(store, snapshot, stored, receiver, caches)? {
+-        // A loop or a placeholder declaration binds what the range or path it
+-        // was taken from holds, which is only known once that is read.
+-        if let Some((marker, inner)) = step_marker(&bound) {
+-            let Some(inner_type) =
+-                receiver_path_type(store, snapshot, stored, inner, caches, depth + 1)?
+-            else {
+-                return Ok(None);
+-            };
+-            return Ok(step_type(marker, &inner_type));
++    match declared_receiver_type(store, snapshot, stored, receiver, caches)? {
++        // The body rebound the name to a value it cannot type. The name holds
++        // no type, and the scopes below must not claim it back: `self =
++        // objects[0]` no longer names this class's instance.
++        ReceiverBinding::Undecided => return Ok(None),
++        ReceiverBinding::Known(bound) => {
++            // A member read the extraction could not type states the type stating
++            // it: `member_of:(ParserState,fontset)` is what `ParserState` says
++            // `fontset` holds.
++            if member_step(&bound).is_some() {
++                return resolve_member_steps(store, snapshot, stored, bound, caches, depth);
++            }
++            // A loop or a placeholder declaration binds what the range or path it
++            // was taken from holds, which is only known once that is read.
++            if let Some((marker, inner)) = step_marker(&bound) {
++                let Some(inner_type) =
++                    receiver_path_type(store, snapshot, stored, inner, caches, depth + 1)?
++                else {
++                    return Ok(None);
++                };
++                return Ok(step_type(marker, &inner_type));
++            }
++            // The spelling keeps the declarator's decorations: a pointer answers a
++            // subscript with what it points at, and the step that reads the value
++            // decides what the name itself denotes.
++            return Ok(Some(bound));
+         }
+-        // The spelling keeps the declarator's decorations: a pointer answers a
+-        // subscript with what it points at, and the step that reads the value
+-        // decides what the name itself denotes.
+-        return Ok(Some(bound));
++        ReceiverBinding::Absent => {}
++    }
++    // `self` and `cls` hold the enclosing class: a member read through them is
++    // a member that class or one of its bases states.
++    if is_self_receiver(&stored.language, receiver) {
++        return Ok(snapshot
++            .entity_record(&stored.reference.owner_id)
++            .and_then(|owner| enclosing_class_scope(snapshot, &owner.qualified_name)));
+     }
+     let Some((base, member)) = receiver.rsplit_once('.') else {
+         return Ok(None);
+@@ -2877,7 +2898,100 @@ fn receiver_path_type(
+     else {
+         return Ok(None);
+     };
+-    member_of_type(store, snapshot, stored, &base_type, member, caches, depth)
++    let Some(bound) = member_of_type(store, snapshot, stored, &base_type, member, caches, depth)?
++    else {
++        return Ok(None);
++    };
++    resolve_member_steps(store, snapshot, stored, bound, caches, depth)
++}
++
++/// The type a member read denotes, one step at a time.
++///
++/// The extraction states a member read it cannot look up as
++/// `member_of:(<type>,<member>)`; the member's own type may step again
++/// (`self.fontset = self.state.fontset`), so the steps are read until the
++/// type is one the member rule can search.
++///
++/// # Errors
++/// Propagates graph storage failures of the member reads.
++fn resolve_member_steps(
++    store: &IndexStore,
++    snapshot: &ResolutionSnapshot,
++    stored: &StoredPendingRef,
++    bound: String,
++    caches: &mut RuleCaches,
++    depth: usize,
++) -> crate::EngineResult<Option<String>> {
++    let mut bound = bound;
++    let mut depth = depth;
++    loop {
++        let Some((base, member)) = member_step(&bound) else {
++            return Ok(Some(bound));
++        };
++        if depth > MAX_TYPE_STEPS {
++            return Ok(None);
++        }
++        // What the member is read from may state a step of its own
++        // (`member_of:(member_of:(ParserState,state),fontset)`): the type the
++        // outer member belongs to is only known once that step is read.
++        let base = match member_step(base) {
++            Some(_) => {
++                let Some(resolved) = resolve_member_steps(
++                    store,
++                    snapsho
+```
+
+**File**: `rust/crates/zg-engine/tests/call_resolution_regressions.rs` (modified, +288/-0)
+```diff
+@@ -1228,3 +1228,291 @@ async fn rust_glob_imports_respect_local_types_and_explicit_imports() {
+         }).await;
+     }
+ }
++
++// A decorated class reaches the binding scan as its decorator's wrapper, and a
++// member one method writes is read by the methods beside it: the step is
++// stated as `member_of:(<type>,<member>)` and the resolver walks it.
++#[tokio::test]
++async fn python_self_member_chain_reaches_the_decorated_class_member() {
++    check_case(Case {
++        name: "python_self_member_chain_reaches_the_decorated_class_member",
++        files: vec![SourceFile {
++            path: "shapes.py",
++            source: "class Fonts:\n    def render_glyph(self):\n        return 1\n\n@dataclass\nclass ParserState:\n    def __init__(self, fontset: Fonts):\n        self.fontset = fontset\n\n@dataclass\nclass Char:\n    def __init__(self, state: ParserState):\n        self.inner = state.fontset\n\n    def render(self):\n        return self.inner.render_glyph()\n",
++        }],
++        queries: vec![
++            Query {
++                operation: "callees",
++                symbol: "render",
++                expected: json!([{"name": "Char::render", "edges": [
++                    {"symbol": {"name": "Fonts::render_glyph"}, "line": 16}
++                ]}]),
++                ..Query::default()
++            },
++            Query {
++                operation: "callers",
++                symbol: "render_glyph",
++                expected: json!([{"name": "Fonts::render_glyph", "edges": [
++                    {"symbol": {"name": "Char::render"}}
++                ]}]),
++                ..Query::default()
++            },
++        ],
++    })
++    .await;
++}
++
++// A bare name of a Python body is the parameter the body declares, not the
++// class member another method stated under the same name.
++#[tokio::test]
++async fn python_bare_parameter_does_not_read_the_class_member() {
++    check_case(Case {
++        name: "python_bare_parameter_does_not_read_the_class_member",
++        files: vec![SourceFile {
++            path: "parser.py",
++            source: "class Index:\n    def create_variables(self):\n        return 1\n\nclass Parser:\n    def __init__(self):\n        self.index = Index()\n\n    def run(self, index):\n        return index.create_variables()\n",
++        }],
++        queries: vec![Query {
++            operation: "callees",
++            symbol: "run",
++            expected: json!([{"name": "Parser::run", "edges": []}]),
++            ..Query::default()
++        }],
++    })
++    .await;
++}
++
++// A member a body writes with a value the index cannot place no longer holds
++// what an earlier write stated, so the call through it stays undecided instead
++// of answering with the type the constructor's first line named.
++#[tokio::test]
++async fn python_unknown_member_write_invalidates_the_earlier_type() {
++    check_case(Case {
++        name: "python_unknown_member_write_invalidates_the_earlier_type",
++        files: vec![SourceFile {
++            path: "use.py",
++            source: "class Left:\n    def work(self):\n        return 'left'\n\nclass Right:\n    def work(self):\n        return 'right'\n\nclass Runner:\n    def __init__(self, client):\n        self.client = Left()\n        self.client = client\n\n    def run(self):\n        return self.client.work()\n",
++        }],
++        queries: vec![Query {
++            operation: "callees",
++            symbol: "Runner::run",
++            expected: json!([{"name": "Runner::run", "edges": []}]),
++            ..Query::default()
++        }],
++    })
++    .await;
++}
++
++// `client: Left` states the parameter, and `client = clients[0]` takes it back:
++// the element a container holds is not the annotated type.
++#[tokio::test]
++async fn python_parameter_reassignment_invalidates_its_annotation() {
++    check_case(Case {
++        name: "python_parameter_reassignment_invalidates_its_annotation",
++        files: vec![SourceFile {
++            path: "use.py",
++            source: "class Left:\n    def work(self):\n        return 'left'\n\nclass Right:\n    def work(self):\n        return 'right'\n\ndef run(client: Left, clients):\n    client = clients[0]\n    return client.work()\n",
++        }],
++        queries: vec![Query {
++            operation: "callees",
++            symbol: "run",
++            expected: json!([{"name": "run", "edges": []}]),
++            ..Query::default()
++        }],
++    })
++    .await;
++}
++
++// A union arm the reader cannot name (`right.Right` is a module) is no evidence
++// that the arm it can name is the only shape the value takes.
++#[tokio::test]
++async fn python_union_with_an_unreadable_arm_stays_undecided() {
++    check_case(Case {
++        name: "python_union_with_an_unreadable_arm_stays_undecided",
++        files: vec![
++            SourceFile {
++                path: "right.py",
++                source: "class Right:\n    def send(self):\n        return 'right'\n",
++            },
++            SourceFile {
++                path: 
+```
+
+---
+
+### Incident Patch 2: `8415f1be` (2026-11-23)
+**Commit Message**: fix(ci): support Cargo 1.100 CUDA fallback metadata (#449)
+
+**File**: `rust/scripts/cuda/build-fallback.py` (modified, +9/-3)
+```diff
+@@ -25,9 +25,15 @@ def source_build(messages):
+     if len(builds) != 1:
+         raise RuntimeError("Expected one active llama sys build script in the primary Cargo messages")
+     # Cargo retains build-script stdout beside this invocation's OUT_DIR, also
+-    # on cache hits. The pinned sys crate records its verified source here;
+-    # custom metadata is not included in Cargo's JSON build-script record.
+-    output = Path(builds[0]["out_dir"]).parent / "output"
++    # on cache hits: output before 1.100, run/stdout in the new build-dir layout.
++    # The pinned sys crate records its verified source here; custom metadata is
++    # not included in Cargo's JSON build-script record.
++    directory = Path(builds[0]["out_dir"]).parent
++    candidates = [directory / "output", directory / "run" / "stdout"]
++    outputs = [path for path in candidates if path.is_file()]
++    if len(outputs) != 1:
++        raise RuntimeError(f"Missing or ambiguous build-script stdout for primary OUT_DIR: {candidates}")
++    output = outputs[0]
+     lines = output.read_text(encoding="utf-8").splitlines()
+     metadata = {}
+     for key in ("source_dir", "source_revision"):
+```
+
+**File**: `rust/scripts/npm-local.test.mjs` (modified, +47/-18)
+```diff
+@@ -1,7 +1,7 @@
+ import assert from "node:assert/strict";
+ import { spawnSync } from "node:child_process";
+ import test from "node:test";
+-import { chmod, lstat, mkdtemp, mkdir, readFile, rm, symlink, truncate, writeFile } from "node:fs/promises";
++import { chmod, copyFile, lstat, mkdtemp, mkdir, readFile, rm, symlink, truncate, writeFile } from "node:fs/promises";
+ import { tmpdir } from "node:os";
+ import { join } from "node:path";
+ import { fileURLToPath } from "node:url";
+@@ -492,6 +492,8 @@ test("CUDA fallback uses the primary Cargo source record, including cached build
+     await writeFile(join(directory, "CMakeLists.txt"), "# source path fixture\n");
+   }
+   await mkdir(join(project, "src"));
++  // This temporary project is outside the repository's toolchain scope.
++  await copyFile(new URL("../rust-toolchain.toml", import.meta.url), join(project, "rust-toolchain.toml"));
+   await writeFile(join(project, "Cargo.toml"),
+     '[package]\nname = "llama-cpp-sys-2"\nversion = "0.0.0"\nedition = "2021"\nlinks = "llama"\n');
+   await writeFile(join(project, "Cargo.lock"),
+@@ -530,35 +532,62 @@ messages = pathlib.Path(sys.argv[2])
+     const records = result.stdout.trim().split(/\r?\n/).map((line) => JSON.parse(line));
+     if (index === 1) assert.ok(records.some((r) => r.reason === "compiler-artifact" && r.fresh));
+     inspect(String.raw`
+-source, revision = fallback.source_build(messages)
+-assert source == pathlib.Path(sys.argv[3]), (source, sys.argv[3])
+-assert revision == sys.argv[4]
+-command = fallback.configure(source, source / "build", source / "cuda", fallback.DEFAULT_ARCHITECTURES)
+-assert command[command.index("-S") + 1] == str(source)
++build = next(r for r in fallback.cargo_records(messages) if r.get("reason") == "build-script-executed")
++directory = pathlib.Path(build["out_dir"]).parent
++outputs = [directory / "output", directory / "run" / "stdout"]
++actual = next(output for output in outputs if output.is_file())
++# Replay the real metadata in both Cargo layouts, restoring it before the next
++# build so Cargo's cache behavior is still exercised by Cargo itself.
++for output in outputs:
++    output.parent.mkdir(parents=True, exist_ok=True)
++    if output != actual:
++        actual.rename(output)
++    try:
++        source, revision = fallback.source_build(messages)
++        assert source == pathlib.Path(sys.argv[3]), (source, sys.argv[3])
++        assert revision == sys.argv[4]
++        command = fallback.configure(source, source / "build", source / "cuda", fallback.DEFAULT_ARCHITECTURES)
++        assert command[command.index("-S") + 1] == str(source)
++    finally:
++        if output != actual:
++            output.rename(actual)
+ `, source, revision);
+   }
+   inspect(String.raw`
+ records = fallback.cargo_records(messages)
+ build = next(r for r in records if r.get("reason") == "build-script-executed")
+-output = pathlib.Path(build["out_dir"]).parent / "output"
+-original = output.read_text(encoding="utf-8")
++directory = pathlib.Path(build["out_dir"]).parent
++outputs = [directory / "output", directory / "run" / "stdout"]
++actual = next(output for output in outputs if output.is_file())
++original = actual.read_text(encoding="utf-8")
+ def reject(expected):
+     try:
+         fallback.source_build(messages)
+     except RuntimeError as error:
+         assert expected in str(error), str(error)
+     else:
+         raise AssertionError("invalid primary source accepted")
+-for text, error in [
+-    ("cargo:source_revision=" + "a" * 40, "source_dir"),
+-    (original + "\ncargo:source_dir=/stale\n", "source_dir"),
+-    (original.replace(sys.argv[3], "relative/source"), "source is unavailable"),
+-    (original.replace(sys.argv[3], str(output.parent / "missing")), "source is unavailable"),
+-    (original.replace(sys.argv[4], "not-a-revision"), "source_revision"),
+-]:
+-    output.write_text(text, encoding="utf-8")
+-    reject(error)
+-output.write_text(original, encoding="utf-8")
++actual.unlink()
++reject("Missing or ambiguous build-script stdout")
++for output in outputs:
++    output.parent.mkdir(parents=True, exist_ok=True)
++    for text, error in [
++        ("cargo:source_revision=" + "a" * 40, "source_dir"),
++        (original + "\ncargo:source_dir=/stale\n", "source_dir"),
++        (original + "\ncargo:source_revision=" + "a" * 40, "source_revision"),
++        (original.replace(sys.argv[3], "relative/source"), "source is unavailable"),
++        (original.replace(sys.argv[3], str(directory / "missing")), "source is unavailable"),
++        (original.replace(sys.argv[4], "not-a-revision"), "source_revision"),
++    ]:
++        output.write_text(text, encoding="utf-8")
++        reject(error)
++    output.unlink()
++for output in outputs:
++    output.write_text(original, encoding="utf-8")
++reject("Missing or ambiguous build-script stdout")
++for output in outputs:
++    output.unlink()
++actual.write_text(original, encoding="utf-8")
+ for changed, error in [
+     (records[:-1], "finish successfully"),
+     ([*records[:-1], {"r
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #449** (2026-11-23): fix(ci): support Cargo 1.100 CUDA fallback metadata (@feihongxu0824)
+- **PR #441** (2026-11-23): feat(rust): expose opt-in retrieval stage diagnostics (@Cuiyus)
 - **PR #437** (2026-11-18): fix(build): restore ONNX Runtime downloads via npmmirror (@feihongxu0824)
+- **PR #435** (2026-11-23): fix(rust): resolve python calls through annotated parameters and self members (@lnfjpt)
 - **PR #427** (2026-11-17): fix(rust): address the remaining issues in #418 (@lnfjpt)
 - **PR #424** (2026-11-17): fix(ort): release environment before CUDA provider destructors (@feihongxu0824)
-- **PR #419** (2026-11-16): chore(rust): prepare 0.3.1 release (@egolearner)
-- **PR #417** (2026-11-20): feat(benchmarks): report Gold coverage across retrieval stages (@Cuiyus)
-- **PR #409** (2026-11-16): fix(storage): upgrade zvec-rust to 0.8.1 with WAL recovery (@egolearner)
 
 ---
 
@@ -1718,72 +1814,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. benchmarks): report Gold coverage across retrieval stages
+## X. rust): resolve python calls through annotated parameters and self members
 
 **RULE**:
-When implementing operations in `.github/scripts/retrieval-pr-comment.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-engine/src/extraction/graph.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad737d20`: benchmarks): report Gold coverage across retrieval stages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f18f2d9`: rust): resolve python calls through annotated parameters and self members. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/retrieval-pr-comment.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-engine/src/extraction/graph.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-export function commentBody({
-  run,
-  request,
-  report,
-  serverUrl,
-  repository,
-  traceArtifactId,
-}) {
-      markdownVersionComparison(
-        { ...result, server_url: serverUrl, run_url: runUrl },
-        {
-          traceUrl: positiveInteger(traceArtifactId)
-            ? `${serverUrl}/${repository}/actions/runs/${run.id}/artifacts/${traceArtifactId}`
-            : undefined,
-        },
-      ),
-    if (!info.isFile() || info.size > 256 * 1024) return null;
-  let traceArtifactId;
-  if (run.conclusion === "success") {
-    try {
-      const artifacts = await github.paginate(
-        github.rest.actions.listWorkflowRunArtifacts,
-        { ...context.repo, run_id: run.id, per_page: 100 },
-      );
-      // Build the URL from GitHub metadata, never artifact-provided Markdown or URLs.
-      traceArtifactId = artifacts.find(
-        (artifact) =>
-          artifact.name === "retrieval-trace.html" &&
-          artifact.expired === false &&
-          positiveInteger(artifact.id) &&
-          artifact.workflow_run?.id === run.id &&
-          artifact.workflow_run?.head_sha === run.head_sha,
-      )?.id;
-    } catch {
-      core.info(
-        "Stage trace artifact unavailable; omitti
+/// The bound type extraction records for a Python name a body rebinds to a
+/// value the index cannot place (`client = clients[0]`, `self.client = client`).
+///
+/// The write shadows what an earlier declaration stated — a parameter's
+/// annotation, a member's previous assignment — so the name holds no type from
+/// that line on. The resolver reads the sentinel as "stated, but undecided":
+/// the answer is not the type the name no longer holds, and a base class's
+/// member is not the answer either.
+pub(crate) const PYTHON_UNBOUND_TYPE: &str = "[[python_unbound]]";
+
+/// The bound type extraction records for a Python member a class writes as
+/// `None` (`self.client = None`).
+///
+/// The write is a declaration of the member — the class chooses what the name
+/// holds, so a base class's member of the same name is not the answer — but it
+/// states no type. It differs from [`PYTHON_UNBOUND_TYPE`], which leaves the
+/// member undecided even beside a write that does state a type: an optional
+/// member (`__init__` writes `None`, another method stores the real value) is
+/// still typed by the write that states one.
+pub(crate) const PYTHON_NONE_TYPE: &str = "[[python_none]]";
+
+    /// Th
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-export function commentBody({ run, request, report, serverUrl, repository }) {
-      markdownVersionComparison({
-        ...result,
-        server_url: serverUrl,
-        run_url: runUrl,
-      }),
-    if (!info.isFile() || info.size > 128 * 1024) return null;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad737d20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f18f2d9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

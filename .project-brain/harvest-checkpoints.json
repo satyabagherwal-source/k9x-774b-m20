@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T20:22:09.317Z",
+  "last_updated": "2026-11-23T20:30:43.930Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1850,14 +1850,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
-      "content_hash": "e6e90b545a91846a49ef8ccec7ab2a2e8e99f0ab2a71efe4bad7d042bae22586",
-      "verified_at": "2026-11-19T12:40:26.265Z",
+      "content_hash": "787020d3f786e0c430358663063cb5b36b89d13b581953be6fa35cd998ad81b8",
+      "verified_at": "2026-11-23T20:30:27.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T12:40:26.265Z"
+      "last_updated": "2026-11-23T20:30:27.302Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
@@ -3561,14 +3561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-smallstep-cli",
-      "content_hash": "f75b8123630faff29b2817e7c0bcb2a9095e18a4bbd2ddaa2033c0cfa8ee5e60",
-      "verified_at": "2026-11-18T14:40:42.488Z",
+      "content_hash": "2c55dd0b0ee93563ec8c6c2026d09af04440f3ab0748a81ea889b40bb28604ee",
+      "verified_at": "2026-11-23T20:30:43.929Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:40:42.488Z"
+      "last_updated": "2026-11-23T20:30:43.929Z"
     },
     "Ontos-AI/knowhere": {
       "repository": "Ontos-AI/knowhere",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "c341c2348112e098a2d012da0b958524f492efe09c8689eb3138e4e81c326238",
-      "verified_at": "2026-11-20T23:21:19.341Z",
+      "content_hash": "8b2607ac00accefcb13f086f33da8824f782418b9154fa099859bdc64830051e",
+      "verified_at": "2026-11-23T20:30:33.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:21:19.341Z"
+      "last_updated": "2026-11-23T20:30:33.209Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",

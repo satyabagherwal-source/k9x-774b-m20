@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-WCUH",
-    "timestamp": "2026-11-21T22:16:22.025Z",
-    "repository": "berty/berty",
-    "learningId": "learn-github-berty-berty",
-    "contentHash": "d19c47c21500add003c1e204e6e3e1105ff8029ddec43eb8e50af035c80db9cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-DP78",
-    "timestamp": "2026-11-21T22:29:51.188Z",
-    "repository": "Comfy-Org/Wan-2.2",
-    "learningId": "learn-huggingface-comfy-org-wan-2-2",
-    "contentHash": "64fca361eaa83b5888bbbe9eec808442ec62bb2c2b64d08245b8b4aec0f2e450",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-DUY0",
-    "timestamp": "2026-11-21T22:29:58.632Z",
-    "repository": "keybase/client",
-    "learningId": "learn-github-keybase-client",
-    "contentHash": "e12b78cb036bef8156242dd74282a05690987e516ca0a485ec7444a679f6481b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-E27M",
     "timestamp": "2026-11-21T22:30:08.050Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7445,51 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "7c1db1c42b197404adb50a56d67e4f7a909ea84842c96d85320da79ff79ac96c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZUTZ",
+    "timestamp": "2026-11-23T20:30:27.287Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+    "contentHash": "787020d3f786e0c430358663063cb5b36b89d13b581953be6fa35cd998ad81b8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZZE2",
+    "timestamp": "2026-11-23T20:30:33.194Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "8b2607ac00accefcb13f086f33da8824f782418b9154fa099859bdc64830051e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-07NV",
+    "timestamp": "2026-11-23T20:30:43.915Z",
+    "repository": "smallstep/cli",
+    "learningId": "learn-github-smallstep-cli",
+    "contentHash": "2c55dd0b0ee93563ec8c6c2026d09af04440f3ab0748a81ea889b40bb28604ee",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

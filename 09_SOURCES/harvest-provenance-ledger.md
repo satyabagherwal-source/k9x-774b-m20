@@ -12483,3 +12483,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-23T20:21:53.602Z |
 | `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `3d378017` | Multi-dimensional audit evidence | 2026-11-23T20:22:01.481Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `ec1c6cba` | Multi-dimensional audit evidence | 2026-11-23T20:22:09.307Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-23T20:30:27.292Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `2f18f2d9` | Multi-dimensional audit evidence | 2026-11-23T20:30:33.198Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `941a292b` | Multi-dimensional audit evidence | 2026-11-23T20:30:43.919Z |

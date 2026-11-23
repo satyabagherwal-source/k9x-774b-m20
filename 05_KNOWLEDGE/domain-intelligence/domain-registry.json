@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T20:22:16.282Z",
+  "last_updated": "2026-11-23T20:30:49.767Z",
   "total_records": 2444,
   "domains": {
     "A": {
@@ -18392,8 +18392,8 @@
       "title": "Research & Knowledge Intelligence: microsoft/FrogNano-4B-2609 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-frognano-4b-2609-research-knowledge-intelligence-microsoft-frognano.md",
       "repository": "microsoft/FrogNano-4B-2609",
-      "content_hash": "b50f09eaef747ec53b88265bb6b7d65477404639929ec1af23a66d26719614c4",
-      "created_at": "2026-11-19T12:40:26.428Z"
+      "content_hash": "dfe2a398ae6d049c6a9fc2612c27cc2534527a21865f38d1b26997b70131bf05",
+      "created_at": "2026-11-23T20:30:27.524Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-core-invariants",
@@ -18461,8 +18461,8 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-frognano-4b-2609-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-frognano-4b-2609-learnings-research-knowledge-intelligence-hf-micro.md",
       "repository": "hf-microsoft-frognano-4b-2609-learnings",
-      "content_hash": "fa7f88fb466f2f2bb84f8e022976b5079aada789943dbdfd708f8861be27fa08",
-      "created_at": "2026-11-19T12:40:38.775Z"
+      "content_hash": "d148ed41433bafcdabb97bfa4ab38b608c7fe808d463ecb0396fc5e4cc95b810",
+      "created_at": "2026-11-23T20:30:48.887Z"
     },
     "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants",
@@ -23606,8 +23606,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai/zvec-grep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invaria.md",
       "repository": "zvec-ai/zvec-grep",
-      "content_hash": "27550009f8def471585d7bc82ff3816601159352e25da0e08071a8e017101aad",
-      "created_at": "2026-11-17T17:20:14.652Z"
+      "content_hash": "f6379f5caaf451dffeeaf944bf723723f100b500f56dfd43cc4427556c1ea1c3",
+      "created_at": "2026-11-23T20:30:33.655Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -23615,8 +23615,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "639a06d96c8c1e06b8b9c55ad2e6dbcd525d14a8e227d0c76a5f19e4aff6ffda",
-      "created_at": "2026-11-19T05:55:02.762Z"
+      "content_hash": "422c7be8eba3480d0f1c7e877ee3b51df5e417cd4ed709a9af9025f2e424745f",
+      "created_at": "2026-11-23T20:30:48.125Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -31765,8 +31765,8 @@
       "title": "Technical Construction Intelligence: smallstep/cli Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-technical-construction-intelligence-smallstep-cli-core-invariants.md",
       "repository": "smallstep/cli",
-      "content_hash": "19a18866a6303f8036f7adcde04e7f3030802a477231519f1191d35925d157bc",
-      "created_at": "2026-11-18T14:40:42.912Z"
+      "content_hash": "0e501eba9bd28c78345c3965461e1228f88721e0c035982fc09f7a95d5dd3dfc",
+      "created_at": "2026-11-23T20:30:44.364Z"
     },
     "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants",
@@ -31774,8 +31774,8 @@
       "title": "Technical Construction Intelligence: smallstep-cli-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-learnings-technical-construction-intelligence-smallstep-cli-learni.md",
       "repository": "smallstep-cli-learnings",
-      "content_hash": "6de6a1d909c8460f307f6aff8d33dd567593738af8745bd0e3362bf6b135c305",
-      "created_at": "2026-11-18T14:40:50.691Z"
+      "content_hash": "ecdb8baa9261b5a65b531d809afdc738cc5b121e76d4689ef7b6a367abd356a9",
+      "created_at": "2026-11-23T20:30:49.767Z"
     },
     "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants",

@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "e6e90b545a91846a49ef8ccec7ab2a2e8e99f0ab2a71efe4bad7d042bae22586",
-    "lastHarvestedAt": "2026-11-19T12:40:26.257Z",
+    "contentHash": "787020d3f786e0c430358663063cb5b36b89d13b581953be6fa35cd998ad81b8",
+    "lastHarvestedAt": "2026-11-23T20:30:27.292Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -2283,10 +2283,10 @@
     "repository": "smallstep/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/smallstep/cli",
-    "sourceVersion": "537c15c1",
+    "sourceVersion": "941a292b",
     "license": "Apache-2.0",
-    "contentHash": "f75b8123630faff29b2817e7c0bcb2a9095e18a4bbd2ddaa2033c0cfa8ee5e60",
-    "lastHarvestedAt": "2026-11-18T14:40:42.477Z",
+    "contentHash": "2c55dd0b0ee93563ec8c6c2026d09af04440f3ab0748a81ea889b40bb28604ee",
+    "lastHarvestedAt": "2026-11-23T20:30:43.919Z",
     "learningId": "learn-github-smallstep-cli"
   },
   "ontos-ai-knowhere": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "ad737d20",
+    "sourceVersion": "2f18f2d9",
     "license": "Apache-2.0",
-    "contentHash": "c341c2348112e098a2d012da0b958524f492efe09c8689eb3138e4e81c326238",
-    "lastHarvestedAt": "2026-11-20T23:21:19.333Z",
+    "contentHash": "8b2607ac00accefcb13f086f33da8824f782418b9154fa099859bdc64830051e",
+    "lastHarvestedAt": "2026-11-23T20:30:33.198Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {

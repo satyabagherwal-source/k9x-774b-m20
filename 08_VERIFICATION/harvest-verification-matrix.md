@@ -12450,3 +12450,6 @@
 | `CYCLE-20261123-OUGU` | `2026-11-23T20:21:53.598Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`b9e8e64a...`) |
 | `CYCLE-20261123-P0JP` | `2026-11-23T20:22:01.477Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10111` | Yes (`8117d3fb...`) |
 | `CYCLE-20261123-P6L3` | `2026-11-23T20:22:09.303Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10112` | Yes (`7c1db1c4...`) |
+| `CYCLE-20261123-ZUTZ` | `2026-11-23T20:30:27.287Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`787020d3...`) |
+| `CYCLE-20261123-ZZE2` | `2026-11-23T20:30:33.194Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10113` | Yes (`8b2607ac...`) |
+| `CYCLE-20261123-07NV` | `2026-11-23T20:30:43.915Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9969` | Yes (`2c55dd0b...`) |

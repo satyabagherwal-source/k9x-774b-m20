@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T19:51:24.234Z",
-    "lastVerified": "2026-11-23T19:51:24.234Z",
+    "lastChecked": "2026-11-23T20:30:38.693Z",
+    "lastVerified": "2026-11-23T20:30:38.693Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T20:22:12.799Z",
-    "lastVerified": "2026-11-23T20:22:12.799Z",
+    "lastChecked": "2026-11-23T20:30:47.249Z",
+    "lastVerified": "2026-11-23T20:30:47.249Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -453,22 +453,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "smallstep-cli": {
-    "name": "cli",
+    "name": "smallstep/cli",
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T16:28:45.908Z",
-    "lastVerified": "2026-11-23T16:28:45.908Z",
+    "lastChecked": "2026-11-23T20:30:43.112Z",
+    "lastVerified": "2026-11-23T20:30:43.112Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
-    "contentHash": "f75b8123630faff29b2817e7c0bcb2a9095e18a4bbd2ddaa2033c0cfa8ee5e60",
+    "contentHash": "2c55dd0b0ee93563ec8c6c2026d09af04440f3ab0748a81ea889b40bb28604ee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "537c15c1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -1508,8 +1507,8 @@
     "officialUrl": "https://github.com/goharbor/harbor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T19:31:00.281Z",
-    "lastVerified": "2026-11-22T19:31:00.281Z",
+    "lastChecked": "2026-11-23T20:30:31.403Z",
+    "lastVerified": "2026-11-23T20:30:31.403Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goharbor-harbor",
@@ -6869,9 +6868,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-22T18:35:26.336Z",
+    "lastChecked": "2026-11-23T20:30:36.376Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-22T18:35:26.336Z"
+    "lastVerified": "2026-11-23T20:30:36.376Z"
   },
   "alexpasmantier-television": {
     "name": "television",
@@ -7779,22 +7778,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zvec-ai-zvec-grep": {
-    "name": "zvec-grep",
+    "name": "zvec-ai/zvec-grep",
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T09:25:45.757Z",
-    "lastVerified": "2026-11-22T09:25:45.757Z",
+    "lastChecked": "2026-11-23T20:30:32.111Z",
+    "lastVerified": "2026-11-23T20:30:32.111Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "c341c2348112e098a2d012da0b958524f492efe09c8689eb3138e4e81c326238",
+    "contentHash": "8b2607ac00accefcb13f086f33da8824f782418b9154fa099859bdc64830051e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ad737d20"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",
@@ -7936,12 +7934,12 @@
     "officialUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T12:40:25.725Z",
-    "lastVerified": "2026-11-19T12:40:25.725Z",
+    "lastChecked": "2026-11-23T20:30:26.510Z",
+    "lastVerified": "2026-11-23T20:30:26.510Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "e6e90b545a91846a49ef8ccec7ab2a2e8e99f0ab2a71efe4bad7d042bae22586",
+    "contentHash": "787020d3f786e0c430358663063cb5b36b89d13b581953be6fa35cd998ad81b8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11250,9 +11248,9 @@
   "jtrivedi-wave": {
     "name": "Wave",
     "officialUrl": "https://github.com/jtrivedi/Wave",
-    "lastChecked": "2026-11-20T21:38:47.636Z",
+    "lastChecked": "2026-11-23T20:30:28.766Z",
     "revisionIdentifier": "27b7e1d2",
-    "lastVerified": "2026-11-20T21:38:47.636Z"
+    "lastVerified": "2026-11-23T20:30:28.766Z"
   },
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",

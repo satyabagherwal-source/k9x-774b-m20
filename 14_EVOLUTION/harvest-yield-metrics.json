@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:22:09.313Z",
-  "total_cycles_completed": 11839,
-  "total_learnings_persisted": 11839,
-  "total_rules_promoted": 10953,
+  "last_updated": "2026-11-23T20:30:43.925Z",
+  "total_cycles_completed": 11842,
+  "total_learnings_persisted": 11842,
+  "total_rules_promoted": 10955,
   "history": [
-    {
-      "timestamp": "2026-11-23T00:31:31.732Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T00:39:27.110Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T00:48:19.695Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T00:48:32.775Z",
       "repository": "lancedb/lancedb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T20:22:09.313Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:30:27.298Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:30:33.205Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:30:43.925Z",
+      "repository": "smallstep/cli",
+      "learningId": "learn-github-smallstep-cli",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
