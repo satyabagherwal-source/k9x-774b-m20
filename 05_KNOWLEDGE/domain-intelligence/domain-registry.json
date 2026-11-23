@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T06:37:48.917Z",
+  "last_updated": "2026-11-23T06:45:59.466Z",
   "total_records": 2398,
   "domains": {
     "A": {
@@ -8168,8 +8168,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "9611dba760bac91400524171af5e8c68aa58a8652f7199b5d005e2947fb3cf41",
-      "created_at": "2026-11-23T06:22:35.859Z"
+      "content_hash": "34cc479065cab75e8530cbacd3ee2092c2bec21b2216102b1a958f7b7fd71415",
+      "created_at": "2026-11-23T06:45:59.466Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12656,8 +12656,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "0ef21b6d83b9ad0b1962a7be599fa151b2b13eadf8887a60c4505101001568a5",
-      "created_at": "2026-11-22T04:39:05.247Z"
+      "content_hash": "6a7ee795611ff68653da562d55750c5eb22de6fd442ad7779d0c3aaa61d18f69",
+      "created_at": "2026-11-23T06:45:54.625Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -12998,8 +12998,8 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-2-research-knowledge-intelligence-zai-org-glm-5-2-core-invarian.md",
       "repository": "zai-org/GLM-5.2",
-      "content_hash": "becc7c624817a11b017f3f9004f4e098d196cccd18f49cb292fdb51ab4adfe61",
-      "created_at": "2026-11-18T21:23:13.579Z"
+      "content_hash": "c46cd7a1d93399b1003d794f3c5c3a6d22ac8c1401b3383a11bb093ae8c52452",
+      "created_at": "2026-11-23T06:45:40.050Z"
     },
     "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants",
@@ -13067,8 +13067,8 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-2-learnings-research-knowledge-intelligence-hf-zai-org-glm-5-2-.md",
       "repository": "hf-zai-org-glm-5.2-learnings",
-      "content_hash": "af132f3b39cd60c1490e141ed3ededf5cfd031147cddc036b97b4706829bfc24",
-      "created_at": "2026-11-18T21:23:26.817Z"
+      "content_hash": "6a582f60f4d7a327fafa931df4612de17c5884758bc1b07e49db07b74481e5f0",
+      "created_at": "2026-11-23T06:45:57.848Z"
     },
     "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants",
@@ -21776,8 +21776,8 @@
       "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-learnings-technical-construction-intelligence-lioensky-vcpto.md",
       "repository": "lioensky-vcptoolbox-learnings",
-      "content_hash": "ccf192e17a772845db066a7e3386f6de0f9d947a6461413212ce725851f28a07",
-      "created_at": "2026-11-22T04:39:43.648Z"
+      "content_hash": "887542488d68b27eb507947bb8f7bc5ac8aec1d4883a1bb08930f38d78067561",
+      "created_at": "2026-11-23T06:45:58.481Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i",

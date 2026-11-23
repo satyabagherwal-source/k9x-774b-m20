@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T06:37:49.148Z",
+  "last_updated": "2026-11-23T06:45:59.789Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9611dba760bac91400524171af5e8c68aa58a8652f7199b5d005e2947fb3cf41",
+      "content_hash": "34cc479065cab75e8530cbacd3ee2092c2bec21b2216102b1a958f7b7fd71415",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:22:35.859Z"
+      "persisted_at": "2026-11-23T06:45:59.466Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9bc411b9b9be2b38aaafec48affd176996e159e07eca4cfe7cb559d5e98ec74",
+      "content_hash": "3a515bcf868b7bf0f63cd6c13a068f69df13ee008282951ff8b0ecc976923b87",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:22:36.012Z"
+      "persisted_at": "2026-11-23T06:45:59.653Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b8c1bad12011df215899b0bc353df0852f6925ee552d3aa20a3cae6a6685acf",
+      "content_hash": "5c7a9b77541d3981a0becbcd063fb3a2ef967b97e322812c7368c78d91a0adeb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:22:36.138Z"
+      "persisted_at": "2026-11-23T06:45:59.789Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -221779,8 +221779,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "7131e7e4",
-      "content_hash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
+      "source_version": "d824df3c",
+      "content_hash": "e8e731131cfccb4a7fbe6b480b5211e48aa7f2c8496c1059515bd2af924ac772",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -221797,7 +221797,7 @@
         {
           "number": 8822,
           "title": "Empirical Invariant Guard in config.env.example",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 9081,
@@ -221830,7 +221830,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T04:39:04.501Z",
+      "verified_at": "2026-11-23T06:45:53.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221872,10 +221872,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "7131e7e4",
-      "content_hash": "0ef21b6d83b9ad0b1962a7be599fa151b2b13eadf8887a60c4505101001568a5",
+      "source_version": "d824df3c",
+      "content_hash": "6a7ee795611ff68653da562d55750c5eb22de6fd442ad7779d0c3aaa61d18f69",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T04:39:05.247Z"
+      "persisted_at": "2026-11-23T06:45:54.625Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox",
@@ -221884,10 +221884,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "7131e7e4",
-      "content_hash": "922ad02f16c9fc04e94420412f2e62f31d5695ff1eb60d0e9a8ca98d1122052b",
+      "source_version": "d824df3c",
+      "content_hash": "9cfefe62d872aa1b16c85c315ea96c455ac6c30b8c61c62922bae1c11f19ebf9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:39:05.457Z"
+      "persisted_at": "2026-11-23T06:45:54.804Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -222334,7 +222334,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.2",
       "source_version": "hf-zai-org-glm-5.2",
-      "content_hash": "eabb92caaf98d7924476a9999aee6dda906ba32743370f696f9040e24181ee7c",
+      "content_hash": "476f4fd580a9214c9ec5e0ab56c6d27c804731926d8687fc2f4f2b2960dd85ba",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "promoted_rules": [],
@@ -222343,7 +222343,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T21:23:13.168Z",
+      "verified_at": "2026-11-23T06:45:39.601Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222360,9 +222360,9 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.2 Core Invariants",
       "repository": "zai-org/GLM-5.2",
       "source_version": "hf-zai-org-glm-5.2",
-      "content_hash": "becc7c624817a11b017f3f9004f4e098d196cccd18f49cb292fdb51ab4adfe61",
+      "content_hash": "c46cd7a1d93399b1003d794f3c5c3a6d22ac8c1401b3383a11bb093ae8c52452",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:23:13.579Z"
+      "persisted_at": "2026-11-23T06:45:40.050Z"
     },
     "learn-github-loft-sh-vcluster": {
       "learning_id": "learn-github-loft-sh-vcluster",
@@ -222563,9 +222563,9 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.2-learnings Core Invariants",
       "repository": "hf-zai-org-glm-5.2-learnings",
       "source_version": "HEAD",
-      "content_hash": "af132f3b39cd60c1490e141ed3ededf5cfd031147cddc036b97b4706829bfc24",
+      "content_hash": "6a582f60f4d7a327fafa931df4612de17c5884758bc1b07e49db07b74481e5f0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:23:26.817Z"
+      "persisted_at": "2026-11-23T06:45:57.848Z"
     },
     "candidate_directive-cli-deprecate-docker-login-instead-of-reading-image-pull-secrets": {
       "item_id": "candidate_directive-cli-deprecate-docker-login-instead-of-reading-image-pull-secrets",
@@ -248927,9 +248927,9 @@
       "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "ccf192e17a772845db066a7e3386f6de0f9d947a6461413212ce725851f28a07",
+      "content_hash": "887542488d68b27eb507947bb8f7bc5ac8aec1d4883a1bb08930f38d78067561",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T04:39:43.648Z"
+      "persisted_at": "2026-11-23T06:45:58.481Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings",
@@ -248939,9 +248939,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "87fd25d4d893dba55b3ff5e739329fa045e5bc224bc58e69be3e3bdec4d7b4c9",
+      "content_hash": "b729711ba3f5308460a445152807ab0304593badd29e84a7288614c56008af5e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:39:43.893Z"
+      "persisted_at": "2026-11-23T06:45:58.653Z"
     },
     "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
@@ -264897,25 +264897,25 @@
       "rule_number": 8822,
       "title": "Empirical Invariant Guard in config.env.example",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "3c8cd08f",
+      "source_version": "d824df3c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T00:10:56.380Z"
+      "verified_at": "2026-11-23T06:45:53.995Z"
     },
     "candidate_directive-empirical-invariant-guard-in-config-env-example": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-config-env-example",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SG1T-empirical-invariant-guard-in-config-env-example.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JKBQ-empirical-invariant-guard-in-config-env-example.md",
       "title": "Empirical Invariant Guard in config.env.example",
-      "repository": "lioensky/VCPToolBox",
-      "source_version": "3c8cd08f",
-      "content_hash": "f6ca0712986dda721c48b6f589ef4192c70f7802d60d62846072b25694cb2ce1",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d794d56f86612e5b8b49816f8a9e5aa9ef5dda6dfa74217ca081f714fc183dff",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T00:10:56.708Z"
+      "persisted_at": "2026-11-23T06:45:58.313Z"
     },
     "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic": {
       "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
@@ -310095,13 +310095,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PI2J-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JL34-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6be05ebe15b699d3d058ad6e5e31347451312f11e7d4814be23bad81cf8af3d2",
+      "content_hash": "906819fe7fd4c481718d127b85818b5d1b75696c2b74486a3261146ef5013cdf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:22:35.710Z"
+      "persisted_at": "2026-11-23T06:45:59.299Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T06:37:42.915Z",
+  "last_updated": "2026-11-23T06:45:54.229Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1205,14 +1205,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-2",
-      "content_hash": "eabb92caaf98d7924476a9999aee6dda906ba32743370f696f9040e24181ee7c",
-      "verified_at": "2026-11-18T21:23:13.402Z",
+      "content_hash": "476f4fd580a9214c9ec5e0ab56c6d27c804731926d8687fc2f4f2b2960dd85ba",
+      "verified_at": "2026-11-23T06:45:39.850Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T21:23:13.402Z"
+      "last_updated": "2026-11-23T06:45:39.850Z"
     },
     "stabilityai/stable-diffusion-3-medium": {
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
-      "verified_at": "2026-11-22T04:39:04.763Z",
+      "content_hash": "e8e731131cfccb4a7fbe6b480b5211e48aa7f2c8496c1059515bd2af924ac772",
+      "verified_at": "2026-11-23T06:45:54.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T04:39:04.763Z"
+      "last_updated": "2026-11-23T06:45:54.229Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",

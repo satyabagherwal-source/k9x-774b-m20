@@ -12287,3 +12287,5 @@
 | `CYCLE-20261123-PE1K` | `2026-11-23T06:22:30.488Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10033` | Yes (`d3bcd9d9...`) |
 | `CYCLE-20261123-8P9L` | `2026-11-23T06:37:31.497Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`91ec00fb...`) |
 | `CYCLE-20261123-8Y29` | `2026-11-23T06:37:42.897Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`4c6db895...`) |
+| `CYCLE-20261123-J62L` | `2026-11-23T06:45:39.837Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`476f4fd5...`) |
+| `CYCLE-20261123-JH5Z` | `2026-11-23T06:45:54.215Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8822` | Yes (`e8e73113...`) |

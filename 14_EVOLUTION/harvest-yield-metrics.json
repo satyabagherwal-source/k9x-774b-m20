@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T06:37:42.910Z",
-  "total_cycles_completed": 11684,
-  "total_learnings_persisted": 11684,
-  "total_rules_promoted": 10864,
+  "last_updated": "2026-11-23T06:45:54.226Z",
+  "total_cycles_completed": 11686,
+  "total_learnings_persisted": 11686,
+  "total_rules_promoted": 10865,
   "history": [
-    {
-      "timestamp": "2026-11-22T11:35:11.581Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T11:47:43.227Z",
-      "repository": "nex-agi/Nex-N2.6",
-      "learningId": "learn-huggingface-nex-agi-nex-n2-6",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T11:47:50.683Z",
       "repository": "tw93/Mole",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T06:37:42.910Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:45:39.847Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:45:54.226Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

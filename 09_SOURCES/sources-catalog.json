@@ -925,8 +925,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceVersion": "hf-zai-org-glm-5.2",
     "license": "Open-Source",
-    "contentHash": "eabb92caaf98d7924476a9999aee6dda906ba32743370f696f9040e24181ee7c",
-    "lastHarvestedAt": "2026-11-18T21:23:13.395Z",
+    "contentHash": "476f4fd580a9214c9ec5e0ab56c6d27c804731926d8687fc2f4f2b2960dd85ba",
+    "lastHarvestedAt": "2026-11-23T06:45:39.841Z",
     "learningId": "learn-huggingface-zai-org-glm-5-2"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "7131e7e4",
+    "sourceVersion": "d824df3c",
     "license": "NOASSERTION",
-    "contentHash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
-    "lastHarvestedAt": "2026-11-22T04:39:04.752Z",
+    "contentHash": "e8e731131cfccb4a7fbe6b480b5211e48aa7f2c8496c1059515bd2af924ac772",
+    "lastHarvestedAt": "2026-11-23T06:45:54.220Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {

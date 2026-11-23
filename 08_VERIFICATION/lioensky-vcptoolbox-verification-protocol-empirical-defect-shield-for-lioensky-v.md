@@ -4,22 +4,22 @@
 {
   "source_repository": "lioensky/VCPToolBox",
   "source_url": "https://github.com/lioensky/VCPToolBox",
-  "source_version": "7131e7e4",
+  "source_version": "d824df3c",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T04:39:05.032Z",
+  "timestamp": "2026-11-23T06:45:54.453Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lioensky-vcptoolbox",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `7131e7e4`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T04:39:05.032Z`  
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `d824df3c`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T06:45:54.453Z`  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lioensky/VCPToolBox` (Commit: `7131e7e4`)
+- **Target Repository**: `lioensky/VCPToolBox` (Commit: `d824df3c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T04:39:03.341Z  
+> **Harvest Timestamp**: 2026-11-23T06:45:53.467Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2452 stars
+- **Stars / Engagement**: 2455 stars
 
 ---
 
@@ -1796,13 +1796,13 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #629** (2026-11-21): **[建议] AdminPanel 占位符预览不展开提示词内部的 {{Var*}}，与模型实际注入内容不一致**
-  *Symptoms*: ## 现象  控制中心 → 占位符面板里，`{{Var*}}` / `{{Tar*}}` 的预览内容直接显示文件原文。当提示词文件内部引用了其他路径变量时，预览里保留字面 `{{VarVCPToolBoxPath}}`：  ``` 获取每日新闻：file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md 获取天气预报：file://{{VarVCPToolBoxPath}}\Plugin\WeatherReporter\weather_cache.txt ```  （以上来自 `TVStxt/toollite.txt`，该文件本身就由 `{{VarToolLite}}` 注入）  而实际注入给模型时这一层会被解析成真实路径。**面板核对时看到的内容与模型实际收到的内容不一致。**  ## 根因  三个预览端点都只调 `tvsManager.getContent()` 取文件原文，没有再往下走一层变量替换。  ### 1. `routes/admin/placeholders.js:113`（列表接口 `GET /placeholders`，`env_tar_var` 分支）  ```js } else if (raw.toLowerCase().endsWith('.txt')) {     try {         preview = await tvsManager.getContent(raw);     } catch (e) { preview = `[读取文件失败: ${e.message}]`; } } ```  ### 2. `routes/admin/placeholders.js:132`（同一接口，`env_sar` 分支）  ```js } else if (raw.toLowerCase().endsWith('.txt')) {     try {         preview = await tvsManager.getContent(raw);     } catch (e) { preview = raw || '[按模型注入]'; } } ```  ### 3. `routes/admin/placeholders.js:232`（详情接口 `GET /placeholders/detail`，`env_tar_var` / `env_sar` 分支）  ```js } else if (envVal.toLowerCase().endsWith('.txt')) {     const tvsManager = require('../../modules/tvsManager');     value = await tvsManager.getContent(envVal); } ```  `modules/tvsManager.js:64 async getContent(filename)` 只做三件事：查 `contentCache` → `fs.readFile(path.join(TVS_DIR, filename), 'utf8')` → 写缓存返回。**它按设计只负责「读文件」，不做任何变量替换。**  ### 对比：注入路径确实多走一层  `modules/messageProcessor.js:967-1001`（`role === 'system'` 时的 `Var*` / `Tar*` 展开）：  ```js if
-
-- **Issue #627** (2026-11-21): **[建议] saveGroups 并发时直接抛错而非排队，任何新增的落盘调用点都必须自己 catch 吞异常**
-  *Symptoms*: ## 现象  `SemanticGroupManager.saveGroups()` 用 `this.saveLock` 做并发保护，但实现方式是**撞车直接抛错**，而不是排队等待：  ```js // Plugin/RAGDiaryPlugin/SemanticGroupManager.js:196 async saveGroups() {     if (this.saveLock) {         const busyError = new Error('A save operation is already in progress. Please wait a moment and try again.');         console.warn(`[SemanticGroup] ${busyError.message}`);         throw busyError;     }     this.saveLock = true;     // …写临时文件 → 原子 rename…     finally {         this.saveLock = false;     } } ```  后到的调用方拿到的是一个异常，而不是「等前一次写完」或「前一次写完后合并我的改动」。  ## 为什么这是个问题  `saveGroups()` 里真正的写盘动作是临时文件 + `fs.rename`（`:221` / `:224`），耗时完全取决于磁盘。这个窗口内任何第二次调用都会失败。  而这条方法并不只有管理面板在用，现有两个调用点都在**可能同时发生**的路径上：  | 调用点 | 所在方法 | 触发场景 | |---|---|---| | `:183` | `loadGroups()` | 插件初始化时发现需要迁移/清理，重写一次 | | `:389` | `precomputeGroupVectors()` | 检测到组词元变化、重算向量后 |  `precomputeGroupVectors()` 会在一次调用里**循环处理所有组**（`:326` `for (const [groupName, groupData] of Object.entries(this.groups))`），每组可能 `await this.ragPlugin.getSingleEmbeddingCached(...)` 打一次 embedding 接口。组多时这个函数能跑几十秒。如果这段时间里初始化路径（`:183`）或另一个入口也走到写盘，后到者必然抛错。  上层的 `updateGroupsData()`（`:240`）把异常原样 re-throw 给路由（`:268` `throw error; // Re-throw the error to be caught by the route handler`），最终表现是管理面板保存失败，用户看到「A save operation is already in progress」这种提示——它不是在告诉用户「稍后再试就行」，而是在暴露内部锁状态。  ## 实测复现  在隔离副本上同时发起两次保存：  ```js const results = await Promise.allSettled([mgr.saveGroups(), mgr.saveGroups()]); ```  实际输出：  ``` [SemanticGroup] A save operation is alread
+- **Issue #634** (2026-11-22): **feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口**
+  *Symptoms*: 外部 agent 可以通过 `POST /v1/memory/search` 使用已有的浪潮记忆检索，不需要 VCP 主 Key，也不需要直接访问索引。  - 默认不注册；管理员用 `MEMORY_READ_GRANTS` 将独立只读令牌的 SHA-256 摘要映射到允许读取的日记库。鉴权和全量范围检查均在嵌入与检索之前。已有 API 的鉴权不变。 - 发送 `Authorization: Bearer <read-token>` 和 `{"query":"会议决定了什么？","diaries":["ExampleDiary"],"k":5}`。返回 `direct` 命中数组，仅包含库名、文件名、正文和分数信息。 - 复用 RAGDiaryPlugin 的 `getContextBridge().embedText/retrieveDiary`；不另建索引、不改检索算法、不引入客户端依赖。  验证：`node --test tests/memorySearch.test.js tests/memoSingleTrack.test.js tests/timelineRiverMemo.test.js`（16 passed，0 skipped）。路由测试使用回环 Express 和合成检索结果，不依赖线上凭证或私有日记库。
   **Post-Mortem & Fix Analysis**:
-  > fix
+  > 这个是走的管理员账号密码的router鉴权吗？
+
+- **Issue #633** (2026-11-22): **[Bug] Memo 几何训练在小语料下整体失败：标签共现覆盖度不足时 warped 场构建硬报错，导致整轮训练被判 failed**
+  *Symptoms*: ## 问题现象  Memo 几何训练在**标签数量较少**的语料下会整体失败，训练任务被标记为 `failed`，并且失败信息完全没有指向真正的原因。  通过管理面板 `/admin_api/rag-active-full-training` 触发全量训练，任务状态为：  ```json {   "status": "failed",   "phase": "failed",   "failedPhase": "warped-tags",   "error": "MEMO_WARPED_PREPARATION_FAILED: base artifact d8a63ddd3f1b83503cb0ec93419a59c6c51934c7ddbc8354 already published; warped insufficient joint coverage" } ```  关键点：报错里的 `warped insufficient joint coverage` 只是**下游症状**，不是根因。真正的原因是语料里的标签共现关系太少，导致所有标签的「内在残差」都算不出来。  ## 复现（两种语料规模对照）  同一套代码、同一份 `rag_params.json`，只改变语料标签数量：  ### A. 3 个标签 —— 失败  ```json {"status": "failed", "phase": "failed", "failedPhase": "warped-tags",  "error": "MEMO_WARPED_PREPARATION_FAILED: ... warped insufficient joint coverage"} ```  此时 `VectorStore/knowledge_base.sqlite` 中：  ``` tag_intrinsic_residuals:  0 行 tag_intrinsic_residual_status: 3 行   tag_id=1 status=insufficient_neighbors neighbor_count=2   tag_id=2 status=insufficient_neighbors neighbor_count=2   tag_id=3 status=insufficient_neighbors neighbor_count=2 ```  ### B. 14 个标签 —— 成功  ``` status: completed | phase: completed | failedPhase: null computed residuals: 12 status breakdown: [{"status":"insufficient_neighbors","c":2}] ```  ### C. 仓库自身 dailynote 语料（15 个标签）—— 成功  ``` status: completed | phase: completed | failedPhase: null computed residuals: 15 status breakdown: [] ```  即：**只要语料标签数够多就完全正常；小语料 / 新装环境必然失败。**  ## 根因链路  ### 1. 邻居数不足 → 残差不算  `rag_params.json:163`  ```json "geometry": { "local": { "maxNeighbors": 96, "minNei
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1819,1020 +1819,188 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82c0efd4` (2026-11-21)
-**Commit Message**: Merge pull request #623 from infinite-vector/feat/comfyuigen-active-timeout-and-base64memo-trace
+### Incident Patch 1: `d824df3c` (2026-11-22)
+**Commit Message**: Merge pull request #634 from Lutra23/feat/scoped-memory-search
 
-feat(ComfyUIGen,RAGDiaryPlugin): 支持 ComfyUI 进程跟随式活性超时检测与 ::Base64Memo 超栈路径溯源及自适应图像压缩
+feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口
 
-**File**: `Plugin/ComfyUIGen/ComfyUIGen.js` (modified, +165/-17)
+**File**: `config.env.example` (modified, +6/-0)
 ```diff
-@@ -16,6 +16,8 @@ async function loadConfiguration() {
-         COMFYUI_BASE_URL: 'http://localhost:8188',
-         COMFYUI_API_KEY: '',
-         DEBUG_MODE: false,
-+        COMFYUI_MAX_WAIT_MINUTES: 30,
-+        COMFYUI_MISSING_QUEUE_TOLERANCE: 5,
-         workflow: 'text2img_basic'
-     };
-     
-@@ -29,6 +31,9 @@ async function loadConfiguration() {
-             if (userSettings.serverUrl) config.COMFYUI_BASE_URL = userSettings.serverUrl;
-             if (userSettings.apiKey) config.COMFYUI_API_KEY = userSettings.apiKey;
-             if (userSettings.workflow) config.workflow = userSettings.workflow;
-+            if (userSettings.maxWaitMinutes !== undefined) {
-+                config.COMFYUI_MAX_WAIT_MINUTES = resolveNumericArg(userSettings.maxWaitMinutes, config.COMFYUI_MAX_WAIT_MINUTES);
-+            }
-             
-             // Store all user settings for parameter processing
-             config.userSettings = userSettings;
-@@ -43,6 +48,12 @@ async function loadConfiguration() {
-     config.COMFYUI_BASE_URL = process.env.COMFYUI_BASE_URL || config.COMFYUI_BASE_URL;
-     config.COMFYUI_API_KEY = process.env.COMFYUI_API_KEY || config.COMFYUI_API_KEY;
-     config.DEBUG_MODE = (process.env.DEBUG_MODE || config.DEBUG_MODE || 'false').toLowerCase() === 'true';
-+    if (process.env.COMFYUI_MAX_WAIT_MINUTES !== undefined && process.env.COMFYUI_MAX_WAIT_MINUTES !== '') {
-+        config.COMFYUI_MAX_WAIT_MINUTES = resolveNumericArg(process.env.COMFYUI_MAX_WAIT_MINUTES, config.COMFYUI_MAX_WAIT_MINUTES);
-+    }
-+    if (process.env.COMFYUI_MISSING_QUEUE_TOLERANCE !== undefined && process.env.COMFYUI_MISSING_QUEUE_TOLERANCE !== '') {
-+        config.COMFYUI_MISSING_QUEUE_TOLERANCE = Math.max(1, Math.floor(resolveNumericArg(process.env.COMFYUI_MISSING_QUEUE_TOLERANCE, 5)));
-+    }
-     
-     // Required system environment variables
-     config.PROJECT_BASE_PATH = process.env.PROJECT_BASE_PATH;
-@@ -128,7 +139,7 @@ function fillWorkflowParameters(workflow, args, config) {
-     if (JSON.stringify(workflow).includes('{{FACE_PROMPT}}') && typeof facePrompt !== 'string') {
-         throw new Error('face_prompt must be a string.');
-     }
--
-+    
-     // 构建LoRA字符串
-     const lorasString = buildLoRAsString(settings.loras || []);
-     
-@@ -387,32 +398,161 @@ async function queuePrompt(workflow, config) {
-     };
- }
+@@ -19,6 +19,12 @@ API_URL=NEWAPI_URL_SUCH_AS_http://127.0.0.1:3000
  
--// 检查队列状态
-+// 检查历史完成状态
- async function checkQueueStatus(promptId, config) {
-     const comfyuiAxios = axios.create({
-         baseURL: config.COMFYUI_BASE_URL,
-+        headers: config.COMFYUI_API_KEY ? { 'Authorization': `Bearer ${config.COMFYUI_API_KEY}` } : {},
-         timeout: 10000
-     });
-     
-     const response = await comfyuiAxios.get(`/history/${promptId}`);
--    return response.data[promptId] || null;
-+    return (response.data && response.data[promptId]) ? response.data[promptId] : null;
- }
- 
--// 等待生成完成
--async function waitForCompletion(promptId, config, maxAttempts = 60, interval = 3000) {
--    for (let attempt = 0; attempt < maxAttempts; attempt++) {
--        debugLog(`Checking queue status, attempt ${attempt + 1}/${maxAttempts}`);
--        
--        const history = await checkQueueStatus(promptId, config);
--        if (history && history.status && history.status.completed) {
--            debugLog('Generation completed!');
--            return history;
-+// 检查 ComfyUI 实时运行队列 (/queue)，判断 promptId 是否仍在 running 或 pending 中推进
-+async function checkActiveQueue(promptId, config) {
-+    const comfyuiAxios = axios.create({
-+        baseURL: config.COMFYUI_BASE_URL,
-+        headers: config.COMFYUI_API_KEY ? { 'Authorization': `Bearer ${config.COMFYUI_API_KEY}` } : {},
-+        timeout: 10000
-+    });
-+
-+    const response = await comfyuiAxios.get('/queue');
-+    const data = response.data || {};
-+    const runningList = Array.isArray(data.queue_running) ? data.queue_running : [];
-+    const pendingList = Array.isArray(data.queue_pending) ? data.queue_pending : [];
-+
-+    const matchesPromptId = (item) => {
-+        if (!item) return false;
-+        if (Array.isArray(item)) return item[1] === promptId || item.includes(promptId);
-+        if (typeof item === 'object') return item.prompt_id === promptId || item.id === promptId;
-+        return item === promptId;
-+    };
-+
-+    const inRunning = runningList.some(matchesPromptId);
-+    const inPending = pendingList.some(matchesPromptId);
-+
-+    return {
-+        inRunning,
-+        inPending,
-+        isActive: inRunning || inPending,
-+        runningCount: runningList.length,
-+        pendingCount: pendingList.length
-+    };
-+}
-+
-+// 从 ComfyUI history.status 中提取节点执行错误详情
-+function extractHistoryError(history) {
-+    if (!history || !history.status) return null;
-+    const status = history.status;
-+    const isError = status.status_str === 'error' ||
-+        (Array.isArray(status.messages) && status.messages.some(m => Array.isArray(m) && (m[0] === 'execution_error' || m[0] === 'execution_interrupted')));
-+    if (!isError) return null;
-+
-+    if (Array.isA
+ PORT=6005
+ Key=YOUR_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
++# Optional read-only RiverMemo API (POST /v1/memory/search). Empty = not registered.
++# Use dedicated random bearer tokens, never Key. Store only each token's lowercase SHA-256 digest here.
++# MEMORY_READ_GRANTS='{"<64 hex digest>":["ExampleDiary"]}'
++# HTTPS request: Authorization: Bearer <read token>; JSON: {"query":"what did we decide?","diaries":["ExampleDiary"],"k":5}
++# Response: {"direct":[{"diary":"ExampleDiary","file":"note.md","text":"...","score":0.8,"scoreSource":"retrieval"}]}
++MEMORY_READ_GRANTS=
+ Image_Key=YOUR_IMAGE_KEY_SUCH_AS_Images_aBcDeFgHiJk
+ File_Key=YOUR_FILE_KEY_SUCH_AS_123456
+ # VCP服务器WebSocket鉴权，用于VCP面板和分布式服务器之间的实时通信。
 ```
 
-**File**: `Plugin/ComfyUIGen/config.env.example` (modified, +3/-0)
+**File**: `routes/memorySearch.js` (added, +48/-0)
 ```diff
-@@ -22,6 +22,9 @@
- # 调试模式（显示详细日志）
- # DEBUG_MODE=false
- 
-+# ComfyUI 绘图进程处于活跃推进态(/queue running/pending)时的最大兜底等待分钟数（默认 30 分钟；重型视频工作流可设为 60~120，设为 0 则只要 ComfyUI 仍在推进便不超时）
-+# COMFYUI_MAX_WAIT_MINUTES=30
-+
- # ==========================================
- # 用户配置通过前端界面管理，包括：
- # - LoRA模型选择和强度设置
-```
-
-**File**: `Plugin/ComfyUIGen/plugin-manifest.json.block` (modified, +7/-2)
-```diff
-@@ -12,7 +12,7 @@
-   },
-   "communication": {
-     "protocol": "stdio",
--    "timeout": 300000
-+    "timeout": 7200000
-   },
-   "configSchema": {
-     "COMFYUI_BASE_URL": {
-@@ -29,13 +29,18 @@
-       "type": "boolean",
-       "description": "是否启用调试模式，显示详细执行日志",
-       "default": false
-+    },
-+    "COMFYUI_MAX_WAIT_MINUTES": {
-+      "type": "number",
-+      "description": "ComfyUI 处于活跃排队或生图推进时的最大兜底等待分钟数（默认30分钟，长视频工作流可调至60-120，设为0则只要进程活跃永不超时）",
-+      "default": 30
-     }
-   },
-   "capabilities": {
-     "invocationCommands": [
-       {
-         "commandIdentifier": "ComfyUIGenerateImage",
--        "description": "调用此工具通过 ComfyUI 生成图像，支持配置默认值及单次调用参数覆盖。\n\n📋 **调用格式**:\n\n\n⚠️ **覆盖规则**:\n- 单次调用参数优先于 comfyui-settings.json 默认值。\n- `lora_name` 不传：保留工作流内置的 LoraLoader 设置。\n- `lora_name` 传实际文件名：替换节点式 LoRA，并可用权重参数控制。\n- `lora_name` 显式传空字符串：自动绕过并移除工作流中的 LoraLoader。\n- 用户配置中的 loras 数组仍会作为提示词 token 拼接；它与节点式 LoraLoader 是两套机制。",
-+        "description": "调用此工具通过 ComfyUI 生成或超分图像，支持配置默认值及单次调用参数覆盖。\n\n📋 **调用格式与覆盖规则**:\n- 单次调用参数优先于 comfyui-settings.json 默认值。\n- `workflow`: 支持 `AnimaEZGen`(极速直出)、`AnimaEnhanced`(4x超分+FaceDetailer面修)、`AnimeSharp`(免prompt纯图片超分，需传 `image` 与可选 `resize_scale`)、`qwen21gen`、`qwen21edit` 等。\n- `resize_scale`: 缩放倍率（AnimaEnhanced 默认 1，AnimeSharp 默认 2，可传 1.5、2、4 等正数）。\n- `face_prompt`: AnimaEnhanced 专用独立面部重绘提示词（默认 detailed glassy eyes, smooth porcelain skin）。\n- `lora_name`: 不传保留内置设置；传文件名替换 LoRA；显式传空字符串 \"\" 自动绕过并移除 LoraLoader。",
-         "example": "<<<[TOOL_REQUEST]>>>\nmaid:「始」CreativeAssistant「末」,\ntool_name:「始」ComfyUIGen「末」,\nworkflow:「始」AnimaEZGen「末」,\nprompt:「始」1girl, silver hair, blue eyes, cinematic anime illustration「末」,\nnegative_prompt:「始」bad hands, blurry「末」,\nwidth:「始」1024「末」,\nheight:「始」1024「末」,\nsteps:「始」24「末」,\ncfg:「始」4「末」,\nsampler:「始」euler_ancestral「末」,\nscheduler:「始」simple「末」,\nseed:「始」-1「末」,\nlora_name:「始」anima_rendering_detailer_base10.safetensors「末」,\nlora_strength:「始」0.4「末」,\nlora_clip_strength:「始」1.0「末」\n<<<[END_TOOL_REQUEST]>>>"
-       }
-     ]
-```
-
-**File**: `Plugin/RAGDiaryPlugin/AttachmentMemoUtils.js` (modified, +238/-10)
-```diff
-@@ -4,6 +4,22 @@ const fs = require('fs').promises;
- const axios = require('axios');
- const mime = require('mime-types');
- 
-+let sharpModule = null;
-+function getSharp() {
-+    if (sharpModule !== null) return sharpModule;
-+    try {
-+        sharpModule = require('sharp');
-+    } catch {
-+        sharpModule = false;
-+    }
-+    return sharpModule || null;
-+}
-+
-+const DEFAULT_MAX_SIZE_MB = 20;
-+const DEFAULT_COMPRESS_THRESHOLD_MB = 4;
-+const DEFAULT_COMPRESS_MAX_DIMENSION = 2048;
-+const DEFAULT_COMPRESS_QUALITY = 85;
-+
- /**
-  * 从召回文本中提取可作为 Base64Memo 注入的附件链接。
-  * 支持 http / https / file 协议，并排除表情包、emoji、sticker 路径。
-@@ -29,49 +45,261 @@ function extractAttachments(text) {
- }
- 
- /**
-- * 获取链接内容并转为 data URI base64。
-+ * 规范化日记来源路径为 file:/// 超栈追踪格式。
-+ *
-+ * @param {object} entry
-+ * @param {string} [fallbackDiaryName]
-+ * @returns {{ sourcePath: string, diaryName: string }}
-+ */
-+function resolveEntrySourceMeta(entry, fallbackDiaryName = '') {
-+    const rawPath = entry?.fullPath || entry?.sourceFile || entry?.path || '';
-+    const diaryName = String(entry?.dbName || fallbackDiaryName || '').trim();
-+    if (!rawPath) {
-+        return { sourcePath: '', diaryName };
-+    }
-+    const normalized = String(rawPath).replace(/\\/g, '/').trim();
-+    const sourcePath = normalized.startsWith('file://')
-+        ? normalized
-+        : `file:///${normalized.replace(/^\/+/, '')}`;
-+    return { sourcePath, diaryName };
-+}
-+
-+/**
-+ * 从结构化检索结果数组或格式化文本中提取带日记来源路径的附件列表。
-+ *
-+ * @param {Array<object>} results
-+ * @param {string} [fallbackText]
-+ * @param {string} [diaryName]
-+ * @returns {Array<{ url: string, sourcePath: string, diaryName: string }>}
-+ */
-+function extractAttachmentsFromResults(results, fallbackText = '', diaryName = '') {
-+    const items = [];
-+    const seenInBatch = new Set();
-+
-+    if (Array.isArray(results) && results.length > 0) {
-+        for (const entry of results) {
-+            const entryText = entry?.text || '';
-+            const urls = extractAttachments(entryText);
-+            if (urls.length === 0) continue;
-+            const { sourcePath, diaryName: resolvedDiary } = resolveEntrySourceMeta(entry, diaryName);
-+            for (const url of urls) {
-+                if (seenInBatch.has(url)) continue;
-+                seenInBatch.add(url);
-+                items.push({
-+                    url,
-+                    sourcePath,
-+                    diaryName: resolvedDiary
-+                });
-+            }
-+        }
-+    }
-+
-+    if (items.length === 0 && fallbackText) {
-+        // 回退：从格式化后的文本块中按段落匹配紧随其后的 [路径: file:///...]
-+        const lines = String(fallbackText).split(/\r?\n/);
-+        let pendingUrls = [];
-+        for (const line of lines) {
-+            const pathMatch = line.match(/\[路径:\s*(file:\/\/\/[^\]]+)\]/i);
-+            if (pathMatch && pendingUrls.length > 0) {
-+                const sourcePath = pathMatch[1].trim();
-+                for (const url of pendingUrls) {
-+                    if (seenInBatch.has(url)) continue;
-+                    seenInBatch.add(url);
-+                    items.push({ url, sourcePath, diaryName: String(diaryName || '').trim() });
-+                }
-+                pendingUrls = [];
-+                continue;
-+            }
-+            const lineUrls = extractAttachments(line);
-+            if (lineUrls.length > 0) {
-+                pendingUrls.push(...lineUrls);
-+            }
-+        }
-+        for (const url of pendingUrls) {
-+            if (seenInBatch.has(url)) continue;
-+            seenInBatch.add(url);
-+            items.push({ url, sourcePath: '', diaryName: String(diaryName || '').trim() });
-+        }
-+    }
-+
-+    return items;
-+}
-+
-+function formatSizeMB(bytes) {
-+    return `${(bytes / (1024 * 1024)).toFixed(2)}MB`;
-+}
-+
-+/**
-+ * 构建紧邻附件图片的日记溯源与压缩说明文本。
-+ *
-+ * @param {object} meta
-+ * @param {string} [meta.sourcePath]
-+ * @param {string} [meta.diaryName]
-+ * @param {boolean} [meta.compressed]
-+ * @param {number} [meta.originalBytes]
-+ * @param {number} [meta.finalBytes]
-+ * @param {number} [meta.index]
-+ * @param {number} [meta.total]
-+ * @returns {string}
-+ */
-+function formatAttachmentSourceNote(meta = {}) {
-+    const indexPrefix = (Number.isFinite(meta.index) && Number.isFinite(meta.total) && meta.total > 1)
-+        ? `(${meta.index}/${meta.total}) `
-+        : '';
-+    const diaryLabel = meta.diaryName ? `《${meta.diaryName}》` : '';
-+    const pathLabel = meta.sourcePath
-+        ? `${diaryLabel ? ' ' : ''}${meta.sourcePath}`
-+        : (diaryLabel || '日记记忆库');
-+    const compressClause = (meta.compressed && Number.isFinite(meta.originalBytes) && Number.isFinite(meta.finalBytes))
-+        ? `，原图 ${formatSizeMB(meta.originalBytes)} 已自适应压缩至 ${formatSizeMB(meta.finalBytes)}`
-+        : '';
-+
-+    return `[日记召回附件图片${indexPrefix}：源自 ${diaryLabel}${pathLabel}${compressClause}]`;
-+}
-+
-+/**
-+ * 获取附件内容，执行硬上限检查（默认 20MB）与自适应图像瘦身（默认 >4MB 触发压缩），返回详细元数据。
-  *
-  * @param {string} url
-  * @param {object} [options]
-  * @param {Console} [op
-```
-
-**File**: `Plugin/RAGDiaryPlugin/RAGDiaryPlugin.js` (modified, +75/-27)
-```diff
-@@ -1748,23 +1748,40 @@ class RAGDiaryPlugin {
-                 }
-             }
- 
--            // 🌟 V7: 处理收集到的多模态附件
-+            // 🌟 V7: 处理收集到的多模态附件（支持超栈路径溯源、20MB硬上限与4MB自适应压缩紧邻注入）
-             if (collectedAttachments.length > 0) {
-                 // 限制数量，优先最近的（collectedAttachments 是按召回顺序添加的，通常 RAG 结果已经按相关性/时间排序）
-                 const limit = parseInt(process.env.BASE64_MEMO_LIMIT) || this.ragParams?.RAGDiaryPlugin?.base64MemoLimit || 5;
--                const uniqueAttachments = [...new Set(collectedAttachments)].slice(0, limit);
--                const base64DataArray = [];
-+                const uniqueAttachmentMap = new Map();
-+                for (const item of collectedAttachments) {
-+                    const entryObj = typeof item === 'string'
-+                        ? { url: item, sourcePath: '', diaryName: '' }
-+                        : (item && typeof item.url === 'string' ? item : null);
-+                    if (!entryObj || !entryObj.url) continue;
-+                    if (!uniqueAttachmentMap.has(entryObj.url)) {
-+                        uniqueAttachmentMap.set(entryObj.url, entryObj);
-+                    } else {
-+                        const existing = uniqueAttachmentMap.get(entryObj.url);
-+                        if (!existing.sourcePath && entryObj.sourcePath) existing.sourcePath = entryObj.sourcePath;
-+                        if (!existing.diaryName && entryObj.diaryName) existing.diaryName = entryObj.diaryName;
-+                    }
-+                }
-+                const uniqueAttachments = Array.from(uniqueAttachmentMap.values()).slice(0, limit);
-+                const resolvedAttachments = [];
- 
-                 console.log(`[RAGDiaryPlugin] 🌟 V7: 开始处理 ${uniqueAttachments.length} 个多模态附件 (限制: ${limit})`);
- 
--                for (const url of uniqueAttachments) {
--                    const b64 = await this._fetchAsBase64(url);
--                    if (b64) {
--                        base64DataArray.push(b64);
-+                for (const item of uniqueAttachments) {
-+                    const fetched = await this._fetchAttachmentWithMeta(item.url);
-+                    if (fetched && fetched.dataUri) {
-+                        resolvedAttachments.push({
-+                            ...item,
-+                            ...fetched
-+                        });
-                     }
-                 }
- 
--                if (base64DataArray.length > 0) {
-+                if (resolvedAttachments.length > 0) {
-                     // 找到第一个用户消息（楼层最上面那个）。若它此前未因占位符
-                     // 处理而克隆，此处按需克隆，保持输入 messages 完全不可变。
-                     const firstUserIndex = newMessages.findIndex(m => m.role === 'user');
-@@ -1775,28 +1792,43 @@ class RAGDiaryPlugin {
-                             };
-                         }
-                         const firstUserMsg = newMessages[firstUserIndex];
--                        const note = `[召回${base64DataArray.length}个日记多模态数据]`;
- 
-                         if (typeof firstUserMsg.content === 'string') {
--                            const originalText = firstUserMsg.content;
-                             firstUserMsg.content = [
--                                { type: 'text', text: originalText + ' ' + note }
-+                                { type: 'text', text: firstUserMsg.content }
-                             ];
-                         } else if (Array.isArray(firstUserMsg.content)) {
--                            firstUserMsg.content = this._replaceTextInContent(firstUserMsg.content, (text) => {
--                                const trimmed = (text || '').trim();
--                                return trimmed ? `${trimmed} ${note}` : note;
--                            });
-+                            firstUserMsg.content = firstUserMsg.content.slice();
-+                        } else if (firstUserMsg.content && typeof firstUserMsg.content === 'object' && typeof firstUserMsg.content.text === 'string') {
-+                            firstUserMsg.content = [
-+                                { ...firstUserMsg.content, type: 'text' }
-+                            ];
-+                        } else {
-+                            firstUserMsg.content = [];
-                         }
- 
--                        // 添加 base64 数据到 content 数组
--                        for (const b64 of base64DataArray) {
-+                        // 紧邻注入：每张召回附件前紧跟一条标明日记 file:/// 超栈来源路径与半句压缩情形的文本说明
-+                        const totalCount = resolvedAttachments.length;
-+                        resolvedAttachments.forEach((att, idx) => {
-+                            const sourceNote = AttachmentMemoUtils.formatAttachmentSourceNote({
-+                                sourcePath: att.sourcePath,
-+                                diaryName: att.diaryName,
-+                                compressed: att.compressed,
-+                                originalBytes: att.originalBytes,
-+                                finalBytes: att.finalBytes,
-+                                inde
-```
-
-**File**: `Plugin/RAGDiaryPlugin/config.env.example` (modified, +4/-0)
-```diff
-@@ -81,6 +81,10 @@ NativeRerankTimeoutMs=3000
- 
- # ::Base64Memo 语法召回多模态附件的最大数量限制，默认 5
- BASE64_MEMO_LIMIT=5
-+# ::Base64Memo 单张召回附件体积硬上限（单位 MB，默认 20；超过该体积的附件将直接取消召回以节省 Token，设为 0 则不限制）
-+BASE64_MEMO_MAX_SIZE_MB=20
-+# ::Base64Memo 静态图片自适应瘦身阈值（单位 MB，默认 4；超过该阈值且未超硬上限的图片将自动压缩为高清 WebP 并附带半句压缩情形说明，设为 0 则关闭压缩）
-+BASE64_MEMO_COMPRESS_THRESHOLD_MB=4
- 
- # 上下文折叠 SQLite 迷你数据库存储上限
- # 最大保存条目数，默认 200；达到上限时按 updated_at 最旧优先 LRU 淘汰
-```
-
----
-
-### Incident Patch 2: `7131e7e4` (2026-11-21)
-**Commit Message**: fix3
-
-**File**: `Plugin/RAGDiaryPlugin/RAGDiaryPlugin.js` (modified, +3/-1)
-```diff
-@@ -645,6 +645,7 @@ class RAGDiaryPlugin {
-         this.cacheManager.startCleanup('embedding');
-         this.cacheManager.startCleanup('aimemo');
- 
-+        this.semanticGroups.resumeStatsFlush();
-         console.log('[RAGDiaryPlugin] 插件初始化完成，统一缓存系统已启动');
-     }
- 
-@@ -6277,7 +6278,7 @@ class RAGDiaryPlugin {
-         });
-     }
- 
--    shutdown() {
-+    async shutdown() {
-         if (this.ragParamsReloadTimer) {
-             clearTimeout(this.ragParamsReloadTimer);
-             this.ragParamsReloadTimer = null;
-@@ -6302,6 +6303,7 @@ class RAGDiaryPlugin {
-             this.foldingStore = null;
-         }
- 
-+        await this.semanticGroups.shutdown();
-         console.log(`[RAGDiaryPlugin] 插件已关闭`);
-     }
- }
-```
-
-**File**: `Plugin/RAGDiaryPlugin/SemanticGroupManager.js` (modified, +56/-11)
-```diff
-@@ -4,17 +4,23 @@ const fs = require('fs').promises;
- const path = require('path');
- const crypto = require('crypto');
- 
-+const STATS_FLUSH_INTERVAL_MS = 60_000;
-+
- class SemanticGroupManager {
-     constructor(ragPlugin) {
-         this.ragPlugin = ragPlugin; // 引用 RAGDiaryPlugin 实例
-         this.groups = {};
-         this.config = {};
-         this.groupVectorCache = new Map(); // 使用 Map 存储向量缓存
--        this.saveLock = false; // 添加保存锁以防止并发写入
-+        this._saveTail = Promise.resolve();
-+        this._statsRevision = 0;
-+        this._savedStatsRevision = 0;
-+        this._statsFlushTimer = null;
-+        this._stopping = false;
-         this.groupsFilePath = path.join(__dirname, 'semantic_groups.json');
-         this.vectorsDirPath = path.join(__dirname, 'semantic_vectors');
-         this.editFilePath = path.join(__dirname, 'semantic_groups.edit.json');
--        this.initialize();
-+        this._ready = this.initialize();
-     }
- 
-     async initialize() {
-@@ -193,13 +199,15 @@ class SemanticGroupManager {
-         }
-     }
- 
--    async saveGroups() {
--        if (this.saveLock) {
--            const busyError = new Error('A save operation is already in progress. Please wait a moment and try again.');
--            console.warn(`[SemanticGroup] ${busyError.message}`);
--            throw busyError;
--        }
--        this.saveLock = true;
-+    saveGroups() {
-+        const save = this._saveTail.then(() => this._writeGroups());
-+        // 当前调用者仍收到原始失败；失败的写入不能阻塞后续保存。
-+        this._saveTail = save.catch(() => {});
-+        return save;
-+    }
-+
-+    async _writeGroups() {
-+        const statsRevision = this._statsRevision;
- 
-         const tempFilePath = this.groupsFilePath + `.${crypto.randomUUID()}.tmp`;
-         try {
-@@ -219,6 +227,7 @@ class SemanticGroupManager {
- 
-             // 2. 成功后，重命名临时文件以原子方式替换原文件
-             await fs.rename(tempFilePath, this.groupsFilePath);
-+            this._savedStatsRevision = statsRevision;
- 
-             console.log('[SemanticGroup] 语义组配置已通过原子写入操作更新并保存。');
-         } catch (error) {
-@@ -232,8 +241,6 @@ class SemanticGroupManager {
-                 }
-             }
-             throw error; // 将原始错误重新抛出，以便API路由可以捕获它
--        } finally {
--            this.saveLock = false;
-         }
-     }
- 
-@@ -306,9 +313,47 @@ class SemanticGroupManager {
-         if (this.groups[groupName]) {
-             this.groups[groupName].last_activated = new Date().toISOString();
-             this.groups[groupName].activation_count = (this.groups[groupName].activation_count || 0) + 1;
-+            this._statsRevision++;
-+            this._scheduleStatsFlush();
-         }
-     }
- 
-+    _scheduleStatsFlush() {
-+        if (this._stopping || this._statsFlushTimer || this._statsRevision === this._savedStatsRevision) return;
-+
-+        this._statsFlushTimer = setTimeout(async () => {
-+            this._statsFlushTimer = null;
-+            try {
-+                await this._ready;
-+                if (!this._stopping && this._statsRevision !== this._savedStatsRevision) {
-+                    await this.saveGroups();
-+                }
-+            } catch (error) {
-+                console.warn('[SemanticGroup] 激活统计刷盘失败，将在下个周期重试:', error.message);
-+            } finally {
-+                this._scheduleStatsFlush();
-+            }
-+        }, STATS_FLUSH_INTERVAL_MS);
-+        this._statsFlushTimer.unref();
-+    }
-+
-+    resumeStatsFlush() {
-+        this._stopping = false;
-+        this._scheduleStatsFlush();
-+    }
-+
-+    async shutdown() {
-+        this._stopping = true;
-+        clearTimeout(this._statsFlushTimer);
-+        this._statsFlushTimer = null;
-+        await this._saveTail;
-+        if (this._statsRevision === this._savedStatsRevision) return;
-+
-+        await this._ready;
-+        while (this._statsRevision !== this._savedStatsRevision) {
-+            await this.saveGroups();
-+        }
-+    }
-     // ============ 预计算组向量 ============
-     _getWordsHash(words) {
-         if (!words || words.length === 0) {
-```
-
-**File**: `tests/semanticGroupPersistence.test.js` (added, +176/-0)
-```diff
-@@ -0,0 +1,176 @@
+@@ -0,0 +1,48 @@
 +'use strict';
 +
-+const test = require('node:test');
-+const assert = require('node:assert/strict');
-+const fs = require('node:fs/promises');
-+const os = require('node:os');
++const { createHash } = require('node:crypto');
 +const path = require('node:path');
-+const vm = require('node:vm');
 +
-+const sourcePath = path.join(__dirname, '../Plugin/RAGDiaryPlugin/SemanticGroupManager.js');
++const digest = value => createHash('sha256').update(value).digest('hex');
 +
-+async function fixture(t) {
-+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'semantic-group-stats-'));
-+    t.after(() => fs.rm(dir, { recursive: true, force: true }));
-+    const groupsPath = path.join(dir, 'semantic_groups.json');
-+    const editPath = path.join(dir, 'semantic_groups.edit.json');
-+    const timers = new Set();
-+    const io = { ...fs };
-+    const mod = { exports: {} };
-+    vm.runInNewContext(await fs.readFile(sourcePath, 'utf8'), {
-+        __dirname: dir,
-+        module: mod,
-+        require: name => name === 'fs' ? { promises: io } : require(name),
-+        console: { log() {}, warn() {}, error() {} },
-+        setTimeout(callback, delay) {
-+            const timer = { callback, delay, referenced: true, unref() { this.referenced = false; } };
-+            timers.add(timer);
-+            return timer;
-+        },
-+        clearTimeout: timer => timers.delete(timer)
-+    }, { filename: sourcePath });
-+
-+    async function open() {
-+        const manager = new mod.exports({ getSingleEmbeddingCached: async () => [1, 0] });
-+        await manager._ready;
-+        return manager;
-+    }
-+
-+    const manager = await open();
-+    manager.groups = {
-+        fruit: { words: ['apple', 'pear'], activation_count: 5, last_activated: '2000-01-01T00:00:00.000Z' }
-+    };
-+    await manager.saveGroups();
-+    return {
-+        manager, groupsPath, editPath, timers, io, open,
-+        read: async () => JSON.parse(await fs.readFile(groupsPath, 'utf8')),
-+        async flush() {
-+            assert.equal(timers.size, 1);
-+            const [timer] = timers;
-+            timers.delete(timer);
-+            await timer.callback();
++function mountMemorySearch(app, { grants, serverKey, getBridge }) {
++    if (!grants) return;
++    const config = JSON.parse(grants);
++    if (!config || Array.isArray(config) || typeof config !== 'object') throw new Error('Invalid MEMORY_READ_GRANTS');
++    const scopes = new Map();
++    for (const [key, names] of Object.entries(config)) {
++        if (!/^[a-f0-9]{64}$/.test(key) || (serverKey && digest(serverKey) === key) ||
++            !Array.isArray(names) || !names.length || names.some(name => typeof name !== 'string' || !name || name.trim() !== name)) {
++            throw new Error('Invalid MEMORY_READ_GRANTS entry');
 +        }
-+    };
++        scopes.set(key, new Set(names));
++    }
++    if (!scopes.size) return;
++
++    app.post('/v1/memory/search', async (req, res) => {
++        res.set('Cache-Control', 'no-store');
++        const bearer = /^Bearer ([^\s]+)$/i.exec(req.get('authorization') || '');
++        const scope = bearer && scopes.get(digest(bearer[1]));
++        if (!scope) return res.sendStatus(401);
++        const { query, diaries, k = 10 } = req.body || {};
++        if (typeof query !== 'string' || !query.trim() || !Array.isArray(diaries) || !diaries.length ||
++            diaries.some(name => typeof name !== 'string' || !name.trim()) || !Number.isSafeInteger(k) || k < 1) return res.sendStatus(400);
++        if (diaries.some(name => !scope.has(name))) return res.sendStatus(403);
++        const requested = new Set(diaries);
++        try {
++            const bridge = getBridge();
++            if (!bridge) return res.sendStatus(503);
++            const vector = await bridge.embedText(query);
++            if (!vector?.length) return res.sendStatus(503);
++            const { results } = await bridge.retrieveDiary({ diaryNames: [...requested], queryText: query, queryVector: vector, k, engine: 'rivermemo', fallback: 'none' });
++            const direct = results.filter(row => requested.has(row.diaryName)).map(row => ({
++                diary: row.diaryName, file: path.win32.basename(row.sourceFile || ''), text: row.text, score: row.score, scoreSource: 'retrieval'
++            }));
++            return res.json({ direct });
++        } catch {
++            return res.status(503).json({ error: 'Memory search unavailable' });
++        }
++    });
 +}
 +
-+test('activation uses one unrefed 60s window; counts survive restart and edit-file sync', async t => {
-+    const f = await fixture(t);
-+    assert.equal(f.manager.detectAndActivateGroups('nothing').size, 0);
-+    assert.equal(f.timers.size, 0);
-+    let renames = 0;
-+    f.io.rename = (...args) => { renames++; return fs.rename(...args); };
-+    assert.equal(f.manager.detectAndActivateGroups('apple').get('fruit').strength, 0.5);
-+    const [timer] = f.timers;
-+    for (let i = 0; i < 19; i++) f.manager.detectAndActivateGroups('apple and pear');
-+    assert.deepEqual([...f.timers], [timer]);
-+    assert.equal(timer.delay, 60_000);
-+    assert.equal(timer.referenced, false);
-+    assert.equal((await f.read()).groups.fruit.activation_count, 5);
-+    await f.flush();
-+    assert.equal(renames, 1);
-+    assert.equal(f.timers.size, 0);
-+    const saved = (await f.read()).groups.fruit;
-+    assert.equal(saved.activation_count, 25);
-+    assert.notEqual(saved.last_activated, '2000-01-01T00:00:00.000Z');
-+    assert.equal(saved.last_activated, f.manager.groups.fruit.last_activated);
-+
-+    await fs.writeFile(f.editPath, JSON.stringify({ groups: { fruit: { words: ['apple', 'plum'], weight: 2 } } }));
-+    const reopened = await f.open();
-+    assert.equal(reopened.groups.fruit.activation_count, 25);
-+    assert.equal(reopened.groups.fruit.last_activated, saved.last_activated);
-+    assert.equal(reopened.groups.fruit.weight, 2);
-+    assert.deepEqual([...reopened.groups.fruit.words], ['apple', 'plum']);
++module.exports = { mountMemorySearch };
+```
+
+**File**: `server.js` (modified, +7/-0)
+```diff
+@@ -868,6 +868,13 @@ app.use('/AdminPanel', (req, res) => {
+ // Image server logic is now handled by the ImageServer plugin.
+ 
+ 
++// The scoped read credential terminates at this route; leave the global API guard unchanged.
++require('./routes/memorySearch').mountMemorySearch(app, {
++    grants: process.env.MEMORY_READ_GRANTS,
++    serverKey,
++    getBridge: () => pluginManager.messagePreprocessors.get('RAGDiaryPlugin')?.getContextBridge()
 +});
 +
-+test('queued saves wait for rename, then capture current data; an intervening activation is not lost', async t => {
-+    const f = await fixture(t);
-+    let unblock;
-+    let entered;
-+    const gate = new Promise(resolve => { unblock = resolve; });
-+    const started = new Promise(resolve => { entered = resolve; });
-+    let writes = 0;
-+    f.io.writeFile = (...args) => { writes++; return fs.writeFile(...args); };
-+    f.io.rename = async (...args) => {
-+        if (writes === 1) {
-+            entered();
-+            await gate;
-+        }
-+        await fs.rename(...args);
-+    };
+ // General API authentication (Bearer token) - This was the original one, now adminAuth handles its paths
+ app.use((req, res, next) => {
+     // Skip bearer token check for admin panel API and static files, as they use basic auth or no auth
+```
+
+**File**: `tests/memorySearch.test.js` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++'use strict';
++const { test } = require('node:test');
++const assert = require('node:assert/strict');
++const { createHash, randomBytes } = require('node:crypto');
++const { once } = require('node:events');
++const express = require('express');
++const { mountMemorySearch } = require('../routes/memorySearch');
 +
-+    const first = f.manager.saveGroups();
-+    await started;
-+    let finished = false;
-+    const second = f.manager.saveGroups().then(() => { finished = true; });
-+    try {
-+        f.manager.config = { edited: true };
-+        f.manager.detectAndActivateGroups('pear');
-+        await Promise.resolve();
-+        assert.equal(writes, 1);
-+        assert.equal(finished, false);
-+        assert.equal((await f.read()).groups.fruit.activation_count, 5);
-+    } finally {
-+        unblock();
-+        await Promise.all([first, second]);
++const token = randomBytes(32).toString('hex');
++const hash = createHash('sha256').update(token).digest('hex');
++const grants = JSON.stringify({ [hash]: ['notes', 'other'] });
++
++test('opt-in only; invalid policy and reuse of the server key are rejected at startup', () => {
++    const app = { post: () => assert.fail('route should not be mounted') };
++    for (const empty of [undefined, '', '{}']) mountMemorySearch(app, { grants: empty });
++    for (const invalid of ['[]', '{"raw-token":["notes"]}', JSON.stringify({ [hash]: [] })]) {
++        assert.throws(() => mountMemorySearch(app, { grants: invalid }), /Invalid MEMORY_READ_GRANTS/);
 +    }
-+    const saved = await f.read();
-+    assert.deepEqual(saved.config, { edited: true });
-+    assert.equal(saved.groups.fruit.activation_count, 6);
-+    await f.flush();
-+    assert.equal(writes, 2, 'a regular save already persisted the dirty stats');
++    assert.throws(() => mountMemorySearch(app, { grants, serverKey: token }), /Invalid MEMORY_READ_GRANTS/);
 +});
 +
-+test('a failed ex
++test('scoped RiverMemo HTTP search', async t => {
++    const app = express();
++    app.use(express.json());
++    const calls = [];
++    let bridge = {
++        embedText: async text => { calls.push(text); return [1]; },
++        retrieveDiary: async options => {
++            calls.push(options);
++            return { results: [
++                { diaryName: 'notes', sourceFile: 'folder/note.md', text: 'fixture', score: 0.8, vector: [1] },
++                { diaryName: 'other', text: 'authorized but not requested' },
++                { diaryName: 'outside', text: 'out of scope' }
++            ] };
++        }
++    };
++    mountMemorySearch(app, { grants, getBridge() { calls.push('bridge'); return bridge; } });
++    const server = app.listen(0, '127.0.0.1');
++    await once(server, 'listening');
++    t.after(() => new Promise(resolve => server.close(resolve)));
++    const post = (body, credential = token) => fetch(`http://127.0.0.1:${server.address().port}/v1/memory/search`, {
++        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + credential }, body: JSON.stringify(body)
++    });
++    const query = { query: 'fixture', diaries: ['notes', 'notes'], k: 3 };
++    assert.equal((await post(query, 'not-the-read-token')).status, 401);
++    assert.equal((await post({ ...query, diaries: ['notes', 'outside'] })).status, 403);
++    for (const malformed of [{ ...query, diaries: [] }, { ...query, k: 0 }, { ...query, query: ' ' }]) {
++        assert.equal((await post(malformed)).status, 400);
++    }
++    assert.deepEqual(calls, []);
++    const res = await post(query);
++    assert.equal(res.status, 200);
++    assert.equal(res.headers.get('cache-control'), 'no-store');
++    assert.deepEqual(await res.json(), { direct: [{ diary: 'notes', file: 'note.md', text: 'fixture', score: 0.8, scoreSource: 'retrieval' }] });
++    assert.deepEqual(calls, ['bridge', 'fixture', { diaryNames: ['notes'], queryText: 'fixture', queryVector: [1], k: 3, engine: 'rivermemo', fallback: 'none' }]);
++    bridge = null;
++    assert.equal((await post(query)).status, 503);
++});
 ```
 
 ---
 
-### Incident Patch 3: `eec525c5` (2026-11-21)
-**Commit Message**: fix4
+### Incident Patch 2: `b973cc2c` (2026-11-22)
+**Commit Message**: fix
 
-**File**: `docs/CONFIGURATION.md` (modified, +1/-1)
+**File**: `Plugin/DoubaoGen/DoubaoGen.js` (modified, +1/-2)
 ```diff
-@@ -36,7 +36,7 @@
+@@ -801,8 +801,7 @@ async function handleCompose(args) {
+         size: resolution,
+         watermark: args.watermark,
+         output_format: args.output_format,
+-        response_format: DEFAULT_RESPONSE_FORMAT,
+-        sequential_image_generation: 'disabled'
++        response_format: DEFAULT_RESPONSE_FORMAT
+     };
  
- | 文件名 | 位置 | 用途 |
- |--------|------|------|
--| `tag-processor-config.env` | 根目录 | Tag 批量处理工具配置 |
-+| `config.env`（Tag 批量处理工具） | 仓库根目录；独立部署时为脚本同目录 | `tag-processor-config.env.example` 是模板，不是运行时读取的文件名 |
- | `Plugin/*/config.env` | 插件目录 | 各插件专属配置 |
- | `docker-compose.yml` | 根目录 | Docker Compose 部署配置 |
- | `Dockerfile` | 根目录 | Docker 镜像构建配置 |
-```
-
-**File**: `docs/DIARY_TAG_BATCH_PROCESSOR.md` (modified, +7/-25)
-```diff
-@@ -108,7 +108,7 @@ npm install
- 
- #### 步骤4：配置
- 
--创建 `config.env`（参考 [`tag-processor-config.env.example`](tag-processor-config.env.example:1)）：
-+在脚本同目录创建 `config.env`（参考 [`tag-processor-config.env.example`](../tag-processor-config.env.example)）：
- 
- ```env
- API_Key=your_api_key_here
-@@ -132,14 +132,14 @@ node diary-tag-batch-processor.js /path/to/your/diaries
- 
- ### 配置文件
- 
--需要在VCP根目录的 `config.env` 中配置API：
-+在 VCP 仓库中运行时，脚本读取仓库根目录的 `config.env`，不读取 `scripts/config.env`。独立部署时读取脚本同目录的 `config.env`。已设置的进程环境变量优先于文件中的值。
- 
- ```env
- # API配置（必需）
- API_Key=your_api_key_here
- API_URL=http://127.0.0.1:3000
- 
--# 可选：在 Plugin/DailyNoteWrite/config.env 中配置Tag模型
-+# 可选：在同一份 config.env 中配置 Tag 模型
- TagModel=gemini-2.5-flash-preview-09-2025-thinking
- TagModelMaxTokens=40000
- TagModelPrompt=TagMaster.txt
-@@ -422,18 +422,16 @@ DebugMode=true
- 
- 本工具可以通过独立的配置文件在其他项目中使用。以下提供完整的配置模板，可直接复制使用。
- 
--### 配置文件：`tag-processor-config.env`
-+### 配置文件模板：保存为 `config.env`
- 
- ```env
- # ============================================================
- # VCP Tag处理器独立配置文件
- # ============================================================
- #
- # 用途：为日记批量打Tag工具提供配置
--# 位置：可放在任意目录，通过 --config 参数指定
--#
--# 使用示例：
--#   node diary-tag-batch-processor.js --config ./tag-processor-config.env ./my-diaries
-+# 位置：仓库根目录，或独立部署时的脚本同目录
-+# 文件名：config.env
- #
- # ============================================================
- 
-@@ -522,23 +520,7 @@ DAILY_NOTE_EXTENSION=txt
- 
- ### 如何使用独立配置
- 
--#### 方法1：替换主配置（简单）
--
--将上述配置内容保存为 `config.env`，放在VCP根目录：
--
--```bash
--# 配置会自动加载
--node diary-tag-batch-processor.js ./my-diaries
--```
--
--#### 方法2：使用自定义路径（高级）
--
--如果需要在其他项目中使用，可以修改工具代码加载配置路径：
--
--```javascript
--// 在 diary-tag-batch-processor.js 开头修改
--require('dotenv').config({ path: '/path/to/your/tag-processor-config.env' });
--```
-+在仓库中运行时，请将所需配置项加入现有根目录 `config.env`，不要用模板覆盖服务器配置。独立部署时，将模板复制为脚本同目录的 `config.env`。脚本不提供 `--config` 参数。
- 
- ### 最小配置示例
- 
-```
-
-**File**: `scripts/diary-tag-batch-processor.js` (modified, +8/-5)
-```diff
-@@ -13,15 +13,19 @@
-  *   node diary-tag-batch-processor.js [目标文件夹路径]
-  * 
-  * 配置：
-- *   通过根目录的 config.env 文件配置API密钥和模型参数
-+ *   在 VCP 仓库中读取根目录的 config.env；独立部署时读取脚本同目录的 config.env。
-  */
- 
- const fs = require('fs').promises;
- const path = require('path');
- const { existsSync } = require('fs');
- 
--// 加载环境变量（独立应用配置）
--require('dotenv').config({ path: path.join(__dirname, 'config.env') });
-+// 用仓库里的工具包模板识别源码布局，不根据配置文件是否存在切换来源。
-+const vcpRoot = path.resolve(__dirname, '..');
-+const inVcpRepo = path.basename(__dirname) === 'scripts'
-+    && existsSync(path.join(vcpRoot, 'diary-tag-processor-package.json'));
-+const configPath = path.join(inVcpRepo ? vcpRoot : __dirname, 'config.env');
-+require('dotenv').config({ path: configPath });
- 
- // --- 配置 ---
- const TAG_MODEL = process.env.TagModel || 'gemini-2.5-flash-preview-09-2025-thinking';
-@@ -400,8 +404,7 @@ async function main() {
-     
-     // 检查API配置
-     if (!API_KEY || !API_URL) {
--        error('API configuration missing in config.env!');
--        error('请在根目录的 config.env 中配置 API_Key 和 API_URL');
-+        error(`缺少 API 配置：请在 ${configPath} 中配置 API_Key 和 API_URL，或通过环境变量提供。`);
-         process.exit(1);
-     }
-     
-```
-
-**File**: `tests/approvalFeedbackPassthrough.test.js` (modified, +1/-1)
-```diff
-@@ -420,7 +420,7 @@ test('流式/非流式模型请求：多模态回执不损坏，免回执仅传
-                 if (name.includes('roleDivider')) return { process: messages => messages };
-                 return require(name.startsWith('../') ? path.join(__dirname, '..', 'modules', name.slice(3)) : name);
-             },
--            console, Buffer, setTimeout, clearTimeout, setInterval, clearInterval
-+            console, Buffer, setTimeout, clearTimeout, setInterval, clearInterval, process: { env: {} }
-         });
-         const Handler = moduleStub.exports;
-         for (const scenario of ['normal', 'archery', 'silent']) {
-```
-
-**File**: `vcp-installer-source/src/installer/config_gen.rs` (modified, +33/-12)
-```diff
-@@ -78,38 +78,58 @@ pub fn generate_config_env(
-     Ok(())
- }
- 
-+// Both backend launchers resolve Node after entering VCPToolBox.
-+const BACKEND_NODE_SETUP: &str = "REM Resolve the service interpreter in this launcher, not in the PM2 daemon.\r\n\
-+if not defined VCP_NODE_INTERPRETER if exist \"..\\runtimes\\node\\node.exe\" set \"VCP_NODE_INTERPRETER=..\\runtimes\\node\\node.exe\"\r\n\
-+if not defined VCP_NODE_INTERPRETER for %%I in (node.exe) do set \"VCP_NODE_INTERPRETER=%%~$PATH:I\"\r\n\
-+if defined VCP_NODE_INTERPRETER for %%I in (\"%VCP_NODE_INTERPRETER%\") do set \"VCP_NODE_INTERPRETER=%%~fI\"\r\n\
-+if not exist \"%VCP_NODE_INTERPRETER%\" (\r\n\
-+    echo [ERROR] Node interpreter not found: \"%VCP_NODE_INTERPRETER%\". Set VCP_NODE_INTERPRETER to node.exe.\r\n\
-+    pause\r\n\
-+    exit /b 1\r\n\
-+)\r\n\
-+\"%VCP_NODE_INTERPRETER%\" --version >nul 2>&1\r\n\
-+if errorlevel 1 (\r\n\
-+    echo [ERROR] Cannot run Node interpreter: \"%VCP_NODE_INTERPRETER%\".\r\n\
-+    pause\r\n\
-+    exit /b 1\r\n\
-+)\r\n\
-+echo [Runtime] Node interpreter: \"%VCP_NODE_INTERPRETER%\"\r\n\
-+\r\n";
-+
- /// 生成 start-backend.bat（安装根目录版本，PM2 双进程）
- pub fn generate_start_backend_bat(
-     install_dir: &Path,
- ) -> Result<()> {
-     // bat不能包含中文（Rust写UTF-8，cmd用GBK读取会乱码）
-     // pm2必须加CALL（bat调.cmd不加CALL控制流一去不返）
--    let content = "@echo off\r\n\
--setlocal\r\n\
-+    let content = format!("@echo off\r\n\
-+setlocal DisableDelayedExpansion\r\n\
- chcp 65001 >nul\r\n\
- echo ==========================================\r\n\
- echo   VCP Backend Launcher (PM2)\r\n\
- echo ==========================================\r\n\
- echo.\r\n\
- set \"PATH=%~dp0runtimes\\node;%~dp0runtimes\\git\\cmd;%~dp0runtimes\\python;%~dp0runtimes\\python\\Scripts;%PATH%\"\r\n\
--cd /d \"%~dp0VCPToolBox\"\r\n\
-+cd /d \"%~dp0VCPToolBox\" || exit /b 1\r\n\
- if not exist \"server.js\" (\r\n\
-     echo [VCP] server.js not found. Please check VCPToolBox installation.\r\n\
-     pause\r\n\
-     exit /b 1\r\n\
- )\r\n\
-+{BACKEND_NODE_SETUP}\
- echo [VCP] Cleaning old processes...\r\n\
- CALL pm2 delete vcp-main 2>nul\r\n\
- CALL pm2 delete vcp-admin 2>nul\r\n\
- CALL pm2 delete server 2>nul\r\n\
- echo.\r\n\
- echo [VCP] Starting main service (vcp-main)...\r\n\
--CALL pm2 start server.js --name \"vcp-main\" --no-autorestart --max-memory-restart 1500M --kill-timeout 15000\r\n\
-+CALL pm2 start server.js --name \"vcp-main\" --no-autorestart --max-memory-restart 1500M --kill-timeout 15000 --interpreter \"%%VCP_NODE_INTERPRETER%%\"\r\n\
- echo [VCP] Waiting for initialization (8s)...\r\n\
- ping -n 9 127.0.0.1 >nul\r\n\
- echo.\r\n\
- echo [VCP] Starting admin panel (vcp-admin)...\r\n\
--CALL pm2 start adminServer.js --name \"vcp-admin\" --no-autorestart --max-memory-restart 512M --kill-timeout 5000\r\n\
-+CALL pm2 start adminServer.js --name \"vcp-admin\" --no-autorestart --max-memory-restart 512M --kill-timeout 5000 --interpreter \"%%VCP_NODE_INTERPRETER%%\"\r\n\
- echo.\r\n\
- echo ==========================================\r\n\
- echo   VCP Backend Started\r\n\
-@@ -123,7 +143,7 @@ echo   pm2 logs              View realtime logs\r\n\
- echo   pm2 restart vcp-main  Restart main service\r\n\
- echo   pm2 stop all          Stop all services\r\n\
- echo.\r\n\
--pause\r\n";
-+pause\r\n");
- 
-     let script_path = install_dir.join("start-backend.bat");
-     fs::write(&script_path, content)
-@@ -170,32 +190,33 @@ pub fn generate_inner_start_bat(
-     let chat_dir = install_dir.join("VCPChat");
- 
-     // start_server.bat — VCPToolBox内部，PM2双进程 + 向上一级找runtimes
--    let content = "@echo off\r\n\
--setlocal\r\n\
-+    let content = format!("@echo off\r\n\
-+setlocal DisableDelayedExpansion\r\n\
- chcp 65001 >nul\r\n\
- echo ==========================================\r\n\
- echo   VCP Backend Launcher (PM2)\r\n\
- echo ==========================================\r\n\
- echo.\r\n\
- set \"PATH=%~dp0..\\runtimes\\node;%~dp0..\\runtimes\\git\\cmd;%~dp0..\\runtimes\\python;%~dp0..\\runtimes\\python\\Scripts;%PATH%\"\r\n\
--cd /d \"%~dp0\"\r\n\
-+cd /d \"%~dp0\" || exit /b 1\r\n\
- if not exist \"server.js\" (\r\n\
-     echo [VCP] server.js not found. Please check VCPToolBox installation.\r\n\
-     pause\r\n\
-     exit /b 1\r\n\
- )\r\n\
-+{BACKEND_NODE_SETUP}\
- echo [VCP] Cleaning old processes...\r\n\
- CALL pm2 delete vcp-main 2>nul\r\n\
- CALL pm2 delete vcp-admin 2>nul\r\n\
- CALL pm2 delete server 2>nul\r\n\
- echo.\r\n\
- echo [VCP] Starting main service (vcp-main)...\r\n\
--CALL pm2 start server.js --name \"vcp-main\" --no-autorestart --max-memory-restart 1500M --kill-timeout 15000\r\n\
-+CALL pm2 start server.js --name \"vcp-main\" --no-autorestart --max-memory-restart 1500M --kill-timeout 15000 --interpreter \"%%VCP_NODE_INTERPRETER%%\"\r\n\
- echo [VCP] Waiting for initialization (8s)...\r\n\
- ping -n 9 127.0.0.1 >nul\r\n\
- echo.\r\n\
- echo [VCP] Starting admin panel (vcp-admin)...\r\n\
--CALL pm2 start adminServer.js --name \"vcp-admin\" --no-autorestart --max-memory-restart 512M --kill-timeout 5000\r\n\
-+CALL pm2 start adminServer.
-```
-
-**File**: `一键启动服务器start_server.bat` (modified, +21/-4)
-```diff
-@@ -1,6 +1,23 @@
- @echo off
--setlocal enabledelayedexpansion
--cd /d "%~dp0"
-+setlocal DisableDelayedExpansion
-+cd /d "%~dp0" || exit /b 1
-+
-+REM Resolve the service interpreter in this launcher, not in the PM2 daemon.
-+if not defined VCP_NODE_INTERPRETER if exist "..\runtimes\node\node.exe" set "VCP_NODE_INTERPRETER=..\runtimes\node\node.exe"
-+if not defined VCP_NODE_INTERPRETER for %%I in (node.exe) do set "VCP_NODE_INTERPRETER=%%~$PATH:I"
-+if defined VCP_NODE_INTERPRETER for %%I in ("%VCP_NODE_INTERPRETER%") do set "VCP_NODE_INTERPRETER=%%~fI"
-+if not exist "%VCP_NODE_INTERPRETER%" (
-+    echo [ERROR] Node interpreter not found: "%VCP_NODE_INTERPRETER%". Set VCP_NODE_INTERPRETER to node.exe.
-+    pause
-+    exit /b 1
-+)
-+"%VCP_NODE_INTERPRETER%" --version >nul 2>&1
-+if errorlevel 1 (
-+    echo [ERROR] Cannot run Node interpreter: "%VCP_NODE_INTERPRETER%".
-+    pause
-+    exit /b 1
-+)
-+echo [Runtime] Node interpreter: "%VCP_NODE_INTERPRETER%"
- 
- echo ============================================
- echo   VCPToolBox - Starting Services via PM2
-@@ -41,7 +58,7 @@ REM Do NOT set --max-memory-restart here. Global Tag index staging, Pairwise ass
- REM EPA/IR and TagMemo rebuilds have legitimate temporary memory peaks above 1500 MB.
- REM A low PM2 RSS limit can restart the main process in the middle of a maintenance
- REM transaction and overlap two cold-start index recoveries against the same SQLite.
--call pm2 start server.js --name "vcp-main" --kill-timeout 15000
-+call pm2 start server.js --name "vcp-main" --kill-timeout 15000 --interpreter "%%VCP_NODE_INTERPRETER%%"
- 
- echo.
- echo Waiting 8 seconds for main service to initialize...
-@@ -51,7 +68,7 @@ REM 3. Start Admin Panel
- echo [2/2] Starting Admin Panel (vcp-admin)...
- REM Keep PM2 memory restart limits disabled for both processes while diagnosing
- REM legitimate maintenance/build memory peaks and unexpected overlapping restarts.
--call pm2 start adminServer.js --name "vcp-admin" --kill-timeout 5000
-+call pm2 start adminServer.js --name "vcp-admin" --kill-timeout 5000 --interpreter "%%VCP_NODE_INTERPRETER%%"
- 
- echo.
- echo ============================================
+     if (args.seed !== undefined && args.seed !== -1 && args.seed !== null) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #634** (2026-11-22): feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口 (@Lutra23)
+- **PR #630** (closed): fix(stream): 截停模型续写的工具回执 (@CI-IISATO)
 - **PR #623** (2026-11-21): feat(ComfyUIGen,RAGDiaryPlugin): 支持 ComfyUI 进程跟随式活性超时检测与 ::Base64Memo 超栈路径溯源及自适应图像压缩 (@infinite-vector)
 - **PR #621** (2026-11-20): fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题 (@InSciTech)
 - **PR #620** (2026-11-20): fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误 (@InSciTech)
 - **PR #619** (2026-11-19): fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞 (@infinite-vector)
-- **PR #618** (2026-11-18): # feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻 (@CI-IISATO)
-- **PR #617** (2026-11-18): fix: 出站请求中降级无法投递的 Markdown data: 图片（避免上游 415/500） (@RoxyAsahi)
 
 ---
 
@@ -2852,60 +2020,36 @@ feat(ComfyUIGen,RAGDiaryPlugin): 支持 ComfyUI 进程跟随式活性超时检�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ComfyUIGen.js
+## X. Empirical Invariant Guard in config.env.example
 
 **RULE**:
-When implementing operations in `Plugin/ComfyUIGen/ComfyUIGen.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `config.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `82c0efd4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d824df3c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ComfyUIGen/ComfyUIGen.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `config.env.example`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-        COMFYUI_MAX_WAIT_MINUTES: 30,
-        COMFYUI_MISSING_QUEUE_TOLERANCE: 5,
-            if (userSettings.maxWaitMinutes !== undefined) {
-                config.COMFYUI_MAX_WAIT_MINUTES = resolveNumericArg(userSettings.maxWaitMinutes, config.COMFYUI_MAX_WAIT_MINUTES);
-            }
-    if (process.env.COMFYUI_MAX_WAIT_MINUTES !== undefined && process.env.COMFYUI_MAX_WAIT_MINUTES !== '') {
-        config.COMFYUI_MAX_WAIT_MINUTES = resolveNumericArg(process.env.COMFYUI_MAX_WAIT_MINUTES, config.COMFYUI_MAX_WAIT_MINUTES);
-    }
-    if (process.env.COMFYUI_MISSING_QUEUE_TOLERANCE !== undefined && process.env.COMFYUI_MISSING_QUEUE_TOLERANCE !== '') {
-        config.COMFYUI_MISSING_QUEUE_TOLERANCE = Math.max(1, Math.floor(resolveNumericArg(process.env.COMFYUI_MISSING_QUEUE_TOLERANCE, 5)));
-    }
-    
-// 检查历史完成状态
-        headers: config.COMFYUI_API_KEY ? { 'Authorization': `Bearer ${config.COMFYUI_API_KEY}` } : {},
-    return (response.data && response.data[promptId]) ? response.data[promptId] : null;
-// 检查 ComfyUI 实时运行队列 (/queue)，判断 promptId 是否仍在 running 或 pending 中推进
-async function checkActiveQueue(promptId, config) {
-    const comfyuiAxios = axios.create({
-        baseURL: config.C
+# Optional read-only RiverMemo API (POST /v1/memory/search). Empty = not registered.
+# Use dedicated random bearer tokens, never Key. Store only each token's lowercase SHA-256 digest here.
+# MEMORY_READ_GRANTS='{"<64 hex digest>":["ExampleDiary"]}'
+# HTTPS request: Authorization: Bearer <read token>; JSON: {"query":"what did we decide?","diaries":["ExampleDiary"],"k":5}
+# Response: {"direct":[{"diary":"ExampleDiary","file":"note.md","text":"...","score":0.8,"scoreSource":"retrieval"}]}
+MEMORY_READ_GRANTS=
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-
-// 检查队列状态
-    return response.data[promptId] || null;
-// 等待生成完成
-async function waitForCompletion(promptId, config, maxAttempts = 60, interval = 3000) {
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        debugLog(`Checking queue status, attempt ${attempt + 1}/${maxAttempts}`);
-        
-        const history = await checkQueueStatus(promptId, config);
-        if (history && history.status && history.status.completed) {
-            debugLog('Generation completed!');
-            return history;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `82c0efd4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d824df3c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
