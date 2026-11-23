@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T21:32:21.217Z",
+  "timestamp": "2026-11-23T21:14:53.127Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-siderolabs-talos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [siderolabs-talos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T21:32:21.217Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T21:14:53.127Z`  
 > **Learning ID**: `LEARN-EVO-siderolabs-talos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from siderolabs-talos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `5da8dc88`  
+> **Source Version**: `97f97c86`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T21:31:41.756Z  
+> **Timestamp**: 2026-11-23T21:14:39.910Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:31:41.751Z  
+> **Harvest Timestamp**: 2026-11-23T21:14:39.903Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11573 stars
+- **Stars / Engagement**: 11584 stars
 
 ---
 
@@ -2139,11 +2139,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15031** (2026-11-20): **feat: update Flannel to 0.28.11**
-  *Symptoms*: See https://github.com/flannel-io/flannel/releases/tag/v0.28.11 
+- **Issue #15053** (2026-11-23): **fix: request redaction in dashboard containers view**
+  *Symptoms*: The talosctl dashboard containers view watched `ContainerSpec` resources without the `x-talos-dev-redact` header. `ContainerSpec` is sensitive but redactable, so without the header a requester lacking the `os:admin` role (`os:reader`, `os:operator`, or Omni's proxied `os:operator`) was denied with `PermissionDenied` and the view failed to load.  Requests resource redaction. 
 
-- **Issue #15030** (2026-11-20): **feat: update etcd to 3.7.4**
-  *Symptoms*: See https://github.com/etcd-io/etcd/blob/main/CHANGELOG/CHANGELOG-3.7.md 
+- **Issue #15050** (2026-11-23): **test: wait for full output in TestNetworkModes (containers)**
+  *Symptoms*: Fixes a container integration test flake in `TestNetworkModes`.  TestNetworkModes waited for `IFACES=`, which is the first line the container prints, and read the log as soon as that line appeared. The `resolv.conf` line comes last, so the log could be read before it was written. The host subtest then failed with neither marker present.  The `resolv.conf` markers also overlapped: `RESOLVCONF` is a substring of `NO-RESOLVCONF`, so the host assertion would have passed even with no `resolv.conf` in the container.  Here's a recent example of this failure: https://github.com/siderolabs/talos/actions/runs/45193124367/job/137760366104?pr=15045  This diff renames the markers to `RESOLV=present` and `RESOLV=absent` so neither matches the other. Both subtests now wait for that line, the last one printed, so the whole output is there when the log is read. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2160,859 +2160,341 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0d3b866` (2026-11-11)
-**Commit Message**: feat: split workload memory by percentage and reserve host memory
+### Incident Patch 1: `c9c11bef` (2026-11-23)
+**Commit Message**: fix: keep node cordoned during talosctl drain
 
-WorkloadResourceConfig limits were byte sizes, which fit one host
-size only and ignore the memory the host needs itself. An omitted
-root was unlimited, so by default only kubepods was bounded.
+talosctl drain cordoned with talos.dev/cordoned, the annotation
+machined uses for its own cordons. While the machine is Running,
+NodeApplyController uncordons any node carrying it, so the cordon
+was removed mid-drain. Controllers that react to an unschedulable
+node (CNPG primary switchover) never ran, and PDB-protected pods
+blocked eviction until the drain timed out.
 
-A limit is now a whole percentage of the host memory minus
-reserved.memory, or an absolute size as before. Percentages add up
-to at most 100%. reserved.memory defaults to the kubelet's default
-systemReserved.memory for the machine type, and every omitted root,
-kubepods included, is capped at the memory beyond it. Percentages
-are resolved against the NUMA topology memory total, or MemTotal
-while the topology can't be read, and follow memory hotplug once a
-burst settles for 5 seconds. Generated configurations include the
-document with only the default reservation; upgraded machines get
-the same default without it.
+Use a separate talos.dev/client-cordoned annotation for client-side
+drains, so machined leaves those cordons alone. Also fix the drain
+failure being reported as a cordon error.
 
-The kubelet gets reserved.memory as systemReserved.memory. A kubepods
-limit derives systemReserved.memory as the host memory minus the
-limit instead. KubeletConfigController resolves both from the machine
-configuration, so a change restarts the kubelet once; with a kubepods
-limit, every hotplug restarts it once too. 
+Fixes #15037
 
-**File**: `.github/workflows/ci.yaml` (modified, +2/-2)
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
+
+**File**: `cmd/talosctl/pkg/talos/nodedrain/nodedrain.go` (modified, +3/-3)
 ```diff
-@@ -306,7 +306,7 @@ jobs:
-           QEMU_WORKERS: "0"
-           SHORT_INTEGRATION_TEST: "yes"
-           TEST_MODE: skip-etcd-k8s
--          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
-+          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
-           WITH_SKIP_ETCD_K8S: "true"
-         run: |
-           sudo -E make e2e-qemu
-@@ -2909,7 +2909,7 @@ jobs:
-           QEMU_NUMA_NODES: "2"
-           QEMU_WORKERS: "0"
-           TEST_MODE: skip-etcd-k8s
--          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
-+          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
-           WITH_SKIP_ETCD_K8S: "true"
-         run: |
-           sudo -E make e2e-qemu
+@@ -64,7 +64,7 @@ func CordonAndDrain(ctx context.Context, clientset kubernetes.Interface, nodeNam
+ 		Status:  reporter.StatusRunning,
+ 	})
+ 
+-	if err := nodedrain.Cordon(ctx, clientset, nodeName, constants.AnnotationCordonedKey); err != nil {
++	if err := nodedrain.Cordon(ctx, clientset, nodeName, constants.AnnotationClientCordonedKey); err != nil {
+ 		report(reporter.Update{
+ 			Message: fmt.Sprintf("%s: error cordoning node: %v", nodeName, err),
+ 			Status:  reporter.StatusError,
+@@ -95,7 +95,7 @@ func CordonAndDrain(ctx context.Context, clientset kubernetes.Interface, nodeNam
+ 
+ 	if err := nodedrain.Drain(ctx, clientset, nodeName, dopts); err != nil {
+ 		report(reporter.Update{
+-			Message: fmt.Sprintf("%s: error cordoning node: %v", nodeName, err),
++			Message: fmt.Sprintf("%s: error draining node: %v", nodeName, err),
+ 			Status:  reporter.StatusError,
+ 		})
+ 
+@@ -123,7 +123,7 @@ func Uncordon(ctx context.Context, clientset kubernetes.Interface, nodeName stri
+ 		Status:  reporter.StatusRunning,
+ 	})
+ 
+-	if err := nodedrain.Uncordon(ctx, clientset, nodeName, constants.AnnotationCordonedKey); err != nil {
++	if err := nodedrain.Uncordon(ctx, clientset, nodeName, constants.AnnotationClientCordonedKey); err != nil {
+ 		report(reporter.Update{
+ 			Message: fmt.Sprintf("%s: error uncordoning node: %v", nodeName, err),
+ 			Status:  reporter.StatusError,
 ```
 
-**File**: `.github/workflows/integration-hypervisor-triggered.yaml` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/k8s/node_apply_test.go` (modified, +9/-0)
 ```diff
-@@ -111,7 +111,7 @@ jobs:
-           QEMU_NUMA_NODES: "2"
-           QEMU_WORKERS: "0"
-           TEST_MODE: skip-etcd-k8s
--          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
-+          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
-           WITH_SKIP_ETCD_K8S: "true"
-         run: |
-           sudo -E make e2e-qemu
-```
-
-**File**: `.kres.yaml` (modified, +2/-2)
-```diff
-@@ -470,7 +470,7 @@ spec:
-             WITH_SKIP_ETCD_K8S: true
-             EXTRA_TEST_ARGS: -talos.extensions.libvirt -talos.hypervisor.disk-image=$(OPENWRT_DISK)
-             TEST_MODE: skip-etcd-k8s
--            WITH_CONFIG_PATCH: "@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml"
-+            WITH_CONFIG_PATCH: "@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml"
-             IMAGE_REGISTRY: registry.dev.siderolabs.io
-         - name: save-talos-logs
-           conditions:
-@@ -1631,7 +1631,7 @@ spec:
-             WITH_SKIP_ETCD_K8S: true
-             EXTRA_TEST_ARGS: -talos.extensions.libvirt -talos.hypervisor.talos-iso=_out/metal-amd64.iso -talos.hypervisor.alpine-iso=$(ALPINE_ISO) -talos.hypervisor.disk-image=$(OPENWRT_DISK)
-             TEST_MODE: skip-etcd-k8s
--            WITH_CONFIG_PATCH: "@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml"
-+            WITH_CONFIG_PATCH: "@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml"
-             IMAGE_REGISTRY: registry.dev.siderolabs.io
-         - name: save-talos-logs
-           conditions:
-```
-
-**File**: `api/resource/definitions/k8s/k8s.proto` (modified, +5/-1)
-```diff
-@@ -213,10 +213,14 @@ message KubeletConfigSpec {
-   google.protobuf.Struct credential_provider_config = 13;
-   map<string, ArgValues> extra_args = 15;
-   map<string, string> register_with_taints = 16;
--  // KubepodsMemoryLimit is the desired kubepods memory.max in bytes; zero means unset.
-+  // KubepodsMemoryLimit is the WorkloadResourceConfig kubepods limit as an absolute size in bytes.
-   uint64 kubepods_memory_limit = 17;
-   // CredentialProviderFiles maps file names to the contents of the credential provider plugin configuration files.
-   map<string, string> credential_provider_files = 18;
-+  // MemoryReserved is WorkloadResourceConfig reserved.memory, or the default for the machine type, in bytes.
-+  uint64 memory_reserved = 19;
-+  // KubepodsMemoryPercent is the WorkloadResourceConfig kubepods limit in percent of the memory beyond MemoryReserved.
-+  uint64 kubepods_memory_percent = 20;
- }
- 
- // KubeletKubeconfigSpec describes the current kubelet client credentials.
-```
-
-**File**: `api/resource/definitions/runtime/runtime.proto` (modified, +8/-2)
-```diff
-@@ -294,11 +294,17 @@ message WatchdogTimerStatusSpec {
-   google.protobuf.Duration feed_interval = 3;
- }
- 
--// WorkloadMemorySpecSpec describes the desired memory.max for each Talos-owned workload root, in bytes.
-+// WorkloadMemorySpecSpec describes the desired memory.max for each workload root, in bytes.
- //
--// Zero means no limit is configured for that root; roots are independent.
-+// Zero means the root is not limited; roots are independent. Omitted Talos-owned roots are capped at
-+// MemoryCapacity minus MemoryReserved.
- message WorkloadMemorySpecSpec {
-   uint64 talos_containers_limit = 1;
-   uint64 virtual_machines_limit = 2;
-+  // MemoryCapacity is the host memory the limits were resolved against; the kubelet resolves a kubepods limit
-+  // against it as well.
-+  uint64 memory_capacity = 4;
-+  // MemoryReserved is the host memory left out of the limits.
-+  uint64 memory_reserved = 5;
- }
- 
-```
-
-**File**: `hack/release.toml` (modified, +60/-16)
-```diff
-@@ -143,34 +143,78 @@ configFiles:
-     [notes.workload_memory_limits]
-         title = "Workload Memory Limits"
-         description = """\
--The new `WorkloadResourceConfig` document sets independent aggregate memory limits for Kubernetes pods, Talos containers and virtual machines:
-+The new `WorkloadResourceConfig` document splits host memory
-+between Kubernetes pods, Talos containers and virtual machines.
-+`reserved.memory` stays with the host,
-+and each limit is a whole percentage of the remaining memory
-+or an absolute size such as `16GiB`.
-+The reservation defaults to the kubelet's default `systemReserved.memory`,
-+which is 512Mi on control plane nodes and 384Mi on workers.
- 
- ```yaml
- apiVersion: v1alpha1
- kind: WorkloadResourceConfig
-+reserved:
-+  memory: 2GiB
- kubepods:
-   memory:
--    limit: 16GiB
-+    limit: 50%
- taloscontainers:
-   memory:
--    limit: 4GiB
-+    limit: 10%
- virtualMachines:
-   memory:
--    limit: 32GiB
-+    limit: 40%
- ```
- 
--Each root is optional. Limits are ceilings, not reservations, and do not cover swap or HugeTLB memory.
--For `kubepods`, Talos derives `systemReserved.memory` so kubelet enforces the cap and adjusts Node Allocatable;
--an explicit `systemReserved.memory`, conflicting kubelet flags or the Static memory manager cannot be combined with this limit.
--Changing the Kubernetes cap restarts kubelet. Without Kubernetes, only the container and virtual machine limits apply.
--
--Lowering a limit can OOM-kill workloads in that group, including QEMU guests or Kubernetes control-plane pods.
--Talos exclusively owns `memory.max` on `/taloscontainers` and `/virtualmachines.partition`, even without this document.
--Omitting their limits means unlimited aggregate memory; individual child limits still apply.
--Kubelet system-reserved or kube-reserved memory enforcement on these roots is rejected regardless of this document;
--CPU-only or compressible enforcement and reservations on unrelated roots remain supported.
--Kubelet drop-in directories are rejected while any cap is active; without caps, their contents remain the operator's responsibility.
--Removing the Kubernetes cap restores the original kubelet configuration. The document has no effect in container mode.
-+Percentages are resolved against the host memory at runtime and follow memory hotplug.
-+They must not add up to more than 100%.
-+Each root is optional.
-+A root without a limit is capped at the host memory minus `reserved.memory`,
-+so all three roots are bounded even without the document,
-+the way `kubepods` always was.
-+Limits are ceilings, not reservations,
-+and they don't cover swap or HugeTLB memory.
+@@ -509,6 +509,15 @@ func TestApplyCordoned(t *testing.T) {
+ 			expectedUnschedulable: true,
+ 			expectedAnnotations:   map[string]string{"foo": "bar"},
+ 		},
++		{
++			name:               "cordoned by talosctl drain - uncordon",
++			inputAnnotations:   map[string]string{constants.AnnotationClientCordonedKey: constants.AnnotationCordonedValue},
++			inputUnschedulable: true,
++			shouldCordon:       false,
 +
-+Newly generated configurations include the document with only `reserved.memory`,
-+set to the default for the machine type.
-+Machines upgraded without it get the same default.
-+
-+Kubelet receives `reserved.memory` as `systemReserved.memory`.
-+With a `kubepods` limit,
-+Talos derives `systemReserved.memory` from the limit instead,
-+so kubelet applies the cap and adjusts Node Allocatable.
-+Changing the reservation or the `kubepods` limit restarts kubelet once.
-+A `kubepods` limit also restarts kubelet once per memory hotplug,
-+after the change settles.
-+Without a `kubepods` limit, hotplug leaves kubelet alone,
-+and `kubepods` and Node Allocatable keep the memory size kubelet started with
-+until its next restart.
-+A kubelet `systemReserved` that sets other resources but no memory
-+now gets the reservation added.
-+Without a `kubepods` limit, an explicit `systemReserved.memory`,
-+the `--system-reserved` flag or a kubelet drop-in file
-+overrides `reserved.memory` for kubelet,
-+and keeping them consistent is the operator's responsibility.
-+A `kubepods` limit rejects them, along with `kubeReserved.memory`,
-+conflicting kubelet flags and the Static memory manager.
-+Without Kubernetes, only the container and virtual machine limits apply.
-+
-+Lowering a limit can OOM-kill workloads in that root,
-+including QEMU guests and Kubernetes control plane pods.
-+Talos owns `memory.max` on `/taloscontainers` and `/virtualmachines.partition`,
-+even without this document.
-+Limits on individual containers and guests still apply.
-+With the document, kubelet `system-reserved` and `kube-reserved` enforcement
-+on these roots is rejected, compressible variants included.
-+The same applies to `/system/extensions`, because Talos owns its `pids.max`.
-+Without the document, only enforcing a memory reservation on these roots is rejected.
-+Reservations enforced on other cgroups still work.
-+Kubelet drop-in directories are rejected while the document sets any limit.
-+Otherwise their contents are the operator's responsibility.
-+Removing the `kubepods` limit restores the original kubelet configuration.
-+In container mode the limits aren't applied,
-+but `reserved.memory` still sets the kubelet `systemReserved.memory`.
- """
- 
-     [notes.memory_protection_small_ram]
++			expectedUnschedulable: true,
++			expectedAnnotations:   map[string]string{constants.AnnotationClientCordonedKey: constants.AnnotationCordonedValue},
++		},
+ 	} {
+ 		t.Run(tt.name, func(t *testing.T) {
+ 			t.Parallel()
 ```
 
-**File**: `hack/test/patches/workload-resources.yaml` (added, +6/-0)
+**File**: `pkg/machinery/constants/constants.go` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+# Reserves host memory for the hypervisor runs, which the Talos-owned workload roots are capped against.
-+# Tests that need a root limit patch their own percentage.
-+apiVersion: v1alpha1
-+kind: WorkloadResourceConfig
-+reserved:
-+  memory: 1GiB
-```
-
-**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_config.go` (modified, +9/-3)
-```diff
-@@ -17,6 +17,7 @@ import (
- 	"github.com/siderolabs/gen/xslices"
- 	"go.uber.org/zap"
+@@ -1178,6 +1178,12 @@ const (
+ 	// AnnotationCordonedValue is the annotation key for the nodes cordoned by Talos.
+ 	AnnotationCordonedValue = "true"
  
-+	configcfg "github.com/siderolabs/talos/pkg/machinery/config/config"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/config"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/k8s"
- )
-@@ -94,10 +95,15 @@ func NewKubeletConfigController() *KubeletConfigController {
- 				kubeletConfig.EnableFSQuotaMonitoring = cfgProvider.Machine().Features().DiskQuotaSupportEnabled()
- 				kubeletConfig.RegisterWithTaints = cfgProvider.K8sNodeConfig().Taints()
- 
-+				// Resolved here, so one machine configuration change reaches the kubelet in one update.
-+				kubeletConfig.MemoryReserved = configcfg.ResolveMemoryReserved(cfgProvider)
-+				kubeletConfig.KubepodsMemoryPercent = 0
-+				kubeletConfig.KubepodsMemoryLimit = 0
++	// AnnotationClientCordonedKey is the annotation key for the nodes cordoned by talosctl drain.
++	//
++	// It must differ from AnnotationCordonedKey: machined uncordons nodes carrying that one
++	// while the machine is running, which would undo the cordon in the middle of a client-side drain.
++	AnnotationClientCordonedKey = "talos.dev/client-cordoned"
 +
- 				if workloadResources := cfgProvider.WorkloadResourceConfig(); workloadResources != nil {
--					kubeletConfig.KubepodsMemoryLimit = workloadResources.KubepodsMemoryLimit()
--				} else {
--					kubeletConfig.KubepodsMemoryLimit = 0
-+					kubepods := workloadResources.KubepodsMemoryLimit()
-+					kubeletConfig.KubepodsMemoryPercent = kubepods.Percent
-+					kubeletConfig.KubepodsMemoryLimit = kubepods.Bytes
- 				}
+ 	// AnnotationStaticPodSecretsVersion is the annotation key for the static pod secret version.
+ 	AnnotationStaticPodSecretsVersion = "talos.dev/secrets-version"
  
- 				if k8sCredentialProviderConfig := cfgProvider.K8sCredentialProviderConfig(); k8sCredentialProviderConfig != nil {
 ```
 
 ---
 
-### Incident Patch 2: `5da8dc88` (2026-11-16)
-**Commit Message**: fix: keep unnumbered BGP peers when the neighbor table read fails
+### Incident Patch 2: `bde1c414` (2026-11-21)
+**Commit Message**: fix: keep importing BGP routes after an imported prefix is originated
 
-The BGP controller resolves unnumbered peers from the kernel
-neighbor table. When dialing rtnetlink or listing neighbors failed,
-the read returned an empty table, which looks the same as a link
-without a router: the controller removed every unnumbered peer
-until the next successful read.
+GoBGP keys local paths by prefix. When an instance started
+originating a prefix it already imported, the originated path
+replaced the imported one along with its UUID. The next import
+reconcile deleted the imported path by its old UUID, GoBGP failed to
+find it, and the error stopped every other import change of the
+instance, on every retry.
 
-Return the read error, keep the link-local address of each running
-unnumbered peer when it happens, and still reconcile the rest of the
-instance. The instance is marked failed, so the controller retries
-with backoff instead of waiting for the next neighbor event, which
-the same buffer overflow may have dropped.
+Forget the imported path when its prefix is originated, as GoBGP
+already replaced it.
 
-Fixes: #14975
+Fixes: #15033
 
 Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/controllers/network/bgp.go` (modified, +7/-2)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/imports_test.go` (modified, +61/-0)
 ```diff
-@@ -190,7 +190,7 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
- 	}
- 
- 	runtimeState := internalbgp.NewRuntimeStateFromResources(linkStatuses.All(), addressStatuses.All())
--	neighborResolver := internalbgp.NewNeighborResolver()
-+	neighborResolver := internalbgp.NewNeighborResolver(internalbgp.ReadNeighbors)
- 
- 	desired := map[resource.ID]struct{}{}
- 
-@@ -222,7 +222,12 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
- 			continue
- 		}
- 
--		peers, peerIfaces := neighborResolver.ResolvePeers(resolved.Spec, runtimeState, instanceLogger)
-+		peers, peerIfaces, err := neighborResolver.ResolvePeers(resolved.Spec, runtimeState, instance.UnnumberedPeers(), instanceLogger)
-+		if err != nil {
-+			instanceLogger.Debug("error reading the neighbor table, keeping the current unnumbered BGP peers", zap.Error(err))
-+
-+			failed = true
-+		}
- 
- 		if err = instance.EnsureServer(
- 			ctx,
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/export_test.go` (modified, +0/-6)
-```diff
-@@ -8,7 +8,6 @@ import (
- 	"maps"
- 	"net/netip"
- 
--	"github.com/jsimonetti/rtnetlink/v2"
+@@ -16,6 +16,7 @@ import (
  	"github.com/osrg/gobgp/v4/pkg/apiutil"
  	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
  	gobgpsrv "github.com/osrg/gobgp/v4/pkg/server"
-@@ -67,8 +66,3 @@ func ListImportCandidatesForTest(instance *Instance, selectors []netip.Prefix) (
- func SetInstancePeerIfacesForTest(instance *Instance, peerIfaces map[netip.Addr]string) {
- 	instance.peerIfaces = peerIfaces
- }
--
--// NewNeighborResolverForTest creates a neighbor resolver backed by a static neighbor snapshot.
--func NewNeighborResolverForTest(neighbors []rtnetlink.NeighMessage) *NeighborResolver {
--	return &NeighborResolver{load: func() []rtnetlink.NeighMessage { return neighbors }}
--}
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance.go` (modified, +15/-0)
-```diff
-@@ -40,6 +40,7 @@ type Instance struct {
- 	installRoutes bool
- 	peers         map[string]string
- 	peerIfaces    map[netip.Addr]string
-+	unnumbered    map[string]netip.Addr
++	"github.com/siderolabs/gen/xslices"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 
+@@ -153,6 +154,66 @@ func TestBGPRouteImportLifecycle(t *testing.T) {
+ 	assert.Nil(t, listBGPImportTestPath(t, targetServer, prefix))
  }
  
- // NewInstance creates an initialized, stopped BGP instance.
-@@ -49,6 +50,7 @@ func NewInstance() *Instance {
- 		imported:   map[netip.Prefix]importedPath{},
- 		peers:      map[string]string{},
- 		peerIfaces: map[netip.Addr]string{},
-+		unnumbered: map[string]netip.Addr{},
- 	}
- }
- 
-@@ -57,6 +59,11 @@ func (instance *Instance) Running() bool {
- 	return instance.server != nil
- }
- 
-+// UnnumberedPeers returns the link-local address of each running unnumbered peer, by its link.
-+func (instance *Instance) UnnumberedPeers() map[string]netip.Addr {
-+	return instance.unnumbered
-+}
++func TestImportedPrefixBecomesOriginated(t *testing.T) {
++	ctx := t.Context()
++	sourceServer := startBGPImportTestServer(t, ctx, 4200000000, "192.0.2.1", -1, false)
++	targetServer := startBGPImportTestServer(t, ctx, 65001, "192.0.2.2", -1, false)
 +
- // Stop tears down the GoBGP server and resets all reconciled state.
- func (instance *Instance) Stop() {
- 	if instance.watchCancel != nil {
-@@ -85,6 +92,7 @@ func (instance *Instance) clearState() {
- 	instance.installRoutes = false
- 	instance.peers = map[string]string{}
- 	instance.peerIfaces = map[netip.Addr]string{}
-+	instance.unnumbered = map[string]netip.Addr{}
- }
- 
- // EnsureServer (re)creates the GoBGP server when server-level configuration changes, then
-@@ -155,6 +163,13 @@ func (instance *Instance) EnsureServer(
- 	}
- 
- 	instance.peerIfaces = peerIfaces
-+	instance.unnumbered = map[string]netip.Addr{}
++	prefix := netip.MustParsePrefix("198.51.100.100/32")
++	other := netip.MustParsePrefix("198.51.100.101/32")
 +
-+	for _, peer := range resolvedPeers {
-+		if peer.LinkLocal.IsValid() {
-+			instance.unnumbered[peer.Link] = peer.LinkLocal
-+		}
-+	}
- 
- 	return instance.reconcilePeers(ctx, config, resolvedPeers)
- }
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/neighbor.go` (modified, +40/-17)
-```diff
-@@ -5,6 +5,7 @@
- package bgp
- 
- import (
-+	"fmt"
- 	"net/netip"
- 	"sync"
- 
-@@ -19,26 +20,32 @@ import (
- // NeighborResolver resolves configured BGP peers against one lazily loaded rtnetlink snapshot.
- type NeighborResolver struct {
- 	once      sync.Once
--	load      func() []rtnetlink.NeighMessage
-+	load      func() ([]rtnetlink.NeighMessage, error)
- 	neighbors []rtnetlink.NeighMessage
-+	loadErr   error
- }
- 
--// NewNeighborResolver creates a neighbor resolver.
--func NewNeighborResolver() *NeighborResolver {
--	return &NeighborResolver{load: readNeighbors}
-+// NewNeighborResolver creates a neighbor resolver which loads the neighbor table with load on first use.
-+func NewNeighborResolver(load func() ([]rtnetlink.NeighMessage, error)) *NeighborResolver {
-+	return &NeighborResolver{load: load}
- }
- 
- // ResolvePeers resolves all currently discoverable peers and their link-local interface mapping.
-+//
-+// If the neighbor table can't be read, unnumbered peers keep their link-local address from current (the
-+// running unnumbered peers by link), as an empty table would remove them, and the read error is returned
-+// together with the resolved peers.
- func (resolver *NeighborResolver) ResolvePeers(
- 	config network.BGPInstanceConfigSpec,
- 	runtimeState *RuntimeState,
-+	current map[string]netip.Addr,
- 	logger *zap.Logger,
--) ([]Peer, map[netip.Addr]string) {
-+) ([]Peer, map[netip.Addr]string, error) {
- 	peerIfaces := map[netip.Addr]string{}
- 	resolved := make([]Peer, 0, len(config.Neighbors))
- 
- 	for _, neighbor := range config.Neighbors {
--		peer, ok := resolver.resolvePeer(neighbor, runtimeState, logger)
-+		peer, ok := resolver.resolvePeer(neighbor, runtimeState, current, logger)
- 		if !ok {
- 			logger.Debug("unnumbered BGP peer not yet discovered, will retry", zap.String("link", neighbor.Link))
- 
-@@ -60,7 +67,7 @@ func (resolver *NeighborResolver) ResolvePeers(
- 		resolved = append(resolved, peer)
- 	}
- 
--	return resolved, peerIfaces
-+	return resolved, peerIfaces, resolver.loadErr
- }
- 
- // warnAuthPasswordConflict reports an unnumbered peer whose link-local address is shared with an already
-@@ -92,6 +99,7 @@ func warnAuthPasswordConflict(resolved []Peer, peer Peer, logger *zap.Logger) {
- func (resolver *NeighborResolver) resolvePeer(
- 	neighbor network.BGPNeighborConfigSpec,
- 	runtimeState *RuntimeState,
-+	current map[string]netip.Addr,
- 	logger *zap.Logger,
- ) (Peer, bool) {
- 	if addr := neighbor.Address; addr.IsValid() {
-@@ -107,10 +115,19 @@ func (resolver *NeighborResolver) resolvePeer(
- 	}
- 
- 	resolver.once.Do(func() {
--		resolver.neighbors = resolver.load()
-+		resolver.neighbors, resolver.loadErr = resolver.load()
- 	})
- 
--	return ResolvePeer(neighbor, runtimeState, resolver.neighbors, logger)
-+	if resolver.loadErr == nil {
-+		return ResolvePeer(neighbor, runtimeState, resolver.neighbors, logger)
-+	}
-+
-+	lla, ok := current[neighbor.Link]
-+	if !ok {
-+		return Peer{}, false
-+	}
-+
-+	return unnumberedPeer(neighbor, lla), true
- }
- 
- // ResolvePeer resolves one configured peer against a neighbor snapshot.
-@@ -148,27 +165,33 @@ func ResolvePeer(
- 		return Peer{}, false
- 	}
- 
--	peer.Address = lla.String() + "%" + neighbor.Link
--	peer.LinkLocal = lla
--	peer.Link = neighbor.Link
-+	return unnumberedPeer(neighbor, lla), true
-+}
- 
--	return peer, true
-+func unnumberedPeer(neighbor network.BGPNeighborConfigSpec, lla netip.Addr) Peer {
-+	return Peer{
-+		Config:    neighbor,
-+		Address:   lla.String() + "%" + neighbor.Link,
-+		LinkLocal: lla,
-+		Link:      neighbor.Link,
-+	}
- }
- 
--func readNeighbors() []rtnetlink.NeighMessage {
-+// ReadNeighbors lists the kernel neighbor table.
-+func ReadNeighbors() ([]rtnetlink.NeighMessage, error) {
- 	conn, err := rtnetlink.Dial(nil)
- 	if err != nil {
--		return nil
-+		return nil, fmt.Errorf("error dialing rtnetlink socket: %w", err)
- 	}
- 
- 	defer conn.Close() //nolint:errcheck
- 
- 	neighbors, err := conn.Neigh.List()
- 	if err != nil {
--		return nil
-+		return nil, fmt.Errorf("error listing neighbors: %w", err)
- 	}
- 
--	return neighbors
-+	return neighbors, nil
- }
- 
- // SelectLinkLocalNeighbor returns the single IPv6 link-local router neighbor on the interface.
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/neighbor_test.go` (modified, +45/-7)
-```diff
-@@ -5,6 +5,7 @@
- package bgp_test
- 
- import (
-+	"errors"
- 	"net/netip"
- 	"testing"
- 
-@@ -78,12 +79,13 @@ func TestNeighborResolver(t *testing.T) {
- 	assert.Equal(t, netip.MustParseAddr("fe80::2"), peer.LinkLocal)
- 	assert.Equal(t, "eth0", peer.Link)
- 
--	peers, _ := internalbgp.NewNeighborResolver().ResolvePeers(network.BGPInstanceConfigSpec{
-+	peers, _, err := internalbgp.NewNeighborResolver(internalbgp.ReadNeighbors).ResolvePeers(network.BGPInstanceConfigSpec{
- 		VRF: "vrf-blue",
- 		Neighbors: []network.BGPNeighborConfigSpec{
- 			{Address: netip.MustParseAddr("192.0.2.2"), PeerASN: 65002},
- 		},
--	}, runtimeState, zap.NewNop())
-+	}, runtimeState, nil, zap.NewNop())
++	_, err := sourceServer.AddPath(apiutil.AddPathRequest{Paths: []*apiutil.Path{newBGPImportTestPath(t, prefix, 50), newBGPImportTestPath(t, other, 50)}})
 +	require.NoError(t, err)
- 	require.Len(t, peers, 1)
- 	assert.Equal(t, "vrf-blue", peers[0].BindInterface)
- }
-@@ -132,13 +134,16 @@ func TestNeighborResolverAuthPasswordConflict(t *testing.T) {
- 
- 			core, logs := observer.New(zapcore.WarnLevel)
- 
--			peers, peerIfaces := internalbgp.NewNeighborResolverForTest(neighbors).ResolvePeers(network.BGPInstanceConfigSpec{
-+			resolver := internalbgp.NewNeighborResolver(func() ([]rtnetlink.NeighMessage, error) { return neighbors, nil })
 +
-+			peers, peerIfaces, err := resolver.ResolvePeers(network.BGPInstanceConfigSpec{
- 				Neighbors: []network.BGPNeighborConfigSpec{
- 					{Link: "eth0", PeerASN: 65002, AuthPassword: test.passwords[0]},
- 					{Link: "eth1", PeerASN: 65002, AuthPassword: test.passwords[1]},
- 					{Link: "eth2", PeerASN: 65002, AuthPassword: test.passwords[2]},
- 				},
--			}, runtimeState, zap.New(core))
-+			}, runtimeState, nil, zap.New(core))
-+			require.NoError(t, err)
- 
- 			require.Len(t, peers, 3)
- 			assert.Equal(t, map[netip.Addr]string{netip.MustParseAddr("fe80::1"): "eth2"}, peerIfaces)
-@@ -157,21 +162,54 @@ func TestNeighborResolverAuthPasswordConflict(t *testing.T) {
- func TestNeighborResolverNumberedPeerSkipsRtnetlink(t *testing.T) {
++	source := internalbgp.NewInstance()
++	internalbgp.SetInstanceServerForTest(source, sourceServer)
++
++	target := internalbgp.NewInstance()
++	internalbgp.SetInstanceServerForTest(target, targetServer)
++	target.SetOutputState(nil, []resourcenetwork.BGPImportRouteSpec{{
++		BGPInstance: "workload",
++		Prefixes:    []netip.Prefix{netip.MustParsePrefix("198.51.100.0/24")},
++	}}, 0, netip.Addr{}, 0, true)
++
++	instances := map[string]*internalbgp.Instance{"fabric": target, "workload": source}
++	desiredInstances := map[string]struct{}{"fabric": {}, "workload": {}}
++
++	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desiredInstances)
++	require.NoError(t, err)
++	require.True(t, internalbgp.InstanceImportedForTest(target, prefix))
++
++	// an address on an advertised link makes the target originate the imported prefix: the originated path
++	// replaces the imported one in GoBGP
++	require.NoError(t, target.ReconcileOriginated([]netip.Prefix{prefix}))
++
++	_, err = sourceServer.AddPath(apiutil.AddPathRequest{Paths: []*apiutil.Path{newBGPImportTestPath(t, other, 75)}})
++	require.NoError(t, err)
++
++	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desiredInstances)
++	require.NoError(t, err)
++	assert.False(t, internalbgp.InstanceImportedForTest(target, prefix))
++
++	originated, err := internalbgp.BuildOriginatedPath(prefix)
++	require.NoError(t, err)
++
++	path := listBGPImportTestPath(t, targetServer, prefix)
++	require.NotNil(t, path)
++
++	attrType := func(attr bgppacket.PathAttributeInterface) bgppacket.BGPAttrType { return attr.GetType() }
++	assert.Equal(t, xslices.Map(originated.Attrs, attrType), xslices.Map(path.Attrs, attrType),
++		"the target must hold the originated path, not the imported one")
++	assert.Equal(t, uint32(75), importedAttribute[*bgppacket.PathAttributeMultiExitDisc](t, listBGPImportTestPath(t, targetServer, other)).Value,
++		"the other imports must still be reconciled")
++
++	// once the target stops originating it, the prefix is imported again
++	require.NoError(t, target.ReconcileOriginated(nil))
++
++	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desiredInstances)
++	require.NoError(t, err)
++	assert.True(t, internalbgp.InstanceImportedForTest(target, prefix))
++	assert.Equal(t, uint32(50), importedAttribute[*bgppacket.PathAttributeMultiExitDisc](t, listBGPImportTestPath(t, targetServer, prefix)).Value)
++}
++
+ func TestBGPImportFamilies(t *testing.T) {
  	t.Parallel()
  
--	resolver := internalbgp.NewNeighborResolver()
-+	resolver := internalbgp.NewNeighborResolver(func() ([]rtnetlink.NeighMessage, error) {
-+		return nil, errors.New("numbered peers must not read the neighbor table")
-+	})
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance.go` (modified, +3/-0)
+```diff
+@@ -210,6 +210,9 @@ func (instance *Instance) ReconcileOriginated(advertised []netip.Prefix) error {
+ 		}
  
--	peers, _ := resolver.ResolvePeers(network.BGPInstanceConfigSpec{
-+	peers, _, err := resolver.ResolvePeers(network.BGPInstanceConfigSpec{
- 		Neighbors: []network.BGPNeighborConfigSpec{
- 			{Address: netip.MustParseAddr("192.0.2.2"), PeerASN: 65002},
- 		},
--	}, internalbgp.NewRuntimeState(nil, nil), zap.NewNop())
-+	}, internalbgp.NewRuntimeState(nil, nil), nil, zap.NewNop())
+ 		instance.originated[prefix] = struct{}{}
++
++		// GoBGP keys local paths by prefix, so an imported path for it was just replaced along with its UUID
++		delete(instance.imported, prefix)
+ 	}
  
-+	require.NoError(t, err)
- 	require.Len(t, peers, 1)
- 	assert.Equal(t, "192.0.2.2", peers[0].Address)
- 
- 	_, ok := internalbgp.ResolvePeer(network.BGPNeighborConfigSpec{}, internalbgp.NewRuntimeState(nil, nil), nil, zap.NewNop())
- 	assert.False(t, ok)
- }
- 
-+func TestNeighborResolverReadError(t *testing.T) {
-+	t.Parallel()
-+
-+	readErr := errors.New("netlink receive: no buffer space available")
-+
-+	resolver := internalbgp.NewNeighborResolver(func() ([]rtnetlink.NeighMessage, error) {
-+		return nil, readErr
-+	})
-+
-+	peers, peerIfaces, err := resolver.ResolvePeers(network.BGPInstanceConfigSpec{
-+		Neighbors: []network.BGPNeighborConfigSpec{
-+			{Address: netip.MustParseAddr("192.0.2.2"), PeerASN: 65002},
-+			{Link: "eth0", PeerASN: 65002},
-+			{Link: "eth1", PeerASN: 65002},
-+			{Link: "eth2", PeerASN: 65002},
-+		},
-+	}, internalbgp.NewRuntimeState(map[string]network.LinkStatusSpec{"eth0": {Index: 10}, "eth1": {Index: 11}, "eth2": {Index: 12}}, nil),
-+		map[string]netip.Addr{
-+			"eth0": netip.MustParseAddr("fe80::1"),
-+			"eth1": netip.MustParseAddr("fe80::1"),
-+		},
-+		zap.NewNop(),
-+	)
-+
-+	assert.ErrorIs(t, err, readErr, "a failed neighbor table read must be reported")
-+	assert.Equal(t, []string{"192.0.2.2", "fe80::1%eth0", "fe80::1%eth1"}, xslices.Map(peers, func(peer internalbgp.Peer) string { return peer.Address }),
-+		"the running unnumbered peers must be kept, also when they share a link-local address, and a link without one must stay unresolved")
-+	assert.Equal(t, map[netip.Addr]string{netip.MustParseAddr("fe80::1"): "eth1"}, peerIfaces)
-+}
-+
- func neighborMessage(index uint32, state uint16, flags uint8, address string) rtnetlink.NeighMessage {
- 	return rtnetlink.NeighMessage{
- 		Index: index,
+ 	for prefix := range instance.originated {
 ```
 
 ---
 
-### Incident Patch 3: `2a16b429` (2026-11-19)
-**Commit Message**: fix: honor list depth when filtering file types
+### Incident Patch 3: `f1028119` (2026-11-16)
+**Commit Message**: fix: replace changed imported BGP paths without a withdrawal
 
-Keep the traversal limit when directories are filtered out.
+When an imported route changed attributes at its source, the
+importing instance deleted its copy and then added the new one, so
+its peers saw a withdrawal before the update and briefly lost the
+route.
 
-Signed-off-by: immanuwell <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+Add the changed path over the current one instead. GoBGP keys local
+paths by prefix, so AddPath replaces the path in place and returns a
+new UUID for it, which a later removal uses.
 
-**File**: `pkg/archiver/walker.go` (modified, +26/-15)
+Fixes: #14969
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/imports.go` (modified, +4/-3)
 ```diff
-@@ -112,11 +112,22 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
- 				FileInfo: fileInfo,
- 				Error:    walkErr,
- 			}
--			if path == rootPath && !fileInfo.IsDir() {
--				// only one file
--				item.RelPath = filepath.Base(path)
--			} else if item.Error == nil {
--				item.RelPath, item.Error = filepath.Rel(rootPath, path)
-+			// fileInfo is nil when walkErr is set for a path which can't be stat'ed
-+			// (e.g. the root path got removed after the initial Lstat)
-+			if item.Error == nil {
-+				if path == rootPath && !fileInfo.IsDir() {
-+					// only one file
-+					item.RelPath = filepath.Base(path)
-+				} else {
-+					item.RelPath, item.Error = filepath.Rel(rootPath, path)
-+				}
-+			}
-+
-+			// Enforce the depth limit even if a filter omits this directory.
-+			var walkResult error
-+
-+			if item.Error == nil && fileInfo.IsDir() && atMaxDepth(opts.maxRecurseDepth, item.RelPath) {
-+				walkResult = filepath.SkipDir
- 			}
+@@ -134,8 +134,7 @@ func (instance *Instance) listImportCandidates(selectors []netip.Prefix) (map[ne
  
- 			// TODO: refactor all those `if item.Error == nil &&` conditions
-@@ -140,7 +151,7 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
- 				}
+ func (instance *Instance) reconcileImported(desired map[netip.Prefix]desiredImportedPath) error {
+ 	for prefix, current := range instance.imported {
+-		path, exists := desired[prefix]
+-		if exists && path.fingerprint == current.fingerprint {
++		if _, exists := desired[prefix]; exists {
+ 			continue
+ 		}
  
- 				if !matches {
--					return nil
-+					return walkResult
- 				}
- 			}
- 
-@@ -163,7 +174,7 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
- 				}
- 
- 				if !matches {
--					return nil
-+					return walkResult
- 				}
- 			}
- 
-@@ -173,11 +184,7 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
- 			case ch <- item:
- 			}
- 
--			if item.Error == nil && fileInfo.IsDir() && atMaxDepth(opts.maxRecurseDepth, rootPath, path) {
--				return filepath.SkipDir
--			}
--
--			return nil
-+			return walkResult
- 		})
- 		if err != nil {
- 			select {
-@@ -193,15 +200,19 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
- // OSPathSeparator is the string version of the os.PathSeparator.
- const OSPathSeparator = string(os.PathSeparator)
- 
--func atMaxDepth(maximum int, root, cur string) bool {
-+// atMaxDepth reports whether the directory at relPath (relative to the walk root) should not be descended into.
-+//
-+// The depth is derived from the relative path, so that it doesn't depend on the way the root path is spelled
-+// (e.g. root "/" already contains a path separator).
-+func atMaxDepth(maximum int, relPath string) bool {
- 	if maximum < 0 {
- 		return false
+@@ -146,8 +145,10 @@ func (instance *Instance) reconcileImported(desired map[netip.Prefix]desiredImpo
+ 		delete(instance.imported, prefix)
  	}
  
--	if root == cur {
-+	if relPath == "." {
- 		// always recurse the root directory
- 		return false
- 	}
++	// a changed path is added over the current one: GoBGP keys local paths by prefix, so AddPath replaces
++	// it in place under a new UUID, while deleting it first would send a withdrawal to the peers
+ 	for prefix, imported := range desired {
+-		if _, exists := instance.imported[prefix]; exists {
++		if current, exists := instance.imported[prefix]; exists && current.fingerprint == imported.fingerprint {
+ 			continue
+ 		}
  
--	return (strings.Count(cur, OSPathSeparator) - strings.Count(root, OSPathSeparator)) >= maximum
-+	return strings.Count(relPath, OSPathSeparator)+1 >= maximum
- }
 ```
 
-**File**: `pkg/archiver/walker_test.go` (modified, +91/-15)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/imports_test.go` (modified, +68/-0)
 ```diff
-@@ -97,21 +97,28 @@ func (suite *WalkerSuite) TestIterationMaxRecurseDepth() {
- 			result:   []string{".", "dev", "dev/random", "etc", "etc/certs", "etc/certs/ca.crt", "etc/hostname", "lib", "lib/dynalib.so", "usr", "usr/bin", "usr/bin/cp", "usr/bin/mv"},
- 		},
- 	} {
--		suite.Run(strconv.Itoa(test.maxDepth), func() {
--			suite.T().Parallel()
--
--			ch, err := archiver.Walker(context.Background(), suite.tmpDir, archiver.WithMaxRecurseDepth(test.maxDepth))
--			suite.Require().NoError(err)
--
--			var result []string //nolint:prealloc // this is a test
--
--			for fi := range ch {
--				suite.Require().NoError(fi.Error)
--				result = append(result, fi.RelPath)
--			}
--
--			suite.Equal(test.result, result)
--		})
-+		for _, root := range []struct {
-+			name string
-+			path string
-+		}{
-+			{name: "clean", path: suite.tmpDir},
-+			// the depth should not depend on the way root path is spelled (e.g. "/" contains a separator)
-+			{name: "trailing-separator", path: suite.tmpDir + archiver.OSPathSeparator},
-+		} {
-+			suite.Run(strconv.Itoa(test.maxDepth)+"/"+root.name, func() {
-+				ch, err := archiver.Walker(context.Background(), root.path, archiver.WithMaxRecurseDepth(test.maxDepth))
-+				suite.Require().NoError(err)
+@@ -8,6 +8,7 @@ import (
+ 	"context"
+ 	"net"
+ 	"net/netip"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+@@ -198,6 +199,73 @@ func startBGPImportTestServer(t *testing.T, ctx context.Context, asn uint32, rou
+ 	return server
+ }
+ 
++func TestImportedPathChangeIsReplacedInPlace(t *testing.T) {
++	ctx := t.Context()
++	fabricPort := freeBGPImportTestPort(t)
++	sourceServer := startBGPImportTestServer(t, ctx, 4200000000, "192.0.2.1", -1, false)
++	targetServer := startBGPImportTestServer(t, ctx, 65001, "192.0.2.2", -1, false)
++	fabricServer := startBGPImportTestServer(t, ctx, 65000, "192.0.2.3", fabricPort, false)
++	connectBGPImportTestFabric(t, ctx, targetServer, fabricServer, fabricPort)
 +
-+				var result []string //nolint:prealloc // this is a test
++	prefix := netip.MustParsePrefix("198.51.100.100/32")
 +
-+				for fi := range ch {
-+					suite.Require().NoError(fi.Error)
-+					result = append(result, fi.RelPath)
++	_, err := sourceServer.AddPath(apiutil.AddPathRequest{Paths: []*apiutil.Path{newBGPImportTestPath(t, prefix, 50)}})
++	require.NoError(t, err)
++
++	source := internalbgp.NewInstance()
++	internalbgp.SetInstanceServerForTest(source, sourceServer)
++
++	target := internalbgp.NewInstance()
++	internalbgp.SetInstanceServerForTest(target, targetServer)
++	target.SetOutputState(nil, []resourcenetwork.BGPImportRouteSpec{{
++		BGPInstance: "workload",
++		Prefixes:    []netip.Prefix{netip.MustParsePrefix("198.51.100.0/24")},
++	}}, 0, netip.Addr{}, 0, true)
++
++	instances := map[string]*internalbgp.Instance{"fabric": target, "workload": source}
++	desired := map[string]struct{}{"fabric": {}, "workload": {}}
++
++	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desired)
++	require.NoError(t, err)
++	require.Eventually(t, func() bool { return listBGPImportTestPath(t, fabricServer, prefix) != nil }, 5*time.Second, 10*time.Millisecond)
++
++	var withdrawals atomic.Int32
++
++	require.NoError(t, fabricServer.WatchEvent(ctx, gobgpsrv.WatchEventMessageCallbacks{
++		OnBestPath: func(paths []*apiutil.Path, _ time.Time) {
++			for _, path := range paths {
++				if path.Withdrawal && path.Nlri.String() == prefix.String() {
++					withdrawals.Add(1)
 +				}
-+
-+				suite.Equal(test.result, result)
-+			})
-+		}
- 	}
- }
- 
-@@ -188,6 +195,75 @@ func (suite *WalkerSuite) TestIterationTypes() {
- 		relPaths)
- }
- 
-+func (suite *WalkerSuite) TestIterationTypesMaxRecurseDepth() {
-+	// add a regular file at the top level, so that shallow depths have something to return
-+	topFile := filepath.Join(suite.tmpDir, "top.txt")
-+	suite.Require().NoError(os.WriteFile(topFile, nil, 0o644))
-+
-+	defer func() {
-+		suite.Require().NoError(os.Remove(topFile))
-+	}()
-+
-+	for _, test := range []struct {
-+		maxDepth int
-+		result   []string
-+	}{
-+		{
-+			maxDepth: 0,
-+			result:   []string{"top.txt"},
-+		},
-+		{
-+			maxDepth: 1,
-+			result:   []string{"top.txt"},
-+		},
-+		{
-+			maxDepth: 2,
-+			result:   []string{"dev/random", "etc/hostname", "lib/dynalib.so", "top.txt"},
-+		},
-+		{
-+			maxDepth: -1,
-+			result:   []string{"dev/random", "etc/certs/ca.crt", "etc/hostname", "lib/dynalib.so", "top.txt", "usr/bin/cp"},
-+		},
-+	} {
-+		suite.Run(strconv.Itoa(test.maxDepth), func() {
-+			ch, err := archiver.Walker(context.Background(), suite.tmpDir,
-+				archiver.WithMaxRecurseDepth(test.maxDepth),
-+				archiver.WithFileTypes(archiver.RegularFileType),
-+			)
-+			suite.Require().NoError(err)
-+
-+			var result []string //nolint:prealloc // this is a test
-+
-+			for fi := range ch {
-+				suite.Require().NoError(fi.Error)
-+				result = append(result, fi.RelPath)
 +			}
++		},
++	}, gobgpsrv.WatchBestPath(false)))
 +
-+			suite.Equal(test.result, result)
-+		})
-+	}
++	updatedPath := newBGPImportTestPath(t, prefix, 75)
++
++	_, err = sourceServer.AddPath(apiutil.AddPathRequest{Paths: []*apiutil.Path{updatedPath}})
++	require.NoError(t, err)
++
++	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desired)
++	require.NoError(t, err)
++
++	require.Eventually(t, func() bool {
++		path := listBGPImportTestPath(t, fabricServer, prefix)
++
++		return path != nil && importedAttribute[*bgppacket.PathAttributeMultiExitDisc](t, path).Value == 75
++	}, 5*time.Second, 10*time.Millisecond)
++
++	assert.Zero(t, withdrawals.Load(), "a changed imported path must replace the old one without a withdrawal")
++
++	// the replacement must still be removable once the source withdraws it
++	require.NoError(t, sourceServer.DeletePath(apiutil.DeletePathRequest{Paths: []*apiutil.Path{updatedPath}}))
++
++	_, _, err = internalbgp.ReconcileImportedPaths("fabric", target, instances, desired)
++	require.NoError(t, err)
++
++	require.Eventually(t, func() bool { return listBGPImportTestPath(t, fabricServer, prefix) == nil }, 5*time.Second, 10*time.Millisecond)
 +}
 +
-+func (suite *WalkerSuite) TestIterationRootRemoved() {
-+	// the root path might disappear between the initial Lstat and the walk,
-+	// in that case the walker should report an error instead of panicking
-+	for range 1000 {
-+		root := filepath.Join(suite.T().TempDir(), "root")
-+		suite.Require().NoError(os.Mkdir(root, 0o755))
-+
-+		ch, err := archiver.Walker(context.Background(), root)
-+		suite.Require().NoError(err)
-+
-+		suite.Require().NoError(os.Remove(root))
-+
-+		for fi := range ch {
-+			if fi.Error != nil {
-+				suite.Require().ErrorIs(fi.Error, os.ErrNotExist)
-+			}
-+		}
-+	}
-+}
-+
- func TestWalkerSuite(t *testing.T) {
- 	suite.Run(t, new(WalkerSuite))
- }
+ func connectBGPImportTestFabric(
+ 	t *testing.T,
+ 	ctx context.Context,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15031** (2026-11-20): feat: update Flannel to 0.28.11 (@smira)
-- **PR #15030** (2026-11-20): feat: update etcd to 3.7.4 (@smira)
-- **PR #15029** (2026-11-20): test: avoid racing CPU scaling governor write (@majabojarska)
-- **PR #15027** (2026-11-20): chore: split hypervisor libvirt tests into per-file suites (@shanduur)
-- **PR #15026** (2026-11-20): test: optimize VM log rotation testing (@majabojarska)
-- **PR #15025** (2026-11-21): fix: honor list depth when filtering file types (@immanuwell)
+- **PR #15053** (2026-11-23): fix: request redaction in dashboard containers view (@majabojarska)
+- **PR #15050** (2026-11-23): test: wait for full output in TestNetworkModes (containers) (@majabojarska)
+- **PR #15049** (2026-11-23): feat: make InlineDataVolumeConfig optionally redactable (@majabojarska)
+- **PR #15048** (2026-11-23): fix: keep node cordoned during talosctl drain (@shanduur)
+- **PR #15047** (2026-11-23): fix: end followed file logs when volumes are torn down (@frezbo)
+- **PR #15045** (2026-11-23): feat: add InlineDataVolumeConfig for ConfigMap-style volumes (@majabojarska)
 
 ---
 
@@ -3032,33 +2514,35 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. split workload memory by percentage and reserve host memory
+## X. keep node cordoned during talosctl drain
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/talosctl/pkg/talos/nodedrain/nodedrain.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0d3b866`: split workload memory by percentage and reserve host memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9c11bef`: keep node cordoned during talosctl drain. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/talosctl/pkg/talos/nodedrain/nodedrain.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
-          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
+	if err := nodedrain.Cordon(ctx, clientset, nodeName, constants.AnnotationClientCordonedKey); err != nil {
+			Message: fmt.Sprintf("%s: error draining node: %v", nodeName, err),
+	if err := nodedrain.Uncordon(ctx, clientset, nodeName, constants.AnnotationClientCordonedKey); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
-          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
+	if err := nodedrain.Cordon(ctx, clientset, nodeName, constants.AnnotationCordonedKey); err != nil {
+			Message: fmt.Sprintf("%s: error cordoning node: %v", nodeName, err),
+	if err := nodedrain.Uncordon(ctx, clientset, nodeName, constants.AnnotationCordonedKey); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0d3b866` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9c11bef` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

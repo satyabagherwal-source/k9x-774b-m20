@@ -12468,3 +12468,7 @@
 | `CYCLE-20261123-8261` | `2026-11-23T21:04:49.658Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10121` | Yes (`cc941d6a...`) |
 | `CYCLE-20261123-882Q` | `2026-11-23T21:04:57.314Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10122` | Yes (`ffe21527...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T21:05:33.554Z` | `duckdb-duckdb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F2F7DD53` [Domain H] | Yes (`9e59b4f4...`) |
+| `CYCLE-20261123-KM28` | `2026-11-23T21:14:35.312Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10123` | Yes (`f8a36f15...`) |
+| `CYCLE-20261123-KQM6` | `2026-11-23T21:14:41.214Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`9574cb32...`) |
+| `CYCLE-20261123-KQMX` | `2026-11-23T21:14:41.241Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10124` | Yes (`bd7d0f17...`) |
+| `CYCLE-20261123-KVK6` | `2026-11-23T21:14:47.622Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10125` | Yes (`66785eb0...`) |

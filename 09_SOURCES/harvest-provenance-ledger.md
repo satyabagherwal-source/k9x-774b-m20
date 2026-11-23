@@ -12501,3 +12501,7 @@ Every entry in this ledger must capture:
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `1671d54b` | Multi-dimensional audit evidence | 2026-11-23T21:04:49.662Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `94a1663a` | Multi-dimensional audit evidence | 2026-11-23T21:04:57.318Z |
 | `learn-dom-h-f2f7dd53` | `project://duckdb-duckdb` | `94a1663a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md` | 2026-11-23T21:05:33.554Z |
+| `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `f1fe89a9` | Multi-dimensional audit evidence | 2026-11-23T21:14:35.317Z |
+| `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-23T21:14:41.221Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `97f97c86` | Multi-dimensional audit evidence | 2026-11-23T21:14:41.246Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `4a2be30a` | Multi-dimensional audit evidence | 2026-11-23T21:14:47.627Z |

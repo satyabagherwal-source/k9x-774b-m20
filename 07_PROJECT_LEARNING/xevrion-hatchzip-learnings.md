@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md`  
 > **Source**: github ([https://github.com/xevrion/hatchzip](https://github.com/xevrion/hatchzip))  
-> **Source Version**: `2a25c9e6`  
+> **Source Version**: `f1fe89a9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T10:29:46.119Z  
+> **Timestamp**: 2026-11-23T21:14:33.986Z  
 > **Learning ID**: `learn-github-xevrion-hatchzip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xevrion/hatchzip](https://github.com/xevrion/hatchzip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T10:29:46.112Z  
+> **Harvest Timestamp**: 2026-11-23T21:14:33.753Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HatchZip is a free, open-source archive extractor for Windows, macOS and Linux that extracts ZIP, 7z, RAR, tar and split archives in place, so it needs free space for the extracted files only. Desktop app and CLI.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3058 stars
+- **Stars / Engagement**: 3106 stars
 
 ---
 
@@ -2714,407 +2714,438 @@ impl Feed for Gzip {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3bc3f552` (2026-11-21)
-**Commit Message**: feat(gui): polish every window, and render them to screenshots on all three systems (#138)
+### Incident Patch 1: `f1fe89a9` (2026-11-23)
+**Commit Message**: fix(core): report missing split ZIP parts clearly (#147)
 
-**File**: `.github/workflows/screenshots.yml` (added, +66/-0)
+**File**: `crates/cli/tests/formats.rs` (modified, +13/-2)
 ```diff
-@@ -0,0 +1,66 @@
-+name: screenshots
-+
-+# Draws every window of the desktop app on each system and keeps the PNGs as
-+# an artifact, so a change to the GUI can be looked at without building it.
-+# Informational only: not a required check, and nothing here gates a merge.
-+on:
-+  workflow_dispatch:
-+  pull_request:
-+    paths:
-+      - 'crates/gui/**'
-+      - '.github/workflows/screenshots.yml'
-+
-+env:
-+  CARGO_TERM_COLOR: always
-+
-+# Reading the code is all this needs.
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.ref }}
-+  cancel-in-progress: true
-+
-+jobs:
-+  screenshots:
-+    name: screenshots (${{ matrix.os }})
-+    runs-on: ${{ matrix.os }}
-+    timeout-minutes: 40
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        os: [ubuntu-24.04, macos-15, windows-2025]
-+    env:
-+      # The software renderer draws into a buffer on any machine, GPU or not;
-+      # Slint's winit backend reads this the same way the app does.
-+      SLINT_BACKEND: winit-software
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+      # rustup is on the runner, rust-toolchain.toml picks the version
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-+      # fontconfig to link, xkbcommon-x11 that winit loads for the keyboard
-+      # on X11, a virtual X server to open windows on, and fonts
-+      # for Hindi (Devanagari, in fonts-noto-core) and Simplified Chinese
-+      # (fonts-noto-cjk), which the runner image lacks. macOS and Windows
-+      # ship fonts for both.
-+      - if: runner.os == 'Linux'
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y libfontconfig1-dev libxkbcommon-x11-0 xvfb fonts-noto-core fonts-noto-cjk
-+          fc-list :lang=hi family | sort -u | head -5
-+          fc-list :lang=zh-cn family | sort -u | head -5
-+      # xvfb-run's default screen is 640x480 at 8 bits, smaller than the
-+      # main window and too shallow for the software renderer's buffers.
-+      - if: runner.os == 'Linux'
-+        run: xvfb-run -a --server-args="-screen 0 1920x1080x24" cargo run --locked --example screenshots -p hatchzip-gui -- screenshots
-+      - if: runner.os != 'Linux'
-+        run: cargo run --locked --example screenshots -p hatchzip-gui -- screenshots
-+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-+        if: always()
-+        with:
-+          name: screenshots-${{ matrix.os }}
-+          path: screenshots/
-+          retention-days: 14
-+          if-no-files-found: error
-```
-
-**File**: `crates/gui/README.md` (modified, +10/-0)
-```diff
-@@ -41,3 +41,13 @@ Files dropped on the window open on Windows, macOS and X11. winit 0.30 doesn't r
- ## Tests
+@@ -967,8 +967,19 @@ fn a_native_split_zip_with_a_part_missing_or_extra_is_refused() {
  
- `cargo test -p hatchzip-gui` runs the unit tests, `tests/cli.rs` for the shell flags, and `tests/ui.rs`, which drives the real windows headlessly through Slint's testing backend. `tests/ui_space.rs` does the same on a disk faked to have room for extracting in place but not for keeping the archive. Set `HATCHZIP_GUI_SHOTS=<dir>` to also save every state they pass through as a PNG, in light and dark.
-+
-+## Screenshots
-+
-+`examples/screenshots.rs` opens every window through the real window system and saves each state as a PNG: the main window (start, an open archive with its contents and the disk space plan, a plan that does not fit, running, done, failed), every Settings section and the Reset prompt, About, and the right-click window running and done. Each is drawn in light and dark and in every bundled language, at the default size, and the main and Settings windows also at their minimum size, as `<scene>-<language>-<theme>[-min].png`.
-+
-+```sh
-+SLINT_BACKEND=winit-software cargo run --example screenshots -p hatchzip-gui -- shots
-+```
-+
-+The `screenshots` workflow runs it on Linux (under Xvfb), macOS and Windows for every pull request that changes `crates/gui`, and on demand from the Actions tab. The images are in the run's `screenshots-<os>` artifacts, kept for 14 days. It is not a required check.
+     let tmp = TempDir::new().unwrap();
+     let first = fresh(&tmp);
+-    fs::remove_file(first.with_extension("z02")).unwrap();
+-    assert_split_refused(&first, &first, "game.z02 is missing");
++    let mut before = split_zip_snapshot(&first);
++    let missing = first.with_extension("z02");
++    let later = first.with_extension("z03");
++    assert!(later.exists());
++    let says = format!(
++        "game.z02 is missing: this split ZIP has {} parts. Put the missing parts",
++        before.len()
++    );
++    fs::remove_file(&missing).unwrap();
++    before.retain(|(path, _)| path != &missing);
++    assert_split_refused(&later, &first, &says);
++    assert_unchanged(&before);
++    assert!(!tmp.path().join("out").exists());
+ 
+     let tmp = TempDir::new().unwrap();
+     let first = fresh(&tmp);
 ```
 
-**File**: `crates/gui/examples/screenshots.rs` (added, +432/-0)
+**File**: `crates/core/src/archive/zip.rs` (modified, +1/-2)
 ```diff
-@@ -0,0 +1,432 @@
-+//! Renders every window of the desktop app to PNGs through the real window
-+//! system, for looking at what each OS draws without building locally.
-+//!
-+//! ```sh
-+//! SLINT_BACKEND=winit-software cargo run --example screenshots -p hatchzip-gui -- <out-dir>
-+//! ```
-+//!
-+//! Each scene is saved in light and dark and in every bundled language, at
-+//! the window's default size, and the main and Settings windows also at
-+//! their minimum size: `<scene>-<language>-<theme>[-min].png`. The software
-+//! renderer is the one that can draw a window into a buffer on any machine;
-+//! `SLINT_BACKEND=winit-software` picks it, as for the app.
-+//!
-+//! Opening, the space plan and the finished extractions are real, on an
-+//! archive made in a temporary folder. A running extraction and a failure
-+//! pass too quickly or need a broken archive, so they are drawn from the
-+//! values a run would hold, worded by the same functions the app uses.
-+
-+use std::cell::RefCell;
-+use std::future::Future;
-+use std::io::Write;
-+use std::path::{Path, PathBuf};
-+use std::pin::Pin;
-+use std::process::ExitCode;
-+use std::rc::Rc;
-+use std::task::{Context as TaskContext, Poll};
-+use std::time::{Duration, Instant};
-+
-+use anyhow::{Context, Result, anyhow, bail};
-+use hatchzip_core::human;
-+use hatchzip_gui::args::{TaskArgs, TaskKind};
-+use hatchzip_gui::backend::{self, Drops};
-+use hatchzip_gui::settings::{Appearance, Settings};
-+use hatchzip_gui::{
-+    MainWindow, Messages, Phase, Screen, TaskView, locale, main_window, task_window,
-+};
-+use i_slint_backend_testing::ElementHandle;
-+use slint::{ComponentHandle, LogicalSize, Timer};
-+
-+/// The bundled languages, by the codes the Settings window saves.
-+const LANGUAGES: [&str; 4] = ["en", "es", "hi", "zh_CN"];
-+
-+/// The `min-width` and `min-height` in `ui/main-window.slint` and
-+/// `ui/settings-window.slint`.
-+const MAIN_MIN: (f32, f32) = (640.0, 440.0);
-+const SETTINGS_MIN: (f32, f32) = (600.0, 420.0);
-+
-+const TIMEOUT: Duration = Duration::from_secs(30);
-+
-+fn main() -> ExitCode {
-+    let Some(out) = std::env::args_os().nth(1).map(PathBuf::from) else {
-+        eprintln!("usage: screenshots <out-dir>");
-+        return ExitCode::from(2);
-+    };
-+    match run(out) {
-+        Ok(count) => {
-+            println!("{count} screenshots written");
-+            ExitCode::SUCCESS
-+        }
-+        Err(e) => {
-+            eprintln!("screenshots: {e:#}");
-+            ExitCode::FAILURE
-+        }
-+    }
-+}
-+
-+fn run(out: PathBuf) -> Result<usize> {
-+    std::fs::create_dir_all(&out).with_context(|| format!("creating {}", out.display()))?;
-+    let drops = Rc::new(Drops::default());
-+    // The app's own backend setup, so SLINT_BACKEND chooses the renderer
-+    // exactly as it does there.
-+    backend::select(drops.clone())?;
-+    // Slint registers its bundled catalogs with the first component, so one
-+    // has to exist before a language can be selected.
-+    drop(MainWindow::new()?);
-+
-+    let result: Rc<RefCell<Option<Result<usize>>>> = Rc::default();
-+    let slot = result.clone();
-+    slint::spawn_local(async move {
-+        let outcome = every_scene(&out, &drops).await;
-+        *slot.borrow_mut() = Some(outcome);
-+        let _ = slint::quit_event_loop();
-+    })
-+    .map_err(|e| anyhow!("starting the scenes: {e}"))?;
-+    // Windows come and go between scenes; only the scenes end the loop.
-+    slint::run_event_loop_until_quit()?;
-+    let outcome = result.borrow_mut().take();
-+    outcome.unwrap_or_else(|| Err(anyhow!("the event loop stopped before the scenes finished")))
-+}
-+
-+async fn every_scene(out: &Path, drops: &Drops) -> Result<usize> {
-+    let mut count = 0;
-+    for language in LANGUAGES {
-+        // Before any window of this pass exists, since the Rust side words
-+        // some text once, when a window is built or a state is set.
-+        locale::select(Some(language));
-+        for (theme, appearance) in [("light", Appearance::Light), ("dark", Appearance::Dark)] {
-+            let settings = Settings {
-+                language: Some(language.to_string()),
-+                appearance,
-+                close_when_done: false,
-+                ..Settings::default()
-+            };
-+            for min in [false, true] {
-+                let shots = Shots {
-+                    dir: out,
-+                    language,
-+                    theme,
-+                    min,
-+                    count: 0,
-+                };
-+                count += main_and_settings(shots, drops, &settings).await?;
+@@ -679,11 +679,10 @@ fn check_part_count(parts: &[Part], this: u64) -> Result<()> {
+     if this > n as u64 {
+         let missing = storage::split_zip_segment(first, n).unwrap_or_else(|| first.clone());
+         bail!(
+-            "{} is missing: this split ZIP has {} parts, and {} of them are here. Put the \
++            "{} is missing: this split ZIP has {} parts. Put the \
+              missing parts next to {} and try again. Nothing was modified",
+             missing.display(),
+             this + 1,
+-            n + 1,
+             first.display()
+         );
+     }
+```
+
+---
+
+### Incident Patch 2: `f46560d1` (2026-11-22)
+**Commit Message**: fix(cli): offer a nested split set only when the run wrote all its parts (#145)
+
+* fix(cli): offer a nested split set only when the run wrote all its parts
+
+* fix(cli): rename the field in the dry-run path too
+
+**File**: `crates/cli/src/main.rs` (modified, +52/-11)
+```diff
+@@ -254,6 +254,38 @@ fn run(command: Command) -> Result<u8> {
+ /// also matches the progress files next to the first volume
+ /// (`game.z01.hatchzip`, ...), which are left out when their archive is
+ /// given too.
++/// Whether every volume of the set whose first volume is `primary` that
++/// exists on disk is in `written`. A set that is not split has one volume.
++fn volumes_written(primary: &Path, written: &std::collections::HashSet<PathBuf>) -> bool {
++    use hatchzip_core::archive::storage;
++    let mut volumes = Vec::new();
++    if storage::is_split_zip(primary) {
++        let mut disk = 0;
++        while let Some(segment) = storage::split_zip_segment(primary, disk) {
++            if !segment.exists() {
++                break;
 +            }
-+            let shots = Shots {
-+                dir: out,
-+                language,
-+                theme,
-+                min: false,
-+                count: 0,
-+            };
-+            count += task_window_scenes(shots, &settings).await?;
++            volumes.push(segment);
++            disk += 1;
++        }
++        volumes.extend(storage::split_zip_last(primary));
++    } else {
++        let mut index = 0;
++        while let Some(volume) = storage::volume_path(primary, index) {
++            if index > 0 && !volume.exists() {
++                break;
++            }
++            volumes.push(volume);
++            index += 1;
 +        }
 +    }
-+    Ok(count)
++    volumes
++        .iter()
++        .filter(|v| v.exists())
++        .all(|v| written.contains(v))
++        && written.contains(primary)
 +}
 +
-+struct Shots<'a> {
-+    dir: &'a Path,
-+    language: &'a str,
-+    theme: &'a str,
-+    min: bool,
-+    count: usize,
-+}
-+
-+impl Shots<'_> {
-+    async
+ fn distinct(archives: &[PathBuf]) -> Result<Vec<PathBuf>> {
+     let owner = |a: &Path| {
+         let name = a.to_str()?;
+@@ -615,9 +647,9 @@ fn restore(archive: &Path, output: Option<&Path>) -> Result<u8> {
+ enum Ended {
+     Extracted {
+         output: PathBuf,
+-        /// Archives this run wrote, found by extension and signature. Empty
+-        /// without `--nested`.
+-        nested: Vec<PathBuf>,
++        /// Every file this run wrote and the person did not keep, as absolute
++        /// paths: what `--nested` may pick archives from.
++        written: Vec<PathBuf>,
+     },
+     /// Stopped with the given status; `saved` if a journal holds progress.
+     Stopped { code: u8, saved: bool },
+@@ -693,12 +725,12 @@ fn extract_all(target: Target, mut opts: Options) -> Result<u8> {
+             },
+         };
+         match ended {
+-            Ended::Extracted { output, nested } => {
++            Ended::Extracted { output, written } => {
+                 done += 1;
+                 if !outputs.contains(&output) {
+                     outputs.push(output);
+                 }
+-                nested_candidates.extend(nested);
++                nested_candidates.extend(written);
+             }
+             Ended::Stopped { code, saved } => {
+                 if opts.several {
+@@ -713,15 +745,25 @@ fn extract_all(target: Target, mut opts: Options) -> Result<u8> {
+             .iter()
+             .filter_map(|a| locate(a).ok().map(|(p, _)| p))
+             .collect();
++        let written: std::collections::HashSet<PathBuf> =
++            nested_candidates.iter().cloned().collect();
+         let mut nested: Vec<PathBuf> = Vec::new();
+         let mut seen = std::collections::HashSet::new();
+         for path in nested_candidates {
++            if hatchzip_core::archive::nested_kind(&path).is_none() {
++                continue;
++            }
+             // A split set counts once, by its first volume, and the parent
+             // archives are never nested.
+             let Ok((primary, _)) = locate(&path) else {
+                 continue;
+             };
+-            if parents.contains(&primary) || !seen.insert(primary) {
++            if parents.contains(&primary) || !seen.insert(primary.clone()) {
++                continue;
++            }
++            // Extracting a set in place removes every volume, so each one
++            // must be a file this run wrote, never one the person had.
++            if !volumes_written(&primary, &written) {
+                 continue;
+             }
+             nested.push(path);
+@@ -923,7 +965,7 @@ fn extract(
+             );
+             return Ok(Ended::Extracted {
+                 output: journal.output,
+-                nested: Vec::new(),
++                written: Vec::new(),
+             });
+         }
+         State::Resume(job, journal) => {
+@@ -1068,13 +1110,12 @@ fn extract(
+                 entries(count),
+                 output.display()
+             );
+-            let nested = candidates
++            let written = candidates
+                 .into_iter()
+                 .filter(|p| !kept.contains(p))
+-                .map(|p| output.join(p))
+-                .filter(|p| hatchzip_core::archive::nested_kind(p).is_some())
++                .filter_map(|p| std::path::absolute(output.join(p)).ok())
+                 .collect();
+-            Ok(Ended::Extracted { output, nested })
++            Ok(Ended::Extracted { output, written })
+         }
+         Ok(Outcome::Paused) => {
+             if !opts.several {
 ```
 
-**File**: `crates/gui/src/locale.rs` (modified, +15/-0)
+**File**: `crates/cli/tests/nested.rs` (modified, +27/-0)
 ```diff
-@@ -107,6 +107,21 @@ pub fn select(saved: Option<&str>) {
-     // Every name in LANGUAGES is bundled, so this only fails if the list and
-     // the folders disagree, which `every_translation_folder_is_listed` catches.
-     let _ = slint::select_bundled_translation(&language);
-+    *CURRENT.lock().unwrap_or_else(|e| e.into_inner()) = language;
-+}
-+
-+/// The language last selected, `""` for English.
-+static CURRENT: std::sync::Mutex<String> = std::sync::Mutex::new(String::new());
-+
-+/// Sets a window's font and script settings for the language on screen.
-+/// Each window has its own `Theme`, so this runs for every window when it
-+/// is built and again when the language changes.
-+pub fn style(theme: crate::Theme<'_>) {
-+    let language = CURRENT.lock().unwrap_or_else(|e| e.into_inner()).clone();
-+    theme.set_font_family(crate::platform::font_family(&language).into());
-+    theme.set_script_boost(if language == "hi" { 1.0 } else { 0.0 });
-+    theme.set_even_lines(language == "zh_CN");
-+    theme.set_menu_edge(crate::platform::IN_WINDOW_MENU);
+@@ -179,6 +179,33 @@ fn a_skipped_file_is_not_extracted() {
+     assert_eq!(fs::read(out.join("first.zip")).unwrap(), user);
  }
  
- #[cfg(test)]
++/// A `.zip` this run wrote next to the person's own `.z01` names a split set
++/// whose first part is theirs. Extracting it in place would remove their
++/// file, so it is not offered.
++#[test]
++fn a_set_whose_first_part_was_already_there_is_not_extracted() {
++    let tmp = TempDir::new().unwrap();
++    let out = tmp.path().join("out");
++    fs::create_dir_all(&out).unwrap();
++    let theirs = b"the first part of someone else's set".to_vec();
++    fs::write(out.join("set.z01"), &theirs).unwrap();
++
++    let inner = zip_bytes(&[("inside.txt", b"one")]);
++    let outer = zip_bytes(&[("set.zip", &inner)]);
++    let archive = tmp.path().join("outer.zip");
++    fs::write(&archive, outer).unwrap();
++
++    let run = extract_nested(&archive, &out, &[]);
++    assert_ok(&run);
++    assert!(
++        String::from_utf8_lossy(&run.stdout).contains("No archives among the extracted files."),
++        "{}",
++        String::from_utf8_lossy(&run.stdout)
++    );
++    assert_eq!(fs::read(out.join("set.z01")).unwrap(), theirs);
++    assert_eq!(fs::read(out.join("set.zip")).unwrap(), inner);
++}
++
+ /// A link inside the output can point anywhere; the scan must not follow it.
+ #[cfg(unix)]
+ #[test]
 ```
 
-**File**: `crates/gui/src/main_window.rs` (modified, +12/-2)
+---
+
+### Incident Patch 3: `9a2ad6b5` (2026-11-22)
+**Commit Message**: fix(shell): remove the Thunar file after Thunar rewrites the copy (#144)
+
+* fix(shell): remove the Thunar file after Thunar rewrites the copy
+
+* fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592
+
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -25,7 +25,7 @@ use crate::text::{self, gb_text, parse_gb, plan_view};
- use crate::work::{Request, sentence};
- use crate::{
-     AboutWindow, MainWindow, Messages, Mode, Palette, PlanView, Screen, SettingsWindow, TaskView,
--    locale, platform, shell,
-+    Theme, locale, platform, shell,
- };
+@@ -1609,9 +1609,9 @@ checksum = "aa9a19cbb55df58761df49b23516a86d432839add4af60fc256da840f66ed35b"
  
- const REPO: &str = "https://github.com/xevrion/hatchzip";
-@@ -221,6 +221,7 @@ pub fn build(
- ) -> Result<MainWindow> {
-     let ui = MainWindow::new()?;
-     locale::apply(settings.language.as_deref());
-+    locale::style(ui.global::<Theme>());
-     ui.set_keep_free(gb_text(settings.keep_free).into());
-     ui.set_verify_first(settings.verify_first);
-     ui.set_remove_archive(!settings.keep_archive);
-@@ -596,6 +597,13 @@ impl App {
-         self.change_settings(|s| s.language = choice.clone());
-         locale::select(choice.as_deref());
-         let ui = self.ui();
-+        locale::style(ui.global::<Theme>());
-+        if let Some(w) = self.settings_window.borrow().as_ref() {
-+            locale::style(w.global::<Theme>());
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -5342,9 +5342,9 @@ checksum = "6d49784317cd0d1ee7ec5c716dd598ec5b4483ea832a2dced265471cc0f690ae"
+ 
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
+```
+
+**File**: `crates/shell/src/platform/linux.rs` (modified, +34/-16)
+```diff
+@@ -482,13 +482,39 @@ fn action_set(xml: &str, uca: &Uca) -> Vec<Vec<(String, String)>> {
+     set
+ }
+ 
++/// Elements Thunar writes for every action, empty or not, so an empty one
++/// says the same as none. The rest, such as `<directories/>`, are flags that
++/// count by being there.
++const THUNAR_TEXT_FIELDS: &[&str] = &[
++    "icon",
++    "name",
++    "submenu",
++    "unique-id",
++    "command",
++    "description",
++    "range",
++    "patterns",
++];
++
+ /// An action's child elements and their text, sorted, leaving out what
+-/// Thunar fills in on its own: the `<unique-id>` and empty elements. Flags
+-/// such as `<directories/>` are kept.
++/// Thunar changes on its own when it saves the file: the `<unique-id>`, text
++/// fields left empty, and the translations (`xml:lang`) of the name and
++/// description, which it keeps only for the locale it runs in. `<range/>`
++/// and `<range></range>` are the same element.
+ fn action_fingerprint(action: &str) -> Vec<(String, String)> {
+     let mut out = Vec::new();
++    let mut keep = |tag: &str, text: &str| {
++        let mut words = tag.split_whitespace();
++        let name = words.next().unwrap_or("");
++        let localized = words.any(|w| w.starts_with("xml:lang"));
++        let filled_in = text.is_empty() && THUNAR_TEXT_FIELDS.contains(&name);
++        if !localized && !filled_in && name != "unique-id" {
++            let key = tag.split_whitespace().collect::<Vec<_>>().join(" ");
++            out.push((key, text.to_owned()));
 +        }
-+        if let Some(w) = self.about.borrow().as_ref() {
-+            locale::style(w.global::<Theme>());
-+        }
-         // Text bound to @tr in the .slint files follows by itself; these were
-         // worded once from Rust and would stay in the old language.
-         show_shell_menu_label(&ui);
-@@ -885,6 +893,7 @@ impl App {
-             Some(w) => w,
-             None => {
-                 let Ok(w) = SettingsWindow::new() else { return };
-+                locale::style(w.global::<Theme>());
-                 let settings = self.settings.borrow().clone();
-                 if settings.appearance != Appearance::System {
-                     w.global::<Palette>()
-@@ -1130,6 +1139,7 @@ impl App {
-         let mut about = self.about.borrow_mut();
-         if about.is_none() {
-             let Ok(w) = AboutWindow::new() else { return };
-+            locale::style(w.global::<Theme>());
-             let appearance = self.settings.borrow().appearance;
-             if appearance != Appearance::System {
-                 w.global::<Palette>()
-@@ -1207,7 +1217,7 @@ fn wire_settings(w: &SettingsWindow) {
-     w.on_show_settings_file(|| with_app(|app| app.show_settings_file()));
-     w.on_reset(|| with_app(|app| app.reset_settings()));
-     let weak = w.as_weak();
--    w.on_close(move || {
-+    w.on_close_requested(move || {
-         if let Some(w) = weak.upgrade() {
-             let _ = w.hide();
++    };
+     let mut depth = 0;
+-    let mut open: Option<(String, usize)> = None;
++    let mut open: Option<(&str, usize)> = None;
+     let mut i = 0;
+     while let Some(off) = action[i..].find('<') {
+         let at = i + off;
+@@ -499,29 +525,21 @@ fn action_fingerprint(action: &str) -> Vec<(String, String)> {
          }
+         let Some(len) = tag_len(rest) else { break };
+         let tag = &action[at + 1..at + len - 1];
+-        let key = tag
+-            .trim_end_matches('/')
+-            .split_whitespace()
+-            .collect::<Vec<_>>()
+-            .join(" ");
+         if tag.starts_with('/') {
+             depth -= 1;
+             if depth == 1
+-                && let Some((name, from)) = open.take()
++                && let Some((tag, from)) = open.take()
+             {
+-                let text = action[from..at].trim();
+-                if !text.is_empty() && !name.starts_with("unique-id") {
+-                    out.push((name, text.to_owned()));
+-                }
++                keep(tag, action[from..at].trim());
+             }
+-        } else if tag.ends_with('/') {
++        } else if let Some(tag) = tag.strip_suffix('/') {
+             if depth == 1 {
+-                out.push((key, String::new()));
++                keep(tag, "");
+             }
+         } else {
+             depth += 1;
+             if depth == 2 {
+-                open = Some((key, at + len));
++                open = Some((tag, at + len));
+             }
+         }
+         i = at + len;
 ```
 
-**File**: `crates/gui/src/platform/linux.rs` (modified, +9/-0)
+**File**: `crates/shell/tests/register.rs` (modified, +78/-0)
 ```diff
-@@ -6,6 +6,15 @@ pub const SHELL_MENU_NAME: super::ShellMenuName = super::ShellMenuName::Files;
- /// The file managers hatchzip-shell knows (Dolphin, GNOME Files, Nemo, Thunar).
- pub const SHELL_MENU: bool = true;
+@@ -265,6 +265,84 @@ fn thunar_keeps_every_action_that_is_not_hatchzips() {
+     assert!(dirs.data.join("kio/servicemenus/hatchzip.desktop").exists());
+ }
  
-+/// The menu bar is drawn inside the window here, so the content gets an
-+/// edge under it.
-+pub const IN_WINDOW_MENU: bool = true;
++/// Ubuntu's packaged `uca.xml` translates the stock action's name and
++/// description, and Thunar saves only the ones for its own locale. It also
++/// writes `<range/>` as `<range></range>`. A copy that changed only that way
++/// goes on unregister; one the user edited stays.
++#[cfg(target_os = "linux")]
++#[test]
++fn thunar_removes_its_rewrite_of_the_stock_file() {
++    use hatchzip_shell::unregister;
 +
-+/// fontconfig already picks a face with the script's glyphs and weights.
-+pub fn font_family(_language: &str) -> &'static str {
-+    ""
-+}
++    let tmp = tempfile::TempDir::new().unwrap();
++    let system = tmp.path().join("xdg");
++    std::fs::create_dir_all(system.join("Thunar")).unwrap();
++    let stock = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE actions [\n\
++                 <!ATTLIST name xml:lang CDATA #IMPLIED>\n\
++                 <!ATTLIST description xml:lang CDATA #IMPLIED>\n]>\n<actions>\n<action>\n\
++                 \t<icon>utilities-terminal</icon>\n\t<name>Open Terminal Here</name>\n\
++                 \t<name xml:lang=\"de\">Terminal hier \u{f6}ffnen</name>\n\
++                 \t<name xml:lang=\"fr\">Ouvrir un terminal ici</name>\n\
++                 \t<command>exo-open --working-directory %f --launch TerminalEmulator</command>\n\
++                 \t<description>Example for a custom action</description>\n\
++                 \t<description xml:lang=\"de\">Beispiel f\u{fc}r eine benutzerdefinierte Aktion</description>\n\
++                 \t<description xml:lang=\"fr\">Exemple d&apos;une action personnalis\u{e9}e</description>\n\
++                 \t<range/>\n\t<patterns>*</patterns>\n\t<startup-notify/>\n\t<directories/>\n\
++                 </action>\n</actions>\n";
++    std::fs::write(system.join("Thunar/uca.xml"), stock).unwrap();
++    let dirs = Dirs {
++        data: tmp.path().join("data"),
++        config: tmp.path().join("config"),
++        system_config: vec![system],
++    };
++    let uca = dirs.config.join("Thunar/uca.xml");
++    let gui = Path::new("/usr/bin/hatchzip-gui");
++    // What Thunar 4.18 in the C locale saves: no translations, `<range>` with
++    // an end tag, and an id for the action that had none.
++    let thunar_saves = |text: &str| {
++        text.lines()
++            .filter(|l| !l.contains("xml:lang=\""))
++            .map(|l| {
++                l.replace("<range/>", "<range></range>").replace(
++                    "<name>Open Terminal Here</name>",
++                    "<name>Open Terminal Here</name>\n\t<unique-id>1700000000-1</unique-id>",
++                )
++            })
++            .collect::<Vec<_>>()
++            .join("\n")
++            + "\n"
++    };
 +
- /// `$XDG_CONFIG_HOME/hatchzip`, or `~/.config/hatchzip`.
- pub fn config_dir() -> Option<PathBuf> {
-     let base = match std::env::var_os("XDG_CONFIG_HOME").filter(|v| !v.is_empty()) {
-```
-
-**File**: `crates/gui/src/platform/macos.rs` (modified, +19/-0)
-```diff
-@@ -13,6 +13,25 @@ pub const SHELL_MENU_NAME: super::ShellMenuName = super::ShellMenuName::Finder;
- /// hatchzip-shell can't add Finder entries yet, so the setting is hidden.
- pub const SHELL_MENU: bool = false;
- 
-+/// The menu bar is the system's, at the top of the screen.
-+pub const IN_WINDOW_MENU: bool = false;
++    register(&dirs, gui).unwrap();
++    let text = std::fs::read_to_string(&uca).unwrap();
++    let rewritten = thunar_saves(&text);
++    assert!(!rewritten.contains("xml:lang=\"") && rewritten.contains("<range></range>"));
++    std::fs::write(&uca, &rewritten).unwrap();
++    unregister(&dirs).unwrap();
++    assert!(!uca.exists(), "Thunar's rewrite of an untouched copy goes");
++    assert!(!dirs.config.join("hatchzip/thunar-uca-created").exists());
 +
-+/// The faces with real bold weights for these scripts. `""` keeps the
-+/// system font.
-+///
-+/// Chinese: fontique cannot draw the outlines PingFang ships in on macOS,
-+/// so asking for it falls through to Heiti SC, whose Light and Medium are
-+/// weights 300 and 400: text and headings both drew at 400. Hiragino Sans
-+/// GB is in every macOS and has W3 (300) and W6 (600), so text gets W3 and
-+/// a 600 heading gets W6. Devanagari: the fallback has tight line metrics.
-+pub fn font_family(language: &str) -> &'static str {
-+    match language {
-+        "zh_CN" => "Hiragino Sans GB",
-+        "hi" => "Kohinoor Devanagari",
-+        _ => "",
++    // The same rewrite, with a change of the user's on top, is kept with it.
++    for (from, to) in [
++        (
++            "<description>Example for a custom action</description>",
++            "<description>My terminal</description>",
++        ),
++        ("<range></range>", "<range>1-1</range>"),
++    ] {
++        register(&dirs, gui).unwrap();
++        let text = std::fs::read_to_string(&uca).unwrap();
++        let edited = thunar_saves(&text).replacen(from, to, 1);
++        std::fs::write(&uca, &edited).unwrap();
++        unregister(&dirs).unwrap();
++        let left = std::fs::read_to_string(&uca).unwrap();
++        assert!(left.contains(to), "the user's edit stays");
++        assert!(!left.contains("hatchzip-"));
++        assert_eq!(left.matches("<action>").count(), 1);
++        std::fs::remove_file(&uca).unwrap();
 +    }
 +}
 +
- /// `~/Library/Application Support/HatchZip`.
- pub fn config_dir() -> Option<PathBuf> {
-     Some(std::env::home_dir()?.join("Library/Application Support/HatchZip"))
-```
-
-**File**: `crates/gui/src/platform/windows.rs` (modified, +14/-0)
-```diff
-@@ -6,6 +6,20 @@ pub const SHELL_MENU_NAME: super::ShellMenuName = super::ShellMenuName::Explorer
- /// Explorer, through the per-user registry hive.
- pub const SHELL_MENU: bool = true;
- 
-+/// The menu bar is a native Win32 menu, with its own edge.
-+pub const IN_WINDOW_MENU: bool = false;
-+
-+/// The system's UI face for each script. Left to itself, the software
-+/// renderer drew Latin text in Arial, and Simplified Chinese in a Japanese
-+/// face that lacks most of its characters.
-+pub fn font_family(language: &str) -> &'static str {
-+    match language {
-+        "zh_CN" => "Microsoft YaHei UI",
-+        "hi" => "Nirmala UI",
-+        _ => "Segoe UI",
-+    }
-+}
-+
- /// `%APPDATA%\HatchZip`, which roams with the user's profile.
- pub fn config_dir() -> Option<PathBuf> {
-     let appdata = std::env::var_os("APPDATA").filter(|v| !v.is_empty())?;
+ /// A Thunar file HatchZip can't read or edit skips only Thunar, and says
+ /// which file it was.
+ #[cfg(target_os = "linux")]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #147** (2026-11-23): fix(core): report missing split ZIP parts clearly (@garvrao80)
+- **PR #146** (closed): chore(deps): update url to 2.5.9 for RUSTSEC-2026-0592 (@xevrion)
+- **PR #145** (2026-11-22): fix(cli): offer a nested split set only when the run wrote all its parts (@xevrion)
+- **PR #144** (2026-11-22): fix(shell): remove the Thunar file after Thunar rewrites the copy (@xevrion)
 - **PR #143** (2026-11-21): feat(core): extract native split ZIP (.z01) in place (@xevrion)
 - **PR #142** (2026-11-21): feat: extract only selected entries, keeping the archive (@xevrion)
-- **PR #138** (2026-11-21): feat(gui): polish every window for macOS, Windows and Linux (@xevrion)
-- **PR #137** (closed): ci(gui): render every window to screenshots on all three systems (@xevrion)
-- **PR #136** (2026-11-20): feat(gui): a Settings window with every option in one place (@xevrion)
-- **PR #134** (2026-11-20): build(deps): bump the minor-and-patch group across 1 directory with 6 updates (@dependabot[bot])
 
 ---
 
@@ -3134,69 +3165,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gui): polish every window, and render them to screenshots on all three systems
+## X. core): report missing split ZIP parts clearly
 
 **RULE**:
-When implementing operations in `.github/workflows/screenshots.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xevrion/hatchzip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/cli/tests/formats.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xevrion/hatchzip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3bc3f552`: gui): polish every window, and render them to screenshots on all three systems. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1fe89a9`: core): report missing split ZIP parts clearly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/screenshots.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/tests/formats.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-name: screenshots
-
-# Draws every window of the desktop app on each system and keeps the PNGs as
-# an artifact, so a change to the GUI can be looked at without building it.
-# Informational only: not a required check, and nothing here gates a merge.
-on:
-  workflow_dispatch:
-  pull_request:
-    paths:
-      - 'crates/gui/**'
-      - '.github/workflows/screenshots.yml'
-
-env:
-  CARGO_TERM_COLOR: always
-
-# Reading the code is all this needs.
-permissions:
-  contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  screenshots:
-    name: screenshots (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 40
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04, macos-15, windows-2025]
-    env:
-      # The software renderer draws into a buffer on any machine, GPU or not;
-      # Slint's winit backend reads this the same way the app does.
-      SLINT_BACKEND: winit-software
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      # rustup is on the runner, rust-toolchain.toml picks the version
-      - uses: S
+    let mut before = split_zip_snapshot(&first);
+    let missing = first.with_extension("z02");
+    let later = first.with_extension("z03");
+    assert!(later.exists());
+    let says = format!(
+        "game.z02 is missing: this split ZIP has {} parts. Put the missing parts",
+        before.len()
+    );
+    fs::remove_file(&missing).unwrap();
+    before.retain(|(path, _)| path != &missing);
+    assert_split_refused(&later, &first, &says);
+    assert_unchanged(&before);
+    assert!(!tmp.path().join("out").exists());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    fs::remove_file(first.with_extension("z02")).unwrap();
+    assert_split_refused(&first, &first, "game.z02 is missing");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3bc3f552` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1fe89a9` are properly handled with clean fallback behavior.

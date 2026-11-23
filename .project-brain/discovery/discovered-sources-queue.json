@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T21:05:33.671Z",
+  "updated_at": "2026-11-23T21:14:52.979Z",
   "stats": {
-    "total_discovered": 8044,
-    "approved_pending_harvest": 7614,
+    "total_discovered": 8045,
+    "approved_pending_harvest": 7615,
     "harvested_count": 0,
     "rejected_count": 430,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7608,
+      "COMMUNITY_AND_EXPERT": 7609,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -173981,6 +173981,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
         "fileName": "duckdb-duckdb-learnings.md"
+      }
+    },
+    "SRC-7CDCD24374C2": {
+      "id": "SRC-7CDCD24374C2",
+      "url": "https://github.com/siderolabs/talos/actions/runs/45193124367/job/137760366104?pr=15045",
+      "title": "https://github.com/siderolabs/talos/actions/runs/45193124367/job/137760366104?pr=15045",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T21:14:52.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
       }
     }
   }

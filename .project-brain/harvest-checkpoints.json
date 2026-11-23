@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T21:04:57.329Z",
+  "last_updated": "2026-11-23T21:14:47.639Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1967,14 +1967,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
-      "content_hash": "1551b10ad9c9e32455c6cf700007e307be8427224c0d3fa89cd5ec44079925d1",
-      "verified_at": "2026-11-19T14:20:17.059Z",
+      "content_hash": "9574cb32a91402b49f026bfea7ce890fe22f9e70e6f1cc74aeca3fcf2985a2f7",
+      "verified_at": "2026-11-23T21:14:41.237Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T14:20:17.059Z"
+      "last_updated": "2026-11-23T21:14:41.237Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "efdc12aa23992a09445e6518907c5c419848754ce086b38e9de41b0cada3424d",
-      "verified_at": "2026-11-22T19:18:47.884Z",
+      "content_hash": "66785eb0ec4710c131fce27f5236564106b77136f5d43029c65b742dd65700f5",
+      "verified_at": "2026-11-23T21:14:47.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:18:47.884Z"
+      "last_updated": "2026-11-23T21:14:47.638Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "5fb9a46bd883b9c4cc95a878b7523c2401461349914e6ecae75430117dda7b12",
-      "verified_at": "2026-11-21T21:31:42.800Z",
+      "content_hash": "bd7d0f177b74a184c316637c9085ffe58c6cd1c2a31187af63757b84d9da5d8e",
+      "verified_at": "2026-11-23T21:14:41.259Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:31:42.800Z"
+      "last_updated": "2026-11-23T21:14:41.259Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -19551,14 +19551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xevrion-hatchzip",
-      "content_hash": "972a8dceb5f082421baaaac1b0375ce76ff75c4dc24a5735f53cfa83ddd16828",
-      "verified_at": "2026-11-22T10:29:47.191Z",
+      "content_hash": "f8a36f15f12d4c6620c85e01a12801ba3cbc2ff06877073e3d91dee818ef39b9",
+      "verified_at": "2026-11-23T21:14:35.329Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:29:47.191Z"
+      "last_updated": "2026-11-23T21:14:35.329Z"
     },
     "thejagstudio/tessera-small": {
       "repository": "thejagstudio/tessera-small",

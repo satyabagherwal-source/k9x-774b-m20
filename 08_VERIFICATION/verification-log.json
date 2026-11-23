@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-FLCF",
-    "timestamp": "2026-11-21T23:27:18.735Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "93cc46b6c26254e730184e7dd434ff51566cec28cfcf1ce2c9be1ebbcf469f8b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-VF8E",
-    "timestamp": "2026-11-21T23:39:37.310Z",
-    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-    "contentHash": "0b89a22d536d0b7f5c342d998d504e9f83819c1ec0c786f93123034a5c17e18a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-VKOQ",
-    "timestamp": "2026-11-21T23:39:44.378Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "827ea4e42dca02da78833df24905cc109f2c7e5b6a8d123a2127145917774d18",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-5LZK",
-    "timestamp": "2026-11-21T23:47:32.624Z",
-    "repository": "LiquidAI/d1-2B",
-    "learningId": "learn-huggingface-liquidai-d1-2b",
-    "contentHash": "1ba061fed393d04be33b7f482aec62f1d4e4ad7a9c62210aba581d1e13d2523b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-5US4",
     "timestamp": "2026-11-21T23:47:44.020Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7430,66 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "ffe21527844b42ff7b11de36f051171d80da703f7cab882b13e2b6877386e5c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-KM28",
+    "timestamp": "2026-11-23T21:14:35.312Z",
+    "repository": "xevrion/hatchzip",
+    "learningId": "learn-github-xevrion-hatchzip",
+    "contentHash": "f8a36f15f12d4c6620c85e01a12801ba3cbc2ff06877073e3d91dee818ef39b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-KQM6",
+    "timestamp": "2026-11-23T21:14:41.214Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "9574cb32a91402b49f026bfea7ce890fe22f9e70e6f1cc74aeca3fcf2985a2f7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-KQMX",
+    "timestamp": "2026-11-23T21:14:41.241Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "bd7d0f177b74a184c316637c9085ffe58c6cd1c2a31187af63757b84d9da5d8e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-KVK6",
+    "timestamp": "2026-11-23T21:14:47.622Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "66785eb0ec4710c131fce27f5236564106b77136f5d43029c65b742dd65700f5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

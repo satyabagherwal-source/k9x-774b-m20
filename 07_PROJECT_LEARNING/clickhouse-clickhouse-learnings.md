@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `841a49be`  
+> **Source Version**: `4a2be30a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T19:18:46.619Z  
+> **Timestamp**: 2026-11-23T21:14:46.376Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:18:46.612Z  
+> **Harvest Timestamp**: 2026-11-23T21:14:46.369Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51063 stars
+- **Stars / Engagement**: 51081 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #133649** (2026-11-23): **Keeper/ZooKeeper: `SetWatchesRequest::getPath` and `SetWatches2Request::getPath` read `data_watches[0]` out of bounds when `data_watches` is empty**
+  *Symptoms*: ### Description  Both `SetWatchesRequest::getPath` and `SetWatches2Request::getPath` unconditionally return `data_watches[0]` without checking whether `data_watches` is empty. When a `SetWatches` or `SetWatches2` request has no data watches (for example, only `exist_watches`, `child_watches`, `persistent_watches`, or `persistent_recursive_watches`, or all lists empty), calling `getPath` causes an out-of-bounds read (undefined behavior / segfault).  ### Root Cause  In `src/Common/ZooKeeper/IKeeper.h:380`: ```cpp [[nodiscard]] String getPath() const override { return data_watches[0]; } ```  In `src/Common/ZooKeeper/IKeeper.h:412`: ```cpp [[nodiscard]] String getPath() const override { return data_watches[0]; } ```  Generic request callers invoke `getPath` without special-casing `SetWatches` / `SetWatches2`, including: - `src/Common/ZooKeeper/ZooKeeperCommon.cpp:1613` (`elem.path = getPath();`) - `src/Common/ZooKeeper/ZooKeeperImpl.cpp:1380` (`String req_path = req->getPath();`) and `:2538` (`request->getPath()`) - `src/Server/KeeperTCPHandler.cpp:867` (`current_request.getPath()`)  ### Observed on  - `master` (`ab6ec720e9e`).  ### Expected Behavior  `SetWatchesRequest::getPath` and `SetWatches2Request::getPath` should return `{}` (or guard `!data_watches.empty() ? data_watches[0] : String{}`) instead of unconditionally indexing `data_watches[0]`.  Caused by: https://github.com/ClickHouse/ClickHouse/pull/88813   <!-- ch-version-info:start --> ### Version info - Resolved by: #133
+
 - **Issue #132739** (2026-11-19): **ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not validate unique/sorted paths invariant, allowing corrupted subcolumn sizes and LOGICAL_ERROR exceptions**
   *Symptoms*: ### Company or project name  IBM  ### Describe what's wrong  Found during review of https://github.com/ClickHouse/ClickHouse/pull/128069  When serializing dynamic paths and shared data into an arena in ColumnObject::serializeDynamicPathsAndSharedDataIntoArena, paths are guaranteed to be serialized in strictly increasing, sorted, and unique order.  However, the matching deserializer ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not enforce this invariant. If a serialized payload contains duplicate path entries (e.g., num_paths = 2 with two entries for path a in the same row):  1. The reader processes the first entry for a, deserializing a value and appending it to dynamic subcolumn a (increasing its size from current_size to current_size + 1). 2. The reader processes the second entry for a, appending another value to dynamic subcolumn a (increasing its size to current_size + 2). 3. After the path loop finishes, shared_data offsets advance by only 1 row.  Because deserialization consumes all bytes, end-of-buffer checks pass and deserialization returns successfully, but leaves the resulting ColumnObject in an invalid state where individual subcolumns disagree on their row count.  Attempting to read or extract the corrupted subcolumn later throws a LOGICAL_ERROR exception.   ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  A record with num_paths = 2 and two entries for a appends twice to that dynamic subcolumn but only once to shar
-
-- **Issue #132436** (2026-11-19): **clickhouse-client prints secrets of a failed query to stderr in non-interactive mode, while the server hides them**
-  *Symptoms*: ### Company or project name  Running ClickHouse in production on Kubernetes (LLM trace store), with native BACKUP to S3 from a CronJob.  ### Describe what's wrong  In non-interactive mode (`--query`, stdin, `--queries-file`, `--ignore-error`), when a query fails, `clickhouse-client` appends the original query text to the error on stderr as `(query: ...)`. Secrets in the query are printed in clear. The server hides the same values in `system.query_log` and in its own logs.  Affected, when the statement fails: `CREATE USER` / `ALTER USER ... IDENTIFIED BY '...'`, `CREATE NAMED COLLECTION`, `BACKUP`/`RESTORE ... S3(url, key, secret)`, and the `s3()` and `mysql()` table functions. `clickhouse-local --ignore-error` does the same.  Non-interactive use is how backup jobs and migrations run, and their stderr usually goes to a log store. I found it when a failed nightly `BACKUP ... TO S3(...)` put the S3 secret key into our central logs while the server logs were clean.  `--echo` printing the query is requested by the user and is not part of this report.  ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  ClickHouse 26.10.4.207 and master 26.11.1.2601 (official Docker images), default config:  ```bash clickhouse-client --query "ALTER USER no_such_user IDENTIFIED WITH plaintext_password BY 'MySecretPassword123'" ```  ``` Received exception from server (version 26.11.1): Code: 192. DB::Exception: Received from localhost:9000. DB::Exception: There is no user `n
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,392 +1338,557 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `657a223e` (2026-11-22)
-**Commit Message**: Address review: check the sum of file counts of an Iceberg manifest list entry for overflow
+### Incident Patch 1: `96b7fb8f` (2026-11-23)
+**Commit Message**: Merge pull request #131504 from groeneai/fix-rabbitmq-insert-missing-exchange
 
-The types of `added_files_count` and `existing_files_count` are taken from
-the schema of the manifest list, so a malformed manifest list can have
-arbitrary `long` values in them, and their sum in `getManifestList` could
-overflow, which is undefined behaviour. The sum is now calculated with
-`common::addOverflow`, and `ICEBERG_SPECIFICATION_VIOLATION` is thrown on
-overflow.
+Fail an `INSERT` into a `RabbitMQ` table whose exchange does not exist, and stop it on `KILL QUERY`
 
-The test manifest list is the manifest list of
-`void_partition_dropped_column` with these fields of the type `long` and
-the values 9223372036854775807 and 1 in the first entry.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp` (modified, +11/-2)
+**File**: `src/Storages/MessageQueueSink.cpp` (modified, +12/-11)
 ```diff
-@@ -11,6 +11,7 @@
- #include <Poco/JSON/Object.h>
- #include <Poco/JSON/Stringifier.h>
- #include <Common/Exception.h>
-+#include <base/arithmeticOverflow.h>
- #include <Common/FailPoint.h>
- 
- 
-@@ -335,8 +336,16 @@ ManifestFileCacheKeys getManifestList(
-                 if (!manifest_list_deserializer.hasPath(count_field))
-                     continue;
-                 auto count = manifest_list_deserializer.getValueFromRowByName(i, count_field);
--                if (!count.isNull())
--                    live_files_count += std::max<Int64>(0, count.safeGet<Int64>());
-+                if (count.isNull())
-+                    continue;
-+                /// The counts are `int` in the specification, but the type is taken from the schema of the file,
-+                /// so the values can be arbitrary `long`s and their sum can overflow.
-+                if (common::addOverflow(live_files_count, std::max<Int64>(0, count.safeGet<Int64>()), live_files_count))
-+                    throw Exception(
-+                        ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION,
-+                        "Manifest list entry at index {} has too large value of the field '{}'",
-+                        i,
-+                        count_field);
-             }
- 
-             std::optional<UInt64> first_row_id;
-```
-
-**File**: `tests/queries/0_stateless/05843_iceberg_manifest_list_files_count_overflow.reference` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+ICEBERG_SPECIFICATION_VIOLATION
-```
-
-**File**: `tests/queries/0_stateless/05843_iceberg_manifest_list_files_count_overflow.sh` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+#!/usr/bin/env bash
-+# Tags: no-fasttest
-+# Tag no-fasttest: `icebergLocal` needs the USE_AVRO build option.
-+
-+# The file counts of a manifest in an Iceberg manifest list are `int` in the specification, but their type is taken
-+# from the schema of the manifest list, so a malformed manifest list can have arbitrary `long` values in them.
-+# The sum of `added_files_count` and `existing_files_count` must be checked for overflow instead of being undefined behaviour.
-+# The manifest list in `data_iceberg/void_partition_malformed_manifest_list` is the manifest list of
-+# `void_partition_dropped_column` with these fields of the type `long` and the values 9223372036854775807 and 1 in the first entry.
-+
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
-+
-+SRC="$CUR_DIR/data_iceberg/void_partition_dropped_column"
-+BAD="$CUR_DIR/data_iceberg/void_partition_malformed_manifest_list"
-+MANIFEST_LIST="snap-2011348865913312671-1-6a6f19d7-4d29-4fe1-9f6f-4cbaf3a20785.avro"
-+
-+T="${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_files_count_overflow"
-+rm -rf "$T"
-+cp -r "$SRC" "$T"
-+cp "$BAD/files_count_overflow.avro" "$T/metadata/$MANIFEST_LIST"
-+$CLICKHOUSE_LOCAL --query "SELECT id FROM icebergLocal('$T') ORDER BY id" 2>&1 | grep -o -m1 'ICEBERG_SPECIFICATION_VIOLATION'
-+rm -rf "$T"
-```
-
----
-
-### Incident Patch 2: `841a49be` (2026-11-22)
-**Commit Message**: Merge pull request #133482 from groeneai/build-hash-section-in-place
-
-Write the binary hash of official builds in place instead of rewriting `clickhouse` with `llvm-objcopy`
-
-**File**: `CMakeLists.txt` (modified, +1/-3)
-```diff
-@@ -271,9 +271,7 @@ if (LINKER_NAME MATCHES "lld" AND NOT LINKER_NAME MATCHES "ld64")
-     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--build-id=sha1")
- endif ()
- 
--# Add a section with the hash of the compiled machine code for integrity checks.
--# Only for official builds, because adding a section can be time consuming (rewrite of several GB).
--# And cross compiled binaries are not supported (since you cannot execute clickhouse hash-binary)
-+# Add a section with the hash of the compiled machine code for integrity checks. Only for official builds.
- if (CLICKHOUSE_OFFICIAL_BUILD AND OS_LINUX AND (ARCH_AMD64 OR ARCH_AARCH64) AND NOT ENABLE_CLANG_TIDY)
-     message(STATUS "Official build: A checksum hash will be added to the clickhouse executable")
-     set (USE_BINARY_HASH 1 CACHE STRING "Calculate binary hash and store it in the separate section")
-```
-
-**File**: `programs/CMakeLists.txt` (modified, +4/-6)
-```diff
-@@ -229,6 +229,8 @@ add_custom_target (clickhouse-bundle ALL DEPENDS ${CLICKHOUSE_BUNDLE})
- 
- if (USE_BINARY_HASH)
-     add_dependencies(clickhouse hash-binary)
-+    # The section for the hash is reserved at link time and filled in place by `hash-binary --write-section`.
-+    target_sources(clickhouse PRIVATE binary_hash_section.S)
- 
-     # When cross-compiling, use the native-built hash-binary; otherwise use the regular build output
-     if (CMAKE_CROSSCOMPILING)
-@@ -238,8 +240,8 @@ if (USE_BINARY_HASH)
-     endif()
- 
-     add_custom_command(TARGET clickhouse POST_BUILD
--        COMMAND ${HASH_BINARY_PATH} clickhouse > hash 2> /dev/null
--        COMMENT "Computing hash of clickhouse binary" VERBATIM)
-+        COMMAND ${HASH_BINARY_PATH} --write-section clickhouse > hash 2> /dev/null
-+        COMMENT "Writing hash of clickhouse binary to section '.clickhouse.hash'" VERBATIM)
- 
-     if (NOT CMAKE_CROSSCOMPILING)
-         add_custom_command(TARGET clickhouse POST_BUILD
-@@ -248,10 +250,6 @@ if (USE_BINARY_HASH)
-             COMMAND ${CMAKE_COMMAND} -E rm hash.verify
-             COMMENT "Verifying hash-binary output matches clickhouse hash-binary" VERBATIM)
-     endif()
+@@ -62,16 +62,7 @@ MessageQueueSink::MessageQueueSink(
+ MessageQueueSink::~MessageQueueSink()
+ {
+     if (isCancelled())
+-    {
+-        if (format)
+-            format->cancel();
 -
--    add_custom_command(TARGET clickhouse POST_BUILD
--        COMMAND ${OBJCOPY_PATH} --add-section .clickhouse.hash=hash clickhouse
--        COMMENT "Adding section '.clickhouse.hash' to clickhouse binary" VERBATIM)
- endif()
- 
- if (CHECK_LARGE_OBJECT_SIZES)
-```
-
-**File**: `programs/binary_hash_section.S` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+/* The section for the hash of the executable segments (USE_BINARY_HASH), filled in place by `hash-binary --write-section`.
-+   It is not allocated, so it is not a part of the hashed segments. */
-+.section .clickhouse.hash,"",%progbits
-+.fill 32, 1, 0x30
-```
-
-**File**: `utils/hash-binary/hash-binary.cpp` (modified, +124/-7)
-```diff
-@@ -1,5 +1,6 @@
- /// Tool to compute the same hash as ClickHouse's getHashOfLoadedBinary() from a file.
- /// Useful for cross-compilation when you can't execute the target binary.
-+/// With --write-section, also writes the hash in place into the section '.clickhouse.hash' reserved at link time.
- ///
- /// NOTE: This file is intentionally standalone with no ClickHouse dependencies.
- /// We cannot reuse src/Common/SipHash.h because it depends on ClickHouse-specific
-@@ -13,10 +14,14 @@
- #include <fstream>
- #include <iomanip>
- #include <iostream>
-+#include <sstream>
- #include <stdexcept>
-+#include <string>
- #include <vector>
- 
- #include <elf.h>
-+#include <fcntl.h>
-+#include <unistd.h>
- 
- 
- namespace
-@@ -195,6 +200,80 @@ bool hashExecutableSegments(std::istream & in, SipHash & hash)
+-        if (buffer)
+-            buffer->cancel();
+-
+-        if (producer)
+-            producer->cancel();
+-    }
++        cancelProducing();
  }
  
+ void MessageQueueSink::onStart()
+@@ -112,7 +103,17 @@ void MessageQueueSink::onFinish()
  
-+/// Writes `value` into the existing non-allocated section `name` of the same size, without changing anything else in the file.
-+template <typename Ehdr, typename Shdr>
-+bool writeSectionInPlace(std::fstream & file, const std::string & name, const std::string & value)
-+{
-+    Ehdr ehdr;
-+    file.seekg(0);
-+    if (!file.read(reinterpret_cast<char *>(&ehdr), sizeof(ehdr)) || ehdr.e_shoff == 0 || ehdr.e_shentsize != sizeof(Shdr))
-+    {
-+        std::cerr << "Failed to read section headers\n";
-+        return false;
-+    }
-+
-+    auto read_section_header = [&](uint64_t index, Shdr & shdr)
-+    {
-+        file.seekg(static_cast<std::streamoff>(ehdr.e_shoff + index * sizeof(Shdr)));
-+        return static_cast<bool>(file.read(reinterpret_cast<char *>(&shdr), sizeof(shdr)));
-+    };
-+
-+    /// With 0xff00 sections or more, the counts are stored in the first section header.
-+    Shdr first;
-+    if (!read_section_header(0, first))
-+    {
-+        std::cerr << "Failed to read section headers\n";
-+        return false;
-+    }
-+    const uint64_t section_count = ehdr.e_shnum ? ehdr.e_shnum : first.sh_size;
-+    const uint64_t names_index = ehdr.e_shstrndx == SHN_XINDEX ? first.sh_link : ehdr.e_shstrndx;
-+
-+    Shdr names_header;
-+    if (names_index >= section_count || !read_section_header(names_index, names_header))
-+    {
-+        std::cerr << "Failed to read section names\n";
-+        return false;
-+    }
-+    std::string names(names_header.sh_size, '\0');
-+    file.seekg(static_cast<std::streamoff>(names_header.sh_offset));
-+    if (!file.read(names.data(), static_cast<std::streamsize>(names.size())))
-+    {
-+        std::cerr << "Failed to read section names\n";
-+        return false;
-+    }
-+
-+    for (uint64_t i = 0; i < section_count; ++i)
-+    {
-+        Shdr shdr;
-+        if (!read_section_header(i, shdr))
-+        {
-+            std::cerr << "Failed to read section header\n";
-+            return false;
-+        }
-+        if (shdr.sh_name >= names.size() || std::strcmp(names.c_str() + shdr.sh_name, name.c_str()) != 0)
-+            continue;
-+
-+        /// The hash covers only the executable segments: a non-allocated section is not part of any segment.
-+        if (shdr.sh_type != SHT_PROGBITS || (shdr.sh_flags & SHF_ALLOC) || shdr.sh_size != value.size())
-+        {
-+            std::cerr << "Section " << name << " must be non-allocated PROGBITS of " << value.size() << " bytes\n";
-+            return false;
-+        }
-+
-+        file.seekp(static_cast<std::streamoff>(shdr.sh_offset));
-+        if (!file.write(value.data(), static_cast<std::streamsize>(value.size())) || !file.flush())
-+        {
-+            std::cerr << "Failed to write section " << name << "\n";
-+            return false;
-+        }
-+        return true;
-+    }
-+
-+    std::cerr << "Section " << name << " not found\n";
-+    return false;
+ void MessageQueueSink::onException(std::exception_ptr /* exception */)
+ {
+-    onFinish();
++    cancelProducing();
 +}
 +
-+
- bool hashElfFile(std::istream & in, SipHash & hash)
- {
-     unsigned char e_ident[EI_NIDENT];
-@@ -223,18 +302,28 @@ int main(int argc, char ** argv)
- {
-     try
-     {
--        if (argc != 2)
-+        const bool write_section = argc == 3 && std::string(argv[1]) == "--write-section";
-+        if (argc != 2 && !write_section)
-         {
--            std::cerr << "Usage: " << argv[0] << " <elf-file>\n"
-+            std::cerr << "Usage: " << argv[0] << " [--write-section] <elf-file>\n"
-                       << "\nComputes the same hash as 'clickhouse hash-binary' but from a file.\n"
--                      << "Useful for cross-compilation when you can't execute the target binary.\n";
-+                      << "Useful for cross-compilation when you can't execute the target binary.\n"
-+                      << "--write-section also writes the hash into the section '.clickhouse.hash' of the file, in place.\n";
-             return 1;
-         }
-+        const char * path = argv[argc - 1];
++void MessageQueueSink::cancelProducing() noexcept
++{
++    if (format)
++        format->cancel();
++    if (buffer)
++        buffer->cancel();
++    if (producer)
++        producer->cancel();
+ }
  
--        std::ifstream file(argv[1], std::ios::binary);
-+        /// With stdout or stderr closed, the file could get that descriptor, and the output would be written into the file.
-+        if (fcntl(STDOUT_FILENO, F_GETFD) == -1 || fcntl(STDERR_FILENO, F_GETFD) == -1)
+ Columns MessageQueueSink::extractFormatColumns(const Columns & columns) const
+```
+
+**File**: `src/Storages/MessageQueueSink.h` (modified, +2/-0)
+```diff
+@@ -83,6 +83,8 @@ class MessageQueueSink final : public SinkToStorage
+ 
+     /// Given the full set of input columns, returns the columns used by the formatter.
+     Columns extractFormatColumns(const Columns & columns) const;
++
++    void cancelProducing() noexcept;
+ };
+ 
+ }
+```
+
+**File**: `src/Storages/RabbitMQ/RabbitMQProducer.cpp` (modified, +42/-2)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ #include <Common/Exception.h>
+ #include <Common/logger_useful.h>
++#include <Interpreters/Context.h>
++#include <Interpreters/ProcessList.h>
+ 
+ 
+ namespace DB
+@@ -11,6 +13,8 @@ static const auto FINISH_PRODUCER_NUM_TRIES = 50;
+ 
+ namespace ErrorCodes
+ {
++    extern const int ABORTED;
++    extern const int CANNOT_CONNECT_RABBITMQ;
+     extern const int LOGICAL_ERROR;
+ }
+ 
+@@ -31,6 +35,12 @@ void RabbitMQProducer::initialize()
+     publisher = publisher_pool->acquire();
+ }
+ 
++void RabbitMQProducer::start(const ContextPtr & context)
++{
++    query_status = context->getProcessListElementSafe();
++    AsynchronousMessageProducer::start(context);
++}
++
+ void RabbitMQProducer::stopProducingTask()
+ {
+     payloads.finish();
+@@ -42,6 +52,12 @@ void RabbitMQProducer::finishImpl()
+         publisher_pool->release(std::move(publisher));
+     else
+         publisher->disconnect();
++    if (stopped_by_shutdown)
++        throw Exception(ErrorCodes::ABORTED, "Table is detached");
++    if (query_status)
++        query_status->throwIfKilled();
++    if (!publish_error.empty())
++        throw Exception(ErrorCodes::CANNOT_CONNECT_RABBITMQ, "{}", publish_error);
+ }
+ 
+ void RabbitMQProducer::produce(const String & message, size_t, const Columns &, size_t)
+@@ -51,7 +67,11 @@ void RabbitMQProducer::produce(const String & message, size_t, const Columns &,
+     payload.id = ++payload_counter;
+     LOG_TEST(log, "Pushing message with id {}", payload.id);
+     if (!payloads.push(std::move(payload)))
++    {
++        /// The producing task has stopped and closed the queue: `finish` throws its error.
++        finish();
+         throw Exception(ErrorCodes::LOGICAL_ERROR, "Could not push to payloads queue");
++    }
+ }
+ 
+ void RabbitMQProducer::cancel() noexcept
+@@ -70,8 +90,28 @@ void RabbitMQProducer::startProducingTaskLoop()
+ {
+     LOG_TRACE(log, "Starting producer loop");
+ 
+-    while ((!payloads.isFinishedAndEmpty() || publisher->hasPendingDeliveries()) && !shutdown_called.load())
+-        publisher->publishStep(payloads);
++    while (!payloads.isFinishedAndEmpty() || publisher->hasPendingDeliveries())
++    {
++        if (shutdown_called.load())
 +        {
-+            std::cerr << "stdout and stderr must be ope
++            stopped_by_shutdown = true;
++            break;
++        }
++
++        if (query_status && query_status->isKilled())
++            break;
++        publish_error = publisher->publishStep(payloads);
++        if (!publish_error.empty())
++            break;
++    }
++
++    if (stopped_by_shutdown || !publish_error.empty() || (query_status && query_status->isKilled()))
++    {
++        /// Nothing pops `payloads` anymore, so `produce` must not wait for free space in it.
++        /// The publisher is not reused: `can_reuse_publisher` stays false, so `finishImpl` disconnects it.
++        payloads.finish();
++        return;
++    }
+ 
+     size_t try_num = 0;
+     while (++try_num <= FINISH_PRODUCER_NUM_TRIES)
+```
+
+**File**: `src/Storages/RabbitMQ/RabbitMQProducer.h` (modified, +10/-0)
+```diff
+@@ -9,6 +9,9 @@
+ namespace DB
+ {
+ 
++class QueryStatus;
++using QueryStatusPtr = std::shared_ptr<QueryStatus>;
++
+ class RabbitMQProducer : public AsynchronousMessageProducer
+ {
+ public:
+@@ -17,6 +20,7 @@ class RabbitMQProducer : public AsynchronousMessageProducer
+         std::atomic<bool> & shutdown_called_,
+         LoggerPtr log_);
+ 
++    void start(const ContextPtr & context) override;
+     void produce(const String & message, size_t rows_in_message, const Columns & columns, size_t last_row) override;
+     void cancel() noexcept override;
+ 
+@@ -38,6 +42,12 @@ class RabbitMQProducer : public AsynchronousMessageProducer
+ 
+     bool can_reuse_publisher = false;
+ 
++    /// Written by the producing task, read in `finishImpl` after `deactivate` waited for the task.
++    String publish_error;
++    bool stopped_by_shutdown = false;
++
++    QueryStatusPtr query_status;
++
+     /* false: when shutdown is called; needed because table might be dropped before all acks are received
+      * true: in all other cases
+      */
+```
+
+**File**: `src/Storages/RabbitMQ/RabbitMQPublisher.cpp` (modified, +14/-2)
+```diff
+@@ -66,11 +66,13 @@ void RabbitMQPublisher::connect()
+ void RabbitMQPublisher::setupChannel()
+ {
+     channel = connection.createChannel();
++    channel_error.clear();
+     LOG_TRACE(log, "Created a producer channel");
+ 
+     channel->onError([&](const char * message)
+     {
+         LOG_ERROR(log, "Producer's channel {} error: {}", channel_id, message);
++        channel_error = message;
+ 
+         /// Channel is not usable anymore. (https://github.com/CopernicaMarketingSoftware/AMQP-CPP/issues/36#issuecomment-125112236)
+         channel->close();
+@@ -211,7 +213,7 @@ void RabbitMQPublisher::publish(Payloads & messages, bool republishing)
+     iterateEventLoop();
+ }
+ 
+-void RabbitMQPublisher::publishStep(Payloads & payloads)
++String RabbitMQPublisher::publishStep(Payloads & payloads)
+ {
+     /// If onReady callback is not received, channel->usable() will anyway return true,
+     /// but must publish only after onReady callback.
+@@ -230,9 +232,19 @@ void RabbitMQPublisher::publishStep(Payloads & payloads)
+ 
+     if (!channel->usable())
+     {
+-        if (connection.reconnect())
++        /// The broker closes only the channel when it rejects a publish, e.g. NOT_FOUND for a missing exchange.
++        /// A new channel is rejected the same way.
++        if (!reconnect_failed && connection.isConnected())
++            return fmt::format(
++                "Cannot publish to RabbitMQ exchange '{}': {}",
++                exchange_name,
++                channel_error.empty() ? "the channel is closed" : channel_error);
++
++        reconnect_failed = !connection.reconnect();
++        if (!reconnect_failed)
+             setupChannel();
+     }
++    return {};
+ }
+ 
+ bool RabbitMQPublisher::isReusable()
+```
+
+**File**: `src/Storages/RabbitMQ/RabbitMQPublisher.h` (modified, +5/-1)
+```diff
+@@ -43,7 +43,8 @@ class RabbitMQPublisher
+ 
+     /// Publishes a portion of messages (republished ones first), runs the event loop
+     /// and restores the connection and the channel if they are lost.
+-    void publishStep(Payloads & payloads);
++    /// Returns the error if the broker rejected a publish by closing the channel, otherwise an empty string.
++    String publishStep(Payloads & payloads);
+ 
+     /// Whether some messages are not confirmed by the server yet or have to be republished.
+     bool hasPendingDeliveries() const { return !returned.empty() || !delivery_record.empty(); }
+@@ -82,6 +83,9 @@ class RabbitMQPublisher
+ 
+     std::unique_ptr<AMQP::TcpChannel> channel;
+     bool channel_ready = false;
++    String channel_error;
++    /// `channel` belongs to a connection that `reconnect` replaced but did not finish connecting.
++    bool reconnect_failed = false;
+ 
+     /// Channel errors lead to channel closure, need to count number of recreated channels to update channel id
+     UInt64 channel_id_counter = 0;
+```
+
+**File**: `tests/integration/test_storage_rabbitmq/test.py` (modified, +223/-0)
+```diff
+@@ -4359,3 +4359,226 @@ def test_rabbitmq_read_consumers_in_parallel(rabbitmq_cluster, unique):
+     # Read in parallel, a message waits about one flush interval (1 s). Read one after another, about half of them
+     # waited longer than 5 s.
+     assert int(late) < messages_num // 20, f"{late} messages inserted more than 5 s after publishing (max {max_delay} s)"
++
++
++def test_rabbitmq_insert_into_missing_exchange(rabbitmq_cluster, db, unique):
++    # With rabbitmq_queue_consume = 1 the table declares nothing, so `never_declared` has no exchange.
++    # `deleted` declares its exchange at CREATE; it is deleted below.
++    instance.query(
++        f"""
++        CREATE TABLE {db}.never_declared (key UInt64)
++            ENGINE = RabbitMQ
++            SETTINGS rabbitmq_host_port = 'rabbitmq1:5672',
++                     rabbitmq_exchange_name = '{unique}_never_declared',
++                     rabbitmq_format = 'JSONEachRow',
++                     rabbitmq_queue_base = '{unique}_never_declared',
++                     rabbitmq_queue_consume = 1;
++        CREATE TABLE {db}.deleted (key UInt64)
++            ENGINE = RabbitMQ
++            SETTINGS rabbitmq_host_port = 'rabbitmq1:5672',
++                     rabbitmq_exchange_name = '{unique}_deleted',
++                     rabbitmq_format = 'JSONEachRow';
++        """
++    )
++    credentials = pika.PlainCredentials("root", "clickhouse")
++    connection = pika.BlockingConnection(
++        pika.ConnectionParameters(rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials)
++    )
++    connection.channel().exchange_delete(exchange=f"{unique}_deleted")
++    connection.close()
++
++    # The last INSERT has more messages than fit in the producer's queue.
++    for table, source in [
++        ("never_declared", "VALUES (1)"),
++        ("deleted", "VALUES (1)"),
++        ("deleted", "SELECT number FROM numbers(100000)"),
++    ]:
++        error = instance.query_and_get_error(f"INSERT INTO {db}.{table} {source}", timeout=30)
++        assert f"no exchange '{unique}_{table}'" in error, error
++
++    # The INSERT reports the error of its SELECT, not the failed publish of the rows produced before it.
++    error = instance.query_and_get_error(
++        f"INSERT INTO {db}.deleted SELECT throwIf(number = 1) FROM numbers(2) SETTINGS max_block_size = 1", timeout=30
++    )
++    assert "FUNCTION_THROW_IF_VALUE_IS_NON_ZERO" in error, error
++
++
++@pytest.mark.parametrize("async_insert, rows", [(0, 1), (1, 1), (0, 100000)])
++def test_rabbitmq_kill_insert(rabbitmq_cluster, db, unique, async_insert, rows):
++    # The queue rejects every message, so the producer republishes until the query is killed.
++    # 100000 messages do not fit in the producer's queue, so that INSERT is killed while it waits for room in it.
++    exchange = f"{unique}_full_{async_insert}_{rows}"
++    credentials = pika.PlainCredentials("root", "clickhouse")
++    connection = pika.BlockingConnection(
++        pika.ConnectionParameters(rabbitmq_cluster.rabbitmq_ip, rabbitmq_cluster.rabbitmq_port, "/", credentials)
++    )
++    # A queue left by an earlier run with other arguments would fail the declaration below.
++    try:
++        cleanup = connection.channel()
++        cleanup.queue_delete(queue=exchange)
++        cleanup.exchange_delete(exchange=exchange)
++        cleanup.close()
++    except pika.exceptions.ChannelClosedByBroker:
++        pass
++    channel = connection.channel()
++    channel.exchange_declare(exchange=exchange, exchange_type="fanout")
++    channel.queue_declare(queue=exchange, arguments={"x-max-length": 0, "x-overflow": "reject-publish"})
++    channel.queue_bind(exchange=exchange, queue=exchange)
++    instance.query(
++        f"""
++        CREATE TABLE {db}.rabbitmq (key UInt64)
++            ENGINE = RabbitMQ
++            SETTINGS rabbitmq_host_port = 'rabbitmq1:5672',
++                     rabbitmq_exchange_name = '{exchange}',
++                     rabbitmq_format = 'JSONEachRow',
++                     rabbitmq_queue_base = '{unique}_unused',
++                     rabbitmq_queue_consume = 1;
++        """
++    )
++
++    query_id = f"{unique}_{uuid.uuid4().hex}"
++    source = "VALUES (1)" if rows == 1 else f"SELECT number FROM numbers({rows})"
++    # An asynchronous insert is published by its flush, a query of its own.
++    if async_insert:
++        producing_query = f"query_kind = 'AsyncInsertFlush' AND query LIKE '%{db}.rabbitmq%'"
++    else:
++        producing_query = f"query_id = '{query_id}'"
++    errors = []
++    insert = threading.Thread(
++        target=lambda: errors.append(
++            instance.query_and_get_error(
++                f"INSERT INTO {db}.rabbitmq {source}",
++                query_id=query_id,
++                settings={"async_insert": async_insert},
++                timeout=120,
++            )
++        ),
++        daemon=True,
++    )
++    insert.start()
++    deadline = time.monotonic() + DEFAULT_TIMEOUT_SEC
++    # A KILL while the producer is still connecting ends t
 ```
 
 ---
 
-### Incident Patch 3: `1afd2c94` (2026-11-22)
-**Commit Message**: Merge pull request #133523 from siddharthapal8240/fix/external-limit-pushdown-int64
+### Incident Patch 2: `2d60a7d9` (2026-11-23)
+**Commit Message**: Merge pull request #133585 from siddharthapal8240/fix/one-sample-ttest-merge-population-mean
 
-Do not push down a `LIMIT` above the signed 64-bit range to `PostgreSQL` and `SQLite` tables
+Fix `studentTTestOneSample` testing against zero after its states are merged
 
-**File**: `src/Storages/transformQueryForExternalDatabase.cpp` (modified, +6/-1)
+**File**: `src/AggregateFunctions/Moments.h` (modified, +8/-1)
 ```diff
-@@ -31,6 +31,7 @@
- #include <Storages/transformQueryForExternalDatabaseAnalyzer.h>
+@@ -710,10 +710,17 @@ struct OneSampleTTestMoments
  
- #include <cmath>
-+#include <limits>
- #include <queue>
- 
- 
-@@ -1189,7 +1190,11 @@ String transformQueryForExternalDatabaseImpl(
-         }
+     void merge(const OneSampleTTestMoments & rhs)
+     {
++        /// The population mean is set by the first value a state sees, so a state without values does not
++        /// have it yet. A merge usually starts from such a state (`-Merge`, `finalizeAggregation`,
++        /// `WITH TOTALS`, the results of several shards or parts), which has to take the mean from the
++        /// state it is merged with: otherwise the test is done against zero. It is the same for all the
++        /// states of one aggregation, so a state that already has values keeps its own.
++        if (n == 0 && rhs.n != 0)
++            population_mean = rhs.population_mean;
++
+         n += rhs.n;
+         x1 += rhs.x1;
+         x2 += rhs.x2;
+-        // Note: population_mean should be the same for merged data
      }
  
--    if (limit)
-+    /// A `LIMIT` in ClickHouse is any `UInt64` (for example MySQL's "all rows" idiom,
-+    /// `LIMIT 18446744073709551615`), while PostgreSQL and SQLite accept only a signed 64-bit value and
-+    /// fail on a larger one (`bigint out of range`, `datatype mismatch`). A limit that large does not
-+    /// cut off the rows of any table, so it is not sent to the external database at all.
-+    if (limit && *limit <= static_cast<UInt64>(std::numeric_limits<Int64>::max()))
-         select->setExpression(ASTSelectQuery::Expression::LIMIT_LENGTH, make_intrusive<ASTLiteral>(*limit));
- 
-     ASTPtr select_ptr = select;
+     void write(WriteBuffer & buf) const
 ```
 
-**File**: `tests/integration/test_storage_postgresql/test.py` (modified, +9/-0)
+**File**: `tests/integration/test_backward_compatibility/test_aggregate_function_state_tuple_return_type.py` (modified, +12/-2)
 ```diff
-@@ -969,6 +969,15 @@ def run(query, **settings):
-     assert result == "99"
-     assert len(queries) == 1 and "LIMIT" not in queries[0]
+@@ -410,11 +410,20 @@ def run_checks(node, checks):
+     mixed_baseline = run_checks(pre_nullable_tuple_node_1, mixed_checks)
+     assert mixed_baseline["sumCount"] == "(48,16)"
  
-+    # A `LIMIT` above the signed 64-bit range is valid in ClickHouse, while the `LIMIT` of PostgreSQL
-+    # is a `bigint`. Such a limit cuts off nothing, so it is not sent, instead of failing the query
-+    # with `bigint out of range`.
-+    result, queries = run(
-+        "SELECT count() FROM (SELECT * FROM pg_limit_pushdown LIMIT 9223372036854775808)"
++    # `studentTTestOneSample` keeps the population mean in its state. A server older than the fix of its
++    # `merge` loses the mean when it merges the states of the shards and does the test against zero, so
++    # this one result depends on the version of the coordinator: the 16 values have the mean 3, which a
++    # current server tests against 2 and an older one against 0. The states are the same in both versions.
++    def expected(name, node, latest_nodes):
++        if name == "studentTTestOneSample" and node in latest_nodes:
++            return "(2.4495,0.0271)"
++        return mixed_baseline[name]
++
+     # Verify all other nodes produce the same results (one round-trip per node).
+     for node in [pre_nullable_tuple_node_2, node3, node4]:
+         results = run_checks(node, mixed_checks)
+         for name in mixed_baseline:
+-            assert results[name] == mixed_baseline[name], f"{name} on {node.name}"
++            assert results[name] == expected(name, node, (node3, node4)), f"{name} on {node.name}"
+ 
+     # Extra baseline with 4x pre-26.1 nodes — must match mixed baseline.
+     pre_nullable_only_baseline = run_checks(
+@@ -443,10 +452,11 @@ def run_checks(node, checks):
+     # Upgrade one pre-26.1 node to latest and re-check compatibility from all coordinators.
+     pre_nullable_tuple_node_1.restart_with_latest_version(fix_metadata=True)
+ 
++    latest_nodes = (pre_nullable_tuple_node_1, node3, node4)
+     for node in [pre_nullable_tuple_node_1, pre_nullable_tuple_node_2, node3, node4]:
+         results = run_checks(node, mixed_checks)
+         for name in mixed_baseline:
+-            assert results[name] == mixed_baseline[name], f"{name} on {node.name}"
++            assert results[name] == expected(name, node, latest_nodes), f"{name} on {node.name}"
+ 
+         results = run_checks(node, mixed_empty_checks)
+         for name in mixed_empty_baseline:
+```
+
+**File**: `tests/queries/0_stateless/03928_aggregate_function_tuple_return_type_compatibility.reference` (modified, +1/-1)
+```diff
+@@ -55,7 +55,7 @@ FROM
+ (
+     SELECT finalizeAggregation(CAST(unhex('010000000000000840000000000000224000000000008041400000000000000040'), 'AggregateFunction(studentTTestOneSample, Nullable(Float64), Nullable(Float64))')) AS res
+ );
+-(2.5981,0.1217)
++(0.866,0.4778)
+ -- argAndMin non-empty state.
+ SELECT finalizeAggregation(CAST(unhex('0101030000000100000000'), 'AggregateFunction(argAndMin, Nullable(Int32), Nullable(Int32))'));
+ (3,0)
+```
+
+**File**: `tests/queries/0_stateless/05843_student_ttest_one_sample_merge_population_mean.reference` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++direct	1.095445	0.353387
++merge	1.095445	0.353387
++finalizeAggregation	1.095445	0.353387
++confidence interval	1.095445	0.353387	0.0948	5.9052
++totals	0	1.095445
++
++totals	0	1.095445
++rollup	0	1.095445
++rollup	1	1.095445
++cube	0	1.095445
++cube	1	1.095445
++two parts	1.095445
++merged part	1	1.095445
++two shards	1.67332
++eight values	1.67332
++empty state	1.095445
+```
+
+**File**: `tests/queries/0_stateless/05843_student_ttest_one_sample_merge_population_mean.sql` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++-- `studentTTestOneSample(x, mean)` keeps the population mean in its state. The mean was lost when the
++-- state was merged into a state without values, which is how every merge starts, so the test was then
++-- done against zero: `-Merge`, `finalizeAggregation`, `WITH TOTALS`, `WITH ROLLUP`, `WITH CUBE`, the
++-- parts of an `AggregatingMergeTree` table and the shards of a distributed query all returned the
++-- t-statistic 3.286335 instead of 1.095445 for the values below.
++
++SELECT 'direct', round(r.1, 6), round(r.2, 6) FROM (SELECT studentTTestOneSample(x, 2.) AS r FROM values('x Float64', 1, 2, 4, 5));
++
++SELECT 'merge', round(r.1, 6), round(r.2, 6)
++FROM (SELECT studentTTestOneSampleMerge(s) AS r FROM (SELECT studentTTestOneSampleState(x, 2.) AS s FROM values('x Float64', 1, 2, 4, 5)));
++
++SELECT 'finalizeAggregation', round(r.1, 6), round(r.2, 6)
++FROM (SELECT finalizeAggregation(studentTTestOneSampleState(x, 2.)) AS r FROM values('x Float64', 1, 2, 4, 5));
++
++SELECT 'confidence interval', round(r.1, 6), round(r.2, 6), round(r.3, 4), round(r.4, 4)
++FROM (SELECT finalizeAggregation(studentTTestOneSampleState(0.95)(x, 2.)) AS r FROM values('x Float64', 1, 2, 4, 5));
++
++SELECT 'totals', k, round(studentTTestOneSample(x, 2.).1, 6)
++FROM values('k UInt8, x Float64', (0, 1), (0, 2), (0, 4), (0, 5)) GROUP BY k WITH TOTALS ORDER BY k;
++
++SELECT 'rollup', k, round(studentTTestOneSample(x, 2.).1, 6)
++FROM values('k UInt8, x Float64', (1, 1), (1, 2), (1, 4), (1, 5)) GROUP BY k WITH ROLLUP ORDER BY k;
++
++SELECT 'cube', k, round(studentTTestOneSample(x, 2.).1, 6)
++FROM values('k UInt8, x Float64', (1, 1), (1, 2), (1, 4), (1, 5)) GROUP BY k WITH CUBE ORDER BY k;
++
++-- The states of two parts, merged by the query and then by the table.
++DROP TABLE IF EXISTS t_ttest_one_sample_states;
++CREATE TABLE t_ttest_one_sample_states (k UInt8, s AggregateFunction(studentTTestOneSample, Float64, Float64)) ENGINE = AggregatingMergeTree ORDER BY k;
++INSERT INTO t_ttest_one_sample_states SELECT 0, studentTTestOneSampleState(x, 2.) FROM values('x Float64', 1, 2);
++INSERT INTO t_ttest_one_sample_states SELECT 0, studentTTestOneSampleState(x, 2.) FROM values('x Float64', 4, 5);
++SELECT 'two parts', round(studentTTestOneSampleMerge(s).1, 6) FROM t_ttest_one_sample_states;
++OPTIMIZE TABLE t_ttest_one_sample_states FINAL;
++SELECT 'merged part', count(), round(finalizeAggregation(any(s)).1, 6) FROM t_ttest_one_sample_states;
++DROP TABLE t_ttest_one_sample_states;
++
++-- Every shard returns the four values, so this is the test over eight values.
++SELECT 'two shards', round(studentTTestOneSample(x, 2.).1, 6)
++FROM remote('127.0.0.{1,2}', view(SELECT * FROM values('x Float64', 1, 2, 4, 5)));
++SELECT 'eight values', round(studentTTestOneSample(x, 2.).1, 6) FROM values('x Float64', 1, 2, 4, 5, 1, 2, 4, 5);
++
++-- A state without values does not take the mean away from a state that has it.
++SELECT 'empty state', round(r.1, 6)
++FROM
++(
++    SELECT studentTTestOneSampleMerge(s) AS r
++    FROM
++    (
++        SELECT studentTTestOneSampleState(x, 2.) AS s FROM values('x Float64', 1, 2, 4, 5)
++        UNION ALL
++        SELECT studentTTestOneSampleState(x, 7.) AS s FROM values('x Float64', 1) WHERE 0
 +    )
-+    assert result == "100"
-+    assert len(queries) == 1 and "LIMIT" not in queries[0]
-+
-     # A real `LIMIT 0` returns nothing and never asks PostgreSQL for a single row.
-     result, _ = run("SELECT count() FROM (SELECT * FROM pg_limit_pushdown LIMIT 0)")
-     assert result == "0"
++);
 ```
 
-**File**: `tests/queries/0_stateless/05843_external_table_limit_above_int64.reference` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+3
-+3
-+2
-+2
-+3
-+2
-```
+---
 
-**File**: `tests/queries/0_stateless/05843_external_table_limit_above_int64.sh` (added, +33/-0)
+### Incident Patch 3: `2fc68f7c` (2026-11-23)
+**Commit Message**: Merge pull request #133716 from groeneai/fix-flaky-05816-parallel-replicas
+
+Do not run `05816_query_condition_cache_part_name_reused_after_attach` with parallel replicas
+
+**File**: `tests/queries/0_stateless/05816_query_condition_cache_part_name_reused_after_attach.sql` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,33 @@
-+#!/usr/bin/env bash
-+# Tags: no-fasttest
-+# Tag no-fasttest: needs the `sqlite` table function and the `sqlite3` tool
-+
-+# A `LIMIT` of a query is pushed down to an external database, where it is safe. A `LIMIT` in ClickHouse
-+# is any `UInt64`, while SQLite (and PostgreSQL) accept only a signed 64-bit value, so a `LIMIT` above
-+# that range - such as `LIMIT 18446744073709551615`, MySQL's idiom for "all rows" - made the query fail
-+# with `datatype mismatch`. Such a limit does not cut off anything and is not sent.
-+
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
-+
-+DB_PATH="${USER_FILES_PATH}/${CLICKHOUSE_DATABASE}_limit_above_int64.db"
-+rm -f "${DB_PATH}"
-+
-+sqlite3 "${DB_PATH}" 'CREATE TABLE t (id INTEGER); INSERT INTO t VALUES (1), (2), (3);'
-+chmod ugo+r "${DB_PATH}"
-+
-+SOURCE="sqlite('${DB_PATH}', 't')"
-+
-+${CLICKHOUSE_CLIENT} --query "
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775808);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 18446744073709551615);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775807 OFFSET 1);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} WHERE id > 1 LIMIT 18446744073709551615);
-+
-+-- The largest limit that SQLite accepts, and an ordinary one.
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775807);
-+SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 2);
-+"
-+
-+rm -f "${DB_PATH}"
+@@ -1,5 +1,6 @@
+--- Tags: no-replicated-database, no-shared-merge-tree
++-- Tags: no-replicated-database, no-shared-merge-tree, no-parallel-replicas
+ -- no-replicated-database, no-shared-merge-tree: their block numbers do not restart, so no part name is reused.
++-- no-parallel-replicas: a replica cancelled by the initiator can still hold the part when TRUNCATE runs, so it is kept.
+ 
+ -- Attaching a MergeTree table again numbers its parts from those on disk, so after TRUNCATE the next INSERT
+ -- writes part `all_1_1_0` again. The query condition cache must not return the removed part's verdicts.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #133562** (2026-11-22): Backport #131636 to 26.9: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll)
-- **PR #133561** (2026-11-22): Backport #131636 to 26.8: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll)
-- **PR #133555** (2026-11-22): Backport #131636 to 26.10: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll2)
-- **PR #133550** (2026-11-22): Backport #130143 to 26.10: Fix `LOGICAL_ERROR` on `INSERT` into a table whose projection has a subquery in its `SELECT` list or `GROUP BY` (@robot-ch-test-poll2)
-- **PR #133548** (2026-11-22): Backport #133464 to 26.11: Remove the background cleanup of unused directories in `store/` (@robot-ch-test-poll2)
-- **PR #133543** (2026-11-22): Backport #133506 to 26.11: Fix JSON schema inference applying the mark of a freed type to an unrelated value (@robot-ch-test-poll2)
+- **PR #133854** (2026-11-23): Backport #133748 to 26.11: Accept `ATTACH MASKING POLICY` only from the loader of the access entities (@robot-ch-test-poll2)
+- **PR #133852** (2026-11-23): Backport #133748 to 26.10: Accept `ATTACH MASKING POLICY` only from the loader of the access entities (@robot-ch-test-poll2)
+- **PR #133837** (closed): Load `PostgreSQL`, `MySQL`, `Redis` and `MongoDB` tables created before `remote_url_allow_hosts` was tightened (@siddharthapal8240)
+- **PR #133824** (2026-11-23): Fix `arm_asan_ubsan` master build: `hash-binary` aborted on SipHash wraparound (@alexey-milovidov)
+- **PR #133797** (2026-11-23): Backport #132964 to 26.11: Fix high memory usage of text index materialization on packed or compact parts (@robot-clickhouse-ci-2)
+- **PR #133783** (2026-11-23): Set 26.8 Regular channel start date to TBD on the Cloud release status page (@fm4v)
 
 ---
 
@@ -1743,39 +1908,49 @@ Do not push down a `LIMIT` above the signed 64-bit range to `PostgreSQL` and `SQ
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Address review: check the sum of file counts of an Iceberg manifest list entry f
+## X. Empirical Invariant Guard in MessageQueueSink.cpp
 
 **RULE**:
-When implementing operations in `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Storages/MessageQueueSink.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `657a223e`: Address review: check the sum of file counts of an Iceberg manifest list entry for overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `96b7fb8f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/MessageQueueSink.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <base/arithmeticOverflow.h>
-                if (count.isNull())
-                    continue;
-                /// The counts are `int` in the specification, but the type is taken from the schema of the file,
-                /// so the values can be arbitrary `long`s and their sum can overflow.
-                if (common::addOverflow(live_files_count, std::max<Int64>(0, count.safeGet<Int64>()), live_files_count))
-                    throw Exception(
-                        ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION,
-                        "Manifest list entry at index {} has too large value of the field '{}'",
-                        i,
-                        count_field);
+        cancelProducing();
+    cancelProducing();
+}
+
+void MessageQueueSink::cancelProducing() noexcept
+{
+    if (format)
+        format->cancel();
+    if (buffer)
+        buffer->cancel();
+    if (producer)
+        producer->cancel();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-                if (!count.isNull())
-                    live_files_count += std::max<Int64>(0, count.safeGet<Int64>());
+    {
+        if (format)
+            format->cancel();
+
+        if (buffer)
+            buffer->cancel();
+
+        if (producer)
+            producer->cancel();
+    }
+    onFinish();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `657a223e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `96b7fb8f` are properly handled with clean fallback behavior.

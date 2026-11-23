@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T21:05:34.462Z",
+  "last_updated": "2026-11-23T21:14:53.706Z",
   "total_verified_learnings": 9086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24196,
+  "total_items": 24204,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112665,10 +112665,10 @@
       "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "841a49be",
-      "content_hash": "7fc573301e76c5df9a6bfbe596296b1f0407d3407f71d05bb958ebab233a2e7c",
+      "source_version": "4a2be30a",
+      "content_hash": "402816f2d19aafc100275db8e172ab7a44dfe53c5e74f1d02d3d6eb000d948c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:18:48.587Z"
+      "persisted_at": "2026-11-23T21:14:48.366Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
@@ -222863,8 +222863,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "5da8dc88",
-      "content_hash": "5fb9a46bd883b9c4cc95a878b7523c2401461349914e6ecae75430117dda7b12",
+      "source_version": "97f97c86",
+      "content_hash": "bd7d0f177b74a184c316637c9085ffe58c6cd1c2a31187af63757b84d9da5d8e",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -222902,6 +222902,11 @@
           "number": 9847,
           "title": "split workload memory by percentage and reserve host memory",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10124,
+          "title": "keep node cordoned during talosctl drain",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222909,7 +222914,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:31:42.573Z",
+      "verified_at": "2026-11-23T21:14:40.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222951,10 +222956,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "5da8dc88",
-      "content_hash": "99fdddbd361cb846ae35044e78bab15835d632380dd8342e63ff17daa5c80d2c",
+      "source_version": "97f97c86",
+      "content_hash": "b5565ebc532a5739a07404d07471050569e25be69108b779d8e79351dc0e0563",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:31:43.177Z"
+      "persisted_at": "2026-11-23T21:14:41.913Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -222963,10 +222968,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "5da8dc88",
-      "content_hash": "8d6198570df40846922abb6b6d067c073dba68a23d6e88406a653cd9e89dd045",
+      "source_version": "97f97c86",
+      "content_hash": "fa5e9a1fbb5908441cd931aa44fb4216477273971d64cfca9eff0c21b9d51098",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:31:43.341Z"
+      "persisted_at": "2026-11-23T21:14:42.151Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -223419,9 +223424,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "416477a2fcb38a88920d2f8d16d6f2624a38b52e93955220152e3a29d1c19679",
+      "content_hash": "1966e29aada57d1207970590ff401aec24e16f200a18baf013cad99be20b673d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:32:21.522Z"
+      "persisted_at": "2026-11-23T21:14:53.483Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -223431,9 +223436,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "83c8d2e2881746c697b1451ae8d6e2adc7ff8357229dd880ea2e68b94464ca52",
+      "content_hash": "bc1b46cb3fd9c322702afaec5e5e3f4aa7c7040836e496fb0ead19ae6f7a64f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:32:21.726Z"
+      "persisted_at": "2026-11-23T21:14:53.706Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -239882,8 +239887,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "841a49be",
-      "content_hash": "efdc12aa23992a09445e6518907c5c419848754ce086b38e9de41b0cada3424d",
+      "source_version": "4a2be30a",
+      "content_hash": "66785eb0ec4710c131fce27f5236564106b77136f5d43029c65b742dd65700f5",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -239921,6 +239926,11 @@
           "number": 9979,
           "title": "Address review: check the sum of file counts of an Iceberg manifest list entry f",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10125,
+          "title": "Empirical Invariant Guard in MessageQueueSink.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239928,7 +239938,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:18:47.613Z",
+      "verified_at": "2026-11-23T21:14:47.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240593,9 +240603,9 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-iris-3b-learnings Core Invariants",
       "repository": "hf-speridlabs-iris-3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e4861b75d325e4964c1e62cbac39683dac7fcafdf4fdd88d33d2840500def02",
+      "content_hash": "75e31634d6cc5f88da223bf1fa41bfbdb883cb2bd0c00b7b712e6a0d3a34f7e1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T14:20:29.571Z"
+      "persisted_at": "2026-11-23T21:14:52.628Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i": {
       "item_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
@@ -297749,8 +297759,8 @@
       "slug": "xevrion-hatchzip",
       "platform": "github",
       "source_url": "https://github.com/xevrion/hatchzip",
-      "source_version": "2a25c9e6",
-      "content_hash": "972a8dceb5f082421baaaac1b0375ce76ff75c4dc24a5735f53cfa83ddd16828",
+      "source_version": "f1fe89a9",
+      "content_hash": "f8a36f15f12d4c6620c85e01a12801ba3cbc2ff06877073e3d91dee818ef39b9",
       "dossier_path": "07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
       "promoted_rules": [
@@ -297778,6 +297788,11 @@
           "number": 9920,
           "title": "polish every window, and render them to screenshots on all three systems",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10123,
+          "title": "report missing split ZIP parts clearly",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -297785,7 +297800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T10:29:46.970Z",
+      "verified_at": "2026-11-23T21:14:35.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -297839,10 +297854,10 @@
       "relative_path": "08_VERIFICATION/xevrion-hatchzip-verification-protocol-empirical-defect-shield-for-xevrion-hatch.md",
       "title": "Verification Protocol: Empirical Defect Shield for xevrion/hatchzip",
       "repository": "xevrion/hatchzip",
-      "source_version": "2a25c9e6",
-      "content_hash": "8f913a09605f90bda19589b4a785b1be0c9cfcd7565bddd20caafb14af2ee67e",
+      "source_version": "f1fe89a9",
+      "content_hash": "ffcb7a472d16c00c2e34547e2d6dcf5d8f87a6dd0553dd75330856de68d0ee30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:29:47.733Z"
+      "persisted_at": "2026-11-23T21:14:36.088Z"
     },
     "rule-9378": {
       "learning_id": "rule-9378",
@@ -297902,9 +297917,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for xevrion-hatchzip-learnings",
       "repository": "xevrion-hatchzip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce3f0d1e1ec432175cf9a812ca1b91d5a069d0b7e9e1375c8b6531d99a052e18",
+      "content_hash": "09ce374c50965e76b1aff14dd0131c2095c7cff41c3535c1fcfcfbce5169d36c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:30:03.072Z"
+      "persisted_at": "2026-11-23T21:14:52.154Z"
     },
     "rule-9379": {
       "learning_id": "rule-9379",
@@ -321294,10 +321309,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-architecture-intelligence-xevrion-hatchzip-core-invariants.md",
       "title": "Architecture Intelligence: xevrion/hatchzip Core Invariants",
       "repository": "xevrion/hatchzip",
-      "source_version": "2a25c9e6",
-      "content_hash": "b70f86a6b8dbf160dafa6c1832ee40bcf0f43f84e52a4ede42abc6faa1cbfff3",
+      "source_version": "f1fe89a9",
+      "content_hash": "96742b51e7917503d8e666debe85cab97c9529c5e7d040518788e0ba667a2876",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T10:29:47.566Z"
+      "persisted_at": "2026-11-23T21:14:35.854Z"
     },
     "rule-9921": {
       "learning_id": "rule-9921",
@@ -321345,9 +321360,9 @@
       "title": "Architecture Intelligence: xevrion-hatchzip-learnings Core Invariants",
       "repository": "xevrion-hatchzip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6472e6eef950379910f1456575169ea0f1e597e94ed863fcf081458fe341522b",
+      "content_hash": "b5dd98d1b5d269b244f5aec72e05e17fbc738d9fd7e580cd522aa22667d133a5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T10:30:02.903Z"
+      "persisted_at": "2026-11-23T21:14:51.926Z"
     },
     "rule-9922": {
       "learning_id": "rule-9922",
@@ -329842,6 +329857,108 @@
       "content_hash": "032e115b3385717094cf9232af84ce88b36f4cd0540610495a90d9b516acf734",
       "domain_letter": "L",
       "persisted_at": "2026-11-23T21:05:01.942Z"
+    },
+    "rule-10123": {
+      "learning_id": "rule-10123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10123,
+      "title": "report missing split ZIP parts clearly",
+      "source_url": "https://github.com/xevrion/hatchzip",
+      "source_version": "f1fe89a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:14:35.052Z"
+    },
+    "candidate_directive-report-missing-split-zip-parts-clearly": {
+      "item_id": "candidate_directive-report-missing-split-zip-parts-clearly",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KMAY-report-missing-split-zip-parts-clearly.md",
+      "title": "report missing split ZIP parts clearly",
+      "repository": "xevrion/hatchzip",
+      "source_version": "f1fe89a9",
+      "content_hash": "3e365e48165910fe8c11adb729940d438260d8247026df56aeb7573a7d4126b7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T21:14:35.632Z"
+    },
+    "rule-10124": {
+      "learning_id": "rule-10124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10124,
+      "title": "keep node cordoned during talosctl drain",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "97f97c86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:14:40.957Z"
+    },
+    "candidate_directive-keep-node-cordoned-during-talosctl-drain": {
+      "item_id": "candidate_directive-keep-node-cordoned-during-talosctl-drain",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KZWN-keep-node-cordoned-during-talosctl-drain.md",
+      "title": "keep node cordoned during talosctl drain",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32380facb30bc1236671257c2d7a5d205308c1387d48d64dadc381fd53524751",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T21:14:53.261Z"
+    },
+    "rule-10125": {
+      "learning_id": "rule-10125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10125,
+      "title": "Empirical Invariant Guard in MessageQueueSink.cpp",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "4a2be30a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:14:47.368Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-messagequeuesink-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-messagequeuesink-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KVS8-empirical-invariant-guard-in-messagequeuesink-cpp.md",
+      "title": "Empirical Invariant Guard in MessageQueueSink.cpp",
+      "repository": "ClickHouse/ClickHouse",
+      "source_version": "4a2be30a",
+      "content_hash": "ed54d00d0e4aaf37f750657180e3ce28d6b7b0f1f171d87feac24ec0b27aba85",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T21:14:47.919Z"
+    },
+    "domain_intelligence-architecture-intelligence-clickhouse-clickhouse-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-clickhouse-clickhouse-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clickhouse-clickhouse-architecture-intelligence-clickhouse-clickhouse-core-invar.md",
+      "title": "Architecture Intelligence: ClickHouse/ClickHouse Core Invariants",
+      "repository": "ClickHouse/ClickHouse",
+      "source_version": "4a2be30a",
+      "content_hash": "25a312e70301be612582338a785fc00a5b74e839c1ee2e22dd65f852269bb0be",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T21:14:48.139Z"
+    },
+    "candidate_directive-core-report-missing-split-zip-parts-clearly": {
+      "item_id": "candidate_directive-core-report-missing-split-zip-parts-clearly",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KYPC-core-report-missing-split-zip-parts-clearly.md",
+      "title": "core): report missing split ZIP parts clearly",
+      "repository": "xevrion-hatchzip-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be0d7ea7e0186b1bd06b2a52ac37699df5bf6e5d4191ae765589486a32584067",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T21:14:51.702Z"
     }
   },
   "ai-builder-brain": {

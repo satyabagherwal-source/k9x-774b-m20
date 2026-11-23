@@ -1025,8 +1025,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "1551b10ad9c9e32455c6cf700007e307be8427224c0d3fa89cd5ec44079925d1",
-    "lastHarvestedAt": "2026-11-19T14:20:17.052Z",
+    "contentHash": "9574cb32a91402b49f026bfea7ce890fe22f9e70e6f1cc74aeca3fcf2985a2f7",
+    "lastHarvestedAt": "2026-11-23T21:14:41.221Z",
     "learningId": "learn-huggingface-speridlabs-iris-3b"
   },
   "hf-qwen-qwen3-4b": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "841a49be",
+    "sourceVersion": "4a2be30a",
     "license": "Apache-2.0",
-    "contentHash": "efdc12aa23992a09445e6518907c5c419848754ce086b38e9de41b0cada3424d",
-    "lastHarvestedAt": "2026-11-22T19:18:47.873Z",
+    "contentHash": "66785eb0ec4710c131fce27f5236564106b77136f5d43029c65b742dd65700f5",
+    "lastHarvestedAt": "2026-11-23T21:14:47.627Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "5da8dc88",
+    "sourceVersion": "97f97c86",
     "license": "MPL-2.0",
-    "contentHash": "5fb9a46bd883b9c4cc95a878b7523c2401461349914e6ecae75430117dda7b12",
-    "lastHarvestedAt": "2026-11-21T21:31:42.792Z",
+    "contentHash": "bd7d0f177b74a184c316637c9085ffe58c6cd1c2a31187af63757b84d9da5d8e",
+    "lastHarvestedAt": "2026-11-23T21:14:41.246Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -12973,10 +12973,10 @@
     "repository": "xevrion/hatchzip",
     "platform": "github",
     "sourceUrl": "https://github.com/xevrion/hatchzip",
-    "sourceVersion": "2a25c9e6",
+    "sourceVersion": "f1fe89a9",
     "license": "Apache-2.0",
-    "contentHash": "972a8dceb5f082421baaaac1b0375ce76ff75c4dc24a5735f53cfa83ddd16828",
-    "lastHarvestedAt": "2026-11-22T10:29:47.183Z",
+    "contentHash": "f8a36f15f12d4c6620c85e01a12801ba3cbc2ff06877073e3d91dee818ef39b9",
+    "lastHarvestedAt": "2026-11-23T21:14:35.317Z",
     "learningId": "learn-github-xevrion-hatchzip"
   },
   "hf-thejagstudio-tessera-small": {

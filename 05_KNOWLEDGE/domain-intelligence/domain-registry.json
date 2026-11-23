@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T21:05:34.218Z",
-  "total_records": 2451,
+  "last_updated": "2026-11-23T21:14:53.483Z",
+  "total_records": 2452,
   "domains": {
     "A": {
       "total": 20,
@@ -1123,7 +1123,7 @@
       ]
     },
     "G": {
-      "total": 431,
+      "total": 432,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1555,7 +1555,8 @@
         "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-core-invariants",
         "domain_intelligence-architecture-intelligence-go-kratos-kratos-core-invariants",
         "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-clickhouse-clickhouse-core-invariants"
       ]
     },
     "H": {
@@ -13156,8 +13157,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "99fdddbd361cb846ae35044e78bab15835d632380dd8342e63ff17daa5c80d2c",
-      "created_at": "2026-11-21T21:31:43.177Z"
+      "content_hash": "b5565ebc532a5739a07404d07471050569e25be69108b779d8e79351dc0e0563",
+      "created_at": "2026-11-23T21:14:41.913Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -13278,8 +13279,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "416477a2fcb38a88920d2f8d16d6f2624a38b52e93955220152e3a29d1c19679",
-      "created_at": "2026-11-21T21:32:21.522Z"
+      "content_hash": "1966e29aada57d1207970590ff401aec24e16f200a18baf013cad99be20b673d",
+      "created_at": "2026-11-23T21:14:53.483Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -18765,8 +18766,8 @@
       "title": "Research & Knowledge Intelligence: speridlabs/iris-3b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-research-knowledge-intelligence-speridlabs-iris-3b-core-in.md",
       "repository": "speridlabs/iris-3b",
-      "content_hash": "44b97a2955d07de2ecff49dd96df3cbf7352b023de54f3dbc71d826f1b6753a0",
-      "created_at": "2026-11-19T14:20:17.236Z"
+      "content_hash": "2e016ef3359793cc78a4850a188e0f30b7d97e04d2ed9e7dbac48b3045dd7c48",
+      "created_at": "2026-11-23T21:14:41.652Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants",
@@ -18834,8 +18835,8 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-iris-3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-learnings-research-knowledge-intelligence-hf-speridlabs-ir.md",
       "repository": "hf-speridlabs-iris-3b-learnings",
-      "content_hash": "5e4861b75d325e4964c1e62cbac39683dac7fcafdf4fdd88d33d2840500def02",
-      "created_at": "2026-11-19T14:20:29.571Z"
+      "content_hash": "75e31634d6cc5f88da223bf1fa41bfbdb883cb2bd0c00b7b712e6a0d3a34f7e1",
+      "created_at": "2026-11-23T21:14:52.628Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
@@ -39642,8 +39643,8 @@
       "title": "Architecture Intelligence: xevrion/hatchzip Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-architecture-intelligence-xevrion-hatchzip-core-invariants.md",
       "repository": "xevrion/hatchzip",
-      "content_hash": "b70f86a6b8dbf160dafa6c1832ee40bcf0f43f84e52a4ede42abc6faa1cbfff3",
-      "created_at": "2026-11-22T10:29:47.566Z"
+      "content_hash": "96742b51e7917503d8e666debe85cab97c9529c5e7d040518788e0ba667a2876",
+      "created_at": "2026-11-23T21:14:35.854Z"
     },
     "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants",
@@ -39651,8 +39652,8 @@
       "title": "Architecture Intelligence: xevrion-hatchzip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-learnings-architecture-intelligence-xevrion-hatchzip-learnings-.md",
       "repository": "xevrion-hatchzip-learnings",
-      "content_hash": "6472e6eef950379910f1456575169ea0f1e597e94ed863fcf081458fe341522b",
-      "created_at": "2026-11-22T10:30:02.903Z"
+      "content_hash": "b5dd98d1b5d269b244f5aec72e05e17fbc738d9fd7e580cd522aa22667d133a5",
+      "created_at": "2026-11-23T21:14:51.926Z"
     },
     "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants",
@@ -41119,6 +41120,15 @@
       "confidence": 0.86,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-23T21:05:33.514Z"
+    },
+    "domain_intelligence-architecture-intelligence-clickhouse-clickhouse-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-clickhouse-clickhouse-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ClickHouse/ClickHouse Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clickhouse-clickhouse-architecture-intelligence-clickhouse-clickhouse-core-invar.md",
+      "repository": "ClickHouse/ClickHouse",
+      "content_hash": "25a312e70301be612582338a785fc00a5b74e839c1ee2e22dd65f852269bb0be",
+      "created_at": "2026-11-23T21:14:48.139Z"
     }
   }
 }
