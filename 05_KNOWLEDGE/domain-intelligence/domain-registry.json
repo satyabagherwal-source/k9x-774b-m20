@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T04:00:24.841Z",
+  "last_updated": "2026-11-23T04:08:23.563Z",
   "total_records": 2389,
   "domains": {
     "A": {
@@ -8159,8 +8159,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "859db16f271ab5a017e6f2398d6fa84757742e52261f0de6bc10dfa7335767e1",
-      "created_at": "2026-11-23T00:48:37.985Z"
+      "content_hash": "eed746ab326afcbfcb9e8930b00e30e516b82fefc3850f679913aab37b0af250",
+      "created_at": "2026-11-23T04:08:23.563Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8204,8 +8204,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "adde4a414aa14bff2252c860126fc42c6e2447300cbfdb978d39995a4ea42770",
-      "created_at": "2026-11-23T00:39:40.599Z"
+      "content_hash": "59bedc4d2bd8f24887b62440f5645c3f1a724b604c2e0c8586493e2365979a25",
+      "created_at": "2026-11-23T04:08:22.798Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -11666,8 +11666,8 @@
       "title": "Research & Knowledge Intelligence: timm/mobilenetv3_small_100.lamb_in1k Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-timm-mobilenetv3_small_100-lamb_in1k-research-knowledge-intelligence-timm-mob.md",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "37151e981043ca29ff0d54dc9af717c3b189a7262bf6db19f87fe9fcda568a57",
-      "created_at": "2026-11-18T18:14:49.331Z"
+      "content_hash": "39f2f41771fff749849a2137416c33efcbc2f79e036ab7e062af244dfd1a943e",
+      "created_at": "2026-11-23T04:08:10.202Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants",
@@ -11753,8 +11753,8 @@
       "title": "Research & Knowledge Intelligence: hf-timm-mobilenetv3_small_100.lamb_in1k-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-timm-mobilenetv3_small_100-lamb_in1k-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-timm-mobilenetv3_small_100.lamb_in1k-learnings",
-      "content_hash": "8955cd8fc2844a1228cbb42fad71cec47532c1d520b6b8f63ae558011c67f62e",
-      "created_at": "2026-11-13T22:31:30.150Z"
+      "content_hash": "6de753937362bea6b8cde44e94d03663be2de8f3476b279f009b09184573bebf",
+      "created_at": "2026-11-23T04:08:21.956Z"
     },
     "domain_intelligence-technical-construction-intelligence-compvis-stable-diffusion-v1-4-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-compvis-stable-diffusion-v1-4-core-invariant",

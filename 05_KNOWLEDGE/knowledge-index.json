@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T04:00:25.012Z",
+  "last_updated": "2026-11-23T04:08:23.842Z",
   "total_verified_learnings": 9076,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "859db16f271ab5a017e6f2398d6fa84757742e52261f0de6bc10dfa7335767e1",
+      "content_hash": "eed746ab326afcbfcb9e8930b00e30e516b82fefc3850f679913aab37b0af250",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T00:48:37.985Z"
+      "persisted_at": "2026-11-23T04:08:23.563Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "74fbd43733124149ef0db0ef58d51c049c6d95549f59ef054bb96266d4d033dc",
+      "content_hash": "18c499d1df1d312ebfa335879a3db1b53f347414de0e878285264f5fac296e47",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T00:48:38.160Z"
+      "persisted_at": "2026-11-23T04:08:23.716Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "73d1608cb9667907bbddaabcdaa202cf0c1a592c8d6b3efc5307ab0be4f9fec4",
+      "content_hash": "b4daa4bb697c5d0a0892affc1f9fca744705d25929c5b8254cbb952e449ced0d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:48:38.302Z"
+      "persisted_at": "2026-11-23T04:08:23.842Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "adde4a414aa14bff2252c860126fc42c6e2447300cbfdb978d39995a4ea42770",
+      "content_hash": "59bedc4d2bd8f24887b62440f5645c3f1a724b604c2e0c8586493e2365979a25",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T00:39:40.599Z"
+      "persisted_at": "2026-11-23T04:08:22.798Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -218487,7 +218487,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "4dc1dd262380c342e51f248bc7105f6e50c9f954d8efc09b8d3639223086d8e1",
+      "content_hash": "16f591b27f73fac2acabed66aa06b627e15fa82254dc46c0b4196c7bc21babfd",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [],
@@ -218496,7 +218496,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T18:14:48.839Z",
+      "verified_at": "2026-11-23T04:08:09.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218513,9 +218513,9 @@
       "title": "Research & Knowledge Intelligence: timm/mobilenetv3_small_100.lamb_in1k Core Invariants",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "37151e981043ca29ff0d54dc9af717c3b189a7262bf6db19f87fe9fcda568a57",
+      "content_hash": "39f2f41771fff749849a2137416c33efcbc2f79e036ab7e062af244dfd1a943e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T18:14:49.331Z"
+      "persisted_at": "2026-11-23T04:08:10.202Z"
     },
     "learn-github-infiniflow-infinity": {
       "learning_id": "learn-github-infiniflow-infinity",
@@ -218809,9 +218809,9 @@
       "title": "Research & Knowledge Intelligence: hf-timm-mobilenetv3_small_100.lamb_in1k-learnings Core Invariants",
       "repository": "hf-timm-mobilenetv3_small_100.lamb_in1k-learnings",
       "source_version": "HEAD",
-      "content_hash": "8955cd8fc2844a1228cbb42fad71cec47532c1d520b6b8f63ae558011c67f62e",
+      "content_hash": "6de753937362bea6b8cde44e94d03663be2de8f3476b279f009b09184573bebf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T22:31:30.150Z"
+      "persisted_at": "2026-11-23T04:08:21.956Z"
     },
     "learn-huggingface-compvis-stable-diffusion-v1-4": {
       "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
@@ -310024,13 +310024,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S0QB-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WWVS-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "21b150235934861b8ae4307207cd163e602cbba0266f9a114d1e883fbe3f9577",
+      "content_hash": "aca4a92367b2d4bb348ed23894295857c3e7a0a459c8ac9a3ff3b3da1758065c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T00:48:37.814Z"
+      "persisted_at": "2026-11-23T04:08:23.418Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

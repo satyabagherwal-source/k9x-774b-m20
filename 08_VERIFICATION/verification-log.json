@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-WMSX",
-    "timestamp": "2026-11-21T03:36:50.289Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "6329e3e0dc0e27046f87347157b5b89c28ef3175927d09d02384fff8fd994007",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-6KWZ",
     "timestamp": "2026-11-21T03:44:34.403Z",
     "repository": "apache/arrow",
@@ -7492,6 +7477,21 @@
     "contentHash": "06e57086532b33ed6b87b25cbdbb5e2eecb8c6a0bd6839353efd32b084bf3170",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-WMJ2",
+    "timestamp": "2026-11-23T04:08:09.998Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "16f591b27f73fac2acabed66aa06b627e15fa82254dc46c0b4196c7bc21babfd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

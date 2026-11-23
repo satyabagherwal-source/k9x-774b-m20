@@ -12291,3 +12291,4 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `2f9654ef` | Multi-dimensional audit evidence | 2026-11-23T04:00:05.519Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `0b859805` | Multi-dimensional audit evidence | 2026-11-23T04:00:17.258Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5915d306` | Multi-dimensional audit evidence | 2026-11-23T04:00:19.223Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-23T04:08:10.002Z |

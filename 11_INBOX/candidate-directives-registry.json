@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T04:00:24.679Z",
+  "last_updated": "2026-11-23T04:08:23.418Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-S0QB",
+      "id": "CD-WWVS",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-S0QB-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-WWVS-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -48386,6 +48386,24 @@
       "source_repo": "paradedb-paradedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9B368E-evaluate-integer-natively-in-join-scan-w.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-FB3F2C",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FB3F2C-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-90F239",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-90F239-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-23"
     }
   ]

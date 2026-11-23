@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
   "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T18:14:49.330Z",
+  "timestamp": "2026-11-23T04:08:10.202Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k) (Revision: `hf-timm-mo`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T18:14:49.330Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T04:08:10.202Z`  
 > **Learning ID**: `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T18:09:47.436Z  
+> **Harvest Timestamp**: 2026-11-23T04:08:09.415Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8149224 downloads | 160 likes
+- **Stars / Engagement**: 6175782 downloads | 160 likes
 
 ---
 

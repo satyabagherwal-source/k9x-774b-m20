@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T04:00:19.228Z",
-  "total_cycles_completed": 11656,
-  "total_learnings_persisted": 11656,
+  "last_updated": "2026-11-23T04:08:10.006Z",
+  "total_cycles_completed": 11657,
+  "total_learnings_persisted": 11657,
   "total_rules_promoted": 10847,
   "history": [
-    {
-      "timestamp": "2026-11-22T07:56:33.476Z",
-      "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
-      "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T07:56:35.046Z",
       "repository": "medialab/xan",
@@ -1403,6 +1396,13 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T04:08:10.006Z",
+      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
