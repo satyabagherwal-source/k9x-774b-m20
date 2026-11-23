@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T16:11:55.890Z",
+  "last_updated": "2026-11-23T16:20:44.428Z",
   "total_records": 2429,
   "domains": {
     "A": {
@@ -10269,8 +10269,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "e9d42d93a368fd75855d7c1ee64d30551ddac7668465405a4ec19cee511bca15",
-      "created_at": "2026-11-21T12:19:46.211Z"
+      "content_hash": "2fe0cb900cf0298eccaea6cdcd1b4c07ab0ae7c10df50a41d290c1c084a33a8b",
+      "created_at": "2026-11-23T16:20:38.651Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -11400,8 +11400,8 @@
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "repository": "ntex-rs/ntex",
-      "content_hash": "9d5f2795d49a353b4bc9f2dad77d3463dfd5f786ea1238d1410c3e224dac9729",
-      "created_at": "2026-11-22T03:46:15.575Z"
+      "content_hash": "720d022b89eb6a9421c1db08ccf71071eb82bfb8f11ac9da6dd529ea8725ee41",
+      "created_at": "2026-11-23T16:20:31.699Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
@@ -11436,8 +11436,8 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-learnings-architecture-intelligence-ntex-rs-ntex-learnings-core-inv.md",
       "repository": "ntex-rs-ntex-learnings",
-      "content_hash": "43dbd4a3a3d6c5b26ae320fd485cd512c1e044159a2512ec667a65d53defeed0",
-      "created_at": "2026-11-22T03:46:26.266Z"
+      "content_hash": "47a265b23757cf21db5147449bd7a7fc4ff37e744803654d331c2607fdc29247",
+      "created_at": "2026-11-23T16:20:42.708Z"
     },
     "DOM-D-B528111D": {
       "record_id": "DOM-D-B528111D",
@@ -16123,8 +16123,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-base-en-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-base-en-v1-5-research-knowledge-intelligence-baai-bge-base-en-v1-5-c.md",
       "repository": "BAAI/bge-base-en-v1.5",
-      "content_hash": "2646898309daeb534f9dee15551fca768e58a679c80c81476ac996ab38ad825b",
-      "created_at": "2026-11-19T03:27:13.850Z"
+      "content_hash": "ac2ea783558580e7ace37bf752c78e5f84b0be4a7bfd5d14f64fd3253a8861c3",
+      "created_at": "2026-11-23T16:20:29.729Z"
     },
     "DOM-D-641F7D27": {
       "record_id": "DOM-D-641F7D27",
@@ -16174,8 +16174,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-base-en-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-base-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-b.md",
       "repository": "hf-baai-bge-base-en-v1.5-learnings",
-      "content_hash": "a227086092d60e395b24b7b0076686142c4e13e9a822e9862764057e01dbe7bc",
-      "created_at": "2026-11-19T03:27:27.151Z"
+      "content_hash": "65dd2d86f9318394bb83f83a54e04633a4bd7482751650d125cba1184a2bd7e3",
+      "created_at": "2026-11-23T16:20:43.450Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants",
@@ -19850,8 +19850,8 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
       "repository": "rook-rook-learnings",
-      "content_hash": "ed26ba5c6c78b750782b83d1231e43bdfc70cd1e188a1b6aad74a7f91d9d8052",
-      "created_at": "2026-11-20T07:15:04.433Z"
+      "content_hash": "6c11a18a8944df26ea05008d7cf3656938b16364a7ea81a4bee46a0d95ec2f34",
+      "created_at": "2026-11-23T16:20:44.428Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `cfe72976`  
+> **Source Version**: `40d33b11`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:19:44.474Z  
+> **Timestamp**: 2026-11-23T16:20:37.387Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:19:44.466Z  
+> **Harvest Timestamp**: 2026-11-23T16:20:37.379Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13714 stars
+- **Stars / Engagement**: 13716 stars
 
 ---
 
@@ -1427,430 +1427,122 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7427ea8c` (2026-11-20)
-**Commit Message**: build(deps): bump the github-dependencies group across 1 directory with 8 updates
+### Incident Patch 1: `40d33b11` (2026-11-23)
+**Commit Message**: Merge pull request #18091 from Greenpepper15/wip-rgw-isolated-root-pool-design
 
-Bumps the github-dependencies group with 8 updates in the / directory:
+docs: add design for a namespaced RGW root pool
 
-| Package | From | To |
-| --- | --- | --- |
-| [github.com/IBM/go-sdk-core/v5](https://github.com/IBM/go-sdk-core) | `5.25.3` | `5.25.4` |
-| [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.8` | `1.48.0` |
-| [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.17` | `1.33.19` |
-| [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) | `1.20.17` | `1.21.1` |
-| [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) | `1.114.9` | `1.114.10` |
-| [github.com/aws/aws-sdk-go-v2/service/sns](https://github.com/aws/aws-sdk-go-v2) | `1.47.10` | `1.48.0` |
-| [github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring](https://github.com/prometheus-operator/prometheus-operator) | `0.95.1` | `0.95.2` |
-| [github.com/prometheus-operator/prometheus-operator/pkg/client](https://github.com/prometheus-operator/prometheus-operator) | `0.95.1` | `0.95.2` |
-
-
-
-Updates `github.com/IBM/go-sdk-core/v5` from 5.25.3 to 5.25.4
-- [Releas
-
-**File**: `go.mod` (modified, +21/-21)
+**File**: `design/ceph/object/namespaced-root-pool.md` (added, +575/-0)
 ```diff
-@@ -10,13 +10,13 @@ replace (
- )
- 
- require (
--	github.com/IBM/go-sdk-core/v5 v5.25.3
-+	github.com/IBM/go-sdk-core/v5 v5.25.4
- 	github.com/IBM/keyprotect-go-client v1.1.0
--	github.com/aws/aws-sdk-go-v2 v1.47.8
--	github.com/aws/aws-sdk-go-v2/config v1.33.17
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.17
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.9
--	github.com/aws/aws-sdk-go-v2/service/sns v1.47.10
-+	github.com/aws/aws-sdk-go-v2 v1.48.0
-+	github.com/aws/aws-sdk-go-v2/config v1.33.19
-+	github.com/aws/aws-sdk-go-v2/credentials v1.21.1
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.10
-+	github.com/aws/aws-sdk-go-v2/service/sns v1.48.0
- 	github.com/aws/smithy-go v1.28.9
- 	github.com/banzaicloud/k8s-objectmatcher v1.8.0
- 	github.com/ceph/ceph-csi-operator/api v0.0.0-20261001132947-98eee8980fc6
-@@ -34,8 +34,8 @@ require (
- 	github.com/kube-object-storage/lib-bucket-provisioner v0.0.0-20260420161730-5164e3746489
- 	github.com/libopenstorage/secrets v0.0.0-20240416031220-a17cf7f72c6c
- 	github.com/pkg/errors v0.9.1
--	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.95.1
--	github.com/prometheus-operator/prometheus-operator/pkg/client v0.95.1
-+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.95.2
-+	github.com/prometheus-operator/prometheus-operator/pkg/client v0.95.2
- 	github.com/rook/rook/pkg/apis v0.0.0-20241216163035-3170ac6a0c58
- 	github.com/sethvargo/go-password v0.4.0
- 	github.com/spf13/cobra v1.10.2
-@@ -70,19 +70,19 @@ require (
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
- 	github.com/ansel1/merry v1.8.3 // indirect
- 	github.com/ansel1/merry/v2 v2.2.5 // indirect
--	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.11 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.11 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.12 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.11 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 // indirect
-+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.12 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.13.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.52.0 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/blang/semver/v4 v4.0.0 // indirect
- 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-```
-
-**File**: `go.sum` (modified, +42/-42)
-```diff
-@@ -110,8 +110,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/
- github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
- github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
- github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
--github.com/IBM/go-sdk-core/v5 v5.25.3 h1:dL7r1nLoi3xPtX0MdMl0FA0WAM6E6oz40KIu4LwEloI=
--github.com/IBM/go-sdk-core/v5 v5.25.3/go.mod h1:83BKM+mYr4eUlkiCJWf36wjF7PSdOOAxeIjTfoSCnTg=
-+github.com/IBM/go-sdk-core/v5 v5.25.4 h1:Xmlv8hvj6PdJQpPcACHoDOqPGWa3jf6UUWCFAMiE1F4=
-+github.com/IBM/go-sdk-core/v5 v5.25.4/go.mod h1:83BKM+mYr4eUlkiCJWf36wjF7PSdOOAxeIjTfoSCnTg=
- github.com/IBM/keyprotect-go-client v0.5.1/go.mod h1:5TwDM/4FRJq1ZOlwQL1xFahLWQ3TveR88VmL1u3njyI=
- github.com/IBM/keyprotect-go-client v1.1.0 h1:TmPeEviEEE5fsQK8TpNZ/fblud9PCV7ZrhuQKjWhaQM=
- github.com/IBM/keyprotect-go-client v1.1.0/go.mod h1:q5beQeQA0ChFa46s31+aK2YuojCukitDaMYNBJgmJkY=
-@@ -144,42 +144,42 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkY
- github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
- github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
- github.com/aws/aws-sdk-go v1.44.164/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
--github.com/aws/aws-sdk-go-v2 v1.47.8 h1:fuClo7Un+Bi0EDTnSIPWxVEoJcze+wkGzNA4Vo3jRcQ=
--github.com/aws/aws-sdk-go-v2 v1.47.8/go.mod h1:I8lFSH4MGrZiw2m7miCrRYHsgpC1+HW8uiVGOiPYPcw=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 h1:SJNA4XaM8Z09adeTHf/vME93jzl44lJV70pSawIBXac=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26/go.mod h1:l0ME5pd2QytH8UZzETcrt90x9Bm+3TyBVeWfVEcZ82c=
--github.com/aws/aws-sdk-go-v2/config v1.33.17 h1:5/Ahj9/efRCbHhZx0swd+rC2EqC8a2CE6/JnzYsJB70=
--github.com/aws/aws-sdk-go-v2/config v1.33.17/go.mod h1:H0TQmatulB8yoemlckKQrPDn8aMHqpMyO5QCkYaQH0w=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.17 h1:n76tvnpRJUk/jwDBijhnuwHSus6VQuC8XXD1hB30F/0=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.17/go.mod h1:Hzlq1/HGNzNpw1qP+5otW3+EwXhMrQdRnBYLBeJKEBU=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8 h1:1bCo9/cf7dlTlbrZnz7g1Bki72b5thfuzFZCjdWCfVk=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8/go.mod h1:mzPw75GydqddJpfuwYO/ZDIl6xNxKjK86apitdLmvV0=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 h1:LTxHSJ/rwTFfaXqi5mlKKHJOW+shFB+HQ7NrCa4OQ48=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11/go.mod h1:GF0bVKZVQX4UeUtPmTuWZj3gw0eRCdkVhW0xFnSRLmU=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.11 h1:DGUM0yztI3Zz5kePulT/mMP/gVZFGTTISUiCcqSQtT0=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.11/go.mod h1:kbcdJgN9cgSzZlUqsMveDl9IfexJqOzCihXjQXTNaPk=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.11 h1:kOHCwgWFyfrz9GqnJct8knQw7Apyl3xHH+OGnome77s=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.11/go.mod h1:854cZkT2fdkdrzQklD49uzxkZnajXoelpVNgT/yk4J0=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 h1:jGzHjc2jDx08Rji1JTBtMxuXUDG7muTEw+ExYXqFzPg=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24/go.mod h1:uJt75pK2cEyY80F5C+DK9YkCkJWsMkJViHxLYZRHl8Y=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.12 h1:hfO8FblXX93ZKHXSCqCjehwul1EtNJa9G8iFSOiJ+6w=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.12/go.mod h1:r8Eypc7ZRNdS7BsaLBUUdcXIEuKE6cVHZJ29u+IGaIc=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 h1:PO7Tx443ecMI00nIxDrT99DVcbeMBQ6BUtJlDMRnY24=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11/go.mod h1:n/9RixikO12YvNomZLP8k4TgUSoEkT1W23QIrpFAPvw=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.11 h1:jNP7wZylDeSJhjc1nmjZBuG5deotp3cEYIfMazmzp+Y=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.11/go.mod h1:1US+8JBnF0xNm6GE6wM5u5ugFwSZpkd2686gMuql5tI=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.9 h1:MLHGyNy4melTyk9e63s+9QgLKCHPDJrP+1NfJhtU1g4=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.9/go.mod h1:zfUkiNK2JiYlR1/SnU8aJ8Gj1nMFLkPZ69rVLv6jWPo=
--github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 h1:1cHBtZSsEEvghtDyjtRoYZ4GdjJy9Sh45GglOWEEm5Q=
--github.com/aws/aws-sdk-go-v2/service/signin v1.13.0/go.mod h1:PCRJucC12nFWle7wRGhSj0cw3OKB84M0EBwTrv34dhg=
--github.com/aws/aws-sdk-go-v2/service/sns v1.47.10 h1:dqHTDRiALOMKb5odwU49bI8ATjDbo8wRgzx0G7wXZUw=
--github.com/aws/aws-sdk-go-v2/service/sns v1.47.10/go.mod h1:DenuY8JutgG46gaBzt5g2YbDsrouO4o3Ndlvpa0MB2M=
--github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 h1:qQ97XqrlFGRRhhrcDbeqUVeezamo1a1F7lH4HczU7EA=
--github.com/aws/aws-sdk-go-v2/service/sso v1.39.4/go.mod h1:mPM3sWIm0iUGl5OWkR9cG23PRFQ0Ir6y+3Hg0lKBAAE=
--github.com/aws/aws-sdk
+@@ -0,0 +1,575 @@
++---
++title: namespaced-root-pool
++target-version: release-1.22
++---
++
++# Namespaced RGW Topology Pool (`rootPoolNamespaceStrategy`)
++
++Store a realm's RGW topology records in a RADOS namespace of `.rgw.root` instead of using the raw `.rgw.root` pool.
++
++## Summary
++
++`sharedPools` collapses a store's data and metadata into shared pools partitioned by RADOS
++namespaces, which are named after the zone name. The **RGW topology records** — realm, zone group, zone, and
++period — are not covered by this feature. Instead every store in the cluster keeps the realm information together in a single, un-namespaced `.rgw.root` pool.
++
++To mitigate this we propose a new `rootPoolNamespaceStrategy` field.
++`rootPoolNamespaceStrategy: RealmName` should be an opt-in setting for storing a realm's topology records in a RADOS namespace of `.rgw.root`. A store using `sharedPools` together with `rootPoolNamespaceStrategy` would then have its entire RADOS footprint (data, metadata, and topology) stored with RADOS namespaces.
++
++### Motivation
++
++- **Enabling realm separation at the cephx level.** With `rootPoolNamespaceStrategy` and `sharedPools`
++  together, a realm's entire RADOS footprint (data, metadata, and topology) would lie in
++  distinct RADOS namespaces. A Rook user could then achieve cephx-enforced realm separation by manually provisioning an RGW instance with a cephx user scoped to those namespaces (the user's mon caps must use the [`profile rgw`](https://github.com/ceph/ceph/pull/70538) cap profile; a bare `mon 'allow rw'` would undermine the separation).
++  Separating realms like this closes confidentiality gaps between realms. For example, the zone record in `.rgw.root` carries the realm's `system_key` (the
++  credentials used for multisite replication) in cleartext, so under broad OSD
++  capabilities any RGW can read another realm's replication credentials out of the
++  shared pool. An OSD capability scoped to the realm's namespaces stops that read.
++- **Decrease coupling of realms stored in the same `.rgw.root` pool.** If every realm shares a `.rgw.root` pool then every `radosgw-admin` invocation can reach any realm, so a wrong `--rgw-realm`, a default-realm-fallback commit, or a `realm list` delete sweep can hit a neighboring realm. Invoking any `radosgw-admin` command against a namespace-separated realm would not influence realms living in other namespaces.
++
++    Keeping each realm in a separate RADOS namespace would also help with:
++    - Backing up realm topology: back up the RADOS namespace
++    - Deleting a realm: delete every RADOS namespace associated with it
++- **No reliance on the root pool's default location.** Every `radosgw-admin` invocation implicitly relies on the root pool location being `.rgw.root` and Rook relies on that default today. Rook otherwise tries consistently to be explicit rather than depend on defaults.
++
++### Goals
++
++- Opt-in partitioning of `.rgw.root` by RADOS namespace, for single-site and multisite setups.
++- Off by default: existing stores, and stores that do not set the
++  field, should be untouched and keep using the shared `.rgw.root`.
++- Backward compatible: existing shared `.rgw.root` stores and realms should be untouched, and enabling
++  the feature should never rewrite or migrate an already-provisioned layout. (Operator downgrade is
++  not supported by Rook. See Open Question 2.)
++- Should apply to newly created realms and object stores only.
++
++### Non-Goals
++
++- Relocating existing shared `.rgw.root` topology to a RADOS namespaced `.rgw.root` (and the other way around)
++    - `rootPoolNamespaceStrategy` is immutable on a CR, so the layout cannot be flipped in place. Deleting a realm
++      and re-creating it under the same name with the other layout is accepted, but this does not cause a
++      migration. Instead it provisions at the new location and leaves the old records orphaned.
++- Configurable namespace or pool names. The pool would always be `.rgw.root` and the namespace
++  always the realm name. No new naming knobs are introduced.
++- Changing the `sharedPools` data/metadata model or its API.
++- Access control. This feature would control the placement of topology records. It would not change
++  what any RGW daemon or client is authorized to read or write. It would, however, arrange the
++  layout that namespace-scoped cephx capabilities require (see Motivation).
++- Automated Ceph-side cleanup of multisite realms. The prerequisite finalizers (see Prerequisite
++  work) only order the deletion of the CRs.
++
++### Constraints and assumptions
++
++The design builds on the following pre-existing behaviors and accepts the constraints they impose:
++
++- In Rook (up-to-date as of v1.21), deleting a `CephObjectRealm` CR in multisite does not delete the realm on the Ceph side. CephObjectRealm's reconcile performs no Ceph-side work on delete. In contrast, in single-site `CephObjectStore` teardown the associated realm records are removed. This design is inten
 ```
 
 ---
 
-### Incident Patch 2: `3fa7352a` (2026-11-20)
-**Commit Message**: Merge pull request #18831 from tittuvarghese/fix-default-clientprofile-secret-names
+### Incident Patch 2: `3eec68fc` (2026-11-23)
+**Commit Message**: Merge pull request #18841 from rook/dependabot/go_modules/k8s-dependencies-d4cee4bf15
 
-csi: use annotated secret names in default client profile
+build(deps): bump sigs.k8s.io/controller-runtime from 0.25.2 to 0.25.3 in the k8s-dependencies group across 1 directory
 
-**File**: `pkg/operator/ceph/cluster/mon/health_test.go` (modified, +1/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -1297,6 +1297,7 @@ func getClient(t *testing.T, obj ...runtime.Object) client.Client {
- 	s := scheme.Scheme
- 	s.AddKnownTypes(cephv1.SchemeGroupVersion, &cephv1.CephCluster{})
- 	assert.NoError(t, csiopv1.AddToScheme(s))
-+	assert.NoError(t, v1.AddToScheme(s))
- 	client := fake.NewClientBuilder().WithScheme(s).WithRuntimeObjects(obj...).Build()
- 	return client
- }
-```
-
-**File**: `pkg/operator/ceph/cluster/mon/mon_test.go` (modified, +4/-0)
-```diff
-@@ -104,6 +104,7 @@ func newTestStartClusterWithQuorumResponse(t *testing.T, namespace string, monRe
- 	}
- 	s := scheme.Scheme
- 	assert.NoError(t, csiopv1.AddToScheme(s))
-+	assert.NoError(t, v1.AddToScheme(s))
- 	cl := fake.NewClientBuilder().WithScheme(s).Build()
- 	return &clusterd.Context{
- 		Clientset: clientset,
-@@ -451,6 +452,7 @@ func TestSaveMonEndpoints(t *testing.T) {
- 	ownerInfo := cephclient.NewMinimumOwnerInfoWithOwnerRef()
- 	s := scheme.Scheme
- 	assert.NoError(t, csiopv1.AddToScheme(s))
-+	assert.NoError(t, v1.AddToScheme(s))
- 	cl := fake.NewClientBuilder().WithScheme(s).Build()
- 	c := New(ctx, &clusterd.Context{Clientset: clientset, ConfigDir: configDir, Client: cl}, "ns", cephv1.ClusterSpec{}, ownerInfo)
- 	setCommonMonProperties(c, 1, cephv1.MonSpec{Count: 3, AllowMultiplePerNode: true}, "myversion")
-@@ -501,6 +503,7 @@ func TestMaxMonID(t *testing.T) {
- 	ownerInfo := cephclient.NewMinimumOwnerInfoWithOwnerRef()
- 	s := scheme.Scheme
- 	assert.NoError(t, csiopv1.AddToScheme(s))
-+	assert.NoError(t, v1.AddToScheme(s))
- 	cl := fake.NewClientBuilder().WithScheme(s).Build()
- 	c := New(t.Context(), &clusterd.Context{Clientset: clientset, ConfigDir: configDir, Client: cl}, "ns", cephv1.ClusterSpec{}, ownerInfo)
- 	c.ClusterInfo = clienttest.CreateTestClusterInfo(1)
-@@ -1365,6 +1368,7 @@ func TestRotateMonCephxKeys(t *testing.T) {
- 	s.AddKnownTypes(cephv1.SchemeGroupVersion, &cephv1.CephCluster{})
- 	s.AddKnownTypes(v1.SchemeGroupVersion, &v1.Secret{})
- 	assert.NoError(t, csiopv1.AddToScheme(s))
-+	assert.NoError(t, v1.AddToScheme(s))
- 
- 	object := []runtime.Object{
- 		cluster,
-```
-
-**File**: `pkg/operator/ceph/csi/config.go` (modified, +35/-6)
-```diff
-@@ -53,6 +53,16 @@ const (
- 	cephFSDriverSuffix = "cephfs.csi.ceph.com"
+@@ -54,7 +54,7 @@ require (
+ 	k8s.io/cloud-provider v0.37.2
+ 	k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab
+ 	sigs.k8s.io/container-object-storage-interface/client v0.2.2
+-	sigs.k8s.io/controller-runtime v0.25.2
++	sigs.k8s.io/controller-runtime v0.25.3
+ 	sigs.k8s.io/mcs-api v0.5.2
+ 	sigs.k8s.io/yaml v1.6.0
  )
- 
-+// Annotations that import-external-cluster.sh sets on the CSI secrets, so that the
-+// client profiles can find them when their names differ from the defaults.
-+//
-+//nolint:gosec // because of the word `Secret`
-+const (
-+	rbdProvisionerSecretAnnotation    = "csi.rook.io/RBDProvisionerSecret"
-+	rbdNodeSecretAnnotation           = "csi.rook.io/RBDNodeSecret"
-+	cephFSProvisionerSecretAnnotation = "csi.rook.io/CephFSProvisionerSecret"
-+)
-+
- func CreateUpdateClientProfileRadosNamespace(ctx context.Context, c client.Client, clusterInfo *cephclient.ClusterInfo, cephBlockPoolRadosNamespaceName, clusterID string) error {
- 	if !opcontroller.CSIOperatorResourcesEnabled() {
- 		logger.Debug("csi operator resources are disabled, skipping ceph-csi clientProfile CR for rados namespace")
-@@ -61,12 +71,12 @@ func CreateUpdateClientProfileRadosNamespace(ctx context.Context, c client.Clien
- 
- 	logger.Info("creating ceph-csi clientProfile CR for rados namespace")
- 
--	rbdProvisionerSecretName, err := getSecretNameByAnnotation(c, ctx, clusterInfo.Namespace, "csi.rook.io/RBDProvisionerSecret", CsiRBDProvisionerSecret)
-+	rbdProvisionerSecretName, err := getSecretNameByAnnotation(c, ctx, clusterInfo.Namespace, rbdProvisionerSecretAnnotation, CsiRBDProvisionerSecret)
- 	if err != nil {
- 		return err
- 	}
- 
--	rbdNodeSecretName, err := getSecretNameByAnnotation(c, ctx, clusterInfo.Namespace, "csi.rook.io/RBDNodeSecret", CsiRBDNodeSecret)
-+	rbdNodeSecretName, err := getSecretNameByAnnotation(c, ctx, clusterInfo.Namespace, rbdNodeSecretAnnotation, CsiRBDNodeSecret)
- 	if err != nil {
- 		return err
- 	}
-@@ -113,7 +123,7 @@ func CreateUpdateClientProfileSubVolumeGroup(ctx context.Context, c client.Clien
- }
- 
- func generateProfileSubVolumeGroupSpec(c client.Client, clusterInfo *cephclient.ClusterInfo, cephFilesystemSubVolumeGroupName, clusterID string, csiMetadataRadosNamespace string) (*csiopv1.ClientProfile, error) {
--	cephFSSecretName, err := getSecretNameByAnnotation(c, clusterInfo.Context, clusterInfo.Namespace, "csi.rook.io/CephFSProvisionerSecret", CsiCephFSProvisionerSecret)
-+	cephFSSecretName, err := getSecretNameByAnnotation(c, clusterInfo.Context, clusterInfo.Namespace, cephFSProvisionerSecretAnnotation, CsiCephFSProvisionerSecret)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -159,6 +169,25 @@ func getSecretNameByAnnotation(c client.Client, ctx context.Context, namespace,
- // CreateDefaultClientProfile creates a default client profile for csi-operator to connect the driver
- func CreateDefaultClientProfile(c client.Client, clusterInfo *cephclient.ClusterInfo) error {
- 	logger.Info("Creating ceph-csi clientProfile default CR")
-+
-+	// External clusters imported with restricted auth permissions use secret names that differ
-+	// from the defaults. The import script annotates them, so look them up the same way as the
-+	// rados namespace and subvolume group client profiles do.
-+	cephFSProvisionerSecretName, err := getSecretNameByAnnotation(c, clusterInfo.Context, clusterInfo.Namespace, cephFSProvisionerSecretAnnotation, CsiCephFSProvisionerSecret)
-+	if err != nil {
-+		return err
-+	}
-+
-+	rbdProvisionerSecretName, err := getSecretNameByAnnotation(c, clusterInfo.Context, clusterInfo.Namespace, rbdProvisionerSecretAnnotation, CsiRBDProvisionerSecret)
-+	if err != nil {
-+		return err
-+	}
-+
-+	rbdNodeSecretName, err := getSecretNameByAnnotation(c, clusterInfo.Context, clusterInfo.Namespace, rbdNodeSecretAnnotation, CsiRBDNodeSecret)
-+	if err != nil {
-+		return err
-+	}
-+
- 	csiOpClientProfile := &csiopv1.ClientProfile{}
- 	csiOpClientProfile.Name = clusterInfo.Namespace
- 	csiOpClientProfile.Namespace = os.Getenv(k8sutil.PodNamespaceEnvVar)
-@@ -177,7 +206,7 @@ func CreateDefaultClientProfile(c client.Client, clusterInfo *cephclient.Cluster
- 
- 	csiOpClientProfile.Spec.CephFs.CephCsiSecrets = &csiopv1.CephCsiSecretsSpec{
- 		ControllerPublishSecret: v1.SecretReference{
--			Name:      CsiCephFSProvisionerSecret,
-+			Name:      cephFSProvisionerSecretName,
- 			Namespace: clusterInfo.Namespace,
- 		},
- 	}
-@@ -188,11 +217,11 @@ func CreateDefaultClientProfile(c client.Client, clusterInfo *cephclient.Cluster
- 	// set RBD ControllerPublish Secret
- 	csiOpClientProfile.Spec.Rbd.CephCsiSecrets = &csiopv1.CephCsiSecretsSpec{
- 		ControllerPublishSecret: v1.SecretReference{
--			Name:      CsiRBDProvisionerSecret,
-+			Name:      rbdProvisionerSecretName,
- 			Namespace: clusterInfo.Namespace,
- 		},
- 		NodePublishSecret: v1.SecretReference{
--			Name:      CsiRBDNodeSecret,
-+			Name:      rbdNodeSecretName,
- 			Namespace: clusterInfo.Namespace,
- 		},
- 	}
 ```
 
-**File**: `pkg/operator/ceph/csi/config_test.go` (modified, +58/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -87,9 +87,66 @@ func TestCreateUpdateClientProfile(t *testing.T) {
- 	assert.Equal(t, *csiOpClientProfile.Spec.CephFs.RadosNamespace, cephSubVolGrpRadosNamespaceNamespacedName.Name)
- }
- 
-+func TestCreateDefaultClientProfile(t *testing.T) {
-+	ns := "test"
-+	c := clienttest.CreateTestClusterInfo(1)
-+	c.Namespace = ns
-+	t.Setenv(k8sutil.PodNamespaceEnvVar, ns)
-+
-+	s := runtime.NewScheme()
-+	assert.NoError(t, v1.AddToScheme(s))
-+	assert.NoError(t, csiopv1.AddToScheme(s))
-+
-+	t.Run("uses default secret names when no secrets are annotated", func(t *testing.T) {
-+		cl := fake.NewClientBuilder().WithScheme(s).Build()
-+
-+		err := CreateDefaultClientProfile(cl, c)
-+		assert.NoError(t, err)
-+
-+		profile := &csiopv1.ClientProfile{}
-+		err = cl.Get(t.Context(), types.NamespacedName{Name: ns, Namespace: ns}, profile)
-+		assert.NoError(t, err)
-+		assert.Equal(t, CsiCephFSProvisionerSecret, profile.Spec.CephFs.CephCsiSecrets.ControllerPublishSecret.Name)
-+		assert.Equal(t, CsiRBDProvisionerSecret, profile.Spec.Rbd.CephCsiSecrets.ControllerPublishSecret.Name)
-+		assert.Equal(t, CsiRBDNodeSecret, profile.Spec.Rbd.CephCsiSecrets.NodePublishSecret.Name)
-+	})
-+
-+	t.Run("uses annotated secret names from a restricted external import", func(t *testing.T) {
-+		annotated := func(name, annotationKey string) *v1.Secret {
-+			return &v1.Secret{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:        name,
-+					Namespace:   ns,
-+					Annotations: map[string]string{annotationKey: "true"},
-+				},
-+			}
-+		}
-+		existing := &csiopv1.ClientProfile{ObjectMeta: metav1.ObjectMeta{Name: ns, Namespace: ns}}
-+		cl := fake.NewClientBuilder().WithScheme(s).WithObjects(
-+			annotated("rook-csi-cephfs-provisioner-k8s-myfs", cephFSProvisionerSecretAnnotation),
-+			annotated("rook-csi-rbd-provisioner-k8s-pool", rbdProvisionerSecretAnnotation),
-+			annotated("rook-csi-rbd-node-k8s-pool", rbdNodeSecretAnnotation),
-+			existing,
-+		).Build()
-+
-+		// an existing default profile with the default names must be updated too
-+		err := CreateDefaultClientProfile(cl, c)
-+		assert.NoError(t, err)
-+
-+		profile := &csiopv1.ClientProfile{}
-+		err = cl.Get(t.Context(), types.NamespacedName{Name: ns, Namespace: ns}, profile)
-+		assert.NoError(t, err)
-+		assert.Equal(t, "rook-csi-cephfs-provisioner-k8s-myfs", profile.Spec.CephFs.CephCsiSecrets.ControllerPublishSecret.Name)
-+		assert.Equal(t, ns, profile.Spec.CephFs.CephCsiSecrets.ControllerPublishSecret.Namespace)
-+		assert.Equal(t, "rook-csi-rbd-provisioner-k8s-pool", profile.Spec.Rbd.CephCsiSecrets.ControllerPublishSecret.Name)
-+		assert.Equal(t, "rook-csi-rbd-node-k8s-pool", profile.Spec.Rbd.CephCsiSecrets.NodePublishSecret.Name)
-+		assert.Equal(t, ns, profile.Spec.Rbd.CephCsiSecrets.NodePublishSecret.Namespace)
-+	})
-+}
-+
- func TestGetSecretNameByAnnotation(t *testing.T) {
- 	ns := "test-ns"
--	annotationKey := "csi.rook.io/RBDProvisionerSecret"
-+	annotationKey := rbdProvisionerSecretAnnotation
- 	defaultName := "rook-csi-rbd-provisioner"
- 
- 	t.Run("return matching secret name when annotation value is true", func(t *testing.T) {
-```
-
----
-
-### Incident Patch 3: `f067f9c3` (2026-11-20)
-**Commit Message**: Merge pull request #18834 from travisn/docs/pending-release-notes-guidance
-
-docs: discourage default edits to PendingReleaseNotes
-
-**File**: `.github/PULL_REQUEST_TEMPLATE.md` (modified, +1/-2)
-```diff
-@@ -17,9 +17,8 @@ Resolves #
- - [ ] **Commit Message Formatting**: Commit titles and messages follow guidelines in the [developer guide](https://rook.io/docs/rook/latest/Contributing/development-flow/#commit-structure).
- - [ ] Reviewed the developer guide on [Submitting a Pull Request](https://rook.io/docs/rook/latest/Contributing/development-flow/#submitting-a-pull-request)
- - [ ] Reviewed [AI guidelines](https://rook.io/docs/rook/latest/Contributing/ai-guidelines), if AI assisted with the PR.
--- [ ] [Pending release notes](https://github.com/rook/rook/blob/master/PendingReleaseNotes.md) updated with breaking and/or notable changes for the next minor release.
-+- [ ] [Pending release notes](https://github.com/rook/rook/blob/master/PendingReleaseNotes.md): leave this file unchanged unless the change specifically targets the next minor release *only*. Add a note only for a non-backported breaking change or notable new feature.
-   - Overwriting Ceph's configurations should be marked as breaking changes.
- - [ ] Documentation has been updated, if necessary (under the `Documentation` folder).
- - [ ] Unit tests have been added, if necessary (`_test.go` files under the `cmd` and `pkg` folders).
- - [ ] Integration tests have been added, if necessary (in the `tests/integration` folder).
--
-```
-
-**File**: `AGENTS.md` (modified, +3/-0)
-```diff
-@@ -36,6 +36,9 @@ API, because those comments become the CRD descriptions.
- * Opening a pull request non-interactively, such as by passing a body to `gh pr create`, skips the
-     template that GitHub would otherwise supply. Read
-     [the template](.github/PULL_REQUEST_TEMPLATE.md) and fill in its checklist regardless.
-+* Leave `PendingReleaseNotes.md` unchanged unless the change targets the next minor release *only*
-+    (not backported) and is a breaking change or a notable new feature. Most PRs are backported and
-+    must not update it; if unsure, do not touch the file. See the note at the top of that file.
- * Disclose in the pull request description how AI tools assisted with the change.
- * Commit messages and review comments are the contributor's own reasoning to explain and own. Do
-     not submit raw model output as either.
-```
-
-**File**: `PendingReleaseNotes.md` (modified, +7/-1)
-```diff
-@@ -1,7 +1,13 @@
- # v1.22 Pending Release Notes
- 
- Notes for the v1.22.0 release, including breaking changes and new features.
--Changes should *not* be included here if they are backported to previous releases.
-+
-+> **Do not update this file by default.** Most Rook pull requests are backported to previous
-+> releases, and backported changes must *not* be listed here. Only add a note when a change targets
-+> **this minor release only** (it is not backported) **and** is a breaking change or a notable new
-+> feature. Bug fixes, refactors, test changes, documentation, dependency bumps, and anything
-+> backported do not belong here. If you are unsure whether your change will be backported, leave this
-+> file unchanged — a maintainer will add a note if one is needed.
- 
- ## Breaking Changes
- 
+@@ -1729,8 +1729,8 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.0.14/go.mod h1:LEScyz
+ sigs.k8s.io/container-object-storage-interface/client v0.2.2 h1:TARggRey9sQkDv94w3b+aBav0gCgM61sgWVWU8zKMDg=
+ sigs.k8s.io/container-object-storage-interface/client v0.2.2/go.mod h1:RQSwGVkJ9vBo02N1tTWmqHqykln8K2d/dHgdXWie2I4=
+ sigs.k8s.io/controller-runtime v0.2.2/go.mod h1:9dyohw3ZtoXQuV1e766PHUn+cmrRCIcBh6XIMFNMZ+I=
+-sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
+-sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
++sigs.k8s.io/controller-runtime v0.25.3 h1:b4OcZSY/aKHY8JG+rBlQmQ1xLs574+ZBEjv1dtfLd80=
++sigs.k8s.io/controller-runtime v0.25.3/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
+ sigs.k8s.io/json v0.0.0-20211020170558-c049b76a60c6/go.mod h1:p4QtZmO4uMYipTQNzagwnNoseA6OxSUutVw05NhYDRs=
+ sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2/go.mod h1:B8JuhiUyNFVKdsE8h686QcCxMaH6HrOAZj4vswFpcB0=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #18851** (2026-11-23): build(deps): bump the all-dependencies group across 1 directory with 26 updates (@dependabot[bot])
+- **PR #18850** (closed): build(deps): bump the all-dependencies group across 1 directory with 26 updates (@dependabot[bot])
 - **PR #18849** (2026-11-20): build(deps): bump the github-dependencies group across 1 directory with 8 updates (@dependabot[bot])
 - **PR #18848** (2026-11-20): csi: use annotated secret names in default client profile (backport #18831) (@mergify[bot])
 - **PR #18847** (2026-11-20): csi: use annotated secret names in default client profile (backport #18831) (@mergify[bot])
 - **PR #18846** (closed): build(deps): bump the all-dependencies group with 25 updates (@dependabot[bot])
-- **PR #18845** (closed): build(deps): bump the all-dependencies group with 24 updates (@dependabot[bot])
-- **PR #18843** (closed): build(deps): bump the github-dependencies group with 7 updates (@dependabot[bot])
 
 ---
 
@@ -1870,64 +1562,49 @@ docs: discourage default edits to PendingReleaseNotes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the github-dependencies group across 1 directory with 8 update
+## X. Empirical Invariant Guard in namespaced-root-pool.md
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `design/ceph/object/namespaced-root-pool.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7427ea8c`: build(deps): bump the github-dependencies group across 1 directory with 8 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40d33b11`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `design/ceph/object/namespaced-root-pool.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/IBM/go-sdk-core/v5 v5.25.4
-	github.com/aws/aws-sdk-go-v2 v1.48.0
-	github.com/aws/aws-sdk-go-v2/config v1.33.19
-	github.com/aws/aws-sdk-go-v2/credentials v1.21.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.10
-	github.com/aws/aws-sdk-go-v2/service/sns v1.48.0
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.95.2
-	github.com/prometheus-operator/prometheus-operator/pkg/client v0.95.2
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.13.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ss
+---
+title: namespaced-root-pool
+target-version: release-1.22
+---
+
+# Namespaced RGW Topology Pool (`rootPoolNamespaceStrategy`)
+
+Store a realm's RGW topology records in a RADOS namespace of `.rgw.root` instead of using the raw `.rgw.root` pool.
+
+## Summary
+
+`sharedPools` collapses a store's data and metadata into shared pools partitioned by RADOS
+namespaces, which are named after the zone name. The **RGW topology records** — realm, zone group, zone, and
+period — are not covered by this feature. Instead every store in the cluster keeps the realm information together in a single, un-namespaced `.rgw.root` pool.
+
+To mitigate this we propose a new `rootPoolNamespaceStrategy` field.
+`rootPoolNamespaceStrategy: RealmName` should be an opt-in setting for storing a realm's topology records in a RADOS namespace of `.rgw.root`. A store using `sharedPools` together with `rootPoolNamespaceStrategy` would then have its entire RADOS footprint (data, metadata, and topology) stored with RADOS namespaces.
+
+### Motivation
+
+- **Enabling realm separation at the cephx level.** With `rootPoolNamespaceStrategy` and `sharedPools`
+  together, a realm's entire RADOS footprint (data, metadata, and topology) w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/IBM/go-sdk-core/v5 v5.25.3
-	github.com/aws/aws-sdk-go-v2 v1.47.8
-	github.com/aws/aws-sdk-go-v2/config v1.33.17
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.17
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.9
-	github.com/aws/aws-sdk-go-v2/service/sns v1.47.10
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.95.1
-	github.com/prometheus-operator/prometheus-operator/pkg/client v0.95.1
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.11 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/s
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7427ea8c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40d33b11` are properly handled with clean fallback behavior.

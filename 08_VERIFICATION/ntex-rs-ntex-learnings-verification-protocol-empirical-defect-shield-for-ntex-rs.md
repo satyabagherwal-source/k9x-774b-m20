@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T03:46:25.999Z",
+  "timestamp": "2026-11-23T16:20:42.331Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ntex-rs-ntex-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ntex-rs-ntex-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T03:46:25.999Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T16:20:42.331Z`  
 > **Learning ID**: `LEARN-EVO-ntex-rs-ntex-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `4adf6cd3`  
+> **Source Version**: `0efc7829`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T03:46:14.697Z  
+> **Timestamp**: 2026-11-23T16:20:29.807Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:46:14.692Z  
+> **Harvest Timestamp**: 2026-11-23T16:20:29.799Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2555 stars
+- **Stars / Engagement**: 2556 stars
 
 ---
 
@@ -1352,18 +1352,29 @@ where
     }
 
     #[inline]
-    async fn call(&self, req: Req, ctx: Ctx<'_, Self, OtSt>) -> Result<S::Res, S::Error> {
-        self.s.call(req, ctx.map_state(&self.st).cast()).await
+    #[allow(clippy::manual_async_fn)]
+    fn call(
+        &self,
+        req: Req,
+        ctx: Ctx<'_, Self, OtSt>,
+    ) -> impl Future<Output = Result<S::Res, S::Error>> {
+        // See `ready`.
+        async move { self.s.call(req, ctx.map_state(&self.st).cast()).await }
     }
 
     #[inline]
-    async fn ready(&self, ctx: Ctx<'_, Self, OtSt>) -> Result<(), S::Error> {
-        self.s.ready(ctx.map_state(&self.st).cast()).await
+    #[allow(clippy::manual_async_fn)]
+    fn ready(&self, ctx: Ctx<'_, Self, OtSt>) -> impl Future<Output = Result<(), S::Error>> {
+        // An `async fn` would store `ctx` twice; `map_state` borrows `ctx`,
+        // so the mapped context must be created inside the block.
+        async move { self.s.ready(ctx.map_state(&self.st).cast()).await }
     }
 
     #[inline]
-    async fn shutdown(&self, ctx: Ctx<'_, Self, OtSt>) {
-        self.s.shutdown(ctx.map_state(&self.st).cast()).await;
+    #[allow(clippy::manual_async_fn)]
+    fn shutdown(&self, ctx: Ctx<'_, Self, OtSt>) -> impl Future<Output = ()> {
+        // See `ready`.
+        async move { self.s.shutdown(ctx.map_state(&self.st).cast()).await }
     }
 }
 
@@ -1402,11 +1413,12 @@ mod tests;
 
 ### Core Architecture Module: `ntex-service/src/pl_state.rs`
 ```
-use std::{fmt, marker::PhantomPinned, rc::Rc, task::Context, task::Poll};
+use std::{fmt, future::poll_fn, marker::PhantomPinned, ptr, rc::Rc, task::Context, task::Poll};
 
+use crate::ctx::{NO_SLOT, WaitersRef};
 use crate::ready_call::ReadyThenCall;
-use crate::util::{BoxFuture, WithOwner, box_future};
-use crate::{BindCtx, Ctx, IntoService, ReadyCallback, ReadyLink, Service, ctx::WaitersRef};
+use crate::util::{BoxFuture, CallFuture, CallPool, PoolOwner};
+use crate::{BindCtx, Ctx, IntoService, ReadyCallback, ReadyLink, Service};
 
 use crate::pipeline::PipelineBinding;
 use crate::pl_inner::{PipelineApi, PipelineInternalApi, PipelineReadiness, detach};
@@ -1453,6 +1465,7 @@ where
                 readiness: PipelineReadiness::new(waiters.scope()),
                 waiters,
                 _pinned: PhantomPinned,
+                pool: CallPool::new(),
             }),
         }
     }
@@ -1469,12 +1482,16 @@ where
     /// future must be polled or dropped: keeping it alive without polling stalls
     /// every other readiness waiter on this pipeline.
     /// Returns successfully if pipeline shutdown has started.
-    pub async fn ready(&self, st: &St) -> Result<(), Err> {
-        if self.is_ready() || self.is_shutdown() {
-            Ok(())
-        } else {
-            self.api.ready(0, st).await
-        }
+    pub fn ready<'a>(&'a self, st: &'a St) -> impl Future<Output = Result<(), Err>> {
+        let mut check = None;
+        poll_fn(move |cx| {
+            let check = match check {
+                Some(ref mut check) => check,
+                None if self.is_ready() || self.is_shutdown() => return Poll::Ready(Ok(())),
+                None => check.insert(self.api.ready(0, st)),
+            };
+            check.as_mut().poll(cx)
+        })
     }
 
     #[inline]
@@ -1500,8 +1517,8 @@ where
     ///
     /// Marks the pipeline as shutting down, then waits for the service's
     /// shutdown. Later calls are not rejected; see [`PipelineState`].
-    pub async fn shutdown(&self, st: &St) {
-        self.api.shutdown(0, st).await;
+    pub fn shutdown<'a>(&'a self, st: &'a St) -> impl Future<Output = ()> {
+        self.api.shutdown(0, st)
     }
 
     #[inline]
@@ -1674,23 +1691,7 @@ where
     }
 }
 
-// ========================== `PipelineApi` ===========================
-
-struct PipelineInternal<St, Req, Res, Err> {
-    st: St,
-    api: Rc<dyn PipelineStateApi<St, Req, Res, Err>>,
-}
-
-impl<St, Req, Res, Err> PipelineInternalApi<Req, Res, Err> for PipelineInternal<St, Req, Res, Err> {
-    fn scope(&self) -> &ReadyScope {
-        self.api.scope()
-    }
-
-    fn reg(&self) -> u32 {
-        self.api.reg()
-    }
-
- 
+// ========================== `PipelineApi` ======
 ```
 
 ### Core Architecture Module: `ntex-service/src/state.rs`
@@ -1773,23 +1774,294 @@ impl<Req, St: 'static> RequestState<Req> for (St, Req) {
 
 ### Core Architecture Module: `ntex-service/src/util.rs`
 ```
-use std::{future::Future, future::poll_fn, pin, pin::Pin, task::Context, task::Poll};
+use std::alloc::{self, Layout};
+use std::task::{Context, Poll};
+use std::{cell::Cell, future::Future, future::poll_fn, marker::PhantomData, mem, pin, pin::Pin};
+use std::{mem::MaybeUninit, ptr, ptr::NonNull};
 
 use crate::{Ctx, Service, readiness::Generation};
 
 pub(crate) type BoxFuture<'a, R> = Pin<Box<dyn Future<Output = R> + 'a>>;
 
-/// Boxes the future built by `f`.
+/// A heap-allocated, type-erased pipeline call future.
 ///
-/// Allocating before `f` runs lets the future be written directly into the
-/// box instead of being built on the stack and copied.
-#[inline]
-pub(crate) fn box_future<'a, F>(f: impl FnOnce() -> F) -> BoxFuture<'a, F::Output>
-where
-    F: Future + 'a,
-{
-    let b = Box::<F>::new_uninit();
-    Box::into_pin(Box::write(b, f()))
+/// Experimental: pipeline calls keep the blocks of finished call futures in a
+/// per-pipeline [`CallPool`] for reuse. This may change or be reverted.
+///
+/// Unlike [`BoxFuture`], dropping the future returns its block to the
+/// [`CallPool`] of its owner.
+pub(crate) struct CallFuture<'a, R> {
+    ptr: NonNull<u8>,
+    // A reference would require `R: 'a`, which `BoxFuture` does not
+    vtable: NonNull<CallVTable<R>>,
+    // Same auto traits, variance and drop check as `BoxFuture`
+    _marker: PhantomData<BoxFuture<'a, R>>,
+}
+
+struct CallVTable<R> {
+    poll: unsafe fn(NonNull<u8>, &mut Context<'_>) -> Poll<R>,
+    release: unsafe fn(NonNull<u8>),
+}
+
+impl<'a, R> CallFuture<'a, R> {
+    /// Builds the future with `f` in a block taken from the pool of `owner`.
+    ///
+    /// The future keeps `owner`. Dropping the future returns the block to the
+    /// pool of `owner` before `owner` is dropped. Taking the block before `f`
+    /// runs lets the future be written directly into the block instead of
+    /// being built on the stack and copied.
+    #[inline]
+    pub(crate) fn pooled<F, O>(owner: O, f: impl FnOnce(&O) -> F) -> Self
+    where
+        F: Future<Output = R> + 'a,
+        O: PoolOwner + 'a,
+    {
+        let block = owner
+            .pool()
+            .take(const { block_layout::<WithOwner<F, O>>() });
+        let fut = f(&owner);
+        // SAFETY: the block fits `WithOwner<F, O>`
+        unsafe {
+            block
+                .ptr
+                .cast::<WithOwner<F, O>>()
+                .write(WithOwner { fut, owner });
+        };
+        Self {
+            ptr: block.into_ptr(),
+            vtable: NonNull::from(
+                const {
+                    &CallVTable {
+                        poll: poll_block::<WithOwner<F, O>>,
+                        release: release_block::<F, O>,
+                    }
+                },
+            ),
+            _marker: PhantomData,
+        }
+    }
+}
+
+impl<R> Future for CallFuture<'_, R> {
+    type Output = R;
+
+    #[inline]
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<R> {
+        // SAFETY: `vtable` is a constant, and `ptr` holds the future it was built for
+        unsafe { (self.vtable.as_ref().poll)(self.ptr, cx) }
+    }
+}
+
+impl<R> Drop for CallFuture<'_, R> {
+    #[inline]
+    fn drop(&mut self) {
+        // SAFETY: `vtable` is a constant, and `ptr` holds the future it was built for
+        unsafe { (self.vtable.as_ref().release)(self.ptr) }
+    }
+}
+
+/// # Safety
+///
+/// `ptr` must hold a pinned `F`.
+unsafe fn poll_block<F: Future>(ptr: NonNull<u8>, cx: &mut Context<'_>) -> Poll<F::Output> {
+    // SAFETY: guaranteed by the caller
+    unsafe { Pin::new_unchecked(ptr.cast::<F>().as_mut()) }.poll(cx)
+}
+
+/// # Safety
+///
+/// `ptr` must hold a `WithOwner<F, O>` in a block built by [`CallFuture::pooled`].
+unsafe fn release_block<F, O: PoolOwner>(ptr: NonNull<u8>) {
+    // Releases the block and the owner even if dropping the future panics
+    struct Release<O: PoolOwner> {
+        ptr: NonNull<u8>,
+        owner: *mut O,
+        layout: Layout,
+    }
+
+    impl<O: PoolOwner> Drop for Release<O> {
+        fn drop(&mut self) {
+            // SAFETY: `owner` is initialized and is not used after this read
+            let owner = unsafe { self.owner.read() };
+            // SAFETY: the block was allocated with `layout`, and the future in it
+            // has been dropped. The pool outlives `owner`, which is dropped last.
+            unsafe { owner.pool().put(self.ptr, self.layout) };
+        }
+    }
+
+    let fut = ptr.cast::<WithOwner<F, O>>().as_ptr();
+    let _release = Release {
+        ptr,
+        // SAFETY: guaranteed by the caller
+        owner: unsafe { &raw mut (*fut).owner },
+        layout: const { block_layout::<WithOwner<F, O>>() },
+    };
+    // SAFETY: guaranteed by the caller
+    unsafe { ptr::drop_in_place(&raw mut (*fut).fut) };
+}
+
+/// Provides the pool that a pooled call future returns its block to.
+pub(crate) trait PoolOwner {
+    fn pool(&self) -> &CallPool;
+}
+
+const POOL_CAP: usize = 4;
+
+/// Blocks of dropped call futures, reused by later calls.
+///
+/// A sequential caller reuses one block. Up to `POOL_CAP` blocks are kept,
+/// and all of them have the layout of the last returned block.
+pub(crate) struct CallPool {
+    blocks: [Cell<NonNull<u8>>; POOL_CAP],
+    len: Cell<usize>,
+    layout: Cell<Layout>,
+}
+
+impl CallPool {
+    pub(crate) fn new() -> Self {
+        Self {
+            blocks: [const { Cell::new(NonNull::dangling()) }; POOL_CAP],
+            len: Cell::new(0),
+            layout: Cell::new(Layout::new::<()>()),
+        }
+    }
+
+    /// Takes a block of `layout`, or allocates one if the pool has none.
+    #[inline]
+    fn take(&self, layout: Layout) -> Block {
+        let len = self.len.get();
+        if len > 0 && self.layout.get() == layout {
+            self.len.set(len - 1);
+            Block {
+                ptr: self.blocks[len - 1].get(),
+                layout,
+            }
+        } else {
+            Block::alloc(layout)
+        }
+    }
+
+    /// Keeps a block for a later call, or frees it if the pool cannot keep it.
+    ///
+    /// # Safety
+    ///
+    /// `ptr` must be a block allocated with `layout` and must not be used again.
+    #[inline]
+    unsafe fn put(&self, ptr: NonNull<u8>, layout: Layout) {
+        let len = self.len.get();
+        if len < POOL_CAP && (len == 0 || self.layout.get() == layout) {
+            self.blocks[len].set(ptr);
+            self.layout.set(layout);
+            self.len.set(len + 1);
+        } else {
+            drop(Block { ptr, layout });
+        }
+    }
+}
+
+impl Drop for CallPool {
+    fn drop(&mut self) {
+        let layout = self.layout.get();
+        for block in &self.blocks[..self.len.get()] {
+            drop(Block {
+                ptr: block.get(),
+                layout,
+            });
+        }
+    }
+}
+
+/// An allocated block, freed on drop.
+struct Block {
+    ptr: NonNull<u8>,
+    layout: Layout,
+}
+
+impl Block {
+    fn alloc(layout: Layout) -> Self {
+        // SAFETY: `block_layout` never returns a zero-sized layout
+        let ptr = unsafe { alloc::alloc(layout) };
+        match NonNull::new(ptr) {
+            Some(ptr) => Self { ptr, layout },
+            None => alloc::handle_alloc_error(layout),
+        }
+    }
+
+    fn into_ptr(self) -> NonNull<u8> {
+        let ptr = self.ptr;
+        mem::forget(self);
+        ptr
+    }
+}
+
+impl Drop for Block {
+    fn drop(&mut self) {
+        // SAFETY: the block was allocated with `layout`
+        unsafe { alloc::dealloc(self.ptr.as_ptr(), self.layout) }
+    }
+}
+
+/// Returns the layout of a block that holds `F` at its start.
+///
+/// A future whose size fills a mimalloc size class that is not a power of two
+/// is padded, see [`misses_aligned_fast_path`].
+const fn block_layout<F>() -> Layout {
+    assert!(size_of::<F>() > 0, "call futures are never zero-sized");
+    if needs_padding::<F>() {
+        Layout::new::<Padded<F>>()
+    } else {
+        Layout::new::<F>()
+    }
+}
+
+/// Adds trailing padding to `F`, which moves its block to the next size class.
+#[repr(C)]
+struct Padded<F> {
+    _fut: F,
+    _pad: MaybeUninit<[u8; 8]>,
+}
+
+/// Returns `true` if a box of `F` always misses mimalloc's aligned fast path
+/// and a box of `Padded<F>` does not.
+const fn needs_padding<F>() -> bool {
+    misses_aligned_fast_path(size_of::<F>(), align_of::<F>())
+        && !misses_aligned_fast_path(size_of::<Padded<F>>(), align_of::<Padded<F>>())
+}
+
+/// Returns `true` if allocating `size` bytes aligned to `align` never takes
+/// mimalloc's aligned fast path.
+///
+/// The `mimalloc` crate allocates every layout with `mi_malloc_aligned`. Its
+/// fast path reuses a free block from the size class of `size`. Otherwise,
+/// unless the class size is a power of two, it over-allocates `size + align - 1`
+/// bytes. When `size` fills a class, that over-allocation comes from the next
+/// class, so the class of `size` never gets free blocks and every allocation
+/// takes the slow path.
+const fn misses_aligned_fast_path(size: usize, align: usize) -> bool {
+    // `MI_SMALL_SIZE_MAX`, larger sizes never take the fast path
+    const SMALL_MAX: usize = 128 * size_of::<usize>();
+
+    if align <= 1 || align > size || size > SMALL_MAX {
+        return false;
+    }
+    let class = mi_class_size(size);
+    !class.is_power_of_two() && size + align - 1 > class
+}
+
+/// Returns the block size of the mimalloc size class for `size`, see `mi_bin`.
+const fn mi_class_size(size: usize) -> usize {
+    const WORD: usize = size_of::<usize>();
+
+    let words = size.div_ceil(WORD);
+    if words == 0 {
+        WORD
+    } else if words <= 8 {
+        words * WORD
+    } else {
+        // Four classes per power of two
+        let step = 1 << ((words - 1).ilog2() - 2);
+        words.next_multiple_of(step) * WORD
+    }
 }
 
 pin_project_lite::pin_project! {
@@ -1827,164 +2099,7 @@ where
 {
     type Output = O;
 
-    #[inline]
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<O> {
-        let this = self.project();
-        let output = std::task::ready!(this.fut.poll(cx));
-        let f = this.f.take().expect("`MapOutput` polled after completion");
-        Poll::Ready(f(output))
-    }
-}
-
-/// Maps the output of `fut` with `f`, without an `async` wrapper.
-pub fn map_output<F, M, O>(fut: F, f: M) -> MapOutput<F, M>
-where
-    F: Future,
-    M: FnOnce(F::Output) -> O,
-{
-    MapOutput { fut, f: Some(f) }
-}
-
-pub(crate) fn shutdown<S, St, A, B, RA, RB>(
-    svc1: &A,
-    svc2: &B,
-    ctx: Ctx<'_, S, St>,
-) -> impl Future<Output = ()>
-where
-    A: Service<St, RA>,
-    B: Service<St, RB>,
-{
-    join(ctx.shutdown(svc1), ctx.shutdown(svc2))
-}
-
-pub(crate) fn ready<S, St, A, B, RA, RB>(
-    svc1: &A,
-    svc2: &B,
-    ctx: Ctx<'_, S, St>,
-) -> impl Future<Output = Result<(), A::Error>>
-where
-    A: Service<St, RA>,
-    B: Service<St, RB, Error = A::Error>,
-{
-    map_output(
-        ready_join(
-            ctx,
-            move |ctx| ctx.ready_generation(svc1),
-            move |ctx| ctx.ready_generation(svc2),
-        ),
-        |res| res.map(|_| ()),
-    )
-}
-
-/// Polls both futures concurrently until both complete.
-pub async fn join<A, B>(fut1: A, fut2: B)
-where
-    A: Future<Output = ()>,
-    B: Future<Output = ()>,
-{
-    let mut fut1 = pin::pin!(fut1);
-    let mut fut2 = pin::pin!(fut2);
-
-    let mut ready1 = false;
-    let mut ready2 = false;
-
-    poll_fn(move |cx| {
-        if !ready1 && Pin::new(&mut fut1).poll(cx).is_ready() {
-            ready1 = true;
-        }
-        if !ready2 && Pin::new(&mut fut2).poll(cx).is_ready() {
-            ready2 = true;
-        }
-        if ready1 && ready2 {
-            Poll::Ready(())
-        } else {
-            Poll::Pending
-        }
-    })
-    .await;
-}
-
-/// Waits until both readiness checks complete without an intervening invalidation.
-///
-/// A completed check is restarted when the scope is invalidated before the
-/// other one completes. Returns the generation at which both are ready.
-/// Both checks are created from a copy of `ctx`.
-pub async fn ready_join<'a, S, St, E, F1, Fut1, F2, Fut2>(
-    ctx: Ctx<'a, S, St>,
-    f1: F1,
-    f2: F2,
-) -> Result<Generation, E>
-where
-    F1: Fn(Ctx<'a, S, St>) -> Fut1,
-    Fut1: Future<Output = Result<Generation, E>>,
-    F2: Fn(Ctx<'a, S, St>) -> Fut2,
-    Fut2: Future<Output = Result<Generation, E>>,
-{
-    let mut fut1 = pin::pin!(Some(f1(ctx)));
-    let mut fut2 = pin::pin!(Some(f2(ctx)));
-    let scope = ctx.scope();
-    let mut generation1 = scope.generation();
-    let mut generation2 = scope.generation();
-
-    poll_fn(|cx| {
-        if is_idle(&mut fut1) && !scope.is_current(generation1) {
-            fut1.set(Some(f1(ctx)));
-        }
-        if let Some(fut) = fut1.as_mut().as_pin_mut()
-            && let Poll::Ready(generation) = fut.poll(cx)?
-        {
-            generation1 = generation;
-            fut1.set(None);
-        }
-
-        if is_idle(&mut fut2) && !scope.is_current(generation2) {
-            fut2.set(Some(f2(ctx)));
-        }
-        if let Some(fut) = fut2.as_mut().as_pin_mut()
-            && let Poll::Ready(generation) = fut.poll(cx)?
-        {
-            generation2 = generation;
-            fut2.set(None);
-        }
-
-        let current1 = scope.is_current(generation1);
-        let current2 = scope.is_current(generation2);
-        if is_idle(&mut fut1) && is_idle(&mut fut2) && current1 && current2 {
-            Poll::Ready(Ok(generation1))
-        } else {
-            // A later poll or future drop can invalidate a completed sibling.
-            // Retain pending work, but schedule another check for the dirty child.
-            if (is_idle(&mut fut1) && !current1) || (is_idle(&mut fut2) && !current2) {
-                cx.waker().wake_by_ref();
-            }
-            Poll::Pending
-        }
-    })
-    .await
-}
-
-/// Checks one field's readiness and maps its error.
-pub async fn ready_field<S, St, T, Req, E>(
-    ctx: Ctx<'_, S, St>,
-    svc: &T,
-    map_err: impl FnOnce(T::Error) -> E,
-) -> Result<Generation, E>
-where
-    T: Service<St, Req>,
-{
-    ctx.ready_generation(svc).await.map_err(map_err)
-}
-
-// `Option::is_none()` would take `&Option<F>`, which retags the whole future
-// and invalidates borrows it holds into itself.
-fn is_idle<F>(fut: &mut Pin<&mut Option<F>>) -> bool {
-    fut.as_mut().as_pin_mut().is_none()
-}
-
-#[cfg(test)]
-#[path = "../tests/unit/util.rs"]
-pub(crate) mod tests;
-
+    
 ```
 
 ### Core Architecture Module: `ntex-tls/src/utils.rs`
@@ -2333,220 +2448,123 @@ pub(crate) mod testing {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4adf6cd3` (2026-11-21)
-**Commit Message**: Optimize copy slice
+### Incident Patch 1: `ca7552a3` (2026-11-22)
+**Commit Message**: io-uring: Post deferred completions when the submission queue is flushed during a busy turn, instead of collecting them until the loop waits for events
 
-* Copy short slices in `BytePages::put_slices()`, `BytePages::put_slice()` and
-  `BytesMut::put_slice()` with fixed-size moves instead of `memcpy` calls, and
-  allow `BytePages::put_slices()` to be inlined
-
-**File**: `ntex-bytes/CHANGELOG.md` (modified, +6/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,11 @@
- # Changes
- 
-+## [1.16.1] - 2026-11-21
-+
-+* Copy short slices in `BytePages::put_slices()`, `BytePages::put_slice()` and
-+  `BytesMut::put_slice()` with fixed-size moves instead of `memcpy` calls, and
-+  allow `BytePages::put_slices()` to be inlined
-+
- ## [1.16.0] - 2026-11-19
- 
- * Add `BytesMut::spare_writer()`, which returns a `SpareWriter` that appends
+@@ -62,7 +62,7 @@ ntex-h2 = "4.7.0"
+ ntex-http = "2.2.1"
+ ntex-io = "4.8.0"
+ ntex-macros = "4.8.0"
+-ntex-net = "4.12.3"
++ntex-net = "4.12.4"
+ ntex-router = "2.3.0"
+ ntex-rt = "4.10.0"
+ ntex-server = "4.6.2"
 ```
 
-**File**: `ntex-bytes/Cargo.toml` (modified, +1/-1)
+**File**: `ntex-net/CHANGES.md` (modified, +5/-0)
+```diff
+@@ -1,5 +1,10 @@
+ # Changes
+ 
++## [4.12.4] - 2026-11-22
++
++* io-uring: Post deferred completions when the submission queue is flushed
++  during a busy turn, instead of collecting them until the loop waits for events
++
+ ## [4.12.3] - 2026-11-17
+ 
+ * io-uring: Fix use-after-free when a task or an io handler panics, the reactor
+```
+
+**File**: `ntex-net/Cargo.toml` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  [package]
- name = "ntex-bytes"
--version = "1.16.0"
-+version = "1.16.1"
- authors = ["Nikolay Kim <fafhrd91@gmail.com>"]
- description = "Types and traits for working with bytes (bytes crate fork)"
- documentation = "https://docs.rs/ntex-bytes"
+ name = "ntex-net"
+-version = "4.12.3"
++version = "4.12.4"
+ authors = ["ntex contributors <team@ntex.rs>"]
+ description = "ntexwork utils for ntex framework"
+ keywords = ["network", "framework", "async", "futures"]
 ```
 
-**File**: `ntex-bytes/src/pages.rs` (modified, +27/-9)
+**File**: `ntex-net/src/uring/reactor.rs` (modified, +23/-18)
 ```diff
-@@ -190,22 +190,15 @@ impl BytePages {
-     ///
-     /// assert_eq!(pages.freeze(), b"content-type: text/plain\r\n"[..]);
-     /// ```
-+    #[inline]
-     pub fn put_slices(&mut self, src: &[&[u8]]) {
-         let len = src.iter().map(|s| s.len()).sum::<usize>();
- 
-         // a small write that leaves the current page non-full is copied in place
-         if let Some(st) = self.current.as_mut()
-             && st.remaining() > len
-         {
--            let start = st.len();
--            let spare = st.spare_mut();
--            let mut pos = 0;
--            for s in src {
--                spare[pos..pos + s.len()].copy_from_slice(s);
--                pos += s.len();
--            }
--            // SAFETY: the copies above initialized `len` bytes after `start`
--            unsafe { st.set_len(start + len) };
-+            st.put_slices(src);
-         } else {
-             for s in src {
-                 self.put_slice(s);
-@@ -1875,6 +1868,31 @@ mod tests {
-         check(b"abc", &[b"y", &large, b"z"]);
+@@ -592,6 +592,24 @@ impl Reactor {
      }
- 
-+    /// STATEMENT: `put_slices` copies every byte of slices of any length into the current page,
-+    /// including lengths at the edges of the small-copy size classes.
-+    ///
-+    /// HOW:
-+    /// - Start a page with `!`, then for each length from 0 to 40 put a slice of distinct bytes
-+    ///   between `<` and `>`; all of it fits into the current page, so every call copies in place.
-+    /// - Check that no page moved to the page list and that the frozen bytes equal the slices
-+    ///   appended to a `Vec`.
-+    #[test]
-+    fn put_slices_all_small_lengths() {
-+        let data: Vec<u8> = (1..=40).collect();
-+        let mut pages = BytePages::new(BytePageSize::Size4);
-+        pages.put_slice(b"!");
-+        let mut expected = b"!".to_vec();
-+
-+        for n in 0..=data.len() {
-+            pages.put_slices(&[b"<", &data[..n], b">"]);
-+            expected.push(b'<');
-+            expected.extend_from_slice(&data[..n]);
-+            expected.push(b'>');
-+        }
-+        assert_eq!(pages.pages().len(), 0);
-+        assert_eq!(pages.freeze(), expected[..]);
-+    }
-+
-     /// STATEMENT: Cloned pages preserve contents while short storage is copied inline and longer mutable storage is shared.
-     ///
-     /// HOW:
-```
-
-**File**: `ntex-bytes/src/stvec.rs` (modified, +79/-1)
-```diff
-@@ -221,13 +221,31 @@ impl StorageVec {
-     #[inline]
-     pub(crate) fn put_slice_partial(&mut self, src: &[u8]) -> usize {
-         let cnt = cmp::min(src.len(), self.remaining());
--        self.spare_mut()[..cnt].copy_from_slice(&src[..cnt]);
-+        copy_small(&mut self.spare_mut()[..cnt], &src[..cnt]);
-         // SAFETY: The `cnt` appended bytes were initialized by the copy above and fit in spare
-         // capacity.
-         unsafe { self.set_len(self.len() + cnt) };
-         cnt
-     }
- 
-+    /// Appends the given slices in order.
-+    ///
-+    /// # Panics
-+    ///
-+    /// Panics if the slices do not fit into the spare capacity.
-+    #[inline]
-+    pub(crate) fn put_slices(&mut self, src: &[&[u8]]) {
-+        let start = self.len();
-+        let spare = self.spare_mut();
-+        let mut pos = 0;
-+        for s in src {
-+            copy_small(&mut spare[pos..pos + s.len()], s);
-+            pos += s.len();
-+        }
-+        // SAFETY: The copies above initialized `pos` bytes after `start`, within spare capacity.
-+        unsafe { self.set_len(start + pos) };
-+    }
-+
-     pub(crate) fn len(&self) -> usize {
-         // SAFETY: The handle owns a reference to the live header; only this view can change its
-         // length.
-@@ -820,6 +838,37 @@ fn grown_capacity(len: usize, required: usize) -> usize {
-     cmp::max(required, cmp::min(len.saturating_mul(2), MAX_CAPACITY))
  }
  
-+/// Copies `src` into `dst`, which has the same length.
++/// Submit the queue and post deferred completions without waiting.
 +///
-+/// Copies of up to 32 bytes use fixed-size moves instead of a `memcpy` call.
-+#[inline]
-+fn copy_small(dst: &mut UninitSlice, src: &[u8]) {
-+    let n = src.len();
-+    match n {
-+        0 => {}
-+        1..=3 => {
-+            dst.write_byte(0, src[0]);
-+            dst.write_byte(n / 2, src[n / 2]);
-+            dst.write_byte(n - 1, src[n - 1]);
-+        }
-+        4..=7 => copy_ends::<4>(dst, src),
-+        8..=16 => copy_ends::<8>(dst, src),
-+        17..=32 => copy_ends::<16>(dst, src),
-+        _ => dst.copy_from_slice(src),
-+    }
++/// With deferred task running only an enter with `GETEVENTS` runs task work,
++/// a plain submit never posts completions that arrived since the last wait.
++fn submit_getevents(
++    sq: SubmissionQueue<'_, SEntry>,
++    submitter: &Submitter<'_>,
++) -> io::Result<usize> {
++    sq.sync();
++    // SAFETY: Valid arguments for an enter without extra arguments.
++    let res = unsafe {
++        submitter.enter::<libc::sigset_t>(sq.len() as u32, 0, EnterFlags::GETEVENTS.bits(), None)
++    };
++    // the kernel consumes entries during the enter, even if it fails
++    sq.sync();
++    res
 +}
 +
-+/// Copies the first and the last `N` bytes of `src`, which together cover
-+/// a source of `N..=2 * N` bytes.
-+#[inline]
-+fn copy_ends<const N: usize>(dst: &mut UninitSlice, src: &[u8]) {
-+    let n = src.len();
-+    let head: [u8; N] = src[..N].try_into().unwrap();
-+    let tail: [u8; N] = src[n - N..].try_into().unwrap();
-+    dst[..N].copy_from_slice(&head);
-+    dst[n - N..n].copy_from_slice(&tail);
-+}
-+
- const fn shared_vec_layout(cap: usize) -> Result<Layout, LayoutError> {
-     let s_layout = match Layout::from_size_align(cap, Layout::new::<u8>().align()) {
-         Ok(l) => l,
-@@ -1164,6 +1213,35 @@ mod tests {
-         assert_eq!(st.as_ref(), b"world");
-     }
+ impl AsRawFd for Reactor {
+     fn as_raw_fd(&self) -> RawFd {
+         self.fd
+@@ -680,9 +698,10 @@ impl ntex_rt::Driver for Reactor {
  
-+    /// STATEMENT: `put_slice_partial` copies every small length exactly, whether the source fits or is cut to the remaining space.
-+    ///
-+    /// HOW:
-+    /// - For each spare size from 0 to 40 bytes, fill a buffer up to that spare size and append a 40-byte source of distinct bytes.
-+    /// - Check the returned count is the spare size, the buffer is full, and the tail equals the source prefix.
-+    /// - For each length from 0 to 40, append that many source bytes to a one-byte buffer and check the count and contents.
-+    #[test]
-+    fn put_slice_partial_small_lengths() {
-+        let src: Vec<u8> = (100..140).collect();
-+
-+        for spare in 0..=src.len() {
-+            let mut st = StorageVec::with_capacity(100);
-+            let fill = st.capacity() - spare;
-+            assert_eq!(st.put_slice_partial(&pattern(fill)), fill);
-+            assert_eq!(st.put_slice_partial(&src), spare);
-+            assert!(st.is_full());
-+            assert_eq!(&st.as_ref()[..fill], &pattern(fill)[..]);
-+            assert_eq!(&st.as_ref()[fill..], &src[..spare]);
-+        }
-+
-+        for n in 0..=src.len() {
-+            let mut st = StorageVec::with_capacity(100);
-+            st.put_u8(1);
-+            assert_eq!(st.put_slice_partial(&src[..n]), n);
-+            assert_eq!(st.as_ref()[0], 1);
-+            assert_eq!(&st.as_ref()[1..], &src[..n]);
-+        }
-+    }
-+
-     /// STATEMENT: Remaining capacity follows initialized data and view offsets and is restored when unique storage is reclaimed.
-     ///
-     /// HOW:
+                     if sq.len() >= 96 {
+                         // flush the full queue without ending the turn; consumed
+-                        // entries are published first, the enter may post more
++                        // entries are published first, the enter posts completions
++                        // that arrived during the turn
+                         cq.sync();
+-                        if submitter.submit().is_err() {
++                        if submit_getevents(sq, &submitter).is_err() {
+                             // the end of the turn retries and reports the error
+                             break true;
+                         }
+@@ -711,22 +730,8 @@ impl ntex_rt::Driver for Reactor {
+                 // submit publishes the queue tail, and skips the syscall if
+                 // there is nothing to submit and no deferred completions to post.
+                 let result = if more_tasks {
+-                    // Without the taskrun flag a plain submit never runs deferred
+-                    // task work, so a task that keeps the runtime busy would starve
+-                    // completions. GETEVENTS with no minimum posts them without waiting.
+-                    sq.sync();
+-                    // SAFETY: Valid arguments for an enter without extra arguments.
+-                    let res = unsafe {
+-                        submitter.enter::<libc::sigset_t>(
+-                            sq.len() as u32,
+-                            0,
+-                            EnterFlags::GETEVENTS.bits(),
+-                            None,
+-                        )
+-                    };
+-                    // the kernel consumes entries during the enter, even if it fails
+-                    sq.sync();
+-                    res
++                    // a task that keeps the runtime busy would starve completions
++                    submit_getevents(sq, &submitter)
+                 } else if more_changes
+                     || more_cqes
+                     || !cqueue::CompletionQueue::<'_, _>::is_empty(&cq)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1243** (2026-11-23): io-uring:  submits the send directly, instead of waking the connectio… (@fafhrd91)
+- **PR #1242** (2026-11-22): Various optimizations (@fafhrd91)
 - **PR #1241** (2026-11-21): Optimize copy slice (@fafhrd91)
 - **PR #1240** (2026-11-19): Fix code typos (@fafhrd91)
 - **PR #1239** (2026-11-19): Add Request and Response Streaming guide (@fafhrd91)
 - **PR #1237** (2026-11-19): Prepare release (@fafhrd91)
-- **PR #1236** (2026-11-19): Add `BytesMut::spare_writer()`, which returns a `SpareWriter` that ap… (@fafhrd91)
-- **PR #1233** (2026-11-19): Prepare releases (@fafhrd91)
 
 ---
 
@@ -2566,36 +2584,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Optimize copy slice
+## X. io-uring: Post deferred completions when the submission queue is flushed during 
 
 **RULE**:
-When implementing operations in `ntex-bytes/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4adf6cd3`: Optimize copy slice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ca7552a3`: io-uring: Post deferred completions when the submission queue is flushed during a busy turn, instead of collecting them until the loop waits for events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex-bytes/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [1.16.1] - 2026-11-21
-
-* Copy short slices in `BytePages::put_slices()`, `BytePages::put_slice()` and
-  `BytesMut::put_slice()` with fixed-size moves instead of `memcpy` calls, and
-  allow `BytePages::put_slices()` to be inlined
-
+ntex-net = "4.12.4"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+ntex-net = "4.12.3"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4adf6cd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ca7552a3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

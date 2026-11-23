@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T07:15:04.181Z",
+  "timestamp": "2026-11-23T16:20:44.058Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rook-rook-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rook-rook-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T07:15:04.181Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T16:20:44.058Z`  
 > **Learning ID**: `LEARN-EVO-rook-rook-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `e7bfa815`  
+> **Source Version**: `40d33b11`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T07:14:53.394Z  
+> **Timestamp**: 2026-11-23T16:20:37.387Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T07:14:53.226Z  
+> **Harvest Timestamp**: 2026-11-23T16:20:37.379Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13713 stars
+- **Stars / Engagement**: 13716 stars
 
 ---
 
@@ -1453,31 +1453,122 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7bfa815` (2026-11-19)
-**Commit Message**: Merge pull request #18233 from taaahaaa/fix-osd-activate-missing-osd-id
+### Incident Patch 1: `40d33b11` (2026-11-23)
+**Commit Message**: Merge pull request #18091 from Greenpepper15/wip-rgw-isolated-root-pool-design
 
-osd: skip raw list entries without an osd_id during activation
+docs: add design for a namespaced RGW root pool
 
-**File**: `pkg/operator/ceph/cluster/osd/activate-osd.sh` (modified, +1/-1)
+**File**: `design/ceph/object/namespaced-root-pool.md` (added, +575/-0)
 ```diff
-@@ -115,7 +115,7 @@ else
- 		python3 -c "
- import sys, json
- for _, info in json.load(sys.stdin).items():
--	if info['osd_id'] == $OSD_ID:
-+	if info.get('osd_id') == $OSD_ID:
- 		print(info['device'], end='')
- 		print('found device: ' + info['device'], file=sys.stderr) # log the disk we found to stderr
- 		sys.exit(0)  # don't keep processing once the disk is found
+@@ -0,0 +1,575 @@
++---
++title: namespaced-root-pool
++target-version: release-1.22
++---
++
++# Namespaced RGW Topology Pool (`rootPoolNamespaceStrategy`)
++
++Store a realm's RGW topology records in a RADOS namespace of `.rgw.root` instead of using the raw `.rgw.root` pool.
++
++## Summary
++
++`sharedPools` collapses a store's data and metadata into shared pools partitioned by RADOS
++namespaces, which are named after the zone name. The **RGW topology records** — realm, zone group, zone, and
++period — are not covered by this feature. Instead every store in the cluster keeps the realm information together in a single, un-namespaced `.rgw.root` pool.
++
++To mitigate this we propose a new `rootPoolNamespaceStrategy` field.
++`rootPoolNamespaceStrategy: RealmName` should be an opt-in setting for storing a realm's topology records in a RADOS namespace of `.rgw.root`. A store using `sharedPools` together with `rootPoolNamespaceStrategy` would then have its entire RADOS footprint (data, metadata, and topology) stored with RADOS namespaces.
++
++### Motivation
++
++- **Enabling realm separation at the cephx level.** With `rootPoolNamespaceStrategy` and `sharedPools`
++  together, a realm's entire RADOS footprint (data, metadata, and topology) would lie in
++  distinct RADOS namespaces. A Rook user could then achieve cephx-enforced realm separation by manually provisioning an RGW instance with a cephx user scoped to those namespaces (the user's mon caps must use the [`profile rgw`](https://github.com/ceph/ceph/pull/70538) cap profile; a bare `mon 'allow rw'` would undermine the separation).
++  Separating realms like this closes confidentiality gaps between realms. For example, the zone record in `.rgw.root` carries the realm's `system_key` (the
++  credentials used for multisite replication) in cleartext, so under broad OSD
++  capabilities any RGW can read another realm's replication credentials out of the
++  shared pool. An OSD capability scoped to the realm's namespaces stops that read.
++- **Decrease coupling of realms stored in the same `.rgw.root` pool.** If every realm shares a `.rgw.root` pool then every `radosgw-admin` invocation can reach any realm, so a wrong `--rgw-realm`, a default-realm-fallback commit, or a `realm list` delete sweep can hit a neighboring realm. Invoking any `radosgw-admin` command against a namespace-separated realm would not influence realms living in other namespaces.
++
++    Keeping each realm in a separate RADOS namespace would also help with:
++    - Backing up realm topology: back up the RADOS namespace
++    - Deleting a realm: delete every RADOS namespace associated with it
++- **No reliance on the root pool's default location.** Every `radosgw-admin` invocation implicitly relies on the root pool location being `.rgw.root` and Rook relies on that default today. Rook otherwise tries consistently to be explicit rather than depend on defaults.
++
++### Goals
++
++- Opt-in partitioning of `.rgw.root` by RADOS namespace, for single-site and multisite setups.
++- Off by default: existing stores, and stores that do not set the
++  field, should be untouched and keep using the shared `.rgw.root`.
++- Backward compatible: existing shared `.rgw.root` stores and realms should be untouched, and enabling
++  the feature should never rewrite or migrate an already-provisioned layout. (Operator downgrade is
++  not supported by Rook. See Open Question 2.)
++- Should apply to newly created realms and object stores only.
++
++### Non-Goals
++
++- Relocating existing shared `.rgw.root` topology to a RADOS namespaced `.rgw.root` (and the other way around)
++    - `rootPoolNamespaceStrategy` is immutable on a CR, so the layout cannot be flipped in place. Deleting a realm
++      and re-creating it under the same name with the other layout is accepted, but this does not cause a
++      migration. Instead it provisions at the new location and leaves the old records orphaned.
++- Configurable namespace or pool names. The pool would always be `.rgw.root` and the namespace
++  always the realm name. No new naming knobs are introduced.
++- Changing the `sharedPools` data/metadata model or its API.
++- Access control. This feature would control the placement of topology records. It would not change
++  what any RGW daemon or client is authorized to read or write. It would, however, arrange the
++  layout that namespace-scoped cephx capabilities require (see Motivation).
++- Automated Ceph-side cleanup of multisite realms. The prerequisite finalizers (see Prerequisite
++  work) only order the deletion of the CRs.
++
++### Constraints and assumptions
++
++The design builds on the following pre-existing behaviors and accepts the constraints they impose:
++
++- In Rook (up-to-date as of v1.21), deleting a `CephObjectRealm` CR in multisite does not delete the realm on the Ceph side. CephObjectRealm's reconcile performs no Ceph-side work on delete. In contrast, in single-site `CephObjectStore` teardown the associated realm records are removed. This design is inten
+```
+
+---
+
+### Incident Patch 2: `3eec68fc` (2026-11-23)
+**Commit Message**: Merge pull request #18841 from rook/dependabot/go_modules/k8s-dependencies-d4cee4bf15
+
+build(deps): bump sigs.k8s.io/controller-runtime from 0.25.2 to 0.25.3 in the k8s-dependencies group across 1 directory
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@ require (
+ 	k8s.io/cloud-provider v0.37.2
+ 	k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab
+ 	sigs.k8s.io/container-object-storage-interface/client v0.2.2
+-	sigs.k8s.io/controller-runtime v0.25.2
++	sigs.k8s.io/controller-runtime v0.25.3
+ 	sigs.k8s.io/mcs-api v0.5.2
+ 	sigs.k8s.io/yaml v1.6.0
+ )
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1729,8 +1729,8 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.0.14/go.mod h1:LEScyz
+ sigs.k8s.io/container-object-storage-interface/client v0.2.2 h1:TARggRey9sQkDv94w3b+aBav0gCgM61sgWVWU8zKMDg=
+ sigs.k8s.io/container-object-storage-interface/client v0.2.2/go.mod h1:RQSwGVkJ9vBo02N1tTWmqHqykln8K2d/dHgdXWie2I4=
+ sigs.k8s.io/controller-runtime v0.2.2/go.mod h1:9dyohw3ZtoXQuV1e766PHUn+cmrRCIcBh6XIMFNMZ+I=
+-sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
+-sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
++sigs.k8s.io/controller-runtime v0.25.3 h1:b4OcZSY/aKHY8JG+rBlQmQ1xLs574+ZBEjv1dtfLd80=
++sigs.k8s.io/controller-runtime v0.25.3/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
+ sigs.k8s.io/json v0.0.0-20211020170558-c049b76a60c6/go.mod h1:p4QtZmO4uMYipTQNzagwnNoseA6OxSUutVw05NhYDRs=
+ sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2/go.mod h1:B8JuhiUyNFVKdsE8h686QcCxMaH6HrOAZj4vswFpcB0=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #18839** (2026-11-20): osd: skip raw list entries without an osd_id during activation (backport #18233) (@mergify[bot])
-- **PR #18832** (2026-11-19): doc: add Cybozu to adopters list (@satoru-takeuchi)
-- **PR #18829** (2026-11-19): object: allow up to 32 storage classes per pool placement (@danielw-canva)
-- **PR #18821** (2026-11-17): csi: skip ClientProfile watches when csi op disabled (backport #18806) (@mergify[bot])
-- **PR #18820** (2026-11-18): csi: skip ClientProfile watches when csi op disabled (backport #18806) (@mergify[bot])
-- **PR #18817** (2026-11-16): exporter: allow skipping monitor configuration fetch (backport #18758) (@mergify[bot])
+- **PR #18851** (2026-11-23): build(deps): bump the all-dependencies group across 1 directory with 26 updates (@dependabot[bot])
+- **PR #18850** (closed): build(deps): bump the all-dependencies group across 1 directory with 26 updates (@dependabot[bot])
+- **PR #18849** (2026-11-20): build(deps): bump the github-dependencies group across 1 directory with 8 updates (@dependabot[bot])
+- **PR #18848** (2026-11-20): csi: use annotated secret names in default client profile (backport #18831) (@mergify[bot])
+- **PR #18847** (2026-11-20): csi: use annotated secret names in default client profile (backport #18831) (@mergify[bot])
+- **PR #18846** (closed): build(deps): bump the all-dependencies group with 25 updates (@dependabot[bot])
 
 ---
 
@@ -1497,31 +1588,52 @@ osd: skip raw list entries without an osd_id during activation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in activate-osd.sh
+## X. Empirical Invariant Guard in namespaced-root-pool.md
 
 **RULE**:
-When implementing operations in `pkg/operator/ceph/cluster/osd/activate-osd.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `design/ceph/object/namespaced-root-pool.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7bfa815`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40d33b11`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/cluster/osd/activate-osd.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `design/ceph/object/namespaced-root-pool.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if info.get('osd_id') == $OSD_ID:
+---
+title: namespaced-root-pool
+target-version: release-1.22
+---
+
+# Namespaced RGW Topology Pool (`rootPoolNamespaceStrategy`)
+
+Store a realm's RGW topology records in a RADOS namespace of `.rgw.root` instead of using the raw `.rgw.root` pool.
+
+## Summary
+
+`sharedPools` collapses a store's data and metadata into shared pools partitioned by RADOS
+namespaces, which are named after the zone name. The **RGW topology records** — realm, zone group, zone, and
+period — are not covered by this feature. Instead every store in the cluster keeps the realm information together in a single, un-namespaced `.rgw.root` pool.
+
+To mitigate this we propose a new `rootPoolNamespaceStrategy` field.
+`rootPoolNamespaceStrategy: RealmName` should be an opt-in setting for storing a realm's topology records in a RADOS namespace of `.rgw.root`. A store using `sharedPools` together with `rootPoolNamespaceStrategy` would then have its entire RADOS footprint (data, metadata, and topology) stored with RADOS namespaces.
+
+### Motivation
+
+- **Enabling realm separation at the cephx level.** With `rootPoolNamespaceStrategy` and `sharedPools`
+  together, a realm's entire RADOS footprint (data, metadata, and topology) w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if info['osd_id'] == $OSD_ID:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7bfa815` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40d33b11` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T16:11:49.544Z",
+  "last_updated": "2026-11-23T16:20:38.102Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1655,14 +1655,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "206903d62fcfd5ead8ec8621f28c9556b76128cc843e02567526f9b8757f3bfc",
-      "verified_at": "2026-11-19T03:27:13.621Z",
+      "content_hash": "7744a8d5bf832ba190ccb9d4a44607ff789d1cb98801dafe0827a3c3fbd8f401",
+      "verified_at": "2026-11-23T16:20:29.432Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T03:27:13.621Z"
+      "last_updated": "2026-11-23T16:20:29.432Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "fb3fb9fa38f4b1f28d6a33c394bc4ac2c3525a445e2f615c3568ce8bc1d39d6e",
-      "verified_at": "2026-11-22T03:46:15.203Z",
+      "content_hash": "bcf4ffa1a4b219bae9665074c9151dcc522e3654a0b16fc1ea36ad80010e17b6",
+      "verified_at": "2026-11-23T16:20:31.176Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:46:15.203Z"
+      "last_updated": "2026-11-23T16:20:31.176Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "a8632ff23350be1697adb352de3f4580909248a6ba3d8325f4b0e2b2bfdd0170",
-      "verified_at": "2026-11-21T12:19:45.742Z",
+      "content_hash": "8ed40e51eae586f89ee22136cdc431aa51ea5ef96f38e7d959f983c17644f625",
+      "verified_at": "2026-11-23T16:20:38.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:19:45.742Z"
+      "last_updated": "2026-11-23T16:20:38.101Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",

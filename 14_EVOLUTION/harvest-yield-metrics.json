@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T16:11:49.539Z",
-  "total_cycles_completed": 11757,
-  "total_learnings_persisted": 11757,
-  "total_rules_promoted": 10901,
+  "last_updated": "2026-11-23T16:20:38.097Z",
+  "total_cycles_completed": 11760,
+  "total_learnings_persisted": 11760,
+  "total_rules_promoted": 10902,
   "history": [
-    {
-      "timestamp": "2026-11-22T18:52:38.844Z",
-      "repository": "Folkbench/folkbench",
-      "learningId": "learn-github-folkbench-folkbench",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T18:52:51.109Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T19:01:34.126Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T19:01:35.512Z",
       "repository": "rtk-ai/rtk",
@@ -1403,6 +1382,27 @@
       "repository": "juicedata/juicefs",
       "learningId": "learn-github-juicedata-juicefs",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T16:20:29.426Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T16:20:31.172Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T16:20:38.097Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -12365,3 +12365,6 @@
 | `CYCLE-20261123-FY0N` | `2026-11-23T16:03:01.751Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10063` | Yes (`80a08af9...`) |
 | `CYCLE-20261123-R1OK` | `2026-11-23T16:11:39.716Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`2540dda8...`) |
 | `CYCLE-20261123-R993` | `2026-11-23T16:11:49.527Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10064` | Yes (`b29819a8...`) |
+| `CYCLE-20261123-2EEE` | `2026-11-23T16:20:29.414Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`7744a8d5...`) |
+| `CYCLE-20261123-2FQW` | `2026-11-23T16:20:31.160Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10065` | Yes (`bcf4ffa1...`) |
+| `CYCLE-20261123-2L23` | `2026-11-23T16:20:38.043Z` | `rook/rook` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rook-rook-learnings.md` | Yes (`8ed40e51...`) |
