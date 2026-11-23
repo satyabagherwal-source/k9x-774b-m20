@@ -21976,5 +21976,17 @@
     "qualityScore": 3375,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-23T07:25:12.423Z"
+  },
+  {
+    "name": "Qwen/Qwen3-4B-Instruct-2507",
+    "fullName": "Qwen/Qwen3-4B-Instruct-2507",
+    "url": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Qwen/Qwen3-4B-Instruct-2507 (1068 likes, 9603541 downloads)",
+    "likes": 1068,
+    "downloads": 9603541,
+    "qualityScore": 12680,
+    "discoveredAt": "2026-11-23T09:46:07.604Z"
   }
 ]

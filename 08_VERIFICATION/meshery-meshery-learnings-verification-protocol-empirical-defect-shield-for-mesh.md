@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T07:29:04.756Z",
+  "timestamp": "2026-11-23T09:49:07.971Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-meshery-meshery-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meshery-meshery-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T07:29:04.756Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T09:49:07.971Z`  
 > **Learning ID**: `LEARN-EVO-meshery-meshery-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `03883b4b`  
+> **Source Version**: `76c6b3e2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T07:27:38.574Z  
+> **Timestamp**: 2026-11-23T09:48:36.083Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:27:38.568Z  
+> **Harvest Timestamp**: 2026-11-23T09:48:36.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12285 stars
+- **Stars / Engagement**: 12295 stars
 
 ---
 
@@ -829,11 +829,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24119** (2026-11-22): **[Docs] Add language tags to untagged code fences**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #24118  This PR adds explicit language tags to previously untagged code fence openers (```) across two documentation files without altering content or closing fences: 1. `docs/content/en/project/contributing/contributing-gitflow.md`: Added `sh` tag to 12 git command fences. 2. `docs/content/en/project/contributing/contributing-docs/docs.md`: Added `yaml` tag to the YAML front-matter example fence at line 439.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added syntax highlighting to YAML and shell command examples in the contributing guides.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #24165** (2026-11-23): **test(mesheryctl): add table-driven tests for system update and delete argument validation**
+  *Symptoms*: ## Intent  Enforce exact positional argument validation in mesheryctl system update and mesheryctl system delete by rejecting unexpected arguments with utils.ErrInvalidArgument and command usage guidance, clean up the unused cobra.Command parameter signature in deleteCmd.Args, and add comprehensive table-driven unit tests in update_test.go and delete_test.go verifying valid 0-argument execution, single unexpected arguments, and multiple unexpected arguments with utils.AssertMeshkitErrorsEqual.  ## What Changed  - Replaced the unused `cmd *cobra.Command` parameter with `_` in `deleteCmd.Args` and `updateCmd.Args`. - Refactored `TestDeleteCmdArgs` and `TestUpdateCmdArgs` into table-driven unit tests covering zero positional arguments, single unexpected arguments, and multiple unexpected arguments with `utils.AssertMeshkitErrorsEqual`.  ## Risk Assessment  ✅ Low: The changes are straightforward, well-bounded argument validation cleanups and table-driven unit test enhancements with no identified defects or regressions.  ## Testing  Drove 7 live end-to-end scenarios against the compiled mesheryctl CLI binary across 0-argument invocations, single and multiple unexpected positional arguments, and adversarial flag combinations, and confirmed unit test suite passing for TestUpdateCmdArgs and TestDeleteCmdArgs.  - Live validation: ✅ go - 7 of 7 scenarios driven live against the product  | Scenario | Result | Live | Evidence | | --- | --- | --- | --- | | mesheryctl system update rejects
 
-- **Issue #24118** (2026-11-22): **[Docs]Add language tags to untagged code fences in contributing-gitflow.md and contributing-docs/docs.md**
-  *Symptoms*: Title: [Docs] Add language tags to untagged code fences in contributing-gitflow.md and contributing-docs/docs.md  ### Current State Several code fences have no language tag, so they render without syntax highlighting: - docs/content/en/project/contributing/contributing-gitflow.md: 12 fences containing git shell commands (git clone, git remote, git fetch, git checkout, ...) - docs/content/en/project/contributing/contributing-docs/docs.md (~line 439): a fence containing YAML front matter  ### Desired State Tag the shell fences with `sh` and the front matter example with `yaml`. No content changes. 
+- **Issue #24164** (2026-11-23): **fix(mesheryctl): add nil safety and test coverage for helper functions**
+  *Symptoms*: - Guard ContentTypeIsHTML against nil http.Response and nil Header - Guard IsValidSubcommand and SubcommandNames against nil cobra.Command elements - Guard StringWithCharset against non-positive length allocations - Add unit tests for IsValidSubcommand, FindInSlice, IsValidUrl, and related edge cases  **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Prevented errors when generating a string with a zero or negative length.   * Improved handling of missing command entries and incomplete web responses, returning safe results instead of causing failures.   * Clarified content-type checks and ensured invalid or missing data is treated as not found or invalid.  * **Tests**   * Added coverage for these edge cases
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -850,615 +850,383 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87be8689` (2026-11-21)
-**Commit Message**: Merge pull request #24103 from madhavzanwar/fix/ui-dimension-ssr-guards
+### Incident Patch 1: `7d748863` (2026-11-20)
+**Commit Message**: fix(server): guard filter and catalog handlers against nil pointer dereference on JSON null body
 
-[UI] Guard getWindowDimensions against undefined window in SSR and clean up resize timeout
+When request body is the JSON literal 'null', json.NewDecoder(r.Body).Decode(&parsedBody) succeeds with no error and leaves parsedBody as nil. Subsequent accesses to parsedBody fields or passing parsedBody to provider methods causes an unhandled panic and dropped connection.
 
-**File**: `ui/utils/__tests__/dimension.test.tsx` (modified, +30/-0)
+Add defensive 'if parsedBody == nil' checks returning 400 Bad Request with MeshKit errors in:
+- handleFilterPOST (POST /api/filter)
+- PublishCatalogFilterHandler (POST /api/filter/catalog/publish)
+- UnPublishCatalogFilterHandler (DELETE /api/filter/catalog/unpublish)
+- PublishCatalogPatternHandler (POST /api/pattern/catalog/publish)
+- UnPublishCatalogPatternHandler (DELETE /api/pattern/catalog/unpublish)
+
+Add regression tests in meshery_filter_nil_guards_test.go and meshery_pattern_handler_nil_guards_test.go.
+
+Fixes #24051
+
+Signed-off-by: Sachin Chandra Yadav <[REDACTED_EMAIL]>
+
+**File**: `server/handlers/meshery_filter_handler.go` (modified, +49/-0)
 ```diff
-@@ -51,6 +51,17 @@ describe('getWindowDimensions', () => {
+@@ -157,6 +157,24 @@ func (h *Handler) handleFilterPOST(
+ 		return
+ 	}
  
-     expect(getWindowDimensions()).toEqual({ width: 320, height: 480 });
-   });
++	if parsedBody == nil {
++		err := fmt.Errorf("request body cannot be empty")
++		errSaveFilter := ErrSaveFilter(err)
++		if h.log != nil {
++			h.log.Error(errSaveFilter)
++		}
++		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
++			"error": errSaveFilter,
++		}).WithDescription("Filter request body is empty.").Build()
++		h.persistAndPublish(provider, token, userID, event)
++		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
++		addMeshkitErr(&res, errSaveFilter)
++		if h.EventsBuffer != nil {
++			go h.EventsBuffer.Publish(&res)
++		}
++		return
++	}
 +
-+  it('returns { width: 0, height: 0 } when window is undefined in SSR', () => {
-+    const originalWindow = globalThis.window;
-+    // @ts-expect-error simulating SSR environment
-+    delete globalThis.window;
-+    try {
-+      expect(getWindowDimensions()).toEqual({ width: 0, height: 0 });
-+    } finally {
-+      globalThis.window = originalWindow;
-+    }
-+  });
- });
+ 	if parsedBody.FilterData != nil && parsedBody.FilterData.ID != nil {
+ 		actedUpon = parsedBody.FilterData.ID
+ 	}
+@@ -520,6 +538,21 @@ func (h *Handler) PublishCatalogFilterHandler(
+ 		return
+ 	}
  
- describe('useWindowDimensions', () => {
-@@ -132,4 +143,23 @@ describe('useWindowDimensions', () => {
-     expect(removeListenerSpy.mock.calls.some(([eventName]) => eventName === 'resize')).toBe(true);
-     removeListenerSpy.mockRestore();
-   });
++	if parsedBody == nil {
++		err := fmt.Errorf("request body cannot be empty")
++		if h.log != nil {
++			h.log.Error(ErrRequestBody(err))
++		}
++		e := eventBuilder.WithSeverity(events.Error).
++			WithMetadata(map[string]interface{}{
++				"error": ErrRequestBody(err),
++			}).
++			WithDescription("Filter payload cannot be empty.").Build()
++		h.persistAndPublish(provider, token, userID, e)
++		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
++		return
++	}
 +
-+  it('cleans up pending searchTimeout on unmount', () => {
-+    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
-+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
-+    const { unmount } = render(<Probe onRender={() => {}} />);
+ 	resp, err := provider.PublishCatalogFilter(r, parsedBody)
+ 	if err != nil {
+ 		if h.log != nil {
+@@ -614,6 +647,22 @@ func (h *Handler) UnPublishCatalogFilterHandler(
+ 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+ 		return
+ 	}
 +
-+    act(() => {
-+      window.dispatchEvent(new Event('resize'));
-+    });
++	if parsedBody == nil {
++		err := fmt.Errorf("request body cannot be empty")
++		if h.log != nil {
++			h.log.Error(ErrRequestBody(err))
++		}
++		e := eventBuilder.WithSeverity(events.Error).
++			WithMetadata(map[string]interface{}{
++				"error": ErrRequestBody(err),
++			}).
++			WithDescription("Filter payload cannot be empty.").Build()
++		h.persistAndPublish(provider, token, userID, e)
++		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
++		return
++	}
 +
-+    const pendingTimeout = setTimeoutSpy.mock.results.at(-1)?.value;
-+
-+    // Unmount before the 500ms debounce timer fires
-+    unmount();
-+
-+    expect(clearTimeoutSpy).toHaveBeenCalledWith(pendingTimeout);
-+    clearTimeoutSpy.mockRestore();
-+    setTimeoutSpy.mockRestore();
-+  });
- });
+ 	resp, err := provider.UnPublishCatalogFilter(r, parsedBody)
+ 	if err != nil {
+ 		if h.log != nil {
 ```
 
-**File**: `ui/utils/dimension.ts` (modified, +12/-1)
+**File**: `server/handlers/meshery_filter_nil_guards_test.go` (modified, +45/-0)
 ```diff
-@@ -5,6 +5,12 @@ import { useState, useEffect } from 'react';
-  * @returns {object} {width, height}
-  */
- export function getWindowDimensions() {
-+  if (typeof window === 'undefined') {
-+    return {
-+      width: 0,
-+      height: 0,
-+    };
-+  }
-   const { innerWidth: width, innerHeight: height } = window;
-   return {
-     width,
-@@ -45,7 +51,12 @@ export function useWindowDimensions() {
-     }
+@@ -460,3 +460,48 @@ func TestFilterHandler_NilLogger_DoesNotPanic(t *testing.T) {
+ 		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+ 	}
+ }
++
++func TestHandleFilterPOST_NullBody_ReturnsBadRequest(t *testing.T) {
++	h, provider := newFilterNilGuardsFixture(t)
++	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
++
++	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
++	req := httptest.NewRequest(http.MethodPost, "/api/filter", strings.NewReader("null")).WithContext(ctx)
++	rec := httptest.NewRecorder()
++
++	h.handleFilterPOST(rec, req, nil, authUser, provider)
++
++	if rec.Code != http.StatusBadRequest {
++		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
++	}
++}
++
++func TestPublishCatalogFilterHandler_NullBody_ReturnsBadRequest(t *testing.T) {
++	h, provider := newFilterNilGuardsFixture(t)
++	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
++
++	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
++	req := httptest.NewRequest(http.MethodPost, "/api/filter/catalog/publish", strings.NewReader("null")).WithContext(ctx)
++	rec := httptest.NewRecorder()
++
++	h.PublishCatalogFilterHandler(rec, req, nil, authUser, provider)
++
++	if rec.Code != http.StatusBadRequest {
++		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
++	}
++}
++
++func TestUnPublishCatalogFilterHandler_NullBody_ReturnsBadRequest(t *testing.T) {
++	h, provider := newFilterNilGuardsFixture(t)
++	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
++
++	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
++	req := httptest.NewRequest(http.MethodDelete, "/api/filter/catalog/unpublish", strings.NewReader("null")).WithContext(ctx)
++	rec := httptest.NewRecorder()
++
++	h.UnPublishCatalogFilterHandler(rec, req, nil, authUser, provider)
++
++	if rec.Code != http.StatusBadRequest {
++		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
++	}
++}
+```
+
+**File**: `server/handlers/meshery_pattern_handler.go` (modified, +28/-0)
+```diff
+@@ -1574,6 +1574,20 @@ func (h *Handler) PublishCatalogPatternHandler(
+ 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+ 		return
+ 	}
++
++	if parsedBody == nil {
++		err := fmt.Errorf("request body cannot be empty")
++		h.log.Error(ErrRequestBody(err))
++		e := eventBuilder.WithSeverity(events.Error).
++			WithMetadata(map[string]interface{}{
++				"error": ErrRequestBody(err),
++			}).
++			WithDescription("Design payload cannot be empty.").Build()
++		h.persistAndPublish(provider, token, userID, e)
++		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
++		return
++	}
++
+ 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
+ 	if err != nil {
+ 		h.log.Error(ErrPublishCatalogPattern(err))
+@@ -1667,6 +1681,20 @@ func (h *Handler) UnPublishCatalogPatternHandler(
+ 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+ 		return
+ 	}
++
++	if parsedBody == nil {
++		err := fmt.Errorf("request body cannot be empty")
++		h.log.Error(ErrRequestBody(err))
++		e := eventBuilder.WithSeverity(events.Error).
++			WithMetadata(map[string]interface{}{
++				"error": ErrRequestBody(err),
++			}).
++			WithDescription("Design payload cannot be empty.").Build()
++		h.persistAndPublish(provider, token, userID, e)
++		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
++		return
++	}
++
+ 	resp, err := provider.UnPublishCatalogPattern(r, parsedBody)
+ 	if err != nil {
+ 		h.log.Error(ErrPublishCatalogPattern(err))
+```
+
+**File**: `server/handlers/meshery_pattern_handler_nil_guards_test.go` (modified, +30/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package handlers
  
-     window.addEventListener('resize', handleResize);
--    return () => window.removeEventListener('resize', handleResize);
-+    return () => {
-+      if (searchTimeout) {
-+        clearTimeout(searchTimeout);
-+      }
-+      window.removeEventListener('resize', handleResize);
-+    };
-   }, []);
+ import (
++	"context"
+ 	"encoding/json"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -484,3 +485,32 @@ func TestGetMesheryPatternSourceHandler_NilProvider_ReturnsInternalServerError(t
+ 	}
+ }
  
-   return windowDimensions;
++func TestPublishCatalogPatternHandler_NullBody_ReturnsBadRequest(t *testing.T) {
++	h, provider := newDeleteConnectionFixture(t)
++	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
++
++	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
++	req := httptest.NewRequest(http.MethodPost, "/api/pattern/catalog/publish", strings.NewReader("null")).WithContext(ctx)
++	rec := httptest.NewRecorder()
++
++	h.PublishCatalogPatternHandler(rec, req, nil, authUser, provider)
++
++	if rec.Code != http.StatusBadRequest {
++		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
++	}
++}
++
++func TestUnPublishCatalogPatternHandler_NullBody_ReturnsBadRequest(t *testing.T) {
++	h, provider := newDeleteConnectionFixture(t)
++	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
++
++	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
++	req := httptest.NewRequest(http.MethodDelete, "/api/pattern/catalog/unpublish", strings.NewReader("null")).WithContext(ctx)
++	rec := httptest.NewRecorder()
++
++	h.UnPublishCatalogPatternHandler(rec, req, nil, authUser, provider)
++
++	if rec.Code != http.StatusBadRequest {
++		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
++	}
++}
 ```
 
 ---
 
-### Incident Patch 2: `44fb193c` (2026-11-21)
-**Commit Message**: Merge pull request #24115 from Hpsingh26/fix/docs-broken-image-references
+### Incident Patch 2: `9dc661db` (2026-11-22)
+**Commit Message**: Merge pull request #24132 from invincible2308/fix/closest-arg-bounds
 
-[Docs] Fix broken image references and shortcode paths in documentation
+[mesheryctl] Prevent index out of range panic in FindClosestArg on empty args
 
-**File**: `docs/CONTRIBUTING-gitflow.md` (modified, +2/-2)
+**File**: `mesheryctl/pkg/utils/closest_arg.go` (modified, +9/-0)
 ```diff
-@@ -8,11 +8,11 @@
- <ul>
- <li><h3> Fork the Repository of Project</h3></li><br>
- 
--<p><img src="/.github/assets/images/fork.png" align="center"></p>
-+<p><img src="../.github/assets/images/fork.png" align="center"></p>
- 
- ( You will see this on Top Right of Github Repository !)<br><br>
- <li><h3>Clone your fork to your local machine</h3></li><br>
--<img width="50%" align="center"  src="/.github/assets/images/clone.png"><br>
-+<img width="50%" align="center"  src="../.github/assets/images/clone.png"><br>
- ( Click on the Green Code button and Copy the link `https://github.com/........` )<br><br>
- <li><h3>Open Git bash where you want to clone the project ( Avoid On Desktop )</h3></li>
- 
-```
-
-**File**: `docs/content/en/concepts/logical/relationships/index.md` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ aliases:
- - /concepts/relationships/
- ---
- 
--Meshery Relationships characterize how [components]({{< ref "components.md" >}}) are connected and interact with each other. Relationships are defined within [models]({{< ref "models/index.md" >}}) to aid in structuring the interrelationships between one or more components in a [design]({{< ref "designs.md" >}}) to further in comprehending the overall structure and dependencies within managed systems.
-+Meshery Relationships characterize how [components]({{< ref "concepts/logical/components.md" >}}) are connected and interact with each other. Relationships are defined within [models]({{< ref "concepts/logical/models/index.md" >}}) to aid in structuring the interrelationships between one or more components in a [design]({{< ref "concepts/logical/designs.md" >}}) to aid in comprehending the overall structure and dependencies within managed systems.
- 
- Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
- 
-```
-
-**File**: `docs/content/en/guides/configuration-management/creating-a-meshery-design/index.md` (renamed, +1/-1)
-```diff
-@@ -61,7 +61,7 @@ The YAML editor sits next to the component forms. To write or paste a design by
- 
- Instead of starting from nothing, import a design from the [Meshery Catalog](https://meshery.io/catalog), from a URL, or from a Kubernetes manifest, Helm chart, or Docker Compose file. See [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}}).
- 
--<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
-+<img src="images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
- 
- <!-- tab -->
- mesheryctl | fa fa-terminal
-```
-
-**File**: `docs/content/en/installation/quick-start/index.md` (modified, +1/-1)
-```diff
-@@ -116,6 +116,6 @@ You can now design and manage any infrastructure that Meshery supports. For the
- 
- ## Additional Resources
- 
--- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
-+- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}})
- - [Meshery Error Code Reference]({{< ref "reference/error-codes.md" >}})
- - [mesheryctl system check]({{< ref "reference/mesheryctl/system/check.md" >}})
-```
-
-**File**: `docs/content/en/project/contributing/cli/cli.md` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@ Annotations: linkScreenshot,
- Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/images` folder in **PNG** format. The screenshot field is given for reference below
- 
- {{< code code=`var linkDocPatternApply = map[string]string{
-- "link":    "![pattern-apply-usage](../../../images/patternApply.png)",
-+ "link":    "![pattern-apply-usage](../../images/patternApply.png)",
-  "caption": "Usage of mesheryctl design apply",
+@@ -37,6 +37,9 @@ func minimum(a, b, c int) int {
  }
- ...
+ 
+ func minIntSlice(values []int) (int, int) {
++	if len(values) == 0 {
++		return -1, 0
++	}
+ 	min := values[0]
+ 	minIndex := 0
+ 	for i, val := range values {
+@@ -49,12 +52,18 @@ func minIntSlice(values []int) (int, int) {
+ }
+ 
+ func FindClosestArg(argPassed string, validArgs []string) string {
++	if len(validArgs) == 0 {
++		return ""
++	}
+ 	argPassedR := []rune(argPassed)
+ 	var values []int
+ 	for _, arg := range validArgs {
+ 		argR := []rune(arg)
+ 		values = append(values, levenshtein(argPassedR, argR))
+ 	}
+ 	minIndex, _ := minIntSlice(values)
++	if minIndex < 0 || minIndex >= len(validArgs) {
++		return ""
++	}
+ 	return validArgs[minIndex]
+ }
 ```
 
-**File**: `docs/content/en/project/contributing/cli/tests/index.md` (renamed, +1/-1)
+**File**: `mesheryctl/pkg/utils/closest_arg_test.go` (modified, +10/-0)
 ```diff
-@@ -257,7 +257,7 @@ To filter and view only CLI-related test cases using the Sheet Views feature:
- 1. In the top menu bar, click Data → Change view
- 2. Choose the pre-defined view labeled "CLI"
+@@ -26,6 +26,11 @@ func TestClosestArgs(t *testing.T) {
+ 		if minIndex != 0 {
+ 			t.Errorf("Expected 0, got %d", minIndex)
+ 		}
++
++		emptyIndex, min := minIntSlice([]int{})
++		if emptyIndex != -1 || min != 0 {
++			t.Errorf("Expected -1 and 0 for empty slice, got index %d and min %d", emptyIndex, min)
++		}
+ 	})
  
--![Meshery Test Plan Screenshot](../../images/meshery-test-plan-v0.8.0-ui.png)
-+![Meshery Test Plan Screenshot](images/meshery-test-plan-v0.8.0-ui.png)
- 
- ## Development
- 
-```
-
-**File**: `docs/content/en/project/contributing/contributing-docs/docs.md` (modified, +3/-1)
-```diff
-@@ -240,9 +240,11 @@ If the code snippet has special characters then use backtick delimiters:
- Don't use `code` shortcode when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
- 
- **A full block:**
-+````markdown
- ```
--```code snippet```
-+code snippet
- ```
-+````
- 
- **Inline formatting:**
- 
-```
-
-**File**: `docs/content/en/project/contributing/contributing-relationships-best-practices.md` (modified, +3/-3)
-```diff
-@@ -6,11 +6,11 @@ categories: [contributing]
- 
- # Relationship Testing and Best Practices
- 
--This guide complements the [Contributing to Model Relationships](/project/contributing/contributing-relationships) documentation by focusing on **practical testing and debugging techniques** for relationship definitions.
-+This guide complements the [Contributing to Model Relationships](/project/contributing/models/relationships) documentation by focusing on **practical testing and debugging techniques** for relationship definitions.
- 
- ## Before You Start
- 
--Make sure you've read the [Contributing to Model Relationships](/project/contributing/contributing-relationships) guide to understand relationship structure, schema, and components.
-+Make sure you've read the [Contributing to Model Relationships](/project/contributing/models/relationships) guide to understand relationship structure, schema, and components.
- 
- ## 1. Validate JSON Syntax
- 
-@@ -394,7 +394,7 @@ Once validated and tested:
- 
- ## Resources
- 
--- [Contributing to Model Relationships](/project/contributing/contributing-relationships)
-+- [Contributing to Model Relationships](/project/contributing/models/relationships)
- - [Meshery Relationship Schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship)
- - [Existing Relationships](https://github.com/meshery/meshery/tree/master/models)
- - [OPA Policies](https://github.com/meshery/meshery/tree/master/models/meshery-core)
+ 	t.Run("Test minimum", func(t *testing.T) {
+@@ -72,5 +77,10 @@ func TestClosestArgs(t *testing.T) {
+ 		if closestArg != "meshery" {
+ 			t.Errorf("Expected meshery, got %s", closestArg)
+ 		}
++
++		emptyArg := FindClosestArg("meshery", []string{})
++		if emptyArg != "" {
++			t.Errorf("Expected empty string for empty validArgs, got %s", emptyArg)
++		}
+ 	})
+ }
 ```
 
 ---
 
-### Incident Patch 3: `01fe4256` (2026-11-21)
-**Commit Message**: Merge branch 'master' into fix/docs-broken-image-references
+### Incident Patch 3: `48e12afb` (2026-11-22)
+**Commit Message**: fix(mesheryctl): prevent index out of range panic in FindClosestArg on empty args
 
-**File**: `docs/content/en/reference/mesheryctl/model/build.md` (modified, +2/-0)
-```diff
-@@ -17,6 +17,8 @@ Create an OCI-compliant package from the model files
- Create an OCI-compliant package from the model files.
- Model files are taken from [path]/[model-name]/[model-version] folder.
- Expects input to be in the format scaffolded by the model init command.
-+When only [model-name] is provided, the model directory must contain exactly one version directory.
-+Root-level files such as README.md, .gitignore, and LICENSE do not affect this validation.
- 
- <pre class='codeblock-pre'>
- <div class='codeblock'>
-```
+Signed-off-by: Sameer Kumar <[REDACTED_EMAIL]>
 
-**File**: `mesheryctl/internal/cli/pkg/flags/validator.go` (modified, +6/-1)
+**File**: `mesheryctl/pkg/utils/closest_arg.go` (modified, +9/-0)
 ```diff
-@@ -51,8 +51,13 @@ func (fv *FlagValidator) Validate(s interface{}) error {
- 	return nil
+@@ -37,6 +37,9 @@ func minimum(a, b, c int) int {
  }
  
-+// IsSemver returns true if the string matches Meshery's supported model-version format (^vMAJOR.MINOR.PATCH...).
-+func IsSemver(version string) bool {
-+	return vSemverRegex.MatchString(version)
-+}
-+
- func isSemver(fl validator.FieldLevel) bool {
--	return vSemverRegex.MatchString(fl.Field().String())
-+	return IsSemver(fl.Field().String())
+ func minIntSlice(values []int) (int, int) {
++	if len(values) == 0 {
++		return -1, 0
++	}
+ 	min := values[0]
+ 	minIndex := 0
+ 	for i, val := range values {
+@@ -49,12 +52,18 @@ func minIntSlice(values []int) (int, int) {
  }
  
- func isRelativePath(fl validator.FieldLevel) bool {
-```
-
-**File**: `mesheryctl/internal/cli/pkg/flags/validator_test.go` (modified, +3/-0)
-```diff
-@@ -67,6 +67,9 @@ func TestValidateSemver(t *testing.T) {
- 
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
-+			if got := IsSemver(tt.version); got != !tt.wantErr {
-+				t.Errorf("IsSemver(%q) = %v, want %v", tt.version, got, !tt.wantErr)
-+			}
- 			type testStruct struct {
- 				Version string `validate:"semver"`
- 			}
-```
-
-**File**: `mesheryctl/internal/cli/root/model/build.go` (modified, +244/-5)
-```diff
-@@ -1,7 +1,10 @@
- package model
- 
- import (
-+	"errors"
- 	"fmt"
-+	"io"
-+	"io/fs"
- 	"os"
- 	"path/filepath"
- 	"strings"
-@@ -24,6 +27,8 @@ var buildModelCmd = &cobra.Command{
- 	Long: `Create an OCI-compliant package from the model files.
- Model files are taken from [path]/[model-name]/[model-version] folder.
- Expects input to be in the format scaffolded by the model init command.
-+When only [model-name] is provided, the model directory must contain exactly one version directory.
-+Root-level files such as README.md, .gitignore, and LICENSE do not affect this validation.
- Find more information at: https://docs.meshery.io/reference/mesheryctl/model/build`,
- 	Example: `
- // Create an OCI-compliant package from the model files
-@@ -91,11 +96,8 @@ mesheryctl model build [model-name]/[model-version]
- 
- 				count := 0
- 				for _, entry := range entries {
--					if entry.IsDir() {
-+					if entry.IsDir() && mesheryctlflags.IsSemver(entry.Name()) {
- 						count++
--					} else {
--						// If there is a file, it's not exactly one subfolder
--						return false
- 					}
- 				}
- 
-@@ -120,7 +122,16 @@ mesheryctl model build [model-name]/[model-version]
- 		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
- 
- 		utils.Log.Infof("Building meshery model from path %s", folder)
--		img, errBuildImage := meshkitOci.BuildImage(folder)
-+
-+		buildSource, cleanup, err := prepareModelBuildSource(folder)
-+		if err != nil {
-+			err = ErrModelBuild(err)
-+			utils.Log.Error(err)
-+			return err
-+		}
-+		defer cleanup()
-+
-+		img, errBuildImage := meshkitOci.BuildImage(buildSource)
- 		if errBuildImage != nil {
- 			return ErrModelBuild(errBuildImage)
- 		}
-@@ -179,3 +190,231 @@ func buildModelCompileImageName(name string, version string, extension string) s
- 		extension,
- 	)
- }
-+
-+// hasGitMetadata checks whether .git exists anywhere within src (as a file or directory).
-+func hasGitMetadata(src string) (bool, error) {
-+	hasGit := false
-+	err := filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
-+		if err != nil {
-+			return err
-+		}
-+		if d.Name() == ".git" {
-+			hasGit = true
-+			if d.IsDir() {
-+				return fs.SkipDir
-+			}
-+		}
-+		return nil
-+	})
-+	return hasGit, err
-+}
-+
-+// prepareModelBuildSource prepares a build source directory that excludes any Git repository metadata (.git).
-+// If no .git metadata is present, it returns the original folder with a no-op cleanup to avoid copying overhead.
-+// If .git metadata is present, it stages a clean copy into an isolated temporary directory outside the source tree.
-+func prepareModelBuildSource(folder string) (string, func(), error) {
-+	cleanFolder := filepath.Clean(folder)
-+	hasGit, err := hasGitMetadata(cleanFolder)
-+	if err != nil {
-+		return "", func() {}, err
+ func FindClosestArg(argPassed string, validArgs []string) string {
++	if len(validArgs) == 0 {
++		return ""
 +	}
-+	if !hasGit {
-+		return cleanFolder, func() {}, nil
-+	}
-+
-+	tmpDir, err := os.MkdirTemp("", "meshery-model-build-*")
-+	if err != nil {
-+		return "", func() {}, err
-+	}
-+	cleanup := func() {
-+		_ = filepath.WalkDir(tmpDir, func(p string, d fs.DirEntry, err error) error {
-+			if err == nil && d.IsDir() {
-+				_ = os.Chmod(p, 0700)
-+			}
-+			return nil
-+		})
-+		_ = os.RemoveAll(tmpDir)
-+	}
-+
-+	if err := copyModelExcludingGit(cleanFolder, tmpDir); err != nil {
-+		cleanup()
-+		return "", func() {}, err
-+	}
-+
-+	return tmpDir, cleanup, nil
-+}
-+
-+type dirPerm struct {
-+	path string
-+	perm os.FileMode
-+}
-+
-+func isSubpathOrEqual(p, target string) bool {
-+	cleanTarget := filepath.Clean(target)
-+	cleanP := filepath.Clean(p)
-+	if cleanP == cleanTarget {
-+		return true
-+	}
-+	if cleanTarget == string(filepath.Separator) {
-+		return true
-+	}
-+	return strings.HasPrefix(cleanP, cleanTarget+string(filepath.Separator))
-+}
-+
-+// copyModelExcludingGit recursively copies src into dst while omitting any .git file or directory.
-+func copyModelExcludingGit(src, dst string) error {
-+	srcInfo, err := os.Stat(src)
-+	if err != nil {
-+		return err
-+	}
-+	if !srcInfo.IsDir() {
-+		return fmt.Errorf("source path is not a directory: %s", src)
-+	}
-+
-+	absDst, err := filepath.Abs(dst)
-+	if err != nil {
-+		return err
-+	}
-+	realDst, err := filepath.EvalSymlinks(absDst)
-+	if err != nil {
-+		realDst = absDst
-+	}
-+
-+	var dirsToRestore []dirPerm
-+
-+	err = filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
-+		if err != nil {
-+			return err
-+		}
-+
-+		absPath, err := filepath.Abs(path)
-+		if err != nil {
-+			return err
-+		}
-+		// Prevent recursion if destination is inside source (e.g. TMPDIR set inside model source)
-+		if isSubpathOrEqual(absPath, absDst) || isSubpathOrEqual(absPath, realDst) {
-+			if d.IsDir() {
-+				return fs.SkipDir
-+			}
-+			return nil
-+		}
-+		if realPath, err := filepath.EvalSymlinks(absPath); err == nil {
-+			if isSubpathOrEqual(realPath, absDst) || isSubpathOrEqual(realPath, realDst) {
-+				if d.IsDir() {
-+					return fs.SkipDir
-+				}
-+				return nil
-+			}
-+		}
-+
-+		if d.Name() == ".git" {
-+			if d.IsDir() {
-+				return fs.SkipDir
-+			}
-+			return nil
-+		}
-+
-+		relPath, err := filepa
-```
-
-**File**: `mesheryctl/internal/cli/root/model/build_test.go` (modified, +845/-0)
-```diff
-@@ -1,14 +1,20 @@
- package model
- 
- import (
-+	archiveTar "archive/tar"
- 	"fmt"
-+	"io"
-+	"io/fs"
- 	"os"
- 	"path/filepath"
- 	"runtime"
-+	"strings"
- 	"testing"
- 
-+	"github.com/google/go-containerregistry/pkg/v1/tarball"
- 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
- 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-+	meshkitOci "github.com/meshery/meshkit/models/oci"
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/pflag"
- 	"github.com/stretchr/testify/assert"
-@@ -28,6 +34,8 @@ func TestModelBuild(t *testing.T) {
- 		buildTestDynamoController    = "test-case-model-build-aws-dynamodb-controller"
- 		buildTestDynamoControllerGbx = "test-case-model-build-aws-dynamodb-controller-gbxter34"
- 		buildTestEC2Controller       = "aws-ec2-controller"
-+		buildTestNoVersionDir        = "test-case-model-build-no-versions"
-+		buildTestTwoVersions         = "test-case-model-build-two-versions"
- 		buildTestVersion             = "v0.1.0"
- 		buildTestNonExistentFolder   = "not_existing_folder"
- 	)
-@@ -36,6 +44,8 @@ func TestModelBuild(t *testing.T) {
- 	cleanupDirs := []string{
- 		buildTestDynamoController,
- 		buildTestDynamoControllerGbx,
-+		buildTestNoVersionDir,
-+		buildTestTwoVersions,
+ 	argPassedR := []rune(argPassed)
+ 	var values []int
+ 	for _, arg := range validArgs {
+ 		argR := []rune(arg)
+ 		values = append(values, levenshtein(argPassedR, argR))
  	}
- 	// Clean up all test artifacts from previous runs
- 	cleanupTestArtifacts(cleanupDirs)
-@@ -113,6 +123,26 @@ func TestModelBuild(t *testing.T) {
- 			t.Log("removed created dirs and files")
+ 	minIndex, _ := minIntSlice(values)
++	if minIndex < 0 || minIndex >= len(validArgs) {
++		return ""
++	}
+ 	return validArgs[minIndex]
+ }
+```
+
+**File**: `mesheryctl/pkg/utils/closest_arg_test.go` (modified, +10/-0)
+```diff
+@@ -26,6 +26,11 @@ func TestClosestArgs(t *testing.T) {
+ 		if minIndex != 0 {
+ 			t.Errorf("Expected 0, got %d", minIndex)
  		}
- 	}
-+	setupHookCreateRootFiles := func(modelDir string, files ...string) func() {
-+		return func() {
-+			for _, file := range files {
-+				filePath := filepath.Join(modelDir, file)
-+				if err := os.WriteFile(filePath, []byte("sample content"), 0o644); err != nil {
-+					t.Fatal(err)
-+				}
-+			}
++
++		emptyIndex, min := minIntSlice([]int{})
++		if emptyIndex != -1 || min != 0 {
++			t.Errorf("Expected -1 and 0 for empty slice, got index %d and min %d", emptyIndex, min)
 +		}
-+	}
-+	setupHookCreateRootDirectories := func(modelDir string, dirs ...string) func() {
-+		return func() {
-+			for _, dir := range dirs {
-+				dirPath := filepath.Join(modelDir, dir)
-+				if err := os.MkdirAll(dirPath, 0o755); err != nil {
-+					t.Fatal(err)
-+				}
-+			}
-+		}
-+	}
+ 	})
  
- 	tests := []struct {
- 		Name             string
-@@ -179,6 +209,214 @@ func TestModelBuild(t *testing.T) {
- 				),
- 			},
- 		},
-+		{
-+			Name:             "given name only with README.md when model build then model is built",
-+			Args:             []string{"build", buildTestDynamoController},
-+			ExpectError:      false,
-+			ExpectedResponse: "model.build.from-model-name-only.golden",
-+			ExpectedFiles: []string{
-+				buildTestDynamoController + ".tar",
-+			},
-+			SetupHooks: []func(){
-+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
-+				setupHookCreateRootFiles(buildTestDynamoController, "README.md"),
-+			},
-+			CleanupHooks: []func(){
-+				cleanUpHookRemoveDirsAndFiles(
-+					buildTestDynamoController,
-+					buildTestDynamoController+".tar",
-+				),
-+			},
-+		},
-+		{
-+			Name:             "given name only with .gitignore when model build then model is built",
-+			Args:             []string{"build", buildTestDynamoController},
-+			ExpectError:      false,
-+			ExpectedResponse: "model.build.from-model-name-only.golden",
-+			ExpectedFiles: []string{
-+				buildTestDynamoController + ".tar",
-+			},
-+			SetupHooks: []func(){
-+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
-+				setupHookCreateRootFiles(buildTestDynamoController, ".gitignore"),
-+			},
-+			CleanupHooks: []func(){
-+				cleanUpHookRemoveDirsAndFiles(
-+					buildTestDynamoController,
-+					buildTestDynamoController+".tar",
-+				),
-+			},
-+		},
-+		{
-+			Name:             "given name only with README.md and .gitignore when model build then model is built",
-+			Args:             []string{"build", buildTestDynamoController},
-+			ExpectError:      false,
-+			ExpectedResponse: "model.build.from-model-name-only.golden",
-+			ExpectedFiles: []string{
-+				buildTestDynamoController + ".tar",
-+			},
-+			SetupHooks: []func(){
-+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
-+				setupHookCreateRootFiles(buildTestDynamoController, "README.md", ".gitignore"),
-+			},
-+			CleanupHooks: []func(){
-+				cleanUpHookRemoveDirsAndFiles(
-+					buildTestDynamoController,
-+					buildTestDynamoController+".tar",
-+				),
-+			},
-+		},
-+		{
-+			Name:             "given name only with LICENSE when model build then model is built",
-+			Args:             []string{"build", buildTestDynamoController},
-+			ExpectError:      false,
-+			ExpectedResponse: "model.build.from-model-name-only.golden",
-+			ExpectedFiles: []string{
-+				buildTestDynamoController + ".tar",
-+			},
-+			SetupHooks: []func(){
-+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
-+				setupHookCreateRootFiles(buildTestDynamoController, "LICENSE"),
-+			},
-+			CleanupHooks: []func(){
-+				cleanUpHookRemoveDirsAndFiles(
-+					buildTestDynamoController,
-+					buildTestDynamoController+".tar",
-+				),
-+			},
-+		},
-+		{
-+			Name:             "given name only with .git directory when model build the
+ 	t.Run("Test minimum", func(t *testing.T) {
+@@ -72,5 +77,10 @@ func TestClosestArgs(t *testing.T) {
+ 		if closestArg != "meshery" {
+ 			t.Errorf("Expected meshery, got %s", closestArg)
+ 		}
++
++		emptyArg := FindClosestArg("meshery", []string{})
++		if emptyArg != "" {
++			t.Errorf("Expected empty string for empty validArgs, got %s", emptyArg)
++		}
+ 	})
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24119** (2026-11-22): [Docs] Add language tags to untagged code fences (@ItsAbir005)
-- **PR #24115** (2026-11-21): [Docs] Fix broken image references and shortcode paths in documentation (@Hpsingh26)
-- **PR #24110** (2026-11-21): fix(server): compare core semver so kanvas builds are not flagged outdated (@leecalcote)
-- **PR #24103** (2026-11-21): [UI] Guard getWindowDimensions against undefined window in SSR and clean up resize timeout (@madhavzanwar)
-- **PR #24097** (2026-11-21): [mesheryctl] Migrate live WriteTokenFile tests and remove orphaned legacy files (@abhinavkdeval08-design)
-- **PR #24096** (2026-11-21): [mesheryctl] Fix model build validation with root-level files (@BHAUMIK0711)
+- **PR #24165** (2026-11-23): test(mesheryctl): add table-driven tests for system update and delete argument validation (@SachinyadavAug20)
+- **PR #24164** (closed): fix(mesheryctl): add nil safety and test coverage for helper functions (@Vaibhav7576)
+- **PR #24162** (2026-11-23): [UI] Guard ExtensionPointSchemaValidator against nullish items and missing hrefs (@madhavzanwar)
+- **PR #24148** (2026-11-23): fix: request the full organization list by honouring the schemas pageSize and all params (@ChackoPAbraham19)
+- **PR #24140** (2026-11-22): fix(ui): confirm performance profile deletion in grid view (@rabit001)
+- **PR #24138** (2026-11-23): [mesheryctl] Validate fetched connection on view by UUID (@Hpsingh26)
 
 ---
 
@@ -1478,50 +1246,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in dimension.test.tsx
+## X. server): guard filter and catalog handlers against nil pointer dereference on JS
 
 **RULE**:
-When implementing operations in `ui/utils/__tests__/dimension.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/handlers/meshery_filter_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87be8689`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d748863`: server): guard filter and catalog handlers against nil pointer dereference on JSON null body. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/utils/__tests__/dimension.test.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/handlers/meshery_filter_handler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		errSaveFilter := ErrSaveFilter(err)
+		if h.log != nil {
+			h.log.Error(errSaveFilter)
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": errSaveFilter,
+		}).WithDescription("Filter request body is empty.").Build()
+		h.persistAndPublish(provider, token, userID, event)
+		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
+		addMeshkitErr(&res, errSaveFilter)
+		if h.EventsBuffer != nil {
+			go h.EventsBuffer.Publish(&res)
+		}
+		return
+	}
 
-  it('returns { width: 0, height: 0 } when window is undefined in SSR', () => {
-    const originalWindow = globalThis.window;
-    // @ts-expect-error simulating SSR environment
-    delete globalThis.window;
-    try {
-      expect(getWindowDimensions()).toEqual({ width: 0, height: 0 });
-    } finally {
-      globalThis.window = originalWindow;
-    }
-  });
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Filter payload cannot be empty.").Build()
+		h.persistAndPublish(provider, token, userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
 
-  it('cleans up pending searchTimeout on unmount', () => {
-    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
-    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
-    const { unmount } = render(<Probe onRender={() => {}} />);
 
-    act(() => {
-      window.dispatchEvent(new Event('resize'));
-    });
-
-    const pendingTimeout = setTimeoutSpy.mock.results.at(-1)?.value;
-
-    // Unmount before the 500ms debounce timer fires
-    unmount();
-
-    expect(clearTimeoutSpy).toHaveBeenCalledWith(pendingTimeout);
-    clearTimeoutSpy.mockRestore();
-    setTimeoutSpy.mockRestore();
-  });
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		e := eventBuilder.WithSe
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1531,7 +1309,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87be8689` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d748863` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

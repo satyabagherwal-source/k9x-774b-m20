@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T09:29:47.252Z",
-  "total_cycles_completed": 11705,
-  "total_learnings_persisted": 11705,
-  "total_rules_promoted": 10874,
+  "last_updated": "2026-11-23T09:48:37.109Z",
+  "total_cycles_completed": 11708,
+  "total_learnings_persisted": 11708,
+  "total_rules_promoted": 10875,
   "history": [
-    {
-      "timestamp": "2026-11-22T14:56:19.548Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T15:01:13.753Z",
-      "repository": "apple/FastFrames-L",
-      "learningId": "learn-huggingface-apple-fastframes-l",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T15:09:04.859Z",
-      "repository": "tencent/Hy4-flash",
-      "learningId": "learn-huggingface-tencent-hy4-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T15:09:07.398Z",
       "repository": "zed-industries/zed",
@@ -1403,6 +1382,27 @@
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T09:48:25.782Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T09:48:26.180Z",
+      "repository": "Qwen/Qwen3-4B-Instruct-2507",
+      "learningId": "learn-huggingface-qwen-qwen3-4b-instruct-2507",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T09:48:37.109Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

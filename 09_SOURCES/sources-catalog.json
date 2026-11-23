@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "e08b6ee961bace31491ddafdafe22dfe4e4c9c060920a4c7a587888f4dfa778b",
-    "lastHarvestedAt": "2026-11-18T23:26:02.841Z",
+    "contentHash": "8630622348d55a9cf70247ec4c2a9b97960f94e8dfd714589cd83519a5a40c27",
+    "lastHarvestedAt": "2026-11-23T09:48:25.776Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "03883b4b",
+    "sourceVersion": "76c6b3e2",
     "license": "Apache-2.0",
-    "contentHash": "f1de2338abf50f17ee9e10cdf7082513ffed85d51c4798cb27e54e7c4b21fa39",
-    "lastHarvestedAt": "2026-11-22T07:27:39.800Z",
+    "contentHash": "54a3364ee5ab2a0839660386fd1005fb81e2590d6c0a544f1d3e11c77d09b9b9",
+    "lastHarvestedAt": "2026-11-23T09:48:37.104Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -13218,5 +13218,15 @@
     "contentHash": "a3770f8666de2e69255401bf65c036bbbe53f338ccfd5f2631e4db95e7cfa1ea",
     "lastHarvestedAt": "2026-11-23T07:28:37.582Z",
     "learningId": "learn-github-ahmadhassan-bted-jantt"
+  },
+  "hf-qwen-qwen3-4b-instruct-2507": {
+    "repository": "Qwen/Qwen3-4B-Instruct-2507",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507",
+    "sourceVersion": "hf-qwen-qwen3-4b-instruct-2507",
+    "license": "Open-Source",
+    "contentHash": "8a7627ce53526b5858591b4ef233767a6a5e75ac61fa169379d64cf10ede5884",
+    "lastHarvestedAt": "2026-11-23T09:48:26.174Z",
+    "learningId": "learn-huggingface-qwen-qwen3-4b-instruct-2507"
   }
 }

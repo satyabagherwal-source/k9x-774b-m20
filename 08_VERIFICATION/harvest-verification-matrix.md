@@ -12309,3 +12309,7 @@
 | `CYCLE-20261123-DGOY` | `2026-11-23T08:33:12.130Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`678114bd...`) |
 | `CYCLE-20261123-KH41` | `2026-11-23T09:06:38.881Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`37cc39b4...`) |
 | `CYCLE-20261123-E8DL` | `2026-11-23T09:29:47.241Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`630ff7a6...`) |
+| `CYCLE-20261123-27FW` | `2026-11-23T09:48:25.772Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`86306223...`) |
+| `CYCLE-20261123-27QX` | `2026-11-23T09:48:26.169Z` | `Qwen/Qwen3-4B-Instruct-2507` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md` | Yes (`8a7627ce...`) |
+| `CYCLE-20261123-2G6J` | `2026-11-23T09:48:37.099Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10041` | Yes (`54a3364e...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T09:49:06.885Z` | `hf-qwen-qwen3-4b-instruct-2507` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CBA8A85D` [Domain D] | Yes (`d9df8d91...`) |

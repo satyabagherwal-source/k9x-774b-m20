@@ -12342,3 +12342,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-23T08:33:12.135Z |
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-23T09:06:38.886Z |
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-23T09:29:47.246Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-11-23T09:48:25.776Z |
+| `learn-huggingface-qwen-qwen3-4b-instruct-2507` | `https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T09:48:26.174Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `76c6b3e2` | Multi-dimensional audit evidence | 2026-11-23T09:48:37.104Z |
+| `learn-dom-d-cba8a85d` | `project://hf-qwen-qwen3-4b-instruct-2507` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md` | 2026-11-23T09:49:06.885Z |

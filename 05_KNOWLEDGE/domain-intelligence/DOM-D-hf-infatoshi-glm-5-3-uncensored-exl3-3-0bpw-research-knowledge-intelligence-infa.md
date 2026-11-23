@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
   "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T23:26:03.016Z",
+  "timestamp": "2026-11-23T09:48:26.000Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw](https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw) (Revision: `hf-infatos`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T23:26:03.016Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T09:48:26.000Z`  
 > **Learning ID**: `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw](https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T23:26:02.258Z  
+> **Harvest Timestamp**: 2026-11-23T09:48:25.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2204 downloads | 366 likes
+- **Stars / Engagement**: 1955 downloads | 368 likes
 
 ---
 

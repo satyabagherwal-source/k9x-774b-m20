@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T09:29:55.106Z",
-  "total_records": 2405,
+  "last_updated": "2026-11-23T09:49:08.278Z",
+  "total_records": 2408,
   "domains": {
     "A": {
       "total": 20,
@@ -65,7 +65,7 @@
       ]
     },
     "D": {
-      "total": 926,
+      "total": 929,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -992,7 +992,10 @@
         "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants",
         "DOM-D-9C50727D",
         "DOM-D-8BD6649E",
-        "DOM-D-38571EB1"
+        "DOM-D-38571EB1",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-instruct-2507-core-invariants",
+        "DOM-D-CBA8A85D",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-instruct-2507-learnings-core-in"
       ]
     },
     "E": {
@@ -8502,8 +8505,8 @@
       "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
       "repository": "meshery/meshery",
-      "content_hash": "cde6a4ab2a9c67403c484ae98c47f2309e278d34b8e4359709b39027975cabdf",
-      "created_at": "2026-11-20T03:48:48.177Z"
+      "content_hash": "47f52a177104a0a951bc56904a43c70fb4a46b38016d83e8bbf3fdf55c2a43f8",
+      "created_at": "2026-11-23T09:48:37.484Z"
     },
     "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
@@ -8580,8 +8583,8 @@
       "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-learnings-technical-construction-intelligence-meshery-meshery-le.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "6661932083774be3adb2fd682088b1d04720b57e2eb0dd4e3bd891af482b6c1b",
-      "created_at": "2026-11-20T03:49:21.088Z"
+      "content_hash": "15b9c7061221941184016ae717dc9b0f26f441b8450d87d4523232617055d7e1",
+      "created_at": "2026-11-23T09:49:08.278Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -14305,8 +14308,8 @@
       "title": "Research & Knowledge Intelligence: Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-research-knowledge-intelligence-infa.md",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "content_hash": "de9cac1b26cc0033ac4c0b3b83b9ab5be4606270fc42954d11a2cec5356709ba",
-      "created_at": "2026-11-18T23:26:03.017Z"
+      "content_hash": "02acf15829c86c77a59b377a04c8760180a22a6ffd099fbbc4f66fb92bb3d87c",
+      "created_at": "2026-11-23T09:48:26.001Z"
     },
     "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants",
@@ -14425,8 +14428,8 @@
       "title": "Research & Knowledge Intelligence: hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-learnings-research-knowledge-intelli.md",
       "repository": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings",
-      "content_hash": "f8e8c35355570c0c81003b9c7b06f5aedd9697629ec123c2430539d3f35d1c31",
-      "created_at": "2026-11-18T23:26:30.206Z"
+      "content_hash": "89cd303398a84d0757c5a791d2a49d8d7db6d7c5bae18e713fb841ca4b2f3482",
+      "created_at": "2026-11-23T09:49:07.605Z"
     },
     "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv",
@@ -40411,6 +40414,66 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-23T08:12:33.680Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-instruct-2507-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-instruct-2507-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-4B-Instruct-2507 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-instruct-2507-research-knowledge-intelligence-qwen-qwen3-4b-ins.md",
+      "repository": "Qwen/Qwen3-4B-Instruct-2507",
+      "content_hash": "af58aa4445907d19289bf382a6ba62f51af266f7e582c43f030954d547182685",
+      "created_at": "2026-11-23T09:48:26.384Z"
+    },
+    "DOM-D-CBA8A85D": {
+      "record_id": "DOM-D-CBA8A85D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3-4B-Instruct-2507",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507))  \n> **Source Version**: `hf-qwen-qwen`  \n> **License**: Open-Sou",
+      "content_hash": "d9df8d91ea0aaff062fe0e28612b90f91e4c17bbc35001e6d80ac67f39c430be",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen3-4b-instruct-2507/hf-qwen-qwen3-4b-instruct-2507-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T09:48:40.454Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3-4b-instruct-2507)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-qwen-qwen3-4b-instruct-2507"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T09:49:06.852Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-instruct-2507-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-instruct-2507-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-4b-instruct-2507-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-instruct-2507-learnings-research-knowledge-intelligence-hf-qwen.md",
+      "repository": "hf-qwen-qwen3-4b-instruct-2507-learnings",
+      "content_hash": "7b2a70b68394305b8346c1a80c8fe8fba2ce9d43c8dea08ada0632b030da2f13",
+      "created_at": "2026-11-23T09:49:07.158Z"
     }
   }
 }
