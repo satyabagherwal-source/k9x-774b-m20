@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T22:24:06.825Z",
-    "lastVerified": "2026-11-23T22:24:06.825Z",
+    "lastChecked": "2026-11-23T22:33:11.239Z",
+    "lastVerified": "2026-11-23T22:33:11.239Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T21:57:09.357Z",
+    "lastChecked": "2026-11-23T22:33:11.227Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T21:57:09.357Z"
+    "lastVerified": "2026-11-23T22:33:11.227Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1678,9 +1678,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-23T18:32:18.555Z",
+    "lastChecked": "2026-11-23T22:33:06.235Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-23T18:32:18.555Z"
+    "lastVerified": "2026-11-23T22:33:06.235Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2630,9 +2630,9 @@
   "goodrain-rainbond": {
     "name": "rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
-    "lastChecked": "2026-11-22T21:57:00.049Z",
+    "lastChecked": "2026-11-23T22:33:03.705Z",
     "revisionIdentifier": "5508cd38",
-    "lastVerified": "2026-11-22T21:57:00.049Z"
+    "lastVerified": "2026-11-23T22:33:03.705Z"
   },
   "crate-crate": {
     "name": "crate",
@@ -7718,8 +7718,8 @@
     "officialUrl": "https://github.com/vcaesar/riot",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T20:46:55.605Z",
-    "lastVerified": "2026-11-22T20:46:55.605Z",
+    "lastChecked": "2026-11-23T22:33:08.820Z",
+    "lastVerified": "2026-11-23T22:33:08.820Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vcaesar-riot",
@@ -8271,9 +8271,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-22T13:58:56.946Z",
+    "lastChecked": "2026-11-23T22:32:56.205Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-22T13:58:56.946Z"
+    "lastVerified": "2026-11-23T22:32:56.205Z"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
     "name": "openbmb/MiniCPM-V-4.7-1B",
@@ -8525,12 +8525,12 @@
     "officialUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T16:16:47.208Z",
-    "lastVerified": "2026-11-19T16:16:47.208Z",
+    "lastChecked": "2026-11-23T22:32:58.819Z",
+    "lastVerified": "2026-11-23T22:32:58.819Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "ca423d5c3d8af719556ac507c6cdbfb920b7e56b910cd253427c2dc6ed02a4c0",
+    "contentHash": "159dfef3c93ed10259bc2fb64816260bc5dc3dbecdbdab681cf38feba81c0fc2",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11576,9 +11576,9 @@
   "mikeroyal-apple-silicon-guide": {
     "name": "Apple-Silicon-Guide",
     "officialUrl": "https://github.com/mikeroyal/Apple-Silicon-Guide",
-    "lastChecked": "2026-11-20T23:47:43.049Z",
+    "lastChecked": "2026-11-23T22:33:01.215Z",
     "revisionIdentifier": "7e58c7d7",
-    "lastVerified": "2026-11-20T23:47:43.049Z"
+    "lastVerified": "2026-11-23T22:33:01.215Z"
   },
   "evanw-esbuild": {
     "name": "esbuild",

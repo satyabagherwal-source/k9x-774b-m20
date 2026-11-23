@@ -12493,3 +12493,4 @@
 | `CYCLE-20261123-QBQ2` | `2026-11-23T22:15:01.082Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10134` | Yes (`8d243876...`) |
 | `CYCLE-20261123-1MY9` | `2026-11-23T22:23:48.849Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`a1b5adcd...`) |
 | `CYCLE-20261123-1Y3D` | `2026-11-23T22:24:03.289Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10135` | Yes (`fafcaa23...`) |
+| `CYCLE-20261123-DL0H` | `2026-11-23T22:33:06.209Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`159dfef3...`) |

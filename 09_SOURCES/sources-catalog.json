@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "ca423d5c3d8af719556ac507c6cdbfb920b7e56b910cd253427c2dc6ed02a4c0",
-    "lastHarvestedAt": "2026-11-19T16:16:47.826Z",
+    "contentHash": "159dfef3c93ed10259bc2fb64816260bc5dc3dbecdbdab681cf38feba81c0fc2",
+    "lastHarvestedAt": "2026-11-23T22:33:06.214Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {

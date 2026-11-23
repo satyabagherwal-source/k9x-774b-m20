@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T22:24:09.835Z",
+  "last_updated": "2026-11-23T22:33:14.512Z",
   "total_verified_learnings": 9087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0840414422d6b21131540eae6519a0e51426b9cf9104fa43ce059c97df07cfc",
+      "content_hash": "2e9e6bb911321ce63bb02cf665610b3b2992e01cebaa08c4f5d600a96f646d34",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:05:28.925Z"
+      "persisted_at": "2026-11-23T22:33:14.328Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f45ab1b36146a791277685991f0d7cc340644116b3be242daee10fc53823fe1f",
+      "content_hash": "ffc3ebda0f6eeb84f3fc294d124af42ecaa4b934c6e343b3616489484188fcc5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:05:29.051Z"
+      "persisted_at": "2026-11-23T22:33:14.512Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0d98ab64ea4f86e911bf16ba53d53035eae5929cf1d22e5b8bd5703afe845c1",
+      "content_hash": "8403aa86444e3dd87fecead0a14baa29fb64c364a634027d036b14680c4ebe9b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T22:24:09.835Z"
+      "persisted_at": "2026-11-23T22:33:13.041Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -242701,7 +242701,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "ca423d5c3d8af719556ac507c6cdbfb920b7e56b910cd253427c2dc6ed02a4c0",
+      "content_hash": "159dfef3c93ed10259bc2fb64816260bc5dc3dbecdbdab681cf38feba81c0fc2",
       "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "promoted_rules": [],
@@ -242710,7 +242710,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:16:47.615Z",
+      "verified_at": "2026-11-23T22:33:05.927Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242727,9 +242727,9 @@
       "title": "Research & Knowledge Intelligence: vllm-sr/d3 Core Invariants",
       "repository": "vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "22309a60bd8c23ca4c74b27a812e20f92436c8af38b00787574d325c3e5e112d",
+      "content_hash": "eef53560a4743226f0e5beed58c6abdfd3affb7b6d43a31bbf0903c6fd658794",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T16:16:48.031Z"
+      "persisted_at": "2026-11-23T22:33:06.493Z"
     },
     "learn-github-milvus-io-milvus": {
       "learning_id": "learn-github-milvus-io-milvus",
@@ -242833,9 +242833,9 @@
       "title": "Research & Knowledge Intelligence: hf-vllm-sr-d3-learnings Core Invariants",
       "repository": "hf-vllm-sr-d3-learnings",
       "source_version": "HEAD",
-      "content_hash": "d51965bf079110b2b7b14d78564d1405bed3bfccc1da5ec1d42b3145c4fddb56",
+      "content_hash": "3a947ae0ab6aaab65214e97c2b570595459d5595dcdbdda0badc0af0451a91fe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T16:17:07.267Z"
+      "persisted_at": "2026-11-23T22:33:11.709Z"
     },
     "learn-github-fallow-rs-fallow": {
       "learning_id": "learn-github-fallow-rs-fallow",
@@ -255690,9 +255690,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba5cef46670e2adfbc5c44087229903ccb655cbc1bcc2f53057be272791f2fa0",
+      "content_hash": "e75497f96930e3a7d3487a7be11d08635805520bdd54deb09c3718293c88ebcd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:05:28.758Z"
+      "persisted_at": "2026-11-23T22:33:14.079Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -329407,13 +329407,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-E1ZR-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DQWS-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "54794cf019912cc56ee6056580e6bef065563f7557b3a508133b2a7e703aa4c0",
+      "content_hash": "aaf2d2c9ae5b1861f4d625a8b3770781321724876ffe0677a502e2e2be7f612d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:05:28.602Z"
+      "persisted_at": "2026-11-23T22:33:13.858Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
