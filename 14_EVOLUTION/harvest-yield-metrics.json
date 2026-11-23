@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:56:21.012Z",
-  "total_cycles_completed": 11853,
-  "total_learnings_persisted": 11853,
-  "total_rules_promoted": 10962,
+  "last_updated": "2026-11-23T21:04:57.324Z",
+  "total_cycles_completed": 11856,
+  "total_learnings_persisted": 11856,
+  "total_rules_promoted": 10964,
   "history": [
-    {
-      "timestamp": "2026-11-23T04:00:05.525Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T04:00:17.264Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T04:00:19.228Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T04:08:10.006Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T20:56:21.012Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:04:38.385Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:04:49.668Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:04:57.324Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

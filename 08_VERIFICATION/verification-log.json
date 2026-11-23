@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-D9ZO",
-    "timestamp": "2026-11-21T23:25:30.708Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "865e8ceb018de6172440a863c7b20fa0052e1ec429b60c389c41a9c1dda2cc0e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-EWSB",
-    "timestamp": "2026-11-21T23:26:46.907Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "3cb059791176083ee53ac9e7f08771a29b5d3286e7328610c8e02dd137834fb9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-F9F2",
-    "timestamp": "2026-11-21T23:27:03.278Z",
-    "repository": "Edge0/Audio8-TTS-Realistic-Air",
-    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-    "contentHash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-FLCF",
     "timestamp": "2026-11-21T23:27:18.735Z",
     "repository": "pimalaya/himalaya",
@@ -7490,6 +7445,51 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "ff25fc6955f73718eaad256a49cbad41c83dca184601487e7e8557eaf03ce172",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-7TGM",
+    "timestamp": "2026-11-23T21:04:38.374Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "65e9c13cd32f1466802ebf8f042dfea28e68772c5dc10285d58099ea4574b345",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-8261",
+    "timestamp": "2026-11-23T21:04:49.658Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "cc941d6ae23bbf63c2576cef327403e04174de1a749d95a31e9a192ea618d0c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-882Q",
+    "timestamp": "2026-11-23T21:04:57.314Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "ffe21527844b42ff7b11de36f051171d80da703f7cab882b13e2b6877386e5c0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T20:56:25.923Z",
+  "updated_at": "2026-11-23T21:05:33.671Z",
   "stats": {
-    "total_discovered": 8040,
-    "approved_pending_harvest": 7611,
+    "total_discovered": 8044,
+    "approved_pending_harvest": 7614,
     "harvested_count": 0,
-    "rejected_count": 429,
+    "rejected_count": 430,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7604,
+      "COMMUNITY_AND_EXPERT": 7608,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -173900,6 +173900,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
         "fileName": "dragonflydb-dragonfly-learnings.md"
+      }
+    },
+    "SRC-D3AC75B0BF3D": {
+      "id": "SRC-D3AC75B0BF3D",
+      "url": "http://proxy:c0nf1gvalue@proxy.internal:3128/",
+      "title": "http://proxy:c0nf1gvalue@proxy.internal:3128/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T21:05:01.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
+        "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-AC0AAE432C78": {
+      "id": "SRC-AC0AAE432C78",
+      "url": "https://charts.internal/",
+      "title": "https://charts.internal/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T21:05:01.612Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
+        "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-A5E9174DC13F": {
+      "id": "SRC-A5E9174DC13F",
+      "url": "https://localhost:9898/",
+      "title": "https://localhost:9898/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T21:05:01.667Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
+        "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-1271BF7C261C": {
+      "id": "SRC-1271BF7C261C",
+      "url": "https://github.com/duckdb/duckdb/issues/29171",
+      "title": "https://github.com/duckdb/duckdb/issues/29171",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T21:05:33.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
+        "fileName": "duckdb-duckdb-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:56:26.611Z",
+  "last_updated": "2026-11-23T21:05:34.641Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T20:00:24.380Z",
@@ -473,7 +473,7 @@
       "staged_for_review": 1
     },
     "loft-sh-vcluster-learnings.md": {
-      "processed_at": "2026-11-19T15:03:33.960Z",
+      "processed_at": "2026-11-23T21:05:01.381Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2773,9 +2773,9 @@
       "staged_for_review": 1
     },
     "duckdb-duckdb-learnings.md": {
-      "processed_at": "2026-11-20T12:50:32.968Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-23T21:05:33.554Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-facebook-sam3-learnings.md": {
       "processed_at": "2026-11-23T20:56:24.327Z",
@@ -2783,7 +2783,7 @@
       "staged_for_review": 0
     },
     "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-19T14:03:38.179Z",
+      "processed_at": "2026-11-23T21:05:00.846Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3783,7 +3783,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3522,
-  "total_canonical_promoted": 489,
-  "total_staged_for_review": 2642
+  "total_dossiers_evaluated": 3525,
+  "total_canonical_promoted": 490,
+  "total_staged_for_review": 2644
 }

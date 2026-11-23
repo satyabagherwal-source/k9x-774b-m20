@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-23T19:01:42.816Z",
+  "updated_at": "2026-11-23T21:05:33.551Z",
   "statistics": {
-    "total_nodes": 487,
-    "total_edges": 203,
+    "total_nodes": 488,
+    "total_edges": 204,
     "domain_distribution": {
       "D": 297,
       "M": 1,
-      "H": 86,
+      "H": 87,
       "J": 22,
       "K": 29,
       "L": 8,
@@ -20,7 +20,7 @@
       "I": 11
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 200,
+      "CONSTRAINED_BY_ARCHITECTURE": 201,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
@@ -10879,6 +10879,29 @@
       ],
       "created_at": "2026-11-23T19:01:42.816Z",
       "updated_at": "2026-11-23T19:01:42.816Z"
+    },
+    "DOM-H-F2F7DD53": {
+      "id": "DOM-H-F2F7DD53",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "runtime memory management for growing perfect-hash aggregates",
+      "summary": "Prevents defects observed in production commit `52dac04d`: runtime memory management for growing perfect-hash aggregates. Unvalidated execut -> When implementing operations in `src/execution/physical_plan/plan_aggregate.cpp`, engineers MUST enforce rigorous boundary validation, safe ",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://duckdb-duckdb/duckdb-duckdb-learnings.md",
+        "source_version": "94a1663a",
+        "observed_at": "2026-11-23T21:04:56.172Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (duckdb-duckdb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-23T21:05:33.551Z",
+      "updated_at": "2026-11-23T21:05:33.551Z"
     }
   },
   "edges": [
@@ -12911,6 +12934,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-864519D2 [D] with Domain M",
       "created_at": "2026-11-23T15:13:16.120Z"
+    },
+    {
+      "id": "EDGE-2C9E7982A1B1",
+      "sourceId": "DOM-H-F2F7DD53",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-F2F7DD53 [H] with Domain G",
+      "created_at": "2026-11-23T21:05:33.551Z"
     }
   ]
 }

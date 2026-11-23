@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "2c2a204df72ea3c2d89494fe74f72006305c37a0fc148ed3f8a998f0a0e3c331",
-    "lastHarvestedAt": "2026-11-19T14:03:26.928Z",
+    "contentHash": "65e9c13cd32f1466802ebf8f042dfea28e68772c5dc10285d58099ea4574b345",
+    "lastHarvestedAt": "2026-11-23T21:04:38.379Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "87d96b77",
+    "sourceVersion": "94a1663a",
     "license": "MIT",
-    "contentHash": "f18cc8e24aeb8ee4d7287bd633e71fb5976cda559fc2ff257978bc96e8be311a",
-    "lastHarvestedAt": "2026-11-21T17:50:04.263Z",
+    "contentHash": "ffe21527844b42ff7b11de36f051171d80da703f7cab882b13e2b6877386e5c0",
+    "lastHarvestedAt": "2026-11-23T21:04:57.318Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "e8a22cc7",
+    "sourceVersion": "1671d54b",
     "license": "Apache-2.0",
-    "contentHash": "8f8b9e0959afc826468a2ac68624e6877db050463ffeab484f1606f40a33fb9e",
-    "lastHarvestedAt": "2026-11-19T15:03:30.530Z",
+    "contentHash": "cc941d6ae23bbf63c2576cef327403e04174de1a749d95a31e9a192ea618d0c3",
+    "lastHarvestedAt": "2026-11-23T21:04:49.662Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {

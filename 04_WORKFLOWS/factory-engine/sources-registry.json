@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T20:30:38.693Z",
-    "lastVerified": "2026-11-23T20:30:38.693Z",
+    "lastChecked": "2026-11-23T21:04:49.870Z",
+    "lastVerified": "2026-11-23T21:04:49.870Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T20:56:24.198Z",
-    "lastVerified": "2026-11-23T20:56:24.198Z",
+    "lastChecked": "2026-11-23T21:05:00.686Z",
+    "lastVerified": "2026-11-23T21:05:00.686Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -829,9 +829,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-23T17:03:32.459Z",
+    "lastChecked": "2026-11-23T21:04:44.909Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-23T17:03:32.459Z"
+    "lastVerified": "2026-11-23T21:04:44.909Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -1816,22 +1816,21 @@
     "lastVerified": "2026-11-21T15:59:38.793Z"
   },
   "loft-sh-vcluster": {
-    "name": "vcluster",
+    "name": "loft-sh/vcluster",
     "officialUrl": "https://github.com/loft-sh/vcluster",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T20:09:01.689Z",
-    "lastVerified": "2026-11-22T20:09:01.690Z",
+    "lastChecked": "2026-11-23T21:04:48.563Z",
+    "lastVerified": "2026-11-23T21:04:48.563Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "8f8b9e0959afc826468a2ac68624e6877db050463ffeab484f1606f40a33fb9e",
+    "contentHash": "cc941d6ae23bbf63c2576cef327403e04174de1a749d95a31e9a192ea618d0c3",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e8a22cc7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
     "name": "cosign",
@@ -7147,22 +7146,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "duckdb-duckdb": {
-    "name": "duckdb",
+    "name": "duckdb/duckdb",
     "officialUrl": "https://github.com/duckdb/duckdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-22T19:09:52.168Z",
-    "lastVerified": "2026-11-22T19:09:52.168Z",
+    "lastChecked": "2026-11-23T21:04:56.166Z",
+    "lastVerified": "2026-11-23T21:04:56.166Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "f18cc8e24aeb8ee4d7287bd633e71fb5976cda559fc2ff257978bc96e8be311a",
+    "contentHash": "ffe21527844b42ff7b11de36f051171d80da703f7cab882b13e2b6877386e5c0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "87d96b77"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sachaos-viddy": {
     "name": "viddy",
@@ -7934,9 +7932,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-11-22T10:17:51.821Z",
+    "lastChecked": "2026-11-23T21:04:34.972Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-11-22T10:17:51.821Z"
+    "lastVerified": "2026-11-23T21:04:34.972Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",
@@ -8119,12 +8117,12 @@
     "officialUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T14:03:18.281Z",
-    "lastVerified": "2026-11-19T14:03:18.281Z",
+    "lastChecked": "2026-11-23T21:04:37.590Z",
+    "lastVerified": "2026-11-23T21:04:37.590Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-    "contentHash": "2c2a204df72ea3c2d89494fe74f72006305c37a0fc148ed3f8a998f0a0e3c331",
+    "contentHash": "65e9c13cd32f1466802ebf8f042dfea28e68772c5dc10285d58099ea4574b345",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11360,9 +11358,9 @@
   "aheze-popovers": {
     "name": "Popovers",
     "officialUrl": "https://github.com/aheze/Popovers",
-    "lastChecked": "2026-11-20T22:22:56.744Z",
+    "lastChecked": "2026-11-23T21:04:39.969Z",
     "revisionIdentifier": "576b4d3e",
-    "lastVerified": "2026-11-20T22:22:56.744Z"
+    "lastVerified": "2026-11-23T21:04:39.969Z"
   },
   "goose3-goose3": {
     "name": "goose3",

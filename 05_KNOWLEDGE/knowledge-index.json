@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T20:56:26.453Z",
+  "last_updated": "2026-11-23T21:05:34.462Z",
   "total_verified_learnings": 9086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24191,
+  "total_items": 24196,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112449,10 +112449,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "repository": "duckdb/duckdb",
-      "source_version": "87d96b77",
-      "content_hash": "db5a8cc73c414c3dd43b735df5942109df74248f142bc69cc843c68d73459006",
+      "source_version": "94a1663a",
+      "content_hash": "c62dadce21e36f7ec7a1a0d322334239a39967b69e22de1ec3c2e5c448a46f10",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:50:04.634Z"
+      "persisted_at": "2026-11-23T21:04:57.786Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb",
@@ -112461,10 +112461,10 @@
       "relative_path": "08_VERIFICATION/duckdb-duckdb-verification-protocol-empirical-defect-shield-for-duckdb-duckdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for duckdb/duckdb",
       "repository": "duckdb/duckdb",
-      "source_version": "87d96b77",
-      "content_hash": "48bcd474dbd2676f5eff296d827bd946e33efc0396a61e281c9d1ccd78d42d30",
+      "source_version": "94a1663a",
+      "content_hash": "ee32d3ef6772c442c94d7e50ddd91b97e520823acb1848fcf08be467a4ad4b03",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:50:04.800Z"
+      "persisted_at": "2026-11-23T21:04:57.972Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants",
@@ -222502,8 +222502,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "e8a22cc7",
-      "content_hash": "8f8b9e0959afc826468a2ac68624e6877db050463ffeab484f1606f40a33fb9e",
+      "source_version": "1671d54b",
+      "content_hash": "cc941d6ae23bbf63c2576cef327403e04174de1a749d95a31e9a192ea618d0c3",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -222521,6 +222521,11 @@
           "number": 9389,
           "title": "create the restored etcd data directory with 0700",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10121,
+          "title": "skip host objects that belong to another virtual object",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222528,7 +222533,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:03:30.391Z",
+      "verified_at": "2026-11-23T21:04:49.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222570,10 +222575,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "repository": "loft-sh/vcluster",
-      "source_version": "e8a22cc7",
-      "content_hash": "84e0c72033fefbc4ab5078c18ce76d49899c29538b2bf3f70711cc99e890fe51",
+      "source_version": "1671d54b",
+      "content_hash": "767da92314ce2a54e8e7508ad83b74664d36fe67ebd44bbeb0bff072a45ccb62",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T15:03:30.799Z"
+      "persisted_at": "2026-11-23T21:04:50.109Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster",
@@ -222582,10 +222587,10 @@
       "relative_path": "08_VERIFICATION/loft-sh-vcluster-verification-protocol-empirical-defect-shield-for-loft-sh-vclus.md",
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh/vcluster",
       "repository": "loft-sh/vcluster",
-      "source_version": "e8a22cc7",
-      "content_hash": "ef0529eda589ba26c60e795d3efc3efb6f0d4678a7a606a3d658bd24429611da",
+      "source_version": "1671d54b",
+      "content_hash": "9b39a79271081555e031f58f52de89acc10ff627f2b97f185a70686c2c27165a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:03:30.907Z"
+      "persisted_at": "2026-11-23T21:04:50.330Z"
     },
     "learn-github-neuron-core-neuron-ai": {
       "learning_id": "learn-github-neuron-core-neuron-ai",
@@ -222717,9 +222722,9 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "repository": "loft-sh-vcluster-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b7689273c1a77467a6522543d659f373669aa3ee3d73e059b38e7547a024d2d",
+      "content_hash": "2619c79af647c248ae9e7b9a9bfc00c82c967686a1c7f2a47999f4fe37c6c472",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T15:03:34.379Z"
+      "persisted_at": "2026-11-23T21:05:02.128Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster-learnings",
@@ -222729,9 +222734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh-vcluster-learnings",
       "repository": "loft-sh-vcluster-learnings",
       "source_version": "HEAD",
-      "content_hash": "e06839c93e90f8624b35d24f670a9351e4a58f9c751138e6207f9482aba8e8ed",
+      "content_hash": "064f0168a67d7ea4652d386dfe4878e3b35b66cb73f44761dfa3cb442fd37ed0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:03:34.497Z"
+      "persisted_at": "2026-11-23T21:05:02.318Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -239721,8 +239726,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "87d96b77",
-      "content_hash": "f18cc8e24aeb8ee4d7287bd633e71fb5976cda559fc2ff257978bc96e8be311a",
+      "source_version": "94a1663a",
+      "content_hash": "ffe21527844b42ff7b11de36f051171d80da703f7cab882b13e2b6877386e5c0",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -239750,6 +239755,11 @@
           "number": 9816,
           "title": "Ignore run-to-run plan cost variation in the plan-cost regression runner",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10122,
+          "title": "runtime memory management for growing perfect-hash aggregates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239757,7 +239767,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:50:04.056Z",
+      "verified_at": "2026-11-23T21:04:57.034Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239848,9 +239858,9 @@
       "title": "Architecture Intelligence: duckdb-duckdb-learnings Core Invariants",
       "repository": "duckdb-duckdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d1c612f8f33cb35f819be07065719f8f88a4b6701bf5a8cfe84de1d240b9894",
+      "content_hash": "f48b79d8e20c638f941774886945bfc2516513730c448afd0e8f13dc61bed733",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T12:50:33.397Z"
+      "persisted_at": "2026-11-23T21:05:34.218Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb-learnings",
@@ -239860,9 +239870,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for duckdb-duckdb-learnings",
       "repository": "duckdb-duckdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "32a09a08865eb26482af5330f9dbea8d5fd891571255e04bf350f8c18aaefb05",
+      "content_hash": "3438114428920249c852c9426df3b9cfddf0ef95055bed1c5ff295e9432c0dc7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:50:33.548Z"
+      "persisted_at": "2026-11-23T21:05:34.462Z"
     },
     "learn-github-clickhouse-clickhouse": {
       "learning_id": "learn-github-clickhouse-clickhouse",
@@ -240037,7 +240047,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "2c2a204df72ea3c2d89494fe74f72006305c37a0fc148ed3f8a998f0a0e3c331",
+      "content_hash": "65e9c13cd32f1466802ebf8f042dfea28e68772c5dc10285d58099ea4574b345",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -240046,7 +240056,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T14:03:26.687Z",
+      "verified_at": "2026-11-23T21:04:38.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240063,9 +240073,9 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF Core Invariants",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "aa46fcfd688db8a96d37e7d36a2cf0c4064a42c7ee5935274981fcbce3df17a5",
+      "content_hash": "d9c758b5a92130a99e4033931a40c96748b2ebf60535ec32aa3a8e5fd8fb692c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T14:03:27.139Z"
+      "persisted_at": "2026-11-23T21:04:38.626Z"
     },
     "learn-github-sharkdp-fd": {
       "learning_id": "learn-github-sharkdp-fd",
@@ -240301,9 +240311,9 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "02df09f686857cf77733abc5b2b7c824ddaa3a00af94c0cf030c6c588d56f018",
+      "content_hash": "245eeba4cf5156ff8613b12165514d18442410f235a247ac536aa951ce28669d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T14:03:38.374Z"
+      "persisted_at": "2026-11-23T21:05:01.101Z"
     },
     "candidate_directive-build-update-gradle-wrapper-to-9-9-1": {
       "item_id": "candidate_directive-build-update-gradle-wrapper-to-9-9-1",
@@ -329768,6 +329778,70 @@
       "content_hash": "70d855cbf2a2ef720027f1d108c7c7e30ad883b63d00ccd4b817912361eba265",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T20:56:26.134Z"
+    },
+    "rule-10121": {
+      "learning_id": "rule-10121",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10121,
+      "title": "skip host objects that belong to another virtual object",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "1671d54b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:04:49.433Z"
+    },
+    "candidate_directive-skip-host-objects-that-belong-to-another-virtual-object": {
+      "item_id": "candidate_directive-skip-host-objects-that-belong-to-another-virtual-object",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-82DA-skip-host-objects-that-belong-to-another-virtual-object.md",
+      "title": "skip host objects that belong to another virtual object",
+      "repository": "loft-sh/vcluster",
+      "source_version": "1671d54b",
+      "content_hash": "ef60bae6c50c63c8707d7ebce84bf8b658bd06fbd1783fe7844548f581f359d9",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T21:04:49.924Z"
+    },
+    "rule-10122": {
+      "learning_id": "rule-10122",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10122,
+      "title": "runtime memory management for growing perfect-hash aggregates",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "94a1663a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:04:57.034Z"
+    },
+    "candidate_directive-runtime-memory-management-for-growing-perfect-hash-aggregates": {
+      "item_id": "candidate_directive-runtime-memory-management-for-growing-perfect-hash-aggregates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-90DC-runtime-memory-management-for-growing-perfect-hash-aggregates.md",
+      "title": "runtime memory management for growing perfect-hash aggregates",
+      "repository": "duckdb-duckdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "016ea4442c442cc70fbb4164ae6d078f7f87d9e93e4cb8ef732f0c2c8dbb0930",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T21:05:33.999Z"
+    },
+    "candidate_directive-syncer-skip-host-objects-that-belong-to-another-virtual-object": {
+      "item_id": "candidate_directive-syncer-skip-host-objects-that-belong-to-another-virtual-object",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8BN6-syncer-skip-host-objects-that-belong-to-another-virtual-object.md",
+      "title": "syncer): skip host objects that belong to another virtual object",
+      "repository": "loft-sh-vcluster-learnings",
+      "source_version": "HEAD",
+      "content_hash": "032e115b3385717094cf9232af84ce88b36f4cd0540610495a90d9b516acf734",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T21:05:01.942Z"
     }
   },
   "ai-builder-brain": {

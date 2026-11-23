@@ -12464,3 +12464,7 @@
 | `CYCLE-20261123-WUT5` | `2026-11-23T20:56:06.905Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`da83616c...`) |
 | `CYCLE-20261123-X02E` | `2026-11-23T20:56:13.718Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10119` | Yes (`0fed78b1...`) |
 | `CYCLE-20261123-X5OR` | `2026-11-23T20:56:21.003Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10120` | Yes (`ff25fc69...`) |
+| `CYCLE-20261123-7TGM` | `2026-11-23T21:04:38.374Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`65e9c13c...`) |
+| `CYCLE-20261123-8261` | `2026-11-23T21:04:49.658Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10121` | Yes (`cc941d6a...`) |
+| `CYCLE-20261123-882Q` | `2026-11-23T21:04:57.314Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10122` | Yes (`ffe21527...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T21:05:33.554Z` | `duckdb-duckdb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F2F7DD53` [Domain H] | Yes (`9e59b4f4...`) |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T20:56:26.293Z",
-  "total_records": 2450,
+  "last_updated": "2026-11-23T21:05:34.218Z",
+  "total_records": 2451,
   "domains": {
     "A": {
       "total": 20,
@@ -1559,7 +1559,7 @@
       ]
     },
     "H": {
-      "total": 581,
+      "total": 582,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2141,7 +2141,8 @@
         "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-core-invariants",
         "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants",
+        "DOM-H-F2F7DD53"
       ]
     },
     "I": {
@@ -8346,8 +8347,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "db5a8cc73c414c3dd43b735df5942109df74248f142bc69cc843c68d73459006",
-      "created_at": "2026-11-21T17:50:04.634Z"
+      "content_hash": "c62dadce21e36f7ec7a1a0d322334239a39967b69e22de1ec3c2e5c448a46f10",
+      "created_at": "2026-11-23T21:04:57.786Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -13059,8 +13060,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "repository": "loft-sh/vcluster",
-      "content_hash": "84e0c72033fefbc4ab5078c18ce76d49899c29538b2bf3f70711cc99e890fe51",
-      "created_at": "2026-11-19T15:03:30.799Z"
+      "content_hash": "767da92314ce2a54e8e7508ad83b74664d36fe67ebd44bbeb0bff072a45ccb62",
+      "created_at": "2026-11-23T21:04:50.109Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
@@ -13128,8 +13129,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-learnings-deployment-operations-intelligence-loft-sh-vcluster-l.md",
       "repository": "loft-sh-vcluster-learnings",
-      "content_hash": "9b7689273c1a77467a6522543d659f373669aa3ee3d73e059b38e7547a024d2d",
-      "created_at": "2026-11-19T15:03:34.379Z"
+      "content_hash": "2619c79af647c248ae9e7b9a9bfc00c82c967686a1c7f2a47999f4fe37c6c472",
+      "created_at": "2026-11-23T21:05:02.128Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -18623,8 +18624,8 @@
       "title": "Architecture Intelligence: duckdb-duckdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-learnings-architecture-intelligence-duckdb-duckdb-learnings-core-i.md",
       "repository": "duckdb-duckdb-learnings",
-      "content_hash": "6d1c612f8f33cb35f819be07065719f8f88a4b6701bf5a8cfe84de1d240b9894",
-      "created_at": "2026-11-20T12:50:33.397Z"
+      "content_hash": "f48b79d8e20c638f941774886945bfc2516513730c448afd0e8f13dc61bed733",
+      "created_at": "2026-11-23T21:05:34.218Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
@@ -18701,8 +18702,8 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-research-knowledge-intelligen.md",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "content_hash": "aa46fcfd688db8a96d37e7d36a2cf0c4064a42c7ee5935274981fcbce3df17a5",
-      "created_at": "2026-11-19T14:03:27.139Z"
+      "content_hash": "d9c758b5a92130a99e4033931a40c96748b2ebf60535ec32aa3a8e5fd8fb692c",
+      "created_at": "2026-11-23T21:04:38.626Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -18746,8 +18747,8 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-learnings-research-knowledge-.md",
       "repository": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings",
-      "content_hash": "02df09f686857cf77733abc5b2b7c824ddaa3a00af94c0cf030c6c588d56f018",
-      "created_at": "2026-11-19T14:03:38.374Z"
+      "content_hash": "245eeba4cf5156ff8613b12165514d18442410f235a247ac536aa951ce28669d",
+      "created_at": "2026-11-23T21:05:01.101Z"
     },
     "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants",
@@ -41076,6 +41077,48 @@
       "repository": "sozercan-kaset-learnings",
       "content_hash": "67c56aa24e60b9d71727e59ffe788fb9984cabe47f01816020c07b8788c09566",
       "created_at": "2026-11-23T20:56:25.255Z"
+    },
+    "DOM-H-F2F7DD53": {
+      "record_id": "DOM-H-F2F7DD53",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "runtime memory management for growing perfect-hash aggregates",
+      "content": "When implementing operations in `src/execution/physical_plan/plan_aggregate.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "9e59b4f49f3836d35807e866f8ce897bdccf1d9d6a3485734970e6c0e97fe097",
+      "summary": "Prevents defects observed in production commit `52dac04d`: runtime memory management for growing perfect-hash aggregates. Unvalidated execut -> When implementing operations in `src/execution/physical_plan/plan_aggregate.cpp`, engineers MUST enforce rigorous boundary validation, safe ",
+      "provenance": {
+        "source_uri": "project://duckdb-duckdb/duckdb-duckdb-learnings.md",
+        "source_version": "94a1663a",
+        "observed_at": "2026-11-23T21:04:56.172Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (duckdb-duckdb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of duckdb-duckdb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T21:05:33.514Z"
     }
   }
 }

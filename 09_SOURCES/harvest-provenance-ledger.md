@@ -12497,3 +12497,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-23T20:56:06.909Z |
 | `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `957c1db4` | Multi-dimensional audit evidence | 2026-11-23T20:56:13.722Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `6cbd2241` | Multi-dimensional audit evidence | 2026-11-23T20:56:21.007Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-23T21:04:38.379Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `1671d54b` | Multi-dimensional audit evidence | 2026-11-23T21:04:49.662Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `94a1663a` | Multi-dimensional audit evidence | 2026-11-23T21:04:57.318Z |
+| `learn-dom-h-f2f7dd53` | `project://duckdb-duckdb` | `94a1663a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md` | 2026-11-23T21:05:33.554Z |

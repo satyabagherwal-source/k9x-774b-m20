@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T12:50:33.122Z",
+  "timestamp": "2026-11-23T21:05:33.862Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-duckdb-duckdb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [duckdb-duckdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T12:50:33.122Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T21:05:33.862Z`  
 > **Learning ID**: `LEARN-EVO-duckdb-duckdb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 84%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from duckdb-duckdb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `522f213e`  
+> **Source Version**: `94a1663a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T12:50:27.021Z  
+> **Timestamp**: 2026-11-23T21:04:56.172Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:50:27.015Z  
+> **Harvest Timestamp**: 2026-11-23T21:04:56.166Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43202 stars
+- **Stars / Engagement**: 43275 stars
 
 ---
 
@@ -791,22 +791,8 @@ struct InternalApproxTopKState {
 		}
 		auto &value = values.back().get();
 		if (value.count > 0) {
-			// the capacity is reached - we need to replace an entry
-
-			// we use the filter as an early out
-			// based on the hash - we find a slot in the filter
-			// instead of monitoring the value immediately, we add to the slot in the filter
-			// ONLY when the value in the filter exceeds the current min value, we start monitoring the value
-			// this speeds up the algorithm as switching monitor values means we need to erase/insert in the hash table
-			auto &filter_value = filter[input.hash & filter_mask];
-			if (filter_value + increment < value.count) {
-				// if the filter has a lower count than the current min count
-				// we can skip adding this entry (for now)
-				filter_value += increment;
-				return;
-			}
-			// the filter exceeds the min value - start monitoring this value
-			// erase the existing entry from the lookup table (before CopyValue overwrites its hash and data)
+			// the capacity is reached - replace the entry with the lowest count
+			// erase it from the lookup table (before CopyValue overwrites its hash and data)
 			// and set the filter for the minimum value back to the current minimum value
 			filter[value.str_val.hash & filter_mask] = value.count;
 			Erase(value);
@@ -814,6 +800,22 @@ struct InternalApproxTopKState {
 		CopyValue(value, input, aggr_input.allocator);
 		Insert(value);
 		IncrementCount(value, increment);
+	}
+
+	//! Returns true if an unmonitored input is only counted in the filter
+	bool FilterInput(const ApproxTopKString &input) {
+		if (values.size() < capacity) {
+			return false;
+		}
+		// instead of monitoring the value immediately, we add to its slot in the filter
+		// ONLY when the filter slot reaches the current min count, we start monitoring the value
+		// this speeds up the algorithm as switching monitor values means we need to erase/insert in the hash table
+		auto &filter_value = filter[input.hash & filter_mask];
+		if (filter_value + 1 < values.back().get().count) {
+			filter_value++;
+			return true;
+		}
+		return false;
 	}
 
 	void IncrementCount(ApproxTopKValue &value, idx_t increment = 1) {
@@ -885,8 +887,13 @@ struct ApproxTopKOperation {
 		if (entry) {
 			// the input is monitored - increment the count
 			state.IncrementCount(*entry);
-		} else {
-			// the input is not monitored - replace the first entry with the current entry and increm
+		} else if (!state.FilterInput(topk_string)) {
+			// the input is not monitored and passes the filter - start monitoring it
+			state.InsertOrReplaceEntry(topk_string, aggr_input);
+		}
+	}
+
+	template <cla
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/holistic/approximate_quantile.cpp`
@@ -1992,11 +1999,13 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29134** (2026-11-20): **Skip plan-cost regression checks for identical plans**
-  *Symptoms*: Adaptive join filters can produce different intermediate row counts for identical plans, causing spurious CI failures.  Compare physical `EXPLAIN` plans without estimated cardinalities and skip cost and timing comparisons when they match. Keep the existing checks for changed plans.
+- **Issue #29244** (2026-11-23): **Cache sort-key suffixes during merging**
+  *Symptoms*: When merge keys share a prefix, cache the first word after it in their existing inline storage so comparisons can avoid reading the heap. Share the temporary substitution and restoration with initial radix sorting, without adding allocations or increasing key size.
 
-- **Issue #29131** (2026-11-20): **Register a sort temporary memory state on its first sink**
-  *Symptoms*: With the following query: ```sql SET threads = 16; SET memory_limit = '24GiB'; CREATE TABLE t_win AS SELECT (range % 50000)::BIGINT AS k, range::BIGINT AS v FROM range(3000000); CREATE TABLE t_agg AS SELECT (hash(range) % 2000000)::BIGINT AS g, range::BIGINT AS x FROM range(100000000);  SELECT count(*), sum(coalesce(w.s, 0) + coalesce(a.s, 0)) FROM 	(SELECT k, sum(v) OVER (PARTITION BY k ORDER BY v ROWS UNBOUNDED PRECEDING) AS s FROM t_win) w 	FULL JOIN (SELECT g, sum(x) AS s FROM t_agg GROUP BY g) a ON w.k = a.g; ```  This takes ~1.4 s on main because the `GROUP BY` finalizes on a single thread:  1. The window (probe side) sinks first and creates one `Sort` per hash group, 64 here. Each `Sort` registers with the `TemporaryMemoryManager` in its constructor and books the default minimum, 1.35 GiB: ~86 GiB booked against a 21.6 GiB budget. 2. The groups are only sorted in the window's source phase, which waits for the join build, so they sit idle and booked. 3. The `GROUP BY` (build side) then asks for memory in `MaxThreads`. The manager is over-committed and grants only the aggregate's minimum, so `partitions_fit` becomes 1.  TPC-DS Q51 can hit the same pattern, depending on the order in which the scheduler runs the two sides of its FULL join.  **Changes**: a `Sort` now registers with the `TemporaryMemoryManager` at its first `Sink`, not in the `SortGlobalSinkState` constructor. Idle hash groups, and groups that skip sorting, book nothing. A registered `Sor
+- **Issue #29242** (2026-11-23): **Move DateTruncSimplificationRule::DatePartToFunc into its own file**
+  *Symptoms*: The parser also needs it, to read INTERVAL literals (transform_expression.cpp). It moves out of the date_trunc rule's translation unit into date_part_to_func.cpp; behavior is unchanged.  Just moving code around, to make different libraries actually compile when stripped down. Function is used at `src/parser/peg/transformer/transform_expression.cpp`
+  **Post-Mortem & Fix Analysis**:
+  > Thanks!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2013,720 +2022,1429 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abbad801` (2026-11-20)
-**Commit Message**: Fix min/max for INTERVAL type (#29104)
+### Incident Patch 1: `52dac04d` (2026-11-23)
+**Commit Message**: Fix runtime memory management for growing perfect-hash aggregates (#29175)
 
-Hi team, I found min/max stats for INTERVAL type seems to be incorrect,
-for example
-```sql
-memory D SELECT max(x, 1), min(x, 1) FROM (VALUES (INTERVAL 25 HOUR), (INTERVAL 1 DAY)) v(x);
-┌────────────┬──────────────┐
-│ max(x, 1)  │  min(x, 1)   │
-│ interval[] │  interval[]  │
-├────────────┼──────────────┤
-│ [1 day]    │ ['25:00:00'] │
-└────────────┴──────────────┘
+Fixes #29163.
+
+With four million rows and a 64 MB memory limit, `list(hash(i))` can
+exhaust memory in `PERFECT_HASH_GROUP_BY` even with only 1,000 groups.
+The key range bounds the number of groups, but each list can grow with
+the input.
+
+This change selects the operator at planning time. Every aggregate must
+have a known fixed-size native state or an explicit opt-in to use
+perfect hash aggregation. The built-in `approx_count_distinct` sketch
+and native single-result `min`/`max` opt in. A variable-width minimum
+can still retain a large value per group. Missing layouts, state
+destructors, and custom state export/import callbacks select regular
+hash aggregation unless the implementation opts in. A `list` alongside
+`min`, `min(x, n)` and `max(x, n)`, and wrappers that buffer ordered
+input all use `HASH_GROUP_BY`, which can spill.
+
+### Results under memory pressure
+
+| Workload | Memory limit | Upstream base | Base with
+`perfect_ht_threshold=0` | This PR |
+|---|---:|---|---|---|
+| Reported list query, 4M rows, 1,000 groups | 64 MB | Out of memory |
+Passed | Passed |
+| List and string minimum, 192M rows, 100 group
+
+**File**: `src/execution/physical_plan/plan_aggregate.cpp` (modified, +16/-2)
+```diff
+@@ -240,8 +240,22 @@ static bool CanUsePerfectHashAggregate(ClientContext &context, LogicalAggregate
+ 	}
+ 	for (auto &expression : op.expressions) {
+ 		auto &aggregate = expression->Cast<BoundAggregateExpression>();
+-		if (aggregate.IsDistinct() || !aggregate.Function().HasStateCombineCallback()) {
+-			// distinct aggregates are not supported in perfect hash aggregates
++		const auto &function = aggregate.Function();
++		if (aggregate.IsDistinct() || !function.HasStateCombineCallback()) {
++			return false;
++		}
++		if (!function.HasGetStateTypeCallback() || function.HasStateDestructorCallback()) {
++			return false;
++		}
++		const auto layout = function.GetStateType(aggregate.BindInfo().get());
++		// Preserve min/max and fixed-size sketch fast paths, excluding sorted aggregate buffers.
++		const auto &name = function.GetName();
++		if (function.GetArguments().size() == 1 && layout.field.kind != AggregateFieldKind::LIST &&
++		    (name == "min" || name == "max" || name == "approx_count_distinct")) {
++			continue;
++		}
++		if (function.HasExportAggregateStateCallback() || function.HasImportAggregateStateCallback() ||
++		    !layout.field.IsFixedSize(layout.type)) {
+ 			return false;
+ 		}
+ 	}
 ```
 
-In the current implementation, min(x, n) and max(x, n) handled INTERVAL
-by comparing sort keys, which order values field by field over the raw
-(months, days, micros) without normalizing them, so max(x, 1) over {31
-days, 1 month} returned [1 month].
-In this PR specializes INTERVAL to `MinMaxFixedValue<interval_t>`, so
-values are compared with the normalized interval_t comparison,
-consistent with ORDER BY and plain min/max.
-
-**File**: `src/function/aggregate/distributive/minmax.cpp` (modified, +4/-0)
+**File**: `src/function/aggregate_state_serialization.cpp` (modified, +26/-0)
 ```diff
-@@ -549,6 +549,10 @@ void SpecializeMinMaxNFunction(PhysicalType arg_type, BoundAggregateFunction &fu
- 	case PhysicalType::DOUBLE:
- 		SpecializeMinMaxNFunction<MinMaxFixedValue<double>, COMPARATOR>(function);
- 		break;
-+	case PhysicalType::INTERVAL:
-+		// sort keys do not normalize intervals, so compare them as interval_t
-+		SpecializeMinMaxNFunction<MinMaxFixedValue<interval_t>, COMPARATOR>(function);
-+		break;
- 	default:
- 		SpecializeMinMaxNFunction<MinMaxFallbackValue, COMPARATOR>(function);
- 		break;
-```
-
-**File**: `test/configs/verify_aggregate_state_export.json` (modified, +1/-0)
-```diff
-@@ -102,6 +102,7 @@
-         "test/sql/aggregate/aggregates/arg_min_max_n_tpch.test",
-         "test/sql/aggregate/aggregates/arg_min_max_nulls_last.test",
-         "test/sql/aggregate/aggregates/minmax_n_fallible.test",
-+        "test/sql/aggregate/aggregates/minmax_n_interval.test",
-         "test/sql/aggregate/aggregates/bitstring_agg_empty.test",
-         "test/sql/aggregate/aggregates/bitstring_agg_memory_limit.test",
-         "test/sql/aggregate/aggregates/first_last_alloc_reuse.test",
-```
-
-**File**: `test/sql/aggregate/aggregates/minmax_n_interval.test` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+# name: test/sql/aggregate/aggregates/minmax_n_interval.test
-+# description: N-variant min/max on INTERVAL follow the normalized INTERVAL order
-+# group: [aggregates]
+@@ -11,6 +11,32 @@
+ 
+ namespace duckdb {
+ 
++bool AggregateStateField::IsFixedSize(const LogicalType &type) const {
++	switch (kind) {
++	case AggregateFieldKind::PRIMITIVE:
++		return TypeIsConstantSize(type.InternalType());
++	case AggregateFieldKind::OPTIONAL_VALUE:
++		return children.size() == 1 && children[0].IsFixedSize(type);
++	case AggregateFieldKind::STRUCT: {
++		if (type.id() != LogicalTypeId::STRUCT) {
++			return false;
++		}
++		const auto &types = StructType::GetChildTypes(type);
++		if (types.size() != children.size()) {
++			return false;
++		}
++		for (idx_t i = 0; i < types.size(); i++) {
++			if (!children[i].IsFixedSize(types[i].second)) {
++				return false;
++			}
++		}
++		return true;
++	}
++	default:
++		return false;
++	}
++}
 +
-+# 1 month is 30 days
-+query II
-+SELECT max(x, 2), min(x, 2) FROM (VALUES (INTERVAL 1 MONTH), (INTERVAL 31 DAY), (NULL)) v(x)
-+----
-+[31 days, 1 month]	[1 month, 31 days]
+ namespace {
+ 
+ template <class OP, class... ARGS>
+```
+
+**File**: `src/include/duckdb/function/aggregate_state_layout.hpp` (modified, +3/-0)
+```diff
+@@ -255,6 +255,9 @@ struct AggregateStateField {
+ 	//! aggregate's empty-group finalize (e.g. count -> 0) instead of short-circuiting to NULL on a NULL state.
+ 	bool list_empty_as_empty = false;
+ 
++	//! Whether the described native field consists entirely of fixed-size values.
++	bool IsFixedSize(const LogicalType &type) const;
 +
-+# 1 day is 24 hours
+ 	//! The alignment of this field when placed as a struct member, mirroring the C++ struct layout rules.
+ 	//! For OPTIONAL_VALUE the alignment is that of the wrapped value - the trailing is_set bool does not affect it.
+ 	idx_t GetAlignment() const {
+```
+
+**File**: `src/optimizer/common_subplan_optimizer.cpp` (modified, +1/-27)
+```diff
+@@ -108,32 +108,6 @@ static bool CanShareSubplanExpression(const Expression &expr) {
+ 	return !unsafe;
+ }
+ 
+-static bool HasFixedSizeState(const LogicalType &type, const AggregateStateField &field) {
+-	switch (field.kind) {
+-	case AggregateFieldKind::PRIMITIVE:
+-		return TypeIsConstantSize(type.InternalType());
+-	case AggregateFieldKind::OPTIONAL_VALUE:
+-		return field.children.size() == 1 && HasFixedSizeState(type, field.children[0]);
+-	case AggregateFieldKind::STRUCT: {
+-		if (type.id() != LogicalTypeId::STRUCT) {
+-			return false;
+-		}
+-		const auto &types = StructType::GetChildTypes(type);
+-		if (types.size() != field.children.size()) {
+-			return false;
+-		}
+-		for (idx_t i = 0; i < types.size(); i++) {
+-			if (!HasFixedSizeState(types[i].second, field.children[i])) {
+-				return false;
+-			}
+-		}
+-		return true;
+-	}
+-	default:
+-		return false;
+-	}
+-}
+-
+ static bool CanCombineAggregateState(const BoundAggregateExpression &aggregate) {
+ 	const auto &function = aggregate.Function();
+ 	if (aggregate.IsDistinct() || aggregate.GetOrderBys() ||
+@@ -143,7 +117,7 @@ static bool CanCombineAggregateState(const BoundAggregateExpression &aggregate)
+ 	}
+ 	// Combining growing states can use more memory than evaluating the original aggregates separately.
+ 	const auto layout = function.GetStateType(aggregate.BindInfo().get());
+-	return HasFixedSizeState(layout.type, layout.field);
++	return layout.field.IsFixedSize(layout.type);
+ }
+ 
+ enum class ConversionType {
+```
+
+**File**: `test/sql/aggregate/aggregate_state_export/ordered_aggregate_export_state.test` (modified, +1/-1)
+```diff
+@@ -159,7 +159,7 @@ WHERE d.direct IS DISTINCT FROM e.exported;
+ ----
+ 0
+ 
+-# many groups via the perfect hash aggregate (small integer keys)
++# ordered list states with small integer group keys
+ statement ok
+ CREATE TABLE narrow AS SELECT (range % 8)::TINYINT AS g, range AS v FROM range(1000);
+ 
+```
+
+**File**: `test/sql/aggregate/aggregates/test_order_by_aggregate.test` (modified, +1/-1)
+```diff
+@@ -97,7 +97,7 @@ SELECT string_agg(x, ',' ORDER BY x), string_agg(x, '|' ORDER BY x DESC) FROM (V
+ ----
+ a string that is not inlined,b,c	c|b|a string that is not inlined
+ 
+-# the perfect hash aggregate keeps the finalize state alive while its results are scanned
++# the grouped strings remain valid while the results are scanned
+ query I
+ SELECT count(*) FROM (SELECT i % 1000 g, string_agg(md5(i::VARCHAR), ',' ORDER BY i) s FROM range(3000) r(i) GROUP BY g) WHERE s != concat_ws(',', md5(g::VARCHAR), md5((g + 1000)::VARCHAR), md5((g + 2000)::VARCHAR));
+ ----
+```
+
+**File**: `test/sql/aggregate/external/list_hash_aggregate_spill.test_slow` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++# name: test/sql/aggregate/external/list_hash_aggregate_spill.test_slow
++# description: Regular hash aggregation of lists spills under memory pressure
++# group: [external]
++
++require core_functions
++
++statement ok
++SET threads = 1
++
++# Each group is an arithmetic progression starting at its key with a step of 250.
++statement ok
++CREATE MACRO group_totals(n) AS TABLE
++SELECT count(*) AS groups,
++       bool_and(len(xs) = n // 250 AND list_avg(xs) = g + (n - 250) / 2) AS groups_match
++FROM (
++    SELECT (i % 250)::UTINYINT AS g, list(i) AS xs FROM range(n) t(i) GROUP BY g
++) grouped
++
++statement ok
++SET tracked_metrics = ['operator.type', 'system.total_bytes_spilled']
++
++statement ok
++SET perfect_ht_threshold = 12
++
++statement ok
++SET memory_limit = '48MB'
++
++statement ok
++SET operator_memory_limit = '24MB'
++
 +query II
-+SELECT max(x, 1), min(x, 1) FROM (VALUES (INTERVAL 25 HOUR), (INTERVAL 1 DAY)) v(x)
++EXPLAIN ANALYZE (FORMAT JSON) SELECT * FROM group_totals(50000)
 +----
-+['25:00:00']	[1 day]
++analyzed_plan	<REGEX>:(?s).*"type": "HASH_GROUP_BY".*"total_bytes_spilled": 0.*
++
++query II
++SELECT * FROM group_totals(50000)
++----
++250	true
++
++# The lists retain 64 MB of integers. Only the grouped aggregate can spill in this query.
++query II
++EXPLAIN ANALYZE (FORMAT JSON) SELECT * FROM group_totals(8000000)
++----
++analyzed_plan	<REGEX>:(?s).*"type": "HASH_GROUP_BY".*"total_bytes_spilled": [1-9].*
++
++query II
++SELECT * FROM group_totals(8000000)
++----
++250	true
+```
+
+**File**: `test/sql/aggregate/external/perfect_hash_growing_state.test_slow` (added, +232/-0)
+```diff
+@@ -0,0 +1,232 @@
++# name: test/sql/aggregate/external/perfect_hash_growing_state.test_slow
++# description: Aggregation of growing lists under a small memory limit
++# group: [external]
++
++require vector_size 2048
++
++statement ok
++SET threads = 1
++
++statement ok
++SET memory_limit = '8MB'
++
++query III
++SELECT count(*), count(xs), count(*) FILTER (WHERE g = 1 AND xs = [repeat('x', 512) || '1']) FROM (
++    SELECT (i % 10)::UTINYINT AS g, list(repeat('x', 512) || i::VARCHAR) FILTER (WHERE i % 50000 = 1) AS xs
++    FROM range(6000) t(i) GROUP BY g
++)
++----
++10	1	1
++
++statement ok
++SET memory_limit = '12MB'
++
++query II
++SELECT count(*), count(*) FILTER (WHERE v = repeat('x', 512) || lpad(g::VARCHAR, 4, '0')) FROM (
++    SELECT (i % 10)::UTINYINT AS g, min(repeat('x', 512) || lpad(i::VARCHAR, 4, '0')) AS v
++    FROM range(6000) t(i) GROUP BY g
++)
++----
++10	10
++
++foreach budget 24 32
++
++statement ok
++SET memory_limit = '{budget}MB'
++
++query III
++SELECT sum(len(xs)), count(v), sum(length(v)) FROM (
++    SELECT (i % 100)::UTINYINT AS g, list(hash(i)) AS xs,
++           min(CASE WHEN i < 100 THEN repeat('x', 16384) || i::VARCHAR END) AS v
++    FROM range(65536) t(i) GROUP BY g
++)
++----
++65536	100	1638590
++
++endloop
++
++statement ok
++SET memory_limit = '22MB'
++
++query I
++SELECT sum(len(xs)) FROM (
++    SELECT (i % 57)::UTINYINT AS g, list(hash(i)) AS xs
++    FROM range(524288) t(i) GROUP BY g
++)
++----
++524288
++
++statement ok
++SET memory_limit = '16MB'
++
++statement ok
++CREATE TABLE grouped_output AS
++SELECT (i % 100)::UTINYINT AS g, list(hash(i)) AS xs FROM range(524288) t(i) GROUP BY g
++
++statement ok
++RESET memory_limit
++
++query II
++SELECT count(*), sum(len(xs)) FROM grouped_output
++----
++100	524288
++
++statement ok
++DROP TABLE grouped_output
++
++statement ok
++SET memory_limit = '256MB'
++
++foreach width 128 1024
++
++query II
++SELECT sum(len(xs)), sum(length(v)) FROM (
++    SELECT (i % 32)::UTINYINT AS g, list(i) FILTER (WHERE i = 0) AS xs,
++           last(CASE WHEN (i // 2048) % 2 = 0 THEN repeat('x', {width}) ELSE 'x' END ORDER BY i) AS v
++    FROM range(1073741824 // {width}) t(i) GROUP BY g
++)
++----
++1	32
++
++endloop
++
++statement ok
++SET memory_limit = '32MB'
++
++foreach start_row 0 524288
++
++query II
++SELECT sum(len(xs)), sum(length(v)) FROM (
++    SELECT (i % 100)::UTINYINT AS g, list(hash(i)) AS xs,
++           min(CASE WHEN i BETWEEN {start_row} AND {start_row} + 99 THEN repeat('x', 16385) || (i % 100)::VARCHAR END) AS v
++    FROM range(524388) t(i) GROUP BY g
++)
++----
++524388	1638690
++
++endloop
++
++statement ok
++SET memory_limit = '48MB'
++
++query I
++SELECT sum(len(xs)) FROM (
++    SELECT (i % 100)::UTINYINT AS g, list(i::VARCHAR) AS xs FROM range(1500000) t(i) GROUP BY g
++)
++----
++1500000
++
++foreach budget 64 80
++
++statement ok
++SET memory_limit = '{budget}MB'
++
++query III
++SELECT sum(len(xs)), max(len(xs)) FILTER (WHERE g = 0), sum(list_sum(xs)) FROM (
++    SELECT (CASE WHEN i % 3 = 0 THEN 0 ELSE i % 100 END)::UTINYINT AS g, list(i) AS xs
++    FROM range(1500000) t(i) GROUP BY g
++)
++----
++1500000	510000	1124999250000
++
++endloop
++
++statement ok
++SET memory_limit = '32MB'
++
++statement ok
++CREATE TABLE crossover AS
++SELECT (i % 100)::UTINYINT AS g, list(hash(i)) AS xs FROM range(1500000) t(i) GROUP BY g
++
++statement ok
++RESET memory_limit
++
++query II
++SELECT count(*), sum(len(xs)) FROM crossover
++----
++100	1500000
++
++statement ok
++DROP TABLE crossover
++
++# An earlier UNION branch can already have contributed states when the filtered LIST spills.
++statement ok
++SET memory_limit = '96MB'
++
++statement ok
++CREATE TABLE merged AS
++SELECT g, list(hash(i)) FILTER (WHERE i % 13 <> 0) AS xs, count(*) AS n
++FROM (SELECT i, (i % 100)::UTINYINT AS g FROM range(16384) t(i)
++      UNION ALL
++      SELECT i, (i % 100)::UTINYINT AS g FROM range(16384, 1500000) t(i))
++GROUP BY g
++
++statement ok
++RESET memory_limit
++
++query II
++SELECT count(*), count(*) FILTER (WHERE n <> 15000 OR list_sort(xs) IS DISTINCT FROM
++    list_sort(list_transform(list_filter(range(g::BIGINT, 1500000, 100), lambda j: j % 13 <> 0), lambda j: hash(j))))
++FROM merged
++----
++100	0
++
++statement ok
++DROP TABLE merged
++
++statement ok
++SET threads = 4
++
++foreach groups 1000 100
++
++statement ok
++SET memory_limit = '64MB'
++
++statement ok
++CREATE TABLE grouped AS
++SELECT g, list(hash(i)) AS xs
++FROM range(4000000) t(i), (SELECT i % {groups} AS g)
++GROUP BY g
++
++statement ok
++RESET memory_limit
++
++query II
++SELECT count(*) = {groups},
++       bool_and(list_sort(xs) IS NOT DISTINCT FROM
++                list_sort(list_transform(range(4000000 // {groups}), lambda j: hash(j * {groups} + g))))
++FROM grouped
++----
++true	true
++
++statement ok
++DROP TABLE grouped
++
++endloop
++
++# Compare a parallel table scan with a filtered list, repeated values and a NULL group.
++statement ok
++CREATE TABLE input AS
++SELECT CASE WHEN i % 17 <> 0 THEN (i % 100)::UTINYINT END AS g,
++       CASE WHEN i % 11 <> 0 THEN i % 127 END AS v, i % 3 <> 0 AS keep
++FROM range(1000000) t(i)
++
++statement ok
++SE
 ```
 
 ---
 
-### Incident Patch 2: `0d9dfc12` (2026-11-20)
-**Commit Message**: Merge remote-tracking branch 'upstream/main' into hjiang/fix-minmax-interval
+### Incident Patch 2: `f9a37d38` (2026-11-23)
+**Commit Message**: Account PEG parser arenas against memory limits (#29032)
 
-**File**: `.github/config/extensions/sqlite_scanner.cmake` (modified, +1/-1)
+PEG parser match and transform arenas now count against the database
+memory limit when parsing with a client context. Match process and
+packrat storage are released before transformation begins, while parse
+results remain alive through transformation.
+
+Parsing allocation failures report that the statement is too large for
+the current memory limit, with guidance to reduce the statement size or
+increase memory_limit. Type parsing and json_serialize_sql propagate OOM
+instead of turning it into an invalid type error or a successful JSON
+error value; ordinary JSON SQL parse errors retain the existing
+error-value behavior.
+
+Validation:
+- DEBUG/FORCE_ASSERT/CRASH_ON_ASSERT build via make reldebug.
+- SQLLogicTests cover repeated parse OOM, allocator memory returning to
+the pre-query baseline, subsequent query recovery, type parsing, and
+JSON SQL error handling.
+- A targeted grammar-extension test exercises OOM inside the transform
+phase and verifies memory returns to its baseline.
+- Parser, grammar-extension, and related JSON regressions: 135 passed.
+- Full JSON SQL suite: 151 passed, one slow test passed on a standalone
+rerun with 
+
+**File**: `extension/json/json_functions/json_serialize_plan.cpp` (modified, +3/-0)
 ```diff
-@@ -2,7 +2,7 @@
- duckdb_extension_load(sqlite_scanner
-         LOAD_TESTS
-         GIT_URL https://github.com/duckdb/duckdb-sqlite
--        GIT_TAG ce0987fda4f6393231c6783ee32f72ab873a6d3e
-+        GIT_TAG 4072b28f8ded96acf1fc7c31c2ad9a552eaf0f77
-         APPLY_PATCHES
-         SUBMODULES database-connector
-         )
+@@ -181,6 +181,9 @@ static void JsonSerializePlanFunction(DataChunk &args, ExpressionState &state, V
+ 
+ 		} catch (std::exception &ex) {
+ 			ErrorData error(ex);
++			if (error.Type() == ExceptionType::OUT_OF_MEMORY) {
++				throw;
++			}
+ 			yyjson_mut_obj_add_true(doc, result_obj, "error");
+ 			// error type and message
+ 			yyjson_mut_obj_add_strcpy(doc, result_obj, "error_type",
 ```
 
-**File**: `.github/patches/extensions/delta/0004-transaction-takes-context.patch` (added, +256/-0)
+**File**: `extension/json/json_functions/json_serialize_sql.cpp` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,256 @@
-+diff --git a/src/include/storage/delta_transaction.hpp b/src/include/storage/delta_transaction.hpp
-+index db31d77..b7aaefa 100644
-+--- a/src/include/storage/delta_transaction.hpp
-++++ b/src/include/storage/delta_transaction.hpp
-+@@ -12,6 +12,7 @@
-+ #include "duckdb/common/optional_idx.hpp"
-+ #include "duckdb/common/types/timestamp.hpp"
-+ #include "duckdb/transaction/transaction.hpp"
-++#include "duckdb/main/context.hpp"
-+ 
-+ namespace duckdb {
-+ class DeltaCatalog;
-+@@ -24,14 +25,30 @@ struct DeltaMultiFileColumnDefinition;
-+ 
-+ enum class DeltaTransactionState { TRANSACTION_NOT_YET_STARTED, TRANSACTION_STARTED, TRANSACTION_FINISHED };
-+ 
-++class DeltaTransaction;
-++
-++//! Makes the client context available to CommitCallback for the duration of a kernel commit call
-++class CommitContextScope {
-++public:
-++	CommitContextScope(DeltaTransaction &transaction, ClientContext &context);
-++	~CommitContextScope();
-++	CommitContextScope(const CommitContextScope &) = delete;
-++	CommitContextScope &operator=(const CommitContextScope &) = delete;
-++
-++private:
-++	DeltaTransaction &transaction;
-++};
-++
-+ class DeltaTransaction : public Transaction {
-++	friend class CommitContextScope;
-++
-+ public:
-+-	DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, ClientContext &context);
-++	DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, Context &context);
-+ 	~DeltaTransaction() override;
-+ 
-+ 	void Start();
-+ 	void Commit(ClientContext &context);
-+-	void Rollback();
-++	void Rollback(ClientContext &context);
-+ 
-+ 	void Append(ClientContext &context, const vector<DeltaDataFile> &append_files);
-+ 
-+@@ -52,7 +69,7 @@ public:
-+ 	vector<DeltaMultiFileColumnDefinition> GetWriteSchema(ClientContext &context);
-+ 
-+ 	//! Removes all outstanding appends and removes the files if possible
-+-	void CleanUpFiles();
-++	void CleanUpFiles(ClientContext &context);
-+ 
-+ 	//! CGetCommits callback for Unity Catalog managed commits
-+ 	//! CCommit callback for Unity Catalog managed commits - returns None on success, Some(error) on failure
-+@@ -111,7 +128,8 @@ private:
-+ 	// string parent_catalog_schema;
-+ 	optional_ptr<TableFunctionCatalogEntry> commit_function;
-+ 	string unity_table_id;
-+-	weak_ptr<ClientContext> current_context;
-++	//! Only set while a kernel commit call is running (see CommitContextScope), read by CommitCallback
-++	optional_ptr<ClientContext> commit_context;
-+ 	optional_ptr<TableCatalogEntry> parent_table_entry;
-+ 
-+ 	ErrorData active_error;
-+diff --git a/src/include/storage/delta_transaction_manager.hpp b/src/include/storage/delta_transaction_manager.hpp
-+index 3957982..aaf5fd9 100644
-+--- a/src/include/storage/delta_transaction_manager.hpp
-++++ b/src/include/storage/delta_transaction_manager.hpp
-+@@ -18,9 +18,9 @@ class DeltaTransactionManager : public TransactionManager {
-+ public:
-+ 	DeltaTransactionManager(AttachedDatabase &db_p, DeltaCatalog &delta_catalog);
-+ 
-+-	Transaction &StartTransaction(ClientContext &context) override;
-++	Transaction &StartTransaction(Context &context, MetaTransaction &meta_transaction) override;
-+ 	ErrorData CommitTransaction(ClientContext &context, Transaction &transaction) override;
-+-	void RollbackTransaction(Transaction &transaction) override;
-++	void RollbackTransaction(ClientContext &context, Transaction &transaction) override;
-+ 
-+ 	void Checkpoint(ClientContext &context, bool force = false) override;
-+ 
-+diff --git a/src/storage/delta_schema_entry.cpp b/src/storage/delta_schema_entry.cpp
-+index 0d453d9..9d6241d 100644
-+--- a/src/storage/delta_schema_entry.cpp
-++++ b/src/storage/delta_schema_entry.cpp
-+@@ -327,8 +327,12 @@ optional_ptr<CatalogEntry> DeltaSchemaEntry::CreateTable(CatalogTransaction tran
-+ 	}
-+ 
-+ 	ffi::ExclusiveCommittedTransaction *committed;
-+-	auto commit_res =
-+-	    KernelUtils::TryUnpackResult(ffi::create_table_commit(create_transaction, engine.get()), committed);
-++	ErrorData commit_res;
-++	{
-++		CommitContextScope commit_scope(GetDeltaTransaction(transaction), context);
-++		commit_res =
-++		    KernelUtils::TryUnpackResult(ffi::create_table_commit(create_transaction, engine.get()), committed);
-++	}
-+ 	if (commit_res.HasError()) {
-+ 		commit_res.Throw();
-+ 	}
-+diff --git a/src/storage/delta_transaction.cpp b/src/storage/delta_transaction.cpp
-+index 4c8961e..7ec33f8 100644
-+--- a/src/storage/delta_transaction.cpp
-++++ b/src/storage/delta_transaction.cpp
-+@@ -29,7 +29,7 @@
-+ 
-+ namespace duckdb {
-+ 
-+-DeltaTransaction::DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, ClientContext &context)
-++DeltaTransaction::DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, Context &context)
-+     : Transaction(manager, context), access_mode(delta_catalog.access_mode), parent_commit(delta_catalog.parent_commit),
-+       parent_catalog_name(delta_catalog.parent_catalog_name), unity_table_id(delta_catalog.unity_table_id) {
-+ 	commit_function = delta_catalog.commit_function;
-+@@
+@@ -129,6 +129,9 @@ static void JsonSerializeFunction(DataChunk &args, ExpressionState &state, Vecto
+ 
+ 		} catch (std::exception &ex) {
+ 			ErrorData error(ex);
++			if (error.Type() == ExceptionType::OUT_OF_MEMORY) {
++				throw;
++			}
+ 			yyjson_mut_obj_add_true(doc, result_obj, "error");
+ 			yyjson_mut_obj_add_strcpy(doc, result_obj, "error_type",
+ 			                          StringUtil::Lower(Exception::ExceptionTypeToString(error.Type())).c_str());
 ```
 
-**File**: `.github/patches/extensions/ducklake/0029-transaction-takes-context.patch` (added, +1154/-0)
+**File**: `src/common/types/type_manager.cpp` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,1154 @@
-+diff --git a/src/common/ducklake_util.cpp b/src/common/ducklake_util.cpp
-+index f65438a3..96de1ab6 100644
-+--- a/src/common/ducklake_util.cpp
-++++ b/src/common/ducklake_util.cpp
-+@@ -591,21 +591,22 @@ string DuckLakeUtil::InlinedStorageExpression(DuckLakeMetadataManager &metadata_
-+ 	return expression;
-+ }
-+ 
-+-vector<string> DuckLakeUtil::InlinedDataToSQL(DuckLakeTransaction &transaction, ColumnDataCollection &data) {
-++vector<string> DuckLakeUtil::InlinedDataToSQL(ClientContext &context, DuckLakeTransaction &transaction,
-++                                              ColumnDataCollection &data) {
-+ 	auto &metadata_manager = transaction.GetMetadataManager();
-+-	auto context = transaction.context.lock();
-+ 	vector<string> rows;
-+ 	rows.reserve(data.Count());
-+ 	for (auto &chunk : data.Chunks()) {
-+ 		for (idx_t r = 0; r < chunk.size(); r++) {
-+-			rows.push_back(ChunkRowToSQL(metadata_manager, *context, chunk, r));
-++			rows.push_back(ChunkRowToSQL(metadata_manager, context, chunk, r));
-+ 		}
-+ 	}
-+ 	return rows;
-+ }
-+ 
-+-void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to) {
-+-	auto &db_config = DBConfig::GetConfig(from);
-++vector<pair<idx_t, Value>> DuckLakeUtil::GetExtensionSettings(Context &from) {
-++	vector<pair<idx_t, Value>> result;
-++	auto &db_config = DBConfig::GetConfig(from.GetDatabase());
-+ 	for (auto &entry : db_config.GetExtensionSettings()) {
-+ 		auto &option = entry.second;
-+ 		if (!option.setting_index.IsValid()) {
-+@@ -616,18 +617,30 @@ void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to)
-+ 		auto setting_index = option.setting_index.GetIndex();
-+ 		// these change the types read from the metadata and data files
-+ 		if (entry.first == "sqlite_all_varchar" || entry.first == "binary_as_string") {
-+-			ClientConfig::GetConfig(to).user_settings.SetUserSetting(setting_index, Value::BOOLEAN(false));
-++			result.emplace_back(setting_index, Value::BOOLEAN(false));
-+ 			continue;
-+ 		}
-+-		if (!ClientConfig::GetConfig(from).user_settings.IsSet(setting_index)) {
-++		auto client_config = from.TryGetClientConfig();
-++		if (!client_config || !client_config->user_settings.IsSet(setting_index)) {
-+ 			continue;
-+ 		}
-+ 		Value value;
-+ 		from.TryGetCurrentUserSetting(setting_index, value);
-+-		ClientConfig::GetConfig(to).user_settings.SetUserSetting(setting_index, std::move(value));
-++		result.emplace_back(setting_index, std::move(value));
-++	}
-++	return result;
-++}
-++
-++void DuckLakeUtil::ApplyExtensionSettings(const vector<pair<idx_t, Value>> &settings, ClientContext &to) {
-++	for (auto &entry : settings) {
-++		ClientConfig::GetConfig(to).user_settings.SetUserSetting(entry.first, entry.second);
-+ 	}
-+ }
-+ 
-++void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to) {
-++	ApplyExtensionSettings(GetExtensionSettings(from.GetContext()), to);
-++}
-++
-+ void DuckLakeUtil::SetExtensionSetting(ClientContext &context, const string &name, const Value &value) {
-+ 	ExtensionOption option;
-+ 	if (!DBConfig::GetConfig(context).TryGetExtensionOption(Identifier(name), option)) {
-+diff --git a/src/functions/ducklake_cleanup_files.cpp b/src/functions/ducklake_cleanup_files.cpp
-+index a79438d7..0337d542 100644
-+--- a/src/functions/ducklake_cleanup_files.cpp
-++++ b/src/functions/ducklake_cleanup_files.cpp
-+@@ -86,7 +86,7 @@ static unique_ptr<FunctionData> CleanupBind(ClientContext &context, TableFunctio
-+ 	if (!skip_cleanup) {
-+ 		auto &transaction = DuckLakeTransaction::Get(context, ducklake_catalog);
-+ 		auto &metadata_manager = transaction.GetMetadataManager();
-+-		result->files = metadata_manager.GetFilesForCleanup(result->GetFilter(), type);
-++		result->files = metadata_manager.GetFilesForCleanup(context, result->GetFilter(), type);
-+ 		for (auto &file : result->files) {
-+ 			result->rows.push_back({Value(file.path)});
-+ 		}
-+diff --git a/src/functions/ducklake_expire_snapshots.cpp b/src/functions/ducklake_expire_snapshots.cpp
-+index 01c645fc..d56a8255 100644
-+--- a/src/functions/ducklake_expire_snapshots.cpp
-++++ b/src/functions/ducklake_expire_snapshots.cpp
-+@@ -72,7 +72,7 @@ static unique_ptr<FunctionData> DuckLakeExpireSnapshotsBind(ClientContext &conte
-+ 	}
-+ 	auto &transaction = DuckLakeTransaction::Get(context, ducklake_catalog);
-+ 	auto &metadata_manager = transaction.GetMetadataManager();
-+-	result->snapshots = metadata_manager.GetAllSnapshots(filter);
-++	result->snapshots = metadata_manager.GetAllSnapshots(context, filter);
-+ 	for (auto &snapshot : result->snapshots) {
-+ 		result->rows.push_back(DuckLakeSnapshotsFunction::GetSnapshotValues(snapshot));
-+ 	}
-+diff --git a/src/functions/ducklake_flush_inlined_data.cpp b/src/functions/ducklake_flush_inlined_data.cpp
-+index 49f07791..9a9bdd99 100644
-+--- a/src/functions/ducklake_flush_inlined_data.cpp
-++++ b/src/functions/ducklake_flush_inlined_data.cpp
-+@@ -498,7 +498,7 @@ WHERE del.begin_snapshot <= {SNAPSHOT_ID}
-+ 	}
-+ 
-+ 	// Register the delete files
-+-	transac
+@@ -1,6 +1,7 @@
+ #include "duckdb/common/types/type_manager.hpp"
+ 
+ #include "duckdb/common/type_visitor.hpp"
++#include "duckdb/common/error_data.hpp"
+ #include "duckdb/function/cast/cast_function_set.hpp"
+ #include "duckdb/parser/parser.hpp"
+ #include "duckdb/planner/binder.hpp"
+@@ -26,6 +27,9 @@ static LogicalType TransformStringToUnboundType(const string &str, ClientContext
+ 	try {
+ 		column_list = Parser(context).ParseColumnList("dummy " + str);
+ 	} catch (const std::runtime_error &e) {
++		if (ErrorData(e).Type() == ExceptionType::OUT_OF_MEMORY) {
++			throw;
++		}
+ 		const vector<string> suggested_types {"BIGINT",
+ 		                                      "INT8",
+ 		                                      "LONG",
 ```
 
-**File**: `.github/patches/extensions/fts/0004-indexing-result-order.patch` (added, +22/-0)
+**File**: `src/include/duckdb/parser/peg/matcher.hpp` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,22 @@
-+diff --git a/test/sql/fts/test_indexing.test_slow b/test/sql/fts/test_indexing.test_slow
-+index 4643b87..a1f283e 100644
-+--- a/test/sql/fts/test_indexing.test_slow
-++++ b/test/sql/fts/test_indexing.test_slow
-+@@ -62,7 +62,7 @@ one
-+ two
-+ three
-+ 
-+-query III
-++query III rowsort
-+ SELECT termid, docid, fieldid FROM fts_main_documents.terms
-+ ----
-+ 0	0	0
-+@@ -100,7 +100,7 @@ SELECT * FROM qtermids
-+ 0
-+ 1
-+ 
-+-query II
-++query II rowsort
-+ WITH ppterms AS (SELECT stem(unnest(string_split_regex(regexp_replace(lower(strip_accents('QUÁCKED BÁRKED')), '[^a-z]', ' ', 'g'), '\s+')), 'porter') AS term),
-+ qtermids AS (SELECT termid FROM fts_main_documents.dict AS dict, ppterms WHERE dict.term = ppterms.term),
-+ qterms AS (SELECT termid, docid FROM fts_main_documents.terms AS terms WHERE termid IN (SELECT qtermids.termid FROM qtermids))
+@@ -536,6 +536,7 @@ static constexpr idx_t PARSER_ARENA_INITIAL_CAPACITY = 8 * ArenaAllocator::ARENA
+ class ParseResultAllocator {
+ public:
+ 	ParseResultAllocator();
++	explicit ParseResultAllocator(Allocator &allocator);
+ 	~ParseResultAllocator();
+ 
+ 	template <class RESULT, class... ARGS>
 ```
 
-**File**: `.github/patches/extensions/glue/0005-transaction-takes-context.patch` (added, +85/-0)
+**File**: `src/parser/peg/matcher.cpp` (modified, +5/-2)
 ```diff
-@@ -0,0 +1,85 @@
-+diff --git a/src/catalog/glue_transaction.cpp b/src/catalog/glue_transaction.cpp
-+index 09f8369..5deb6d3 100644
-+--- a/src/catalog/glue_transaction.cpp
-++++ b/src/catalog/glue_transaction.cpp
-+@@ -5,13 +5,14 @@
-+ #include "duckdb/logging/logger.hpp"
-+ #include "duckdb/main/attached_database.hpp"
-+ #include "duckdb/main/client_context.hpp"
-++#include "duckdb/main/context.hpp"
-+ #include "duckdb/transaction/transaction_manager.hpp"
-+ 
-+ namespace duckdb {
-+ 
-+ namespace {
-+ 
-+-bool ConnectionScopedMetadataCache(ClientContext &context) {
-++bool ConnectionScopedMetadataCache(Context &context) {
-+ 	Value scope;
-+ 	if (context.TryGetCurrentSetting("glue_metadata_cache_scope", scope) && !scope.IsNull()) {
-+ 		return StringUtil::Lower(StringValue::Get(scope)) == "connection";
-+@@ -22,11 +23,11 @@ bool ConnectionScopedMetadataCache(ClientContext &context) {
-+ 
-+ } // namespace
-+ 
-+-GlueTransaction::GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, ClientContext &context)
-++GlueTransaction::GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, Context &context)
-+     : Transaction(manager, context), glue_catalog(glue_catalog),
-+       transaction_state(GlueTransactionState::TRANSACTION_NOT_YET_STARTED) {
-+ 	if (ConnectionScopedMetadataCache(context)) {
-+-		auto state = context.GetContext().GetRegisteredState().GetOrCreate<GlueMetadataCacheState>("glue_metadata_cache");
-++		auto state = context.GetRegisteredState().GetOrCreate<GlueMetadataCacheState>("glue_metadata_cache");
-+ 		cache = state->GetCache(glue_catalog.GetName().GetIdentifierName(), glue_catalog.GetAttached().oid);
-+ 	} else {
-+ 		cache = make_shared_ptr<GlueTransactionCache>();
-+diff --git a/src/catalog/glue_transaction_manager.cpp b/src/catalog/glue_transaction_manager.cpp
-+index 9f53af1..b5b6778 100644
-+--- a/src/catalog/glue_transaction_manager.cpp
-++++ b/src/catalog/glue_transaction_manager.cpp
-+@@ -11,7 +11,7 @@ GlueTransactionManager::GlueTransactionManager(AttachedDatabase &db_p, GlueCatal
-+     : TransactionManager(db_p), glue_catalog(glue_catalog) {
-+ }
-+ 
-+-Transaction &GlueTransactionManager::StartTransaction(ClientContext &context) {
-++Transaction &GlueTransactionManager::StartTransaction(Context &context, MetaTransaction &) {
-+ 	auto transaction = make_uniq<GlueTransaction>(glue_catalog, *this, context);
-+ 	transaction->Start();
-+ 	auto &result = *transaction;
-+@@ -31,7 +31,7 @@ ErrorData GlueTransactionManager::CommitTransaction(ClientContext &context, Tran
-+ 	return ErrorData();
-+ }
-+ 
-+-void GlueTransactionManager::RollbackTransaction(Transaction &transaction) {
-++void GlueTransactionManager::RollbackTransaction(ClientContext &context, Transaction &transaction) {
-+ 	auto &glue_transaction = transaction.Cast<GlueTransaction>();
-+ 	glue_transaction.Rollback();
-+ 	lock_guard<mutex> l(transaction_lock);
-+diff --git a/src/include/catalog/glue_transaction.hpp b/src/include/catalog/glue_transaction.hpp
-+index 68bb793..db37941 100644
-+--- a/src/include/catalog/glue_transaction.hpp
-++++ b/src/include/catalog/glue_transaction.hpp
-+@@ -146,7 +146,7 @@ private:
-+ //! immediately. The transaction exists because every attached database needs one, and carries the metadata cache.
-+ class GlueTransaction : public Transaction {
-+ public:
-+-	GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, ClientContext &context);
-++	GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, Context &context);
-+ 	~GlueTransaction() override;
-+ 
-+ 	void Start();
-+diff --git a/src/include/catalog/glue_transaction_manager.hpp b/src/include/catalog/glue_transaction_manager.hpp
-+index e37e655..bc17782 100644
-+--- a/src/include/catalog/glue_transaction_manager.hpp
-++++ b/src/include/catalog/glue_transaction_manager.hpp
-+@@ -12,9 +12,9 @@ class GlueTransactionManager : public TransactionManager {
-+ public:
-+ 	GlueTransactionManager(AttachedDatabase &db_p, GlueCatalog &glue_catalog);
-+ 
-+-	Transaction &StartTransaction(ClientContext &context) override;
-++	Transaction &StartTransaction(Context &context, MetaTransaction &) override;
-+ 	ErrorData CommitTransaction(ClientContext &context, Transaction &transaction) override;
-+-	void RollbackTransaction(Transaction &transaction) override;
-++	void RollbackTransaction(ClientContext &context, Transaction &transaction) override;
-+ 
-+ 	void Checkpoint(ClientContext &context, bool force = false) override;
-+ 
+@@ -217,8 +217,11 @@ void MatcherAllocator::InitializeListChains() {
+ 	}
+ }
+ 
+-ParseResultAllocator::ParseResultAllocator()
+-    : arena(Allocator::DefaultAllocator(), PARSER_ARENA_INITIAL_CAPACITY), pending_destructors(arena) {
++ParseResultAllocator::ParseResultAllocator() : ParseResultAllocator(Allocator::DefaultAllocator()) {
++}
++
++ParseResultAllocator::ParseResultAllocator(Allocator &allocator)
++    : arena(allocator, PARSER_ARENA_INITIAL_CAPACITY), pending_destructors(arena) {
+ }
+ 
+ ParseResultAllocator::~ParseResultAllocator() = default;
 ```
 
-**File**: `.github/patches/extensions/iceberg/0005-transaction-takes-context.patch` (added, +678/-0)
+**File**: `src/parser/peg/transformer/peg_transformer_factory.cpp` (modified, +31/-19)
 ```diff
-@@ -0,0 +1,678 @@
-+diff --git a/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp b/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
-+index e30b8dfc8..e16d07a22 100644
-+--- a/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
-++++ b/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
-+@@ -505,13 +505,13 @@ void IcebergSchemaEntry::Alter(CatalogTransaction transaction, AlterInfo &info)
-+ 				}
-+ 				D_ASSERT(state && state->IsDroppedOrRenamed());
-+ 			}
-+-			irc_transaction.RenameTable(catalog_table_info, new_name.GetIdentifierName());
-++			irc_transaction.RenameTable(context, catalog_table_info, new_name.GetIdentifierName());
-+ 			return;
-+ 		}
-+ 	}
-+ 
-+ 	auto &alter = irc_transaction.GetOrCreateAlter();
-+-	auto &updated_table = alter.GetOrInitializeTable(catalog_table_info);
-++	auto &updated_table = alter.GetOrInitializeTable(context, catalog_table_info);
-+ 	auto &transaction_data = updated_table.GetOrCreateTransactionData(irc_transaction);
-+ 	auto &current_schema = updated_table.table_metadata.GetLatestSchema();
-+ 
-+@@ -565,7 +565,7 @@ void IcebergSchemaEntry::Alter(CatalogTransaction transaction, AlterInfo &info)
-+ 		// Ensure last assigned partition field id is up to date
-+ 		transaction_data.TableAddAssertLastAssignedPartitionId();
-+ 
-+-		updated_table.SetSortedBy(irc_transaction, sort_info.orders, current_schema);
-++		updated_table.SetSortedBy(context, irc_transaction, sort_info.orders, current_schema);
-+ 		return;
-+ 	}
-+ 	case AlterTableType::ADD_COLUMN: {
-+diff --git a/src/catalog/rest/catalog_entry/table/iceberg_table.cpp b/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
-+index 4d4a83c43..4034fda70 100644
-+--- a/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
-++++ b/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
-+@@ -551,15 +551,15 @@ void IcebergTable::SetPartitionedBy(IcebergTransaction &transaction,
-+ 	transaction_data.TableSetDefaultSpec();
-+ }
-+ 
-+-void IcebergTable::SetSortedBy(IcebergTransaction &transaction, const vector<OrderByNode> &orders,
-+-                               const IcebergTableSchema &schema, bool first_sort_spec) {
-++void IcebergTable::SetSortedBy(ClientContext &context, IcebergTransaction &transaction,
-++                               const vector<OrderByNode> &orders, const IcebergTableSchema &schema,
-++                               bool first_sort_spec) {
-+ 	idx_t new_sort_order_id = UNSORTED_SORT_ORDER_ID;
-+ 	if (!first_sort_spec && !orders.empty()) {
-+ 		new_sort_order_id = GetNextSortOrderId();
-+ 	}
-+ 
-+-	auto context = transaction.context.lock();
-+-	auto new_sort_order = BuildSortOrder(*context, orders, schema, static_cast<int32_t>(new_sort_order_id));
-++	auto new_sort_order = BuildSortOrder(context, orders, schema, static_cast<int32_t>(new_sort_order_id));
-+ 
-+ 	// if spec definition already exists in a previous spec definition, set it to that spec id
-+ 	// (some catalog may allow duplicate definitions, others not)
-+@@ -824,10 +824,7 @@ IcebergTableMetadata IcebergTable::CreateMetadataFromLog(ClientContext &context,
-+ 	return IcebergTableMetadata::FromTableMetadata(parsed_metadata);
-+ }
-+ 
-+-IcebergTable IcebergTable::Copy(IcebergTransaction &iceberg_transaction) const {
-+-	auto locked_context = iceberg_transaction.context.lock();
-+-	auto &context = *locked_context;
-+-
-++IcebergTable IcebergTable::Copy(ClientContext &context) const {
-+ 	auto ret = Copy();
-+ 	auto transaction_start_ms = IcebergUtils::GetTransactionStartTimeMS(context);
-+ 	auto clock_skew_ms = DEFAULT_METADATA_LOG_CLOCK_SKEW_MS;
-+@@ -891,8 +888,7 @@ shared_ptr<IcebergTable> IcebergTable::CreatePlaceholder(IcebergCatalog &catalog
-+ IcebergTransactionData &IcebergTable::GetOrCreateTransactionData(IcebergTransaction &transaction) {
-+ 	lock_guard<mutex> guard(transaction.lock);
-+ 	if (!transaction_data) {
-+-		auto context = transaction.context.lock();
-+-		transaction_data = make_uniq<IcebergTransactionData>(*context, transaction, *this);
-++		transaction_data = make_uniq<IcebergTransactionData>(transaction, *this);
-+ 	}
-+ 	return *transaction_data;
-+ }
-+diff --git a/src/catalog/rest/iceberg_table_set.cpp b/src/catalog/rest/iceberg_table_set.cpp
-+index d6efdf664..43cea7fe7 100644
-+--- a/src/catalog/rest/iceberg_table_set.cpp
-++++ b/src/catalog/rest/iceberg_table_set.cpp
-+@@ -252,7 +252,7 @@ void IcebergTableSet::DropEntry(ClientContext &context, DropInfo &info, bool del
-+ 
-+ 	// Add the table to the transaction's deleted tables.
-+ 	auto &transaction = IcebergTransaction::Get(context, catalog).Cast<IcebergTransaction>();
-+-	auto &table = transaction.DeleteTable(*entry->second);
-++	auto &table = transaction.DeleteTable(context, *entry->second);
-+ 	//! FIXME: Schema versions point back to their IcebergTable and must be reinitialized after the copy.
-+ 	table.InitSchemaVersions();
-+ }
-+@@ -521,8 +521,8 @@ optional_ptr<CatalogEntry> IcebergTableSet::GetEntry(ClientContext &context, con
-+ 	}
-+ 	iceberg_transaction.tables[table_key] = new_vers
+@@ -19,6 +19,7 @@
+ #include "duckdb/parser/query_node/set_operation_node.hpp"
+ #include "duckdb/parser/statement/merge_into_statement.hpp"
+ #include "duckdb/parser/constraints/foreign_key_constraint.hpp"
++#include "duckdb/common/error_data.hpp"
+ 
+ namespace duckdb {
+ 
+@@ -51,30 +52,36 @@ static unique_ptr<SQLStatement> ExtractAndTransformStatement(PEGTransformer &tra
+ unique_ptr<SQLStatement> PEGTransformerFactory::TransformTopLevelStatement(TokenIterator &token_iterator,
+                                                                            ParserOptions &options,
+                                                                            const CompiledGrammar &grammar,
+-                                                                           optional_idx &failure_index) {
++                                                                           optional_idx &failure_index) try {
+ 	if (!token_iterator.Current()) {
+ 		return nullptr;
+ 	}
+ 	vector<MatcherSuggestion> suggestions;
+-	ParseResultAllocator parse_result_allocator;
++	// Parsing is query work too: count its arenas against the database memory
++	// limit instead of letting a complex statement grow the process unchecked.
++	auto &allocator = options.context ? BufferAllocator::Get(*options.context) : Allocator::DefaultAllocator();
++	ParseResultAllocator parse_result_allocator(allocator);
+ 	idx_t max_token_index = token_iterator.Position();
+-	// the packrat cache outlives the match processes, so they need separate arenas
+-	ArenaAllocator process_allocator(Allocator::DefaultAllocator(), PARSER_ARENA_INITIAL_CAPACITY);
+-	ArenaAllocator packrat_allocator(Allocator::DefaultAllocator(), PARSER_ARENA_INITIAL_CAPACITY);
+-	ParserPackratCache packrat_cache(packrat_allocator, token_iterator.Position(), token_iterator.Size());
+-	MatchContext match_context(suggestions, parse_result_allocator, process_allocator, max_token_index,
+-	                           MatchMode::BUILD_PARSE_RESULT, options.identifier_case_mode, &packrat_cache);
+-	MatchState state(token_iterator, match_context);
+-	auto match_result = grammar.TopLevelStatementMatcher().MatchParseResult(state);
+-	process_allocator.FreeAll();
+-	if (!match_result.IsSuccess()) {
+-		failure_index = state.GetMaxTokenIndex();
+-		return nullptr;
+-	}
+-	D_ASSERT(match_result.HasParseResult());
++	auto match_result = MatcherResult::Failure();
++	{
++		// Match processes and packrat entries are no longer needed once the parse result is built.
++		// the packrat cache outlives the match processes, so they need separate arenas
++		ArenaAllocator process_allocator(allocator, PARSER_ARENA_INITIAL_CAPACITY);
++		ArenaAllocator packrat_allocator(allocator, PARSER_ARENA_INITIAL_CAPACITY);
++		ParserPackratCache packrat_cache(packrat_allocator, token_iterator.Position(), token_iterator.Size());
++		MatchContext match_context(suggestions, parse_result_allocator, process_allocator, max_token_index,
++		                           MatchMode::BUILD_PARSE_RESULT, options.identifier_case_mode, &packrat_cache);
++		MatchState state(token_iterator, match_context);
++		match_result = grammar.TopLevelStatementMatcher().MatchParseResult(state);
++		if (!match_result.IsSuccess()) {
++			failure_index = state.GetMaxTokenIndex();
++			return nullptr;
++		}
++		D_ASSERT(match_result.HasParseResult());
+ 
+-	// Advance the caller's cursor past the consumed tokens.
+-	token_iterator.SetPosition(state.token_iterator);
++		// Advance the caller's cursor past the consumed tokens.
++		token_iterator.SetPosition(state.token_iterator);
++	}
+ 
+ 	// TopLevelStatement <- Statement? (';'+ / EndOfInput)
+ 	//   child 0: Optional<Statement>
+@@ -95,10 +102,15 @@ unique_ptr<SQLStatement> PEGTransformerFactory::TransformTopLevelStatement(Token
+ 		}
+ 	}
+ 
+-	ArenaAllocator transformer_allocator(Allocator::DefaultAllocator(), PARSER_ARENA_INITIAL_CAPACITY);
++	ArenaAllocator transformer_allocator(allocator, PARSER_ARENA_INITIAL_CAPACITY);
+ 	PEGTransformer transformer(transformer_allocator, token_iterator, options, grammar);
+ 
+ 	return ExtractAndTransformStatement(transformer, token_iterator, stmt_opt.GetResult(), terminator_offset);
++} catch (const OutOfMemoryException &ex) {
++	if (!options.context) {
++		throw;
++	}
++	throw OutOfMemoryException("While parsing SQL: %s", ErrorData(ex).RawMessage());
+ }
+ 
+ PEGTransformerFactory::PEGTransformerFactory(ParsedGrammar &grammar_p) : grammar(grammar_p) {
 ```
 
-**File**: `.github/patches/extensions/mysql_scanner/0003-transaction-takes-context.patch` (added, +817/-0)
+**File**: `test/api/test_grammar_extension.cpp` (modified, +49/-0)
 ```diff
-@@ -0,0 +1,817 @@
-+diff --git a/src/include/mysql_types.hpp b/src/include/mysql_types.hpp
-+index bacb77d..06ac6f4 100644
-+--- a/src/include/mysql_types.hpp
-++++ b/src/include/mysql_types.hpp
-+@@ -12,6 +12,7 @@
-+ 
-+ #include "duckdb.hpp"
-+ #include "duckdb/main/client_context.hpp"
-++#include "duckdb/main/context.hpp"
-+ #include "duckdb/parser/expression/type_expression.hpp"
-+ #include "duckdb/parser/parsed_expression.hpp"
-+ 
-+@@ -39,6 +40,7 @@ struct MySQLTypeConfig {
-+ 	bool incomplete_dates_as_nulls = false;
-+ 
-+ 	MySQLTypeConfig();
-++	MySQLTypeConfig(Context &context);
-+ 	MySQLTypeConfig(ClientContext &context);
-+ };
-+ 
-+diff --git a/src/include/storage/mysql_catalog_set.hpp b/src/include/storage/mysql_catalog_set.hpp
-+index 096686b..b676f4a 100644
-+--- a/src/include/storage/mysql_catalog_set.hpp
-++++ b/src/include/storage/mysql_catalog_set.hpp
-+@@ -24,16 +24,17 @@ class MySQLCatalogSet {
-+ public:
-+ 	MySQLCatalogSet(Catalog &catalog);
-+ 
-+-	optional_ptr<CatalogEntry> GetEntry(MySQLTransaction &transaction, const string &name);
-+-	virtual void DropEntry(MySQLTransaction &transaction, DropInfo &info);
-+-	void Scan(MySQLTransaction &transaction, const std::function<void(CatalogEntry &)> &callback);
-++	optional_ptr<CatalogEntry> GetEntry(ClientContext &context, MySQLTransaction &transaction, const string &name);
-++	virtual void DropEntry(ClientContext &context, MySQLTransaction &transaction, DropInfo &info);
-++	void Scan(ClientContext &context, MySQLTransaction &transaction,
-++	          const std::function<void(CatalogEntry &)> &callback);
-+ 	virtual optional_ptr<CatalogEntry> CreateEntry(MySQLTransaction &transaction, shared_ptr<CatalogEntry> entry);
-+ 	void ClearEntries();
-+ 
-+ protected:
-+-	virtual void LoadEntries(MySQLTransaction &transaction) = 0;
-++	virtual void LoadEntries(ClientContext &context, MySQLTransaction &transaction) = 0;
-+ 
-+-	void TryLoadEntries(MySQLTransaction &transaction);
-++	void TryLoadEntries(ClientContext &context, MySQLTransaction &transaction);
-+ 
-+ 	void EraseEntryInternal(const string &name);
-+ 
-+diff --git a/src/include/storage/mysql_index_set.hpp b/src/include/storage/mysql_index_set.hpp
-+index 122a00b..415af85 100644
-+--- a/src/include/storage/mysql_index_set.hpp
-++++ b/src/include/storage/mysql_index_set.hpp
-+@@ -17,10 +17,10 @@ class MySQLIndexSet : public MySQLInSchemaSet {
-+ public:
-+ 	MySQLIndexSet(MySQLSchemaEntry &schema);
-+ 
-+-	void DropEntry(MySQLTransaction &transaction, DropInfo &info) override;
-++	void DropEntry(ClientContext &context, MySQLTransaction &transaction, DropInfo &info) override;
-+ 
-+ protected:
-+-	void LoadEntries(MySQLTransaction &transaction) override;
-++	void LoadEntries(ClientContext &context, MySQLTransaction &transaction) override;
-+ };
-+ 
-+ } // namespace duckdb
-+diff --git a/src/include/storage/mysql_schema_set.hpp b/src/include/storage/mysql_schema_set.hpp
-+index a0762ad..8ceff1e 100644
-+--- a/src/include/storage/mysql_schema_set.hpp
-++++ b/src/include/storage/mysql_schema_set.hpp
-+@@ -23,10 +23,11 @@ public:
-+ 	explicit MySQLSchemaSet(Catalog &catalog, vector<string> schemas_to_load);
-+ 
-+ public:
-+-	optional_ptr<CatalogEntry> CreateSchema(MySQLTransaction &transaction, CreateSchemaInfo &info);
-++	optional_ptr<CatalogEntry> CreateSchema(ClientContext &context, MySQLTransaction &transaction,
-++	                                        CreateSchemaInfo &info);
-+ 
-+ protected:
-+-	void LoadEntries(MySQLTransaction &transaction) override;
-++	void LoadEntries(ClientContext &context, MySQLTransaction &transaction) override;
-+ 
-+ 	vector<string> schemas_to_load;
-+ };
-+diff --git a/src/include/storage/mysql_table_set.hpp b/src/include/storage/mysql_table_set.hpp
-+index 7e01552..96b69fe 100644
-+--- a/src/include/storage/mysql_table_set.hpp
-++++ b/src/include/storage/mysql_table_set.hpp
-+@@ -25,21 +25,23 @@ public:
-+ 	explicit MySQLTableSet(MySQLSchemaEntry &schema);
-+ 
-+ public:
-+-	optional_ptr<CatalogEntry> CreateTable(MySQLTransaction &transaction, BoundCreateTableInfo &info);
-++	optional_ptr<CatalogEntry> CreateTable(ClientContext &context, MySQLTransaction &transaction,
-++	                                       BoundCreateTableInfo &info);
-+ 
-+-	static unique_ptr<MySQLTableInfo> GetTableInfo(MySQLTransaction &transaction, MySQLSchemaEntry &schema,
-+-	                                               const string &table_name);
-+-	optional_ptr<CatalogEntry> RefreshTable(MySQLTransaction &transaction, const string &table_name);
-++	static unique_ptr<MySQLTableInfo> GetTableInfo(ClientContext &context, MySQLTransaction &transaction,
-++	                                               MySQLSchemaEntry &schema, const string &table_name);
-++	optional_ptr<CatalogEntry> RefreshTable(ClientContext &context, MySQLTransaction &transaction,
-++	                                        const string &table_name);
-+ 
-+-	void AlterTable(MySQLTransaction &transaction, AlterTableInfo &info);
-++	void AlterTable(ClientContext &context, MySQLTransaction &transaction, AlterTa
+@@ -8,6 +8,7 @@
+ #include "duckdb/common/limits.hpp"
+ #include "duckdb/main/parse_iterator.hpp"
+ #include "duckdb/main/settings.hpp"
++#include "duckdb/storage/buffer_manager.hpp"
+ #include "duckdb/parser/expression/constant_expression.hpp"
+ #include "duckdb/parser/grammar_extension.hpp"
+ #include "duckdb/parser/parser.hpp"
+@@ -3735,3 +3736,51 @@ TEST_CASE("The parser's tokens keep the literal info the tokenizer cached", "[ap
+ 	REQUIRE_FALSE(borrowing_iterator.GetToken(0).HasLiteralInfo(table));
+ 	REQUIRE(borrowed[0].GetLiteralInfo(table).LiteralId() == table.Lookup("SELECT").LiteralId());
+ }
++
++class MemoryLimitGrammarExtension final : public GrammarExtension {
++public:
++	MemoryLimitGrammarExtension() : GrammarExtension("memory_limit_test", "ARENA_MEMORY") {
++	}
++
++	vector<GrammarChange> GetChanges() const override {
++		vector<GrammarChange> changes;
++		changes.push_back(GrammarChange::AddRule(
++		    "ArenaMemoryStatement <- 'ARENA_MEMORY'",
++		    [this](PEGTransformer &transformer, ParseResult &) -> arena_ptr<TransformProcess> {
++			    transform_calls++;
++			    auto &buffer_manager = transformer.options.context->GetBufferManager();
++			    transformer.GetAllocator().Allocate(buffer_manager.GetMaxMemory());
++			    throw InternalException("Transform arena allocation unexpectedly exceeded the memory limit");
++		    }));
++		changes.push_back(GrammarChange::PrependChoice("Statement", "ArenaMemoryStatement"));
++		return changes;
++	}
++
++	mutable idx_t transform_calls = 0;
++};
++
++TEST_CASE("Top-level transform arenas honor the database memory limit", "[api][grammar_extension]") {
++	DuckDB db(nullptr);
++	Connection con(db);
++	auto extension = make_shared_ptr<MemoryLimitGrammarExtension>();
++	GrammarExtension::Register(*db.instance, extension);
++	REQUIRE_NO_FAIL(con.Query("SET active_grammar_extensions=['memory_limit_test']"));
++	REQUIRE_NO_FAIL(con.Query("SET memory_limit='16MB'"));
++	auto &buffer_manager = BufferManager::GetBufferManager(*con.context);
++	const auto memory_before = buffer_manager.GetUsedMemory();
++	for (idx_t attempt = 0; attempt < 2; attempt++) {
++		auto result = con.Query("ARENA_MEMORY");
++		REQUIRE(result->HasError());
++		REQUIRE(result->GetErrorType() == ExceptionType::OUT_OF_MEMORY);
++		REQUIRE(extension->transform_calls == attempt + 1);
++		REQUIRE(buffer_manager.GetUsedMemory() == memory_before);
++		REQUIRE_NO_FAIL(con.Query("SELECT 42"));
++	}
++	Parser parser(*con.context);
++	try {
++		parser.ParseQuery("ARENA_MEMORY");
++		FAIL("Expected an out-of-memory exception during parsing");
++	} catch (const OutOfMemoryException &ex) {
++		REQUIRE(StringUtil::Contains(ErrorData(ex).RawMessage(), "While parsing SQL:"));
++	}
++}
 ```
 
-**File**: `.github/patches/extensions/mysql_scanner/0004-database-connector-transaction-manager-takes-context.patch` (added, +51/-0)
+**File**: `test/sql/json/peg_memory_limit.test` (added, +64/-0)
 ```diff
-@@ -0,0 +1,51 @@
-+--- a/database-connector/src/include/dbconnector/storage/transaction_manager.hpp
-++++ b/database-connector/src/include/dbconnector/storage/transaction_manager.hpp
-+@@ -5,6 +5,8 @@
-+ #include "duckdb/common/reference_map.hpp"
-+ #include "duckdb/main/attached_database.hpp"
-+ #include "duckdb/main/client_context.hpp"
-++#include "duckdb/main/context.hpp"
-++#include "duckdb/transaction/meta_transaction.hpp"
-+ #include "duckdb/transaction/transaction_manager.hpp"
-+ 
-+ namespace dbconnector {
-+@@ -17,7 +19,7 @@
-+ 	    : duckdb::TransactionManager(db_p), catalog(catalog_p) {
-+ 	}
-+ 
-+-	duckdb::Transaction &StartTransaction(duckdb::ClientContext &context) override {
-++	duckdb::Transaction &StartTransaction(duckdb::Context &context, duckdb::MetaTransaction &) override {
-+ 		auto transaction = duckdb::make_uniq<TransactionT>(catalog, *this, context);
-+ 		transaction->Start();
-+ 		auto &result = *transaction;
-+@@ -30,7 +32,7 @@
-+ 		auto &db_transaction = transaction.Cast<TransactionT>();
-+ 		duckdb::ErrorData error;
-+ 		try {
-+-			db_transaction.Commit();
-++			db_transaction.Commit(context);
-+ 		} catch (const std::exception &ex) {
-+ 			error = duckdb::ErrorData(ex);
-+ 		} catch (...) {
-+@@ -40,10 +42,10 @@
-+ 		return error;
-+ 	}
-+ 
-+-	void RollbackTransaction(duckdb::Transaction &transaction) override {
-++	void RollbackTransaction(duckdb::ClientContext &context, duckdb::Transaction &transaction) override {
-+ 		auto &db_transaction = transaction.Cast<TransactionT>();
-+ 		try {
-+-			db_transaction.Rollback();
-++			db_transaction.Rollback(context);
-+ 		} catch (...) {
-+ 			DestroyTransaction(transaction);
-+ 			throw;
-+@@ -53,7 +55,7 @@
-+ 
-+ 	void Checkpoint(duckdb::ClientContext &context, bool force = false) override {
-+ 		auto &transaction = TransactionT::Get(context, db.GetCatalog());
-+-		auto &conn = transaction.GetConnection();
-++		auto &conn = transaction.GetConnection(context);
-+ 		conn.Execute(context, "CHECKPOINT");
-+ 	}
-+ 
+@@ -0,0 +1,64 @@
++# name: test/sql/json/peg_memory_limit.test
++# description: JSON SQL and type parsing preserve PEG out-of-memory errors
++# group: [json]
++
++require json
++
++statement ok
++SET VARIABLE oversized_statement = 'SELECT [' || repeat('1,', 400000) || '1]';
++
++statement ok
++SET VARIABLE oversized_type = (
++    SELECT '"STRUCT(' || string_agg('c' || i || ' INTEGER', ',') || ')"'
++    FROM range(10000) t(i)
++);
++
++statement ok
++SET memory_limit='16MB';
++
++statement ok
++SET VARIABLE parser_memory_before = (
++    SELECT memory_usage_bytes FROM duckdb_memory() WHERE tag='ALLOCATOR'
++);
++
++# Allocation failure must abort the query, rather than become a successful JSON error value.
++foreach serializer json_serialize_sql json_serialize_plan
++
++statement error
++SELECT {serializer}(getvariable('oversized_statement'));
++----
++<REGEX>:Out of Memory Error: While parsing SQL: failed to allocate data of size .* \(.*/.* used\).*
++
++query I
++SELECT memory_usage_bytes <= getvariable('parser_memory_before')
++FROM duckdb_memory() WHERE tag='ALLOCATOR';
++----
++true
++
++endloop
++
++# Type parsing must preserve OOM instead of reporting an invalid type name.
++statement error
++SELECT json_transform('{}', getvariable('oversized_type'));
++----
++<REGEX>:Out of Memory Error: While parsing SQL: failed to allocate data of size .* \(.*/.* used\).*
++
++query I
++SELECT memory_usage_bytes <= getvariable('parser_memory_before')
++FROM duckdb_memory() WHERE tag='ALLOCATOR';
++----
++true
++
++# Ordinary parse errors still use the existing JSON error-value contract.
++query TT
++SELECT json_serialize_sql('SELECT') ->> 'error', json_serialize_sql('SELECT') ->> 'error_type';
++----
++true	parser
++
++query I
++SELECT 42;
++----
++42
++
++statement ok
++RESET memory_limit;
 ```
 
 ---
 
-### Incident Patch 3: `8c17d8c3` (2026-11-20)
-**Commit Message**: fix ci
+### Incident Patch 3: `8b2341c3` (2026-11-23)
+**Commit Message**: Narrow full joins before pushing down null-rejecting filters (#29195)
 
-**File**: `test/configs/force_storage_restart.json` (modified, +1/-0)
+## Problem
+
+A query using `FULL JOIN ... WHERE a.age <= 25` can read every Parquet
+row group even when the equivalent `LEFT JOIN` prunes most of them.
+DuckDB proves that the join can become a LEFT join after the general
+filter pushdown pass has already visited it. The predicate ends up in a
+separate filter above the scan. See
+[duckdb/duckdb#29171](https://github.com/duckdb/duckdb/issues/29171).
+
+## Change
+
+During filter pushdown, reuse the existing NULL-rejection check for
+predicates that reference a single input of a FULL comparison join. When
+substituting NULLs for that input proves the predicate cannot be true,
+narrow the join and use the existing LEFT or INNER pushdown path. A
+right-preserving join swaps the inputs and comparison operands. The
+rewrite respects the outer-join simplification setting and guards
+against volatile or potentially throwing expressions.
+
+The shared-key rewrite runs while the comparison join is still FULL. It
+attaches a range on the coalesced equality key to both original inputs.
+The remaining filters can then narrow the join without losing Parquet
+row-group pruning, including when th
+
+**File**: `src/optimizer/pushdown/pushdown_aggregate.cpp` (modified, +8/-7)
 ```diff
-@@ -55,6 +55,7 @@
-       "paths": [
-         "test/sql/copy/parquet/bloom_filter_coalesced_memory.test_slow",
-         "test/sql/copy/parquet/bloom_filter_coalesced_reads.test",
-+        "test/sql/copy/parquet/bloom_filter_or_reads.test",
-         "test/sql/storage/compression/zstd/zstd_compression_ratio.test_slow",
-         "test/sql/logging/logging_memory_after_truncate.test",
-         "test/sql/logging/logging_deprecated_names.test",
+@@ -9,15 +9,16 @@ namespace duckdb {
+ 
+ using Filter = FilterPushdown::Filter;
+ 
+-static bool IsVolatile(LogicalAggregate &aggr, const Expression &expr) {
+-	bool is_volatile = false;
++static bool CanInlineGroupBindings(LogicalAggregate &aggr, const Expression &expr) {
++	bool can_inline = true;
+ 	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(expr, [&](const BoundColumnRefExpression &colref) {
+ 		D_ASSERT(colref.Depth() == 0);
+-		if (aggr.GetExpression(colref.Binding()).IsVolatile()) {
+-			is_volatile = true;
++		auto &group_expr = aggr.GetExpression(colref.Binding());
++		if (group_expr.IsVolatile() || group_expr.CanThrow()) {
++			can_inline = false;
+ 		}
+ 	});
+-	return is_volatile;
++	return can_inline;
+ }
+ 
+ static unique_ptr<Expression> ReplaceGroupBindings(LogicalAggregate &aggr, unique_ptr<Expression> root_expr) {
+@@ -82,8 +83,8 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownAggregate(unique_ptr<Logical
+ 		if (!can_pushdown_filter) {
+ 			continue;
+ 		}
+-		if (f.filter->IsVolatile() || IsVolatile(aggr, *f.filter)) {
+-			// a volatile filter is evaluated once per group, not once per input row
++		if (f.filter->IsVolatile() || !CanInlineGroupBindings(aggr, *f.filter)) {
++			// Keep volatile evaluation counts and the rows seen by throwing group expressions unchanged.
+ 			continue;
+ 		}
+ 		// no aggregate! we can push this down
+```
+
+**File**: `src/optimizer/pushdown/pushdown_outer_join.cpp` (modified, +86/-22)
+```diff
+@@ -1,7 +1,13 @@
+ #include "duckdb/optimizer/filter_pushdown.hpp"
+ #include "duckdb/parser/expression_map.hpp"
++#include "duckdb/planner/expression/bound_between_expression.hpp"
++#include "duckdb/planner/expression/bound_columnref_expression.hpp"
++#include "duckdb/planner/expression/bound_comparison_expression.hpp"
+ #include "duckdb/planner/expression/bound_constant_expression.hpp"
++#include "duckdb/planner/expression/bound_operator_expression.hpp"
++#include "duckdb/planner/expression/expression_barrier.hpp"
+ #include "duckdb/planner/expression_iterator.hpp"
++#include "duckdb/planner/logical_operator_visitor.hpp"
+ #include "duckdb/planner/operator/logical_comparison_join.hpp"
+ 
+ namespace duckdb {
+@@ -93,7 +99,7 @@ static bool ExprIsFunctionOnlyOf(const Expression &expr, const expression_set_t
+ //! is a join condition of the form `l = r` where `l` and `r` are join keys for
+ //! the left and right table respectively, then pushdown `P(l)` to the left
+ //! table, `P(r)` to the right table, and remove the original filter.
+-static bool
++static void
+ PushDownFiltersOnCoalescedEqualJoinKeys(vector<unique_ptr<Filter>> &filters, vector<JoinCondition> &join_conditions,
+                                         const std::function<void(unique_ptr<Expression> filter)> &pushdown_left,
+                                         const std::function<void(unique_ptr<Expression> filter)> &pushdown_right) {
+@@ -116,10 +122,9 @@ PushDownFiltersOnCoalescedEqualJoinKeys(vector<unique_ptr<Filter>> &filters, vec
+ 	}
+ 
+ 	if (join_cond_by_coalesced_join_keys.empty()) {
+-		return false;
++		return;
+ 	}
+ 
+-	bool has_applied_pushdown = false;
+ 	for (idx_t i = 0; i < filters.size(); i++) {
+ 		auto &filter = filters[i]->filter;
+ 		if (filter->IsVolatile() || filter->CanThrow()) {
+@@ -164,38 +169,97 @@ PushDownFiltersOnCoalescedEqualJoinKeys(vector<unique_ptr<Filter>> &filters, vec
+ 		pushdown_left(std::move(left_filter));
+ 		pushdown_right(std::move(right_filter));
+ 		filters.erase_at(i);
+-		has_applied_pushdown = true;
+ 		i--;
+ 	}
++}
+ 
+-	return has_applied_pushdown;
++static bool CanSplitOuterJoinFilters(LogicalOperator &join, const vector<unique_ptr<Filter>> &filters) {
++	for (auto &filter : filters) {
++		if (filter->filter->IsVolatile() || filter->filter->CanThrow()) {
++			return false;
++		}
++	}
++	bool can_split = true;
++	LogicalOperatorVisitor::EnumerateExpressions(join, [&](unique_ptr<Expression> *expr) {
++		if ((*expr)->IsVolatile() || ExpressionBarrier::Contains(**expr)) {
++			can_split = false;
++		}
++	});
++	return can_split;
++}
++
++static void PushDownComparisonFilters(vector<unique_ptr<Filter>> &filters, const unordered_set<TableIndex> &bindings,
++                                      vector<unique_ptr<Expression>> &child_filters) {
++	auto is_non_null_constant = [](const Expression &expr) {
++		return expr.GetExpressionClass() == ExpressionClass::BOUND_CONSTANT &&
++		       !expr.Cast<BoundConstantExpression>().GetValue().IsNull();
++	};
++	for (auto &filter_ptr : filters) {
++		auto &filter = *filter_ptr;
++		auto &expr = *filter.filter;
++		optional_ptr<const Expression> column;
++		if (expr.GetExpressionType() == ExpressionType::COMPARE_BETWEEN) {
++			auto &between = expr.Cast<BoundFunctionExpression>();
++			if (!is_non_null_constant(BoundBetweenExpression::LowerBound(between)) ||
++			    !is_non_null_constant(BoundBetweenExpression::UpperBound(between))) {
++				continue;
++			}
++			column = BoundBetweenExpression::Input(between);
++		} else {
++			if (!BoundComparisonExpression::IsComparison(expr) ||
++			    expr.GetExpressionType() == ExpressionType::COMPARE_DISTINCT_FROM ||
++			    expr.GetExpressionType() == ExpressionType::COMPARE_NOT_DISTINCT_FROM) {
++				continue;
++			}
++			auto &comparison = expr.Cast<BoundFunctionExpression>();
++			auto &left = BoundComparisonExpression::Left(comparison);
++			auto &right = BoundComparisonExpression::Right(comparison);
++			const auto left_is_column = left.GetExpressionClass() == ExpressionClass::BOUND_COLUMN_REF;
++			column = left_is_column ? left : right;
++			if (!is_non_null_constant(left_is_column ? right : left)) {
++				continue;
++			}
++		}
++		if (column->GetExpressionClass() != ExpressionClass::BOUND_COLUMN_REF) {
++			continue;
++		}
++		auto &colref = column->Cast<BoundColumnRefExpression>();
++		if (colref.Depth() != 0 || !bindings.count(colref.Binding().table_index)) {
++			continue;
++		}
++		child_filters.push_back(std::move(filter.filter));
++		// Removing a match can create an unmatched row on the other side: reject its NULL-extended column.
++		filter.filter = make_uniq<BoundOperatorExpression>(ExpressionType::OPERATOR_IS_NOT_NULL, LogicalType::BOOLEAN,
++		                                                   column->Copy());
++		filter.ExtractBindings();
++	}
+ }
+ 
+ unique_ptr<LogicalOperator> FilterPushdown::PushdownOuterJoin(unique_ptr<LogicalOperator> op,
+                                                               unordered_set<TableIndex> &left_bindings,
+                                       
+```
+
+**File**: `src/optimizer/pushdown/pushdown_projection.cpp` (modified, +31/-25)
+```diff
+@@ -10,16 +10,20 @@
+ 
+ namespace duckdb {
+ 
+-static bool IsVolatile(LogicalProjection &proj, const Expression &expr) {
+-	bool is_volatile = false;
+-	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(expr, [&](const BoundColumnRefExpression &colref) {
+-		D_ASSERT(colref.Depth() == 0);
+-		auto &proj_expr = proj.GetExpression(colref.Binding());
+-		if (proj_expr.IsVolatile()) {
+-			is_volatile = true;
+-		}
+-	});
+-	return is_volatile;
++static bool CanPushProjectionFilter(LogicalProjection &proj, const FilterPushdown::Filter &filter) {
++	if (filter.filter->CanThrow() && !filter.has_barrier) {
++		return false;
++	}
++	bool can_push = true;
++	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(
++	    *filter.filter, [&](const BoundColumnRefExpression &colref) {
++		    D_ASSERT(colref.Depth() == 0);
++		    auto &proj_expr = proj.GetExpression(colref.Binding());
++		    if (proj_expr.IsVolatile()) {
++			    can_push = false;
++		    }
++	    });
++	return can_push;
+ }
+ 
+ // A compress expression only holds where it was placed, so a filter must not inline it into a position below
+@@ -34,16 +38,20 @@ static bool ReferencesCompressExpression(LogicalProjection &proj, const Expressi
+ 	return references_compress_expression;
+ }
+ 
+-static bool ReferencesComputedExpression(LogicalProjection &proj, const Expression &expr) {
+-	bool references_computed_expression = false;
+-	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(expr, [&](const BoundColumnRefExpression &colref) {
+-		D_ASSERT(colref.Depth() == 0);
+-		auto &proj_expr = proj.GetExpression(colref.Binding());
+-		if (proj_expr.GetExpressionClass() != ExpressionClass::BOUND_COLUMN_REF) {
+-			references_computed_expression = true;
+-		}
+-	});
+-	return references_computed_expression;
++static bool NeedsProjectionSplit(LogicalProjection &proj, const FilterPushdown::Filter &filter,
++                                 FilterPushdown::ProjectionMode projection_mode) {
++	bool needs_split = false;
++	ExpressionIterator::VisitExpression<BoundColumnRefExpression>(
++	    *filter.filter, [&](const BoundColumnRefExpression &colref) {
++		    D_ASSERT(colref.Depth() == 0);
++		    auto &proj_expr = proj.GetExpression(colref.Binding());
++		    if ((!filter.has_barrier && proj_expr.CanThrow()) ||
++		        (projection_mode == FilterPushdown::ProjectionMode::PRESERVE_COMPUTED_EXPRESSIONS &&
++		         proj_expr.GetExpressionClass() != ExpressionClass::BOUND_COLUMN_REF)) {
++			    needs_split = true;
++		    }
++	    });
++	return needs_split;
+ }
+ 
+ static unique_ptr<Expression> CreateColumnReference(const Expression &expr, ColumnBinding binding) {
+@@ -168,12 +176,10 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownProjection(unique_ptr<Logica
+ 	vector<unique_ptr<Expression>> remain_expressions;
+ 	vector<unique_ptr<Expression>> split_expressions;
+ 	auto stays_on_top = [&](const Filter &f) {
+-		return IsVolatile(proj, *f.filter) || ReferencesCompressExpression(proj, *f.filter) ||
+-		       (f.filter->CanThrow() && !f.has_barrier);
++		return !CanPushProjectionFilter(proj, f) || ReferencesCompressExpression(proj, *f.filter);
+ 	};
+ 	auto splits_off = [&](const Filter &f) {
+-		return projection_mode == ProjectionMode::PRESERVE_COMPUTED_EXPRESSIONS &&
+-		       ReferencesComputedExpression(proj, *f.filter);
++		return NeedsProjectionSplit(proj, f, projection_mode);
+ 	};
+ 	// barred expressions may only cross the projection if every other filter does: a filter kept on top of the
+ 	// projection, or split off below it, would otherwise be evaluated after them
+@@ -187,7 +193,7 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownProjection(unique_ptr<Logica
+ 		auto &f = *filter;
+ 		D_ASSERT(f.bindings.size() <= 1);
+ 		if (stays_on_top(f) || (f.has_barrier && hold_back_barriers)) {
+-			// Volatile and throwing expressions and filters over compressed columns cannot move across the
++			// Volatile inputs, throwing filters and filters over compressed columns cannot move across the
+ 			// projection. Expressions carrying a barrier are the exception: a projection does not remove any rows,
+ 			// so pushing them through it does not change which rows they are evaluated on - unless another filter
+ 			// stays behind, see above.
+```
+
+**File**: `test/optimizer/full_join_filter_pushdown.test` (added, +270/-0)
+```diff
+@@ -0,0 +1,270 @@
++# name: test/optimizer/full_join_filter_pushdown.test
++# description: Push comparisons into FULL join inputs while retaining NULL rejection
++# group: [optimizer]
++
++statement ok
++CREATE TABLE lhs (id INTEGER, la INTEGER);
++CREATE TABLE rhs (id INTEGER, ra INTEGER);
++INSERT INTO lhs VALUES (1, 20), (2, 30), (3, NULL), (4, 25);
++INSERT INTO rhs VALUES (1, 20), (1, 21), (2, 40), (3, NULL), (5, 25);
++
++query II
++EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25;
++----
++physical_plan	<REGEX>:.*Filters:.*la <= 25.*
++
++query III
++SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25 ORDER BY 1, 2, 3;
++----
++1	1	20
++1	1	21
++4	NULL	NULL
++
++query II
++EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE r.ra <= 25;
++----
++physical_plan	<REGEX>:.*Filters:.*ra <= 25.*
++
++query III
++SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE r.ra <= 25 ORDER BY 1, 2, 3;
++----
++1	1	20
++1	1	21
++NULL	5	25
++
++query II
++EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25 AND r.ra <= 25;
++----
++physical_plan	<REGEX>:.*Join Type: INNER.*
++
++query III
++SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id
++WHERE l.la <= 25 AND r.ra <= 25 ORDER BY 1, 2, 3;
++----
++1	1	20
++1	1	21
++
++query II
++SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la IS NULL ORDER BY 1, 2;
++----
++3	3
++NULL	5
++
++# Simple projections and reversed operands retain the original output bindings.
++query IIII
++SELECT r.ra, l.k, r.id, l.a
++FROM (SELECT la AS a, id AS k FROM lhs) l FULL JOIN rhs r ON l.k = r.id
++WHERE 25 >= l.a ORDER BY l.k, r.ra;
++----
++20	1	1	20
++21	1	1	20
++NULL	4	NULL	25
++
++# The ordinary outer-join simplifier still narrows a one-sided predicate.
++query II
++EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25;
++----
++physical_plan	<REGEX>:.*Join Type: (LEFT|RIGHT).*
++
++statement ok
++SET disabled_optimizers = 'outer_join_simplification';
++
++query II
++EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id WHERE l.la <= 25;
++----
++physical_plan	<REGEX>:.*la IS NOT NULL.*Join Type: FULL.*Filters:.*la <= 25.*
++
++query II
++EXPLAIN SELECT l.k, r.id
++FROM (SELECT la AS a, id AS k FROM lhs) l FULL JOIN rhs r ON l.k = r.id WHERE 25 >= l.a;
++----
++physical_plan	<REGEX>:.*Join Type: FULL.*Filters:.*la <= 25.*
++
++# Removing the last match must not leave a new unmatched row from the other input.
++query III
++SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id
++WHERE l.la <= 25 ORDER BY 1, 2, 3;
++----
++1	1	20
++1	1	21
++4	NULL	NULL
++
++query III
++SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id
++WHERE 25 >= r.ra ORDER BY 1, 2, 3;
++----
++1	1	20
++1	1	21
++NULL	5	25
++
++query III
++SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id = r.id
++WHERE l.la <= 25 AND r.ra <= 25 ORDER BY 1, 2, 3;
++----
++1	1	20
++1	1	21
++
++# The residual also protects matches removed from a non-equality FULL join.
++query II
++SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id < r.id
++WHERE l.la > 25 ORDER BY 1, 2;
++----
++2	3
++2	5
++
++# Paired bounds are combined into BETWEEN before filter pushdown.
++query II
++SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id
++WHERE l.la >= 20 AND l.la < 25 ORDER BY 1, 2;
++----
++1	1
++1	1
++
++# Multiple predicates on one column retain all comparisons.
++query II
++SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id
++WHERE l.la <= 25 AND l.la <> 20 ORDER BY 1, 2;
++----
++4	NULL
++
++# A one-sided ON condition uses a regular ANY join.
++query II
++EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id < 3 WHERE r.ra <= 25;
++----
++physical_plan	<REGEX>:.*Join Type: FULL.*Filters:.*ra <= 25.*
++
++query III
++SELECT l.id, r.id, r.ra FROM lhs l FULL JOIN rhs r ON l.id < 3
++WHERE r.ra <= 25 ORDER BY 1, 2, 3;
++----
++1	1	20
++1	1	21
++1	5	25
++2	1	20
++2	1	21
++2	5	25
++
++query I
++SELECT count(*) FROM lhs l FULL JOIN rhs r USING (id)
++WHERE id BETWEEN 1 AND 2 AND l.id > 2;
++----
++0
++
++# NULL-safe comparisons must retain their original NULL behavior.
++query II
++SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id
++WHERE l.la IS NOT DISTINCT FROM NULL ORDER BY 1, 2;
++----
++3	3
++NULL	5
++
++query II
++SELECT l.id, r.id FROM lhs l FULL JOIN rhs r ON l.id = r.id
++WHERE l.la IS DISTINCT FROM 25 ORDER BY 1, 2;
++----
++1	1
++1	1
++2	2
++3	3
++NULL	5
++
++# A synthesized row must not reach a throwing sibling before the NULL check.
++statement ok
++CREATE TABLE match_rhs AS SELECT * FROM rhs WHERE id < 5;
++
++query II
++EXPLAIN SELECT l.id, r.id FROM lhs l FULL JOIN match_rhs r ON l.id = r.id
++WHERE l.la <= 25 AND CASE WHEN l.id IS NULL THEN (r.ra * 1000)::TINYINT ELSE 0 END = 0;
++----
++physical_plan	<!REGEX>:.*Filters:.*la <= 25.*
++
++query II
++SELECT l.id, r.id FROM lhs l FULL JOIN match_rhs r ON l.id = r.id
++WHERE l.la <= 25 AND CASE WHEN l.id IS NULL THEN (r.ra * 1000)::TINYINT ELSE 0 END = 0
++ORDER BY 1, 2;
++----
++1	1
++
+```
+
+**File**: `test/optimizer/pushdown/full_join_shared_key_range.test` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++# name: test/optimizer/pushdown/full_join_shared_key_range.test
++# description: FULL join pushdown preserves shared-key and one-sided scan pruning
++# group: [pushdown]
++
++require parquet
++
++statement ok
++SET threads = 1;
++
++statement ok
++COPY (SELECT i AS id, (i % 40)::INTEGER AS age FROM range(16384) t(i) ORDER BY i)
++TO '{TEST_DIR}/full_join_shared_key_range.parquet' (FORMAT PARQUET, ROW_GROUP_SIZE 2048);
++
++statement ok
++CREATE VIEW ages AS SELECT * FROM read_parquet('{TEST_DIR}/full_join_shared_key_range.parquet');
++
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT id FROM ages l FULL JOIN ages r USING (id)
++WHERE id BETWEEN 100 AND 106 AND l.age <= 25 ORDER BY id;
++----
++analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,.*"row_groups_scanned": 1,.*
++
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT id FROM ages l FULL JOIN ages r USING (id)
++WHERE id BETWEEN 100 AND 106 AND r.age <= 25 ORDER BY id;
++----
++analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,.*"row_groups_scanned": 1,.*
++
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT id FROM ages l FULL JOIN ages r USING (id)
++WHERE id BETWEEN 100 AND 106 AND l.age <= 25 AND r.age <= 25 ORDER BY id;
++----
++analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,.*"row_groups_scanned": 1,.*
++
++query I
++SELECT id FROM ages l FULL JOIN ages r USING (id)
++WHERE id BETWEEN 100 AND 106 AND l.age <= 25 AND r.age <= 25 ORDER BY id;
++----
++100
++101
++102
++103
++104
++105
++
++# Cluster age independently of the original fixture's repeating values.
++statement ok
++COPY (SELECT i AS id, i::INTEGER AS age FROM range(16384) t(i) ORDER BY age)
++TO '{TEST_DIR}/full_join_age_range.parquet' (FORMAT PARQUET, ROW_GROUP_SIZE 2048);
++CREATE VIEW sorted_ages AS SELECT * FROM read_parquet('{TEST_DIR}/full_join_age_range.parquet');
++CREATE TABLE other_ids AS SELECT i AS id FROM range(16384) t(i);
++
++# Identify the Parquet input by its eight row groups; age alone must prune it.
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT count(*) FROM sorted_ages l FULL JOIN other_ids r USING (id) WHERE l.age < 2048;
++----
++analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,[^{}]*"total_row_groups_to_scan": 8,.*
++
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT count(*) FROM other_ids l FULL JOIN sorted_ages r USING (id) WHERE r.age < 2048;
++----
++analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,[^{}]*"total_row_groups_to_scan": 8,.*
++
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT count(*) FROM sorted_ages l LEFT JOIN other_ids r USING (id) WHERE l.age < 2048;
++----
++analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,[^{}]*"total_row_groups_to_scan": 8,.*
++
++# Keep the FULL join while checking BETWEEN and combined-filter pruning.
++statement ok
++SET disabled_optimizers = 'outer_join_simplification';
++
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT count(*) FROM sorted_ages l FULL JOIN other_ids r USING (id)
++WHERE l.age >= 2048 AND l.age < 4096;
++----
++analyzed_plan	<REGEX>:.*"row_groups_scanned": 1,[^{}]*"total_row_groups_to_scan": 8,.*
++
++query I
++SELECT count(*) FROM sorted_ages l FULL JOIN other_ids r USING (id)
++WHERE l.age >= 2048 AND l.age < 4096;
++----
++2048
++
++# The shared key admits two groups; age must remove one more on the affected input.
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT count(*) FROM sorted_ages l FULL JOIN sorted_ages r USING (id)
++WHERE id BETWEEN 0 AND 4095 AND l.age < 2048;
++----
++analyzed_plan	<REGEX>:.*("row_groups_scanned": 1,.*"row_groups_scanned": 2,|"row_groups_scanned": 2,.*"row_groups_scanned": 1,).*
++
++query I
++SELECT count(*) FROM sorted_ages l FULL JOIN sorted_ages r USING (id)
++WHERE id BETWEEN 0 AND 4095 AND l.age < 2048;
++----
++2048
++
++statement ok
++RESET disabled_optimizers;
+```
+
+**File**: `test/sql/cte/materialized/cte_filter_pusher.test` (modified, +2/-2)
+```diff
+@@ -94,7 +94,7 @@ WHERE x < 10;
+ ----
+ 288
+ 
+-# Ordinary filter pushdown still moves computed predicates below unrelated projection expressions
++# Ordinary filter pushdown also splits throwing inputs from unrelated projection expressions
+ query II
+ EXPLAIN SELECT sum(length(payload))
+ FROM (
+@@ -103,7 +103,7 @@ FROM (
+ ) sq
+ WHERE x < 10;
+ ----
+-logical_opt	<REGEX>:(?s).*Expressions: payload.*Expressions: \(i \+ 1\) < 10.*Range.*
++logical_opt	<REGEX>:(?s).*Expressions: payload.*Expressions: x < 10.*Expressions: x, i.*Range.*
+ 
+ # Preserve NULLs and duplicates while splitting a computed projection
+ statement ok
+```
+
+**File**: `test/sql/optimizer/barrier_projection_siblings.test` (modified, +11/-0)
+```diff
+@@ -96,3 +96,14 @@ WITH computed AS MATERIALIZED (
+ SELECT sum(v) FROM computed WHERE k=2
+ ----
+ 1
++
++# Throwing filter inputs also permit splitting ordinary projections.
++query I
++SELECT sum(v)
++FROM (
++    SELECT i+1 AS k, CASE WHEN i=0 THEN error('filtered projection') ELSE i END AS v
++    FROM pushdown_rows
++) computed
++WHERE k=2
++----
++1
+```
+
+**File**: `test/sql/optimizer/test_no_pushdown_cast_into_cte.test` (modified, +2/-2)
+```diff
+@@ -43,7 +43,7 @@ SELECT a, b
+ FROM   t
+ WHERE  a < b;
+ ----
+-logical_opt	<REGEX>:.*FILTER.*CAST\(a AS INTEGER.*<.*b AS INTEGER\).*FILTER.*position.*
++logical_opt	<REGEX>:.*FILTER.*a < b.*PROJECTION.*CAST\(a AS INTEGER\).*CAST\(b AS INTEGER\).*FILTER.*position.*
+ 
+ 
+ # INT can always be cast to varchar, so the filter a[1] = '1'
+@@ -106,4 +106,4 @@ where mycolname[1:3] != 'xxx' AND mycolname2 = 0 limit 5;
+ 0
+ 0
+ 0
+-0
+\ No newline at end of file
++0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29134** (closed): Skip plan-cost regression checks for identical plans (@lnkuiper)
-- **PR #29131** (closed): Register a sort temporary memory state on its first sink (@anhphanmd)
-- **PR #29126** (2026-11-20): Remove duplicate Unity Catalog test patch (@lnkuiper)
-- **PR #29122** (2026-11-20): [v2.0-cyanoptera] Skip async_task_synchronous_batch under storage_compatibility and v1_storage_block_size_16kB (@Robinho-MR)
-- **PR #29118** (2026-11-20): Scan validity segments into ValidityMask (@lnkuiper)
-- **PR #29105** (2026-11-20): Avoid unnecessary bloom filter IO (@dentiny)
+- **PR #29244** (2026-11-23): Cache sort-key suffixes during merging (@lnkuiper)
+- **PR #29242** (2026-11-23): Move DateTruncSimplificationRule::DatePartToFunc into its own file (@carlopi)
+- **PR #29241** (2026-11-23): Declare thread_id in namespace duckdb when threads are disabled (@carlopi)
+- **PR #29238** (2026-11-23): Make transaction-local state safe for concurrent statements of one transaction (@Robinho-MR)
+- **PR #29236** (2026-11-23): GrammarChange: expose Collapsible(), SuppressSuggestions() and HasCode() (@carlopi)
+- **PR #29235** (2026-11-23): Add `duckdb_grammar_changes()`, listing the changes of the active grammar extensions (@carlopi)
 
 ---
 
@@ -2746,34 +3464,47 @@ consistent with ORDER BY and plain min/max.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. min/max for INTERVAL type
+## X. runtime memory management for growing perfect-hash aggregates
 
 **RULE**:
-When implementing operations in `src/function/aggregate/distributive/minmax.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/execution/physical_plan/plan_aggregate.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abbad801`: min/max for INTERVAL type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `52dac04d`: runtime memory management for growing perfect-hash aggregates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/function/aggregate/distributive/minmax.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/execution/physical_plan/plan_aggregate.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	case PhysicalType::INTERVAL:
-		// sort keys do not normalize intervals, so compare them as interval_t
-		SpecializeMinMaxNFunction<MinMaxFixedValue<interval_t>, COMPARATOR>(function);
-		break;
+		const auto &function = aggregate.Function();
+		if (aggregate.IsDistinct() || !function.HasStateCombineCallback()) {
+			return false;
+		}
+		if (!function.HasGetStateTypeCallback() || function.HasStateDestructorCallback()) {
+			return false;
+		}
+		const auto layout = function.GetStateType(aggregate.BindInfo().get());
+		// Preserve min/max and fixed-size sketch fast paths, excluding sorted aggregate buffers.
+		const auto &name = function.GetName();
+		if (function.GetArguments().size() == 1 && layout.field.kind != AggregateFieldKind::LIST &&
+		    (name == "min" || name == "max" || name == "approx_count_distinct")) {
+			continue;
+		}
+		if (function.HasExportAggregateStateCallback() || function.HasImportAggregateStateCallback() ||
+		    !layout.field.IsFixedSize(layout.type)) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		if (aggregate.IsDistinct() || !aggregate.Function().HasStateCombineCallback()) {
+			// distinct aggregates are not supported in perfect hash aggregates
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abbad801` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `52dac04d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
