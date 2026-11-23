@@ -45,8 +45,8 @@
     "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
     "license": "Open-Source",
-    "contentHash": "3136ce7bed5dd2532f161abdeed5ac917db753909354aa4e2dc1d65c3baf3575",
-    "lastHarvestedAt": "2026-11-19T04:44:03.678Z",
+    "contentHash": "4fd6e2565477d3a503ae63c6d4fee0b9eacab1e6d531d8aa9a8b706e63e65d9c",
+    "lastHarvestedAt": "2026-11-23T17:03:25.953Z",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle"
   },
   "hf-baai-bge-large-en-v1.5": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "ecf1cb0e",
+    "sourceVersion": "c4528161",
     "license": "NOASSERTION",
-    "contentHash": "793b3f5ca7b7b9c4779a88b61da3c18588de8d8e3eae098cbe3e0223fc81b3ef",
-    "lastHarvestedAt": "2026-11-23T14:46:42.220Z",
+    "contentHash": "9143a8ce17ab4c299e8809594c9f361e15bafaae768d1db75458dd1c3f6609c7",
+    "lastHarvestedAt": "2026-11-23T17:03:44.741Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "f872eb46",
+    "sourceVersion": "a99e9208",
     "license": "Apache-2.0",
-    "contentHash": "09bbcc92d5b90de5dc0d14851d36f98a7c1b7d58109d5ee6b433aeddce2777c7",
-    "lastHarvestedAt": "2026-11-21T08:52:48.404Z",
+    "contentHash": "11caf0ea9d01fb784ee4636484f91f7c4b9feadff2cea6efe9a12563b061a299",
+    "lastHarvestedAt": "2026-11-23T17:03:42.627Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -6093,10 +6093,10 @@
     "repository": "kubearmor/KubeArmor",
     "platform": "github",
     "sourceUrl": "https://github.com/kubearmor/KubeArmor",
-    "sourceVersion": "d026c0dc",
+    "sourceVersion": "551b0df2",
     "license": "Apache-2.0",
-    "contentHash": "a48b0b5e418b339297b83acda04bd996fd161a012c1a1dec82900bbb414f3798",
-    "lastHarvestedAt": "2026-11-19T01:32:37.428Z",
+    "contentHash": "957701f35479bba6a48490b0fb7dce5b8110f86df53435567db12e0dca9fe511",
+    "lastHarvestedAt": "2026-11-23T17:03:28.796Z",
     "learningId": "learn-github-kubearmor-kubearmor"
   },
   "callstack-agent-device": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "0183949c",
+    "sourceVersion": "bfd092bc",
     "license": "MPL-2.0",
-    "contentHash": "01444c9797a2628bfc00a175d597fef79a36faa591373b655bffe6dc43c24983",
-    "lastHarvestedAt": "2026-11-21T13:30:36.302Z",
+    "contentHash": "a04dc0e197350ff33b4aa6db724e6d40a2bd476fb057c4da96c9cb339878532b",
+    "lastHarvestedAt": "2026-11-23T17:03:37.692Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

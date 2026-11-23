@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T16:53:44.444Z",
-  "total_cycles_completed": 11773,
-  "total_learnings_persisted": 11773,
-  "total_rules_promoted": 10910,
+  "last_updated": "2026-11-23T17:03:44.747Z",
+  "total_cycles_completed": 11778,
+  "total_learnings_persisted": 11778,
+  "total_rules_promoted": 10914,
   "history": [
-    {
-      "timestamp": "2026-11-22T19:43:28.003Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T19:52:10.967Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T19:52:27.566Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T20:00:17.462Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-apple-lensvlm-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T20:00:25.265Z",
-      "repository": "siteline/swiftui-introspect",
-      "learningId": "learn-github-siteline-swiftui-introspect",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T20:08:57.392Z",
       "repository": "fastino/GLiNER2.5-Decide",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-23T16:53:44.444Z",
       "repository": "sqlpage/SQLPage",
       "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:03:25.960Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:03:28.803Z",
+      "repository": "kubearmor/KubeArmor",
+      "learningId": "learn-github-kubearmor-kubearmor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:03:37.700Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:03:42.633Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:03:44.747Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

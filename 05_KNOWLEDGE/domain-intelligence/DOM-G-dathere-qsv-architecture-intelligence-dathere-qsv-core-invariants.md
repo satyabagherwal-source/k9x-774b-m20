@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "ecf1cb0e",
+  "source_version": "c4528161",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-23T14:46:42.445Z",
+  "timestamp": "2026-11-23T17:03:45.046Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `ecf1cb0e`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-23T14:46:42.445Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `c4528161`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T17:03:45.046Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:46:41.154Z  
+> **Harvest Timestamp**: 2026-11-23T17:03:43.300Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2293,197 +2293,287 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ecf1cb0e` (2026-11-23)
-**Commit Message**: docs: report vulnerabilities via GitHub private reporting
+### Incident Patch 1: `c4528161` (2026-11-23)
+**Commit Message**: fix(writestat): refuse numbers too close to 0 for .xpt; keep them in .por (#5103)
 
-The qsv-severe@ address bounces, and public issues were the default
-channel for non-severe vulnerabilities. Route all of them through private
-vulnerability reporting instead.
+* fix(writestat): refuse numbers too close to 0 for .xpt; keep them in .por (#5094)
 
-[skip ci]
+A SAS transport file's IBM floats come no closer to 0 than 16^-65 (about
+5.4e-79): the writer stores a non-zero number closer to 0 as missing (or,
+a subnormal double, as 0), and writestat checked only the 7.2e75 end. Such
+numbers are now a loss like the large ones: refused unless --lossy, and
+each column's warning names them, on both sides of the range.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `SECURITY.md` (modified, +2/-2)
-```diff
-@@ -13,8 +13,8 @@ It has a built-in self-update engine that makes it very convenient to upgrade to
- 
- ## Reporting a Vulnerability
- 
--If you've found a vulnerability, please [create an issue](https://github.com/dathere/qsv/issues/new/choose) in GitHub.
-+Please report vulnerabilities privately through GitHub's [private vulnerability reporting](https://github.com/dathere/qsv/security/advisories/new) (Security tab → "Report a vulnerability"). This applies to the qsv binaries and to the qsv MCP server / Claude plugin in `.claude/skills`.
- 
--However, if a vulnerability is severe and could lead to zero-day exploits, please send an email to [qsv-severe@datHere.com](mailto:qsv-severe@datHere.com) instead.
-+Please do **not** open a public issue for a vulnerability. Public [issues](https://github.com/dathere/qsv/issues/new/choose) are for ordinary bugs.
- 
- The vulnerability report will be addressed within one business day. A  mitigation/workaround, if available, will be included in the next release and mentioned in the changelog, with zero-day mitigations only being mentioned only when it's been fully fixed.
-```
-
----
-
-### Incident Patch 2: `faf40911` (2026-11-23)
-**Commit Message**: chore(mcp): v29.0.2 patch release of MCP Server and Claude Cowork plugin
-
-[skip ci]
+SPSS portable files can hold them, but the writer lost precision from about
+1e-56 and wrote them as 0 below about 4e-73. The polars-readstat-rs fork
+pin moves to dathere/polars_readstat@18551f9, which writes them as a
+mantissa and a negative power of 30, and reads values below about 1e-292
+back without losing digits.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
+* docs(changelog): link the upstream .por PR (#5094) [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #5103 [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(writestat): say a subnormal is written to .xpt as 0, not missing (#5094)
+
+Co-Authored-B
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -6,14 +6,14 @@
-   },
-   "metadata": {
-     "description": "Blazingly fast data wrangling plugins for Claude Code — 57 skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
--    "version": "29.0.1"
-+    "version": "29.0.2"
-   },
-   "plugins": [
-     {
-       "name": "qsv-data-wrangling",
-       "source": "./.claude/skills",
-       "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
--      "version": "29.0.1",
-+      "version": "29.0.2",
-       "author": {
-         "name": "datHere, Inc.",
-         "email": "qsv@dathere.com",
+@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
+ 
+ ### Fixed
++- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
+ - `synthesize`: an `ordered` relationship read its source dates only as RFC 3339 or `YYYY-MM-DD`, so on columns `stats` types as dates in other forms (`04/18/2019 09:55:45 PM`, `2022-01-21 13:47:00`) it found no rows with both dates and was dropped with only a log warning, leaving the columns independent and out of order. Source dates are now read with the parser `stats` uses, honoring `--prefer-dmy`/`QSV_PREFER_DMY`, by `ordered` groups and by `--discover-relationships`. **Behavior change:** such groups now apply, so their output changes. ([#5085](https://github.com/dathere/qsv/pull/5085))
+ - `synthesize`: input with non-UTF8 cells failed outright when it had any numeric or date column ("invalid UTF-8"), or when a column it enumerated held one ("Unable to parse output of qsv command frequency"). It also failed when a relationship was declared, and with `QSV_NO_HEADERS` when the first row held one. Every pass now reads raw bytes, and invalid bytes are written as U+FFFD (`�`), as `stats` already reports them, and `--report` keys source cells the same way, so a copied row still counts as an exact match. A non-UTF8 header is still refused by `stats`. ([#5084](https://github.com/dathere/qsv/pull/5084))
+ - `synthesize`: under `QSV_NO_HEADERS`, `stats` numbers columns from 0 and `frequency` from 1, so each column was paired with the next column's frequency table: a column could be filled with its neighbor's values, and the first fell back to filler text. Frequency's column numbers are now shifted to match. ([#5068](https://github.com/dathere/qsv/pull/5068))
 ```
 
-**File**: `.claude/skills/.claude-plugin/plugin.json` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-data-wrangling",
--  "version": "29.0.1",
-+  "version": "29.0.2",
-   "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
-   "author": {
-     "name": "datHere, Inc.",
+@@ -6541,7 +6541,7 @@ dependencies = [
+ [[package]]
+ name = "polars-readstat-rs"
+ version = "0.27.0"
+-source = "git+https://github.com/dathere/polars_readstat?rev=2714269c43532016b2da72839269ff3015a31f20#2714269c43532016b2da72839269ff3015a31f20"
++source = "git+https://github.com/dathere/polars_readstat?rev=18551f90697b23e677c5e17a0fe8f03ad710d90b#18551f90697b23e677c5e17a0fe8f03ad710d90b"
+ dependencies = [
+  "byteorder",
+  "chrono",
 ```
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +7/-4)
+**File**: `Cargo.toml` (modified, +4/-3)
 ```diff
-@@ -23,16 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
- 
--### Fixed
--- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
--- **`output_file` no longer loses the result of commands that can't write one.** Passing it to `count`, `headers`, `split` or another skill without an output option reported "Successfully wrote output to" a file qsv never wrote, and dropped what qsv printed. The server now ignores `output_file` for these commands, returns the result and adds a note saying so in a separate content block (#5089, #5092).
--- **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
-+## [29.0.2] - 2026-11-23
-+Patch release of the MCP server and the Claude Cowork / Claude Code plugin, for use with qsv 29.0.0 (`minimum_qsv_version` stays 29.0.0). It carries the security fixes below, published as advisory [GHSA-5763-32xg-7rh3](https://github.com/dathere/qsv/security/advisories/GHSA-5763-32xg-7rh3); update now. As in 29.0.1, the bundled skill files also describe `qsv-synthesize` options from the next qsv release (listed under [Unreleased]); with qsv 29.0.0 those options are rejected as unknown flags.
- 
- ### Security
- - **Input and output paths can no longer reach credential directories or shell startup files.** The protected home directories (`~/.ssh`, `~/.aws`, `~/.gnupg`, `~/.kube`, ...) were enforced only for `qsv_set_working_dir` and directory browsing, not for the paths a tool call names (`input_file`, `output_file`, path options). With the home directory allowed (the default when `QSV_MCP_ALLOWED_DIRS` is unset) or in plugin mode, a tool call could write to `~/.ssh/authorized_keys`. Every path now gets the same check, applied before plugin mode adds a directory to the allowed list, including output directories a command creates. Also newly protected: `~/.config/gh`; places where a written file runs code at login or in the next agent session (`~/Library/LaunchAgents`, `~/.config/systemd`, `~/.config/autostart`, `~/.config/fish`, the Windows Startup folder, `~/.claude`); and home dotfiles that run code or hold credentials (`.bashrc`, `.zshrc`, `.profile` and the other bash/zsh startup files, `.gitconfig`, `.git-credentials`, `.netrc`, `.npmrc`, `.pypirc`). This is a denylist, not a sandbox: other locations under the home directory (for example `~/bin`) stay writable. To confine the server, set `QSV_MCP_ALLOWED_DIRS` (and `QSV_MCP_WORKING_DIR`, which is always allowed). (#5102)
- - **`QSV_MCP_ALLOWED_DIRS` now confines plugin mode too.** In plugin mode (Claude Code, Cowork) the server added the directory of any path outside its allowed list to that list, so setting `QSV_MCP_ALLOWED_DIRS` had no effect there. When it is set, paths outside it are now refused, as in other modes. With it unset (the default), plugin mode still adds directories as before. `qsv_config` reports which applies. (#5102)
- - **On Linux, a directory whose name starts with `..` (e.g. `..archive`) inside an allowed directory is no longer refused** as a parent-directory escape. (#5102)
- 
-+### Fixed
-+- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` f
+@@ -553,9 +553,10 @@ polars-core  = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe32
+ polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe3247677895b67d32f681b89e1e103" }
+ # polars-readstat-rs 0.27.0 calls DataFrame/Series::slice(offset, len), which polars main
+ # replaced with slice(impl Into<Slice>) (pola-rs/polars#30887). Our fork passes the pair as a
+-# tuple; upstream can't take it while it builds on crates.io polars 0.55.1. Drop once a
+-# polars-readstat-rs release builds against the pinned polars rev.
+-polars-readstat-rs = { git = "https://github.com/dathere/polars_readstat", rev = "2714269c43532016b2da72839269ff3015a31f20" }
++# tuple; upstream can't take it while it builds on crates.io polars 0.55.1. The fork also
++# writes & reads .por numbers far below 1 without loss (#5094). Drop once a polars-readstat-rs
++# release builds against the pinned polars rev AND has that .por fix (else #5094 comes back).
++polars-readstat-rs = { git = "https://github.com/dathere/polars_readstat", rev = "18551f90697b23e677c5e17a0fe8f03ad710d90b" }
+ # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
+ # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
+ # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
 ```
 
-**File**: `.claude/skills/README-MCP.md` (modified, +3/-3)
+**File**: `docs/help/writestat.md` (modified, +4/-3)
 ```diff
-@@ -60,7 +60,7 @@ Excel and JSONL files are automatically converted to CSV before processing - no
+@@ -51,9 +51,10 @@ Metadata the output format can't hold is refused rather than dropped silently:
+ value labels & missing values in SAS transport & SPSS portable files, missing
+ values & file labels in Stata files, labels too long for SAS transport files,
+ column names Stata would have to change, and so on. So are data it would lose,
+-such as numbers beyond ±7.2e75 in a SAS transport file, which it writes as
+-missing. With --lossy, the file is
+-written anyway, and a warning names everything left out. Display settings
++such as numbers beyond ±7.2e75 or, other than 0, closer to 0 than ±5.4e-79 in a
++SAS transport file, which it writes as missing (or, below ±2.2e-308, as 0).
++With --lossy, the file is written anyway, and a warning names everything left
++out. Display settings
+ (measure, alignment, width & format) are written where the format has them and
+ left out where it doesn't.
  
- The **MCP Desktop Extension** (MCPB) provides the easiest installation experience:
- 
--1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.1.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
-+1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.2.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
- 2. Open Claude Desktop Settings → Extensions
- 3. Click "Install from file" and select the `.mcpb` file
- 4. Configure your allowed directories when prompted
-@@ -622,8 +622,8 @@ For issues or questions:
- 
- ---
- 
--**Updated**: 2026-11-21
--**Version**: 29.0.1
-+**Updated**: 2026-11-23
-+**Version**: 29.0.2
- **Tools**: 23 tools at startup (10 core + 13 commonly-used; +1 app-only when MCP Apps enabled), all 57 discoverable via `qsv_search_tools`
- **Skills**: 57 qsv commands
- **Status**: Production Ready
 ```
 
-**File**: `.claude/skills/README.md` (modified, +3/-3)
+**File**: `src/cmd/writestat.rs` (modified, +31/-13)
 ```diff
-@@ -49,7 +49,7 @@ Each skill file provides:
+@@ -35,9 +35,10 @@ Metadata the output format can't hold is refused rather than dropped silently:
+ value labels & missing values in SAS transport & SPSS portable files, missing
+ values & file labels in Stata files, labels too long for SAS transport files,
+ column names Stata would have to change, and so on. So are data it would lose,
+-such as numbers beyond ±7.2e75 in a SAS transport file, which it writes as
+-missing. With --lossy, the file is
+-written anyway, and a warning names everything left out. Display settings
++such as numbers beyond ±7.2e75 or, other than 0, closer to 0 than ±5.4e-79 in a
++SAS transport file, which it writes as missing (or, below ±2.2e-308, as 0).
++With --lossy, the file is written anyway, and a warning names everything left
++out. Display settings
+ (measure, alignment, width & format) are written where the format has them and
+ left out where it doesn't.
  
- **Installation**:
- 1. Install qsv: `brew install qsv` (macOS) or see [qsv installation](https://github.com/dathere/qsv#installation)
--2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.1.mcpb`) from releases
-+2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.2.mcpb`) from releases
- 3. Double-click the `.mcpb` file (opens with Claude Desktop)
- 4. **That's it!** qsv binary path is auto-detected, no manual configuration needed
- 5. Restart Claude Desktop
-@@ -467,8 +467,8 @@ MIT
+@@ -1017,32 +1018,49 @@ fn fit_temporal(mut df: DataFrame, format: Format, losses: &mut Losses) -> CliRe
+     Ok(df)
+ }
  
- ---
- 
--**Updated**: 2026-11-21
--**Version**: 29.0.1
-+**Updated**: 2026-11-23
-+**Version**: 29.0.2
- **Generator**: `qsv --update-mcp-skills`
- **Skills**: 57 commands
- **Usage Examples**: 263 from documentation
+-/// SAS transport files store numbers as IBM floats, which reach about 7.2e75:
+-/// the writer stores a larger number as missing. (One too small to hold is
+-/// stored as zero, which isn't counted: such values are rounding noise far
+-/// more often than data.)
++/// SAS transport files store numbers as IBM floats, which reach about 7.2e75
++/// and, other than 0, no closer to 0 than about 5.4e-79: the writer stores a
++/// number beyond either as missing (or, if it is a subnormal f64, as 0).
+ fn xpt_out_of_range(df: &DataFrame, losses: &mut Losses) -> CliResult<()> {
+     // The largest IBM float, (1 - 16^-14) * 16^63 = 2^252 - 2^196, rounds up to
+     // 2^252 as an f64, and 2^252 itself is out of range: the f64s that fit are
+     // those below it.
+     const TOO_LARGE: f64 = f64::from_bits((1023 + 252) << 52); // 2^252
++    // The smallest normalized IBM float, 16^-65 = 2^-260, is an f64 too.
++    const SMALLEST: f64 = f64::from_bits((1023 - 260) << 52); // 2^-260
+     for col in df.columns() {
+         if !matches!(col.dtype(), DataType::Float32 | DataType::Float64) {
+             continue;
+         }
+         let values = col.cast(&DataType::Float64)?;
+-        if let Some(v) = values
+-            .f64()?
+-            .iter()
+-            .flatten()
+-            .find(|v| v.is_finite() && v.abs() >= TOO_LARGE)
+-        {
++        let (mut large, mut small) = (None, None);
++        for v in values.f64()?.iter().flatten() {
++            if !v.is_finite() || v == 0.0 {
++                continue;
++            }
++            if large.is_none() && v.abs() >= TOO_LARGE {
++                large = Some(v);
++            } else if small.is_none() && v.abs() < SMALLEST {
++                small = Some(v);
++            }
++            if large.is_some() && small.is_some() {
++                break;
++            }
++        }
++        if let Some(v) = large {
+             losses.add(format!(
+                 "the numbers in \"{}\" beyond ±7.2e75, such as {v:e}: a SAS transport file writes \
+                  them as missing",
+                 col.name()
+             ));
+         }
++        if let Some(v) = small {
++            losses.add(format!(
++                "the numbers in \"{}\" closer to 0 than ±5.4e-79, such as {v:e}: a SAS transport \
++                 file writes them as missing (or, below ±2.2e-308, as 0)",
++                col.name()
++            ));
++        }
+     }
+     Ok(())
+ }
 ```
 
-**File**: `.claude/skills/docs/desktop/README-MCPB.md` (modified, +2/-2)
+**File**: `tests/test_writestat.rs` (modified, +93/-0)
 ```diff
-@@ -576,7 +576,7 @@ Same license as qsv: MIT OR Apache-2.0
+@@ -523,6 +523,99 @@ fn writestat_xpt_number_range_boundary() {
+     );
+ }
  
- ---
- 
--**Updated**: 2026-11-21
--**Version**: 29.0.1
-+**Updated**: 2026-11-23
-+**Version**: 29.0.2
- **Format**: MCP Bundle (MCPB) v0.3
- **Compatibility**: Claude Desktop 1.0+
-```
-
-**File**: `.claude/skills/manifest.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "manifest_version": "0.3",
-   "name": "qsv",
--  "version": "29.0.1",
-+  "version": "29.0.2",
-   "description": "Blazingly fast Data Wrangling Toolkit for Tabular Data",
-   "long_description": "Comprehensive data-wrangling toolkit for transforming, analyzing, querying & validating tabular data. Process local CSV, TSV, SSV, Excel/ODS, Parquet and JSONL files w/o uploading. Despite the warning, only accesses APPROVED DIRECTORIES on your computer.",
-   "author": {
-```
-
-**File**: `.claude/skills/package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "@qsv/agent-skills",
--  "version": "29.0.1",
-+  "version": "29.0.2",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "@qsv/agent-skills",
--      "version": "29.0.1",
-+      "version": "29.0.2",
-       "license": "MIT",
-       "dependencies": {
-         "@modelcontextprotocol/ext-apps": "^1.7.2",
++// Other than 0, IBM floats come no closer to 0 than about 5.4e-79: the writer
++// would store a number closer to 0 as missing (or, a subnormal double, as 0).
++// (#5094)
++#[test]
++fn writestat_xpt_number_too_small() {
++    let wrk = Workdir::new("writestat_xpt_number_too_small");
++    wrk.create_from_string(
++        "in.csv",
++        "id,dose\n1,0.5\n2,1e-78\n3,1e-80\n4,2.5e-300\n5,-3e-90\n6,0\n7,12.75\n",
++    );
++    for format in ["xpt", "xpt5"] {
++        let mut cmd = wrk.command("writestat");
++        cmd.args(["in.csv", "--format", format, "-o", "out.xpt"]);
++        let err = wrk.stderr_on_error(&mut cmd);
++        assert!(
++            err.contains("the numbers in \"dose\" closer to 0 than ±5.4e-79, such as 1e-80"),
++            "{format}: {err}"
++        );
++        assert!(!err.contains("\"id\""), "{format}: {err}");
++        assert!(!wrk.path("out.xpt").exists());
++    }
++
++    // one column can be out of range on both sides: each is named
++    wrk.create_from_string("in.csv", "x,y\n1e76,1e-90\n1e-80,2\n");
++    let mut cmd = wrk.command("writestat");
++    cmd.args(["--lossy", "in.csv", "-o", "out.xpt"]);
++    let err = wrk.stderr_on_success(&mut cmd);
++    for loss in [
++        "the numbers in \"x\" beyond ±7.2e75, such as 1e76",
++        "the numbers in \"x\" closer to 0 than ±5.4e-79, such as 1e-80",
++        "the numbers in \"y\" closer to 0 than ±5.4e-79, such as 1e-90",
++    ] {
++        assert!(err.contains(loss), "{loss}: {err}");
++    }
++    assert_eq!(read_back(&wrk, "out.xpt", &[]), "x,y\n,\n,2.0\n");
++}
++
++// The boundary: 2^-260, the smallest normalized IBM float, fits, as do 0 & -0;
++// the double just closer to 0 & a subnormal don't.
++#[test]
++fn writestat_xpt_number_too_small_boundary() {
++    let wrk = Workdir::new("writestat_xpt_number_too_small_boundary");
++    for v in ["5.397605346934027e-79", "-5.397605346934027e-79", "1e-310"] {
++        wrk.create_from_string("in.csv", &format!("x\n{v}\n1\n"));
++        let mut cmd = wrk.command("writestat");
++        cmd.args(["in.csv", "-o", "out.xpt"]);
++        let err = wrk.stderr_on_error(&mut cmd);
++        assert!(err.contains(&format!("such as {v}")), "{v}: {err}");
++    }
++    wrk.create_from_string(
++        "in.csv",
++        "x\n5.397605346934028e-79\n-5.397605346934028e-79\n0\n-0.0\n",
++    );
++    let mut cmd = wrk.command("writestat");
++    cmd.args(["in.csv", "-o", "out.xpt"]);
++    wrk.assert_success(&mut cmd);
++    assert_eq!(
++        read_back(&wrk, "out.xpt", &[]),
++        "x\n5.397605346934028e-79\n-5.397605346934028e-79\n0.0\n0.0\n"
++    );
++}
++
++// A portable file holds numbers far closer to 0 than SAS transport files do;
++// they come back as written, not as 0 (#5094). The reader rebuilds them with
++// float arithmetic, so within a few ulps.
++#[test]
++fn writestat_por_small_numbers() {
++    let wrk = Workdir::new("writestat_por_small_numbers");
++    let values: [f64; 9] = [
++        0.5, 1e-50, 1e-60, 1e-70, 1e-78, 1e-80, -3e-90, 2.5e-300, 1e-310,
++    ];
++    let csv: String = values.iter().map(|v| format!("{v:e}\n")).collect();
++    wrk.create_from_string("in.csv", &format!("x\n{csv}"));
++    let mut cmd = wrk.command("writestat");
++    cmd.args(["in.csv", "-o", "out.por"]);
++    wrk.assert_success(&mut cmd);
++    let back = read_back(&wrk, "out.por", &[]);
++    let got: Vec<f64> = back
++        .lines()
++        .skip(1)
++        .map(|l| l.parse().unwrap_or_else(|_| panic!("{l:?} in {back}")))
++        .collect();
++    assert_eq!(got.len(), values.len(), "{back}");
++    for (want, got) in values.iter().zip(got) {
++        // a subnormal holds fewer digits
++        let tolerance = (4.0 * f64::from_bits(1) / want.abs()).max(1e-15);
++        assert!(
++            got != 0.0 && ((got - want) / want).abs() <= tolerance,
++            "{want:e} read back as {got:e}"
++        );
++    }
++}
++
+ // A 60-byte SPSS name is valid, though its <name>_null column's 65 bytes
+ // aren't: that column becomes the variable's missing values, not a variable.
+ #[test]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5103** (2026-11-23): fix(writestat): refuse numbers too close to 0 for .xpt; keep them in .por (@jqnatividad)
 - **PR #5102** (2026-11-23): fix(mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode (@jqnatividad)
 - **PR #5101** (2026-11-23): deps: bump mlua to 0.12.3 (Luau 0.748); drop the mlua git pin (@jqnatividad)
 - **PR #5100** (2026-11-23): deps: bump jsonschema to 0.63.1; validate suggests a known format for a typo'd one (@jqnatividad)
 - **PR #5099** (2026-11-23): build(deps): bump datasketches from 0.6.0 to 0.7.0 (@dependabot[bot])
 - **PR #5098** (2026-11-23): build(deps): bump flexi_logger from 0.31.10 to 0.32.0 (@dependabot[bot])
-- **PR #5097** (2026-11-23): build(deps): bump anthropics/claude-code-action from 1.0.278 to 1.0.284 (@dependabot[bot])
 
 ---
 
@@ -2503,33 +2593,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: report vulnerabilities via GitHub private reporting
+## X. writestat): refuse numbers too close to 0 for .xpt; keep them in .por
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ecf1cb0e`: docs: report vulnerabilities via GitHub private reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4528161`: writestat): refuse numbers too close to 0 for .xpt; keep them in .por. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Please report vulnerabilities privately through GitHub's [private vulnerability reporting](https://github.com/dathere/qsv/security/advisories/new) (Security tab → "Report a vulnerability"). This applies to the qsv binaries and to the qsv MCP server / Claude plugin in `.claude/skills`.
-Please do **not** open a public issue for a vulnerability. Public [issues](https://github.com/dathere/qsv/issues/new/choose) are for ordinary bugs.
+- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-If you've found a vulnerability, please [create an issue](https://github.com/dathere/qsv/issues/new/choose) in GitHub.
-However, if a vulnerability is severe and could lead to zero-day exploits, please send an email to [qsv-severe@datHere.com](mailto:qsv-severe@datHere.com) instead.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ecf1cb0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4528161` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

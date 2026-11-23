@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T16:53:47.693Z",
-    "lastVerified": "2026-11-23T16:53:47.693Z",
+    "lastChecked": "2026-11-23T17:03:48.230Z",
+    "lastVerified": "2026-11-23T17:03:48.230Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -173,22 +173,21 @@
     "revisionIdentifier": "9a44a8e8"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T16:28:50.913Z",
-    "lastVerified": "2026-11-23T16:28:50.913Z",
+    "lastChecked": "2026-11-23T17:03:43.300Z",
+    "lastVerified": "2026-11-23T17:03:43.300Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "793b3f5ca7b7b9c4779a88b61da3c18588de8d8e3eae098cbe3e0223fc81b3ef",
+    "contentHash": "9143a8ce17ab4c299e8809594c9f361e15bafaae768d1db75458dd1c3f6609c7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ecf1cb0e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -822,9 +821,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-23T08:33:10.860Z",
+    "lastChecked": "2026-11-23T17:03:32.459Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-23T08:33:10.860Z"
+    "lastVerified": "2026-11-23T17:03:32.459Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -5393,22 +5392,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "etcd-io-etcd": {
-    "name": "etcd",
+    "name": "etcd-io/etcd",
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T12:19:28.407Z",
-    "lastVerified": "2026-11-22T12:19:28.407Z",
+    "lastChecked": "2026-11-23T17:03:41.627Z",
+    "lastVerified": "2026-11-23T17:03:41.627Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "09bbcc92d5b90de5dc0d14851d36f98a7c1b7d58109d5ee6b433aeddce2777c7",
+    "contentHash": "11caf0ea9d01fb784ee4636484f91f7c4b9feadff2cea6efe9a12563b061a299",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f872eb46"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ekzhang-rustpad": {
     "name": "rustpad",
@@ -6103,22 +6101,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubearmor-kubearmor": {
-    "name": "KubeArmor",
+    "name": "kubearmor/KubeArmor",
     "officialUrl": "https://github.com/kubearmor/KubeArmor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T04:51:10.607Z",
-    "lastVerified": "2026-11-22T04:51:10.607Z",
+    "lastChecked": "2026-11-23T17:03:27.365Z",
+    "lastVerified": "2026-11-23T17:03:27.365Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubearmor-kubearmor",
-    "contentHash": "a48b0b5e418b339297b83acda04bd996fd161a012c1a1dec82900bbb414f3798",
+    "contentHash": "957701f35479bba6a48490b0fb7dce5b8110f86df53435567db12e0dca9fe511",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d026c0dc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -6807,12 +6804,12 @@
     "officialUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T04:44:03.035Z",
-    "lastVerified": "2026-11-19T04:44:03.035Z",
+    "lastChecked": "2026-11-23T17:03:25.043Z",
+    "lastVerified": "2026-11-23T17:03:25.043Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-    "contentHash": "3136ce7bed5dd2532f161abdeed5ac917db753909354aa4e2dc1d65c3baf3575",
+    "contentHash": "4fd6e2565477d3a503ae63c6d4fee0b9eacab1e6d531d8aa9a8b706e63e65d9c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6882,22 +6879,21 @@
     "lastVerified": "2026-11-22T07:56:35.112Z"
   },
   "opentofu-opentofu": {
-    "name": "opentofu",
+    "name": "opentofu/opentofu",
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T14:40:37.124Z",
-    "lastVerified": "2026-11-22T14:40:37.124Z",
+    "lastChecked": "2026-11-23T17:03:36.270Z",
+    "lastVerified": "2026-11-23T17:03:36.270Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "01444c9797a2628bfc00a175d597fef79a36faa591373b655bffe6dc43c24983",
+    "contentHash": "a04dc0e197350ff33b4aa6db724e6d40a2bd476fb057c4da96c9cb339878532b",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0183949c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "genkit-ai-genkit": {
     "name": "genkit",
@@ -10715,9 +10711,9 @@
   "kruszoneq-macusb": {
     "name": "macUSB",
     "officialUrl": "https://github.com/Kruszoneq/macUSB",
-    "lastChecked": "2026-11-20T16:23:24.043Z",
+    "lastChecked": "2026-11-23T17:03:27.460Z",
     "revisionIdentifier": "777ed534",
-    "lastVerified": "2026-11-20T16:23:24.043Z"
+    "lastVerified": "2026-11-23T17:03:27.460Z"
   },
   "html5lib-html5lib-python": {
     "name": "html5lib-python",

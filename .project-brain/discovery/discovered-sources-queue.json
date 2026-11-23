@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T16:53:49.579Z",
+  "updated_at": "2026-11-23T17:03:52.403Z",
   "stats": {
-    "total_discovered": 7916,
-    "approved_pending_harvest": 7492,
+    "total_discovered": 7928,
+    "approved_pending_harvest": 7504,
     "harvested_count": 0,
     "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7482,
-      "OFFICIAL_DOCUMENTATION": 249,
+      "COMMUNITY_AND_EXPERT": 7493,
+      "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 44,
@@ -171207,6 +171207,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
         "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-E8449C5A493C": {
+      "id": "SRC-E8449C5A493C",
+      "url": "https://docs.google.com/spreadsheets/d/1jodHIO7Dk2VWTs1IRnfMFaRktS9IH8XRyifOnPdSY8I/edit",
+      "title": "https://docs.google.com/spreadsheets/d/1jodHIO7Dk2VWTs1IRnfMFaRktS9IH8XRyifOnPdSY8I/edit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:51.574Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-F303D3748AB8": {
+      "id": "SRC-F303D3748AB8",
+      "url": "https://github.com/etcd-io/etcd/blob/main/Documentation/contributor-guide/dependency_management.md",
+      "title": "https://github.com/etcd-io/etcd/blob/main/Documentation/contributor-guide/dependency_management.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:51.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-239F9092C888": {
+      "id": "SRC-239F9092C888",
+      "url": "https://github.com/etcd-io/etcd/pull/22838",
+      "title": "https://github.com/etcd-io/etcd/pull/22838",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:51.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-03783DE8C39C": {
+      "id": "SRC-03783DE8C39C",
+      "url": "https://github.com/etcd-io/etcd/pull/22837",
+      "title": "https://github.com/etcd-io/etcd/pull/22837",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:51.782Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-F6BB234C9C8F": {
+      "id": "SRC-F6BB234C9C8F",
+      "url": "https://github.com/etcd-io/etcd/pull/22836",
+      "title": "https://github.com/etcd-io/etcd/pull/22836",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:51.853Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-06A149BF1D87": {
+      "id": "SRC-06A149BF1D87",
+      "url": "https://github.com/etcd-io/etcd/pull/22835",
+      "title": "https://github.com/etcd-io/etcd/pull/22835",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:51.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-3739226B6C1C": {
+      "id": "SRC-3739226B6C1C",
+      "url": "https://app.codecov.io/gh/etcd-io/etcd/pull/22899?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/etcd-io/etcd/pull/22899?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:51.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-D85CD4FC959F": {
+      "id": "SRC-D85CD4FC959F",
+      "url": "https://app.codecov.io/gh/etcd-io/etcd/commit/6db057ed2d65aadea71d7ae912b4560c33af254d?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/etcd-io/etcd/commit/6db057ed2d65aadea71d7ae912b4560c33af254d?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:52.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-60426DE0E3D2": {
+      "id": "SRC-60426DE0E3D2",
+      "url": "https://app.codecov.io/gh/etcd-io/etcd/commit/0db02c38835e494408e3d62a8ac7a1fd02419a6a?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/etcd-io/etcd/commit/0db02c38835e494408e3d62a8ac7a1fd02419a6a?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:52.126Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-0A737ACBD2FD": {
+      "id": "SRC-0A737ACBD2FD",
+      "url": "https://app.codecov.io/gh/etcd-io/etcd/pull/22899/indirect-changes?src=pr&el=tree-",
+      "title": "https://app.codecov.io/gh/etcd-io/etcd/pull/22899/indirect-changes?src=pr&el=tree-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:52.193Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-9F9E954E738D": {
+      "id": "SRC-9F9E954E738D",
+      "url": "https://github.com/etcd-io/etcd/pull/22899",
+      "title": "https://github.com/etcd-io/etcd/pull/22899",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:52.264Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-4E58CAD32CC8": {
+      "id": "SRC-4E58CAD32CC8",
+      "url": "https://github.com/etcd-io/etcd/blob/main/OWNERS",
+      "title": "https://github.com/etcd-io/etcd/blob/main/OWNERS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T17:03:52.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
       }
     }
   }

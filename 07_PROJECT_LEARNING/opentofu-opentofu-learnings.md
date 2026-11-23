@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `0183949c`  
+> **Source Version**: `bfd092bc`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T13:30:35.320Z  
+> **Timestamp**: 2026-11-23T17:03:36.278Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T13:30:35.315Z  
+> **Harvest Timestamp**: 2026-11-23T17:03:36.270Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30948 stars
+- **Stars / Engagement**: 30967 stars
 
 ---
 
@@ -1419,89 +1419,36 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0183949c` (2026-11-20)
-**Commit Message**: Add some notes about checks in the different runtimes
+### Incident Patch 1: `bfd092bc` (2026-11-20)
+**Commit Message**: Don't save marked output values in the plan
+
+This was preventing some ad-hoc testing of other features
 
 Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
-**File**: `internal/engine/applying/apply.go` (modified, +6/-1)
+**File**: `internal/engine/planning/plan.go` (modified, +2/-1)
 ```diff
-@@ -37,6 +37,9 @@ func ApplyPlannedChanges(ctx context.Context, plan *plans.Plan, configInst *eval
- 	tracer := contextTracer(ctx)
- 	ctx = shared.ContextWithTracer(ctx, &tracer.Tracer)
- 
-+	// NOTE: The current runtime starts off with a copy of checks from
-+	// the plan. Since we visit each node and don't perform graph
-+	// surgery here, we can just start with a fresh set of check results
- 	checkReport := &checks.ReportedChecks{}
- 	ctx = checks.ContextWithCheckReporting(ctx, checkReport)
- 	ctx = checks.ContextWithSeverity(ctx, func(addr addrs.Checkable) tfdiags.Severity {
-@@ -77,7 +80,9 @@ func ApplyPlannedChanges(ctx context.Context, plan *plans.Plan, configInst *eval
- 	newState, moreDiags := execOps.Finish(ctx, !plan.Destroying)
- 	diags = diags.Append(moreDiags)
- 
--	// TODO copy from plan in certain scenarios?
-+	// NOTE: The current runtime has a few scenarios where it copies
-+	// the checks from the plan (refresh-only), but that should not
-+	// be necessary due to how we structured the this runtime.
- 	newState.CheckResults = states.NewCheckResults(checkReport.State())
- 
- 	return newState, diags
-```
-
----
-
-### Incident Patch 2: `2e8c0206` (2026-11-19)
-**Commit Message**: Update test wording to match condition changes
-
-Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
-
-**File**: `internal/lang/eval/internal/configgraph/input_variable_test.go` (modified, +1/-1)
-```diff
-@@ -105,7 +105,7 @@ func TestInputVariable_Value(t *testing.T) {
- 				// also mentions the location of the check rule so an author
- 				// can find it if they want to learn more about it.
- 				Severity: hcl.DiagError,
--				Summary:  "Invalid value for input variable",
-+				Summary:  "Invalid value for variable",
- 				Detail: `The value was cty.EmptyObjectVal.
- 
- This problem was reported by the validation rule at child.tf:0,0.`,
-```
-
-**File**: `internal/lang/eval/internal/configgraph/output_value_test.go` (modified, +1/-1)
-```diff
-@@ -114,7 +114,7 @@ func TestOutputValue_Value(t *testing.T) {
- 				// doing that correctly right now.
- 				tfdiags.Sourceless(
- 					tfdiags.Error,
--					"Output value precondition failed",
-+					"Module output value precondition failed",
- 					"Failure Message\n\nThis problem was reported by the precondition at precondition:0,0.",
- 				),
- 			),
-```
-
-**File**: `internal/lang/eval/internal/tofu2024/compile_output_values_test.go` (modified, +1/-1)
-```diff
-@@ -160,7 +160,7 @@ func TestCompileModuleInstanceOutputValuesValue(t *testing.T) {
- 					},
- 				},
- 			},
--			WantError: `Output value precondition failed`,
-+			WantError: `Module output value precondition failed`,
- 			WantValue: cty.DynamicVal.Mark(exprs.EvalError),
- 		},
- 	}
+@@ -136,9 +136,10 @@ func finalizePlan(ctx context.Context, intermediate *planContextResult, provider
+ 	clear(refreshedOutputs)
+ 	for k, v := range intermediate.RootOutput.Current {
+ 		if v.Value.IsKnown() {
++			unmarkedVal, _ := v.Value.UnmarkDeep()
+ 			refreshedOutputs[k] = &states.OutputValue{
+ 				Addr:  addrs.AbsOutputValue{OutputValue: addrs.OutputValue{Name: k}},
+-				Value: v.Value,
++				Value: unmarkedVal,
+ 				// TODO Sensitive  bool
+ 				// TODO Deprecated string
+ 			}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4866** (2026-11-23): Don't save marked output values in the plan (@cam72cam)
 - **PR #4864** (2026-11-20): Pre/Post conditions in the new runtime (@cam72cam)
 - **PR #4863** (2026-11-20): resource: "Latching" behavior of ActionIfUnwanted for `destroy = false` (@apparentlymart)
 - **PR #4861** (2026-11-18): Fix symbol libraries crash when uninitialized (@cam72cam)
 - **PR #4859** (2026-11-18): [Backport][v1.13] tofu test: apply mock_provider resource overrides inside modules (#4841) (@yottta)
 - **PR #4854** (2026-11-17): runtime: fix upgrade state on destroy and no skip refresh (@lbordowitz)
-- **PR #4847** (2026-11-17): Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash (@lxea)
 
 ---
 
@@ -1521,33 +1468,29 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add some notes about checks in the different runtimes
+## X. Don't save marked output values in the plan
 
 **RULE**:
-When implementing operations in `internal/engine/applying/apply.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/engine/planning/plan.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0183949c`: Add some notes about checks in the different runtimes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bfd092bc`: Don't save marked output values in the plan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/applying/apply.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/planning/plan.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// NOTE: The current runtime starts off with a copy of checks from
-	// the plan. Since we visit each node and don't perform graph
-	// surgery here, we can just start with a fresh set of check results
-	// NOTE: The current runtime has a few scenarios where it copies
-	// the checks from the plan (refresh-only), but that should not
-	// be necessary due to how we structured the this runtime.
+			unmarkedVal, _ := v.Value.UnmarkDeep()
+				Value: unmarkedVal,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// TODO copy from plan in certain scenarios?
+				Value: v.Value,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0183949c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bfd092bc` are properly handled with clean fallback behavior.

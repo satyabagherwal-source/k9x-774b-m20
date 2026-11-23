@@ -4,17 +4,17 @@
 {
   "source_repository": "kubearmor/KubeArmor",
   "source_url": "https://github.com/kubearmor/KubeArmor",
-  "source_version": "d026c0dc",
+  "source_version": "551b0df2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T01:32:37.700Z",
+  "timestamp": "2026-11-23T17:03:29.113Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kubearmor-kubearmor",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor) (Revision: `d026c0dc`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T01:32:37.700Z`  
+> **Provenance**: Harvested from [kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor) (Revision: `551b0df2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:03:29.113Z`  
 > **Learning ID**: `learn-github-kubearmor-kubearmor`
 
 
@@ -30,7 +30,7 @@ During deep inspection of kubearmor/KubeArmor, modular boundaries, performance c
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:32:36.206Z  
+> **Harvest Timestamp**: 2026-11-23T17:03:27.365Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of kubearmor/KubeArmor, modular boundaries, performance c
 - **Description**: Runtime Security Enforcement System. Workload hardening/sandboxing and implementing least-permissive policies made easy leveraging LSMs (LSM-BPF, AppArmor).
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 2645 stars
+- **Stars / Engagement**: 2643 stars
 
 ---
 
@@ -3192,276 +3192,292 @@ func (nh *NRIHandler) nriToKubeArmorContainer(nriContainer *api.Container) tp.Co
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d026c0dc` (2026-11-14)
-**Commit Message**: docs(examples): fix links to the match-expression policy files
+### Incident Patch 1: `551b0df2` (2026-11-23)
+**Commit Message**: fix(monitor): stop silently dropping alerts for short-lived processes
 
-The two match-expression policies are in examples/multiubuntu/security-policies, not examples/nginx-csp/cluster-security-policies.
+Stop silently dropping alerts for short-lived processes and upgrade go version.
 
-Signed-off-by: Sanjana Kumari <[REDACTED_EMAIL]>
-
-**File**: `getting-started/security_policy_examples.md` (modified, +2/-2)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -26,7 +26,7 @@ Here, we demonstrate how to define security policies using our example microserv
+@@ -3,7 +3,7 @@
  
-     * Verification: After applying this policy, please get into one of the containers with the 'group-1' \(using "kubectl -n multiubuntu exec -it ubuntu-X-deployment-... -- bash"\) and run '/bin/sleep'. You will see that /bin/sleep is blocked.
+ ### Builder
  
--  * Block accessing specific executable matching labels, In & NotIn operator \([ksp-match-expression-in-notin-block-process.yaml](../examples/nginx-csp/cluster-security-policies/ksp-match-expression-in-notin-block-process.yaml)\)
-+  * Block accessing specific executable matching labels, In & NotIn operator \([ksp-match-expression-in-notin-block-process.yaml](../examples/multiubuntu/security-policies/ksp-match-expression-in-notin-block-process.yaml)\)
+-FROM golang:1.26-alpine3.23@sha256:a07f231c19b03e6106cf442f02a5bcf262147e744d15b7b5e4b6d81d420c70a0 AS builder
++FROM golang:1.26-alpine3.23@sha256:23f198931d4bd83b4f5a613bd75656257ae8bf832dcbc2db80e1050b5219ca2a AS builder
  
-     ```yaml
-     apiVersion: security.kubearmor.com/v1
-@@ -58,7 +58,7 @@ Here, we demonstrate how to define security policies using our example microserv
- 
-     * Verification: After applying this policy, please exec into any container who contains label `container=ubuntu-1` within the namespace 'multiubuntu' and run 'apt'. You can see the binary is blocked. Then try to do same in other workloads who doesn't contains label `container=ubuntu-1`, the binary won't be blocked.
- 
--  * Block accessing specific executable matching labels, NotIn operator \([ksp-match-expression-notin-block-process.yaml](../examples/nginx-csp/cluster-security-policies/ksp-match-expression-notin-block-process.yaml)\)
-+  * Block accessing specific executable matching labels, NotIn operator \([ksp-match-expression-notin-block-process.yaml](../examples/multiubuntu/security-policies/ksp-match-expression-notin-block-process.yaml)\)
- 
-     ```yaml
-     apiVersion: security.kubearmor.com/v1
+ RUN apk --no-cache update && apk upgrade --no-cache libcrypto3 libssl3 zlib libexpat
+ RUN apk add --no-cache git clang llvm make gcc protobuf protobuf-dev curl elfutils-dev libbpf-dev
 ```
 
----
-
-### Incident Patch 2: `c4e1c022` (2026-11-10)
-**Commit Message**: fix(feeder): narrow DefaultPosturesLock scope in UpdateMatchedPolicy
-
-Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
-
-**File**: `KubeArmor/feeder/feeder.go` (modified, +2/-2)
+**File**: `KubeArmor/go.mod` (modified, +1/-1)
 ```diff
-@@ -260,7 +260,7 @@ type Feeder struct {
+@@ -1,6 +1,6 @@
+ module github.com/kubearmor/KubeArmor/KubeArmor
  
- 	// DefaultPosture (namespace -> postures)
- 	DefaultPostures     map[string]tp.DefaultPosture
--	DefaultPosturesLock *sync.Mutex
-+	DefaultPosturesLock *sync.RWMutex
+-go 1.26.10
++go 1.26.11
  
- 	AlertMap     map[OuterKey]AlertThrottleState
- 	AlertMapLock sync.RWMutex
-@@ -403,7 +403,7 @@ func NewFeeder(node *tp.Node, nodeLock **sync.RWMutex) (feeder *Feeder) {
- 
- 	// initialize default postures
- 	fd.DefaultPostures = map[string]tp.DefaultPosture{}
--	fd.DefaultPosturesLock = new(sync.Mutex)
-+	fd.DefaultPosturesLock = new(sync.RWMutex)
- 
- 	fd.UserNameMap = UserNameMap{
- 		usernames: make(map[uint32]cachedUserName),
+ replace (
+ 	github.com/kubearmor/KubeArmor => ../../
 ```
 
-**File**: `KubeArmor/feeder/policyMatcher.go` (modified, +25/-21)
+**File**: `KubeArmor/monitor/logUpdate.go` (modified, +115/-32)
 ```diff
-@@ -1400,8 +1400,10 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
- 	existCapabilitiesAllowPolicy := false
- 	existUSBDeviceAllowPolicy := false
- 	existNetworkFirewallAllowPolicy := false
--	fd.DefaultPosturesLock.Lock()
--	defer fd.DefaultPosturesLock.Unlock()
-+	fd.DefaultPosturesLock.RLock()
-+	defaultPosture := fd.DefaultPostures[log.NamespaceName]
-+	fd.DefaultPosturesLock.RUnlock()
+@@ -8,6 +8,8 @@ import (
+ 	"path/filepath"
+ 	"strconv"
+ 	"strings"
++	"syscall"
++	"time"
+ 
+ 	kl "github.com/kubearmor/KubeArmor/KubeArmor/common"
+ 	cfg "github.com/kubearmor/KubeArmor/KubeArmor/config"
+@@ -128,11 +130,61 @@ func (mon *SystemMonitor) UpdateLogBase(ctx SyscallContext, log tp.Log) tp.Log {
+ 
+ // UpdateLogs Function
+ func (mon *SystemMonitor) UpdateLogs() {
++	// failed file/network events (potential alerts) whose process is not in the pid map yet.
++	// The perf buffer is per-CPU and gives no ordering across CPUs, so such an event can be
++	// read before the execve enter of its own process; it is retried until that arrives.
++	type unresolvedLog struct {
++		msg      ContextCombined
++		log      tp.Log
++		deadline time.Time
++	}
 +
- 	if log.Result == "Passed" || log.Result == "Operation not permitted" || log.Result == "Permission denied" {
- 		if log.Type == "SystemEvent" {
- 			return log
-@@ -1436,7 +1438,7 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
- 					existNetworkFirewallAllowPolicy = true
- 				}
++	unresolved := make([]unresolvedLog, 0)
++	retryTicker := time.NewTicker(UnresolvedRetryInterval)
++	defer retryTicker.Stop()
++
+ 	for {
+ 		select {
+ 		case <-StopChan:
+ 			return
  
--				if fd.DefaultPostures[log.NamespaceName].FileAction == "allow" {
-+				if defaultPosture.FileAction == "allow" {
- 					continue
- 				}
++		case now := <-retryTicker.C:
++			if len(unresolved) == 0 {
++				continue
++			}
++
++			// entries are queued in arrival order with the same timeout and keep that order,
++			// so the expired ones are always at the front: drop them without any lookup
++			expired := 0
++			for expired < len(unresolved) && now.After(unresolved[expired].deadline) {
++				mon.Logger.Debugf("%s Event dropped: process information still missing after %s", unresolved[expired].log.Operation, UnresolvedRetryTimeout)
++				expired++
++			}
++
++			// retry at most UnresolvedRetryBatch entries per tick, so a long queue can't stall
++			// this goroutine (and the ContextChan consumer with it); the rest wait for the next tick
++			pending := unresolved[:0]
++			for i, ev := range unresolved[expired:] {
++				if i >= UnresolvedRetryBatch {
++					pending = append(pending, unresolved[expired+i:]...)
++					break
++				}
++
++				// one cheap lookup first; the full resolution only once the process is known
++				if !mon.HasActivePid(ev.msg.ContainerID, ev.msg.ContextSys.HostPID) {
++					pending = append(pending, ev)
++					continue
++				}
++
++				mon.resolveProcessInfo(&ev.log, ev.msg)
++				if mon.isProcessInformationMissing(&ev.log) {
++					continue
++				}
++				mon.finalizeAndPushLog(ev.msg, ev.log)
++			}
++			clear(unresolved[len(pending):])
++			unresolved = pending
++
+ 		case msg, valid := <-mon.ContextChan:
+ 			if !valid {
+ 				continue
+@@ -568,44 +620,75 @@ func (mon *SystemMonitor) UpdateLogs() {
  			}
-@@ -1640,9 +1642,9 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
  
- 						log.Enforcer = "eBPF Monitor"
+ 			if mon.isProcessInformationMissing(&log) {
++				// a file/network event denied by an enforcer is a potential alert: instead of
++				// dropping it, wait for the (possibly late) execve of its process. Only EPERM
++				// (BPF-LSM) and EACCES (AppArmor, SELinux) are queued: the policy matcher only
++				// turns "Passed", "Operation not permitted" and "Permission denied" into
++				// alerts, so other failures (ENOENT, ECONNREFUSED, ...) can never be one
++				if (msg.ContextSys.Retval == -int64(syscall.EPERM) || msg.ContextSys.Retval == -int64(syscall.EACCES)) &&
++					(log.Operation == "File" || log.Operation == "Network") {
++					if len(unresolved) >= UnresolvedQueueSize {
++						mon.Logger.Debugf("%s Event dropped: process information missing and retry queue is full", log.Operation)
++						continue
++					}
++					unresolved = append(unresolved, unresolvedLog{
++						msg:      msg,
++						log:      log,
++						deadline: time.Now().Add(UnresolvedRetryTimeout),
++					})
++				}
+ 				continue
+ 			}
  
--						if fd.DefaultPostures[log.NamespaceName].FileAction == "block" {
-+						if defaultPosture.FileAction == "block" {
- 							log.Action = "Audit (Block)"
--						} else { // fd.DefaultPostures[log.NamespaceName].FileAction == "audit"
-+						} else { // defaultPosture.FileAction == "audit"
- 							log.Action = "Audit"
- 						}
+-			// fallback logic: in case we get relative path in log.Resource for file and process event
+-			// then we join cwd + resource to get pull path
+-			if log.Operation == "Process" || log.Operation == "File" {
+-				if !strings.HasPrefix(strings.Split(log.Resource, " ")[0], "/") && log.Cwd != "/" {
+-					log.Resource = filepath.Join(log.Cwd, log.Resource)
+-				}
+-			}
++			mon.finalizeAndPushLog(msg, log)
++		}
++	}
++}
  
-@@ -1652,7 +1654,7 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
+-			// get error message
+-			if msg.ContextSys.Retval < 0 {
+-				message := getErrorMessage(msg.ContextSys.Retval)
+-				if message != "" {
+-					log.Result = message
+-				} else {
+-					log.Result = fmt.Sprintf("Unknown (%d)", msg.ContextSys.Retval)
+-				}
+-			} else {
+-				log.Result = "Passed"
+-			}
++// resolveProcessInfo re-reads the process fields of a non-exec log from the pid map
++func (mon *SystemMonitor) resolveProcessInfo(log *tp.Log, msg ContextCombined) {
++	// readlink is false: the process has usually exited already, and if it were still
++	// alive the first (readlink) attempt would have resolved it
++	log.ProcessName = mon.GetExecPath(msg.ContainerID, msg.ContextSys, false)
++	log.ParentProcessName = mon.GetParentExecPath(msg.ContainerID, msg.ContextSys, false, false)
++	log.Source = mon.GetCommand(msg.ContainerID, msg.ContextSys, false)
++}
  
- 				// apply the default postures when log.type isn't yet known
- 
--				if fd.DefaultPostures[log.NamespaceName].FileAction == "block" && secPolicy.Action == "Audit (Allow)" && log.Result == "Passed" && log.Type == "" {
-+				if defaultPosture.FileAction == "block" && secPolicy.Action == "Audit (Allow)" && log.Result == "Passed" && log.Type == "" {
- 					// defaultPosture = block + audit mode
- 					log.Type = "MatchedPolicy"
- 
-@@ -1667,7 +1669,7 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
- 					log.Action = "Audit (Block)"
- 				}
- 
--				if fd.DefaultPostures[log.NamespaceName].FileAction == "audit" && (secPolicy.Action == "Allow" || secPolicy.Action == "Audit (Allow)") && log.Result == "Passed" && log.Type == "" {
-+				if defaultPosture.FileAction == "audit" && (secPolicy.Action == "Allow" || secPolicy.Action == "Audit (Allow)") && log.Result == "Passed" && log.Type == "" {
- 					// defaultPosture = audit
- 					log.Type = "MatchedPolicy"
- 
-@@ -1865,17 +1867,17 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
- 
- 						log.Enforcer = "eBPF Monitor"
- 
--						if fd.DefaultPostures[log.NamespaceName].NetworkAction == "block" {
-+						if defaultPosture.NetworkAction == "block" {
- 							log.Action = "Audit (Block)"
--						} else { // fd.DefaultPostures[log.NamespaceName].NetworkAction == "audit"
-+						} else { // defaultPosture.NetworkAction == "audit"
- 							log.Action = "Audit"
- 						}
- 
- 						continue
- 					}
- 				}
- 
--				if fd.DefaultPostures[log.NamespaceName].NetworkAction == "block" && secPolicy.Action == "Audit (Allow)" && log.Result == "Passed" {
-+				if defaultPosture.NetworkAction == "block" && secPolicy.Action == "Audit (Allow)" && log.Result == "Passed" {
- 					// defaultPosture = block + audit mode
- 
- 					log.Type = "MatchedPolicy"
-@@ -1890,7 +1892,7 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
- 					log.Action = "Audit (Block)"
- 				}
- 
--				if fd.DefaultPostures[log.NamespaceName].NetworkAction == "audit" && (secPolicy.Action == "Allow" || secPolicy.Action == "Audit (Allow)") && log.Result == "Passed" {
-+				if defaultPosture.NetworkAction == "audit" && (secPolicy.Action == "Allow" || secPolicy.Action == "Audit (Allow)") && log.Result == "Passed" {
- 					// defaultPosture = audit
- 
- 					log.Type = "MatchedPolicy"
-@@ -2181,17 +2183,17 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
- 
- 						log.Enforcer = "eBPF Monitor"
- 
--						if fd.DefaultPostures[log.NamespaceName].CapabilitiesAction == "block" {
-+						if defaultPosture.CapabilitiesAction == "block" {
- 							log.Action = "Audit (Block)"
--						} else { // fd.DefaultPostures[log.NamespaceName].CapabilitiesAction == "audit"
-+						} else { // defaultPosture.CapabilitiesAction == "audit"
- 							log.Action = "Audit"
- 						}
- 
- 						continue
- 					}
- 				}
- 
--				if fd.DefaultPostures[log.NamespaceName].CapabilitiesAction == "block" && secPolicy.Action == "Audit (Allow)" && log.Result == "Passed" {
-+				if defaultPosture.CapabilitiesAction == "block" && secPolicy.Action == "Audit (Allow)" && log.Result == "Passed" {
- 					// defaultPosture = block + audit mode
- 
- 					log.Type = "MatchedPolicy"
-@@ -2206,7 +2208,7 @@ func (fd *Feeder) UpdateMatchedPolicy(log tp.Log) tp.Log {
- 					log.Action = "Audit (Block)"
- 				}
- 
--				if fd.DefaultPostures[log.NamespaceName].CapabilitiesAction == "audit" && (secPolicy.Action == "Allow" || secPolicy.Action == "Audit (Allow)") && log.Result == "Passed" {
-+				if defaultPosture.CapabilitiesAction == "audit" && (secPolicy.Action == "Allow" || secPolicy.Action == "Audit (Allow)") && log.Result
+-			// exec event
+-			log.ExecEvent.ExecID = strconv.FormatUint(msg.ContextSys.ExecID, 10)
+-			if comm := strings.TrimRight(string(msg.ContextSys.Comm[:]), "\x00"); len(comm) > 0 {
+-				log.ExecEvent.ExecutableName = comm
+-			}
++// finalizeAndPushLog fills the remaining fields of a log and p
 ```
 
----
-
-### Incident Patch 3: `22271255` (2026-11-10)
-**Commit Message**: ci: Run multi-arch img build test with alongside ginkgo tests
-
-Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci-test-suite.yml` (modified, +12/-18)
+**File**: `KubeArmor/monitor/processTree.go` (modified, +25/-3)
 ```diff
-@@ -120,68 +120,62 @@ jobs:
+@@ -278,6 +278,21 @@ func (mon *SystemMonitor) GetParentExecPath(containerID string, ctx SyscallConte
+ 	return path
+ }
  
-   matrix-tests:
-     name: "Ginkgo Tests - K8s"
--    needs: [detect-changes, go-tests, ebpf-tests, ka-multiarch-img-build-test]
-+    needs: [detect-changes, go-tests, ebpf-tests]
-     if: |
-       !cancelled() &&
-       (needs.go-tests.result == 'success' || needs.go-tests.result == 'skipped') &&
-       (needs.ebpf-tests.result == 'success' || needs.ebpf-tests.result == 'skipped') &&
--      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success') && 
--      (needs.ka-multiarch-img-build-test.result == 'success')
-+      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success')
-     uses: ./.github/workflows/ci-test-ginkgo.yml
++// HasActivePid reports whether the process is in the pid map
++func (mon *SystemMonitor) HasActivePid(containerID string, hostPid uint32) bool {
++	ActiveHostPidMap := *(mon.ActiveHostPidMap)
++	ActivePidMapLock := *(mon.ActivePidMapLock)
++
++	ActivePidMapLock.Lock()
++	defer ActivePidMapLock.Unlock()
++
++	if pidMap, ok := ActiveHostPidMap[containerID]; ok {
++		_, ok := pidMap[hostPid]
++		return ok
++	}
++	return false
++}
++
+ // GetExecPath Function
+ func (mon *SystemMonitor) GetExecPath(containerID string, ctx SyscallContext, readlink bool) string {
+ 	ActiveHostPidMap := *(mon.ActiveHostPidMap)
+@@ -394,13 +409,20 @@ func (mon *SystemMonitor) CleanUpExitedHostPids() {
  
-   matrix-tests-ubi:
-     name: "Ginkgo Tests (UBI) - K8s"
--    needs: [detect-changes, go-tests, ebpf-tests, ka-multiarch-img-build-test]
-+    needs: [detect-changes, go-tests, ebpf-tests]
-     if: |
-       !cancelled() &&
-       (needs.go-tests.result == 'success' || needs.go-tests.result == 'skipped') &&
-       (needs.ebpf-tests.result == 'success' || needs.ebpf-tests.result == 'skipped') &&
--      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success') && 
--      (needs.ka-multiarch-img-build-test.result == 'success')
-+      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success')
-     uses: ./.github/workflows/ci-test-ubi-image.yml
+ 		for containerID, pidMap := range ActiveHostPidMap {
+ 			for pid, pidNode := range pidMap {
+-				if pidNode.Exited && now.After(pidNode.ExitedTime.Add(time.Second*5)) {
++				if pidNode.Exited && now.After(pidNode.ExitedTime.Add(ExitedNodeGracePeriod)) {
+ 					cleanMaps(pidMap, mon.execLogMap, mon.execLogMapLock, pid)
+-				} else if now.After(pidNode.ExitedTime.Add(time.Second * 30)) {
++				} else if !pidNode.Exited {
++					// the process is gone but its exit event has not been processed (yet). Its
++					// other events may still be queued (UpdateLogs can lag behind, and per-CPU
++					// perf buffers deliver out of order), so don't delete the node right away:
++					// mark it exited now and let the ExitedNodeGracePeriod rule above remove it
++					// on a later pass
+ 					p, err := os.FindProcess(int(pid))
+ 					if err == nil && p != nil {
+ 						if p.Signal(syscall.Signal(0)) != nil {
+-							cleanMaps(pidMap, mon.execLogMap, mon.execLogMapLock, pid)
++							pidNode.Exited = true
++							pidNode.ExitedTime = now
++							pidMap[pid] = pidNode
+ 						}
+ 					} else {
+ 						cleanMaps(pidMap, mon.execLogMap, mon.execLogMapLock, pid)
+```
+
+**File**: `KubeArmor/monitor/systemMonitor.go` (modified, +14/-0)
+```diff
+@@ -42,6 +42,20 @@ const (
+ 	ReplayInterval       = 1 * time.Second
+ 	ReplayTimeout        = 10 * time.Second
+ 	DefaultVisibilityKey = uint32(0xc0ffee)
++	// failed (non-Passed) file/network events whose process is not known yet are retried
++	// until the process shows up in the pid map. Events from per-CPU perf buffers can be read
++	// out of order, so an event may arrive before the execve that created its process.
++	// The retries run on the UpdateLogs goroutine, so the work per tick is bounded: at most
++	// UnresolvedRetryBatch entries are looked up per tick and the queue holds at most
++	// UnresolvedQueueSize entries.
++	UnresolvedRetryInterval = 100 * time.Millisecond
++	UnresolvedRetryTimeout  = 3 * time.Second
++	UnresolvedRetryBatch    = 256
++	UnresolvedQueueSize     = 1024
++	// ExitedNodeGracePeriod is how long an exited process stays in the pid map before it is
++	// removed. It must be longer than UnresolvedRetryTimeout: a queued event can only be
++	// resolved while its process is still in the pid map.
++	ExitedNodeGracePeriod = 5 * time.Second
+ )
  
-   matrix-tests-systemd:
-     name: "Ginkgo Tests - Systemd"
--    needs: [detect-changes, go-tests, ebpf-tests, ka-multiarch-img-build-test]
-+    needs: [detect-changes, go-tests, ebpf-tests]
-     if: |
-       !cancelled() &&
-       (needs.go-tests.result == 'success' || needs.go-tests.result == 'skipped') &&
-       (needs.ebpf-tests.result == 'success' || needs.ebpf-tests.result == 'skipped') &&
--      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success') && 
--      (needs.ka-multiarch-img-build-test.result == 'success')
-+      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success')
-     uses: ./.github/workflows/ci-test-systemd.yml
-   
-   matrix-tests-network:
-     name: "Ginkgo Tests (Network) - K8s"
--    needs: [detect-changes, go-tests, ebpf-tests, ka-multiarch-img-build-test]
-+    needs: [detect-changes, go-tests, ebpf-tests]
-     if: |
-       !cancelled() &&
-       (needs.go-tests.result == 'success' || needs.go-tests.result == 'skipped') &&
-       (needs.ebpf-tests.result == 'success' || needs.ebpf-tests.result == 'skipped') &&
--      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success') && 
--      (needs.ka-multiarch-img-build-test.result == 'success')
-+      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success')
-     uses: ./.github/workflows/ci-network-tests.yml
+ // ======================= /=/
+```
+
+**File**: `deployments/go.mod` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/kubearmor/KubeArmor/deployments
  
-   matrix-tests-controller:
-     name: "Ginkgo Tests (Controller) - K8s"
--    needs: [detect-changes, go-tests, ebpf-tests, ka-multiarch-img-build-test]
-+    needs: [detect-changes, go-tests, ebpf-tests]
-     if: |
-       !cancelled() &&
-       (needs.go-tests.result == 'success' || needs.go-tests.result == 'skipped') &&
-       (needs.ebpf-tests.result == 'success' || needs.ebpf-tests.result == 'skipped') &&
--      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success') && 
--      (needs.ka-multiarch-img-build-test.result == 'success')
-+      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success')
-     uses: ./.github/workflows/ci-test-controllers.yml
+-go 1.26.10
++go 1.26.11
  
-   build-test-operator:
-     name: "Build Test - Operator"
--    needs: [detect-changes, go-tests, ebpf-tests, ka-multiarch-img-build-test]
-+    needs: [detect-changes, go-tests, ebpf-tests]
-     if: |
-       !cancelled() &&
-       (needs.go-tests.result == 'success' || needs.go-tests.result == 'skipped') &&
-       (needs.ebpf-tests.result == 'success' || needs.ebpf-tests.result == 'skipped') &&
--      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success') && 
--      (needs.ka-multiarch-img-build-test.result == 'success')
-+      (needs.go-tests.result == 'success' || needs.ebpf-tests.result == 'success')
-     uses: ./.github/workflows/ci-test-operator.yaml
+ replace (
+ 	github.com/kubearmor/KubeArmor => ../
+```
+
+**File**: `deployments/podman/go.mod` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/kubearmor/KubeArmor/deployments/podman
  
-   matrix-composite-result:
+-go 1.26.10
++go 1.26.11
+ 
+ require (
+ 	github.com/kubearmor/KubeArmor/KubeArmor v0.0.0-20260521154542-6789b83a8cee
+```
+
+**File**: `pkg/KubeArmorController/Dockerfile` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ # Copyright 2026 Authors of KubeArmor
+ 
+ # Build the manager binary
+-FROM golang:1.26.10@sha256:fb456410ab4c979617acaf28c46b2b9fe60b11bcc3dc8ceea0eaeb3e7cd0f8a8 AS builder
++FROM golang:1.26.11@sha256:4165ee6bf3b7811fd7b40373290405c83d0167dcb87ee5f29c427cdcef45ff8f AS builder
+ 
+ WORKDIR /workspace
+ # Copy the Go Modules manifests
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3029** (2026-11-23): fix(monitor): stop silently dropping alerts for short-lived processes (@AryanBakliwal)
+- **PR #3012** (closed): docs: document Elasticsearch adapter configuration in KubeArmorConfig (@Ankitavasudev)
+- **PR #3011** (closed): docs: document seccompEnabled and controllerPort in KubeArmorConfig (@Ankitavasudev)
 - **PR #3010** (2026-11-18): docs(examples): fix links to the match-expression policy files (@SANJANAKUMARI83)
 - **PR #3004** (2026-11-18): fix(feeder): narrow DefaultPosturesLock scope in UpdateMatchedPolicy (@AryanBakliwal)
-- **PR #2999** (closed): chore(deps): update module github.com/klauspost/compress to v1.20.2 [security] - autoclosed (@renovate[bot])
-- **PR #2987** (closed): docs: resolve issue #2985 (@imagiolabs)
-- **PR #2949** (2026-10-23): fix: Fix stable release workflow and ignore bpf2go files (@AryanBakliwal)
-- **PR #2948** (2026-10-23): go generate fix, removed obj files, and added release related workflow tests to CI (@AryanBakliwal)
+- **PR #3001** (closed): docs: document the presets field in the policy specifications (@Ankitavasudev)
 
 ---
 
@@ -3481,33 +3497,31 @@ Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(examples): fix links to the match-expression policy files
+## X. monitor): stop silently dropping alerts for short-lived processes
 
 **RULE**:
-When implementing operations in `getting-started/security_policy_examples.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubearmor/KubeArmor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubearmor/KubeArmor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d026c0dc`: docs(examples): fix links to the match-expression policy files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `551b0df2`: monitor): stop silently dropping alerts for short-lived processes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `getting-started/security_policy_examples.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  * Block accessing specific executable matching labels, In & NotIn operator \([ksp-match-expression-in-notin-block-process.yaml](../examples/multiubuntu/security-policies/ksp-match-expression-in-notin-block-process.yaml)\)
-  * Block accessing specific executable matching labels, NotIn operator \([ksp-match-expression-notin-block-process.yaml](../examples/multiubuntu/security-policies/ksp-match-expression-notin-block-process.yaml)\)
+FROM golang:1.26-alpine3.23@sha256:23f198931d4bd83b4f5a613bd75656257ae8bf832dcbc2db80e1050b5219ca2a AS builder
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  * Block accessing specific executable matching labels, In & NotIn operator \([ksp-match-expression-in-notin-block-process.yaml](../examples/nginx-csp/cluster-security-policies/ksp-match-expression-in-notin-block-process.yaml)\)
-  * Block accessing specific executable matching labels, NotIn operator \([ksp-match-expression-notin-block-process.yaml](../examples/nginx-csp/cluster-security-policies/ksp-match-expression-notin-block-process.yaml)\)
+FROM golang:1.26-alpine3.23@sha256:a07f231c19b03e6106cf442f02a5bcf262147e744d15b7b5e4b6d81d420c70a0 AS builder
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d026c0dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `551b0df2` are properly handled with clean fallback behavior.
 
 
 ## Consequences

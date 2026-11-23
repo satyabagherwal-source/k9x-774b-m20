@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T16:53:49.795Z",
+  "last_updated": "2026-11-23T17:03:52.692Z",
   "directives": [
     {
       "id": "CD-001",
@@ -22256,14 +22256,14 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-AZPK",
+      "id": "CD-M73O",
       "directive_title": "Empirical Invariant Guard in go.mod",
-      "source_repo": "smallstep-cli-learnings",
+      "source_repo": "etcd-io-etcd-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AZPK-empirical-invariant-guard-in-go-mod.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-M73O-empirical-invariant-guard-in-go-mod.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-18",
+      "date_staged": "2026-11-23",
       "domain_letter": "D"
     },
     {
@@ -49935,6 +49935,68 @@
       "source_repo": "revenuecat-purchases-ios",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EE916F-bump-ruby-to-3-3-14-for-the-regexp-strin.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-LOWL",
+      "directive_title": "stop silently dropping alerts for short-lived processes",
+      "source_repo": "kubearmor/KubeArmor",
+      "source_commit": "551b0df2",
+      "staged_file": "11_INBOX/candidate-directives/CD-LOWL-stop-silently-dropping-alerts-for-short-lived-processes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-M5L3",
+      "directive_title": "Don't save marked output values in the plan",
+      "source_repo": "opentofu-opentofu-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-M5L3-don-t-save-marked-output-values-in-the-plan.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-M17A",
+      "directive_title": "refuse numbers too close to 0 for .xpt; keep them in .por",
+      "source_repo": "dathere/qsv",
+      "source_commit": "c4528161",
+      "staged_file": "11_INBOX/candidate-directives/CD-M17A-refuse-numbers-too-close-to-0-for-xpt-keep-them-in-por.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-M4BK",
+      "directive_title": "monitor): stop silently dropping alerts for short-lived processes",
+      "source_repo": "kubearmor-kubearmor-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-M4BK-monitor-stop-silently-dropping-alerts-for-short-lived-processes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-67DF3B",
+      "directive_title": "Don't save marked output values in the plan",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "opentofu-opentofu",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-67DF3B-don-t-save-marked-output-values-in-the-p.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-0EC393",
+      "directive_title": "Empirical Invariant Guard in go.mod",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "etcd-io-etcd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0EC393-empirical-invariant-guard-in-go-mod.md",
       "staged_date": "2026-11-23"
     }
   ]

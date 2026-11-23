@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T16:53:49.970Z",
+  "last_updated": "2026-11-23T17:03:52.924Z",
   "total_records": 2433,
   "domains": {
     "A": {
@@ -10744,8 +10744,8 @@
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "repository": "opentofu/opentofu",
-      "content_hash": "7c21bef4ae1a8ff27e74a410f9b23ae60b48771c364681ac08993db538cdb0b6",
-      "created_at": "2026-11-21T13:30:36.641Z"
+      "content_hash": "3b778dbbd9b2beb6ece9f95d298f220db4f4eab161787e0b2ccdcdd6473d952d",
+      "created_at": "2026-11-23T17:03:38.231Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -12490,8 +12490,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "eb2b33dfa97a07b70f265446354a893d80ba043f8fae0ad97f17e7f893b88ba0",
-      "created_at": "2026-11-23T14:46:42.608Z"
+      "content_hash": "9c4fe8f76a9098099bfb978cce5351b288674dda595f219874406b0cb2d5394e",
+      "created_at": "2026-11-23T17:03:45.273Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -16439,8 +16439,8 @@
       "title": "Research & Knowledge Intelligence: lilylilith/QI_2.1_AnyAngle Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lilylilith-qi_2-1_anyangle-research-knowledge-intelligence-lilylilith-qi_2-1_.md",
       "repository": "lilylilith/QI_2.1_AnyAngle",
-      "content_hash": "ccdb38b2b030dd44402b59057ed49b557e9ae7160a95c19b0ccf26551e6a4cee",
-      "created_at": "2026-11-19T04:44:03.869Z"
+      "content_hash": "a058a525110f0cba1a795e27f6b8459a355c868c6051ab4ef8188a455677b1e8",
+      "created_at": "2026-11-23T17:03:26.252Z"
     },
     "domain_intelligence-architecture-intelligence-biomejs-biome-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-biomejs-biome-core-invariants",
@@ -23067,8 +23067,8 @@
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "repository": "etcd-io/etcd",
-      "content_hash": "d31fad227ade3911e5ac86e7958dca7935e791000a5acfcc01e9a61dec370140",
-      "created_at": "2026-11-20T04:58:10.679Z"
+      "content_hash": "1b9c3d9979ae8a6a69eff31d5751e11a5e43bc283078c217d5fbc2704cb51e2e",
+      "created_at": "2026-11-23T17:03:43.150Z"
     },
     "DOM-D-CB5F7DEE": {
       "record_id": "DOM-D-CB5F7DEE",
@@ -23169,8 +23169,8 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-learnings-content-information-intelligence-etcd-io-etcd-learnings-c.md",
       "repository": "etcd-io-etcd-learnings",
-      "content_hash": "7cefc7da3ba4add49a077adb3f2dd87550f17100135d95d7f3ab70cf020f013e",
-      "created_at": "2026-11-20T04:58:14.836Z"
+      "content_hash": "1543fa0062144b9615cecbdb41cbb646c3cbc0a88a17c266ba387e1ebe384e45",
+      "created_at": "2026-11-23T17:03:52.924Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",
@@ -28350,8 +28350,8 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-learnings-architecture-intelligence-opentofu-opentofu-learning.md",
       "repository": "opentofu-opentofu-learnings",
-      "content_hash": "3bccb8d59da076176ca5219549f0cc7d3cf2df299c728482c07239ceedf3dca8",
-      "created_at": "2026-11-21T13:30:48.194Z"
+      "content_hash": "9667863ef68a4e4abedaf7a16b519831640c2af5c114f289e3a83505ea533fd5",
+      "created_at": "2026-11-23T17:03:50.952Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core",
@@ -32900,8 +32900,8 @@
       "title": "Deployment & Operations Intelligence: kubearmor/KubeArmor Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-deployment-operations-intelligence-kubearmor-kubearmor-core-.md",
       "repository": "kubearmor/KubeArmor",
-      "content_hash": "348b402e551596a2d1bf28d73642bfd87745098ba18fa6f8594a0820683b6091",
-      "created_at": "2026-11-19T01:32:37.880Z"
+      "content_hash": "d7ecc2184988ef49f76cef28ff0f4347ae75bb5614c56f03343a3e0839d0ed59",
+      "created_at": "2026-11-23T17:03:29.346Z"
     },
     "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants",
@@ -32909,8 +32909,8 @@
       "title": "Deployment & Operations Intelligence: kubearmor-kubearmor-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-learnings-deployment-operations-intelligence-kubearmor-kubea.md",
       "repository": "kubearmor-kubearmor-learnings",
-      "content_hash": "ad58c42774b3763e2b384c58e921d0bb9c300e64d15622986d6380e825613d51",
-      "created_at": "2026-11-19T01:32:56.159Z"
+      "content_hash": "cf834ffdbdc96b97a105da2fdd0e63b1cbd11d200ec7c1aebdd4f053a76e0d70",
+      "created_at": "2026-11-23T17:03:49.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhaliq-minimax-h3-image-character-swap-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akhaliq-minimax-h3-image-character-swap-core-inv",

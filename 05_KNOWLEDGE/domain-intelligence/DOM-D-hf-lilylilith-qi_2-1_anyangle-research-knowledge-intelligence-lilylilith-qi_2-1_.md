@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
   "source_version": "hf-lilylilith-qi_2.1_anyangle",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T04:44:03.868Z",
+  "timestamp": "2026-11-23T17:03:26.251Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) (Revision: `hf-lilylil`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T04:44:03.868Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T17:03:26.251Z`  
 > **Learning ID**: `learn-huggingface-lilylilith-qi_2-1_anyangle`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T04:44:03.035Z  
+> **Harvest Timestamp**: 2026-11-23T17:03:25.043Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 13091 downloads | 197 likes
+- **Stars / Engagement**: 12946 downloads | 201 likes
 
 ---
 

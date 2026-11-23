@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T16:53:50.147Z",
+  "last_updated": "2026-11-23T17:03:53.147Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24056,
+  "total_items": 24063,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "ecf1cb0e",
-      "content_hash": "b0154bd43ff41c886128421f9f8ceb0f5deec17f69f5cc066ed4ed9e3191854a",
+      "source_version": "c4528161",
+      "content_hash": "482d379ff00554b0d6604ededd78119b6c13452d7dd388207105696f5ac50692",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:46:42.772Z"
+      "persisted_at": "2026-11-23T17:03:45.497Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -215211,8 +215211,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "0183949c",
-      "content_hash": "01444c9797a2628bfc00a175d597fef79a36faa591373b655bffe6dc43c24983",
+      "source_version": "bfd092bc",
+      "content_hash": "a04dc0e197350ff33b4aa6db724e6d40a2bd476fb057c4da96c9cb339878532b",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -215240,6 +215240,11 @@
           "number": 9786,
           "title": "Add some notes about checks in the different runtimes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10075,
+          "title": "Don't save marked output values in the plan",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215247,7 +215252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T13:30:36.116Z",
+      "verified_at": "2026-11-23T17:03:37.407Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215289,10 +215294,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "repository": "opentofu/opentofu",
-      "source_version": "0183949c",
-      "content_hash": "7c21bef4ae1a8ff27e74a410f9b23ae60b48771c364681ac08993db538cdb0b6",
+      "source_version": "bfd092bc",
+      "content_hash": "3b778dbbd9b2beb6ece9f95d298f220db4f4eab161787e0b2ccdcdd6473d952d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T13:30:36.641Z"
+      "persisted_at": "2026-11-23T17:03:38.231Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu",
@@ -215301,10 +215306,10 @@
       "relative_path": "08_VERIFICATION/opentofu-opentofu-verification-protocol-empirical-defect-shield-for-opentofu-ope.md",
       "title": "Verification Protocol: Empirical Defect Shield for opentofu/opentofu",
       "repository": "opentofu/opentofu",
-      "source_version": "0183949c",
-      "content_hash": "3015701d2576e93ee15ec3b01cd8d31537781c82a648ae95b6de1737c0475ecb",
+      "source_version": "bfd092bc",
+      "content_hash": "d978b3935c7fdbe566cd9cca1896f930705226f22024e9f04efea58b3cac1987",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T13:30:36.791Z"
+      "persisted_at": "2026-11-23T17:03:38.458Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -220029,8 +220034,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "ecf1cb0e",
-      "content_hash": "793b3f5ca7b7b9c4779a88b61da3c18588de8d8e3eae098cbe3e0223fc81b3ef",
+      "source_version": "c4528161",
+      "content_hash": "9143a8ce17ab4c299e8809594c9f361e15bafaae768d1db75458dd1c3f6609c7",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220213,6 +220218,11 @@
           "number": 10056,
           "title": "report vulnerabilities via GitHub private reporting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10076,
+          "title": "refuse numbers too close to 0 for .xpt; keep them in .por",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220220,7 +220230,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:46:42.015Z",
+      "verified_at": "2026-11-23T17:03:44.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221232,10 +221242,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "ecf1cb0e",
-      "content_hash": "eb2b33dfa97a07b70f265446354a893d80ba043f8fae0ad97f17e7f893b88ba0",
+      "source_version": "c4528161",
+      "content_hash": "9c4fe8f76a9098099bfb978cce5351b288674dda595f219874406b0cb2d5394e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T14:46:42.608Z"
+      "persisted_at": "2026-11-23T17:03:45.273Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -232494,7 +232504,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "3136ce7bed5dd2532f161abdeed5ac917db753909354aa4e2dc1d65c3baf3575",
+      "content_hash": "4fd6e2565477d3a503ae63c6d4fee0b9eacab1e6d531d8aa9a8b706e63e65d9c",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [],
@@ -232503,7 +232513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T04:44:03.454Z",
+      "verified_at": "2026-11-23T17:03:25.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232520,9 +232530,9 @@
       "title": "Research & Knowledge Intelligence: lilylilith/QI_2.1_AnyAngle Core Invariants",
       "repository": "lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "ccdb38b2b030dd44402b59057ed49b557e9ae7160a95c19b0ccf26551e6a4cee",
+      "content_hash": "a058a525110f0cba1a795e27f6b8459a355c868c6051ab4ef8188a455677b1e8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T04:44:03.869Z"
+      "persisted_at": "2026-11-23T17:03:26.252Z"
     },
     "learn-github-biomejs-biome": {
       "learning_id": "learn-github-biomejs-biome",
@@ -253166,11 +253176,16 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "f872eb46",
-      "content_hash": "09bbcc92d5b90de5dc0d14851d36f98a7c1b7d58109d5ee6b433aeddce2777c7",
+      "source_version": "a99e9208",
+      "content_hash": "11caf0ea9d01fb784ee4636484f91f7c4b9feadff2cea6efe9a12563b061a299",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
+        {
+          "number": 8879,
+          "title": "Empirical Invariant Guard in go.mod",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8904,
           "title": "Empirical Invariant Guard in CONTRIBUTING.md",
@@ -253197,7 +253212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T08:52:48.157Z",
+      "verified_at": "2026-11-23T17:03:42.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253225,10 +253240,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "repository": "etcd-io/etcd",
-      "source_version": "e4cf2bb0",
-      "content_hash": "d31fad227ade3911e5ac86e7958dca7935e791000a5acfcc01e9a61dec370140",
+      "source_version": "a99e9208",
+      "content_hash": "1b9c3d9979ae8a6a69eff31d5751e11a5e43bc283078c217d5fbc2704cb51e2e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T04:58:10.679Z"
+      "persisted_at": "2026-11-23T17:03:43.150Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd",
@@ -253237,10 +253252,10 @@
       "relative_path": "08_VERIFICATION/etcd-io-etcd-verification-protocol-empirical-defect-shield-for-etcd-io-etcd.md",
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io/etcd",
       "repository": "etcd-io/etcd",
-      "source_version": "f872eb46",
-      "content_hash": "c9133f3c30379a73f44a9c560408294d280938483489490520b4496820c0317c",
+      "source_version": "a99e9208",
+      "content_hash": "b1bc094333bd1939ff2ea9bbc703730c719b55cf323c62bfb40483c11ea7197a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T08:52:49.052Z"
+      "persisted_at": "2026-11-23T17:03:43.379Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
@@ -253274,9 +253289,9 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "7cefc7da3ba4add49a077adb3f2dd87550f17100135d95d7f3ab70cf020f013e",
+      "content_hash": "1543fa0062144b9615cecbdb41cbb646c3cbc0a88a17c266ba387e1ebe384e45",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T04:58:14.836Z"
+      "persisted_at": "2026-11-23T17:03:52.924Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings",
@@ -253286,9 +253301,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io-etcd-learnings",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ed2bccab0de8fa51cebf211bdc14e18934be0a11d4a7af5cf3d9a5730e8de63",
+      "content_hash": "5180e92dc9f9d573575e457a339303544e51728fd4938c11173ff86d21dce0f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T08:54:44.552Z"
+      "persisted_at": "2026-11-23T17:03:53.147Z"
     },
     "learn-github-metrolistgroup-metrolist": {
       "learning_id": "learn-github-metrolistgroup-metrolist",
@@ -269465,26 +269480,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8879,
       "title": "Empirical Invariant Guard in go.mod",
-      "source_url": "https://github.com/smallstep/cli",
-      "source_version": "537c15c1",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "a99e9208",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T14:40:42.248Z"
+      "verified_at": "2026-11-23T17:03:42.346Z"
     },
     "candidate_directive-empirical-invariant-guard-in-go-mod": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-go-mod",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AZPK-empirical-invariant-guard-in-go-mod.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M73O-empirical-invariant-guard-in-go-mod.md",
       "title": "Empirical Invariant Guard in go.mod",
-      "repository": "smallstep-cli-learnings",
+      "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a5f9ad9dcabb615b58c18ecaa02074b0873da7da9b5d804c37bb38193aac785",
+      "content_hash": "bca7018122756db9856f681d9180359f676b37fc15ed260883cf220f0fe4c9fa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T14:40:50.504Z"
+      "persisted_at": "2026-11-23T17:03:52.692Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
@@ -277218,9 +277233,9 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "repository": "opentofu-opentofu-learnings",
       "source_version": "HEAD",
-      "content_hash": "3bccb8d59da076176ca5219549f0cc7d3cf2df299c728482c07239ceedf3dca8",
+      "content_hash": "9667863ef68a4e4abedaf7a16b519831640c2af5c114f289e3a83505ea533fd5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T13:30:48.194Z"
+      "persisted_at": "2026-11-23T17:03:50.952Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings",
@@ -277230,9 +277245,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for opentofu-opentofu-learnings",
       "repository": "opentofu-opentofu-learnings",
       "source_version": "HEAD",
-      "content_hash": "5fa9e389307aad345593be88ce5188343ea05966fbfc6b53767e5aefb615ab8d",
+      "content_hash": "be2eebd0f838d46a6e4db463b780ef9e4350a7bb15530f84fdf30b6f2272b698",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T13:30:48.338Z"
+      "persisted_at": "2026-11-23T17:03:51.178Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
@@ -294943,14 +294958,19 @@
       "slug": "kubearmor-kubearmor",
       "platform": "github",
       "source_url": "https://github.com/kubearmor/KubeArmor",
-      "source_version": "d026c0dc",
-      "content_hash": "a48b0b5e418b339297b83acda04bd996fd161a012c1a1dec82900bbb414f3798",
+      "source_version": "551b0df2",
+      "content_hash": "957701f35479bba6a48490b0fb7dce5b8110f86df53435567db12e0dca9fe511",
       "dossier_path": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "promoted_rules": [
         {
           "number": 9318,
           "title": "docs(examples): fix links to the match-expression policy files",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10074,
+          "title": "stop silently dropping alerts for short-lived processes",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -294959,7 +294979,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:32:37.204Z",
+      "verified_at": "2026-11-23T17:03:28.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -295001,10 +295021,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-deployment-operations-intelligence-kubearmor-kubearmor-core-.md",
       "title": "Deployment & Operations Intelligence: kubearmor/KubeArmor Core Invariants",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "d026c0dc",
-      "content_hash": "348b402e551596a2d1bf28d73642bfd87745098ba18fa6f8594a0820683b6091",
+      "source_version": "551b0df2",
+      "content_hash": "d7ecc2184988ef49f76cef28ff0f4347ae75bb5614c56f03343a3e0839d0ed59",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T01:32:37.880Z"
+      "persisted_at": "2026-11-23T17:03:29.346Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor",
@@ -295013,10 +295033,10 @@
       "relative_path": "12_DECISIONS/ADR-kubearmor-kubearmor-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubea.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in kubearmor/KubeArmor",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "d026c0dc",
-      "content_hash": "e511f671183529c3ba92b350721504bfda4812153f00e4a1a2a2bb06ab80f370",
+      "source_version": "551b0df2",
+      "content_hash": "f9d7efa43b20f8bb62b514eda6660fcb17ed08d19218bdf5d56dbb9ac41aa175",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T01:32:38.079Z"
+      "persisted_at": "2026-11-23T17:03:29.582Z"
     },
     "agent_contract-agent-contract-kubearmor-kubearmor-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-kubearmor-kubearmor-autonomous-specialist-persona",
@@ -295025,10 +295045,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/kubearmor-kubearmor-agent-contract-kubearmor-kubearmor-autonomous-specialist-per.md",
       "title": "Agent Contract: kubearmor/KubeArmor Autonomous Specialist Persona",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "d026c0dc",
-      "content_hash": "5f1a19929333e524dfd49f7c78d42b990b4eb7bc4ef2b7883c30b710aaf54a73",
+      "source_version": "551b0df2",
+      "content_hash": "ad4592dd9012624229f1be32d26f5d23e81e627f070a819b0f0ac062d0b2d203",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T01:32:38.238Z"
+      "persisted_at": "2026-11-23T17:03:29.780Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor",
@@ -295037,10 +295057,10 @@
       "relative_path": "08_VERIFICATION/kubearmor-kubearmor-verification-protocol-empirical-defect-shield-for-kubearmor-.md",
       "title": "Verification Protocol: Empirical Defect Shield for kubearmor/KubeArmor",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "d026c0dc",
-      "content_hash": "acee2a3bc6d66916dbca69adf2157ec4480e391b39da64f3127469b70fce2185",
+      "source_version": "551b0df2",
+      "content_hash": "e4f685d394220580cf498ccab76a67d760b2a5344d8ed43a789240efd56896c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:32:38.400Z"
+      "persisted_at": "2026-11-23T17:03:29.968Z"
     },
     "rule-9319": {
       "learning_id": "rule-9319",
@@ -295102,9 +295122,9 @@
       "title": "Deployment & Operations Intelligence: kubearmor-kubearmor-learnings Core Invariants",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad58c42774b3763e2b384c58e921d0bb9c300e64d15622986d6380e825613d51",
+      "content_hash": "cf834ffdbdc96b97a105da2fdd0e63b1cbd11d200ec7c1aebdd4f053a76e0d70",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T01:32:56.159Z"
+      "persisted_at": "2026-11-23T17:03:49.329Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor-learnings",
@@ -295114,9 +295134,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in kubearmor-kubearmor-learnings",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3228cc318a86226161c89c60162e39b0d8a11556db1dd2f16e057f623fdcd16",
+      "content_hash": "52eadca39864080088ebce20f283949b8050ab8cd15176efb6c4240149c3801a",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T01:32:56.337Z"
+      "persisted_at": "2026-11-23T17:03:49.555Z"
     },
     "agent_contract-agent-contract-kubearmor-kubearmor-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-kubearmor-kubearmor-learnings-autonomous-specialist-persona",
@@ -295126,9 +295146,9 @@
       "title": "Agent Contract: kubearmor-kubearmor-learnings Autonomous Specialist Persona",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae195328695698ed7310e98c60e316e8cd6149eeafac2881af95cc7602013018",
+      "content_hash": "b42a095cfe164f0d8adf126882e71e21de26c7ef65248dba3da3d22dba8d1c1a",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T01:32:56.495Z"
+      "persisted_at": "2026-11-23T17:03:49.743Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor-learnings",
@@ -295138,9 +295158,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kubearmor-kubearmor-learnings",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "4dda1fe8b01979d60b3ca712d4d36ea80a6946b1c1f5990dc5cd01f350c9aae9",
+      "content_hash": "356a38f03a9c0acd4021099c02c19432d103d8b7fe12f68bcac4401cae0ceace",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:32:56.654Z"
+      "persisted_at": "2026-11-23T17:03:49.959Z"
     },
     "candidate_directive-desktop-hotspot-base64-intrinsic": {
       "item_id": "candidate_directive-desktop-hotspot-base64-intrinsic",
@@ -327772,6 +327792,96 @@
       "content_hash": "004bd54d574d9130e0aa39898c7e1fcc3ee88fa889d661c10dcc850c5d4f941a",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T16:53:48.088Z"
+    },
+    "rule-10074": {
+      "learning_id": "rule-10074",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10074,
+      "title": "stop silently dropping alerts for short-lived processes",
+      "source_url": "https://github.com/kubearmor/KubeArmor",
+      "source_version": "551b0df2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:03:28.517Z"
+    },
+    "candidate_directive-stop-silently-dropping-alerts-for-short-lived-processes": {
+      "item_id": "candidate_directive-stop-silently-dropping-alerts-for-short-lived-processes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LOWL-stop-silently-dropping-alerts-for-short-lived-processes.md",
+      "title": "stop silently dropping alerts for short-lived processes",
+      "repository": "kubearmor/KubeArmor",
+      "source_version": "551b0df2",
+      "content_hash": "fdd5bb8096550023a2242c422370dad42b83e6395fc51c31b5a429e6b8663f41",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T17:03:29.114Z"
+    },
+    "rule-10075": {
+      "learning_id": "rule-10075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10075,
+      "title": "Don't save marked output values in the plan",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "bfd092bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:03:37.407Z"
+    },
+    "candidate_directive-don-t-save-marked-output-values-in-the-plan": {
+      "item_id": "candidate_directive-don-t-save-marked-output-values-in-the-plan",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M5L3-don-t-save-marked-output-values-in-the-plan.md",
+      "title": "Don't save marked output values in the plan",
+      "repository": "opentofu-opentofu-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4c7dce95c85d92b26a2bf5254a292e0625d4ce8114870d394fec1899fb35546b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T17:03:50.728Z"
+    },
+    "rule-10076": {
+      "learning_id": "rule-10076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10076,
+      "title": "refuse numbers too close to 0 for .xpt; keep them in .por",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "c4528161",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:03:44.464Z"
+    },
+    "candidate_directive-refuse-numbers-too-close-to-0-for-xpt-keep-them-in-por": {
+      "item_id": "candidate_directive-refuse-numbers-too-close-to-0-for-xpt-keep-them-in-por",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M17A-refuse-numbers-too-close-to-0-for-xpt-keep-them-in-por.md",
+      "title": "refuse numbers too close to 0 for .xpt; keep them in .por",
+      "repository": "dathere/qsv",
+      "source_version": "c4528161",
+      "content_hash": "1e042c9c5a35a76ea84c9f6640b6dd5f8368ef1bb9eaae8ca7f32229c44050dd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T17:03:45.050Z"
+    },
+    "candidate_directive-monitor-stop-silently-dropping-alerts-for-short-lived-processes": {
+      "item_id": "candidate_directive-monitor-stop-silently-dropping-alerts-for-short-lived-processes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M4BK-monitor-stop-silently-dropping-alerts-for-short-lived-processes.md",
+      "title": "monitor): stop silently dropping alerts for short-lived processes",
+      "repository": "kubearmor-kubearmor-learnings",
+      "source_version": "HEAD",
+      "content_hash": "15674ebc1dfd200c42a6d876d238ea132340c829e7c12433112d8da7e2bfacff",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T17:03:49.094Z"
     }
   },
   "ai-builder-brain": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T16:53:50.291Z",
+  "last_updated": "2026-11-23T17:03:53.332Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T16:28:52.270Z",
@@ -198,7 +198,7 @@
       "staged_for_review": 1
     },
     "opentofu-opentofu-learnings.md": {
-      "processed_at": "2026-11-21T13:30:47.705Z",
+      "processed_at": "2026-11-23T17:03:50.188Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -683,7 +683,7 @@
       "staged_for_review": 1
     },
     "etcd-io-etcd-learnings.md": {
-      "processed_at": "2026-11-21T08:54:43.883Z",
+      "processed_at": "2026-11-23T17:03:51.391Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3478,7 +3478,7 @@
       "staged_for_review": 1
     },
     "kubearmor-kubearmor-learnings.md": {
-      "processed_at": "2026-11-19T01:32:55.186Z",
+      "processed_at": "2026-11-23T17:03:48.446Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3441,
+  "total_dossiers_evaluated": 3444,
   "total_canonical_promoted": 487,
-  "total_staged_for_review": 2582
+  "total_staged_for_review": 2585
 }

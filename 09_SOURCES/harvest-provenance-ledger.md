@@ -12415,3 +12415,8 @@ Every entry in this ledger must capture:
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `c8c17e5c` | Multi-dimensional audit evidence | 2026-11-23T16:53:39.571Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `0eb2f794` | Multi-dimensional audit evidence | 2026-11-23T16:53:42.333Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `f0d8890e` | Multi-dimensional audit evidence | 2026-11-23T16:53:44.439Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-11-23T17:03:25.953Z |
+| `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `551b0df2` | Multi-dimensional audit evidence | 2026-11-23T17:03:28.796Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `bfd092bc` | Multi-dimensional audit evidence | 2026-11-23T17:03:37.692Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `a99e9208` | Multi-dimensional audit evidence | 2026-11-23T17:03:42.627Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c4528161` | Multi-dimensional audit evidence | 2026-11-23T17:03:44.741Z |

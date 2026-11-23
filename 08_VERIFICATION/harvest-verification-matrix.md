@@ -12382,3 +12382,8 @@
 | `CYCLE-20261123-920E` | `2026-11-23T16:53:39.566Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10071` | Yes (`d22b1173...`) |
 | `CYCLE-20261123-9455` | `2026-11-23T16:53:42.329Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10072` | Yes (`0d643bae...`) |
 | `CYCLE-20261123-95RM` | `2026-11-23T16:53:44.434Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10073` | Yes (`c7cbc84c...`) |
+| `CYCLE-20261123-LMGS` | `2026-11-23T17:03:25.948Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`4fd6e256...`) |
+| `CYCLE-20261123-LONR` | `2026-11-23T17:03:28.791Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10074` | Yes (`957701f3...`) |
+| `CYCLE-20261123-LVIV` | `2026-11-23T17:03:37.687Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10075` | Yes (`a04dc0e1...`) |
+| `CYCLE-20261123-LZBY` | `2026-11-23T17:03:42.622Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8879` | Yes (`11caf0ea...`) |
+| `CYCLE-20261123-M0YO` | `2026-11-23T17:03:44.736Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10076` | Yes (`9143a8ce...`) |
