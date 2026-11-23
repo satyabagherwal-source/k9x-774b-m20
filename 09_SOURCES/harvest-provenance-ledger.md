@@ -12479,3 +12479,4 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `ac734972` | Multi-dimensional audit evidence | 2026-11-23T19:51:15.444Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `23cefad9` | Multi-dimensional audit evidence | 2026-11-23T19:51:23.132Z |
 | `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `42d1f169` | Multi-dimensional audit evidence | 2026-11-23T20:00:19.584Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `6775607e` | Multi-dimensional audit evidence | 2026-11-23T20:08:34.314Z |

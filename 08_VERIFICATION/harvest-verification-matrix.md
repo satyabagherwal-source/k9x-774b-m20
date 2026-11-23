@@ -12446,3 +12446,4 @@
 | `CYCLE-20261123-LG4X` | `2026-11-23T19:51:15.441Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10107` | Yes (`095e7c96...`) |
 | `CYCLE-20261123-LM2H` | `2026-11-23T19:51:23.129Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10108` | Yes (`26b3b62a...`) |
 | `CYCLE-20261123-X3ZW` | `2026-11-23T20:00:19.580Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10109` | Yes (`3d6e2921...`) |
+| `CYCLE-20261123-7PQD` | `2026-11-23T20:08:34.309Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10110` | Yes (`9723f36b...`) |

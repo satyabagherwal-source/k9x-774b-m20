@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T20:00:25.081Z",
+  "last_updated": "2026-11-23T20:08:40.638Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24149,
+  "total_items": 24151,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec2a6ee757a6bed094736daa467acaa3e1c95c5edb1dd2cda4281c484356b2f0",
+      "content_hash": "6f447dcb82959bea6096aa0e43c20c89ecbde114485e4bdc2238fde05b9df480",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T15:20:58.325Z"
+      "persisted_at": "2026-11-23T20:08:39.325Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9c07645bfb3894d6d4505f2104a9868d3fcb232474a02efc7fbe82a12a1da94",
+      "content_hash": "abd1df4becde081f6b2446e58985a9a4b6c92ff55d662d1ef8dd39037dd2efcf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T15:20:58.496Z"
+      "persisted_at": "2026-11-23T20:08:39.502Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae01160f1fd46a3effaf43acea8f2335fb02be2e78fdfa58542ec19ff23f20d8",
+      "content_hash": "d4265baff9bfb44851ca2d7d49a003d9c74be07a8ff864bd1e2a012fcde25d64",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:20:58.617Z"
+      "persisted_at": "2026-11-23T20:08:39.647Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -221149,8 +221149,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "bca43971",
-      "content_hash": "c47b4a2bae09b05efb93ad44d0421844c5223fa2a60b92b72e34ca6da2154a58",
+      "source_version": "6775607e",
+      "content_hash": "9723f36b70acf73d55a0e0456902fdd765350b3a5fa11c85c8ed08c9dadfb03c",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -221193,6 +221193,11 @@
           "number": 9827,
           "title": "support database-level read-only mode",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10110,
+          "title": "executor, planner: avoid PointGet lock leak and honor IDsInDDLToIgnore for _tidb",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221200,7 +221205,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:09:52.182Z",
+      "verified_at": "2026-11-23T20:08:34.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221242,10 +221247,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "bca43971",
-      "content_hash": "efbad2f484cfe502f9b55baa689e09dc1f7167fac9b2b0f0c5c53949b0da4a3e",
+      "source_version": "6775607e",
+      "content_hash": "de062d5416c3c191b75d93d99a95433ed5718b0fe2284fb6ab584e24aef6bfb1",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T19:09:52.834Z"
+      "persisted_at": "2026-11-23T20:08:34.739Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -221254,10 +221259,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "bca43971",
-      "content_hash": "45e93dafe74e299e767344a251d5f408c256d146de6349bf1e98352a9d0582b9",
+      "source_version": "6775607e",
+      "content_hash": "1dcf7c43c9f5d49983f249eac58b7fe1ceb08bdf21f69120a7af2f0556b0c9dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:09:53.003Z"
+      "persisted_at": "2026-11-23T20:08:34.934Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -221329,9 +221334,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "b13c0bd54f9f11309a7025bb7f8f36fc3786d1947cd12fe9fdbeb30cae036326",
+      "content_hash": "bdba715d323b2f208d1c277c04726491ac5e5f905a80422cf43bec18eb521ce5",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T19:10:05.086Z"
+      "persisted_at": "2026-11-23T20:08:38.279Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -221341,9 +221346,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1ca1adf28b3fcd94654f3393ae599fff766f927c336a69d008608b77241889b",
+      "content_hash": "7f51664d6658fc37ab6a2c5be39c632dac3dcf38ab58a5bd684debca903ce58d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:10:05.285Z"
+      "persisted_at": "2026-11-23T20:08:38.461Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -229031,9 +229036,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "51a8e9af8d6e5c17806156ebf225b175649fb0ab4163660bdc98712b30cb934a",
+      "content_hash": "3c9f4544221259e7ebc9e99a8e938211e0c3b224c183b7f53cc09b9ff4c09f1e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T15:20:59.328Z"
+      "persisted_at": "2026-11-23T20:08:40.460Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -229043,9 +229048,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d02700d596882a096568bd4424c4a4e41449975888e625456998d39d2302051",
+      "content_hash": "8e58b4ae84bc653d2fa58c67d406c463ccb7e0cae715e5109a6660a8025a91fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:20:59.491Z"
+      "persisted_at": "2026-11-23T20:08:40.638Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -303515,13 +303520,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XVKK-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7UCC-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "75e535594e86d54c3e6c2f6177b9bdc8ac7bab4ef394b10f2ef876c3be3b5790",
+      "content_hash": "c047ddbcf24e734de43b65006137ab91f3b1536500396ad9140ab61338dcb2e2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-23T15:20:59.156Z"
+      "persisted_at": "2026-11-23T20:08:40.284Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -310461,13 +310466,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XUTD-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7TGT-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "242eb2b019eb52b4b2edb016fddf2833f7ba8e46e7f601724fab7df3e9ef26f6",
+      "content_hash": "b4a06f06154c1f33c6af068827b24f2f18493c6b2c893758afc89fdd9982e4dd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T15:20:58.183Z"
+      "persisted_at": "2026-11-23T20:08:39.152Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -329151,6 +329156,32 @@
       "content_hash": "3e4760c97b22acc76d20296936f32b0e382744c4de4b2a16ba668ef5b4ba3de0",
       "domain_letter": "K",
       "persisted_at": "2026-11-23T20:00:23.184Z"
+    },
+    "rule-10110": {
+      "learning_id": "rule-10110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10110,
+      "title": "executor, planner: avoid PointGet lock leak and honor IDsInDDLToIgnore for _tidb",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "6775607e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T20:08:34.093Z"
+    },
+    "candidate_directive-executor-planner-avoid-pointget-lock-leak-and-honor-idsinddltoignore-for-_tidb": {
+      "item_id": "candidate_directive-executor-planner-avoid-pointget-lock-leak-and-honor-idsinddltoignore-for-_tidb",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7SNO-executor-planner-avoid-pointget-lock-leak-and-honor-idsinddltoignore-for-_tidb.md",
+      "title": "executor, planner: avoid PointGet lock leak and honor IDsInDDLToIgnore for _tidb",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e134a134f74e924bea0938899d91d6ae5e2454c6d7b8d0e05a9f88e673cc332c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T20:08:38.103Z"
     }
   },
   "ai-builder-brain": {

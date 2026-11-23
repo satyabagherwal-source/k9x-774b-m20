@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T20:00:19.592Z",
+  "last_updated": "2026-11-23T20:08:34.323Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "c47b4a2bae09b05efb93ad44d0421844c5223fa2a60b92b72e34ca6da2154a58",
-      "verified_at": "2026-11-22T19:09:52.450Z",
+      "content_hash": "9723f36b70acf73d55a0e0456902fdd765350b3a5fa11c85c8ed08c9dadfb03c",
+      "verified_at": "2026-11-23T20:08:34.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:09:52.450Z"
+      "last_updated": "2026-11-23T20:08:34.322Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

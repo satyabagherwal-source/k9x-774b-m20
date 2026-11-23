@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "bca43971",
+    "sourceVersion": "6775607e",
     "license": "Apache-2.0",
-    "contentHash": "c47b4a2bae09b05efb93ad44d0421844c5223fa2a60b92b72e34ca6da2154a58",
-    "lastHarvestedAt": "2026-11-22T19:09:52.420Z",
+    "contentHash": "9723f36b70acf73d55a0e0456902fdd765350b3a5fa11c85c8ed08c9dadfb03c",
+    "lastHarvestedAt": "2026-11-23T20:08:34.314Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

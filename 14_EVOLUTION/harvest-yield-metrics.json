@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:00:19.589Z",
-  "total_cycles_completed": 11835,
-  "total_learnings_persisted": 11835,
-  "total_rules_promoted": 10950,
+  "last_updated": "2026-11-23T20:08:34.319Z",
+  "total_cycles_completed": 11836,
+  "total_learnings_persisted": 11836,
+  "total_rules_promoted": 10951,
   "history": [
-    {
-      "timestamp": "2026-11-22T23:57:25.528Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T00:12:44.381Z",
       "repository": "Cloudflare/clef-flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-23T20:00:19.589Z",
       "repository": "jhspetersson/fselect",
       "learningId": "learn-github-jhspetersson-fselect",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:08:34.319Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

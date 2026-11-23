@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T20:00:22.781Z",
-    "lastVerified": "2026-11-23T20:00:22.781Z",
+    "lastChecked": "2026-11-23T20:08:37.600Z",
+    "lastVerified": "2026-11-23T20:08:37.600Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,8 +253,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-23T16:11:46.393Z",
-    "lastVerified": "2026-11-23T16:11:46.393Z",
+    "lastChecked": "2026-11-23T20:08:29.967Z",
+    "lastVerified": "2026-11-23T20:08:29.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T19:34:36.430Z",
+    "lastChecked": "2026-11-23T20:08:35.063Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T19:34:36.430Z"
+    "lastVerified": "2026-11-23T20:08:35.063Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1331,14 +1331,14 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T19:09:51.914Z",
-    "lastVerified": "2026-11-22T19:09:51.914Z",
+    "lastChecked": "2026-11-23T20:08:33.095Z",
+    "lastVerified": "2026-11-23T20:08:33.095Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "c47b4a2bae09b05efb93ad44d0421844c5223fa2a60b92b72e34ca6da2154a58",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "9723f36b70acf73d55a0e0456902fdd765350b3a5fa11c85c8ed08c9dadfb03c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6738,9 +6738,9 @@
   "mariadb-server": {
     "name": "server",
     "officialUrl": "https://github.com/MariaDB/server",
-    "lastChecked": "2026-11-22T18:12:31.313Z",
+    "lastChecked": "2026-11-23T20:08:32.446Z",
     "revisionIdentifier": "39281811",
-    "lastVerified": "2026-11-22T18:12:31.313Z"
+    "lastVerified": "2026-11-23T20:08:32.446Z"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -7598,9 +7598,9 @@
   "crate-ci-typos": {
     "name": "typos",
     "officialUrl": "https://github.com/crate-ci/typos",
-    "lastChecked": "2026-11-22T08:35:53.896Z",
+    "lastChecked": "2026-11-23T20:08:19.931Z",
     "revisionIdentifier": "e7647d64",
-    "lastVerified": "2026-11-22T08:35:53.896Z"
+    "lastVerified": "2026-11-23T20:08:19.931Z"
   },
   "hf-cactus-compute-whistle": {
     "name": "Cactus-Compute/whistle",
@@ -11202,9 +11202,9 @@
   "elai950-alerttoast": {
     "name": "AlertToast",
     "officialUrl": "https://github.com/elai950/AlertToast",
-    "lastChecked": "2026-11-20T21:06:13.371Z",
+    "lastChecked": "2026-11-23T20:08:24.957Z",
     "revisionIdentifier": "76a1c179",
-    "lastVerified": "2026-11-20T21:06:13.371Z"
+    "lastVerified": "2026-11-23T20:08:24.957Z"
   },
   "rdflib-rdflib": {
     "name": "RDFLib/rdflib",
