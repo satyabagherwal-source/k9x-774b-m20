@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T19:09:26.091Z",
+  "updated_at": "2026-11-23T19:26:21.733Z",
   "stats": {
-    "total_discovered": 7977,
-    "approved_pending_harvest": 7548,
+    "total_discovered": 7979,
+    "approved_pending_harvest": 7550,
     "harvested_count": 0,
     "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7542,
+      "COMMUNITY_AND_EXPERT": 7544,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -172514,6 +172514,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
         "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-ACB17C124611": {
+      "id": "SRC-ACB17C124611",
+      "url": "https://github.com/zip-rs/zip2/compare/v9.6.1...v9.7.3",
+      "title": "https://github.com/zip-rs/zip2/compare/v9.6.1...v9.7.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:26:20.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-D5223A4C79A3": {
+      "id": "SRC-D5223A4C79A3",
+      "url": "https://github.com/gardener/enhancements/tree/main/geps/0066-make-shoot-domains-mutable",
+      "title": "https://github.com/gardener/enhancements/tree/main/geps/0066-make-shoot-domains-mutable",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:26:21.733Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
       }
     }
   }

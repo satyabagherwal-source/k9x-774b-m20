@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T19:18:02.815Z",
+  "last_updated": "2026-11-23T19:26:21.938Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50563,6 +50563,59 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-71AECB-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-P48V",
+      "directive_title": "bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group",
+      "source_repo": "domcyrus/rustnet",
+      "source_commit": "83404419",
+      "staged_file": "11_INBOX/candidate-directives/CD-P48V-bump-zip-from-9-6-1-to-9-7-3-in-the-rust-dependencies-group.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-PFQP",
+      "directive_title": "Pin `gardener/cc-utils` GitHub Actions references to commit SHAs",
+      "source_repo": "gardener-gardener-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PFQP-pin-gardener-cc-utils-github-actions-references-to-commit-shas.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-PBQY",
+      "directive_title": "fail the test instead of panicking when a ping times out in test helpers",
+      "source_repo": "tailscale/tailscale",
+      "source_commit": "01f673c4",
+      "staged_file": "11_INBOX/candidate-directives/CD-PBQY-fail-the-test-instead-of-panicking-when-a-ping-times-out-in-test-helpers.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-PEQM",
+      "directive_title": "deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group",
+      "source_repo": "domcyrus-rustnet-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PEQM-deps-bump-zip-from-9-6-1-to-9-7-3-in-the-rust-dependencies-group.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-97C7CB",
+      "directive_title": "Pin `gardener/cc-utils` GitHub Actions references to commit SHAs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gardener-gardener",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-97C7CB-pin-gardener-cc-utils-github-actions-ref.md",
       "staged_date": "2026-11-23"
     }
   ]

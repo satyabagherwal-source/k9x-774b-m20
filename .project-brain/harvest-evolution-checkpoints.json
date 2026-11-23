@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T19:18:03.323Z",
+  "last_updated": "2026-11-23T19:26:22.417Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T18:32:33.917Z",
@@ -358,7 +358,7 @@
       "staged_for_review": 1
     },
     "gardener-gardener-learnings.md": {
-      "processed_at": "2026-11-21T18:23:09.761Z",
+      "processed_at": "2026-11-23T19:26:21.545Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1238,7 +1238,7 @@
       "staged_for_review": 1
     },
     "domcyrus-rustnet-learnings.md": {
-      "processed_at": "2026-11-22T07:37:21.717Z",
+      "processed_at": "2026-11-23T19:26:19.905Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3508,8 +3508,8 @@
       "staged_for_review": 1
     },
     "hf-radixark-daisyrose-27b-learnings.md": {
-      "processed_at": "2026-11-19T10:16:28.054Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-23T19:26:21.151Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "xevrion-hatchzip-learnings.md": {
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3489,
+  "total_dossiers_evaluated": 3492,
   "total_canonical_promoted": 489,
-  "total_staged_for_review": 2616
+  "total_staged_for_review": 2618
 }

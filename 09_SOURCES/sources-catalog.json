@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "0345103e",
+    "sourceVersion": "01f673c4",
     "license": "BSD-3-Clause",
-    "contentHash": "c8c4a18fdad52a7b4ad0c2f5f4a98a0fa0b8357e80f4eafe8cfa07d9485da331",
-    "lastHarvestedAt": "2026-11-23T15:29:05.209Z",
+    "contentHash": "e5ee3e137a6f0196687b67748f048a33cf8281a7274f6d89b379bfd6d0e33919",
+    "lastHarvestedAt": "2026-11-23T19:26:16.528Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "535573d8",
+    "sourceVersion": "83404419",
     "license": "Apache-2.0",
-    "contentHash": "eca52ec64be58abfb84cac843342f6df0ddcb3cd4340a4090cb00c87c2c59e0a",
-    "lastHarvestedAt": "2026-11-22T07:37:05.066Z",
+    "contentHash": "b8d1c94b15a378f62a1dda6089967129f28d28be7e0fe0555cbd8e115bfd7fde",
+    "lastHarvestedAt": "2026-11-23T19:26:06.815Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "53eeaa41",
+    "sourceVersion": "31c91dd2",
     "license": "Apache-2.0",
-    "contentHash": "11050f995581b96687ceb775c05fd8c080f56ba3c00bee4e2a4fa8f8eb7b46fb",
-    "lastHarvestedAt": "2026-11-21T18:22:59.832Z",
+    "contentHash": "ac5004077176e63b3915ade6ca303b5c961de532a936620377259bf4317e0f01",
+    "lastHarvestedAt": "2026-11-23T19:26:14.976Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -12965,8 +12965,8 @@
     "sourceUrl": "https://huggingface.co/RadixArk/DaisyRose-27B",
     "sourceVersion": "hf-radixark-daisyrose-27b",
     "license": "Open-Source",
-    "contentHash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
-    "lastHarvestedAt": "2026-11-19T10:15:58.226Z",
+    "contentHash": "ba74cb3354d7df28074e0182de1f7ad9b5cef66b87cf0274528b0cf0e718eed7",
+    "lastHarvestedAt": "2026-11-23T19:26:07.939Z",
     "learningId": "learn-huggingface-radixark-daisyrose-27b"
   },
   "xevrion-hatchzip": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T10:16:28.186Z",
+  "timestamp": "2026-11-23T19:26:21.245Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-radixark-daisyrose-27b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-radixark-daisyrose-27b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T10:16:28.186Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T19:26:21.245Z`  
 > **Learning ID**: `LEARN-EVO-hf-radixark-daisyrose-27b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-radixark-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T10:15:57.795Z  
+> **Timestamp**: 2026-11-23T19:26:07.456Z  
 > **Learning ID**: `learn-huggingface-radixark-daisyrose-27b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/RadixArk/DaisyRose-27B](https://huggingface.co/RadixArk/DaisyRose-27B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T10:15:34.024Z  
+> **Harvest Timestamp**: 2026-11-23T19:26:04.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 121 likes
+- **Stars / Engagement**: 2130 downloads | 330 likes
 
 ---
 

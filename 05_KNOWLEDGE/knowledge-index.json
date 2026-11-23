@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T19:18:03.164Z",
+  "last_updated": "2026-11-23T19:26:22.279Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24128,
+  "total_items": 24135,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "0345103e",
-      "content_hash": "6fd51611768a2fddf2209c63af7edc32214a013df863995d25565dd9c1b8a289",
+      "source_version": "01f673c4",
+      "content_hash": "dd678d0f9ce994c9df0ab2e063f5053843c52c6dd99f6d2c8ccc598935d75de1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T15:29:05.608Z"
+      "persisted_at": "2026-11-23T19:26:16.934Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "0345103e",
-      "content_hash": "386c8bc902998e6c0e50c6765291ae326c9c5dc63dadc1b8cc883737af04bbf6",
+      "source_version": "01f673c4",
+      "content_hash": "5b719cc705e24981f6241dab137a37cd80961d2b8aceb7117987bfe540da6007",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:29:05.801Z"
+      "persisted_at": "2026-11-23T19:26:17.120Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -219719,8 +219719,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "53eeaa41",
-      "content_hash": "11050f995581b96687ceb775c05fd8c080f56ba3c00bee4e2a4fa8f8eb7b46fb",
+      "source_version": "31c91dd2",
+      "content_hash": "ac5004077176e63b3915ade6ca303b5c961de532a936620377259bf4317e0f01",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -219763,6 +219763,11 @@
           "number": 9817,
           "title": "Update golang.org/x/exp digest to 8801fbd",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10102,
+          "title": "Pin `gardener/cc-utils` GitHub Actions references to commit SHAs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219770,7 +219775,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T18:22:59.620Z",
+      "verified_at": "2026-11-23T19:26:14.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219812,10 +219817,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "repository": "gardener/gardener",
-      "source_version": "53eeaa41",
-      "content_hash": "a2a7e7f508f1a9befd8168754b9bfb1ad10b9c9fe160c07e00f6abd76870444b",
+      "source_version": "31c91dd2",
+      "content_hash": "afa2e1761a070b646bf8e54734942ec261ed5aa4a97735feb64e5c24a65c661e",
       "domain_letter": "L",
-      "persisted_at": "2026-11-21T18:23:00.227Z"
+      "persisted_at": "2026-11-23T19:26:15.372Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
@@ -219824,10 +219829,10 @@
       "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
       "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
       "repository": "gardener/gardener",
-      "source_version": "53eeaa41",
-      "content_hash": "76a9343404b4ee5bb4f82eb6ef8d653a96601cca9b63d14637df737cfbd7ec76",
+      "source_version": "31c91dd2",
+      "content_hash": "626a63aad56d0a0112fe36f44b5fe9b082cec44f2cf953e30679c346830f08f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T18:23:00.409Z"
+      "persisted_at": "2026-11-23T19:26:15.550Z"
     },
     "rule-8406": {
       "learning_id": "rule-8406",
@@ -220001,9 +220006,9 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "5983d90c0d26478117c8dc50237ec62cf74507407e8ee2b0b2ed8b79c2e9220e",
+      "content_hash": "960ee4ad83c33a1895d231d14523da65b8a6f4cd79e154fbfad3496e0f9ff20a",
       "domain_letter": "L",
-      "persisted_at": "2026-11-21T18:23:10.612Z"
+      "persisted_at": "2026-11-23T19:26:22.107Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings",
@@ -220013,9 +220018,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gardener-gardener-learnings",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba5dcda1620daaf5b95cf319f07f4811125f02f1c772896a230c82aaae78d6d2",
+      "content_hash": "22422754b7d15d3d5d1a5bc0a541f6d4b3a80e581187e5e5e4e45f6a8177128a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T18:23:10.810Z"
+      "persisted_at": "2026-11-23T19:26:22.279Z"
     },
     "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
@@ -223565,8 +223570,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "0345103e",
-      "content_hash": "c8c4a18fdad52a7b4ad0c2f5f4a98a0fa0b8357e80f4eafe8cfa07d9485da331",
+      "source_version": "01f673c4",
+      "content_hash": "e5ee3e137a6f0196687b67748f048a33cf8281a7274f6d89b379bfd6d0e33919",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -223694,6 +223699,11 @@
           "number": 10059,
           "title": ".github/workflows: give golangci-lint its own Go build cache",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10103,
+          "title": "fail the test instead of panicking when a ping times out in test helpers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223701,7 +223711,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:29:04.988Z",
+      "verified_at": "2026-11-23T19:26:16.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224480,8 +224490,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "535573d8",
-      "content_hash": "eca52ec64be58abfb84cac843342f6df0ddcb3cd4340a4090cb00c87c2c59e0a",
+      "source_version": "83404419",
+      "content_hash": "b8d1c94b15a378f62a1dda6089967129f28d28be7e0fe0555cbd8e115bfd7fde",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -224509,6 +224519,11 @@
           "number": 9906,
           "title": "remove 2 advisory ignore entries that no longer match Cargo.lock",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10101,
+          "title": "bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224516,7 +224531,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T07:37:04.827Z",
+      "verified_at": "2026-11-23T19:26:06.606Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224558,10 +224573,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "repository": "domcyrus/rustnet",
-      "source_version": "535573d8",
-      "content_hash": "059e4f3608bc3bb9ee8ffb6d4de9d99caf940f0924c7b3d8a29a87d65b2dfcee",
+      "source_version": "83404419",
+      "content_hash": "f523ed74d82f52d51a746e612bc574b06f39b0e18be5676570ae5a69c00032a2",
       "domain_letter": "B",
-      "persisted_at": "2026-11-22T07:37:05.477Z"
+      "persisted_at": "2026-11-23T19:26:07.209Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet",
@@ -224570,10 +224585,10 @@
       "relative_path": "08_VERIFICATION/domcyrus-rustnet-verification-protocol-empirical-defect-shield-for-domcyrus-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus/rustnet",
       "repository": "domcyrus/rustnet",
-      "source_version": "535573d8",
-      "content_hash": "98929f7a398e13377ed615eb691f4efeb22bbe35e70baceca7d9e1e5336e2894",
+      "source_version": "83404419",
+      "content_hash": "8320bbfb6c6dcbf3f101b1002e8095c84a3429a00b718a1d49ff34f67adb207c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:37:05.659Z"
+      "persisted_at": "2026-11-23T19:26:07.375Z"
     },
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
@@ -224671,9 +224686,9 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae2afa4dca899553d193762d589ebddd2066acbefc15680b6b41ee90a83dbbae",
+      "content_hash": "f04318c054178a20c02100db80e4efaa7dddd66536d613650ba8c34ffec363aa",
       "domain_letter": "B",
-      "persisted_at": "2026-11-22T07:37:22.458Z"
+      "persisted_at": "2026-11-23T19:26:20.815Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings",
@@ -224683,9 +224698,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus-rustnet-learnings",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b54b47d760b78db64d406689cc018e0a712da4db5b3338f066bdb7ac200fb7a",
+      "content_hash": "5ecd5276a4d5110063cdcc30c4cc9c372e7bc169a5831b0861973ee12eff0726",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:37:22.638Z"
+      "persisted_at": "2026-11-23T19:26:20.990Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
@@ -297206,7 +297221,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/RadixArk/DaisyRose-27B",
       "source_version": "hf-radixark-daisyrose-27b",
-      "content_hash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
+      "content_hash": "ba74cb3354d7df28074e0182de1f7ad9b5cef66b87cf0274528b0cf0e718eed7",
       "dossier_path": "07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md",
       "promoted_rules": [],
@@ -297215,7 +297230,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T10:15:58.054Z",
+      "verified_at": "2026-11-23T19:26:07.720Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -297232,9 +297247,9 @@
       "title": "Research & Knowledge Intelligence: RadixArk/DaisyRose-27B Core Invariants",
       "repository": "RadixArk/DaisyRose-27B",
       "source_version": "hf-radixark-daisyrose-27b",
-      "content_hash": "d37f4c59db43ce8fd1e65ee95795283300019e49a70105f9b86e9fa22e110a1d",
+      "content_hash": "7d9bc3548acfe9a952824eca16b9e5184ff85600b1ee69730c8ab10e6c3c2659",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T10:15:58.408Z"
+      "persisted_at": "2026-11-23T19:26:08.147Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria",
@@ -297244,9 +297259,9 @@
       "title": "Research & Knowledge Intelligence: hf-radixark-daisyrose-27b-learnings Core Invariants",
       "repository": "hf-radixark-daisyrose-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "796d71b7b998eca23fea701b67e489d7a8ddf9bdf0d0f0996dafa3ab0627c9d2",
+      "content_hash": "65c17fa1b7e05211da696a997b507ac69b8c7570d6ea72832c7f50c6cd2c9eea",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T10:16:28.285Z"
+      "persisted_at": "2026-11-23T19:26:21.350Z"
     },
     "rule-9369": {
       "learning_id": "rule-9369",
@@ -328836,6 +328851,96 @@
       "content_hash": "478e3292b7ccf65c371a8aed6d60370a2abdd7d61f51c04e393dd87f68375fba",
       "domain_letter": "K",
       "persisted_at": "2026-11-23T19:18:02.394Z"
+    },
+    "rule-10101": {
+      "learning_id": "rule-10101",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10101,
+      "title": "bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "83404419",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:26:06.606Z"
+    },
+    "candidate_directive-bump-zip-from-9-6-1-to-9-7-3-in-the-rust-dependencies-group": {
+      "item_id": "candidate_directive-bump-zip-from-9-6-1-to-9-7-3-in-the-rust-dependencies-group",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P48V-bump-zip-from-9-6-1-to-9-7-3-in-the-rust-dependencies-group.md",
+      "title": "bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group",
+      "repository": "domcyrus/rustnet",
+      "source_version": "83404419",
+      "content_hash": "fd07133ae3b8117de38a87dab9434de3d4678bf2a159454055df14365989572f",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-23T19:26:07.043Z"
+    },
+    "rule-10102": {
+      "learning_id": "rule-10102",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10102,
+      "title": "Pin `gardener/cc-utils` GitHub Actions references to commit SHAs",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "31c91dd2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:26:14.770Z"
+    },
+    "candidate_directive-pin-gardener-cc-utils-github-actions-references-to-commit-shas": {
+      "item_id": "candidate_directive-pin-gardener-cc-utils-github-actions-references-to-commit-shas",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PFQP-pin-gardener-cc-utils-github-actions-references-to-commit-shas.md",
+      "title": "Pin `gardener/cc-utils` GitHub Actions references to commit SHAs",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4742f62462e20ac38fe2cfb41ecd09a118be852a95806ad365d109181cb577e4",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T19:26:21.938Z"
+    },
+    "rule-10103": {
+      "learning_id": "rule-10103",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10103,
+      "title": "fail the test instead of panicking when a ping times out in test helpers",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "01f673c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:26:16.304Z"
+    },
+    "candidate_directive-fail-the-test-instead-of-panicking-when-a-ping-times-out-in-test-helpers": {
+      "item_id": "candidate_directive-fail-the-test-instead-of-panicking-when-a-ping-times-out-in-test-helpers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PBQY-fail-the-test-instead-of-panicking-when-a-ping-times-out-in-test-helpers.md",
+      "title": "fail the test instead of panicking when a ping times out in test helpers",
+      "repository": "tailscale/tailscale",
+      "source_version": "01f673c4",
+      "content_hash": "4d417cec7e498f49471c72a58828edda5ac98ba6970a6b06ac632713db90f1a3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T19:26:16.763Z"
+    },
+    "candidate_directive-deps-bump-zip-from-9-6-1-to-9-7-3-in-the-rust-dependencies-group": {
+      "item_id": "candidate_directive-deps-bump-zip-from-9-6-1-to-9-7-3-in-the-rust-dependencies-group",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PEQM-deps-bump-zip-from-9-6-1-to-9-7-3-in-the-rust-dependencies-group.md",
+      "title": "deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "57295a1f1fd579b38cc5e96e2fd2a67b50827b45ae09c2d806c722f4d938c7dc",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-23T19:26:20.642Z"
     }
   },
   "ai-builder-brain": {

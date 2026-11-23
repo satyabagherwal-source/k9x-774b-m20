@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-BXNP",
-    "timestamp": "2026-11-21T21:04:29.989Z",
-    "repository": "mistralai/Mistral-Large-4-1T-A52B",
-    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-    "contentHash": "6879173e1f9e3a6ca1d27c336994cc7f7e947075b0850c46695a917f2dc84b98",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-C9RA",
-    "timestamp": "2026-11-21T21:04:45.670Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "b720d3debe8c328593bab6555fb20b30145cfb202ea73ac7c127373f798022d2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-VKHF",
-    "timestamp": "2026-11-21T21:19:46.035Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "3919bff8a6ca847a991704fc8a036f429364c06081633873aec27c63011af5f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-ZOCY",
-    "timestamp": "2026-11-21T21:22:57.682Z",
-    "repository": "Diffuspace/Clover-35B-A3B-Preview",
-    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-APSI",
     "timestamp": "2026-11-21T21:31:32.754Z",
     "repository": "LiconStudio/Minimax-H3-VBVR",
@@ -7490,6 +7430,66 @@
     "repository": "kube-rs/kube",
     "learningId": "learn-github-kube-rs-kube",
     "contentHash": "340cdec43fa6b19b6ad9c26d6b29af6d8476f95e85b58a6ee7cb8699e00b4c9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-P42I",
+    "timestamp": "2026-11-23T19:26:06.810Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "b8d1c94b15a378f62a1dda6089967129f28d28be7e0fe0555cbd8e115bfd7fde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-P4XQ",
+    "timestamp": "2026-11-23T19:26:07.934Z",
+    "repository": "RadixArk/DaisyRose-27B",
+    "learningId": "learn-huggingface-radixark-daisyrose-27b",
+    "contentHash": "ba74cb3354d7df28074e0182de1f7ad9b5cef66b87cf0274528b0cf0e718eed7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-PAD8",
+    "timestamp": "2026-11-23T19:26:14.972Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "ac5004077176e63b3915ade6ca303b5c961de532a936620377259bf4317e0f01",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-PBKC",
+    "timestamp": "2026-11-23T19:26:16.524Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "e5ee3e137a6f0196687b67748f048a33cf8281a7274f6d89b379bfd6d0e33919",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

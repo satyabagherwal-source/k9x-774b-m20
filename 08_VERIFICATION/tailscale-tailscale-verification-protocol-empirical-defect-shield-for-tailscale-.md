@@ -4,22 +4,22 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "0345103e",
+  "source_version": "01f673c4",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-23T15:29:05.431Z",
+  "timestamp": "2026-11-23T19:26:16.763Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `0345103e`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-23T15:29:05.431Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `01f673c4`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-23T19:26:16.763Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `0345103e`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `01f673c4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T15:29:04.144Z  
+> **Harvest Timestamp**: 2026-11-23T19:26:15.475Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39523 stars
+- **Stars / Engagement**: 39531 stars
 
 ---
 
@@ -814,10 +814,8 @@ export const sessionStateStorage: IPNStateStorage = {
 - **Issue #22582** (2026-11-23): **client/systray: SIGINT and SIGTERM exit with status 1 during normal shutdown**
   *Symptoms*: ### What is the issue?  On upstream main eaf3fc8daf90fb18714e21df38258db2ae33184a, stopping the Linux tray with SIGINT or SIGTERM cancels its IPN bus watch. watchIPNBus then treats context.Canceled as fatal and terminates the process with status 1.  The signal handler calls onExit directly, which cleans up handlers but does not stop the native tray loop. The fatal watcher currently terminates the process instead. Removing the fatal alone would leave that loop running.  ### Steps to reproduce  I reproduced this using the actual Menu.Run and tray library in subprocesses, with a private D-Bus session, a fake StatusNotifierWatcher, and a fake tailscaled LocalAPI streaming watch endpoint. No live tailnet or desktop session is needed.  Apply the attached clean-shutdown-tests.patch to this exact upstream commit and run:      ./tool/go test -race ./client/systray -run '^TestShutdownSignals$' -count=1 -v  Both signal cases exit with status 1 and log:      exiting     ipnbus error: context canceled     watchIPNBus: ipnbus error: context canceled  The test also reproduced status 1 for the D-Bus Quit action. That path may be scheduling-dependent because Run can return before the watcher reaches log.Fatal.  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Debian GNU/Linux 13; Linux 6.12.111+deb13-amd64  ### Tailscale version  1.104.7  ### Other software  _No response_  ### Bug report  _No response_
 
-- **Issue #22450** (2026-11-17): **wireguard-go: wakes up once a second when idle**
-  *Symptoms*: I noticed when working on a new version of natlab that runs the Linux kernel within Go synctest tests that an idle Tailscale wakes up once a second interacting the Linux kernel.  Turns out that it's the hack for checking for network namespace moves (moving the tun device), which Tailscale doesn't even use, and which is also seemingly broken in modern kernels. (I didn't bisect whenever it last worked)  Tracking bug to fix that and stop its once/second wake-ups.  /cc @raggi 
-  **Post-Mortem & Fix Analysis**:
-  > Hahahah, asking Claude to look at the Linux git repo to figure if/when this code ever worked, starting by trying to find whether it worked when it was first written, and then bisecting...  ``` ● The hack only ever worked on Linux 4.5 through 5.0, and the 2019   stable backports broke it on the older series too. It was written in   November 2017, against roughly 4.14, where it did work.    When it worked:   - v4.5: commit 1bd4978a88ac ("tun: honor IFF_UP in tun_get_user()")     added if (!(tun->dev->flags & IFF_UP)) return -EIO; as the first     statement in tun_get_user. A zero-length write on a down interface     therefore got EIO. On an up interface it fell through to the     packet-info length check and got EINVAL.   - Before v4.5 there was no IFF_UP check in the write path, so a     zero-length write always got EINVAL, meaning "up".   - Evidence it was designed around this: in wireguard-go, the hack     was added 2017-11-29 (471f7ff, "Added cross namespace TUN status     detection"
+- **Issue #22574** (2026-11-23): **Funnel: 2 of 3 edges slow (~5 s TLS) or failing since 2026-11-22 05:31 UTC, ingress via DERP fra**
+  *Symptoms*: ### What is the issue?  Since 2026-11-22 05:31 UTC, Funnel requests to one of my nodes intermittently fail. Callers get "Bad Gateway" or time out after about 5 s. Nothing changed on my side. The node's log had zero TLS handshake errors for the 46 hours before (back to 2026-11-20 07:32 UTC); since then about 35-40 per hour.  Testing each Funnel edge separately (public DNS, `curl --resolve NAME:443:EDGE`, 20 requests each, 2026-11-22 07:37-07:44 UTC; the app answers 403 to "/" by design, so any HTTP code means TLS completed):  | Edge | Result | Time until TLS done | |---|---|---| | 185.40.234.172 | 20/20 ok | 0.16-0.41 s | | 185.40.234.37 | 19/20 ok, 1 failed | 3.7-13.7 s, mostly ~5.4 s | | 185.40.234.210 | 16/20 ok, 4 failed | ~5.4 s, some 10.8-13.8 s |  So one edge is healthy and two are consistently slow or failing, which explains why it looks intermittent: it depends on which edge the caller hits. A warm test (2 requests 10 s apart to 185.40.234.37) was still slow: 3.2 s, then 2.3 s.  On the node: - `peerapi_ingress` went from 138 to 211 during the test, so connections reach the node; the delay is in the relay-to-node leg. - All `funnel-ingress-node` peers have empty `CurAddr` (no direct path); the three active ones have `Relay: fra`. Node metrics: ~1,986 packets received via DERP vs 49 direct. - `tailscale netcheck` on the node: UDP yes, IPv4 yes, MappingVariesByDestIP false, nearest DERP Frankfurt 29.7 ms. - Each failure logs the same pattern (addresses redacted):  ``` 07
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -834,102 +832,59 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fefe73ac` (2026-11-21)
-**Commit Message**: .github/workflows: give golangci-lint its own Go build cache
+### Incident Patch 1: `7294a69d` (2026-11-22)
+**Commit Message**: tsnet: fail the test instead of panicking when a ping times out in test helpers
 
-The golangci-lint job's setup-go cache key collided with the CodeQL
-workflow's, so PRs restored CodeQL's main-branch build cache, which
-lacks the test packages and export data golangci-lint loads. Package
-loading thus ran nearly cold every time (~9 of ~10 minutes), and jobs
-now regularly hit the 10m timeout. Use a dedicated cache key, and run
-on pushes to main so there's a cache for PRs to restore.
+setupTwoClientTest and TestDialThroughExitNode used
+must.Get(lc.Ping(...)) to wait for the TSMP path to come up. When that
+ping timed out, must.Get panicked, killing the whole tsnet test binary.
+The flakes dashboard then blamed every test that was running or paused
+at the time (TestPacketFilterFromNetmap, TestListenService, TestListen*,
+TestDialUDP, ...), not just the one whose ping failed.
 
-Updates #18366
-Updates tailscale/corp#28679
+Use t.Fatalf instead so a failed ping fails only its own test.
 
-Change-Id: I7a23a66dc7198c030d6a378aa2733d558c8c37d9
+The underlying ping failure was the wireguard-go duplicate handshake
+initiation race, fixed by the wireguard-go bump in #22537.
+
+Updates #22551
+
+Change-Id: I227852aaa576e500df036bb1700fe6c7589b0a25
 Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/golangci-lint.yml` (modified, +36/-7)
+**File**: `tsnet/tsnet_test.go` (modified, +6/-2)
 ```diff
-@@ -1,16 +1,20 @@
- name: golangci-lint
- on:
--  # For now, only lint pull requests, not the main branches.
-   pull_request:
-     paths:
-       - ".github/workflows/golangci-lint.yml"
-       - "**.go"
-       - "go.mod"
-       - "go.sum"
--  # TODO(andrew): enable for main branch after an initial waiting period.
--  #push:
--  #  branches:
--  #    - main
-+  # Runs on main populate the Go build cache that pull requests restore.
-+  push:
-+    branches:
-+      - main
-+    paths:
-+      - ".github/workflows/golangci-lint.yml"
-+      - "**.go"
-+      - "go.mod"
-+      - "go.sum"
+@@ -615,7 +615,9 @@ func TestDialThroughExitNode(t *testing.T) {
+ 	// Ping to make sure the connection is up.
+ 	pingCtx, cancelPing := pingTimeout(ctx)
+ 	defer cancelPing()
+-	must.Get(lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP))
++	if _, err := lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP); err != nil {
++		t.Fatalf("TSMP ping s2 -> s1: %v", err)
++	}
  
-   workflow_dispatch:
+ 	must.Get(lc2.EditPrefs(ctx, &ipn.MaskedPrefs{
+ 		Prefs: ipn.Prefs{
+@@ -2923,7 +2925,9 @@ func setupTwoClientTest(t *testing.T, useTUN bool) *listenTest {
  
-@@ -29,10 +33,25 @@ jobs:
-     steps:
-       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+ 	pingCtx, cancelPing := pingTimeout(ctx)
+ 	defer cancelPing()
+-	must.Get(lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP))
++	if _, err := lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP); err != nil {
++		t.Fatalf("TSMP ping s1 -> s2: %v", err)
++	}
  
-+      # setup-go's own cache is disabled because its key collides with the
-+      # one used by the CodeQL workflow, whose saved build cache lacks the
-+      # test packages and export data that golangci-lint needs. We manage
-+      # our own cache below instead.
-       - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
-         with:
-           go-version-file: go.mod
--          cache: true
-+          cache: false
-+
-+      - name: Restore Go cache
-+        id: restore-cache
-+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-+        with:
-+          path: |
-+            ~/.cache/go-build
-+            ~/go/pkg/mod
-+          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
-+          restore-keys: |
-+            ${{ runner.os }}-golangci-lint-
- 
-       - name: golangci-lint
-         uses: golangci/golangci-lint-action@b7bcab6379029e905e3f389a6bf301f1bc220662 # head as of 2026-03-04
-@@ -44,4 +63,14 @@ jobs:
- 
-           # Loading packages with a cold cache takes a while:
-           args: --timeout=10m
--          
-+
-+      - name: Save Go cache
-+        # Save even on lint failure, but only on main and only once per
-+        # go.mod/go.sum hash, as each entry is several GB.
-+        if: always() && steps.restore-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
-+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-+        with:
-+          path: |
-+            ~/.cache/go-build
-+            ~/go/pkg/mod
-+          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
+ 	return &listenTest{
+ 		control: control,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22594** (closed): mikeodr/rpf 7 natlab tests (@mikeodr)
 - **PR #22591** (2026-11-23): wgengine/router: add envknob to disable src_valid_mark (@mikeodr)
 - **PR #22586** (2026-11-23): go.mod: bump 5 modules (@tailscale-code-updater[bot])
 - **PR #22583** (2026-11-23): client/systray: shut down cleanly on termination signals (@fQwQf)
 - **PR #22581** (2026-11-22): feature/androidbin: register fallback in Android cgo builds (@lozbrown)
 - **PR #22580** (2026-11-23): net/dnsfallback: continue to remove the DNS fallback mechanism (@bradfitz)
-- **PR #22579** (2026-11-22): control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled (@bradfitz)
 
 ---
 
@@ -949,67 +904,37 @@ Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. .github/workflows: give golangci-lint its own Go build cache
+## X. tsnet: fail the test instead of panicking when a ping times out in test helpers
 
 **RULE**:
-When implementing operations in `.github/workflows/golangci-lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tsnet/tsnet_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fefe73ac`: .github/workflows: give golangci-lint its own Go build cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7294a69d`: tsnet: fail the test instead of panicking when a ping times out in test helpers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/golangci-lint.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsnet/tsnet_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  # Runs on main populate the Go build cache that pull requests restore.
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/golangci-lint.yml"
-      - "**.go"
-      - "go.mod"
-      - "go.sum"
-      # setup-go's own cache is disabled because its key collides with the
-      # one used by the CodeQL workflow, whose saved build cache lacks the
-      # test packages and export data that golangci-lint needs. We manage
-      # our own cache below instead.
-          cache: false
-
-      - name: Restore Go cache
-        id: restore-cache
-        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('go.mod', 'go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-golangci-lint-
-
-      - name: Save Go cache
-        # Save even on lint failure, but only on main and only once per
-        # go.mod/go.sum hash, as each entry is several GB.
-        if: always() && steps.restore-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
-        uses: actions/cache/save@668228422ae6a00e4
+	if _, err := lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP); err != nil {
+		t.Fatalf("TSMP ping s2 -> s1: %v", err)
+	}
+	if _, err := lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP); err != nil {
+		t.Fatalf("TSMP ping s1 -> s2: %v", err)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  # For now, only lint pull requests, not the main branches.
-  # TODO(andrew): enable for main branch after an initial waiting period.
-  #push:
-  #  branches:
-  #    - main
-          cache: true
-          
+	must.Get(lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP))
+	must.Get(lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fefe73ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7294a69d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

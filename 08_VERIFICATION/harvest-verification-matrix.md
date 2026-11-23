@@ -12432,3 +12432,7 @@
 | `CYCLE-20261123-3K6Q` | `2026-11-23T19:09:21.266Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10099` | Yes (`8eadb334...`) |
 | `CYCLE-20261123-EEHF` | `2026-11-23T19:17:47.091Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`4e319837...`) |
 | `CYCLE-20261123-EMOX` | `2026-11-23T19:17:57.729Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10100` | Yes (`340cdec4...`) |
+| `CYCLE-20261123-P42I` | `2026-11-23T19:26:06.810Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10101` | Yes (`b8d1c94b...`) |
+| `CYCLE-20261123-P4XQ` | `2026-11-23T19:26:07.934Z` | `RadixArk/DaisyRose-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md` | Yes (`ba74cb33...`) |
+| `CYCLE-20261123-PAD8` | `2026-11-23T19:26:14.972Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10102` | Yes (`ac500407...`) |
+| `CYCLE-20261123-PBKC` | `2026-11-23T19:26:16.524Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10103` | Yes (`e5ee3e13...`) |

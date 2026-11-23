@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T19:18:02.988Z",
+  "last_updated": "2026-11-23T19:26:22.107Z",
   "total_records": 2444,
   "domains": {
     "A": {
@@ -8331,8 +8331,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "6fd51611768a2fddf2209c63af7edc32214a013df863995d25565dd9c1b8a289",
-      "created_at": "2026-11-23T15:29:05.608Z"
+      "content_hash": "dd678d0f9ce994c9df0ab2e063f5053843c52c6dd99f6d2c8ccc598935d75de1",
+      "created_at": "2026-11-23T19:26:16.934Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -12033,8 +12033,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "a2a7e7f508f1a9befd8168754b9bfb1ad10b9c9fe160c07e00f6abd76870444b",
-      "created_at": "2026-11-21T18:23:00.227Z"
+      "content_hash": "afa2e1761a070b646bf8e54734942ec261ed5aa4a97735feb64e5c24a65c661e",
+      "created_at": "2026-11-23T19:26:15.372Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -12128,8 +12128,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "5983d90c0d26478117c8dc50237ec62cf74507407e8ee2b0b2ed8b79c2e9220e",
-      "created_at": "2026-11-21T18:23:10.612Z"
+      "content_hash": "960ee4ad83c33a1895d231d14523da65b8a6f4cd79e154fbfad3496e0f9ff20a",
+      "created_at": "2026-11-23T19:26:22.107Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -13565,8 +13565,8 @@
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "repository": "domcyrus/rustnet",
-      "content_hash": "059e4f3608bc3bb9ee8ffb6d4de9d99caf940f0924c7b3d8a29a87d65b2dfcee",
-      "created_at": "2026-11-22T07:37:05.477Z"
+      "content_hash": "f523ed74d82f52d51a746e612bc574b06f39b0e18be5676570ae5a69c00032a2",
+      "created_at": "2026-11-23T19:26:07.209Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
@@ -13583,8 +13583,8 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-learnings-product-intelligence-domcyrus-rustnet-learnings-core-.md",
       "repository": "domcyrus-rustnet-learnings",
-      "content_hash": "ae2afa4dca899553d193762d589ebddd2066acbefc15680b6b41ee90a83dbbae",
-      "created_at": "2026-11-22T07:37:22.458Z"
+      "content_hash": "f04318c054178a20c02100db80e4efaa7dddd66536d613650ba8c34ffec363aa",
+      "created_at": "2026-11-23T19:26:20.815Z"
     },
     "DOM-D-2D29CC33": {
       "record_id": "DOM-D-2D29CC33",
@@ -33505,8 +33505,8 @@
       "title": "Research & Knowledge Intelligence: RadixArk/DaisyRose-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-radixark-daisyrose-27b-research-knowledge-intelligence-radixark-daisyrose-27b.md",
       "repository": "RadixArk/DaisyRose-27B",
-      "content_hash": "d37f4c59db43ce8fd1e65ee95795283300019e49a70105f9b86e9fa22e110a1d",
-      "created_at": "2026-11-19T10:15:58.408Z"
+      "content_hash": "7d9bc3548acfe9a952824eca16b9e5184ff85600b1ee69730c8ab10e6c3c2659",
+      "created_at": "2026-11-23T19:26:08.147Z"
     },
     "DOM-D-14D059C0": {
       "record_id": "DOM-D-14D059C0",
@@ -33556,8 +33556,8 @@
       "title": "Research & Knowledge Intelligence: hf-radixark-daisyrose-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-radixark-daisyrose-27b-learnings-research-knowledge-intelligence-hf-radixark-.md",
       "repository": "hf-radixark-daisyrose-27b-learnings",
-      "content_hash": "796d71b7b998eca23fea701b67e489d7a8ddf9bdf0d0f0996dafa3ab0627c9d2",
-      "created_at": "2026-11-19T10:16:28.285Z"
+      "content_hash": "65c17fa1b7e05211da696a997b507ac69b8c7570d6ea72832c7f50c6cd2c9eea",
+      "created_at": "2026-11-23T19:26:21.350Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants",

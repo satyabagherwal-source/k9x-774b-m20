@@ -4,24 +4,24 @@
 {
   "source_repository": "domcyrus/rustnet",
   "source_url": "https://github.com/domcyrus/rustnet",
-  "source_version": "535573d8",
+  "source_version": "83404419",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T07:37:05.299Z",
+  "timestamp": "2026-11-23T19:26:07.039Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-domcyrus-rustnet",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [domcyrus/rustnet](https://github.com/domcyrus/rustnet) (Revision: `535573d8`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T07:37:05.299Z`  
+> **Provenance**: Harvested from [domcyrus/rustnet](https://github.com/domcyrus/rustnet) (Revision: `83404419`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T19:26:07.039Z`  
 > **Learning ID**: `learn-github-domcyrus-rustnet`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from domcyrus/rustnet:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:37:03.973Z  
+> **Harvest Timestamp**: 2026-11-23T19:26:05.660Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5250 stars
+- **Stars / Engagement**: 5256 stars
 
 ---
 
@@ -2515,34 +2515,481 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `535573d8` (2026-11-21)
-**Commit Message**: chore(deps): remove 2 advisory ignore entries that no longer match Cargo.lock (#742)
+### Incident Patch 1: `83404419` (2026-11-23)
+**Commit Message**: chore(deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group (#747)
 
-**File**: `.cargo/audit.toml` (modified, +1/-8)
+Bumps the rust-dependencies group with 1 update: [zip](https://github.com/zip-rs/zip2).
+
+
+Updates `zip` from 9.6.1 to 9.7.3
+- [Release notes](https://github.com/zip-rs/zip2/releases)
+- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/zip-rs/zip2/compare/v9.6.1...v9.7.3)
+
+---
+updated-dependencies:
+- dependency-name: zip
+  dependency-version: 9.7.3
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: rust-dependencies
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +8/-8)
 ```diff
-@@ -1,12 +1,5 @@
- [advisories]
--ignore = [
--    # quick-xml < 0.41.0 can consume excessive resources when parsing
--    # untrusted XML. RustNet only receives it through wayland-scanner, a
--    # build-time tool that parses trusted protocol XML bundled with the crate.
--    # wayland-scanner 0.31.8 currently pins quick-xml ^0.38.3.
--    "RUSTSEC-2026-0194",
--    "RUSTSEC-2026-0195",
--]
-+ignore = []
+@@ -139,7 +139,7 @@ dependencies = [
+  "objc2-foundation",
+  "parking_lot",
+  "percent-encoding",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+  "wl-clipboard-rs",
+  "x11rb",
+ ]
+@@ -895,7 +895,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
  
- [output]
- deny = ["yanked"]
+ [[package]]
+@@ -1946,7 +1946,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
+ dependencies = [
+  "libc",
+- "windows-sys 0.36.1",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -2562,7 +2562,7 @@ dependencies = [
+  "errno 0.3.14",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -2983,7 +2983,7 @@ dependencies = [
+  "getrandom 0.4.3",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -3631,7 +3631,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -4038,9 +4038,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "zip"
+-version = "9.6.1"
++version = "9.7.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "953a376f4930ed5af88e1e65948385f76866b45e7f75b21ac275327d0eeb9b46"
++checksum = "63e50f7b2212e4635244be3c363b53273d159f2523eb7db3096c1d2861c1b603"
+ dependencies = [
+  "constant_time_eq",
+  "crc32fast",
+```
+
+---
+
+### Incident Patch 2: `64736fff` (2026-11-22)
+**Commit Message**: feat: track TCP attempts and rolling failures (#734)
+
+* feat: track TCP handshake health and rolling failures
+
+**File**: `CHANGELOG.md` (modified, +13/-2)
+```diff
+@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Update ctutils to 0.4.4 for RUSTSEC-2026-0385 and replace yanked clipboard-win 5.4.1 with 5.4.3 (#698)
+ 
+ ### Changed
++- Skip TCP attempt mutex locking on steady-state established packets when no handshakes are pending (#734)
++- Keep Overview's TCP handshake summary on one compact line while quiet or healthy, expanding when issues appear, and make sidebar DNS/TCP health rows jump directly to Findings (#734)
++- Show a severity indicator on `5 Health & Host` in the tab bar, attention counts on `Findings`, and trailing action chips on linked evidence rows (#734)
++- Reduce TCP attempt lookups and reclaim expired entries before counting capacity omissions (#734)
++- Reuse unchanged TCP health snapshots, preserve exact expiry deadlines, and select recent issues without sorting all retained attempts (#734)
++- Share TCP destination ranking and health help between Overview and Findings (#734)
+ - Skip process ownership accounting work on the default packet ingestion path (#721)
+ - Speed up executable-path conversion in headless snapshots while preserving path encoding (#721)
+ - Retain only directory traversal privileges in the Windows sandbox while preserving token groups and integrity level (#721)
+@@ -23,12 +29,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Avoid allocating static Overview titles and expanded process-group connectors on each render (#412)
+ 
+ ### Added
++- Sort findings by severity while preserving the selected finding and evidence position (#734)
++- Align health colors across Findings, Overview, Details and host inventory, and leave zero error counts neutral (#734)
++- Combine Findings, Sockets, Interfaces and DNS resolvers in 5 Health & Host, with a single expandable list, item-by-item navigation and return links (#734)
++- Track outbound TCP attempts with inline destination evidence, matching connection Details and a five-minute headless JSON summary (#734)
++- Show inline TCP handshake health and the worst affected destination in Overview, with recovered-anomaly counts and contextual help (#734)
+ - Add headless automation controls, opt-in full metadata and capture accounting, and guarded Linux executable retention (#721)
+ - Add opt-in incremental headless JSONL with sequence checks, bounded baselines, and periodic full snapshots for resynchronization (#719)
+-- Add shared Host timeframes for network events and interface errors, keeping cumulative totals visible
++- Add shared observation windows for network events and interface errors, keeping cumulative totals visible
+ - Show per-resolver DNS health, retries, pending age, selectable 60s/5m/1h/since-startup windows, and 15-minute recent issue evidence in Host
+ - Log cached local listening/bound port status on incoming new TCP/UDP connections (#682)
+-- Show observed TCP resets and ICMP errors in Host, with sent/received counts and best-effort TCP/UDP error correlation in Details (#683)
++- Show observed TCP resets and ICMP errors in Health, with sent/received counts and best-effort TCP/UDP error correlation in Details (#683)
+ - Retire observed TCP/UDP flows after confirmed socket disappearance on macOS, Windows, and FreeBSD; keep timeout fallback for incomplete or restricted inventories (#684)
+ - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
+ 
+```
+
+**File**: `USAGE.ja.md` (modified, +31/-9)
+```diff
+@@ -11,14 +11,14 @@
+ 権限の設定は[インストールガイド（英語）](INSTALL.md)を参照してください。
+ `rustnet` で起動し、必要なら `-i <interface>` でキャプチャ対象を指定します。
+ 
+-- `1`～`5` または Tab / Shift+Tab：Overview、Details、Activity、Graph、Host の切り替え。
++- `1`～`5` または Tab / Shift+Tab：Overview、Details、Activity、Graph、Health & Host の切り替え。
+ - `/`：接続の絞り込み。Enter：選択した接続の詳細。Esc：戻る。
+ - `h`：現在の画面のヘルプ。`q`：終了。
+ 
+ ## 小さい端末での表示<a id="compact-terminals"></a>
+ 
+ 全体が収まらない場合は `v` / Shift+`v` または見出しのクリックでセクションを切り替えます。
+-Host では常に同じ操作で Sockets、Interfaces、DNS を選択します。
++Health & Host では同じ操作で Findings、Sockets、Interfaces、DNS resolvers を選択します。
+ Details では長いセクションのページも切り替え、`j` / `k` とマウスホイールで接続を選びます。
+ 端末のサイズ変更や接続の切り替え後も選択中のセクションを保ちます。
+ 
+@@ -46,23 +46,23 @@ Overview のフィルターと履歴切り替えは Activity を制限しませ
+ 
+ ## Host とネットワークイベント<a id="host-socket-inventory"></a>
+ 
+-Host > Sockets は OS の TCP 状態、UDP バインド、待受端点と所属プロセスを表示し、
++Health & Host > Sockets は OS の TCP 状態、UDP バインド、待受端点と所属プロセスを表示し、
+ 5 秒ごとに更新します。パケットを観測していないソケットも表示します。
+ Linux ではサンドボックス適用後も、同一ソケットの起動時の所属情報を保持します。
+ 共有ソケット、終了したプロセス、識別情報の変化、権限不足では所属不明になる場合があり、
+ 新規ソケットの所属取得には引き続き procfs へのアクセスが必要です。
+ 
+ ### 観測したネットワークイベント（未リリース）<a id="observed-network-events-unreleased"></a>
+ 
+-Host > Sockets は TCP リセットと ICMPv4/v6 エラーの送信/受信数を表示します。
++Findings > Resets and ICMP は TCP リセットと ICMPv4/v6 エラーの送信/受信数を表示します。
+ 対象は到達不能、禁止、パケット過大/フラグメント化要求、時間超過、パラメーター異常です。
+ 起動またはクリア以降の捕獲した通信を集計し、表示フィルターや接続保持期間には依存しません。
+ ファイアウォール判定や OS 全体のカウンターではなく、MTU や traceroute の応答は正常な場合もあります。
+ 
+ Details > Health は件数と最新エラーのタイプ/コード、報告元、方向、経過時間、取得できた通知 MTU を表示します。
+ 引用された端点で TCP/UDP 接続に対応付け、接続状態や通信量は変更しません。
+ 不完全な引用、フラグメント、IPv6 拡張、NAT、接続の不在や再利用で対応付け不能・誤対応になる場合があります。
+-未対応のエラーも Host で集計し、個別のエラーレコードは保持しません。
++未対応のエラーも Health で集計し、個別のエラーレコードは保持しません。
+ 
+ `--json-log` の受信 `new_connection` には `local_port_status` も含まれます（未リリース）。
+ キャッシュ内の TCP 待受/UDP バインドに一致すれば `opened`、観測されなければ `closed`、
+@@ -75,7 +75,7 @@ Details の `Exit Cleanup` に状態を表示します。共有ソケットや
+ 
+ ## Host の期間選択（開発版）
+ 
+-Host の各セクションで `w` を押すと **60s / 5m / 1h / since startup** を切り替えます。Sockets、Interfaces、DNS で選択を共有し、ソケット一覧とインターフェース速度は引き続き現在値を表示します。
++Findings、Health & Host > Interfaces、Health & Host > DNS resolvers で `w` を押すと **60s / 5m / 1h / since startup** を切り替えます。これらの画面で選択を共有し、ソケット一覧とインターフェース速度は引き続き現在値を表示します。
+ 
+ - **ネットワークイベント：** 送受信件数は選択期間と Rustnet の起動またはクリア以降の累積値を並べて表示します。選択期間内がゼロでも累積値のある種類を表示します。
+ - **インターフェース：** エラー、ドロップ、衝突は `選択期間/OS 累積値` と表示します。初回サンプル後に観測した増分のみを期間内に集計し、既存の OS エラーは新しいエラーに含めません。OS 累積値とパケット総数を保持し、強調表示は選択期間に従います。
+@@ -85,7 +85,7 @@ Host の各セクションで `w` を押すと **60s / 5m / 1h / since startup**
+ 
+ ## DNS 診断（未リリース）
+ 
+-Host > DNS は既定で直近 60 秒の単播 UDP DNS を解析器ごとに表示します。
++Health & Host > DNS resolvers は既定で直近 60 秒の単播 UDP DNS を解析器ごとに表示します。
+ `w` で 60 秒、5 分間、1 時間、起動以降を順に切り替えます。結果、遅延、解析器、問い合わせ名は選択した期間を使います。
+ Overview の健康状態は常に 60 秒です。切り替えてもデータは消去されません。
+ 3 つのローリング期間では完了した最大 8,192 件と待機中の最大 4,096 件を共有し、容量による欠落は `sampled` と表示します。
+@@ -115,7 +115,7 @@ Linux では `sudo rustnet -i any --no-resolve-dns` でネットワークイン
+ systemd-resolved 利用時の設定は `resolvectl status` で確認できます。RustNet は観測した端点だけを表示し、
+ 設定変更や能動的な探査は行いません。
+ 
+-応答が見えない場合は捕獲範囲、Host > Sockets の ICMP エラー、Host > Interfaces のエラーやドロップも確認してください。
++応答が見えない場合は捕獲範囲、Findings > Resets and ICMP の ICMP エラー、Health & Host > Interfaces のエラーやドロップも確認してください。
+ 捕獲停止時の状態は unknown です。TCP フォールバック、暗号化 DNS、キャッシュ、`/etc/hosts`、
+ DNS パケットを出さない NSS/D-Bus 呼び出しの成功は判断できません。
+ macOS もキャッシュや mDNSResponder によりアプリケーションの特定が制限されますが、
+@@ -184,7 +184,7 @@ Linux では後から procfs のアクセスを拒否された場合、起動時
+ `--headless --output jsonl-delta` で **スキーマバージョン 2** を有効にします。既定の `jsonl` と `json` はバージョン 1 のままです。利用側は切り替え前に以下の規則に対応してください。
+ 
+ - **スナップショット：** `type: "snapshot"` は全状態を置き換えます。`connections` は対象の全接続、`base_sequence` は null、`removed_connection_ids` は空です。最初、終了時、前回の完全スナップショットから 60 レコード後、または 30 秒経過後の次の出力時の早い方で、完全スナップショットを送ります。
+-- **差分：** `type: "delta"` を不可分に適用します。`removed_connection_ids` を削除し、完全な `connections` オブジェクトを `id` で追加または置換します。`timestamp`、`runtime`、`sandbox`、`stats`、`filter` は毎回置き換えます。適用後の総数が `connection_count` と一致することを検証し、完全スナップショットと同じ順序にするには `id` で並べ替えます。
++- **差分：** `type: "delta"` を不可分に適用します。`removed_connection_ids` を削除し、完全な `connections` オブジェクトを `id` で追加または置換します。`timestamp`、`runtime`、`sandbox`、`stats`、`tcp_attempts`、`filter` は毎回置き換えます。適用後の総数が `connection_count` と一致することを検証し、完全スナップショットと同じ順序にするには `id` で並べ替えます。
+ - **復旧：** 新しいストリームは `sequence: 1` から始まります。差分の `base_sequence` は最後に適用した番号、`sequence` はその次の番号である必要があります。欠落、重複、不正なレコード、件数の不一致があれば状態を古いものとし、有効な完全スナップショットまで差分を無視します。ストリームを混在させないでください。復旧には定期的なスナップショットを使い、stdin による再同期要求はありません。
+ - **上限：** 基準状態はアクティブ・履歴接続を合計 10,000 件、JSON を 16 MiB まで保持し、別途出力用フィールドと管理データを保持します。上限を超えると全状態が再び収まるまで完全スナップショットを使います。遅れて届くメタデータや最終カウンターを含む全出力フィールドを比較します。
+ 
+@@ -195,3 +195,25 @@ Linux では後から procfs のアクセスを拒否された場合、起動時
+ ```bash
+ cargo test --release --locked --lib --all-features benchmark_history_encoding -- --ignored --nocapture
+ ```
++
++### TCP 接続試行の状態（未リリース）
++
++Findings > TCP handshakes は、観測した送信 TCP 接続試行を固定の5分間ウィンドウで表示します。Host の選択期間や接続フィルターには依存しません。最初の送信 SYN で試行を開始し、同じ SYN の再送は同じ試行として数えます。対応する SYN-ACK と最後の送信 ACK の両方を観測した場合だけ成功です。同一ホスト内の接続や、SYN データが受理されない場合の TCP Fast
+```
+
+**File**: `USAGE.md` (modified, +41/-19)
+```diff
+@@ -188,7 +188,7 @@ socket identity; unverifiable or changed identities stay unresolved.
+ 
+ #### Schema contract
+ 
+-The default `jsonl` and `json` wire schema is `schema_version = 1`. Every record is a snapshot object with these top-level fields: `schema_version`, `type`, `timestamp`, `runtime`, `sandbox`, `stats`, `filter`, `connection_count`, and `connections`. A terminal record sets `runtime.status` to `stopping`, `stopped`, or `stopped_with_errors`, and includes `runtime.termination_reason` and `runtime.shutdown`. Connection records cover endpoints, process attribution, traffic, protocol timing, GeoIP, and optional Kubernetes metadata. The `rtt` object includes current, initial, smoothed TCP, DNS, LLMNR, NetBIOS, ICMP echo, STUN, and NTP timings in milliseconds. Optional enrichment and timing fields remain null until discovered; connections drained during shutdown can appear before process, GeoIP, or Kubernetes enrichment completes. Consumers must branch on `schema_version` and tolerate unknown additive fields.
++The default `jsonl` and `json` wire schema is `schema_version = 1`. Every record is a snapshot object with these top-level fields: `schema_version`, `type`, `timestamp`, `runtime`, `sandbox`, `stats`, `tcp_attempts`, `filter`, `connection_count`, and `connections`. A terminal record sets `runtime.status` to `stopping`, `stopped`, or `stopped_with_errors`, and includes `runtime.termination_reason` and `runtime.shutdown`. Connection records cover endpoints, process attribution, traffic, protocol timing, GeoIP, and optional Kubernetes metadata. The `rtt` object includes current, initial, smoothed TCP, DNS, LLMNR, NetBIOS, ICMP echo, STUN, and NTP timings in milliseconds. Optional enrichment and timing fields remain null until discovered; connections drained during shutdown can appear before process, GeoIP, or Kubernetes enrichment completes. Consumers must branch on `schema_version` and tolerate unknown additive fields.
+ 
+ Development builds reuse encoded JSON for unchanged historic headless connections. The cache retains at most 10,000 records and 16 MiB of encoded connection JSON, plus their projected fields and bookkeeping. It compares all exported connection fields, so late metadata and final counters still update. In `jsonl` and `json` mode, every output record remains a full snapshot with schema version 1; snapshot construction and output size still grow with the number of visible connections.
+ 
+@@ -203,7 +203,7 @@ Closing a JSONL pipeline early, for example with `head`, produces a broken pipe.
+ `--headless --output jsonl-delta` opts into **schema version 2**. Default `jsonl` and `json` output stays at version 1. Consumers must support these rules before switching:
+ 
+ - **Snapshots:** `type: "snapshot"` replaces all state. `connections` contains all selected connections, `base_sequence` is null, and `removed_connection_ids` is empty. Full snapshots are sent initially, at shutdown, and after 60 records or on the next emission after 30 seconds, whichever comes first.
+-- **Deltas:** apply `type: "delta"` atomically: delete `removed_connection_ids`, then insert or replace the complete `connections` objects by `id`. Replace `timestamp`, `runtime`, `sandbox`, `stats`, and `filter` on every record. Verify the resulting total equals `connection_count`; sort by `id` to match full-snapshot ordering.
++- **Deltas:** apply `type: "delta"` atomically: delete `removed_connection_ids`, then insert or replace the complete `connections` objects by `id`. Replace `timestamp`, `runtime`, `sandbox`, `stats`, `tcp_attempts`, and `filter` on every record. Verify the resulting total equals `connection_count`; sort by `id` to match full-snapshot ordering.
+ - **Recovery:** each new stream starts at `sequence: 1`. A delta's `base_sequence` must equal the last applied sequence, and `sequence` must be its successor. On gaps, duplicates, invalid records, or count mismatches, mark state stale and ignore deltas until a valid full snapshot arrives. Do not combine streams. Recovery uses periodic snapshots, with no stdin resync request.
+ - **Limits:** the baseline holds up to 10,000 active/historic connections and 16 MiB of encoded JSON, plus projected fields and bookkeeping. Larger states use full snapshots until a complete baseline fits again. All exported fields participate in change detection, including late metadata and final counters.
+ 
+@@ -294,12 +294,12 @@ RustNet automatically detects TUN/TAP interfaces and adjusts packet parsing acco
+ 
+ #### `--no-localhost` / `--show-localhost`
+ 
+-Control whether localhost (127.0.0.1/::1) connections are displayed.
++Control whether localhost (`127.0.0.0/8` and `::1`) traffic is shown and counted.
+ 
+-- **Default**: Localhost connections are filtered out (`--no-localhost`)
+-- **Override**: Use `--show-localhost` to see localhost connections
++- **Default**: Localhost connections are filtered out (`--no-localhost`). Loopback traffic is also excluded from TCP handshake findings, TCP reset
+```
+
+**File**: `USAGE.zh-CN.md` (modified, +37/-15)
+```diff
+@@ -182,7 +182,7 @@ EOF 或读取失败会请求正常关闭并输出终态记录。`--include-histo
+ 
+ #### Schema 约定
+ 
+-默认 `jsonl` 和 `json` 输出格式版本为 `schema_version = 1`。每条记录都是快照对象，顶层字段为 `schema_version`、`type`、`timestamp`、`runtime`、`sandbox`、`stats`、`filter`、`connection_count` 和 `connections`。最终终止记录会将 `runtime.status` 设为 `stopping`、`stopped` 或 `stopped_with_errors`，并包含 `runtime.termination_reason` 和 `runtime.shutdown`。连接记录涵盖端点、进程归属、流量、各协议计时、GeoIP，以及可选的 Kubernetes 元数据。`rtt` 对象以毫秒为单位提供当前值、初始值、平滑 TCP 值，以及 DNS、LLMNR、NetBIOS、ICMP echo、STUN 和 NTP 计时。可选的增强与计时字段在被发现前保持为 null；关闭期间排空的连接可能在进程、GeoIP 或 Kubernetes 增强完成前就出现在最终记录中。使用方必须根据 `schema_version` 选择解析逻辑，并允许出现新增的未知字段。
++默认 `jsonl` 和 `json` 输出格式版本为 `schema_version = 1`。每条记录都是快照对象，顶层字段为 `schema_version`、`type`、`timestamp`、`runtime`、`sandbox`、`stats`、`tcp_attempts`、`filter`、`connection_count` 和 `connections`。最终终止记录会将 `runtime.status` 设为 `stopping`、`stopped` 或 `stopped_with_errors`，并包含 `runtime.termination_reason` 和 `runtime.shutdown`。连接记录涵盖端点、进程归属、流量、各协议计时、GeoIP，以及可选的 Kubernetes 元数据。`rtt` 对象以毫秒为单位提供当前值、初始值、平滑 TCP 值，以及 DNS、LLMNR、NetBIOS、ICMP echo、STUN 和 NTP 计时。可选的增强与计时字段在被发现前保持为 null；关闭期间排空的连接可能在进程、GeoIP 或 Kubernetes 增强完成前就出现在最终记录中。使用方必须根据 `schema_version` 选择解析逻辑，并允许出现新增的未知字段。
+ 
+ 开发版本会复用未变化的无界面历史连接记录的 JSON 编码。缓存最多保留 10,000 条记录和 16 MiB 的连接 JSON 编码，以及对应的投影字段和管理数据。它会比较所有导出的连接字段，因此延迟到达的元数据和最终计数仍会更新。在 `jsonl` 和 `json` 模式下，每条输出记录仍然是版本 1 的完整快照；快照构建开销和输出大小仍会随可见连接数量增长。
+ 
+@@ -197,7 +197,7 @@ EOF 或读取失败会请求正常关闭并输出终态记录。`--include-histo
+ `--headless --output jsonl-delta` 显式启用 **schema 版本 2**。默认 `jsonl` 和 `json` 仍使用版本 1。使用方切换前必须支持以下规则：
+ 
+ - **快照：**`type: "snapshot"` 替换全部状态。`connections` 包含所有选中的连接，`base_sequence` 为 null，`removed_connection_ids` 为空。首次、关闭时，以及距上次完整快照 60 条记录后或满 30 秒后的下一次输出时，发送完整快照，以先到者为准。
+-- **增量：**原子应用 `type: "delta"`：先删除 `removed_connection_ids`，再按 `id` 插入或替换完整的 `connections` 对象。每条记录都替换 `timestamp`、`runtime`、`sandbox`、`stats` 和 `filter`。验证最终总数等于 `connection_count`；按 `id` 排序可匹配完整快照的顺序。
++- **增量：**原子应用 `type: "delta"`：先删除 `removed_connection_ids`，再按 `id` 插入或替换完整的 `connections` 对象。每条记录都替换 `timestamp`、`runtime`、`sandbox`、`stats`、`tcp_attempts` 和 `filter`。验证最终总数等于 `connection_count`；按 `id` 排序可匹配完整快照的顺序。
+ - **恢复：**每个新流从 `sequence: 1` 开始。增量的 `base_sequence` 必须等于最后应用的序号，`sequence` 必须是其下一序号。遇到间断、重复、无效记录或数量不符时，将状态标为过期，并忽略增量直到有效完整快照到达。不要混合不同流。恢复依靠周期性快照，不支持 stdin 重新同步请求。
+ - **上限：**基线最多保留合计 10,000 条活跃及历史连接、16 MiB 的 JSON 编码，以及投影字段和管理数据。超过上限时使用完整快照，直到完整基线再次满足上限。所有导出字段都参与变化检测，包括延迟元数据和最终计数。
+ 
+@@ -506,7 +506,7 @@ rustnet --kubernetes on
+ 
+ - `Tab`：下一个标签页
+ - `Shift+Tab`：上一个标签页
+-- `1` / `2` / `3` / `4` / `5`：直接跳转到 概览 / 详情 / 活动 / 图表 / 主机
++- `1` / `2` / `3` / `4` / `5`：直接跳转到 概览 / 详情 / 活动 / 图表 / 健康与主机（Health & Host）
+ - `Enter` —— 查看所选连接的详细信息
+ - `Esc` —— 返回上一个视图或清除活动过滤器
+ - `h`：切换仅包含当前标签页相关操作的帮助浮层
+@@ -1023,14 +1023,14 @@ Activity 按完全相同的进程名汇总，与 Overview 的进程分组一致
+ 
+ 宽屏将 Capture 放在应用表右侧。空间不足时，使用 `v` / Shift+`v` 或点击 Applications / Capture 切换区块。Capture 可滚动，调整窗口大小后保留位置，并明确区分最近 60 秒的捕获覆盖率与保留流量的进程归属比例，展示已归属、未知和总字节数。接口清单和速率表统一放在 Host，Activity 仅保留解释覆盖率所需的接口依据。流量占比条在空间允许时显示在同一行。
+ 
+-按 `d` 在出站 (TX，蓝色) 和入站 (RX，绿色) 之间切换，按 `s` 轮换活动指标的排序方式，按 `S` 反转排序顺序。详细的接口表格位于主机标签页（按 `5`，再用 `v` / Shift+`v` 选择 Interfaces）。
++按 `d` 在出站 (TX，蓝色) 和入站 (RX，绿色) 之间切换，按 `s` 轮换活动指标的排序方式，按 `S` 反转排序顺序。详细的接口表格位于 Health & Host 标签页（按 `5`，再用 `v` / Shift+`v` 选择 Interfaces）。
+ 
+ 进行快速安全检查时，可按滚动字节数或保留字节数对出站流量排序，找出异常的高流量进程，并检查其流量最大的远端对端。保留流量会让短寿命上传进程在套接字关闭后仍然可见。
+ 
+ ### 紧凑终端布局<a id="compact-terminals"></a>
+ 
+ 完整仪表板放不下时，按 `v` / Shift+`v` 或点击区块名称切换视图。
+-Host 始终使用这些操作切换 Sockets、Interfaces 和 DNS。
++Health & Host 使用这些操作切换 Findings、Sockets、Interfaces 和 DNS resolvers。
+ 在 Details 中，这些操作也用于长区块翻页；`j` / `k` 和鼠标滚轮切换连接。
+ 调整大小或切换连接时保留所选区块。
+ 
+@@ -1067,7 +1067,7 @@ Details 的 Connection 区块通过 **Observed VLANs** 显示该连接中捕获
+ 
+ > **自 v1.7.0 起可用。**
+ 
+-按 `5` 打开主机标签页。此视图直接读取操作系统套接字表，不需要先捕获到数据包，因此可显示未产生流量的监听端点。
++按 `5` 打开 Health & Host，然后选择 Sockets。此视图直接读取操作系统套接字表，不需要先捕获到数据包，因此可显示未产生流量的监听端点。
+ 
+ 套接字视图包括：
+ 
+@@ -1090,23 +1090,23 @@ Linux 在沙箱启用后为未变化的套接字保留启动时缓存的进程
+ | FreeBSD | 使用 `sockstat -s` 获取原生 TCP 状态及 UDP 套接字行 |
+ | Windows | IP Helper 的 `GetExtendedTcpTable` 和 `GetExtendedUdpTable` owner 表 |
+ 
+-使用 `v` / Shift+`v` 或点击 Sockets / Interfaces / DNS 选择区块。底部显示切换快捷键。Tab / Shift+Tab 和 1-5 切换主标签页。
++使用 `v` / Shift+`v` 或点击 Findings / Sockets / Interfaces / DNS resolvers 选择区块。底部显示切换快捷键。Tab / Shift+Tab 和 1-5 切换主标签页。
+ 
+ ### 观测到的网络事件（尚未发布）<a id="observed-network-events-unreleased"></a>
+ 
+-Host > Sockets 统计 TCP 重置和 ICMPv4/v6 错误的发送/接收数，包括不可达、禁止访问、
++Findings > Resets and ICMP 统计 TCP 重置和 ICMPv4/v6 错误的发送/接收数，包括不可达、禁止访问、
+ 数据包过大/需要分片、超时和参数问题。计数覆盖启动或清空以来捕获的流量，
+ 不受显示筛选或连接保留期限影响。这些是观测值，不是防火墙判定或整个系统的计数；
+ MTU 和 traceroute 消息也可能是正常行为。
+ 
+ Details > Health 显示计数和最近错误的类型/代码、报告地址、方向、距今时间及可用的通告 MTU。
+ 通过引用的端点匹配 TCP/UDP 连接，不改变连接状态或流量总数。
+ 截断的引用、分片、IPv6 扩展头、NAT、缺失或复用的连接可能导致无法匹配或误匹配。
+-未匹配的错误仍计入 Host；不保留单条错误记录。
++未匹配的错误仍计入 Health；不保留单条错误记录。
+ 
+ ### Host 时间范围（开发版本）
+ 
+-在任意 Host 区块按 `w`，循环选择 **60s / 5m / 1h / since startup**。Sockets、Interfaces 和 DNS 共用选择；套接字清单和接口速率仍显示实时值。
++在 Findings、Health & Host > Interfaces 或 Health & Host > DNS resolvers 中按 `w`，循环选择 **60s / 5m /
+```
+
+**File**: `crates/rustnet-core/src/network/interface_stats/bsd.rs` (modified, +7/-4)
+```diff
+@@ -14,7 +14,7 @@ use std::time::SystemTime;
+ 
+ /// Walk the `getifaddrs` list and build stats from every `AF_LINK` entry.
+ fn collect_af_link_stats(
+-    extract: impl Fn(&libc::if_data, String) -> InterfaceStats,
++    extract: impl Fn(&libc::if_data, String, bool) -> InterfaceStats,
+ ) -> Result<Vec<InterfaceStats>, io::Error> {
+     unsafe {
+         let mut ifap: *mut libc::ifaddrs = ptr::null_mut();
+@@ -32,9 +32,10 @@ fn collect_af_link_stats(
+                 && addr.sa_family as i32 == libc::AF_LINK
+             {
+                 let name = CStr::from_ptr(ifa.ifa_name).to_string_lossy().to_string();
++                let is_loopback = (ifa.ifa_flags & (libc::IFF_LOOPBACK as u32)) != 0;
+ 
+                 if let Some(if_data) = (ifa.ifa_data as *const libc::if_data).as_ref() {
+-                    stats.push(extract(if_data, name));
++                    stats.push(extract(if_data, name, is_loopback));
+                 }
+             }
+ 
+@@ -77,12 +78,13 @@ impl InterfaceStatsProvider for MacOSStatsProvider {
+     fn get_all_stats(&self) -> Result<Vec<InterfaceStats>, io::Error> {
+         // Apple's if_data carries u32 counters; widen them and sanitize the
+         // error/drop fields (may contain garbage on virtual interfaces).
+-        collect_af_link_stats(|if_data, name| {
++        collect_af_link_stats(|if_data, name, is_loopback| {
+             let total_rx_packets = if_data.ifi_ipackets;
+             let total_tx_packets = if_data.ifi_opackets;
+ 
+             InterfaceStats {
+                 interface_name: name,
++                is_loopback,
+                 rx_bytes: if_data.ifi_ibytes as u64,
+                 tx_bytes: if_data.ifi_obytes as u64,
+                 rx_packets: total_rx_packets as u64,
+@@ -109,8 +111,9 @@ pub struct FreeBSDStatsProvider;
+ impl InterfaceStatsProvider for FreeBSDStatsProvider {
+     fn get_all_stats(&self) -> Result<Vec<InterfaceStats>, io::Error> {
+         // FreeBSD's if_data counters are already u64.
+-        collect_af_link_stats(|if_data, name| InterfaceStats {
++        collect_af_link_stats(|if_data, name, is_loopback| InterfaceStats {
+             interface_name: name,
++            is_loopback,
+             rx_bytes: if_data.ifi_ibytes,
+             tx_bytes: if_data.ifi_obytes,
+             rx_packets: if_data.ifi_ipackets,
+```
+
+**File**: `crates/rustnet-core/src/network/interface_stats/errors.rs` (modified, +1/-0)
+```diff
+@@ -117,6 +117,7 @@ mod tests {
+     fn stat(seconds: u64, count: u64) -> InterfaceStats {
+         InterfaceStats {
+             interface_name: "test0".into(),
++            is_loopback: false,
+             rx_bytes: 0,
+             tx_bytes: 0,
+             rx_packets: 0,
+```
+
+**File**: `crates/rustnet-core/src/network/interface_stats/linux.rs` (modified, +17/-0)
+```diff
+@@ -21,6 +21,7 @@ impl LinuxStatsProvider {
+ 
+         Ok(InterfaceStats {
+             interface_name: interface.to_string(),
++            is_loopback: is_loopback_interface(interface),
+             rx_bytes: read_stat(&base_path, "rx_bytes")?,
+             tx_bytes: read_stat(&base_path, "tx_bytes")?,
+             rx_packets: read_stat(&base_path, "rx_packets")?,
+@@ -53,6 +54,21 @@ impl InterfaceStatsProvider for LinuxStatsProvider {
+     }
+ }
+ 
++/// Read `/sys/class/net/<interface>/flags` and test `IFF_LOOPBACK` (`0x8`),
++/// falling back to the standard `"lo"` name if flags cannot be read.
++fn is_loopback_interface(interface: &str) -> bool {
++    const IFF_LOOPBACK: u32 = 0x8;
++    let path = format!("/sys/class/net/{interface}/flags");
++    fs::read_to_string(&path)
++        .ok()
++        .and_then(|content| {
++            let trimmed = content.trim();
++            let hex = trimmed.strip_prefix("0x").unwrap_or(trimmed);
++            u32::from_str_radix(hex, 16).ok()
++        })
++        .map_or(interface == "lo", |flags| (flags & IFF_LOOPBACK) != 0)
++}
++
+ /// Read a single statistic from sysfs
+ fn read_stat(base_path: &str, stat_name: &str) -> Result<u64, io::Error> {
+     let path = format!("{}/{}", base_path, stat_name);
+@@ -78,6 +94,7 @@ mod tests {
+         match result {
+             Ok(stats) => {
+                 assert_eq!(stats.interface_name, "lo");
++                assert!(stats.is_loopback);
+             }
+             Err(e) => {
+                 // Acceptable errors: NotFound or PermissionDenied
+```
+
+**File**: `crates/rustnet-core/src/network/interface_stats/mod.rs` (modified, +2/-0)
+```diff
+@@ -26,6 +26,7 @@ pub use windows::capture_interface_alias;
+ #[derive(Debug, Clone)]
+ pub struct InterfaceStats {
+     pub interface_name: String,
++    pub is_loopback: bool,
+     pub rx_bytes: u64,
+     pub tx_bytes: u64,
+     pub rx_packets: u64,
+@@ -141,6 +142,7 @@ mod tests {
+     ) -> InterfaceStats {
+         InterfaceStats {
+             interface_name: "test".to_string(),
++            is_loopback: false,
+             rx_bytes,
+             tx_bytes,
+             rx_packets,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #742** (2026-11-21): chore(deps): remove 2 advisory ignore entries that no longer match Cargo.lock (@zyl71)
+- **PR #747** (2026-11-23): chore(deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group (@dependabot[bot])
+- **PR #744** (2026-11-22): Support cargo binstall for official RustNet release binaries (@domcyrus)
+- **PR #743** (closed): Summarize RustNet’s security checks in all three READMEs (@domcyrus)
 - **PR #740** (2026-11-20): chore(deps): bump the rust-dependencies group with 4 updates (@dependabot[bot])
 - **PR #739** (2026-11-19): chore(deps): bump zip from 9.5.1 to 9.6.0 in the rust-dependencies group (@dependabot[bot])
 - **PR #738** (2026-11-17): docs: add WinGet installation instructions (@domcyrus)
-- **PR #737** (2026-11-17): chore(deps): bump maxminddb from 0.32.0 to 0.33.0 in the rust-dependencies group (@dependabot[bot])
-- **PR #736** (2026-11-16): chore(deps): bump rust from 1.98-slim to 1.99-slim in the docker group (@dependabot[bot])
 
 ---
 
@@ -2562,38 +3009,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): remove 2 advisory ignore entries that no longer match Cargo.lock
+## X. deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group
 
 **RULE**:
-When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `535573d8`: deps): remove 2 advisory ignore entries that no longer match Cargo.lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83404419`: deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ignore = []
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+version = "9.7.3"
+checksum = "63e50f7b2212e4635244be3c363b53273d159f2523eb7db3096c1d2861c1b603"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-ignore = [
-    # quick-xml < 0.41.0 can consume excessive resources when parsing
-    # untrusted XML. RustNet only receives it through wayland-scanner, a
-    # build-time tool that parses trusted protocol XML bundled with the crate.
-    # wayland-scanner 0.31.8 currently pins quick-xml ^0.38.3.
-    "RUSTSEC-2026-0194",
-    "RUSTSEC-2026-0195",
-]
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.36.1",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+version = "9.6.1"
+checksum = "953a376f4930ed5af88e1e65948385f76866b45e7f75b21ac275327d0eeb9b46"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `535573d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83404419` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -12465,3 +12465,7 @@ Every entry in this ledger must capture:
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `1f2f7af9` | Multi-dimensional audit evidence | 2026-11-23T19:09:21.270Z |
 | `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T19:17:47.096Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `6a339634` | Multi-dimensional audit evidence | 2026-11-23T19:17:57.733Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `83404419` | Multi-dimensional audit evidence | 2026-11-23T19:26:06.815Z |
+| `learn-huggingface-radixark-daisyrose-27b` | `https://huggingface.co/RadixArk/DaisyRose-27B` | `hf-radixar` | Multi-dimensional audit evidence | 2026-11-23T19:26:07.939Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `31c91dd2` | Multi-dimensional audit evidence | 2026-11-23T19:26:14.976Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `01f673c4` | Multi-dimensional audit evidence | 2026-11-23T19:26:16.528Z |

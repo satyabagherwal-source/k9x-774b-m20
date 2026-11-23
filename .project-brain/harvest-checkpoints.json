@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T19:17:57.742Z",
+  "last_updated": "2026-11-23T19:26:16.538Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "c8c4a18fdad52a7b4ad0c2f5f4a98a0fa0b8357e80f4eafe8cfa07d9485da331",
-      "verified_at": "2026-11-23T15:29:05.217Z",
+      "content_hash": "e5ee3e137a6f0196687b67748f048a33cf8281a7274f6d89b379bfd6d0e33919",
+      "verified_at": "2026-11-23T19:26:16.537Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:29:05.217Z"
+      "last_updated": "2026-11-23T19:26:16.537Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "eca52ec64be58abfb84cac843342f6df0ddcb3cd4340a4090cb00c87c2c59e0a",
-      "verified_at": "2026-11-22T07:37:05.075Z",
+      "content_hash": "b8d1c94b15a378f62a1dda6089967129f28d28be7e0fe0555cbd8e115bfd7fde",
+      "verified_at": "2026-11-23T19:26:06.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:37:05.075Z"
+      "last_updated": "2026-11-23T19:26:06.823Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "11050f995581b96687ceb775c05fd8c080f56ba3c00bee4e2a4fa8f8eb7b46fb",
-      "verified_at": "2026-11-21T18:22:59.842Z",
+      "content_hash": "ac5004077176e63b3915ade6ca303b5c961de532a936620377259bf4317e0f01",
+      "verified_at": "2026-11-23T19:26:14.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T18:22:59.842Z"
+      "last_updated": "2026-11-23T19:26:14.984Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -19536,14 +19536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-radixark-daisyrose-27b",
-      "content_hash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
-      "verified_at": "2026-11-19T10:15:58.234Z",
+      "content_hash": "ba74cb3354d7df28074e0182de1f7ad9b5cef66b87cf0274528b0cf0e718eed7",
+      "verified_at": "2026-11-23T19:26:07.947Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T10:15:58.234Z"
+      "last_updated": "2026-11-23T19:26:07.947Z"
     },
     "xevrion/hatchzip": {
       "repository": "xevrion/hatchzip",

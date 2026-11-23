@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/RadixArk/DaisyRose-27B",
   "source_version": "hf-radixark-daisyrose-27b",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T10:15:58.407Z",
+  "timestamp": "2026-11-23T19:26:08.146Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-radixark-daisyrose-27b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [RadixArk/DaisyRose-27B](https://huggingface.co/RadixArk/DaisyRose-27B) (Revision: `hf-radixar`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T10:15:58.407Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T19:26:08.146Z`  
 > **Learning ID**: `learn-huggingface-radixark-daisyrose-27b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/RadixArk/DaisyRose-27B](https://huggingface.co/RadixArk/DaisyRose-27B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T10:15:34.024Z  
+> **Harvest Timestamp**: 2026-11-23T19:26:04.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 121 likes
+- **Stars / Engagement**: 2130 downloads | 330 likes
 
 ---
 
