@@ -4,24 +4,24 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/ProvableHQ/snarkOS",
-  "source_version": "b0a4509e",
+  "source_version": "ae6a5b06",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T17:38:00.448Z",
+  "timestamp": "2026-11-23T21:40:01.860Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `b0a4509e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:38:00.448Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `ae6a5b06`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T21:40:01.860Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aleo-labs-protocol/snarkOS:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:37:59.464Z  
+> **Harvest Timestamp**: 2026-11-23T21:40:00.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1866,11 +1866,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4745** (2026-11-23): **Re-issue block requests that were never sent**
+  *Symptoms*: ## Motivation  A syncing client stalled permanently after a peer disconnected while block requests to it were outstanding.  `prepare_block_requests` re-issues heights from `failed_requests`. It removes them from that map when `construct_requests` returns them, before they are sent. When `send_block_requests` returns `false`, these heights are then in neither `failed_requests` nor `requests`. This happens when:  - a send fails, for example to a peer that the router dropped but whose locators are still present; - a selected peer has disconnected, so the chunk is skipped; - `insert_block_request` fails partway through a chunk.  In each case, `try_issuing_block_requests` also stops the chunk loop, so the later chunks of the batch are not sent.  Usually `construct_requests` picks the lowest missing height again. But `prepare_block_requests` returns early when `num_total_block_requests()` is at its cap. If completed responses above the gap fill the requests map, they cannot be applied until the gap arrives, and they do not time out. Sync stalls.  Commits:  - When a send fails, put each height of the batch that is not in `requests` back into `failed_requests`, with its hash and previous hash.  This covers all of the failure paths above in one place. Heights from chunks that were sent stay in `requests`. New batches, not only re-issued ones, also go back to `failed_requests` when their send fails.  ## Test Plan  - New `test_reissue_unsent_block_requests`: the first chunk of a re-issu
+
 - **Issue #4715** (2026-11-20): **Release a connecting peer however its handshake ends**
   *Symptoms*: ## Motivation  Under 50% or 70% packet loss, the chain halts. It does not recover after the loss stops: the validators' gateway connections never re-form.  The cause is a handshake that times out. The TCP layer runs each handshake under a 10 s timeout (`Handshake::TIMEOUT_MS`), and enforces it by dropping the handshake future. The handshake marks the peer as connecting in the peer pool, and returns it to the candidates only after the handshake returns. A dropped future never gets there, and nothing else clears the entry. From then on:  - `connect()` to the peer fails with `AlreadyConnecting`. The heartbeats skip that error without a log, so the node never dials the peer again. - Every inbound handshake from the peer fails the same way.  One stuck entry on either side breaks the pair for good. Under heavy loss, many handshakes take longer than 10 s, so many pairs get stuck. The router and the bootstrap client have the same pattern.  This PR makes `add_connecting_peer` return a `ConnectingPeerGuard`. Dropping the guard returns the peer to the candidates, unless the handshake has upgraded it to connected. This covers the timeout, every early error return, and task abort. The gateway, the router and the bootstrap client hold the guard until they upgrade the peer. The rollback after the handshake goes away, and so does the out-parameter that carried the listening address to it.  The router and the bootstrap client recorded the listening address before `add_connecting_peer`. A hand
-
-- **Issue #4713** (2026-11-19): **Fix the storage-service test imports for the memory feature alone**
-  *Symptoms*: ## Motivation  The shared storage-service tests in `node/bft/storage-service/src/tests.rs` do not compile with the `memory` feature alone:  ``` cargo test -p snarkos-node-bft-storage-service --features memory error[E0433]: cannot find type `Bytes` in this scope   --> node/bft/storage-service/src/tests.rs:51:44 ```  `sample_transmission` uses `Bytes` for every service. The `use bytes::Bytes;` import is behind `#[cfg(feature = "persistent")]`. So the import is missing when only `memory` is on. The `test` feature turns on `memory` only, so `--features test` also fails.  CI does not see the error. The node job tests the crate with `memory` and `persistent` together. In workspace builds, `snarkos-node-consensus` turns on `persistent` and `snarkos-node-bft` turns on `memory`, so feature unification turns on both.  This PR fixes the imports in `tests.rs`:  - It removes the `cfg` from `use bytes::Bytes;`. `bytes` is a dev-dependency of the crate, so it is always available to the tests. - It puts `StorageMode` behind `#[cfg(feature = "persistent")]`. Only the persistent service uses it. With `memory` alone, the import is unused, and `clippy -D warnings` fails.  ## Test Plan  `cargo clippy -p snarkos-node-bft-storage-service --all-targets -- -D warnings` passes with each of these feature sets: `memory`, `persistent`, `memory,persistent` and `test`. Before this change, the tests do not compile with `memory` or `test`.  `cargo nextest run -p snarkos-node-bft-storage-service` passes with 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1887,416 +1887,293 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0a4509e` (2026-11-23)
-**Commit Message**: Merge pull request #4770 from aleo-labs-protocol/dependabot/cargo/staging/jsonwebtoken-12.0.0
+### Incident Patch 1: `ae6a5b06` (2026-11-23)
+**Commit Message**: Merge pull request #4747 from aleo-labs-protocol/eran/programs-summary
 
-Bump jsonwebtoken from 11.1.0 to 12.0.0
+Add GET /{network}/programs/summary
 
-**File**: `Cargo.lock` (modified, +5/-5)
+**File**: `node/rest/src/lib.rs` (modified, +153/-4)
 ```diff
-@@ -2849,17 +2849,17 @@ dependencies = [
+@@ -48,7 +48,7 @@ use snarkvm::{
  
- [[package]]
- name = "jsonwebtoken"
--version = "11.1.0"
-+version = "12.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e75fe14a82d81e5f5af639997db37d8b96045938a7ac6ab18cdbe1c7467e05e1"
-+checksum = "f347a975eb5fa8f5c4eadce6c1152c11c326cf32cf839fb64ff12d5cb8f4ce8b"
- dependencies = [
-  "aws-lc-rs",
-- "base64 0.22.1",
-- "getrandom 0.2.17",
-+ "base64 0.23.1",
-+ "getrandom 0.4.3",
-  "js-sys",
-  "serde",
-  "serde_json",
-- "signature 2.2.0",
-+ "signature 3.0.0",
-  "zeroize",
- ]
- 
-```
-
-**File**: `node/rest/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ workspace = true
- features = [ "serde", "rayon" ]
- 
- [dependencies.jsonwebtoken]
--version = "11.1"
-+version = "12.0"
- default-features = false
- features = [ "aws_lc_rs" ]
- 
-```
-
-**File**: `node/rest/src/helpers/auth.rs` (modified, +5/-6)
-```diff
-@@ -69,7 +69,8 @@ impl Claims {
- 
-     /// Returns the json web token string.
-     pub fn to_jwt_string(&self) -> Result<String> {
--        encode(&Header::default(), &self, &EncodingKey::from_secret(JWT_SECRET.get().unwrap())).map_err(|e| anyhow!(e))
-+        let key = EncodingKey::from_secret(JWT_SECRET.get().unwrap()).map_err(|e| anyhow!(e))?;
-+        encode(&Header::default(), &self, &key).map_err(|e| anyhow!(e))
+ use anyhow::{Context, Result, ensure};
+ use axum::{
+-    body::Body,
++    body::{Body, Bytes},
+     extract::{ConnectInfo, DefaultBodyLimit, Query, State},
+     http::{
+         HeaderName,
+@@ -201,6 +201,36 @@ impl VerificationLane {
      }
  }
  
-@@ -84,11 +85,9 @@ pub async fn auth_middleware(request: Request<Body>, next: Next) -> Result<Respo
-     let auth: TypedHeader<Authorization<Bearer>> =
-         parts.extract().await.map_err(|_| StatusCode::UNAUTHORIZED.into_response())?;
++/// The latest `programs/summary` response body, built at most once per block height.
++pub(crate) struct ProgramsSummaryCache {
++    /// The height and serialized JSON body of the latest summary.
++    latest: Mutex<Option<(u32, Bytes)>>,
++    /// One permit, so only one build runs at a time. Requests wait for it asynchronously.
++    build: Arc<Semaphore>,
++}
++
++impl Default for ProgramsSummaryCache {
++    fn default() -> Self {
++        Self { latest: Default::default(), build: Arc::new(Semaphore::new(1)) }
++    }
++}
++
++impl ProgramsSummaryCache {
++    /// Returns the cached body if it was built at `min_height` or later.
++    fn get(&self, min_height: u32) -> Option<Bytes> {
++        self.latest.lock().as_ref().filter(|(h, _)| *h >= min_height).map(|(_, body)| body.clone())
++    }
++
++    /// Call only while holding the build permit.
++    fn set(&self, height: u32, body: Bytes) {
++        *self.latest.lock() = Some((height, body));
++    }
++
++    async fn acquire_build(&self) -> Result<OwnedSemaphorePermit, RestError> {
++        self.build.clone().acquire_owned().await.map_err(|err| RestError::internal_server_error(anyhow::anyhow!(err)))
++    }
++}
++
+ /// A REST API server for the ledger.
+ #[derive(Clone)]
+ pub struct Rest<N: Network, C: ConsensusStorage<N>, R: Routing<N>> {
+@@ -220,6 +250,8 @@ pub struct Rest<N: Network, C: ConsensusStorage<N>, R: Routing<N>> {
+     verification_slots: Arc<VerificationSlots>,
+     /// A cache containing recently requested blocks.
+     block_cache: Arc<Mutex<LruCache<N::BlockHash, ErasedJson>>>,
++    /// The latest `programs/summary` body, shared by all route prefixes.
++    programs_summary: Arc<ProgramsSummaryCache>,
+     /// The upstream for the routes of the removed `history` feature, if `--history-compat-mode` is set.
+     history_compat: Option<Arc<HistoryCompat>>,
+ }
+@@ -259,6 +291,7 @@ impl<N: Network, C: 'static + ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R>
+             handles: Default::default(),
+             verification_slots: Arc::new(VerificationSlots::new(rest_verification_limits)),
+             block_cache: Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(BLOCK_CACHE_SIZE).unwrap()))),
++            programs_summary: Default::default(),
+             history_compat,
+         };
+         // Spawn the server.
+@@ -378,6 +411,7 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
+             .route("/program/{id}/mapping/{name}/{key}", get(Self::get_mapping_value))
+             .route("/program/{id}/amendment_count", get(Self::get_program_amendment_count))
+             .route("/program/{id}/{edition}/amendment_count", get(Self::get_program_amendment_count_for_edition))
++            .route("/programs/summary", get(Self::get_programs_summary))
  
--    if let Err(err) = decode::<Claims>(
--        auth.token(),
--        &DecodingKey::from_secret(JWT_SECRET.get().unwrap()),
--        &Validation::new(Algorithm::HS256),
--    ) {
-+    if let Err(err) = DecodingKey::from_secret(JWT_SECRET.get().unwrap())
-+        .and_then(|key| decode::<Claims>(auth.token(), &key, &Validation::new(Algorithm::HS256)))
-+    {
-         warn!("Request authorization error: {err}");
-         return Err(StatusCode::UNAUTHORIZED.into_response());
+             // GET ../sync/.. (with the deprecated ../sync_status alias)
+             .route("/sync_status", get(Self::get_sync_status))
+@@ -789,12 +823,14 @@ mod route_tests {
+             block::{Header, Transactions},
+             committee::test_helpers::sample_committee,
+             store::{StorageMode, helpers::memory::ConsensusMemory},
++            test_helpers::sample_genesis_committee,
+         },
+-        prelude::MainnetV0,
++        prelude::{MainnetV0, PrivateKey, Program, Transaction},
+         utilities::TestRng,
+     };
+ 
+     use axum::body::to_bytes;
++    use std::str::FromStr;
+     use tower::ServiceExt; // for `oneshot`
+ 
+     type CurrentNetwork = MainnetV0;
+@@ -811,8 +847,6 @@ mod route_tests {
+     /// port and spawn a server. None of the routes exercised here touch `consensus`, `cdn_sync`,
+     /// `routing` or `block_sync`; those fields exist only to satisfy the type.
+     async fn sample_rest() -> CurrentRest {
+-        let rng = &mut TestRng::default();
+-
+         // `Ledger::load` reaches snarkVM's sequential-operation thread and blocks on the reply,
+         // which panics if called from an async context. Production always drives these from a
+         // blocking task, so do the same here.
+@@ -826,6 +860,13 @@ mod route_tests {
+         .expect("the ledger task panicked")
+         .expect("couldn't load the test ledger");
+ 
++        sample_rest_with(ledger).await
++    }
++
++    /// Builds a `Rest` over the given ledger, as `sample_rest` does.
++    async fn sample_rest_with(ledger: Ledger<CurrentNetwork, ConsensusMemory<CurrentNetwork>>) -> CurrentRest {
++        let rng = &mut TestRng::default();
++
+         let ledger_service = Arc::new(MockLedgerService::new(sample_committee(rng)));
+ 
+         Rest {
+@@ -841,6 +882,7 @@ mod route_tests {
+                 num_verifying_solutions: 1,
+             })),
+             block_cache: Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(BLOCK_CACHE
+```
+
+**File**: `node/rest/src/routes.rs` (modified, +69/-1)
+```diff
+@@ -37,7 +37,7 @@ use snarkvm::{
+     },
+ };
+ 
+-use axum::{Json, extract::rejection::JsonRejection};
++use axum::{Json, extract::rejection::JsonRejection, response::IntoResponse};
+ 
+ use anyhow::{Context, anyhow};
+ use indexmap::IndexMap;
+@@ -277,6 +277,21 @@ pub(crate) struct TransactionWithMetadata<T: Serialize, N: Network> {
+     block_height: Option<u32>,
+ }
+ 
++/// The return value for a `programs/summary` query.
++#[derive(Serialize)]
++struct ProgramsSummary {
++    height: u32,
++    programs: Vec<ProgramSummary>,
++}
++
++/// A deployed program, its latest edition, and that edition's amendment count.
++#[derive(Serialize)]
++struct ProgramSummary {
++    program_id: String,
++    edition: u16,
++    amendment_count: u64,
++}
++
+ /// The return value for a `sync_status` query.
+ #[skip_serializing_none]
+ #[derive(Copy, Clone, Serialize)]
+@@ -889,6 +904,59 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
+         Ok(ErasedJson::new(rest.ledger.get_latest_edition_for_program(&id)?))
      }
+ 
++    /// GET /<network>/programs/summary
++    ///
++    /// Returns the deployed programs with their latest edition and that edition's amendment count,
++    /// sorted by ID, and a `height`. The list may include programs deployed after `height`, and an
++    /// edition or amendment count may be newer than it was at `height`. A storage read error during
++    /// the scan can shorten the list, since snarkVM's map iterator stops silently on a decode error.
++    /// The response is built once per height and cached.
++    pub(crate) async fn get_programs_summary(State(rest): State<Self>) -> Result<Response, RestError> {
++        let body = rest.programs_summary_body().await?;
++        Ok(([(CONTENT_TYPE, "application/json")], body).into_response())
++    }
++
++    /// Returns a `programs/summary` JSON body at least as new as the height the request first saw.
++    pub(crate) async fn programs_summary_body(&self) -> Result<Bytes, RestError> {
++        let seen = self.ledger.latest_height();
++        if let Some(body) = self.programs_summary.get(seen) {
++            return Ok(body);
++        }
++
++        let permit = self.programs_summary.acquire_build().await?;
++        // A build that finished while this request waited is new enough.
++        if let Some(body) = self.programs_summary.get(seen) {
++            return Ok(body);
++        }
++
++        // The ledger advances the height only after the block is written, so a scan started after
++        // this read covers every block up to it.
++        let height = self.ledger.latest_height();
++        let (ledger, cache) = (self.ledger.clone(), self.programs_summary.clone());
++        // The blocking task owns the permit, so a dropped request cannot release it mid-build.
++        let build = move || -> Result<Bytes, RestError> {
++            let _permit = permit;
++            let store = ledger.vm().block_store().transaction_store();
++            let mut programs = store
++                .program_ids_and_latest_editions()
++                .map(|(id, edition)| {
++                    let amendment_count = store.get_amendment_count(&id, *edition)?.unwrap_or(0);
++                    Ok(ProgramSummary { program_id: id.to_string(), edition: *edition, amendment_count })
++                })
++                .collect::<Result<Vec<_>, RestError>>()?;
++            programs.sort_unstable_by(|a, b| a.program_id.cmp(&b.program_id));
++            let summary = ProgramsSummary { height, programs };
++            let body = Bytes::from(serde_json::to_vec(&summary).context("Failed to serialize the summary")?);
++            cache.set(height, body.clone());
++            Ok(body)
++        };
++
++        match tokio::task::spawn_blocking(build).await {
++            Ok(body) => body,
++            Err(err) => Err(RestError::internal_server_error(anyhow!(err).context("Tokio error"))),
++        }
++    }
++
+     /// GET /<network>/program/{programID}/mappings
+     pub(crate) async fn get_mapping_names(
+         State(rest): State<Self>,
 ```
 
 ---
 
-### Incident Patch 2: `9e0bd5f6` (2026-11-23)
-**Commit Message**: Merge pull request #4772 from aleo-labs-protocol/chore/bump-snarkvm-1a1c603dc
+### Incident Patch 2: `59290c82` (2026-11-23)
+**Commit Message**: Accept any cached summary at or above the height a request saw
 
-Bump snarkVM to aleo-labs-protocol/snarkVM@1a1c603dc
+Drop the rollback guard: nothing rolls the ledger back while REST serves.
+Reach the transaction store through the block store, as the neighbouring
+amendment-count routes do.
 
-**File**: `Cargo.lock` (modified, +286/-206)
+**File**: `node/rest/src/lib.rs` (modified, +3/-4)
 ```diff
-@@ -287,10 +287,10 @@ dependencies = [
-  "bytes",
-  "form_urlencoded",
-  "futures-util",
-- "http 1.5.0",
-- "http-body 1.1.0",
-+ "http",
-+ "http-body",
-  "http-body-util",
-- "hyper 1.11.0",
-+ "hyper",
-  "hyper-util",
-  "itoa",
-  "matchit",
-@@ -318,8 +318,8 @@ checksum = "08c78f31d7b1291f7ee735c1c6780ccde7785daae9a9206026862dab7d8792d1"
- dependencies = [
-  "bytes",
-  "futures-core",
-- "http 1.5.0",
-- "http-body 1.1.0",
-+ "http",
-+ "http-body",
-  "http-body-util",
-  "mime",
-  "pin-project-lite",
-@@ -341,8 +341,8 @@ dependencies = [
-  "futures-core",
-  "futures-util",
-  "headers",
-- "http 1.5.0",
-- "http-body 1.1.0",
-+ "http",
-+ "http-body",
-  "http-body-util",
-  "mime",
-  "pin-project-lite",
-@@ -366,7 +366,7 @@ dependencies = [
-  "miniz_oxide 0.9.1",
-  "object",
-  "rustc-demangle",
-- "windows-link",
-+ "windows-link 0.2.1",
- ]
+@@ -70,7 +70,6 @@ use parking_lot::Mutex;
+ use std::{
+     net::SocketAddr,
+     num::NonZeroUsize,
+-    ops::RangeInclusive,
+     sync::{Arc, LazyLock},
+     time::Duration,
+ };
+@@ -220,9 +219,9 @@ impl Default for ProgramsSummaryCache {
+ }
  
- [[package]]
-@@ -375,12 +375,6 @@ version = "1.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "fd307490d624467aa6f74b0eabb77633d1f758a7b25f12bceb0b22e08d9726f6"
- 
--[[package]]
--name = "base64"
--version = "0.21.7"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
--
- [[package]]
- name = "base64"
- version = "0.22.1"
-@@ -721,7 +715,7 @@ dependencies = [
-  "iana-time-zone",
-  "num-traits",
-  "serde",
-- "windows-link",
-+ "windows-link 0.2.1",
- ]
- 
- [[package]]
-@@ -1704,6 +1698,17 @@ dependencies = [
-  "num-traits",
- ]
- 
-+[[package]]
-+name = "evmap"
-+version = "11.0.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1b8874945f036109c72242964c1174cf99434e30cfa45bf45fedc983f50046f8"
-+dependencies = [
-+ "hashbag",
-+ "left-right",
-+ "smallvec",
-+]
-+
- [[package]]
- name = "fancy-regex"
- version = "0.11.0"
-@@ -1947,6 +1952,20 @@ dependencies = [
-  "slab",
- ]
- 
-+[[package]]
-+name = "generator"
-+version = "0.8.12"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ea6c6a73cd1aa4f4f00c02b109fa55d3a9d6ecc2fc4f53177b74ed6ee23b0c53"
-+dependencies = [
-+ "cc",
-+ "libc",
-+ "log",
-+ "rustversion",
-+ "windows-core 0.100.0",
-+ "windows-sys 0.61.2",
-+]
-+
- [[package]]
- name = "generic-array"
- version = "0.14.7"
-@@ -2086,7 +2105,7 @@ dependencies = [
-  "fnv",
-  "futures-core",
-  "futures-sink",
-- "http 1.5.0",
-+ "http",
-  "indexmap 2.14.2",
-  "slab",
-  "tokio",
-@@ -2105,6 +2124,12 @@ dependencies = [
-  "zerocopy",
- ]
- 
-+[[package]]
-+name = "hashbag"
-+version = "0.1.13"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7040a10f52cba493ddb09926e15d10a9d8a28043708a405931fe4c6f19fac064"
-+
- [[package]]
- name = "hashbrown"
- version = "0.12.3"
-@@ -2116,9 +2141,6 @@ name = "hashbrown"
- version = "0.14.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
--dependencies = [
-- "ahash",
--]
- 
- [[package]]
- name = "hashbrown"
-@@ -2164,7 +2186,7 @@ dependencies = [
-  "base64 0.22.1",
-  "bytes",
-  "headers-core",
-- "http 1.5.0",
-+ "http",
-  "httpdate",
-  "mime",
-  "sha1 0.10.7",
-@@ -2176,7 +2198,7 @@ version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "54b4a22553d4242c49fddb9ba998a99962b5cc6f22cb5a3482bec22522403ce4"
- dependencies = [
-- "http 1.5.0",
-+ "http",
- ]
- 
- [[package]]
-@@ -2225,17 +2247,6 @@ dependencies = [
-  "windows-sys 0.61.2",
- ]
- 
--[[package]]
--name = "http"
--version = "0.2.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "601cbb57e577e2f5ef5be8e7b83f0f63994f25aa94d673e54a92d5c516d101f1"
--dependencies = [
-- "bytes",
-- "fnv",
-- "itoa",
--]
--
- [[package]]
- name = "http"
- version = "1.5.0"
-@@ -2246,25 +2257,14 @@ dependencies = [
-  "itoa",
- ]
- 
--[[package]]
--name = "http-body"
--version = "0.4.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7ceab25649e9960c0311ea418d17bee82c0dcec1bd053b5f9a66e265a693bed2"
--dependencies = [
-- "bytes",
-- "http 0.2.12",
-- "pin-project-lite",
--]
--
- [[package]]
- name = "http-body"
- version = "1.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ca2a8f2913ee65f60facd6a5905613afaa448497a0230cc41ce022d93290bc2c"
- dependencies = [
-  "bytes",
-- "http 1.5.0",
-+ "http",
- ]
- 
- [[package]]
-@@ -2275,8 +2275,8 @@ checksum = "23169fe34a5fbcdd3f3862e78fb9b6fccd5f02a6dc6f732547005d45631ce71c"
- dependencies = [
-  "bytes",
-  "futures-core",
-- "http 1.5.0",
-- "http-body 1.1.0",
-+ "http",
-+ "http-body",
-  "pin-project-lite",
- ]
- 
-@@ -2315,29 +2315,6 @@ dependencies = [
-  "zeroize",
- ]
- 
--[[package]]
--name = "hyper"
--version = "0.14.32"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "41dfc780fdec9373c01bae43289ea34c972e40ee3c9f6b3c8801a35f35586ce7"
--dependencies = [
-- "bytes",
-- "futures-channel",
-- "futures-core",
-- "futures-util",
-- "http 0.2.12",
-- "http-body 0.4.6",
-- "httparse",
-- "httpdate",
-- "itoa",
-- "pin-project-lite",
-- "
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ members = [
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "a33f170b2c75dadcb91891c60f761c817fbde79f" #staging
-+rev = "1a1c603dc2db7245ccdc9554c2720dbee2dace2b" #staging
- #version = "=4.12.0"
- default-features = false
- 
-```
-
-**File**: `cli/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ cuda = [
- # that sends another genesis hash; peers below `HandshakeTrailer::GENESIS_VERSION` may send none.
- # `snarkos developer` commands sent to a public endpoint pass no genesis check and use the lowered
- # consensus heights.
--dev-network = [ "snarkvm/dev-network", "snarkvm/dev_genesis_state_root" ]
-+dev-network = [ "snarkvm/dev-network" ]
- # Lets `--dev-on-prod` extend a copy of a real ledger with blocks signed by a deterministic dev
- # committee. It keeps the production network parameters, so it is separate from `dev-network`, and a
- # build with both rejects `--dev-on-prod`. It relaxes some block and BFT checks for dev-committee rounds.
-```
-
-**File**: `cli/src/commands/start.rs` (modified, +2/-0)
-```diff
-@@ -1443,6 +1443,8 @@ mod tests {
-         Ok(())
+ impl ProgramsSummaryCache {
+-    /// Returns the cached body if it was built at a height in `heights`.
+-    fn get(&self, heights: RangeInclusive<u32>) -> Option<Bytes> {
+-        self.latest.lock().as_ref().filter(|(h, _)| heights.contains(h)).map(|(_, body)| body.clone())
++    /// Returns the cached body if it was built at `min_height` or later.
++    fn get(&self, min_height: u32) -> Option<Bytes> {
++        self.latest.lock().as_ref().filter(|(h, _)| *h >= min_height).map(|(_, body)| body.clone())
      }
  
-+    // A `dev-network` build rejects the production genesis block, which this test parses.
-+    #[cfg(not(feature = "dev-network"))]
-     #[test]
-     fn test_parse_development_and_genesis() {
-         let prod_genesis = Block::from_bytes_le(CurrentNetwork::genesis_bytes()).unwrap();
+     /// Call only while holding the build permit.
 ```
 
-**File**: `node/Cargo.toml` (modified, +1/-1)
+**File**: `node/rest/src/routes.rs` (modified, +7/-8)
 ```diff
-@@ -42,7 +42,7 @@ test-helpers = []
- dev-network = [ "snarkos-node-bft/dev-network", "snarkos-node-consensus/dev-network" ]
- # See `cli/Cargo.toml`.
- dev-committee-override = [
--  "snarkvm/dev-committee",
-+  "snarkvm/dev-committee-override",
-   "snarkos-node-bft/dev-committee-override",
-   "snarkos-node-consensus/dev-committee-override"
- ]
-```
-
-**File**: `node/bft/ledger-service/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -22,9 +22,9 @@ metrics = [ "dep:snarkos-node-metrics", "snarkvm/metrics" ]
- mock = [ ]
- cuda = [ "snarkvm/cuda" ]
- test-helpers = [ "mock" ]
--dev-network = [ "snarkvm/dev_genesis_state_root" ]
-+dev-network = [ "snarkvm/dev-network" ]
- # See `cli/Cargo.toml`.
--dev-committee-override = [ "snarkvm/dev-committee" ]
-+dev-committee-override = [ "snarkvm/dev-committee-override" ]
- 
- [dependencies.anyhow]
- workspace = true
-```
-
-**File**: `node/metrics/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ default = [ "metrics" ]
- metrics = [ "snarkvm/metrics" ]
- 
- [dependencies.metrics-exporter-prometheus]
--version = "0.13"
-+version = "0.18"
- default-features = false
- features = [ "http-listener" ]
- 
-```
-
-**File**: `node/metrics/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -90,7 +90,7 @@ pub fn initialize_metrics(ip: Option<SocketAddr>) {
-     // Spawn the exporter, retaining its handle so that it can be stopped on shutdown.
-     let task = tokio::spawn(async move {
-         if let Err(error) = exporter.await {
--            tracing::error!("The metrics exporter has failed: {error}");
-+            tracing::error!("The metrics exporter has failed: {error:?}");
+@@ -919,25 +919,24 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
+     /// Returns a `programs/summary` JSON body at least as new as the height the request first saw.
+     pub(crate) async fn programs_summary_body(&self) -> Result<Bytes, RestError> {
+         let seen = self.ledger.latest_height();
+-        if let Some(body) = self.programs_summary.get(seen..=seen) {
++        if let Some(body) = self.programs_summary.get(seen) {
+             return Ok(body);
          }
-     });
-     if let Err(task) = EXPORTER_TASK.set(task) {
+ 
+         let permit = self.programs_summary.acquire_build().await?;
+-        // The ledger advances the height only after the block is written, so a scan started after
+-        // this read covers every block up to it.
+-        let height = self.ledger.latest_height();
+-        // A build that finished while this request waited is new enough. The upper bound skips a
+-        // body from above the current height, left by a rollback.
+-        if let Some(body) = self.programs_summary.get(seen..=height) {
++        // A build that finished while this request waited is new enough.
++        if let Some(body) = self.programs_summary.get(seen) {
+             return Ok(body);
+         }
+ 
++        // The ledger advances the height only after the block is written, so a scan started after
++        // this read covers every block up to it.
++        let height = self.ledger.latest_height();
+         let (ledger, cache) = (self.ledger.clone(), self.programs_summary.clone());
+         // The blocking task owns the permit, so a dropped request cannot release it mid-build.
+         let build = move || -> Result<Bytes, RestError> {
+             let _permit = permit;
+-            let store = ledger.vm().transaction_store();
++            let store = ledger.vm().block_store().transaction_store();
+             let mut programs = store
+                 .program_ids_and_latest_editions()
+                 .map(|(id, edition)| {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2325,39 +2202,65 @@ Bump snarkVM to aleo-labs-protocol/snarkVM@1a1c603dc
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Empirical Invariant Guard in lib.rs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/rest/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0a4509e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae6a5b06`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/rest/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "12.0.0"
-checksum = "f347a975eb5fa8f5c4eadce6c1152c11c326cf32cf839fb64ff12d5cb8f4ce8b"
- "base64 0.23.1",
- "getrandom 0.4.3",
- "signature 3.0.0",
+    body::{Body, Bytes},
+/// The latest `programs/summary` response body, built at most once per block height.
+pub(crate) struct ProgramsSummaryCache {
+    /// The height and serialized JSON body of the latest summary.
+    latest: Mutex<Option<(u32, Bytes)>>,
+    /// One permit, so only one build runs at a time. Requests wait for it asynchronously.
+    build: Arc<Semaphore>,
+}
+
+impl Default for ProgramsSummaryCache {
+    fn default() -> Self {
+        Self { latest: Default::default(), build: Arc::new(Semaphore::new(1)) }
+    }
+}
+
+impl ProgramsSummaryCache {
+    /// Returns the cached body if it was built at `min_height` or later.
+    fn get(&self, min_height: u32) -> Option<Bytes> {
+        self.latest.lock().as_ref().filter(|(h, _)| *h >= min_height).map(|(_, body)| body.clone())
+    }
+
+    /// Call only while holding the build permit.
+    fn set(&self, height: u32, body: Bytes) {
+        *self.latest.lock() = Some((height, body));
+    }
+
+    async fn acquire_build(&self) -> Result<OwnedSemaphorePermit, RestError> {
+        self.build.clone().acquire_owned().await.map_err(|err| RestError::internal_server_error(anyhow::anyhow!(err)))
+    }
+}
+
+    /// The latest `programs/summary` 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "11.1.0"
-checksum = "e75fe14a82d81e5f5af639997db37d8b96045938a7ac6ab18cdbe1c7467e05e1"
- "base64 0.22.1",
- "getrandom 0.2.17",
- "signature 2.2.0",
+    body::Body,
+        prelude::MainnetV0,
+        let rng = &mut TestRng::default();
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0a4509e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae6a5b06` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

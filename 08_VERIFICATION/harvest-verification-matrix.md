@@ -12478,3 +12478,5 @@
 | `CYCLE-20261123-VPM1` | `2026-11-23T21:23:13.129Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`2b177507...`) |
 | `CYCLE-20261123-645H` | `2026-11-23T21:31:18.533Z` | `autotrust/AutoTrust-Decider-Pro-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`fb75e21d...`) |
 | `CYCLE-20261123-6HIA` | `2026-11-23T21:31:35.842Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10128` | Yes (`ef0408cc...`) |
+| `CYCLE-20261123-H16V` | `2026-11-23T21:39:47.911Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | Yes (`999b6417...`) |
+| `CYCLE-20261123-HBRX` | `2026-11-23T21:40:01.629Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10129` | Yes (`e4cf9518...`) |

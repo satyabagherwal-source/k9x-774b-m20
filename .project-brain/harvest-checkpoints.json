@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T21:31:35.855Z",
+  "last_updated": "2026-11-23T21:40:01.642Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2126,14 +2126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "05545c19da84baac80c6010c70cdb41c87588a2fd9e11e52c5f3202ab74ffc9c",
-      "verified_at": "2026-11-19T15:03:21.336Z",
+      "content_hash": "999b6417b175bf342f440bfb1ad77fd25c04688169a5915ccc2dcd12ac122e2d",
+      "verified_at": "2026-11-23T21:39:47.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:03:21.336Z"
+      "last_updated": "2026-11-23T21:39:47.923Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "f72e9068f01b4c55c5d9f2b0c75d8bf6f77cf440da878d45225b22817e755a45",
-      "verified_at": "2026-11-23T19:43:03.419Z",
+      "content_hash": "e4cf951848685e0bd3b9db10b8ee634d858090bdf479b0b4408cef43e172d601",
+      "verified_at": "2026-11-23T21:40:01.642Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:43:03.419Z"
+      "last_updated": "2026-11-23T21:40:01.642Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",

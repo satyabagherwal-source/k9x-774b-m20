@@ -12511,3 +12511,5 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `5f12fdd2` | Multi-dimensional audit evidence | 2026-11-23T21:23:13.134Z |
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T21:31:18.538Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `401721aa` | Multi-dimensional audit evidence | 2026-11-23T21:31:35.846Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-23T21:39:47.916Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ae6a5b06` | Multi-dimensional audit evidence | 2026-11-23T21:40:01.634Z |

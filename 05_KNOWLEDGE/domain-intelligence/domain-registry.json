@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T21:31:40.956Z",
+  "last_updated": "2026-11-23T21:40:06.689Z",
   "total_records": 2454,
   "domains": {
     "A": {
@@ -8558,10 +8558,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "4f78e092f074a78294217045d829206ee7e0078e0a67a9d53697a9d196c5d4da",
-      "created_at": "2026-11-23T19:43:03.819Z"
+      "content_hash": "baf7b85a0cbcf55a1b2c486f8da9196b312336dfd78742cb4277cf32e200a3ee",
+      "created_at": "2026-11-23T21:40:02.034Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9187,8 +9187,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "3a435e217ed979e787390edf3c116f893397f6715a7547136518ba15254e48c8",
-      "created_at": "2026-11-23T21:31:40.956Z"
+      "content_hash": "58e3b704fb930b529b00fb44fa711f05aaa44f74d260184053b6cf4557658033",
+      "created_at": "2026-11-23T21:40:06.689Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9793,8 +9793,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "62dd6c8128c8bb518e8542f5407944c24ded3442357c0dfa57bf3d193bc49b21",
-      "created_at": "2026-11-23T17:38:05.329Z"
+      "content_hash": "b15da36b6814c81d47f66aad49508e013448f3ffac45572cd24d79a75e81631d",
+      "created_at": "2026-11-23T21:40:05.913Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -19026,8 +19026,8 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-research-knowledge-intelligence-openbmb-minicpm.md",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "content_hash": "7124e572a99c0fd80cdbe1afb150e7a06d93631ae989372f2087ea219f13eef7",
-      "created_at": "2026-11-19T15:03:21.492Z"
+      "content_hash": "126c0c13de1b3347f98d4bd5040ea425e10b9f35cea2825a3806b0dfcf34cefb",
+      "created_at": "2026-11-23T21:39:48.130Z"
     },
     "DOM-D-C5F6E511": {
       "record_id": "DOM-D-C5F6E511",
@@ -19077,8 +19077,8 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-research-knowledge-intelligence-hf-op.md",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings",
-      "content_hash": "e4a8e1ed3a80b5c6f15531d6512512980d7a9a9620e80374e72c20e9453ea705",
-      "created_at": "2026-11-19T15:03:33.820Z"
+      "content_hash": "d7740004272e6dd6bc73ec24a202867d0c1240ef973ed6f8e5a0d1ff381d84c4",
+      "created_at": "2026-11-23T21:40:05.250Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",

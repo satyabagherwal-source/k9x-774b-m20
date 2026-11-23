@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T21:31:41.130Z",
+  "last_updated": "2026-11-23T21:40:06.865Z",
   "total_verified_learnings": 9086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24214,
+  "total_items": 24216,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "b0a4509e",
-      "content_hash": "4f78e092f074a78294217045d829206ee7e0078e0a67a9d53697a9d196c5d4da",
+      "source_version": "ae6a5b06",
+      "content_hash": "baf7b85a0cbcf55a1b2c486f8da9196b312336dfd78742cb4277cf32e200a3ee",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T19:43:03.819Z"
+      "persisted_at": "2026-11-23T21:40:02.034Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "b0a4509e",
-      "content_hash": "28e4a63467dfcb1e87f1219c699655abc6abd0b8510152b38ffd8f386df13557",
+      "source_version": "ae6a5b06",
+      "content_hash": "0e96a1cbc59404baddf15277f5ef4d46da9106ee00d02343e51b38a7dc4d5c28",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:43:03.990Z"
+      "persisted_at": "2026-11-23T21:40:02.212Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a435e217ed979e787390edf3c116f893397f6715a7547136518ba15254e48c8",
+      "content_hash": "58e3b704fb930b529b00fb44fa711f05aaa44f74d260184053b6cf4557658033",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:31:40.956Z"
+      "persisted_at": "2026-11-23T21:40:06.689Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae81528a3b50e82edddd6619846b37e6a15b1ca93f57c2cf38f82667bfa095e2",
+      "content_hash": "470806f8c324dbf2e4f6a8df9c344d795a3ddd6ff75953e9791615b372334983",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:31:41.130Z"
+      "persisted_at": "2026-11-23T21:40:06.865Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "62dd6c8128c8bb518e8542f5407944c24ded3442357c0dfa57bf3d193bc49b21",
+      "content_hash": "b15da36b6814c81d47f66aad49508e013448f3ffac45572cd24d79a75e81631d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:38:05.329Z"
+      "persisted_at": "2026-11-23T21:40:05.913Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215958,13 +215958,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "b0a4509e",
-      "content_hash": "f72e9068f01b4c55c5d9f2b0c75d8bf6f77cf440da878d45225b22817e755a45",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ae6a5b06",
+      "content_hash": "e4cf951848685e0bd3b9db10b8ee634d858090bdf479b0b4408cef43e172d601",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216070,6 +216070,11 @@
           "number": 10002,
           "title": "Merge branch 'staging' into fix/4587-bound-transmission-latency-tracker",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10129,
+          "title": "Empirical Invariant Guard in lib.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216077,7 +216082,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:43:03.196Z",
+      "verified_at": "2026-11-23T21:40:01.412Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220337,9 +220342,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "43cd7c8817d00274d4c055da8e8dca1b8ca05a8650ab99768f83da04a3da5571",
+      "content_hash": "5731f451c0a2f59276dfd0d707111ac5f472fe1ec4c931592bd2c3d0b7ffa5d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:38:05.502Z"
+      "persisted_at": "2026-11-23T21:40:06.086Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -241149,7 +241154,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "05545c19da84baac80c6010c70cdb41c87588a2fd9e11e52c5f3202ab74ffc9c",
+      "content_hash": "999b6417b175bf342f440bfb1ad77fd25c04688169a5915ccc2dcd12ac122e2d",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [],
@@ -241158,7 +241163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:03:21.167Z",
+      "verified_at": "2026-11-23T21:39:47.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241175,9 +241180,9 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B Core Invariants",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "7124e572a99c0fd80cdbe1afb150e7a06d93631ae989372f2087ea219f13eef7",
+      "content_hash": "126c0c13de1b3347f98d4bd5040ea425e10b9f35cea2825a3806b0dfcf34cefb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T15:03:21.492Z"
+      "persisted_at": "2026-11-23T21:39:48.130Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-",
@@ -241187,9 +241192,9 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-learnings Core Invariants",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4a8e1ed3a80b5c6f15531d6512512980d7a9a9620e80374e72c20e9453ea705",
+      "content_hash": "d7740004272e6dd6bc73ec24a202867d0c1240ef973ed6f8e5a0d1ff381d84c4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T15:03:33.820Z"
+      "persisted_at": "2026-11-23T21:40:05.250Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
@@ -319353,13 +319358,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6LBK-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HFJL-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "73e379defdae49cf55340f0469ac4de520fc3353a8f25dfac089c8feca9cb3fb",
+      "content_hash": "cd23e89d3a5c5fb822f065d946940858998db36ee349e6da5e987b2badad5a8e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:31:40.787Z"
+      "persisted_at": "2026-11-23T21:40:06.516Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -330105,6 +330110,32 @@
       "content_hash": "7485cb8503a9da9c0764847c3dcd0fd619ab1f677cc850597205b11773470514",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T21:31:40.001Z"
+    },
+    "rule-10129": {
+      "learning_id": "rule-10129",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10129,
+      "title": "Empirical Invariant Guard in lib.rs",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ae6a5b06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:40:01.412Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-lib-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-lib-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HEY5-empirical-invariant-guard-in-lib-rs.md",
+      "title": "Empirical Invariant Guard in lib.rs",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "80a254b9d127a50476929c7a2e7ddb61755f477fb053f4327a44c631197e0025",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T21:40:05.744Z"
     }
   },
   "ai-builder-brain": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T21:31:41.292Z",
+  "last_updated": "2026-11-23T21:40:07.023Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T20:00:24.380Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-23T21:31:40.505Z",
+      "processed_at": "2026-11-23T21:40:06.249Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2058,7 +2058,7 @@
       "staged_for_review": 1
     },
     "provablehq-snarkos-learnings.md": {
-      "processed_at": "2026-11-23T17:38:04.823Z",
+      "processed_at": "2026-11-23T21:40:05.451Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2813,7 +2813,7 @@
       "staged_for_review": 0
     },
     "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md": {
-      "processed_at": "2026-11-19T15:03:33.654Z",
+      "processed_at": "2026-11-23T21:40:05.034Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3783,7 +3783,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3534,
+  "total_dossiers_evaluated": 3537,
   "total_canonical_promoted": 490,
-  "total_staged_for_review": 2651
+  "total_staged_for_review": 2653
 }
