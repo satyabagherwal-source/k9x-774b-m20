@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T13:54:39.954Z",
+  "updated_at": "2026-11-23T14:13:01.054Z",
   "stats": {
-    "total_discovered": 7835,
-    "approved_pending_harvest": 7412,
+    "total_discovered": 7838,
+    "approved_pending_harvest": 7414,
     "harvested_count": 0,
-    "rejected_count": 423,
+    "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7403,
+      "COMMUNITY_AND_EXPERT": 7406,
       "OFFICIAL_DOCUMENTATION": 248,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -169432,6 +169432,65 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
         "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-C272FA6FAF46": {
+      "id": "SRC-C272FA6FAF46",
+      "url": "https://learn.chatgpt.com/docs/models",
+      "title": "https://learn.chatgpt.com/docs/models",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:13:00.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-E475DD5D4DFF": {
+      "id": "SRC-E475DD5D4DFF",
+      "url": "https://learn.chatgpt.com/docs/agent-configuration/subagents",
+      "title": "https://learn.chatgpt.com/docs/agent-configuration/subagents",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T14:13:00.227Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
+        "fileName": "chrisbanes-skills-learnings.md"
+      }
+    },
+    "SRC-07B93A5DFA18": {
+      "id": "SRC-07B93A5DFA18",
+      "url": "https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh",
+      "title": "https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T14:13:01.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
+        "fileName": "risingwavelabs-risingwave-learnings.md"
       }
     }
   }

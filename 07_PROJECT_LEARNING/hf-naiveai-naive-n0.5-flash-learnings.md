@@ -3,7 +3,7 @@
 > **Source Version**: `hf-naiveai-n`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:22:40.885Z  
+> **Timestamp**: 2026-11-23T14:12:38.109Z  
 > **Learning ID**: `learn-huggingface-naiveai-naive-n0-5-flash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/NaiveAI/Naive-N0.5-Flash](https://huggingface.co/NaiveAI/Naive-N0.5-Flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:22:40.651Z  
+> **Harvest Timestamp**: 2026-11-23T14:12:37.974Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 19713 downloads | 412 likes
+- **Stars / Engagement**: 25708 downloads | 413 likes
 
 ---
 

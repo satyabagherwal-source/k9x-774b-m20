@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-L10B",
-    "timestamp": "2026-11-21T12:19:41.531Z",
-    "repository": "dkhamsing/open-source-ios-apps",
-    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "62e99f7c7e9f06bccaaa327ba31ee4906a0eb93eafb519140f3d31f7eb4b6c33",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-L48V",
-    "timestamp": "2026-11-21T12:19:45.727Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "a8632ff23350be1697adb352de3f4580909248a6ba3d8325f4b0e2b2bfdd0170",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-XEJN",
-    "timestamp": "2026-11-21T12:29:18.947Z",
-    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-    "contentHash": "46f3709d47e099b6dfaa8f4f595f8a759e84a3928fe8be88d9fc72c60ad93835",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-XEYF",
-    "timestamp": "2026-11-21T12:29:19.479Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "d5e3494b42c2155cb604fc486b071a0c79eeec394a0af8870436f0b10d9e21d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-XJF0",
     "timestamp": "2026-11-21T12:29:25.260Z",
     "repository": "react-hook-form/react-hook-form",
@@ -7490,6 +7430,66 @@
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
     "contentHash": "b2a36bda4b54510b47a4a22c17496c7fb8f0f66ecf20e03d658ecff3ed380327",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-HZKA",
+    "timestamp": "2026-11-23T14:12:38.602Z",
+    "repository": "NaiveAI/Naive-N0.5-Flash",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "d78bb07575733ab0329d61a32056cf899c3509aabac6437bcffce3464ae8d378",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-I5DH",
+    "timestamp": "2026-11-23T14:12:46.133Z",
+    "repository": "chrisbanes/skills",
+    "learningId": "learn-github-chrisbanes-skills",
+    "contentHash": "5d903d59cbfbaad438bf7c763f0fee621428d653d38f7a9ee42f9cd9393d9483",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-IBHL",
+    "timestamp": "2026-11-23T14:12:54.057Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "26762ea613b4c0cff03a5708e99fa9e2d1e3511b5fe9360cf47e63df358bfd5f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ID14",
+    "timestamp": "2026-11-23T14:12:56.056Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "df4d278f8470bfe203b1a8369ea429248392568a84f50bd2f18224054cd009b2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

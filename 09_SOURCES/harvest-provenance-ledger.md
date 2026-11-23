@@ -12358,3 +12358,7 @@ Every entry in this ledger must capture:
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `caec4119` | Multi-dimensional audit evidence | 2026-11-23T13:49:48.286Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cb301ad6` | Multi-dimensional audit evidence | 2026-11-23T13:50:04.439Z |
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-11-23T13:54:35.620Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-11-23T14:12:38.607Z |
+| `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `efeb99dc` | Multi-dimensional audit evidence | 2026-11-23T14:12:46.137Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `6c258d07` | Multi-dimensional audit evidence | 2026-11-23T14:12:54.062Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0311b3bf` | Multi-dimensional audit evidence | 2026-11-23T14:12:56.061Z |

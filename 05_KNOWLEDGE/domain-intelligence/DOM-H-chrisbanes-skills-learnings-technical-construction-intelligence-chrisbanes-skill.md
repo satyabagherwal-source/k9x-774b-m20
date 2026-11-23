@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T09:59:50.683Z",
+  "timestamp": "2026-11-23T14:13:00.326Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-chrisbanes-skills-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [chrisbanes-skills-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T09:59:50.683Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T14:13:00.326Z`  
 > **Learning ID**: `LEARN-EVO-chrisbanes-skills-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from chrisbanes-skills-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source**: github ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
-> **Source Version**: `50b5d4cf`  
+> **Source Version**: `efeb99dc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T09:59:05.997Z  
+> **Timestamp**: 2026-11-23T14:12:45.114Z  
 > **Learning ID**: `learn-github-chrisbanes-skills`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T09:59:05.989Z  
+> **Harvest Timestamp**: 2026-11-23T14:12:45.109Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Skills for Kotlin, Jetpack Compose, and Android development
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1164 stars
+- **Stars / Engagement**: 1165 stars
 
 ---
 
@@ -276,465 +276,300 @@ class ProfileModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50b5d4cf` (2026-11-19)
-**Commit Message**: Bump version to 2026.11.19
+### Incident Patch 1: `69450002` (2026-11-23)
+**Commit Message**: Clarify when Compose UI tests need device coverage (#193)
 
-**File**: `.claude-plugin/plugin.json` (modified, +1/-1)
+## Summary
+
+Add a test-selection row for critical flows that depend on the installed
+build or cross an app, process, or OS boundary. Use a focused device
+smoke test or end-to-end test when a narrower test can't prove the
+behavior.
+
+Add three opt-in Compose eval cases for a system permission dialog,
+R8-optimized startup, and local Compose state restoration.
+
+Proposed by `kacperkapusciak`. Fixes #192.
+
+## Evidence
+
+- The permission fixture validator rejects the fake-callback plan and
+accepts a focused test that denies the system dialog and checks the
+manual-entry fallback.
+- `npm run lint`, `npm run evals:validate` (313 cases), `npm run
+references:check`, and `npm test` passed locally. One existing test was
+skipped.
+
+## Merge impact
+
+Reversible. The change affects Compose test-selection guidance and
+opt-in evaluation coverage.
+
+**File**: `evals/README.md` (modified, +3/-4)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "chrisbanes-skills",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
--  "version": "2026.11.18",
-+  "version": "2026.11.19",
-   "author": {
-     "name": "Chris Banes",
-     "url": "https://github.com/chrisbanes"
+@@ -331,10 +331,9 @@ The Compose benchmark remains 38 scored cases and comprises:
+ Case IDs retain their focused concern names even when several concerns route to
+ the same clustered public skill.
+ 
+-Four calibration-only performance challenge cases are also validated with the
+-corpus. They are excluded from default plans and published scorecards; select
+-them explicitly with `--case` when deciding whether they should graduate into
+-the benchmark.
++The corpus also validates four performance challenges and three cases on when
++Compose UI tests give way to device tests. These calibration cases are excluded
++from default plans and published scorecards. Select them explicitly with `--case`.
+ 
+ Two calibration-only workflow challenges exercise actionable failure behavior
+ when a required external `tdd` provider is unavailable. They
 ```
 
-**File**: `.codex-plugin/plugin.json` (modified, +1/-1)
+**File**: `evals/cases/compose-device-permission-direct/case.json` (added, +19/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "chrisbanes-skills",
--  "version": "2026.11.18",
-+  "version": "2026.11.19",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "author": {
-     "name": "Chris Banes",
+@@ -0,0 +1,19 @@
++{
++  "id": "compose-device-permission-direct",
++  "title": "Verify a system permission decision in the installed app",
++  "family": "testing",
++  "target_skills": ["compose-ui-testing-patterns"],
++  "expected_skills": ["compose-ui-testing-patterns"],
++  "task_mode": "edit",
++  "kind": "direct",
++  "fixture": "text",
++  "allowed_write_paths": ["test-plan.md"],
++  "validators": [{"argv": ["python3", "@validators/text_case.py", "compose-device-permission-direct"], "timeout_seconds": 30}],
++  "rubric": [
++    {"id": "system-boundary", "text": "Identifies the real Android permission dialog and its result as the boundary the fake callback cannot exercise"},
++    {"id": "focused-device-test", "text": "Recommends a focused device test that denies the system prompt and verifies the installed app shows its fallback"},
++    {"id": "retain-ui-test", "text": "Retains the existing Compose test for rendering the denied state and limits the recommendation to the permission flow"}
++  ],
++  "provenance": {"kind": "synthetic"},
++  "calibration": true
++}
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `evals/cases/compose-device-permission-direct/expectations.json` (added, +6/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "chrisbanes-skills",
--  "version": "2026.11.18",
-+  "version": "2026.11.19",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "type": "module",
-   "main": ".opencode/plugins/chrisbanes-skills.js",
+@@ -0,0 +1,6 @@
++{
++  "files": ["test-plan.md"],
++  "must_contain": ["manual entry", "createComposeRule"],
++  "must_match": ["(?i)\\b(?:device|emulator|end-to-end)\\b"],
++  "must_not_contain": ["fakes a denied permission"]
++}
 ```
 
-**File**: `plugin.json` (modified, +1/-1)
+**File**: `evals/cases/compose-device-permission-direct/overlay/test-plan.md` (added, +9/-0)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-   "name": "chrisbanes-skills",
--  "version": "2026.11.18",
-+  "version": "2026.11.19",
-   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
-   "author": {
-     "name": "Chris Banes",
+@@ -0,0 +1,9 @@
++# Camera permission
++
++When somebody taps Scan for the first time and denies camera access in the
++Android system dialog, the installed app must offer manual entry.
++
++The current `createComposeRule` test renders the denied state and checks that
++the manual entry button is shown. The proposed test fakes a denied permission
++callback in that same Compose host and labels the result coverage of the system
++dialog flow.
+```
+
+**File**: `evals/cases/compose-device-permission-direct/prompt.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++Update `test-plan.md` with the smallest test setup that proves the acceptance
++criterion. Keep the change to the plan.
+```
+
+**File**: `evals/cases/compose-device-release-novel/case.json` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++{
++  "id": "compose-device-release-novel",
++  "title": "Verify startup on the R8-optimized build",
++  "family": "testing",
++  "target_skills": ["compose-ui-testing-patterns"],
++  "expected_skills": ["compose-ui-testing-patterns"],
++  "task_mode": "review",
++  "kind": "novel",
++  "fixture": "text",
++  "allowed_write_paths": [],
++  "validators": [{"argv": ["python3", "@validators/text_case.py", "compose-device-release-novel"], "timeout_seconds": 30}],
++  "rubric": [
++    {"id": "build-boundary", "text": "Explains that startup depends on the R8-optimized artifact and a passing debug rule does not exercise that artifact even though startup stays in one app"},
++    {"id": "release-smoke", "text": "Recommends a focused device smoke test that launches the installed R8-optimized release build and checks that the home screen becomes visible"},
++    {"id": "scope", "text": "Keeps the existing debug integration test for its current purpose without moving unrelated coverage into the release test"}
++  ],
++  "provenance": {"kind": "synthetic"},
++  "calibration": true
++}
+```
+
+**File**: `evals/cases/compose-device-release-novel/expectations.json` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++{
++  "files": ["test-plan.md"],
++  "must_contain": ["R8-optimized release build", "existing debug activity integration", "Compose home screen"]
++}
+```
+
+**File**: `evals/cases/compose-device-release-novel/overlay/test-plan.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++# Startup after changing keep rules
++
++Startup reaches the Compose home screen on debug builds. On the previous
++R8-optimized release build, an entry point loaded at runtime was stripped and
++the app crashed before reaching home. The keep rule has been corrected.
++
++The proposed regression check extends the existing debug activity integration
++test with a second home-screen assertion. Startup stays within the app.
 ```
 
 ---
 
-### Incident Patch 2: `2161b90d` (2026-11-18)
-**Commit Message**: Add GitLab issue tracker binding (#182)
+### Incident Patch 2: `edd18ff7` (2026-11-20)
+**Commit Message**: Update everyday model routing guidance (#188)
 
 ## Summary
 
-Add the shared GitLab issue tracker binding and route it through
-`run-project`, `deliver-issue` and `to-plan`.
-
-- Define GitLab issue scope, claim and stop, note markers, dependency
-reads and issue closure.
-- Keep the tracker and code host independent. Missing dependency
-evidence blocks dependent work, and native closure requires an exact,
-authorized issue set.
-
-This is the offline portion of [issue
-#163](https://github.com/chrisbanes/skills/issues/163). [Implementation
-plan, revision
-1](https://github.com/chrisbanes/skills/issues/163#issuecomment-6982694062),
-payload SHA-256
-`8d29832c9f15eda2250d78072b52aa5ff80dd12a35af54e3f7ccec4bf80351f5`.
+Route settled implementation to Sol/medium and substantial multi-source
+synthesis to Sol/high. Update routing evaluation cases while preserving
+explicit model pins.
 
 ## Evidence
 
-- Before, the GitLab binding handled merge requests and rejected GitLab
-issue tracker operations.
-- Offline cases now cover claim loss, note readback and revision chains,
-unavailable blockers, exact native closure and mixed-host closure.
-- A successful GitLab response may omit relationships the runner cannot
-see. The binding requires independent completeness evidence for blockers
-and effective closure targets before those operations proceed.
-- [Offline
-handoff](https://github.c
+| Finding | Source URL | Checked | Change made |
+|---|---|---|---|
+| Sol suits everyday coding and work across several sources; medium
+balances speed and depth, while high suits difficult multi-source work.
+| https://learn.chatgpt.com/docs/models | 2026-11-20 | Use Sol/medium
+for bounded implementation and Sol/high for substantial synthesis. |
+| Sol suits everyday agents that plan, use tools and check their work. |
+https://learn.chatgpt.com/docs/agent-configuration/subagents |
+2026-11-20 | Align the Codex delegation table and evaluation
+expectations. |
 
-**File**: `README.md` (modified, +4/-3)
+## Validation
+
+- `npm run build`: exit 1, missing script (`npm error Missing script:
+"build"`).
+- `npm run lint`: exit 0, no issues found (after installing existing
+dependencies from cache).
+- `npm run evals:validate`: exit 0, validated 307 cases.
+- `npm test`: exit 0, final output `Ran 429 tests in 78.142s` / `OK`.
+- No live model evaluations.
+
+## Merge Danger
+
+**Door:** two-way. **Blast Radius:** 
+
+**File**: `evals/cases/deliver-issue-model-routing-direct/prompt.md` (modified, +1/-1)
 ```diff
-@@ -138,9 +138,10 @@ for its lane-specific fallback and blocking behavior.
- Both delivery skills bundle their internal references for selective installation.
- Install `changelog` alongside `release-kotlin-library`.
+@@ -1,6 +1,6 @@
+ Assess the proposed workflow using only the supplied state and applicable skill references. Do not run commands other than skill and reference reads, launch agents, contact providers or edit files.
  
--The delivery skills support Jira Cloud as a tracker for JQL boards, direct
--issue delivery and planning markers. Select the code host separately.
--See the [Jira binding](references/jira-binding.md) for setup and supported operations.
-+The delivery skills support Jira Cloud JQL boards and GitLab issue selections by
-+label or milestone, as well as direct issue delivery and planning markers.
-+Select the code host separately. See the [Jira binding](references/jira-binding.md)
-+and [GitLab binding](references/gitlab-binding.md) for setup and capabilities.
+-Each snapshot is a qualifying direct fast-path issue: one known CLI help typo, two files, an existing snapshot check, no blockers, no plan chain, and a fresh independent reviewer. The lead picked gpt-6.2-sol/high. The applicable implementation policy recommends gpt-6.1-terra/high for this fix. One authorized, isolated and resumable Terra/high worker is free. There are no installed pins, merge grants, or other restrictions.
++Each snapshot is a qualifying direct fast-path issue: one known CLI help typo, two files, an existing snapshot check, no blockers, no plan chain, and a fresh independent reviewer. The lead picked gpt-6.2-sol/high. The applicable implementation policy recommends gpt-6.2-sol/medium for this fix. One authorized, isolated and resumable Terra/high worker is free. There are no installed pins, merge grants, or other restrictions.
  
- When `run-project` has no explicit GitHub Project scope, it selects the sole
- visible open, non-template Project linked to the verified repository. Supply a
+ - advisory: The user supplied only the delivery request and the picker choice.
+ - matching: The user also explicitly requested implementation on gpt-6.2-sol/high.
 ```
 
-**File**: `evals/artifacts/issue-163/r1/offline-handoff.md` (added, +167/-0)
+**File**: `evals/cases/implement-with-subagents-model-routing-novel/expectations.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,167 @@
-+# Issue 163 offline handoff
-+
-+The controller supplied the [issue and brief](https://github.com/chrisbanes/skills/issues/163#issuecomment-6956402695)
-+and [active revision 1 plan](https://github.com/chrisbanes/skills/issues/163#issuecomment-6982694062).
-+The issue and plan were read through the GitHub connector. The controller's
-+Project #22 item is `PVTI_lAHOAAN4ns4BsKlazhJzXlA` on
-+`PVT_kwHOAAN4ns4BsKla`. The controller retains Project, tracker, PR and
-+qualification authority.
-+
-+- Base `3d9da4774f441854a8ff4c513487301b057053ca`
-+- Plan digest `8d29832c9f15eda2250d78072b52aa5ff80dd12a35af54e3f7ccec4bf80351f5`
-+- Configuration digest `cfc5e733c34d0d677ac2c387523b88a28340981c4c2825624fb1a686d8cc18e7`
-+- Evidence preservation uses the controller-retained baseline tree.
-+
-+## Contract coverage
-+
-+| Shared operation | GitLab path and offline evidence |
-+| --- | --- |
-+| Identity, source, readiness, normalization | Exact authenticated project and issue reads, label or milestone membership, roles and logical state in the shared GitLab reference. Direct, Project and standalone planning have their own entry gates. |
-+| Claim, release and stop | Verified claim label plus exclusive assignment. Claim-loss stop preserves records and releases capacity after quiescence. The direct decision fixture covers ownership and loss. |
-+| Dependencies and hierarchy | Inward blocking links require verified tier and visibility. Unsupported tier and failed reads both block dependent lanes with distinct receipts. Descendant completeness requires a trusted current inventory when this REST binding cannot verify it. |
-+| Durable markers and supersession | Paginated issue notes, exact canonical payload readback and authoritative revision edges. The novel decision fixture covers presentation, no-op and ambiguous-create reconciliation. |
-+| Linking, merge and closure | Independent tracker and host operations, verified canonical linkage, exact effective closing set and verified tracker terminal state. The negative fixture covers native identity, a second project with the same IID, non-default base and mixed GitHub hosting. |
-+| Done and recovery | Fingerprint native auto-close and other verified Done inputs, preserve on drift, and reconcile ambiguous writes and unintended closure against exact readback. Unattended GitLab tracker wake and GitHub Project-specific mutations are unavailable. |
-+
-+The source uses the existing sync authority and provider-neutral routing.
-+GitLab's note API strips CR and trailing whitespace and executes quick actions.
-+The note transport therefore requires LF, rejects quick actions and frames the
-+exact payload with a removable footer. Supersession leaves verified predecessor
-+notes visible. [GitLab Notes API](https://docs.gitlab.com/api/notes/#note-body-normalization)
-+
-+## Qualification and evidence applicability
-+
-+The [protocol](qualification-protocol.md) and [write ledger](qualification-writes.json)
-+are checked offline using the existing fake GitLab client test suite.
-+Their checks establish the proposed allowlist, attempted-write accounting,
-+cleanup reserve and behavior on ambiguous responses in a simulation. The fixture
-+has Free capability and missing default role labels. It cannot qualify the full
-+journey in its recorded state. A ready MR is proposed as qualification setup
-+within the 15-write forward allowance. Ordinary delivery retains its draft
-+gate. The isolated branch protocol exercises tracker-controlled closure only.
-+[GitLab issue links](https://docs.gitlab.com/user/project/issues/related_issues/),
-+[GitLab default branch](https://docs.gitlab.com/user/project/repository/branches/default/)
-+
-+The corpus cases are synthetic decision fixtures. They establish corpus,
-+bundling and deterministic grading behavior, including rejection of unsafe
-+decisions. Live provider qualification, live scoring, independent candidate
-+review and external delivery remain controller gates.
-+
-+The entrypoint byte limit, automatic eligibility matrix and read-only
-+grader assertion were repaired during routine integration. The protocol uses
-+a checked allowlist with the existing test client because the prior live guard
-+is scoped to code-host operations and counts a different journey. No plan
-+amendment or material scope expansion was applied.
-+
-+## Independent review repairs
-+
-+- Require independent relationship visibility before a paged successful result
-+  can clear the dependency gate. The decision case covers a filtered empty
-+  response. [GitLab issue-link implementation](https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/api/issue_links.rb#L17-38)
-+- Require positive evidence of the effective closing set, including invisible
-+  manual links, before accepting an exact or empty result. Both are covered in
-+  the decision case. [GitLab manual-link semantics](https://docs.gitlab.com/user/project/issues/managing_issues/#user-responsibility-when-merging)
-+- Normalize a GitHub PR author's immuta
+@@ -8,7 +8,7 @@
+   "decisions": {
+     "chain": {
+       "valid": true,
+-      "model": "gpt-6.1-terra",
++      "model": "gpt-6.2-sol",
+       "effort": "high",
+       "owner": "W1",
+       "next": "dispatch",
 ```
 
-**File**: `evals/artifacts/issue-163/r1/qualification-protocol.md` (added, +118/-0)
+**File**: `evals/cases/implement-with-subagents-model-routing-novel/prompt.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,118 @@
-+# GitLab tracker qualification proposal
-+
-+Revision 1 of [issue #163](https://github.com/chrisbanes/skills/issues/163)
-+and its [active plan](https://github.com/chrisbanes/skills/issues/163#issuecomment-6982694062).
-+This is a checked protocol proposal. The preceding
-+[code-host evidence](../../2026-11-17-gitlab-code-host-live.md) applies to
-+code-host operations only. This revision has **zero authorized or attempted
-+fixture writes**. Native GitLab closure is covered by synthetic offline
-+decisions. Live execution, tracker cleanup and qualification are pending.
-+
-+## Read-only fixture record
-+
-+The controller verified GitLab.com project `banes3/Banes-project`, ID
-+`88319115`, private, with issues enabled, default branch `main`, Free
-+namespace plan and configured account with group Owner access. The fully
-+paged label inventory lacked `ready-for-agent` and `agent:in-progress`.
-+This preflight blocks the full journey. Free lacks directional blocking
-+links. Alternative role labels require trusted configuration and
-+verification. A failed link read would be unknown even on a supported tier.
-+No tier, setting, label, resource or branch was changed.
-+
-+## Obtain one bounded grant
-+
-+1. Refresh exact host, account, path and numeric ID, default branch and
-+   its SHA, namespace tier, issue visibility, directional blocking-link
-+   capability, configured role/selection names and IDs, and effective
-+   operation and cleanup permissions. Require independent relationship
-+   visibility evidence and a complete blocker and descendant view for the
-+   three run issues. A successful empty links response proves neither. Verify Owner cleanup scope
-+   for issue and MR deletion, and effective branch-create/delete authority
-+   for both disposable branches. Verify protection patterns, push/merge
-+   policy and automation. Stop before writing if any required fact is unknown.
-+2. Agree a unique run ID and record a sanitized preflight manifest with exact
-+   fixture, actors, label/selection names, immutable base SHA, one file
-+   path, branch names and starting absence of run resources. Require both
-+   branches to be new, unprotected, disposable and different from the
-+   default. Check that the pinned base and generated commit introduce no
-+   additional closing directives. Neither actor receives authority over
-+   existing issues, labels, refs, merge requests or project settings.
-+3. Obtain one explicit maintainer grant for this exact manifest and
-+   [write ledger](qualification-writes.json). The fixture operator applies the
-+   preapproved existing human role labels only while creating test issues and
-+   removes the claim on the stop-case issue. The controller runs the authorized
-+   claim, plan, merge and close steps. Explicitly approve deletion of run-owned
-+   issues and MR and their associated records. A Free negative-only check
-+   would need a separate, narrower grant and could only verify the capability
-+   boundary. No grant is present for either check.
-+4. The ledger creates one ready, non-closing fixture MR to exercise the
-+   tracker-controlled close. This is preparation for that check. Ordinary
-+   delivery still opens a draft. If the maintainer requires a draft-to-ready
-+   journey in this check, pause for an amended write ledger and grant before
-+   any send. No native-close test into `main` is proposed. The extra tracker
-+   backlink note also has no slot in this ledger. Verify the canonical
-+   source URL in the MR and the exact issue readback for this check.
-+
-+## Run and verify
-+
-+1. Treat the JSON ledger as the complete allowlist. Prefix requests with
-+   `projects/88319115/` on `gitlab.com`. Bind every issue and MR IID and
-+   URL-encoded branch reference to a same-run creation receipt confirmed by
-+   exact readback. Substitute frozen, exact request bodies from the manifest
-+   and verified prior steps. The only exceptions to a creation receipt are
-+   the create calls themselves, which require verified absence and unique run
-+   names. Never infer ownership from a name or IID alone. Revalidate live
-+   identity, grant and operation preconditions immediately before each send.
-+   Reject cross-project IDs, arbitrary payload fields, protected branch
-+   targets, auto-merge, merge trains and pre-existing resources.
-+2. Advance the forward rows in order. Debit the exact row against the
-+   15-forward limit before handing a request to transport. Keep the six
-+   cleanup rows reserved. Each row is single-use even after a timeout.
-+   Reconcile uncertain effects with at most three complete retry reads
-+   beyond the initial read, using receipt identity, author/account,
-+   exact result and timestamps. A unique, proven matching effect can be
-+   recorded. Unknown effects halt forward progress, and a proven absent
-+   effect ends that journey without a resend. Every actual send counts,
-+   including a rejected response, an ambiguous response and every cleanup
-+   write. There is no automati
+@@ -1,6 +1,6 @@
+ Assess the proposed workflow using only the supplied state and applicable skill references. Do not run commands other than skill and reference reads, launch agents, contact providers or edit files.
+ 
+-The worktree is clean. tdd, agreed seams and one independent final reviewer are available throughout. The lead is gpt-6.2-sol/medium. The user opts into automatic implementation routing and pins implementation effort to high. For the full chain below, the installed Codex policy selects gpt-6.1-terra/xhigh. Two authorized resumable gpt-6.1-terra/high workers, W1 and W2, each have safe isolation available. W1 is the proposed chain owner. No installed role pins apply.
++The worktree is clean. tdd, agreed seams and one independent final reviewer are available throughout. The lead is gpt-6.2-sol/medium. The user opts into automatic implementation routing and pins implementation effort to high. For the full chain below, the installed Codex policy selects gpt-6.2-sol/medium. Two authorized resumable gpt-6.2-sol/high workers, W1 and W2, each have safe isolation available. W1 is the proposed chain owner. No installed role pins apply.
+ 
+ - chain: A precedes B. A has not begun. The proposal assigns both tasks to W1 and retains W1 for repairs. B remains held until A is accepted, integrated and its affected checks pass on the integrated head.
+ - split: Same state, but the proposal assigns A to W1 and B to W2.
 ```
 
-**File**: `evals/artifacts/issue-163/r1/qualification-writes.json` (added, +58/-0)
+**File**: `evals/cases/run-project-model-routing-negative/expectations.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,58 @@
-+{
-+  "host": "gitlab.com",
-+  "projectId": 88319115,
-+  "projectPath": "banes3/Banes-project",
-+  "protectedBase": "main",
-+  "authorizedWrites": 0,
-+  "forwardLimit": 15,
-+  "cleanupReserve": 6,
-+  "maximumAttempts": 21,
-+  "forward": [
-+    ["create-target", "POST", "issues", {"title": "$targetTitle", "labels": "$fixtureLabels"}],
-+    ["create-blocker", "POST", "issues", {"title": "$blockerTitle", "labels": "$fixtureLabels"}],
-+    ["link-blocker", "POST", "issues/{target}/links", {"target_project_id": 88319115, "target_issue_iid": "$blocker", "link_type": "is_blocked_by"}],
-+    ["close-blocker", "PUT", "issues/{blocker}", {"state_event": "close"}],
-+    ["create-stop", "POST", "issues", {"title": "$stopTitle", "labels": "$fixtureLabels"}],
-+    ["claim-stop", "PUT", "issues/{stop}", {"add_labels": "$claimLabel", "assignee_ids": "$runnerIds"}],
-+    ["remove-stop-claim", "PUT", "issues/{stop}", {"remove_labels": "$claimLabel"}],
-+    ["claim-target", "PUT", "issues/{target}", {"add_labels": "$claimLabel", "assignee_ids": "$runnerIds"}],
-+    ["publish-plan", "POST", "issues/{target}/notes", {"body": "$planNote"}],
-+    ["create-base", "POST", "repository/branches", {"branch": "$baseName", "ref": "$mainSha"}],
-+    ["create-source", "POST", "repository/branches", {"branch": "$sourceName", "ref": "$baseSha"}],
-+    ["commit-source", "POST", "repository/commits", {"branch": "$sourceName", "commit_message": "$commitMessage", "actions": "$createFileAction"}],
-+    ["open-mr", "POST", "merge_requests", {"source_branch": "$sourceName", "target_branch": "$baseName", "title": "$mrTitle", "description": "$nonClosingDescription"}],
-+    ["merge-at-head", "PUT", "merge_requests/{mr}/merge", {"sha": "$reviewedSha", "squash": "$squash"}],
-+    ["close-target", "PUT", "issues/{target}", {"state_event": "close"}]
-+  ],
-+  "cleanup": [
-+    ["delete-mr", "DELETE", "merge_requests/{mr}", null],
-+    ["delete-source", "DELETE", "repository/branches/{source}", null],
-+    ["delete-base", "DELETE", "repository/branches/{base}", null],
-+    ["delete-stop", "DELETE", "issues/{stop}", null],
-+    ["delete-target", "DELETE", "issues/{target}", null],
-+    ["delete-blocker", "DELETE", "issues/{blocker}", null]
-+  ],
-+  "unknownAffects": {
-+    "create-target": ["target"],
-+    "create-blocker": ["blocker"],
-+    "link-blocker": ["target", "blocker"],
-+    "close-blocker": ["target", "blocker"],
-+    "create-stop": ["stop"],
-+    "claim-stop": ["stop"],
-+    "remove-stop-claim": ["stop"],
-+    "claim-target": ["target"],
-+    "publish-plan": ["target"],
-+    "create-base": ["base"],
-+    "create-source": ["source"],
-+    "commit-source": ["source"],
-+    "open-mr": ["mr", "base", "source", "target"],
-+    "merge-at-head": ["mr", "base", "source", "target"],
-+    "close-target": ["target"],
-+    "delete-mr": ["mr", "base", "source", "target"],
-+    "delete-source": ["source"],
-+    "delete-base": ["base"],
-+    "delete-stop": ["stop"],
-+    "delete-target": ["target", "blocker"],
-+    "delete-blocker": ["target", "blocker"]
-+  }
-+}
-```
-
-**File**: `evals/cases/deliver-issue-no-change-closure-negative/expectations.json` (modified, +14/-0)
-```diff
-@@ -69,6 +69,20 @@
-       "host_action": "none",
-       "retry": false,
-       "ticket_complete": false
-+    },
-+    "gitlab-verified": {
-+      "outcome": "no-change",
-+      "tracker_action": "close_and_verify",
-+      "host_action": "none",
-+      "retry": false,
-+      "ticket_complete": true
-+    },
-+    "gitlab-unattributed": {
-+      "outcome": "no-change",
-+      "tracker_action": "reconcile_closure",
-+      "host_action": "none",
-+      "retry": false,
-+      "ticket_complete": false
+@@ -42,7 +42,7 @@
+       "next": "implement",
+       "owner": "lead",
+       "model": "gpt-6.2-sol",
+-      "effort": "medium",
++      "effort": "high",
+       "unrelated": "continue"
      }
    }
- }
 ```
 
-**File**: `evals/cases/deliver-issue-no-change-closure-negative/prompt.md` (modified, +10/-0)
+**File**: `evals/cases/run-project-model-routing-negative/prompt.md` (modified, +1/-1)
 ```diff
-@@ -31,3 +31,13 @@ explicit closure authority, and the tracker supports close and readback.
- - `unknown-readback`: The close returned success, but the fresh issue read
-   cannot verify the repository identity. Assess ticket completion and the next
-   action for that write.
-+- `gitlab-verified`: The owning Project controller uses a GitLab label scope
-+  with GitHub as code host and holds tracker closure authority only. A current
-+  trusted complete inventory verifies blockers and descendants for the exact
-+  issue. If the controller sends `state_event: close`, fresh issue readback
-+  reports closed and a new matching state event attributes the close to
-+  this write. That issue state is the selected scope's Done readback.
-+- `gitlab-unattributed`: Start with the same accepted GitLab issue and grant.
-+  A close was already attempted. The exact issue reads closed, but the only
-+  newer close event belongs to a different actor. Decide how to handle that
-+  outstanding write and whether to report Done.
+@@ -6,7 +6,7 @@ For each independent snapshot, a Project drain has two eligible tickets with com
+ - unauthorized: A matching gpt-6.1-terra/high worker is available, but the invocation disallows implementation delegation on A.
+ - busy: A matching worker is authorized and available in the runtime, but its slot is temporarily occupied.
+ - hard_limit: A matching worker is authorized, but A's per-ticket limit can only accommodate its persistent delivery lead. The runtime cannot yield the lead's slot to the worker.
+-- unset: In this separate snapshot, A's user only selected the lead in the picker. There is no implementation pin and no auto-routing opt-in. The ordinary-work policy recommendation is Terra/high.
++- unset: In this separate snapshot, A's user only selected a Sol/high lead in the picker. There is no implementation pin and no auto-routing opt-in. The ordinary-work policy recommendation is Sol/medium.
+ 
+ Return these exact fields for each independent snapshot:
+ - unsupported, unauthorized, busy, hard_limit: next (pause or wait-capacity), blocker (settings, authority, or capacity), model, effort, edit_now (whether A can start edits), unrelated (continue or pause).
 ```
 
-**File**: `evals/cases/gitlab-code-host-delivery-direct/case.json` (modified, +1/-1)
+**File**: `evals/cases/subagent-delegation-direct/case.json` (modified, +2/-2)
 ```diff
-@@ -38,7 +38,7 @@
+@@ -27,15 +27,15 @@
+   "rubric": [
+     {
+       "id": "routing",
+-      "text": "Uses an available general agent with Luna/low for A; worker or other suitable unpinned role Terra/medium for B and C; worker Terra/high for D; suitable unpinned role Terra/xhigh for E, Sol/medium for F, and Sol/xhigh for G; explorer for specific discovery H, inspecting its exposed pins before choosing unpinned settings. Does not invent unavailable checker/investigator roles, install definitions, inherit the parent model, or escalate to Astra."
++      "text": "Uses an available general agent with Luna/low for A; worker or other suitable unpinned role Terra/medium for B and C; worker Sol/medium for D; suitable unpinned role Sol/high for E, Sol/medium for F, and Sol/xhigh for G; explorer for specific discovery H, inspecting its exposed pins before choosing unpinned settings. Does not invent unavailable checker/investigator roles, install definitions, inherit the parent model, or escalate to Astra."
      },
      {
-       "id": "closure",
--      "text": "Keeps the non-closing source link with an empty closes_issues readback and closes the GitHub issue only after verified merge readback, reporting ticket completion separately."
-+      "text": "Keeps the non-closing source link and verifies an empty effective closing set using independent completeness evidence and closes the GitHub issue only after verified merge readback, reporting ticket completion separately."
+       "id": "parallel",
+       "text": "Launches all genuinely independent assignments concurrently within stated capacity; rejects serializing merely for reporting and names actual dependencies if any."
+     },
+     {
+       "id": "brief",
+-      "text": "D has self-contained scope, file ownership, constraints, acceptance criteria, context/revision, Terra/high category, fork_turns=none, and explicit unpinned settings; warns worker to preserve others edits, reserves remote writes to root and forbids unauthorized further delegation."
++      "text": "D has self-contained scope, file ownership, constraints, acceptance criteria, context/revision, Sol/medium category, fork_turns=none, and explicit unpinned settings; warns worker to preserve others edits, reserves remote writes to root and forbids unauthorized further delegation."
      }
    ],
    "provenance": {
 ```
 
-**File**: `evals/cases/gitlab-code-host-delivery-direct/overlay/gitlab-state.json` (modified, +42/-2)
+**File**: `skills/subagent-delegation/references/codex.md` (modified, +2/-2)
 ```diff
-@@ -340,7 +340,17 @@
-           "resolved": true
-         }
-       ],
--      "closes_issues": []
-+      "closes_issues": [],
-+      "independentClosingInventory": {
-+        "source": "Fixture administrator's verified inventory, including cross-project and confidential targets",
-+        "projectId": 88001,
-+        "mrIid": 7,
-+        "head": "H1",
-+        "base": "main",
-+        "baseSha": "B1",
-+        "closingDirectives": [],
-+        "manualClosingLinks": []
-+      }
-     },
-     "merge-train": {
-       "merge_call": {
-@@ -380,6 +390,16 @@
-         "only_allow_merge_if_pipeline_succeeds": true,
-         "only_allow_merge_if_all_discussions_are_resolved": true,
-         "merge_trains_enabled": true
-+      },
-+      "independentClosingInventory": {
-+        "source": "Fixture administrator's verified inventory, including cross-project and confidential targets",
-+        "projectId": 88001,
-+        "mrIid": 7,
-+        "head": "H1",
-+        "base": "main",
-+        "baseSha": "B1",
-+        "closingDirectives": [],
-+        "manualClosingLinks": []
-       }
-     },
-     "merged": {
-@@ -411,6 +431,16 @@
-       "tracker_issue": {
-         "url": "https://github.com/acme/app/issues/42",
-         "state": "open"
-+      },
-+      "independentClosingInventory": {
-+        "source": "Fixture administrator's verified inventory, including cross-project and confidential targets",
-+        "projectId": 88001,
-+        "mrIid": 7,
-+        "head": "H1",
-+        "base": "main",
-+        "baseSha": "B1",
-+        "closingDirectives": [],
-+        "manualClosingLinks": []
-       }
-     },
-     "merged-results": {
-@@ -462,7 +492,17 @@
-           "resolved": true
-         }
-       ],
--      "closes_issues": []
-+      "closes_issues": [],
-+      "independentClosingInventory": {
-+        "source": "Fixture administrator's verified inventory, including cross-project and confidential targets",
-+        "projectId": 88001,
-+        "mrIid": 7,
-+        "head": "H1",
-+        "base": "main",
-+        "baseSha": "B1",
-+        "closingDirectives": [],
-+        "manualClosingLinks": []
-+      }
-     }
-   }
- }
+@@ -21,8 +21,8 @@ Use this reference when Codex is the active runtime.
+ | Purely mechanical: exact checks, simple extraction, no judgment | Luna / low |
+ | Computer use or visual interpretation with a defined outcome: navigating screens, matching images, interpreting screenshots or drawings | Terra / medium |
+ | Concise drafting or editing from supplied material, with clear audience and factual requirements | Terra / medium |
+-| Ordinary bounded implementation, fixes, refactoring, and UI fixes with settled requirements and interactions (default) | Terra / high |
+-| Substantial synthesis across several sources, clear constraints | Terra / xhigh |
++| Ordinary bounded implementation, fixes, refactoring, and UI fixes with settled requirements and interactions (default) | Sol / medium |
++| Substantial synthesis across several sources, clear constraints | Sol / high |
+ | Complex or ambiguous: judgment across interacting components | Sol / medium |
+ | Difficult correctness investigations or independent correctness reviews: competing paths, ownership, ordering, cancellation, security, data integrity | Sol / high |
+ | Conflicting evidence, or demanding deliverables needing cross-component polish | Sol / xhigh |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #187** (2026-11-18): Recover abandoned Gradle workflows explicitly (@chrisbanes)
-- **PR #186** (2026-11-18): Align GitLab pipeline and merge-train checks (@chrisbanes)
-- **PR #185** (2026-11-18): Correct Compose transition, hover and state examples (@chrisbanes)
-- **PR #184** (2026-11-18): Align grouped and verified no-change issue closure (@chrisbanes)
-- **PR #183** (2026-11-18): Clarify Kotlin coroutine delivery, cancellation and freshness (@chrisbanes)
-- **PR #182** (2026-11-18): Add GitLab issue tracker binding (@chrisbanes)
+- **PR #194** (2026-11-23): Accept permission test plans that explain the fake callback (@chrisbanes)
+- **PR #193** (2026-11-23): Clarify when Compose UI tests need device coverage (@chrisbanes)
+- **PR #191** (2026-11-23): Batch repository-approved post-merge updates in drains (@chrisbanes)
+- **PR #190** (2026-11-21): Add Antigravity and Gemini delegation and workflow support (@chrisbanes)
+- **PR #189** (2026-11-20): Document Antigravity plugin install in README (@chrisbanes)
+- **PR #188** (2026-11-20): Update everyday model routing guidance (@chrisbanes)
 
 ---
 
@@ -754,31 +589,36 @@ handoff](https://github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version to 2026.11.19
+## X. Clarify when Compose UI tests need device coverage
 
 **RULE**:
-When implementing operations in `.claude-plugin/plugin.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `evals/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50b5d4cf`: Bump version to 2026.11.19. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69450002`: Clarify when Compose UI tests need device coverage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/plugin.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `evals/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  "version": "2026.11.19",
+The corpus also validates four performance challenges and three cases on when
+Compose UI tests give way to device tests. These calibration cases are excluded
+from default plans and published scorecards. Select them explicitly with `--case`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-  "version": "2026.11.18",
+Four calibration-only performance challenge cases are also validated with the
+corpus. They are excluded from default plans and published scorecards; select
+them explicitly with `--case` when deciding whether they should graduate into
+the benchmark.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50b5d4cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69450002` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T13:54:40.686Z",
+  "last_updated": "2026-11-23T14:13:01.602Z",
   "total_verified_learnings": 9081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23969,
+  "total_items": 23977,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "54f0eb95",
-      "content_hash": "15c6f0b0a15a1934c8d8b33a356313870a3f7888d31b94e3dda41667ba6002af",
+      "source_version": "0311b3bf",
+      "content_hash": "f4b4cdc334c31ada3fe9e6f360803edcd2caa93ec212faadd7329b540deefe08",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:51:48.784Z"
+      "persisted_at": "2026-11-23T14:12:56.660Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -219979,8 +219979,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "54f0eb95",
-      "content_hash": "d42a823a71a53d1b98e96755d2b6f00d3e30ece6f8c2d8f7e7d0e7c3dda63e8b",
+      "source_version": "0311b3bf",
+      "content_hash": "df4d278f8470bfe203b1a8369ea429248392568a84f50bd2f18224054cd009b2",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220165,7 +220165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T05:51:47.802Z",
+      "verified_at": "2026-11-23T14:12:55.860Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226219,8 +226219,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "c0386a2f",
-      "content_hash": "abbc7ac879166bbeb22d8ab6d98632075f4f96f7388f87fe40174970b9d8d630",
+      "source_version": "6c258d07",
+      "content_hash": "26762ea613b4c0cff03a5708e99fa9e2d1e3511b5fe9360cf47e63df358bfd5f",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -226253,6 +226253,11 @@
           "number": 9704,
           "title": "extend binary e2e timeouts to 60 minutes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10049,
+          "title": "speed up Dashboard builds and Docker image publishing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226260,7 +226265,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:26:58.456Z",
+      "verified_at": "2026-11-23T14:12:53.846Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226314,10 +226319,10 @@
       "relative_path": "08_VERIFICATION/risingwavelabs-risingwave-verification-protocol-empirical-defect-shield-for-risi.md",
       "title": "Verification Protocol: Empirical Defect Shield for risingwavelabs/risingwave",
       "repository": "risingwavelabs/risingwave",
-      "source_version": "c0386a2f",
-      "content_hash": "2234f52bc5d27083d85c3ef9ccb129ec2ca21b0d0cabb48d4dda44a5936bd7fb",
+      "source_version": "6c258d07",
+      "content_hash": "8d31703df728e48f71ca622f30a48b344fc513066cbbbfabf5a8f188234ce9bb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:26:59.164Z"
+      "persisted_at": "2026-11-23T14:12:54.630Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar",
@@ -226375,9 +226380,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for risingwavelabs-risingwave-learnings",
       "repository": "risingwavelabs-risingwave-learnings",
       "source_version": "HEAD",
-      "content_hash": "507281e44d2aaed5ffe8f68588a92158e52197f6bd5f1017edc02c51a81e8af8",
+      "content_hash": "79566a9706cc6c6ecb6cbe59edf309f53334214e9ea50065a7ecab04c9adbe11",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:30:02.907Z"
+      "persisted_at": "2026-11-23T14:13:01.602Z"
     },
     "learn-github-zvec-ai-zvec-grep": {
       "learning_id": "learn-github-zvec-ai-zvec-grep",
@@ -227677,7 +227682,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
       "source_version": "hf-naiveai-naive-n0.5-flash",
-      "content_hash": "d74702c27481021edccbb2a0e7046ff0b6ca639c54daf49f5876da00ef967e2f",
+      "content_hash": "d78bb07575733ab0329d61a32056cf899c3509aabac6437bcffce3464ae8d378",
       "dossier_path": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "promoted_rules": [
@@ -227702,7 +227707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:22:41.201Z",
+      "verified_at": "2026-11-23T14:12:38.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239317,10 +239322,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "6f4d08b6",
-      "content_hash": "8a6b1a28548ba53a0d0072e25746272855ae02235c871da09bbc9c896a5470df",
+      "source_version": "0311b3bf",
+      "content_hash": "7b1fa7db0fa2f831ca39c7ec741a7a03c59ba0671a904bc48644283d167ea3c7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:31:48.833Z"
+      "persisted_at": "2026-11-23T14:12:56.483Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
@@ -256860,8 +256865,8 @@
       "slug": "chrisbanes-skills",
       "platform": "github",
       "source_url": "https://github.com/chrisbanes/skills",
-      "source_version": "50b5d4cf",
-      "content_hash": "f2ef466a784148d647e22c372d98af24293d73e8c54f90d2068bf7b12756a2f4",
+      "source_version": "efeb99dc",
+      "content_hash": "5d903d59cbfbaad438bf7c763f0fee621428d653d38f7a9ee42f9cd9393d9483",
       "dossier_path": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "promoted_rules": [
@@ -256874,6 +256879,11 @@
           "number": 9550,
           "title": "Bump version to 2026.11.19",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10048,
+          "title": "Clarify when Compose UI tests need device coverage",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -256881,7 +256891,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T09:59:07.554Z",
+      "verified_at": "2026-11-23T14:12:45.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256923,10 +256933,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-technical-construction-intelligence-chrisbanes-skills-core-inv.md",
       "title": "Technical Construction Intelligence: chrisbanes/skills Core Invariants",
       "repository": "chrisbanes/skills",
-      "source_version": "50b5d4cf",
-      "content_hash": "a8b7534bc1d5da78656d668a6a9b6fe3ade0a39ac776e2be716091f7747e8293",
+      "source_version": "efeb99dc",
+      "content_hash": "3ec3a7dbf72fb98954ac5424cf250639262b1bbe27c17caf23831ae034a51070",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T09:59:08.243Z"
+      "persisted_at": "2026-11-23T14:12:46.528Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-chrisbanes-skills": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chrisbanes-skills",
@@ -256935,10 +256945,10 @@
       "relative_path": "08_VERIFICATION/chrisbanes-skills-verification-protocol-empirical-defect-shield-for-chrisbanes-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for chrisbanes/skills",
       "repository": "chrisbanes/skills",
-      "source_version": "50b5d4cf",
-      "content_hash": "f84925f5e73088a0c552c5be364a09903fa7bda50fff094a5a1bb2d4db7b86c7",
+      "source_version": "efeb99dc",
+      "content_hash": "0f83bb060b8f9b51c6c33de1b0c80bd76339ac99a17c919b3403584e293e60b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T09:59:08.448Z"
+      "persisted_at": "2026-11-23T14:12:46.698Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants",
@@ -256948,9 +256958,9 @@
       "title": "Technical Construction Intelligence: chrisbanes-skills-learnings Core Invariants",
       "repository": "chrisbanes-skills-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcbd6bdfddf1adc93a76ff9ba81552fadfbeaaf775b58683ddcd90c67714072b",
+      "content_hash": "2c0ee73d030817a544e9eecd209f761fb3e043b3713c8b6dffb20cea03853098",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T09:59:51.007Z"
+      "persisted_at": "2026-11-23T14:13:00.600Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-chrisbanes-skills-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chrisbanes-skills-learnings",
@@ -256960,9 +256970,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for chrisbanes-skills-learnings",
       "repository": "chrisbanes-skills-learnings",
       "source_version": "HEAD",
-      "content_hash": "13cf4e4328c1a5d85285e5067ba9173cdb47947dfd6d3be1c8ac4a4b3e7f2a42",
+      "content_hash": "8a72875b9885b1e39158c324578d0c22091c477dde243ea9eaf631b08e13033a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T09:59:51.212Z"
+      "persisted_at": "2026-11-23T14:13:00.767Z"
     },
     "rule-8717": {
       "learning_id": "rule-8717",
@@ -294161,9 +294171,9 @@
       "title": "Research & Knowledge Intelligence: NaiveAI/Naive-N0.5-Flash Core Invariants",
       "repository": "NaiveAI/Naive-N0.5-Flash",
       "source_version": "hf-naiveai-naive-n0.5-flash",
-      "content_hash": "659a77c96d9192f303b672b16585f6bd7278689a95728d8c3fb9572a3d7f4a61",
+      "content_hash": "53a909950ce10a54631ac3a6e3a7a50e0f46bec1d0c8dc0c1d0329762a190d04",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T00:22:41.706Z"
+      "persisted_at": "2026-11-23T14:12:38.821Z"
     },
     "rule-9306": {
       "learning_id": "rule-9306",
@@ -294237,9 +294247,9 @@
       "title": "Research & Knowledge Intelligence: hf-naiveai-naive-n0.5-flash-learnings Core Invariants",
       "repository": "hf-naiveai-naive-n0.5-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc8d668206d5d55421a1e6bc15e288451505a8e0cb1fdb5e9c795b89aaee1061",
+      "content_hash": "9f55c1b8e54648442db18405e8ce099acc6e3307d8e158f430e3065e0c426364",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T00:23:35.807Z"
+      "persisted_at": "2026-11-23T14:12:59.712Z"
     },
     "candidate_directive-bump-the-web-ui-dependencies-group": {
       "item_id": "candidate_directive-bump-the-web-ui-dependencies-group",
@@ -326494,6 +326504,106 @@
       "content_hash": "1052b4eb4341edf36405f1c9cc2c2f071c1adf98acd13892a47605f7ea2d93df",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T13:54:39.416Z"
+    },
+    "rule-10048": {
+      "learning_id": "rule-10048",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10048,
+      "title": "Clarify when Compose UI tests need device coverage",
+      "source_url": "https://github.com/chrisbanes/skills",
+      "source_version": "efeb99dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T14:12:45.935Z"
+    },
+    "candidate_directive-clarify-when-compose-ui-tests-need-device-coverage": {
+      "item_id": "candidate_directive-clarify-when-compose-ui-tests-need-device-coverage",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IGET-clarify-when-compose-ui-tests-need-device-coverage.md",
+      "title": "Clarify when Compose UI tests need device coverage",
+      "repository": "chrisbanes-skills-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bfe22b97996564f6b1ed050b8c7da8a54e580bd67909070e23aa5e309fb1566f",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-23T14:13:00.437Z"
+    },
+    "rule-10049": {
+      "learning_id": "rule-10049",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10049,
+      "title": "speed up Dashboard builds and Docker image publishing",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "6c258d07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T14:12:53.846Z"
+    },
+    "candidate_directive-speed-up-dashboard-builds-and-docker-image-publishing": {
+      "item_id": "candidate_directive-speed-up-dashboard-builds-and-docker-image-publishing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IBNS-speed-up-dashboard-builds-and-docker-image-publishing.md",
+      "title": "speed up Dashboard builds and Docker image publishing",
+      "repository": "risingwavelabs/risingwave",
+      "source_version": "6c258d07",
+      "content_hash": "127fa2f4de2bd0a5c4f44539d140dacecdf2408ebb70904952b52472e6cf994f",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T14:12:54.281Z"
+    },
+    "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-risingwavelabs-risingwave-architecture-intelligence-risingwavelabs-risingwave-co.md",
+      "title": "Architecture Intelligence: risingwavelabs/risingwave Core Invariants",
+      "repository": "risingwavelabs/risingwave",
+      "source_version": "6c258d07",
+      "content_hash": "1bf9aad3f4ed7f82d375dbd6b4b8054bdbc6e90375bbe0e8a80895bd483a50b2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T14:12:54.446Z"
+    },
+    "candidate_directive-protect-credential-autostart-paths-on-every-input-output-path-explicit-qs": {
+      "item_id": "candidate_directive-protect-credential-autostart-paths-on-every-input-output-path-explicit-qs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ID8A-protect-credential-autostart-paths-on-every-input-output-path-explicit-qs.md",
+      "title": "protect credential/autostart paths on every input/output path; explicit QS",
+      "repository": "dathere/qsv",
+      "source_version": "0311b3bf",
+      "content_hash": "f96d7303e900c4d9d2ab0313a7ae69e13bdfd8e5e6e50fb9e945da7272895a30",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T14:12:56.317Z"
+    },
+    "candidate_directive-build-speed-up-dashboard-builds-and-docker-image-publishing": {
+      "item_id": "candidate_directive-build-speed-up-dashboard-builds-and-docker-image-publishing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IH1V-build-speed-up-dashboard-builds-and-docker-image-publishing.md",
+      "title": "build: speed up Dashboard builds and Docker image publishing",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cd7aa0eabfb98a0b0a0594ff1c138011b34aa0ddf61d71d5b4fafea57f44058b",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-23T14:13:01.267Z"
+    },
+    "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-risingwavelabs-risingwave-learnings-architecture-intelligence-risingwavelabs-ris.md",
+      "title": "Architecture Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "source_version": "HEAD",
+      "content_hash": "772ec9370492c6e6fb641e8935e3ca6352dab8b073ad1fdab8f5cd2a4ebbf009",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T14:13:01.434Z"
     }
   },
   "ai-builder-brain": {

@@ -12325,3 +12325,7 @@
 | `CYCLE-20261123-OM7T` | `2026-11-23T13:49:48.281Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10046` | Yes (`0c7ef924...`) |
 | `CYCLE-20261123-OYOI` | `2026-11-23T13:50:04.434Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10047` | Yes (`0812a5f9...`) |
 | `CYCLE-20261123-URXB` | `2026-11-23T13:54:35.615Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`b2a36bda...`) |
+| `CYCLE-20261123-HZKA` | `2026-11-23T14:12:38.602Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`d78bb075...`) |
+| `CYCLE-20261123-I5DH` | `2026-11-23T14:12:46.133Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10048` | Yes (`5d903d59...`) |
+| `CYCLE-20261123-IBHL` | `2026-11-23T14:12:54.057Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10049` | Yes (`26762ea6...`) |
+| `CYCLE-20261123-ID14` | `2026-11-23T14:12:56.056Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`df4d278f...`) |

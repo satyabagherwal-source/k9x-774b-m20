@@ -1085,8 +1085,8 @@
     "sourceUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
     "sourceVersion": "hf-naiveai-naive-n0.5-flash",
     "license": "Open-Source",
-    "contentHash": "d74702c27481021edccbb2a0e7046ff0b6ca639c54daf49f5876da00ef967e2f",
-    "lastHarvestedAt": "2026-11-19T00:22:41.454Z",
+    "contentHash": "d78bb07575733ab0329d61a32056cf899c3509aabac6437bcffce3464ae8d378",
+    "lastHarvestedAt": "2026-11-23T14:12:38.607Z",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash"
   },
   "hf-openai-clip-vit-base-patch32": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "54f0eb95",
+    "sourceVersion": "0311b3bf",
     "license": "NOASSERTION",
-    "contentHash": "d42a823a71a53d1b98e96755d2b6f00d3e30ece6f8c2d8f7e7d0e7c3dda63e8b",
-    "lastHarvestedAt": "2026-11-23T05:51:48.056Z",
+    "contentHash": "df4d278f8470bfe203b1a8369ea429248392568a84f50bd2f18224054cd009b2",
+    "lastHarvestedAt": "2026-11-23T14:12:56.061Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "c0386a2f",
+    "sourceVersion": "6c258d07",
     "license": "Apache-2.0",
-    "contentHash": "abbc7ac879166bbeb22d8ab6d98632075f4f96f7388f87fe40174970b9d8d630",
-    "lastHarvestedAt": "2026-11-21T02:26:58.657Z",
+    "contentHash": "26762ea613b4c0cff03a5708e99fa9e2d1e3511b5fe9360cf47e63df358bfd5f",
+    "lastHarvestedAt": "2026-11-23T14:12:54.062Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "50b5d4cf",
+    "sourceVersion": "efeb99dc",
     "license": "Apache-2.0",
-    "contentHash": "f2ef466a784148d647e22c372d98af24293d73e8c54f90d2068bf7b12756a2f4",
-    "lastHarvestedAt": "2026-11-20T09:59:07.801Z",
+    "contentHash": "5d903d59cbfbaad438bf7c763f0fee621428d653d38f7a9ee42f9cd9393d9483",
+    "lastHarvestedAt": "2026-11-23T14:12:46.137Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {

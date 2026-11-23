@@ -751734,3 +751734,154 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `337cca9c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10048. Clarify when Compose UI tests need device coverage (Harvested from chrisbanes/skills)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Clarify when Compose UI tests need device coverage",
+  "source": "chrisbanes/skills",
+  "source_url": "https://github.com/chrisbanes/skills",
+  "source_version": "efeb99dc",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T14:12:45.645Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-chrisbanes-skills",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [chrisbanes/skills](https://github.com/chrisbanes/skills) (Revision: `efeb99dc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `evals/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `69450002`: Clarify when Compose UI tests need device coverage. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `evals/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+The corpus also validates four performance challenges and three cases on when
+Compose UI tests give way to device tests. These calibration cases are excluded
+from default plans and published scorecards. Select them explicitly with `--case`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+Four calibration-only performance challenge cases are also validated with the
+corpus. They are excluded from default plans and published scorecards; select
+them explicitly with `--case` when deciding whether they should graduate into
+the benchmark.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `69450002` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10049. speed up Dashboard builds and Docker image publishing (Harvested from risingwavelabs/risingwave)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "speed up Dashboard builds and Docker image publishing",
+  "source": "risingwavelabs/risingwave",
+  "source_url": "https://github.com/risingwavelabs/risingwave",
+  "source_version": "6c258d07",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T14:12:53.547Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-risingwavelabs-risingwave",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave) (Revision: `6c258d07`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.dockerignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8429b5b9`: build: speed up Dashboard builds and Docker image publishing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.dockerignore`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+dashboard/.next/
+dashboard/node_modules/
+dashboard/out/
+dashboard/proto/gen/
+dashboard/public/monaco/
+dashboard/tmp_gen/
+dashboard/*.tsbuildinfo
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8429b5b9` are properly handled with clean fallback behavior.

@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "6f4d08b6",
+  "source_version": "0311b3bf",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-21T21:31:48.675Z",
+  "timestamp": "2026-11-23T14:12:56.314Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `6f4d08b6`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-21T21:31:48.675Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `0311b3bf`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T14:12:56.314Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:31:47.960Z  
+> **Harvest Timestamp**: 2026-11-23T14:12:55.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3838 stars
+- **Stars / Engagement**: 3846 stars
 
 ---
 
@@ -465,8 +465,14 @@ export function spawnWithTimeout(options: SpawnWithTimeoutOptions): Promise<Spaw
  * Shared utility functions for QSV MCP Server
  */
 
+import { realpathSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
+import {
+  SENSITIVE_HOME_DIRS,
+  SENSITIVE_HOME_FILES,
+  normalizeForCaseFs,
+} from "./tool-constants.js";
 
 /**
  * Expand tilde (~) in paths to the user's home directory
@@ -720,6 +726,55 @@ export function reservedCachePathError(outputPath: string): string {
   );
 }
 
+/**
+ * Return the SENSITIVE_HOME_DIRS / SENSITIVE_HOME_FILES entry that `target`
+ * falls under, or undefined if it is not protected. `target` must already be
+ * realpath'd.
+ *
+ * Each protected path is compared in BOTH its logical home-relative form and
+ * its realpath'd form: a symlinked `~/.ssh -> /private/secret` would otherwise
+ * slip through, since `target` resolves to /private/secret while the
+ * unresolved blocked path stays ~/.ssh. (roborev commit 49361f5 review)
+ */
+export function findSensitiveHomeEntry(target: string): string | undefined {
+  const home = homedir();
+  let canonHome: string;
+  try {
+    canonHome = realpathSync.native(home);
+  } catch {
+    canonHome = home;
+  }
+  const normTarget = normalizeForCaseFs(target);
+  const sep = process.platform === "win32" ? "\\" : "/";
+  const blockedForms = (entry: string): Set<string> => {
+    const logical = resolve(canonHome, entry);
+    // A missing entry still has a canonical form via its nearest existing
+    // ancestor: with ~/.config -> /dotfiles/config and no ~/.config/autostart
+    // yet, a write lands in /dotfiles/config/autostart.
+    let ancestor = logical;
+    const missing: string[] = [];
+    let canonical = logical;
+    for (;;) {
+      try {
+        canonical = join(realpathSync.native(ancestor), ...missing);
+        break;
+      } catch {
+        const parent = dirname(ancestor);
+        if (parent === ancestor) break;
+        missing.unshift(basename(ancestor));
+        ancestor = parent;
+      }
+    }
+    return new Set([normalizeForCaseFs(logical), normalizeForCaseFs(canonical)]);
+  };
+  for (const dir of SENSITIVE_HOME_DIRS) {
+    for (const blocked of blockedForms(dir)) {
+      if (normTarget === blocked || normTarget.startsWith(blocked + sep)) {
+        return dir;
+      }
+    }
+  }
+  for 
 ```
 
 ### Core Architecture Module: `.claude/skills/src/wink-nlp-utils.d.ts`
@@ -2238,325 +2293,629 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f4d08b6` (2026-11-21)
-**Commit Message**: fix(mcp): don't report an error for commands that write only their own files (#5089)
+### Incident Patch 1: `0311b3bf` (2026-11-23)
+**Commit Message**: fix(mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode (#5102)
 
-* fix(mcp): don't report an error for commands that write only their own files
+* fix(mcp): protect credential and autostart paths on every input/output path
 
-split, partition, to, validate and index have no --output. In TSV output
-mode (the default) or on large inputs the server still gave them a temp
-output file, then failed reading it back (ENOENT) although the command
-succeeded. Use a temp file only for skills with --output or a positional
-output, and report completion plus qsv's stderr summary when a successful
-command prints nothing.
+The protected home directories (~/.ssh, ~/.aws, ...) were enforced only by
+qsv_set_working_dir and directory browsing. resolvePath, which every tool
+call's input_file / output_file / path option goes through, checked only the
+allowed directories, which include the home directory by default and grow on
+demand in plugin mode. So an output_file could overwrite
+~/.ssh/authorized_keys.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- one findSensitiveHomeEntry helper (utils.ts) now backs all three call sites
+- resolvePath runs it before isPathAllowed, so plugin mode can't auto-add a
+  protected dir
+- resolveDir (output dirs a command creates) checks the full path: segments
+  re-appended to the nearest existing ancestor were never validated, so with
+  no ~/.config, ~/.config/gh/x got through
+- newly protected: ~/.config/gh, LaunchAgents, systemd user units, XDG
+  autostart, fish config, the Windows Startup folder, ~/.claude, and shell
+  startup / credential dotfiles (.bashrc, .zshrc, .netrc, .git-credentials, ...)
 
-* fix(mcp): refuse output_file without an output option; fall back when no temp file
-
-Addresses roborev job 6694:
-- output_file is refused for skills with no --output or positional output
-  (split used to report writing a file qsv never wrote)
-- an auto temp file the command never wrote (extdedup --no-output,
-  schema --stdout) falls back to stdout / the completion summary
-- the stderr summary is cut to 4,000 characters
-- a spawn error (binary missing or not executable) is exit 127, not 0
-- CHANGELOG: index was never affected; it's out of the list
-
-Co-Authored-By: Claude Opus 5.5 <[REDAC
+Co-Author
 
 **File**: `.claude/skills/CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
+@@ -28,6 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`output_file` no longer loses the result of commands that can't write one.** Passing it to `count`, `headers`, `split` or another skill without an output option reported "Successfully wrote output to" a file qsv never wrote, and dropped what qsv printed. The server now ignores `output_file` for these commands, returns the result and adds a note saying so in a separate content block (#5089, #5092).
+ - **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
  
-+### Fixed
-+- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
-+- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
-+- **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
++### Security
++- **Input and output paths can no longer reach credential directories or shell startup files.** The protected home directories (`~/.ssh`, `~/.aws`, `~/.gnupg`, `~/.kube`, ...) were enforced only for `qsv_set_working_dir` and directory browsing, not for the paths a tool call names (`input_file`, `output_file`, path options). With the home directory allowed (the default when `QSV_MCP_ALLOWED_DIRS` is unset) or in plugin mode, a tool call could write to `~/.ssh/authorized_keys`. Every path now gets the same check, applied before plugin mode adds a directory to the allowed list, including output directories a command creates. Also newly protected: `~/.config/gh`; places where a written file runs code at login or in the next agent session (`~/Library/LaunchAgents`, `~/.config/systemd`, `~/.config/autostart`, `~/.config/fish`, the Windows Startup folder, `~/.claude`); and home dotfiles that run code or hold credentials (`.bashrc`, `.zshrc`, `.profile` and the other bash/zsh startup files, `.gitconfig`, `.git-credentials`, `.netrc`, `.npmrc`, `.pypirc`). This is a denylist, not a sandbox: other locations under the home directory (for example `~/bin`) stay writable. To confine the server, set `QSV_MCP_ALLOWED_DIRS` (and `QSV_MCP_WORKING_DIR`, which is always allowed). (#5102)
++- **`QSV_MCP_ALLOWED_DIRS` now confines plugin mode too.** In plugin mode (Claude Code, Cowork) the server added the directory of any path outside its allowed list to that list, so setting `QSV_MCP_ALLOWED_DIRS` had no effect there. When it is set, paths outside it are now refused, as in other modes. With it unset (the default), plugin mode still adds directories as before. `qsv_config` reports which applies. (#5102)
++- **On Linux, a directory whose name starts with `..` (e.g. `..archive`) inside an allowed directory is no longer refused** as a parent-directory escape. (#5102)
 +
  ## [29.0.1] - 2026-11-21
  Patch release of the MCP server and the Claude Cowork / Claude Code plugin, for use with qsv 29.0.0 (`minimum_qsv_version` stays 29.0.0). It carries the security fixes below, published as advisory [GHSA-vm54-v922-fpq5](https://github.com/dathere/qsv/security/advisories/GHSA-vm54-v922-fpq5); update now. The bundled skill files also describe `qsv-synthesize` options from the next qsv release (listed under [Unreleased]); with qsv 29.0.0 those options are rejected as unknown flags.
  
 ```
 
-**File**: `.claude/skills/src/executor.ts` (modified, +2/-1)
+**File**: `.claude/skills/src/config.ts` (modified, +21/-5)
 ```diff
-@@ -439,7 +439,8 @@ export class SkillExecutor {
-     }
+@@ -666,6 +666,20 @@ export function isPluginMode(): boolean {
+   return hasPluginRoot && !inExtensionMode;
+ }
  
-     return {
--      exitCode: result.exitCode ?? 0,
-+      // null with no signal: the process never started (spawn error)
-+      exitCode: result.exitCode ?? 127,
-       stdout: result.stdout,
-       stderr: result.stderr,
-     };
-```
-
-**File**: `.claude/skills/src/file-operations.ts` (modified, +35/-0)
-```diff
-@@ -226,6 +226,20 @@ export async function autoIndexIfNeeded(
-  * @param inputFile - Path to the input file
-  * @returns Promise<boolean> - true if temp file should be used
-  */
 +/**
-+ * Whether a skill can write its output to a file the server names (`--output` or a
-+ * positional `output` arg). Commands like `split` and `to` write their own files, so a
-+ * temp output file would never be created.
++ * Whether QSV_MCP_ALLOWED_DIRS was actually set (not unset, blank, or an
++ * unexpanded `${user_config...}` template). An explicit list confines plugin
++ * mode too: the provider then refuses paths outside it instead of auto-adding.
 + */
-+const MAX_STDERR_SUMMARY_CHARS = 4000;
-+
-+export function skillTakesOutputFile(skill: QsvSkill): boolean {
-+  return (
-+    skill.command.options.some((o) => o.flag === "--output") ||
-+    skill.command.args.some((a) => a.name === "output")
-+  );
++export function hasExplicitAllowedDirs(): boolean {
++  const envValue = process.env["QSV_MCP_ALLOWED_DIRS"];
++  return !!envValue && envValue.trim() !== "" && !UNEXPANDED_TEMPLATE_REGEX.test(envValue);
 +}
 +
- export async function shouldUseTempFile(
-   command: string,
-   inputFile: string,
-@@ -813,6 +827,18 @@ export async function formatToolResult(
-   // (or undefined if the temp file was small enough to return inline and deleted).
-   let finalOutputFile: string | undefined = outputFile;
- 
-+  // Some modes never write the temp file (extdedup --no-output, schema --stdout):
-+  // their result is on stdout/stderr instead
-+  if (outputFile && autoCreatedTempFile) {
-+    try {
-+      await stat(outputFile);
-+    } catch (err: unknown) {
-+      if (!(isNodeError(err) && err.code === "ENOENT")) throw err;
-+      outputFile = undefined;
-+      finalOutputFile = undefined;
-+    }
-+  }
++export function isPluginAutoAddDirs(): boolean {
++  return isPluginMode() && !hasExplicitAllowedDirs();
++}
 +
-   if (outputFile) {
-     if (autoCreatedTempFile) {
-       try {
-@@ -905,6 +931,15 @@ export async function formatToolResult(
-         responseText += `- Rows processed: ${result.metadata.rowsProcessed}\n`;
-       }
-     }
-+  } else if (result.output.trim() === "") {
-+    // e.g. split or `to` write their own files and print only a summary on stderr
-+    const summary = result.stderr.trim();
-+    responseText = `✅ qsv ${commandName} completed; it printed no output.`;
-+    if (summary.length > MAX_STDERR_SUMMARY_CHARS) {
-+      responseText += `\n\n${summary.slice(0, MAX_STDERR_SUMMARY_CHARS)}\n[stderr truncated]`;
-+    } else if (summary) {
-+      responseText += `\n\n${summary}`;
-+    }
-   } else {
-     responseText = result.output;
-   }
+ /**
+  * Pass the SQL file-write policy on to qsv child processes, which inherit process.env.
+  * qsv's Polars SQL contexts (sqlp, joinp --sql-filter, profile, scoresql) honor
+@@ -719,11 +733,7 @@ export const config = {
+   allowedDirs: (() => {
+     const envValue = process.env["QSV_MCP_ALLOWED_DIRS"];
+     // When unset/empty, default to well-known user directories
+-    if (
+-      !envValue ||
+-      envValue.trim() === "" ||
+-      UNEXPANDED_TEMPLATE_REGEX.test(envValue)
+-    ) {
++    if (!envValue || !hasExplicitAllowedDirs()) {
+       const home = homedir();
+       const defaults = [
+         join(home, "Downloads"),
+@@ -895,6 +905,12 @@ export const config = {
+    */
+   isPluginMode: isPluginMode(),
+ 
++  /**
++   * Whether a path outside allowedDirs gets its directory auto-added instead
++   * of being refused: plugin mode, unless QSV_MCP_ALLOWED_DIRS is explicit.
++   */
++  pluginAutoAddDirs: isPluginAutoAddDirs(),
++
+   /**
+    * Whether SQL may write files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`).
+    * The query, not output_file, picks the target, so this is off in plugin mode
 ```
 
-**File**: `.claude/skills/src/tool-handlers.ts` (modified, +10/-0)
+**File**: `.claude/skills/src/file-operations.ts` (modified, +16/-5)
 ```diff
-@@ -45,6 +45,7 @@ import {
-   formatToolResult,
-   resolveParamAliases,
-   shouldUseTempFile,
-+  skillTakesOutputFile,
-   canonicalFlag,
-   isSqlScriptArg,
- } from "./file-operations.js";
-@@ -865,6 +866,14 @@ export async function handleToolCall(
-       return errorResult(`Error: output_file can't be the input file for ${commandName}; it would be emptied.`);
+@@ -35,7 +35,7 @@ import {
+ import { isShuttingDown, activeProcesses } from "./concurrency.js";
+ import { runQsvSimple } from "./executor.js";
+ import { config } from "./config.js";
+-import { expandTilde, formatBytes, getErrorMessage, findSimilarFiles, errorResult, successResult, isNodeError } from "./utils.js";
++import { expandTilde, findSensitiveHomeEntry, formatBytes, getErrorMessage, findSimilarFiles, errorResult, successResult, isNodeError } from "./utils.js";
+ 
+ /**
+  * Stat a path, returning null for ENOENT (file not found) and rethrowing
+@@ -533,6 +533,10 @@ export function looksLikeFilePath(value: string): boolean {
+   );
+ }
+ 
++// Anchored: provider errors echo the requested path, so an unanchored match
++// would treat a refused path whose name contains "does not exist" as missing.
++const MISSING_PATH = /^Path does not exist\b/;
++
+ /**
+  * Resolve file-path parameters (positional args and options) to absolute paths.
+  * This handles all file-type args beyond input/output which are already resolved.
+@@ -570,7 +574,7 @@ export async function resolveFilePathParams(
+     try {
+       return await filesystemProvider.resolvePath(value);
+     } catch (error: unknown) {
+-      if (!/does not exist/i.test(getErrorMessage(error))) throw invalid(label, error);
++      if (!MISSING_PATH.test(getErrorMessage(error))) throw invalid(label, error);
+     }
+     // expand ~ as the provider does; each ancestor is still checked by the provider
+     const expanded = expandTilde(value);
+@@ -580,9 +584,16 @@ export async function resolveFilePathParams(
+       missing.unshift(basename(ancestor));
+       ancestor = dirname(ancestor);
+       try {
+-        return join(await filesystemProvider.resolvePath(ancestor), ...missing);
++        const dir = join(await filesystemProvider.resolvePath(ancestor), ...missing);
++        // the re-appended segments were never seen by the provider, so with no
++        // ~/.config, ~/.config/gh/x would otherwise pass via ancestor ~/.config
++        const sensitive = findSensitiveHomeEntry(dir);
++        if (sensitive !== undefined) {
++          throw invalid(label, new Error(`${value} is under "${sensitive}", which is protected.`));
++        }
++        return dir;
+       } catch (error: unknown) {
+-        if (!/does not exist/i.test(getErrorMessage(error))) throw invalid(label, error);
++        if (!MISSING_PATH.test(getErrorMessage(error))) throw invalid(label, error);
+       }
+     }
+     throw invalid(label, new Error("no existing parent directory"));
+@@ -612,7 +623,7 @@ export async function resolveFilePathParams(
+     try {
+       resolved = await filesystemProvider.resolvePath(value);
+     } catch (error: unknown) {
+-      if (/does not exist/i.test(getErrorMessage(error))) return value;
++      if (MISSING_PATH.test(getErrorMessage(error))) return value;
+       throw invalid(label, error);
+     }
+     return (await stat(resolved).then(() => true, () => false)) ? resolved : value;
+```
+
+**File**: `.claude/skills/src/mcp-filesystem.ts` (modified, +22/-46)
+```diff
+@@ -7,17 +7,15 @@
+ 
+ import { readdir, stat, lstat, realpath, access } from "node:fs/promises";
+ import { realpathSync } from "node:fs";
+-import { join, resolve, relative, basename, dirname, extname, isAbsolute } from "node:path";
+-import { homedir } from "node:os";
++import { join, resolve, relative, basename, dirname, extname, isAbsolute, sep } from "node:path";
+ import type {
+   McpResource,
+   FileMetadata,
+ } from "./types.js";
+-import { expandTilde, formatBytes, getErrorMessage } from "./utils.js";
++import { expandTilde, findSensitiveHomeEntry, formatBytes, getErrorMessage } from "./utils.js";
+ import { config as appConfig } from "./config.js";
+ import { runQsvSimple } from "./executor.js";
+ import { statsFilePath } from "./parquet-bridge.js";
+-import { SENSITIVE_HOME_DIRS, normalizeForCaseFs } from "./tool-constants.js";
+ 
+ /**
+  * Cache expiration time in milliseconds (1 minute)
+@@ -194,7 +192,8 @@ export class FilesystemResourceProvider {
+       // 3. Belt-and-suspenders: reject leading separators (already caught by isAbsolute)
+       const isContainedSubpath =
+         !isAbsolute(rel) &&
+-        !rel.startsWith("..") &&
++        rel !== ".." &&
++        !rel.startsWith(".." + sep) &&
+         !rel.startsWith("/") &&
+         !rel.startsWith("\\");
+ 
+@@ -246,47 +245,13 @@ export class FilesystemResourceProvider {
      }
  
-+    // qsv would never write it, yet the result would claim it was written
-+    if (outputFile && !isHelpRequest && !skillTakesOutputFile(skill)) {
-+      return errorResult(
-+        `Error: qsv ${commandName} has no output file option, so output_file can't be used. ` +
-+          `It writes its own files; set its destination parameter instead (see help=true).`,
+     // Defense-in-depth: refuse to point the working dir at well-known
+-    // credential / secrets directories. Mirrors the SENSITIVE_HOME_DIRS check
+-    // in mcp-server.handleBrowseDirectory so both entry points are symmetric.
+-    // Without this, plugin mode could auto-add (e.g.) ~/.ssh to allowedDirs.
+-    // Extension-based file listing still blocks reading non-tabular files,
+-    // but pointing the working dir at a secrets dir is itself a smell.
+-    //
+-    // Symlink hardening: `newDir` was realpath'd above, so we must compare
+-    // against BOTH the logical home-relative path AND its realpath'd target.
+-    // Otherwise a symlinked `~/.ssh -> /private/secret` is bypassable:
+-    // target resolves to /private/secret while the unresolved blocked path
+-    // remains ~/.ssh, and the equality/prefix check misses. (roborev
+-    // commit 49361f5 review)
+-    const home = homedir();
+-    let canonHome: string;
+-    try {
+-      canonHome = realpathSync(home);
+-    } catch {
+-      canonHome = home;
+-    }
+-    const target = normalizeForCaseFs(newDir);
+-    const sep = process.platform === "win32" ? "\\" : "/";
+-    for (const sensitive of SENSITIVE_HOME_DIRS) {
+-      const blockedLogical = resolve(canonHome, sensitive);
+-      let blockedCanonical = blockedLogical;
+-      try {
+-        blockedCanonical = realpathSync(blockedLogical);
+-      } catch {
+-        // Sensitive dir doesn't exist on this host — only the logical
+-        // form is meaningful (no symlink to resolve through).
+-      }
+-      // De-dupe so we don't recheck the same path when there's no symlink.
+-      for (const blocked of new Set([
+-        normalizeForCaseFs(blockedLogical),
+-        normalizeForCaseFs(blockedCanonical),
+-      ])) {
+-        if (target === blocked || target.startsWith(blocked + sep)) {
+-          throw new Error(
+-            `Cannot set working directory to ${dir}: "${sensitive}" is a protected directory.`,
+-          );
+-        }
+-      }
++    // credential / secrets directories. Without this, plugin mode could
++    // auto-add (e.g.) ~/.ssh to allowedDirs.
++    const sensitive = findSensitiveHomeEntry(newDir);
++    if (sensitive !== undefined) {
++      throw new Error(
++        `Cannot set working directory to ${dir}: "${sensitive}" is a protected directory.`,
++      );
+     }
+ 
+     if (!this.isPathAllowed(newDir, true)) {
+@@ -341,6 +306,17 @@ export class FilesystemResourceProvider {
+       }
+     }
+ 
++    // Must run BEFORE isPathAllowed: in plugin mode that call auto-adds the
++    // parent dir to allowedDirs, so a home-wide allow (the default when
++    // QSV_MCP_ALLOWED_DIRS is unset) or plugin mode would otherwise let an
++    // output_file overwrite ~/.ssh/authorized_keys.
++    const sensitive = findSensitiveHomeEntry(canonical);
++    if (sensitive !== undefined) {
++      throw new Error(
++        `Access denied: ${path} is under "${sensitive}", which is protected.`,
 +      );
 +    }
 +
-     // DuckDB/Parquet-first interception for sqlp queries. The orchestration
-     // (multi-table detection, Parquet conversion, DuckDB attempt, fallback
-     // SQL rewrite, warning capture) lives in runSqlpParquetInterception so
-@@ -894,6 +903,7 @@ export async function handleToolCall(
-       inputFile &&
-       commandName !== "describegpt" &&
-       !isBinaryOutputFormat(commandName, params) &&
-+      skillTakesOutputFile(skill) &&
-       (await shouldUseTempFile(commandName, inputFile))
-     ) {
-       // viz emits a self-contained interactive HTML artifact; its output format is
+     // Security check: ensure canonical path is within allowed directories
+     if (!this.isPathAllowed(canonical)) {
+       throw new Error(`Access denied: ${path} is outside allowed directories`);
 ```
 
-**File**: `.claude/skills/tests/executor.test.ts` (modified, +7/-0)
+**File**: `.claude/skills/src/mcp-server.ts` (modified, +6/-38)
 ```diff
-@@ -555,3 +555,10 @@ test('buildCommand does not add --frequency-jsonl when option definition is miss
-     config.qsvValidation.version = originalVersion;
-   }
- });
-+
-+test('a qsv binary that fails to start is a failure, not a success', async () => {
-+  const executor = new SkillExecutor('/nonexistent/qsv-binary-for-test');
-+  const result = await executor.execute(countSkill, { args: { input: 'x.csv' } } as SkillParams);
-+  assert.strictEqual(result.success, false);
-+  assert.match(result.stderr, /SPAWN ERROR/);
-+});
-```
-
-**File**: `.claude/skills/tests/file-operations.test.ts` (modified, +60/-0)
-```diff
-@@ -23,6 +23,8 @@ import {
-   collectAdditionalInputFiles,
-   resolveFilePathParams,
-   canonicalFlag,
-+  skillTakesOutputFile,
-+  formatToolResult,
- } from "../src/file-operations.js";
+@@ -58,14 +58,12 @@ import { getUiCapability, RESOURCE_MIME_TYPE } from "@modelcontextprotocol/ext-a
+ import { getDirectoryPickerHtml } from "./ui/directory-picker-html.js";
+ import { scanDirectory } from "./browse-directory.js";
+ import { VERSION } from "./version.js";
+-import { getErrorMessage, errorResult, successResult, completedDirResult } from "./utils.js";
++import { getErrorMessage, errorResult, successResult, completedDirResult, findSensitiveHomeEntry } from "./utils.js";
+ import { UpdateChecker, getUpdateConfigFromEnv } from "./update-checker.js";
+ import { PipelineManifest } from "./pipeline-manifest.js";
+ import { WorkingDirManager } from "./working-dir-manager.js";
+ import { PIPELINE_METADATA, type PipelineMetadata } from "./mcp-tools.js";
  import {
-   FILE_PATH_INPUT_OPTIONS,
-@@ -759,3 +761,61 @@ describe("path confinement", () => {
-     assert.deepStrictEqual(missing, [], "classify these in tool-constants.ts (path kind) or NOT_A_PATH here");
-   });
- });
-+
-+describe("commands that write their own files", () => {
-+  test("only a skill with --output or a positional output gets a temp output file", async () => {
-+    const loader = new SkillLoader();
-+    await loader.loadAll();
-+    for (const name of ["split", "partition", "to", "validate", "index"]) {
-+      const s = await loader.load(`qsv-${name}`);
-+      assert.ok(s, name);
-+      assert.strictEqual(skillTakesOutputFile(s), false, name);
-+    }
-+    for (const name of ["select", "sort", "extsort"]) {
-+      const s = await loader.load(`qsv-${name}`);
-+      assert.ok(s, name);
-+      assert.strictEqual(skillTakesOutputFile(s), true, name);
-+    }
-+  });
-+
-+  test("a successful command with no stdout reports completion and its stderr summary", async () => {
-+    const result = {
-+      success: true,
-+      output: "",
-+      stderr: "Wrote 'in.parquet' (1 rows)\n",
-+      metadata: { command: "qsv to parquet out in.csv", duration: 5, exitCode: 0 },
-+    };
-+    const formatted = await formatToolResult(result, "to", "/in.csv", undefined, false, {});
-+    assert.ok(!formatted.isError);
-+    const text = formatted.content[0].text ?? "";
-+    assert.match(text, /qsv to completed; it printed no output/);
-+    assert.match(text, /Wrote 'in\.parquet' \(1 rows\)/);
-+  });
-+
-+  test("an auto temp file the command never wrote falls back to its stdout", async () => {
-+    const base = {
-+      success: true,
-+      stderr: "2 duplicates\n",
-+      metadata: { command: "qsv x", duration: 5, exitCode: 0 },
-+    };
-+    const missing = join(homedir(), `qsv-never-written-${Date.now()}.tsv`);
-+    const json = await formatToolResult({ ...base, output: '{"a":1}' }, "schema", "/in.csv", missing, true, {});
-+    assert.ok(!json.isError, json.content[0].text);
-+    assert.strictEqual(json.content[0].text, '{"a":1}');
-+    const empty = await formatToolResult({ ...base, output: "" }, "extdedup", "/in.csv", missing, true, {});
-+    assert.ok(!empty.isError, empty.content[0].text);
-+    assert.match(empty.content[0].text ?? "", /qsv extdedup completed[^]*2 duplicates/);
-+  });
-+
-+  test("a long stderr summary is truncated", async () => {
-+    const result = {
-+      success: true,
-+      output: "",
-+      stderr: "x".repeat(100_000),
-+      metadata: { command: "qsv split", duration: 5, exitCode: 0 },
-+    };
-+    const text = (await formatToolResult(result, "split", "/in.csv", undefined, false, {})).content[0].text ?? "";
-+    assert.ok(text.length < 5000, String(text.length));
-+    assert.match(text, /\[stderr truncated\]$/);
-+  });
-+});
+-  SENSITIVE_HOME_DIRS,
+-  normalizeForCaseFs,
+   CORE_TOOLS,
+   coreToolCount,
+   ELICITATION_EXEMPT_TOOLS,
+@@ -189,7 +187,8 @@ class QsvMcpServer {
+       workingDirectory: config.workingDir,
+       allowedDirectories: config.allowedDirs,
+       qsvBinPath: config.qsvBinPath,
+-      pluginMode: config.isPluginMode,
++      // the provider's pluginMode only means "auto-add requested dirs"
++      pluginMode: config.pluginAutoAddDirs,
+     });
+ 
+     // Initialize working directory manager (elicitation, roots sync)
+@@ -1079,40 +1078,9 @@ class QsvMcpServer {
+       }
+ 
+       // Defense-in-depth: block browsing sensitive directories.
+-      // Canonicalize home via realpath to match targetDir (e.g. macOS
+-      // /Users/… vs /System/Volumes/Data/Users/…).
+-      const home = homedir();
+-      let canonHome: string;
+-      try {
+-        canonHome = await realpath(home);
+-      } catch {
+-        canonHome = home;
+-      }
+-      const target = normalizeForCaseFs(targetDir);
+-      // Symlink hardening: compare against BOTH the logical home-relative
+-      // path AND its realpath'd target. Without this, a symlinked
+-      // ~/.ssh → /private/secret is bypassable: targetDir is realpath'd
+-      // above (so it resolves to /private/secret) while the unresolved
+-      // blocked path stays ~/.ssh, and the equality/prefix check misses.
+-      // (roborev commit 49361f5 review)
+-      for (const sensitive of SENSITIVE_HOME_DIRS) {
+-        const blockedLogical = resolve(canonHome, sensitive);
+-        let blockedCanonical = blockedLogical;
+-        try {
+-          blockedCanonical = await realpath(blockedLogical);
+-        } catch {
+-          // Sensitive dir doesn't exist on this host — only the logical
+-          // form is meaningful (no symlink to resolve through).
+-        }
+-        // De-dupe so we don't recheck the same path when there's no symlink.
+-        for (const blocked of new Set([
+-          normalizeForCaseFs(blockedLogical),
+-          normalizeForCaseFs(blockedCanonical),
+-        ])) {
+-          if (target === blocked || target.startsWith(blocked + sep)) {
+-            return errorResult(`Access to "${sensitive}" is not allowed for security reasons.`);
+-          }
+-        }
++      const sensitive = findSensitiveHomeEntry(targetDir);
++      if (sensitive !== undefined) {
++        return errorResult(`Access to "${sensitive}" is not allowed for security reasons.`);
+       }
+ 
+       const result = await scanDirectory(targetDir);
 ```
 
-**File**: `.claude/skills/tests/qsv-integration.test.ts` (modified, +54/-1)
+**File**: `.claude/skills/src/tool-constants.ts` (modified, +40/-4)
 ```diff
-@@ -5,7 +5,7 @@
+@@ -361,11 +361,14 @@ export const BINARY_VALIDATION_TIMEOUT_MS = 5000;
+ /**
+  * Home-relative directories that should never be browsed or used as the
+  * working directory. Covers SSH/GPG/cloud-CLI credential stores, K8s configs,
+- * password managers, and the Docker daemon socket directory.
++ * password managers, the Docker daemon socket directory, and login/agent
++ * autostart locations (LaunchAgents, systemd user units, XDG autostart, the
++ * Windows Startup folder, fish config, Claude Code's ~/.claude).
+  *
+- * Shared by `mcp-server.handleBrowseDirectory` and
+- * `FilesystemResourceProvider.setWorkingDirectory` so both entry points
+- * enforce the same denylist symmetrically.
++ * Enforced by `mcp-server.handleBrowseDirectory`,
++ * `FilesystemResourceProvider.setWorkingDirectory` and
++ * `FilesystemResourceProvider.resolvePath` (every input/output path), all via
++ * `findSensitiveHomeEntry` so the entry points can't drift apart.
+  */
+ export const SENSITIVE_HOME_DIRS = [
+   ".ssh",
+@@ -379,6 +382,39 @@ export const SENSITIVE_HOME_DIRS = [
+   ".password-store",
+   ".local/share/keyrings",
+   ".docker",
++  ".config/gh",
++  // writing here runs code at login / on the next agent session
++  "Library/LaunchAgents",
++  ".config/systemd",
++  ".config/autostart",
++  ".config/fish",
++  "AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup",
++  ".claude",
++];
++
++/**
++ * Home-relative files that must never be read or written through an MCP path
++ * argument (`input_file`, `output_file`, ...). Shell startup files are code
++ * execution if overwritten; the rest hold credentials that a read would leak.
++ * Enforced by `FilesystemResourceProvider.resolvePath` alongside
++ * SENSITIVE_HOME_DIRS.
++ */
++export const SENSITIVE_HOME_FILES = [
++  ".bashrc",
++  ".bash_profile",
++  ".bash_login",
++  ".bash_logout",
++  ".profile",
++  ".zshrc",
++  ".zshenv",
++  ".zprofile",
++  ".zlogin",
++  ".zlogout",
++  ".gitconfig",
++  ".git-credentials",
++  ".netrc",
++  ".npmrc",
++  ".pypirc",
+ ];
  
- import { test } from 'node:test';
- import assert from 'node:assert';
--import { readFile, stat, access, chmod, mkdir } from 'node:fs/promises';
-+import { readFile, readdir, stat, access, chmod, mkdir } from 'node:fs/promises';
- import { join } from 'node:path';
- import { handleToolCall, handleToParquetCall } from '../src/mcp-tools.js';
- import { config } from '../src/config.js';
-@@ -1102,3 +1102,56 @@ test('qsv_sqlp runs a .sql script file, also when DuckDB is available', { skip:
-     await cleanupTestDir(testDir);
+ 
+```
+
+**File**: `.claude/skills/src/tool-handlers.ts` (modified, +4/-2)
+```diff
+@@ -1244,8 +1244,10 @@ export async function handleConfigTool(
+   } else {
+     configText += `ℹ️ Only working directory is accessible\n`;
    }
- });
+-  if (config.isPluginMode) {
++  if (config.pluginAutoAddDirs) {
+     configText += `\n📌 _Plugin mode: additional directories are auto-added as needed at runtime._\n`;
++  } else if (config.isPluginMode) {
++    configText += `\n📌 _Plugin mode: QSV_MCP_ALLOWED_DIRS is set, so paths outside these directories and the working directory are refused._\n`;
+   }
+ 
+   // Performance Settings
+@@ -1263,7 +1265,7 @@ export async function handleConfigTool(
+   // Mode
+   configText += `\n## Deployment Mode\n\n`;
+   if (config.isPluginMode) {
+-    configText += `🔌 **Claude Plugin Mode** (relaxed directory security)\n`;
++    configText += `🔌 **Claude Plugin Mode**${config.pluginAutoAddDirs ? " (relaxed directory security)" : ""}\n`;
+   } else if (extensionMode) {
+     configText += `🧩 **Desktop Extension Mode**\n`;
+   } else {
+```
+
+**File**: `.claude/skills/src/utils.ts` (modified, +63/-1)
+```diff
+@@ -2,8 +2,14 @@
+  * Shared utility functions for QSV MCP Server
+  */
+ 
++import { realpathSync } from "node:fs";
+ import { homedir } from "node:os";
+-import { join } from "node:path";
++import { basename, dirname, join, resolve } from "node:path";
++import {
++  SENSITIVE_HOME_DIRS,
++  SENSITIVE_HOME_FILES,
++  normalizeForCaseFs,
++} from "./tool-constants.js";
+ 
+ /**
+  * Expand tilde (~) in paths to the user's home directory
+@@ -256,3 +262,59 @@ export function reservedCachePathError(outputPath: string): string {
+     `Files ending in ${suffixList} are auto-managed by qsv. Use a different output path.`
+   );
+ }
 +
-+test('qsv split succeeds although it writes only its own files', { skip: !QSV_AVAILABLE }, async () => {
-+  const testDir = await createTestDir();
-+  const loader = new SkillLoader();
-+  const executor = new SkillExecutor();
-+
++/**
++ * Return the SENSITIVE_HOME_DIRS / SENSITIVE_HOME_FILES entry that `target`
++ * falls under, or undefined if it is not protected. `target` must already be
++ * realpath'd.
++ *
++ * Each protected path is compared in BOTH its logical home-relative form and
++ * its realpath'd form: a symlinked `~/.ssh -> /private/secret` would otherwise
++ * slip through, since `target` resolves to /private/secret while the
++ * unresolved blocked path stays ~/.ssh. (roborev commit 49361f5 review)
++ */
++export function findSensitiveHomeEntry(target: string): string | undefined {
++  const home = homedir();
++  let canonHome: string;
 +  try {
-+    await loader.loadAll();
-+    const csvPath = await createTestCSV(testDir, 'test.csv', 'id,name\n1,a\n2,b\n3,c\n');
-+    const provider = new FilesystemResourceProvider({ workingDirectory: testDir, allowedDirectories: [testDir] });
-+    const outdir = join(testDir, 'parts');
-+
-+    const result = await handleToolCall(
-+      'qsv_split',
-+      { input_file: csvPath, outdir, size: 1 },
-+      executor,
-+      loader,
-+      provider,
-+    );
-+
-+    assert.ok(!result.isError, result.content[0].text);
-+    assert.match(result.content[0].text ?? '', /qsv split completed; it printed no output/);
-+    assert.strictEqual((await readdir(outdir)).length, 3);
-+  } finally {
-+    await cleanupTestDir(testDir);
++    canonHome = realpathSync.native(home);
++  } catch {
++    canonHome = home;
 +  }
-+});
-+
-+test('output_file is refused for a command that has no output file option', { skip: !QSV_AVAILABLE }, async () => {
-+  const testDir = await createTestDir();
-+  const loader = new SkillLoader();
-+  const executor = new SkillExecutor();
-+
-+  try {
-+    await loader.loadAll();
-+    const csvPath = await createTestCSV(testDir, 'test.csv', 'id,name\n1,a\n2,b\n');
-+    const provider = new FilesystemResourceProvider({ workingDirectory: testDir, allowedDirectories: [testDir] });
-+
-+    const result = await handleToolCall(
-+      'qsv_split',
-+      { input_file: csvPath, outdir: join(testDir, 'parts'), size: 1, output_file: join(testDir, 'out.csv') },
-+      executor,
-+      loader,
-+      provider,
-+    );
-+
-+    assert.ok(result.isError);
-+    assert.match(result.content[0].text ?? '', /has no output file option/);
-+    await assert.rejects(stat(join(testDir, 'parts')));
-+  } finally {
-+    await cleanupTestDir(testDir);
++  const normTarget = normalizeForCaseFs(target);
++  const sep = process.platform === "win32" ? "\\" : "/";
++  const blockedForms = (entry: string): Set<string> => {
++    const logical = resolve(canonHome, entry);
++    // A missing entry still has a canonical form via its nearest existing
++    // ancestor: with ~/.config -> /dotfiles/config and no ~/.config/autostart
++    // yet, a write lands in /dotfiles/config/autostart.
++    let ancestor = logical;
++    const missing: string[] = [];
++    let canonical = logical;
++    for (;;) {
++      try {
++        canonical = join(realpathSync.native(ancestor), ...missing);
++        break;
++      } catch {
++        const parent = dirname(ancestor);
++        if (parent === ancestor) break;
++        missing.unshift(basename(ancestor));
++        ancestor = parent;
++      }
++    }
++    return new Set([normalizeForCaseFs(logical), normalizeForCaseFs(canonical)]);
++  };
++  for (const dir of SENSITIVE_HOME_DIRS) {
++    for (const blocked of blockedForms(dir)) {
++      if (normTarget === blocked || normTarget.startsWith(blocked + sep)) {
++        return dir;
++      }
++    }
 +  }
-+});
++  for (const file of SENSITIVE_HOME_FILES) {
++    if (blockedForms(file).has(normTarget)) {
++      return file;
++    }
++  }
++  return undefined;
++}
+```
+
+---
+
+### Incident Patch 2: `22ae4398` (2026-11-23)
+**Commit Message**: build(deps): bump flexi_logger from 0.31.10 to 0.32.0 (#5098)
+
+Bumps [flexi_logger](https://github.com/emabee/flexi_logger) from 0.31.10 to 0.32.0.
+- [Release notes](https://github.com/emabee/flexi_logger/releases)
+- [Changelog](https://github.com/emabee/flexi_logger/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/emabee/flexi_logger/commits)
+
+---
+updated-dependencies:
+- dependency-name: flexi_logger
+  dependency-version: 0.32.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +3/-3)
+```diff
+@@ -2789,15 +2789,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "flexi_logger"
+-version = "0.31.10"
++version = "0.32.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a4945fa9cdfd7571192cf559c186d45ab36c8034482a2d217a19bdc566f190cc"
++checksum = "5e87b74024da93123949cca26cb6e366744234fdd4d7914eb3dfeab0baa82d51"
+ dependencies = [
+- "chrono",
+  "core_affinity",
+  "crossbeam-channel",
+  "crossbeam-queue",
+  "flate2",
++ "jiff 1.0.2",
+  "log",
+  "thiserror 2.0.21",
+ ]
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -237,7 +237,7 @@ foldhash = "0.2"
+ glob = { version = "0.3", optional = true }
+ file-format = { version = "0.29", features = ["reader"] }
+ filetime = "0.2"
+-flexi_logger = { version = "0.31", features = [
++flexi_logger = { version = "0.32", features = [
+     "async",
+     "compress",
+     "dont_minimize_extra_stacks",
+```
+
+---
+
+### Incident Patch 3: `07af1518` (2026-11-23)
+**Commit Message**: build(deps): bump datasketches from 0.6.0 to 0.7.0 (#5099)
+
+Bumps [datasketches](https://github.com/apache/datasketches-rust) from 0.6.0 to 0.7.0.
+- [Changelog](https://github.com/apache/datasketches-rust/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/apache/datasketches-rust/compare/0.6.0...0.7.0)
+
+---
+updated-dependencies:
+- dependency-name: datasketches
+  dependency-version: 0.7.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +3/-3)
+```diff
+@@ -2165,9 +2165,9 @@ checksum = "4583a4551df46e2792f82ceeac45e850d2e2d5debba0b91f102385cda5b11f06"
+ 
+ [[package]]
+ name = "datasketches"
+-version = "0.6.0"
++version = "0.7.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "17518a0e88b8a18c546a855d9db6455caaea7865774364bff759edf6a4731aca"
++checksum = "aecf54f9bc061790ad1a73c9f5b39bdcd0abf3f576abad113f822a9d94ea9ff0"
+ 
+ [[package]]
+ name = "dbase"
+@@ -9093,7 +9093,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
+ dependencies = [
+  "fastrand",
+- "getrandom 0.3.4",
++ "getrandom 0.4.3",
+  "once_cell",
+  "rustix",
+  "windows-sys 0.61.2",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -640,7 +640,7 @@ polars = { git = "https://github.com/pola-rs/polars", rev = "93d31f095fe32476778
+ # support big-endian targets, so we exclude the crate on big-endian builds.
+ # Code paths that use it are guarded by #[cfg(not(target_endian = "big"))].
+ [target.'cfg(not(target_endian = "big"))'.dependencies]
+-datasketches = { version = "0.6", features = ["frequencies", "hll", "tdigest"] }
++datasketches = { version = "0.7", features = ["frequencies", "hll", "tdigest"] }
+ 
+ # AVX-512 is an x86_64-only ISA extension; Polars' avx512 kernels are inert on
+ # other targets, so gate the feature to x86_64. Cargo unions these features with
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5090** (2026-11-21): feat(synthesize): ordered relationship members keep their own blanks (@jqnatividad)
-- **PR #5089** (2026-11-21): fix(mcp): don't report an error for commands that write only their own files (@jqnatividad)
-- **PR #5088** (2026-11-21): docs(synthesize): name both blank limits for discovered ordered pairs (@jqnatividad)
-- **PR #5087** (2026-11-21): fix(mcp): run .sql scripts on sqlp; allow nested ~/ and to parquet dirs (@jqnatividad)
-- **PR #5086** (2026-11-21): fix(mcp): don't let extsort/extdedup empty a file through output_file (@jqnatividad)
-- **PR #5085** (2026-11-21): feat(synthesize): --discover-relationships <file> finds joint, correlated and ordered groups (@jqnatividad)
+- **PR #5102** (2026-11-23): fix(mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode (@jqnatividad)
+- **PR #5101** (2026-11-23): deps: bump mlua to 0.12.3 (Luau 0.748); drop the mlua git pin (@jqnatividad)
+- **PR #5100** (2026-11-23): deps: bump jsonschema to 0.63.1; validate suggests a known format for a typo'd one (@jqnatividad)
+- **PR #5099** (2026-11-23): build(deps): bump datasketches from 0.6.0 to 0.7.0 (@dependabot[bot])
+- **PR #5098** (2026-11-23): build(deps): bump flexi_logger from 0.31.10 to 0.32.0 (@dependabot[bot])
+- **PR #5097** (2026-11-23): build(deps): bump anthropics/claude-code-action from 1.0.278 to 1.0.284 (@dependabot[bot])
 
 ---
 
@@ -2576,13 +2935,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDAC
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): don't report an error for commands that write only their own files
+## X. mcp): protect credential/autostart paths on every input/output path; explicit QS
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f4d08b6`: mcp): don't report an error for commands that write only their own files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0311b3bf`: mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2590,11 +2949,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
-- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
-- **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
-
+### Security
+- **Input and output paths can no longer reach credential directories or shell startup files.** The protected home directories (`~/.ssh`, `~/.aws`, `~/.gnupg`, `~/.kube`, ...) were enforced only for `qsv_set_working_dir` and directory browsing, not for the paths a tool call names (`input_file`, `output_file`, path options). With the home directory allowed (the default when `QSV_MCP_ALLOWED_DIRS` is unset) or in plugin mode, a tool call could write to `~/.ssh/authorized_keys`. Every path now gets the same check, applied before plugin mode adds a directory to the allowed list, including output directories a command creates. Also newly protected: `~/.config/gh`; places where a written file runs code at login or in the next agent session (`~/Library/LaunchAgents`, `~/.config/systemd`, `~/.config/autostart`, `~/.config/fish`, the Windows Startup folder, `~/.claude`); and home dotfiles that run code or hold credentials (`.bashrc`, `.zshrc`, `.profile` and the other bash/zsh startup files, `.gitconfig`, `.git-credentials`, `.netrc`, `.npmrc`, `.pypirc`). This is a denylist, not a sandbox: other locations under the home directory (for example `~/bin`) stay writable. To confine
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2604,7 +2960,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f4d08b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0311b3bf` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

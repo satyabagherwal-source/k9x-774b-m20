@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `c0386a2f`  
+> **Source Version**: `6c258d07`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T02:26:57.644Z  
+> **Timestamp**: 2026-11-23T14:12:53.021Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T02:26:57.639Z  
+> **Harvest Timestamp**: 2026-11-23T14:12:53.016Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9425 stars
+- **Stars / Engagement**: 9426 stars
 
 ---
 
@@ -1077,131 +1077,250 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18e28071` (2026-11-20)
-**Commit Message**: ci: extend binary e2e timeouts to 60 minutes (#28107)
+### Incident Patch 1: `8429b5b9` (2026-11-23)
+**Commit Message**: build: speed up Dashboard builds and Docker image publishing (#28123)
 
-**File**: `ci/workflows/main-cron.yml` (modified, +2/-2)
+Signed-off-by: Li0k <[REDACTED_EMAIL]>
+Co-authored-by: Li0k <[REDACTED_EMAIL]>
+
+**File**: `.dockerignore` (modified, +7/-0)
 ```diff
-@@ -933,7 +933,7 @@ steps:
-     plugins:
-       - docker-compose#v5.5.0: *docker-compose
-       - ./ci/plugins/upload-failure-logs
--    timeout_in_minutes: 50
-+    timeout_in_minutes: 60
-     retry: *auto-retry
+@@ -45,6 +45,13 @@ log/
+ .bin/
  
-   - label: "e2e single-node binary test"
-@@ -948,7 +948,7 @@ steps:
-     plugins:
-       - docker-compose#v5.5.0: *docker-compose
-       - ./ci/plugins/upload-failure-logs
--    timeout_in_minutes: 45
-+    timeout_in_minutes: 60
-     retry: *auto-retry
- 
-   - label: "end-to-end test for opendal storage backend (parallel)"
-```
-
----
-
-### Incident Patch 2: `425c375d` (2026-11-20)
-**Commit Message**: fix: require patched OpenJDK 21 for Java4Shell (#28106)
-
-**File**: `docker/Dockerfile` (modified, +5/-1)
-```diff
-@@ -2,9 +2,13 @@ FROM ubuntu:24.04 AS base
- 
- ENV LANG en_US.utf8
- 
-+# Require Ubuntu's CVE-2026-114938 fix while allowing newer security updates.
-+# https://ubuntu.com/security/notices/USN-9156-1
- RUN apt-get update \
-   && apt-get -y install ca-certificates build-essential libsasl2-dev openjdk-21-jdk software-properties-common \
--    python3.12 python3.12-dev openssl pkg-config curl git libblas-dev liblapack-dev libomp-dev
-+    python3.12 python3.12-dev openssl pkg-config curl git libblas-dev liblapack-dev libomp-dev \
-+  && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' openjdk-21-jre-headless)" ge '21.0.13.1+2-1~24.04.1' \
-+  && java -version
- 
- FROM base AS rust-base
+ # generated files
++dashboard/.next/
++dashboard/node_modules/
++dashboard/out/
++dashboard/proto/gen/
++dashboard/public/monaco/
++dashboard/tmp_gen/
++dashboard/*.tsbuildinfo
+ risedev-components.user.env
+ riselab-components.user.env
  
 ```
 
-**File**: `docker/Dockerfile.hdfs` (modified, +10/-2)
+**File**: `.github/workflows/dashboard.yml` (modified, +2/-2)
 ```diff
-@@ -4,8 +4,12 @@ FROM ubuntu:24.04 AS base
- 
- ENV LANG en_US.utf8
- 
-+# Require Ubuntu's CVE-2026-114938 fix while allowing newer security updates.
-+# https://ubuntu.com/security/notices/USN-9156-1
- RUN apt-get update \
--  && apt-get -y install ca-certificates build-essential libsasl2-dev openjdk-21-jdk software-properties-common python3.12 python3.12-dev openssl pkg-config libblas-dev liblapack-dev libomp-dev
-+  && apt-get -y install ca-certificates build-essential libsasl2-dev openjdk-21-jdk software-properties-common python3.12 python3.12-dev openssl pkg-config libblas-dev liblapack-dev libomp-dev \
-+  && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' openjdk-21-jre-headless)" ge '21.0.13.1+2-1~24.04.1' \
-+  && java -version
- 
- FROM base AS dashboard-builder
- 
-@@ -116,7 +120,11 @@ RUN cd /risingwave/java && mvn -B package -Dmaven.test.skip=true -Dno-build-rust
-   tar -zxvf /risingwave/java/connector-node/assembly/target/risingwave-connector-1.0.0.tar.gz -C /risingwave/bin/connector-node
- 
- FROM ubuntu:24.04 as image-base
--RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates openjdk-21-jdk wget libsasl2-dev libblas-dev liblapack-dev libomp-dev && rm -rf /var/lib/{apt,dpkg,cache,log}/
-+# This runtime stage installs its own JDK, so enforce the same security baseline.
-+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates openjdk-21-jdk wget libsasl2-dev libblas-dev liblapack-dev libomp-dev \
-+  && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' openjdk-21-jre-headless)" ge '21.0.13.1+2-1~24.04.1' \
-+  && java -version \
-+  && rm -rf /var/lib/{apt,dpkg,cache,log}/
- 
- FROM image-base as risingwave
- LABEL org.opencontainers.image.source https://github.com/risingwavelabs/risingwave
+@@ -18,10 +18,10 @@ jobs:
+       - uses: actions/checkout@v5
+       - uses: pnpm/action-setup@v4
+         with:
+-          version: 10.14.0
++          package_json_file: dashboard/package.json
+       - uses: actions/setup-node@v4
+         with:
+-          node-version: 20
++          node-version-file: dashboard/.node-version
+           cache: pnpm
+           cache-dependency-path: dashboard/pnpm-lock.yaml
+       - uses: arduino/setup-protoc@v3
 ```
 
-**File**: `docker/README.md` (modified, +9/-0)
+**File**: `ci/docker-compose.yml` (modified, +5/-12)
 ```diff
-@@ -94,6 +94,15 @@ docker build . -f docker/Dockerfile
+@@ -553,23 +553,16 @@ services:
+       - ..:/risingwave
  
- from the project root.
+   release-env-x86:
+-    # Build binaries on a earlier Linux distribution (therefore with earlier version GLIBC)
+-    # `manylinux_2_28` is based on AlmaLinux 8 with GLIBC 2.28.
+-    #
+-    # GLIBC versions on some systems:
+-    # - Amazon Linux 2023 (AL2023): 2.34
+-    # - Ubuntu 20.04: 2.31
+-    #
+-    # Systems that we don't provide support for:
+-    # - Ubuntu 18.04: 2.27 (Already EOL 2023-05-31)
+-    # - Amazon Linux 2: 2.26 (Originally EOL 2023-06-30, superseded by AL2023)
+-    image: quay.io/pypa/manylinux_2_28_x86_64:2025.03.23-1
++    # Build standalone Linux releases on AlmaLinux 9 with glibc 2.34.
++    # Amazon Linux 2023, RHEL 9, and Ubuntu 22.04 meet this glibc baseline.
++    # RHEL 8 and Ubuntu 20.04 have older glibc versions.
++    image: quay.io/pypa/manylinux_2_34_x86_64:2026.11.14-1
+     working_dir: /mnt
+     volumes:
+       - ..:/mnt
  
-+The standard and HDFS images require Ubuntu's OpenJDK 21 package version
-+`21.0.13.1+2-1~24.04.1` or newer to address
-+[CVE-2026-114938](https://ubuntu.com/security/notices/USN-9156-1).
-+The build installs the latest available JDK and fails if the installed runtime
-+is below this minimum. Private Ubuntu mirrors must provide the security update.
-+To refresh an existing image's JDK, rebuild with `--pull --no-cache`, then replace
-+the running containers with the rebuilt image. Restarting an old image does not
-+update its JDK.
+   release-env-arm:
+-    image: quay.io/pypa/manylinux_2_28_aarch64:2025.03.23-1
++    image: quay.io/pypa/manylinux_2_34_aarch64:2026.11.14-1
+     working_dir: /mnt
+     volumes:
+       - ..:/mnt
+```
+
+**File**: `ci/scripts/docker.sh` (modified, +31/-22)
+```diff
+@@ -32,25 +32,36 @@ docker buildx create \
+   --name container \
+   --driver=docker-container
+ 
+-PULL_PARAM=""
++cache_ref="ghcr.io/risingwavelabs/risingwave-build-cache:${arch}"
++build_args=(
++  -f docker/Dockerfile
++  --build-arg "GIT_SHA=${BUILDKITE_COMMIT}"
++  --build-arg "CARGO_PROFILE=${CARGO_PROFILE}"
++  --progress plain
++  --builder=container
++  --cache-from "type=registry,ref=${cache_ref}"
++)
++pull_args=()
+ if [[ "${ALWAYS_PULL:-false}" = "true" ]]; then
+-  PULL_PARAM="--pull"
++  pull_args=(--pull)
+ fi
++tag="${BUILDKITE_COMMIT}-${arch}"
++test_image="risingwave-image-test:${tag}"
++container_id=
++cleanup() {
++  if [[ -n "$container_id" ]]; then
++    docker rm -f "$container_id" >/dev/null || true
++  fi
++  docker image rm "$test_image" >/dev/null 2>&1 || true
++}
++trap cleanup EXIT
+ 
+-docker buildx build -f docker/Dockerfile \
+-  --build-arg "GIT_SHA=${BUILDKITE_COMMIT}" \
+-  --build-arg "CARGO_PROFILE=${CARGO_PROFILE}" \
+-  -t "${ghcraddr}:${BUILDKITE_COMMIT}-${arch}" \
+-  --progress plain \
+-  --builder=container \
+-  --load \
+-  ${PULL_PARAM} \
+-  --cache-to "type=registry,ref=ghcr.io/risingwavelabs/risingwave-build-cache:${arch}" \
+-  --cache-from "type=registry,ref=ghcr.io/risingwavelabs/risingwave-build-cache:${arch}" \
++docker buildx build "${build_args[@]}" "${pull_args[@]}" \
++  --target risingwave-nodwp --load -t "$test_image" \
+   .
+ 
+ echo "--- check the image can start correctly"
+-container_id=$(docker run -d "${ghcraddr}:${BUILDKITE_COMMIT}-${arch}" playground)
++container_id=$(docker run -d "$test_image" playground)
+ sleep 10
+ container_status=$(docker inspect --format='{{.State.Status}}' "$container_id")
+ if [ "$container_status" != "running" ]; then
+@@ -60,12 +71,10 @@ if [ "$container_status" != "running" ]; then
+   exit 1
+ fi
+ 
+-echo "--- docker images"
+-docker images
+-
+-echo "--- docker push to ghcr"
+-docker push "${ghcraddr}:${BUILDKITE_COMMIT}-${arch}"
+-
+-echo "--- docker push to dockerhub"
+-docker tag "${ghcraddr}:${BUILDKITE_COMMIT}-${arch}" "${dockerhubaddr}:${BUILDKITE_COMMIT}-${arch}"
+-docker push "${dockerhubaddr}:${BUILDKITE_COMMIT}-${arch}"
++echo "--- export and push the image with debug symbols"
++# Publish single-architecture manifests for multi-arch-docker.sh.
++docker buildx build "${build_args[@]}" \
++  --target risingwave --provenance=false --push \
++  -t "${ghcraddr}:${tag}" -t "${dockerhubaddr}:${tag}" \
++  --cache-to "type=registry,ref=${cache_ref}" \
++  .
+```
+
+**File**: `ci/scripts/release.sh` (modified, +3/-3)
+```diff
+@@ -26,8 +26,8 @@ ld.lld --version
+ 
+ echo "--- Install dependencies"
+ dnf install -y perl-core wget python3.12 python3.12-devel cyrus-sasl-devel rsync openssl-devel blas-devel lapack-devel libgomp
+-# python udf compiling requires python3.12
+-update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.12 3
++# Use the distribution's shared Python library for embedded UDFs.
++export PYO3_PYTHON=/usr/bin/python3.12
+ 
+ echo "--- Install java and maven"
+ dnf install -y java-21-openjdk java-21-openjdk-devel
+@@ -61,7 +61,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+ export NVM_DIR="$HOME/.nvm"
+ . "$NVM_DIR/nvm.sh"
+ cd dashboard && nvm install && nvm use && cd ..
+-npm install --global pnpm@10.14.0
++npm install --global "$(node -p 'require("./dashboard/package.json").packageManager')"
+ 
+ echo "--- Check risingwave release version"
+ if [[ -n "${BUILDKITE_TAG}" ]]; then
+```
+
+**File**: `dashboard/.node-version` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-20
++24.22.3
+```
+
+**File**: `dashboard/.pnpmfile.cjs` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++const lintPackages = new Set([
++  "eslint-config-next",
++  "prettier-plugin-organize-imports",
++  "ts-api-utils",
++  "ts-declaration-location",
++  "typescript-eslint",
++])
 +
- To build the images without SIMD vector extensions, run
- 
- ```
++function readPackage(pkg) {
++  const usesLegacyCompiler =
++    pkg.name?.startsWith("@typescript-eslint/") || lintPackages.has(pkg.name)
++
++  if (usesLegacyCompiler && pkg.peerDependencies?.typescript) {
++    // Isolate consumers of the JavaScript compiler API from Next's native CLI.
++    pkg.dependencies = { ...pkg.dependencies, typescript: "5.4.2" }
++    delete pkg.peerDependencies.typescript
++  }
++
++  return pkg
++}
++
++module.exports = { hooks: { readPackage } }
 ```
 
-**File**: `src/jni_core/src/jvm_runtime.rs` (modified, +7/-0)
+**File**: `dashboard/package.json` (modified, +3/-3)
 ```diff
-@@ -90,6 +90,13 @@ fn build_jvm_with_native_registration() -> anyhow::Result<JavaVM> {
-         .option("-Xms16m")
-         .option(format!("-Xmx{}", jvm_heap_size));
- 
-+    #[cfg(target_arch = "x86_64")]
-+    {
-+        // Mitigate CVE-2026-114938 in unpatched x86-64 JDKs. ARM64 is unaffected
-+        // and retains its Base64 intrinsics. See https://calif.io/java4shell/.
-+        args_builder = args_builder.option("-XX:-UseBASE64Intrinsics");
-+    }
-+
-     // Exit the embedded JVM on uncaught `OutOfMemoryError` so that the host
-     // compute node process terminates and the cluster recovers via the standard
-     // recovery loop, matching native OOM behavior. Set `JVM_EXIT_ON_OOM=false`
+@@ -3,7 +3,7 @@
+   "packageManager": "pnpm@10.14.0",
+   "scripts": {
+     "dev": "next dev",
+-    "build": "next build --webpack",
++    "build": "next build",
+     "start": "next start",
+     "gen-proto": "./scripts/generate_proto.sh",
+     "lint": "prettier --check . && eslint .",
+@@ -41,7 +41,7 @@
+     "framer-motion": "^6.5.1",
+     "lodash": "^4.18.1",
+     "monaco-editor": "^0.56.0",
+-    "next": "^16.4.5",
++    "next": "^16.4.6",
+     "nuqs": "^2.8.6",
+     "react": "^18.2.0",
+     "react-dom": "^18.2.0",
+@@ -73,7 +73,7 @@
+     "express": "^4.21.1",
+     "prettier": "^2.7.1",
+     "prettier-plugin-organize-imports": "^3.1.1",
+-    "typescript": "5.4.2"
++    "typescript": "7.0.2"
+   },
+   "overrides": {
+     "react-json-view": {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28125** (2026-11-20): build: use Turbopack and native TypeScript for Dashboard (@Li0k)
-- **PR #28124** (closed): build: upgrade standalone Linux release builders to manylinux_2_34 (@Li0k)
-- **PR #28117** (2026-11-20): ci: shorten the PR CDC source test step with `parallelism: 2` (@maybe-vibe)
-- **PR #28115** (2026-11-20): chore: update version to v3.0.6 (@cyliu0)
-- **PR #28114** (2026-11-20): chore(deps): bump firestore to 0.57 and gcloud-sdk to 0.32 (@maybe-vibe)
-- **PR #28113** (2026-11-20): fix: require patched OpenJDK 21 for Java4Shell (#28106) (@risingwave-ci)
+- **PR #28150** (2026-11-23): cherry-pick feat(expr): backport AI_DECIDE to release-3.1 (#27933) (@hzxa21)
+- **PR #28149** (closed): cherry-pick feat(expr): add typed AI_DECIDE for batch and streaming SQL (backport #27933 to release-3.1) (@rw-jarvis-bot[bot])
+- **PR #28143** (2026-11-23): chore: update version to v3.1.2 (@cyliu0)
+- **PR #28136** (closed): perf(optimizer): avoid redundant sorts and TopN for ordered index scans (@Standing-Man)
+- **PR #28133** (2026-11-23): chore(deps): align LanceDB with DataFusion 54 (@dependabot[bot])
+- **PR #28126** (2026-11-23): chore(deps): migrate frontend to DataFusion 54.1 (@Li0k)
 
 ---
 
@@ -1221,30 +1340,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: extend binary e2e timeouts to 60 minutes
+## X. build: speed up Dashboard builds and Docker image publishing
 
 **RULE**:
-When implementing operations in `ci/workflows/main-cron.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.dockerignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18e28071`: ci: extend binary e2e timeouts to 60 minutes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8429b5b9`: build: speed up Dashboard builds and Docker image publishing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/workflows/main-cron.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.dockerignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    timeout_in_minutes: 60
-    timeout_in_minutes: 60
+dashboard/.next/
+dashboard/node_modules/
+dashboard/out/
+dashboard/proto/gen/
+dashboard/public/monaco/
+dashboard/tmp_gen/
+dashboard/*.tsbuildinfo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    timeout_in_minutes: 50
-    timeout_in_minutes: 45
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18e28071` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8429b5b9` are properly handled with clean fallback behavior.

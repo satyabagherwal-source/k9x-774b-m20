@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T13:54:40.359Z",
-  "total_records": 2417,
+  "last_updated": "2026-11-23T14:13:01.434Z",
+  "total_records": 2419,
   "domains": {
     "A": {
       "total": 20,
@@ -1113,7 +1113,7 @@
       ]
     },
     "G": {
-      "total": 416,
+      "total": 418,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1530,7 +1530,9 @@
         "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-core-invariants",
         "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants",
         "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-core-invariants",
+        "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-learnings-core-invariants"
       ]
     },
     "H": {
@@ -18452,8 +18454,8 @@
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "8a6b1a28548ba53a0d0072e25746272855ae02235c871da09bbc9c896a5470df",
-      "created_at": "2026-11-21T21:31:48.833Z"
+      "content_hash": "7b1fa7db0fa2f831ca39c7ec741a7a03c59ba0671a904bc48644283d167ea3c7",
+      "created_at": "2026-11-23T14:12:56.483Z"
     },
     "DOM-D-11540386": {
       "record_id": "DOM-D-11540386",
@@ -23948,8 +23950,8 @@
       "title": "Technical Construction Intelligence: chrisbanes/skills Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-technical-construction-intelligence-chrisbanes-skills-core-inv.md",
       "repository": "chrisbanes/skills",
-      "content_hash": "a8b7534bc1d5da78656d668a6a9b6fe3ade0a39ac776e2be716091f7747e8293",
-      "created_at": "2026-11-20T09:59:08.243Z"
+      "content_hash": "3ec3a7dbf72fb98954ac5424cf250639262b1bbe27c17caf23831ae034a51070",
+      "created_at": "2026-11-23T14:12:46.528Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants",
@@ -23957,8 +23959,8 @@
       "title": "Technical Construction Intelligence: chrisbanes-skills-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-learnings-technical-construction-intelligence-chrisbanes-skill.md",
       "repository": "chrisbanes-skills-learnings",
-      "content_hash": "dcbd6bdfddf1adc93a76ff9ba81552fadfbeaaf775b58683ddcd90c67714072b",
-      "created_at": "2026-11-20T09:59:51.007Z"
+      "content_hash": "2c0ee73d030817a544e9eecd209f761fb3e043b3713c8b6dffb20cea03853098",
+      "created_at": "2026-11-23T14:13:00.600Z"
     },
     "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants",
@@ -32644,8 +32646,8 @@
       "title": "Research & Knowledge Intelligence: NaiveAI/Naive-N0.5-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-naiveai-naive-n0-5-flash-research-knowledge-intelligence-naiveai-naive-n0-5-f.md",
       "repository": "NaiveAI/Naive-N0.5-Flash",
-      "content_hash": "659a77c96d9192f303b672b16585f6bd7278689a95728d8c3fb9572a3d7f4a61",
-      "created_at": "2026-11-19T00:22:41.706Z"
+      "content_hash": "53a909950ce10a54631ac3a6e3a7a50e0f46bec1d0c8dc0c1d0329762a190d04",
+      "created_at": "2026-11-23T14:12:38.821Z"
     },
     "DOM-D-0BC48FAB": {
       "record_id": "DOM-D-0BC48FAB",
@@ -32695,8 +32697,8 @@
       "title": "Research & Knowledge Intelligence: hf-naiveai-naive-n0.5-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-naiveai-naive-n0-5-flash-learnings-research-knowledge-intelligence-hf-naiveai.md",
       "repository": "hf-naiveai-naive-n0.5-flash-learnings",
-      "content_hash": "bc8d668206d5d55421a1e6bc15e288451505a8e0cb1fdb5e9c795b89aaee1061",
-      "created_at": "2026-11-19T00:23:35.807Z"
+      "content_hash": "9f55c1b8e54648442db18405e8ce099acc6e3307d8e158f430e3065e0c426364",
+      "created_at": "2026-11-23T14:12:59.712Z"
     },
     "DOM-H-6F9CB66B": {
       "record_id": "DOM-H-6F9CB66B",
@@ -40597,6 +40599,24 @@
       "repository": "daveebbelaar-bama-learnings",
       "content_hash": "c1e51f24e3f605c0e59d89e3917558b72496b0551b00249b5b7d7637e04d7653",
       "created_at": "2026-11-23T13:25:06.372Z"
+    },
+    "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: risingwavelabs/risingwave Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-risingwavelabs-risingwave-architecture-intelligence-risingwavelabs-risingwave-co.md",
+      "repository": "risingwavelabs/risingwave",
+      "content_hash": "1bf9aad3f4ed7f82d375dbd6b4b8054bdbc6e90375bbe0e8a80895bd483a50b2",
+      "created_at": "2026-11-23T14:12:54.446Z"
+    },
+    "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-risingwavelabs-risingwave-learnings-architecture-intelligence-risingwavelabs-ris.md",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "content_hash": "772ec9370492c6e6fb641e8935e3ca6352dab8b073ad1fdab8f5cd2a4ebbf009",
+      "created_at": "2026-11-23T14:13:01.434Z"
     }
   }
 }
