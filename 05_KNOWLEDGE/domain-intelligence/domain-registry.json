@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T07:18:41.054Z",
-  "total_records": 2398,
+  "last_updated": "2026-11-23T07:28:54.656Z",
+  "total_records": 2400,
   "domains": {
     "A": {
       "total": 20,
@@ -1522,7 +1522,7 @@
       ]
     },
     "H": {
-      "total": 572,
+      "total": 574,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2095,7 +2095,9 @@
         "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar",
         "DOM-H-17797BC1",
         "DOM-H-7A8AC6A4",
-        "DOM-H-BBA39C7F"
+        "DOM-H-BBA39C7F",
+        "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari"
       ]
     },
     "I": {
@@ -13435,8 +13437,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b-chat-hf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-research-knowledge-intelligence-meta-llama-llam.md",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "content_hash": "1258f9f24f6e33c22b8ea6dec8168fcf92f7ba9b357bb5797f23c55ad1e2cb88",
-      "created_at": "2026-11-18T22:06:53.896Z"
+      "content_hash": "cd4afc438a40883d76161e38882d9c0d8385e6c56925a935f067310b0bf791a0",
+      "created_at": "2026-11-23T07:28:40.307Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
@@ -13501,8 +13503,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-chat-hf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-learnings-research-knowledge-intelligence-hf-me.md",
       "repository": "hf-meta-llama-llama-2-7b-chat-hf-learnings",
-      "content_hash": "0a4cd87707cd401083aca69034546451263696d02cf5f887c2351155987ab4c3",
-      "created_at": "2026-11-18T22:06:57.602Z"
+      "content_hash": "3638bf0b6df8882f9bb1bb6b6851132e20a17ae522e3ee0c005be8dcc368ec4c",
+      "created_at": "2026-11-23T07:28:53.840Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari",
@@ -35492,8 +35494,8 @@
       "title": "Design Intelligence: SimonSchubert/Kai Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-simonschubert-kai-design-intelligence-simonschubert-kai-core-invariants.md",
       "repository": "SimonSchubert/Kai",
-      "content_hash": "2d764a63123633682cf0c572b59273d52c714a66e6d984f6f3f61f204f2f07d3",
-      "created_at": "2026-11-20T06:19:29.261Z"
+      "content_hash": "fc3412bf77c81a0b618021e6036be63e108c2139dc48a24eeadaf4717ec8f5ea",
+      "created_at": "2026-11-23T07:28:47.781Z"
     },
     "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants",
@@ -35501,8 +35503,8 @@
       "title": "Design Intelligence: simonschubert-kai-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-simonschubert-kai-learnings-design-intelligence-simonschubert-kai-learnings-core.md",
       "repository": "simonschubert-kai-learnings",
-      "content_hash": "e1529bb4da55cb8ead216e4589356a3f09e99b381b5ea452f47b76a7c02982ed",
-      "created_at": "2026-11-20T06:19:41.921Z"
+      "content_hash": "cb6c3da4a85ff7923bd67b48b62fb23075405428266d6d8e994ccbe5b58a3fb5",
+      "created_at": "2026-11-23T07:28:54.656Z"
     },
     "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-core-invariants",
@@ -40308,6 +40310,24 @@
       "repository": "xerj-org-xerj-learnings",
       "content_hash": "926737abe07e7a950e7f39d43542d961ab1e1234b56b560f68dd1042e451e3b4",
       "created_at": "2026-11-23T06:22:34.817Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: AhmadHassan-BTed/Jantt Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ahmadhassan-bted-jantt-technical-construction-intelligence-ahmadhassan-bted-jant.md",
+      "repository": "AhmadHassan-BTed/Jantt",
+      "content_hash": "83e6775dcb408e8fd9d31864a45fd749356f38e5fed9e064af3cf48c0389f976",
+      "created_at": "2026-11-23T07:28:38.087Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ahmadhassan-bted-jantt-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ahmadhassan-bted-jantt-learnings-technical-construction-intelligence-ahmadhassan.md",
+      "repository": "ahmadhassan-bted-jantt-learnings",
+      "content_hash": "de938b4a64b63be1f63d70cd37c93c435f935a9764e406eb9dbeb0d32e417a8e",
+      "created_at": "2026-11-23T07:28:53.138Z"
     }
   }
 }

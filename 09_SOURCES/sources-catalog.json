@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "4874b36c48dd43898245af8a4002df86cbf807098fd62070db7033af720eca5a",
-    "lastHarvestedAt": "2026-11-18T22:06:53.726Z",
+    "contentHash": "e07357155fb841b15798bf4f843b4ca73a2acb2b9f8714c541ed9bd312e85f53",
+    "lastHarvestedAt": "2026-11-23T07:28:40.024Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -8643,10 +8643,10 @@
     "repository": "SimonSchubert/Kai",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/Kai",
-    "sourceVersion": "bc3f0916",
+    "sourceVersion": "dc4cc9b5",
     "license": "Apache-2.0",
-    "contentHash": "fac8a97cb2b3cf88369f350a9487cf7920221fe74c451c67fc3f04a14002cc81",
-    "lastHarvestedAt": "2026-11-20T06:19:28.913Z",
+    "contentHash": "545e9dab3bafa3fa9e00d02188cf24e3c5d2dfbd3fff828b572cc1558bb0a593",
+    "lastHarvestedAt": "2026-11-23T07:28:47.279Z",
     "learningId": "learn-github-simonschubert-kai"
   },
   "a4csi-schema-org-validate": {
@@ -13208,5 +13208,15 @@
     "contentHash": "1a00472834afbc88d394c75694c8897bbc868cdcef185de4fb9010edba99831a",
     "lastHarvestedAt": "2026-11-22T19:43:06.942Z",
     "learningId": "learn-github-yashabcyber7-nexadroid"
+  },
+  "ahmadhassan-bted-jantt": {
+    "repository": "AhmadHassan-BTed/Jantt",
+    "platform": "github",
+    "sourceUrl": "https://github.com/AhmadHassan-BTed/Jantt",
+    "sourceVersion": "49407b4a",
+    "license": "MIT",
+    "contentHash": "a3770f8666de2e69255401bf65c036bbbe53f338ccfd5f2631e4db95e7cfa1ea",
+    "lastHarvestedAt": "2026-11-23T07:28:37.582Z",
+    "learningId": "learn-github-ahmadhassan-bted-jantt"
   }
 }

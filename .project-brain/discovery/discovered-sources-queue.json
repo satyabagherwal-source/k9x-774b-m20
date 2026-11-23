@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T06:37:47.299Z",
+  "updated_at": "2026-11-23T07:28:52.615Z",
   "stats": {
-    "total_discovered": 7800,
-    "approved_pending_harvest": 7378,
+    "total_discovered": 7812,
+    "approved_pending_harvest": 7390,
     "harvested_count": 0,
     "rejected_count": 422,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7369,
+      "COMMUNITY_AND_EXPERT": 7381,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -168669,6 +168669,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-5D3FBFFABC9A": {
+      "id": "SRC-5D3FBFFABC9A",
+      "url": "https://github.com/AhmadHassan-BTed/Jantt",
+      "title": "https://github.com/AhmadHassan-BTed/Jantt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:51.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-493D8B18EF3A": {
+      "id": "SRC-493D8B18EF3A",
+      "url": "https://unpkg.com/@jantt/standalone",
+      "title": "https://unpkg.com/@jantt/standalone",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:51.906Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-C5426586405E": {
+      "id": "SRC-C5426586405E",
+      "url": "https://unpkg.com/@jantt/standalone/dist/jantt.css",
+      "title": "https://unpkg.com/@jantt/standalone/dist/jantt.css",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:51.976Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-AAC5B3934463": {
+      "id": "SRC-AAC5B3934463",
+      "url": "https://unpkg.com/@jantt",
+      "title": "https://unpkg.com/@jantt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.046Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-80FC44D64E9D": {
+      "id": "SRC-80FC44D64E9D",
+      "url": "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.9.16.tgz",
+      "title": "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.9.16.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-43D5D92E4DBC": {
+      "id": "SRC-43D5D92E4DBC",
+      "url": "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.14.7.tgz",
+      "title": "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.14.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.223Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-DDDF7E1788F5": {
+      "id": "SRC-DDDF7E1788F5",
+      "url": "https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.8.1.tgz",
+      "title": "https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.8.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-47FD6FA6C742": {
+      "id": "SRC-47FD6FA6C742",
+      "url": "https://registry.npmjs.org/@js-sdsl/ordered-map/-/ordered-map-4.4.2.tgz",
+      "title": "https://registry.npmjs.org/@js-sdsl/ordered-map/-/ordered-map-4.4.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.353Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-67F389C256D4": {
+      "id": "SRC-67F389C256D4",
+      "url": "https://opencollective.com/js-sdsl",
+      "title": "https://opencollective.com/js-sdsl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.419Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-EED2AF8F6E43": {
+      "id": "SRC-EED2AF8F6E43",
+      "url": "https://registry.npmjs.org/@microsoft/api-extractor/-/api-extractor-7.43.0.tgz",
+      "title": "https://registry.npmjs.org/@microsoft/api-extractor/-/api-extractor-7.43.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-B1EBF1500D5A": {
+      "id": "SRC-B1EBF1500D5A",
+      "url": "https://registry.npmjs.org/re2js/-/re2js-2.8.6.tgz",
+      "title": "https://registry.npmjs.org/re2js/-/re2js-2.8.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.549Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
+      }
+    },
+    "SRC-C0538AF06F60": {
+      "id": "SRC-C0538AF06F60",
+      "url": "https://registry.npmjs.org/re2js/-/re2js-2.10.0.tgz",
+      "title": "https://registry.npmjs.org/re2js/-/re2js-2.10.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T07:28:52.615Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+        "fileName": "ahmadhassan-bted-jantt-learnings.md"
       }
     }
   }

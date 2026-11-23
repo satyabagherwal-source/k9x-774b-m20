@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T07:18:36.384Z",
+  "last_updated": "2026-11-23T07:28:47.290Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1265,14 +1265,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "4874b36c48dd43898245af8a4002df86cbf807098fd62070db7033af720eca5a",
-      "verified_at": "2026-11-18T22:06:53.733Z",
+      "content_hash": "e07357155fb841b15798bf4f843b4ca73a2acb2b9f8714c541ed9bd312e85f53",
+      "verified_at": "2026-11-23T07:28:40.035Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T22:06:53.733Z"
+      "last_updated": "2026-11-23T07:28:40.035Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
@@ -13011,14 +13011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-kai",
-      "content_hash": "fac8a97cb2b3cf88369f350a9487cf7920221fe74c451c67fc3f04a14002cc81",
-      "verified_at": "2026-11-20T06:19:28.920Z",
+      "content_hash": "545e9dab3bafa3fa9e00d02188cf24e3c5d2dfbd3fff828b572cc1558bb0a593",
+      "verified_at": "2026-11-23T07:28:47.289Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:19:28.920Z"
+      "last_updated": "2026-11-23T07:28:47.289Z"
     },
     "a4csi/schema-org-validate": {
       "repository": "a4csi/schema-org-validate",
@@ -19934,6 +19934,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-22T19:43:06.954Z"
+    },
+    "AhmadHassan-BTed/Jantt": {
+      "repository": "AhmadHassan-BTed/Jantt",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ahmadhassan-bted-jantt",
+      "content_hash": "a3770f8666de2e69255401bf65c036bbbe53f338ccfd5f2631e4db95e7cfa1ea",
+      "verified_at": "2026-11-23T07:28:37.592Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-23T07:28:37.592Z"
     }
   },
   "repos": {

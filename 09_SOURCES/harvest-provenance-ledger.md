@@ -12326,3 +12326,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-11-23T07:05:27.999Z |
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-23T07:18:26.500Z |
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `13783c34` | Multi-dimensional audit evidence | 2026-11-23T07:18:36.375Z |
+| `learn-github-ahmadhassan-bted-jantt` | `https://github.com/AhmadHassan-BTed/Jantt` | `49407b4a` | Multi-dimensional audit evidence | 2026-11-23T07:28:37.582Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-23T07:28:40.024Z |
+| `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `dc4cc9b5` | Multi-dimensional audit evidence | 2026-11-23T07:28:47.279Z |

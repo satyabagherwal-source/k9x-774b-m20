@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T07:18:40.907Z",
+  "last_updated": "2026-11-23T07:28:54.437Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7222,14 +7222,14 @@
       "staged_date": "2026-11-12"
     },
     {
-      "id": "CD-A7UW",
+      "id": "CD-2S2T",
       "directive_title": "Upgrade dependencies",
       "source_repo": "simonschubert-kai-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-A7UW-upgrade-dependencies.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-2S2T-upgrade-dependencies.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-20",
+      "date_staged": "2026-11-23",
       "domain_letter": "F"
     },
     {
@@ -48862,6 +48862,37 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BF6761-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-2FAG",
+      "directive_title": "lock down realtime database room rules against role escalation and ta",
+      "source_repo": "AhmadHassan-BTed/Jantt",
+      "source_commit": "49407b4a",
+      "staged_file": "11_INBOX/candidate-directives/CD-2FAG-lock-down-realtime-database-room-rules-against-role-escalation-and-ta.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-2QWL",
+      "directive_title": "security): lock down realtime database room rules against role escalation and ta",
+      "source_repo": "ahmadhassan-bted-jantt-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2QWL-security-lock-down-realtime-database-room-rules-against-role-escalation-and-ta.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-3A7E5C",
+      "directive_title": "Upgrade dependencies",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "simonschubert-kai",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3A7E5C-upgrade-dependencies.md",
       "staged_date": "2026-11-23"
     }
   ]

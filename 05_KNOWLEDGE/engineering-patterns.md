@@ -750638,3 +750638,83 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `973c0a2e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10035. lock down realtime database room rules against role escalation and ta (Harvested from AhmadHassan-BTed/Jantt)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "lock down realtime database room rules against role escalation and ta",
+  "source": "AhmadHassan-BTed/Jantt",
+  "source_url": "https://github.com/AhmadHassan-BTed/Jantt",
+  "source_version": "49407b4a",
+  "license": "MIT",
+  "extracted_at": "2026-11-23T07:28:36.981Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ahmadhassan-bted-jantt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [AhmadHassan-BTed/Jantt](https://github.com/AhmadHassan-BTed/Jantt) (Revision: `49407b4a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `database.rules.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in AhmadHassan-BTed/Jantt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `52ec345e`: security): lock down realtime database room rules against role escalation and takeover. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `database.rules.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+          "$roomId": {
+            ".write": "auth != null && (auth.uid === $uid || root.child('rooms').child($roomId).child('meta/ownerUid').val() === auth.uid || root.child('rooms').child($roomId).child('members/' + auth.uid + '/role').val() === 'owner')"
+          }
+        ".write": "auth != null && ((!data.exists() && newData.child('meta/ownerUid').val() === auth.uid) || data.child('meta/ownerUid').val() === auth.uid || (data.child('members/' + auth.uid + '/role').val() === 'editor' && (!newData.exists() ? false : (newData.child('members').val() === data.child('members').val() && (!data.child('teams').exists() || newData.child('teams').val() === data.child('teams').val()) && newData.child('meta/ownerUid').val() === data.child('meta/ownerUid').val()))))",
+          ".write": "auth != null && ((!data.exists() && newData.child('ownerUid').val() === auth.uid) || data.child('ownerUid').val() === auth.uid || (data.parent().child('members/' + auth.uid + '/role').val() === 'editor' && newData.child('ownerUid').val() === data.child('ownerUid').val() && (!data.child('secretKey').exists() || newData.child('secretKey').val() === data.child('secretKey').val())))",
+          "ownerUid": {
+ 
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+          ".write": "auth != null"
+        ".write": "auth != null && (!data.exists() && newData.child('meta/ownerUid').val() === auth.uid || data.child('meta/ownerUid').val() === auth.uid || data.child('members/' + auth.uid + '/role').val() === 'owner' || data.child('members/' + auth.uid + '/role').val() === 'editor')",
+          ".write": "auth != null && (!data.exists() || data.parent().child('meta/ownerUid').val() === auth.uid || data.parent().child('members/' + auth.uid + '/role').val() === 'editor')"
+            ".write": "auth != null && (!data.parent().parent().exists() || data.parent().parent().child('meta/ownerUid').val() === auth.uid || auth.uid === $memberUid)"
+          ".write": "auth != null && (!data.parent().exists() || data.parent().child('meta/ownerUid').val() === auth.uid || data.parent().child('members/' + auth.uid + '/role').val() === 'editor')"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `52ec345e` are properly handled with clean fallback behavior.

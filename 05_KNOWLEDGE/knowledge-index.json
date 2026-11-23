@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T07:18:41.208Z",
-  "total_verified_learnings": 9077,
+  "last_updated": "2026-11-23T07:28:54.888Z",
+  "total_verified_learnings": 9078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23906,
+  "total_items": 23914,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -59944,13 +59944,13 @@
       "rule_number": 3545,
       "title": "Upgrade dependencies",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "bc3f0916",
+      "source_version": "dc4cc9b5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T06:19:28.725Z"
+      "verified_at": "2026-11-23T07:28:47.022Z"
     },
     "rule-3546": {
       "learning_id": "rule-3546",
@@ -224249,7 +224249,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "4874b36c48dd43898245af8a4002df86cbf807098fd62070db7033af720eca5a",
+      "content_hash": "e07357155fb841b15798bf4f843b4ca73a2acb2b9f8714c541ed9bd312e85f53",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [],
@@ -224258,7 +224258,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T22:06:53.537Z",
+      "verified_at": "2026-11-23T07:28:39.740Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224275,9 +224275,9 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b-chat-hf Core Invariants",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "1258f9f24f6e33c22b8ea6dec8168fcf92f7ba9b357bb5797f23c55ad1e2cb88",
+      "content_hash": "cd4afc438a40883d76161e38882d9c0d8385e6c56925a935f067310b0bf791a0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T22:06:53.896Z"
+      "persisted_at": "2026-11-23T07:28:40.307Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
@@ -224299,9 +224299,9 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-chat-hf-learnings Core Invariants",
       "repository": "hf-meta-llama-llama-2-7b-chat-hf-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a4cd87707cd401083aca69034546451263696d02cf5f887c2351155987ab4c3",
+      "content_hash": "3638bf0b6df8882f9bb1bb6b6851132e20a17ae522e3ee0c005be8dcc368ec4c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T22:06:57.602Z"
+      "persisted_at": "2026-11-23T07:28:53.840Z"
     },
     "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1": {
       "learning_id": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
@@ -303546,8 +303546,8 @@
       "slug": "simonschubert-kai",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "bc3f0916",
-      "content_hash": "fac8a97cb2b3cf88369f350a9487cf7920221fe74c451c67fc3f04a14002cc81",
+      "source_version": "dc4cc9b5",
+      "content_hash": "545e9dab3bafa3fa9e00d02188cf24e3c5d2dfbd3fff828b572cc1558bb0a593",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "promoted_rules": [
@@ -303562,7 +303562,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T06:19:28.725Z",
+      "verified_at": "2026-11-23T07:28:47.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -303575,13 +303575,13 @@
       "item_id": "candidate_directive-upgrade-dependencies",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-A7UW-upgrade-dependencies.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2S2T-upgrade-dependencies.md",
       "title": "Upgrade dependencies",
       "repository": "simonschubert-kai-learnings",
       "source_version": "HEAD",
-      "content_hash": "13baf6f62e9165da196a16b5202ba2495600c119b213022e9ac6baffba5db66c",
+      "content_hash": "4d442f2f2ccf4bd566fed0d3a0c2b082af5c7f13c15c33f74b8160bb84940f01",
       "domain_letter": "F",
-      "persisted_at": "2026-11-20T06:19:41.769Z"
+      "persisted_at": "2026-11-23T07:28:54.437Z"
     },
     "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants",
@@ -303590,10 +303590,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-simonschubert-kai-design-intelligence-simonschubert-kai-core-invariants.md",
       "title": "Design Intelligence: SimonSchubert/Kai Core Invariants",
       "repository": "SimonSchubert/Kai",
-      "source_version": "bc3f0916",
-      "content_hash": "2d764a63123633682cf0c572b59273d52c714a66e6d984f6f3f61f204f2f07d3",
+      "source_version": "dc4cc9b5",
+      "content_hash": "fc3412bf77c81a0b618021e6036be63e108c2139dc48a24eeadaf4717ec8f5ea",
       "domain_letter": "F",
-      "persisted_at": "2026-11-20T06:19:29.261Z"
+      "persisted_at": "2026-11-23T07:28:47.781Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-simonschubert-kai": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-simonschubert-kai",
@@ -303602,10 +303602,10 @@
       "relative_path": "08_VERIFICATION/simonschubert-kai-verification-protocol-empirical-defect-shield-for-simonschuber.md",
       "title": "Verification Protocol: Empirical Defect Shield for SimonSchubert/Kai",
       "repository": "SimonSchubert/Kai",
-      "source_version": "bc3f0916",
-      "content_hash": "18ed0d848165fd47339b2edbf8aa788cab49fe1014283dbb540d236036fb3f5b",
+      "source_version": "dc4cc9b5",
+      "content_hash": "2ab4c73bdef9b4f3fbe1e5e46cf42eab50cc750356aa95370dd24c8828f08494",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:19:29.404Z"
+      "persisted_at": "2026-11-23T07:28:48.001Z"
     },
     "rule-9527": {
       "learning_id": "rule-9527",
@@ -303641,9 +303641,9 @@
       "title": "Design Intelligence: simonschubert-kai-learnings Core Invariants",
       "repository": "simonschubert-kai-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1529bb4da55cb8ead216e4589356a3f09e99b381b5ea452f47b76a7c02982ed",
+      "content_hash": "cb6c3da4a85ff7923bd67b48b62fb23075405428266d6d8e994ccbe5b58a3fb5",
       "domain_letter": "F",
-      "persisted_at": "2026-11-20T06:19:41.921Z"
+      "persisted_at": "2026-11-23T07:28:54.656Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-simonschubert-kai-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-simonschubert-kai-learnings",
@@ -303653,9 +303653,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for simonschubert-kai-learnings",
       "repository": "simonschubert-kai-learnings",
       "source_version": "HEAD",
-      "content_hash": "670c668c8f64c244dae146fc57ef028f306ad8494f39433213948e86a121850f",
+      "content_hash": "1d85681edbe69925bd01456e68a465c4f9c236ae21e346cf6e84814abb425d7c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:19:42.090Z"
+      "persisted_at": "2026-11-23T07:28:54.888Z"
     },
     "learn-github-tmolavi-siteprobe": {
       "learning_id": "learn-github-tmolavi-siteprobe",
@@ -325579,6 +325579,125 @@
       "content_hash": "7b24f738492df71a2c8b0b1e37b1957fe0198a09cf7d9bf42a68b25b00654cd3",
       "domain_letter": "K",
       "persisted_at": "2026-11-23T07:18:40.231Z"
+    },
+    "learn-github-ahmadhassan-bted-jantt": {
+      "learning_id": "learn-github-ahmadhassan-bted-jantt",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AhmadHassan-BTed/Jantt",
+      "repository": "AhmadHassan-BTed/Jantt",
+      "slug": "ahmadhassan-bted-jantt",
+      "platform": "github",
+      "source_url": "https://github.com/AhmadHassan-BTed/Jantt",
+      "source_version": "49407b4a",
+      "content_hash": "a3770f8666de2e69255401bf65c036bbbe53f338ccfd5f2631e4db95e7cfa1ea",
+      "dossier_path": "07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ahmadhassan-bted-jantt-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10035,
+          "title": "lock down realtime database room rules against role escalation and ta",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T07:28:37.329Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10035": {
+      "learning_id": "rule-10035",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10035,
+      "title": "lock down realtime database room rules against role escalation and ta",
+      "source_url": "https://github.com/AhmadHassan-BTed/Jantt",
+      "source_version": "49407b4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T07:28:37.329Z"
+    },
+    "candidate_directive-lock-down-realtime-database-room-rules-against-role-escalation-and-ta": {
+      "item_id": "candidate_directive-lock-down-realtime-database-room-rules-against-role-escalation-and-ta",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2FAG-lock-down-realtime-database-room-rules-against-role-escalation-and-ta.md",
+      "title": "lock down realtime database room rules against role escalation and ta",
+      "repository": "AhmadHassan-BTed/Jantt",
+      "source_version": "49407b4a",
+      "content_hash": "409aa4ec3e93156710b2e82e870d38b0fc70b58ed6117555e630e7e5adf2fb7e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T07:28:37.870Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ahmadhassan-bted-jantt-technical-construction-intelligence-ahmadhassan-bted-jant.md",
+      "title": "Technical Construction Intelligence: AhmadHassan-BTed/Jantt Core Invariants",
+      "repository": "AhmadHassan-BTed/Jantt",
+      "source_version": "49407b4a",
+      "content_hash": "83e6775dcb408e8fd9d31864a45fd749356f38e5fed9e064af3cf48c0389f976",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T07:28:38.087Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-ahmadhassan-bted-jantt": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ahmadhassan-bted-jantt",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/ahmadhassan-bted-jantt-verification-protocol-empirical-defect-shield-for-ahmadha.md",
+      "title": "Verification Protocol: Empirical Defect Shield for AhmadHassan-BTed/Jantt",
+      "repository": "AhmadHassan-BTed/Jantt",
+      "source_version": "49407b4a",
+      "content_hash": "6d247bfd624a980cee86bf01437cfaa228cea43a4cb9dc147768431cc1b5f14a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T07:28:38.304Z"
+    },
+    "candidate_directive-security-lock-down-realtime-database-room-rules-against-role-escalation-and-ta": {
+      "item_id": "candidate_directive-security-lock-down-realtime-database-room-rules-against-role-escalation-and-ta",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2QWL-security-lock-down-realtime-database-room-rules-against-role-escalation-and-ta.md",
+      "title": "security): lock down realtime database room rules against role escalation and ta",
+      "repository": "ahmadhassan-bted-jantt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e4b50378e3c9582606e20e7905cbdc859252fcecedf5016a921fa4db7bdaa47",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T07:28:52.924Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ahmadhassan-bted-jantt-learnings-technical-construction-intelligence-ahmadhassan.md",
+      "title": "Technical Construction Intelligence: ahmadhassan-bted-jantt-learnings Core Invariants",
+      "repository": "ahmadhassan-bted-jantt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de938b4a64b63be1f63d70cd37c93c435f935a9764e406eb9dbeb0d32e417a8e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T07:28:53.138Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-ahmadhassan-bted-jantt-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ahmadhassan-bted-jantt-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/ahmadhassan-bted-jantt-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ahmadhassan-bted-jantt-learnings",
+      "repository": "ahmadhassan-bted-jantt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "67350a930b9f8ec54c05d0e3e07d2a3edea37dd5ef0a01579554f2173391efe7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T07:28:53.356Z"
     }
   },
   "ai-builder-brain": {

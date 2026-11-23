@@ -12293,3 +12293,6 @@
 | `CYCLE-20261123-8MUX` | `2026-11-23T07:05:27.993Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`eaf7ed6e...`) |
 | `CYCLE-20261123-PBJZ` | `2026-11-23T07:18:26.495Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`4f8e3326...`) |
 | `CYCLE-20261123-PJ6C` | `2026-11-23T07:18:36.372Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10034` | Yes (`26a2ad5c...`) |
+| `CYCLE-20261123-2F2H` | `2026-11-23T07:28:37.577Z` | `AhmadHassan-BTed/Jantt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10035` | Yes (`a3770f86...`) |
+| `CYCLE-20261123-2GYB` | `2026-11-23T07:28:40.019Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`e0735715...`) |
+| `CYCLE-20261123-2MJU` | `2026-11-23T07:28:47.274Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`545e9dab...`) |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T07:18:36.381Z",
-  "total_cycles_completed": 11690,
-  "total_learnings_persisted": 11690,
-  "total_rules_promoted": 10866,
+  "last_updated": "2026-11-23T07:28:47.285Z",
+  "total_cycles_completed": 11693,
+  "total_learnings_persisted": 11693,
+  "total_rules_promoted": 10868,
   "history": [
-    {
-      "timestamp": "2026-11-22T12:37:25.745Z",
-      "repository": "NativeScript/NativeScript",
-      "learningId": "learn-github-nativescript-nativescript",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T12:37:34.800Z",
-      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T12:57:02.385Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T12:57:04.128Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T07:18:36.381Z",
       "repository": "ShiftHackZ/SDAI-KMP",
       "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T07:28:37.588Z",
+      "repository": "AhmadHassan-BTed/Jantt",
+      "learningId": "learn-github-ahmadhassan-bted-jantt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T07:28:40.031Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T07:28:47.285Z",
+      "repository": "SimonSchubert/Kai",
+      "learningId": "learn-github-simonschubert-kai",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

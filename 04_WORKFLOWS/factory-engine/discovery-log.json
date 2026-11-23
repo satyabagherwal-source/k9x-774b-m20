@@ -21961,5 +21961,20 @@
     "qualityScore": 995,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-22T19:39:42.637Z"
+  },
+  {
+    "name": "Jantt",
+    "fullName": "AhmadHassan-BTed/Jantt",
+    "url": "https://github.com/AhmadHassan-BTed/Jantt",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Create interactive Gantt charts with AI — no code required, free forever. Built-in BYOK AI Copilot (10 providers + Ollama), free cloud rooms, working-calendar CPM, 6 views, React/Vue/Svelte/Python/MCP.",
+    "stars": 6237,
+    "forks": 23,
+    "openIssues": 0,
+    "language": "TypeScript",
+    "qualityScore": 3375,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-23T07:25:12.423Z"
   }
 ]

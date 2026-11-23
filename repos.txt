@@ -5314,3 +5314,7 @@ https://github.com/BaaRai/ARTEX
 # --- Automatically Discovered by AI Scout Engine [2026-11-22T19:43:00.286Z] ---
 # [AI-AGENTS] yashabcyber7/nexadroid (995 score) - 🤖📱 Production-Ready Multi-Agent AI Operating System for Android
 https://github.com/yashabcyber7/nexadroid
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-23T07:28:30.863Z] ---
+# [AI-AGENTS] AhmadHassan-BTed/Jantt (3375 score) - Create interactive Gantt charts with AI — no code required, free forever. Built-
+https://github.com/AhmadHassan-BTed/Jantt
