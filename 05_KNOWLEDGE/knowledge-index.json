@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T21:14:53.706Z",
+  "last_updated": "2026-11-23T21:23:18.368Z",
   "total_verified_learnings": 9086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24204,
+  "total_items": 24212,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -34114,13 +34114,13 @@
       "rule_number": 1692,
       "title": "build(deps): bump github/codeql-action/upload-sarif",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "fc10d048",
+      "source_version": "5f12fdd2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T05:14:46.386Z"
+      "verified_at": "2026-11-23T21:23:12.925Z"
     },
     "rule-1693": {
       "learning_id": "rule-1693",
@@ -223487,11 +223487,16 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "dd75b495",
-      "content_hash": "c38360b7bd945d400f2086a63f165baa343ca4a2cd7e17d43eec5d3035ac220a",
+      "source_version": "5f12fdd2",
+      "content_hash": "2b177507d201075b046a7c8faaa6f84bdaecfd03fb511c1a66155de8ab3e2353",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
+        {
+          "number": 1692,
+          "title": "build(deps): bump github/codeql-action/upload-sarif",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8431,
           "title": "allow large filesync pattern lists",
@@ -223528,7 +223533,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:40:22.413Z",
+      "verified_at": "2026-11-23T21:23:12.925Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223570,10 +223575,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "repository": "moby/buildkit",
-      "source_version": "dd75b495",
-      "content_hash": "be6e369d779734e1a74be4c83a7029e073c8d31ffb39cda27cbb889960602cda",
+      "source_version": "5f12fdd2",
+      "content_hash": "12d831ad1f5f25852167b8d8e95ddfc5d2d3a28d1a04e934b16f078ca06e11c0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T21:40:22.979Z"
+      "persisted_at": "2026-11-23T21:23:13.529Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
@@ -223582,10 +223587,10 @@
       "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
       "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
       "repository": "moby/buildkit",
-      "source_version": "dd75b495",
-      "content_hash": "6582a6dc764609802757ed6ff51971807391cce7e3f9a5e50b85edfa95090436",
+      "source_version": "5f12fdd2",
+      "content_hash": "8b88a52311b8d59745222a81710e654ec229c6fe4fdb44d1fbd032e75c40fde4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:40:23.145Z"
+      "persisted_at": "2026-11-23T21:23:13.700Z"
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -229676,8 +229681,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "6cb727eb",
-      "content_hash": "05d2cf3a6fe1d39f4e83d31cd85d40a7b1632d98e3379fa9a34fd5aeb58c53f2",
+      "source_version": "d486e054",
+      "content_hash": "8871071470abab78c850ad4b015cc6343ce932595f20f446f8a2eedfdc68e8b8",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -229710,6 +229715,11 @@
           "number": 9922,
           "title": "wheel notches scroll a row at once, easing only the newest step",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10126,
+          "title": "add conditional ui location for zoomed rex pane",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229717,7 +229727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T10:54:50.198Z",
+      "verified_at": "2026-11-23T21:23:04.868Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229771,10 +229781,10 @@
       "relative_path": "08_VERIFICATION/zenbu-labs-terminal-browser-verification-protocol-empirical-defect-shield-for-ze.md",
       "title": "Verification Protocol: Empirical Defect Shield for zenbu-labs/terminal-browser",
       "repository": "zenbu-labs/terminal-browser",
-      "source_version": "6cb727eb",
-      "content_hash": "0646bfe40f6f69ebb1d4d3e1ee3c3aec2fa49dec0f7da0eff8da811f1257fd3c",
+      "source_version": "d486e054",
+      "content_hash": "ece854f91aa8cd9b7bd4aafb092985cf084ae53d64dbae20b66aef22f516ea35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:54:51.138Z"
+      "persisted_at": "2026-11-23T21:23:05.654Z"
     },
     "learn-github-okteto-okteto": {
       "learning_id": "learn-github-okteto-okteto",
@@ -230340,9 +230350,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zenbu-labs-terminal-browser-learnings",
       "repository": "zenbu-labs-terminal-browser-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e6b13229a4431945826578e093f014123d4463e63f94854f311c8e38149a3e1",
+      "content_hash": "03a7631a970e3a470ed23811421fab286fb3da9d35540fc0789ea95a1f1e01ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:55:07.163Z"
+      "persisted_at": "2026-11-23T21:23:17.191Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva",
@@ -240640,7 +240650,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "55aec4fda4864a4799534e3adb1b2ab83a91e614f4274da00891be394d850c45",
+      "content_hash": "83c1d584b4afbdbe3781cabb2c2d0504ed00614622a2b75f33e058ea06c4c5fd",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "promoted_rules": [],
@@ -240649,7 +240659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T14:28:19.887Z",
+      "verified_at": "2026-11-23T21:23:03.063Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240662,13 +240672,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "59ddec342c1461ce12ed555c30bb79361547830bbbfec33b0250de5873577879",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "content_hash": "9e282991a6e0da9f52b24b666e3356f43749a2a6b63bcc7e389d6ca0772a725f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T16:29:01.734Z"
+      "persisted_at": "2026-11-23T21:23:03.519Z"
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -240781,9 +240791,9 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings Core Invariants",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings",
       "source_version": "HEAD",
-      "content_hash": "763dfdb0e55872253d1c7bbb0e9aa10e100aedb3e51e304916cccb324303a223",
+      "content_hash": "7de38046cb2d978a2b98466c3bffc06c2f204b5a7f1b0e45f053996e47952b09",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T14:28:41.224Z"
+      "persisted_at": "2026-11-23T21:23:17.566Z"
     },
     "candidate_directive-normalize-move-caa-and-openpgpkey-checks-to-their-makers": {
       "item_id": "candidate_directive-normalize-move-caa-and-openpgpkey-checks-to-their-makers",
@@ -264857,14 +264867,19 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "0f1f0a6a",
-      "content_hash": "4dd921dc7916009554cb49bda9b010d9b823f307f9b51797c50c8cb66a5da199",
+      "source_version": "b74e3fe6",
+      "content_hash": "ae35633117a3974c1eb6eb339b93fbeac6da44105f451d8f3e265092addb7add",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
         {
           "number": 8815,
           "title": "记录 2.3.0 build 68 完整验证与 CI 修复",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10127,
+          "title": "将 AppPorts 2.4.0 构建号更新至 91",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -264873,7 +264888,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T22:39:46.016Z",
+      "verified_at": "2026-11-23T21:23:10.699Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264915,10 +264930,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
       "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
       "repository": "wzh4869/AppPorts",
-      "source_version": "0f1f0a6a",
-      "content_hash": "6bb6f6ac5fd8b28284351cd0650d79979d67de054446d28168a30daf57fbec51",
+      "source_version": "b74e3fe6",
+      "content_hash": "f0ce0b32b4d23fb02f7b10c673c1774145c19da65e51ec7ba08ab6eb490c1cd1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T22:39:46.580Z"
+      "persisted_at": "2026-11-23T21:23:11.324Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports",
@@ -264927,10 +264942,10 @@
       "relative_path": "08_VERIFICATION/wzh4869-appports-verification-protocol-empirical-defect-shield-for-wzh4869-apppo.md",
       "title": "Verification Protocol: Empirical Defect Shield for wzh4869/AppPorts",
       "repository": "wzh4869/AppPorts",
-      "source_version": "0f1f0a6a",
-      "content_hash": "96772928d7bd89e1d2f69cabcb0ab63294d395979b103247381cbd4937afa19c",
+      "source_version": "b74e3fe6",
+      "content_hash": "a4a17cc234fab3a8ce2984a29148d2c5908fff47314a176a3a4a297cbf292169",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:39:46.724Z"
+      "persisted_at": "2026-11-23T21:23:11.514Z"
     },
     "learn-github-kubeedge-kubeedge": {
       "learning_id": "learn-github-kubeedge-kubeedge",
@@ -265126,9 +265141,9 @@
       "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
       "repository": "wzh4869-appports-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c65e8da15a9c282e74a95ed3213b0c96d984ebf981a95ef63b6ef339aee41b4",
+      "content_hash": "80a08c35f9747c00dc22b7ee99ba3164e4d46e796b329c96b0ad6ff61065e43c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T22:41:40.087Z"
+      "persisted_at": "2026-11-23T21:23:18.185Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports-learnings",
@@ -265138,9 +265153,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for wzh4869-appports-learnings",
       "repository": "wzh4869-appports-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e8e3790bf6e9f60944ec251ba8daee5240416c147d8ef44617905feb23a3e8d",
+      "content_hash": "78cde0bbbf256883abefe8a07c155e698596e85460c721fac691d3fc4c4cdf8c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:41:40.246Z"
+      "persisted_at": "2026-11-23T21:23:18.368Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
@@ -329959,6 +329974,106 @@
       "content_hash": "be0d7ea7e0186b1bd06b2a52ac37699df5bf6e5d4191ae765589486a32584067",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T21:14:51.702Z"
+    },
+    "rule-10126": {
+      "learning_id": "rule-10126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10126,
+      "title": "add conditional ui location for zoomed rex pane",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "d486e054",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:23:04.868Z"
+    },
+    "candidate_directive-add-conditional-ui-location-for-zoomed-rex-pane": {
+      "item_id": "candidate_directive-add-conditional-ui-location-for-zoomed-rex-pane",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VSH8-add-conditional-ui-location-for-zoomed-rex-pane.md",
+      "title": "add conditional ui location for zoomed rex pane",
+      "repository": "zenbu-labs-terminal-browser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "02253a71193a4d3088c64d424dce47f8afa8101069ea59b04212c50242ab201b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-23T21:23:16.848Z"
+    },
+    "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-zenbu-labs-terminal-browser-design-intelligence-zenbu-labs-terminal-browser-core.md",
+      "title": "Design Intelligence: zenbu-labs/terminal-browser Core Invariants",
+      "repository": "zenbu-labs/terminal-browser",
+      "source_version": "d486e054",
+      "content_hash": "00c6396c76e8541cda12bb32f9a8676a73ef96a892ca2cd0a87f86c9d83e2e1e",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-23T21:23:05.477Z"
+    },
+    "rule-10127": {
+      "learning_id": "rule-10127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10127,
+      "title": "将 AppPorts 2.4.0 构建号更新至 91",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "b74e3fe6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T21:23:10.700Z"
+    },
+    "candidate_directive-appports-2-4-0-91": {
+      "item_id": "candidate_directive-appports-2-4-0-91",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VO30-appports-2-4-0-91.md",
+      "title": "将 AppPorts 2.4.0 构建号更新至 91",
+      "repository": "wzh4869/AppPorts",
+      "source_version": "b74e3fe6",
+      "content_hash": "da2e7fe3550475dd9eaebad68fd40ade960e4007194aa60176c390bd90df9772",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T21:23:11.152Z"
+    },
+    "candidate_directive-build-deps-bump-github-codeql-action-upload-sarif": {
+      "item_id": "candidate_directive-build-deps-bump-github-codeql-action-upload-sarif",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VPSI-build-deps-bump-github-codeql-action-upload-sarif.md",
+      "title": "build(deps): bump github/codeql-action/upload-sarif",
+      "repository": "moby/buildkit",
+      "source_version": "5f12fdd2",
+      "content_hash": "ef5242a9e7d873e073e43df6fb43a51b57bb70dbea5dcc99d601d5c8d756d040",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T21:23:13.363Z"
+    },
+    "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-zenbu-labs-terminal-browser-learnings-design-intelligence-zenbu-labs-terminal-br.md",
+      "title": "Design Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
+      "repository": "zenbu-labs-terminal-browser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ac9200059b31532242dcc8d90e802007c465e5573b8cee39ba084abb82a9b84",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-23T21:23:17.018Z"
+    },
+    "candidate_directive-build-appports-2-4-0-91": {
+      "item_id": "candidate_directive-build-appports-2-4-0-91",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VTDP-build-appports-2-4-0-91.md",
+      "title": "build): 将 AppPorts 2.4.0 构建号更新至 91",
+      "repository": "wzh4869-appports-learnings",
+      "source_version": "HEAD",
+      "content_hash": "125835a2575612118b2bf4fd2a1fa61524ac05bc9930dbbe8a64852596837c7b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T21:23:18.016Z"
     }
   },
   "ai-builder-brain": {

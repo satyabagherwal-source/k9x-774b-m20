@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T21:14:47.634Z",
-  "total_cycles_completed": 11860,
-  "total_learnings_persisted": 11860,
-  "total_rules_promoted": 10967,
+  "last_updated": "2026-11-23T21:23:13.140Z",
+  "total_cycles_completed": 11864,
+  "total_learnings_persisted": 11864,
+  "total_rules_promoted": 10970,
   "history": [
-    {
-      "timestamp": "2026-11-23T04:58:22.007Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T04:58:23.664Z",
-      "repository": "Kuberwastaken/claurst",
-      "learningId": "learn-github-kuberwastaken-claurst",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T05:06:32.449Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-openai-whisper-large-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T05:06:39.960Z",
-      "repository": "EhPanda-Team/EhPanda",
-      "learningId": "learn-github-ehpanda-team-ehpanda",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T05:06:41.945Z",
       "repository": "Agent-Field/agentfield",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-23T21:14:47.634Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:23:03.310Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:23:05.089Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:23:10.925Z",
+      "repository": "wzh4869/AppPorts",
+      "learningId": "learn-github-wzh4869-appports",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:23:13.140Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

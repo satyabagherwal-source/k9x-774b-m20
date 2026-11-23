@@ -12505,3 +12505,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-23T21:14:41.221Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `97f97c86` | Multi-dimensional audit evidence | 2026-11-23T21:14:41.246Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `4a2be30a` | Multi-dimensional audit evidence | 2026-11-23T21:14:47.627Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-23T21:23:03.305Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `d486e054` | Multi-dimensional audit evidence | 2026-11-23T21:23:05.084Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `b74e3fe6` | Multi-dimensional audit evidence | 2026-11-23T21:23:10.920Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `5f12fdd2` | Multi-dimensional audit evidence | 2026-11-23T21:23:13.134Z |

@@ -12472,3 +12472,7 @@
 | `CYCLE-20261123-KQM6` | `2026-11-23T21:14:41.214Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`9574cb32...`) |
 | `CYCLE-20261123-KQMX` | `2026-11-23T21:14:41.241Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10124` | Yes (`bd7d0f17...`) |
 | `CYCLE-20261123-KVK6` | `2026-11-23T21:14:47.622Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10125` | Yes (`66785eb0...`) |
+| `CYCLE-20261123-VI10` | `2026-11-23T21:23:03.300Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`83c1d584...`) |
+| `CYCLE-20261123-VJEG` | `2026-11-23T21:23:05.080Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10126` | Yes (`88710714...`) |
+| `CYCLE-20261123-VNWJ` | `2026-11-23T21:23:10.915Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10127` | Yes (`ae356331...`) |
+| `CYCLE-20261123-VPM1` | `2026-11-23T21:23:13.129Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`2b177507...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T21:14:53.914Z",
+  "last_updated": "2026-11-23T21:23:18.510Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T20:00:24.380Z",
@@ -1353,7 +1353,7 @@
       "staged_for_review": 1
     },
     "zenbu-labs-terminal-browser-learnings.md": {
-      "processed_at": "2026-11-22T10:55:06.370Z",
+      "processed_at": "2026-11-23T21:23:16.510Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1718,7 +1718,7 @@
       "staged_for_review": 0
     },
     "wzh4869-appports-learnings.md": {
-      "processed_at": "2026-11-20T22:41:39.655Z",
+      "processed_at": "2026-11-23T21:23:17.759Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2798,7 +2798,7 @@
       "staged_for_review": 1
     },
     "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md": {
-      "processed_at": "2026-11-19T14:28:41.008Z",
+      "processed_at": "2026-11-23T21:23:17.355Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3783,7 +3783,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3528,
+  "total_dossiers_evaluated": 3531,
   "total_canonical_promoted": 490,
-  "total_staged_for_review": 2646
+  "total_staged_for_review": 2649
 }

@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "55aec4fda4864a4799534e3adb1b2ab83a91e614f4274da00891be394d850c45",
-    "lastHarvestedAt": "2026-11-19T14:28:20.110Z",
+    "contentHash": "83c1d584b4afbdbe3781cabb2c2d0504ed00614622a2b75f33e058ea06c4c5fd",
+    "lastHarvestedAt": "2026-11-23T21:23:03.305Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "dd75b495",
+    "sourceVersion": "5f12fdd2",
     "license": "Apache-2.0",
-    "contentHash": "c38360b7bd945d400f2086a63f165baa343ca4a2cd7e17d43eec5d3035ac220a",
-    "lastHarvestedAt": "2026-11-21T21:40:22.606Z",
+    "contentHash": "2b177507d201075b046a7c8faaa6f84bdaecfd03fb511c1a66155de8ab3e2353",
+    "lastHarvestedAt": "2026-11-23T21:23:13.134Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "6cb727eb",
+    "sourceVersion": "d486e054",
     "license": "MIT",
-    "contentHash": "05d2cf3a6fe1d39f4e83d31cd85d40a7b1632d98e3379fa9a34fd5aeb58c53f2",
-    "lastHarvestedAt": "2026-11-22T10:54:50.440Z",
+    "contentHash": "8871071470abab78c850ad4b015cc6343ce932595f20f446f8a2eedfdc68e8b8",
+    "lastHarvestedAt": "2026-11-23T21:23:05.084Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -9823,10 +9823,10 @@
     "repository": "wzh4869/AppPorts",
     "platform": "github",
     "sourceUrl": "https://github.com/wzh4869/AppPorts",
-    "sourceVersion": "0f1f0a6a",
+    "sourceVersion": "b74e3fe6",
     "license": "Apache-2.0",
-    "contentHash": "4dd921dc7916009554cb49bda9b010d9b823f307f9b51797c50c8cb66a5da199",
-    "lastHarvestedAt": "2026-11-20T22:39:46.198Z",
+    "contentHash": "ae35633117a3974c1eb6eb339b93fbeac6da44105f451d8f3e265092addb7add",
+    "lastHarvestedAt": "2026-11-23T21:23:10.920Z",
     "learningId": "learn-github-wzh4869-appports"
   },
   "andythefactory-newspaper4k": {

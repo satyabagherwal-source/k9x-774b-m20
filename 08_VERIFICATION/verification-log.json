@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-5US4",
-    "timestamp": "2026-11-21T23:47:44.020Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-5XHO",
-    "timestamp": "2026-11-21T23:47:47.532Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-FVQ1",
-    "timestamp": "2026-11-21T23:55:31.801Z",
-    "repository": "SulphurAI/Sulphur-3",
-    "learningId": "learn-huggingface-fusioncow-sulphur-3",
-    "contentHash": "3bbf7a4a075c1c933d3d23831ecc9844aebf8d8ba5a61639093fa8a3d8590551",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-G7Q4",
-    "timestamp": "2026-11-21T23:55:47.356Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "b0c6615f858f3b5aaa9b069eb32b9aaa014182d266f7bf0a8e010bb64bb529a0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-Y7N9",
     "timestamp": "2026-11-22T00:09:47.061Z",
     "repository": "xiaomi-research/Xiaomi-OCR-0",
@@ -7490,6 +7430,66 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "66785eb0ec4710c131fce27f5236564106b77136f5d43029c65b742dd65700f5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-VI10",
+    "timestamp": "2026-11-23T21:23:03.300Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+    "contentHash": "83c1d584b4afbdbe3781cabb2c2d0504ed00614622a2b75f33e058ea06c4c5fd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-VJEG",
+    "timestamp": "2026-11-23T21:23:05.080Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "8871071470abab78c850ad4b015cc6343ce932595f20f446f8a2eedfdc68e8b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-VNWJ",
+    "timestamp": "2026-11-23T21:23:10.915Z",
+    "repository": "wzh4869/AppPorts",
+    "learningId": "learn-github-wzh4869-appports",
+    "contentHash": "ae35633117a3974c1eb6eb339b93fbeac6da44105f451d8f3e265092addb7add",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-VPM1",
+    "timestamp": "2026-11-23T21:23:13.129Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "2b177507d201075b046a7c8faaa6f84bdaecfd03fb511c1a66155de8ab3e2353",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

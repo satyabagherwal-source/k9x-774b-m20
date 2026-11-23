@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T21:14:53.483Z",
-  "total_records": 2452,
+  "last_updated": "2026-11-23T21:23:18.185Z",
+  "total_records": 2454,
   "domains": {
     "A": {
       "total": 20,
@@ -1019,7 +1019,7 @@
       ]
     },
     "F": {
-      "total": 99,
+      "total": 101,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1119,7 +1119,9 @@
         "domain_intelligence-design-intelligence-akhilaaa3-jev-omni-core-invariants",
         "DOM-F-892076A7",
         "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
-        "domain_intelligence-design-intelligence-sqlpage-sqlpage-core-invariants"
+        "domain_intelligence-design-intelligence-sqlpage-sqlpage-core-invariants",
+        "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-core-invariants",
+        "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants"
       ]
     },
     "G": {
@@ -13297,8 +13299,8 @@
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "repository": "moby/buildkit",
-      "content_hash": "be6e369d779734e1a74be4c83a7029e073c8d31ffb39cda27cbb889960602cda",
-      "created_at": "2026-11-21T21:40:22.979Z"
+      "content_hash": "12d831ad1f5f25852167b8d8e95ddfc5d2d3a28d1a04e934b16f078ca06e11c0",
+      "created_at": "2026-11-23T21:23:13.529Z"
     },
     "DOM-D-F2B017DF": {
       "record_id": "DOM-D-F2B017DF",
@@ -18851,10 +18853,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "59ddec342c1461ce12ed555c30bb79361547830bbbfec33b0250de5873577879",
-      "created_at": "2026-11-22T16:29:01.734Z"
+      "content_hash": "9e282991a6e0da9f52b24b666e3356f43749a2a6b63bcc7e389d6ca0772a725f",
+      "created_at": "2026-11-23T21:23:03.519Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -18871,8 +18873,8 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-learnings-research-knowledge-in.md",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings",
-      "content_hash": "763dfdb0e55872253d1c7bbb0e9aa10e100aedb3e51e304916cccb324303a223",
-      "created_at": "2026-11-19T14:28:41.224Z"
+      "content_hash": "7de38046cb2d978a2b98466c3bffc06c2f204b5a7f1b0e45f053996e47952b09",
+      "created_at": "2026-11-23T21:23:17.566Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants",
@@ -25310,8 +25312,8 @@
       "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
       "repository": "wzh4869/AppPorts",
-      "content_hash": "6bb6f6ac5fd8b28284351cd0650d79979d67de054446d28168a30daf57fbec51",
-      "created_at": "2026-11-20T22:39:46.580Z"
+      "content_hash": "f0ce0b32b4d23fb02f7b10c673c1774145c19da65e51ec7ba08ab6eb490c1cd1",
+      "created_at": "2026-11-23T21:23:11.324Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants",
@@ -25337,8 +25339,8 @@
       "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-learnings-architecture-intelligence-wzh4869-appports-learnings-.md",
       "repository": "wzh4869-appports-learnings",
-      "content_hash": "8c65e8da15a9c282e74a95ed3213b0c96d984ebf981a95ef63b6ef339aee41b4",
-      "created_at": "2026-11-20T22:41:40.087Z"
+      "content_hash": "80a08c35f9747c00dc22b7ee99ba3164e4d46e796b329c96b0ad6ff61065e43c",
+      "created_at": "2026-11-23T21:23:18.185Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
@@ -41129,6 +41131,24 @@
       "repository": "ClickHouse/ClickHouse",
       "content_hash": "25a312e70301be612582338a785fc00a5b74e839c1ee2e22dd65f852269bb0be",
       "created_at": "2026-11-23T21:14:48.139Z"
+    },
+    "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: zenbu-labs/terminal-browser Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-zenbu-labs-terminal-browser-design-intelligence-zenbu-labs-terminal-browser-core.md",
+      "repository": "zenbu-labs/terminal-browser",
+      "content_hash": "00c6396c76e8541cda12bb32f9a8676a73ef96a892ca2cd0a87f86c9d83e2e1e",
+      "created_at": "2026-11-23T21:23:05.477Z"
+    },
+    "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-zenbu-labs-terminal-browser-learnings-design-intelligence-zenbu-labs-terminal-br.md",
+      "repository": "zenbu-labs-terminal-browser-learnings",
+      "content_hash": "2ac9200059b31532242dcc8d90e802007c465e5573b8cee39ba084abb82a9b84",
+      "created_at": "2026-11-23T21:23:17.018Z"
     }
   }
 }

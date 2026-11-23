@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T21:14:47.639Z",
+  "last_updated": "2026-11-23T21:23:13.143Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "c38360b7bd945d400f2086a63f165baa343ca4a2cd7e17d43eec5d3035ac220a",
-      "verified_at": "2026-11-21T21:40:22.613Z",
+      "content_hash": "2b177507d201075b046a7c8faaa6f84bdaecfd03fb511c1a66155de8ab3e2353",
+      "verified_at": "2026-11-23T21:23:13.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:40:22.613Z"
+      "last_updated": "2026-11-23T21:23:13.142Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "05d2cf3a6fe1d39f4e83d31cd85d40a7b1632d98e3379fa9a34fd5aeb58c53f2",
-      "verified_at": "2026-11-22T10:54:50.451Z",
+      "content_hash": "8871071470abab78c850ad4b015cc6343ce932595f20f446f8a2eedfdc68e8b8",
+      "verified_at": "2026-11-23T21:23:05.093Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:54:50.451Z"
+      "last_updated": "2026-11-23T21:23:05.093Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",
@@ -14781,14 +14781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wzh4869-appports",
-      "content_hash": "4dd921dc7916009554cb49bda9b010d9b823f307f9b51797c50c8cb66a5da199",
-      "verified_at": "2026-11-20T22:39:46.233Z",
+      "content_hash": "ae35633117a3974c1eb6eb339b93fbeac6da44105f451d8f3e265092addb7add",
+      "verified_at": "2026-11-23T21:23:10.928Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T22:39:46.233Z"
+      "last_updated": "2026-11-23T21:23:10.928Z"
     },
     "AndyTheFactory/newspaper4k": {
       "repository": "AndyTheFactory/newspaper4k",
@@ -17810,15 +17810,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "6b3ff9c82f2b218919a9b7bd7b0e20fce3b1bdb974a3a53bc882811ec4fa61e6",
-      "verified_at": "2026-11-22T16:29:01.493Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "content_hash": "83c1d584b4afbdbe3781cabb2c2d0504ed00614622a2b75f33e058ea06c4c5fd",
+      "verified_at": "2026-11-23T21:23:03.313Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:29:01.493Z"
+      "last_updated": "2026-11-23T21:23:03.313Z"
     },
     "agentlas-ai/Agentlas-OS": {
       "repository": "agentlas-ai/Agentlas-OS",
