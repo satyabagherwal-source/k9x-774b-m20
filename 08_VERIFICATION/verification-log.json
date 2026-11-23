@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-XP48",
-    "timestamp": "2026-11-21T13:53:31.496Z",
-    "repository": "watchexec/watchexec",
-    "learningId": "learn-github-watchexec-watchexec",
-    "contentHash": "ab79c0af4b8083275d9a9b35d971f85cc9fe3429af433995706485a8f3b32eb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-XT1K",
     "timestamp": "2026-11-21T13:53:36.584Z",
     "repository": "karakeep-app/karakeep",
@@ -7492,6 +7477,21 @@
     "contentHash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-XL6X",
+    "timestamp": "2026-11-23T15:20:45.705Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "ac9cd589f5000be6a131ad49c90cbb0dd119c47310853ab7b5a0a11f3061edf5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

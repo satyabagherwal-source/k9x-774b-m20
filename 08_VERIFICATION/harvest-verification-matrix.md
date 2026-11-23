@@ -12348,3 +12348,4 @@
 | `CYCLE-20261123-N1QN` | `2026-11-23T15:12:33.935Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`084f3f60...`) |
 | `CYCLE-20261123-NBCJ` | `2026-11-23T15:12:46.387Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10058` | Yes (`dc9e1791...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T15:13:16.123Z` | `hf-tenstrip-10eros-max` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-864519D2` [Domain D] | Yes (`e984ae6b...`) |
+| `CYCLE-20261123-XL6X` | `2026-11-23T15:20:45.705Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`ac9cd589...`) |

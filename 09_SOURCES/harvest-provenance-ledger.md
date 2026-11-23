@@ -12381,3 +12381,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T15:12:33.939Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `3fa285c4` | Multi-dimensional audit evidence | 2026-11-23T15:12:46.391Z |
 | `learn-dom-d-864519d2` | `project://hf-tenstrip-10eros-max` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md` | 2026-11-23T15:13:16.123Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-23T15:20:45.708Z |
