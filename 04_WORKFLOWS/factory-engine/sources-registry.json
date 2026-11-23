@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T09:48:40.338Z",
-    "lastVerified": "2026-11-23T09:48:40.338Z",
+    "lastChecked": "2026-11-23T13:07:02.185Z",
+    "lastVerified": "2026-11-23T13:07:02.185Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T08:33:15.769Z",
+    "lastChecked": "2026-11-23T13:06:57.007Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T08:33:15.769Z"
+    "lastVerified": "2026-11-23T13:06:57.007Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1149,14 +1149,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T03:27:53.505Z",
-    "lastVerified": "2026-11-23T03:27:53.505Z",
+    "lastChecked": "2026-11-23T13:06:57.778Z",
+    "lastVerified": "2026-11-23T13:06:57.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "95ad893396affc32565765622c7c770a0ad121be8b69dca5952dfb58a90cb4dc",
+    "contentHash": "0f5bbb7e880550e53378f08bf7c8ca0dd2e5a51bb4ccf50f9295fdb971c2e6aa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3956,9 +3956,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-22T06:36:15.877Z",
+    "lastChecked": "2026-11-23T13:06:54.212Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-22T06:36:15.877Z"
+    "lastVerified": "2026-11-23T13:06:54.212Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -5435,22 +5435,21 @@
     "lastVerified": "2026-11-22T03:54:06.927Z"
   },
   "bridgecrewio-checkov": {
-    "name": "checkov",
+    "name": "bridgecrewio/checkov",
     "officialUrl": "https://github.com/bridgecrewio/checkov",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-22T07:37:07.519Z",
-    "lastVerified": "2026-11-22T07:37:07.519Z",
+    "lastChecked": "2026-11-23T13:06:53.999Z",
+    "lastVerified": "2026-11-23T13:06:53.999Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bridgecrewio-checkov",
-    "contentHash": "0072a4b4236687a668da16f6d6332567198030c6c3e47292a0671d62cd6edf7a",
+    "contentHash": "6ba557375b0824ce42b2d5ef18d5cc919ae2afa0fbcaf2d06e513d7d4e9bfe18",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "28694608"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -5526,12 +5525,12 @@
     "officialUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T23:34:40.337Z",
-    "lastVerified": "2026-11-18T23:34:40.337Z",
+    "lastChecked": "2026-11-23T13:06:44.242Z",
+    "lastVerified": "2026-11-23T13:06:44.242Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "2f28419bb7d9a57cbf7d4429850547e62cab60a5ca8dc944f39ec9db6ae1bb9c",
+    "contentHash": "fd821a8c8f02ec43f57a62df10fb3604fbd4d33bab88cc82cd9f0ad40546f6ea",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10173,9 +10172,9 @@
   "realm-realm-kotlin": {
     "name": "realm-kotlin",
     "officialUrl": "https://github.com/realm/realm-kotlin",
-    "lastChecked": "2026-11-20T08:28:25.998Z",
+    "lastChecked": "2026-11-23T13:06:46.835Z",
     "revisionIdentifier": "9cdc4556",
-    "lastVerified": "2026-11-20T08:28:25.998Z"
+    "lastVerified": "2026-11-23T13:06:46.835Z"
   },
   "jafforgehq-site-analytics-tool": {
     "name": "site-analytics-tool",
@@ -14617,6 +14616,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "el4cteo-fast-anything": {
+    "name": "EL4CTEO/fast-anything",
+    "officialUrl": "https://github.com/EL4CTEO/fast-anything",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-23T13:06:45.604Z",
+    "lastVerified": "2026-11-23T13:06:45.604Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-el4cteo-fast-anything",
+    "contentHash": "df4143a6081a9c2f20066d56c06238923e500fe99c0c74966ddbcce87fb65820",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

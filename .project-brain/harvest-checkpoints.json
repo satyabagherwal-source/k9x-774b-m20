@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T09:48:37.112Z",
+  "last_updated": "2026-11-23T13:06:58.698Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "2f28419bb7d9a57cbf7d4429850547e62cab60a5ca8dc944f39ec9db6ae1bb9c",
-      "verified_at": "2026-11-18T23:34:41.000Z",
+      "content_hash": "fd821a8c8f02ec43f57a62df10fb3604fbd4d33bab88cc82cd9f0ad40546f6ea",
+      "verified_at": "2026-11-23T13:06:45.031Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:34:41.000Z"
+      "last_updated": "2026-11-23T13:06:45.031Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "4c6db895658d70a194b2176c3fb1b5fbc4a574ad8abb56ae33d755887283fc74",
-      "verified_at": "2026-11-23T06:37:42.914Z",
+      "content_hash": "0f5bbb7e880550e53378f08bf7c8ca0dd2e5a51bb4ccf50f9295fdb971c2e6aa",
+      "verified_at": "2026-11-23T13:06:58.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T06:37:42.914Z"
+      "last_updated": "2026-11-23T13:06:58.697Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -7791,14 +7791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bridgecrewio-checkov",
-      "content_hash": "0072a4b4236687a668da16f6d6332567198030c6c3e47292a0671d62cd6edf7a",
-      "verified_at": "2026-11-20T04:02:33.956Z",
+      "content_hash": "6ba557375b0824ce42b2d5ef18d5cc919ae2afa0fbcaf2d06e513d7d4e9bfe18",
+      "verified_at": "2026-11-23T13:06:55.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T04:02:33.956Z"
+      "last_updated": "2026-11-23T13:06:55.277Z"
     },
     "apache/zookeeper": {
       "repository": "apache/zookeeper",
@@ -19964,6 +19964,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-23T09:48:26.183Z"
+    },
+    "EL4CTEO/fast-anything": {
+      "repository": "EL4CTEO/fast-anything",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-el4cteo-fast-anything",
+      "content_hash": "df4143a6081a9c2f20066d56c06238923e500fe99c0c74966ddbcce87fb65820",
+      "verified_at": "2026-11-23T13:06:46.927Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-23T13:06:46.927Z"
     }
   },
   "repos": {

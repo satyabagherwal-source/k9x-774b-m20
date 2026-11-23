@@ -21988,5 +21988,20 @@
     "downloads": 9603541,
     "qualityScore": 12680,
     "discoveredAt": "2026-11-23T09:46:07.604Z"
+  },
+  {
+    "name": "fast-anything",
+    "fullName": "EL4CTEO/fast-anything",
+    "url": "https://github.com/EL4CTEO/fast-anything",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Don't rewrite it in Rust. Rewrite the 5% that's slow: profile Python, Node or Ruby apps, port the hot functions with your coding agent, prove they behave the same.",
+    "stars": 2714,
+    "forks": 170,
+    "openIssues": 2,
+    "language": "Rust",
+    "qualityScore": 1662,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-23T13:04:16.793Z"
   }
 ]

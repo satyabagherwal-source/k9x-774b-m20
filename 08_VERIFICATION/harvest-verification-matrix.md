@@ -12313,3 +12313,7 @@
 | `CYCLE-20261123-27QX` | `2026-11-23T09:48:26.169Z` | `Qwen/Qwen3-4B-Instruct-2507` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md` | Yes (`8a7627ce...`) |
 | `CYCLE-20261123-2G6J` | `2026-11-23T09:48:37.099Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10041` | Yes (`54a3364e...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T09:49:06.885Z` | `hf-qwen-qwen3-4b-instruct-2507` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CBA8A85D` [Domain D] | Yes (`d9df8d91...`) |
+| `CYCLE-20261123-58YE` | `2026-11-23T13:06:45.014Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`fd821a8c...`) |
+| `CYCLE-20261123-5AF3` | `2026-11-23T13:06:46.911Z` | `EL4CTEO/fast-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10042` | Yes (`df4143a6...`) |
+| `CYCLE-20261123-5GV1` | `2026-11-23T13:06:55.261Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10043` | Yes (`6ba55737...`) |
+| `CYCLE-20261123-5JI1` | `2026-11-23T13:06:58.681Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`0f5bbb7e...`) |

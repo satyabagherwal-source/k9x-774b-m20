@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T09:49:06.911Z",
+  "updated_at": "2026-11-23T13:07:04.716Z",
   "stats": {
-    "total_discovered": 7823,
-    "approved_pending_harvest": 7400,
+    "total_discovered": 7831,
+    "approved_pending_harvest": 7408,
     "harvested_count": 0,
     "rejected_count": 423,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7392,
-      "OFFICIAL_DOCUMENTATION": 247,
+      "COMMUNITY_AND_EXPERT": 7399,
+      "OFFICIAL_DOCUMENTATION": 248,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
       "SECURITY_ADVISORIES": 44,
@@ -169168,6 +169168,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md",
         "fileName": "hf-qwen-qwen3-4b-instruct-2507-learnings.md"
+      }
+    },
+    "SRC-2A3DC20019C6": {
+      "id": "SRC-2A3DC20019C6",
+      "url": "https://github.com/EL4CTEO/fast-anything",
+      "title": "https://github.com/EL4CTEO/fast-anything",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:07:02.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md",
+        "fileName": "el4cteo-fast-anything-learnings.md"
+      }
+    },
+    "SRC-E3A905384922": {
+      "id": "SRC-E3A905384922",
+      "url": "https://github.com/CycloneDX/cyclonedx-python-lib/actions",
+      "title": "https://github.com/CycloneDX/cyclonedx-python-lib/actions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:07:04.275Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-491DB0E085D3": {
+      "id": "SRC-491DB0E085D3",
+      "url": "https://pypi.org/project/cyclonedx-python-lib",
+      "title": "https://pypi.org/project/cyclonedx-python-lib",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:07:04.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-C7626846B153": {
+      "id": "SRC-C7626846B153",
+      "url": "https://cyclonedx-python-library.readthedocs.io/",
+      "title": "https://cyclonedx-python-library.readthedocs.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:07:04.432Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-7FEBE9C96CEC": {
+      "id": "SRC-7FEBE9C96CEC",
+      "url": "https://github.com/CycloneDX/cyclonedx-python-lib/issues",
+      "title": "https://github.com/CycloneDX/cyclonedx-python-lib/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:07:04.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-E833B445F877": {
+      "id": "SRC-E833B445F877",
+      "url": "https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/LICENSE",
+      "title": "https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:07:04.577Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-551048E5BB82": {
+      "id": "SRC-551048E5BB82",
+      "url": "https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/CHANGELOG.md",
+      "title": "https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:07:04.649Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-C8AA782B99EB": {
+      "id": "SRC-C8AA782B99EB",
+      "url": "https://github.com/CycloneDX/cyclonedx-python-lib",
+      "title": "https://github.com/CycloneDX/cyclonedx-python-lib",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T13:07:04.715Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
       }
     }
   }

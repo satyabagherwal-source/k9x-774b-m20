@@ -12346,3 +12346,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-4b-instruct-2507` | `https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T09:48:26.174Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `76c6b3e2` | Multi-dimensional audit evidence | 2026-11-23T09:48:37.104Z |
 | `learn-dom-d-cba8a85d` | `project://hf-qwen-qwen3-4b-instruct-2507` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md` | 2026-11-23T09:49:06.885Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-11-23T13:06:45.019Z |
+| `learn-github-el4cteo-fast-anything` | `https://github.com/EL4CTEO/fast-anything` | `445abd1d` | Multi-dimensional audit evidence | 2026-11-23T13:06:46.916Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `7da6ab8d` | Multi-dimensional audit evidence | 2026-11-23T13:06:55.266Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ffead11c` | Multi-dimensional audit evidence | 2026-11-23T13:06:58.686Z |

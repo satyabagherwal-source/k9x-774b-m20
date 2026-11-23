@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-458P",
-    "timestamp": "2026-11-21T11:38:34.249Z",
-    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "8b666adc88ea44ff87e8818360145996ad8b4508bd7253fe66a6b8d478bb9b73",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-48V9",
-    "timestamp": "2026-11-21T11:38:38.949Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "16981e5f8cae9ee64ed5c4602d9f4bebdbc2bda8075cfe7d5fc97fd677ab8790",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-4B43",
-    "timestamp": "2026-11-21T11:38:41.859Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "a6b33cf462f3fc05be918958fedd3d39a95d94eb7b57de4b9654e3afaf1d7734",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-4EUV",
-    "timestamp": "2026-11-21T11:38:46.711Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "be099813a8bb20e468b0d79ed97d8dc427af04ef516b8a256f8591d5018d1025",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-PO49",
     "timestamp": "2026-11-21T11:55:18.489Z",
     "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
@@ -7490,6 +7430,66 @@
     "repository": "meshery/meshery",
     "learningId": "learn-github-meshery-meshery",
     "contentHash": "54a3364ee5ab2a0839660386fd1005fb81e2590d6c0a544f1d3e11c77d09b9b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-58YE",
+    "timestamp": "2026-11-23T13:06:45.014Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "fd821a8c8f02ec43f57a62df10fb3604fbd4d33bab88cc82cd9f0ad40546f6ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-5AF3",
+    "timestamp": "2026-11-23T13:06:46.911Z",
+    "repository": "EL4CTEO/fast-anything",
+    "learningId": "learn-github-el4cteo-fast-anything",
+    "contentHash": "df4143a6081a9c2f20066d56c06238923e500fe99c0c74966ddbcce87fb65820",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-5GV1",
+    "timestamp": "2026-11-23T13:06:55.261Z",
+    "repository": "bridgecrewio/checkov",
+    "learningId": "learn-github-bridgecrewio-checkov",
+    "contentHash": "6ba557375b0824ce42b2d5ef18d5cc919ae2afa0fbcaf2d06e513d7d4e9bfe18",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-5JI1",
+    "timestamp": "2026-11-23T13:06:58.681Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "0f5bbb7e880550e53378f08bf7c8ca0dd2e5a51bb4ccf50f9295fdb971c2e6aa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

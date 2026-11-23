@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T09:49:08.467Z",
-  "total_verified_learnings": 9078,
+  "last_updated": "2026-11-23T13:07:05.660Z",
+  "total_verified_learnings": 9079,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23938,
+  "total_items": 23951,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -66187,14 +66187,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3992,
       "title": "Bump crates with security advisories",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "8caa8775",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ffead11c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T06:37:42.639Z"
+      "verified_at": "2026-11-23T13:06:58.422Z"
     },
     "rule-3993": {
       "learning_id": "rule-3993",
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "8caa8775",
-      "content_hash": "d5d4611890bc0d1a943088421f8bb51841a717094bc515e3b9c758688b6943ec",
+      "source_version": "ffead11c",
+      "content_hash": "749459237b5632af06be46fd0982bad89a9fb6f5765e5bc0c2f3773963f63187",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T06:37:43.432Z"
+      "persisted_at": "2026-11-23T13:06:59.214Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "8caa8775",
-      "content_hash": "5e1a31f5778fb05f5e8e43ef23c13d04c3825e92954774940bc1dc15de7f5f6d",
+      "source_version": "ffead11c",
+      "content_hash": "ea22f87d9e46f6eeac7d0acdfe760713d3f42a8f482317b4830c1bf9e3c0f572",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:37:43.660Z"
+      "persisted_at": "2026-11-23T13:06:59.439Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -112977,10 +112977,10 @@
       "relative_path": "03_SKILLS/bridgecrewio-checkov-skill-operational-integration-playbook-for-bridgecrewio-che.md",
       "title": "Skill: Operational & Integration Playbook for bridgecrewio/checkov",
       "repository": "bridgecrewio/checkov",
-      "source_version": "28694608",
-      "content_hash": "9712fab5648ae354e1f16f4b966d75f14f76a0ccc73f1ed5f42e715ef2a3d9ca",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:02:34.607Z"
+      "source_version": "7da6ab8d",
+      "content_hash": "bbf3ff74d32135fc684bbd14acf371f0ffbab852e05070f2e4f80721e0105e9a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:06:56.010Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov",
@@ -112989,10 +112989,10 @@
       "relative_path": "08_VERIFICATION/bridgecrewio-checkov-verification-protocol-empirical-defect-shield-for-bridgecre.md",
       "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio/checkov",
       "repository": "bridgecrewio/checkov",
-      "source_version": "28694608",
-      "content_hash": "7564ad0e5bc7635a6bf00f75c2af3af84d96d738c948b65c71c10fe41045d0c7",
+      "source_version": "7da6ab8d",
+      "content_hash": "4a8c478fc9e7c4ed86992a81d334469f8373e826d7e030a915ee7704a40422f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:02:34.768Z"
+      "persisted_at": "2026-11-23T13:06:56.195Z"
     },
     "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg": {
       "item_id": "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg",
@@ -113086,9 +113086,9 @@
       "title": "Skill: Operational & Integration Playbook for bridgecrewio-checkov-learnings",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb1adb4d2e127563d3210d1fb6b9709e988157775d9305c82d767c01418ef876",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:02:43.075Z"
+      "content_hash": "22ab0db51d57a4f8cb68432beaa34cf169cca65cad7a978aa0028c1578a55a59",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:07:05.452Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings",
@@ -113098,9 +113098,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio-checkov-learnings",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "6bbd1687311c9d27b92e1dbbb3dcdcbad4b498cf43fa838c015dad394852c21b",
+      "content_hash": "ca3f5ccef704a7bc6f9fdbb675a6b56e7e55f9b9f563dd04af7ff8963732f306",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:02:43.239Z"
+      "persisted_at": "2026-11-23T13:07:05.660Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
@@ -215898,13 +215898,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "8caa8775",
-      "content_hash": "4c6db895658d70a194b2176c3fb1b5fbc4a574ad8abb56ae33d755887283fc74",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ffead11c",
+      "content_hash": "0f5bbb7e880550e53378f08bf7c8ca0dd2e5a51bb4ccf50f9295fdb971c2e6aa",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216017,7 +216017,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T06:37:42.639Z",
+      "verified_at": "2026-11-23T13:06:58.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226913,7 +226913,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "2f28419bb7d9a57cbf7d4429850547e62cab60a5ca8dc944f39ec9db6ae1bb9c",
+      "content_hash": "fd821a8c8f02ec43f57a62df10fb3604fbd4d33bab88cc82cd9f0ad40546f6ea",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [],
@@ -226922,7 +226922,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:34:40.768Z",
+      "verified_at": "2026-11-23T13:06:44.732Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226939,9 +226939,9 @@
       "title": "Research & Knowledge Intelligence: pablodawson/MiniMax-H3-360-Orbit-LoRA Core Invariants",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "c73045fcb9b2c6a88c6309e90bf67901471f86f3d1a81a86b81265703ed75694",
+      "content_hash": "0689609908386b797b29d878b837d7e800c70ec513e39ec456923a46d5df1ff6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T23:34:41.200Z"
+      "persisted_at": "2026-11-23T13:06:45.306Z"
     },
     "learn-github-matthart1983-netwatch": {
       "learning_id": "learn-github-matthart1983-netwatch",
@@ -227337,9 +227337,9 @@
       "title": "Research & Knowledge Intelligence: hf-pablodawson-minimax-h3-360-orbit-lora-learnings Core Invariants",
       "repository": "hf-pablodawson-minimax-h3-360-orbit-lora-learnings",
       "source_version": "HEAD",
-      "content_hash": "143a12a8bc5a41f8d0ea1cff4235c0ec74a97175dd2657803a39fa67eb376209",
+      "content_hash": "c9333d193ac0e0161f6bf159007be23cfe6ea8a047fd43b756d285797c593c27",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T23:34:59.181Z"
+      "persisted_at": "2026-11-23T13:07:03.652Z"
     },
     "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-learnings-core-invariant": {
       "item_id": "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-learnings-core-invariant",
@@ -302742,14 +302742,19 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "28694608",
-      "content_hash": "0072a4b4236687a668da16f6d6332567198030c6c3e47292a0671d62cd6edf7a",
+      "source_version": "7da6ab8d",
+      "content_hash": "6ba557375b0824ce42b2d5ef18d5cc919ae2afa0fbcaf2d06e513d7d4e9bfe18",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
         {
           "number": 9509,
           "title": "remove leading wildcard from Azure hostname patterns",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10043,
+          "title": "support cyclonedx-python-lib up to 11.x",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -302758,7 +302763,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T04:02:33.702Z",
+      "verified_at": "2026-11-23T13:06:55.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -325581,13 +325586,13 @@
       "item_id": "candidate_directive-bump-crates-with-security-advisories",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-91PK-bump-crates-with-security-advisories.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5JQI-bump-crates-with-security-advisories.md",
       "title": "Bump crates with security advisories",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
-      "source_version": "HEAD",
-      "content_hash": "f505ed7987bc6f22419614b91685f548f19848a0d8fa80cf156f40290bb12057",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "ffead11c",
+      "content_hash": "41d77101aa7c31e21d1b4eef60d46d3414e88feb16b5903bb301dd7adbed7cc0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T06:37:47.630Z"
+      "persisted_at": "2026-11-23T13:06:58.993Z"
     },
     "rule-10034": {
       "learning_id": "rule-10034",
@@ -326033,6 +326038,187 @@
       "content_hash": "d6e243d09249934e8ad113819e771fe6e43bd549150efe30fa64b7c6a19cdb58",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T09:49:08.084Z"
+    },
+    "learn-github-el4cteo-fast-anything": {
+      "learning_id": "learn-github-el4cteo-fast-anything",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "EL4CTEO/fast-anything",
+      "repository": "EL4CTEO/fast-anything",
+      "slug": "el4cteo-fast-anything",
+      "platform": "github",
+      "source_url": "https://github.com/EL4CTEO/fast-anything",
+      "source_version": "445abd1d",
+      "content_hash": "df4143a6081a9c2f20066d56c06238923e500fe99c0c74966ddbcce87fb65820",
+      "dossier_path": "07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10042,
+          "title": "simplify pad_id by delegating non-overflowing ids to pad",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T13:06:46.659Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10042": {
+      "learning_id": "rule-10042",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10042,
+      "title": "simplify pad_id by delegating non-overflowing ids to pad",
+      "source_url": "https://github.com/EL4CTEO/fast-anything",
+      "source_version": "445abd1d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T13:06:46.659Z"
+    },
+    "candidate_directive-simplify-pad_id-by-delegating-non-overflowing-ids-to-pad": {
+      "item_id": "candidate_directive-simplify-pad_id-by-delegating-non-overflowing-ids-to-pad",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5ANL-simplify-pad_id-by-delegating-non-overflowing-ids-to-pad.md",
+      "title": "simplify pad_id by delegating non-overflowing ids to pad",
+      "repository": "EL4CTEO/fast-anything",
+      "source_version": "445abd1d",
+      "content_hash": "6bf7acaaa7fd8b27dbd0c57327449372cb61db12716313a510758bfb421a0b6d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:06:47.218Z"
+    },
+    "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-architecture-intelligence-el4cteo-fast-anything-core-invar.md",
+      "title": "Architecture Intelligence: EL4CTEO/fast-anything Core Invariants",
+      "repository": "EL4CTEO/fast-anything",
+      "source_version": "445abd1d",
+      "content_hash": "22e76ee3d9ca3e6341c801ea0c96c3659e968e39235f85cac5be6f2635a7f2b1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:06:47.439Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-el4cteo-fast-anything": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-el4cteo-fast-anything",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/el4cteo-fast-anything-verification-protocol-empirical-defect-shield-for-el4cteo-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for EL4CTEO/fast-anything",
+      "repository": "EL4CTEO/fast-anything",
+      "source_version": "445abd1d",
+      "content_hash": "da18c27d612807f450f7d872cbede0bcc981ef0696ee6eb4dab5a6ad1a4556d9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T13:06:47.660Z"
+    },
+    "rule-10043": {
+      "learning_id": "rule-10043",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10043,
+      "title": "support cyclonedx-python-lib up to 11.x",
+      "source_url": "https://github.com/bridgecrewio/checkov",
+      "source_version": "7da6ab8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T13:06:55.010Z"
+    },
+    "candidate_directive-support-cyclonedx-python-lib-up-to-11-x": {
+      "item_id": "candidate_directive-support-cyclonedx-python-lib-up-to-11-x",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5H3F-support-cyclonedx-python-lib-up-to-11-x.md",
+      "title": "support cyclonedx-python-lib up to 11.x",
+      "repository": "bridgecrewio/checkov",
+      "source_version": "7da6ab8d",
+      "content_hash": "218c5695755f68c8b2d003b8a59a0daecdcfed51a4a903dc21030c442b2424c8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:06:55.565Z"
+    },
+    "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bridgecrewio-checkov-architecture-intelligence-bridgecrewio-checkov-core-invaria.md",
+      "title": "Architecture Intelligence: bridgecrewio/checkov Core Invariants",
+      "repository": "bridgecrewio/checkov",
+      "source_version": "7da6ab8d",
+      "content_hash": "f8191c8f1797cbd62657d6f01dd0df64170be46045d2321668cfb66cb3addc49",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:06:55.787Z"
+    },
+    "candidate_directive-show-simplify-pad_id-by-delegating-non-overflowing-ids-to-pad": {
+      "item_id": "candidate_directive-show-simplify-pad_id-by-delegating-non-overflowing-ids-to-pad",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5MMH-show-simplify-pad_id-by-delegating-non-overflowing-ids-to-pad.md",
+      "title": "show: simplify pad_id by delegating non-overflowing ids to pad",
+      "repository": "el4cteo-fast-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "121ac604bb4eea7d5422424f580874bbf522b3e59366414f39939d37eb2837c1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:07:02.731Z"
+    },
+    "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-learnings-architecture-intelligence-el4cteo-fast-anything-.md",
+      "title": "Architecture Intelligence: el4cteo-fast-anything-learnings Core Invariants",
+      "repository": "el4cteo-fast-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "344515a7e618478816f4a079574fc8e1c36a9597f16ac29136c42c1cd6524b87",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:07:02.960Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-el4cteo-fast-anything-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-el4cteo-fast-anything-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/el4cteo-fast-anything-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for el4cteo-fast-anything-learnings",
+      "repository": "el4cteo-fast-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3de47e06d6f33dd12a5f163becafe763ea2c98aa6db92d460e1d495157ead909",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T13:07:03.180Z"
+    },
+    "candidate_directive-general-support-cyclonedx-python-lib-up-to-11-x": {
+      "item_id": "candidate_directive-general-support-cyclonedx-python-lib-up-to-11-x",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5ODQ-general-support-cyclonedx-python-lib-up-to-11-x.md",
+      "title": "general): support cyclonedx-python-lib up to 11.x",
+      "repository": "bridgecrewio-checkov-learnings",
+      "source_version": "HEAD",
+      "content_hash": "59fe2de205c9a0f1f3878e2dd0c624dee4c0d3815557dc2f07cf4bfa65355c9e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:07:05.006Z"
+    },
+    "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bridgecrewio-checkov-learnings-architecture-intelligence-bridgecrewio-checkov-le.md",
+      "title": "Architecture Intelligence: bridgecrewio-checkov-learnings Core Invariants",
+      "repository": "bridgecrewio-checkov-learnings",
+      "source_version": "HEAD",
+      "content_hash": "499e9a39d2b5d9cbddb48272555d2b90e3bc6edde4e83d584745e1ee8d7316c4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T13:07:05.232Z"
     }
   },
   "ai-builder-brain": {

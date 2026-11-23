@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T09:48:37.109Z",
-  "total_cycles_completed": 11708,
-  "total_learnings_persisted": 11708,
-  "total_rules_promoted": 10875,
+  "last_updated": "2026-11-23T13:06:58.693Z",
+  "total_cycles_completed": 11712,
+  "total_learnings_persisted": 11712,
+  "total_rules_promoted": 10878,
   "history": [
-    {
-      "timestamp": "2026-11-22T15:09:07.398Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T15:09:15.233Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T15:37:15.775Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T15:37:17.765Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T15:41:31.312Z",
       "repository": "Comfy-Org/MiniMax-H3",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-23T09:48:37.109Z",
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T13:06:45.026Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T13:06:46.923Z",
+      "repository": "EL4CTEO/fast-anything",
+      "learningId": "learn-github-el4cteo-fast-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T13:06:55.273Z",
+      "repository": "bridgecrewio/checkov",
+      "learningId": "learn-github-bridgecrewio-checkov",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T13:06:58.693Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

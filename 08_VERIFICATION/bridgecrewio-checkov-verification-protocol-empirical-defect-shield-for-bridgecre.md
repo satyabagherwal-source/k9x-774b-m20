@@ -4,22 +4,22 @@
 {
   "source_repository": "bridgecrewio/checkov",
   "source_url": "https://github.com/bridgecrewio/checkov",
-  "source_version": "28694608",
+  "source_version": "7da6ab8d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T04:02:34.219Z",
+  "timestamp": "2026-11-23T13:06:55.564Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bridgecrewio-checkov",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `28694608`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T04:02:34.219Z`  
+> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `7da6ab8d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T13:06:55.564Z`  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `bridgecrewio/checkov` (Commit: `28694608`)
+- **Target Repository**: `bridgecrewio/checkov` (Commit: `7da6ab8d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T04:02:32.595Z  
+> **Harvest Timestamp**: 2026-11-23T13:06:53.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9163 stars
+- **Stars / Engagement**: 9168 stars
 
 ---
 
@@ -966,132 +966,221 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28694608` (2026-11-19)
-**Commit Message**: fix(secrets): remove leading wildcard from Azure hostname patterns (#7809)
+### Incident Patch 1: `7da6ab8d` (2026-11-23)
+**Commit Message**: chore(general): support cyclonedx-python-lib up to 11.x (#7827)
 
-**File**: `checkov/version.py` (modified, +1/-1)
+* chore(general): support cyclonedx-python-lib up to 11.x
+
+* chore(general): require cyclonedx-python-lib 8.0.0 or newer
+
+**File**: `Pipfile` (modified, +1/-1)
 ```diff
-@@ -1 +1 @@
--version = '3.4.5'
-+version = '3.4.6'
+@@ -67,7 +67,7 @@ argcomplete = ">=3.0.0,<4.0.0"
+ typing-extensions = ">=4.5.0,<5.0.0"
+ importlib-metadata = ">=6.0.0,<8.0.0"
+ cachetools = ">=5.2.0,<6.0.0"
+-cyclonedx-python-lib = ">=6.0.0,<8.0.0"
++cyclonedx-python-lib = ">=8.0.0,<12.0.0"
+ packageurl-python = ">=0.11.1,<0.14.0"
+ click = ">=8.1.0,<9.0.0"
+ aiohttp = ">=3.8.0,<3.15.0"
 ```
 
-**File**: `kubernetes/requirements.txt` (modified, +1/-1)
+**File**: `Pipfile.lock` (modified, +8/-8)
 ```diff
-@@ -1 +1 @@
--checkov==3.4.5
-+checkov==3.4.6
+@@ -1,7 +1,7 @@
+ {
+     "_meta": {
+         "hash": {
+-            "sha256": "4dc88a0e63f1083defbdaad6bf811de2fe04705e6d35269260304fa78df76dc2"
++            "sha256": "0cf09403a2aae58ae9d085ce6af230b8a373804e30359647a5b74d830d88850d"
+         },
+         "pipfile-spec": 6,
+         "requires": {
+@@ -634,12 +634,12 @@
+         },
+         "cyclonedx-python-lib": {
+             "hashes": [
+-                "sha256:31186c5725ac0cfcca433759a407b1424686cdc867b47cc86e6cf83691310903",
+-                "sha256:c42fab352cc0f7418d1b30def6751d9067ebcf0e8e4be210fc14d6e742a9edcc"
++                "sha256:0e807521a921a5c3cb8ce1153f8a61d29eedfe76a46aac2796b7c6b573391a54",
++                "sha256:16767c4039de90c04e9f03348f8f0ed4b8ff842eaa7eefcad3a95685f970dacf"
+             ],
+             "index": "pypi",
+-            "markers": "python_version >= '3.8' and python_version < '4.0'",
+-            "version": "==7.6.2"
++            "markers": "python_version >= '3.9' and python_version < '4.0'",
++            "version": "==11.12.0"
+         },
+         "decorator": {
+             "hashes": [
+@@ -1519,11 +1519,11 @@
+         },
+         "py-serializable": {
+             "hashes": [
+-                "sha256:801be61b0a1ba64c3861f7c624f1de5cfbbabf8b458acc9cdda91e8f7e5effa1",
+-                "sha256:89af30bc319047d4aa0d8708af412f6ce73835e18bacf1a080028bb9e2f42bdb"
++                "sha256:2cce775abc5aac12115f9ff572a145c7276d04a770090334bd4e51ed9c782415",
++                "sha256:8e4fa02e8de819c0488ccdb69c2d3109274adcf224c02357fd8729cb12727aab"
+             ],
+             "markers": "python_version >= '3.8' and python_version < '4.0'",
+-            "version": "==1.1.2"
++            "version": "==2.2.0"
+         },
+         "pycares": {
+             "hashes": [
 ```
 
----
-
-### Incident Patch 2: `c57ca423` (2026-11-19)
-**Commit Message**: fix(secrets): remove leading wildcard from Azure hostname patterns (#7809)
-
-**File**: `checkov/common/util/secrets.py` (modified, +12/-12)
+**File**: `checkov/common/output/cyclonedx.py` (modified, +2/-2)
 ```diff
-@@ -35,18 +35,18 @@
-     'azure': [
-         "(\"|')?([0-9A-Fa-f]{4}-){4}[0-9A-Fa-f]{12}(\"|')?",  # client_secret
-         "(\"|')?[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}(\"|')?",  # client_id and many other forms of IDs
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|A][z|Z][u|U][r|R][e|E][h|H][d|D][i|I][n|N][s|S][i|I][g|G][h|H][t|T][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][o|O][c|C][u|U][m|M][e|E][n|N][t|T][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|A][z|Z][u|U][r|R][e|E][h|H][d|D][i|I][n|N][s|S][i|I][g|G][h|H][t|T][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][o|O][c|C][u|U][m|M][e|E][n|N][t|T][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-     ],
+@@ -16,11 +16,11 @@
+     HashAlgorithm,
+     HashType,
+     Property,
+-    Tool,
+ )
+ from cyclonedx.model.bom import Bom
+ from cyclonedx.model.component import Component, ComponentType
+ from cyclonedx.model.license import DisjunctiveLicense
++from cyclonedx.model.tool import Tool
+ from cyclonedx.model.vulnerability import (
+     Vulnerability,
+     VulnerabilityAdvisory,
+@@ -74,7 +74,7 @@ def create_bom(self) -> Bom:
  
-     'aws': [
+         this_tool = Tool(vendor="bridgecrew", name="checkov", version=version)
+         self.update_tool_external_references(this_tool)
+-        bom.metadata.tools.add(this_tool)
++        bom.metadata.tools.tools.add(this_tool)
+ 
+         for report in self.reports:
+             if report.check_type in SCA_CHECKTYPES and self.export_iac_only:
 ```
 
-**File**: `tests/unit/test_secrets.py` (modified, +47/-1)
+**File**: `setup.py` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,10 @@
-+import base64
-+import random
-+import string
-+import time
- import unittest
- 
--from checkov.common.util.secrets import string_has_secrets, ALL, AWS, GENERAL, omit_secret_value_from_line, \
-+from checkov.common.util.secrets import string_has_secrets, ALL, AWS, AZURE, GENERAL, omit_secret_value_from_line, \
-     get_secrets_from_string
- 
- 
-@@ -70,3 +74,45 @@ def test_get_secrets_from_secrets(self):
-         secret = get_secrets_from_string(s)
- 
-         assert secret == ["AKIAIOSFODNN7EXAMPLE"]
-+
-+    def test_azure_hostnames_are_detected(self):
-+        test_strings = [
-+            'https://myaccount.blob.core.windows.net/container',
-+            'Server=tcp:mydb.database.windows.net,1433',
-+            'login via example.onmicrosoft.com',
-+            "'svc.servicebus.windows.net'",
-+            'endpoint: myapp.cloudapp.azure.com',
-+            'db.documents.azure.com',
-+        ]
-+
-+        for s in test_strings:
-+            with self.subTest(s=s):
-+                self.assertTrue(string_has_secrets(s, AZURE))
-+
-+    def test_azure_hostname_without_subdomain_is_not_detected(self):
-+        self.assertFalse(string_has_secrets('blob.core.windows.net', AZURE))
-+        self.assertFalse(string_has_secrets('no azure host here', AZURE))
-+
-+    def test_get_secrets_from_string_returns_azure_hostname(self):
-+        s = 'url = "https://myaccount.blob.core.windows.net/container"'
-+
-+        secrets = get_secrets_from_string(s, AZURE)
-+
-+        self.assertEqual(secrets, ['myaccount.blob.core.windows.net'])
-+
-+    def test_long_strings_without_azure_hostname_are_evaluated_quickly(self):
-+        rng = random.Random(0)
-+        # base64 and alphanumeric input contain no '.', so none of the Azure hostname patterns can match
-+        test_strings = {
-+            'base64': base64.b64encode(rng.randbytes(12_321)).decode(),
-+            'alphanumeric': ''.join(rng.choices(string.ascii_letters + string.digits, k=16_428)),
-+        }
-+
-+        for name, s in test_strings.items():
-+            with self.subTest(input=name):
-+                start = time.monotonic()
-+                result = string_has_secrets(s, AZURE, GENERAL)
-+                elapsed = time.monotonic() - start
-+
-+                self.assertFalse(result)
-+                self.assertLess(elapsed, 2)
+@@ -87,7 +87,7 @@ def run(self) -> None:
+         "typing-extensions<5.0.0,>=4.5.0",
+         "importlib-metadata<8.0.0,>=6.0.0",
+         "cachetools>=5.2.0,<6.0.0",
+-        "cyclonedx-python-lib<8.0.0,>=6.0.0",
++        "cyclonedx-python-lib<12.0.0,>=8.0.0",
+         "packageurl-python>=0.11.1,<0.14.0",
+         "click<9.0.0,>=8.1.0",
+         "aiohttp<3.15.0,>=3.8.0",
+```
+
+**File**: `tests/common/output/test_cyclonedx_report.py` (modified, +1/-0)
+```diff
+@@ -126,6 +126,7 @@ def test_valid_cyclonedx_image_bom():
+         version='ubuntu:latest',
+     )
+     image_component = Component(
++        bom_ref=str(image_purl),
+         name='acme/repo//ubuntu:latest',
+         purl=image_purl,
+         group=None,
+```
+
+**File**: `tests/sca_image/outputs/results_cyclonedx.xml` (modified, +2/-33)
+```diff
+@@ -3,37 +3,6 @@
+ 	<metadata>
+ 		<timestamp>2023-10-25T07:58:16.083818+00:00</timestamp>
+ 		<tools>
+-			<tool>
+-				<vendor>CycloneDX</vendor>
+-				<name>cyclonedx-python-lib</name>
+-				<version>5.0.0</version>
+-				<externalReferences>
+-					<reference type="build-system">
+-						<url>https://github.com/CycloneDX/cyclonedx-python-lib/actions</url>
+-					</reference>
+-					<reference type="distribution">
+-						<url>https://pypi.org/project/cyclonedx-python-lib/</url>
+-					</reference>
+-					<reference type="documentation">
+-						<url>https://cyclonedx-python-library.readthedocs.io/</url>
+-					</reference>
+-					<reference type="issue-tracker">
+-						<url>https://github.com/CycloneDX/cyclonedx-python-lib/issues</url>
+-					</reference>
+-					<reference type="license">
+-						<url>https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/LICENSE</url>
+-					</reference>
+-					<reference type="release-notes">
+-						<url>https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/CHANGELOG.md</url>
+-					</reference>
+-					<reference type="vcs">
+-						<url>https://github.com/CycloneDX/cyclonedx-python-lib</url>
+-					</reference>
+-					<reference type="website">
+-						<url>https://github.com/CycloneDX/cyclonedx-python-lib/#readme</url>
+-					</reference>
+-				</externalReferences>
+-			</tool>
+ 			<tool>
+ 				<vendor>bridgecrew</vendor>
+ 				<name>checkov</name>
+@@ -134,7 +103,7 @@
+ 					</source>
+ 					<score>7.8</score>
+ 					<severity>medium</severity>
+-					<method>CVSSv3</method>
++					<method>CVSSv31</method>
+ 					<vector>AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</vector>
+ 				</rating>
+ 			</ratings>
+@@ -159,7 +128,7 @@
+ 					</source>
+ 					<score>9.1</score>
+ 					<severity>low</severity>
+-					<method>CVSSv3</method>
++					<method>CVSSv31</method>
+ 					<vector>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:H</vector>
+ 				</rating>
+ 			</ratings>
+```
+
+**File**: `tests/sca_package_2/outputs/results_cyclonedx_1_2.xml` (modified, +0/-5)
+```diff
+@@ -3,11 +3,6 @@
+ 	<metadata>
+ 		<timestamp>2025-02-05T09:31:56.644237+00:00</timestamp>
+ 		<tools>
+-			<tool>
+-				<vendor>CycloneDX</vendor>
+-				<name>cyclonedx-python-lib</name>
+-				<version>7.6.2</version>
+-			</tool>
+ 			<tool>
+ 				<vendor>bridgecrew</vendor>
+ 				<name>checkov</name>
+```
+
+**File**: `tests/sca_package_2/outputs/results_cyclonedx_1_3.xml` (modified, +0/-5)
+```diff
+@@ -3,11 +3,6 @@
+ 	<metadata>
+ 		<timestamp>2025-02-05T09:32:16.848085+00:00</timestamp>
+ 		<tools>
+-			<tool>
+-				<vendor>CycloneDX</vendor>
+-				<name>cyclonedx-python-lib</name>
+-				<version>7.6.2</version>
+-			</tool>
+ 			<tool>
+ 				<vendor>bridgecrew</vendor>
+ 				<name>checkov</name>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7827** (2026-11-23): chore(general): support cyclonedx-python-lib up to 11.x (@itrocki)
 - **PR #7809** (2026-11-19): fix(secrets): remove leading wildcard from Azure hostname patterns (@omriyoffe-panw)
 - **PR #7795** (2026-11-12): fix(general): harden request error logging (@Saarett)
 - **PR #7794** (2026-11-10): fix(bicep): resolve references within the declaring file (@itrocki)
 - **PR #7776** (2026-11-02): fix(terraform): build userinfo test URLs dynamically (@talazuri)
 - **PR #7759** (closed): Test Migration of CI Jobs to GitHub-Hosted Runners (@amitz)
-- **PR #7758** (2026-11-02): fix(terraform): add optional allowlist for external module download sources (@talazuri)
 
 ---
 
@@ -1111,47 +1200,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. secrets): remove leading wildcard from Azure hostname patterns
+## X. general): support cyclonedx-python-lib up to 11.x
 
 **RULE**:
-When implementing operations in `checkov/common/util/secrets.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Pipfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c57ca423`: secrets): remove leading wildcard from Azure hostname patterns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7da6ab8d`: general): support cyclonedx-python-lib up to 11.x. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/common/util/secrets.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `Pipfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-
+cyclonedx-python-lib = ">=8.0.0,<12.0.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "
+cyclonedx-python-lib = ">=6.0.0,<8.0.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c57ca423` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7da6ab8d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

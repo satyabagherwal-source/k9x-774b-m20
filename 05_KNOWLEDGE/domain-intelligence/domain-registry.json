@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T09:49:08.278Z",
-  "total_records": 2408,
+  "last_updated": "2026-11-23T13:07:05.232Z",
+  "total_records": 2412,
   "domains": {
     "A": {
       "total": 20,
@@ -1110,7 +1110,7 @@
       ]
     },
     "G": {
-      "total": 412,
+      "total": 416,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1523,7 +1523,11 @@
         "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants",
         "domain_intelligence-architecture-intelligence-xerj-org-xerj-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-prof18-feed-flow-core-invariants",
-        "domain_intelligence-architecture-intelligence-prof18-feed-flow-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-prof18-feed-flow-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-core-invariants",
+        "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants",
+        "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8512,10 +8516,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "d5d4611890bc0d1a943088421f8bb51841a717094bc515e3b9c758688b6943ec",
-      "created_at": "2026-11-23T06:37:43.432Z"
+      "content_hash": "749459237b5632af06be46fd0982bad89a9fb6f5765e5bc0c2f3773963f63187",
+      "created_at": "2026-11-23T13:06:59.214Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -14446,8 +14450,8 @@
       "title": "Research & Knowledge Intelligence: pablodawson/MiniMax-H3-360-Orbit-LoRA Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pablodawson-minimax-h3-360-orbit-lora-research-knowledge-intelligence-pabloda.md",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "content_hash": "c73045fcb9b2c6a88c6309e90bf67901471f86f3d1a81a86b81265703ed75694",
-      "created_at": "2026-11-18T23:34:41.200Z"
+      "content_hash": "0689609908386b797b29d878b837d7e800c70ec513e39ec456923a46d5df1ff6",
+      "created_at": "2026-11-23T13:06:45.306Z"
     },
     "domain_intelligence-architecture-intelligence-matthart1983-netwatch-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-matthart1983-netwatch-core-invariants",
@@ -14575,8 +14579,8 @@
       "title": "Research & Knowledge Intelligence: hf-pablodawson-minimax-h3-360-orbit-lora-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pablodawson-minimax-h3-360-orbit-lora-learnings-research-knowledge-intelligen.md",
       "repository": "hf-pablodawson-minimax-h3-360-orbit-lora-learnings",
-      "content_hash": "143a12a8bc5a41f8d0ea1cff4235c0ec74a97175dd2657803a39fa67eb376209",
-      "created_at": "2026-11-18T23:34:59.181Z"
+      "content_hash": "c9333d193ac0e0161f6bf159007be23cfe6ea8a047fd43b756d285797c593c27",
+      "created_at": "2026-11-23T13:07:03.652Z"
     },
     "DOM-K-2852CE47": {
       "record_id": "DOM-K-2852CE47",
@@ -40474,6 +40478,42 @@
       "repository": "hf-qwen-qwen3-4b-instruct-2507-learnings",
       "content_hash": "7b2a70b68394305b8346c1a80c8fe8fba2ce9d43c8dea08ada0632b030da2f13",
       "created_at": "2026-11-23T09:49:07.158Z"
+    },
+    "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: EL4CTEO/fast-anything Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-architecture-intelligence-el4cteo-fast-anything-core-invar.md",
+      "repository": "EL4CTEO/fast-anything",
+      "content_hash": "22e76ee3d9ca3e6341c801ea0c96c3659e968e39235f85cac5be6f2635a7f2b1",
+      "created_at": "2026-11-23T13:06:47.439Z"
+    },
+    "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: bridgecrewio/checkov Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bridgecrewio-checkov-architecture-intelligence-bridgecrewio-checkov-core-invaria.md",
+      "repository": "bridgecrewio/checkov",
+      "content_hash": "f8191c8f1797cbd62657d6f01dd0df64170be46045d2321668cfb66cb3addc49",
+      "created_at": "2026-11-23T13:06:55.787Z"
+    },
+    "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-el4cteo-fast-anything-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: el4cteo-fast-anything-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-learnings-architecture-intelligence-el4cteo-fast-anything-.md",
+      "repository": "el4cteo-fast-anything-learnings",
+      "content_hash": "344515a7e618478816f4a079574fc8e1c36a9597f16ac29136c42c1cd6524b87",
+      "created_at": "2026-11-23T13:07:02.960Z"
+    },
+    "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: bridgecrewio-checkov-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bridgecrewio-checkov-learnings-architecture-intelligence-bridgecrewio-checkov-le.md",
+      "repository": "bridgecrewio-checkov-learnings",
+      "content_hash": "499e9a39d2b5d9cbddb48272555d2b90e3bc6edde4e83d584745e1ee8d7316c4",
+      "created_at": "2026-11-23T13:07:05.232Z"
     }
   }
 }

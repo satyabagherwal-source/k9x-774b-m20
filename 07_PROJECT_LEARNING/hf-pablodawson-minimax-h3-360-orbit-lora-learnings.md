@@ -3,7 +3,7 @@
 > **Source Version**: `hf-pablodaws`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T23:34:40.509Z  
+> **Timestamp**: 2026-11-23T13:06:44.388Z  
 > **Learning ID**: `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA](https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T23:34:40.337Z  
+> **Harvest Timestamp**: 2026-11-23T13:06:44.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 29797 downloads | 611 likes
+- **Stars / Engagement**: 25917 downloads | 617 likes
 
 ---
 
