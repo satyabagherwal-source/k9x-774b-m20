@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T22:33:14.512Z",
+  "last_updated": "2026-11-23T22:43:07.926Z",
   "total_verified_learnings": 9087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24239,
+  "total_items": 24246,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113817,10 +113817,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "repository": "meilisearch/meilisearch",
-      "source_version": "9a44a8e8",
-      "content_hash": "d0cbcd0bb5700485c81ae06612d7cf44bb41ce31fa20d72aebcaaba849c6b930",
+      "source_version": "36dabf36",
+      "content_hash": "2edc65768b450f34b52609b887b23a57bbe406de7e8cfba0b7403a93995b49b4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T16:13:07.089Z"
+      "persisted_at": "2026-11-23T22:43:01.929Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch",
@@ -113829,10 +113829,10 @@
       "relative_path": "08_VERIFICATION/meilisearch-meilisearch-verification-protocol-empirical-defect-shield-for-meilis.md",
       "title": "Verification Protocol: Empirical Defect Shield for meilisearch/meilisearch",
       "repository": "meilisearch/meilisearch",
-      "source_version": "9a44a8e8",
-      "content_hash": "911b5f94edce93705d2bdfba4d9b1a1b0f2c99c55cb7dcad763dab58220e792f",
+      "source_version": "36dabf36",
+      "content_hash": "d4ca08354482795e12a006497c8a9d5b77e3bce92ae09f54bedd76765b7997b8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:13:07.245Z"
+      "persisted_at": "2026-11-23T22:43:02.152Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
@@ -216096,26 +216096,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "b0a4509e",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "36dabf36",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T19:43:03.196Z"
+      "verified_at": "2026-11-23T22:43:01.123Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-B0A2-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QCI3-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
-      "source_version": "HEAD",
-      "content_hash": "5bda45a3f754f2b89358e0d3337abdeacc179589ffad1e9cb1d2fae5dabb36f2",
+      "repository": "meilisearch/meilisearch",
+      "source_version": "36dabf36",
+      "content_hash": "90d282980f43b02189b018990f16081e96625d7d63a3d68d3c3edef726c4f919",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:43:08.333Z"
+      "persisted_at": "2026-11-23T22:43:01.709Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -232052,13 +232052,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "d5abe4bf",
-      "content_hash": "b243dab580568dc3c7438581e494927dcecdf693eda2684f7d7e9bdfdf5e6200",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "48669ad1",
+      "content_hash": "ae502dd99e944324ef5a5a68c391b9828e510e31a138918a481ed4133d04a163",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -232124,6 +232124,11 @@
           "number": 9991,
           "title": "retry a request once when no response headers arrive",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10136,
+          "title": "a Harness package.json inside a native plugin root is part of that bun",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232131,7 +232136,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T21:09:18.959Z",
+      "verified_at": "2026-11-23T22:42:49.616Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232170,37 +232175,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "d5abe4bf",
-      "content_hash": "37017655d8dfbece6fe7cf1743c9a9d474aa89664cb9438b98f4d4aaef9207cf",
+      "source_version": "48669ad1",
+      "content_hash": "1766f34983e0c2da4eb49bb12c45af06fee219272242c947f2e44aea2ea3fffa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T21:09:19.767Z"
+      "persisted_at": "2026-11-23T22:42:50.441Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "d5abe4bf",
-      "content_hash": "242f1b7b9acf0cc87923f6dd0d2f41bf5c77b603949646681d08424460acac3f",
+      "source_version": "48669ad1",
+      "content_hash": "45600976ba3eb4fd057127a73315c1006c1d9d319659dc4ce2f5406f4e95fc5c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T21:09:19.996Z"
+      "persisted_at": "2026-11-23T22:42:50.680Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
+      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "d5abe4bf",
-      "content_hash": "0f3fc950047bd778b1893be02bbba27864cf87b836bd6d3aade81945f1fb0220",
+      "source_version": "48669ad1",
+      "content_hash": "908876e1aecb7eae219e343741b222b83801bc3fd15fa1a5ce186e55a94ef977",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:09:20.219Z"
+      "persisted_at": "2026-11-23T22:42:50.871Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -232222,9 +232227,9 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "f179b641650671fac218f7a98b064eddcca51f62062c746de6b0600fe680a6b3",
+      "content_hash": "60a37229f2eacc4502d89859b04153d08470c610d8a949d568567e0a5e4647cf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T14:17:31.026Z"
+      "persisted_at": "2026-11-23T22:43:05.893Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona",
@@ -232234,9 +232239,9 @@
       "title": "Agent Contract: codewhale-hq-codewhale-learnings Autonomous Specialist Persona",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "789308653ec267323891e08da2237b41fcd3fafa6dce7943a04bc0190ad5925f",
+      "content_hash": "0bf30635cd6ebd39699049a3d8775cf89676b2e6d24bf52700666498c60aa06f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T14:17:31.194Z"
+      "persisted_at": "2026-11-23T22:43:06.123Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin",
@@ -232246,9 +232251,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "b628a98a3ea7ed108b34a945bf237cad973367b8d8017c4ea6cda3f89605e31c",
+      "content_hash": "6d3cd02948f4dd61a4d3823bcee758569d914275b29ff98dca42009527e77ff6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T14:17:31.333Z"
+      "persisted_at": "2026-11-23T22:43:06.308Z"
     },
     "learn-huggingface-bingsu-adetailer": {
       "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -242945,7 +242950,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "32f1a04a9bea3383eebec80fed3055599da91d9786cb46aba33922a623ff50bb",
+      "content_hash": "90b2d8d0023597f98e765f84a7e1a79c23140dfa718b99ef99f551c208e0661a",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -242965,7 +242970,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:24:47.910Z",
+      "verified_at": "2026-11-23T22:42:44.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258268,14 +258273,19 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "9a44a8e8",
-      "content_hash": "7f924d339f3f9b63f295bf5efb030ff89c3806bb4d483ad81aa9a8d4c444b27b",
+      "source_version": "36dabf36",
+      "content_hash": "8f1cd620620b8e7144c5b3aaf9f9185e610394eb5e1771a2e6ef4d96dea3b1a4",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
         {
           "number": 7277,
           "title": "Empirical Invariant Guard in README.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8012,
+          "title": "Empirical Invariant Guard in Cargo.lock",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -258294,7 +258304,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T16:13:06.505Z",
+      "verified_at": "2026-11-23T22:43:01.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -298998,9 +299008,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B-GGUF Core Invariants",
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "ea76b07aef2d5dedb1025dfac25c7ab7e2efd270d5fc96f369d9258dba11b5e7",
+      "content_hash": "794e6beca054eabe5d742732d1d4730a8a81b308c049e3e4416beebbe4eb309d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T16:24:48.287Z"
+      "persisted_at": "2026-11-23T22:42:44.767Z"
     },
     "rule-9406": {
       "learning_id": "rule-9406",
@@ -299074,9 +299084,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-gguf-learnings Core Invariants",
       "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "abe9602c250cb521b8535a69e03625989f1ae4847a12db71071cc417825aaac0",
+      "content_hash": "79b4bb5ecb3a6787f30eb21532f57ec9aacac7f655733f7ae8ddd338b86a64c4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T16:25:30.950Z"
+      "persisted_at": "2026-11-23T22:43:06.789Z"
     },
     "rule-9408": {
       "learning_id": "rule-9408",
@@ -310860,8 +310870,8 @@
       "slug": "rafsoh-dimeapp",
       "platform": "github",
       "source_url": "https://github.com/rafsoh/dimeApp",
-      "source_version": "6dead5de",
-      "content_hash": "41d3ae6037e6c4e2ce946cf83dac073e61f11f645399b1bbcbf82026c1382182",
+      "source_version": "2e7cc39c",
+      "content_hash": "de07fc6738038d9bc6e084cef678dabc3ad9db18c8a95af57c6a5157c2bff9d6",
       "dossier_path": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
       "promoted_rules": [
@@ -310879,6 +310889,11 @@
           "number": 9668,
           "title": "Non-Destructive In-Memory Snapshotting for Undo Actions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10137,
+          "title": "Empirical Invariant Guard in Localizable.strings",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -310886,7 +310901,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:57:47.951Z",
+      "verified_at": "2026-11-23T22:42:54.018Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -310992,10 +311007,10 @@
       "relative_path": "08_VERIFICATION/rafsoh-dimeapp-verification-protocol-empirical-defect-shield-for-rafsoh-dimeapp.md",
       "title": "Verification Protocol: Empirical Defect Shield for rafsoh/dimeApp",
       "repository": "rafsoh/dimeApp",
-      "source_version": "6dead5de",
-      "content_hash": "9dd83a43be1606cf3ee975f89439369fbb34427416b9942cf7ad8194ca594593",
+      "source_version": "2e7cc39c",
+      "content_hash": "2249cf7a1fe85bfdac90114cff060e9d849d4de073ad629c192f9f190c059fa7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:57:49.230Z"
+      "persisted_at": "2026-11-23T22:42:55.047Z"
     },
     "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants",
@@ -311017,9 +311032,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rafsoh-dimeapp-learnings",
       "repository": "rafsoh-dimeapp-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c2ed2595982ea28bd8a2e962d87df521de93fdbd8bd61287f07d2065cc3cac8",
+      "content_hash": "efd7ededd6038d7732a55a567d98b4833c6f0bee247f8081722ab1fa8b540fda",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:57:53.277Z"
+      "persisted_at": "2026-11-23T22:43:07.926Z"
     },
     "learn-github-parcel-bundler-parcel": {
       "learning_id": "learn-github-parcel-bundler-parcel",
@@ -330469,6 +330484,94 @@
       "content_hash": "6d482febc3f1b63cbd461e582038918c22d3726a29500ca29a2cec843e638895",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T22:24:08.072Z"
+    },
+    "rule-10136": {
+      "learning_id": "rule-10136",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10136,
+      "title": "a Harness package.json inside a native plugin root is part of that bun",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "48669ad1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T22:42:49.616Z"
+    },
+    "candidate_directive-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun": {
+      "item_id": "candidate_directive-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q3M9-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun.md",
+      "title": "a Harness package.json inside a native plugin root is part of that bun",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "48669ad1",
+      "content_hash": "3ae615f06492a1c971142cd4cb888c9e35241dd3b4e97069ab3119cf13e677e4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T22:42:50.198Z"
+    },
+    "rule-10137": {
+      "learning_id": "rule-10137",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10137,
+      "title": "Empirical Invariant Guard in Localizable.strings",
+      "source_url": "https://github.com/rafsoh/dimeApp",
+      "source_version": "2e7cc39c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T22:42:54.018Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-localizable-strings": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-localizable-strings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QGY5-empirical-invariant-guard-in-localizable-strings.md",
+      "title": "Empirical Invariant Guard in Localizable.strings",
+      "repository": "rafsoh-dimeapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5a372cf9c46d78b643d782353ef0874523a2f2509eb47e6e6b7b589a7e095db1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T22:43:07.469Z"
+    },
+    "domain_intelligence-design-intelligence-rafsoh-dimeapp-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-rafsoh-dimeapp-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-design-intelligence-rafsoh-dimeapp-core-invariants.md",
+      "title": "Design Intelligence: rafsoh/dimeApp Core Invariants",
+      "repository": "rafsoh/dimeApp",
+      "source_version": "2e7cc39c",
+      "content_hash": "09e1f9f418fb2e5c8aacf6af63451b1e9e7297af91199ea2ae963e06b044b3b9",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-23T22:42:54.822Z"
+    },
+    "candidate_directive-plugins-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun": {
+      "item_id": "candidate_directive-plugins-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QFJW-plugins-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun.md",
+      "title": "plugins): a Harness package.json inside a native plugin root is part of that bun",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f189e4ade89342d0505320463ab217cf9d20bd1fd4ba35d1c4fed5273270c150",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T22:43:05.666Z"
+    },
+    "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-learnings-design-intelligence-rafsoh-dimeapp-learnings-core-invar.md",
+      "title": "Design Intelligence: rafsoh-dimeapp-learnings Core Invariants",
+      "repository": "rafsoh-dimeapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d32ce9f8af5d779366b74bd73bf7f64d18e3f48a51dbed1bd5e96006c7d1c5f7",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-23T22:43:07.696Z"
     }
   },
   "ai-builder-brain": {

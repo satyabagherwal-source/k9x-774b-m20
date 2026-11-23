@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T22:33:13.858Z",
+  "last_updated": "2026-11-23T22:43:07.469Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1687,13 +1687,13 @@
       "learning_id": "learn-github-svenstaro-miniserve"
     },
     {
-      "id": "CD-B0A2",
+      "id": "CD-QCI3",
       "directive_title": "Empirical Invariant Guard in Cargo.lock",
-      "source_repo": "aleo-labs-protocol-snarkos-learnings",
-      "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-B0A2-empirical-invariant-guard-in-cargo-lock.md",
-      "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "source_repo": "meilisearch/meilisearch",
+      "source_commit": "36dabf36",
+      "staged_file": "11_INBOX/candidate-directives/CD-QCI3-empirical-invariant-guard-in-cargo-lock.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
       "date_staged": "2026-11-23",
       "domain_letter": "D"
     },
@@ -51432,6 +51432,48 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-89BB94-rust-resolve-python-calls-through-annota.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-Q3M9",
+      "directive_title": "a Harness package.json inside a native plugin root is part of that bun",
+      "source_repo": "codewhale-hq/Codewhale",
+      "source_commit": "48669ad1",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q3M9-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-QGY5",
+      "directive_title": "Empirical Invariant Guard in Localizable.strings",
+      "source_repo": "rafsoh-dimeapp-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QGY5-empirical-invariant-guard-in-localizable-strings.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-QFJW",
+      "directive_title": "plugins): a Harness package.json inside a native plugin root is part of that bun",
+      "source_repo": "codewhale-hq-codewhale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QFJW-plugins-a-harness-package-json-inside-a-native-plugin-root-is-part-of-that-bun.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-9122AF",
+      "directive_title": "Empirical Invariant Guard in Localizable.strings",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rafsoh-dimeapp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9122AF-empirical-invariant-guard-in-localizable.md",
       "staged_date": "2026-11-23"
     }
   ]

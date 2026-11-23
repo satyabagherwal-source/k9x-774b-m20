@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-BKAH",
-    "timestamp": "2026-11-22T01:44:08.825Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "22284158552a865e79073f4e5c35c24313d631f807c7bcbb858f7c8ebe201356",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-U9SI",
-    "timestamp": "2026-11-22T01:58:41.682Z",
-    "repository": "Qwen/Qwen3-Embedding-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-    "contentHash": "d27eb2ba6fed3be8d5ee172422cdb8bb77f1c4aec1890283fe3294e308ba6354",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-UKH5",
-    "timestamp": "2026-11-22T01:58:55.529Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-7KIZ",
-    "timestamp": "2026-11-22T02:09:02.123Z",
-    "repository": "moonshotai/Kimi-K3.1-Pro",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-    "contentHash": "e3f190a4e4f84536f900f3b5c330dba5d702c20e8f3c1ab664ab6c6ad5915442",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-7PWJ",
     "timestamp": "2026-11-22T02:09:09.091Z",
     "repository": "ZSeven-W/openpencil",
@@ -7492,6 +7432,66 @@
     "contentHash": "159dfef3c93ed10259bc2fb64816260bc5dc3dbecdbdab681cf38feba81c0fc2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-PZ79",
+    "timestamp": "2026-11-23T22:42:44.469Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "90b2d8d0023597f98e765f84a7e1a79c23140dfa718b99ef99f551c208e0661a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-Q3DS",
+    "timestamp": "2026-11-23T22:42:49.888Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "ae502dd99e944324ef5a5a68c391b9828e510e31a138918a481ed4133d04a163",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-Q6SC",
+    "timestamp": "2026-11-23T22:42:54.300Z",
+    "repository": "rafsoh/dimeApp",
+    "learningId": "learn-github-rafsoh-dimeapp",
+    "contentHash": "de07fc6738038d9bc6e084cef678dabc3ad9db18c8a95af57c6a5157c2bff9d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-QC9H",
+    "timestamp": "2026-11-23T22:43:01.397Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "8f1cd620620b8e7144c5b3aaf9f9185e610394eb5e1771a2e6ef4d96dea3b1a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

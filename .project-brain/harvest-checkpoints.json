@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T22:33:06.224Z",
+  "last_updated": "2026-11-23T22:43:01.413Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2361,14 +2361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "32f1a04a9bea3383eebec80fed3055599da91d9786cb46aba33922a623ff50bb",
-      "verified_at": "2026-11-19T16:24:48.116Z",
+      "content_hash": "90b2d8d0023597f98e765f84a7e1a79c23140dfa718b99ef99f551c208e0661a",
+      "verified_at": "2026-11-23T22:42:44.484Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:24:48.116Z"
+      "last_updated": "2026-11-23T22:42:44.484Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "b243dab580568dc3c7438581e494927dcecdf693eda2684f7d7e9bdfdf5e6200",
-      "verified_at": "2026-11-22T21:09:19.248Z",
+      "content_hash": "ae502dd99e944324ef5a5a68c391b9828e510e31a138918a481ed4133d04a163",
+      "verified_at": "2026-11-23T22:42:49.903Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:09:19.248Z"
+      "last_updated": "2026-11-23T22:42:49.903Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "7f924d339f3f9b63f295bf5efb030ff89c3806bb4d483ad81aa9a8d4c444b27b",
-      "verified_at": "2026-11-20T16:13:06.714Z",
+      "content_hash": "8f1cd620620b8e7144c5b3aaf9f9185e610394eb5e1771a2e6ef4d96dea3b1a4",
+      "verified_at": "2026-11-23T22:43:01.413Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T16:13:06.714Z"
+      "last_updated": "2026-11-23T22:43:01.413Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -15081,14 +15081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rafsoh-dimeapp",
-      "content_hash": "41d3ae6037e6c4e2ce946cf83dac073e61f11f645399b1bbcbf82026c1382182",
-      "verified_at": "2026-11-20T23:57:48.208Z",
+      "content_hash": "de07fc6738038d9bc6e084cef678dabc3ad9db18c8a95af57c6a5157c2bff9d6",
+      "verified_at": "2026-11-23T22:42:54.315Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:57:48.208Z"
+      "last_updated": "2026-11-23T22:42:54.315Z"
     },
     "exyte/Chat": {
       "repository": "exyte/Chat",

@@ -4,17 +4,17 @@
 {
   "source_repository": "codewhale-hq/Codewhale",
   "source_url": "https://github.com/codewhale-hq/Codewhale",
-  "source_version": "bc58781b",
+  "source_version": "48669ad1",
   "license": "MIT",
-  "timestamp": "2026-11-22T14:17:17.485Z",
+  "timestamp": "2026-11-23T22:42:50.197Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-codewhale-hq-codewhale",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `bc58781b`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T14:17:17.485Z`  
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `48669ad1`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T22:42:50.197Z`  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:17:14.137Z  
+> **Harvest Timestamp**: 2026-11-23T22:42:48.464Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41196 stars
+- **Stars / Engagement**: 41199 stars
 
 ---
 
@@ -1978,11 +1978,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7449** (2026-11-21): **fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842)**
-  *Symptoms*: ## What and why  The `.late-usage/<id>.json` ledger keeps a 1 MiB bound and refused the whole write when adding a record would cross it. Diagnostic-only receipts — the route-decision evidence written by `persist_late_decision_receipt` — carry no spend, but they count toward that bound and can fill it on their own.  This makes the write compact instead of refusing: when a candidate would exceed 1 MiB, drop the oldest diagnostic-only records until it fits, and keep every spend-bearing record (settled or unresolved) unchanged. Replay still dedupes by `source_fingerprint`, so no spend is forgotten or double-counted.  ## Where this came from  Refs #6842. This is the sidecar half of the issue; bounding the unordered replay index (`usage_source_fingerprints`) and the retained journal archive policy remain open there.  ## How I tested it  - `cargo test -p codewhale-engine --lib oversized_ledger_compacts_diagnostic_receipts_before_failing` — 1 passed (the new fixture builds a ledger over 1 MiB with diagnostic + spend records; after the write, all spend records survive, the diagnostic count shrinks, and the file is within the bound) - The existing bound tests still pass: a ledger made only of spend-bearing records still returns `InvalidData` rather than silently truncating a receipt. - `cargo fmt --all -- --check` — passed - The `Behaviour:` line is in the commit body; `scripts/check-behaviour-line.py` arrives with #7445 and is not on this branch yet.  ## Checklist  - [x] One focused c
+- **Issue #7494** (2026-11-23): **fix(app-server): resolve 6 verified R7 audit defects**
+  *Symptoms*: ## What and why  Resolves all 6 verified R7 audit defects in `crates/app-server/`: - **R7-L2-01** (`remote_setup/mod.rs`): guard 1-based menu selection against `0` underflow. - **R7-L4-02** (`remote_control.rs`): stop swallowing active-index rollback failures. - **R7-L11-01** (`acp_server.rs`): offload synchronous session store I/O in async ACP handlers onto `spawn_blocking`. - **R7-L11-02** (`acp_server/connection.rs`): avoid holding the server mutex across async handler execution and blocking I/O. - **R7-L11-03** (`runtime_api.rs`): offload skills canonicalization and directory scanning onto `spawn_blocking`. - **R7-L12-01** (`acp_server.rs` + `crates/localization/`): localize the previously hardcoded English ACP full-access hint across all 15 locale bundles.  ## Where this came from  Closes #7463  ## How I tested it  - `cargo test -p codewhale-localization` and `cargo test -p codewhale-app-server --lib` — all pass. - `cargo fmt --all -- --check`, `python3 scripts/check-dead-code-budget.py`, `python3 scripts/check-blocking-calls-budget.py` — all pass.  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and tests cover new or changed behavior - [ ] If this adds or changes a user-facing feature, I updated its docs and its row in `docs/features.toml` (N/A — internal audit fixes)
 
-- **Issue #7431** (2026-11-21): **fix(engine): classify local read-only deferred tools as Safe in get_tool_category**
-  *Symptoms*: ## What and why  `crates/engine/src/core/authority.rs` `get_tool_category()` still left a number of registered `ToolCapability::ReadOnly` local tools, canonical read-action targets, and legacy `tool_search` spellings unclassified, so they fell through to `ToolCategory::Unknown` and Auto-Review routed every call to `AskUser` (`auto_review.rs:1582`).  Each candidate tool from #7407 was audited individually against its implementation and capabilities before classifying:  ### Classified as `ToolCategory::Safe`  | Tool / Target | Rationale | | --- | --- | | `is_tool_search_tool(name)` (`tool_search`, `tool_search_tool_regex`, `tool_search_tool_bm25`) | Replaces the literal `"tool_search"` arm with the shared `codewhale_tools::names::is_tool_search_tool` helper so legacy dispatchable spellings (`turn_loop.rs:1136-1146`, `:2238`) also classify as `Safe`. | | `context_archive_get`, `context_archive_search` | `ReadOnly` / `Auto`. Bounded, secret-scrubbed in-process reads of the current session's compaction archive. | | `session_get`, `session_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of prior session metadata/tails. | | `memory_get`, `memory_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of `NativeMemoryStore`. | | `project_map` | `ReadOnly`, `Sandboxable` / `Auto`. In-process directory walk (`"project"` was already in `Safe`, while the registered tool name is `"project_map"`). | | `validate_data` | `ReadOnly`, `Sandboxable` /
+- **Issue #7482** (2026-11-23): **fix(audit): resolve 8 verified R20 defects across net, notify, telemetry, ingest, and web gates**
+  *Symptoms*: ## What and why  Fixes all 8 verified R20 audit defects across `crates/net`, `crates/notify`, `crates/telemetry`, `telemetry-ingest`, and `web/scripts`:  - **R20-L4-01 (`crates/net/src/import_claude.rs`, `crates/command-contract/src/config.rs`, `crates/tui/src/commands/groups/config/import_claude.rs`)**: Preserve the `serde_json::Error` detail (including line/column) in `CommandSourceStatus::InvalidJson(String)` and include it in `CommandSourceStatus::describe` instead of discarding it. - **R20-L7-01 (`crates/notify/src/audio.rs`)**: Bound external audio player execution (`afplay` / `aplay`) with a 15-second timeout via `spawn` + `try_wait` polling, killing and reaping a hung child so `Reset::drop` always releases the `PLAYING` busy latch. - **R20-L8-01 (`web/scripts/check-release-docs.mjs`, `web/scripts/release-docs-lib.mjs`, `web/lib/agent-docs.test.ts`)**: Fail closed when the published release tag is unavailable and `derived` is `null` instead of printing OK, unless explicitly opted in via `--allow-shallow` or `CODEWHALE_ALLOW_SHALLOW_CHECKOUT=1`. - **R20-L8-02 (`web/scripts/check-facts.mjs`, `web/scripts/release-baseline-lib.mjs`, `web/scripts/release-gates.test.mjs`)**: Extract `checkReleaseBaseline` and fail closed when the published release tag is unavailable instead of warning and exiting 0, unless explicitly opted in via `--allow-shallow` or `CODEWHALE_ALLOW_SHALLOW_CHECKOUT=1`. - **R20-L9-01 (`telemetry-ingest/src/index.ts`, `telemetry-ingest/wrangler.jsonc`, `tele
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1999,424 +1999,386 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c211938` (2026-11-21)
-**Commit Message**: Sync the packaged TUI changelog for the notice correction
+### Incident Patch 1: `b21c9527` (2026-11-23)
+**Commit Message**: fix(plugins): a Harness package.json inside a native plugin root is part of that bundle
 
-Regenerated the existing release-note projection with scripts/sync-changelog.sh. The version drift check now passes locally with 40 feature issue references.
+Adding Computer Use from the Marketplace on 0.10.3 fetched the pinned
+v0.16.3 computer-use.tar.gz, passed its SHA-256 pin, then refused the
+install: "archive must contain exactly one plugin bundle root ... found 2".
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
+Cause: the tarball scan counts every manifest directory as a bundle root.
+a9a0fe86fa3 (2026-11-09, CW-7051/CW-7054, first released in v0.10.3) added
+DeepSeek Harness detection to that scan: any package.json with dsh.bundle
+outside node_modules became a root. The Computer Use archive (git archive
+--prefix=computer-use/ of the plugin tag) carries computer-use/plugin.json
+and, since plugin v0.11.2 (f8b9ab5, 2026-09-15), the optional Harness
+integration at computer-use/integrations/dsh/package.json. That nested
+manifest became a second root. Before a9a0fe86fa3 package.json was never
+counted, so the same archive scanned to one root; the catalog entry was
+added on 2026-10-26, between the two. v0.10.2 had no Computer Use
+Marketplace entry, so no released Engine ever installed it from the
+Marketplace. The existing tests put the Harness package.json at the bundle
+root or in a sibling direct
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -17,8 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- ## [Unreleased]
+ ### Fixed
  
-+- Native release bundles, the Windows installer, npm packages and published crates include the Codewhale license and both third-party notice documents.
-+
- - Stopping an external agent while it waits for approval now records the turn as interrupted even when the agent replies that it finished. (CW-7965)
- 
- - The Simplified Chinese telemetry guide now explains which files each process keeps, how much disk space they use and when old files are removed. (CW-7987)
+-- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now applies the owner-only permissions without asking Windows for the right to change the folder's owner. A folder owned by another account is still refused, now with a message that names it and says how to fix it.
++- **Computer Use installs from the Marketplace:** in 0.10.3, adding Computer Use from `/plugins` fetched the pinned 0.16.3 archive, passed its checksum, and then stopped with "archive must contain exactly one plugin bundle root … found 2", because the DeepSeek Harness `package.json` that Computer Use ships in `integrations/dsh/` was counted as a second plugin. A Harness `package.json` inside a plugin's folder is now part of that plugin: Computer Use installs as one plugin, disabled and untrusted, with the same skills, commands and MCP server in its review as a directory install of that release, and the nested Harness bundle is neither converted nor enabled. Two plugins side by side in one archive are still refused, and the message now says a Harness `package.json` counts as a plugin.
+ - **Ctrl+V pasted text twice on Windows Terminal:** the terminal pastes text itself and also forwards the key release, which read the clipboard a second time. A release with no key press now only attaches a clipboard image, which is the case the terminal cannot deliver, and a held Ctrl+V no longer pastes again on release. Thanks [@diegovskytl](https://github.com/diegovskytl) for the report. (Refs #7485)
++- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now applies the owner-only permissions without asking Windows for the right to change the folder's owner. A folder owned by another account is still refused, now with a message that names it and says how to fix it.
+ - **`codewhale update` refused a release binary in `~/.local/bin`:** any `.crates.toml` beside the `bin` directory, left by an unrelated `cargo install --root`, made the updater treat the binary as Cargo-managed. It now checks that Cargo's record lists this executable, as `codewhale doctor` already did.
+ - **Every terminal draws the dot whale in `/pet`:** terminals whose session is not the shared pet companion's source no longer show the old whale with `whale needs /pet source · showing cove`. Each draws the dot whale and its activity forms (editing, reading, waiting, done and so on) from its own session. The source still decides what the companion records and plays sound for. (CW-8359)
+ - **Resumed reasoning opens a card below tools:** when a gateway continues sending `thinking_delta` chunks after a tool card has already appeared beneath the active thinking card, Codewhale finalizes that earlier card (preserving any unrevealed thinking text and clearing stalled translation placeholders) and opens a fresh thinking card below the tool instead of growing the card above it. Thanks [@SparkofSpike](https://github.com/SparkofSpike). (#7455, Refs #7454)
 ```
 
----
-
-### Incident Patch 2: `30ca06be` (2026-11-21)
-**Commit Message**: fix(release): preserve remaining ownership during partial command restore
-
-Keep validated ownership for untouched aliases when one restored command changes. Record the installed replacement digest when displacing a command so undo can distinguish its own unclaimed replacement from a later user edit. Historical four-column recovery manifests still work. All five release recovery tests passed locally, including partial restore and modified-command undo.
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `crates/plugins/src/install/mod.rs` (modified, +1/-1)
 ```diff
-@@ -282,7 +282,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- - **MCP catalogs stay fresh:** a server's tools, resources, prompts and skills are rediscovered on their own connection when an advertised `ttlMs` expires or the server sends a list-changed notice. A tool resolved against the old catalog is refused with "retry the call", a removed tool cannot run, and a failed refresh reconnects instead of serving stale entries. Catalogs are never shared across servers, credentials or reconnects.
- - **MCP Skills extension:** servers that advertise the published Skills extension have their skills listed in `list_mcp_resources`. Listing never activates a skill, and reading a skill file is refused unless its size and sha256 digest match the listing. MCP skills do not yet join `/skills`.
- - **Updates install themselves:** release-binary installs check for a new release every 6 hours (was 1), download and checksum-verify it in the background, and apply it the next time `codewhale` starts, never during a session. One line says `Updated to v… · What's new: … · Undo: codewhale update --rollback`. Until releases are signed, the download waits for your OK (one `[y/N]` question at the next start, or `/update install`); a release with a valid Ed25519 manifest signature applies on its own. `codewhale update --rollback` puts back the version the last update replaced and keeps the rolled-back version from returning automatically. Turn it down with `codewhale config set update.mode notify` (or `off`, or `CODEWHALE_UPDATE_MODE`); an organization's root-owned `policy.toml` overrides both. Offline and rate-limited checks retry about an hour later instead of on every launch. Package-manager and desktop-app copies only get their manager's command. Builds with the release key refuse a missing or invalid signature, and re-check the staged binary against the signed manifest at start. The checksum manifest now always comes from GitHub Releases; on Linux x64 the CNB mirror can still serve the binary, but only bytes that GitHub's manifest lists.
--- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo.
-+- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo. A partial restore retains ownership of unchanged commands.
- - **Uninstall guidance on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed, then a hidden PowerShell process deletes it after the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-da
+@@ -382,7 +382,7 @@ pub enum PluginInstallError {
+     #[error("archive entry name is longer than {limit} bytes")]
+     EntryNameTooLong { limit: usize },
+     #[error(
+-        "archive must contain exactly one plugin bundle root (a directory holding plugin.json, kimi.plugin.json, or plugin.toml); found {0} (install a single plugin bundle, not a mono-repo)"
++        "archive must contain exactly one plugin bundle root (a directory holding plugin.json, kimi.plugin.json, plugin.toml, or a DeepSeek Harness package.json); found {0} (install a single plugin bundle, not a mono-repo)"
+     )]
+     PluginTomlRoots(usize),
+     #[error("symlinks and hard links are not allowed in plugin bundles")]
 ```
 
-**File**: `crates/release/src/installs.rs` (modified, +73/-10)
+**File**: `crates/plugins/src/install/tarball.rs` (modified, +12/-2)
 ```diff
-@@ -794,6 +794,10 @@ impl RecoveryBatch {
-     }
+@@ -3,7 +3,10 @@
+ //! Pass one ([`scan_tarball_for_bundle`]) writes nothing: it rejects traversal and
+ //! absolute paths, enforces the uncompressed size cap from the headers, and
+ //! locates the single bundle root — the directory holding the bundle's
+-//! manifest (`plugin.json`, `kimi.plugin.json`, or the legacy `plugin.toml`). Pass two
++//! manifest (`plugin.json`, `kimi.plugin.json`, the legacy `plugin.toml`, or a
++//! DeepSeek Harness `package.json`). A Harness `package.json` below a native
++//! manifest's directory is a file of that bundle, not a second root; nested
++//! native manifests still count as separate roots. Pass two
+ //! ([`extract_into`]) extracts only entries under that root, so a mono-repo's
+ //! symlinks elsewhere in the archive are never materialized.
  
-     pub fn move_in(&mut self, path: &Path) -> Result<RecoveryMove> {
-+        self.move_in_replaced(path, None)
-+    }
-+
-+    fn move_in_replaced(&mut self, path: &Path, replacement: Option<&str>) -> Result<RecoveryMove> {
-         let original = path.to_string_lossy();
-         if original.contains(['\t', '\n', '\r']) {
-             bail!(
-@@ -842,7 +846,10 @@ impl RecoveryBatch {
-                 format!("failed to move {} to {}", path.display(), to.display())
-             })?;
-         }
--        let line = format!("{original}\t{}\t{digest}\t{bytes}\n", to.display());
-+        let suffix = replacement
-+            .map(|digest| format!("\t{digest}"))
-+            .unwrap_or_default();
-+        let line = format!("{original}\t{}\t{digest}\t{bytes}{suffix}\n", to.display());
-         let mut manifest = fs::OpenOptions::new()
-             .create(true)
-             .append(true)
-@@ -889,6 +896,7 @@ pub struct RecoveryRecord {
-     pub stored: PathBuf,
-     pub sha256: Option<String>,
-     pub bytes: u64,
-+    pub replacement_sha256: Option<String>,
- }
+@@ -178,7 +181,14 @@ fn scan_bundle_entries(
+     };
  
- #[derive(Debug, Clone)]
-@@ -957,6 +965,7 @@ fn read_manifest(dir: &Path) -> Vec<RecoveryRecord> {
-                 stored,
-                 sha256,
-                 bytes,
-+                replacement_sha256: fields.next().map(str::to_string),
-             })
-         })
-         .collect()
-@@ -1023,11 +1032,16 @@ fn verified_recovery_file(
-     Ok(meta)
- }
- 
-+struct DisplacedReceipt {
-+    path: PathBuf,
-+    retained: Vec<(String, String)>,
-+}
-+
- fn command_receipt_to_displace(
-     directory: &Path,
-     records: &BTreeMap<&Path, &RecoveryRecord>,
-     owner: Option<u64>,
--) -> Result<Option<PathBuf>> {
-+) -> Result<Option<DisplacedReceipt>> {
-     let receipt = directory.join(RECEIPT_FILE);
-     let meta = match fs::symlink_metadata(&receipt) {
-         Ok(meta) => meta,
-@@ -1045,17 +1059,19 @@ fn command_receipt_to_displace(
-     }
-     let claims = parse_command_receipt(&read_small(&receipt, 512)?)?;
-     let mut changes_owned_bytes = false;
-+    let mut retained = Vec::new();
-     for name in RECEIPT_COMMANDS {
-         let command = directory.join(name);
--        if records.contains_key(command.as_path())
-+        if let Some(record) = records.get(command.as_path())
-+            && record.replacement_sha256.is_none()
-             && !claims.contains_key(*name)
-             && fs::symlink_metadata(&command).is_ok()
-         {
-             bail!("preserved unclaimed command {}", command.display());
-         }
-     }
-     for (name, expected) in claims {
--        let path = directory.join(name);
-+        let path = directory.join(&name);
-         match fs::symlink_metadata(&path) {
-             Ok(current)
-                 if current.is_file()
-@@ -1067,13 +1083,25 @@ fn command_receipt_to_displace(
-             _ => bail!("preserved modified command {}", path.display()),
-         }
-         if let Some(record) = records.get(path.as_path()) {
--            changes_owned_bytes |= match &record.sha256 {
-+            let changes = match &record.sha256 {
-                 Some(digest) => digest != &expected,
-                 None => file_sha256(&record.stored)? != expected,
-             };
-+            if changes {
-+                changes_owned_bytes = true;
-+                continue;
-+            }
-         }
-+        retained.push((name, expected));
-+    }
-+    let saved = records.contains_key(receipt.as_path());
-+    if saved {
-+        retained.clear();
-     }
--    Ok((changes_owned_bytes || records.contains_key(receipt.as_path())).then_some(receipt))
-+    Ok((changes_owned_bytes || saved).then_some(DisplacedReceipt {
-+        path: receipt,
-+        retained,
-+    }))
- }
- 
- fn validate_saved_command_receipt(
-@@ -1134,6 +1162,21 @@ pub fn restore(home: &Path, stamp: Option<&str>) -> Result<(String, RestoreRepor
-             })
-         })
-         .collect();
-+    for record in records.values() {
-+        if let Some(expected) = &record.replacement_sha256 {
-+            let current = match fs::symlink_metadata(&record.original) {
-+                Ok(meta) => meta,
-+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
-+                Err(error) => return Err(error.into()),
-+            };
-+            if !current.is_file()
-+                || !owned_by(&current, owner_id(home))
-+                || file_sha256(&record.original)? != *expected
-+            {
-+                bail!("preserved modified command {}", record.original.display());
-+            }
-+        }
-+    }
-     let mut receipts = Vec::new();
-     for dir in directories {
-         let receipt = dir.join(RECEIPT_FILE);
-@@ -1163,7 +1206,15 @@ pub fn restore(home: &Path, stamp: Option<&str>) -> Result<(String, RestoreRepor
-     if !receipts.is_empty() {
-         let mut batch = RecoveryBatch::open(home)?;
-         for receipt in receipts {
--            batch.move_in(&receipt)?;
-+            batch.move_in(&rec
+     let roots = filter_roots(&manifest_paths);
+-    let dsh_roots = filter_roots(&dsh_manifest_paths);
++    let dsh_roots: BTreeSet<String> = filter_roots(&dsh_manifest_paths)
++        .into_iter()
++        .filter(|dsh_root| {
++            !roots
++                .iter()
++                .any(|root| dsh_root != root && Path::new(dsh_root).starts_with(root))
++        })
++        .collect();
+     let all_roots: BTreeSet<String> = roots.union(&dsh_roots).cloned().collect();
+     if all_roots.len() != 1 {
+         return Err(PluginInstallError::PluginTomlRoots(all_roots.len()).into());
 ```
 
-**File**: `crates/release/tests/recovery_records.rs` (modified, +44/-0)
+**File**: `crates/plugins/src/install/tests.rs` (modified, +49/-0)
 ```diff
-@@ -164,3 +164,47 @@ fn command_restore_preserves_ownership_and_undo() {
-         assert_eq!(fs::read(unrelated).unwrap(), b"keep me");
-     }
+@@ -3012,6 +3012,55 @@ fn tarball_with_dsh_package_and_plugin_json_merges_and_enforces_rules() {
+     assert!(tarball::stage_tarball(&multi_tar, tmp.path(), DEFAULT_MAX_SIZE_BYTES, None).is_err());
  }
-+
+ 
 +#[test]
-+fn partial_restore_keeps_other_claims_and_only_undoes_its_own_replacement() {
-+    use codewhale_release::installs::{
-+        RECEIPT_COMMANDS, RECEIPT_FILE, parse_command_receipt, sha256_hex,
-+    };
-+    let home = tempfile::tempdir().unwrap();
-+    let dir = home.path();
-+    let prior = dir.join(RECEIPT_COMMANDS[0]);
-+    let untouched = dir.join(RECEIPT_COMMANDS[1]);
-+    let receipt = dir.join(RECEIPT_FILE);
-+    let original_claims = [RECEIPT_COMMANDS[0], RECEIPT_COMMANDS[1]]
-+        .map(|name| format!("{}  {name}\n", sha256_hex(b"new")))
-+        .concat();
-+    fs::write(&prior, b"old").unwrap();
-+    let mut batch = RecoveryBatch::open(dir).unwrap();
-+    let stamp = batch.stamp.clone();
-+    batch.move_in(&prior).unwrap();
-+    batch.finish();
-+    fs::write(&prior, b"new").unwrap();
-+    fs::write(&untouched, b"new").unwrap();
-+    fs::write(&receipt, &original_claims).unwrap();
-+    let (_, report) = restore(dir, Some(&stamp)).unwrap();
-+    assert!(report.skipped.is_empty());
-+    let retained = parse_command_receipt(&fs::read_to_string(&receipt).unwrap()).unwrap();
-+    assert_eq!(retained.len(), 1);
-+    assert_eq!(retained[RECEIPT_COMMANDS[1]], sha256_hex(b"new"));
-+    assert_eq!(fs::read(&prior).unwrap(), b"old");
-+    assert_eq!(fs::read(&untouched).unwrap(), b"new");
-+    let undo = report.displaced.unwrap();
-+    fs::write(&prior, b"my changes").unwrap();
-+    assert!(restore(dir, Some(&undo)).is_err());
-+    assert_eq!(fs::read(&prior).unwrap(), b"my changes");
-+    assert_eq!(
-+        retained,
-+        parse_command_receipt(&fs::read_to_string(&receipt).unwrap()).unwrap()
++fn native_root_with_nested_dsh_integration_installs_as_one_bundle() {
++    let tmp = tempfile::tempdir().unwrap();
++    let plugin_json = serde_json::to_vec(&serde_json::json!({
++        "$schema": "https://agent-plugins.org/schemas/plugin.json",
++        "name": "computer-use",
++        "version": "0.16.3"
++    }))
++    .unwrap();
++    let root_package = br#"{"name":"codewhale-cu-plugin","version":"0.16.3","private":true}"#;
++    let dsh_package = serde_json::to_vec(&serde_json::json!({
++        "name": "@codewhale/computer-use-dsh",
++        "version": "0.6.0",
++        "dsh": {"bundle": {"patch": "./cordis.patch.yml"}}
++    }))
++    .unwrap();
++    let patch = minimal_dsh_patch_with_skill().as_bytes();
++
++    let archive = tarball(&[
++        ("computer-use/plugin.json", &plugin_json),
++        ("computer-use/package.json", root_package),
++        ("computer-use/integrations/dsh/package.json", &dsh_package),
++        ("computer-use/integrations/dsh/cordis.patch.yml", patch),
++    ]);
++    let staged = stage_tarball(&archive, tmp.path(), DEFAULT_MAX_SIZE_BYTES, None).unwrap();
++    assert_eq!(staged.name, "computer-use");
++    assert!(!staged.staged_path.join("CONVERSION.json").exists());
++    assert!(
++        staged
++            .staged_path
++            .join("integrations/dsh/package.json")
++            .is_file()
 +    );
-+    fs::write(&prior, b"old").unwrap();
-+    let (_, report) = restore(dir, Some(&undo)).unwrap();
-+    assert!(report.skipped.is_empty());
-+    assert_eq!(fs::read(&prior).unwrap(), b"new");
-+    assert_eq!(fs::read(&untouched).unwrap(), b"new");
-+    assert_eq!(fs::read_to_string(&receipt).unwrap(), original_claims);
++
++    let siblings = tarball(&[
++        ("repo/native/plugin.json", &plugin_json),
++        ("repo/harness/package.json", &dsh_package),
++        ("repo/harness/cordis.patch.yml", patch),
++    ]);
++    let err = scan_tarball(&siblings, DEFAULT_MAX_SIZE_BYTES).unwrap_err();
++    assert!(
++        matches!(
++            err.downcast_ref::<PluginInstallError>(),
++            Some(PluginInstallError::PluginTomlRoots(2))
++        ),
++        "got: {err:#}"
++    );
 +}
++
+ #[test]
+ fn tarball_with_dsh_package_and_other_manifest_spelling_is_refused() {
+     let tmp = tempfile::tempdir().unwrap();
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
+**File**: `crates/tui/CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -282,7 +282,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- - **MCP catalogs stay fresh:** a server's tools, resources, prompts and skills are rediscovered on their own connection when an advertised `ttlMs` expires or the server sends a list-changed notice. A tool resolved against the old catalog is refused with "retry the call", a removed tool cannot run, and a failed refresh reconnects instead of serving stale entries. Catalogs are never shared across servers, credentials or reconnects.
- - **MCP Skills extension:** servers that advertise the published Skills extension have their skills listed in `list_mcp_resources`. Listing never activates a skill, and reading a skill file is refused unless its size and sha256 digest match the listing. MCP skills do not yet join `/skills`.
- - **Updates install themselves:** release-binary installs check for a new release every 6 hours (was 1), download and checksum-verify it in the background, and apply it the next time `codewhale` starts, never during a session. One line says `Updated to v… · What's new: … · Undo: codewhale update --rollback`. Until releases are signed, the download waits for your OK (one `[y/N]` question at the next start, or `/update install`); a release with a valid Ed25519 manifest signature applies on its own. `codewhale update --rollback` puts back the version the last update replaced and keeps the rolled-back version from returning automatically. Turn it down with `codewhale config set update.mode notify` (or `off`, or `CODEWHALE_UPDATE_MODE`); an organization's root-owned `policy.toml` overrides both. Offline and rate-limited checks retry about an hour later instead of on every launch. Package-manager and desktop-app copies only get their manager's command. Builds with the release key refuse a missing or invalid signature, and re-check the staged binary against the signed manifest at start. The checksum manifest now always comes from GitHub Releases; on Linux x64 the CNB mirror can still serve the binary, but only bytes that GitHub's manifest lists.
--- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo.
-+- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo. A partial restore retains ownership of unchanged commands.
- - **Uninstall guidance on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed, then a hidden PowerShell process deletes it after the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-da
+@@ -17,8 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
+-- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now applies the owner-only permissions without asking Windows for the right to change the folder's owner. A folder owned by another account is still refused, now with a message that names it and says how to fix it.
++- **Computer Use installs from the Marketplace:** in 0.10.3, adding Computer Use from `/plugins` fetched the pinned 0.16.3 archive, passed its checksum, and then stopped with "archive must contain exactly one plugin bundle root … found 2", because the DeepSeek Harness `package.json` that Computer Use ships in `integrations/dsh/` was counted as a second plugin. A Harness `package.json` inside a plugin's folder is now part of that plugin: Computer Use installs as one plugin, disabled and untrusted, with the same skills, commands and MCP server in its review as a directory install of that release, and the nested Harness bundle is neither converted nor enabled. Two plugins side by side in one archive are still refused, and the message now says a Harness `package.json` counts as a plugin.
+ - **Ctrl+V pasted text twice on Windows Terminal:** the terminal pastes text itself and also forwards the key release, which read the clipboard a second time. A release with no key press now only attaches a clipboard image, which is the case the terminal cannot deliver, and a held Ctrl+V no longer pastes again on release. Thanks [@diegovskytl](https://github.com/diegovskytl) for the report. (Refs #7485)
++- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now applies the owner-only permissions without asking Windows for the right to change the folder's owner. A folder owned by another account is still refused, now with a message that names it and says how to fix it.
+ - **`codewhale update` refused a release binary in `~/.local/bin`:** any `.crates.toml` beside the `bin` directory, left by an unrelated `cargo install --root`, made the updater treat the binary as Cargo-managed. It now checks that Cargo's record lists this executable, as `codewhale doctor` already did.
+ - **Every terminal draws the dot whale in `/pet`:** terminals whose session is not the shared pet companion's source no longer show the old whale with `whale needs /pet source · showing cove`. Each draws the dot whale and its activity forms (editing, reading, waiting, done and so on) from its own session. The source still decides what the companion records and plays sound for. (CW-8359)
+ - **Resumed reasoning opens a card below tools:** when a gateway continues sending `thinking_delta` chunks after a tool card has already appeared beneath the active thinking card, Codewhale finalizes that earlier card (preserving any unrevealed thinking text and clearing stalled translation placeholders) and opens a fresh thinking card below the tool instead of growing the card above it. Thanks [@SparkofSpike](https://github.com/SparkofSpike). (#7455, Refs #7454)
 ```
 
 ---
 
-### Incident Patch 3: `b0d4ae89` (2026-11-21)
-**Commit Message**: fix(engine): preserve child tool authority when connectors refresh
+### Incident Patch 2: `437c921c` (2026-11-23)
+**Commit Message**: fix(config,windows): secure an owned private directory without WRITE_OWNER
 
-Rebuild the child connector catalog from its current authority and the connected operations at every refresh. Use the child-bound schema and the per-turn allow and deny policy for boot, discovery and connection changes.
+On Windows, /provider and starting a session failed for a project on a
+second drive (D:, E:) with that drive's default ACL, where a normal
+user has Modify through Authenticated Users but not Full control. The
+screen showed "The Engine session acknowledgement does not match this
+UI" and the log "opening Codewhale credentials directory for owner-only
+security: <workspace>\.codewhale\state: Access is denied (os error 5)".
 
-Checked formatting, git diff, and 4096 in-memory connected/admitted catalog combinations. Added connected and disconnected assertions to the existing delegation fixture.
+Cause: open_owned_directory (crates/config/src/private_directory.rs)
+opened the final directory with FILE_GENERIC_READ | WRITE_DAC |
+WRITE_OWNER. The owner of an object holds WRITE_DAC implicitly but not
+WRITE_OWNER, and Modify does not grant it, so the open itself was
+refused even though Codewhale had just created the directory and owns
+it. The owner-only ACL was never applied (the directory kept the
+inherited ACL, readable by BUILTIN\Users) and the admission failed.
+On C: under the user profile the user has Full control, which is why
+only second-drive projects hit it. The delegated sub-agent store under
+<workspace>\.codewhale\state then refused, the Engine declined the
+session switch ("Fai
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -19,7 +19,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- - **Exact route inventory:** model lists separate metadata, observed roster evidence and readiness; optional session selections reject changed account or endpoint bindings, and the terminal shows the catalog status from that same route inventory, including on bundled fallback rows. A new Runtime thread can commit an exact selection before it becomes visible. Empty discovery no longer masquerades as a failed refresh. (CW-8311)
+@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - **DSH reviewed client module map:** CommonJS client activation uses the installer’s admitted import edges for relative modules, JSON, cycles and contained package exports. Undeclared requests fail closed, and prior compatibility receipts require review again. Installed Engine/App qualification remains pending (CW-8288, CW-8014, CW-8019).
--- An explicitly scoped child can request a read from an operator-declared static HTTP connector with a matching account binding, schema and approved arguments.
-+- An explicitly scoped child can request a read from an operator-declared static HTTP connector with a matching account binding, schema and approved arguments. Connector refreshes preserve the child’s authorized tool catalog.
- - **SearchApi web search provider:** `web_search` now supports SearchApi (`[search] provider = "searchapi"`, `SEARCHAPI_API_KEY` or `[search] api_key`) for Google organic results with `hl`, `gl`, and `time_period` filtering. Thanks [@gabsferreira](https://github.com/gabsferreira) (#7410).
- - **Crisper 980-dot whale and activity forms in `/pet`:** the terminal pet's 980 dots now compile from perimeter-anchored hexagonal-lattice silhouettes with rorqual throat illumination at rest and cleaner edges across all thirteen running, waiting and done forms, while keeping zero motion under Hold still and Reduce motion. (CW-6453)
- - **Terminal and website design tokens updated to 5.4.0:** vendored `codewhale-design` `5.4.0` and `codewhale-ratatui` `5.4.0` roles (`Subagent` and `LivePeak`), exported the updated `5.4.0` CSS custom properties to the website (`web/app/tokens.css`), fixed `adapt_fg_for_depth` ANSI-16 appearance awareness (bright 9–14 on dark, dark 1–6 on light) so warnings and status lines stay legible on light 16-color terminals, and preserved green/red hues (`22`/`52` dark, `158`/`224` light) on 256-color diff line backgrounds. (CW-8264)
+ ### Fixed
+ 
++- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now applies the owner-only permissions without asking Windows for the right to change the folder's owner. A folder owned by another account is still refused, now with a message that names it and says how to fix it.
+ - **Ctrl+V pasted text twice on Windows Terminal:** the terminal pastes text itself and also forwards the key release, which read the clipboard a second time. A release with no key press now only attaches a clipboard image, which is the case the terminal cannot deliver, and a held Ctrl+V no longer pastes again on release.
+ - **`codewhale update` refused a release binary in `~/.local/bin`:** any `.crates.toml` beside the `bin` directory, left by an unrelated `cargo install --root`, made the updater treat the binary as Cargo-managed. It now checks that Cargo's record lists this executable, as `codewhale doctor` already did.
+ - **Every terminal draws the dot whale in `/pet`:** terminals whose session is not the shared pet companion's source no longer show the old whale with `whale needs /pet source · showing cove`. Each draws the dot whale and its activity forms (editing, reading, waiting, done and so on) from its own session. The source still decides what the companion records and plays sound for. (CW-8359)
 ```
 
-**File**: `crates/engine/src/core/engine/turn_loop.rs` (modified, +21/-29)
+**File**: `crates/config/src/private_directory.rs` (modified, +227/-21)
 ```diff
-@@ -1079,12 +1079,12 @@ impl Engine {
-         policy: &ToolSurfacePolicy,
-         catalog: &mut Vec<Tool>,
-         active: &mut std::collections::HashSet<String>,
--    ) {
-+    ) -> bool {
-         if !self.config.features.enabled(Feature::Mcp) {
--            return;
-+            return false;
-         }
-         let Some(pool) = self.mcp_pool.as_ref() else {
--            return;
-+            return false;
-         };
-         let (universe, mut refreshed) = {
-             let pool = pool.lock().await;
-@@ -1094,13 +1094,14 @@ impl Engine {
-         // A config/authority change during handshake can remove a server;
-         // `replace_runtime_mcp_tools` owns every MCP name already in the
-         // catalog, so its previous names leave this turn's catalog too.
--        refreshed.retain(|tool| {
--            policy.passes_allow_list(&tool.name)
--                && !policy.denies_tool(&tool.name)
--                && (self.child_host.is_none() || policy.registry.contains(&tool.name))
--        });
-+        if let Some(child) = &self.child_host {
-+            refreshed = child
-+                .authority
-+                .connected_mcp_tools_for_model(&policy.registry, refreshed);
-+        }
-+        refreshed.retain(|tool| policy.allows_tool(&tool.name));
-         let always_load = self.effective_tools_always_load();
--        if replace_runtime_mcp_tools(
-+        let changed = replace_runtime_mcp_tools(
-             catalog,
-             active,
-             &universe,
-@@ -1109,9 +1110,11 @@ impl Engine {
-             &always_load,
-             self.turn_tool_surface_budget
-                 .unwrap_or(crate::model_profile::ToolSurfaceBudget::Standard),
--        ) {
-+        );
-+        if changed {
-             self.session.pending_prefix_change_reason = Some("mcp-session-boot".to_string());
-         }
-+        changed
+@@ -1089,21 +1089,53 @@ fn open_owned_directory(
+         !handles.is_empty(),
+         "Codewhale credentials directory cannot be a volume root"
+     );
+-    let mut secure_options = fs::OpenOptions::new();
+-    secure_options
+-        .access_mode(FILE_GENERIC_READ | WRITE_DAC | WRITE_OWNER)
+-        .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE)
+-        .custom_flags(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT);
+-    let final_directory = secure_options.open(directory).with_context(|| {
++    let open_final = |access: u32| {
++        let mut secure_options = fs::OpenOptions::new();
++        secure_options
++            .access_mode(access)
++            .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE)
++            .custom_flags(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT);
++        secure_options.open(directory)
++    };
++    let not_owned_hint = || {
+         format!(
+-            "opening Codewhale credentials directory for owner-only security: {}",
++            "Codewhale cannot make {} private: your account neither owns it nor has Full control \
++             of it. Take ownership of the folder, or grant your account Full control, and retry",
+             crate::quote_os_path(directory)
+         )
+-    })?;
++    };
++    let (final_directory, holds_write_owner) =
++        match open_final(FILE_GENERIC_READ | WRITE_DAC | WRITE_OWNER) {
++            Ok(handle) => (handle, true),
++            Err(error) if error.raw_os_error() == Some(5) => {
++                let handle = open_final(FILE_GENERIC_READ | WRITE_DAC)
++                    .with_context(|| {
++                        format!(
++                            "opening Codewhale credentials directory for owner-only security: {}",
++                            crate::quote_os_path(directory)
++                        )
++                    })
++                    .with_context(not_owned_hint)?;
++                (handle, false)
++            }
++            Err(error) => {
++                return Err(error).with_context(|| {
++                    format!(
++                        "opening Codewhale credentials directory for owner-only security: {}",
++                        crate::quote_os_path(directory)
++                    )
++                });
++            }
++        };
+     validate_windows_handle_path(&final_directory, directory, true)?;
+     if protect || created_final {
+-        secure_windows_owner_only_handle(&final_directory, true)
+-            .context("securing the current-user private directory")?;
++        let secured = if holds_write_owner {
++            secure_windows_owner_only_handle(&final_directory, true, true)
++        } else {
++            secure_windows_owner_only_handle(&final_directory, true, false)
++                .with_context(not_owned_hint)
++        };
++        secured.context("securing the current-user private directory")?;
      }
- 
-     /// A gated MCP-focused search is explicit discovery of already configured
-@@ -5719,25 +5722,14 @@ impl Engine {
-                         .and_then(|metadata| metadata.get("mcp_catalog_changed"))
-                         .and_then(serde_json::Value::as_bool)
-                         .unwrap_or(false);
--                    if mcp_catalog_changed && let Some(pool) = self.mcp_pool.as_ref().cloned() {
--                        let (universe, refreshed) = {
--                            let pool = pool.lock().await;
--                            let refreshed = pool.to_api_tools();
--                            (pool.model_tool_names(&refreshed), refreshed)
--                        };
--                        let surface_budget = self
--                            .turn_tool_surface_budget
--                            .unwrap_or(crate::model_profile::ToolSurfaceBudget::Standard);
--                        let always_load = self.effective_tools_always_load();
--                        tool_surface_changed |= replace_runtime_mcp_tools(
--                            tool_catalog,
--                            active_tool_names,
--                            &universe,
--                            refreshed,
--                            self.current_mode,
--                            &always_load,
--                            surface_budget,
--                        );
-+                    if mcp_catalog_changed {
-+                        tool_surface_changed |= self
-+                            .refresh_current_mcp_catalog(
-+                                tool_policy,
-+                                tool_catalog,
-+                                active_tool_names,
-+                            )
-+                            .await;
-                     }
-                     // Any of the legitimate mid-turn tool-surface changes above
-                     // re-pin the header under a declared `change:tool_surface`
-```
-
-**File**: `crates/engine/src/mcp/tests.rs` (modified, +16/-0)
-```diff
-@@ -10892,6 +10892,22 @@ async fn delegated_read_binds_the_approved_payload_to_one_live_operation() -> Re
-     assert!(names.contains(&name.to_owned()), "{names:?}");
-     assert!(!names.contains(&"mcp_books_delete".to_owned()));
-     assert!(!names.contains(&"mcp_other_read".to_owned()));
-+    let mut connected = shared.lock().await.to_api_tools();
-+    assert!(connected.iter().any(|tool| tool.name == "mcp_books_delete"));
-+    let refreshed = authority.connected_mcp_tools_for_model(&registry, connected.clone());
-+    assert_eq!(
-+        refreshed
-+            .iter()
-+            .map(|tool| tool.name.as_str())
-+            .collect::<Vec<_>>(),
-+        [name]
-+    );
-+    connected.retain(|tool| tool.name != name);
-+    assert!(
-+        authority
-+            .connected_mcp_tools_for_model(&registry, connected)
-+            .is_empty()
-+    );
-     authority.validate(&registry, name, &allowed)?;
-     assert!(
-         authority
-```
-
-**File**: `crates/engine/src/tools/subagent/engine.rs` (modified, +12/-0)
-```diff
-@@ -872,6 +872,18 @@ impl ChildAuthority {
-             .collect()
+     verify_windows_owner_only_handle(&final_directory)
+         .context("verifying Codewhale credentials directory ownership")?;
+@@ -1189,7 +1221,7 @@ impl PrivateDirectory {
+             };
+             let secured = (|| -> Result<()> {
+                 validate_windows_file_shape(&file, &path)?;
+-                secure_windows_owner_only_handle(&file, false)
++                secure_windows_owner_only_handle(&file, false, true)
+                     .context("securing a new xAI OAuth lifecycle lock")?;
+                 validate_windows_owned_file_handle(&file, &path)?;
+                 Ok(())
+@@ -1231,7 +1263,7 @@ impl PrivateDirectory {
+         let temporary_path = temporary.path().to_path_buf();
+         let security_handle =
+             reopen_windows_file_for_owner_security(temporary.as_file(), &temporary_path)?;
+-        secure_windows_owner_only_handle(&security_handle, false)
++        secure_windows_owner_only_handle(&security_handle, false, true)
+             .context("securing a new xAI OAuth temporary file before writing credentials")?;
+         validate_windows_owned_file_handle(&security_handle, &temporary_path)
+             .context("verifying a new xAI OAuth temporary file before writing credentials")?;
+@@ -1668,6 +1700,134 @@ mod windows_tests {
+             "lexically unnormalized paths remain inadmissible"
+         );
      }
- 
-+    pub(crate) fn connected_mcp_tools_for_model(
-+        &self,
-+        registry: &ToolRegistry,
-+        connected: Vec<Tool>,
-+    ) -> Vec<Tool> {
-+        let connected: HashSet<_> = connected.into_iter().map(|tool| tool.name).collect();
-+        self.tools_for_model(registry, &self.agent_type)
-+            .into_iter()
-+            .filter(|tool| connected.contains(&tool.name))
-+            .collect()
-+    }
 +
-     pub fn tools_for_model(&self, registry: &ToolRegistry, agent_type: &FleetRole) -> Vec<Tool> {
-         // Filter the full registry in deny-first order. These catalog filters
-         // reduce accidental exposure, but are never the authority boundary:
++    #[test]
++    fn owner_with_modify_but_not_full_control_secures_its_private_directory() {
++        use windows_sys::Win32::Foundation::{CloseHandle, HANDLE, LUID};
++        use windows_sys::Win32::Security::{
++            AdjustTokenPrivileges, DuplicateTokenEx, LUID_AND_ATTRIBUTES, LookupPrivilegeValueW,
++            RevertToSelf, SE_CHANGE_NOTIFY_NAME, SE_PRIVILEGE_ENABLED, SecurityImpersonation,
++            TOKEN_ADJUST_PRIVILEGES, TOKEN_DUPLICATE, TOKEN_IMPERSONATE, TOKEN_PRIVILEGES,
++            TOKEN_QUERY, TokenImpersonation,
++        };
++        use windows_sys::Win32::Storage::FileSystem::{FILE_GENERIC_READ, WRITE_DAC, WRITE_OWNER};
++        use windows_sys::Win32::System::Threading::{
++            GetCurrentProcess,
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -19,7 +19,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- - **Exact route inventory:** model lists separate metadata, observed roster evidence and readiness; optional session selections reject changed account or endpoint bindings, and the terminal shows the catalog status from that same route inventory, including on bundled fallback rows. A new Runtime thread can commit an exact selection before it becomes visible. Empty discovery no longer masquerades as a failed refresh. (CW-8311)
+@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - **DSH reviewed client module map:** CommonJS client activation uses the installer’s admitted import edges for relative modules, JSON, cycles and contained package exports. Undeclared requests fail closed, and prior compatibility receipts require review again. Installed Engine/App qualification remains pending (CW-8288, CW-8014, CW-8019).
--- An explicitly scoped child can request a read from an operator-declared static HTTP connector with a matching account binding, schema and approved arguments.
-+- An explicitly scoped child can request a read from an operator-declared static HTTP connector with a matching account binding, schema and approved arguments. Connector refreshes preserve the child’s authorized tool catalog.
- - **SearchApi web search provider:** `web_search` now supports SearchApi (`[search] provider = "searchapi"`, `SEARCHAPI_API_KEY` or `[search] api_key`) for Google organic results with `hl`, `gl`, and `time_period` filtering. Thanks [@gabsferreira](https://github.com/gabsferreira) (#7410).
- - **Crisper 980-dot whale and activity forms in `/pet`:** the terminal pet's 980 dots now compile from perimeter-anchored hexagonal-lattice silhouettes with rorqual throat illumination at rest and cleaner edges across all thirteen running, waiting and done forms, while keeping zero motion under Hold still and Reduce motion. (CW-6453)
- - **Terminal and website design tokens updated to 5.4.0:** vendored `codewhale-design` `5.4.0` and `codewhale-ratatui` `5.4.0` roles (`Subagent` and `LivePeak`), exported the updated `5.4.0` CSS custom properties to the website (`web/app/tokens.css`), fixed `adapt_fg_for_depth` ANSI-16 appearance awareness (bright 9–14 on dark, dark 1–6 on light) so warnings and status lines stay legible on light 16-color terminals, and preserved green/red hues (`22`/`52` dark, `158`/`224` light) on 256-color diff line backgrounds. (CW-8264)
+ ### Fixed
+ 
++- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now applies the owner-only permissions without asking Windows for the right to change the folder's owner. A folder owned by another account is still refused, now with a message that names it and says how to fix it.
+ - **Ctrl+V pasted text twice on Windows Terminal:** the terminal pastes text itself and also forwards the key release, which read the clipboard a second time. A release with no key press now only attaches a clipboard image, which is the case the terminal cannot deliver, and a held Ctrl+V no longer pastes again on release.
+ - **`codewhale update` refused a release binary in `~/.local/bin`:** any `.crates.toml` beside the `bin` directory, left by an unrelated `cargo install --root`, made the updater treat the binary as Cargo-managed. It now checks that Cargo's record lists this executable, as `codewhale doctor` already did.
+ - **Every terminal draws the dot whale in `/pet`:** terminals whose session is not the shared pet companion's source no longer show the old whale with `whale needs /pet source · showing cove`. Each draws the dot whale and its activity forms (editing, reading, waiting, done and so on) from its own session. The source still decides what the companion records and plays sound for. (CW-8359)
+```
+
+---
+
+### Incident Patch 3: `61e073db` (2026-11-23)
+**Commit Message**: release: keep build-machine paths out of self-hosted macOS shipping binaries
+
+Proof run 45138848324 (release-artifacts dispatched directly from
+ci/selfhosted-mac-release-proof) built both macOS legs on codewhale-mac:
+macos-x64 68.9 min (34.3 waiting for the machine build lock, cargo build
+33.8), then macos-arm64 29.3 min (cargo build 28.6), 98 min wall for both
+against 205/220 min on hosted Macs in RC 44908205009. Compared with that
+RC's hosted binaries: same architectures, minos 11.0 / 10.12, the same nine
+linked system frameworks and libraries, arm64 ad-hoc linker-signed and x64
+unsigned; SDK 26.2 (the runner's Xcode 26.2) against 26.5.
+
+But the self-hosted arm64 binary carried 1,069 strings under
+/Users/hunterbown/actions-runner/_work/_temp/release-home/.cargo/registry/src
+(panic locations of registry crates) and one OUT_DIR path under
+/Volumes/VIXinSSD/CW/.codewhale-ci/...; hosted binaries carry /Users/runner/
+paths in the same places. The self-hosted legs now build with
+CARGO_ENCODED_RUSTFLAGS = the workflow's RUSTFLAGS plus
+--remap-path-prefix for the fresh CARGO_HOME (logical and physical) to /cargo
+and the workspace (logical and physical) to /codewhale. Hosted legs are
+unch
+
+**File**: `.github/scripts/release-workflows.test.js` (modified, +6/-1)
+```diff
+@@ -1283,7 +1283,12 @@ assert.equal(
+   "only macOS release builds may use the self-hosted Mac, and only when pin chose it",
+ );
+ const releaseBuild = jobBlock(artifacts, "build");
+-assert.match(namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build"), /rm -rf "\$\{fresh\}"/);
++const freshReleaseHome = namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build");
++assert.match(freshReleaseHome, /rm -rf "\$\{fresh\}"/);
++for (const remap of [/"\$\{CARGO_HOME\}=\/cargo"/, /"\$\(cd "\$\{fresh\}" && pwd -P\)\/\.cargo=\/cargo"/, /"\$\{GITHUB_WORKSPACE\}=\/codewhale"/, /"\$\(cd "\$\{GITHUB_WORKSPACE\}" && pwd -P\)=\/codewhale"/]) {
++  assert.match(freshReleaseHome, remap, "self-hosted shipping binaries must not embed the build machine's home or workspace paths");
++}
++assert.match(freshReleaseHome, /CARGO_ENCODED_RUSTFLAGS=/);
+ assert.match(namedStep(releaseBuild, "Start the self-hosted release build from an empty target"), /rm -rf target\n\s+test -z "\$\(git status --porcelain --ignored\)"/);
+ assert.match(releaseBuild, /uses: Swatinem\/rust-cache@[^\n]+\n        if: runner\.environment != 'self-hosted'\n/, "self-hosted shipping builds must not restore or save a shared cache");
+ assert.match(candidate, /^      macos_runner: \$\{\{ inputs\.macos_runner \}\}$/m);
+```
+
+**File**: `.github/workflows/release-artifacts.yml` (modified, +6/-0)
+```diff
+@@ -203,13 +203,19 @@ jobs:
+           export HOME="${fresh}" CARGO_HOME="${fresh}/.cargo" RUSTUP_HOME="${fresh}/.rustup"
+           curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused -sSf https://sh.rustup.rs \
+             | sh -s -- -y --no-modify-path --profile minimal --default-toolchain none
++          read -ra flags <<< "${RUSTFLAGS}"
++          for prefix in "${CARGO_HOME}=/cargo" "$(cd "${fresh}" && pwd -P)/.cargo=/cargo" \
++            "${GITHUB_WORKSPACE}=/codewhale" "$(cd "${GITHUB_WORKSPACE}" && pwd -P)=/codewhale"; do
++            flags+=("--remap-path-prefix=${prefix}")
++          done
+           {
+             echo "HOME=${HOME}"
+             echo "CARGO_HOME=${CARGO_HOME}"
+             echo "RUSTUP_HOME=${RUSTUP_HOME}"
+             echo "TMPDIR=${fresh}/tmp"
+             echo "CARGO_BUILD_JOBS=6"
+             echo "CW_RELEASE_HOME=${fresh}"
++            printf 'CARGO_ENCODED_RUSTFLAGS=%s\n' "$(IFS=$'\037'; echo "${flags[*]}")"
+           } >> "${GITHUB_ENV}"
+           echo "${CARGO_HOME}/bin" >> "${GITHUB_PATH}"
+       # No ref: — GITHUB_SHA only. CodeQL treats workflow_call checkout-with-ref
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7450** (2026-11-21): feat: add LLMTR as an OpenAI-compatible provider (@knowhycodata)
-- **PR #7449** (2026-11-21): fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842) (@donglovejava)
-- **PR #7448** (2026-11-21): Show request transmission on provider errors (@deosiree)
-- **PR #7444** (2026-11-21): test(tui): guard all four paste-burst chunk-flush sites (@donglovejava)
-- **PR #7431** (2026-11-21): fix(engine): classify local read-only deferred tools as Safe in get_tool_category (@NieZhuZhu)
-- **PR #7430** (2026-11-21): fix(execpolicy): scan static awk and sed program payloads (@NieZhuZhu)
+- **PR #7508** (closed): build(engine): raise the engine crate recursion limit to 512 (@Hmbown)
+- **PR #7494** (closed): fix(app-server): resolve 6 verified R7 audit defects (@NieZhuZhu)
+- **PR #7488** (2026-11-23): feat(providers): add WorldRouter as a bundled descriptor row (@Opgeek-1)
+- **PR #7482** (2026-11-23): fix(audit): resolve 8 verified R20 defects across net, notify, telemetry, ingest, and web gates (@NieZhuZhu)
+- **PR #7480** (2026-11-23): fix(bridges): keep code fences intact when a reply is split by bytes (@thejesh23)
+- **PR #7479** (2026-11-23): fix(telegram): stop one refused reply from wedging the poll loop (@thejesh23)
 
 ---
 
@@ -2436,32 +2398,32 @@ Checked formatting, git diff, and 4096 in-memory connected/admitted catalog comb
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Sync the packaged TUI changelog for the notice correction
+## X. plugins): a Harness package.json inside a native plugin root is part of that bun
 
 **RULE**:
-When implementing operations in `crates/tui/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c211938`: Sync the packaged TUI changelog for the notice correction. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b21c9527`: plugins): a Harness package.json inside a native plugin root is part of that bundle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tui/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Native release bundles, the Windows installer, npm packages and published crates include the Codewhale license and both third-party notice documents.
-
+- **Computer Use installs from the Marketplace:** in 0.10.3, adding Computer Use from `/plugins` fetched the pinned 0.16.3 archive, passed its checksum, and then stopped with "archive must contain exactly one plugin bundle root … found 2", because the DeepSeek Harness `package.json` that Computer Use ships in `integrations/dsh/` was counted as a second plugin. A Harness `package.json` inside a plugin's folder is now part of that plugin: Computer Use installs as one plugin, disabled and untrusted, with the same skills, commands and MCP server in its review as a directory install of that release, and the nested Harness bundle is neither converted nor enabled. Two plugins side by side in one archive are still refused, and the message now says a Harness `package.json` counts as a plugin.
+- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now applies the owner-only permissions without asking Windows for the right to change the folder's owner. A folder owned by another account is still refused, now with a message that names it and says how to fix it.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c211938` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b21c9527` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

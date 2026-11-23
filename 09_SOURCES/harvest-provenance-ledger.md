@@ -12527,3 +12527,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-23T22:23:48.854Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `92175f43` | Multi-dimensional audit evidence | 2026-11-23T22:24:03.294Z |
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-23T22:33:06.214Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-23T22:42:44.474Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `48669ad1` | Multi-dimensional audit evidence | 2026-11-23T22:42:49.893Z |
+| `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `2e7cc39c` | Multi-dimensional audit evidence | 2026-11-23T22:42:54.305Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `36dabf36` | Multi-dimensional audit evidence | 2026-11-23T22:43:01.402Z |

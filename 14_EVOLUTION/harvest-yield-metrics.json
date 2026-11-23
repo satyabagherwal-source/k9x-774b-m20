@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T22:33:06.220Z",
-  "total_cycles_completed": 11881,
-  "total_learnings_persisted": 11881,
-  "total_rules_promoted": 10978,
+  "last_updated": "2026-11-23T22:43:01.409Z",
+  "total_cycles_completed": 11885,
+  "total_learnings_persisted": 11885,
+  "total_rules_promoted": 10981,
   "history": [
-    {
-      "timestamp": "2026-11-23T06:22:30.496Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T06:37:31.510Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T06:37:42.910Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T06:45:39.847Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-zai-org-glm-5-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T06:45:54.226Z",
       "repository": "lioensky/VCPToolBox",
@@ -1403,6 +1375,34 @@
       "repository": "vllm-sr/d3",
       "learningId": "learn-huggingface-vllm-sr-d3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:42:44.480Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:42:49.899Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:42:54.311Z",
+      "repository": "rafsoh/dimeApp",
+      "learningId": "learn-github-rafsoh-dimeapp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:43:01.409Z",
+      "repository": "meilisearch/meilisearch",
+      "learningId": "learn-github-meilisearch-meilisearch",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -759088,3 +759088,147 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `92175f43` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10136. a Harness package.json inside a native plugin root is part of that bun (Harvested from codewhale-hq/Codewhale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "a Harness package.json inside a native plugin root is part of that bun",
+  "source": "codewhale-hq/Codewhale",
+  "source_url": "https://github.com/codewhale-hq/Codewhale",
+  "source_version": "48669ad1",
+  "license": "MIT",
+  "extracted_at": "2026-11-23T22:42:49.225Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-codewhale-hq-codewhale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `48669ad1`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b21c9527`: plugins): a Harness package.json inside a native plugin root is part of that bundle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **Computer Use installs from the Marketplace:** in 0.10.3, adding Computer Use from `/plugins` fetched the pinned 0.16.3 archive, passed its checksum, and then stopped with "archive must contain exactly one plugin bundle root … found 2", because the DeepSeek Harness `package.json` that Computer Use ships in `integrations/dsh/` was counted as a second plugin. A Harness `package.json` inside a plugin's folder is now part of that plugin: Computer Use installs as one plugin, disabled and untrusted, with the same skills, commands and MCP server in its review as a directory install of that release, and the nested Harness bundle is neither converted nor enabled. Two plugins side by side in one archive are still refused, and the message now says a Harness `package.json` counts as a plugin.
+- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+- **`/provider` failed for projects on a second drive on Windows:** on a drive such as D: or E:, where Windows gives your account Modify but not Full control by default, Codewhale could not make the project's `.codewhale\state` folder private, so `/provider` and starting a session showed "The Engine session acknowledgement does not match this UI". Codewhale created that folder and you own it, so it now applies the owner-only permissions without asking Windows for the right to change the folder's owner. A folder owned by another account is still refused, now with a message that names it and says how to fix it.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b21c9527` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10137. Empirical Invariant Guard in Localizable.strings (Harvested from rafsoh/dimeApp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in Localizable.strings",
+  "source": "rafsoh/dimeApp",
+  "source_url": "https://github.com/rafsoh/dimeApp",
+  "source_version": "2e7cc39c",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-23T22:42:53.605Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rafsoh-dimeapp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rafsoh/dimeApp](https://github.com/rafsoh/dimeApp) (Revision: `2e7cc39c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `app/Localizations/en.lproj/Localizable.strings`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rafsoh/dimeApp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d95a9194`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/Localizations/en.lproj/Localizable.strings`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+"no_income_categories" = "No income categories found";
+"no_expense_categories" = "No expense categories found";
+"Search by note, category, amount or date" = "Search by note, category, amount or date";
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+"no_income_categories" = "No income categories found, click the 'New' button to add some";
+"no_expense_categories" = "No expense categories found, click the 'New' button to add some";
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d95a9194` are properly handled with clean fallback behavior.

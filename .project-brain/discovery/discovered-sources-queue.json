@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T22:15:06.827Z",
+  "updated_at": "2026-11-23T22:43:07.189Z",
   "stats": {
-    "total_discovered": 8062,
-    "approved_pending_harvest": 7630,
+    "total_discovered": 8066,
+    "approved_pending_harvest": 7634,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7626,
+      "COMMUNITY_AND_EXPERT": 7630,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -174363,6 +174363,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
         "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-5ACC6FA7B15E": {
+      "id": "SRC-5ACC6FA7B15E",
+      "url": "https://github.com/diegovskytl",
+      "title": "https://github.com/diegovskytl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:43:05.203Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-4855A2FEF93C": {
+      "id": "SRC-4855A2FEF93C",
+      "url": "https://agent-plugins.org/schemas/plugin.json",
+      "title": "https://agent-plugins.org/schemas/plugin.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:43:05.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-FCE78D563CCB": {
+      "id": "SRC-FCE78D563CCB",
+      "url": "https://github.com/rarfell/dimeApp/issues",
+      "title": "https://github.com/rarfell/dimeApp/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:43:07.119Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-4E87BB775E8B": {
+      "id": "SRC-4E87BB775E8B",
+      "url": "https://github.com/user-attachments/assets/86f1d199-2437-4dca-b156-5ed33febca0c",
+      "title": "https://github.com/user-attachments/assets/86f1d199-2437-4dca-b156-5ed33febca0c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:43:07.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
       }
     }
   }

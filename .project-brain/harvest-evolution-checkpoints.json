@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T22:33:14.698Z",
+  "last_updated": "2026-11-23T22:43:08.144Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T22:33:11.973Z",
@@ -48,7 +48,7 @@
       "staged_for_review": 1
     },
     "codewhale-hq-codewhale-learnings.md": {
-      "processed_at": "2026-11-22T14:17:30.575Z",
+      "processed_at": "2026-11-23T22:43:05.072Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2848,8 +2848,8 @@
       "staged_for_review": 0
     },
     "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md": {
-      "processed_at": "2026-11-19T16:25:30.743Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-23T22:43:06.520Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-black-forest-labs-flux-3-image-klein-learnings.md": {
@@ -3643,9 +3643,9 @@
       "staged_for_review": 1
     },
     "rafsoh-dimeapp-learnings.md": {
-      "processed_at": "2026-11-20T23:57:52.149Z",
+      "processed_at": "2026-11-23T22:43:07.044Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "dosco-deeporg-learnings.md": {
       "processed_at": "2026-11-23T05:51:54.433Z",
@@ -3788,7 +3788,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3555,
+  "total_dossiers_evaluated": 3558,
   "total_canonical_promoted": 491,
-  "total_staged_for_review": 2664
+  "total_staged_for_review": 2666
 }

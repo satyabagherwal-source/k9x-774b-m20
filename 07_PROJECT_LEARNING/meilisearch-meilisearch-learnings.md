@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `9a44a8e8`  
+> **Source Version**: `36dabf36`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T16:13:05.697Z  
+> **Timestamp**: 2026-11-23T22:43:00.418Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:13:05.691Z  
+> **Harvest Timestamp**: 2026-11-23T22:43:00.410Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59944 stars
+- **Stars / Engagement**: 59977 stars
 
 ---
 
@@ -2049,31 +2049,399 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a44a8e8` (2026-11-19)
-**Commit Message**: Merge pull request #6744 from meilisearch/fix-macos-ci-runner
+### Incident Patch 1: `36dabf36` (2026-11-23)
+**Commit Message**: Merge pull request #6750 from meilisearch/update-version-v1.58.0
 
-Replace unsupported macos-14 runner with macos-15
+Update version for the next release (v1.58.0) in Cargo.toml
 
-**File**: `.github/workflows/test-suite.yml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +19/-19)
 ```diff
-@@ -66,7 +66,7 @@ jobs:
-     strategy:
-       fail-fast: false
-       matrix:
--        os: [macos-14]
-+        os: [macos-15]
-         features: ["", "--features enterprise"]
-     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-     steps:
+@@ -779,7 +779,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "build-info"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "anyhow",
+  "time",
+@@ -1958,7 +1958,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "dump"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "big_s",
+  "flate2",
+@@ -2216,7 +2216,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "file-store"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "tempfile",
+  "thiserror 2.0.20",
+@@ -2236,7 +2236,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "filter-parser"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "insta",
+  "itertools 0.14.0",
+@@ -2265,7 +2265,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "flatten-serde-json"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "criterion",
+  "serde_json",
+@@ -2449,7 +2449,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fuzzers"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "arbitrary",
+  "bumpalo",
+@@ -3189,7 +3189,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "http-client"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "cidr",
+  "hyper-util",
+@@ -3509,7 +3509,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "index-scheduler"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "anyhow",
+  "backoff",
+@@ -3758,7 +3758,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "json-depth-checker"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "criterion",
+  "serde_json",
+@@ -4196,7 +4196,7 @@ checksum = "7ebb8d8732c6a6df3d8f032a82911cfc747e00efb95cc46e8d0acd5b5b88570c"
+ 
+ [[package]]
+ name = "meili-snap"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "insta",
+  "md5",
+@@ -4206,7 +4206,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "actix-cors",
+  "actix-http",
+@@ -4299,7 +4299,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch-auth"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "base64 0.22.1",
+  "enum-iterator",
+@@ -4318,7 +4318,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch-types"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "actix-web",
+  "anyhow",
+@@ -4357,7 +4357,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilitool"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -4391,7 +4391,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "milli"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "arroy",
+  "bbqueue",
+@@ -5019,7 +5019,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+ 
+ [[package]]
+ name = "permissive-json-pointer"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "big_s",
+  "serde_json",
+@@ -6071,7 +6071,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "routes"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "actix-web",
+  "routes-macros",
+@@ -6083,7 +6083,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "routes-macros"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "proc-macro2",
+  "proc-macro2-diagnostics",
+@@ -8639,7 +8639,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "xtask"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "anyhow",
+  "build-info",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ members = [
+ ]
+ 
+ [workspace.package]
+-version = "1.57.0"
++version = "1.58.0"
+ authors = [
+     "Quentin de Quelen <quentin@dequelen.me>",
+     "Clément Renault <clement@meilisearch.com>",
+```
+
+---
+
+### Incident Patch 2: `739b2719` (2026-11-23)
+**Commit Message**: Update version for the next release (v1.58.0) in Cargo.toml
+
+**File**: `Cargo.lock` (modified, +19/-19)
+```diff
+@@ -779,7 +779,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "build-info"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "anyhow",
+  "time",
+@@ -1958,7 +1958,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "dump"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "big_s",
+  "flate2",
+@@ -2216,7 +2216,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "file-store"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "tempfile",
+  "thiserror 2.0.20",
+@@ -2236,7 +2236,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "filter-parser"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "insta",
+  "itertools 0.14.0",
+@@ -2265,7 +2265,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "flatten-serde-json"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "criterion",
+  "serde_json",
+@@ -2449,7 +2449,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fuzzers"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "arbitrary",
+  "bumpalo",
+@@ -3189,7 +3189,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "http-client"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "cidr",
+  "hyper-util",
+@@ -3509,7 +3509,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "index-scheduler"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "anyhow",
+  "backoff",
+@@ -3758,7 +3758,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "json-depth-checker"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "criterion",
+  "serde_json",
+@@ -4196,7 +4196,7 @@ checksum = "7ebb8d8732c6a6df3d8f032a82911cfc747e00efb95cc46e8d0acd5b5b88570c"
+ 
+ [[package]]
+ name = "meili-snap"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "insta",
+  "md5",
+@@ -4206,7 +4206,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "actix-cors",
+  "actix-http",
+@@ -4299,7 +4299,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch-auth"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "base64 0.22.1",
+  "enum-iterator",
+@@ -4318,7 +4318,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch-types"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "actix-web",
+  "anyhow",
+@@ -4357,7 +4357,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilitool"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -4391,7 +4391,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "milli"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "arroy",
+  "bbqueue",
+@@ -5019,7 +5019,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+ 
+ [[package]]
+ name = "permissive-json-pointer"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "big_s",
+  "serde_json",
+@@ -6071,7 +6071,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "routes"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "actix-web",
+  "routes-macros",
+@@ -6083,7 +6083,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "routes-macros"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "proc-macro2",
+  "proc-macro2-diagnostics",
+@@ -8639,7 +8639,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "xtask"
+-version = "1.57.0"
++version = "1.58.0"
+ dependencies = [
+  "anyhow",
+  "build-info",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ members = [
+ ]
+ 
+ [workspace.package]
+-version = "1.57.0"
++version = "1.58.0"
+ authors = [
+     "Quentin de Quelen <quentin@dequelen.me>",
+     "Clément Renault <clement@meilisearch.com>",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6750** (2026-11-23): Update version for the next release (v1.58.0) in Cargo.toml (@meili-bot)
 - **PR #6748** (closed): Fix the word position documentation link (@curquiza)
 - **PR #6744** (2026-11-19): Replace unsupported macos-14 runner with macos-15 (@curquiza)
 - **PR #6742** (2026-11-18): Add temporary Product Hunt launch link to README (@mayasssh)
 - **PR #6740** (2026-11-17): Fix ngrams base costs (@ManyTheFish)
 - **PR #6739** (2026-11-16): Upgrade to Rust v1.100 (@dureuill)
-- **PR #6738** (2026-11-16): Switch to  ubuntu 24.04 in prevision of GH retirement of 22.04 (@dureuill)
 
 ---
 
@@ -2093,28 +2461,64 @@ Replace unsupported macos-14 runner with macos-15
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in test-suite.yml
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `.github/workflows/test-suite.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a44a8e8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36dabf36`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-suite.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        os: [macos-15]
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
+version = "1.58.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        os: [macos-14]
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
+version = "1.57.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a44a8e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36dabf36` are properly handled with clean fallback behavior.

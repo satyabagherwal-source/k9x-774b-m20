@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T22:33:14.079Z",
-  "total_records": 2459,
+  "last_updated": "2026-11-23T22:43:07.696Z",
+  "total_records": 2461,
   "domains": {
     "A": {
       "total": 20,
@@ -1022,7 +1022,7 @@
       ]
     },
     "F": {
-      "total": 101,
+      "total": 103,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1124,7 +1124,9 @@
         "domain_intelligence-design-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
         "domain_intelligence-design-intelligence-sqlpage-sqlpage-core-invariants",
         "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-core-invariants",
-        "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-rafsoh-dimeapp-core-invariants",
+        "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants"
       ]
     },
     "G": {
@@ -9219,8 +9221,8 @@
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "repository": "meilisearch/meilisearch",
-      "content_hash": "d0cbcd0bb5700485c81ae06612d7cf44bb41ce31fa20d72aebcaaba849c6b930",
-      "created_at": "2026-11-20T16:13:07.089Z"
+      "content_hash": "2edc65768b450f34b52609b887b23a57bbe406de7e8cfba0b7403a93995b49b4",
+      "created_at": "2026-11-23T22:43:01.929Z"
     },
     "DOM-D-F5004225": {
       "record_id": "DOM-D-F5004225",
@@ -16298,10 +16300,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "37017655d8dfbece6fe7cf1743c9a9d474aa89664cb9438b98f4d4aaef9207cf",
-      "created_at": "2026-11-22T21:09:19.767Z"
+      "content_hash": "1766f34983e0c2da4eb49bb12c45af06fee219272242c947f2e44aea2ea3fffa",
+      "created_at": "2026-11-23T22:42:50.441Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -16309,8 +16311,8 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-learnings-architecture-intelligence-codewhale-hq-codewhal.md",
       "repository": "codewhale-hq-codewhale-learnings",
-      "content_hash": "f179b641650671fac218f7a98b064eddcca51f62062c746de6b0600fe680a6b3",
-      "created_at": "2026-11-22T14:17:31.026Z"
+      "content_hash": "60a37229f2eacc4502d89859b04153d08470c610d8a949d568567e0a5e4647cf",
+      "created_at": "2026-11-23T22:43:05.893Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
@@ -33973,8 +33975,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-gguf-research-knowledge-intelligence-liquidai-lfm2-5-.md",
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-      "content_hash": "ea76b07aef2d5dedb1025dfac25c7ab7e2efd270d5fc96f369d9258dba11b5e7",
-      "created_at": "2026-11-19T16:24:48.287Z"
+      "content_hash": "794e6beca054eabe5d742732d1d4730a8a81b308c049e3e4416beebbe4eb309d",
+      "created_at": "2026-11-23T22:42:44.767Z"
     },
     "DOM-D-B8ECD4B4": {
       "record_id": "DOM-D-B8ECD4B4",
@@ -34024,8 +34026,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-research-knowledge-intelligence-hf-liq.md",
       "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
-      "content_hash": "abe9602c250cb521b8535a69e03625989f1ae4847a12db71071cc417825aaac0",
-      "created_at": "2026-11-19T16:25:30.950Z"
+      "content_hash": "79b4bb5ecb3a6787f30eb21532f57ec9aacac7f655733f7ae8ddd338b86a64c4",
+      "created_at": "2026-11-23T22:43:06.789Z"
     },
     "domain_intelligence-technical-construction-intelligence-pola-rs-polars-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pola-rs-polars-core-invariants",
@@ -41232,6 +41234,24 @@
       "repository": "apache-pinot-learnings",
       "content_hash": "604ff32468712fb47c6c4553761d7fd1f207020feef41d23944611edceb8c2de",
       "created_at": "2026-11-23T22:15:07.253Z"
+    },
+    "domain_intelligence-design-intelligence-rafsoh-dimeapp-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-rafsoh-dimeapp-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: rafsoh/dimeApp Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-design-intelligence-rafsoh-dimeapp-core-invariants.md",
+      "repository": "rafsoh/dimeApp",
+      "content_hash": "09e1f9f418fb2e5c8aacf6af63451b1e9e7297af91199ea2ae963e06b044b3b9",
+      "created_at": "2026-11-23T22:42:54.822Z"
+    },
+    "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: rafsoh-dimeapp-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-learnings-design-intelligence-rafsoh-dimeapp-learnings-core-invar.md",
+      "repository": "rafsoh-dimeapp-learnings",
+      "content_hash": "d32ce9f8af5d779366b74bd73bf7f64d18e3f48a51dbed1bd5e96006c7d1c5f7",
+      "created_at": "2026-11-23T22:43:07.696Z"
     }
   }
 }
