@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T18:16:01.723Z",
-  "total_cycles_completed": 11804,
-  "total_learnings_persisted": 11804,
-  "total_rules_promoted": 10930,
+  "last_updated": "2026-11-23T18:24:03.953Z",
+  "total_cycles_completed": 11806,
+  "total_learnings_persisted": 11806,
+  "total_rules_promoted": 10931,
   "history": [
-    {
-      "timestamp": "2026-11-22T21:56:56.045Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T21:57:07.900Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T22:06:18.966Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T18:16:01.723Z",
       "repository": "stakater/Reloader",
       "learningId": "learn-github-stakater-reloader",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T18:23:47.727Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T18:24:03.953Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

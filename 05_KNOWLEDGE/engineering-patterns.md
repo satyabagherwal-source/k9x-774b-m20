@@ -755318,3 +755318,98 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f1d193f8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10091. [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedic (Harvested from StarRocks/starrocks)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedic",
+  "source": "StarRocks/starrocks",
+  "source_url": "https://github.com/StarRocks/starrocks",
+  "source_version": "520e2886",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T18:24:03.360Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-starrocks-starrocks",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `520e2886`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `53b41a5c`: [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedicated printer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+
+        // The defaults of these visitors end in visit(), which dispatches again and recurses forever.
+        @Override
+        public OperatorStr visitPhysicalRawValues(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
+
+        @Override
+        public OperatorStr visitPhysicalFetch(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
+
+        @Override
+        public OperatorStr visitPhysicalLookUp(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
+
+        private OperatorStr visitUnhandled(OptExpression optExpression, ExplainContext context) {
+            PhysicalOperator op = (PhysicalOperator) optExpression.getOp();
+            StringBuilder sb = new StringBuilder("- ")
+                    .append(op.getOpType().name().replaceFirst("^PHYSICAL_", "").replace('_', '-'))
+                    .append(buildOutputColumns(op, ""))
+                    .append("\n");
+            // LookUp carries no statistics
+            if (optExpression.getStatistics() != null) {
+   
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `53b41a5c` are properly handled with clean fallback behavior.

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T06:19:42.527Z",
+  "timestamp": "2026-11-23T18:24:08.124Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-starrocks-starrocks-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [starrocks-starrocks-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T06:19:42.527Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T18:24:08.124Z`  
 > **Learning ID**: `LEARN-EVO-starrocks-starrocks-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `b400696f`  
+> **Source Version**: `520e2886`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T06:19:36.533Z  
+> **Timestamp**: 2026-11-23T18:24:02.842Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T06:19:36.528Z  
+> **Harvest Timestamp**: 2026-11-23T18:24:02.837Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12271 stars
+- **Stars / Engagement**: 12280 stars
 
 ---
 
@@ -1846,648 +1846,844 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36091cdd` (2026-11-20)
-**Commit Message**: [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in CAST(VARIANT AS JSON) (#83939)
+### Incident Patch 1: `53b41a5c` (2026-11-23)
+**Commit Message**: [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedicated printer (#83959)
 
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: wanpengfei-git <[REDACTED_EMAIL]>
+Signed-off-by: Gavin <[REDACTED_EMAIL]>
+Co-authored-by: Gavin <[REDACTED_EMAIL]>
 
-**File**: `be/src/exprs/cast_expr_tpl.hpp` (modified, +9/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java` (modified, +30/-0)
 ```diff
-@@ -229,14 +229,22 @@ static ColumnPtr cast_to_json_fn(ColumnPtr& column, const cctz::time_zone& zone)
-                 if (!st.ok()) {
-                     overflow = true;
-                 } else {
--                    auto parsed = JsonValue::parse_json_or_string(ss.str());
-+                    // variant_to_json writes JSON text, so a number, a boolean or a null must stay one instead of
-+                    // becoming a JSON string, which is what parse_json_or_string makes of a bare scalar.
-+                    auto parsed = JsonValue::parse_json_text(ss.str());
-                     if (parsed.ok()) {
-                         value = parsed.value();
-                     } else {
-                         overflow = true;
+@@ -774,6 +774,36 @@ public OperatorStr visitPhysicalSplitConsumer(OptExpression optExpression, Expla
+             return new OperatorStr(sb.toString(), context.step,
+                     buildChildOperatorStr(optExpression, context.step));
+         }
++
++        // The defaults of these visitors end in visit(), which dispatches again and recurses forever.
++        @Override
++        public OperatorStr visitPhysicalRawValues(OptExpression optExpression, ExplainContext context) {
++            return visitUnhandled(optExpression, context);
++        }
++
++        @Override
++        public OperatorStr visitPhysicalFetch(OptExpression optExpression, ExplainContext context) {
++            return visitUnhandled(optExpression, context);
++        }
++
++        @Override
++        public OperatorStr visitPhysicalLookUp(OptExpression optExpression, ExplainContext context) {
++            return visitUnhandled(optExpression, context);
++        }
++
++        private OperatorStr visitUnhandled(OptExpression optExpression, ExplainContext context) {
++            PhysicalOperator op = (PhysicalOperator) optExpression.getOp();
++            StringBuilder sb = new StringBuilder("- ")
++                    .append(op.getOpType().name().replaceFirst("^PHYSICAL_", "").replace('_', '-'))
++                    .append(buildOutputColumns(op, ""))
++                    .append("\n");
++            // LookUp carries no statistics
++            if (optExpression.getStatistics() != null) {
++                buildCostEstimate(sb, optExpression, context.step);
++            }
++            buildCommonProperty(sb, op, context.step);
++            return new OperatorStr(sb.toString(), context.step, buildChildOperatorStr(optExpression, context.step));
++        }
+     }
+ 
+     private void buildCostEstimate(StringBuilder sb, OptExpression optExpression, int step) {
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/ExplainTest.java` (modified, +75/-0)
+```diff
+@@ -14,13 +14,26 @@
+ 
+ package com.starrocks.sql.plan;
+ 
++import com.starrocks.catalog.Column;
++import com.starrocks.catalog.IcebergTable;
+ import com.starrocks.common.Config;
++import com.starrocks.qe.SessionVariable;
+ import com.starrocks.sql.Explain;
+ import com.starrocks.sql.ast.QueryStatement;
+ import com.starrocks.sql.ast.StatementBase;
++import com.starrocks.sql.optimizer.OptExpression;
++import com.starrocks.sql.optimizer.operator.logical.LogicalIcebergEqualityDeleteScanOperator;
++import com.starrocks.sql.optimizer.operator.physical.PhysicalIcebergEqualityDeleteScanOperator;
++import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
++import com.starrocks.sql.optimizer.statistics.Statistics;
++import com.starrocks.type.IntegerType;
+ import com.starrocks.utframe.UtFrameUtils;
+ import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.Test;
++import org.mockito.Mockito;
++
++import java.util.List;
++import java.util.Map;
+ 
+ public class ExplainTest extends PlanTestBase {
+     @Test
+@@ -158,4 +171,66 @@ public void testExplainUsesConfiguredDefaultLevel() throws Exception {
+         Assertions.assertEquals(StatementBase.ExplainLevel.NORMAL, queryStatement.getExplainLevel());
+ 
+     }
++
++    @Test
++    public void testExplainLogicalIcebergEqualityDeleteScan() {
++        IcebergTable table = Mockito.mock(IcebergTable.class);
++        Mockito.when(table.getName()).thenReturn("eqd_repro");
++        Column column = new Column("id", IntegerType.INT);
++        ColumnRefOperator ref = new ColumnRefOperator(1, IntegerType.INT, "id", true);
++        LogicalIcebergEqualityDeleteScanOperator logicalScan = new LogicalIcebergEqualityDeleteScanOperator(
++                table, Map.of(ref, column), Map.of(column, ref), -1, null);
++        OptExpression root = OptExpression.create(new PhysicalIcebergEqualityDeleteScanOperator(logicalScan));
++
++        String plan = new Explain(false, false, "    ", "    ").print(root, List.of(ref));
++        assertContains(plan, "- ICEBERG-EQUALITY-DELETE-SCAN [eqd_repro] => [1:id]");
++    }
++
++    @Test
++    public void testExplainLogicalIcebergEqualityDeleteScanWithRows() {
++        IcebergTable table = Mockito.mock(IcebergTable.class);
++        Mockito.when(table.getName()).thenReturn("eqd_repro");
++        Column column = new Column("id", IntegerType.INT);
++        ColumnRefOperator ref = new ColumnRefOperator(1, IntegerType.INT, "id", true);
++        LogicalIcebergEqualityDeleteScanOperator logicalScan = new LogicalIcebergEqualityDeleteScanOperator(
++                table, Map.of(ref, column), Map.of(column, ref), -1, null);
++        OptExpression root = OptExpression.create(new PhysicalIcebergEqualityDeleteScanOperator(logicalScan));
++        root.setStatistics(Statistics.builder().setOutputRowCount(5).build());
++
++        String plan = new Explain(true, true, " ", " |").print(root, List.of(ref));
++        assertContains(plan, "- ICEBERG-EQUALITY-DELETE-SCAN [eqd_repro] => [1:id] {rows: 5}");
++    }
++
++    @Test
++    public void testExplainLogicalRawValues() throws Exception {
++        SessionVariable sv = connectContext.getSessionVariable();
++        int threshold = sv.getLargeInPredicateThreshold();
++        sv.setLargeInPredicateThreshold(3);
++        try {
++            String plan = getExecPlan("select * from t0 where v1 in (1, 2, 3, 4)")
++                    .getExplainString(StatementBase.ExplainLevel.LOGICAL);
++            assertContains(plan, "LEFT SEMI JOIN");
++            assertContains(plan, "- RAW-VALUES");
++        } finally {
++            sv.setLargeInPredicateThreshold(threshold);
++        }
++    }
++
++    @Test
++    public void testExplainLogicalFetch() throws Exception {
++        SessionVariable sv = connectContext.getSessionVariable();
++        boolean glm = sv.isEnableGlobalLateMaterialization();
++        boolean costBased = sv.isEnableGlobalLateMaterializationCostBased();
++        sv.setEnableGlobalLateMaterialization(true);
++        sv.setEnableGlobalLateMaterializationCostBased(false);
++        try {
++            String plan = getExecPlan("select * from supplier where S_SUPPKEY < 10 order by 1,2 limit 10")
++                    .getExplainString(StatementBase.ExplainLevel.LOGICAL);
++            assertContains(plan, "- FETCH");
++            assertContains(plan, "- LOOKUP");
++        } finally {
++            sv.setEnableGlobalLateMaterialization(glm);
++            sv.setEnableGlobalLateMaterializationCostBased(costBased);
++        }
++    }
+ }
+```
+
+---
+
+### Incident Patch 2: `520e2886` (2026-11-23)
+**Commit Message**: [BugFix] End the scan instead of dropping the filter when an IN list holds only NULLs (#84190)
+
+Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `be/src/compute_env/query/scan_conjuncts_manager.cpp` (modified, +17/-1)
+```diff
+@@ -567,6 +567,17 @@ requires(!lt_is_date<SlotType>) Status ChunkPredicateBuilder<E, Type>::normalize
+             values.insert(decoder.decode(value));
+         }
+ 
++        if (values.empty()) {
++            // and col in (null, null): no value is left once NULL is eliminated, so the predicate is never
++            // true. Empty the range instead of calling `add_fixed_values`, which reads an empty set as
++            // "no constraint". The root builder then ends the scan; a builder under OR gives up the push-down.
++            if constexpr (!Negative) {
++                range->clear_to_empty();
++                _normalized_exprs[i] = true;
++            }
++            return Status::OK();
++        }
++
+         if (range->add_fixed_values(FILTER_IN, values).ok()) {
+             _normalized_exprs[i] = true;
+         }
+@@ -702,7 +713,12 @@ requires lt_is_date<SlotType> Status ChunkPredicateBuilder<E, Type>::normalize_i
                      }
                  }
-             }
-+            if (!overflow && value.is_null() && row_ref.get_value().type() == VariantType::NULL_TYPE) {
-+                // A variant null converts to SQL NULL, as it does for every other cast target. A NaN or infinite
-+                // FLOAT/DOUBLE also prints as null, but it takes the path below like CAST(DOUBLE AS JSON) does.
-+                builder.append_null();
-+                continue;
-+            }
-         } else {
-             if constexpr (AllowThrowException) {
-                 THROW_RUNTIME_ERROR_WITH_TYPE(FromType);
+                 if (values.empty()) {
+-                    status = Status::EndOfFile("const false predicate result");
++                    // No value can match (all NULL, or DATETIME values that are not a whole day),
++                    // so the predicate is never true.
++                    if constexpr (!Negative) {
++                        range->clear_to_empty();
++                        _normalized_exprs[i] = true;
++                    }
+                     continue;
+                 }
+                 if (range->add_fixed_values(FILTER_IN, values).ok()) {
 ```
 
-**File**: `be/src/types/json_value.cpp` (modified, +33/-0)
+**File**: `be/test/exec/olap_scan_prepare_test.cpp` (modified, +99/-0)
 ```diff
-@@ -136,6 +136,39 @@ StatusOr<JsonValue> JsonValue::parse_json_or_string(const Slice& src) {
-     return Status::OK();
+@@ -102,6 +102,34 @@ static TExpr create_or_pred_with_false_and_branch(SlotId slot_id) {
+     return texpr;
  }
  
-+StatusOr<JsonValue> JsonValue::parse_json_text(const Slice& src) {
-+    if (src.size > kJSONLengthLimit) {
-+        return Status::NotSupported("JSON string exceed maximum length 16MB");
-+    }
-+    try {
-+        // The velocypack parser builds a number that ends the input digit by digit instead of converting it as a
-+        // whole, so a bare 0.3 comes back as the next double. A trailing space sends it through the exact
-+        // conversion; only a bare scalar can end without a closing bracket or quote, and it is short.
-+        std::string padded;
-+        Slice text = src;
-+        if (!src.empty()) {
-+            const char last = src.get_data()[src.get_size() - 1];
-+            if (last != '}' && last != ']' && last != '"') {
-+                padded.reserve(src.get_size() + 1);
-+                padded.append(src.get_data(), src.get_size());
-+                padded.push_back(' ');
-+                text = Slice(padded);
-+            }
-+        }
-+        vpack::Exception error(vpack::Exception::InternalError);
-+        vpack::Options options = parse_options_from_config();
-+        auto b = vpack::Parser::tryFromJson(text.get_data(), text.get_size(), &error, &options);
-+        if (b == nullptr) {
-+            return fromVPackException(error);
-+        }
-+        JsonValue res;
-+        res.assign(*b);
-+        return res;
-+    } catch (const vpack::Exception& e) {
-+        return fromVPackException(e);
-+    }
++// Appends `slot IN (NULL, NULL)`.
++static void append_int_in_all_null_pred(std::vector<TExprNode>* nodes, SlotId slot_id) {
++    nodes->emplace_back(ExprsTestHelper::create_in_pred_node<TYPE_INT>(3));
++    nodes->emplace_back(ExprsTestHelper::create_slot_expr_node_t<TYPE_INT>(0, slot_id, true));
++    nodes->emplace_back(ExprsTestHelper::create_null_literal<TYPE_INT>());
++    nodes->emplace_back(ExprsTestHelper::create_null_literal<TYPE_INT>());
 +}
 +
- Status JsonValue::parse(const Slice& src, JsonValue* out) {
-     ASSIGN_OR_RETURN(auto json_value, parse_json_or_string(src));
-     *out = std::move(json_value);
-```
-
-**File**: `be/src/types/json_value.h` (modified, +2/-0)
-```diff
-@@ -125,6 +125,8 @@ class JsonValue {
-     static StatusOr<JsonValue> parse(const Slice& src);
-     // Try to parse it as JSON object, otherwise consider it as a string
-     static StatusOr<JsonValue> parse_json_or_string(const Slice& src);
-+    // Parse `src` as one JSON text of any kind, including a bare scalar such as 1, true or null.
-+    static StatusOr<JsonValue> parse_json_text(const Slice& src);
-     // Effective JSON nesting-depth cap from config (json_max_parse_nesting_depth), with a built-in
-     // fallback (1024) so it is never silently disabled. Single source of truth shared by the
-     // velocypack parse path (parse_options_from_config) and the simdjson ingest path (SimdJsonConverter).
-```
-
-**File**: `be/test/exprs/cast_expr_test.cpp` (modified, +83/-0)
-```diff
-@@ -17,6 +17,7 @@
- #include <glog/logging.h>
- #include <gtest/gtest.h>
- 
-+#include <cstring>
- #include <limits>
- 
- #include "base/string/slice.h"
-@@ -3740,4 +3741,86 @@ TEST_F(VectorizedCastExprTest, variant_cast_to_json_from_rebuilt_shredded_row) {
-     EXPECT_EQ(long_value, str->to_string());
++// (slot IN (NULL, NULL) AND slot = 1) OR slot = 2
++static TExpr create_or_pred_with_in_all_null_and_branch(SlotId slot_id) {
++    TExpr texpr;
++    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_OR));
++    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_AND));
++    append_int_in_all_null_pred(&texpr.nodes, slot_id);
++    append_int_eq_pred(&texpr.nodes, slot_id, 1);
++    append_int_eq_pred(&texpr.nodes, slot_id, 2);
++    return texpr;
++}
++
++// slot IN (NULL, NULL) OR slot = 2
++static TExpr create_or_pred_with_in_all_null_branch(SlotId slot_id) {
++    TExpr texpr;
++    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_OR));
++    append_int_in_all_null_pred(&texpr.nodes, slot_id);
++    append_int_eq_pred(&texpr.nodes, slot_id, 2);
++    return texpr;
++}
++
+ template <LogicalType Type>
+ StatusOr<RuntimeFilterProbeDescriptor*> ChunkPredicateBuilderTest::_gen_runtime_filter_desc(SlotId slot_id) {
+     TRuntimeFilterDescription tRuntimeFilterDescription;
+@@ -415,6 +443,77 @@ TEST_F(ChunkPredicateBuilderTest, normalize_or_with_false_and_branch) {
+     ASSERT_EQ(pred.debug_string(), "{\"and\":[]}");
  }
  
-+// A scalar VARIANT casts to the same JSON scalar, not to a JSON string of its text, and a variant null casts to SQL
-+// NULL, also under a throwing cast.
-+TEST_F(VectorizedCastExprTest, variant_scalar_cast_to_json_keeps_json_type) {
-+    const std::vector<std::string> inputs = {"1", "true", "1.5", R"("s")", "null", R"({"a":null})"};
-+    auto variant_col = VariantColumn::create();
-+    for (const auto& text : inputs) {
-+        auto encoded = VariantEncoder::encode_json_text_to_variant(text);
-+        ASSERT_TRUE(encoded.ok()) << encoded.status();
-+        variant_col->append(&encoded.value());
-+    }
-+    for (const bool allow_throw : {false, true}) {
-+        ColumnPtr result;
-+        ASSERT_NO_THROW(
-+                result = cast_from_variant(gen_type_desc(TPrimitiveType::JSON), variant_col->clone(), allow_throw));
-+        ASSERT_EQ(inputs.size(), result->size());
-+        const auto json_at = [&](size_t row) {
-+            const JsonValue* json = result->get(row).get_json();
-+            return json == nullptr ? std::string("<null>") : json->to_string_uncheck();
-+        };
-+        EXPECT_EQ("1", json_at(0));
-+        EXPECT_TRUE(result->get(0).get_json()->get_int().ok());
-+        EXPECT_EQ("true", json_at(1));
-+        EXPECT_TRUE(result->get(1).get_json()->get_bool().ok());
-+        EXPECT_EQ("1.5", json_at(2));
-+        EXPECT_EQ(R"("s")", json_at(3));
-+        EXPECT_TRUE(result->is_null(4));
-+        EXPECT_EQ(R"({"a": null})", json_at(5));
-+    }
++// `c1 IN (NULL, NULL)` is never true, so the scan ends instead of reading every row.
++TEST_F(ChunkPredicateBuilderTest, normalized_in_all_null_is_eof) {
++    SlotId slot_id = 1;
++    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_INT_DESC, 1}, {"c2", TYPE_INT_DESC, 2}, {""}};
++    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
++
++    TExpr texpr;
++    append_int_in_all_null_pred(&texpr.nodes, slot_id);
++    _texprs.emplace_back(std::move(texpr));
++    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
++    ASSERT_EQ(_expr_ctxs.size(), 1);
++    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
++
++    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
++    auto ret = builder.parse_conjuncts();
++    ASSERT_TRUE(ret.status().is_end_of_file()) << ret.status();
 +}
 +
-+// A DOUBLE VARIANT casts to the same double in JSON. The JSON parser built a number at the end of its input digit by
-+// digit, which turned 0.3 into the next double up.
-+TEST_F(VectorizedCastExprTest, variant_double_cast_to_json_keeps_exact_value) {
-+    const std::vector<double> values = {0.3, -0.3, 0.7, 1e-5, 123.456, 1e300, 5e-324, -0.0};
-+    auto variant_col = VariantColumn::create();
-+    for (double d : values) {
-+        auto json = JsonValue::from_double(d);
-+        auto encoded = VariantEncoder::encode_json_to_variant(json);
-+        ASSERT_TRUE(encoded.ok()) << encoded.status();
-+        variant_col->append(&encoded.value());
-+    }
-+    ColumnPtr result = cast_from_variant(gen_type_desc(TPrimitiveType::JSON), std::move(variant_col));
-+    ASSERT_EQ(values.size(), result->size());
-+    for (size_t i = 0; i < values.size(); ++i) {
-+        const JsonValue* json = result->get(i).get_json();
-+        ASSERT_NE(nullptr, json) << i;
-+        auto d = json->get_double();
-+        ASSERT_TRUE(d.ok()) << i << ": " << json->to_string_uncheck();
-+        EXPECT_EQ(values[i], d.value()) << i << ": " << json->to_string_uncheck();
-+    }
++TEST_F(ChunkPredicateBuilderTest, normalized_in_all_null_date_is_eof) {
++    SlotId slot_id = 1;
++    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_DATE_DESC, 1}, {"c2", TYPE_DATE_DESC, 2}, {""}};
++    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
++
++    _texprs.emplace_back(ExprsTestHelper::create_in_pred_texpr<TYPE_DATE, std::string>(slot_id, {}, true));
++    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
++    ASSERT_EQ(_expr_ctxs.size(), 1);
++    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
++
++    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
++    auto ret = builder.parse_conjuncts();
++    ASSERT_TRUE(ret.status().is_end_of_file()) << ret.status();
 +}
 +
-+// A NaN DOUBLE has no JSON form and prints as null; it casts like CAST(DOUBLE AS JSON) does: SQL NULL, or an error
-+// under a throwing cast. Only a variant null is always SQL NULL.
-+TEST_F(VectorizedCastExprTest, variant_nan_cast_to_json_follows_double_cast) {
-+    const auto make_column = [](bool nan) {
-+        auto variant_col = VariantColumn::create();
-+        if (nan) {
-+            const double value = std::numeric_limits<double>::quiet_NaN();
-+            std::string bytes(1 + sizeof(double), '\0');
-+            bytes[0] = static_cast<char>(static_cast<uint8_t>(VariantType::DOUBLE) << 2);
-+            memcpy(bytes.data() + 1, &value, sizeof(value)); // little-endian host
-+            VariantRowValue row(VariantMetadata::kEmptyMetadata, bytes);
-+            variant_col->append(&row);
-+        } else {
-+            auto encoded = VariantEncoder::encode_json_text_to_variant("null");
-+            EXPECT_TRUE(encoded.ok()) << encoded.status();
-+            variant_col->append(&encoded.value());
-+        }
-+        return variant_col;
-+    };
-+    const TTypeDesc json_type = gen_type_desc(TPrimitiveType::JSON);
-+    ColumnPtr nan_result = cast_from_variant(json_type, make_column(true));
-+    ASSERT_EQ(1, nan_result->size());
-+    EXPECT_TRUE(nan_result->is_null(0));
-+    EXPECT_FALSE(cast_from_variant_error(json_type, make_column(true)).empty());
++// Under OR the always-false branch must not end the scan: `(c1 IN (NULL, NULL) AND c1 = 1) OR c1 = 2`
++// keeps the rows where c1 = 2. The OR is left unnormalized and evaluated as an expression.
++TEST_F(ChunkPredicateBuilderTest, normalize_or_with_in_all_null_and_branch) {
++    SlotId slot_id = 1;
++    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_INT_DESC, 1}, {"c2", TYPE_INT_DESC, 2}, {""}};
++    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
 +
-+    ColumnPtr null_result = cast_from_variant(json_type, make_column(false), true);
-+    ASSERT_EQ(1, null_result->size());
-+    EXPECT_TRUE(null_result->is_null(0));
++    _texprs.emplace_back(create_or_pred_with_in_all_null_and_branch(slot_id));
++    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
++    ASSERT_EQ(_expr_ctxs.size(), 1);
++    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
++
++    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
++    ASSIGN_OR_ASSERT_FAIL(auto normalized, builder.parse_conjuncts());
++    ASSERT_TRUE(normalized);
++    ASSERT_FALSE(builder.is_pred_normalized(0));
++
++    ASSIGN_OR_ASSERT_FAIL(auto pred, builder.get_predicate_tree_root(_int_pred_parser, _predicate_free_pool));
++    ASSERT_EQ(pred.debug_string(), "{\"and\":[]}");
 +}
 +
- } // namespace starrocks
++// `c1 IN (NULL, NULL) OR c1 = 2`: same, the scan must not end.
++TEST_F(ChunkPredicateBuilderTest, normalize_or_with_in_all_null_branch) {
++    SlotId slot_id = 1;
++    parquet::Utils::Slo
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/FunctionSet.java` (modified, +8/-1)
+**File**: `test/sql/test_push_down_predicate/R/test_in_all_null_push_down` (added, +67/-0)
 ```diff
-@@ -1396,7 +1396,14 @@ private void initAggregateBuiltins() {
-                 false, false, false));
- 
-         for (Type t : SUPPORTED_TYPES) {
--            if (t.isFunctionType() || t.isVariantType()) {
-+            if (t.isFunctionType()) {
-+                continue;
-+            }
-+            if (t.isVariantType()) {
-+                // Only count: without it count(v) casts v to VARCHAR, which turns a variant null into a SQL NULL
-+                // and drops it from the count, although `v IS NULL` is false.
-+                addBuiltin(AggregateFunction.createBuiltin(FunctionSet.COUNT,
-+                        Lists.newArrayList(t), IntegerType.BIGINT, IntegerType.BIGINT, false, true, true));
-                 continue;
-             }
-             if (t.isNull()) {
+@@ -0,0 +1,67 @@
++-- name: test_in_all_null_push_down
++CREATE TABLE t_in_null_${uuid0} (
++    k INT,
++    v SMALLINT NOT NULL,
++    w SMALLINT NULL,
++    s VARCHAR(16) NULL,
++    d DATE NULL
++)
++DUPLICATE KEY(k)
++DISTRIBUTED BY HASH(k) BUCKETS 1
++PROPERTIES ("replication_num" = "1");
++-- result:
++-- !result
++INSERT INTO t_in_null_${uuid0} VALUES (1, 0, 0, 'a', '2024-01-01'), (2, 5, 5, 'b', '2024-01-02'), (3, 7, NULL, NULL, NULL);
++-- result:
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL);
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL);
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE s IN (NULL, NULL);
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE d IN (NULL, NULL);
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) AND k = 1;
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE NOT (v IN (NULL, NULL));
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL)) IS NULL;
++-- result:
++3
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) OR k = 2 ORDER BY k;
++-- result:
++2
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL) AND k = 1) OR k = 2 ORDER BY k;
++-- result:
++2
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL) OR w IS NULL ORDER BY k;
++-- result:
++3
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL, 5) ORDER BY k;
++-- result:
++2
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE v NOT IN (NULL, NULL) OR k = 3 ORDER BY k;
++-- result:
++3
++-- !result
++DROP TABLE t_in_null_${uuid0};
++-- result:
++-- !result
+\ No newline at end of file
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/FunctionAnalyzer.java` (modified, +4/-1)
+**File**: `test/sql/test_push_down_predicate/T/test_in_all_null_push_down` (added, +25/-0)
 ```diff
-@@ -1620,7 +1620,10 @@ private static Function getAdjustedAnalyzedAggregateFunction(ConnectContext sess
-         if (fnName.equals(FunctionSet.COUNT) && isDistinct) {
-             // Compatible with the logic of the original search function "count distinct"
-             // TODO: fix how we equal count distinct.
--            fn = ExprUtils.getBuiltinFunction(FunctionSet.COUNT, new Type[] { argumentTypes[0] },
-+            // count(VARIANT) is only for plain counting: there is no distinct aggregate over VARIANT, so count
-+            // distinct keeps casting a VARIANT argument to VARCHAR as it did before the VARIANT overload existed.
-+            Type distinctArgType = argumentTypes[0].isVariantType() ? VarcharType.VARCHAR : argumentTypes[0];
-+            fn = ExprUtils.getBuiltinFunction(FunctionSet.COUNT, new Type[] { distinctArgType },
-                     Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF);
-         } else if (fnName.equals(FunctionSet.EXCHANGE_BYTES) || fnName.equals(FunctionSet.EXCHANGE_SPEED)) {
-             fn = ExprUtils.getBuiltinFunction(fnName, argumentTypes, Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF);
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/AggregateTest.java` (modified, +28/-0)
-```diff
-@@ -3645,4 +3645,32 @@ public void testStructFieldOfAggregates() throws Exception {
-         assertContains(plan, "output: sum(2: v2), max(3: v3)");
-         assertContains(plan, "named_struct('a', 4: sum, 'b', 5: max).a");
-     }
-+
-+    // count(v) on a VARIANT counts it as VARIANT. Counting cast(v as VARCHAR) instead turned a variant null into a SQL
-+    // NULL and dropped it from the count, although `v IS NULL` is false.
-+    @Test
-+    public void testCountVariantDoesNotCastToVarchar() throws Exception {
-+        int oldStage = connectContext.getSessionVariable().getNewPlannerAggStage();
-+        try {
-+            for (int stage : new int[] {0, 1, 2}) {
-+                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
-+                String plan = getVerboseExplain(
-+                        "select t1b, count(cast(t1a as variant)) from test_all_type group by t1b");
-+                assertContains(plan, "count[([11: cast, VARIANT, true]); args: VARIANT; result: BIGINT");
-+                assertNotContains(plan, "as VARCHAR");
-+            }
-+            // There is no distinct aggregate over VARIANT: count distinct still casts its argument to VARCHAR, so
-+            // the multi-phase split never hands a VARIANT column to a VARCHAR distinct state.
-+            for (int stage : new int[] {0, 1, 2, 3, 4}) {
-+                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
-+                String plan = getVerboseExplain(
-+                        "select count(distinct cast(t1a as variant)) from test_all_type");
-+                assertContains(plan, "VARIANT, true] as VARCHAR)");
-+                assertNotContains(plan, "as VARIANT)); args: CHAR");
-+                assertNotContains(plan, "VARIANT, true]); args: CHAR");
-+            }
-+        } finally {
-+            connectContext.getSessionVariable().setNewPlanerAggStage(oldStage);
-+        }
-+    }
- }
-```
-
-**File**: `test/sql/test_iceberg/R/test_iceberg_variant_mixed_files` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ alter table plain execute add_files(location='oss://${oss_bucket}/test_iceberg_v
- -- !result
- select count(*), count(v), min(id), max(id) from mixed;
- -- result:
--276	273	1	405
-+276	275	1	405
- -- !result
- function: assert_equal_result("select id, cast(v as string) from mixed order by id", "select id, cast(v as string) from plain order by id")
- -- result:
+@@ -0,0 +1,25 @@
++-- name: test_in_all_null_push_down
++CREATE TABLE t_in_null_${uuid0} (
++    k INT,
++    v SMALLINT NOT NULL,
++    w SMALLINT NULL,
++    s VARCHAR(16) NULL,
++    d DATE NULL
++)
++DUPLICATE KEY(k)
++DISTRIBUTED BY HASH(k) BUCKETS 1
++PROPERTIES ("replication_num" = "1");
++INSERT INTO t_in_null_${uuid0} VALUES (1, 0, 0, 'a', '2024-01-01'), (2, 5, 5, 'b', '2024-01-02'), (3, 7, NULL, NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE s IN (NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE d IN (NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) AND k = 1;
++SELECT count(*) FROM t_in_null_${uuid0} WHERE NOT (v IN (NULL, NULL));
++SELECT count(*) FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL)) IS NULL;
++SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) OR k = 2 ORDER BY k;
++SELECT k FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL) AND k = 1) OR k = 2 ORDER BY k;
++SELECT k FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL) OR w IS NULL ORDER BY k;
++SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL, 5) ORDER BY k;
++SELECT k FROM t_in_null_${uuid0} WHERE v NOT IN (NULL, NULL) OR k = 3 ORDER BY k;
++DROP TABLE t_in_null_${uuid0};
 ```
 
 ---
 
-### Incident Patch 2: `593ce64a` (2026-11-20)
-**Commit Message**: [BugFix] Derive a pinned refresh's scope from the frozen snapshot, not from live (#81631)
+### Incident Patch 3: `61e67dcb` (2026-11-23)
+**Commit Message**: [BugFix] Finish the split of an empty ORDER BY != PK partition without waiting for UNSHARE (#84189)
 
-Signed-off-by: Youngwb <[REDACTED_EMAIL]>
-Co-authored-by: Youngwb <[REDACTED_EMAIL]>
+Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
+Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/MaterializedView.java` (modified, +8/-2)
+**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/SplitTabletJob.java` (modified, +81/-26)
 ```diff
-@@ -1414,22 +1414,28 @@ public List<BasePartitionInfo> getBaseTableLatestPartitionInfo(Table baseTable)
-                 .stream().map(BasePartitionInfo::fromExternalTable).collect(Collectors.toList());
+@@ -473,10 +473,10 @@ protected void runRunningJob() {
+     /*
+      * 1. Abort in-flight lake compactions on the partitions where a tablet was really split, then wait for the
+      *    remaining previous transactions finished
+-     * 2. Remove old versions of materialized index
+-     * 3. Unregister resharding tablets
+-     * 4. Release the new shards' creation-time placement pin
+-     * 5. Durably publish FINISHED and update aggregate table state and metrics
++     * 2. Unregister resharding tablets
++     * 3. Release the new shards' creation-time placement pin
++     * 4. Durably publish FINISHED, then recycle the old versions of materialized index and release any query pin
++     *    left on them (applyFinishedLocked), and update aggregate table state and metrics
+      */
+     @Override
+     protected void runCleaningJob() {
+@@ -499,14 +499,20 @@ protected void runCleaningJob() {
+         }
+ 
+         // ORDER BY != PK children inherit complete shared rowsets. Keep queries on the parent layout
+-        // until one partition-wide, non-partial UNSHARE transaction has rewritten every sibling.
++        // until one partition-wide, non-partial UNSHARE transaction has rewritten every sibling. An empty
++        // INSERT OVERWRITE temporary partition to which nothing has committed since the split inherited
++        // nothing, and nothing can still be cross-published into its children: a publish only exists for a
++        // committed transaction, and the resharding tablets are unregistered below under the same table
++        // lock, which keeps every commit out. It needs no UNSHARE; applyFinishedLocked releases its pin.
+         CompactionMgr compactionMgr = GlobalStateMgr.getCurrentState().getCompactionMgr();
+-        boolean waitingForUnshare = false;
+         try (LockedObject<OlapTable> lockedTable = getLockedTable(LockType.READ)) {
+             OlapTable olapTable = lockedTable.get();
+-            for (Long physicalPartitionId : reshardingPhysicalPartitions.keySet()) {
++            boolean waitingForUnshare = false;
++            for (ReshardingPhysicalPartition reshardingPhysicalPartition : reshardingPhysicalPartitions.values()) {
++                long physicalPartitionId = reshardingPhysicalPartition.getPhysicalPartitionId();
+                 PhysicalPartition physicalPartition = olapTable.getPhysicalPartition(physicalPartitionId);
+-                if (physicalPartition == null || !physicalPartition.isUnsharing()) {
++                if (physicalPartition == null || !physicalPartition.isUnsharing()
++                        || inheritsNothingFromParent(olapTable, reshardingPhysicalPartition, physicalPartition)) {
+                     continue;
+                 }
+                 waitingForUnshare = true;
+@@ -515,25 +521,78 @@ protected void runCleaningJob() {
+                     compactionMgr.triggerUnshareCompaction(identifier);
+                 }
+             }
+-        }
+-        if (waitingForUnshare) {
+-            return;
+-        }
+-
+-        // 2. Remove old versions of materialized index
+-        removeOldMaterializedIndexes();
++            if (waitingForUnshare) {
++                return;
++            }
+ 
+-        // 3. Unregister resharding tablets
+-        unregisterReshardingTablets();
++            // 2. Unregister resharding tablets
++            unregisterReshardingTablets();
++        }
+ 
+-        // 4. Release the child shards' creation-time placement pin so the balancer can spread them
++        // 3. Release the child shards' creation-time placement pin so the balancer can spread them
+         //    now, instead of when the parent shards are finally reclaimed tens of minutes later.
+         clearPlacementPreference(reshardingPhysicalPartitions);
+ 
+-        // 5. Durably publish FINISHED
++        // 4. Durably publish FINISHED
+         setJobState(JobState.FINISHED);
      }
  
-+    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite) {
-+        return getUpdatedPartitionNamesOfExternalTable(baseTable, isQueryRewrite, null);
++    // Whether the split left this partition's children nothing of the parent's: the split read version 1, so the
++    // parent had no file to share, and no transaction has committed to the partition since, so no load can have
++    // brought one in either. Committed, not visible: a writer that resolved the old layout but took its transaction
++    // id after the end transaction id (a bypass write, which registers the index of the tablets it wrote, or a
++    // replication job, which caches its indexes) is not waited on above, and its publish may already be on its way
++    // to the children while the version is unchanged.
++    //
++    // Only a temporary partition that a running static INSERT OVERWRITE (a materialized view refresh included) created
++    // for its own write and has not swapped in yet: no other writer targets one. Elsewhere, including a temporary
++    // partition a user added, such a writer could still commit after the unregister below: its publish would reach
++    // the parent only, and since the parent and child indexes share a meta id, the file bundle of that version would
++    // carry no met
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/TabletReshardJob.java` (modified, +13/-2)
+```diff
+@@ -340,6 +340,9 @@ private void publishFinalState(JobState desiredState) {
+                         if (isDone()) {
+                             return;
+                         }
++                        if (desiredState == JobState.FINISHED && table != null) {
++                            applyFinishedLocked(table);
++                        }
+                         finishedTimeMs = snapshot.finishedTimeMs;
+                         stateStartedTimeMs = snapshot.stateStartedTimeMs;
+                         jobState = desiredState;
+@@ -351,6 +354,14 @@ private void publishFinalState(JobState desiredState) {
+         LOG.info("Tablet reshard job set job state. {}", this);
+     }
+ 
++    /**
++     * Applies, on the leader, what the FINISHED record changes in the catalog beyond the job itself. Runs under the
++     * table WRITE lock once the record is durable, so nothing it changes can be seen before the record that makes
++     * every replaying FE change it too.
++     */
++    protected void applyFinishedLocked(OlapTable table) {
 +    }
 +
-     /**
-      * Get the updated partition names of the external base table of the materialized view.
+     private void recordTerminalMetrics(JobState state) {
+         if (!MetricRepo.hasInit) {
+             return;
+@@ -609,8 +620,8 @@ protected static void checkNewIndexesInstallable(OlapTable olapTable,
+      * never a partition-directory delete, which for a split would destroy the live child tablets that
+      * share the parent's object-storage directory.
       *
-      * @param baseTable:      the external base table of the materialized view to check the updated partition names
-      * @param isQueryRewrite: whether it's for query rewrite or not
-+     * @param pinnedVersionRange: the frozen snapshot to compare against, null to compare against the live table
-      * @return: the updated partition names of the external base table
+-     * <p>Runs on both the leader (runCleaningJob) and the replay path (replayFinishedJob); it is
+-     * deterministic (the index keeps its own id, no id allocation) and
++     * <p>Runs on both the leader (a merge from runCleaningJob, a split from applyFinishedLocked) and the replay
++     * path (replayFinishedJob); it is deterministic (the index keeps its own id, no id allocation) and
+      * {@code recycleMaterializedIndex} is idempotent, so a re-run is safe. The caller holds the table
+      * WRITE lock and passes the locked table.
       */
--    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite) {
-+    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite,
-+                                                               TvrVersionRange pinnedVersionRange) {
-         Set<String> result = Sets.newHashSet();
-         // NOTE: For query dump replay, ignore updated partition infos only to check mv can rewrite query or not.
-         // Ignore partitions when mv 's last refreshed time period is less than `maxMVRewriteStaleness`
-         if (FeConstants.isReplayFromQueryDump || (isQueryRewrite && isStalenessSatisfied())) {
-             return result;
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/lake/compaction/CompactionMgr.java` (modified, +6/-1)
+```diff
+@@ -30,6 +30,7 @@
+ import com.starrocks.persist.metablock.SRMetaBlockWriter;
+ import com.starrocks.server.GlobalStateMgr;
+ import com.starrocks.sql.common.MetaUtils;
++import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -351,6 +352,7 @@ public PartitionStatistics triggerManualCompaction(PartitionIdentifier partition
+     }
+ 
+     public PartitionStatistics triggerUnshareCompaction(PartitionIdentifier partition) {
++        boolean[] newRequest = new boolean[1];
+         PartitionStatistics statistics = partitionStatisticsHashMap.compute(partition, (k, v) -> {
+             if (v == null) {
+                 v = new PartitionStatistics(partition);
+@@ -365,11 +367,14 @@ public PartitionStatistics triggerUnshareCompaction(PartitionIdentifier partitio
+                 // re-triggers a pending UNSHARE on every reshard tick, so keep the retry deadline of a request
+                 // that is already pending, or one the scheduler deferred would be retried every cycle.
+                 v.clearCompactionRetryTimes();
++                newRequest[0] = true;
+             }
+             v.setPriority(PartitionStatistics.CompactionPriority.UNSHARE);
+             return v;
+         });
+-        LOG.info("Trigger UNSHARE compaction, {}", statistics);
++        // The priority stays UNSHARE until the compaction starts or the request is dropped, so the reshard tick's
++        // repeats of a pending request are logged at DEBUG only.
++        LOG.log(newRequest[0] ? Level.INFO : Level.DEBUG, "Trigger UNSHARE compaction, {}", statistics);
+         return statistics;
+     }
+ 
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/load/InsertOverwriteJobMgr.java` (modified, +22/-0)
+```diff
+@@ -142,6 +142,28 @@ public boolean hasRunningOverwriteJob(long tableId) {
          }
- 
--        ConnectorPartitionTraits traits = ConnectorPartitionTraits.build(this, baseTable);
-+        ConnectorPartitionTraits traits = ConnectorPartitionTraits.build(this, baseTable, pinnedVersionRange);
-         traits.setQueryMVRewrite(isQueryRewrite);
-         return traits.getUpdatedPartitionNames(
-                 this.getBaseTableInfos(),
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/MvRefreshArbiter.java` (modified, +11/-6)
-```diff
-@@ -51,8 +51,10 @@ public class MvRefreshArbiter {
-     private static final Logger LOG = LogManager.getLogger(MvRefreshArbiter.class);
- 
-     public static boolean needsToRefreshTable(MaterializedView mv, BaseTableInfo baseTableInfo, Table table,
--                                              MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
--        Optional<Boolean> needsToRefresh = needsToRefreshTable(mv, baseTableInfo, table, true, queryRewriteParams);
-+                                              MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
-+                                              TvrVersionRange pinnedVersionRange) {
-+        Optional<Boolean> needsToRefresh =
-+                needsToRefreshTable(mv, baseTableInfo, table, true, queryRewriteParams, pinnedVersionRange);
-         if (needsToRefresh.isPresent()) {
-             return needsToRefresh.get();
-         }
-@@ -130,7 +132,8 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
-                                                          BaseTableInfo baseTableInfo,
-                                                          Table baseTable,
-                                                          boolean withMv,
--                                                         MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
-+                                                         MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
-+                                                         TvrVersionRange pinnedVersionRange) {
-         if (baseTable.isView()) {
-             // do nothing
-             return Optional.of(false);
-@@ -168,7 +171,7 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
-             return Optional.of(false);
-         } else {
-             Set<String> baseUpdatedPartitionNames = mv.getUpdatedPartitionNamesOfExternalTable(baseTable,
--                    queryRewriteParams.isQueryRewrite());
-+                    queryRewriteParams.isQueryRewrite(), pinnedVersionRange);
-             if (baseUpdatedPartitionNames == null) {
-                 return Optional.empty();
-             }
-@@ -181,12 +184,14 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
-      * @param baseTable: the table to check
-      * @param withMv: whether to check the materialized view if it's a materialized view
-      * @param queryRewriteParams: whether this caller is query rewrite or not
-+     * @param pinnedVersionRange: the frozen snapshot to answer from, null to answer from the live table
-      * @return MvBaseTableUpdateInfo: the update info of the base table
-      */
-     public static MvBaseTableUpdateInfo getMvBaseTableUpdateInfo(MaterializedView mv,
-                                                                  Table baseTable,
-                                                                  boolean withMv,
--                                                                 MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
-+                                                                 MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
-+                                                                 TvrVersionRange pinnedVersionRange) {
-         MvBaseTableUpdateInfo baseTableUpdateInfo = new MvBaseTableUpdateInfo();
-         if (baseTable.isView()) {
-             // do nothing
-@@ -225,7 +230,7 @@ public static MvBaseTableUpdateInfo getMvBaseTableUpdateInfo(MaterializedView mv
-             baseTableUpdateInfo.addToRefreshPartitionNames(updatedPCellSet);
-         } else {
-             Set<String> baseUpdatedPartitionNames = mv.getUpdatedPartitionNamesOfExternalTable(baseTable,
--                    queryRewriteParams.isQueryRewrite());
-+                    queryRewriteParams.isQueryRewrite(), pinnedVersionRange);
-             if (baseUpdatedPartitionNames == null) {
-                 return null;
-             }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/mv/MVTimelinessArbiter.java` (modified, +3/-2)
-```diff
-@@ -213,7 +213,8 @@ protected boolean needsRefreshOnNonRefBaseTables(Map<Table, List<Column>> refBas
-                 return true;
-             }
-             // If the non-ref table has already changed, need refresh all materialized views' partitions.
--            if (needsToRefreshTable(mv, tableInfo, baseTable, queryRewriteParams)) {
-+            if (needsToRefreshTable(mv, tableInfo, baseTable, queryRewriteParams,
-+                    /* pinnedVersionRange */ null)) {
-                 return true;
-             }
-             if (hasDeletedPartitions(mv, baseTable, /* pinnedVersionRange */ null)) {
-@@ -265,7 +266,7 @@ protected Map<Table, PCellSortedSet> collectBaseTableUpdatePartitionNames(Map<Ta
-         Map<Table, PCellSortedSet> baseChangedPartitionNames = Maps.newHashMap();
-         for (Table baseTable : refBaseTableAndColumns.keySet()) {
-             MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, baseTable,
--                    true, queryRewriteParams);
-+                    true, queryRewriteParams, /* pinnedVersionRange */ null);
-             if (mvBaseTableUpdateInfo == null) {
-                 logMVPrepare(mv, "Failed to collect update info for ref base table {}, fallback to full refresh",
-                         baseTable.getName());
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/mv/MVTimelinessNonPartitionArbiter.java` (modified, +2/-1)
-```diff
-@@ -69,7 +69,8 @@ protected MvUpdateInfo getMVTimelinessUpdateInfoInChecked() {
-             }
- 
-             // once mv's base table has updated, refresh the materialized view totally.
--            MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, table, true, queryRewriteParams);
-+            MvBaseTableUpdateInfo mvBaseTableUpdateInfo =
-+                    getMvBaseTableUpdateInfo(mv, table, true, queryRewriteParams, /* pinnedVersionRange */ null);
-             if (mvBaseTableUpdateInfo == null) {
-                 logMVPrepare(mv, "Non-partitioned base table update info is unknown, need refresh totally.");
-                 return MvUpdateInfo.fullRefresh(mv);
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/partitiontraits/CachedPartitionTraits.java` (modified, +6/-2)
-```diff
-@@ -66,12 +66,16 @@ public CachedPartitionTraits(Cache<Object, Object> cache,
      }
  
-     /**
--     * Construct the cache key: cache_{prefix}_{tableId}
-+     * Construct the cache key: cache_{prefix}_{mvId}_{tableId}, suffixed with the pinned snapshot when
-+     * this instance reads one.
-      * @param prefix use the prefix to distinguish different cache keys, please check the unique usage of this method
-      * @return the cache key
-      */
-     private String buildCacheKey(String prefix) {
--        return String.format("cache_%s_%s_%s", prefix, (mv == null) ? "0" : mv.getId(), table.getId());
-+        String key = String.format("cache_%s_%s_%s", prefix, (mv == null) ? "0" : mv.getId(), table.getId());
-+        // A pinned answer and a live answer for the same base table must not share an entry. The unpinned
-+        // key stays unsuffixed: it is reported per-key in the refresh runtime profile.
-+        return pinnedVersionRange == null ? key : key + "_" + pinnedVersionRange;
-     }
- 
-     /**
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/MvTaskRunContext.java` (modified, +6/-2)
-```diff
-@@ -33,8 +33,8 @@ public class MvTaskRunContext extends TaskRunContext {
-     public static class MVRefreshRuntimeState {
-         private final Map<Long, BaseTableSnapshotInfo> snapshotBaseTables = Maps.newHashMap();
- 
--        // Pinned TvrVersionRange per base table, keyed by Table.getTableIdentifier() (stable across
--        // connector getTable() calls, unlike tableId for external tables).
-+        // Pinned TvrVersionRange per base table, keyed by Table.getUUID() (cross-database unique and
-+        // stable across connector getTable() calls, unlike tableId for external tables).
-         private final Map<String, TvrVersionRange> pinnedTvrMap = Maps.newHashMap();
- 
-         public Map<Long, BaseTableSnapshotInfo> getSnapshotBaseTables() {
-@@ -50,6 +50,10 @@ public Map<String, TvrVersionRange> getPinnedTvrMap() {
-             return pinnedTvrMap;
-         }
- 
-+        public TvrVersionRange getPinnedRange(Table baseTable) {
-+            return pinnedTvrMap.get(baseTable.getUUID());
-+        }
-+
-         public void reset() {
-             snapshotBaseTables.clear();
-             pinnedTvrMap.clear();
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/pct/MVPCTRefreshNonPartitioner.java` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ private PCellSortedSet getNonPartitionedMVPartitionsToRefresh() {
-     @Override
-     public PCellSortedSet getMVPartitionsToRefreshWithCheck(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables) {
-         // non-partitioned materialized view
--        if (mvRefreshParams.isForce() || isNonPartitionedMVNeedToRefresh(snapshotBaseTables, mv, queryRewriteParams)) {
-+        if (mvRefreshParams.isForce() || isNonPartitionedMVNeedToRefresh(snapshotBaseTables)) {
-             return getNonPartitionedMVPartitionsToRefresh();
-         }
-         return PCellSortedSet.of();
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/pct/MVPCTRefreshPartitioner.java` (modified, +9/-8)
-```diff
-@@ -489,7 +489,7 @@ protected PCellSortedSet getMvPartitionNamesToRefresh(PCellSortedSet toRefreshPa
- 
-             // check the updated partition names in the ref base table
-             MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, baseTable,
--                    false, queryRewriteParams);
-+                    false, queryRewriteParams, pinnedRangeFor(baseTable));
-             if (mvBaseTableUpdateInfo == null) {
-                 throw new DmlException(String.format("Find the updated partition info of ref base table %s of mv " +
-                         "%s failed, current mv partitions:%s", baseTable.getName(), mv.getName(), toRefreshPartitions));
-@@ -554,7 +554,8 @@ protected boolean needsRefreshBasedOnNonRefTables(Map<Long, BaseTableSnapshotInf
-             if (tableColumnMap.containsKey(snapshotTable)) {
-                 continue;
-             }
--            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams)) {
-+            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams,
-+                    pinnedRangeFor(snapshotTable))) {
-                 return true;
-             }
-             // A non-ref base table is not partition-aligned with the mv, so losing a partition invalidates all of it.
-@@ -571,18 +572,18 @@ protected boolean needsRefreshBasedOnNonRefTables(Map<Long, BaseTableSnapshotInf
-      * - its base table has updated.
-      * - its base table has deleted partitions.
-      */
--    public static boolean isNonPartitionedMVNeedToRefresh(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables,
--                                                          MaterializedView mv,
--                                                          MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
-+    public boolean isNonPartitionedMVNeedToRefresh(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables) {
-         for (BaseTableSnapshotInfo snapshotInfo : snapshotBaseTables.values()) {
-             Table snapshotTable = snapshotInfo.getBaseTable();
-             if (!isPartitionRefreshSupported(snapshotTable)) {
-                 return true;
-             }
--            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams)) {
-+            TvrVersionRange pinnedRange = pinnedRangeFor(snapshotTable);
-+            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams,
-+                    pinnedRange)) {
-                 return true;
-             }
--            if (hasDeletedPartitions(mv, snapshotTable, /* pinnedVersionRange */ null)) {
-+            if (hasDeletedPartitions(mv, snapshotTable, pinnedRange)) {
-                 return true;
-             }
-             if (hasUntrackedRows(mv, snapshotTable)) {
-@@ -633,7 +634,7 @@ public PrefetchedPartitionInfos prefetchExternalPartitionInfos(Map<Long, BaseTab
- 
-     /** The snapshot the scan reads: a pinned run must answer base-state questions from it, not from live. */
-     private TvrVersionRange pinnedRangeFor(Table baseTable) {
--        return mvContext.getRefreshRuntimeState().getPinnedTvrMap().get(baseTable.getUUID());
-+        return mvContext.getRefreshRuntimeState().getPinnedRange(baseTable);
-     }
- 
-     public void dropPartition(Database db, MaterializedView materializedView, String mvPartitionName) {
-```
-
----
-
-### Incident Patch 3: `ee983a26` (2026-11-20)
-**Commit Message**: [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (#83938)
-
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/DeleteFileWrapper.java` (modified, +7/-2)
-```diff
-@@ -53,12 +53,17 @@ public boolean equals(Object o) {
- 
-         DeleteFileWrapper that = (DeleteFileWrapper) o;
- 
--        return deleteFile.path().toString().equals(that.deleteFile.path().toString());
-+        // pos() is the entry's row in its manifest: a manifest can list the same delete file twice (committed twice
-+        // and then merged into one manifest), and Iceberg indexes it once per entry. Keeping both entries keeps the
-+        // cached set in step with the manifest's live entry count, which the read side checks.
-+        return deleteFile.path().toString().equals(that.deleteFile.path().toString())
-+                && Objects.equals(deleteFile.pos(), that.deleteFile.pos());
-     }
- 
-     @Override
-     public int hashCode() {
--        return Objects.hash(deleteFile.path());
-+        // path() is a CharSequence; hash its string form so it stays consistent with equals().
-+        return Objects.hash(deleteFile.path().toString(), deleteFile.pos());
-     }
- 
-     @Override
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergManifestCacheStatsTest.java` (modified, +51/-0)
-```diff
-@@ -19,6 +19,7 @@
- import com.google.common.collect.Maps;
- import com.starrocks.catalog.Column;
- import com.starrocks.catalog.IcebergTable;
-+import com.starrocks.common.jmockit.Deencapsulation;
- import com.starrocks.common.tvr.TvrTableSnapshot;
- import com.starrocks.connector.ConnectorProperties;
- import com.starrocks.connector.ConnectorType;
-@@ -881,4 +882,54 @@ public void testManifestWithDuplicateLiveEntriesIsCached() throws IOException {
-                 sortedLocations(planTasks(catalog, table, Expressions.equal("id", 5))));
-         Assertions.assertEquals(expected, sortedLocations(planTasksWithStats(catalog, table, List.of("id"))));
-     }
-+
-+    @Test
-+    public void testDeleteManifestWithDuplicateLiveEntriesIsCached() throws IOException {
-+        Schema schema = new Schema(List.of(Types.NestedField.required(1, "id", Types.IntegerType.get())));
-+        Table table = create(schema, PartitionSpec.unpartitioned(), "t_dup_deletes", 2);
-+        // merge the delete manifests of the two row deltas below into one
-+        table.updateProperties().set("commit.manifest.min-count-to-merge", "2").commit();
-+        table.newAppend().appendFile(DataFiles.builder(PartitionSpec.unpartitioned())
-+                .withPath("/path/to/dup-deletes-data.parquet")
-+                .withFileSizeInBytes(10)
-+                .withRecordCount(10)
-+                .build()).commit();
-+        DeleteFile deletes = FileMetadata.deleteFileBuilder(PartitionSpec.unpartitioned())
-+                .ofPositionDeletes()
-+                .withPath("/path/to/dup-deletes-pos.parquet")
-+                .withFormat(FileFormat.PARQUET)
-+                .withFileSizeInBytes(10)
-+                .withRecordCount(1)
-+                .build();
-+        // a retried commit: the same delete file is committed twice
-+        table.newRowDelta().addDeletes(deletes).commit();
-+        table.newRowDelta().addDeletes(deletes).commit();
-+
-+        List<ManifestFile> manifests = table.currentSnapshot().deleteManifests(table.io());
-+        Assertions.assertEquals(1, manifests.size());
-+        ManifestFile manifest = manifests.get(0);
-+        Assertions.assertEquals(2, manifest.existingFilesCount() + manifest.addedFilesCount());
-+
-+        int expected;
-+        try (CloseableIterable<FileScanTask> tasks = table.newScan().planFiles()) {
-+            List<FileScanTask> list = Lists.newArrayList(tasks);
-+            Assertions.assertEquals(1, list.size());
-+            expected = list.get(0).deletes().size();
-+        }
-+        Assertions.assertEquals(2, expected);
-+
-+        CachingIcebergCatalog catalog = newCatalog(Map.of());
-+        com.github.benmanes.caffeine.cache.Cache<String, Set<DeleteFile>> deleteFileCache =
-+                Deencapsulation.getField(catalog, "deleteFileCache");
-+        // cold: reads the manifest and fills the cache; warm: must be served from the complete cache entry
-+        for (int i = 0; i < 3; i++) {
-+            List<FileScanTask> tasks = planTasks(catalog, table, Expressions.alwaysTrue());
-+            Assertions.assertEquals(1, tasks.size());
-+            Assertions.assertEquals(expected, tasks.get(0).deletes().size(), "plan " + i);
-+            Set<DeleteFile> cached =
-+                    deleteFileCache.getIfPresent(manifest.path());
-+            Assertions.assertNotNull(cached, "plan " + i + " left no cache entry");
-+            Assertions.assertEquals(2, cached.size(), "plan " + i + " left an incomplete cache entry");
++    // Whether the partition is one of the temporary partitions a running static (not dynamic) overwrite job on the
++    // table created for its own write.
++    public boolean isTmpPartitionOfRunningStaticJob(long tableId, long partitionId) {
++        lock.readLock().lock();
++        try {
++            List<Long> jobIds = tableToOverwriteJobs.get(tableId);
++            if (jobIds == null) {
++                return false;
++            }
++            for (Long jobId : jobIds) {
++                InsertOverwriteJob job = overwriteJobMap.get(jobId);
++                if (job != null && !job.isDynamicOverwrite() && job.getTmpPartitionIds() != null
++                        && job.getTmpPartitionIds().contains(partitionId)) {
++                    return true;
++                }
++            }
++            return false;
++        } finally {
++            lock.readLock().unlock();
 +        }
 +    }
- }
++
+     public void replayCreateInsertOverwrite(CreateInsertOverwriteJobLog jobInfo) {
+         InsertOverwriteJob insertOverwriteJob = new InsertOverwriteJob(jobInfo.getJobId(),
+                 jobInfo.getDbId(), jobInfo.getTableId(), jobInfo.getTargetPartitionIds(), jobInfo.isDynamicOverwrite());
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/ReshardJournalReplay.java` (modified, +61/-0)
+```diff
+@@ -229,6 +229,67 @@ static void checkFailedCleaningJournalLeavesLayoutUnchanged(TabletReshardJob job
+         Assertions.assertEquals(newTabletIds, tabletIds(newIndex));
+     }
+ 
++    /**
++     * An ORDER BY != PK split that left a partition's children nothing of the parent's finishes without an UNSHARE, so
++     * no UNSHARE transaction unpins the partition on a replaying FE. Its FINISHED record has to: until then the
++     * follower keeps serving queries from the parent, and after it, from the children.
++     *
++     * <p>Runs the job (not yet admitted, on the given physical partition, the only one it reshards) to FINISHED, then
++     * replays its records onto a follower's copy of the table taken at RUNNING, checking the follower after each one.
++     */
++    static void checkFinishedRecordReleasesQueryPin(Database db, OlapTable table, PhysicalPartition partition,
++                                                    TabletReshardJob job) throws Exception {
++        // Replaying puts the job's records into TabletReshardJobMgr, whose daemon would run them as the leader's.
++        new MockUp<TabletReshardJobMgr>() {
++            @Mock
++            protected void runAfterLeaseValid() {
++            }
++        };
++        long partitionId = partition.getId();
++        long baseMetaId = table.getBaseIndexMetaId();
++        long oldIndexId = partition.getLatestBaseIndex().getId();
++        job.init();
++        job.run();
++        Assertions.assertEquals(TabletReshardJob.JobState.RUNNING, job.getJobState());
++        long newIndexId = job.getReshardingPhysicalPartitions().get(partitionId).getReshardingIndexes()
++                .get(oldIndexId).getMaterializedIndex().getId();
++
++        OlapTable followerTable = copyTable(table);
++        ReshardJournalReplay recorder = new ReshardJournalReplay(() -> {
++        });
++        for (int i = 0; i < 10 && !job.isDone(); i++) {
++            job.run();
++        }
++        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, job.getJobState());
++
++        List<JournalEntity> records = recorder.recordsOf(job.getJobId(), -1L);
++        TabletReshardJobMgr tabletReshardJobMgr = GlobalStateMgr.getCurrentState().getTabletReshardJobMgr();
++        try {
++            withFollowerTable(db, followerTable, () -> {
++                PhysicalPartition followerPartition = followerTable.getPhysicalPartition(partitionId);
++                List<TabletReshardJob.JobState> replayed = new ArrayList<>();
++                for (JournalEntity record : records) {
++                    replay(record);
++                    replayed.add(((TabletReshardJob) record.data()).getJobState());
++                    if (isJobRecord(record, TabletReshardJob.JobState.CLEANING)) {
++                        Assertions.assertTrue(followerPartition.isQueryableIndexPinned(baseMetaId));
++                        Assertions.assertEquals(oldIndexId, followerPartition.getQueryableIndex(baseMetaId).getId());
++                    } else if (isJobRecord(record, TabletReshardJob.JobState.FINISHED)) {
++                        Assertions.assertFalse(followerPartition.isUnsharing());
++                        Assertions.assertEquals(newIndexId, followerPartition.getQueryableIndex(baseMetaId).getId());
++                    }
++                }
++                Assertions.assertEquals(List.of(TabletReshardJob.JobState.CLEANING, TabletReshardJob.JobState.FINISHED),
++                        replayed);
++            });
++        } finally {
++            // The replay registered the job's records in the shared manager; the leader's job never was.
++            if (tabletReshardJobMgr.getTabletReshardJob(job.getJobId()) != null) {
++                tabletReshardJobMgr.replayRemoveTabletReshardJob(job.getJobId());
++            }
++        }
++    }
++
+     /**
+      * Counts the CLEANING records of reshard jobs journaled from now on. With closeJournalFirst, the leader's journal is
+      * closed, as giving up leadership closes it, just before the first one is written, so that write fails; the caller
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/SplitTabletJobTest.java` (modified, +409/-0)
+```diff
+@@ -32,14 +32,19 @@
+ import com.starrocks.common.StarRocksException;
+ import com.starrocks.common.lock.LockTestUtils;
+ import com.starrocks.common.util.PropertyAnalyzer;
++import com.starrocks.common.util.concurrent.lock.AutoCloseableLock;
+ import com.starrocks.common.util.concurrent.lock.LockHoldDepth;
+ import com.starrocks.common.util.concurrent.lock.LockType;
+ import com.starrocks.lake.LakeTable;
+ import com.starrocks.lake.LakeTablet;
+ import com.starrocks.lake.StarOSAgent;
+ import com.starrocks.lake.Utils;
+ import com.starrocks.lake.compaction.CompactionMgr;
++import com.starrocks.lake.compaction.PartitionIdentifier;
++import com.starrocks.lake.compaction.PartitionStatistics;
++import com.starrocks.load.InsertOverwriteJob;
+ import com.starrocks.persist.EditLog;
++import com.starrocks.persist.WALApplier;
+ import com.starrocks.proto.AggregatePublishVersionRequest;
+ import com.starrocks.proto.PublishVersionRequest;
+ import com.starrocks.proto.PublishVersionResponse;
+@@ -54,8 +59,10 @@
+ import com.starrocks.server.WarehouseManager;
+ import com.starrocks.sql.ast.SplitTabletClause;
+ import com.starrocks.sql.ast.TabletList;
++import com.starrocks.sql.common.MetaUtils;
+ import com.starrocks.thrift.TStatusCode;
+ import com.starrocks.transaction.GlobalTransactionMgr;
++import com.starrocks.transaction.TabletCommitInfo;
+ import com.starrocks.transaction.TransactionState;
+ import com.starrocks.transaction.TransactionStatus;
+ import com.starrocks.type.IntegerType;
+@@ -79,6 +86,7 @@
+ import java.util.Set;
+ import java.util.concurrent.Callable;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.CopyOnWriteArrayList;
+ import java.util.concurrent.Future;
+ import java.util.concurrent.ThreadPoolExecutor;
+@@ -444,6 +452,407 @@ public void testPkOrderByFactoryLeavesBoundarySelectionToBePkIndex() throws Exce
+         Assertions.assertTrue(splittingTablet.getNewTabletIds().size() > 1);
+     }
+ 
++    /**
++     * The pre-split that INSERT OVERWRITE runs on its new, empty temporary partition leaves the ORDER BY != PK
++     * children nothing inherited from the parent, so CLEANING does not wait for an UNSHARE compaction. The parent
++     * stays queryable until the FINISHED record is durable, and only then is it unpinned and recycled.
++     */
++    @Test
++    public void testEmptyTemporaryPartitionSplitFinishesWithoutUnshare() throws Exception {
++        installLakeServiceMock(this::addDataDrivenRanges);
++        OlapTable pkTable = createSeparateSortKeyTable("split_empty_partition_pk_sort");
++        PhysicalPartition partition = temporaryPartition(pkTable, "tp1");
++        InsertOverwriteJob overwrite = registerOverwriteJob(pkTable, partition);
++        long baseMetaId = pkTable.getBaseIndexMetaId();
++        long oldIndexId = partition.getLatestBaseIndex().getId();
++        Assertions.assertEquals(PhysicalPartition.PARTITION_INIT_VERSION, partition.getVisibleVersion());
++        Map<Long, Integer> unshareTriggers = countUnshareTriggers();
++        SplitTabletJob job = (SplitTabletJob) createTabletReshardJob(pkTable, partition);
++
++        AtomicBoolean unsharingAtFinish = new AtomicBoolean();
++        AtomicBoolean recycledAtFinish = new AtomicBoolean(true);
++        AtomicLong schemaUpdateTimeAtFinish = new AtomicLong();
++        AtomicInteger parentInfosAtFinish = new AtomicInteger(-1);
++        new MockUp<EditLog>() {
++            @Mock
++            public void logUpdateTabletReshardJob(Invocation invocation, TabletReshardJob record, WALApplier applier) {
++                if (record.getJobState() == TabletReshardJob.JobState.FINISHED) {
++                    unsharingAtFinish.set(partition.isUnsharing());
++                    recycledAtFinish.set(GlobalStateMgr.getCurrentState().getRecycleBin()
++                            .isMaterializedIndexRecycled(oldIndexId));
++                    schemaUpdateTimeAtFinish.set(pkTable.lastSchemaUpdateTime.get());
++                    parentInfosAtFinish.set(job.collectParentPublishInfos(
++                            Set.copyOf(partition.getLatestBaseIndex().getTabletIdsInOrder())).size());
++                }
++                invocation.proceed();
++            }
++        };
++
++        job.init();
++        job.run();
++        Assertions.assertEquals(TabletReshardJob.JobState.RUNNING, job.getJobState());
++        job.run();
++        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, job.getJobState());
++        Assertions.assertTrue(unshareTriggers.isEmpty(), "no UNSHARE was needed: " + unshareTriggers);
++
++        MaterializedIndex newIndex = partition.getLatestBaseIndex();
++        Assertions.assertNotEquals(oldIndexId, newIndex.getId());
++        Assertions.assertFalse(partition.isUnsharing());
++        Assertions.assertEquals(newIndex.getId(), partition.getQueryableIndex(baseMetaId).getId());
++        Assertions.assertTrue(GlobalStateMgr.getCurrentState().getRecycleBin().isMaterializedIndexRecycled(oldIndexId));
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/lake/compaction/CompactionMgrTest.java` (modified, +44/-0)
+```diff
+@@ -34,10 +34,16 @@
+ import mockit.Mock;
+ import mockit.MockUp;
+ import mockit.Mocked;
++import org.apache.logging.log4j.Level;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.core.LogEvent;
++import org.apache.logging.log4j.core.appender.AbstractAppender;
++import org.apache.logging.log4j.core.config.Configurator;
+ import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.Test;
+ 
+ import java.io.IOException;
++import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.HashSet;
+@@ -250,6 +256,44 @@ public void testRepeatedUnshareTriggerKeepsRetryDeadline() {
+         }
+     }
+ 
++    // A split waiting for UNSHARE re-triggers its pending request on every reshard tick. Only the request itself is
++    // worth an INFO line; the repeats go to DEBUG.
++    @Test
++    public void testUnshareTriggerLogsOncePerRequest() {
++        CompactionMgr compactionManager = new CompactionMgr();
++        PartitionIdentifier partition = new PartitionIdentifier(1, 2, 3);
++
++        List<String> logs = new ArrayList<>();
++        AbstractAppender appender = new AbstractAppender("unshare-trigger-log-capture", null, null) {
++            @Override
++            public void append(LogEvent event) {
++                String message = event.getMessage().getFormattedMessage();
++                if (message.startsWith("Trigger UNSHARE compaction")) {
++                    logs.add(event.getLevel().name());
++                }
++            }
++        };
++        org.apache.logging.log4j.core.Logger logger =
++                (org.apache.logging.log4j.core.Logger) LogManager.getLogger(CompactionMgr.class);
++        Level oldLevel = logger.getLevel();
++        appender.start();
++        logger.addAppender(appender);
++        Configurator.setLevel(CompactionMgr.class.getName(), Level.DEBUG);
++        try {
++            compactionManager.triggerUnshareCompaction(partition);
++            compactionManager.triggerUnshareCompaction(partition);
++            // Once the request has run (or been dropped) its priority is reset, so the next trigger is a new request.
++            compactionManager.resetPriority(partition);
++            compactionManager.triggerUnshareCompaction(partition);
++        } finally {
++            Configurator.setLevel(CompactionMgr.class.getName(), oldLevel);
++            logger.removeAppender(appender);
++            appender.stop();
++        }
++
++        Assertions.assertEquals(List.of("INFO", "DEBUG", "INFO"), logs);
++    }
++
+     @Test
+     public void testTriggerClearsRetryDeadline() {
+         String oldSelector = Config.lake_compaction_selector;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #83989** (2026-11-20): [Tool] Retire the stale GeoStorageDescPB validation_state waiver (backport #82269) (backport #82278) (@mergify[bot])
-- **PR #83967** (2026-11-20): [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (backport #83938) (@mergify[bot])
-- **PR #83966** (2026-11-20): [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (backport #83938) (@mergify[bot])
-- **PR #83964** (2026-11-20): [Enhancement] Enable nested geo expressions in SQL (backport #83063) (backport #83089) (@mergify[bot])
-- **PR #83962** (2026-11-20): Resolve conflicts for main-cd-contributed-pr-66835 (@GavinMar)
-- **PR #83961** (2026-11-20): [BugFix] Reject REFRESH EXTERNAL TABLE names with more than three parts (backport #83892) (@mergify[bot])
+- **PR #84200** (closed): [BugFix] Stop answering COUNT of a NULL-valued constant expression with the row count (@Hyper-FF)
+- **PR #84198** (2026-11-23): [Enhancement] Resolve sync conflict for the StarCache write overwrite config (@starrocks-xupeng)
+- **PR #84195** (2026-11-23): [Enhancement] Support multimodal data in AI functions (backport #84113) (@mergify[bot])
+- **PR #84190** (2026-11-23): [BugFix] End the scan instead of dropping the filter when an IN list holds only NULLs (@Hyper-FF)
+- **PR #84189** (2026-11-23): [BugFix] Finish the split of an empty ORDER BY != PK partition without waiting for UNSHARE (@starrocks-bot[bot])
+- **PR #84186** (2026-11-23): [Enhancement] Share the sort key description across the chunks of a heap merge (backport #83692) (@mergify[bot])
 
 ---
 
@@ -2507,39 +2703,56 @@ Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in
+## X. [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedic
 
 **RULE**:
-When implementing operations in `be/src/exprs/cast_expr_tpl.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36091cdd`: [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in CAST(VARIANT AS JSON). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53b41a5c`: [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedicated printer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/exprs/cast_expr_tpl.hpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-                    // variant_to_json writes JSON text, so a number, a boolean or a null must stay one instead of
-                    // becoming a JSON string, which is what parse_json_or_string makes of a bare scalar.
-                    auto parsed = JsonValue::parse_json_text(ss.str());
-            if (!overflow && value.is_null() && row_ref.get_value().type() == VariantType::NULL_TYPE) {
-                // A variant null converts to SQL NULL, as it does for every other cast target. A NaN or infinite
-                // FLOAT/DOUBLE also prints as null, but it takes the path below like CAST(DOUBLE AS JSON) does.
-                builder.append_null();
-                continue;
-            }
+
+        // The defaults of these visitors end in visit(), which dispatches again and recurses forever.
+        @Override
+        public OperatorStr visitPhysicalRawValues(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
+
+        @Override
+        public OperatorStr visitPhysicalFetch(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
+
+        @Override
+        public OperatorStr visitPhysicalLookUp(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
+
+        private OperatorStr visitUnhandled(OptExpression optExpression, ExplainContext context) {
+            PhysicalOperator op = (PhysicalOperator) optExpression.getOp();
+            StringBuilder sb = new StringBuilder("- ")
+                    .append(op.getOpType().name().replaceFirst("^PHYSICAL_", "").replace('_', '-'))
+                    .append(buildOutputColumns(op, ""))
+                    .append("\n");
+            // LookUp carries no statistics
+            if (optExpression.getStatistics() != null) {
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-                    auto parsed = JsonValue::parse_json_or_string(ss.str());
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36091cdd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53b41a5c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

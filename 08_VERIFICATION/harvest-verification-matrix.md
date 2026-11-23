@@ -12413,3 +12413,5 @@
 | `CYCLE-20261123-QQPU` | `2026-11-23T18:03:23.970Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10089` | Yes (`aa7d0040...`) |
 | `CYCLE-20261123-6UOW` | `2026-11-23T18:15:55.616Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`5f4b1cd1...`) |
 | `CYCLE-20261123-6ZE9` | `2026-11-23T18:16:01.713Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10090` | Yes (`6c7439ef...`) |
+| `CYCLE-20261123-GYYT` | `2026-11-23T18:23:47.717Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`104ed466...`) |
+| `CYCLE-20261123-HBHH` | `2026-11-23T18:24:03.941Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10091` | Yes (`a0b8f3fd...`) |

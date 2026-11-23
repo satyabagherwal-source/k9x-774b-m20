@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `0f1ce94b`  
+> **Source Version**: `520e2886`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T15:37:17.210Z  
+> **Timestamp**: 2026-11-23T18:24:02.842Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T15:37:17.204Z  
+> **Harvest Timestamp**: 2026-11-23T18:24:02.837Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12279 stars
+- **Stars / Engagement**: 12280 stars
 
 ---
 
@@ -1818,547 +1818,844 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83f27a03` (2026-11-22)
-**Commit Message**: [Enhancement] Support LDAP and JWT security integrations on one authentication_chain over MySQL (#83215)
+### Incident Patch 1: `53b41a5c` (2026-11-23)
+**Commit Message**: [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedicated printer (#83959)
 
-Signed-off-by: Planck Li <[REDACTED_EMAIL]>
-Co-authored-by: Planck Li <[REDACTED_EMAIL]>
+Signed-off-by: Gavin <[REDACTED_EMAIL]>
+Co-authored-by: Gavin <[REDACTED_EMAIL]>
 
-**File**: `docs/en/administration/configuration/FE_parameters/log_server_meta.md` (modified, +9/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java` (modified, +30/-0)
 ```diff
-@@ -1031,6 +1031,15 @@ This topic introduces the following types of FE configurations:
- - Description: Master switch for Bearer-token authentication on the non-MySQL channels (HTTP, Arrow Flight, and BE-direct Stream Load). When set to `false`, these channels reject any `Authorization: Bearer ...` request with HTTP 401 and fall back to the behavior where only the MySQL protocol supports token authentication; Basic authentication and existing Arrow Flight UUID session tokens are unaffected. MySQL protocol authentication is never gated by this switch.
- - Introduced in: v4.2
- 
-+### `authentication_chain_accept_jwt_as_password`
+@@ -774,6 +774,36 @@ public OperatorStr visitPhysicalSplitConsumer(OptExpression optExpression, Expla
+             return new OperatorStr(sb.toString(), context.step,
+                     buildChildOperatorStr(optExpression, context.step));
+         }
 +
-+- Default: false
-+- Type: Boolean
-+- Unit: -
-+- Is mutable: Yes
-+- Description: Whether a security-integration user may present a JWT as the password of a MySQL login (the `mysql_clear_password` plugin). When set to `true` and such a password has the shape of a JWT, StarRocks first offers it as a token to the JWT and OAuth 2.0 security integrations on `authentication_chain`, and only if none accepts it tries it as a password against the LDAP security integrations. This lets a MySQL client without the `authentication_openid_connect_client` plugin log in through a JWT security integration that shares `authentication_chain` with an LDAP one. When set to `false`, such a password goes straight to the LDAP security integrations. This item applies to the MySQL protocol only: HTTP and Arrow Flight carry a token as `Bearer`, and their `Basic` passwords are never read as tokens. A password that merely looks like a token costs one refused token verification before the password path; the login is counted in the authentication metrics by its final outcome only.
-+- Introduced in: -
++        // The defaults of these visitors end in visit(), which dispatches again and recurses forever.
++        @Override
++        public OperatorStr visitPhysicalRawValues(OptExpression optExpression, ExplainContext context) {
++            return visitUnhandled(optExpression, context);
++        }
 +
- ### `http_web_page_display_hardware`
++        @Override
++        public OperatorStr visitPhysicalFetch(OptExpression optExpression, ExplainContext context) {
++            return visitUnhandled(optExpression, context);
++        }
++
++        @Override
++        public OperatorStr visitPhysicalLookUp(OptExpression optExpression, ExplainContext context) {
++            return visitUnhandled(optExpression, context);
++        }
++
++        private OperatorStr visitUnhandled(OptExpression optExpression, ExplainContext context) {
++            PhysicalOperator op = (PhysicalOperator) optExpression.getOp();
++            StringBuilder sb = new StringBuilder("- ")
++                    .append(op.getOpType().name().replaceFirst("^PHYSICAL_", "").replace('_', '-'))
++                    .append(buildOutputColumns(op, ""))
++                    .append("\n");
++            // LookUp carries no statistics
++            if (optExpression.getStatistics() != null) {
++                buildCostEstimate(sb, optExpression, context.step);
++            }
++            buildCommonProperty(sb, op, context.step);
++            return new OperatorStr(sb.toString(), context.step, buildChildOperatorStr(optExpression, context.step));
++        }
+     }
  
- - Default: true
+     private void buildCostEstimate(StringBuilder sb, OptExpression optExpression, int step) {
 ```
 
-**File**: `docs/en/administration/user_privs/authentication/jwt_authentication.md` (modified, +1/-1)
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/ExplainTest.java` (modified, +75/-0)
 ```diff
-@@ -17,7 +17,7 @@ This topic describes how to manually create and authenticate users using JWT in
+@@ -14,13 +14,26 @@
  
- ## Prerequisites
+ package com.starrocks.sql.plan;
  
--If you want to connect to StarRocks from a MySQL client, the MySQL client version must be 9.2 or later.
-+If you want to connect to StarRocks from a MySQL client, the MySQL client version must be 9.1 or later. From 9.1, the `authentication_openid_connect_client` plugin ships with all MySQL client distributions, community distributions included.
++import com.starrocks.catalog.Column;
++import com.starrocks.catalog.IcebergTable;
+ import com.starrocks.common.Config;
++import com.starrocks.qe.SessionVariable;
+ import com.starrocks.sql.Explain;
+ import com.starrocks.sql.ast.QueryStatement;
+ import com.starrocks.sql.ast.StatementBase;
++import com.starrocks.sql.optimizer.OptExpression;
++import com.starrocks.sql.optimizer.operator.logical.LogicalIcebergEqualityDeleteScanOperator;
++import com.starrocks.sql.optimizer.operator.physical.PhysicalIcebergEqualityDeleteScanOperator;
++import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
++import com.starrocks.sql.optimizer.statistics.Statistics;
++import com.starrocks.type.IntegerType;
+ import com.starrocks.utframe.UtFrameUtils;
+ import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.Test;
++import org.mockito.Mockito;
++
++import java.util.List;
++import java.util.Map;
  
- ## Create a user with JWT
+ public class ExplainTest extends PlanTestBase {
+     @Test
+@@ -158,4 +171,66 @@ public void testExplainUsesConfiguredDefaultLevel() throws Exception {
+         Assertions.assertEquals(StatementBase.ExplainLevel.NORMAL, queryStatement.getExplainLevel());
  
-```
-
-**File**: `docs/en/administration/user_privs/authentication/security_integration.md` (modified, +35/-1)
-```diff
-@@ -365,6 +365,7 @@ ADMIN SET FRONTEND CONFIG (
- :::note
- - StarRocks prioritizes native authentication for local users. If a local user with the same username does not exist, authentication is performed in the order configured by `authentication_chain`. If login fails using the native authentication method, the cluster will try the next authentication method in the specified order.
- - You can specify multiple security integrations in `authentication_chain` except for OAuth 2.0 security integration. You cannot specify multiple OAuth 2.0 security integrations or one with other security integrations.
-+- `authentication_chain` can hold both LDAP and JWT security integrations, but over the MySQL protocol this is only partially supported. See [Mix LDAP and JWT security integrations](#mix-ldap-and-jwt-security-integrations).
- :::
- 
- You can check the value of `authentication_chain` using the following statement:
-@@ -373,6 +374,39 @@ You can check the value of `authentication_chain` using the following statement:
- ADMIN SHOW FRONTEND CONFIG LIKE 'authentication_chain';
- ```
- 
-+### Mix LDAP and JWT security integrations
+     }
 +
-+Over HTTP and Arrow Flight, LDAP and JWT security integrations on one `authentication_chain` work side by side, because the credential itself says what it is: `Basic` (user name and password) is tried against the LDAP security integrations, and `Bearer` (a token) against the JWT and OAuth 2.0 security integrations. See [Connect over HTTP and Arrow Flight](#connect-over-http-and-arrow-flight).
++    @Test
++    public void testExplainLogicalIcebergEqualityDeleteScan() {
++        IcebergTable table = Mockito.mock(IcebergTable.class);
++        Mockito.when(table.getName()).thenReturn("eqd_repro");
++        Column column = new Column("id", IntegerType.INT);
++        ColumnRefOperator ref = new ColumnRefOperator(1, IntegerType.INT, "id", true);
++        LogicalIcebergEqualityDeleteScanOperator logicalScan = new LogicalIcebergEqualityDeleteScanOperator(
++                table, Map.of(ref, column), Map.of(column, ref), -1, null);
++        OptExpression root = OptExpression.create(new PhysicalIcebergEqualityDeleteScanOperator(logicalScan));
 +
-+Over the MySQL protocol the support is partial. StarRocks has to choose one client authentication plugin for a connection before it sees any credential, and the two kinds of security integration need different plugins: `mysql_clear_password` for LDAP and `authentication_openid_connect_client` for JWT. StarRocks chooses by the plugin the client declares in its handshake:
++        String plan = new Explain(false, false, "    ", "    ").print(root, List.of(ref));
++        assertContains(plan, "- ICEBERG-EQUALITY-DELETE-SCAN [eqd_repro] => [1:id]");
++    }
 +
-+| The client declares | Security integration used |
-+| --- | --- |
-+| `authentication_openid_connect_client` | The first JWT security integration on the chain |
-+| `mysql_clear_password` | The first LDAP security integration on the chain |
-+| Neither (most clients send `mysql_native_password` by default) | The first security integration on the chain |
++    @Test
++    public void testExplainLogicalIcebergEqualityDeleteScanWithRows() {
++        IcebergTable table = Mockito.mock(IcebergTable.class);
++        Mockito.when(table.getName()).thenReturn("eqd_repro");
++        Column column = new Column("id", IntegerType.INT);
++        ColumnRefOperator ref = new ColumnRefOperator(1, IntegerType.INT, "id", true);
++        LogicalIcebergEqualityDeleteScanOperator logicalScan = new LogicalIcebergEqualityDeleteScanOperator(
++                table, Map.of(ref, column), Map.of(column, ref), -1, null);
++        OptExpression root = OptExpression.create(new PhysicalIcebergEqualityDeleteScanOperator(logicalScan));
++        root.setStatistics(Statistics.builder().setOutputRowCount(5).build());
 +
-+Therefore:
++        String plan = new Explain(true, true, " ", " |").print(root, List.of(ref));
++        assertContains(plan, "- ICEBERG-EQUALITY-DELETE-SCAN [eqd_repro] => [1:id] {rows: 5}");
++    }
 +
-+- Put first the security integration that most of your clients use without any extra setting.
-+- Clients of the other kind must declare their plugin: `--default-auth=<plugin>` with the MySQL client, `defaultAuthenticationPlugin=<plugin>` with MySQL Connector/J. The MySQL client includes `authentication_openid_connect_client` from version 9.1, community distributions included. Older MySQL clients and the MariaDB client do not have this plugin.
-+- A client that cannot declare a plugin, such as PyMySQL, always gets the first security integration on the chain.
++    @Test
++    public void testExplainLogicalRawValues() throws Exception {
++        SessionVariable sv = connectContext.getSessionVariable();
++        int threshold = sv.getLargeInPredicateThreshold();
++        sv.setLargeInPredicateThreshold(3);
++        try {
++            String plan = getExecPlan("select * from t0 where v1 in (1, 2, 3, 4)")
++                    .getExplainString(StatementBase.ExplainLevel.LOGICAL);
++            assertContains(plan, "LEFT SEMI JOIN");
++            assertContains(plan, "- RAW-VALUES");
++        } finally {
++            sv.setLargeInPredicateThreshold(threshold);
++        }
++    }
 +
-+```Bash
-+# A JWT security integration user, with the LDAP security integration first on the chain
-+mysql -h <fe_host> -P <query_port> --default-auth=authentication_openid_connect_client \
-+    --authentication-openid-connect-client-id-token-file=<path_to_token_file> -u <username>
-+
-+# An LDAP security integration user, with the JWT security integration first on the chain
-+mysql -h <fe_host> -P <query_port> --default-auth=mysql_clear_password --enable-cleartext-plugin -u <username> -p
-+```
-+
-+If your JWT clients cannot load the OpenID Connect plugin, set the FE configuration item `authentication_chain_accept_jwt_as_password` to `true` and put the LDAP security integration first. A JWT client then passes its token as the password: when the password of a MySQL login has the shape of a JWT, StarRocks first verifies it against the JWT and OAuth 2.0 security integrations, and only if none accepts it tries it as a password against the LDAP security integrations. The token travels like a clear-text password, so use an SSL connection. This item applies to the MySQL protocol only; over HTTP and Arrow Flight, send the token as `Bearer`.
-+
-+```Bash
-+mysql -h <fe_host> -P <query_port> --ssl-mode=REQUIRED --enable-cleartext-plugin -u <username> -p"$(cat <path_to_token_file>)"
-+```
-+
- ## Connect over HTTP and Arrow Flight
- 
- A user of a security integration on `authentication_chain` can log in over every StarRocks entry point, not only the MySQL protocol: the HTTP SQL API, Stream Load (through an FE or directly against a BE), the FE Web UI, and Arrow Flight SQL. The credential the client sends depends on the type of the integration.
-@@ -402,7 +436,7 @@ Note the following points:
- - Privileges for security-integration users come from [Group Provider](../group_provider.md) and `GRANT ... TO EXTERNAL GROUP` only; the groups a user is resolved into apply on every entry point.
- - On Arrow Flight SQL, a JWT is authenticated exactly like a user name and password: the server answers with its own session token, which the client uses for the rest of the connection. The session cannot outlive the JWT; once the token's `exp` passes, the connect
-```
-
-**File**: `docs/ja/administration/configuration/FE_parameters/log_server_meta.md` (modified, +9/-0)
-```diff
-@@ -1022,6 +1022,15 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
- - 説明：MySQL 以外のチャネル（HTTP、Arrow Flight、BE 直結の Stream Load）における Bearer トークン認証のマスタースイッチ。`false` に設定すると、これらのチャネルは `Authorization: Bearer ...` を含むリクエストをすべて HTTP 401 で拒否し、「トークン認証は MySQL プロトコルのみ」という以前の動作に戻ります。Basic 認証と既存の Arrow Flight UUID セッショントークンは影響を受けません。MySQL プロトコルの認証がこのスイッチで制限されることはありません。
- - 導入時期：v4.2
- 
-+### `authentication_chain_accept_jwt_as_password`
-+
-+- デフォルト：false
-+- タイプ：Boolean
-+- 単位：-
-+- 変更可能：Yes
-+- 説明：セキュリティインテグレーションのユーザーが、MySQL ログインのパスワード（`mysql_clear_password` プラグイン）として JWT を渡せるようにするかどうか。`true` に設定すると、そのパスワードが JWT の形をしている場合、StarRocks はまずそれをトークンとして `authentication_chain` 上の JWT および OAuth 2.0 セキュリティインテグレーションに渡し、どれも受け入れなかった場合にのみパスワードとして LDAP セキュリティインテグレーションに渡します。これにより、`authentication_openid_connect_client` プラグインを持たない MySQL クライアントでも、LDAP セキュリティインテグレーションと `authentication_chain` を共有する JWT セキュリティインテグレーションでログインできます。`false` の場合、そのようなパスワードはそのまま LDAP セキュリティインテグレーションに渡されます。この設定項目は MySQL プロトコルにのみ適用されます。HTTP と Arrow Flight はトークンを `Bearer` で運ぶため、`Basic` のパスワードがトークンとして扱われることはありません。たまたまトークンの形をしたパスワードは、パスワードの経路に入る前にトークン検証が 1 回拒否されるだけのコストがかかります。認証メトリクスにはそのログインの最終結果だけが計上されます。
-+- 導入時期：-
-+
- ### `http_web_page_display_hardware`
- 
- - デフォルト：true
-```
-
-**File**: `docs/ja/administration/user_privs/authentication/jwt_authentication.md` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ JSON Web Token（JWT）は、当事者間で情報をJSONオブジェクトと
- 
- ## 前提条件
- 
--MySQL クライアントから StarRocks に接続する場合、MySQL クライアントのバージョンは 9.2 以降である必要があります。
-+MySQL クライアントから StarRocks に接続する場合、MySQL クライアントのバージョンは 9.1 以降である必要があります。9.1 以降、`authentication_openid_connect_client` プラグインはコミュニティ版を含むすべての MySQL クライアントのディストリビューションに同梱されています。
- 
- ## JWT でユーザーを作成する
- 
-```
-
-**File**: `docs/ja/administration/user_privs/authentication/security_integration.md` (modified, +35/-1)
-```diff
-@@ -365,6 +365,7 @@ ADMIN SET FRONTEND CONFIG (
- :::note
- - StarRocks はローカルユーザーのネイティブ認証を優先します。同じユーザー名を持つローカルユーザーが存在しない場合、`authentication_chain` で設定した順序で認証が行われます。ネイティブ認証方式でログインに失敗した場合、クラスタは指定された順序で次の認証方式を試行します。
- - OAuth 2.0 セキュリティインテグレーションを除いて、`authentication_chain` に複数のセキュリティインテグレーションを指定できます。複数の OAuth 2.0 セキュリティインテグレーションを指定することや、他のセキュリティインテグレーションと一緒に指定することはできません。
-+- `authentication_chain` には LDAP と JWT のセキュリティインテグレーションを同時に含められますが、MySQL プロトコルでは部分的なサポートにとどまります。[LDAP と JWT のセキュリティインテグレーションを混在させる](#ldap-と-jwt-のセキュリティインテグレーションを混在させる)を参照してください。
- :::
- 
- `authentication_chain` の値を確認するには、次のステートメントを使用します:
-@@ -373,6 +374,39 @@ ADMIN SET FRONTEND CONFIG (
- ADMIN SHOW FRONTEND CONFIG LIKE 'authentication_chain';
- ```
- 
-+### LDAP と JWT のセキュリティインテグレーションを混在させる
-+
-+HTTP と Arrow Flight では、同じ `authentication_chain` 上の LDAP と JWT のセキュリティインテグレーションは並存できます。認証情報そのものが種類を示すためです。`Basic`（ユーザー名とパスワード）は LDAP セキュリティインテグレーションで、`Bearer`（トークン）は JWT と OAuth 2.0 セキュリティインテグレーションで検証されます。[HTTP と Arrow Flight から接続する](#http-と-arrow-flight-から接続する)を参照してください。
-+
-+MySQL プロトコルでは部分的なサポートにとどまります。StarRocks は認証情報を受け取る前に接続のクライアント認証プラグインを 1 つ決めなければならず、2 種類のセキュリティインテグレーションは異なるプラグインを必要とします。LDAP は `mysql_clear_password`、JWT は `authentication_openid_connect_client` です。StarRocks はクライアントがハンドシェイクで宣言したプラグインによって選びます。
-+
-+| クライアントが宣言するプラグイン | 使われるセキュリティインテグレーション |
-+| --- | --- |
-+| `authentication_openid_connect_client` | チェーン上の最初の JWT セキュリティインテグレーション |
-+| `mysql_clear_password` | チェーン上の最初の LDAP セキュリティインテグレーション |
-+| どちらも宣言しない（多くのクライアントはデフォルトで `mysql_native_password` を送る） | チェーン上の最初のセキュリティインテグレーション |
-+
-+したがって:
-+
-+- 追加の設定なしで大多数のクライアントが使うセキュリティインテグレーションを先頭に置いてください。
-+- もう一方の種類のクライアントはプラグインを宣言する必要があります。MySQL クライアントでは `--default-auth=<plugin>`、MySQL Connector/J では `defaultAuthenticationPlugin=<plugin>` を使います。MySQL クライアントはバージョン 9.1 から `authentication_openid_connect_client` を同梱しており、コミュニティ版にも含まれます。それより古い MySQL クライアントと MariaDB クライアントにはこのプラグインがありません。
-+- プラグインを宣言できないクライアント（PyMySQL など）は、常にチェーン上の最初のセキュリティインテグレーションを使います。
-+
-+```Bash
-+# JWT セキュリティインテグレーションのユーザー（チェーンの先頭は LDAP セキュリティインテグレーション）
-+mysql -h <fe_host> -P <query_port> --default-auth=authentication_openid_connect_client \
-+    --authentication-openid-connect-client-id-token-file=<path_to_token_file> -u <username>
-+
-+# LDAP セキュリティインテグレーションのユーザー（チェーンの先頭は JWT セキュリティインテグレーション）
-+mysql -h <fe_host> -P <query_port> --default-auth=mysql_clear_password --enable-cleartext-plugin -u <username> -p
-+```
-+
-+JWT クライアントが OpenID Connect プラグインを読み込めない場合は、FE の設定項目 `authentication_chain_accept_jwt_as_password` を `true` にし、LDAP セキュリティインテグレーションを先頭に置いてください。JWT クライアントはトークンをパスワードとして渡します。MySQL ログインのパスワードが JWT の形をしている場合、StarRocks はまず JWT と OAuth 2.0 セキュリティインテグレーションで検証し、どれも受け入れなかった場合にのみパスワードとして LDAP セキュリティインテグレーションに渡します。トークンは平文パスワードと同じように送られるため、SSL 接続を使ってください。この設定項目は MySQL プロトコルにのみ適用されます。HTTP と Arrow Flight ではトークンを `Bearer` で送ってください。
-+
-+```Bash
-+mysql -h <fe_host> -P <query_port> --ssl-mode=REQUIRED --enable-cleartext-plugin -u <username> -p"$(cat <path_to_token_file>)"
-+```
-+
- ## HTTP と Arrow Flight から接続する
- 
- `authentication_chain` に登録したセキュリティインテグレーションのユーザーは、MySQL プロトコルだけでなく StarRocks のすべてのエントリポイントからログインできます: HTTP SQL API、Stream Load（FE 経由または BE に直接）、FE Web UI、Arrow Flight SQL。クライアントが送る認証情報はインテグレーションのタイプによって決まります。
-@@ -402,7 +436,7 @@ curl -H "Authorization: Bearer ${TOKEN}" -H "label:load_1" -H "column_separator:
- - セキュリティインテグレーションのユーザーの権限は [Group Provider](../group_provider.md) と `GRANT ... TO EXTERNAL GROUP` からのみ付与されます。ユーザーが解決されたグループはすべてのエントリポイントで有効です。
- - Arrow Flight SQL では、JWT はユーザー名とパスワードとまったく同じ方法で認証されます。サーバーは自身が発行するセッショントークンを返し、クライアントは接続の残りの間それを使います。セッションは JWT より長く生きられません。トークンの `exp` を過ぎると接続は拒否され、クライアントは新しい JWT で再認証する必要があります。
- - FE の設定項目 `enable_rest_bearer_authentication`（デフォルト `true`）は、HTTP と Arrow Flight エントリポイントの Bearer 認証を無効にします。MySQL プロトコルには影響せず、MySQL プロトコルのトークンログインは引き続き `authentication_openid_connect_client` と `authentication_oauth2_client` プラグインを使います。
--- MySQL プロトコルはクライアントに一度に 1 種類のトークンプラグインしか提示できず、`authentication_chain` で最初に現れる JWT または OAuth 2.0 インテグレーションがそれを決めます。HTTP と Arrow Flight にはこの制限はありません。トークン自体が issuer と audience でルーティングされるためです。
-+- MySQL プロトコルはクライアントに一度に 1 つのプラグインしか提示できません。クライアントが宣言したプラグインが対応するセキュリティインテグレーションを選び、何も宣言しないクライアントは `authentication_chain` の最初のセキュリティインテグレーションを使います（[LDAP と JWT のセキュリティインテグレーションを混在させる](#ldap-と-jwt-のセキュリティインテグレーションを混在させる)を参照）。HTTP と Arrow Flight にはこの制限はありません。トークン自体が issuer と audience でルーティングされるためです。
- - HTTP 認証の失敗はすべて `401` を返し、`WWW-Authenticate` に `Basic` と `Bearer` の両方のチャレンジを含み、どのインテグレーションがなぜ拒否したかは示しません。原因の調査には FE のメトリクス `authentication_failure_total` と `authentication_failure_reason_total` を使ってください。
- 
- ## セキュリティインテグレーションを管理する
-```
-
-**File**: `docs/zh/administration/configuration/FE_parameters/log_server_meta.md` (modified, +9/-0)
-```diff
-@@ -1030,6 +1030,15 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
- - 描述: 非 MySQL 通道（HTTP、Arrow Flight、直连 BE 的 Stream Load）上 Bearer token 认证的总开关。设为 `false` 后，这些通道收到 `Authorization: Bearer ...` 一律返回 HTTP 401，回退到"只有 MySQL 协议支持 token 认证"的行为；Basic 认证与既有的 Arrow Flight UUID session token 不受影响。MySQL 协议的认证任何情况下都不受此开关控制。
- - 引入版本: v4.2
- 
-+### `authentication_chain_accept_jwt_as_password`
-+
-+- 默认值: false
-+- 类型: Boolean
-+- 单位: -
-+- 是否可变: Yes
-+- 描述: 是否允许安全集成用户把 JWT 当作 MySQL 登录的口令提交（`mysql_clear_password` 插件）。设为 `true` 后，这样的口令形状像一个 JWT 时，StarRocks 先把它当 token 交给 `authentication_chain` 中的 JWT 和 OAuth 2.0 安全集成验证，没有任何一个接受时才把它当口令交给 LDAP 安全集成。这样没有 `authentication_openid_connect_client` 插件的 MySQL 客户端也能通过与 LDAP 安全集成同在 `authentication_chain` 中的 JWT 安全集成登录。设为 `false` 时，这样的口令直接交给 LDAP 安全集成。该配置项只作用于 MySQL 协议：HTTP 和 Arrow Flight 以 `Bearer` 携带 token，它们的 `Basic` 口令不会被当作 token。一个碰巧长得像 token 的口令会在走口令路径之前多经历一次被拒绝的 token 校验；认证指标只按这次登录的最终结果计数。
-+- 引入版本: -
-+
- ### `http_web_page_display_hardware`
- 
- - 默认值: true
-```
-
-**File**: `docs/zh/administration/user_privs/authentication/jwt_authentication.md` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ JSON Web Token（JWT）是一项开放标准（RFC 7519），它定义了一种
- 
- ## 前提条件
- 
--如果您想从 MySQL 客户端连接到 StarRocks，MySQL 客户端版本必须是 9.2 或更高版本。
-+如果您想从 MySQL 客户端连接到 StarRocks，MySQL 客户端版本必须是 9.1 或更高版本。从 9.1 起，所有发行版（包括社区版）的 MySQL 客户端都自带 `authentication_openid_connect_client` 插件。
- 
- ## 使用 JWT 认证创建用户
- 
++    @Test
++    public void testExplainLogicalFetch() throws Exception {
++        SessionVariable sv = connectContext.getSessionVariable();
++        boolean glm = sv.isEnableGlobalLateMaterialization();
++        boolean costBased = sv.isEnableGlobalLateMaterializationCostBased();
++        sv.setEnableGlobalLateMaterialization(true);
++        sv.setEnableGlobalLateMaterializationCostBased(false);
++        try {
++            String plan = getExecPlan("select * from supplier where S_SUPPKEY < 10 order by 1,2 limit 10")
++                    .getExplainString(StatementBase.ExplainLevel.LOGICAL);
++            assertContains(plan, "- FETCH");
++            assertContains(plan, "- LOOKUP");
++        } finally {
++            sv.setEnableGlobalLateMaterialization(glm);
++            sv.setEnableGlobalLateMaterializationCostBased(costBased);
++        }
++    }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `0f1ce94b` (2026-11-22)
-**Commit Message**: [BugFix] Do not queue a query-triggered analyze from the authorization check's optimization (#83236)
+### Incident Patch 2: `520e2886` (2026-11-23)
+**Commit Message**: [BugFix] End the scan instead of dropping the filter when an IN list holds only NULLs (#84190)
 
-Signed-off-by: Planck Li <[REDACTED_EMAIL]>
-Co-authored-by: Planck Li <[REDACTED_EMAIL]>
+Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/authorization/ColumnPrivilege.java` (modified, +3/-0)
+**File**: `be/src/compute_env/query/scan_conjuncts_manager.cpp` (modified, +17/-1)
 ```diff
-@@ -124,6 +124,9 @@ public static void check(ConnectContext context, QueryStatement stmt, List<Table
-             // with no column to check, and so with no SELECT check at all. Keep such scans here.
-             optimizerOptions.disableRule(RuleType.TF_CAST_TO_EMPTY);
-             optimizerOptions.disableRule(RuleType.TF_ELIMINATE_LIMIT_ZERO);
-+            // The statement is not authorized yet: looking up statistics here must not queue an analyze for
-+            // its tables. The planning that follows a passed check queues it as usual.
-+            optimizerOptions.setQueryTriggerAnalyzeEnabled(false);
-             // Prune without the IVM rewrite: it needs the MV state-column bindings only InsertPlanner sets up, and it
-             // changes how an IVM refresh scans its base tables, not which of their columns it reads. The optimizer also
-             // detaches the query MV context, which carries what the statement's own planning still has to read.
+@@ -567,6 +567,17 @@ requires(!lt_is_date<SlotType>) Status ChunkPredicateBuilder<E, Type>::normalize
+             values.insert(decoder.decode(value));
+         }
+ 
++        if (values.empty()) {
++            // and col in (null, null): no value is left once NULL is eliminated, so the predicate is never
++            // true. Empty the range instead of calling `add_fixed_values`, which reads an empty set as
++            // "no constraint". The root builder then ends the scan; a builder under OR gives up the push-down.
++            if constexpr (!Negative) {
++                range->clear_to_empty();
++                _normalized_exprs[i] = true;
++            }
++            return Status::OK();
++        }
++
+         if (range->add_fixed_values(FILTER_IN, values).ok()) {
+             _normalized_exprs[i] = true;
+         }
+@@ -702,7 +713,12 @@ requires lt_is_date<SlotType> Status ChunkPredicateBuilder<E, Type>::normalize_i
+                     }
+                 }
+                 if (values.empty()) {
+-                    status = Status::EndOfFile("const false predicate result");
++                    // No value can match (all NULL, or DATETIME values that are not a whole day),
++                    // so the predicate is never true.
++                    if constexpr (!Negative) {
++                        range->clear_to_empty();
++                        _normalized_exprs[i] = true;
++                    }
+                     continue;
+                 }
+                 if (range->add_fixed_values(FILTER_IN, values).ok()) {
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/server/MetadataMgr.java` (modified, +9/-6)
+**File**: `be/test/exec/olap_scan_prepare_test.cpp` (modified, +99/-0)
 ```diff
-@@ -716,7 +716,8 @@ public List<String> listPartitionNamesByValue(String catalogName, String dbName,
-         return ImmutableList.copyOf(partitionNames.build());
-     }
+@@ -102,6 +102,34 @@ static TExpr create_or_pred_with_false_and_branch(SlotId slot_id) {
+     return texpr;
+ }
  
--    public Statistics getTableStatisticsFromInternalStatistics(Table table, Map<ColumnRefOperator, Column> columns) {
-+    public Statistics getTableStatisticsFromInternalStatistics(Table table, Map<ColumnRefOperator, Column> columns,
-+                                                               boolean queryTriggerAnalyzeEnabled) {
-         Statistics.Builder statistics = Statistics.builder();
++// Appends `slot IN (NULL, NULL)`.
++static void append_int_in_all_null_pred(std::vector<TExprNode>* nodes, SlotId slot_id) {
++    nodes->emplace_back(ExprsTestHelper::create_in_pred_node<TYPE_INT>(3));
++    nodes->emplace_back(ExprsTestHelper::create_slot_expr_node_t<TYPE_INT>(0, slot_id, true));
++    nodes->emplace_back(ExprsTestHelper::create_null_literal<TYPE_INT>());
++    nodes->emplace_back(ExprsTestHelper::create_null_literal<TYPE_INT>());
++}
++
++// (slot IN (NULL, NULL) AND slot = 1) OR slot = 2
++static TExpr create_or_pred_with_in_all_null_and_branch(SlotId slot_id) {
++    TExpr texpr;
++    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_OR));
++    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_AND));
++    append_int_in_all_null_pred(&texpr.nodes, slot_id);
++    append_int_eq_pred(&texpr.nodes, slot_id, 1);
++    append_int_eq_pred(&texpr.nodes, slot_id, 2);
++    return texpr;
++}
++
++// slot IN (NULL, NULL) OR slot = 2
++static TExpr create_or_pred_with_in_all_null_branch(SlotId slot_id) {
++    TExpr texpr;
++    texpr.nodes.emplace_back(create_compound_pred_node(TExprOpcode::COMPOUND_OR));
++    append_int_in_all_null_pred(&texpr.nodes, slot_id);
++    append_int_eq_pred(&texpr.nodes, slot_id, 2);
++    return texpr;
++}
++
+ template <LogicalType Type>
+ StatusOr<RuntimeFilterProbeDescriptor*> ChunkPredicateBuilderTest::_gen_runtime_filter_desc(SlotId slot_id) {
+     TRuntimeFilterDescription tRuntimeFilterDescription;
+@@ -415,6 +443,77 @@ TEST_F(ChunkPredicateBuilderTest, normalize_or_with_false_and_branch) {
+     ASSERT_EQ(pred.debug_string(), "{\"and\":[]}");
+ }
  
-         List<ColumnRefOperator> requiredColumnRefs = new ArrayList<>();
-@@ -730,8 +731,8 @@ public Statistics getTableStatisticsFromInternalStatistics(Table table, Map<Colu
- 
-         List<String> columnNames = requiredColumnRefs.stream().map(col -> columns.get(col).getName()).collect(
-                 Collectors.toList());
--        List<ConnectorTableColumnStats> columnStatisticList =
--                GlobalStateMgr.getCurrentState().getStatisticStorage().getConnectorTableStatistics(table, columnNames);
-+        List<ConnectorTableColumnStats> columnStatisticList = GlobalStateMgr.getCurrentState().getStatisticStorage()
-+                .getConnectorTableStatistics(table, columnNames, queryTriggerAnalyzeEnabled);
- 
-         Map<String, Histogram> histogramStatistics =
-                 GlobalStateMgr.getCurrentState().getStatisticStorage().getConnectorHistogramStatistics(table, columnNames);
-@@ -773,8 +774,9 @@ private void captureAnalyzedColumnRowCountsToDump(OptimizerContext session, Stri
-                 .filter(ref -> !FeNameFormat.FORBIDDEN_COLUMN_NAMES.contains(ref.getName()))
-                 .collect(Collectors.toList());
-         List<String> columnNames = refs.stream().map(ref -> columns.get(ref).getName()).collect(Collectors.toList());
--        List<ConnectorTableColumnStats> stats =
--                GlobalStateMgr.getCurrentState().getStatisticStorage().getConnectorTableStatistics(table, columnNames);
-+        List<ConnectorTableColumnStats> stats = GlobalStateMgr.getCurrentState().getStatisticStorage()
-+                .getConnectorTableStatistics(table, columnNames,
-+                        session.getOptimizerOptions().isQueryTriggerAnalyzeEnabled());
-         for (int i = 0; i < refs.size() && i < stats.size(); i++) {
-             if (!stats.get(i).isUnknown()) {
-                 session.getDumpInfo().addExternalColumnRowCount(table, refs.get(i).getName(),
-@@ -865,7 +867,8 @@ private Statistics computeTableStatistics(OptimizerContext session,
-         // FIXME: In testing env, `_statistics_.external_column_statistics` is not created, ignore query columns stats from it.
-         // Get basic/histogram stats from internal statistics.
-         Statistics internalStatistics = FeConstants.runningUnitTest ? null :
--                getTableStatisticsFromInternalStatistics(table, columns);
-+                getTableStatisticsFromInternalStatistics(table, columns,
-+                        session.getOptimizerOptions().isQueryTriggerAnalyzeEnabled());
-         if (internalStatistics == null ||
-                 internalStatistics.getColumnStatistics().values().stream().allMatch(ColumnStatistic::isUnknown)) {
-             // Get basic stats from connector metadata.
++// `c1 IN (NULL, NULL)` is never true, so the scan ends instead of reading every row.
++TEST_F(ChunkPredicateBuilderTest, normalized_in_all_null_is_eof) {
++    SlotId slot_id = 1;
++    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_INT_DESC, 1}, {"c2", TYPE_INT_DESC, 2}, {""}};
++    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
++
++    TExpr texpr;
++    append_int_in_all_null_pred(&texpr.nodes, slot_id);
++    _texprs.emplace_back(std::move(texpr));
++    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
++    ASSERT_EQ(_expr_ctxs.size(), 1);
++    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
++
++    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
++    auto ret = builder.parse_conjuncts();
++    ASSERT_TRUE(ret.status().is_end_of_file()) << ret.status();
++}
++
++TEST_F(ChunkPredicateBuilderTest, normalized_in_all_null_date_is_eof) {
++    SlotId slot_id = 1;
++    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_DATE_DESC, 1}, {"c2", TYPE_DATE_DESC, 2}, {""}};
++    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
++
++    _texprs.emplace_back(ExprsTestHelper::create_in_pred_texpr<TYPE_DATE, std::string>(slot_id, {}, true));
++    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
++    ASSERT_EQ(_expr_ctxs.size(), 1);
++    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
++
++    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
++    auto ret = builder.parse_conjuncts();
++    ASSERT_TRUE(ret.status().is_end_of_file()) << ret.status();
++}
++
++// Under OR the always-false branch must not end the scan: `(c1 IN (NULL, NULL) AND c1 = 1) OR c1 = 2`
++// keeps the rows where c1 = 2. The OR is left unnormalized and evaluated as an expression.
++TEST_F(ChunkPredicateBuilderTest, normalize_or_with_in_all_null_and_branch) {
++    SlotId slot_id = 1;
++    parquet::Utils::SlotDesc slot_descs[] = {{"c1", TYPE_INT_DESC, 1}, {"c2", TYPE_INT_DESC, 2}, {""}};
++    _opts.tuple_desc = parquet::Utils::create_tuple_descriptor(&_runtime_state, &_pool, slot_descs);
++
++    _texprs.emplace_back(create_or_pred_with_in_all_null_and_branch(slot_id));
++    ASSERT_OK(ExprsTestHelper::create_and_open_conjunct_ctxs(&_pool, &_runtime_state, &_texprs, &_expr_ctxs));
++    ASSERT_EQ(_expr_ctxs.size(), 1);
++    _expr_containers.emplace_back(BoxedExprContext(_expr_ctxs[0]));
++
++    ChunkPredicateBuilder<BoxedExprContext, CompoundNodeType::AND> builder(_opts, _expr_containers, true);
++    ASSIGN_OR_ASSERT_FAIL(auto normalized, builder.parse_conjuncts());
++    ASSERT_TRUE(normalized);
++    ASSERT_FALSE(builder.is_pred_normalized(0));
++
++    ASSIGN_OR_ASSERT_FAIL(auto pred, builder.get_predicate_tree_root(_int_pred_parser, _predicate_free_pool));
++    ASSERT_EQ(pred.debug_string(), "{\"and\":[]}");
++}
++
++// `c1 IN (NULL, NULL) OR c1 = 2`: same, the scan must not end.
++TEST_F(ChunkPredicateBuilderTest, normalize_or_with_in_all_null_branch) {
++    SlotId slot_id = 1;
++    parquet::Utils::Slo
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/OptimizerOptions.java` (modified, +13/-0)
+**File**: `test/sql/test_push_down_predicate/R/test_in_all_null_push_down` (added, +67/-0)
 ```diff
-@@ -40,6 +40,11 @@ public enum OptimizerStrategy {
- 
-     private final BitSet ruleSwitches;
- 
-+    // Whether looking up an external table's column statistics during this run may queue a query-triggered
-+    // analyze for the table. Off for the column pruning a column-level authorization check runs before the
-+    // statement is authorized: that plan is thrown away, and the statement may still be denied.
-+    private boolean queryTriggerAnalyzeEnabled = true;
-+
-     public OptimizerOptions() {
-         this(OptimizerStrategy.COST_BASED);
-     }
-@@ -62,6 +67,14 @@ public boolean isBaselinePlan() {
-         return optimizerStrategy.equals(OptimizerStrategy.BASELINE_PLAN);
-     }
- 
-+    public boolean isQueryTriggerAnalyzeEnabled() {
-+        return queryTriggerAnalyzeEnabled;
-+    }
-+
-+    public void setQueryTriggerAnalyzeEnabled(boolean queryTriggerAnalyzeEnabled) {
-+        this.queryTriggerAnalyzeEnabled = queryTriggerAnalyzeEnabled;
-+    }
-+
-     public void disableRule(RuleType ruleType) {
-         ruleSwitches.clear(ruleType.ordinal());
-     }
+@@ -0,0 +1,67 @@
++-- name: test_in_all_null_push_down
++CREATE TABLE t_in_null_${uuid0} (
++    k INT,
++    v SMALLINT NOT NULL,
++    w SMALLINT NULL,
++    s VARCHAR(16) NULL,
++    d DATE NULL
++)
++DUPLICATE KEY(k)
++DISTRIBUTED BY HASH(k) BUCKETS 1
++PROPERTIES ("replication_num" = "1");
++-- result:
++-- !result
++INSERT INTO t_in_null_${uuid0} VALUES (1, 0, 0, 'a', '2024-01-01'), (2, 5, 5, 'b', '2024-01-02'), (3, 7, NULL, NULL, NULL);
++-- result:
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL);
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL);
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE s IN (NULL, NULL);
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE d IN (NULL, NULL);
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) AND k = 1;
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE NOT (v IN (NULL, NULL));
++-- result:
++0
++-- !result
++SELECT count(*) FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL)) IS NULL;
++-- result:
++3
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) OR k = 2 ORDER BY k;
++-- result:
++2
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL) AND k = 1) OR k = 2 ORDER BY k;
++-- result:
++2
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL) OR w IS NULL ORDER BY k;
++-- result:
++3
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL, 5) ORDER BY k;
++-- result:
++2
++-- !result
++SELECT k FROM t_in_null_${uuid0} WHERE v NOT IN (NULL, NULL) OR k = 3 ORDER BY k;
++-- result:
++3
++-- !result
++DROP TABLE t_in_null_${uuid0};
++-- result:
++-- !result
+\ No newline at end of file
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/CachedStatisticStorage.java` (modified, +10/-1)
+**File**: `test/sql/test_push_down_predicate/T/test_in_all_null_push_down` (added, +25/-0)
 ```diff
-@@ -219,6 +219,12 @@ public void refreshHistogramStatistics(Table table, List<String> columns, boolea
- 
+@@ -0,0 +1,25 @@
++-- name: test_in_all_null_push_down
++CREATE TABLE t_in_null_${uuid0} (
++    k INT,
++    v SMALLINT NOT NULL,
++    w SMALLINT NULL,
++    s VARCHAR(16) NULL,
++    d DATE NULL
++)
++DUPLICATE KEY(k)
++DISTRIBUTED BY HASH(k) BUCKETS 1
++PROPERTIES ("replication_num" = "1");
++INSERT INTO t_in_null_${uuid0} VALUES (1, 0, 0, 'a', '2024-01-01'), (2, 5, 5, 'b', '2024-01-02'), (3, 7, NULL, NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE s IN (NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE d IN (NULL, NULL);
++SELECT count(*) FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) AND k = 1;
++SELECT count(*) FROM t_in_null_${uuid0} WHERE NOT (v IN (NULL, NULL));
++SELECT count(*) FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL)) IS NULL;
++SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL) OR k = 2 ORDER BY k;
++SELECT k FROM t_in_null_${uuid0} WHERE (v IN (NULL, NULL) AND k = 1) OR k = 2 ORDER BY k;
++SELECT k FROM t_in_null_${uuid0} WHERE w IN (NULL, NULL) OR w IS NULL ORDER BY k;
++SELECT k FROM t_in_null_${uuid0} WHERE v IN (NULL, NULL, 5) ORDER BY k;
++SELECT k FROM t_in_null_${uuid0} WHERE v NOT IN (NULL, NULL) OR k = 3 ORDER BY k;
++DROP TABLE t_in_null_${uuid0};
+```
+
+---
+
+### Incident Patch 3: `61e67dcb` (2026-11-23)
+**Commit Message**: [BugFix] Finish the split of an empty ORDER BY != PK partition without waiting for UNSHARE (#84189)
+
+Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
+Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/SplitTabletJob.java` (modified, +81/-26)
+```diff
+@@ -473,10 +473,10 @@ protected void runRunningJob() {
+     /*
+      * 1. Abort in-flight lake compactions on the partitions where a tablet was really split, then wait for the
+      *    remaining previous transactions finished
+-     * 2. Remove old versions of materialized index
+-     * 3. Unregister resharding tablets
+-     * 4. Release the new shards' creation-time placement pin
+-     * 5. Durably publish FINISHED and update aggregate table state and metrics
++     * 2. Unregister resharding tablets
++     * 3. Release the new shards' creation-time placement pin
++     * 4. Durably publish FINISHED, then recycle the old versions of materialized index and release any query pin
++     *    left on them (applyFinishedLocked), and update aggregate table state and metrics
+      */
      @Override
-     public List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table, List<String> columns) {
-+        return getConnectorTableStatistics(table, columns, true);
-+    }
-+
-+    @Override
-+    public List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table, List<String> columns,
-+                                                                       boolean queryTriggerAnalyzeEnabled) {
-         Preconditions.checkState(table != null);
+     protected void runCleaningJob() {
+@@ -499,14 +499,20 @@ protected void runCleaningJob() {
+         }
  
-         // get Statistics Table column info, just return default column statistics
-@@ -242,13 +248,16 @@ public List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table,
-             SessionVariable sessionVariable = ConnectContext.get() == null ?
-                     GlobalStateMgr.getCurrentState().getVariableMgr().newSessionVariable() :
-                     ConnectContext.get().getSessionVariable();
-+            // Decided here, on the query's thread: the callback runs on the refresher's, which has no
-+            // ConnectContext, and possibly after the statement has moved on to its next optimization.
-+            boolean triggerAnalyze = queryTriggerAnalyzeEnabled && sessionVariable.isEnableQueryTriggerAnalyze();
-             result.whenCompleteAsync((res, e) -> {
-                 if (e != null) {
-                     LOG.warn("Get connector table column statistics filed, exception: ", e);
-                     return;
+         // ORDER BY != PK children inherit complete shared rowsets. Keep queries on the parent layout
+-        // until one partition-wide, non-partial UNSHARE transaction has rewritten every sibling.
++        // until one partition-wide, non-partial UNSHARE transaction has rewritten every sibling. An empty
++        // INSERT OVERWRITE temporary partition to which nothing has committed since the split inherited
++        // nothing, and nothing can still be cross-published into its children: a publish only exists for a
++        // committed transaction, and the resharding tablets are unregistered below under the same table
++        // lock, which keeps every commit out. It needs no UNSHARE; applyFinishedLocked releases its pin.
+         CompactionMgr compactionMgr = GlobalStateMgr.getCurrentState().getCompactionMgr();
+-        boolean waitingForUnshare = false;
+         try (LockedObject<OlapTable> lockedTable = getLockedTable(LockType.READ)) {
+             OlapTable olapTable = lockedTable.get();
+-            for (Long physicalPartitionId : reshardingPhysicalPartitions.keySet()) {
++            boolean waitingForUnshare = false;
++            for (ReshardingPhysicalPartition reshardingPhysicalPartition : reshardingPhysicalPartitions.values()) {
++                long physicalPartitionId = reshardingPhysicalPartition.getPhysicalPartitionId();
+                 PhysicalPartition physicalPartition = olapTable.getPhysicalPartition(physicalPartitionId);
+-                if (physicalPartition == null || !physicalPartition.isUnsharing()) {
++                if (physicalPartition == null || !physicalPartition.isUnsharing()
++                        || inheritsNothingFromParent(olapTable, reshardingPhysicalPartition, physicalPartition)) {
+                     continue;
                  }
-                 // Followers too: the manager forwards their requests to the leader, which runs the analyze.
--                if (sessionVariable.isEnableQueryTriggerAnalyze()) {
-+                if (triggerAnalyze) {
-                     GlobalStateMgr.getCurrentState().getConnectorTableTriggerAnalyzeMgr().checkAndUpdateTableStats(res);
+                 waitingForUnshare = true;
+@@ -515,25 +521,78 @@ protected void runCleaningJob() {
+                     compactionMgr.triggerUnshareCompaction(identifier);
                  }
-             }, statsCacheRefresherExecutor);
+             }
+-        }
+-        if (waitingForUnshare) {
+-            return;
+-        }
+-
+-        // 2. Remove old versions of materialized index
+-        removeOldMaterializedIndexes();
++            if (waitingForUnshare) {
++                return;
++            }
+ 
+-        // 3. Unregister resharding tablets
+-        unregisterReshardingTablets();
++            // 2. Unregister resharding tablets
++            unregisterReshardingTablets();
++        }
+ 
+-        // 4. Release the child shards' creation-time placement pin so the balancer can spread them
++        // 3. Release the child shards' creation-time placement pin so the balancer can spread them
+         //    now, instead of when the parent shards are finally reclaimed tens of minutes later.
+         clearPlacementPreference(reshardingPhysicalPartitions);
+ 
+-        // 5. Durably publish FINISHED
++        // 4. Durably publish FINISHED
+         setJobState(JobState.FINISHED);
+     }
+ 
++    // Whether the split left this partition's children nothing of the parent's: the split read version 1, so the
++    // parent had no file to share, and no transaction has committed to the partition since, so no load can have
++    // brought one in either. Committed, not visible: a writer that resolved the old layout but took its transaction
++    // id after the end transaction id (a bypass write, which registers the index of the tablets it wrote, or a
++    // replication job, which caches its indexes) is not waited on above, and its publish may already be on its way
++    // to the children while the version is unchanged.
++    //
++    // Only a temporary partition that a running static INSERT OVERWRITE (a materialized view refresh included) created
++    // for its own write and has not swapped in yet: no other writer targets one. Elsewhere, including a temporary
++    // partition a user added, such a writer could still commit after the unregister below: its publish would reach
++    // the parent only, and since the parent and child indexes share a meta id, the file bundle of that version would
++    // carry no met
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/StatisticStorage.java` (modified, +10/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/TabletReshardJob.java` (modified, +13/-2)
 ```diff
-@@ -70,6 +70,16 @@ default List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table,
-                 map(col -> ConnectorTableColumnStats.unknown()).collect(Collectors.toList());
+@@ -340,6 +340,9 @@ private void publishFinalState(JobState desiredState) {
+                         if (isDone()) {
+                             return;
+                         }
++                        if (desiredState == JobState.FINISHED && table != null) {
++                            applyFinishedLocked(table);
++                        }
+                         finishedTimeMs = snapshot.finishedTimeMs;
+                         stateStartedTimeMs = snapshot.stateStartedTimeMs;
+                         jobState = desiredState;
+@@ -351,6 +354,14 @@ private void publishFinalState(JobState desiredState) {
+         LOG.info("Tablet reshard job set job state. {}", this);
      }
  
 +    /**
-+     * As {@link #getConnectorTableStatistics(Table, List)}, except that with {@code queryTriggerAnalyzeEnabled}
-+     * false the lookup must not queue a query-triggered analyze for the table
-+     * (see {@link com.starrocks.sql.optimizer.OptimizerOptions#isQueryTriggerAnalyzeEnabled()}).
++     * Applies, on the leader, what the FINISHED record changes in the catalog beyond the job itself. Runs under the
++     * table WRITE lock once the record is durable, so nothing it changes can be seen before the record that makes
++     * every replaying FE change it too.
 +     */
-+    default List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table, List<String> columns,
-+                                                                        boolean queryTriggerAnalyzeEnabled) {
-+        return getConnectorTableStatistics(table, columns);
++    protected void applyFinishedLocked(OlapTable table) {
 +    }
 +
-     default List<ConnectorTableColumnStats> getConnectorTableStatisticsSync(Table table, List<String> columns) {
-         return getConnectorTableStatistics(table, columns);
+     private void recordTerminalMetrics(JobState state) {
+         if (!MetricRepo.hasInit) {
+             return;
+@@ -609,8 +620,8 @@ protected static void checkNewIndexesInstallable(OlapTable olapTable,
+      * never a partition-directory delete, which for a split would destroy the live child tablets that
+      * share the parent's object-storage directory.
+      *
+-     * <p>Runs on both the leader (runCleaningJob) and the replay path (replayFinishedJob); it is
+-     * deterministic (the index keeps its own id, no id allocation) and
++     * <p>Runs on both the leader (a merge from runCleaningJob, a split from applyFinishedLocked) and the replay
++     * path (replayFinishedJob); it is deterministic (the index keeps its own id, no id allocation) and
+      * {@code recycleMaterializedIndex} is idempotent, so a re-run is safe. The caller holds the table
+      * WRITE lock and passes the locked table.
+      */
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/lake/compaction/CompactionMgr.java` (modified, +6/-1)
+```diff
+@@ -30,6 +30,7 @@
+ import com.starrocks.persist.metablock.SRMetaBlockWriter;
+ import com.starrocks.server.GlobalStateMgr;
+ import com.starrocks.sql.common.MetaUtils;
++import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -351,6 +352,7 @@ public PartitionStatistics triggerManualCompaction(PartitionIdentifier partition
      }
+ 
+     public PartitionStatistics triggerUnshareCompaction(PartitionIdentifier partition) {
++        boolean[] newRequest = new boolean[1];
+         PartitionStatistics statistics = partitionStatisticsHashMap.compute(partition, (k, v) -> {
+             if (v == null) {
+                 v = new PartitionStatistics(partition);
+@@ -365,11 +367,14 @@ public PartitionStatistics triggerUnshareCompaction(PartitionIdentifier partitio
+                 // re-triggers a pending UNSHARE on every reshard tick, so keep the retry deadline of a request
+                 // that is already pending, or one the scheduler deferred would be retried every cycle.
+                 v.clearCompactionRetryTimes();
++                newRequest[0] = true;
+             }
+             v.setPriority(PartitionStatistics.CompactionPriority.UNSHARE);
+             return v;
+         });
+-        LOG.info("Trigger UNSHARE compaction, {}", statistics);
++        // The priority stays UNSHARE until the compaction starts or the request is dropped, so the reshard tick's
++        // repeats of a pending request are logged at DEBUG only.
++        LOG.log(newRequest[0] ? Level.INFO : Level.DEBUG, "Trigger UNSHARE compaction, {}", statistics);
+         return statistics;
+     }
+ 
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/StatisticsCalculator.java` (modified, +2/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/load/InsertOverwriteJobMgr.java` (modified, +22/-0)
 ```diff
-@@ -361,7 +361,8 @@ private void addSubFiledStatistics(Operator node, Map<ColumnRefOperator, Subfiel
-                     columnNames);
-         } else {
-             columnStatisticList = GlobalStateMgr.getCurrentState().getStatisticStorage().getConnectorTableStatistics(table,
--                    columnNames).stream().map(ConnectorTableColumnStats::getColumnStatistic).collect(Collectors.toList());
-+                    columnNames, optimizerContext.getOptimizerOptions().isQueryTriggerAnalyzeEnabled()).stream()
-+                    .map(ConnectorTableColumnStats::getColumnStatistic).collect(Collectors.toList());
-             histogramStatistics = GlobalStateMgr.getCurrentState().getStatisticStorage().
-                     getConnectorHistogramStatistics(table, columnNames);
+@@ -142,6 +142,28 @@ public boolean hasRunningOverwriteJob(long tableId) {
          }
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/authorization/ColumnPrivilegeTriggerAnalyzeTest.java` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package com.starrocks.authorization;
-+
-+import com.starrocks.catalog.Table;
-+import com.starrocks.catalog.TableName;
-+import com.starrocks.common.FeConstants;
-+import com.starrocks.connector.statistics.ConnectorTableColumnStats;
-+import com.starrocks.qe.ConnectContext;
-+import com.starrocks.server.GlobalStateMgr;
-+import com.starrocks.sql.StatementPlanner;
-+import com.starrocks.sql.analyzer.Authorizer;
-+import com.starrocks.sql.ast.StatementBase;
-+import com.starrocks.sql.optimizer.statistics.CachedStatisticStorage;
-+import com.starrocks.sql.optimizer.statistics.StatisticStorage;
-+import com.starrocks.sql.plan.ConnectorPlanTestBase;
-+import com.starrocks.utframe.UtFrameUtils;
-+import org.junit.jupiter.api.Assertions;
-+import org.junit.jupiter.api.Test;
-+
-+import java.util.ArrayList;
-+import java.util.List;
-+import java.util.stream.Collectors;
-+
-+/**
-+ * The column pruning {@link ColumnPrivilege} runs for a Ranger-style catalog happens before the statement is
-+ * authorized, and its plan is thrown away. A statement the check then denies must leave no trace behind: the
-+ * statistics it looked up on the way must not have queued a collection for the table.
-+ */
-+public class ColumnPrivilegeTriggerAnalyzeTest extends ConnectorPlanTestBase {
-+
-+    private static final String HIVE_CATALOG = "hive0";
-+    private static final String SQL =
-+            "SELECT l_orderkey FROM hive0.partitioned_db.lineitem_par WHERE l_partkey > 10";
-+
-+    /** Every lookup of connector statistics, as whether it was allowed to queue a collection. */
-+    private static final class RecordingStatisticStorage extends CachedStatisticStorage {
-+        final List<Boolean> lookups = new ArrayList<>();
-+
-+        @Override
-+        public List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table, List<String> columns,
-+                                                                           boolean queryTriggerAnalyzeEnabled) {
-+            lookups.add(queryTriggerAnalyzeEnabled);
-+            return columns.stream().map(c -> ConnectorTableColumnStats.unknown()).collect(Collectors.toList());
+     }
+ 
++    // Whether the partition is one of the temporary partitions a running static (not dynamic) overwrite job on the
++    // table created for its own write.
++    public boolean isTmpPartitionOfRunningStaticJob(long tableId, long partitionId) {
++        lock.readLock().lock();
++        try {
++            List<Long> jobIds = tableToOverwriteJobs.get(tableId);
++            if (jobIds == null) {
++                return false;
++            }
++            for (Long jobId : jobIds) {
++                InsertOverwriteJob job = overwriteJobMap.get(jobId);
++                if (job != null && !job.isDynamicOverwrite() && job.getTmpPartitionIds() != null
++                        && job.getTmpPartitionIds().contains(partitionId)) {
++                    return true;
++                }
++            }
++            return false;
++        } finally {
++            lock.readLock().unlock();
 +        }
 +    }
 +
-+    /** Installing any ExternalAccessController is what makes ColumnPrivilege run the optimization. */
-+    private static ExternalAccessController controller(boolean denyColumns) {
-+        return new ExternalAccessController() {
-+            @Override
-+            public void checkTableAction(ConnectContext context, TableName tableName, PrivilegeType privilegeType) {
-+            }
-+
-+            @Override
-+            public void checkColumnAction(ConnectContext context, TableName tableName, String column,
-+                                          PrivilegeType privilegeType) throws AccessDeniedException {
-+                if (denyColumns) {
-+                    throw new AccessDeniedException();
-+                }
-+            }
-+
-+            @Override
-+            public void checkMaterializedViewAction(ConnectContext context, TableName tableName,
-+                                                    PrivilegeType privilegeType) {
-+            }
-+        };
-+    }
-+
-+    /**
-+     * Plans with the given controller on the hive catalog and returns the statistics lookups planning made. The
-+     * internal-statistics lookup is skipped in unit tests, so it is switched back on for the planning only.
-+     */
-+    private List<Boolean> lookupsWhilePlanning(boolean denyColumns) throws Exception {
-+        GlobalStateMgr state = connectContext.getGlobalStateMgr();
-+        AccessControlProvider provider = Authorizer.getInstance();
-+        StatisticStorage previousStorage = state.getStatisticStorage();
-+        RecordingStatisticStorage storage = new RecordingStatisticStorage();
-+        state.setStatisticStorage(storage);
-+        provider.setAccessControl(HIVE_CATALOG, controller(denyColumns));
-+        FeConstants.runningUnitTest = false;
-+        try {
-+            StatementBase stmt = UtFrameUtils.parseStmtWithNewParserNotIncludeAnalyzer(SQL, connectContext);
-+            if (denyColumns) {
-+                Assertions.assertThrows(Exception.class, () -> StatementPlanner.plan(stmt, connectContext));
-+            } else {
-+                StatementPlanner.plan(stmt, connectContext);
-+            }
-+        } finally {
-+            FeConstants.runningUnitTest = true;
-+    
+     public void replayCreateInsertOverwrite(CreateInsertOverwriteJobLog jobInfo) {
+         InsertOverwriteJob insertOverwriteJob = new InsertOverwriteJob(jobInfo.getJobId(),
+                 jobInfo.getDbId(), jobInfo.getTableId(), jobInfo.getTargetPartitionIds(), jobInfo.isDynamicOverwrite());
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/server/MetadataMgrWidenColumnRangesTest.java` (modified, +4/-1)
+**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/ReshardJournalReplay.java` (modified, +61/-0)
 ```diff
-@@ -21,6 +21,7 @@
- import com.starrocks.common.tvr.TvrTableSnapshot;
- import com.starrocks.connector.ConnectorMetadata;
- import com.starrocks.sql.optimizer.OptimizerContext;
-+import com.starrocks.sql.optimizer.OptimizerOptions;
- import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
- import com.starrocks.sql.optimizer.statistics.ColumnStatistic;
- import com.starrocks.sql.optimizer.statistics.Statistics;
-@@ -36,6 +37,7 @@
- import static org.junit.jupiter.api.Assertions.assertSame;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- import static org.mockito.ArgumentMatchers.any;
-+import static org.mockito.ArgumentMatchers.anyBoolean;
- import static org.mockito.Mockito.doReturn;
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.spy;
-@@ -95,12 +97,13 @@ public void testAnalyzeBranchWidensWithConnectorRanges() {
-         Statistics analyzed = Statistics.builder().setOutputRowCount(1000)
-                 .addColumnStatistic(ts, stat(100, 200))
-                 .setStatsSource(Statistics.StatsSource.ANALYZE).build();
--        doReturn(analyzed).when(metadataMgr).getTableStatisticsFromInternalStatistics(any(), any());
-+        doReturn(analyzed).when(metadataMgr).getTableStatisticsFromInternalStatistics(any(), any(), anyBoolean());
-         ConnectorMetadata connector = mock(ConnectorMetadata.class);
-         TvrTableSnapshot version = TvrTableSnapshot.of(7L);
-         when(connector.getPartitionSourceColumnRanges(table, version)).thenReturn(Map.of("ts", Pair.create(50.0, 300.0)));
-         doReturn(Optional.of(connector)).when(metadataMgr).getOptionalMetadata("iceberg_catalog");
-         OptimizerContext session = mock(OptimizerContext.class);
-+        when(session.getOptimizerOptions()).thenReturn(new OptimizerOptions());
+@@ -229,6 +229,67 @@ static void checkFailedCleaningJournalLeavesLayoutUnchanged(TabletReshardJob job
+         Assertions.assertEquals(newTabletIds, tabletIds(newIndex));
+     }
  
-         boolean runningUnitTest = FeConstants.runningUnitTest;
-         FeConstants.runningUnitTest = false;
++    /**
++     * An ORDER BY != PK split that left a partition's children nothing of the parent's finishes without an UNSHARE, so
++     * no UNSHARE transaction unpins the partition on a replaying FE. Its FINISHED record has to: until then the
++     * follower keeps serving queries from the parent, and after it, from the children.
++     *
++     * <p>Runs the job (not yet admitted, on the given physical partition, the only one it reshards) to FINISHED, then
++     * replays its records onto a follower's copy of the table taken at RUNNING, checking the follower after each one.
++     */
++    static void checkFinishedRecordReleasesQueryPin(Database db, OlapTable table, PhysicalPartition partition,
++                                                    TabletReshardJob job) throws Exception {
++        // Replaying puts the job's records into TabletReshardJobMgr, whose daemon would run them as the leader's.
++        new MockUp<TabletReshardJobMgr>() {
++            @Mock
++            protected void runAfterLeaseValid() {
++            }
++        };
++        long partitionId = partition.getId();
++        long baseMetaId = table.getBaseIndexMetaId();
++        long oldIndexId = partition.getLatestBaseIndex().getId();
++        job.init();
++        job.run();
++        Assertions.assertEquals(TabletReshardJob.JobState.RUNNING, job.getJobState());
++        long newIndexId = job.getReshardingPhysicalPartitions().get(partitionId).getReshardingIndexes()
++                .get(oldIndexId).getMaterializedIndex().getId();
++
++        OlapTable followerTable = copyTable(table);
++        ReshardJournalReplay recorder = new ReshardJournalReplay(() -> {
++        });
++        for (int i = 0; i < 10 && !job.isDone(); i++) {
++            job.run();
++        }
++        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, job.getJobState());
++
++        List<JournalEntity> records = recorder.recordsOf(job.getJobId(), -1L);
++        TabletReshardJobMgr tabletReshardJobMgr = GlobalStateMgr.getCurrentState().getTabletReshardJobMgr();
++        try {
++            withFollowerTable(db, followerTable, () -> {
++                PhysicalPartition followerPartition = followerTable.getPhysicalPartition(partitionId);
++                List<TabletReshardJob.JobState> replayed = new ArrayList<>();
++                for (JournalEntity record : records) {
++                    replay(record);
++                    replayed.add(((TabletReshardJob) record.data()).getJobState());
++                    if (isJobRecord(record, TabletReshardJob.JobState.CLEANING)) {
++                        Assertions.assertTrue(followerPartition.isQueryableIndexPinned(baseMetaId));
++                        Assertions.assertEquals(oldIndexId, followerPartition.getQueryableIndex(baseMetaId).getId());
++                    } else if (isJobRecord(record, TabletReshardJob.JobState.FINISHED)) {
++                        Assertions.assertFalse(followerPartition.isUnsharing());
++                        Assertions.assertEquals(newIndexId, followerPartition.getQueryableIndex(baseMetaId).getId());
++                    }
++                }
++                Assertions.assertEquals(List.of(TabletReshardJob.JobState.CLEANING, TabletReshardJob.JobState.FINISHED),
++                        replayed);
++            });
++        } finally {
++            // The replay registered the job's records in the shared manager; the leader's job never was.
++            if (tabletReshardJobMgr.getTabletReshardJob(job.getJobId()) != null) {
++                tabletReshardJobMgr.replayRemoveTabletReshardJob(job.getJobId());
++            }
++        }
++    }
++
+     /**
+      * Counts the CLEANING records of reshard jobs journaled from now on. With closeJournalFirst, the leader's journal is
+      * closed, as giving up leadership closes it, just before the first one is written, so that write fails; the caller
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/SplitTabletJobTest.java` (modified, +409/-0)
+```diff
+@@ -32,14 +32,19 @@
+ import com.starrocks.common.StarRocksException;
+ import com.starrocks.common.lock.LockTestUtils;
+ import com.starrocks.common.util.PropertyAnalyzer;
++import com.starrocks.common.util.concurrent.lock.AutoCloseableLock;
+ import com.starrocks.common.util.concurrent.lock.LockHoldDepth;
+ import com.starrocks.common.util.concurrent.lock.LockType;
+ import com.starrocks.lake.LakeTable;
+ import com.starrocks.lake.LakeTablet;
+ import com.starrocks.lake.StarOSAgent;
+ import com.starrocks.lake.Utils;
+ import com.starrocks.lake.compaction.CompactionMgr;
++import com.starrocks.lake.compaction.PartitionIdentifier;
++import com.starrocks.lake.compaction.PartitionStatistics;
++import com.starrocks.load.InsertOverwriteJob;
+ import com.starrocks.persist.EditLog;
++import com.starrocks.persist.WALApplier;
+ import com.starrocks.proto.AggregatePublishVersionRequest;
+ import com.starrocks.proto.PublishVersionRequest;
+ import com.starrocks.proto.PublishVersionResponse;
+@@ -54,8 +59,10 @@
+ import com.starrocks.server.WarehouseManager;
+ import com.starrocks.sql.ast.SplitTabletClause;
+ import com.starrocks.sql.ast.TabletList;
++import com.starrocks.sql.common.MetaUtils;
+ import com.starrocks.thrift.TStatusCode;
+ import com.starrocks.transaction.GlobalTransactionMgr;
++import com.starrocks.transaction.TabletCommitInfo;
+ import com.starrocks.transaction.TransactionState;
+ import com.starrocks.transaction.TransactionStatus;
+ import com.starrocks.type.IntegerType;
+@@ -79,6 +86,7 @@
+ import java.util.Set;
+ import java.util.concurrent.Callable;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.CopyOnWriteArrayList;
+ import java.util.concurrent.Future;
+ import java.util.concurrent.ThreadPoolExecutor;
+@@ -444,6 +452,407 @@ public void testPkOrderByFactoryLeavesBoundarySelectionToBePkIndex() throws Exce
+         Assertions.assertTrue(splittingTablet.getNewTabletIds().size() > 1);
+     }
+ 
++    /**
++     * The pre-split that INSERT OVERWRITE runs on its new, empty temporary partition leaves the ORDER BY != PK
++     * children nothing inherited from the parent, so CLEANING does not wait for an UNSHARE compaction. The parent
++     * stays queryable until the FINISHED record is durable, and only then is it unpinned and recycled.
++     */
++    @Test
++    public void testEmptyTemporaryPartitionSplitFinishesWithoutUnshare() throws Exception {
++        installLakeServiceMock(this::addDataDrivenRanges);
++        OlapTable pkTable = createSeparateSortKeyTable("split_empty_partition_pk_sort");
++        PhysicalPartition partition = temporaryPartition(pkTable, "tp1");
++        InsertOverwriteJob overwrite = registerOverwriteJob(pkTable, partition);
++        long baseMetaId = pkTable.getBaseIndexMetaId();
++        long oldIndexId = partition.getLatestBaseIndex().getId();
++        Assertions.assertEquals(PhysicalPartition.PARTITION_INIT_VERSION, partition.getVisibleVersion());
++        Map<Long, Integer> unshareTriggers = countUnshareTriggers();
++        SplitTabletJob job = (SplitTabletJob) createTabletReshardJob(pkTable, partition);
++
++        AtomicBoolean unsharingAtFinish = new AtomicBoolean();
++        AtomicBoolean recycledAtFinish = new AtomicBoolean(true);
++        AtomicLong schemaUpdateTimeAtFinish = new AtomicLong();
++        AtomicInteger parentInfosAtFinish = new AtomicInteger(-1);
++        new MockUp<EditLog>() {
++            @Mock
++            public void logUpdateTabletReshardJob(Invocation invocation, TabletReshardJob record, WALApplier applier) {
++                if (record.getJobState() == TabletReshardJob.JobState.FINISHED) {
++                    unsharingAtFinish.set(partition.isUnsharing());
++                    recycledAtFinish.set(GlobalStateMgr.getCurrentState().getRecycleBin()
++                            .isMaterializedIndexRecycled(oldIndexId));
++                    schemaUpdateTimeAtFinish.set(pkTable.lastSchemaUpdateTime.get());
++                    parentInfosAtFinish.set(job.collectParentPublishInfos(
++                            Set.copyOf(partition.getLatestBaseIndex().getTabletIdsInOrder())).size());
++                }
++                invocation.proceed();
++            }
++        };
++
++        job.init();
++        job.run();
++        Assertions.assertEquals(TabletReshardJob.JobState.RUNNING, job.getJobState());
++        job.run();
++        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, job.getJobState());
++        Assertions.assertTrue(unshareTriggers.isEmpty(), "no UNSHARE was needed: " + unshareTriggers);
++
++        MaterializedIndex newIndex = partition.getLatestBaseIndex();
++        Assertions.assertNotEquals(oldIndexId, newIndex.getId());
++        Assertions.assertFalse(partition.isUnsharing());
++        Assertions.assertEquals(newIndex.getId(), partition.getQueryableIndex(baseMetaId).getId());
++        Assertions.assertTrue(GlobalStateMgr.getCurrentState().getRecycleBin().isMaterializedIndexRecycled(oldIndexId));
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/lake/compaction/CompactionMgrTest.java` (modified, +44/-0)
+```diff
+@@ -34,10 +34,16 @@
+ import mockit.Mock;
+ import mockit.MockUp;
+ import mockit.Mocked;
++import org.apache.logging.log4j.Level;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.core.LogEvent;
++import org.apache.logging.log4j.core.appender.AbstractAppender;
++import org.apache.logging.log4j.core.config.Configurator;
+ import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.Test;
+ 
+ import java.io.IOException;
++import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.HashSet;
+@@ -250,6 +256,44 @@ public void testRepeatedUnshareTriggerKeepsRetryDeadline() {
+         }
+     }
+ 
++    // A split waiting for UNSHARE re-triggers its pending request on every reshard tick. Only the request itself is
++    // worth an INFO line; the repeats go to DEBUG.
++    @Test
++    public void testUnshareTriggerLogsOncePerRequest() {
++        CompactionMgr compactionManager = new CompactionMgr();
++        PartitionIdentifier partition = new PartitionIdentifier(1, 2, 3);
++
++        List<String> logs = new ArrayList<>();
++        AbstractAppender appender = new AbstractAppender("unshare-trigger-log-capture", null, null) {
++            @Override
++            public void append(LogEvent event) {
++                String message = event.getMessage().getFormattedMessage();
++                if (message.startsWith("Trigger UNSHARE compaction")) {
++                    logs.add(event.getLevel().name());
++                }
++            }
++        };
++        org.apache.logging.log4j.core.Logger logger =
++                (org.apache.logging.log4j.core.Logger) LogManager.getLogger(CompactionMgr.class);
++        Level oldLevel = logger.getLevel();
++        appender.start();
++        logger.addAppender(appender);
++        Configurator.setLevel(CompactionMgr.class.getName(), Level.DEBUG);
++        try {
++            compactionManager.triggerUnshareCompaction(partition);
++            compactionManager.triggerUnshareCompaction(partition);
++            // Once the request has run (or been dropped) its priority is reset, so the next trigger is a new request.
++            compactionManager.resetPriority(partition);
++            compactionManager.triggerUnshareCompaction(partition);
++        } finally {
++            Configurator.setLevel(CompactionMgr.class.getName(), oldLevel);
++            logger.removeAppender(appender);
++            appender.stop();
++        }
++
++        Assertions.assertEquals(List.of("INFO", "DEBUG", "INFO"), logs);
++    }
++
+     @Test
+     public void testTriggerClearsRetryDeadline() {
+         String oldSelector = Config.lake_compaction_selector;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #84135** (2026-11-22): [Enhancement] Look up partitions instead of scanning partition lists per partition (backport #83853) (@mergify[bot])
-- **PR #84134** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
-- **PR #84123** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
-- **PR #84116** (2026-11-21): [BugFix] Stop pushing aggregations below joins when they cannot reduce rows (backport #84115) (@mergify[bot])
-- **PR #84115** (2026-11-21): [BugFix] Stop pushing aggregations below joins when they cannot reduce rows (@starrocks-bot[bot])
-- **PR #84112** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
+- **PR #84200** (closed): [BugFix] Stop answering COUNT of a NULL-valued constant expression with the row count (@Hyper-FF)
+- **PR #84198** (2026-11-23): [Enhancement] Resolve sync conflict for the StarCache write overwrite config (@starrocks-xupeng)
+- **PR #84195** (2026-11-23): [Enhancement] Support multimodal data in AI functions (backport #84113) (@mergify[bot])
+- **PR #84190** (2026-11-23): [BugFix] End the scan instead of dropping the filter when an IN list holds only NULLs (@Hyper-FF)
+- **PR #84189** (2026-11-23): [BugFix] Finish the split of an empty ORDER BY != PK partition without waiting for UNSHARE (@starrocks-bot[bot])
+- **PR #84186** (2026-11-23): [Enhancement] Share the sort key description across the chunks of a heap merge (backport #83692) (@mergify[bot])
 
 ---
 
@@ -2378,29 +2675,46 @@ Co-authored-by: Planck Li <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Enhancement] Support LDAP and JWT security integrations on one authentication_c
+## X. [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedic
 
 **RULE**:
-When implementing operations in `docs/en/administration/configuration/FE_parameters/log_server_meta.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83f27a03`: [Enhancement] Support LDAP and JWT security integrations on one authentication_chain over MySQL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53b41a5c`: [BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedicated printer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/administration/configuration/FE_parameters/log_server_meta.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/Explain.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-### `authentication_chain_accept_jwt_as_password`
 
-- Default: false
-- Type: Boolean
-- Unit: -
-- Is mutable: Yes
-- Description: Whether a security-integration user may present a JWT as the password of a MySQL login (the `mysql_clear_password` plugin). When set to `true` and such a password has the shape of a JWT, StarRocks first offers it as a token to the JWT and OAuth 2.0 security integrations on `authentication_chain`, and only if none accepts it tries it as a password against the LDAP security integrations. This lets a MySQL client without the `authentication_openid_connect_client` plugin log in through a JWT security integration that shares `authentication_chain` with an LDAP one. When set to `false`, such a password goes straight to the LDAP security integrations. This item applies to the MySQL protocol only: HTTP and Arrow Flight carry a token as `Bearer`, and their `Basic` passwords are never read as tokens. A password that merely looks like a token costs one refused token verification before the password path; the login is counted in the authentication metrics by its final outcome only.
-- Introduced in: -
+        // The defaults of these visitors end in visit(), which dispatches again and recurses forever.
+        @Override
+        public OperatorStr visitPhysicalRawValues(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
 
+        @Override
+        public OperatorStr visitPhysicalFetch(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
+
+        @Override
+        public OperatorStr visitPhysicalLookUp(OptExpression optExpression, ExplainContext context) {
+            return visitUnhandled(optExpression, context);
+        }
+
+        private OperatorStr visitUnhandled(OptExpression optExpression, ExplainContext context) {
+            PhysicalOperator op = (PhysicalOperator) optExpression.getOp();
+            StringBuilder sb = new StringBuilder("- ")
+                    .append(op.getOpType().name().replaceFirst("^PHYSICAL_", "").replace('_', '-'))
+                    .append(buildOutputColumns(op, ""))
+                    .append("\n");
+            // LookUp carries no statistics
+            if (optExpression.getStatistics() != null) {
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2410,4 +2724,4 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83f27a03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53b41a5c` are properly handled with clean fallback behavior.

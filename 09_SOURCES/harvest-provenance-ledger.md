@@ -12446,3 +12446,5 @@ Every entry in this ledger must capture:
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `9438aa66` | Multi-dimensional audit evidence | 2026-11-23T18:03:23.975Z |
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T18:15:55.621Z |
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `6002095f` | Multi-dimensional audit evidence | 2026-11-23T18:16:01.718Z |
+| `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-23T18:23:47.722Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `520e2886` | Multi-dimensional audit evidence | 2026-11-23T18:24:03.946Z |

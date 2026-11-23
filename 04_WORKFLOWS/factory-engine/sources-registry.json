@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T18:16:04.972Z",
-    "lastVerified": "2026-11-23T18:16:04.972Z",
+    "lastChecked": "2026-11-23T18:24:07.203Z",
+    "lastVerified": "2026-11-23T18:24:07.203Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,9 +244,9 @@
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
-    "lastChecked": "2026-11-22T17:12:17.724Z",
+    "lastChecked": "2026-11-23T18:23:51.937Z",
     "revisionIdentifier": "53625dfe",
-    "lastVerified": "2026-11-22T17:12:17.724Z"
+    "lastVerified": "2026-11-23T18:23:51.937Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T17:46:22.703Z",
+    "lastChecked": "2026-11-23T18:23:59.362Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T17:46:22.703Z"
+    "lastVerified": "2026-11-23T18:23:59.362Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1574,9 +1574,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-23T14:29:21.142Z",
+    "lastChecked": "2026-11-23T18:23:54.465Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-23T14:29:21.142Z"
+    "lastVerified": "2026-11-23T18:23:54.465Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -5976,14 +5976,14 @@
     "officialUrl": "https://github.com/StarRocks/starrocks",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-22T15:37:17.204Z",
-    "lastVerified": "2026-11-22T15:37:17.204Z",
+    "lastChecked": "2026-11-23T18:24:02.837Z",
+    "lastVerified": "2026-11-23T18:24:02.837Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "093eef45311ad4dcc6d6611dca2648a5f578d4231f55e0e7fd0a1aa1fe1da789",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "a0b8f3fddcb8e7061774acbe405ead03c740eaa47b18bc2ddf3c09e9de89ae01",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6824,9 +6824,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-22T06:19:18.277Z",
+    "lastChecked": "2026-11-23T18:23:44.393Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-22T06:19:18.277Z"
+    "lastVerified": "2026-11-23T18:23:44.393Z"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
     "name": "lilylilith/QI_2.1_AnyAngle",
@@ -7366,12 +7366,12 @@
     "officialUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T07:14:12.568Z",
-    "lastVerified": "2026-11-19T07:14:12.568Z",
+    "lastChecked": "2026-11-23T18:23:47.000Z",
+    "lastVerified": "2026-11-23T18:23:47.000Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "fc4ce72c1db06cdc0472d6063a217dc21b1cae6f34628d0dc2cf1e74842988a3",
+    "contentHash": "104ed466d44e6a5808ec6647fba5fae9b5a84e7a29632fa5dc94ca907492ae71",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10949,9 +10949,9 @@
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
     "officialUrl": "https://github.com/paololeonardi/WaterfallGrid",
-    "lastChecked": "2026-11-20T18:16:52.579Z",
+    "lastChecked": "2026-11-23T18:23:49.489Z",
     "revisionIdentifier": "c7c08652",
-    "lastVerified": "2026-11-20T18:16:52.579Z"
+    "lastVerified": "2026-11-23T18:23:49.489Z"
   },
   "syntax-tree-hast-util-to-html": {
     "name": "syntax-tree/hast-util-to-html",

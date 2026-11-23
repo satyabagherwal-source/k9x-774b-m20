@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T18:16:06.609Z",
+  "last_updated": "2026-11-23T18:24:09.081Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-7366",
+      "id": "CD-HFG6",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7366-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-HFG6-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -50314,6 +50314,35 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F0B9CB-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-HET1",
+      "directive_title": "[BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedic",
+      "source_repo": "starrocks-starrocks-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HET1-bugfix-fix-stackoverflowerror-in-explain-logical-for-operators-without-a-dedic.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-2BEC3F",
+      "directive_title": "[BugFix] Fix StackOverflowError in EXPLAIN LOGICAL for operators without a dedic",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "starrocks-starrocks",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2BEC3F--bugfix-fix-stackoverflowerror-in-explai.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-8982E2",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8982E2-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-23"
     }
   ]
