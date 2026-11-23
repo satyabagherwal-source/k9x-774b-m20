@@ -5332,3 +5332,7 @@ https://github.com/EL4CTEO/fast-anything
 https://huggingface.co/inclusionAI/LingSante-3.1-flash
 # [MOBILE-CROSS-PLATFORM] daveebbelaar/bama (1202 score) - BAMA: Build Any Mac App. Agent skills to research, clone, design, build, optimiz
 https://github.com/daveebbelaar/bama
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-23T14:20:53.409Z] ---
+# [AI-AGENTS] Fei-Craft/DS-Bot (5101 score) - A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messa
+https://github.com/Fei-Craft/DS-Bot

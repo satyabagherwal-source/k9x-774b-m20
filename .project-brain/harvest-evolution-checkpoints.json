@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:13:01.753Z",
+  "last_updated": "2026-11-23T14:21:16.439Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T09:29:54.071Z",
@@ -1333,7 +1333,7 @@
       "staged_for_review": 1
     },
     "kamgurgul-cpu-info-learnings.md": {
-      "processed_at": "2026-11-20T10:44:21.272Z",
+      "processed_at": "2026-11-23T14:21:15.613Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2488,7 +2488,7 @@
       "staged_for_review": 0
     },
     "hf-openai-clip-vit-base-patch32-learnings.md": {
-      "processed_at": "2026-11-19T00:31:40.169Z",
+      "processed_at": "2026-11-23T14:21:15.189Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3761,9 +3761,14 @@
       "processed_at": "2026-11-23T13:25:05.708Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "fei-craft-ds-bot-learnings.md": {
+      "processed_at": "2026-11-23T14:21:14.232Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3384,
+  "total_dossiers_evaluated": 3387,
   "total_canonical_promoted": 484,
-  "total_staged_for_review": 2545
+  "total_staged_for_review": 2547
 }

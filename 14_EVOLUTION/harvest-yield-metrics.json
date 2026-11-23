@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:12:56.098Z",
-  "total_cycles_completed": 11723,
-  "total_learnings_persisted": 11723,
-  "total_rules_promoted": 10884,
+  "last_updated": "2026-11-23T14:21:09.884Z",
+  "total_cycles_completed": 11726,
+  "total_learnings_persisted": 11726,
+  "total_rules_promoted": 10886,
   "history": [
-    {
-      "timestamp": "2026-11-22T16:48:07.392Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T16:48:11.687Z",
-      "repository": "mrkai77/Loop",
-      "learningId": "learn-github-mrkai77-loop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T16:48:20.951Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T16:57:22.516Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1403,6 +1382,27 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T14:21:00.293Z",
+      "repository": "Fei-Craft/DS-Bot",
+      "learningId": "learn-github-fei-craft-ds-bot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T14:21:02.420Z",
+      "repository": "openai/clip-vit-base-patch32",
+      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T14:21:09.884Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

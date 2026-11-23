@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:13:01.267Z",
+  "last_updated": "2026-11-23T14:21:15.918Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49275,6 +49275,46 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
       "domain_letter": "L"
+    },
+    {
+      "id": "CD-T1QA",
+      "directive_title": "Remove Bot session switching and manual new-session UI and endpoints",
+      "source_repo": "fei-craft-ds-bot-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-T1QA-remove-bot-session-switching-and-manual-new-session-ui-and-endpoints.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-T2Q5",
+      "directive_title": "[SHARED] Update libs",
+      "source_repo": "kamgurgul-cpu-info-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-T2Q5-shared-update-libs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-204350",
+      "directive_title": "Remove Bot session switching and manual new-session UI and endpoints",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fei-craft-ds-bot",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-204350-remove-bot-session-switching-and-manual-.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-BB3053",
+      "directive_title": "[SHARED] Update libs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kamgurgul-cpu-info",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB3053--shared-update-libs.md",
+      "staged_date": "2026-11-23"
     }
   ]
 }

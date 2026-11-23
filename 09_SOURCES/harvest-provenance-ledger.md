@@ -12362,3 +12362,6 @@ Every entry in this ledger must capture:
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `efeb99dc` | Multi-dimensional audit evidence | 2026-11-23T14:12:46.137Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `6c258d07` | Multi-dimensional audit evidence | 2026-11-23T14:12:54.062Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0311b3bf` | Multi-dimensional audit evidence | 2026-11-23T14:12:56.061Z |
+| `learn-github-fei-craft-ds-bot` | `https://github.com/Fei-Craft/DS-Bot` | `d104d9ca` | Multi-dimensional audit evidence | 2026-11-23T14:21:00.287Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-23T14:21:02.414Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `e11ca719` | Multi-dimensional audit evidence | 2026-11-23T14:21:09.878Z |

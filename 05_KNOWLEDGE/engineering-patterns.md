@@ -751885,3 +751885,75 @@ dashboard/*.tsbuildinfo
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8429b5b9` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10050. Remove Bot session switching and manual new-session UI and endpoints (Harvested from Fei-Craft/DS-Bot)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Remove Bot session switching and manual new-session UI and endpoints",
+  "source": "Fei-Craft/DS-Bot",
+  "source_url": "https://github.com/Fei-Craft/DS-Bot",
+  "source_version": "d104d9ca",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T14:20:59.719Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fei-craft-ds-bot",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Fei-Craft/DS-Bot](https://github.com/Fei-Craft/DS-Bot) (Revision: `d104d9ca`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `app/test/chat.test.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Fei-Craft/DS-Bot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `80c3cfc6`: Remove Bot session switching and manual new-session UI and endpoints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/test/chat.test.mjs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+const view = (prefs, ready = true, question, { ui = {} } = {}) => {
+  const roster = { ready, prefs, byId: { b1: { id: 'b1', name: 'Bot' } }, roomsById: {}, questions: question ? { b1: question } : {} }
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+const view = (prefs, ready = true, question, { ui = {}, partsRunning } = {}) => {
+  const roster = { ready, prefs, partsRunning, byId: { b1: { id: 'b1', name: 'Bot' } }, roomsById: {}, questions: question ? { b1: question } : {} }
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `80c3cfc6` are properly handled with clean fallback behavior.

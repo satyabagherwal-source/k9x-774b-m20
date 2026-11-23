@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T14:13:01.434Z",
-  "total_records": 2419,
+  "last_updated": "2026-11-23T14:21:16.104Z",
+  "total_records": 2421,
   "domains": {
     "A": {
       "total": 20,
@@ -1536,7 +1536,7 @@
       ]
     },
     "H": {
-      "total": 577,
+      "total": 579,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2114,7 +2114,9 @@
         "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari",
         "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-learnings-core-invari",
         "domain_intelligence-technical-construction-intelligence-defguard-defguard-learnings-core-invariants",
-        "DOM-H-9811BE70"
+        "DOM-H-9811BE70",
+        "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants"
       ]
     },
     "I": {
@@ -14794,8 +14796,8 @@
       "title": "Research & Knowledge Intelligence: openai/clip-vit-base-patch32 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-clip-vit-base-patch32-research-knowledge-intelligence-openai-clip-vit-.md",
       "repository": "openai/clip-vit-base-patch32",
-      "content_hash": "ce3c69c7d6edcba974c01685028fb5a416127116eddcabb514420478b7e80b8b",
-      "created_at": "2026-11-19T00:31:22.048Z"
+      "content_hash": "b7779359b829d21ae362b96e95f1014938727fcd520fe47e3741fcdf7c6e7474",
+      "created_at": "2026-11-23T14:21:02.646Z"
     },
     "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants",
@@ -14854,8 +14856,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-clip-vit-base-patch32-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-clip-vit-base-patch32-learnings-research-knowledge-intelligence-hf-ope.md",
       "repository": "hf-openai-clip-vit-base-patch32-learnings",
-      "content_hash": "8bb874aa3d19342f9daefb64629bc9362075854462cf41500d2ec6dbbd000dd8",
-      "created_at": "2026-11-19T00:31:40.363Z"
+      "content_hash": "66be20b5de28eb83d71df244d5446b56517dd8eb87fc5d4d11735d1c5eed3ffc",
+      "created_at": "2026-11-23T14:21:15.412Z"
     },
     "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants",
@@ -35894,8 +35896,8 @@
       "title": "Architecture Intelligence: kamgurgul/cpu-info Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kamgurgul-cpu-info-architecture-intelligence-kamgurgul-cpu-info-core-invariants.md",
       "repository": "kamgurgul/cpu-info",
-      "content_hash": "717805360487eb28a929d2e106a903e87a85bc9edc80d640587d43415d4c51b4",
-      "created_at": "2026-11-20T10:34:21.279Z"
+      "content_hash": "9b8c2693af58a1e800b5d288c7a281ea7628e65ae7362cb97500f56a90764bc8",
+      "created_at": "2026-11-23T14:21:10.300Z"
     },
     "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
@@ -35903,8 +35905,8 @@
       "title": "Architecture Intelligence: kamgurgul-cpu-info-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kamgurgul-cpu-info-learnings-architecture-intelligence-kamgurgul-cpu-info-learni.md",
       "repository": "kamgurgul-cpu-info-learnings",
-      "content_hash": "f7666470752d0f85f82337f3d16229c1ceadb461417ec86fc82338a6497ee617",
-      "created_at": "2026-11-20T10:44:21.779Z"
+      "content_hash": "52c29d55cf06d8e3299a388bdaa6d26d1251c9e88ad4bd0577148ae3b9ff13d0",
+      "created_at": "2026-11-23T14:21:16.104Z"
     },
     "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants",
@@ -40617,6 +40619,24 @@
       "repository": "risingwavelabs-risingwave-learnings",
       "content_hash": "772ec9370492c6e6fb641e8935e3ca6352dab8b073ad1fdab8f5cd2a4ebbf009",
       "created_at": "2026-11-23T14:13:01.434Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Fei-Craft/DS-Bot Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fei-craft-ds-bot-technical-construction-intelligence-fei-craft-ds-bot-core-invar.md",
+      "repository": "Fei-Craft/DS-Bot",
+      "content_hash": "7f2ea3d21613fd967f7906d7ba39d6b338a17fe3821f379c33082c80326844af",
+      "created_at": "2026-11-23T14:21:00.732Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fei-craft-ds-bot-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fei-craft-ds-bot-learnings-technical-construction-intelligence-fei-craft-ds-bot-.md",
+      "repository": "fei-craft-ds-bot-learnings",
+      "content_hash": "11070f5fcc2414f636edea96ecb5498e54e13d5849321a8ac33ec7b36c1c4664",
+      "created_at": "2026-11-23T14:21:14.811Z"
     }
   }
 }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-XJF0",
-    "timestamp": "2026-11-21T12:29:25.260Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "0894c96861b3f17d0a175f246d6b1b7ba37b113b489a9936651c3e7b5b32a860",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-8G1Q",
-    "timestamp": "2026-11-21T12:37:54.110Z",
-    "repository": "orcarouter/OrcaCyber-Nano-1.0",
-    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-    "contentHash": "626151f90a27cf39d3d9c21f0cec82423b7bc07a4251ec30e0fe8eddae074c3c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-8IIL",
-    "timestamp": "2026-11-21T12:37:57.309Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "18275a11a81b54d76ee74bc37e36fdc497ae34384a1cf12bef3ecf2cd9446034",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-8MRI",
     "timestamp": "2026-11-21T12:38:02.814Z",
     "repository": "open-policy-agent/opa",
@@ -7492,6 +7447,51 @@
     "contentHash": "df4d278f8470bfe203b1a8369ea429248392568a84f50bd2f18224054cd009b2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-SQNV",
+    "timestamp": "2026-11-23T14:21:00.283Z",
+    "repository": "Fei-Craft/DS-Bot",
+    "learningId": "learn-github-fei-craft-ds-bot",
+    "contentHash": "20e6f6a0edf22924c204657cc1c8a62ffc8e74255c21c42294b3aca8fb0b0c77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-SSAY",
+    "timestamp": "2026-11-23T14:21:02.410Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "70cbe293b350241407c546df9c3f9fea622a6e4ae3ac22588e9041920559e8b8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-SY2A",
+    "timestamp": "2026-11-23T14:21:09.874Z",
+    "repository": "kamgurgul/cpu-info",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "d915c223c67baf7cc0856a41ec1dd10161e911e3e9318011d3feb110e44f6156",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

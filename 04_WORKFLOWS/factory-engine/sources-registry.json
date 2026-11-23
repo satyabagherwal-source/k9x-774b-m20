@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T14:12:59.358Z",
-    "lastVerified": "2026-11-23T14:12:59.358Z",
+    "lastChecked": "2026-11-23T14:21:14.082Z",
+    "lastVerified": "2026-11-23T14:21:14.082Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -265,9 +265,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T13:06:57.007Z",
+    "lastChecked": "2026-11-23T14:21:14.072Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T13:06:57.007Z"
+    "lastVerified": "2026-11-23T14:21:14.072Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1519,9 +1519,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-23T04:23:17.573Z",
+    "lastChecked": "2026-11-23T14:21:09.128Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-23T04:23:17.573Z"
+    "lastVerified": "2026-11-23T14:21:09.128Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4195,9 +4195,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-22T07:13:58.957Z",
+    "lastChecked": "2026-11-23T14:21:11.687Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-22T07:13:58.957Z"
+    "lastVerified": "2026-11-23T14:21:11.687Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -5687,9 +5687,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-22T08:22:39.077Z",
+    "lastChecked": "2026-11-23T14:21:06.605Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-22T08:22:39.077Z"
+    "lastVerified": "2026-11-23T14:21:06.605Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb",
@@ -5721,12 +5721,12 @@
     "officialUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T00:31:21.195Z",
-    "lastVerified": "2026-11-19T00:31:21.195Z",
+    "lastChecked": "2026-11-23T14:21:01.762Z",
+    "lastVerified": "2026-11-23T14:21:01.762Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "bb4f2572ed21e1c4409b49d1a4e9cbd6fc40f79903c5ad7aa1a12bcd03697205",
+    "contentHash": "70cbe293b350241407c546df9c3f9fea622a6e4ae3ac22588e9041920559e8b8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10265,14 +10265,14 @@
     "officialUrl": "https://github.com/kamgurgul/cpu-info",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-20T10:34:19.446Z",
-    "lastVerified": "2026-11-20T10:34:19.446Z",
+    "lastChecked": "2026-11-23T14:21:09.122Z",
+    "lastVerified": "2026-11-23T14:21:09.122Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kamgurgul-cpu-info",
-    "contentHash": "0bc4c5841003aee9074a621ebe0f9c955a45cf105a7f7b94bcc5d2af7bec0570",
+    "contentHash": "d915c223c67baf7cc0856a41ec1dd10161e911e3e9318011d3feb110e44f6156",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14665,6 +14665,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fei-craft-ds-bot": {
+    "name": "Fei-Craft/DS-Bot",
+    "officialUrl": "https://github.com/Fei-Craft/DS-Bot",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-23T14:20:58.297Z",
+    "lastVerified": "2026-11-23T14:20:58.297Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fei-craft-ds-bot",
+    "contentHash": "20e6f6a0edf22924c204657cc1c8a62ffc8e74255c21c42294b3aca8fb0b0c77",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 12,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

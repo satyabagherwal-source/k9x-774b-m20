@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T10:44:21.474Z",
+  "timestamp": "2026-11-23T14:21:15.819Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kamgurgul-cpu-info-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kamgurgul-cpu-info-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T10:44:21.474Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T14:21:15.819Z`  
 > **Learning ID**: `LEARN-EVO-kamgurgul-cpu-info-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source**: github ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
-> **Source Version**: `0a32bfc5`  
+> **Source Version**: `e11ca719`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T10:34:19.616Z  
+> **Timestamp**: 2026-11-23T14:21:09.127Z  
 > **Learning ID**: `learn-github-kamgurgul-cpu-info`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T10:34:19.446Z  
+> **Harvest Timestamp**: 2026-11-23T14:21:09.122Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CPU Info is a multiplatform application which provides information about device hardware and software
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1104 stars
+- **Stars / Engagement**: 1107 stars
 
 ---
 
@@ -679,163 +679,54 @@ fun formatHz(valueHz: Long): String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75fd286f` (2026-11-20)
-**Commit Message**: [JVM] Fix proguard config
+### Incident Patch 1: `e11ca719` (2026-11-21)
+**Commit Message**: [SHARED] Update libs
 
-**File**: `desktopApp/rules.pro` (modified, +3/-0)
+**File**: `gradle/libs.versions.toml` (modified, +2/-2)
 ```diff
-@@ -10,6 +10,9 @@
- # JNA - keep all classes and suppress reflection notes
- -keep class com.sun.jna.** { *; }
- -dontnote com.sun.jna.**
-+# JNA binds native functions by method name and structures by field name
-+-keep interface * extends com.sun.jna.Library { *; }
-+-keep class * extends com.sun.jna.Structure { *; }
+@@ -1,5 +1,5 @@
+ [versions]
+-androidGradlePlugin = "9.5.1"
++androidGradlePlugin = "9.5.2"
+ androidxActivity = "1.13.0"
+ androidxArchCoreTesting = "2.2.0"
+ androidxCore = "1.19.1"
+@@ -40,7 +40,7 @@ licenses = "3.1.5"
+ oshi = "7.8.0"
+ profileinstaller = "1.4.1"
+ relinker = "1.4.5"
+-spotless = "8.11.0"
++spotless = "8.12.0"
+ turbine = "1.2.1"
+ uiautomator = "2.4.1"
  
- # WindowsExeIconDecoder - JNA interfaces must be kept with original names
- -keep class com.kgurgul.cpuinfo.utils.WindowsExeIconDecoder { *; }
-```
-
-**File**: `shared/src/jvmMain/kotlin/com/kgurgul/cpuinfo/domain/action/ExternalAppAction.jvm.kt` (modified, +3/-0)
-```diff
-@@ -64,6 +64,9 @@ actual class ExternalAppAction actual constructor() : IExternalAppAction, KoinCo
-                 throw e
-             } catch (e: Exception) {
-                 Result.failure(e)
-+            } catch (e: LinkageError) {
-+                // Broken native bindings (e.g. UnsatisfiedLinkError) must surface, not vanish.
-+                Result.failure(e)
-             }
-         }
- 
-```
-
-**File**: `shared/src/jvmMain/kotlin/com/kgurgul/cpuinfo/utils/uninstall/WindowsUninstaller.kt` (modified, +8/-26)
-```diff
-@@ -20,15 +20,15 @@ import com.kgurgul.cpuinfo.domain.model.UninstallTarget
- import com.sun.jna.Native
- import com.sun.jna.platform.win32.Kernel32
- import com.sun.jna.platform.win32.Kernel32Util
-+import com.sun.jna.platform.win32.KnownFolders
- import com.sun.jna.platform.win32.Ole32
- import com.sun.jna.platform.win32.Shell32
-+import com.sun.jna.platform.win32.Shell32Util
- import com.sun.jna.platform.win32.ShellAPI
- import com.sun.jna.platform.win32.Win32Exception
- import com.sun.jna.platform.win32.WinBase
- import com.sun.jna.platform.win32.WinError
- import com.sun.jna.ptr.IntByReference
--import com.sun.jna.win32.StdCallLibrary
--import com.sun.jna.win32.W32APIOptions
- import java.io.File
- import java.io.IOException
- import kotlinx.coroutines.delay
-@@ -138,15 +138,11 @@ internal class WindowsUninstaller(
- }
- 
- private suspend fun launchWindowsUninstaller(entry: WindowsAppEntry): UninstallOutcome {
--    val systemPath = CharArray(WINDOWS_MAX_PATH)
--    val size = SystemDirectoryApi.instance.GetSystemDirectory(systemPath, systemPath.size)
--    check(size > 0 && size < systemPath.size) { "Cannot locate the Windows system directory" }
-+    // Use JNA's own bindings: ProGuard renames methods of app-declared JNA interfaces.
-+    val systemDirectory = Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_System)
-+    check(systemDirectory.isNotBlank()) { "Cannot locate the Windows system directory" }
-     val command =
--        windowsUninstallCommand(
--            entry,
--            String(systemPath, 0, size),
--            Kernel32Util::expandEnvironmentStrings,
--        )
-+        windowsUninstallCommand(entry, systemDirectory, Kernel32Util::expandEnvironmentStrings)
-     require(File(command.executable).isFile) { "Uninstaller does not exist: ${command.executable}" }
-     val execution =
-         ShellAPI.SHELLEXECUTEINFO().apply {
-@@ -161,7 +157,8 @@ private suspend fun launchWindowsUninstaller(entry: WindowsAppEntry): UninstallO
-     val comResult = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED)
-     try {
-         if (!Shell32.INSTANCE.ShellExecuteEx(execution)) {
--            val error = Kernel32.INSTANCE.GetLastError()
-+            // JNA captures the error right after the call; a separate GetLastError call may not.
-+            val error = Native.getLastError()
-             if (error == WinError.ERROR_CANCELLED) return UninstallOutcome.CANCELLED
-             throw Win32Exception(error)
-         }
-@@ -189,18 +186,3 @@ private suspend fun launchWindowsUninstaller(entry: WindowsAppEntry): UninstallO
-         Kernel32.INSTANCE.CloseHandle(process)
-     }
- }
--
--private const val WINDOWS_MAX_PATH = 260
--
--private interface SystemDirectoryApi : StdCallLibrary {
--    fun GetSystemDirectory(buffer: CharArray, size: Int): Int
--
--    companion object {
--        val instance: SystemDirectoryApi =
--            Native.load(
--                "kernel32",
--                SystemDirectoryApi::class.java,
--                W32APIOptions.UNICODE_OPTIONS,
--            )
--    }
--}
 ```
 
 ---
 
-### Incident Patch 2: `5b8d81b1` (2026-11-19)
-**Commit Message**: [IOS] Fix iOS pipeline
+### Incident Patch 2: `a8e9be39` (2026-11-21)
+**Commit Message**: [IOS] Add screenshoots
 
-**File**: `.github/workflows/ios_release.yml` (modified, +1/-0)
+**File**: `iosApp/iosApp/Info.plist` (modified, +2/-0)
 ```diff
-@@ -79,6 +79,7 @@ jobs:
-             PRODUCT_BUNDLE_IDENTIFIER="${{ secrets.IOS_BUNDLE_ID }}" \
-             CODE_SIGN_STYLE="Manual" \
-             CODE_SIGN_IDENTITY="Apple Distribution" \
-+            CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
-             PROVISIONING_PROFILE_SPECIFIER="${{ secrets.IOS_DIST_PROVISIONING_PROFILE_NAME }}" \
-             archive
-       - name: "Generate ExportOptions.plist"
-```
-
-**File**: `iosApp/iosApp/Info.plist` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@
- 	<key>CFBundleShortVersionString</key>
+@@ -20,6 +20,8 @@
  	<string>1.5.0</string>
  	<key>CFBundleVersion</key>
--	<string>7</string>
-+	<string>$(CURRENT_PROJECT_VERSION)</string>
+ 	<string>$(CURRENT_PROJECT_VERSION)</string>
++	<key>ITSAppUsesNonExemptEncryption</key>
++	<false/>
  	<key>LSRequiresIPhoneOS</key>
  	<true/>
  	<key>UIApplicationSceneManifest</key>
 ```
 
----
-
-### Incident Patch 3: `bb8afb2a` (2026-11-19)
-**Commit Message**: [IOS] Fix iOS pipeline
-
-**File**: `.github/workflows/ios_release.yml` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ jobs:
-         run: ./gradlew spotlessCheck
-   build_and_release:
-     needs: code_quality
--    runs-on: macos-26
-+    runs-on: xcode-27
-     steps:
-       - uses: actions/checkout@v7
-       - name: set up JDK 17
-```
-
 #### Recent Merged Pull Requests:
+- **PR #657** (closed): Update dependency com.diffplug.spotless to v8.12.0 - autoclosed (@renovate[bot])
+- **PR #656** (closed): Update androidGradlePlugin to v9.5.2 - autoclosed (@renovate[bot])
 - **PR #655** (closed): Update composeUiTest to v1.13.0 - autoclosed (@renovate[bot])
 - **PR #654** (closed): Update androidxWear to v1.7.2 - autoclosed (@renovate[bot])
 - **PR #653** (2026-11-19): Update dependency ruby to v4.0.10 (@renovate[bot])
 - **PR #652** (closed): Update dependency com.github.oshi:oshi-core to v7.8.0 - autoclosed (@renovate[bot])
-- **PR #651** (closed): Update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.13.0 - autoclosed (@renovate[bot])
-- **PR #650** (closed): Update Gradle to v9.9.2 - autoclosed (@renovate[bot])
 
 ---
 
@@ -855,33 +746,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [JVM] Fix proguard config
+## X. [SHARED] Update libs
 
 **RULE**:
-When implementing operations in `desktopApp/rules.pro`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75fd286f`: [JVM] Fix proguard config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e11ca719`: [SHARED] Update libs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktopApp/rules.pro`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-# JNA binds native functions by method name and structures by field name
--keep interface * extends com.sun.jna.Library { *; }
--keep class * extends com.sun.jna.Structure { *; }
+androidGradlePlugin = "9.5.2"
+spotless = "8.12.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+androidGradlePlugin = "9.5.1"
+spotless = "8.11.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75fd286f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e11ca719` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

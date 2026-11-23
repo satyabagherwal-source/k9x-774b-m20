@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "bb4f2572ed21e1c4409b49d1a4e9cbd6fc40f79903c5ad7aa1a12bcd03697205",
-    "lastHarvestedAt": "2026-11-19T00:31:21.861Z",
+    "contentHash": "70cbe293b350241407c546df9c3f9fea622a6e4ae3ac22588e9041920559e8b8",
+    "lastHarvestedAt": "2026-11-23T14:21:02.414Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -8843,10 +8843,10 @@
     "repository": "kamgurgul/cpu-info",
     "platform": "github",
     "sourceUrl": "https://github.com/kamgurgul/cpu-info",
-    "sourceVersion": "0a32bfc5",
+    "sourceVersion": "e11ca719",
     "license": "Apache-2.0",
-    "contentHash": "0bc4c5841003aee9074a621ebe0f9c955a45cf105a7f7b94bcc5d2af7bec0570",
-    "lastHarvestedAt": "2026-11-20T10:34:20.844Z",
+    "contentHash": "d915c223c67baf7cc0856a41ec1dd10161e911e3e9318011d3feb110e44f6156",
+    "lastHarvestedAt": "2026-11-23T14:21:09.878Z",
     "learningId": "learn-github-kamgurgul-cpu-info"
   },
   "ugolbck-seofordev": {
@@ -13258,5 +13258,15 @@
     "contentHash": "483bbd5e882dd4da6670e7f2bb72400994e9f8c81db33e7e1483dea66a0961f2",
     "lastHarvestedAt": "2026-11-23T13:24:22.822Z",
     "learningId": "learn-huggingface-inclusionai-lingsante-3-1-flash"
+  },
+  "fei-craft-ds-bot": {
+    "repository": "Fei-Craft/DS-Bot",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Fei-Craft/DS-Bot",
+    "sourceVersion": "d104d9ca",
+    "license": "Apache-2.0",
+    "contentHash": "20e6f6a0edf22924c204657cc1c8a62ffc8e74255c21c42294b3aca8fb0b0c77",
+    "lastHarvestedAt": "2026-11-23T14:21:00.287Z",
+    "learningId": "learn-github-fei-craft-ds-bot"
   }
 }
