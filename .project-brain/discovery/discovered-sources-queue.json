@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T08:12:34.076Z",
+  "updated_at": "2026-11-23T08:33:16.297Z",
   "stats": {
-    "total_discovered": 7818,
-    "approved_pending_harvest": 7395,
+    "total_discovered": 7822,
+    "approved_pending_harvest": 7399,
     "harvested_count": 0,
     "rejected_count": 423,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7387,
+      "COMMUNITY_AND_EXPERT": 7391,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -169058,6 +169058,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
         "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-52979649036A": {
+      "id": "SRC-52979649036A",
+      "url": "https://github.com/Emkej",
+      "title": "https://github.com/Emkej",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T08:33:16.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-0540BF75D1AC": {
+      "id": "SRC-0540BF75D1AC",
+      "url": "https://github.com/kucherenko/jscpd/issues/1319",
+      "title": "https://github.com/kucherenko/jscpd/issues/1319",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T08:33:16.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-2F8611543431": {
+      "id": "SRC-2F8611543431",
+      "url": "https://github.com/kucherenko/jscpd/pull/1320",
+      "title": "https://github.com/kucherenko/jscpd/pull/1320",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T08:33:16.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-DA369A6DEF93": {
+      "id": "SRC-DA369A6DEF93",
+      "url": "https://github.com/kucherenko/jscpd/issues/1033",
+      "title": "https://github.com/kucherenko/jscpd/issues/1033",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T08:33:16.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
       }
     }
   }

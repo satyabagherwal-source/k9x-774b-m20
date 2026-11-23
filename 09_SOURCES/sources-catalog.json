@@ -1005,8 +1005,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "033a860aa6f7e15ad16e4f8cf91359eed1be8496a6bd9fe93b8360b15f917e55",
-    "lastHarvestedAt": "2026-11-18T23:02:48.456Z",
+    "contentHash": "678114bd2a4bd3b28ee8deb638197f43d574f1824cbf9d7deb65e40ac9b91939",
+    "lastHarvestedAt": "2026-11-23T08:33:12.135Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr"
   },
   "hf-aleph-alpha-kolibri-1": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "a5ac161f",
+    "sourceVersion": "a46ba6ab",
     "license": "MIT",
-    "contentHash": "f229e00b89abaf31466d2e97a3881d38d9d9761add0f79efc29cceec29261682",
-    "lastHarvestedAt": "2026-11-22T00:24:36.500Z",
+    "contentHash": "8ec15bbd341b0974193b2eef0e1c538a2ba80aeb03a214944261977e10aa9950",
+    "lastHarvestedAt": "2026-11-23T08:33:09.361Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-C2LJ",
-    "timestamp": "2026-11-21T09:52:45.607Z",
-    "repository": "mistralai/Timestral-209M",
-    "learningId": "learn-huggingface-mistralai-timestral-209m",
-    "contentHash": "215ab52ac3bd1c62b89de0e81eb9882b0a8e385ea76f1ce65c7d70ef634cb08c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-XNVS",
-    "timestamp": "2026-11-21T10:37:32.584Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-    "contentHash": "eeec5fe5f1ee00f546f996b5a3afed28bfaa25774454f01cf20094a38d7e9727",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-XPJY",
     "timestamp": "2026-11-21T10:37:34.750Z",
     "repository": "Automattic/harper",
@@ -7490,6 +7460,36 @@
     "repository": "deepseek-ai/DeepSeek-V3",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
     "contentHash": "d7ecfd23d115b7bb6b979d4bf16980f0fdbdbbd85c6ecc132bb116d4ff2f2956",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-DEJW",
+    "timestamp": "2026-11-23T08:33:09.356Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "8ec15bbd341b0974193b2eef0e1c538a2ba80aeb03a214944261977e10aa9950",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-DGOY",
+    "timestamp": "2026-11-23T08:33:12.130Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "678114bd2a4bd3b28ee8deb638197f43d574f1824cbf9d7deb65e40ac9b91939",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

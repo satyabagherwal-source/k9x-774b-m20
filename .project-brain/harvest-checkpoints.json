@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T08:11:57.603Z",
+  "last_updated": "2026-11-23T08:33:12.146Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1325,14 +1325,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr",
-      "content_hash": "033a860aa6f7e15ad16e4f8cf91359eed1be8496a6bd9fe93b8360b15f917e55",
-      "verified_at": "2026-11-18T23:02:48.463Z",
+      "content_hash": "678114bd2a4bd3b28ee8deb638197f43d574f1824cbf9d7deb65e40ac9b91939",
+      "verified_at": "2026-11-23T08:33:12.146Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:02:48.463Z"
+      "last_updated": "2026-11-23T08:33:12.146Z"
     },
     "Aleph-Alpha/Kolibri-1": {
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "f229e00b89abaf31466d2e97a3881d38d9d9761add0f79efc29cceec29261682",
-      "verified_at": "2026-11-22T00:24:36.507Z",
+      "content_hash": "8ec15bbd341b0974193b2eef0e1c538a2ba80aeb03a214944261977e10aa9950",
+      "verified_at": "2026-11-23T08:33:09.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T00:24:36.507Z"
+      "last_updated": "2026-11-23T08:33:09.372Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",

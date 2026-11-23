@@ -12338,3 +12338,5 @@ Every entry in this ledger must capture:
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `0c437895` | Multi-dimensional audit evidence | 2026-11-23T08:11:46.085Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-23T08:11:57.593Z |
 | `learn-dom-h-9811be70` | `project://doobidoo-mcp-memory-service` | `e4501cbf` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md` | 2026-11-23T08:12:33.719Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `a46ba6ab` | Multi-dimensional audit evidence | 2026-11-23T08:33:09.361Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-23T08:33:12.135Z |

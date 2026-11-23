@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T08:11:57.599Z",
-  "total_cycles_completed": 11701,
-  "total_learnings_persisted": 11701,
-  "total_rules_promoted": 10873,
+  "last_updated": "2026-11-23T08:33:12.142Z",
+  "total_cycles_completed": 11703,
+  "total_learnings_persisted": 11703,
+  "total_rules_promoted": 10874,
   "history": [
-    {
-      "timestamp": "2026-11-22T14:40:37.005Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T14:40:45.612Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T14:40:47.898Z",
       "repository": "trinodb/trino",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T08:11:57.599Z",
       "repository": "deepseek-ai/DeepSeek-V3",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T08:33:09.368Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T08:33:12.142Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

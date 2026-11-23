@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T08:12:34.974Z",
+  "last_updated": "2026-11-23T08:33:18.535Z",
   "total_verified_learnings": 9078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23930,
+  "total_items": 23933,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "84b4ba717f85b93992f378971945c1b98d91d6054020ea593d7e7445c6bce424",
+      "content_hash": "e1e1f4ebbb63b4bbb317b0d9c1b2031e94c16b693fd0740abe2b12f465883e51",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T07:37:05.448Z"
+      "persisted_at": "2026-11-23T08:33:18.315Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d60ef16c011e8486c8459341e55a06ac51260c8f42bcd0e89736d14a2865f5c9",
+      "content_hash": "b295f3b751cac40403784484ef5d475bf90fe3aa0cc7a35d7f07d354944b0616",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T07:37:05.595Z"
+      "persisted_at": "2026-11-23T08:33:18.535Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114801,10 +114801,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
       "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
       "repository": "kucherenko/jscpd",
-      "source_version": "a5ac161f",
-      "content_hash": "05abc548daa6c6d26cf8d3ac7204e23e3a585f63e6bbd4eed4153a0c3184c247",
+      "source_version": "a46ba6ab",
+      "content_hash": "62a74e0d47083fecc41e160b5f1a719ef8e12ced3b6961f2d9ea9eadeecf4acb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T00:24:36.820Z"
+      "persisted_at": "2026-11-23T08:33:09.867Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd",
@@ -114813,10 +114813,10 @@
       "relative_path": "08_VERIFICATION/kucherenko-jscpd-verification-protocol-empirical-defect-shield-for-kucherenko-js.md",
       "title": "Verification Protocol: Empirical Defect Shield for kucherenko/jscpd",
       "repository": "kucherenko/jscpd",
-      "source_version": "a5ac161f",
-      "content_hash": "58ce1f89fb29c824c467a2a0d05f47944bec0a2dcc04e7f987b25d81189d2729",
+      "source_version": "a46ba6ab",
+      "content_hash": "8459ccd8f817b662bc0329bd049e1a470c27480b54894327c1264495a9bc231e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:24:36.959Z"
+      "persisted_at": "2026-11-23T08:33:10.082Z"
     },
     "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359": {
       "item_id": "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359",
@@ -114862,9 +114862,9 @@
       "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
       "repository": "kucherenko-jscpd-learnings",
       "source_version": "HEAD",
-      "content_hash": "9624ece03cd9987989d5f744ebdeb7d2ee51468c3ee521da4a643352e58729da",
+      "content_hash": "461b1232069bf7e84af932ead7bce53c3c85ed94c155e6ba05493bf62dd9a204",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T00:24:55.307Z"
+      "persisted_at": "2026-11-23T08:33:16.818Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings",
@@ -114874,9 +114874,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kucherenko-jscpd-learnings",
       "repository": "kucherenko-jscpd-learnings",
       "source_version": "HEAD",
-      "content_hash": "94bdf717375ee40d7fd3e8036186928af6f9a19028bac4004774e3641c389dff",
+      "content_hash": "90f9ce56d255743f155596f618c62f29f3ddae62abf2d0739c21d95662d7a918",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:24:55.446Z"
+      "persisted_at": "2026-11-23T08:33:17.041Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
@@ -225683,7 +225683,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "033a860aa6f7e15ad16e4f8cf91359eed1be8496a6bd9fe93b8360b15f917e55",
+      "content_hash": "678114bd2a4bd3b28ee8deb638197f43d574f1824cbf9d7deb65e40ac9b91939",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "promoted_rules": [],
@@ -225692,7 +225692,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:02:48.270Z",
+      "verified_at": "2026-11-23T08:33:11.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225709,9 +225709,9 @@
       "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR Core Invariants",
       "repository": "baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "5cc3de9039bb4e5b8855d1db31aadb00a11c20ba998522de2c195705385c6d96",
+      "content_hash": "dedad626e971aa888371f872574b04df83d64c09e35b4470df58ea57c9063964",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T23:02:48.607Z"
+      "persisted_at": "2026-11-23T08:33:12.416Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants",
@@ -225721,9 +225721,9 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-learnings Core Invariants",
       "repository": "hf-baidu-unlimited-ocr-learnings",
       "source_version": "HEAD",
-      "content_hash": "33abf3706752a2c8dbfeb7a75bd755caa4c10e541b344f4800be6fee8e74ff47",
+      "content_hash": "534bc7943daba21dcf28788ddd610a1bea34ad9428169ef687a844813e3f0c25",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T23:02:51.525Z"
+      "persisted_at": "2026-11-23T08:33:17.506Z"
     },
     "learn-huggingface-aleph-alpha-kolibri-1": {
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
@@ -304907,8 +304907,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "a5ac161f",
-      "content_hash": "f229e00b89abaf31466d2e97a3881d38d9d9761add0f79efc29cceec29261682",
+      "source_version": "a46ba6ab",
+      "content_hash": "8ec15bbd341b0974193b2eef0e1c538a2ba80aeb03a214944261977e10aa9950",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -304921,6 +304921,11 @@
           "number": 9872,
           "title": "raise the Rust toolchain and MSRV to 1.98",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10040,
+          "title": "bump url to 2.5.9 for RUSTSEC-2026-0592",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -304928,7 +304933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T00:24:36.334Z",
+      "verified_at": "2026-11-23T08:33:09.104Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -318912,13 +318917,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DATT-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DLA2-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a70147531ef81b4f9cb753cb7755f7276f567305edf33f09a16d17234b32154a",
+      "content_hash": "d3a7c2bfb82d5244c6354ffaad3dd4867f481f5e75380a008ff14aaa93c44730",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T07:37:05.300Z"
+      "persisted_at": "2026-11-23T08:33:18.080Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -325923,6 +325928,44 @@
       "content_hash": "6ccaae2adc17bb69f486229292151d5b89191e52b65a4e9fa39c726fa1fd4b0a",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T08:12:34.369Z"
+    },
+    "rule-10040": {
+      "learning_id": "rule-10040",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10040,
+      "title": "bump url to 2.5.9 for RUSTSEC-2026-0592",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "a46ba6ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T08:33:09.104Z"
+    },
+    "candidate_directive-bump-url-to-2-5-9-for-rustsec-2026-0592": {
+      "item_id": "candidate_directive-bump-url-to-2-5-9-for-rustsec-2026-0592",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DERW-bump-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "title": "bump url to 2.5.9 for RUSTSEC-2026-0592",
+      "repository": "kucherenko/jscpd",
+      "source_version": "a46ba6ab",
+      "content_hash": "94c4d329443a9b887eec60b7c60fec734263d2b912b2f498b77ca9a75613ae32",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T08:33:09.650Z"
+    },
+    "candidate_directive-deps-bump-url-to-2-5-9-for-rustsec-2026-0592": {
+      "item_id": "candidate_directive-deps-bump-url-to-2-5-9-for-rustsec-2026-0592",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DK52-deps-bump-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "title": "deps): bump url to 2.5.9 for RUSTSEC-2026-0592",
+      "repository": "kucherenko-jscpd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fc353978ae2718a9e79360f7918cfab846142f7e1feeef7301c4b13afebf865d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T08:33:16.605Z"
     }
   },
   "ai-builder-brain": {
