@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T04:58:13.745Z",
+  "timestamp": "2026-11-23T05:51:53.639Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rainbow-me-rainbow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rainbow-me-rainbow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T04:58:13.745Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T05:51:53.639Z`  
 > **Learning ID**: `LEARN-EVO-rainbow-me-rainbow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source**: github ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
-> **Source Version**: `38757729`  
+> **Source Version**: `02bfff09`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T04:58:02.695Z  
+> **Timestamp**: 2026-11-23T05:51:37.248Z  
 > **Learning ID**: `learn-github-rainbow-me-rainbow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T04:58:02.480Z  
+> **Harvest Timestamp**: 2026-11-23T05:51:37.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🌈‒ the Ethereum wallet that lives in your pocket 
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4404 stars
+- **Stars / Engagement**: 4402 stars
 
 ---
 
@@ -645,11 +645,13 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7955** (2026-11-19): **fix(dapp-request): show Simulation Unavailable when the backend simulation fails**
-  *Symptoms*: Fixes APP-4204  ## What changed (plus any additional context for devs)  When the backend can't simulate a dApp request, the signing sheet looked like a normal, unremarkable result. The metadata backend reports a failed simulation as HTTP 200 with a null `simulateTransactions` / `simulateMessage` and a GraphQL error. The app ignored the error, so the sheet showed a collapsed "Simulated Result" card with no balance changes and no security scan, and nothing was logged.   Now a failed backend simulation reaches the sheet as an error, and the sheet shows its existing "Simulation Unavailable" state with the "Proceed with caution" explanation, for both transaction and typed-data requests: - `simulateTransactions` and `simulateMessage` always ask the GraphQL requester to throw when the response has errors and no data. Responses with partial data are returned as before. Gas estimation for swaps, which already opted in, now gets this from the same place instead of passing the option itself; its behavior is unchanged. - The requester throws a `GraphQLResponseError`. The simulation query doesn't retry it, since a backend failure (scanner rejection, unsupported chain) mostly repeats, so the sheet shows the unavailable state right away and the existing "Error while simulating" log fires once per request, with the backend's message as the cause. Network errors still retry 3 times. - The "Simulation Unavailable" card now expands so its explanation is visible (it used to stay collapsed, with 
+- **Issue #7964** (2026-11-21): **Bump iOS and Android to v2.0.51**
+  *Symptoms*: Bump iOS and Android to v2.0.51
+  **Post-Mortem & Fix Analysis**:
+  > Launch in [simulator](http://localhost:29070/install/http?url=https://app-team.p.rainbow.me/version-bump-v2.0.51/485c00482941e2ecbd291dba21e3b4dbac803325.app.zip&platform=ios&destination=simulator) or [device](http://localhost:29070/install/http?url=https://app-team.p.rainbow.me/version-bump-v2.0.51/485c00482941e2ecbd291dba21e3b4dbac803325.ipa&platform=ios&destination=device) for 485c00482941e2ecbd291dba21e3b4dbac803325
 
-- **Issue #7954** (2026-11-19): **fix(gas): skip swap gas simulation on chains where the backend can't simulate**
-  *Symptoms*: Fixes APP-4203  ## What changed (plus any additional context for devs)  Before a swap that needs an approval, the app estimates gas by simulating the approval and the swap together in one `simulateTransactions` request. The claim + swap flow does the same. The backend rejects that request on chains without Blockaid bulk support, such as Unichain, Linea, Scroll, Ink and zkSync. On chains without Blockaid at all, it rejects any simulation. The app waited for the rejection, logged "Simulation result count mismatch" ([RAINBOW-WALLET-3XBC](https://rainbow-me.sentry.io/issues/RAINBOW-WALLET-3XBC), ~78k events), and then used its fallback.  The `networks` query now asks for `enabledServices.simulation { enabled bulk }`, added in rainbow-me/metadata#626. Gas estimation skips the simulation request when the chain can't simulate, or when it would send more than one transaction to a chain without bulk support. It returns no estimate, which is what callers already got when the simulation failed: - **Swaps:** fall back to the approval and swap estimates, as before, minus the wasted request. - **Claim + swap:** has no fallback, so its gas state ends as it does today. That's an existing problem and out of scope here.  If `simulation` is missing for a chain, for example in networks data saved by an older build, the app tries the simulation as before.  Simulation requests that still fail are now logged with the `chainId` and the backend's error message. The GraphQL requester gets an opt-in `t
+- **Issue #7958** (2026-11-20): **chore: stop committing .claude/settings.local.json**
+  *Symptoms*: ## What changed (plus any additional context for devs)  `.claude/settings.local.json` is checked into the repo. It's where Claude Code saves each command someone approves, and Claude Code's docs describe it as a personal file that isn't meant to be committed. While it's tracked, the next approved command that carries a key (a `curl -H "Authorization: Bearer …"`, say) goes straight into a commit. GitGuardian found about 31,000 secrets in these files on public GitHub ([report](https://blog.gitguardian.com/claude-code-settings-local-json-secrets-docker-hub/)).  I looked at the file as it is today and nothing in it looks like a secret, so there's nothing to rotate.  Found with [`npx @gglint/cli secrets`](https://github.com/corridor/gglint). `npx @gglint/cli secrets --fix` added the file to `.gitignore`, and I removed it from git with `git rm --cached .claude/settings.local.json`, as gglint suggests.  One thing to know: when you pull this, git removes the file from your checkout too. If you want to keep the commands you've approved, copy it somewhere first and put it back afterwards; git leaves it alone from then on. And if some of these permissions are meant for everyone, `.claude/settings.json` is Claude Code's shared file for that.  ## Screen recordings / screenshots  N/A: no change to the app.  ## What to test  - `npx @gglint/cli secrets` reported the file before this change, and finds no problems after it. - `git check-ignore .claude/settings.local.json` matches the new `.git
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -666,686 +668,119 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38757729` (2026-11-19)
-**Commit Message**: fix(dapp-request): show Simulation Unavailable when the backend simulation fails (#7955)
+### Incident Patch 1: `02bfff09` (2026-11-21)
+**Commit Message**: Bump iOS and Android to v2.0.51 (#7964)
 
-Fixes APP-4204
+Bump iOS and Android to v2.0.51
 
-## What changed (plus any additional context for devs)
-
-When the backend can't simulate a dApp request, the signing sheet looked
-like a normal, unremarkable result. The metadata backend reports a
-failed simulation as HTTP 200 with a null `simulateTransactions` /
-`simulateMessage` and a GraphQL error. The app ignored the error, so the
-sheet showed a collapsed "Simulated Result" card with no balance changes
-and no security scan, and nothing was logged.
-
-Now a failed backend simulation reaches the sheet as an error, and the
-sheet shows its existing "Simulation Unavailable" state with the
-"Proceed with caution" explanation, for both transaction and typed-data
-requests:
-- `simulateTransactions` and `simulateMessage` always ask the GraphQL
-requester to throw when the response has errors and no data. Responses
-with partial data are returned as before. Gas estimation for swaps,
-which already opted in, now gets this from the same place instead of
-passing the option itself; its behavior is unchanged.
-- The requester throws a `GraphQLResponseError`. The simulation query
-doesn't retry it, 
-
-**File**: `src/features/dapp-request/components/RequestSimulationCard.tsx` (modified, +8/-4)
+**File**: `CHANGELOG.md` (modified, +23/-0)
 ```diff
-@@ -196,9 +196,10 @@ export const RequestSimulationCard = ({
-     if (isLoading || isPersonalSignRequest) {
-       return false;
-     }
--    const shouldExpandOnLoad = isBalanceEnough === false || (!isEmpty(simulation) && !noChanges) || !!simulationError;
-+    const shouldExpandOnLoad =
-+      isBalanceEnough === false || (!isEmpty(simulation) && !noChanges) || !!simulationError || !!txSimulationApiError;
-     return shouldExpandOnLoad;
--  }, [isBalanceEnough, isLoading, isPersonalSignRequest, noChanges, simulation, simulationError]);
-+  }, [isBalanceEnough, isLoading, isPersonalSignRequest, noChanges, simulation, simulationError, txSimulationApiError]);
+@@ -21,6 +21,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/)
  
-   return (
-     <FadedScrollCard
-@@ -211,7 +212,10 @@ export const RequestSimulationCard = ({
-       <Stack space={simulationError || isBalanceEnough === false ? '16px' : '24px'}>
-         <Box alignItems="center" flexDirection="row" justifyContent="space-between" height={{ custom: CARD_ROW_HEIGHT }}>
-           <Inline alignVertical="center" space="12px">
--            {!isLoading && (simulationError || isBalanceEnough === false || simulationScanResult !== TransactionScanResultType.Ok) ? (
-+            {!isLoading &&
-+            (simulationError ||
-+              isBalanceEnough === false ||
-+              (!txSimulationApiError && simulationScanResult !== TransactionScanResultType.Ok)) ? (
-               <EventIcon
-                 eventType={
-                   simulationScanResult && simulationScanResult !== TransactionScanResultType.Ok
-@@ -232,7 +236,7 @@ export const RequestSimulationCard = ({
-                   <Animated.View style={spinnerStyle}>
-                     <Text
-                       align="center"
--                      color={isLoading ? 'label' : isPersonalSignRequest ? 'labelQuaternary' : 'label'}
-+                      color={isLoading ? 'label' : isPersonalSignRequest || txSimulationApiError ? 'labelQuaternary' : 'label'}
-                       size="icon 15px"
-                       weight="bold"
-                     >
+ ### Testing
+ 
++## [2.0.50](https://github.com/rainbow-me/rainbow/releases/tag/v2.0.50)
++
++### Added
++
++- Add matchup title and hide the empty scoreboard in game sheets in Sports (https://github.com/rainbow-me/rainbow/pull/7944)
++- Show the Polymarket value and wallet switcher in the Sports header (https://github.com/rainbow-me/rainbow/pull/7948)
++- Label perp markets and show platform and deployer in About in Perps (https://github.com/rainbow-me/rainbow/pull/7953)
++
++### Changed
++
++- Drop spreads from game cards and show the payout multiple in Sports (https://github.com/rainbow-me/rainbow/pull/7945)
++- Require review for token identity changes and auto-approve version bumps in Cubic (https://github.com/rainbow-me/rainbow/pull/7943)
++- Bump iOS and Android to v2.0.50 (https://github.com/rainbow-me/rainbow/pull/7942)
++
++### Fixed
++
++- Read the RNBW staking exit fee in its own store (https://github.com/rainbow-me/rainbow/pull/7941)
++- Show the matchup title for games outside the sports catalog (https://github.com/rainbow-me/rainbow/pull/7949)
++- Remove the grey band inside light game cards on Android (https://github.com/rainbow-me/rainbow/pull/7950)
++- Open the Predictions sheet directly on the requested tab (https://github.com/rainbow-me/rainbow/pull/7952)
++- Skip swap gas simulation on chains where the backend can't simulate (https://github.com/rainbow-me/rainbow/pull/7954)
++- Show Simulation Unavailable when the backend simulation fails (https://github.com/rainbow-me/rainbow/pull/7955)
++
+ ## [2.0.49](https://github.com/rainbow-me/rainbow/releases/tag/v2.0.49)
+ 
+ ### Added
 ```
 
-**File**: `src/graphql/utils/getFetchRequester.ts` (modified, +6/-1)
+**File**: `android/app/build.gradle` (modified, +2/-2)
 ```diff
-@@ -11,6 +11,11 @@ type Options = Pick<RainbowFetchRequestOpts, 'abortController' | 'timeout' | 'he
-   throwOnErrorsWithoutData?: boolean;
- };
- 
-+/** The server answered with GraphQL `errors` and no data. */
-+export class GraphQLResponseError extends Error {
-+  name = 'GraphQLResponseError';
-+}
-+
- type Config = {
-   __name: string;
-   schema: {
-@@ -100,7 +105,7 @@ export function getFetchRequester(config: Config) {
-     // A response with errors can still carry partial data (a failing nullable subfield nulls only itself),
-     // which callers may use, so only a response where every root field is null counts as failed.
-     if (throwOnErrorsWithoutData && data.errors?.length && Object.values(data.data ?? {}).every(value => value == null)) {
--      throw new Error(data.errors.map(error => error.message).join('; '));
-+      throw new GraphQLResponseError(data.errors.map(error => error.message).join('; '));
-     }
- 
-     return data.data;
+@@ -134,8 +134,8 @@ android {
+         applicationId "me.rainbow"
+         minSdkVersion rootProject.ext.minSdkVersion
+         targetSdkVersion rootProject.ext.targetSdkVersion
+-        versionCode 330
+-        versionName "2.0.50"
++        versionCode 331
++        versionName "2.0.51"
+         missingDimensionStrategy 'react-native-camera', 'general'
+         renderscriptTargetApi 23
+         renderscriptSupportModeEnabled true
 ```
 
-**File**: `src/raps/utils.test.ts` (modified, +1/-1)
+**File**: `ios/Rainbow.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -90,7 +90,7 @@ describe('estimateTransactionsGasLimit', () => {
- 
-     await expect(estimateTransactionsGasLimit({ chainId: ChainId.linea, steps })).resolves.toBe(expected);
- 
--    expect(simulateTransactions).toHaveBeenCalledWith({ chainId: ChainId.linea, transactions }, { throwOnErrorsWithoutData: true });
-+    expect(simulateTransactions).toHaveBeenCalledWith({ chainId: ChainId.linea, transactions });
-   });
- 
-   it('warns with the backend error when the simulation request fails', async () => {
+@@ -1988,7 +1988,7 @@ Upload Debug Symbols to Sentry */ = {
+ 					"$(PROJECT_DIR)",
+ 				);
+ 				LLVM_LTO = YES;
+-				MARKETING_VERSION = 2.0.50;
++				MARKETING_VERSION = 2.0.51;
+ 				OTHER_CFLAGS = "$(inherited)";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+@@ -2055,7 +2055,7 @@ Upload Debug Symbols to Sentry */ = {
+ 					"$(PROJECT_DIR)",
+ 				);
+ 				LLVM_LTO = YES;
+-				MARKETING_VERSION = 2.0.50;
++				MARKETING_VERSION = 2.0.51;
+ 				OTHER_CFLAGS = "$(inherited)";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+@@ -2174,7 +2174,7 @@ Upload Debug Symbols to Sentry */ = {
+ 					"$(PROJECT_DIR)",
+ 				);
+ 				LLVM_LTO = YES;
+-				MARKETING_VERSION = 2.0.50;
++				MARKETING_VERSION = 2.0.51;
+ 				OTHER_CFLAGS = "$(inherited)";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+@@ -2292,7 +2292,7 @@ Upload Debug Symbols to Sentry */ = {
+ 					"$(PROJECT_DIR)",
+ 				);
+ 				LLVM_LTO = YES;
+-				MARKETING_VERSION = 2.0.50;
++				MARKETING_VERSION = 2.0.51;
+ 				OTHER_CFLAGS = "$(inherited)";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
 ```
 
-**File**: `src/raps/utils.ts` (modified, +1/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -257,7 +257,7 @@ export async function estimateTransactionsGasLimit({
- 
-   let results: Awaited<ReturnType<typeof simulateTransactions>>;
-   try {
--    results = await simulateTransactions({ chainId, transactions }, { throwOnErrorsWithoutData: true });
-+    results = await simulateTransactions({ chainId, transactions });
-   } catch (e) {
-     logger.warn('[estimateTransactionsGasLimit]: Simulation request failed', {
-       chainId,
-```
-
-**File**: `src/resources/transactions/transactionSimulation.test.ts` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+import { beforeEach, describe, expect, it, vi } from 'vitest';
-+
-+import { rainbowFetch } from '@/framework/data/http/rainbowFetch';
-+import { GraphQLResponseError } from '@/graphql/utils/getFetchRequester';
-+
-+import { simulateMessage, simulateTransaction } from './transactionSimulation';
-+
-+vi.mock('@/framework/data/http/rainbowFetch', () => ({ rainbowFetch: vi.fn() }));
-+
-+const blockaidError = 'failed to scan transactions: blockaid returned status code 403';
-+const result = { simulation: { in: [], out: [], approvals: [] } };
-+
-+function respondWith(body: { data: unknown; errors?: { message: string }[] }) {
-+  vi.mocked(rainbowFetch).mockResolvedValue({ data: body } as Awaited<ReturnType<typeof rainbowFetch>>);
-+}
-+
-+const callers = [
-+  {
-+    name: 'simulateTransaction',
-+    field: 'simulateTransactions',
-+    wrap: (value: unknown) => (value == null ? value : [value]),
-+    call: () => simulateTransaction({ chainId: 1, transactions: [{ from: '0xa', to: '0xb', data: '0x', value: '0x0' }] }),
-+  },
-+  {
-+    name: 'simulateMessage',
-+    field: 'simulateMessage',
-+    wrap: (value: unknown) => value,
-+    call: () => simulateMessage({ address: '0xa', chainId: 1, message: { method: 'eth_signTypedData_v4', params: ['{}'] }, domain: '' }),
-+  },
-+];
-+
-+describe.each(callers)('$name', ({ field, wrap, call }) => {
-+  beforeEach(() => {
-+    vi.mocked(rainbowFetch).mockReset();
-+  });
-+
-+  it('rejects with the backend error when the simulation failed', async () => {
-+    respondWith({ data: { [field]: null }, errors: [{ message: blockaidError }] });
-+
-+    await expect(call()).rejects.toThrow(blockaidError);
-+    await expect(call()).rejects.toBeInstanceOf(GraphQLResponseError);
-+  });
-+
-+  it('returns the result when the response also carries errors', async () => {
-+    respondWith({ data: { [field]: wrap(result) }, errors: [{ message: 'a nested field failed' }] });
-+
-+    await expect(call()).resolves.toEqual(result);
-+  });
-+});
-```
-
-**File**: `src/resources/transactions/transactionSimulation.ts` (modified, +9/-7)
-```diff
-@@ -14,6 +14,7 @@ import type {
-   TransactionScanResultType,
-   TransactionSimulationResult,
- } from '@/graphql/__generated__/metadataPOST';
-+import { GraphQLResponseError } from '@/graphql/utils/getFetchRequester';
- import { logger, RainbowError } from '@/logger';
- import { createQueryKey, type QueryConfig, type QueryFunctionArgs } from '@/react-query';
- 
-@@ -40,12 +41,11 @@ type SimulationResult = {
- // ///////////////////////////////////////////////
- // Simulations
- 
--export const simulateTransactions = async (
--  args: SimulateTransactionsQueryVariables,
--  options?: Parameters<typeof metadataPOSTClient.simulateTransactions>[1]
--) => {
-+// The backend reports a failed simulation (e.g. its scanner rejecting the request) as GraphQL errors with a
-+// null result, which must not read as an empty simulation, so both calls throw on it.
-+export const simulateTransactions = async (args: SimulateTransactionsQueryVariables) => {
-   if (!args.transactions) return [];
--  const response = await metadataPOSTClient.simulateTransactions(args, options);
-+  const response = await metadataPOSTClient.simulateTransactions(args, { throwOnErrorsWithoutData: true });
-   return response?.simulateTransactions ?? [];
- };
- 
-@@ -55,7 +55,7 @@ export const simulateTransaction = async (args: SimulateTransactionsQueryVariabl
- };
- 
- export const simulateMessage = async (args: SimulateMessageQueryVariables): Promise<Partial<MessageResult>> => {
--  const response = await metadataPOSTClient.simulateMessage(args);
-+  const response = await metadataPOSTClient.simulateMessage(args, { throwOnErrorsWithoutData: true });
-   return response?.simulateMessage ?? {};
- };
- 
-@@ -178,7 +178,9 @@ export const useSimulation = (
- ) => {
-   return useQuery(simulationQueryKey(args), fetchSimulation, {
-     enabled: !!args.address && !!args.chainId,
--    retry: 3,
-+    // A backend failure (scanner rejection, unsupported chain) mostly repeats on retry, and retrying keeps the sheet
-+    // on "Simulating" for seconds, so only network failures are retried.
-+    retry: (failureCount, error) => !(error instanceof GraphQLResponseError) && failureCount < 3,
-     refetchOnWindowFocus: false,
-     staleTime: Infinity,
-     ...config,
-```
-
----
-
-### Incident Patch 2: `cf22f6cd` (2026-11-19)
-**Commit Message**: fix(gas): skip swap gas simulation on chains where the backend can't simulate (#7954)
-
-Fixes APP-4203
-
-## What changed (plus any additional context for devs)
-
-Before a swap that needs an approval, the app estimates gas by
-simulating the approval and the swap together in one
-`simulateTransactions` request. The claim + swap flow does the same. The
-backend rejects that request on chains without Blockaid bulk support,
-such as Unichain, Linea, Scroll, Ink and zkSync. On chains without
-Blockaid at all, it rejects any simulation. The app waited for the
-rejection, logged "Simulation result count mismatch"
-([RAINBOW-WALLET-3XBC](https://rainbow-me.sentry.io/issues/RAINBOW-WALLET-3XBC),
-~78k events), and then used its fallback.
-
-The `networks` query now asks for `enabledServices.simulation { enabled
-bulk }`, added in rainbow-me/metadata#626. Gas estimation skips the
-simulation request when the chain can't simulate, or when it would send
-more than one transaction to a chain without bulk support. It returns no
-estimate, which is what callers already got when the simulation failed:
-- **Swaps:** fall back to the approval and swap estimates, as before,
-minus the wasted request.
-- **Claim + swap:*
-
-**File**: `src/features/network/api/backendNetworksQuery.js` (modified, +4/-0)
-```diff
-@@ -91,6 +91,10 @@ const BACKEND_NETWORKS_QUERY = `
-         sponsorship {
-           enabled
-         }
-+        simulation {
-+          enabled
-+          bulk
-+        }
-         launcher {
-           v1 {
-             enabled
-```
-
-**File**: `src/features/network/stores/backendNetworksStore.ts` (modified, +4/-0)
-```diff
-@@ -60,6 +60,7 @@ export interface BackendNetworksState {
-   getSponsorshipEligibleChainIds: () => ChainId[];
- 
-   getChainGasUnits: (chainId?: ChainId) => BackendNetwork['gasUnits'];
-+  getChainSimulationSupport: (chainId: ChainId) => BackendNetworkServices['simulation'];
-   getChainDefaultRpc: (chainId: ChainId) => string;
-   disableSponsorshipUntilNextFetch: (chainId: ChainId) => void;
-   isSponsorshipEligible: (chainId: ChainId) => boolean;
-@@ -361,6 +362,9 @@ export const useBackendNetworksStore = createQueryStore<BackendNetworksResponse,
-       return (chainId ? chainsGasUnits[chainId] : undefined) || chainsGasUnits[ChainId.mainnet];
-     }),
- 
-+    getChainSimulationSupport: (chainId: ChainId) =>
-+      get().backendNetworks.find(network => toChainId(network.id) === chainId)?.enabledServices.simulation,
-+
-     getChainDefaultRpc: createParameterizedSelector(() => chainId => {
-       const defaultChains = get().getDefaultChains();
-       switch (chainId) {
-```
-
-**File**: `src/features/network/types/backendNetworks.ts` (modified, +5/-0)
-```diff
-@@ -171,6 +171,11 @@ export interface BackendNetworkServices {
-   sponsorship?: {
-     enabled: boolean;
-   };
-+  /** Missing from networks persisted by builds that didn't request it. */
-+  simulation?: {
-+    enabled: boolean;
-+    bulk: boolean;
-+  };
-   launcher: {
-     v1: {
-       enabled: boolean;
-```
-
-**File**: `src/graphql/utils/getFetchRequester.test.ts` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+import { parse } from 'graphql';
-+import { beforeEach, describe, expect, it, vi } from 'vitest';
-+
-+import { rainbowFetch } from '@/framework/data/http/rainbowFetch';
-+
-+import { getFetchRequester } from './getFetchRequester';
-+
-+vi.mock('@/framework/data/http/rainbowFetch', () => ({ rainbowFetch: vi.fn() }));
-+
-+const document = parse('query simulateTransactions { simulateTransactions { gas { estimate } } }');
-+const requester = getFetchRequester({ __name: 'metadataPOST', schema: { url: 'https://example.com/graph' } });
-+const errors = [{ message: 'Bulk transactions are currently not supported for this chain: 1' }, { message: 'second' }];
-+
-+function respondWith(body: { data: unknown; errors?: { message: string }[] }) {
-+  vi.mocked(rainbowFetch).mockResolvedValue({ data: body } as Awaited<ReturnType<typeof rainbowFetch>>);
-+}
-+
-+describe('getFetchRequester', () => {
-+  beforeEach(() => {
-+    vi.mocked(rainbowFetch).mockReset();
-+  });
-+
-+  it('returns data alongside GraphQL errors by default', async () => {
-+    respondWith({ data: { simulateTransactions: null }, errors });
-+
-+    await expect(requester(document)).resolves.toEqual({ simulateTransactions: null });
-+  });
-+
-+  it('throws the GraphQL error messages when throwOnErrorsWithoutData is set and no root field has data', async () => {
-+    respondWith({ data: { simulateTransactions: null }, errors });
-+
-+    await expect(requester(document, undefined, { throwOnErrorsWithoutData: true })).rejects.toThrow(
-+      'Bulk transactions are currently not supported for this chain: 1; second'
-+    );
-+    expect(vi.mocked(rainbowFetch).mock.lastCall?.[1]).not.toHaveProperty('throwOnErrorsWithoutData');
-+  });
-+
-+  it('keeps partial data alongside GraphQL errors when throwOnErrorsWithoutData is set', async () => {
-+    const partial = { simulateTransactions: [{ gas: { estimate: '0x5208' } }, null] };
-+    respondWith({ data: partial, errors });
-+
-+    await expect(requester(document, undefined, { throwOnErrorsWithoutData: true })).resolves.toEqual(partial);
-+  });
-+});
-```
-
-**File**: `src/graphql/utils/getFetchRequester.ts` (modified, +11/-3)
-```diff
-@@ -7,7 +7,9 @@ import { buildGetQueryParams } from '@/graphql/utils/buildGetQueryParams';
- 
- const allowedOperations = ['mutation', 'query'];
- 
--type Options = Pick<RainbowFetchRequestOpts, 'abortController' | 'timeout' | 'headers'>;
-+type Options = Pick<RainbowFetchRequestOpts, 'abortController' | 'timeout' | 'headers'> & {
-+  throwOnErrorsWithoutData?: boolean;
-+};
- 
- type Config = {
-   __name: string;
-@@ -59,7 +61,7 @@ export function getFetchRequester(config: Config) {
-   return async function requester<TResponse = unknown, TVariables = Record<string, unknown>>(
-     node: DocumentNode,
-     variables?: TVariables,
--    options?: Options
-+    { throwOnErrorsWithoutData, ...options }: Options = {}
-   ): Promise<TResponse> {
-     const definitions = node.definitions.filter(
-       definition => definition.kind === 'OperationDefinition' && allowedOperations.includes(definition.operation)
-@@ -93,7 +95,13 @@ export function getFetchRequester(config: Config) {
-         operationName,
-       });
-     }
--    const { data } = await rainbowFetch<{ data: TResponse }>(requestUrl, requestOptions);
-+    const { data } = await rainbowFetch<{ data: TResponse; errors?: { message: string }[] }>(requestUrl, requestOptions);
-+
-+    // A response with errors can still carry partial data (a failing nullable subfield nulls only itself),
-+    // which callers may use, so only a response where every root field is null counts as failed.
-+    if (throwOnErrorsWithoutData && data.errors?.length && Object.values(data.data ?? {}).every(value => value == null)) {
-+      throw new Error(data.errors.map(error => error.message).join('; '));
-+    }
- 
-     return data.data;
-   };
-```
-
-**File**: `src/raps/utils.test.ts` (modified, +84/-3)
-```diff
-@@ -1,12 +1,17 @@
--import { describe, expect, it, vi } from 'vitest';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- 
--import { getFallbackGasLimitForTrade } from './utils';
-+import { ChainId } from '@/features/network/types/backendNetworks';
-+import { logger } from '@/logger';
-+import { simulateTransactions } from '@/resources/transactions/transactionSimulation';
-+
-+import { estimateTransactionsGasLimit, getFallbackGasLimitForTrade } from './utils';
- 
- const mockGetChainGasUnits = vi.fn();
-+const mockGetChainSimulationSupport = vi.fn();
- 
- vi.mock('@/features/network/stores/backendNetworksStore', () => ({
-   useBackendNetworksStore: {
--    getState: () => ({ getChainGasUnits: mockGetChainGasUnits }),
-+    getState: () => ({ getChainGasUnits: mockGetChainGasUnits, getChainSimulationSupport: mockGetChainSimulationSupport }),
-   },
- }));
- 
-@@ -25,3 +30,79 @@ describe('getFallbackGasLimitForTrade', () => {
-     expect(getFallbackGasLimitForTrade(4663)).toBe('525000');
-   });
- });
-+
-+describe('estimateTransactionsGasLimit', () => {
-+  const approve = { to: '0xtoken', data: '0xapprove', from: '0xuser', value: '0x0' };
-+  const swap = { to: '0xrouter', data: '0xswap', from: '0xuser', value: '0x0' };
-+  const approveAndSwap = [
-+    { transaction: approve, label: 'approve' },
-+    { transaction: swap, label: 'swap' },
-+  ];
-+
-+  beforeEach(() => {
-+    mockGetChainSimulationSupport.mockReset();
-+    vi.mocked(simulateTransactions).mockReset();
-+    vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
-+  });
-+
-+  afterEach(() => {
-+    vi.restoreAllMocks();
-+  });
-+
-+  it.each([
-+    { name: 'simulation is unsupported', support: { enabled: false, bulk: false }, steps: [approveAndSwap[1]] },
-+    { name: 'bulk is unsupported for several transactions', support: { enabled: true, bulk: false }, steps: approveAndSwap },
-+  ])('skips the request without warning when $name', async ({ support, steps }) => {
-+    mockGetChainSimulationSupport.mockReturnValue(support);
-+
-+    await expect(estimateTransactionsGasLimit({ chainId: ChainId.linea, steps })).resolves.toBeUndefined();
-+
-+    expect(mockGetChainSimulationSupport).toHaveBeenCalledWith(ChainId.linea);
-+    expect(simulateTransactions).not.toHaveBeenCalled();
-+    expect(logger.warn).not.toHaveBeenCalled();
-+  });
-+
-+  it.each([
-+    {
-+      name: 'support is unknown',
-+      support: undefined,
-+      steps: approveAndSwap,
-+      transactions: [approve, swap],
-+      expected: '300',
-+    },
-+    {
-+      name: 'bulk is supported',
-+      support: { enabled: true, bulk: true },
-+      steps: approveAndSwap,
-+      transactions: [approve, swap],
-+      expected: '300',
-+    },
-+    {
-+      name: 'only one step has a transaction on a chain without bulk',
-+      support: { enabled: true, bulk: false },
-+      steps: [{ transaction: null, label: 'approve' }, approveAndSwap[1]],
-+      transactions: [swap],
-+      expected: '100',
-+    },
-+  ])('simulates and sums the estimates when $name', async ({ support, steps, transactions, expected }) => {
-+    mockGetChainSimulationSupport.mockReturnValue(support);
-+    vi.mocked(simulateTransactions).mockResolvedValue(transactions.map((_, index) => ({ gas: { used: '0', estimate: `${index + 1}00` } })));
-+
-+    await expect(estimateTransactionsGasLimit({ chainId: ChainId.linea, steps })).resolves.toBe(expected);
-+
-+    expect(simulateTransactions).toHaveBeenCalledWith({ chainId: ChainId.linea, transactions }, { throwOnErrorsWithoutData: true });
-+  });
-+
-+  it('warns with the backend error when the simulation request fails', async () => {
-+    mockGetChainSimulationSupport.mockReturnValue(undefined);
-+    vi.mocked(simulateTransactions).mockRejectedValue(new Error('Bulk transactions are currently not supported for this chain: 59144'));
-+
-+    await expect(estimateTransactionsGasLimit({ chainId: ChainId.linea, steps: approveAndSwap })).resolves.toBeUndefined();
-+
-+    expect(logger.warn).toHaveBeenCalledWith('[estimateTransactionsGasLimit]: Simulation request failed', {
-+      chainId: ChainId.linea,
-+      transactionCount: 2,
-+      message: 'Bulk transactions are currently not supported for this chain: 59144',
-+    });
-+  });
-+});
-```
-
-**File**: `src/raps/utils.ts` (modified, +16/-2)
-```diff
-@@ -247,16 +247,30 @@ export async function estimateTransactionsGasLimit({
-     return undefined;
-   }
- 
-+  // Unknown support (networks persisted before the field existed) still tries the simulation.
-+  const simulationSupport = useBackendNetworksStore.getState().getChainSimulationSupport(chainId);
-+  if (simulationSupport && (!simulationSupport.enabled || (activeSteps.length > 1 && !simulationSupport.bulk))) {
-+    return undefined;
-+  }
-+
-   const transactions = activeSteps.map(step => step.transaction);
- 
-+  let results: Awaited<ReturnType<typeof simulateTransactions>>;
-   try {
--    const results = await simulateTransactions({
-+    results = await simulateTransactions({ chainId, transactions }, { throwOnErrorsWithoutData: true });
-+  } catch (e) {
-+    logger.warn('[estimateTransactionsGasLimit]: Simulation request failed', {
-       chainId,
--      transactions,
-+      transactionCount: transactions.length,
-+      message: ensureError(e).message,
-     });
-+    return undefined;
-+  }
- 
-+  try {
-     if (results.length !== activeSteps.length) {
-       logger.warn('[estimateTransactionsGasLimit]: Simulation result count mismatch', {
-+        chainId,
-         expected: activeSteps.length,
-         received: results.length,
-       });
-```
-
-**File**: `src/resources/transactions/transactionSimulation.ts` (modified, +5/-2)
-```diff
-@@ -40,9 +40,12 @@ type SimulationResult = {
- // ///////////////////////////////////////////////
- // Simulations
- 
--export const simulateTransactions = async (args: SimulateTransactionsQueryVariables) => {
-+export const simulateTransactions = async (
-+  args: SimulateTransactionsQueryVariables,
-+  options?: Parameters<typeof metadataPOSTClient.simulateTransactions>[1]
-+) => {
-   if (!args.transactions) return [];
--  const response = await metadataPOSTClient.simulateTransactions(args);
-+  const response = await metadataPOSTClient.simulateTransactions(args, options);
-   return response?.simulateTransactions ?? [];
- };
- 
-```
-
----
-
-### Incident Patch 3: `314b7a05` (2026-11-18)
-**Commit Message**: fix(sports): remove the grey band inside light game cards on Android (#7950)
-
-Fixes APP-4199
-
-## What changed (plus any additional context for devs)
-
-In light mode, Sports game cards had a grey band just inside their edges
-on Android. The small badges inside the card had the same grey fill: the
-period badge on live games ("Set 2", "Game 2 of 3") and the draw-odds
-badge on three-way games ("27% 3.8x · Chance of Draw").
-
-The light card and these badges had no opaque background, only a
-translucent white gradient, but still set an Android `elevation`.
-Android draws the elevation shadow under the whole view outline, so it
-showed through the translucent fill.
-
-The light card and its badges now have an opaque white background, and
-the translucent gradients are removed. Android keeps its elevation
-shadow outside the card, and nothing shows through. On iOS the card
-already rendered white over the Sports background, so it looks the same.
-On the Predictions host (`#F5F5F7` background), the card was faintly
-grey at the top through the gradient and is now flat white on both
-platforms. Dark mode is unchanged.
-
-<!-- ship-visuals:start -->
-## Screen recordings / screenshots
-
-| State | Before | Aft
-
-**File**: `src/features/sports/ui/GameCard.tsx` (modified, +9/-26)
-```diff
-@@ -26,7 +26,6 @@ import {
- } from '@/features/sports/core/generated/external/sports/payload';
- import { getParticipantDisplayName } from '@/features/sports/core/participants';
- import { useSportsStore } from '@/features/sports/data/sportsStore';
--import { SPORTS_BACKGROUND_COLOR_LIGHT } from '@/features/sports/ui/colors';
- import { GameScore } from '@/features/sports/ui/GameScore';
- import { sportsIcons } from '@/features/sports/ui/sportsIcons';
- import { SportsBadge, SportsImage } from '@/features/sports/ui/SportsImage';
-@@ -61,9 +60,6 @@ const STATUS_LABELS: Partial<
-   [GameStatus.GAME_STATUS_POSTPONED]: i18n.l.sports.postponed,
- };
- 
--const LIGHT_CARD_FILL = [white(0.68), white(0.96)] as const;
--const LIGHT_BADGE_FILL = [white(0.54), white(0.81)] as const;
--
- // ============ GameCard ======================================================= //
- 
- /**
-@@ -173,36 +169,32 @@ function GameCardSurface({
-     2 * (styles.row.height + styles.divider.height) +
-     (threeWay ? styles.divider.height + styles.drawRow.height : CARD_BOTTOM_PADDING);
- 
--  const backgroundColor = isDarkMode ? globalColors.grey100 : undefined;
--  const backdropColor = backgroundColor ?? SPORTS_BACKGROUND_COLOR_LIGHT;
-+  const backgroundColor = isDarkMode ? globalColors.grey100 : globalColors.white100;
- 
-   return (
-     <View style={[styles.surface, { width, height, backgroundColor }]} testID={testID}>
-       <SurfaceShadow
--        backdropColor={backdropColor}
-+        backdropColor={backgroundColor}
-         borderRadius={CARD_BORDER_RADIUS}
-         color={globalColors.grey100}
-         opacity={0.06}
-         radius={12}
-         y={isDarkMode ? 4 : 2}
-       />
--      {isDarkMode ? null : (
-+      {isDarkMode ? (
-+        <View pointerEvents="none" style={styles.cardBackground}>
-+          <CardInnerShadow width={width} height={height} />
-+        </View>
-+      ) : (
-         <SurfaceShadow
--          backdropColor={backdropColor}
-+          backdropColor={backgroundColor}
-           borderRadius={CARD_BORDER_RADIUS}
-           color={globalColors.grey100}
-           opacity={0.02}
-           radius={3}
-           y={2}
-         />
-       )}
--      <View pointerEvents="none" style={styles.cardBackground}>
--        {isDarkMode ? (
--          <CardInnerShadow width={width} height={height} />
--        ) : (
--          <LinearGradient colors={LIGHT_CARD_FILL} style={StyleSheet.absoluteFill} />
--        )}
--      </View>
-       {children}
-       <Border borderRadius={CARD_BORDER_RADIUS} borderWidth={2} borderColor={{ custom: white(isDarkMode ? 0.03 : 1) }} enableInLightMode />
-     </View>
-@@ -309,9 +301,6 @@ function GameBadge({ children, isDarkMode }: { children: ReactNode; isDarkMode:
-             radius={3}
-             y={2}
-           />
--          <View pointerEvents="none" style={styles.badgeBackground}>
--            <LinearGradient colors={LIGHT_BADGE_FILL} style={StyleSheet.absoluteFill} />
--          </View>
-         </>
-       )}
- 
-@@ -575,14 +564,8 @@ const styles = StyleSheet.create({
-     borderRadius: 8,
-     borderCurve: 'continuous',
-   },
--  badgeBackground: {
--    ...StyleSheet.absoluteFillObject,
--    borderRadius: 8,
--    borderCurve: 'continuous',
--    overflow: 'hidden',
--  },
-   darkBadge: { backgroundColor: white(0.07) },
--  lightBadge: { elevation: 4 },
-+  lightBadge: { backgroundColor: globalColors.white100, elevation: 4 },
-   dot: { opacity: 0.7 },
-   row: {
-     height: 52,
+@@ -1,6 +1,6 @@
+ {
+   "name": "Rainbow",
+-  "version": "2.0.50-1",
++  "version": "2.0.51-1",
+   "private": true,
+   "browser": {
+     "@tanstack/query-async-storage-persister": "@tanstack/query-async-storage-persister/build/esm/index",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7964** (2026-11-21): Bump iOS and Android to v2.0.51 (@i1skn)
+- **PR #7958** (closed): chore: stop committing .claude/settings.local.json (@Anubhav-2003)
+- **PR #7957** (closed): Bump iOS and Android to v2.0.50 (@jinchung)
 - **PR #7955** (2026-11-19): fix(dapp-request): show Simulation Unavailable when the backend simulation fails (@i1skn)
 - **PR #7954** (2026-11-19): fix(gas): skip swap gas simulation on chains where the backend can't simulate (@i1skn)
 - **PR #7953** (2026-11-19): feat(perps): label perp markets and show platform and deployer in About (@i1skn)
-- **PR #7952** (2026-11-19): fix(predictions): open the Predictions sheet directly on the requested tab (@i1skn)
-- **PR #7950** (2026-11-18): fix(sports): remove the grey band inside light game cards on Android (@i1skn)
-- **PR #7949** (2026-11-17): fix(sports): show the matchup title for games outside the sports catalog (@i1skn)
 
 ---
 
@@ -1365,41 +800,50 @@ platforms. Dark mode is unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dapp-request): show Simulation Unavailable when the backend simulation fails
+## X. Bump iOS and Android to v2.0.51
 
 **RULE**:
-When implementing operations in `src/features/dapp-request/components/RequestSimulationCard.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `38757729`: dapp-request): show Simulation Unavailable when the backend simulation fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02bfff09`: Bump iOS and Android to v2.0.51. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/features/dapp-request/components/RequestSimulationCard.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    const shouldExpandOnLoad =
-      isBalanceEnough === false || (!isEmpty(simulation) && !noChanges) || !!simulationError || !!txSimulationApiError;
-  }, [isBalanceEnough, isLoading, isPersonalSignRequest, noChanges, simulation, simulationError, txSimulationApiError]);
-            {!isLoading &&
-            (simulationError ||
-              isBalanceEnough === false ||
-              (!txSimulationApiError && simulationScanResult !== TransactionScanResultType.Ok)) ? (
-                      color={isLoading ? 'label' : isPersonalSignRequest || txSimulationApiError ? 'labelQuaternary' : 'label'}
+## [2.0.50](https://github.com/rainbow-me/rainbow/releases/tag/v2.0.50)
+
+### Added
+
+- Add matchup title and hide the empty scoreboard in game sheets in Sports (https://github.com/rainbow-me/rainbow/pull/7944)
+- Show the Polymarket value and wallet switcher in the Sports header (https://github.com/rainbow-me/rainbow/pull/7948)
+- Label perp markets and show platform and deployer in About in Perps (https://github.com/rainbow-me/rainbow/pull/7953)
+
+### Changed
+
+- Drop spreads from game cards and show the payout multiple in Sports (https://github.com/rainbow-me/rainbow/pull/7945)
+- Require review for token identity changes and auto-approve version bumps in Cubic (https://github.com/rainbow-me/rainbow/pull/7943)
+- Bump iOS and Android to v2.0.50 (https://github.com/rainbow-me/rainbow/pull/7942)
+
+### Fixed
+
+- Read the RNBW staking exit fee in its own store (https://github.com/rainbow-me/rainbow/pull/7941)
+- Show the matchup title for games outside the sports catalog (https://github.com/rainbow-me/rainbow/pull/7949)
+- Remove the grey band inside light game cards on Android (https://github.com/rainbow-me/rainbow/pull/7950)
+- Open the Predictions sheet directly on the requested tab (https://
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    const shouldExpandOnLoad = isBalanceEnough === false || (!isEmpty(simulation) && !noChanges) || !!simulationError;
-  }, [isBalanceEnough, isLoading, isPersonalSignRequest, noChanges, simulation, simulationError]);
-            {!isLoading && (simulationError || isBalanceEnough === false || simulationScanResult !== TransactionScanResultType.Ok) ? (
-                      color={isLoading ? 'label' : isPersonalSignRequest ? 'labelQuaternary' : 'label'}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `38757729` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02bfff09` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

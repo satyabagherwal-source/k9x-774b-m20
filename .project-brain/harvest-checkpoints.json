@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T05:35:35.030Z",
+  "last_updated": "2026-11-23T05:51:48.067Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1130,14 +1130,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "be7d3716fff255c09ddfea537586c3fdd72d872a7ae98bdcc208608244a762d6",
-      "verified_at": "2026-11-18T20:14:17.578Z",
+      "content_hash": "1947692b796e8d51133a0ce76d7d0f33fe5db0226307696c8052e2e0557f936e",
+      "verified_at": "2026-11-23T05:51:40.227Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T20:14:17.578Z"
+      "last_updated": "2026-11-23T05:51:40.227Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "06e57086532b33ed6b87b25cbdbb5e2eecb8c6a0bd6839353efd32b084bf3170",
-      "verified_at": "2026-11-23T04:00:19.230Z",
+      "content_hash": "d42a823a71a53d1b98e96755d2b6f00d3e30ece6f8c2d8f7e7d0e7c3dda63e8b",
+      "verified_at": "2026-11-23T05:51:48.066Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T04:00:19.230Z"
+      "last_updated": "2026-11-23T05:51:48.066Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -12801,14 +12801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rainbow-me-rainbow",
-      "content_hash": "dcd83c5a8489032f20f9f19b354b8548e1bf339dabc1a3baaf2568c0f4400112",
-      "verified_at": "2026-11-20T04:58:03.630Z",
+      "content_hash": "fa59e9443583735f8b3a7b2adb03ef14889ec7dfd60d43402b0a52ff2136954a",
+      "verified_at": "2026-11-23T05:51:37.905Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T04:58:03.630Z"
+      "last_updated": "2026-11-23T05:51:37.905Z"
     },
     "zoontek/react-native-permissions": {
       "repository": "zoontek/react-native-permissions",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "12e165f285a1c4f2e6dd4a5047e61415af422c666be291b5e3618d75ad5f2890",
-      "verified_at": "2026-11-23T00:56:31.444Z",
+      "content_hash": "a439ce057b6e867e07015e7bc658e8d2ba40d1654df210c5c6a118931f454631",
+      "verified_at": "2026-11-23T05:51:40.335Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T00:56:31.444Z"
+      "last_updated": "2026-11-23T05:51:40.335Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",

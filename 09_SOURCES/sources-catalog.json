@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "be7d3716fff255c09ddfea537586c3fdd72d872a7ae98bdcc208608244a762d6",
-    "lastHarvestedAt": "2026-11-18T20:14:17.570Z",
+    "contentHash": "1947692b796e8d51133a0ce76d7d0f33fe5db0226307696c8052e2e0557f936e",
+    "lastHarvestedAt": "2026-11-23T05:51:40.216Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "5915d306",
+    "sourceVersion": "54f0eb95",
     "license": "NOASSERTION",
-    "contentHash": "06e57086532b33ed6b87b25cbdbb5e2eecb8c6a0bd6839353efd32b084bf3170",
-    "lastHarvestedAt": "2026-11-23T04:00:19.223Z",
+    "contentHash": "d42a823a71a53d1b98e96755d2b6f00d3e30ece6f8c2d8f7e7d0e7c3dda63e8b",
+    "lastHarvestedAt": "2026-11-23T05:51:48.056Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "38757729",
+    "sourceVersion": "02bfff09",
     "license": "GPL-3.0",
-    "contentHash": "dcd83c5a8489032f20f9f19b354b8548e1bf339dabc1a3baaf2568c0f4400112",
-    "lastHarvestedAt": "2026-11-20T04:58:03.622Z",
+    "contentHash": "fa59e9443583735f8b3a7b2adb03ef14889ec7dfd60d43402b0a52ff2136954a",
+    "lastHarvestedAt": "2026-11-23T05:51:37.864Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {
@@ -13123,10 +13123,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/deeporg",
-    "sourceVersion": "85c58cdb",
+    "sourceVersion": "bea1c714",
     "license": "Apache-2.0",
-    "contentHash": "9584104f386e2e76172099a413f8d3dc787cbc527bde57069a09700467968f91",
-    "lastHarvestedAt": "2026-11-22T04:51:23.651Z",
+    "contentHash": "a439ce057b6e867e07015e7bc658e8d2ba40d1654df210c5c6a118931f454631",
+    "lastHarvestedAt": "2026-11-23T05:51:40.319Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "hf-openai-clip-vit-large-patch14": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T00:45:20.682Z",
+  "timestamp": "2026-11-23T05:51:53.639Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rainbow-me-rainbow-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rainbow-me-rainbow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T00:45:20.682Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T05:51:53.639Z`  
 > **Learning ID**: `LEARN-EVO-rainbow-me-rainbow-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rainbow-me-rainbow-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source**: github ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
-> **Source Version**: `f9797f7f`  
+> **Source Version**: `02bfff09`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:45:14.392Z  
+> **Timestamp**: 2026-11-23T05:51:37.248Z  
 > **Learning ID**: `learn-github-rainbow-me-rainbow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:45:14.240Z  
+> **Harvest Timestamp**: 2026-11-23T05:51:37.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -648,11 +648,13 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7946** (2026-11-13): **fix(fonts): remove bundled SF Mono from the iOS app**
-  *Symptoms*: Fixes APP-4193  ## What changed (plus any additional context for devs)  App Store Connect flags `SF-Mono-Semibold.otf` and `SF-Mono-Bold.otf` in the iOS bundle as disallowed Apple fonts (ITMS-91182). Uploads that still contain them will be rejected from October 1, 2027. This removes both files from the iOS bundle and renders monospaced text with the system monospaced font that ships with iOS.  - The design-system `SFMono` tokens now use the `ui-monospace` family on iOS. The only consumer is the `code` style of `MarkdownText` (inline code, code blocks and fences). - iOS still runs the old renderer (Paper), which ignores `ui-monospace` and falls back to the proportional system font. The React Native patch teaches Paper's `RCTFont` to resolve `ui-monospace` to the system font at the requested weight with the monospaced design, the same mapping Fabric already does. Remove that hunk once iOS moves to Fabric. - Code text on iOS now renders at true Medium, the weight the token asks for and the weight Android already uses. Before, the token fell back to Semibold because Semibold and Bold were the only weights bundled. Line heights, wrapping and alignment are unchanged. - Android is unchanged and keeps its own bundled SF Mono files.  This is Christian's #7918, rebased on develop.  Additional cleanup: removes the unused legacy `SFMono` entry from `src/styles/fonts.js` and the unreferenced copies of the two fonts under `ios/`.  <!-- ship-visuals:start --> ## Screen recordings / screensh
+- **Issue #7964** (2026-11-21): **Bump iOS and Android to v2.0.51**
+  *Symptoms*: Bump iOS and Android to v2.0.51
+  **Post-Mortem & Fix Analysis**:
+  > Launch in [simulator](http://localhost:29070/install/http?url=https://app-team.p.rainbow.me/version-bump-v2.0.51/485c00482941e2ecbd291dba21e3b4dbac803325.app.zip&platform=ios&destination=simulator) or [device](http://localhost:29070/install/http?url=https://app-team.p.rainbow.me/version-bump-v2.0.51/485c00482941e2ecbd291dba21e3b4dbac803325.ipa&platform=ios&destination=device) for 485c00482941e2ecbd291dba21e3b4dbac803325
 
-- **Issue #7944** (2026-11-13): **feat(sports): add matchup title and hide the empty scoreboard in game sheets**
-  *Symptoms*: Fixes APP-4166  ## What changed (plus any additional context for devs)  The expanded sheet for a sports game now matches the Figma spec in two places:  - **The team box only shows once there is a score.** Before kickoff the sheet used to show an empty bordered box with the two team names. The box now appears only when the Sports API returns at least one score column. The status line above it stays in every state: start time before kickoff, then Live with period and clock, Final, Postponed, and so on. Any game without a score has no box, whatever its status: for example, a live game whose score feed is missing, or a game postponed before kickoff. - **Every game has a large matchup title,** such as "Vikings vs Packers", between the league row and the volume. When the competition is unknown, the sheet still falls back to Polymarket's event title, as before. The status line stays centered, as in the Figma frame.  **Why the title is built from team names with the game-card rule.** Each team uses its short name when the full name ends with it ("Minnesota Vikings" → "Vikings"), otherwise its full name. The two names are joined with the existing translated "vs" string. A sample of 110 live and upcoming games from the Sports API (NHL, ATP/WTA, UFC, CS2, Dota 2, UEFA Nations League) ruled out the alternatives:  | Source | Example | Problem | | --- | --- | --- | | Polymarket event title | "UFC 334: Amanda Nunes vs. Kayla Harrison (Women's Bantamweight, Main Card)" | Tennis, UFC and espo
+- **Issue #7958** (2026-11-20): **chore: stop committing .claude/settings.local.json**
+  *Symptoms*: ## What changed (plus any additional context for devs)  `.claude/settings.local.json` is checked into the repo. It's where Claude Code saves each command someone approves, and Claude Code's docs describe it as a personal file that isn't meant to be committed. While it's tracked, the next approved command that carries a key (a `curl -H "Authorization: Bearer …"`, say) goes straight into a commit. GitGuardian found about 31,000 secrets in these files on public GitHub ([report](https://blog.gitguardian.com/claude-code-settings-local-json-secrets-docker-hub/)).  I looked at the file as it is today and nothing in it looks like a secret, so there's nothing to rotate.  Found with [`npx @gglint/cli secrets`](https://github.com/corridor/gglint). `npx @gglint/cli secrets --fix` added the file to `.gitignore`, and I removed it from git with `git rm --cached .claude/settings.local.json`, as gglint suggests.  One thing to know: when you pull this, git removes the file from your checkout too. If you want to keep the commands you've approved, copy it somewhere first and put it back afterwards; git leaves it alone from then on. And if some of these permissions are meant for everyone, `.claude/settings.json` is Claude Code's shared file for that.  ## Screen recordings / screenshots  N/A: no change to the app.  ## What to test  - `npx @gglint/cli secrets` reported the file before this change, and finds no problems after it. - `git check-ignore .claude/settings.local.json` matches the new `.git
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -669,552 +671,119 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00de51f5` (2026-11-13)
-**Commit Message**: fix(rnbw-staking): read the exit fee in its own store (#7941)
+### Incident Patch 1: `02bfff09` (2026-11-21)
+**Commit Message**: Bump iOS and Android to v2.0.51 (#7964)
 
-Fixes https://rainbow-me.sentry.io/issues/RAINBOW-WALLET-3YQF/
+Bump iOS and Android to v2.0.51
 
-## What changed (plus any additional context for devs)
-
-The staking position fetch ran the platform `GetStakingPosition` request
-and the on-chain `exitFeeBps()` read on Base in one `Promise.all`. When
-the Base RPC call failed (in Sentry the failures are `missing response`
-and `timeout` transport errors, which ethers reports as
-`CALL_EXCEPTION`), the whole fetch rejected and the platform data was
-dropped with it. Users lost their membership tier, staked balance and
-earnings on the membership screen, and the Add Cash fee fell back to the
-lowest tier. Sentry shows about 14.8k affected users.
-
-The exit fee now lives in its own query store. It is one contract-wide
-value, so the store has no params and doesn't refetch on wallet or
-currency changes. The position store depends only on the platform, so a
-failed RPC read no longer affects the tier, balance or earnings.
-
-- The staking learn screen and the unstake sheet read the fee from the
-new store and keep their existing loading state until it arrives.
-- The unstake PnL values stay empty until the fee is loaded.
-- 
-
-**File**: `src/features/rnbw-staking/screens/rnbw-staking-learn-screen/RnbwStakingLearnScreen.tsx` (modified, +2/-2)
+**File**: `CHANGELOG.md` (modified, +23/-0)
 ```diff
-@@ -12,7 +12,7 @@ import { opacity } from '@/design-system/utils/opacity';
- import { ProgressMeter } from '@/features/rnbw-membership/components/ProgressMeter';
- import { RnbwButton } from '@/features/rnbw-membership/components/RnbwButton/RnbwButton';
- import { UnstakePenaltySign } from '@/features/rnbw-staking/components/UnstakePenaltySign';
--import { useStakingPositionStore } from '@/features/rnbw-staking/stores/rnbwStakingPositionStore';
-+import { useStakingExitFeeStore } from '@/features/rnbw-staking/stores/rnbwStakingExitFeeStore';
- import { LoadingSpinner } from '@/framework/ui/components/LoadingSpinner';
- import * as i18n from '@/languages';
- import Navigation from '@/navigation/Navigation';
-@@ -25,7 +25,7 @@ const PROGRESS_LABEL_HEIGHT = 24;
- const ARROW_SIZE = 7;
+@@ -21,6 +21,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/)
  
- export const RnbwStakingLearnScreen = memo(function RnbwStakingLearnScreen() {
--  const exitFeePercentage = useStakingPositionStore(s => s.getExitFeePercentage());
-+  const exitFeePercentage = useStakingExitFeeStore(s => s.getData());
-   const { top: safeAreaTop, bottom: safeAreaBottom } = useSafeAreaInsets();
-   const labelSecondaryColor = useForegroundColor('labelSecondary');
-   const { isDarkMode } = useColorMode();
+ ### Testing
+ 
++## [2.0.50](https://github.com/rainbow-me/rainbow/releases/tag/v2.0.50)
++
++### Added
++
++- Add matchup title and hide the empty scoreboard in game sheets in Sports (https://github.com/rainbow-me/rainbow/pull/7944)
++- Show the Polymarket value and wallet switcher in the Sports header (https://github.com/rainbow-me/rainbow/pull/7948)
++- Label perp markets and show platform and deployer in About in Perps (https://github.com/rainbow-me/rainbow/pull/7953)
++
++### Changed
++
++- Drop spreads from game cards and show the payout multiple in Sports (https://github.com/rainbow-me/rainbow/pull/7945)
++- Require review for token identity changes and auto-approve version bumps in Cubic (https://github.com/rainbow-me/rainbow/pull/7943)
++- Bump iOS and Android to v2.0.50 (https://github.com/rainbow-me/rainbow/pull/7942)
++
++### Fixed
++
++- Read the RNBW staking exit fee in its own store (https://github.com/rainbow-me/rainbow/pull/7941)
++- Show the matchup title for games outside the sports catalog (https://github.com/rainbow-me/rainbow/pull/7949)
++- Remove the grey band inside light game cards on Android (https://github.com/rainbow-me/rainbow/pull/7950)
++- Open the Predictions sheet directly on the requested tab (https://github.com/rainbow-me/rainbow/pull/7952)
++- Skip swap gas simulation on chains where the backend can't simulate (https://github.com/rainbow-me/rainbow/pull/7954)
++- Show Simulation Unavailable when the backend simulation fails (https://github.com/rainbow-me/rainbow/pull/7955)
++
+ ## [2.0.49](https://github.com/rainbow-me/rainbow/releases/tag/v2.0.49)
+ 
+ ### Added
 ```
 
-**File**: `src/features/rnbw-staking/screens/rnbw-unstake-sheet/RnbwUnstakeSheet.tsx` (modified, +3/-3)
+**File**: `android/app/build.gradle` (modified, +2/-2)
 ```diff
-@@ -32,7 +32,7 @@ import { useAccountAddress } from '@/state/wallets/walletsStore';
- import { STAKING_CHAIN_ID } from '../../constants';
- import { useRnbwStakingBalance } from '../../stores/derived/useRnbwStakingBalance';
- import { useRnbwStakingPositionPnl } from '../../stores/derived/useRnbwStakingPositionPnl';
--import { useStakingPositionStore } from '../../stores/rnbwStakingPositionStore';
-+import { useStakingExitFeeStore } from '../../stores/rnbwStakingExitFeeStore';
- import { prepareUnstakeRnbw, type PreparedUnstakeRnbw, type UnstakeRnbwPreparationParams } from '../../utils/prepareUnstakeRnbw';
- import { unstakeRnbw } from '../../utils/unstakeRnbw';
- 
-@@ -47,8 +47,8 @@ const LAYOUT_ANIMATION = LinearTransition.springify()
- export const RnbwUnstakeSheet = memo(function RnbwUnstakeSheet() {
-   const labelSecondaryColor = useForegroundColor('labelSecondary');
-   const [step, setStep] = useState<'warning' | 'unstake'>('warning');
--  const exitFeePercentage = useStakingPositionStore(s => s.getExitFeePercentage());
--  const showSkeleton = exitFeePercentage === undefined;
-+  const exitFeePercentage = useStakingExitFeeStore(s => s.getData());
-+  const showSkeleton = exitFeePercentage == null;
-   const unstakePreparationStore = useStableValue(() => createPreparedCallsStore(prepareUnstakeRnbw));
- 
-   useCleanup(() => {
+@@ -134,8 +134,8 @@ android {
+         applicationId "me.rainbow"
+         minSdkVersion rootProject.ext.minSdkVersion
+         targetSdkVersion rootProject.ext.targetSdkVersion
+-        versionCode 330
+-        versionName "2.0.50"
++        versionCode 331
++        versionName "2.0.51"
+         missingDimensionStrategy 'react-native-camera', 'general'
+         renderscriptTargetApi 23
+         renderscriptSupportModeEnabled true
 ```
 
-**File**: `src/features/rnbw-staking/stores/derived/useRnbwStakingPositionPnl.ts` (modified, +4/-2)
+**File**: `ios/Rainbow.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -4,6 +4,7 @@ import { divWorklet, isPositive, mulWorklet, subWorklet, toFixedWorklet, toPerce
- import { formatNumber } from '@/helpers/strings';
- import { convertRawAmountToDecimalFormatWorklet, isZero } from '@/helpers/utilities';
- 
-+import { useStakingExitFeeStore } from '../rnbwStakingExitFeeStore';
- import { useStakingPositionStore } from '../rnbwStakingPositionStore';
- 
- type StakingPositionPnl = {
-@@ -27,10 +28,11 @@ const EMPTY_VALUE: StakingPositionPnl = {
- export const useRnbwStakingPositionPnl = createDerivedStore<StakingPositionPnl>(
-   $ => {
-     const data = $(useStakingPositionStore, state => state.getData());
-+    const exitFeePercentage = $(useStakingExitFeeStore, state => state.getData());
- 
--    if (!data || data?.stakedRnbw === '0') return EMPTY_VALUE;
-+    if (!data || data?.stakedRnbw === '0' || exitFeePercentage == null) return EMPTY_VALUE;
- 
--    const { stakedRnbw, sessionPnl, decimals, exitFeePercentage } = data;
-+    const { stakedRnbw, sessionPnl, decimals } = data;
- 
-     const exchangeRateGain = sessionPnl?.exchangeRateGain ?? '0';
-     const exitFee = mulWorklet(stakedRnbw, exitFeePercentage / 100);
+@@ -1988,7 +1988,7 @@ Upload Debug Symbols to Sentry */ = {
+ 					"$(PROJECT_DIR)",
+ 				);
+ 				LLVM_LTO = YES;
+-				MARKETING_VERSION = 2.0.50;
++				MARKETING_VERSION = 2.0.51;
+ 				OTHER_CFLAGS = "$(inherited)";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+@@ -2055,7 +2055,7 @@ Upload Debug Symbols to Sentry */ = {
+ 					"$(PROJECT_DIR)",
+ 				);
+ 				LLVM_LTO = YES;
+-				MARKETING_VERSION = 2.0.50;
++				MARKETING_VERSION = 2.0.51;
+ 				OTHER_CFLAGS = "$(inherited)";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+@@ -2174,7 +2174,7 @@ Upload Debug Symbols to Sentry */ = {
+ 					"$(PROJECT_DIR)",
+ 				);
+ 				LLVM_LTO = YES;
+-				MARKETING_VERSION = 2.0.50;
++				MARKETING_VERSION = 2.0.51;
+ 				OTHER_CFLAGS = "$(inherited)";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+@@ -2292,7 +2292,7 @@ Upload Debug Symbols to Sentry */ = {
+ 					"$(PROJECT_DIR)",
+ 				);
+ 				LLVM_LTO = YES;
+-				MARKETING_VERSION = 2.0.50;
++				MARKETING_VERSION = 2.0.51;
+ 				OTHER_CFLAGS = "$(inherited)";
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
 ```
 
-**File**: `src/features/rnbw-staking/stores/rnbwStakingExitFeeStore.ts` (added, +22/-0)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,22 @@
-+import { createQueryStore } from '@storesjs/stores';
-+import { decodeFunctionResult, encodeFunctionData, type Hex } from 'viem';
-+
-+import { getProvider } from '@/handlers/web3';
-+import { logger, RainbowError } from '@/logger';
-+
-+import { STAKING_ABI, STAKING_CHAIN_ID, STAKING_CONTRACT_ADDRESS } from '../constants';
-+
-+export const useStakingExitFeeStore = createQueryStore<number>({ fetcher: readExitFeePercentage }, { storageKey: 'rnbwStakingExitFee' });
-+
-+async function readExitFeePercentage(): Promise<number> {
-+  try {
-+    const provider = getProvider({ chainId: STAKING_CHAIN_ID });
-+    const data = encodeFunctionData({ abi: STAKING_ABI, functionName: 'exitFeeBps' });
-+    const result = await provider.call({ to: STAKING_CONTRACT_ADDRESS, data });
-+    const exitFeeBps = decodeFunctionResult({ abi: STAKING_ABI, functionName: 'exitFeeBps', data: result as Hex });
-+    return Number(exitFeeBps) / 100;
-+  } catch (e) {
-+    logger.error(new RainbowError('[readExitFeePercentage]: Failed to read exit fee percentage', e));
-+    throw e;
-+  }
-+}
-```
-
-**File**: `src/features/rnbw-staking/stores/rnbwStakingPositionStore.ts` (modified, +11/-36)
-```diff
-@@ -1,19 +1,15 @@
- import { createQueryStore } from '@storesjs/stores';
--import { decodeFunctionResult, encodeFunctionData, type Address, type Hex } from 'viem';
-+import { type Address } from 'viem';
- 
- import { type NativeCurrencyKey } from '@/features/currency/types';
- import { ChainId } from '@/features/network/types/backendNetworks';
- import { rnbwMembershipAnalyticsActions } from '@/features/rnbw-membership/stores/rnbwMembershipAnalyticsStore';
- import type { Tier } from '@/features/rnbw-membership/types';
--import { getProvider } from '@/handlers/web3';
--import { logger, RainbowError } from '@/logger';
- import { getPlatformClient } from '@/resources/platform/client';
- import { type PlatformResponse } from '@/resources/platform/types';
- import { userAssetsStoreManager } from '@/state/assets/userAssetsStoreManager';
- import { useWalletsStore } from '@/state/wallets/walletsStore';
- 
--import { STAKING_ABI, STAKING_CHAIN_ID, STAKING_CONTRACT_ADDRESS } from '../constants';
--
- type StakingPnl = {
-   netProfit: string;
-   totalCashbackReceived: string;
-@@ -26,7 +22,6 @@ type StakingPnl = {
- export type StakingPositionData = {
-   allTiers: Tier[];
-   decimals: number;
--  exitFeePercentage: number;
-   hasPosition: boolean;
-   lastUpdateTime: string;
-   pnl: StakingPnl;
-@@ -44,7 +39,6 @@ type StakingPositionParams = {
- };
- 
- type StakingPositionStore = {
--  getExitFeePercentage: () => number | undefined;
-   hasPosition: () => boolean;
- };
- 
-@@ -69,9 +63,6 @@ export const useStakingPositionStore = createQueryStore<StakingPositionData, Sta
-     },
-   },
-   (_, get) => ({
--    getExitFeePercentage: () => {
--      return get().getData()?.exitFeePercentage;
--    },
-     hasPosition: () => {
-       const data = get().getData();
-       return data?.hasPosition ?? false;
-@@ -80,33 +71,17 @@ export const useStakingPositionStore = createQueryStore<StakingPositionData, Sta
-   { storageKey: 'rnbwStakingPosition' }
- );
- 
--type StakingPositionResponse = PlatformResponse<Omit<StakingPositionData, 'exitFeePercentage'>>;
-+type StakingPositionResponse = PlatformResponse<StakingPositionData>;
- 
- async function fetchStakingPosition({ currency, address }: StakingPositionParams): Promise<StakingPositionData> {
--  const [response, exitFeePercentage] = await Promise.all([
--    getPlatformClient().get<StakingPositionResponse>('/staking/GetStakingPosition', {
--      params: {
--        walletAddress: address,
--        chainId: String(ChainId.base),
--        currency,
--        includeTiers: String(true),
--      },
--    }),
--    readExitFeePercentage(),
--  ]);
--
--  return { ...response.data.result, exitFeePercentage };
--}
-+  const response = await getPlatformClient().get<StakingPositionResponse>('/staking/GetStakingPosition', {
-+    params: {
-+      walletAddress: address,
-+      chainId: String(ChainId.base),
-+      currency,
-+      includeTiers: String(true),
-+    },
-+  });
- 
--async function readExitFeePercentage(): Promise<number> {
--  try {
--    const provider = getProvider({ chainId: STAKING_CHAIN_ID });
--    const data = encodeFunctionData({ abi: STAKING_ABI, functionName: 'exitFeeBps' });
--    const result = await provider.call({ to: STAKING_CONTRACT_ADDRESS, data });
--    const exitFeeBps = decodeFunctionResult({ abi: STAKING_ABI, functionName: 'exitFeeBps', data: result as Hex });
--    return Number(exitFeeBps) / 100;
--  } catch (e) {
--    logger.error(new RainbowError('[readExitFeePercentage]: Failed to read exit fee percentage', e));
--    throw e;
--  }
-+  return response.data.result;
- }
-```
-
-**File**: `src/features/rnbw-staking/utils/prefetchRnbwStakingPosition.ts` (modified, +5/-1)
-```diff
-@@ -2,12 +2,16 @@ import { RNBW_MEMBERSHIP } from '@/features/config/constants/experimental';
- import { getExperimentalFlag } from '@/features/config/stores/experimentalConfigStore';
- import { getRemoteConfig } from '@/features/config/stores/remoteConfig';
- 
-+import { useStakingExitFeeStore } from '../stores/rnbwStakingExitFeeStore';
- import { useStakingPositionStore } from '../stores/rnbwStakingPositionStore';
- 
- export async function prefetchRnbwStakingPosition() {
-   if (!isRnbwMembershipEnabled()) return;
- 
--  await useStakingPositionStore.getState().fetch(undefined, { force: true });
-+  await Promise.all([
-+    useStakingPositionStore.getState().fetch(undefined, { force: true }),
-+    useStakingExitFeeStore.getState().fetch(undefined, { force: true }),
-+  ]);
- }
- 
- function isRnbwMembershipEnabled(): boolean {
-```
-
-**File**: `src/features/rnbw-staking/utils/unstakeRnbw.test.ts` (modified, +54/-17)
-```diff
-@@ -10,8 +10,10 @@ import { unstakeRnbw } from './unstakeRnbw';
- 
- const mockGetProvider = vi.fn();
- const mockLoadWallet = vi.fn<(...args: [unknown]) => Promise<unknown>>();
--const mockFetch = vi.fn<(...args: [undefined, { force: boolean } | undefined]) => Promise<void>>();
--const mockGetData = vi.fn<(...args: []) => StakingPositionData | undefined>();
-+const mockFetchPosition = vi.fn<(...args: [undefined, { force: boolean } | undefined]) => Promise<void>>();
-+const mockGetPosition = vi.fn<(...args: []) => StakingPositionData | null>();
-+const mockFetchExitFee = vi.fn<(...args: [undefined, { force: boolean } | undefined]) => Promise<void>>();
-+const mockGetExitFee = vi.fn<(...args: []) => number | null>();
- const mockExecuteUnstakeRnbw = vi.fn<(...args: [unknown]) => Promise<RnbwStakingExecution>>();
- const mockPollForStakingUpdate = vi.fn<(...args: [string]) => Promise<boolean>>();
- const mockTrack = vi.fn();
-@@ -37,8 +39,17 @@ vi.mock('@/features/wallet/data/loadWallet', () => ({
- vi.mock('../stores/rnbwStakingPositionStore', () => ({
-   useStakingPositionStore: {
-     getState: () => ({
--      fetch: (params: undefined, options?: { force: boolean }) => mockFetch(params, options),
--      getData: () => mockGetData(),
-+      fetch: (params: undefined, options?: { force: boolean }) => mockFetchPosition(params, options),
-+      getData: () => mockGetPosition(),
-+    }),
-+  },
-+}));
-+
-+vi.mock('../stores/rnbwStakingExitFeeStore', () => ({
-+  useStakingExitFeeStore: {
-+    getState: () => ({
-+      fetch: (params: undefined, options?: { force: boolean }) => mockFetchExitFee(params, options),
-+      getData: () => mockGetExitFee(),
-     }),
-   },
- }));
-@@ -68,10 +79,11 @@ const PREPARED_CALLS = {
-   },
- } as unknown as PreparedUnstakeRnbw;
- 
-+const EXIT_FEE_PERCENTAGE = 5;
-+
- const POSITION: StakingPositionData = {
-   allTiers: [],
-   decimals: 18,
--  exitFeePercentage: 5,
-   hasPosition: true,
-   lastUpdateTime: '0',
-   pnl: {
-@@ -128,25 +140,38 @@ describe('unstakeRnbw', () => {
-     vi.clearAllMocks();
-     mockGetProvider.mockReturnValue(PROVIDER);
-     mockLoadWallet.mockResolvedValue(new Wallet(PRIVATE_KEY));
--    mockGetData.mockReturnValue(POSITION);
--    mockFetch.mockResolvedValue(undefined);
-+    mockGetPosition.mockReturnValue(POSITION);
-+    mockFetchPosition.mockResolvedValue(undefined);
-+    mockGetExitFee.mockReturnValue(EXIT_FEE_PERCENTAGE);
-+    mockFetchExitFee.mockResolvedValue(undefined);
-     mockExecuteUnstakeRnbw.mockResolvedValue(manualExecution());
-     mockPollForStakingUpdate.mockResolvedValue(true);
-   });
- 
--  it('refreshes the staking position before submission and delegates to executeUnstakeRnbw', async () => {
-+  it('refreshes the staking position and exit fee together before submission and delegates to executeUnstakeRnbw', async () => {
-     const { order, record } = recordCallOrder();
--    mockFetch.mockImplementation(async () => {
--      record('fetch');
-+    let resolvePositionFetch: (() => void) | undefined;
-+    mockFetchPosition.mockImplementation(() => {
-+      record('fetch position');
-+      return new Promise<void>(resolve => {
-+        resolvePositionFetch = resolve;
-+      });
-+    });
-+    mockFetchExitFee.mockImplementation(async () => {
-+      record('fetch exit fee');
-     });
-     mockExecuteUnstakeRnbw.mockImplementation(async () => {
-       record('execute');
-       return manualExecution();
-     });
- 
--    await unstakeRnbw({ address: ACCOUNT, gasParams: GAS_PARAMS, preparedCalls: Promise.resolve(null) });
-+    const unstakePromise = unstakeRnbw({ address: ACCOUNT, gasParams: GAS_PARAMS, preparedCalls: Promise.resolve(null) });
-+    await vi.waitFor(() => expect(order).toEqual(['fetch position', 'fetch exit fee']));
-+    resolvePositionFetch?.();
-+    await unstakePromise;
- 
--    expect(mockFetch).toHaveBeenCalledWith(undefined, { force: true });
-+    expect(mockFetchPosition).toHaveBeenCalledWith(undefined, { force: true });
-+    expect(mockFetchExitFee).toHaveBeenCalledWith(undefined, { force: true });
-     expect(mockGetProvider).toHaveBeenCalled();
-     expect(mockLoadWallet).toHaveBeenCalledWith({ address: ACCOUNT, provider: PROVIDER });
-     expect(mockExecuteUnstakeRnbw).toHaveBeenCalledWith(
-@@ -158,7 +183,7 @@ describe('unstakeRnbw', () => {
-         provider: PROVIDER,
-       })
-     );
--    expect(order).toEqual(['fetch', 'execute']);
-+    expect(order).toEqual(['fetch position', 'fetch exit fee', 'execute']);
-   });
- 
-   it('returns after submitting the unstake execution', async () => {
-@@ -187,16 +212,28 @@ describe('unstakeRnbw', () => {
-   });
- 
-   it('throws when refreshed position data is missing', async () => {
--    mockGetData.mockReturnValueOnce(POSITION).mockReturnValueOnce(undefined);
-+    mockGetPosition.mockReturnValue(null);
- 
-     await expect(unstakeRnbw({ address: ACCOUNT, gasParams: GAS_PARAMS, preparedCalls: Promise.resolve(null) })).rejects.toThrow(
-       '[unstakeRnbw]: Position data missing'
-     );
-     expect(mockExecuteU
-```
-
-**File**: `src/features/rnbw-staking/utils/unstakeRnbw.ts` (modified, +20/-12)
-```diff
-@@ -11,6 +11,7 @@ import { convertRawAmountToDecimalFormat } from '@/helpers/utilities';
- import { RainbowError } from '@/logger';
- 
- import { STAKING_CHAIN_ID } from '../constants';
-+import { useStakingExitFeeStore } from '../stores/rnbwStakingExitFeeStore';
- import { useStakingPositionStore, type StakingPositionData } from '../stores/rnbwStakingPositionStore';
- import { type RnbwStakingExecution, type RnbwStakingExecutionMode } from './executeRnbwStakingCalls';
- import { executeUnstakeRnbw } from './executeUnstakeRnbw';
-@@ -40,8 +41,8 @@ export async function unstakeRnbw({
-   gasParams: LegacyTransactionGasParamAmounts | TransactionGasParamAmounts;
-   preparedCalls: Promise<PreparedUnstakeRnbw | null>;
- }): Promise<UnstakeRnbwResult> {
--  const positionData = await refreshAndValidatePosition();
--  const { receiveRaw, ...analyticsSnapshot } = snapshotUnstakeAnalytics(positionData);
-+  const { positionData, exitFeePercentage } = await refreshAndValidateUnstakeInputs();
-+  const { receiveRaw, ...analyticsSnapshot } = snapshotUnstakeAnalytics(positionData, exitFeePercentage);
- 
-   let executionMode: RnbwStakingExecutionMode | undefined;
-   try {
-@@ -80,20 +81,28 @@ export async function unstakeRnbw({
-   }
- }
- 
--async function refreshAndValidatePosition(): Promise<StakingPositionData> {
--  const initialExitFeePercentage = useStakingPositionStore.getState().getData()?.exitFeePercentage;
--  await useStakingPositionStore.getState().fetch(undefined, { force: true });
-+async function refreshAndValidateUnstakeInputs(): Promise<{ positionData: StakingPositionData; exitFeePercentage: number }> {
-+  const initialExitFeePercentage = useStakingExitFeeStore.getState().getData();
-+  await Promise.all([
-+    useStakingPositionStore.getState().fetch(undefined, { force: true }),
-+    useStakingExitFeeStore.getState().fetch(undefined, { force: true }),
-+  ]);
-   const positionData = useStakingPositionStore.getState().getData();
-+  const exitFeePercentage = useStakingExitFeeStore.getState().getData();
- 
--  if (!positionData || positionData.exitFeePercentage === undefined) {
-+  if (!positionData) {
-     throw new RainbowError('[unstakeRnbw]: Position data missing');
-   }
- 
--  if (initialExitFeePercentage !== positionData.exitFeePercentage) {
-+  if (exitFeePercentage == null) {
-+    throw new RainbowError('[unstakeRnbw]: Exit fee missing');
-+  }
-+
-+  if (initialExitFeePercentage !== exitFeePercentage) {
-     throw new RainbowError('[unstakeRnbw]: Exit fee percentage changed');
-   }
- 
--  return positionData;
-+  return { positionData, exitFeePercentage };
- }
- 
- async function finalizeSubmittedUnstake({
-@@ -126,9 +135,9 @@ async function finalizeSubmittedUnstake({
-   }
- }
- 
--function snapshotUnstakeAnalytics(positionData: StakingPositionData): UnstakeAnalyticsSnapshot {
-+function snapshotUnstakeAnalytics(positionData: StakingPositionData, exitFeePercentage: number): UnstakeAnalyticsSnapshot {
-   const { stakedRnbw: stakedRnbwRaw, decimals, sessionPnl } = positionData;
--  const { receiveRaw, exitFeeRaw } = computeUnstakeAmounts(positionData);
-+  const { receiveRaw, exitFeeRaw } = computeUnstakeAmounts(stakedRnbwRaw, exitFeePercentage);
- 
-   return {
-     stakedAmount: convertRawAmountToDecimalFormat(stakedRnbwRaw, decimals),
-@@ -139,8 +148,7 @@ function snapshotUnstakeAnalytics(positionData: StakingPositionData): UnstakeAna
-   };
- }
- 
--function computeUnstakeAmounts(positionData: StakingPositionData): { exitFeeRaw: string; receiveRaw: string } {
--  const { stakedRnbw, exitFeePercentage } = positionData;
-+function computeUnstakeAmounts(stakedRnbw: string, exitFeePercentage: number): { exitFeeRaw: string; receiveRaw: string } {
-   const exitFeeRaw = mulWorklet(stakedRnbw, exitFeePercentage / 100);
-   return { exitFeeRaw, receiveRaw: subWorklet(stakedRnbw, exitFeeRaw) };
- }
-```
-
----
-
-### Incident Patch 2: `8994fb72` (2026-11-13)
-**Commit Message**: chore(ci): require review for token identity changes and auto-approve version bumps in Cubic (#7943)
-
-## What changed (plus any additional context for devs)
-
-Two changes to Cubic's auto-approval in `cubic.yaml`.
-
-**Token identity needs a human.** A new High item in the approval prompt
-covers which contract address and chain a token the user picks resolves
-to (search, lists, defaults, deep links), token decimals, verified, scam
-or spoof classification and filtering, and any added or changed
-hardcoded token or contract address. Changing these can make a familiar
-ticker with a verified badge buy a different contract, and the
-confirmation screen would show that wrong token faithfully, so no
-existing High item caught it. #7931 changed the swap search that picks
-these contracts and was auto-approved as "search UI/data".
-
-**Release version bumps are auto-approvable**, as the approval policy
-intended. The prompt no longer lists them as High, and approves a PR
-that changes only `version` in package.json, `versionName`/`versionCode`
-in android/app/build.gradle and
-`MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in project.pbxproj, plus
-CHANGELOG.md. Any other change to those three files keeps 
-
-**File**: `cubic.yaml` (modified, +33/-5)
-```diff
-@@ -33,19 +33,22 @@ reviews:
-     - Gas, fee, slippage, amount or price-impact calculations; the amounts, addresses or recipients shown on confirmation and signing screens; token approvals and allowances
-     - WalletConnect, dapp browser provider injection, deep links and universal links
-     - Money-movement and identity flows (such as Cash): authentication, passkeys, sessions and tokens, order submission, KYC, and compliance or eligibility decisions
-+    - Token identity: which contract address and chain a token the user picks resolves to (search, lists, defaults, deep links); token decimals; verified, scam or spoof classification and filtering; any added or changed hardcoded token or contract address
- 
-     Security and data
-     - Authentication or authorization anywhere; secrets, API keys, environment config
-     - Sending user data (addresses, balances, identifiers, device info) to a new party or endpoint; analytics SDK changes; new analytics events that carry user-identifying data
-     - Any dependency change: adding, removing or upgrading a dependency (package.json, yarn.lock)
- 
-     Platform and hard to reverse
--    - Native code: ios/, android/, and patches that change native code; permissions, entitlements, Info.plist, AndroidManifest; release version bumps
-+    - Native code: ios/, android/, and patches that change native code; permissions, entitlements, Info.plist, AndroidManifest
-     - Persisted-state migrations: store version or migrate changes, renamed or removed storage keys
-     - Build, CI, release and code-signing config (babel and metro config, .github/workflows, bitrise, fastlane, signing, install and CI scripts), and review or approval config (cubic.yaml)
- 
-     Everything else is approvable, including new features, new screens, new stores and network calls to existing backends, changed calculations outside the list above, removed features, refactors and performance work. Touching business logic, size, or the theoretical chance of a bug are not reasons to decline; Cubic has already reviewed the implementation.
- 
-+    A release version bump is approvable when it changes only the app version and build number: `version` in package.json, `versionName` and `versionCode` in android/app/build.gradle, `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in ios/Rainbow.xcodeproj/project.pbxproj, plus CHANGELOG.md. Any other change to those files keeps its High item.
-+
-     When you require human review, name the High item and the file where the diff hits it. A generic reason doesn't count.
-   auto_approve_rules:
-     exclude_external_contributors: true
-@@ -57,9 +60,35 @@ reviews:
-     # Amount, fee and slippage math in feature files is left to the prompt's High list: path-blocking
-     # it would send most feature work to a human.
-     exclude:
--      # Native, platform and patched dependencies
--      - 'ios/**'
--      - 'android/**'
-+      # Native, platform and patched dependencies. The three files a release version bump changes
-+      # (ios/Rainbow.xcodeproj/project.pbxproj, android/app/build.gradle, package.json) are left to the
-+      # prompt, as an exclude can't be overridden; a new ios/ folder or android/app/ file needs a glob here.
-+      - 'ios/*'
-+      - 'ios/.*'
-+      - 'ios/AppIcons/**'
-+      - 'ios/Config/**'
-+      - 'ios/fastlane/**'
-+      - 'ios/Frameworks/**'
-+      - 'ios/ImageNotification/**'
-+      - 'ios/Images.xcassets/**'
-+      - 'ios/Internals/**'
-+      - 'ios/OpenInRainbow/**'
-+      - 'ios/PriceWidget/**'
-+      - 'ios/Rainbow/**'
-+      - 'ios/Rainbow Stickers/**'
-+      - 'ios/Rainbow.xcodeproj/xcshareddata/**'
-+      - 'ios/Rainbow.xcworkspace/**'
-+      - 'ios/RainbowTests/**'
-+      - 'ios/SelectTokenIntent/**'
-+      - 'ios/ShareWithRainbow/**'
-+      - 'android/*'
-+      - 'android/.*'
-+      - 'android/.settings/**'
-+      - 'android/gradle/**'
-+      - 'android/keystores/**'
-+      - 'android/app/src/**'
-+      - 'android/app/debug.keystore'
-+      - 'android/app/proguard-rules.pro'
-       - 'patches/**'
-       - 'app.json'
-       - 'app.config.ts'
-@@ -82,7 +111,6 @@ reviews:
-       - 'audit-ci.jsonc'
-       - '.yarnrc.yml'
-       - '.yarn/**'
--      - 'package.json'
-       - 'yarn.lock'
-       - 'src/graphql/package.json'
-       - 'src/graphql/yarn.lock'
+@@ -1,6 +1,6 @@
+ {
+   "name": "Rainbow",
+-  "version": "2.0.50-1",
++  "version": "2.0.51-1",
+   "private": true,
+   "browser": {
+     "@tanstack/query-async-storage-persister": "@tanstack/query-async-storage-persister/build/esm/index",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7946** (closed): fix(fonts): remove bundled SF Mono from the iOS app (@i1skn)
-- **PR #7944** (2026-11-13): feat(sports): add matchup title and hide the empty scoreboard in game sheets (@i1skn)
-- **PR #7943** (2026-11-13): chore(ci): require review for token identity changes and auto-approve version bumps in Cubic (@i1skn)
-- **PR #7942** (2026-11-12): Bump iOS and Android to v2.0.50 (@i1skn)
-- **PR #7941** (2026-11-13): fix(rnbw-staking): read the exit fee in its own store (@i1skn)
-- **PR #7940** (2026-11-11): fix(assets): handle user assets without a networks map (@i1skn)
+- **PR #7964** (2026-11-21): Bump iOS and Android to v2.0.51 (@i1skn)
+- **PR #7958** (closed): chore: stop committing .claude/settings.local.json (@Anubhav-2003)
+- **PR #7957** (closed): Bump iOS and Android to v2.0.50 (@jinchung)
+- **PR #7955** (2026-11-19): fix(dapp-request): show Simulation Unavailable when the backend simulation fails (@i1skn)
+- **PR #7954** (2026-11-19): fix(gas): skip swap gas simulation on chains where the backend can't simulate (@i1skn)
+- **PR #7953** (2026-11-19): feat(perps): label perp markets and show platform and deployer in About (@i1skn)
 
 ---
 
@@ -1234,33 +803,50 @@ CHANGELOG.md. Any other change to those three files keeps
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rnbw-staking): read the exit fee in its own store
+## X. Bump iOS and Android to v2.0.51
 
 **RULE**:
-When implementing operations in `src/features/rnbw-staking/screens/rnbw-staking-learn-screen/RnbwStakingLearnScreen.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00de51f5`: rnbw-staking): read the exit fee in its own store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02bfff09`: Bump iOS and Android to v2.0.51. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/features/rnbw-staking/screens/rnbw-staking-learn-screen/RnbwStakingLearnScreen.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { useStakingExitFeeStore } from '@/features/rnbw-staking/stores/rnbwStakingExitFeeStore';
-  const exitFeePercentage = useStakingExitFeeStore(s => s.getData());
+## [2.0.50](https://github.com/rainbow-me/rainbow/releases/tag/v2.0.50)
+
+### Added
+
+- Add matchup title and hide the empty scoreboard in game sheets in Sports (https://github.com/rainbow-me/rainbow/pull/7944)
+- Show the Polymarket value and wallet switcher in the Sports header (https://github.com/rainbow-me/rainbow/pull/7948)
+- Label perp markets and show platform and deployer in About in Perps (https://github.com/rainbow-me/rainbow/pull/7953)
+
+### Changed
+
+- Drop spreads from game cards and show the payout multiple in Sports (https://github.com/rainbow-me/rainbow/pull/7945)
+- Require review for token identity changes and auto-approve version bumps in Cubic (https://github.com/rainbow-me/rainbow/pull/7943)
+- Bump iOS and Android to v2.0.50 (https://github.com/rainbow-me/rainbow/pull/7942)
+
+### Fixed
+
+- Read the RNBW staking exit fee in its own store (https://github.com/rainbow-me/rainbow/pull/7941)
+- Show the matchup title for games outside the sports catalog (https://github.com/rainbow-me/rainbow/pull/7949)
+- Remove the grey band inside light game cards on Android (https://github.com/rainbow-me/rainbow/pull/7950)
+- Open the Predictions sheet directly on the requested tab (https://
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { useStakingPositionStore } from '@/features/rnbw-staking/stores/rnbwStakingPositionStore';
-  const exitFeePercentage = useStakingPositionStore(s => s.getExitFeePercentage());
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00de51f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02bfff09` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

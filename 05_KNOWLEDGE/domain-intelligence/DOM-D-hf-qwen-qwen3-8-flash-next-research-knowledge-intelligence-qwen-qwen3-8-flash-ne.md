@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
   "source_version": "hf-qwen-qwen3.8-flash-next",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T20:14:17.749Z",
+  "timestamp": "2026-11-23T05:51:40.544Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Qwen/Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next) (Revision: `hf-qwen-qw`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T20:14:17.749Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T05:51:40.544Z`  
 > **Learning ID**: `learn-huggingface-qwen-qwen3-8-flash-next`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Qwen/Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T20:14:14.201Z  
+> **Harvest Timestamp**: 2026-11-23T05:51:31.095Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2968190 downloads | 7289 likes
+- **Stars / Engagement**: 2417260 downloads | 7460 likes
 
 ---
 

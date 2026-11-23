@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T05:35:35.027Z",
-  "total_cycles_completed": 11670,
-  "total_learnings_persisted": 11670,
-  "total_rules_promoted": 10856,
+  "last_updated": "2026-11-23T05:51:48.062Z",
+  "total_cycles_completed": 11674,
+  "total_learnings_persisted": 11674,
+  "total_rules_promoted": 10858,
   "history": [
-    {
-      "timestamp": "2026-11-22T10:03:41.787Z",
-      "repository": "Abiray/MiniMax-H3-Image-GGUF",
-      "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T10:03:53.410Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T10:03:56.580Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T10:17:55.631Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T10:18:02.916Z",
       "repository": "Tencent-TDS/KuiklyUI",
@@ -1403,6 +1375,34 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:51:37.901Z",
+      "repository": "rainbow-me/rainbow",
+      "learningId": "learn-github-rainbow-me-rainbow",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:51:40.223Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:51:40.329Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:51:48.062Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

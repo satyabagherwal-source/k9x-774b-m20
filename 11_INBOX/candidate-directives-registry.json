@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T05:36:08.323Z",
+  "last_updated": "2026-11-23T05:51:55.012Z",
   "directives": [
     {
       "id": "CD-001",
@@ -48245,11 +48245,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-26CW",
+      "id": "CD-LQPB",
       "directive_title": "run the snowflake suite in three shards, TestSubscription on its own [skip-r",
       "source_repo": "dosco/deeporg",
-      "source_commit": "5b9451b6",
-      "staged_file": "11_INBOX/candidate-directives/CD-26CW-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r.md",
+      "source_commit": "bea1c714",
+      "staged_file": "11_INBOX/candidate-directives/CD-LQPB-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
       "date_staged": "2026-11-23",
@@ -48267,11 +48267,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-2A9N",
+      "id": "CD-M1RX",
       "directive_title": "ci: run the snowflake suite in three shards, TestSubscription on its own [skip-r",
-      "source_repo": "dosco-graphjin-learnings",
+      "source_repo": "dosco-deeporg-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-2A9N-ci-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-M1RX-ci-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -48595,6 +48595,46 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E2B182-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-M0TF",
+      "directive_title": "Bump iOS and Android to v2.0.51",
+      "source_repo": "rainbow-me-rainbow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-M0TF-bump-ios-and-android-to-v2-0-51.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LWN3",
+      "directive_title": "move plotly pin to 7907bd2 (release/0.15.0 tip after rebase)",
+      "source_repo": "dathere/qsv",
+      "source_commit": "54f0eb95",
+      "staged_file": "11_INBOX/candidate-directives/CD-LWN3-move-plotly-pin-to-7907bd2-release-0-15-0-tip-after-rebase.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-CE40E4",
+      "directive_title": "Bump iOS and Android to v2.0.51",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rainbow-me-rainbow",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CE40E4-bump-ios-and-android-to-v2-0-51.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-254472",
+      "directive_title": "ci: run the snowflake suite in three shards, TestSubscription on its own [skip-r",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dosco-deeporg",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-254472-ci-run-the-snowflake-suite-in-three-shar.md",
       "staged_date": "2026-11-23"
     }
   ]

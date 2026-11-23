@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T05:36:08.701Z",
+  "last_updated": "2026-11-23T05:51:55.631Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23881,
+  "total_items": 23886,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "5915d306",
-      "content_hash": "c44803cd4671adcd7f3360038758f005990683a0424efe09c5babb9a09cb2d29",
+      "source_version": "54f0eb95",
+      "content_hash": "15c6f0b0a15a1934c8d8b33a356313870a3f7888d31b94e3dda41667ba6002af",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T04:00:19.766Z"
+      "persisted_at": "2026-11-23T05:51:48.784Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -219974,8 +219974,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "5915d306",
-      "content_hash": "06e57086532b33ed6b87b25cbdbb5e2eecb8c6a0bd6839353efd32b084bf3170",
+      "source_version": "54f0eb95",
+      "content_hash": "d42a823a71a53d1b98e96755d2b6f00d3e30ece6f8c2d8f7e7d0e7c3dda63e8b",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220148,6 +220148,11 @@
           "number": 9953,
           "title": "build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10028,
+          "title": "move plotly pin to 7907bd2 (release/0.15.0 tip after rebase)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220155,7 +220160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T04:00:19.026Z",
+      "verified_at": "2026-11-23T05:51:47.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221162,10 +221167,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "5915d306",
-      "content_hash": "ecf0e615b835587d19499ffe5afd00801877662af08c7376d0b3fe5a5f60df37",
+      "source_version": "54f0eb95",
+      "content_hash": "9d7646df745642cf763a7e78c9a5f6e680973a6ce0d471466d359863e13cdb1e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T04:00:19.604Z"
+      "persisted_at": "2026-11-23T05:51:48.570Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -221482,9 +221487,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-flash-next-learnings Core Invariants",
       "repository": "hf-qwen-qwen3.8-flash-next-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fa02801fe833d7b9b88dd165a78d379a2df23d4931bc23a8f364c7a803a24a9",
+      "content_hash": "b0f677990996563069d0a400cfab4a5e077758c3560e37938c230f2a4f0d052d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:14:35.599Z"
+      "persisted_at": "2026-11-23T05:51:52.025Z"
     },
     "candidate_directive-docs-fix-dead-links-and-accept-empty-banner-slots-in-url-validation": {
       "item_id": "candidate_directive-docs-fix-dead-links-and-accept-empty-banner-slots-in-url-validation",
@@ -253849,8 +253854,8 @@
       "slug": "rainbow-me-rainbow",
       "platform": "github",
       "source_url": "https://github.com/rainbow-me/rainbow",
-      "source_version": "38757729",
-      "content_hash": "dcd83c5a8489032f20f9f19b354b8548e1bf339dabc1a3baaf2568c0f4400112",
+      "source_version": "02bfff09",
+      "content_hash": "fa59e9443583735f8b3a7b2adb03ef14889ec7dfd60d43402b0a52ff2136954a",
       "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "promoted_rules": [
@@ -253870,7 +253875,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T04:58:03.444Z",
+      "verified_at": "2026-11-23T05:51:37.574Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253912,10 +253917,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rainbow-me-rainbow-architecture-intelligence-rainbow-me-rainbow-core-invariants.md",
       "title": "Architecture Intelligence: rainbow-me/rainbow Core Invariants",
       "repository": "rainbow-me/rainbow",
-      "source_version": "f9797f7f",
-      "content_hash": "1acbbda45f9c9d15f455d61bd91355cb1e5d6dce87e2188b77e9a7d4db6accdf",
+      "source_version": "02bfff09",
+      "content_hash": "2f2aba82e6a80e877c68e2e4ebed0406e7e540e4ac97650edae4d374245eeaac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:45:15.545Z"
+      "persisted_at": "2026-11-23T05:51:38.412Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rainbow-me-rainbow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rainbow-me-rainbow",
@@ -253924,10 +253929,10 @@
       "relative_path": "08_VERIFICATION/rainbow-me-rainbow-verification-protocol-empirical-defect-shield-for-rainbow-me-.md",
       "title": "Verification Protocol: Empirical Defect Shield for rainbow-me/rainbow",
       "repository": "rainbow-me/rainbow",
-      "source_version": "38757729",
-      "content_hash": "ed37d44fa5fb06d0394ae8604a7f23ef54a97266b0bb4290d04c5d9981059362",
+      "source_version": "02bfff09",
+      "content_hash": "b16ef9b307afa171b095e33537e3c21237185eff34b5e6c356b42d3f48cfd565",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:58:04.092Z"
+      "persisted_at": "2026-11-23T05:51:38.659Z"
     },
     "candidate_directive-rnbw-staking-read-the-exit-fee-in-its-own-store": {
       "item_id": "candidate_directive-rnbw-staking-read-the-exit-fee-in-its-own-store",
@@ -253949,9 +253954,9 @@
       "title": "Architecture Intelligence: rainbow-me-rainbow-learnings Core Invariants",
       "repository": "rainbow-me-rainbow-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e316608557c208a927945aa24efc7cae6af7712de8fb465c9566e0948343168",
+      "content_hash": "8a0ac0882ebf7bfd38aceabae55f6055f199203f9a530af872f9cf7d9fa360a9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:45:20.894Z"
+      "persisted_at": "2026-11-23T05:51:53.979Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rainbow-me-rainbow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rainbow-me-rainbow-learnings",
@@ -253961,9 +253966,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rainbow-me-rainbow-learnings",
       "repository": "rainbow-me-rainbow-learnings",
       "source_version": "HEAD",
-      "content_hash": "21923441a33b3ddb0e12fd552f7b74437d05bcdadac82badadd700a5812fc4f5",
+      "content_hash": "064383784410f67264bf9a6a33be8bf214525663767dfa193356bc4eec9f2f9f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:58:14.153Z"
+      "persisted_at": "2026-11-23T05:51:54.198Z"
     },
     "rule-8678": {
       "learning_id": "rule-8678",
@@ -311183,13 +311188,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-graphjin",
+      "slug": "dosco-deeporg",
       "platform": "github",
-      "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "5b9451b6",
-      "content_hash": "12e165f285a1c4f2e6dd4a5047e61415af422c666be291b5e3618d75ad5f2890",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "bea1c714",
+      "content_hash": "a439ce057b6e867e07015e7bc658e8d2ba40d1654df210c5c6a118931f454631",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -311204,7 +311209,7 @@
         {
           "number": 10013,
           "title": "run the snowflake suite in three shards, TestSubscription on its own [skip-r",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -311212,7 +311217,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T00:56:31.222Z",
+      "verified_at": "2026-11-23T05:51:40.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -311237,13 +311242,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "5b9451b6",
-      "content_hash": "1717feb54f0525917d04a17f18d2324cd90e9c730633327f4bd5fdbac042dc4f",
+      "source_version": "bea1c714",
+      "content_hash": "d9760152fa744e48423754c0bef19b02cb71c71dcc9c2212fe91689eeb6fbd40",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:56:32.004Z"
+      "persisted_at": "2026-11-23T05:51:41.383Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -311317,9 +311322,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-deeporg-learnings",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "3077b518ee28bf8a319a7c8ebb81c4dff8177ba0f26e7d3eca47b4a866ce5e4a",
+      "content_hash": "d13db1f86dbb6d29bc311ec9b397ff6072220d28bde0c1f6cbd90f14040fb0a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:52:01.236Z"
+      "persisted_at": "2026-11-23T05:51:55.631Z"
     },
     "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo": {
       "item_id": "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo",
@@ -319037,13 +319042,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "5b9451b6",
-      "content_hash": "9dd645ec6c5ae9cc5abdaa08bc010c3db91332ea995dd702f29e7d1b8cf26e4c",
+      "source_version": "bea1c714",
+      "content_hash": "b19f1cc0a43797ee7c8671230ee545f3789e0914fe15c5c818a4d5c98bbbe2d6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:56:31.833Z"
+      "persisted_at": "2026-11-23T05:51:40.949Z"
     },
     "rule-9885": {
       "learning_id": "rule-9885",
@@ -319787,9 +319792,9 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "f40dc9afb84ec7857b792bcdb60e00a5fe00a068bb217a42b136a366ff90246a",
+      "content_hash": "85cc03c547e502662cee686ad570dc5bcc2cd8bc496efce4fcbdea6a00a7dc3c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T04:52:01.009Z"
+      "persisted_at": "2026-11-23T05:51:55.228Z"
     },
     "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci": {
       "item_id": "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci",
@@ -324618,26 +324623,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10013,
       "title": "run the snowflake suite in three shards, TestSubscription on its own [skip-r",
-      "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "5b9451b6",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "bea1c714",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T00:56:31.222Z"
+      "verified_at": "2026-11-23T05:51:40.033Z"
     },
     "candidate_directive-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r": {
       "item_id": "candidate_directive-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-26CW-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LQPB-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r.md",
       "title": "run the snowflake suite in three shards, TestSubscription on its own [skip-r",
       "repository": "dosco/deeporg",
-      "source_version": "5b9451b6",
-      "content_hash": "8810ea7b483ab65c6871eba198c474b3106040c1ad1e877a57ef1f9d2a1cf45c",
+      "source_version": "bea1c714",
+      "content_hash": "00829470736edcd3175ad5458234925ea748f2c4094a68255672b109300164f7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:56:31.668Z"
+      "persisted_at": "2026-11-23T05:51:40.664Z"
     },
     "candidate_directive-ci-update-freebsd-vm-version-to-avoid-node-warning": {
       "item_id": "candidate_directive-ci-update-freebsd-vm-version-to-avoid-node-warning",
@@ -324655,13 +324660,13 @@
       "item_id": "candidate_directive-ci-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2A9N-ci-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M1RX-ci-run-the-snowflake-suite-in-three-shards-testsubscription-on-its-own-skip-r.md",
       "title": "ci: run the snowflake suite in three shards, TestSubscription on its own [skip-r",
-      "repository": "dosco-graphjin-learnings",
+      "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "14cffe2d8fc5aa531a3506e8bc7ffe097b652611c417ae6d2463cb4a12b64022",
+      "content_hash": "f6ce0f3d98974f429cdd1b65aa23af6bb1ef2fcd4dfd1d9ce1c6a6aa29b57d7f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:56:36.735Z"
+      "persisted_at": "2026-11-23T05:51:55.012Z"
     },
     "rule-10014": {
       "learning_id": "rule-10014",
@@ -325225,6 +325230,68 @@
       "content_hash": "c4c54715a7e805f49f05cf80db06d7750fc1180379b7892c1f7e741e5a550fd4",
       "domain_letter": "K",
       "persisted_at": "2026-11-23T05:27:31.214Z"
+    },
+    "candidate_directive-bump-ios-and-android-to-v2-0-51": {
+      "item_id": "candidate_directive-bump-ios-and-android-to-v2-0-51",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M0TF-bump-ios-and-android-to-v2-0-51.md",
+      "title": "Bump iOS and Android to v2.0.51",
+      "repository": "rainbow-me-rainbow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "992bc5809d34c8348da1c6cc6108d8f2d8a35c1a58f7be7e3c46e02157c03af9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T05:51:53.764Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-dosco-deeporg": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-dosco-deeporg",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/dosco-deeporg-skill-operational-integration-playbook-for-dosco-deeporg.md",
+      "title": "Skill: Operational & Integration Playbook for dosco/deeporg",
+      "repository": "dosco/deeporg",
+      "source_version": "bea1c714",
+      "content_hash": "fa689fbd9d78b2eda9ab54f79f252be5669644082ae2e77e6bf6cd1c0d552f4c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T05:51:41.184Z"
+    },
+    "rule-10028": {
+      "learning_id": "rule-10028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10028,
+      "title": "move plotly pin to 7907bd2 (release/0.15.0 tip after rebase)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "54f0eb95",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T05:51:47.802Z"
+    },
+    "candidate_directive-move-plotly-pin-to-7907bd2-release-0-15-0-tip-after-rebase": {
+      "item_id": "candidate_directive-move-plotly-pin-to-7907bd2-release-0-15-0-tip-after-rebase",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LWN3-move-plotly-pin-to-7907bd2-release-0-15-0-tip-after-rebase.md",
+      "title": "move plotly pin to 7907bd2 (release/0.15.0 tip after rebase)",
+      "repository": "dathere/qsv",
+      "source_version": "54f0eb95",
+      "content_hash": "3c520a8d5388bf0d5a35cbe4ddd44acb8b9b20558fa24735591ecf6883cb67bb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T05:51:48.358Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-dosco-deeporg-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-dosco-deeporg-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/dosco-deeporg-learnings-skill-operational-integration-playbook-for-dosco-deeporg.md",
+      "title": "Skill: Operational & Integration Playbook for dosco-deeporg-learnings",
+      "repository": "dosco-deeporg-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7d483f23f63d9c2e5131c42704e569df5454e28305437256164ecb7a8e1dba06",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T05:51:55.453Z"
     }
   },
   "ai-builder-brain": {

@@ -12306,3 +12306,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-23T05:35:21.940Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `82707de5` | Multi-dimensional audit evidence | 2026-11-23T05:35:35.021Z |
 | `learn-dom-d-38571eb1` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-23T05:36:07.201Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `02bfff09` | Multi-dimensional audit evidence | 2026-11-23T05:51:37.864Z |
+| `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T05:51:40.216Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `bea1c714` | Multi-dimensional audit evidence | 2026-11-23T05:51:40.319Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `54f0eb95` | Multi-dimensional audit evidence | 2026-11-23T05:51:48.056Z |

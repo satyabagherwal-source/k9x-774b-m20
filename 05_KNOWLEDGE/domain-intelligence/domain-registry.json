@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T05:36:08.508Z",
+  "last_updated": "2026-11-23T05:51:55.228Z",
   "total_records": 2394,
   "domains": {
     "A": {
@@ -12451,8 +12451,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "ecf0e615b835587d19499ffe5afd00801877662af08c7376d0b3fe5a5f60df37",
-      "created_at": "2026-11-23T04:00:19.604Z"
+      "content_hash": "9d7646df745642cf763a7e78c9a5f6e680973a6ce0d471466d359863e13cdb1e",
+      "created_at": "2026-11-23T05:51:48.570Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12529,8 +12529,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-Flash-Next Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-flash-next-research-knowledge-intelligence-qwen-qwen3-8-flash-ne.md",
       "repository": "Qwen/Qwen3.8-Flash-Next",
-      "content_hash": "5be6c66f6badbc64df334e386fc10acaa7736853484682dcf8ef1b070f7c9001",
-      "created_at": "2026-11-18T20:14:17.750Z"
+      "content_hash": "b859f2e1367a6b55304c97c236a898ba9e1c34079cbd51f823ad924b8a49f544",
+      "created_at": "2026-11-23T05:51:40.545Z"
     },
     "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian": {
       "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian",
@@ -12598,8 +12598,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-flash-next-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-flash-next-learnings-research-knowledge-intelligence-hf-qwen-qwe.md",
       "repository": "hf-qwen-qwen3.8-flash-next-learnings",
-      "content_hash": "0fa02801fe833d7b9b88dd165a78d379a2df23d4931bc23a8f364c7a803a24a9",
-      "created_at": "2026-11-18T20:14:35.599Z"
+      "content_hash": "b0f677990996563069d0a400cfab4a5e077758c3560e37938c230f2a4f0d052d",
+      "created_at": "2026-11-23T05:51:52.025Z"
     },
     "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor": {
       "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor",
@@ -23298,8 +23298,8 @@
       "title": "Architecture Intelligence: rainbow-me/rainbow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rainbow-me-rainbow-architecture-intelligence-rainbow-me-rainbow-core-invariants.md",
       "repository": "rainbow-me/rainbow",
-      "content_hash": "1acbbda45f9c9d15f455d61bd91355cb1e5d6dce87e2188b77e9a7d4db6accdf",
-      "created_at": "2026-11-16T00:45:15.545Z"
+      "content_hash": "2f2aba82e6a80e877c68e2e4ebed0406e7e540e4ac97650edae4d374245eeaac",
+      "created_at": "2026-11-23T05:51:38.412Z"
     },
     "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-learnings-core-invariants",
@@ -23307,8 +23307,8 @@
       "title": "Architecture Intelligence: rainbow-me-rainbow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rainbow-me-rainbow-learnings-architecture-intelligence-rainbow-me-rainbow-learni.md",
       "repository": "rainbow-me-rainbow-learnings",
-      "content_hash": "6e316608557c208a927945aa24efc7cae6af7712de8fb465c9566e0948343168",
-      "created_at": "2026-11-16T00:45:20.894Z"
+      "content_hash": "8a0ac0882ebf7bfd38aceabae55f6055f199203f9a530af872f9cf7d9fa360a9",
+      "created_at": "2026-11-23T05:51:53.979Z"
     },
     "domain_intelligence-architecture-intelligence-clastix-kamaji-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clastix-kamaji-core-invariants",
@@ -39096,10 +39096,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "9dd645ec6c5ae9cc5abdaa08bc010c3db91332ea995dd702f29e7d1b8cf26e4c",
-      "created_at": "2026-11-23T00:56:31.833Z"
+      "content_hash": "b19f1cc0a43797ee7c8671230ee545f3789e0914fe15c5c818a4d5c98bbbe2d6",
+      "created_at": "2026-11-23T05:51:40.949Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
@@ -39324,8 +39324,8 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-learnings-research-knowledge-intelligence-dosco-deeporg-learnings-.md",
       "repository": "dosco-deeporg-learnings",
-      "content_hash": "f40dc9afb84ec7857b792bcdb60e00a5fe00a068bb217a42b136a366ff90246a",
-      "created_at": "2026-11-22T04:52:01.009Z"
+      "content_hash": "85cc03c547e502662cee686ad570dc5bcc2cd8bc496efce4fcbdea6a00a7dc3c",
+      "created_at": "2026-11-23T05:51:55.228Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",
