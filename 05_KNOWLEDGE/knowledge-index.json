@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T16:20:44.846Z",
+  "last_updated": "2026-11-23T16:28:53.019Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24035,
+  "total_items": 24039,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "73d92ed5cbfcb44bd17dbea25c3ff5e3700c436b7ff24a887f8a79142769a5f3",
+      "content_hash": "e0977c9c4ddb3549eaf854fd1329d7afdfd890354b19f1a78e8e2fbd7752baad",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T14:55:33.575Z"
+      "persisted_at": "2026-11-23T16:28:53.019Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -258495,8 +258495,8 @@
       "slug": "duongductrong-snapzy",
       "platform": "github",
       "source_url": "https://github.com/duongductrong/Snapzy",
-      "source_version": "494f494b",
-      "content_hash": "8596b8aa14677d0ae13eb5a2c71aa3bb0ca5735de2ea0c40ba0f2714d44bc997",
+      "source_version": "508f68ca",
+      "content_hash": "6a048c113ed26a409e3cba95d4ecebad0eca69c57129af9c3885f31179030877",
       "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "promoted_rules": [
@@ -258509,6 +258509,11 @@
           "number": 9587,
           "title": "Stop the video fixture from hanging CI and collect test-host crash reports",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10066,
+          "title": "stop the status badges from painting over the duration readout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258516,7 +258521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T15:15:16.285Z",
+      "verified_at": "2026-11-23T16:28:45.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258570,10 +258575,10 @@
       "relative_path": "08_VERIFICATION/duongductrong-snapzy-verification-protocol-empirical-defect-shield-for-duongduct.md",
       "title": "Verification Protocol: Empirical Defect Shield for duongductrong/Snapzy",
       "repository": "duongductrong/Snapzy",
-      "source_version": "494f494b",
-      "content_hash": "eea7be4b2c892708495a6737aec307d001ddf0ef251c364c8f5e1ceed4ae8de3",
+      "source_version": "508f68ca",
+      "content_hash": "5797c73afc5260a4f66aee28a11c4221c9c125617055fb0844bace71d4ad3242",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:15:16.996Z"
+      "persisted_at": "2026-11-23T16:28:46.684Z"
     },
     "rule-8740": {
       "learning_id": "rule-8740",
@@ -258673,9 +258678,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for duongductrong-snapzy-learnings",
       "repository": "duongductrong-snapzy-learnings",
       "source_version": "HEAD",
-      "content_hash": "efedd5a601809b81d197c17ff27afe01c1704b315a826c0ea6b0bf60f0914435",
+      "content_hash": "fad9384bfa0f8b3ea5e005631f09c2e2c24f1f03f642a3eadff5379b586c91da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:15:28.029Z"
+      "persisted_at": "2026-11-23T16:28:52.112Z"
     },
     "candidate_directive-build-stop-marking-release-binaries-as-dirty": {
       "item_id": "candidate_directive-build-stop-marking-release-binaries-as-dirty",
@@ -295366,7 +295371,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inworld/voice-isolator",
       "source_version": "hf-inworld-voice-isolator",
-      "content_hash": "63fe08c80341da6fbb710bc4a0076474e30b6d196109c228f9989ae89f2370ba",
+      "content_hash": "d5f76d7b944a68e3eb6a847b84921fda7a4c0cb6097af5236c23851ce716cb56",
       "dossier_path": "07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md",
       "promoted_rules": [],
@@ -295375,7 +295380,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T03:39:04.506Z",
+      "verified_at": "2026-11-23T16:28:38.940Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -295392,9 +295397,9 @@
       "title": "Research & Knowledge Intelligence: inworld/voice-isolator Core Invariants",
       "repository": "inworld/voice-isolator",
       "source_version": "hf-inworld-voice-isolator",
-      "content_hash": "8ea8926adba6fab3d7f4e027b8142b90682134c6a6c48163252adfccfa2923c1",
+      "content_hash": "619106391468e2faf34e078cbe9f6ed1f1d1782b92865b020af76e9b90e6380b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T03:39:04.919Z"
+      "persisted_at": "2026-11-23T16:28:39.389Z"
     },
     "rule-9327": {
       "learning_id": "rule-9327",
@@ -295456,9 +295461,9 @@
       "title": "Research & Knowledge Intelligence: hf-inworld-voice-isolator-learnings Core Invariants",
       "repository": "hf-inworld-voice-isolator-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e16c7417d328de8dae15e6dbe200c907be47734423643058a0472269229b1f0",
+      "content_hash": "54c7a815b22ca83a79f3f5f46a348f48ee47c4322af3c06bba0946e222a9e233",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T03:39:51.801Z"
+      "persisted_at": "2026-11-23T16:28:51.274Z"
     },
     "candidate_directive-fix-typos": {
       "item_id": "candidate_directive-fix-typos",
@@ -327464,6 +327469,56 @@
       "content_hash": "0b694a762d5fc06735c5a4c39f72486b8fe7d25ae8ee1d86e0a58be3fa132a66",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T16:20:42.485Z"
+    },
+    "rule-10066": {
+      "learning_id": "rule-10066",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10066,
+      "title": "stop the status badges from painting over the duration readout",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "508f68ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T16:28:45.896Z"
+    },
+    "candidate_directive-stop-the-status-badges-from-painting-over-the-duration-readout": {
+      "item_id": "candidate_directive-stop-the-status-badges-from-painting-over-the-duration-readout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D60C-stop-the-status-badges-from-painting-over-the-duration-readout.md",
+      "title": "stop the status badges from painting over the duration readout",
+      "repository": "duongductrong-snapzy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50dd5261183fa0e63b6356f9aaa13609cea2f549904767f3608e42b723d646e2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T16:28:51.759Z"
+    },
+    "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duongductrong-snapzy-architecture-intelligence-duongductrong-snapzy-core-invaria.md",
+      "title": "Architecture Intelligence: duongductrong/Snapzy Core Invariants",
+      "repository": "duongductrong/Snapzy",
+      "source_version": "508f68ca",
+      "content_hash": "89b265f290df28f5443ddfcd789b0b15d653ff958855558c83e56dc62bb08e9d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T16:28:46.508Z"
+    },
+    "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duongductrong-snapzy-learnings-architecture-intelligence-duongductrong-snapzy-le.md",
+      "title": "Architecture Intelligence: duongductrong-snapzy-learnings Core Invariants",
+      "repository": "duongductrong-snapzy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bc8f50c3df488bfdf2061832baa89b27490ad7265566b250e27b73c686b9dd08",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T16:28:51.932Z"
     }
   },
   "ai-builder-brain": {

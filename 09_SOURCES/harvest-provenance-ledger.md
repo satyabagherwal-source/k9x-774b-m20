@@ -12401,3 +12401,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-23T16:20:29.419Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `0efc7829` | Multi-dimensional audit evidence | 2026-11-23T16:20:31.165Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `40d33b11` | Multi-dimensional audit evidence | 2026-11-23T16:20:38.048Z |
+| `learn-huggingface-inworld-voice-isolator` | `https://huggingface.co/inworld/voice-isolator` | `hf-inworld` | Multi-dimensional audit evidence | 2026-11-23T16:28:39.174Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `508f68ca` | Multi-dimensional audit evidence | 2026-11-23T16:28:46.110Z |

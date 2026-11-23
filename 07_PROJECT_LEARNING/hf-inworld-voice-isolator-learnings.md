@@ -3,7 +3,7 @@
 > **Source Version**: `hf-inworld-v`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T03:39:04.245Z  
+> **Timestamp**: 2026-11-23T16:28:38.670Z  
 > **Learning ID**: `learn-huggingface-inworld-voice-isolator`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/inworld/voice-isolator](https://huggingface.co/inworld/voice-isolator))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T03:39:04.068Z  
+> **Harvest Timestamp**: 2026-11-23T16:28:38.540Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: audio-to-audio
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 84 likes
+- **Stars / Engagement**: 0 downloads | 700 likes
 
 ---
 

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T16:20:44.428Z",
-  "total_records": 2429,
+  "last_updated": "2026-11-23T16:28:53.019Z",
+  "total_records": 2431,
   "domains": {
     "A": {
       "total": 20,
@@ -1117,7 +1117,7 @@
       ]
     },
     "G": {
-      "total": 420,
+      "total": 422,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1538,7 +1538,9 @@
         "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-core-invariants",
         "domain_intelligence-architecture-intelligence-risingwavelabs-risingwave-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-core-invariants",
-        "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants",
+        "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8244,8 +8246,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "73d92ed5cbfcb44bd17dbea25c3ff5e3700c436b7ff24a887f8a79142769a5f3",
-      "created_at": "2026-11-23T14:55:33.575Z"
+      "content_hash": "e0977c9c4ddb3549eaf854fd1329d7afdfd890354b19f1a78e8e2fbd7752baad",
+      "created_at": "2026-11-23T16:28:53.019Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -32992,8 +32994,8 @@
       "title": "Research & Knowledge Intelligence: inworld/voice-isolator Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inworld-voice-isolator-research-knowledge-intelligence-inworld-voice-isolator.md",
       "repository": "inworld/voice-isolator",
-      "content_hash": "8ea8926adba6fab3d7f4e027b8142b90682134c6a6c48163252adfccfa2923c1",
-      "created_at": "2026-11-19T03:39:04.919Z"
+      "content_hash": "619106391468e2faf34e078cbe9f6ed1f1d1782b92865b020af76e9b90e6380b",
+      "created_at": "2026-11-23T16:28:39.389Z"
     },
     "DOM-E-DB6AB3E1": {
       "record_id": "DOM-E-DB6AB3E1",
@@ -33049,8 +33051,8 @@
       "title": "Research & Knowledge Intelligence: hf-inworld-voice-isolator-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inworld-voice-isolator-learnings-research-knowledge-intelligence-hf-inworld-v.md",
       "repository": "hf-inworld-voice-isolator-learnings",
-      "content_hash": "1e16c7417d328de8dae15e6dbe200c907be47734423643058a0472269229b1f0",
-      "created_at": "2026-11-19T03:39:51.801Z"
+      "content_hash": "54c7a815b22ca83a79f3f5f46a348f48ee47c4322af3c06bba0946e222a9e233",
+      "created_at": "2026-11-23T16:28:51.274Z"
     },
     "DOM-D-7AF79394": {
       "record_id": "DOM-D-7AF79394",
@@ -40783,6 +40785,24 @@
       "repository": "argoproj-argo-workflows-learnings",
       "content_hash": "0a45f2588bdd4258785335a550bd37f2bef523d741f59e082647156f5840c326",
       "created_at": "2026-11-23T16:03:06.743Z"
+    },
+    "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: duongductrong/Snapzy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duongductrong-snapzy-architecture-intelligence-duongductrong-snapzy-core-invaria.md",
+      "repository": "duongductrong/Snapzy",
+      "content_hash": "89b265f290df28f5443ddfcd789b0b15d653ff958855558c83e56dc62bb08e9d",
+      "created_at": "2026-11-23T16:28:46.508Z"
+    },
+    "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: duongductrong-snapzy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duongductrong-snapzy-learnings-architecture-intelligence-duongductrong-snapzy-le.md",
+      "repository": "duongductrong-snapzy-learnings",
+      "content_hash": "bc8f50c3df488bfdf2061832baa89b27490ad7265566b250e27b73c686b9dd08",
+      "created_at": "2026-11-23T16:28:51.932Z"
     }
   }
 }

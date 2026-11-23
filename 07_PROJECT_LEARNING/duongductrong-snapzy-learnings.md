@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source**: github ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
-> **Source Version**: `494f494b`  
+> **Source Version**: `508f68ca`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T15:15:15.442Z  
+> **Timestamp**: 2026-11-23T16:28:45.015Z  
 > **Learning ID**: `learn-github-duongductrong-snapzy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T15:15:15.437Z  
+> **Harvest Timestamp**: 2026-11-23T16:28:45.008Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source native macOS screenshot and screen recording app. A CleanShot X alternative.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3592 stars
+- **Stars / Engagement**: 3609 stars
 
 ---
 
@@ -145,7 +145,7 @@ struct CaptureOutputOptions: ParsableArguments {
   @Option(help: "Image format. Defaults to the --output extension, else png.")
   var format: CLIImageFormat?
 
-  @Option(help: "JPEG quality, 0 to 1.")
+  @Option(help: "JPEG, HEIC or AVIF quality, 0 to 1.")
   var quality: Double?
 
   @Option(name: .customLong("max-dimension"), help: "Downscale so the longest edge is at most this many pixels.")
@@ -161,7 +161,7 @@ struct CaptureOutputOptions: ParsableArguments {
     let format = try resolvedFormat()
     if let quality {
       guard (0 ... 1).contains(quality) else { throw ValidationError("--quality must be between 0 and 1.") }
-      guard format == .jpeg else { throw ValidationError("--quality only applies to jpg output.") }
+      guard format.acceptsQuality else { throw ValidationError("--quality only applies to jpg, heic and avif output.") }
     }
     if let maxDimension, maxDimension <= 0 {
       throw ValidationError("--max-dimension must be greater than 0.")
@@ -927,13 +927,11 @@ struct MeasureImageCommand: AsyncParsableCommand {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #754** (2026-11-17): **fix: Use sidebar.left icon for the sidebar toggle**
-  *Symptoms*: ## Summary  The Annotate toolbar's **Toggle Sidebar** button uses the `rectangle.on.rectangle` SF Symbol. On macOS that icon usually means duplicate, copy or windows, so it doesn't read as a sidebar toggle. That makes the sidebar (backgrounds, padding, corner radius, presets) hard to find, especially since it starts hidden.  This PR switches it to `sidebar.left`, the standard macOS sidebar icon. The Video Editor's sidebar toggle (`VideoEditorToolbarView`) and `AnnotateMockupMainView` already use that icon, so this also makes the app consistent.  ## Changes  Swapped `rectangle.on.rectangle` → `sidebar.left` everywhere it stands for the Annotate sidebar toggle:  - `Snapzy/Features/Annotate/Components/AnnotateToolbarView.swift`: the toolbar button - `Snapzy/Features/Shortcuts/ShortcutOverlayModels.swift`: the `.toggleSidebar` entry in the shortcut overlay - `Snapzy/Features/Onboarding/Mockups/SnapzyMockAnnotateWindow.swift`: onboarding mock of the Annotate window - `Snapzy/Features/Preferences/Components/PreferencesAnnotatePreview.swift`: Annotate preview in Preferences  These look similar but are left alone: `rectangle.on.rectangle.angled` in `PreferencesAfterCaptureMatrixView` and `plus.rectangle.on.rectangle` in `AnnotateBottomBarView`.  `sidebar.left` has been available since macOS 11; the deployment target is 13.0.  ## Test plan  Built locally (Debug, ad-hoc signed) with Xcode 27.2 on macOS 27.2.  - [x] Open a screenshot in Annotate: the toolbar button next to Crop shows th
+- **Issue #771** (2026-11-21): **fix: stop re-checking app identity before every capture**
+  *Symptoms*: ## What this fixes  Fixes #509 — the brief freeze that happens before the selection overlay appears when using Screenshot & Annotate, reported as happening every single time.  Root cause: before every capture, the app runs its full permission check, and that check re-evaluates the app's own bundle identity. One step of that evaluation is a strict `SecStaticCodeCheckValidity` over the bundle with nested-code validation, which costs around half a second on an installed build — and it ran on the main actor, so the whole UI sat still while it worked. The step is inside `#if !DEBUG`, which is why nobody running from Xcode ever saw it.  ## Changes  **perf: reuse app identity instead of re-checking it before every capture** — the hot path in front of a capture now trusts a cached "granted" status as long as a cheap (~10 ms) system preflight still confirms it, and only falls back to the full check otherwise, so revoked access or a broken bundle is still caught and surfaced. The identity evaluation itself is memoised behind a fingerprint of the executable (path, modification date, size), meaning the bundle gets re-validated when it genuinely changed — a reinstall, a `brew upgrade --cask` — and not on every button press. The places where somebody is explicitly asking the system a fresh question (the permission rows in Preferences and onboarding, and the request-permission path) pass `refresh(force: true)`, so nothing about the real check gets weaker. The evaluation also logs how long i
 
-- **Issue #736** (2026-11-14): **[Bug]: 截图并标注功能启动后，已移动光标但是定位光标位置不改变**
-  *Symptoms*: ### Description  使用截图并标注功能，触发选取页面后，看不到鼠标移动 MAC:27.2.1  ### Steps to Reproduce  1、触发【截图并标注】功能 2、移动鼠标  ### Expected Behavior  定位点根据鼠标移动同步移动  ### Actual Behavior  鼠标移动后定位不到鼠标位置  ### Screenshots / Recordings  https://github.com/user-attachments/assets/cfe4dc83-d7ec-4889-9c9f-f37a270c8b08  ### Snapzy Version  2.1.0  ### macOS Version  Other (specify in description)  ### Installation Method  None  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Hi @l56105878,  感谢反馈！这个问题与 #705 / #597 为同一原因（macOS 27.2 上「截图并标注」的十字准星、坐标气泡和放大镜无法跟随指针移动），已在 #707 中修复并自 **[v2.2.0-beta.3](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.3)** 起发布（目前最新 Beta 为 **[v2.2.0-beta.11](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.11)**）。  获取 Beta 更新的方法：**Settings → About → Update Channel → Beta**，然后点击 **Check for Updates**。  现在先将此 Issue 关闭；如果更新到 Beta 版本后仍然可以复现，欢迎随时回复或重新打开！  ---  Hi @l56105878,  Thanks for reporting this! This is the same macOS 27.2 Capture Markup pointer-tracking issue fixed in #707, available starting in **[v2.2.0-beta.3](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.3)** (latest beta: **[v2.2.0-beta.11](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.11)**).  To update to Beta: **Settings → About → Update Channel → Beta**, then **Check for Updates**.  Closing this as fixed—please feel free to reopen if the issue persists on the latest beta build.
+- **Issue #762** (2026-11-21): **[Bug]: Area capture then application capture not working**
+  *Symptoms*: ### Description  When I press Shift+Command+4, then Space, it captures the whole screen instead of just the app, as it used to.  ### Steps to Reproduce  When I press Shift+Command+4, then Space, it captures the whole screen instead of just the app, as it used to.  ### Expected Behavior  Work as it used to.   ### Actual Behavior  When I press Shift+Command+4, then Space, it captures the whole screen instead of just the app, as it used to.  ### Screenshots / Recordings  _No response_  ### Snapzy Version  2.2.0 (233)  ### macOS Version  macOS 15 (Sequoia)  ### Installation Method  None  ### Additional Context  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -950,1133 +948,1121 @@ struct MeasureImageCommand: AsyncParsableCommand {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22ea076c` (2026-11-20)
-**Commit Message**: fix: Stop the video fixture from hanging CI and collect test-host crash reports (#764)
+### Incident Patch 1: `b96a6091` (2026-11-22)
+**Commit Message**: fix: stop the status badges from painting over the duration readout (#783)
 
-The audio+video fixture writer could stall forever on the headless macOS 15
-runner, hanging VideoEditorAgentVisionTests past its 2 minute allowance. Encode
-each fixture once per process, copy it per test, and abandon/retry an encode
-whose writer stops accepting media for 15 s.
+* fix(video-editor): measure the width the trailing controls side is given
 
-CI now uploads Snapzy crash reports so test-host aborts come with a backtrace.
+The row already knew the natural width of every cluster, but never the width of the
+flexible frame holding them. Without that number there is no way to tell whether the
+status badges actually have room, so start measuring the side frame itself.
 
-**File**: `.github/workflows/ci.yml` (modified, +19/-0)
+* fix(video-editor): state the badge rule as the width the side frame really has
+
+The badges are exempt from the row's minimum on purpose, so they can neither buy width
+nor push the row wider — an over-wide group just paints over the duration readout.
+Naming that rule in one function makes the requirement explicit: the group has to fit
+the trailing side's measured width, not the container. Nothing reads it yet.
+
+* fix(video-editor): drop the status badges when the trailing side cannot hold them
+
+This is what stops the scissors/zoom-count group from being drawn over the duration
+readout (issue #780). The old check subtracted the other clusters from the container, so
+it priced the badges against the whole row's leftover space — space the trailing frame
+never hands them. Now the decision compar
+
+**File**: `Snapzy/Features/VideoEditor/Agent/VideoEditorAgentAnalyzer.swift` (modified, +4/-0)
 ```diff
-@@ -183,6 +183,25 @@ jobs:
+@@ -49,6 +49,10 @@ nonisolated struct VideoEditorActivity: Equatable {
  
-           tail -20 build/ci-test.log
- 
-+      - name: Collect crash reports
-+        # A test-host abort leaves only "malloc: ..." in the log; the backtrace lives in
-+        # the crash report ReportCrash writes, which the xcresult does not include.
-+        if: failure() || cancelled()
-+        run: |
-+          mkdir -p build/crash-reports
-+          find "$HOME/Library/Logs/DiagnosticReports" /Library/Logs/DiagnosticReports \
-+            \( -name 'Snapzy*' -o -name 'xctest*' \) -type f -mmin -60 \
-+            -exec cp {} build/crash-reports/ \; 2>/dev/null || true
-+          ls -la build/crash-reports
+ @MainActor
+ final class VideoEditorAgentAnalyzer {
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
 +
-+      - name: Upload crash reports
-+        if: failure() || cancelled()
-+        uses: actions/upload-artifact@v7
-+        with:
-+          name: ci-crash-reports
-+          path: build/crash-reports
-+          if-no-files-found: ignore
-+
-       - name: Upload test diagnostics
-         if: failure() || cancelled()
-         uses: actions/upload-artifact@v7
+   /// Audio window. Short enough to cut between words, long enough to be cheap.
+   nonisolated static let window: TimeInterval = 0.05
+   /// Shortest silence or idle stretch worth reporting at all; tools filter further.
 ```
 
-**File**: `SnapzyTests/Helpers/VideoEditorActivityFixture.swift` (modified, +52/-0)
+**File**: `Snapzy/Features/VideoEditor/Agent/VideoEditorAgentController.swift` (modified, +8/-0)
 ```diff
-@@ -47,7 +47,49 @@ enum VideoEditorActivityFixture {
-     t < 2 || (t >= 5 && t < 7) || t >= 10
+@@ -24,6 +24,10 @@ import SwiftUI
+ 
+ @MainActor
+ final class VideoEditorAgentController: ObservableObject {
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
++
+   enum Phase: Equatable {
+     case idle
+     /// Waiting for the provider's first step.
+@@ -94,6 +98,10 @@ final class VideoEditorAgentController: ObservableObject {
+   /// re-renders the field alone instead of every view observing the controller.
+   final class Draft: ObservableObject {
+     @Published var text = ""
++
++    /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++    /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++    nonisolated deinit {}
    }
  
-+  /// Encoded fixtures by `duration`/`audio`, written once per test process. The bytes never
-+  /// change, and the H.264 encoder on headless CI runners is slow and can stall for good, so
-+  /// every extra encode is another chance to hang a test until its time allowance runs out.
-+  private static var encodedFixtures: [String: URL] = [:]
-+  private static let encodeAttempts = 3
-+  /// How long the writer may refuse more media before an attempt is abandoned.
-+  private static let stallTimeout: TimeInterval = 15
+   @Published var isPromptPresented = false
+```
+
+**File**: `Snapzy/Features/VideoEditor/Agent/VideoEditorAgentToolbox.swift` (modified, +4/-0)
+```diff
+@@ -50,6 +50,10 @@ nonisolated enum VideoEditorAgentToolError: Error, Equatable {
+ 
+ @MainActor
+ final class VideoEditorAgentToolbox {
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
 +
-+  /// A fresh copy of the fixture in `directory`, so callers may move or delete it freely.
-   static func makeVideoFile(in directory: URL, duration: TimeInterval, audio: Bool) async throws -> URL {
-+    let key = "\(duration)-\(audio)"
-+    let cached: URL
-+    if let existing = encodedFixtures[key], FileManager.default.fileExists(atPath: existing.path) {
-+      cached = existing
-+    } else {
-+      let cacheDirectory = FileManager.default.temporaryDirectory
-+        .appendingPathComponent("VideoEditorActivityFixture-\(ProcessInfo.processInfo.processIdentifier)", isDirectory: true)
-+      try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
-+      cached = try await encodeWithRetry(in: cacheDirectory, duration: duration, audio: audio)
-+      encodedFixtures[key] = cached
-+    }
-+    let url = directory.appendingPathComponent("analyzer-\(UUID().uuidString).mov")
-+    try FileManager.default.copyItem(at: cached, to: url)
-+    return url
+   static let maximumChangesPerRun = 80
+ 
+   nonisolated static let silenceDefaults = (minDuration: 1.0, padding: 0.25)
+```
+
+**File**: `Snapzy/Features/VideoEditor/Agent/VideoEditorAgentTranscriber.swift` (modified, +4/-0)
+```diff
+@@ -20,6 +20,10 @@ import Foundation
+ 
+ @MainActor
+ final class VideoEditorAgentTranscriber {
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
++
+   /// `@concurrent`: a nonsending async closure type stored as a value pulls in
+   /// swift_getExtendedFunctionTypeMetadata (macOS 15+ only), which crashes Release builds on 13/14 (#725).
+   typealias Engine = @concurrent @Sendable (_ asset: AVAsset, _ roles: [VideoEditorAudioTrackRole], _ locale: Locale) async throws -> [VideoEditorTranscriptWord]
+```
+
+**File**: `Snapzy/Features/VideoEditor/Agent/VideoEditorAgentVision.swift` (modified, +4/-0)
+```diff
+@@ -56,6 +56,10 @@ nonisolated enum VideoEditorVisionError: Error, Equatable {
+ 
+ @MainActor
+ final class VideoEditorAgentVision {
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
++
+   /// `@concurrent`: a nonsending async closure type stored as a value pulls in
+   /// swift_getExtendedFunctionTypeMetadata (macOS 15+ only), which crashes Release builds on 13/14 (#725).
+   typealias Recognizer = @concurrent @Sendable (CGImage) async throws -> [VideoEditorScreenText]
+```
+
+**File**: `Snapzy/Features/VideoEditor/Agent/VideoEditorCaptionTranslator.swift` (modified, +4/-0)
+```diff
+@@ -31,6 +31,10 @@ final class VideoEditorCaptionTranslator: ObservableObject {
+   private var continuation: CheckedContinuation<BlockTranslationOutput, Error>?
+   private var token: UUID?
+ 
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
++
+   /// One result per text, in order (nil = nothing came back for it).
+   func translate(
+     _ texts: [String],
+```
+
+**File**: `Snapzy/Features/VideoEditor/Components/VideoEditorVideoControlsView.swift` (modified, +49/-16)
+```diff
+@@ -122,7 +122,38 @@ private enum VideoControlsLayoutStyle {
+ }
+ 
+ private enum VideoControlsPart: Hashable {
+-  case left, center, status, zoom
++  case status, zoom, trailingFrame
++}
++
++/// The one rule the status badges are shown under: their group has to fit the width the trailing
++/// side of the row was actually given.
++///
++/// That width is measured from the laid-out side frame rather than derived, because the row's
++/// division is the only thing the badges are judged against and it is not something the row can
++/// promise: the transport is centred by two equally flexible side frames, a side that needs more
++/// than its half takes it, and the widths involved (spacings, glyph sizes, the layout style the
++/// row switches between) all move with the theme and the zoom level.
++///
++/// What the measurement does capture is the asymmetry that produced issue #780. The badges are
++/// wrapped in `.frame(minWidth: 0)` on purpose, so the row's minimum keeps no room for them and
++/// an over-wide badge group can neither buy width from the leading side nor push the row wider —
++/// it keeps its `.fixedSize()` width and paints over the duration readout. A cluster that is part
++/// of the minimum behaves differently: it grows its frame, which costs the transport its centring
++/// but never overlaps. Comparing the group with the container instead — the old check — prices the
++/// badges as though they were part of the minimum, and at the reported size the row really does
++/// pack into 530 pt with them on while the trailing frame is only 147 pt of it.
++enum VideoControlsFitPolicy {
++  /// Whether the zoom cluster and the status badges fit inside the trailing side's measured width.
++  /// An unknown or empty measurement shows the badges, matching the first layout pass.
++  static func showsStatus(
++    trailingWidth: CGFloat,
++    zoomWidth: CGFloat,
++    statusWidth: CGFloat,
++    badgeSpacing: CGFloat
++  ) -> Bool {
++    guard trailingWidth > 0, zoomWidth > 0, statusWidth > 0 else { return true }
++    return trailingWidth >= zoomWidth + badgeSpacing + statusWidth
 +  }
+ }
+ 
+ private struct VideoControlsPartWidthKey: PreferenceKey {
+@@ -182,26 +213,26 @@ struct VideoControlsView: View {
+ 
+   var body: some View {
+     let _ = VideoEditorRenderRateGuard.record("VideoControlsView", isPlaying: playbackState.isPlaying)
+-    // Both sides are equally flexible, so the transport stays centred whenever each half
+-    // fits its side; when it doesn't, the row goes asymmetric and then drops the status
+-    // badges instead of demanding width. The bar must stay compressible: its minimum
+-    // width feeds the window's content minimum (NSHostingView `.minSize`), and a rigid
++    // The two side frames are equally flexible, which is what keeps the transport centred, and
++    // `VideoControlsFitPolicy` drops the status badges as soon as the trailing group stops
++    // fitting the width that side frame is actually given — measured off the frame, because
++    // that width is the only space the badges really have. The bar must stay compressible: its
++    // minimum width feeds the window's content minimum (NSHostingView `.minSize`), and a rigid
+     // row made ⌘K's sidebar reservation grow the window instead of narrowing the editor.
+     // (Not `ViewThatFits`: probing both glass candidates on every layout pass made each
+     // editor layout ~15× slower.)
+     HStack(spacing: controlsLayout.outerSpacing) {
+       leftActions
+         .disabled(aiChrome.isRunning)
+         .fixedSize(horizontal: true, vertical: false)
+-        .measureVideoControlsPart(.left)
+         .frame(maxWidth: .infinity, alignment: .leading)
+ 
+       centerTransport
+         .fixedSize(horizontal: true, vertical: false)
+-        .measureVideoControlsPart(.center)
+ 
+       rightActions(showsStatus: showsStatus)
+         .frame(maxWidth: .infinity, alignment: .trailing)
++        .measureVideoControlsPart(.trailingFrame)
+     }
+     .onPreferenceChange(VideoControlsPartWidthKey.self) { widths in
+       if partWidths != widths { partWidths = widths }
+@@ -219,18 +250,20 @@ struct VideoControlsView: View {
+     .onReceive(agent.chromePublisher) { aiChrome = $0 }
+   }
+ 
+-  /// Whether the status badges fit beside the zoom cluster without squeezing the row.
+-  /// Unknown widths (first pass) show them, matching the previous layout.
++  /// Whether the status badges fit beside the zoom cluster inside the width the trailing side was
++  /// laid out in. See `VideoControlsFitPolicy` for why that measured frame, and not the row's
++  /// leftover space, is what the badges have to live in.
+   private var showsStatus: Bool {
+-    guard containerWidth > 0,
+-          let left = partWidths[.left],
+-          let center = partWidths[.center],
++    guard let trailing = partWidths[.trailingFrame],
+           let zoom = partWidths[.zoom],
+-          let status = partWidths[.status],
+-          status > 0
++          let status = partWidths[.status]
+     else { return true 
+```
+
+**File**: `Snapzy/Features/VideoEditor/Models/VideoEditorTimelineViewport.swift` (modified, +4/-0)
+```diff
+@@ -39,6 +39,10 @@ final class VideoEditorTimelineViewport: ObservableObject {
+   static let scrollZoomSensitivityPrecise: CGFloat = 0.004
+   static let scrollZoomSensitivityCoarse: CGFloat = 0.12
+ 
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
 +
-+  private static func encodeWithRetry(in directory: URL, duration: TimeInterval, audio: Bool) async throws -> URL {
-+    var lastError: Error?
-+    for _ in 0 ..< encodeAttempts {
-+      do {
-+        return try await encodeVideoFile(in: directory, duration: duration, audio: audio)
-+      } catch let error as FixtureStall {
-+        lastError = error
-+      }
-+    }
-+    throw lastError ?? FixtureStall()
-+  }
-+
-+  private struct FixtureStall: Error, CustomStringConvertible {
-+    var description: String { "AVAssetWriter stopped accepting fixture media" }
-+  }
-+
-+  private static func encodeVideoFile(in directory: URL, duration: TimeInterval, audio: Bool) async throws -> URL {
-     let url = directory.appendingPathComponent("analyzer-\(UUID().uuidString).mov")
-     let writer = try AVAssetWriter(outputURL: url, fileType: .mov)
-     let video = AVAssetWriterInput(mediaType: .video, outputSettings: [
-@@ -90,7 +132,17 @@ enum VideoEditorActivityFixture {
-     let steps = Int(duration * Double(frameRate))
-     var videoIndex = 0
-     var audioIndex = audio ? 0 : steps
-+    var lastProgress = Date()
-     while videoIndex < steps || audioIndex < steps {
-+      let progressMark = videoIndex + audioIndex
-+      defer {
-+        if videoIndex + audioIndex != progressMark { lastProgress = Date() }
-+      }
-+      if Date().timeIntervalSince(lastProgress) > stallTimeout {
-+        writer.cancelWriting()
-+        try? FileManager.default.removeItem(at: url)
-+        throw FixtureStall()
-+      }
-       var progressed = false
-       if videoIndex < steps, videoIndex <= audioIndex || audioIndex >= steps, video.isReadyForMoreMediaData {
-         var buffer: CVPixelBuffer?
+   /// Effective width of the timeline content inside the scroll container.
+   var contentWidth: CGFloat {
+     max(0, viewportWidth * zoomLevel)
 ```
 
 ---
 
-### Incident Patch 2: `49ddfbdc` (2026-11-19)
-**Commit Message**: feat: Added Quick Access Optimize action to shrink screenshots (#763)
+### Incident Patch 2: `550e7a19` (2026-11-21)
+**Commit Message**: feat(quick-access): fly pins out of and back into where they came from (#781)
 
-* feat: Added Quick Access Optimize action to shrink screenshots
+* feat(quick-access): fly pinned captures out of the card they came from
 
-Adds an Optimize card action that opens a clear Liquid Glass list of
-downscale levels (e.g. 0.5x / 1x / 1.5x / Original on Retina) beside the
-card, with the real encoded size and savings for each level. The same
-levels are reachable from the card's context menu as a submenu, even when
-the action is not placed on the card.
+Pinning used to fade the window in where the capture had been, which said nothing
+about where the image came from and, when the pin matched the capture size, said
+nothing at all. The pinned window now grows out of the Quick Access card it was
+pinned from: the content is laid out once at its resting size and Core Animation
+scales it along a spring path inside a temporarily enlarged window, so no frame of
+the flight resizes the image surface or re-runs SwiftUI layout. That is what keeps
+a large capture smooth; animating the window frame instead stuttered on exactly
+those. It falls back to a plain fade when there is no source region, when the path
+cannot fit the display, or when Reduce Motion is on.
 
-- Levels derive from the file's DPI; no upscaling and no new dependencies
-  (Core Graphics, ImageIO, existing Swift-WebP).
-- The untouched original is kept while the card lives, so every level is
-  rendered from it and "Original" restores it.
-- Saved enabled-action lists now record the actions they were saved
-  against, so Optimize arrives enabled for existing users.
-- Adds a `.clear` native variant to the Liquid Glass surface.
+The close, zoom and lock controls are hidden behind a hover reveal so they stop
+covering the picture, and the window ignores the mouse while in flight so a cursor
+nowhere near the pin cannot light its chrome or drag it.
 
-Refs #758
+* fix(quick-access): stop the pin's flight window from reading as a frame
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+The flight window is much larger than the pi
 
-* feat: Enhance Quick Access Optimize menu with button anchoring and animation support
-
-* feat: Enhance Quick Access Optimize with native glass support and fade animations
-
-* feat: Adjust Quick Access Optimize menu row height and improve nati
-
-**File**: `Snapzy/Features/Preferences/Components/PreferencesQuickAccessOptimizePresetsSection.swift` (added, +133/-0)
+**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessCardView.swift` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,133 @@
-+//
-+//  PreferencesQuickAccessOptimizePresetsSection.swift
-+//  Snapzy
-+//
-+//  Quick Access settings section that lists, adds, edits and deletes the Optimize
-+//  presets shown in the card's Optimize menu.
-+//
-+
-+import SwiftUI
-+
-+struct QuickAccessOptimizePresetsSection: View {
-+  @ObservedObject private var store = QuickAccessOptimizePresetStore.shared
-+  @State private var editing: EditingPreset?
-+
-+  /// A preset open in the editor sheet; `isNew` until it is first saved.
-+  private struct EditingPreset: Identifiable {
-+    var preset: QuickAccessOptimizePreset
-+    let isNew: Bool
-+    var id: UUID { preset.id }
-+  }
-+
-+  var body: some View {
-+    Section {
-+      if store.presets.isEmpty {
-+        Text(L10n.PreferencesQuickAccess.optimizePresetsEmpty)
-+          .foregroundColor(.secondary)
-+      }
-+
-+      ForEach(store.presets) { preset in
-+        HStack(spacing: 12) {
-+          Image(systemName: "slider.horizontal.3")
-+            .foregroundColor(.secondary)
-+            .frame(width: 20)
-+
-+          VStack(alignment: .leading, spacing: 2) {
-+            Text(preset.name)
-+              .fontWeight(.medium)
-+            Text(preset.settings.summary())
-+              .font(.caption)
-+              .foregroundColor(.secondary)
-+              .monospacedDigit()
-+          }
-+
-+          Spacer()
-+
-+          Button {
-+            editing = EditingPreset(preset: preset, isNew: false)
-+          } label: {
-+            Image(systemName: "pencil")
-+          }
-+          .buttonStyle(.borderless)
-+          .help(L10n.Common.edit)
-+
-+          Button {
-+            store.deletePreset(id: preset.id)
-+          } label: {
-+            Image(systemName: "trash")
-+          }
-+          .buttonStyle(.borderless)
-+          .help(L10n.Common.delete)
-+        }
-+        .padding(.vertical, 2)
-+      }
-+      .onMove { store.movePresets(fromOffsets: $0, toOffset: $1) }
-+
-+      Button {
-+        editing = EditingPreset(
-+          preset: QuickAccessOptimizePreset(name: "", settings: store.lastCustomSettings),
-+          isNew: true
-+        )
-+      } label: {
-+        Label(L10n.PreferencesQuickAccess.addOptimizePreset, systemImage: "plus")
-+      }
-+      .buttonStyle(.borderless)
-+    } header: {
-+      Text(L10n.PreferencesQuickAccess.optimizePresetsSection)
-+    } footer: {
-+      Text(L10n.PreferencesQuickAccess.optimizePresetsDescription)
-+        .font(.caption)
-+        .foregroundColor(.secondary)
-+    }
-+    .sheet(item: $editing) { editing in
-+      QuickAccessOptimizePresetEditorSheet(
-+        preset: editing.preset,
-+        isNew: editing.isNew,
-+        onSave: { preset in
-+          if editing.isNew {
-+            store.addPreset(name: preset.name, settings: preset.settings)
-+          } else {
-+            store.updatePreset(preset)
-+          }
-+          self.editing = nil
-+        },
-+        onCancel: { self.editing = nil }
-+      )
-+    }
-+  }
-+}
-+
-+private struct QuickAccessOptimizePresetEditorSheet: View {
-+  @State var preset: QuickAccessOptimizePreset
-+  let isNew: Bool
-+  let onSave: (QuickAccessOptimizePreset) -> Void
-+  let onCancel: () -> Void
-+
-+  var body: some View {
-+    VStack(alignment: .leading, spacing: 16) {
-+      Text(isNew ? L10n.PreferencesQuickAccess.newOptimizePresetTitle : L10n.PreferencesQuickAccess.editOptimizePresetTitle)
-+        .font(.headline)
-+
-+      HStack(spacing: 10) {
-+        Text(L10n.PreferencesQuickAccess.optimizePresetNameLabel)
-+          .font(.system(size: 12))
-+          .frame(width: 70, alignment: .leading)
-+        TextField(L10n.QuickAccess.optimizePresetNamePlaceholder, text: $preset.name)
-+          .textFieldStyle(.roundedBorder)
-+      }
-+
-+      QuickAccessOptimizeSettingsForm(settings: $preset.settings)
-+
-+      HStack {
-+        Spacer()
-+        Button(L10n.Common.cancel, action: onCancel)
-+          .keyboardShortcut(.cancelAction)
-+        Button(L10n.Common.save) { onSave(preset) }
-+          .keyboardShortcut(.defaultAction)
-+          .disabled(preset.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-+      }
-+    }
-+    .padding(20)
-+    .frame(width: 440)
-+  }
-+}
-```
-
-**File**: `Snapzy/Features/Preferences/Components/PreferencesQuickAccessSettingsView.swift` (modified, +2/-0)
-```diff
-@@ -29,6 +29,8 @@ struct QuickAccessSettingsView: View {
-     Form {
-       QuickAccessActionCustomizationView(manager: manager)
- 
-+      QuickAccessOptimizePresetsSection()
-+
-       Section(L10n.PreferencesQuickAccess.pinZoomSection) {
-         PinZoomModeComparisonPreview(
-           selectedMode: pinZoomModeStore.mode,
-```
-
-**File**: `Snapzy/Features/Preferences/Models/PreferencesKeys.swift` (modified, +3/-0)
-```diff
-@@ -150,13 +150,16 @@ enum PreferencesKeys {
-   static let quickAccessPinZoomMode = "quickAccess.pin.zoom.mode"
-   static let quickAccessActionOrder = "quickAccess.actions.order.v1"
-   static let quickAccessEnabledActions = "quickAccess.actions.enabled.v1"
-+  static let quickAccessKnownActions = "quickAccess.actions.known.v1"
-   static let quickAccessActionSlotAssignments = "quickAccess.actions.slots.v1"
-   static let quickAccessSwipeLeftAction = "quickAccess.swipe.action.left"
-   static let quickAccessSwipeRightAction = "quickAccess.swipe.action.right"
-   static let quickAccessHideCardWhenWindowOpen = "quickAccess.hideCardWhenWindowOpen"
-   static let quickAccessAnimationStyle = "quickAccess.animationStyle"
-   static let quickAccessPlaySounds = "quickAccess.playSounds"
-   static let quickAccessOpenInFinderAfterSave = "quickAccess.openInFinderAfterSave"
-+  static let quickAccessOptimizePresets = "quickAccess.optimize.presets.v1"
-+  static let quickAccessOptimizeLastCustom = "quickAccess.optimize.lastCustom.v1"
- 
-   // Recording
-   static let recordingFormat = "recording.format"
-```
-
-**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessCardView.swift` (modified, +148/-11)
-```diff
-@@ -28,6 +28,8 @@ struct QuickAccessCardView: View {
-   @State private var swipeOffset: CGFloat = 0
-   @State private var isCloudUploading = false
-   @State private var cloudUploadProgress: Double = 0
-+  @State private var cardAnchor = QuickAccessCardAnchor()
-+  @State private var optimizeButtonAnchor = QuickAccessCardAnchor()
-   @Environment(\.accessibilityReduceMotion) var reduceMotion
- 
-   private let cornerRadius = Radius.card
-@@ -123,6 +125,11 @@ struct QuickAccessCardView: View {
-       QuickAccessContextMenuPresenter(entries: quickAccessContextMenuEntries)
-         .frame(width: scaledWidth, height: scaledHeight)
-     )
-+    .background(
-+      QuickAccessCardAnchorView(anchor: cardAnchor)
-+        .frame(width: scaledWidth, height: scaledHeight)
-+        .allowsHitTesting(false)
-+    )
-     .overlay(dragInteractionBridge.frame(width: scaledWidth, height: scaledHeight))
-     .onDisappear {
-       isDragging = false
-@@ -349,6 +356,8 @@ struct QuickAccessCardView: View {
-       return cloudActionTitle
-     case .pinToScreen:
-       return item.isPinned ? L10n.PreferencesQuickAccess.unpinAction : L10n.PreferencesQuickAccess.pinToScreenAction
-+    case .optimize:
-+      return L10n.PreferencesQuickAccess.optimizeAction
-     }
-   }
- 
-@@ -393,6 +402,8 @@ struct QuickAccessCardView: View {
-       return shouldShowCloudButton
-     case .delete:
-       return true
-+    case .optimize:
-+      return QuickAccessOptimizeStore.shared.canOptimize(item)
-     }
-   }
- 
-@@ -402,6 +413,10 @@ struct QuickAccessCardView: View {
-       return !item.isVideo
-     case .uploadToCloud:
-       return shouldShowCloudButton && !alreadyUploadedToCloud && !isCloudUploading
-+    case .optimize:
-+      // An open editor would write its own pixels back over the optimized file.
-+      let isEditorOpen = item.isWindowOpen && !item.isPinned
-+      return QuickAccessOptimizeStore.shared.canOptimize(item) && !isEditorOpen
-     case .copy, .saveOrOpen, .dismiss, .delete, .edit:
-       return true
-     }
-@@ -426,9 +441,19 @@ struct QuickAccessCardView: View {
+@@ -440,7 +440,7 @@ struct QuickAccessCardView: View {
+       uploadToCloud()
      case .pinToScreen:
        guard !item.isVideo else { return }
-       manager.togglePin(id: item.id)
-+    case .optimize:
-+      presentOptimizeMenu()
+-      manager.togglePin(id: item.id)
++      manager.togglePin(id: item.id, entranceFrom: cardAnchor.screenFrame)
+     case .optimize:
+       presentOptimizeMenu()
+     }
+@@ -549,7 +549,7 @@ struct QuickAccessCardView: View {
+       .padding(6)
+       .contentShape(Circle())
+       .onTapGesture {
+-        manager.togglePin(id: item.id)
++        manager.togglePin(id: item.id, entranceFrom: cardAnchor.screenFrame)
+       }
+       .help(item.isPinned ? L10n.PreferencesQuickAccess.unpinAction : L10n.PreferencesQuickAccess.pinToScreenAction)
+   }
+```
+
+**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessPinWindowView.swift` (modified, +115/-38)
+```diff
+@@ -17,13 +17,19 @@ struct QuickAccessPinWindowView: View {
+   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+   @State private var isZoomPickerPresented = false
+   @State private var isZoomHovering = false
++  @State private var isLockHovering = false
+   @State private var isDragHovering = false
+   @State private var isDragActive = false
+ 
+   private let cornerRadius = NSWindow.defaultCornerRadius
+   private let dragHandleCornerRadius: CGFloat = 8
+   private let controlInset: CGFloat = 12
+ 
++  /// Hidden chrome shrinks a little instead of only losing its surface, so it settles into place
++  /// rather than blinking in. A transform keeps the glass backdrop attached (Rule 2), opacity
++  /// would not.
++  private static let hiddenChromeScale: CGFloat = 0.86
++
+   var body: some View {
+     ZStack {
+       screenshotImage
+@@ -50,77 +56,121 @@ struct QuickAccessPinWindowView: View {
+   private var chromeLayer: some View {
+     ZStack {
+       unlockedControls
+-        .opacity(state.isLocked ? 0 : 1)
+-        .allowsHitTesting(!state.isLocked)
++        .allowsHitTesting(unlockedChromeIsRevealed)
+ 
+-      interactiveRegion(lockButton)
++      interactiveRegion(
++        lockButton(isRevealed: lockChromeIsRevealed),
++        isExcluded: lockChromeIsRevealed
++      )
+         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+         .padding(controlInset)
      }
    }
  
-+  private func presentOptimizeMenu() {
-+    QuickAccessOptimizePanelController.shared.present(
-+      for: item,
-+      buttonFrame: optimizeButtonAnchor.screenFrame,
-+      cardFrame: cardAnchor.screenFrame
-+    )
++  /// Chrome answers to the pointer being over the pinned image instead of sitting on top of it
++  /// permanently — the point of a pin is to look at the capture. Interactions that outlive the
++  /// hover itself keep their own control lit, so an open popover is never stranded by the pointer
++  /// drifting off the frame.
++  private var wantsChrome: Bool {
++    state.isMouseInside || isZoomPickerPresented || isDragActive || isDragHovering
 +  }
 +
-   private func handleDoubleClick() {
-     if item.isVideo {
-       openVideoEditor()
-@@ -554,6 +579,7 @@ struct QuickAccessCardView: View {
-       performAction(action)
++  private var unlockedChromeIsRevealed: Bool {
++    !state.isLocked && wantsChrome
++  }
++
++  /// A locked pin is click-through everywhere but the lock rect, so there the button is revealed by
++  /// its own hover; the pointer merely crossing the image would light something it cannot click.
++  private var lockChromeIsRevealed: Bool {
++    state.isLocked ? isLockHovering : wantsChrome
++  }
++
++  private var chromeMotion: Animation? {
++    reduceMotion ? nil : LiquidGlassTokens.hoverSpring
++  }
++
+   private var unlockedControls: some View {
+     ZStack {
+       interactiveRegion(
+-        chromeButton(systemName: "xmark", help: L10n.PreferencesQuickAccess.unpinAction, action: onClose)
++        chromeButton(
++          systemName: "xmark",
++          help: L10n.PreferencesQuickAccess.unpinAction,
++          isRevealed: unlockedChromeIsRevealed,
++          action: onClose
++        ),
++        isExcluded: unlockedChromeIsRevealed
+       )
+       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+       .padding(controlInset)
+ 
+-      interactiveRegion(zoomMenu)
+-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+-        .padding(.top, controlInset)
++      interactiveRegion(
++        zoomMenu(isRevealed: unlockedChromeIsRevealed),
++        isExcluded: unlockedChromeIsRevealed
++      )
++      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
++      .padding(.top, controlInset)
+ 
+-      interactiveRegion(dragHandle)
+-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+-        .padding(.bottom, controlInset)
++      interactiveRegion(
++        dragHandle(isRevealed: unlockedChromeIsRevealed),
++        isExcluded: unlockedChromeIsRevealed
++      )
++      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
++      .padding(.bottom, controlInset)
      }
-       .help(actionHelpText(for: action))
-+      .background(optimizeAnchor(for: action))
-       .disabled(!isActionEnabled(action))
-       .opacity(isActionEnabled(action) ? 1 : 0.6)
-       .transition(buttonTransition(delay: delay))
-@@ -596,12 +622,21 @@ struct QuickAccessCardView: View {
-       action: { performAction(action) },
-       helpText: actionHelpText(for: action)
-     )
-+    .background(optimizeAnchor(for: action))
-     .transition(cornerButtonTransition(delay: delay))
-     .padding(6)
-     .disabled(!isActionEnabled(action))
-     .opacity(isActionEnabled(action) ? 1 : 0.6)
    }
  
-+  /// Lets the Optimize menu open over the button that triggered it.
-+  @ViewBuilder
-+  private func optimizeAnchor(for action: QuickAccessActionKind) -> some View {
-+    if action == .optimize {
-+      QuickAccessCardAnchorView(anchor: optimizeButtonAnchor)
+   /// Wraps interactive chrome so background-window dragging never starts on
+-  /// a control, keeping both drags and clicks exclusive to the control.
+-  private func interactiveRegion<V: View>(_ content: V) -> some View {
+-    content.background(PinWindowDragExclusionRepresentable())
++  /// a control, keeping both drags and clicks exclusive to the control. Hidden chrome drops out of
++  /// the exclusion too — an invisible button must not eat the drag and leave a dead patch.
++  private func interactiveRegion(_ content: some View, isExcluded: Bool) -> some View {
++    content.background(PinWindowDragExclusionRepresentable(isActive: isExcluded))
+   }
+ 
+-  private var lockButton: some View {
++  private func lockButton(isRevealed: Bool) -> some View {
+     chromeButton(
+       systemName: state.isLocked ? "lock.fill" : "lock.open",
+-      help: state.isLocked ? L10n.QuickAccess.unlockPinnedWindow : L10n.QuickAccess.lockPinnedWindow
++      help: state.isLocked ? L10n.QuickAccess.unlockPinnedWindow : L10n.QuickAccess.lockPinnedWindow,
++      isRevealed: isRevealed
+     ) {
+       state.isLocked.toggle()
+       onLockChanged()
+     }
++    .onHover { hovering in
++      isLockHovering = hovering
 +    }
++    .animation(chrom
+```
+
+**File**: `Snapzy/Features/QuickAccess/Managers/QuickAccessPinWindow.swift` (modified, +11/-1)
+```diff
+@@ -161,6 +161,11 @@ final class QuickAccessPinWindow: NSPanel {
+ 
+   var onEscapeRequested: (() -> Void)?
+ 
++  /// While a flight runs, the window is a transparent frame around content that is being scaled along
++  /// its path. It must not take the mouse, become key, or light hover chrome from a cursor that is
++  /// nowhere near where the pin will end up.
++  var isInFlight = false
++
+   private weak var pinState: QuickAccessPinWindowState?
+   private var localMouseMonitor: Any?
+   private var globalMouseMonitor: Any?
+@@ -273,6 +278,11 @@ final class QuickAccessPinWindow: NSPanel {
+   }
+ 
+   func updateMousePassthrough(at mouseLocation: NSPoint) {
++    if isInFlight {
++      ignoresMouseEvents = true
++      return
++    }
++
+     guard let pinState else {
+       ignoresMouseEvents = false
+       return
+@@ -490,7 +500,7 @@ final class QuickAccessPinWindow: NSPanel {
+     // test their bounds directly.
+     var stack: [NSView] = [contentView]
+     while let view = stack.popLast() {
+-      if let exclusion = view as? PinWindowDragExclusionView {
++      if let exclusion = view as? PinWindowDragExclusionView, !exclusion.isHidden {
+         let exclusionRect = exclusion.convert(exclusion.bounds, to: contentView)
+         if NSPointInRect(point, exclusionRect) {
+           return true
+```
+
+**File**: `Snapzy/Features/QuickAccess/Managers/QuickAccessPinWindowManager.swift` (modified, +280/-12)
+```diff
+@@ -6,6 +6,7 @@
+ //
+ 
+ import AppKit
++import QuartzCore
+ import SwiftUI
+ 
+ @MainActor
+@@ -16,8 +17,15 @@ final class QuickAccessPinWindowManager {
+ 
+   private init() {}
+ 
++  /// - Parameter entranceFrom: The region the pinned image should grow out of — the Quick Access
++  ///   card it was pinned from, when the gesture came from a card. Falls back to the captured
++  ///   region, and to a plain fade when neither is known.
+   @discardableResult
+-  func show(item: QuickAccessItem, onUserClose: @escaping (UUID) -> Void) -> Bool {
++  func show(
++    item: QuickAccessItem,
++    entranceFrom: NSRect? = nil,
++    onUserClose: @escaping (UUID) -> Void
++  ) -> Bool {
+     guard !item.isVideo else { return false }
+ 
+     if let controller = controllers[item.id] {
+@@ -26,7 +34,7 @@ final class QuickAccessPinWindowManager {
+       return true
+     }
+ 
+-    let controller = QuickAccessPinWindowController(item: item)
++    let controller = QuickAccessPinWindowController(item: item, entranceFrom: entranceFrom)
+     controller.onUserClose = { [weak self] id in
+       self?.controllers[id] = nil
+       onUserClose(id)
+@@ -70,17 +78,54 @@ final class QuickAccessPinWindowManager {
+ 
+ @MainActor
+ private final class QuickAccessPinWindowController {
++  /// Both directions of the flight share one key, so a pin re-shown while its first flight is still
++  /// running replaces the animation instead of stacking on it.
++  private static let flightMotionKey = "quickAccess.pin.flight"
++
++  /// One flight, precomputed: see `makeFlight()`.
++  private struct Flight {
++    let flightFrame: NSRect
++    let restingFrame: NSRect
++    let containerFrame: NSRect
++    let transform: CATransform3D
 +  }
 +
-   private func cornerButtonTransition(delay: Int) -> AnyTransition {
-     if reduceMotion {
-       return .opacity
-@@ -640,6 +675,11 @@ struct QuickAccessCardView: View {
-         insertedDestructiveSeparator = true
+   var onUserClose: ((UUID) -> Void)?
+ 
+   private let id: UUID
+   private let state: QuickAccessPinWindowState
+   private let window: QuickAccessPinWindow
++  /// Fills the window, so the frame change AppKit performs on every `setFrame` lands here instead of
++  /// on the view that holds the laid-out content.
++  private let contentHost = NSView(frame: .zero)
++  /// Host for the SwiftUI content, sized by the sizing policy once at its resting frame and moved by
++  /// nothing else but this controller. The flight scales this view's layer, so the content is never
++  /// re-flowed mid-travel.
++  private let contentContainer = NSView(frame: .zero)
++  /// The flight currently in progress, cleared when it completes. Its frames are the only truth about
++  /// where the window is allowed to be while a spring runs.
++  private var activeFlight: Flight?
++  /// Where the flight is going: a leaving pin closes its window instead of landing in place.
++  private var isLeaving = false
++  /// Backup completion, in case the spring's completion block never reaches the main thread.
++  private var flightLanding: Timer?
++  /// A flight outlives the manager's reference to this controller — closing a pin drops it from the
++  /// dictionary immediately — so the flight holds the controller itself until it completes.
++  private var flightLease: QuickAccessPinWindowController?
++  /// The region the flight grows out of and returns to. The card the gesture came from wins over the
++  /// captured region: a pin whose resting size matches its capture has nowhere to travel, while the
++  /// card sits in a corner and always gives the flight somewhere to come from.
++  private let entranceOrigin: CGRect?
+ 
+-  init(item: QuickAccessItem) {
++  init(item: QuickAccessItem, entranceFrom: NSRect? = nil) {
+     id = item.id
+ 
+     let image = Self.loadImage(for: item)
+-    let screen = ScreenUtility.activeScreen()
++    let origin = CaptureOriginStore.shared.origin(for: item.url)
++    entranceOrigin = entranceFrom ?? origin
++    // The display the capture came from, not the one the pointer happens to be on: after a
++    // capture on monitor 2 the pointer usually drifts back to monitor 1.
++    let screen = origin.flatMap(ScreenUtility.screen(containing:)) ?? ScreenUtility.activeScreen()
+     let mode = QuickAccessPinZoomModeStore.shared.mode
+     let baseSize = QuickAccessPinWindowSizing.size(for: image.size, visibleSize: screen.visibleFrame.size, mode: mode)
+     state = QuickAccessPinWindowState(
+@@ -92,27 +137,180 @@ private final class QuickAccessPinWindowController {
+       zoomMode: mode
+     )
+ 
+-    let frame = QuickAccessPinWindowSizing.centeredFrame(size: state.displaySize, on: screen)
++    let restingSize = state.displaySize
++    let restingFrame = origin.map {
++      QuickAccessPinWindowSizing.frame(
++        size: restingSize,
++        centeredAt: CGPoint(x: $0.midX, y: $0.midY)
++      )
++    } ?? QuickAccessPinWindowSizing.centeredFrame(size: restingSize, on: screen)
++    let frame = QuickAccessPinWindowSizing.constrainedFrame(restingFrame, on: screen)
+     window = QuickAccessPinWindow(contentRect: frame, state: state)
+     state.onWindowResize = { [weak self] size, anchorFraction in
+       self?.resize(to: size, preservingAnchorFraction: anchorFraction, animated: false)
+     }
+
+```
+
+**File**: `Snapzy/Features/QuickAccess/Models/QuickAccessPinWindowSizing.swift` (modified, +61/-0)
+```diff
+@@ -7,10 +7,20 @@
+ 
+ import AppKit
+ import Foundation
++import QuartzCore
+ 
+ enum QuickAccessPinWindowSizing {
+   static let minimumInteractiveSize = CGSize(width: 240, height: 180)
+ 
++  /// Band the entrance is allowed to travel across, as a fraction of the resting size. A hairline
++  /// selection would otherwise start from a sub-pixel speck, and a capture larger than the resting
++  /// window would shrink into it from a size that reads as a different image.
++  static let minimumEntranceScale: CGFloat = 0.08
++  static let maximumEntranceScale: CGFloat = 1.25
++
++  /// Room a flight window keeps around the travelling content so its shadow is not cut off.
++  static let entranceShadowMargin: CGFloat = 40
++
+   private static let absoluteMaxSize = CGSize(width: 1440, height: 920)
+   private static let screenMaxRatio: CGFloat = 0.8
+   private static let screenMargin: CGFloat = 24
+@@ -120,4 +130,55 @@ enum QuickAccessPinWindowSizing {
+       height: height
+     )
+   }
++
++  /// The window frame an entrance flies inside: the resting frame and the start frame together,
++  /// widened by the shadow margin and trimmed to the display.
++  ///
++  /// The pin has to be laid out once at its resting size and then moved by the compositor, because
++  /// animating the window frame itself resizes its surface and re-lays the content on every single
++  /// frame — which is exactly what stutters on a large capture. A layer can only draw inside its
++  /// window, so a flight that crosses the screen needs a window wide enough to hold the whole path.
++  /// `nil` when the path cannot fit, so the caller can fall back to a plain fade.
++  static func flightRect(
++    resting: CGRect,
++    start: CGRect,
++    shadowMargin: CGFloat,
++    screenFrame: CGRect
++  ) -> CGRect? {
++    let rect = resting.union(start).insetBy(dx: -shadowMargin, dy: -shadowMargin)
++      .intersection(screenFrame)
++    guard rect.contains(resting), rect.contains(start) else { return nil }
++    return rect
++  }
++
++  /// The transform that draws a layer occupying `layerRect` exactly over `targetRect`.
++  ///
++  /// AppKit hosts a view's layer with the anchor point at its corner rather than its center, so the
++  /// translation depends on the anchor: scaling about a corner shifts the origin, and the correction
++  /// is `anchor * size * (scale - 1)`. Reading the anchor and the flipped geometry off the layer keeps
++  /// this correct for a flipped or non-flipped host instead of assuming either.
++  static func entranceTransform(
++    targetRect: CGRect,
++    layerRect: CGRect,
++    anchorPoint: CGPoint,
++    geometryFlipped: Bool
++  ) -> CATransform3D {
++    guard targetRect.width > 0, targetRect.height > 0, layerRect.width > 0, layerRect.height > 0 else {
++      return CATransform3DIdentity
++    }
++
++    let scaleX = min(max(targetRect.width / layerRect.width, minimumEntranceScale), maximumEntranceScale)
++    let scaleY = min(max(targetRect.height / layerRect.height, minimumEntranceScale), maximumEntranceScale)
++    let offsetY = geometryFlipped ? layerRect.maxY - targetRect.maxY : targetRect.minY - layerRect.minY
++
++    var transform = CATransform3DIdentity
++    transform = CATransform3DTranslate(
++      transform,
++      targetRect.minX - layerRect.minX + anchorPoint.x * layerRect.width * (scaleX - 1),
++      offsetY + anchorPoint.y * layerRect.height * (scaleY - 1),
++      0
++    )
++    transform = CATransform3DScale(transform, scaleX, scaleY, 1)
++    return transform
++  }
+ }
+```
+
+**File**: `Snapzy/Features/QuickAccess/QuickAccessManager.swift` (modified, +6/-4)
+```diff
+@@ -624,7 +624,9 @@ final class QuickAccessManager: ObservableObject {
+   }
+ 
+   /// Toggle pin state for an item. Pinned items bypass auto-dismiss.
+-  func togglePin(id: UUID) {
++  /// - Parameter entranceFrom: Screen rect of the card the gesture came from, so the pinned window
++  ///   can grow out of it instead of appearing in place.
++  func togglePin(id: UUID, entranceFrom: NSRect? = nil) {
+     guard let index = items.firstIndex(where: { $0.id == id }) else {
+       DiagnosticLogger.shared.log(
+         .warning,
+@@ -635,7 +637,7 @@ final class QuickAccessManager: ObservableObject {
+       return
+     }
+ 
+-    setPinState(id: id, isPinned: !items[index].isPinned, closePinWindow: true)
++    setPinState(id: id, isPinned: !items[index].isPinned, closePinWindow: true, entranceFrom: entranceFrom)
+   }
+ 
+   /// Pin a screenshot item without toggling it back off.
+@@ -703,7 +705,7 @@ final class QuickAccessManager: ObservableObject {
+     }
+   }
+ 
+-  private func setPinState(id: UUID, isPinned: Bool, closePinWindow: Bool) {
++  private func setPinState(id: UUID, isPinned: Bool, closePinWindow: Bool, entranceFrom: NSRect? = nil) {
+     guard let index = items.firstIndex(where: { $0.id == id }) else {
+       if closePinWindow {
+         pinWindowManager.close(id: id)
+@@ -720,7 +722,7 @@ final class QuickAccessManager: ObservableObject {
+     items[index].isPinned = isPinned
+ 
+     if isPinned {
+-      let didShowWindow = pinWindowManager.show(item: items[index]) { [weak self] closedId in
++      let didShowWindow = pinWindowManager.show(item: items[index], entranceFrom: entranceFrom) { [weak self] closedId in
+         self?.handlePinWindowClosed(id: closedId)
        }
  
-+      if action == .optimize {
-+        entries.append(optimizeContextMenuEntry)
-+        continue
-+      }
-+
-       entries.append(
-         .action(
-           title: actionTitle(for: action),
-@@ -653,6 +693,51 @@ struct QuickAccessCardView: View {
-     return entries
-   }
- 
-+  /// Optimize as a submenu so the levels stay reachable from the context menu even
-+  /// when the action has no slot on the card. Levels are read when the menu opens.
-+  private var optimizeContextMenuEntry: QuickAccessContextMenuEntry {
-+    let item = item
-+    return .submenu(
-+      title: actionTitle(for: .optimize),
-+      systemImage: actionIcon(for: .optimize),
-+      isEnabled: isActionEnabled(.optimize),
-+      makeEntries: {
-+        let store = QuickAccessOptimizeStore.shared
-+        guard let plan = store.plan(for: item) else { return [] }
-+        var entries: [QuickAccessContextMenuEntry] = plan.levels.map { level in
-+          .option(
-+            title: QuickAccessOptimizeMenuFormatting.title(for: level),
-+            detail: level.dimensionsLabel,
-+            isChecked: level.fraction == plan.currentFraction,
-+            action: { store.applyReportingFailure(.level(level), to: item.id) }
-+          )
-+        }
-+        let presets = QuickAccessOpt
 ```
 
-**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessOptimizeCustomView.swift` (added, +374/-0)
+**File**: `Snapzy/Services/Capture/CaptureOriginStore.swift` (added, +66/-0)
 ```diff
-@@ -0,0 +1,374 @@
+@@ -0,0 +1,66 @@
 +//
-+//  QuickAccessOptimizeCustomView.swift
++//  CaptureOriginStore.swift
 +//  Snapzy
 +//
-+//  The "Custom…" Optimize editor: size, format, quality and a file-size cap with a
-+//  live size preview, plus saving the settings as a preset. The settings rows are
-+//  shared with the presets editor in Preferences.
++//  Short-lived map from a saved capture to the screen region it was taken from.
 +//
 +
-+import AppKit
-+import Combine
-+import SwiftUI
++import CoreGraphics
++import Foundation
 +
-+// MARK: - Shared settings rows
-+
-+/// Size, format, quality and file-size cap. Pass `source` to show pixel sizes and
-+/// to name the "Original" format after the file's own.
-+struct QuickAccessOptimizeSettingsForm: View {
-+  @Binding var settings: QuickAccessOptimizeSettings
-+  var source: QuickAccessOptimizeSourceInfo?
-+  var originalExtension: String?
-+  var labelWidth: CGFloat = 70
-+
-+  private var outputIsLossy: Bool {
-+    switch settings.format {
-+    case .jpeg, .webp: true
-+    case .png: false
-+    case .original: originalExtension.map(QuickAccessOptimizeFormat.isLossy(fileExtension:)) ?? true
-+    }
-+  }
-+
-+  var body: some View {
-+    VStack(alignment: .leading, spacing: 10) {
-+      row(L10n.QuickAccess.optimizeSizeLabel) {
-+        HStack(spacing: 8) {
-+          Slider(
-+            value: intBinding(\.scalePercent, step: 5),
-+            in: Double(QuickAccessOptimizeSettings.scaleRange.lowerBound)...Double(QuickAccessOptimizeSettings.scaleRange.upperBound)
-+          )
-+          Text(sizeLabel)
-+            .font(.system(size: 11).monospacedDigit())
-+            .foregroundStyle(.secondary)
-+            .frame(minWidth: 52, alignment: .trailing)
-+        }
-+      }
-+
-+      row(L10n.QuickAccess.optimizeFormatLabel) {
-+        Picker("", selection: $settings.format) {
-+          ForEach(QuickAccessOptimizeFormat.allCases) { format in
-+            Text(format == .original ? L10n.QuickAccess.optimizeFormatOriginal : format.displayName(originalExtension: nil))
-+              .tag(format)
-+          }
-+        }
-+        .labelsHidden()
-+        .pickerStyle(.segmented)
-+        .help(settings.format.displayName(originalExtension: originalExtension))
-+      }
-+
-+      row(L10n.QuickAccess.optimizeQualityLabel) {
-+        HStack(spacing: 8) {
-+          Slider(
-+            value: intBinding(\.qualityPercent, step: 5),
-+            in: Double(QuickAccessOptimizeSettings.qualityRange.lowerBound)...Double(QuickAccessOptimizeSettings.qualityRange.upperBound)
-+          )
-+          Text(outputIsLossy ? "\(settings.qualityPercent)" : L10n.QuickAccess.optimizeQualityLossless)
-+            .font(.system(size: 11).monospacedDigit())
-+            .foregroundStyle(.secondary)
-+            .frame(minWidth: 52, alignment: .trailing)
-+        }
-+        .disabled(!outputIsLossy)
-+      }
-+
-+      row(L10n.QuickAccess.optimizeMaxSizeLabel) {
-+        Picker("", selection: $settings.maxFileSize) {
-+          Text(L10n.Common.off).tag(Int?.none)
-+          ForEach(QuickAccessOptimizeSettings.maxFileSizeOptions, id: \.self) { bytes in
-+            Text(QuickAccessImageOptimizer.formatByteCount(bytes)).tag(Int?.some(bytes))
-+          }
-+        }
-+        .labelsHidden()
-+        .pickerStyle(.segmented)
-+        .controlSize(.small)
-+      }
-+    }
-+  }
-+
-+  /// "50% · 1440×900", or just "50%" without a source.
-+  private var sizeLabel: String {
-+    guard let source else { return "\(settings.scalePercent)%" }
-+    let fraction = CGFloat(settings.scalePercent) / 100
-+    let width = Int((CGFloat(source.pixelWidth) * fraction).rounded())
-+    let height = Int((CGFloat(source.pixelHeight) * fraction).rounded())
-+    return "\(settings.scalePercent)% · \(width)×\(height)"
-+  }
-+
-+  private func row(_ title: String, @ViewBuilder content: () -> some View) -> some View {
-+    HStack(alignment: .center, spacing: 10) {
-+      Text(title)
-+        .font(.system(size: 12))
-+        .frame(width: labelWidth, alignment: .leading)
-+      content()
-+    }
-+  }
-+
-+  private func intBinding(_ keyPath: WritableKeyPath<QuickAccessOptimizeSettings, Int>, step: Int) -> Binding<Double> {
-+    Binding(
-+      get: { Double(settings[keyPath: keyPath]) },
-+      set: { settings[keyPath: keyPath] = Int(($0 / Double(step)).rounded()) * step }
-+    )
-+  }
-+}
-+
-+// MARK: - Editor model
-+
++/// Surfaces that reopen a capture — currently the pinned screenshot window — use this to grow out
++/// of the region the user just selected instead of popping in at the screen center.
++///
++/// The capture APIs only hand forward a file URL, so the region has to be remembered beside it
++/// rather than threaded through every result type. Entries expire on their own: an origin is only
++/// meaningful for the seconds between capturing and pinning, and a stale one would animate from a
++/// part of the desktop that no longer holds anything.
 +@MainActor
-+final class QuickAccessOptimizeCustomModel: ObservableObject {
-+  let itemID: UUID
-+  let source: QuickAccessOptimizeCustomSource
++final class CaptureOriginStore {
++  static let shared = CaptureOriginStore()
 +
-+  @Published var settings: QuickAccessOptimizeSettings {
-+    didSet { if settings != oldValue { scheduleRender() } }
-+  }
-+  @Published private(set) var rendering: QuickAccessOptimizeRendering?
-+  @Published private(set) var renderedSettings: QuickAccessOptimizeSettings?
-+  @Published private(set) var isRendering = false
-+  @Published private(set) var renderFailed = false
-+  @Published var isNamingPreset = false
-+  @Published var presetName = ""
-+  @Published private(set) var savedPresetName: String?
-+  /// Drives the bubble in/out animation; the panel stays up until it has played.
-+  @Published var isShown = false
++  /// How long an origin stays usable after its capture was written.
++  static let lifetime: TimeInterval = 60
 +
-+  var onApply: ((QuickAccessOptimizeSetting
-```
-
-**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessOptimizeMenuView.swift` (added, +330/-0)
-```diff
-@@ -0,0 +1,330 @@
-+//
-+//  QuickAccessOptimizeMenuView.swift
-+//  Snapzy
-+//
-+//  Optimize levels (`0.5x`, `1x`, `2x`…), saved presets and "Custom…" as a
-+//  native-style pop-up menu on clear Liquid Glass, opened with the current level
-+//  over the Optimize button.
-+//
++  /// Bound on remembered origins; captures are pinned within seconds, so a short ring is enough.
++  static let capacity = 32
 +
-+import AppKit
-+import Combine
-+import SwiftUI
-+
-+enum QuickAccessOptimizeMenuFormatting {
-+  /// "1x", or "Original (2x)" for the untouched size.
-+  static func title(for level: QuickAccessOptimizeLevel) -> String {
-+    level.isOriginal
-+      ? "\(L10n.QuickAccess.optimizeOriginal) (\(level.scaleLabel))"
-+      : level.scaleLabel
++  private struct Entry {
++    let url: URL
++    let screenRect: CGRect
++    let recordedAt: Date
 +  }
 +
-+  /// "−62%" against the original, or nil when it would not shrink anything.
-+  static func savingsLabel(byteCount: Int, originalByteCount: Int?) -> String? {
-+    guard let originalByteCount, originalByteCount > 0, byteCount < originalByteCount else { return nil }
-+    let percent = Int((Double(originalByteCount - byteCount) / Double(originalByteCount) * 100).rounded())
-+    guard percent > 0 else { return nil }
-+    return "−\(percent)%"
-+  }
-+}
-+
-+@MainActor
-+final class QuickAccessOptimizeMenuModel: ObservableObject {
-+  struct Row: Identifiable, Equatable {
-+    enum Kind: Equatable {
-+      case level(QuickAccessOptimizeLevel)
-+      case preset(QuickAccessOptimizePreset)
-+      case custom
-+    }
-+
-+    let id: String
-+    let kind: Kind
-+    /// Draws a separator above the row, like a native menu group break.
-+    let startsGroup: Bool
-+    var byteCount: Int?
-+    var encodedData: Data?
-+    var isEstimating: Bool
-+
-+    var level: QuickAccessOptimizeLevel? {
-+      if case let .level(level) = kind { return level }
-+      return nil
-+    }
-+
-+    static func id(for level: QuickAccessOptimizeLevel) -> String { "level-\(level.fraction)" }
-+  }
-+
-+  let itemID: UUID
-+  let originalByteCount: Int?
-+  let originalExtension: String
-+  @Published private(set) var rows: [Row]
-+  /// The level on disk, or nil when custom settings produced the file.
-+  let currentRowID: String?
-+  @Published var highlightedID: String?
-+  /// Drives the bubble in/out animation; the panel stays up until it has played.
-+  @Published var isShown = false
-+
-+  var onChoose: ((Row) -> Void)?
-+
-+  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
-+  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
-+  nonisolated deinit {}
-+
-+  init(itemID: UUID, plan: QuickAccessOptimizePlan, presets: [QuickAccessOptimizePreset]) {
-+    self.itemID = itemID
-+    originalByteCount = plan.originalByteCount
-+    originalExtension = plan.fileExtension
-+
-+    var rows = plan.levels.map { level in
-+      Row(
-+        id: Row.id(for: level),
-+        kind: .level(level),
-+        startsGroup: false,
-+        byteCount: level.isOriginal ? plan.originalByteCount : nil,
-+        encodedData: nil,
-+        isEstimating: !level.isOriginal
-+      )
-+    }
-+    rows += presets.enumerated().map { index, preset in
-+      Row(
-+        id: "preset-\(preset.id.uuidString)",
-+        kind: .preset(preset),
-+        startsGroup: index == 0,
-+        byteCount: nil,
-+        encodedData: nil,
-+        isEstimating: false
-+      )
-+    }
-+    rows.append(Row(id: "custom", kind: .custom, startsGroup: true, byteCount: nil, encodedData: nil, isEstimating: false))
-+    self.rows = rows
-+
-+    currentRowID = plan.levels.first { $0.fraction == plan.currentFraction }.map(Row.id(for:))
-+    highlightedID = currentRowID ?? rows.last?.id
-+  }
-+
-+  /// Row the menu opens on (and grows out of): the current level, else "Custom…".
-+  var anchorIndex: Int {
-+    rows.firstIndex { $0.id == (currentRowID ?? "custom") } ?? 0
-+  }
-+
-+  func record(_ level: QuickAccessOptimizeLevel, data: Data?) {
-+    guard let index = rows.firstIndex(where: { $0.level == level }) else { return }
-+    rows[index].encodedData = data
-+    rows[index].byteCount = data?.count
-+    rows[index].isEstimating = false
-+  }
-+
-+  func choose(_ row: Row) {
-+    onChoose?(row)
-+  }
-+
-+  func moveHighlight(by offset: Int) {
-+    guard !rows.isEmpty else { return }
-+    let currentIndex = rows.firstIndex { $0.id == highlightedID } ?? 0
-+    let nextIndex = min(max(currentIndex + offset, 0), rows.count - 1)
-+    highlightedID = rows[nextIndex].id
-+  }
-+
-+  func chooseHighlighted() {
-+    guard let row = rows.first(where: { $0.id == highlightedID }) else { return }
-+    choose(row)
-+  }
-+}
-+
-+struct QuickAccessOptimizeMenuView: View {
-+  @ObservedObject var model: QuickAccessOptimizeMenuModel
-+
-+  // Geometry mirrors a native pop-up menu; the panel controller reads it to put
-+  // the current row right over the Optimize button.
-+  static let shadowPadding: CGFloat = 14
-+  static let inset: CGFloat = 4
-+  static let rowHeight: CGFloat = 19
-+  static let rowSpacing: CGFloat = 1
-+  /// Height of a group separator, hairline included.
-+  static let separatorHeight: CGFloat = 9
-+
-+  /// Distance from the hosting view's top edge to the centre of row `index`.
-+
-```
-
-**File**: `Snapzy/Features/QuickAccess/Managers/QuickAccessOptimizePanelController.swift` (added, +366/-0)
-```diff
-@@ -0,0 +1,366 @@
-+//
-+//  QuickAccessOptimizePanelController.swift
-+//  Snapzy
-+//
-+//  Hosts the Optimize list and the Custom editor in a borderless child panel. The
-+//  Quick Access panel only accepts the mouse inside the card stack, so anything that
-+//  spills past the card has to live in a separate window anchored to the card.
-+//
-+
-+import AppKit
-+import Combine
-+import SwiftUI
-+
-+/// Remembers the AppKit view behind a card so callers can ask for its screen frame.
-+@MainActor
-+final class QuickAccessCardAnchor {
-+  weak var view: NSView?
-+
-+  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
-+  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
-+  nonisolated deinit {}
-+
-+  var screenFrame: NSRect? {
-+    guard let view, let window = view.window else { return nil }
-+    return window.convertToScreen(view.convert(view.bounds, to: nil))
-+  }
-+}
-+
-+struct QuickAccessCardAnchorView: NSViewRepresentable {
-+  let anchor: QuickAccessCardAnchor
-+
-+  func makeNSView(context _: Context) -> NSView {
-+    let view = PassthroughView()
-+    anchor.view = view
-+    return view
-+  }
-+
-+  func updateNSView(_ nsView: NSView, context _: Context) {
-+    anchor.view = nsView
-+  }
-+
-+  private final class PassthroughView: NSView {
-+    override func hitTest(_: NSPoint) -> NSView? { nil }
-+  }
-+}
-+
-+/// Borderless panel that can take keyboard focus without activating Snapzy.
-+final class QuickAccessOptimizePanel: NSPanel {
-+  init(contentRect: NSRect) {
-+    super.init(
-+      contentRect: contentRect,
-+      styleMask: [.borderless, .nonactivatingPanel],
-+      backing: .buffered,
-+      defer: false
-+    )
-+    isFloatingPanel = true
-+    becomesKeyOnlyIfNeeded = false
-+    hidesOnDeactivate = false
-+    isOpaque = false
-+    backgroundColor = .clear
-+    // The SwiftUI view draws its own shadow so it can scale with the bubble animation.
-+    hasShadow = false
-+    isReleasedWhenClosed = false
-+    collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
-+    animationBehavior = .utilityWindow
-+  }
-+
-+  override var canBecomeKey: Bool { true }
-+  override var canBecomeMain: Bool { false }
-+}
-+
-+@MainActor
-+final class QuickAccessOptimizePanelController {
-+  static let shared = QuickAccessOptimizePanelController()
-+
-+  private var panel: QuickAccessOptimizePanel?
-+  private var menuModel: QuickAccessOptimizeMenuModel?
-+  private var customModel: QuickAccessOptimizeCustomModel?
-+  /// Hides whichever view is up with the bubble animation.
-+  private var setShown: ((Bool) -> Void)?
-+  private var presentedItemID: UUID?
-+  private var estimateTask: Task<Void, Never>?
-+  private var eventMonitors: [Any] = []
-+  private var itemsCancellable: AnyCancellable?
-+  private var heldItemID: UUID?
-+  /// A click on the card's Optimize button first dismisses the open list through the
-+  /// click monitor; remembering that lets the button act as a toggle.
-+  private var lastOutsideDismissal: (itemID: UUID, date: Date)?
++  private var entries: [Entry] = []
 +
 +  private init() {}
 +
-+  var isPresented: Bool { panel != nil }
-+
-+  /// Opens the list like a native pop-up menu: the current level lands right over
-+  /// `buttonFrame` (screen coordinates), or over the card's centre when the menu was
-+  /// opened without the button (e.g. from a shortcut).
-+  func present(for item: QuickAccessItem, buttonFrame: NSRect?, cardFrame: NSRect?) {
-+    if presentedItemID == item.id {
-+      dismiss()
-+      return
++  func record(url: URL, screenRect: CGRect, at date: Date = Date()) {
++    // `size`, not the `screenRect.width` accessor: CoreGraphics reports an inverted rect's width
++    // as if it had already been standardized, so the accessor would let a degenerate region in.
++    guard screenRect.size.width > 0, screenRect.size.height > 0 else { return }
++    pruneExpired(at: date)
++    entries.removeAll { $0.url == url }
++    entries.append(Entry(url: url, screenRect: screenRect, recordedAt: date))
++    if entries.count > Self.capacity {
++      entries.removeFirst(entries.count - Self.capacity)
 +    }
-+    if let lastOutsideDismissal,
-+       lastOutsideDismissal.itemID == item.id,
-+       Date().timeIntervalSince(lastOutsideDismissal.date) < 0.4 {
-+      self.lastOutsideDismissal = nil
-+      return
-+    }
-+    dismiss()
++  }
 +
-+    let store = QuickAccessOptimizeStore.shared
-+    guard !store.isOptimizing(item.id) else { return }
-+    guard let plan = store.plan(for: item) else {
-+      reportUnavailable()
-+      return
++  func origin(for url: URL, at date: Date = Date()) -> CGRect? {
++    guard let entry = entries.last(where: { $0.url == url }) else { return nil }
++    guard date.timeIntervalSince(entry.recordedAt) <= Self.lifetime else {
++      entries.removeAll { $0.url == url }
++      return nil
 +    }
++    return entry.screenRect
++  }
 +
-+    let anchor = buttonFrame ?? cardFrame
-+    let model = QuickAccessOptimizeMenuModel(
-+      itemID: item.id,
-+      plan: plan,
-+      presets: QuickAccessOptimizePresetStore.shared.presets
-+    )
-+    model.onChoose = { [weak self] row in
-+      self?.dismiss()
-+      switch row.kind {
-+      case let .level(level):
-+        store.applyReportingFailure(.level(level, encodedData: row.encodedData), to: item.id)
-+      case let .preset(preset):
-+        store.applyReportingFailure(.custom(preset.settings), to: item.id)
-+      case .custom:
-+        // Wait for the menu's close animation so the editor does not pop over it.
-+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.closeDuration) {
-+          guard let current = QuickAccessManager.shared.items.first(where: { $0.id == item.id }) else { return }
-+          self?.presentCustom(for: current, anchor: anchor)
-+        }
-+      }
-+    }
-+    menuModel = model
++  func removeAll() {
++    entries.removeAll()
++  }
 +
-+    let hostingView = NSHostingView(rootView: QuickAccessOptimizeMenuView(model: model))
-+    hostingView.layoutSubtreeIfNeeded()
-+    let size
++  private func pruneExpired(at date: Date) {
++    entries.removeAll { date.timeIntervalSince($0.recordedAt) > Self.lifetime }
++  }
++}
 ```
 
-**File**: `Snapzy/Features/QuickAccess/Models/QuickAccessActionConfigurationStore.swift` (modified, +15/-3)
+**File**: `Snapzy/Services/Capture/ScreenCaptureManager.swift` (modified, +18/-6)
 ```diff
-@@ -22,7 +22,8 @@ final class QuickAccessActionConfigurationStore: ObservableObject {
-     self.defaults = defaults
-     actionOrder = Self.normalizedOrder(from: defaults.stringArray(forKey: PreferencesKeys.quickAccessActionOrder))
-     enabledActions = Self.normalizedEnabledActions(
--      from: defaults.stringArray(forKey: PreferencesKeys.quickAccessEnabledActions)
-+      from: defaults.stringArray(forKey: PreferencesKeys.quickAccessEnabledActions),
-+      known: defaults.stringArray(forKey: PreferencesKeys.quickAccessKnownActions)
-     )
-     slotAssignments = Self.normalizedSlotAssignments(
-       from: defaults.dictionary(forKey: PreferencesKeys.quickAccessActionSlotAssignments) as? [String: String]
-@@ -124,6 +125,7 @@ final class QuickAccessActionConfigurationStore: ObservableObject {
-       forKey: PreferencesKeys.quickAccessEnabledActions
-     )
-     defaults.set(rawSlotAssignments(from: slotAssignments), forKey: PreferencesKeys.quickAccessActionSlotAssignments)
-+    defaults.set(QuickAccessActionKind.allCases.map(\.rawValue), forKey: PreferencesKeys.quickAccessKnownActions)
-   }
+@@ -1198,7 +1198,8 @@ final class ScreenCaptureManager: ObservableObject {
+           format: format,
+           scaleFactor: compositeResult.scaleFactor,
+           emitCompletion: invocation.emitsCompletion,
+-          context: context
++          context: context,
++          captureOrigin: rect
+         )
+       }
  
-   private static func normalizedOrder(from rawIDs: [String]?) -> [QuickAccessActionKind] {
-@@ -143,12 +145,22 @@ final class QuickAccessActionConfigurationStore: ObservableObject {
-     return ordered
-   }
+@@ -1226,7 +1227,8 @@ final class ScreenCaptureManager: ObservableObject {
+         format: format,
+         scaleFactor: captured.scaleFactor,
+         emitCompletion: invocation.emitsCompletion,
+-        context: context
++        context: context,
++        captureOrigin: rect
+       )
  
--  private static func normalizedEnabledActions(from rawIDs: [String]?) -> Set<QuickAccessActionKind> {
-+  /// `known` is the action list the enabled list was saved against. Actions added
-+  /// since then were never offered to the user, so they start enabled when they
-+  /// are enabled by default; an explicit disable of a known action is kept.
-+  static func normalizedEnabledActions(
-+    from rawIDs: [String]?,
-+    known rawKnownIDs: [String]?
-+  ) -> Set<QuickAccessActionKind> {
-     guard let rawIDs else {
-       return QuickAccessActionKind.defaultEnabledActions
-     }
+     } catch {
+@@ -1293,7 +1295,8 @@ final class ScreenCaptureManager: ObservableObject {
+           format: format,
+           scaleFactor: windowImage.scaleFactor,
+           emitCompletion: invocation.emitsCompletion,
+-          context: context
++          context: context,
++          captureOrigin: target.frame
+         )
+       } catch {
+         DiagnosticLogger.shared.logError(
+@@ -1315,7 +1318,8 @@ final class ScreenCaptureManager: ObservableObject {
+         format: format,
+         scaleFactor: immediateMenuBarPopoverCapture.scaleFactor,
+         emitCompletion: invocation.emitsCompletion,
+-        context: context
++        context: context,
++        captureOrigin: target.frame
+       )
  
--    return Set(rawIDs.compactMap(QuickAccessActionKind.init(rawValue:)))
-+    let saved = Set(rawIDs.compactMap(QuickAccessActionKind.init(rawValue:)))
-+    let known = rawKnownIDs.map { Set($0.compactMap(QuickAccessActionKind.init(rawValue:))) }
-+      ?? QuickAccessActionKind.legacyKnownActions
-+    let introduced = QuickAccessActionKind.defaultEnabledActions.subtracting(known)
-+    return saved.union(introduced)
-   }
+     case .coreGraphicsWindow:
+@@ -1327,7 +1331,8 @@ final class ScreenCaptureManager: ObservableObject {
+           format: format,
+           scaleFactor: windowImage.scaleFactor,
+           emitCompletion: invocation.emitsCompletion,
+-          context: context
++          context: context,
++          captureOrigin: target.frame
+         )
+       }
+       DiagnosticLogger.shared.log(
+@@ -1393,14 +1398,18 @@ final class ScreenCaptureManager: ObservableObject {
+   // MARK: - Image Saving
  
-   private static func normalizedSlotAssignments(
+   /// Save a CGImage to disk with write verification
++  ///
++  /// - Parameter captureOrigin: the captured region in screen coordinates, remembered so a later
++  ///   pin can animate out of the place the shot was taken rather than out of the screen center.
+   private func saveImage(
+     _ image: CGImage,
+     to directory: URL,
+     fileName: String?,
+     format: ImageFormat,
+     scaleFactor: CGFloat? = nil,
+     emitCompletion: Bool = true,
+-    context: CaptureContext = .empty
++    context: CaptureContext = .empty,
++    captureOrigin: CGRect? = nil
+   ) async -> CaptureResult {
+     let directoryAccess = SandboxFileAccessManager.shared.beginAccessingURL(directory)
+     defer { directoryAccess.stop() }
+@@ -1474,6 +1483,9 @@ final class ScreenCaptureManager: ObservableObject {
+ 
+     switch writeResult {
+     case .success(let url):
++      if let captureOrigin {
++        CaptureOriginStore.shared.record(url: url, screenRect: captureOrigin)
++      }
+       DiagnosticLogger.shared.log(.info, .capture, "Capture saved: \(url.lastPathComponent)")
+       if emitCompletion {
+         captureCompletedSubject.send(url)
 ```
 
 ---
 
-### Incident Patch 3: `4a61039c` (2026-11-18)
-**Commit Message**: ci: split CI into parallel checks, test and release-build jobs (#759)
+### Incident Patch 3: `1bc88796` (2026-11-21)
+**Commit Message**: feat: Collapse Quick Access cards to the screen edge (#591) (#782)
 
-- checks: localization verify + SnapzyCLIKit tests (10 min)
-- test: Debug xcodebuild test with the unchanged skip list (30 min)
-- release-build: arm64-only on PRs, universal on push like the release
-  archive; adds the #725 runtime weak-import guard, lipo arch check on
-  push, and the Release build duration in the job summary
-- skip CI for docs/plans/markdown-only changes
-- raise release-publish build timeout from 45 to 75 min
+Quick Access cards can be tucked into the screen edge, where they peek out
+and stay active instead of being dismissed. The auto-close countdown waits
+while a card is collapsed.
 
-**File**: `.github/workflows/ci.yml` (modified, +105/-6)
+- Collapse: two-finger move down on a card, the new Collapse to Edge card
+  action (hover shortcut ⌥H, context menu, optional slot or swipe action),
+  or an opt-in "Swipe Toward Edge to Collapse" setting (off by default).
+- Restore: click the peek, two-finger move up, or swipe back out of the edge.
+- Peeks are fixed-size windows flush with the screen edge that reuse the card
+  surface; only the card moves inside them, so hover is a smooth spring and
+  the Quick Access panel's geometry and click-through are unchanged.
+- Swipe end decisions moved into a pure QuickAccessSwipeResolver, locked by
+  characterization tests written before the change.
+
+Closes #591
+
+**File**: `README.ja.md` (modified, +1/-0)
 ```diff
-@@ -3,17 +3,25 @@ name: CI Build Check
- on:
-   push:
-     branches: [master, beta]
-+    paths-ignore:
-+      - 'docs/**'
-+      - 'plans/**'
-+      - '**/*.md'
-   pull_request:
-     branches: [master, beta]
-+    paths-ignore:
-+      - 'docs/**'
-+      - 'plans/**'
-+      - '**/*.md'
+@@ -162,6 +162,7 @@ curl -fsSL https://raw.githubusercontent.com/duongductrong/Snapzy/master/reset-p
+ | スクリーンショットを画面にピン留め | `⌘P` |
+ | 削除 | `⌘⌫` |
+ | 閉じる | `⌘W` |
++| 画面端にしまう | `⌥H` |
  
- concurrency:
-   group: ci-${{ github.ref }}
-   cancel-in-progress: true
+ <a id="command-line-tools"></a>
  
- jobs:
--  build:
-+  checks:
-     runs-on: macos-15
--    timeout-minutes: 45
-+    timeout-minutes: 10
- 
-     steps:
-       - name: Checkout
-@@ -39,6 +47,25 @@ jobs:
-       - name: Test SnapzyCLIKit package
-         run: swift test --package-path Packages/SnapzyCLIKit
- 
-+  test:
-+    runs-on: macos-15
-+    timeout-minutes: 30
-+
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@v7
-+
-+      - name: Setup Xcode
-+        uses: maxim-lobanov/setup-xcode@v1
-+        with:
-+          xcode-version: '26.2'
-+
-+      - name: Reset SwiftPM artifact cache
-+        # Fresh macos-15 images can ship a stale entry for the Sparkle binary
-+        # artifact, which makes package resolution fail with
-+        # "... already exists in file system".
-+        run: rm -rf "$HOME/Library/Caches/org.swift.swiftpm/artifacts"
-+
-       - name: Run tests
-         env:
-           # The following tests crash on GitHub Actions macOS runners (Swift concurrency /
-@@ -157,21 +184,68 @@ jobs:
-             build/ci-test.log
-             build/ci-test.xcresult
- 
--      - name: Build
-+  release-build:
-+    runs-on: macos-15
-+    timeout-minutes: 60
-+    env:
-+      # Pull requests build arm64 only to keep the Release (WMO) compile short; the
-+      # SIL optimizer is arch-independent, so optimizer crashes still surface.
-+      # Pushes to master/beta build universal exactly like release-publish.yml.
-+      BUILD_MODE: ${{ github.event_name == 'pull_request' && 'arm64' || 'universal' }}
-+
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@v7
-+
-+      - name: Setup Xcode
-+        uses: maxim-lobanov/setup-xcode@v1
-+        with:
-+          xcode-version: '26.2'
-+
-+      - name: Reset SwiftPM artifact cache
-+        # Fresh macos-15 images can ship a stale entry for the Sparkle binary
-+        # artifact, which makes package resolution fail with
-+        # "... already exists in file system".
-+        run: rm -rf "$HOME/Library/Caches/org.swift.swiftpm/artifacts"
-+
-+      - name: Build Release
-         run: |
-           set -euo pipefail
-           mkdir -p build
- 
--          if ! xcodebuild \
-+          if [ "$BUILD_MODE" = "universal" ]; then
-+            arch_args=(ONLY_ACTIVE_ARCH=NO)
-+          else
-+            arch_args=(ARCHS=arm64 ONLY_ACTIVE_ARCH=YES)
-+          fi
-+          echo "Build mode: $BUILD_MODE (${arch_args[*]})"
-+
-+          start=$(date +%s)
-+          set +e
-+          xcodebuild \
-             -project Snapzy.xcodeproj \
-             -scheme Snapzy \
-             -configuration Release \
-             -derivedDataPath build/DerivedData \
-             CODE_SIGN_IDENTITY="" \
-             CODE_SIGNING_REQUIRED=NO \
-             CODE_SIGNING_ALLOWED=NO \
--            ONLY_ACTIVE_ARCH=NO \
--            build > build/ci-build.log 2>&1; then
-+            "${arch_args[@]}" \
-+            build > build/ci-build.log 2>&1
-+          status=$?
-+          set -e
-+          elapsed=$(( $(date +%s) - start ))
-+
-+          {
-+            echo "### Release build ($BUILD_MODE)"
-+            echo ""
-+            echo "| Result | Duration |"
-+            echo "| --- | --- |"
-+            if [ "$status" -eq 0 ]; then result="success"; else result="failed ($status)"; fi
-+            printf '| %s | %dm %02ds |\n' "$result" $((elapsed / 60)) $((elapsed % 60))
-+          } >> "$GITHUB_STEP_SUMMARY"
-+
-+          if [ "$status" -ne 0 ]; then
-             tail -100 build/ci-build.log
-             exit 1
-           fi
-@@ -202,3 +276,28 @@ jobs:
-             exit 1
-           fi
-           echo "Embedded snapzy CLI verified"
-+
-+      # Release-only crash class (#725): optimized builds call macOS 15+ Swift
-+      # runtime symbols without a fallback, so the app dies at launch on 13/14.
-+      # Same guard as release-publish.yml, so a green PR cannot fail the release.
-+      - name: Guard Swift runtime imports for deployment target
-+        run: |
-+          set -euo pipefail
-+          bash scripts/check-runtime-weak-imports.sh build/DerivedData/Build/Products/Release/Snapzy.app
-+
-+      - name: Verify universal binaries
-+        if: env.BUILD_MODE == 'universal'
-+        run: |
-+          set -euo pipefail
-+          APP_PATH="build/DerivedData/Build/Products/Release/Snapzy.app"
-+          APP_EXEC=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP_PATH/Contents/Info.plist")
-+          for bin in "$APP_PATH/Contents/MacOS/$APP_EXEC" "$APP_PATH/Contents/Helpers/snapzy"; do
-+            archs=$(lipo -archs "$bin")
-+            echo "$bin: $archs"
-+            for want in x86_64 arm64; do
-+              if ! grep -qw "$want" <<<"$archs"; then
-+              
 ```
 
-**File**: `.github/workflows/release-publish.yml` (modified, +1/-1)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -26,7 +26,7 @@ jobs:
-       (github.event.pull_request.merged == true &&
-       startsWith(github.event.pull_request.head.ref, 'release/v'))
-     runs-on: macos-15
--    timeout-minutes: 45
-+    timeout-minutes: 75
-     permissions:
-       contents: write
-     env:
+@@ -150,6 +150,7 @@ Hover a Quick Access card, then press the key. Active only while the pointer is
+ | Pin screenshot to screen | `⌘P` |
+ | Delete | `⌘⌫` |
+ | Close | `⌘W` |
++| Collapse to screen edge | `⌥H` |
+ 
+ ## Command line tools
+ 
+```
+
+**File**: `README.vi.md` (modified, +1/-0)
+```diff
+@@ -162,6 +162,7 @@ Rê chuột lên một thẻ Truy cập nhanh rồi nhấn phím. Các phím nà
+ | Ghim ảnh chụp lên màn hình | `⌘P` |
+ | Xóa | `⌘⌫` |
+ | Đóng | `⌘W` |
++| Thu vào cạnh màn hình | `⌥H` |
+ 
+ <a id="command-line-tools"></a>
+ 
+```
+
+**File**: `README.zh-CN.md` (modified, +1/-0)
+```diff
+@@ -162,6 +162,7 @@ curl -fsSL https://raw.githubusercontent.com/duongductrong/Snapzy/master/reset-p
+ | 将截图固定到屏幕 | `⌘P` |
+ | 删除 | `⌘⌫` |
+ | 关闭 | `⌘W` |
++| 收起到屏幕边缘 | `⌥H` |
+ 
+ <a id="command-line-tools"></a>
+ 
+```
+
+**File**: `Snapzy/Features/Preferences/Components/PreferencesQuickAccessSettingsView.swift` (modified, +5/-0)
+```diff
+@@ -148,6 +148,11 @@ struct QuickAccessSettingsView: View {
+             .labelsHidden()
+         }
+ 
++        SettingRow(title: L10n.PreferencesQuickAccess.swipeTowardEdgeCollapsesTitle, description: L10n.PreferencesQuickAccess.swipeTowardEdgeCollapsesDescription) {
++          Toggle("", isOn: $manager.swipeTowardEdgeCollapses)
++            .labelsHidden()
++        }
++
+         if manager.twoFingerSwipeToDismissEnabled {
+           SettingRow(title: L10n.PreferencesQuickAccess.swipeSensitivityTitle, description: L10n.PreferencesQuickAccess.swipeSensitivityDescription) {
+             HStack(spacing: 8) {
+```
+
+**File**: `Snapzy/Features/Preferences/Models/PreferencesSearchIndex.swift` (modified, +3/-0)
+```diff
+@@ -340,6 +340,9 @@ extension PreferencesSearchEntry {
+       .init(.quickAccess, section: behaviors, title: L10n.PreferencesQuickAccess.twoFingerSwipeTitle,
+             detail: L10n.PreferencesQuickAccess.twoFingerSwipeDescription,
+             keywords: ["trackpad", "gesture", "dismiss"]),
++      .init(.quickAccess, section: behaviors, title: L10n.PreferencesQuickAccess.swipeTowardEdgeCollapsesTitle,
++            detail: L10n.PreferencesQuickAccess.swipeTowardEdgeCollapsesDescription,
++            keywords: ["collapse", "edge", "peek", "hide", "tuck"]),
+       .init(.quickAccess, section: behaviors, title: L10n.PreferencesQuickAccess.swipeSensitivityTitle,
+             detail: L10n.PreferencesQuickAccess.swipeSensitivityDescription, keywords: ["trackpad", "gesture"]),
+       .init(.quickAccess, section: swipeActions, title: L10n.PreferencesQuickAccess.trackpadSwipeModeTitle,
+```
+
+**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessCardSurface.swift` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++//
++//  QuickAccessCardSurface.swift
++//  Snapzy
++//
++//  The Quick Access card's chrome: rounded clip, backdrop, GPU-cached shadow
++//  and hairline stroke. Shared by the stack card and its edge peek (#591) so
++//  a collapsed card looks exactly like the card it came from.
++//
++
++import AppKit
++import SwiftUI
++
++struct QuickAccessCardSurface: ViewModifier {
++  var cornerRadius: CGFloat = Radius.card
++
++  func body(content: Content) -> some View {
++    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
++
++    content
++      .clipShape(shape)
++      .contentShape(shape)
++      .background(shape.fill(Color.black.opacity(0.1)))
++      // GPU-cached drop shadow (furthest back). Replaces per-frame SwiftUI `.shadow()`
++      // blur that lagged when many stacked cards recomposited during capture-area mode.
++      .background(QuickAccessCardShadowView(cornerRadius: cornerRadius))
++      .overlay(shape.stroke(Color.white.opacity(0.2), lineWidth: 1))
++  }
++}
++
++extension View {
++  func quickAccessCardSurface(cornerRadius: CGFloat = Radius.card) -> some View {
++    modifier(QuickAccessCardSurface(cornerRadius: cornerRadius))
++  }
++}
++
++/// Card thumbnail fill, identical crop to the stack card.
++struct QuickAccessCardThumbnail: View {
++  let image: NSImage
++  let size: CGSize
++
++  var body: some View {
++    // Clipped scaled-to-fill images can still expose their hidden area to hit
++    // testing, so the thumbnail stays decorative and the card owns interaction.
++    Image(nsImage: image)
++      .resizable()
++      .aspectRatio(contentMode: .fill)
++      .frame(width: size.width, height: size.height)
++      .clipped()
++      .contentShape(Rectangle())
++      .allowsHitTesting(false)
++  }
++}
+```
+
+**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessCardView.swift` (modified, +104/-52)
+```diff
+@@ -25,6 +25,9 @@ struct QuickAccessCardView: View {
+   @State private var isDragging = false
+   @State private var isSwiping = false
+   @State private var isDismissing = false
++  @State private var isCollapsing = false
++  /// 0...1 progress of a live two-finger move down toward the edge (#591).
++  @State private var collapseSwipeProgress: CGFloat = 0
+   @State private var swipeOffset: CGFloat = 0
+   @State private var isCloudUploading = false
+   @State private var cloudUploadProgress: Double = 0
+@@ -73,33 +76,28 @@ struct QuickAccessCardView: View {
+ 
+       // Hover overlay with staggered buttons (hidden while swiping so it does not
+       // visually fight the swipe gesture).
+-      if isHovering && !isSwiping && canPerformCardActions && hasVisibleOverlayActions {
++      if isHovering && !isSwiping && collapseSwipeProgress == 0 && canPerformCardActions && hasVisibleOverlayActions {
+         hoverOverlay
+           .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.95)))
+       }
+ 
+       // Corner buttons (only visible on hover, hidden during cloud upload and swipe).
+-      if isHovering && !isSwiping && canPerformCardActions && !cornerOverlayActions.isEmpty {
++      if isHovering && !isSwiping && collapseSwipeProgress == 0 && canPerformCardActions && !cornerOverlayActions.isEmpty {
+         cornerButtons
+       }
+     }
+     .frame(width: scaledWidth, height: scaledHeight)
+-    .clipShape(cardShape)
+-    .contentShape(cardShape)
+-    .background(
+-      cardShape
+-        .fill(Color.black.opacity(0.1))
+-    )
+-    // GPU-cached drop shadow (furthest back). Replaces per-frame SwiftUI `.shadow()`
+-    // blur that lagged when many stacked cards recomposited during capture-area mode.
+-    .background(QuickAccessCardShadowView(cornerRadius: cornerRadius))
+-    .overlay(
+-      cardShape
+-        .stroke(Color.white.opacity(0.2), lineWidth: 1)
++    .quickAccessCardSurface(cornerRadius: cornerRadius)
++    .scaleEffect(
++      reduceMotion ? 1 : QuickAccessCollapseSwipePolicy.cardScale(progress: collapseSwipeProgress),
++      anchor: manager.position.isLeftSide ? .leading : .trailing
+     )
+     .opacity(cardOpacity)
+-    .offset(x: reduceMotion ? 0 : swipeOffset)
+-    .rotationEffect(.degrees(reduceMotion ? 0 : Double(swipeOffset) * 0.03))
++    .offset(
++      x: reduceMotion ? 0 : swipeOffset + collapseSwipeDrift,
++      y: reduceMotion ? 0 : QuickAccessCollapseSwipePolicy.cardDrop(progress: collapseSwipeProgress)
++    )
++    .rotationEffect(.degrees(reduceMotion || isCollapseMotion ? 0 : Double(swipeOffset) * 0.03))
+     .onHover { hovering in
+       withAnimation(QuickAccessAnimations.hoverOverlay) {
+         isHovering = hovering
+@@ -140,14 +138,16 @@ struct QuickAccessCardView: View {
+     }
+     .onAppear {
+       isDismissing = false
++      isCollapsing = false
++      collapseSwipeProgress = 0
+       swipeOffset = 0
+       isSwiping = false
+       isDragging = false
+       isHovering = false
+     }
+     .onReceive(manager.$items) { updatedItems in
+       guard let currentItem = updatedItems.first(where: { $0.id == item.id }) else { return }
+-      if !currentItem.isWindowOpen && swipeOffset != 0 && !isSwiping && !isDismissing {
++      if !currentItem.isWindowOpen && swipeOffset != 0 && !isSwiping && !isDismissing && !isCollapsing {
+         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+           swipeOffset = 0
+         }
+@@ -167,9 +167,19 @@ struct QuickAccessCardView: View {
+     if isDismissing { return 0 }
+ 
+     if reduceMotion { return 1.0 }
++    // Collapsing slides the card into the edge intact; it does not fade like a dismiss.
++    if isCollapseMotion { return 1.0 }
+     return 1.0 - Double(abs(swipeOffset)) / 200.0
+   }
+ 
++  /// True while the card is (or is being swiped toward) collapsing into its edge.
++  private var isCollapseMotion: Bool {
++    if isCollapsing { return true }
++    guard swipeOffset != 0 else { return false }
++    if manager.swipeTowardEdgeCollapses && swipeOffset * dismissDirection > 0 { return true }
++    return swipeActionStore.action(for: swipeOffset > 0 ? .right : .left) == .collapseToEdge
++  }
++
+   private var captureType: CaptureType {
+     item.isVideo ? .recording : .screenshot
+   }
+@@ -209,10 +219,6 @@ struct QuickAccessCardView: View {
+     item.processingState == .idle && !isCloudUploading
+   }
+ 
+-  private var cardShape: RoundedRectangle {
+-    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+-  }
+-
+   private var orderedEnabledActions: [QuickAccessActionKind] {
+     actionConfiguration.orderedActions(includeDisabled: false)
+   }
+@@ -261,12 +267,7 @@ struct QuickAccessCardView: View {
+       },
+       onSwipeChanged: { translation in
+         guard !reduceMotion else { return }
+-        var finalTranslation = translation
+-        if finalTranslation > 0 && swipeActionStore.action(for: .right) == nil {
+-          finalTranslation = 0
+-        } else if finalTranslation < 0 && swipeActionStore.action(f
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #768** (2026-11-20): feat: Added recording area border shown during recording, independent of dim (#545) (@duongductrong)
-- **PR #767** (2026-11-20): chore: release v2.3.0-beta.2 (@github-actions[bot])
-- **PR #766** (2026-11-20): feat: Added auto-expanding canvas to the Annotate editor (@duongductrong)
-- **PR #765** (2026-11-20): chore: release v2.3.0-beta.1 (@github-actions[bot])
-- **PR #764** (2026-11-20): fix: Get master CI green again (@duongductrong)
-- **PR #763** (2026-11-19): feat: Added Quick Access Optimize action to shrink screenshots (@duongductrong)
+- **PR #807** (2026-11-23): chore: release v2.3.0-beta.11 (@github-actions[bot])
+- **PR #806** (2026-11-23): feat: add snapzy record command for CLI screen recording (@duongductrong)
+- **PR #805** (2026-11-23): chore: release v2.3.0-beta.10 (@github-actions[bot])
+- **PR #804** (2026-11-23): fix: stop cursor shape flicker in Studio recordings and keep smart zooms on fill-gaps no-op (@duongductrong)
+- **PR #803** (2026-11-22): perf: smooth onboarding step transitions (@duongductrong)
+- **PR #802** (2026-11-22): chore: release v2.3.0-beta.9 (@github-actions[bot])
 
 ---
 
@@ -2096,38 +2082,23 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Stop the video fixture from hanging CI and collect test-host crash reports
+## X. stop the status badges from painting over the duration readout
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Snapzy/Features/VideoEditor/Agent/VideoEditorAgentAnalyzer.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22ea076c`: Stop the video fixture from hanging CI and collect test-host crash reports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b96a6091`: stop the status badges from painting over the duration readout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/VideoEditor/Agent/VideoEditorAgentAnalyzer.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-      - name: Collect crash reports
-        # A test-host abort leaves only "malloc: ..." in the log; the backtrace lives in
-        # the crash report ReportCrash writes, which the xcresult does not include.
-        if: failure() || cancelled()
-        run: |
-          mkdir -p build/crash-reports
-          find "$HOME/Library/Logs/DiagnosticReports" /Library/Logs/DiagnosticReports \
-            \( -name 'Snapzy*' -o -name 'xctest*' \) -type f -mmin -60 \
-            -exec cp {} build/crash-reports/ \; 2>/dev/null || true
-          ls -la build/crash-reports
-
-      - name: Upload crash reports
-        if: failure() || cancelled()
-        uses: actions/upload-artifact@v7
-        with:
-          name: ci-crash-reports
-          path: build/crash-reports
-          if-no-files-found: ignore
+  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
+  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
+  nonisolated deinit {}
 
 ```
 
@@ -2138,4 +2109,4 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22ea076c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b96a6091` are properly handled with clean fallback behavior.

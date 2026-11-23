@@ -12368,3 +12368,5 @@
 | `CYCLE-20261123-2EEE` | `2026-11-23T16:20:29.414Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`7744a8d5...`) |
 | `CYCLE-20261123-2FQW` | `2026-11-23T16:20:31.160Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10065` | Yes (`bcf4ffa1...`) |
 | `CYCLE-20261123-2L23` | `2026-11-23T16:20:38.043Z` | `rook/rook` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rook-rook-learnings.md` | Yes (`8ed40e51...`) |
+| `CYCLE-20261123-CWAP` | `2026-11-23T16:28:39.169Z` | `inworld/voice-isolator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md` | Yes (`d5f76d7b...`) |
+| `CYCLE-20261123-D1ND` | `2026-11-23T16:28:46.105Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10066` | Yes (`6a048c11...`) |

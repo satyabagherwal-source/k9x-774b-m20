@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-2IWH",
-    "timestamp": "2026-11-21T15:49:15.185Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "de002ed2640e98ef18cf29629cf43a0b21be4fc8fe36cdd0e57b45892de9fe60",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-2IZK",
-    "timestamp": "2026-11-21T15:49:15.296Z",
-    "repository": "Comfy-Org/Fibo-2.0",
-    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-FUQX",
     "timestamp": "2026-11-21T15:59:37.065Z",
     "repository": "KRAFTON/Raon-1-mini-preview",
@@ -7492,6 +7462,36 @@
     "contentHash": "8ed40e51eae586f89ee22136cdc431aa51ea5ef96f38e7d959f983c17644f625",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-CWAP",
+    "timestamp": "2026-11-23T16:28:39.169Z",
+    "repository": "inworld/voice-isolator",
+    "learningId": "learn-huggingface-inworld-voice-isolator",
+    "contentHash": "d5f76d7b944a68e3eb6a847b84921fda7a4c0cb6097af5236c23851ce716cb56",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-D1ND",
+    "timestamp": "2026-11-23T16:28:46.105Z",
+    "repository": "duongductrong/Snapzy",
+    "learningId": "learn-github-duongductrong-snapzy",
+    "contentHash": "6a048c113ed26a409e3cba95d4ecebad0eca69c57129af9c3885f31179030877",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
