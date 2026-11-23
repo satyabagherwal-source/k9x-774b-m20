@@ -4,24 +4,24 @@
 {
   "source_repository": "nats-io/nats-server",
   "source_url": "https://github.com/nats-io/nats-server",
-  "source_version": "ba5c7e53",
+  "source_version": "5a7a03c3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T14:28:30.977Z",
+  "timestamp": "2026-11-23T20:47:51.858Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nats-io-nats-server",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nats-io/nats-server](https://github.com/nats-io/nats-server) (Revision: `ba5c7e53`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T14:28:30.977Z`  
+> **Provenance**: Harvested from [nats-io/nats-server](https://github.com/nats-io/nats-server) (Revision: `5a7a03c3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T20:47:51.858Z`  
 > **Learning ID**: `learn-github-nats-io-nats-server`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nats-io/nats-server:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:28:29.686Z  
+> **Harvest Timestamp**: 2026-11-23T20:47:50.241Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21063 stars
+- **Stars / Engagement**: 21123 stars
 
 ---
 
@@ -2740,972 +2740,848 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba5c7e53` (2026-11-18)
-**Commit Message**: (2.16) [FIXED] Send async INFO to clients when max_payload limit changes (#8833)
+### Incident Patch 1: `6e319bdf` (2026-11-23)
+**Commit Message**: [FIXED] Validate source FilterSubject on stream updates (#8923)
 
-Fixes #8814 
+## Problem
+Stream creation validates source `FilterSubject` values, but stream
+updates do not apply the same validation.
 
-### Description
+As a result, an update containing an invalid filter such as `origin..x`
+can be accepted and persisted. The sourcing stream then stops receiving
+messages without reporting an error. In a single-server setup, the
+stream can also fail to load after a restart. In clustered deployments,
+the stream can go offline across all peers.
 
-Currently, when an account JWT update modifies `limits.payload` or a
-config reload changes the server's `max_payload`, existing client
-connections do not receive an updated async INFO protocol message.
+## Solution
+Add source `FilterSubject` validation to `checkStreamCfgLocked`, using
+the same validation and error handling already applied to
+SubjectTransforms sources.
 
-Because client libraries (like `nats.go`) validate message sizes against
-the cached `max_payload` received during the initial connect handshake:
-- If the limit is raised, existing clients continue rejecting valid
-payloads locally (`ErrMaxPayload`) until they reconnect.
-- If the limit is lowered, clients attempt to publish messages that the
-server now rejects with `-ERR 'Maximum Payload Violation'`, causing the
-connection to be closed.
-- Additionally, on config reload, `maxPayloadOption.Apply` was directly
-overwriting `client.mpay`, which accidentally stripped out stricter
-account-level and user-level JWT limits.
+Invalid updates are now rejected before the configuration is committed.
+In clustered deployments, the meta leader's pre-check prevents invalid
+proposals from being applied.
 
-### Changes
+This also ensures that peers retain their existing valid configuration
+if an invalid update reaches the meta layer.
 
-1. **`server/accounts.go`**: In `updateAccountClaimsWithRefresh`, check
-if the effective `c.mpay` changed after calling
-`c.applyAccountLimits()`. If changed, send an updated async INFO message
-to eligible clients (`protocol >= 1` and initial handshak
+## Tests
+Added `TestJetStreamStreamUpdateInvalidSourceFilterSubject` in
+`server/jetstream_test.go`.
 
-**File**: `server/accounts.go` (modified, +9/-0)
+The test covers invalid filters:
+
+* `origin..x`
+* `origin x`
+* `origin.>.x`
+* `.origin`
+
+It verifies that both creation and 
+
+**File**: `server/jetstream_test.go` (modified, +41/-0)
 ```diff
-@@ -4005,6 +4005,10 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 		}
+@@ -25955,6 +25955,47 @@ func TestJetStreamFlowControlCrossAccountFanOut(t *testing.T) {
  	}
- 
-+	s.mu.RLock()
-+	info := s.copyInfo()
-+	s.mu.RUnlock()
-+
- 	// client list is in chronological order (older cids at the beginning of the list).
- 	count := 0
- 	for _, c := range clients {
-@@ -4020,7 +4024,9 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 			count++
- 		}
- 		c.mu.Lock()
-+		oldMpay := atomic.LoadInt32(&c.mpay)
- 		c.applyAccountLimits()
-+		mpayChanged := oldMpay != atomic.LoadInt32(&c.mpay)
- 		// if we have an nkey user we are a callout user - save
- 		// the issuedAt, and nkey user id to honor revocations
- 		var nkeyUserID string
-@@ -4030,6 +4036,9 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 			nkeyUserID = c.user.Nkey
- 		}
- 		theJWT := c.opts.JWT
-+		if mpayChanged {
-+			c.sendAsyncInfo(info)
-+		}
- 		c.mu.Unlock()
- 		if defaultPermsChanged && c.updateDefaultPermissions(defaultPerms) && defaultPerms != nil {
- 			c.processSubsOnConfigReload(nil)
-```
-
-**File**: `server/client.go` (modified, +14/-1)
-```diff
-@@ -997,7 +997,7 @@ func (c *client) applyAccountLimits() {
- 	if minLimit(&c.msubs, mSubs) && !wasUnlimited {
- 		c.Debugf("Max Subscriptions set to %d from server overrides account or user config", opts.MaxSubs)
- 	}
--	if c.subsAtLimit() {
-+	if c.msubs != jwt.NoLimit && len(c.subs) > int(c.msubs) {
- 		go func() {
- 			c.maxSubsExceeded()
- 			time.Sleep(20 * time.Millisecond)
-@@ -2807,6 +2807,19 @@ func (c *client) generateClientInfoJSON(info Info, includeClientIP bool) []byte
- 	return generateInfoJSON(&info)
  }
  
-+// sendAsyncInfo will send an updated async INFO protocol message to the client
-+// if the client supports async INFO and has completed its initial handshake.
-+// Assume lock is held.
-+func (c *client) sendAsyncInfo(info Info) {
-+	if c.opts.Protocol >= ClientProtoInfo && c.flags.isSet(firstPongSent) {
-+		if c.iproc && info.TLSRequired && !c.flags.isSet(didTLSFirst) {
-+			info.TLSRequired = false
-+			info.TLSAvailable = true
-+		}
-+		c.enqueueProto(c.generateClientInfoJSON(info, true))
-+	}
-+}
-+
- func (c *client) sendErr(err string) {
- 	c.mu.Lock()
- 	if c.trace {
-```
-
-**File**: `server/jwt_test.go` (modified, +350/-0)
-```diff
-@@ -8628,3 +8628,353 @@ func TestJWTAccountNATSResolverSyncKeepsDeletedAccount(t *testing.T) {
- 		require_Error(t, err)
- 	}
- }
-+
-+func TestJWTAccountLimitsMaxPayloadAsyncInfo(t *testing.T) {
-+	s := opTrustBasicSetup()
-+	defer s.Shutdown()
-+	buildMemAccResolver(s)
-+
-+	okp, _ := nkeys.FromSeed(oSeed)
-+
-+	fooKP, _ := nkeys.CreateAccount()
-+	fooPub, _ := fooKP.PublicKey()
-+	fooAC := jwt.NewAccountClaims(fooPub)
-+	fooAC.Limits.Payload = 100
-+	fooJWT, err := fooAC.Encode(okp)
-+	require_NoError(t, err)
-+	addAccountToMemResolver(s, fooPub, fooJWT)
-+
-+	connectClient := func(nuc *jwt.UserClaims, proto int) (*testAsyncClient, *bufio.Reader) {
-+		nkp, _ := nkeys.CreateUser()
-+		pub, _ := nkp.PublicKey()
-+		if nuc == nil {
-+			nuc = jwt.NewUserClaims(pub)
-+		} else {
-+			nuc.Subject = pub
-+		}
-+		uJWT, err := nuc.Encode(fooKP)
-+		require_NoError(t, err)
-+
-+		c, cr, l := newClientForServer(s)
-+		var info nonceInfo
-+		require_NoError(t, json.Unmarshal([]byte(l[5:]), &info))
-+		sigraw, _ := nkp.Sign([]byte(info.Nonce))
-+		sig := base64.RawURLEncoding.EncodeToString(sigraw)
-+
-+		cs := fmt.Sprintf("CONNECT {\"jwt\":%q,\"sig\":%q,\"protocol\":%d}\r\nPING\r\n", uJWT, sig, proto)
-+		c.parseAsync(cs)
-+		pong, err := cr.ReadString('\n')
-+		require_NoError(t, err)
-+		if !strings.HasPrefix(pong, "PONG") {
-+			t.Fatalf("Expected PONG, got %q", pong)
-+		}
-+		// Clients with protocol >= ClientProtoInfo also receive an initial connect INFO on first PING
-+		if proto >= ClientProtoInfo {
-+			connectInfo, err := cr.ReadString('\n')
-+			require_NoError(t, err)
-+			if !strings.HasPrefix(connectInfo, "INFO ") {
-+				t.Fatalf("Expected initial connect INFO, got %q", connectInfo)
-+			}
-+		}
-+		return c, cr
-+	}
-+
-+	// Client 1: protocol=1, inherits account limit 100
-+	c1, cr1 := connectClient(nil, ClientProtoInfo)
-+	defer c1.close()
-+
-+	// Client 2: protocol=1, user limit = 50 (lower than account limit 100)
-+	uc2 := jwt.NewUserClaims("temp")
-+	uc2.Limits.Payload = 50
-+	c2, cr2 := connectClient(uc2, ClientProtoInfo)
-+	defer c2.close()
-+
-+	// Client 3: protocol=0 (legacy client, does not support async INFO)
-+	c3, cr3 := connectClient(nil, 0)
-+	defer c3.close()
-+
-+	// Verify initial effective limits
-+	require_True(t, atomic.LoadInt32(&c1.client.mpay) == 100)
-+	require_True(t, atomic.LoadInt32(&c2.client.mpay) == 50)
-+	require_True(t, atomic.LoadInt32(&c3.client.mpay) == 100)
-+
-+	// Step 1: Raise account payload limit from 100 to 200
-+	fooAC.Limits.Payload = 200
-+	fooJWT, err = fooAC.Encode(okp)
-+	require_NoError(t, err)
-+	addAccountToMemResolver(s, fooPub, fooJWT)
-+
-+	acc, err := s.LookupAccount(fooPub)
-+	require_NoError(t, err)
-+	s.UpdateAccountClaims(acc, fooAC)
-+
-+	// Check client 1: limit updated 100 -> 200 and receives async INFO
-+	require_True(t, atomic.LoadInt32(&c1.client.mpay) == 200)
-+	line1, err := cr1.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(line1, "INFO ") {
-+		t.Fatalf("Client 1 expected async INFO, got: %q", line1)
-+	}
-+	var parsedInfo Info
-+	require_NoError(t, json.Unmarshal([]byte(line1[5:]), &parsedInfo))
-+	if parsedInfo.MaxPayload != 200 {
-+		t.Fatalf("Client 1 expected MaxPayload 200 in async INFO, got %d", parsedInfo.MaxPayload)
-+	}
-+
-+	// Check client 2: user limit 50 < 200, so effective limit unchanged at 50, should NOT receive async INFO
-+	require_True(t, atomic.LoadInt32(&c2.client.mpay) == 50)
-+	// Check client 3: protocol=0, limit updated to 200, but should NOT receive async INFO
-+	require_True(t, atomic.LoadInt32(&c3.client.mpay) == 200)
-+
-+	// Verify neither c2 nor c3 received async INFO by pinging them and expecting PONG directly
-+	c2.parseAsync("PING\r\n")
-+	pong2, err := cr2.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(pong2, "PONG") {
-+		t.Fatalf("Client 2 expected direct PONG (no async INFO), got: %q", pong2)
-+	}
-+
-+	c3.parseAsync("PING\r\n")
-+	pong3, err := cr3.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(pong3, "PONG") {
-+		t.Fatalf("Client 3 expected direct PONG (no async INFO), got: %q", pong3)
-+	}
-+
-+	// Step 2: Lower account payload limit to 30 (< user limit 50)
-+	fooAC.Limits.Payload = 30
-+	fooJWT, err = fooAC.Encode(okp)
-+	require_NoError(t, err)
-+	addAccountToMemResolver(s, fooPub, fooJWT)
-+	s.UpdateAccountClaims(acc, fooAC)
-+
-+	// Client 1: effective limit lowered to 30 -> receives async INFO
-+	require_True(t, atomic.LoadInt32(&c1.client.mpay) == 30)
-+	line1, err = cr1.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(line1, "INFO ") {
-+		t.Fatalf("Client 1 expected async INFO, got: %q", line1)
-+	}
-+	require_NoError(t, json.Unmarshal([]byte(line1[5:]), &parsedInfo))
-+	if parsedInfo.MaxPayload != 30 {
-+		t.Fatalf("Client 1 expected MaxPayload 30 in async INFO, got %d", parsedInfo.MaxPayload)
-+	}
-+
-+	// Client 2: effective limit lowered from 50 to 30 -> receives async INFO
-+	require_True(t, atomic.LoadInt32(&c2.client.mpay) == 30)
-+	line2, err := cr2.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(line
-```
-
-**File**: `server/reload.go` (modified, +17/-1)
-```diff
-@@ -671,10 +671,26 @@ type maxPayloadOption struct {
- func (m *maxPayloadOption) Apply(server *Server) {
- 	server.mu.Lock()
- 	server.info.MaxPayload = m.newValue
-+	info := server.copyInfo()
-+	clients := make([]*client, 0, len(server.clients))
- 	for _, client := range server.clients {
--		atomic.StoreInt32(&client.mpay, int32(m.newValue))
-+		clients = append(clients, client)
- 	}
- 	server.mu.Unlock()
-+
-+	for _, client := range clients {
-+		client.mu.Lock()
-+		oldMpay := atomic.LoadInt32(&client.mpay)
-+		if client.acc != nil {
-+			client.applyAccountLimits()
-+		} else {
-+			atomic.StoreInt32(&client.mpay, m.newValue)
-+		}
-+		if oldMpay != atomic.LoadInt32(&client.mpay) {
-+			client.sendAsyncInfo(info)
-+		}
-+		client.mu.Unlock()
-+	}
- 	server.Noticef("Reloaded: max_payload = %d", m.newValue)
- }
- 
-```
-
-**File**: `server/reload_test.go` (modified, +39/-15)
-```diff
-@@ -2244,10 +2244,6 @@ func TestConfigReloadMaxPayload(t *testing.T) {
- 		t.Fatalf("Error creating client: %v", err)
- 	}
- 	defer nc.Close()
--	closed := make(chan struct{})
--	nc.SetDisconnectHandler(func(*nats.Conn) {
--		closed <- struct{}{}
--	})
- 
- 	conn, err := nats.Connect(addr)
- 	if err != nil {
-@@ -2276,22 +2272,50 @@ func TestConfigReloadMaxPayload(t *testing.T) {
- 		t.Fatalf("Error reloading config: %v", err)
- 	}
- 
--	// Ensure oversized messages don't get delivered and the client is
--	// disconnected.
--	if err := nc.Publish("foo", []byte("hello")); err != nil {
--		t.Fatalf("Error publishing: %v", err)
-+	// Wait for the client to receive the updated max payload via async INFO.
-+	checkFor(t, 2*time.Second, 10*time.Millisecond, func() error {
-+		if nc.MaxPayload() != 1 {
-+			return fmt.Errorf("expected max payload 1, got %d", nc.MaxPayload())
-+		}
-+		return nil
-+	})
-+
-+	// Ensure oversized messages are rejected client-side now that the client knows the new limit.
-+	if err := nc.Publish("foo", []byte("hello")); err != nats.ErrMaxPayload {
-+		t.Fatalf("Expected ErrMaxPayload, got: %v", err)
- 	}
--	nc.Flush()
-+
-+	// Ensure that if an oversized message is sent by a client (e.g. bypassing
-+	// client-side validation), the server enforces the limit and disconnects the client.
-+	raw, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", opts.Host, server.Addr().(*net.TCPAddr).Port), 2*time.Second)
-+	if err != nil {
-+		t.Fatalf("Error connecting raw client: %v", err)
-+	}
-+	defer raw.Close()
-+	raw.Write([]byte("CONNECT {}\r\nPUB foo 5\r\nhello\r\n"))
-+	raw.SetReadDeadline(time.Now().Add(2 * time.Second))
-+	var out []byte
-+	buf := make([]byte, 512)
-+	for {
-+		n, err := raw.Read(buf)
-+		if n > 0 {
-+			out = append(out, buf[:n]...)
-+			if strings.Contains(string(out), "Maximum Payload Violation") {
-+				break
-+			}
-+		}
-+		if err != nil {
-+			break
-+		}
-+	}
-+	if !strings.Contains(string(out), "Maximum Payload Violation") {
-+		t.Fatalf("Expected Maximum Payload Violation, got %q", string(out))
-+	}
-+
- 	_, err = sub.NextMsg(20 * time.Millisecond)
- 	if err != nats.ErrTimeout {
- 		t.Fatalf("Expected ErrTimeout, got: %v", err)
- 	}
--
--	select {
--	case <-closed:
--	case <-time.After(5 * time.Second):
--		t.Fatal("Expected to be disconnected")
--	}
- }
- 
- // Ensure reload supports rotating out files. Test this by starting
-```
-
----
-
-### Incident Patch 2: `1a1580fc` (2026-11-18)
-**Commit Message**: [FIXED] Batch account limits, store errors & trace-only messages (#8907)
-
-Fixes for account limits and error handling with counters and batch
-publishing:
-
-- Account limits: counter increments were checked before the counter
-value was added, and atomic batches only per message instead of as a
-whole. Both are now checked on the message as stored, before proposing.
-An R1 atomic batch could also be partially stored when hitting the limit
-during commit.
-- Store errors: an R1 fast batch store error left the message counted as
-pending, so the batch only completed once it timed out.
-- Max record size: was checked before header rewrites, so a scheduled
-message could grow past it and only fail on apply, stalling a clustered
-fast batch.
-- Trace-only messages: were stored as part of a batch (by followers
-only, for a clustered fast batch) or stalled an R1 fast batch. They're
-now dropped, so the batch fails on the missing sequence.
-
-**File**: `server/jetstream.go` (modified, +13/-2)
-```diff
-@@ -2566,6 +2566,17 @@ func (jsa *jsAccount) limitsExceeded(storeType StorageType, tierName string, rep
- }
- 
- func (jsa *jsAccount) wouldExceedLimits(storeType StorageType, tierName string, replicas int, subj string, hdr, msg []byte) (bool, *ApiError) {
-+	var size uint64
-+	if storeType == MemoryStorage {
-+		size = memStoreMsgSize(subj, hdr, msg)
-+	} else {
-+		size = fileStoreMsgSize(subj, hdr, msg)
-+	}
-+	return jsa.wouldExceedLimitsWithSize(storeType, tierName, replicas, size)
-+}
-+
-+// wouldExceedLimitsWithSize checks whether storing size bytes per replica would exceed the account limits.
-+func (jsa *jsAccount) wouldExceedLimitsWithSize(storeType StorageType, tierName string, replicas int, size uint64) (bool, *ApiError) {
- 	jsa.usageMu.RLock()
- 	defer jsa.usageMu.RUnlock()
- 
-@@ -2591,12 +2602,12 @@ func (jsa *jsAccount) wouldExceedLimits(storeType StorageType, tierName string,
- 
- 	// Since tiers are flat we need to scale limit up by replicas when checking.
- 	if storeType == MemoryStorage {
--		totalMem := inUse.total.mem.Load() + (int64(memStoreMsgSize(subj, hdr, msg)) * r)
-+		totalMem := inUse.total.mem.Load() + (int64(size) * r)
- 		if selectedLimits.MaxMemory >= 0 && totalMem > selectedLimits.MaxMemory*lr {
- 			return true, nil
- 		}
- 	} else {
--		totalStore := inUse.total.store.Load() + (int64(fileStoreMsgSize(subj, hdr, msg)) * r)
-+		totalStore := inUse.total.store.Load() + (int64(size) * r)
- 		if selectedLimits.MaxStore >= 0 && totalStore > selectedLimits.MaxStore*lr {
- 			return true, nil
- 		}
-```
-
-**File**: `server/jetstream_batching.go` (modified, +66/-7)
-```diff
-@@ -362,6 +362,52 @@ func (batches *batching) fastBatchCommit(b *fastBatch, batchId string, mset *str
- 	return false
- }
- 
-+// fastBatchMsgFailed reports a message that was not persisted, and either continues or commits the batch.
-+// The message must be counted in b.lseq, but not as pending.
-+// Lock should be held.
-+func (batches *batching) fastBatchMsgFailed(b *fastBatch, batch *FastBatch, mset *stream, reply, name string, apiErr *ApiError, err error, dseq uint64) {
-+	// If a batch immediately errors, we send the same response as we would a normal publish.
-+	if !batch.gapOk && b.lseq == 1 {
-+		var response []byte
-+		if err == errMsgIdDuplicate && dseq > 0 {
-+			var buf [256]byte
-+			response = append(buf[:0], mset.pubAck...)
-+			response = append(response, strconv.FormatUint(dseq, 10)...)
-+			response = append(response, fmt.Sprintf(",\"duplicate\": true,\"batch\":%q,\"count\":%d}", batch.id, batch.seq)...)
-+		} else {
-+			response, _ = json.Marshal(&JSPubAckResponse{PubAck: &PubAck{Stream: name}, Error: apiErr})
-+		}
-+		b.cleanupLocked(batch.id, batches)
-+		mset.outq.sendMsg(reply, response)
-+		return
-+	}
-+
-+	// We always return the error to the client, unless it's a duplicate.
-+	if err != errMsgIdDuplicate {
-+		buf, _ := BatchFlowErr{Sequence: batch.seq, Error: apiErr}.MarshalJSON()
-+		mset.outq.sendMsg(reply, buf)
-+	}
-+
-+	// If gaps are okay, we just allow them to continue.
-+	// Unless this is the commit message, in which case we must still complete it below.
-+	if batch.gapOk && !batch.commit {
-+		return
-+	}
-+
-+	// Revert the last sequence, we might be able to immediately return the PubAck as part of the commit.
-+	// Otherwise, the batch is cleaned up automatically later.
-+	if err != errMsgIdDuplicate {
-+		b.lseq--
-+		// If there is none pending, correct the persisted sequence as we need to commit below.
-+		if b.pending == 0 {
-+			b.pseq = b.lseq
-+		}
-+	}
-+	if batches.fastBatchCommit(b, batch.id, mset, reply) {
-+		b.cleanupLocked(batch.id, batches)
-+	}
-+}
-+
- // setupCleanupTimer sets up a timer to clean up the batch after a timeout.
- func (b *fastBatch) setupCleanupTimer(mset *stream, batchId string, batches *batching) {
- 	// Create a timer to clean up after timeout.
-@@ -419,6 +465,7 @@ type batchStagedDiff struct {
- 	msgIds             map[string]struct{}
- 	counter            map[string]*msgCounterRunningTotal
- 	inflight           map[string]*inflightSubjectRunningTotal
-+	inflightBytes      uint64 // Total bytes of the staged messages, as stored.
- 	inflightTransform  map[uint64]string
- 	expectedPerSubject map[string]*batchExpectedPerSubject
- }
-@@ -537,18 +584,12 @@ func (batch *batchApply) rejectBatchState(mset *stream) {
- // mset.clMu lock must be held.
- func checkMsgHeadersPreClusteredProposal(
- 	diff *batchStagedDiff, mset *stream, subject, rsubject string, hdr []byte, msg []byte, sourced bool, name string,
--	jsa *jsAccount, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules bool,
-+	jsa *jsAccount, tierName string, replicas int, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules bool,
- 	discard DiscardPolicy, discardNewPer bool, maxMsgSize int, maxMsgs int64, maxMsgsPer int64, maxBytes int64,
- ) ([]byte, []byte, uint64, *ApiError, error) {
- 	var incr *big.Int
- 	var hasSchedule bool
- 
--	// Do this before staging any proposal state. All clustered publish paths,
--	// including atomic and fast batches, use this helper.
--	if mset.store.Type() == FileStorage && isFileStoreMsgTooLarge(fileStoreMsgSize(subject, hdr, msg)) {
--		return hdr, msg, 0, NewJSStreamStoreFailedError(ErrMsgTooLarge), ErrMsgTooLarge
--	}
--
- 	// Some header checks must be checked pre proposal.
- 	if len(hdr) > 0 {
- 		// Since we encode header len as u16 make sure we do not exceed.
-@@ -950,6 +991,12 @@ func checkMsgHeadersPreClusteredProposal(
- 		}
- 	}
- 
-+	// Check the message as it will be stored, since the headers above can make it grow.
-+	// All clustered publish paths, including atomic and fast batches, use this helper.
-+	if mset.store.Type() == FileStorage && isFileStoreMsgTooLarge(fileStoreMsgSize(subject, hdr, msg)) {
-+		return hdr, msg, 0, NewJSStreamStoreFailedError(ErrMsgTooLarge), ErrMsgTooLarge
-+	}
-+
- 	// Track inflight.
- 	// Store the subject to ensure other messages in this batch using
- 	// an expected check or rollup on the same subject fail.
-@@ -975,6 +1022,18 @@ func checkMsgHeadersPreClusteredProposal(
- 		i = &inflightSubjectRunningTotal{bytes: sz, ops: 1, schedule: hasSchedule}
- 		diff.inflight[subject] = i
- 	}
-+	diff.inflightBytes += sz
-+
-+	// Check the account limits for the whole batch so far, as it will be stored.
-+	if jsa != nil {
-+		if exceeded, apiErr := jsa.wouldExceedLimitsWithSize(mset.store.Type(), tierName, replicas, diff.inflightBytes); exceeded {
-+			if apiErr == nil {
-+				apiErr = NewJSAccountResourcesExceededError()
-+			}
-+			mset.srv.RateLimitWarnf("JetStream account limits exceeded for '%s': %s", jsa.acc().GetName(), apiErr.Error())
-+			return hdr, msg, 0, apiErr, a
-```
-
-**File**: `server/jetstream_batching_test.go` (modified, +656/-4)
-```diff
-@@ -531,6 +531,188 @@ func TestJetStreamAtomicBatchPublishLimits(t *testing.T) {
- 	t.Run("R3", func(t *testing.T) { test(t, 3) })
- }
- 
-+func TestJetStreamAtomicBatchPublishAccountLimits(t *testing.T) {
-+	test := func(t *testing.T, replicas int) {
-+		c := createJetStreamClusterExplicit(t, "R3S", 3)
-+		defer c.shutdown()
-+
-+		nc := clientConnectToServer(t, c.randomServer())
-+		defer nc.Close()
-+
-+		_, err := jsStreamCreate(t, nc, &StreamConfig{
-+			Name:               "TEST",
-+			Subjects:           []string{"foo", "bar"},
-+			Storage:            MemoryStorage,
-+			Replicas:           replicas,
-+			AllowMsgCounter:    true,
-+			AllowAtomicPublish: true,
-+		})
-+		require_NoError(t, err)
-+
-+		increment := func(subject, batchId string, seq int, commit bool) *nats.Msg {
-+			m := nats.NewMsg(subject)
-+			m.Header.Set(JSMessageIncr, "1")
-+			m.Header.Set(JSBatchId, batchId)
-+			m.Header.Set(JSBatchSeq, strconv.Itoa(seq))
-+			if commit {
-+				m.Header.Set(JSBatchCommit, "1")
-+			}
-+			return m
-+		}
-+		commit := func(m *nats.Msg) *JSPubAckResponse {
-+			t.Helper()
-+			rmsg, err := nc.RequestMsg(m, time.Second)
-+			require_NoError(t, err)
-+			var pubAck JSPubAckResponse
-+			require_NoError(t, json.Unmarshal(rmsg.Data, &pubAck))
-+			return &pubAck
-+		}
-+
-+		// Measure what one stored increment uses.
-+		pubAck := commit(increment("foo", "a", 1, true))
-+		require_True(t, pubAck.Error == nil)
-+		sl := c.streamLeader(globalAccountName, "TEST")
-+		acc := sl.GlobalAccount()
-+		mset, err := acc.lookupStream("TEST")
-+		require_NoError(t, err)
-+		stored, r := int64(mset.state().Bytes), int64(replicas)
-+
-+		// The leader checks the limits against the usage of all replicas, which they report periodically.
-+		checkFor(t, 5*time.Second, 50*time.Millisecond, func() error {
-+			if used := int64(acc.JetStreamUsage().Memory); used != r*stored {
-+				return fmt.Errorf("expected usage %d, got %d", r*stored, used)
-+			}
-+			return nil
-+		})
-+
-+		// Room for one more increment, not two.
-+		for _, s := range c.servers {
-+			require_NoError(t, s.GlobalAccount().UpdateJetStreamLimits(map[string]JetStreamAccountLimits{
-+				_EMPTY_: {MaxMemory: 2 * r * stored, MaxStore: -1, MaxStreams: -1, MaxConsumers: -1},
-+			}))
-+		}
-+
-+		// Each increment fits on its own, but the batch doesn't, so none of it must be stored.
-+		require_NoError(t, nc.PublishMsg(increment("foo", "b", 1, false)))
-+		pubAck = commit(increment("bar", "b", 2, true))
-+		require_Error(t, pubAck.Error, NewJSAccountResourcesExceededError())
-+		require_Equal(t, mset.state().Msgs, 1)
-+	}
-+
-+	t.Run("R1", func(t *testing.T) { test(t, 1) })
-+	t.Run("R3", func(t *testing.T) { test(t, 3) })
-+}
-+
-+func TestJetStreamAtomicBatchPublishScheduleAccountLimits(t *testing.T) {
++func TestJetStreamStreamUpdateInvalidSourceFilterSubject(t *testing.T) {
 +	s := RunBasicJetStreamServer(t)
 +	defer s.Shutdown()
 +
-+	nc := clientConnectToServer(t, s)
++	nc, js := jsClientConnect(t, s)
 +	defer nc.Close()
 +
-+	_, err := jsStreamCreate(t, nc, &StreamConfig{
-+		Name:               "TEST",
-+		Subjects:           []string{"foo.>"},
-+		Storage:            MemoryStorage,
-+		AllowAtomicPublish: true,
-+		AllowMsgSchedules:  true,
-+	})
++	_, err := js.AddStream(&nats.StreamConfig{Name: "ORIGIN", Subjects: []string{"origin.>"}})
 +	require_NoError(t, err)
 +
-+	// The scheduled message copies the batch headers of the schedule, but isn't part of a batch.
-+	at := time.Now().Add(500 * time.Millisecond)
-+	m := nats.NewMsg("foo.schedule")
-+	m.Header.Set(JSSchedulePattern, fmt.Sprintf("@at %s", at.Format(time.RFC3339Nano)))
-+	m.Header.Set(JSScheduleTarget, "foo.target")
-+	m.Header.Set(JSBatchId, "uuid")
-+	m.Header.Set(JSBatchSeq, "1")
-+	m.Header.Set(JSBatchCommit, "1")
-+	rmsg, err := nc.RequestMsg(m, time.Second)
-+	require_NoError(t, err)
-+	var pubAck JSPubAckResponse
-+	require_NoError(t, json.Unmarshal(rmsg.Data, &pubAck))
-+	require_True(t, pubAck.Error == nil)
++	invalid := []string{"origin..x", "origin x", "origin.>.x", ".origin"}
 +
-+	// No room for the scheduled message.
-+	acc := s.GlobalAccount()
-+	used := int64(acc.JetStreamUsage().Memory)
-+	require_NoError(t, acc.UpdateJetStreamLimits(map[string]JetStreamAccountLimits{
-+		_EMPTY_: {MaxMemory: used + 1, MaxStore: -1, MaxStreams: -1, MaxConsumers: -1},
-+	}))
++	// Creating a stream with an invalid source filter subject errors.
++	for _, filter := range invalid {
++		_, err = js.AddStream(&nats.StreamConfig{
++			Name:    "SOURCE",
++			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
++		})
++		require_Error(t, err)
++	}
 +
-+	// After the schedule fired, the scheduled message must not have been stored.
-+	time.Sleep(time.Until(at) + time.Second)
-+	mset, err := acc.lookupStream("TEST")
++	cfg := &nats.StreamConfig{
++		Name:    "SOURCE",
++		Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: "origin.valid"}},
++	}
++	_, err = js.AddStream(cfg)
 +	require_NoError(t, err)
-+	_, err = mset.store.LoadLastMsg("foo.target", nil)
-+	require_Error(t, err, ErrStoreMsgNotFound)
-+	require_Equal(t, int64(acc.JetStreamUsage().Memory), used)
++
++	// So does updating an existing stream, and the stored config must not change.
++	for _, filter := range invalid {
++		_, err = js.UpdateStream(&nats.StreamConfig{
++			Name:    "SOURCE",
++			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
++		})
++		require_Error(t, err, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, filter)))
++	}
++	si, err := js.StreamInfo("SOURCE")
++	require_NoError(t, err)
++	require_Equal(t, si.Config.Sources[0].FilterSubject, "origin.valid")
 +}
 +
-+// Grows the account usage on the next stored message, as if another stream used it up.
-+// Protected by the stream lock.
-+type atomicBatchUsageStore struct {
-+	StreamStore
-+	jsa  *jsAccount
-+	grow int64
-+}
-+
-+func (s *atomicBatchUsageStore) StoreMsg(subject string, hdr, msg []byte, ttl int64) (uint64, int64, error) {
-+	if s.grow > 0 {
-+		s.jsa.usageMu.Lock()
-+		if s.jsa.usage[_EMPTY_] == nil {
-+			s.jsa.usage[_EMPTY_] = &jsaStorage{}
+ func TestJetStreamStreamCheckSourcesWithExternal(t *testing.T) {
+ 	s := RunBasicJetStreamServer(t)
+ 	defer s.Shutdown()
+```
+
+**File**: `server/stream.go` (modified, +3/-0)
+```diff
+@@ -2299,6 +2299,9 @@ func (s *Server) checkStreamCfgLocked(config *StreamConfig, acc *Account, pedant
+ 		if src.FilterSubject != _EMPTY_ && len(src.SubjectTransforms) != 0 {
+ 			return StreamConfig{}, NewJSSourceMultipleFiltersNotAllowedError()
+ 		}
++		if src.FilterSubject != _EMPTY_ && !IsValidSubject(src.FilterSubject) {
++			return StreamConfig{}, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, src.FilterSubject))
 +		}
-+		s.jsa.usage[_EMPTY_].total.mem.Add(s.grow)
-+		s.jsa.usageMu.Unlock()
-+		s.grow = 0
-+	}
-+	return s.StreamStore.StoreMsg(subject, hdr, msg, ttl)
-+}
-+
-+func TestJetStreamAtomicBatchPublishAccountLimitsDuri
-```
-
-**File**: `server/jetstream_cluster.go` (modified, +2/-17)
-```diff
-@@ -13602,7 +13602,7 @@ func (mset *stream) processClusteredInboundMsg(subject, reply string, hdr, msg [
- 	canRespond := !mset.cfg.NoAck && len(reply) > 0
- 	name, stype := mset.cfg.Name, mset.cfg.Storage
- 	discard, discardNewPer, maxMsgs, maxMsgsPer, maxBytes := mset.cfg.Discard, mset.cfg.DiscardNewPer, mset.cfg.MaxMsgs, mset.cfg.MaxMsgsPer, mset.cfg.MaxBytes
--	s, js, jsa, st, r, tierName, outq, node, term := mset.srv, mset.js, mset.jsa, mset.cfg.Storage, mset.cfg.Replicas, mset.tier, mset.outq, mset.clusteredNode(), mset.term
-+	s, js, jsa, r, tierName, outq, node, term := mset.srv, mset.js, mset.jsa, mset.cfg.Replicas, mset.tier, mset.outq, mset.clusteredNode(), mset.term
- 	maxMsgSize, lseq := int(mset.cfg.MaxMsgSize), mset.lseq
- 	isLeader, isSealed, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules := mset.isLeader(), mset.cfg.Sealed, mset.cfg.AllowRollup, mset.cfg.DenyPurge, mset.cfg.AllowMsgTTL, mset.cfg.AllowMsgCounter, mset.cfg.AllowMsgSchedules
  
-@@ -13664,21 +13664,6 @@ func (mset *stream) processClusteredInboundMsg(subject, reply string, hdr, msg [
- 		return NewJSInsufficientResourcesError()
- 	}
- 
--	// Check here pre-emptively if we have exceeded our account limits.
--	if exceeded, err := jsa.wouldExceedLimits(st, tierName, r, csubject, hdr, msg); exceeded {
--		if err == nil {
--			err = NewJSAccountResourcesExceededError()
--		}
--		s.RateLimitWarnf("JetStream account limits exceeded for '%s': %s", jsa.acc().GetName(), err.Error())
--		if canRespond {
--			var resp = &JSPubAckResponse{PubAck: &PubAck{Stream: name}}
--			resp.Error = err
--			response, _ = json.Marshal(resp)
--			outq.send(newJSPubMsg(reply, _EMPTY_, _EMPTY_, nil, response, nil, 0))
--		}
--		return err
--	}
--
- 	// Check msgSize if we have a limit set there. Again this works if it goes through but better to be pre-emptive.
- 	// Subtract to prevent against overflows.
- 	if maxMsgSize >= 0 && (len(hdr) > maxMsgSize || len(msg) > maxMsgSize-len(hdr)) {
-@@ -13708,7 +13693,7 @@ func (mset *stream) processClusteredInboundMsg(subject, reply string, hdr, msg [
- 		err    error
- 	)
- 	diff := &batchStagedDiff{}
--	if hdr, msg, dseq, apiErr, err = checkMsgHeadersPreClusteredProposal(diff, mset, csubject, subject, hdr, msg, sourced, name, jsa, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, discard, discardNewPer, maxMsgSize, maxMsgs, maxMsgsPer, maxBytes); err != nil {
-+	if hdr, msg, dseq, apiErr, err = checkMsgHeadersPreClusteredProposal(diff, mset, csubject, subject, hdr, msg, sourced, name, jsa, tierName, r, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, discard, discardNewPer, maxMsgSize, maxMsgs, maxMsgsPer, maxBytes); err != nil {
- 		mset.clMu.Unlock()
- 		if err == errMsgIdDuplicate && dseq > 0 {
- 			var buf [256]byte
-```
-
-**File**: `server/stream.go` (modified, +41/-66)
-```diff
-@@ -6588,6 +6588,7 @@ var (
- 	errInvalidMsgHandler = errors.New("undefined message handler")
- 	errStreamMismatch    = errors.New("expected stream does not match")
- 	errMsgTTLDisabled    = errors.New("message TTL disabled")
-+	errBatchTraceOnly    = errors.New("batch publish does not support trace-only messages")
- )
- 
- // processJetStreamMsg is where we try to actually process the stream msg.
-@@ -6658,7 +6659,9 @@ func (mset *stream) processJetStreamMsgWithBatch(subject, reply string, hdr, msg
- 	isLeader, isSealed := mset.isLeaderNodeState(), mset.cfg.Sealed
- 	isClustered, isMirror := mset.isClustered(), mset.cfg.Mirror != nil
- 	canConsistencyCheck := !isClustered || traceOnly
--	canRespond := doAck && len(reply) > 0 && isLeader
-+	// Errors for an R1 fast batch are reported by the caller as part of the batch.
-+	canAck := doAck && len(reply) > 0 && isLeader
-+	canRespond := canAck && fastBatch == nil
- 	outq := mset.outq
- 
- 	var resp = &JSPubAckResponse{}
-@@ -7388,10 +7391,8 @@ func (mset *stream) processJetStreamMsgWithBatch(subject, reply string, hdr, msg
- 			// Check full leader state so we only send the client an update once we're caught up.
- 			commit := mset.batches.fastBatchRegisterSequences(mset, reply, mset.lseq, mset.isLeader(), fastBatch)
- 			mset.batches.mu.Unlock()
--			if !commit {
--				reply = _EMPTY_
--				canRespond = false
--			}
-+			// Only respond with the PubAck if the batch commits now, even if errors are reported by the caller.
-+			canRespond = commit && canAck
- 		}
- 		if canRespond {
- 			response = append(pubAck, strconv.FormatUint(mset.lseq, 10)...)
-@@ -7428,7 +7429,9 @@ func (mset *stream) processJetStreamMsgWithBatch(subject, reply string, hdr, msg
- 
- 	// If clustered this was already checked and we do not want to check here and possibly introduce skew.
- 	// Don't error and log if we're tracing when clustered.
--	if !isClustered {
-+	// Batches were already checked. Rejecting an atomic batch message here would partially commit it.
-+	// Sourced messages, e.g. scheduled ones, can still carry batch headers but aren't part of a batch.
-+	if !isClustered && (batchId == _EMPTY_ || sourced) {
- 		if exceeded, err := jsa.wouldExceedLimits(stype, mset.tier, mset.cfg.Replicas, subject, hdr, msg); exceeded {
- 			if err == nil {
- 				err = NewJSAccountResourcesExceededError()
-@@ -7588,10 +7591,8 @@ func (mset *stream) processJetStreamMsgWithBatch(subject, reply string, hdr, msg
- 		// Check full leader state so we only send the client an update once we're caught up.
- 		commit := mset.batches.fastBatchRegisterSequences(mset, reply, mset.lseq, mset.isLeader(), fastBatch)
- 		mset.batches.mu.Unlock()
--		if !commit {
--			reply = _EMPTY_
--			canRespond = false
--		}
-+		// Only respond with the PubAck if the batch commits now, even if errors are reported by the caller.
-+		canRespond = commit && canAck
- 	}
- 
- 	// Send response here.
-@@ -7668,6 +7669,11 @@ func (mset *stream) processJetStreamAtomicBatchMsg(batchId, subject, reply strin
- 		}()
- 	}
- 
-+	// Trace-only messages are dropped, so the batch fails on the missing sequence.
-+	if mt.traceOnly() {
-+		return errBatchTraceOnly
-+	}
-+
- 	// Check that we are the leader. This can be false if we have scaled up from an R1 that had inbound queued messages.
- 	if !isLeader {
- 		return NewJSClusterNotLeaderError()
-@@ -8002,7 +8008,7 @@ func (mset *stream) processJetStreamAtomicBatchMsg(batchId, subject, reply strin
- 			return errorOnUnsupported(JSExpectedLastMsgId)
- 		}
- 
--		if bhdr, bmsg, _, apiErr, err = checkMsgHeadersPreClusteredProposal(diff, mset, csubj, bsubj, bhdr, bmsg, false, name, jsa, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, discard, discardNewPer, maxMsgSize, maxMsgs, maxMsgsPer, maxBytes); err != nil {
-+		if bhdr, bmsg, _, apiErr, err = checkMsgHeadersPreClusteredProposal(diff, mset, csubj, bsubj, bhdr, bmsg, false, name, jsa, tierName, r, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, discard, discardNewPer, maxMsgSize, maxMsgs, maxMsgsPer, maxBytes); err != nil {
- 			rollback()
- 			b.cleanupLocked(batchId, batches)
- 			batches.mu.Unlock()
-@@ -8142,7 +8148,7 @@ func (mset *stream) processJetStreamFastBatchMsg(batch *FastBatch, subject, repl
- 	canRespond := !mset.cfg.NoAck && len(reply) > 0
- 	name, stype := mset.cfg.Name, mset.cfg.Storage
- 	discard, discardNewPer, maxMsgs, maxMsgsPer, maxBytes := mset.cfg.Discard, mset.cfg.DiscardNewPer, mset.cfg.MaxMsgs, mset.cfg.MaxMsgsPer, mset.cfg.MaxBytes
--	s, js, jsa, st, r, tierName, outq, node, term := mset.srv, mset.js, mset.jsa, mset.cfg.Storage, mset.cfg.Replicas, mset.tier, mset.outq, mset.node, mset.term
-+	s, js, jsa, r, tierName, outq, node, term := mset.srv, mset.js, mset.jsa, mset.cfg.Replicas, mset.tier, mset.outq, mset.node, mset.term
- 	maxMsgSize, lseq := int(mset.cfg.MaxMsgSize), mset.lseq
- 	isLeader, isClustered, isSealed, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, allowBatchPublish := mset.isLeader(), mset.isClustered(), mset.cf
+ 		for _, tr := range src.SubjectTransforms {
+ 			if tr.Source != _EMPTY_ && !IsValidSubject(tr.Source) {
 ```
 
 ---
 
-### Incident Patch 3: `43f2ceab` (2026-11-17)
-**Commit Message**: [FIXED] Max record size checked before header rewrites
+### Incident Patch 2: `dcdafc24` (2026-11-23)
+**Commit Message**: [FIXED] MQTT: Pipeline retained message stores to avoid blocking read… (#8801)
 
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+Resolves #8790
+  
+When an MQTT client sends a PUBLISH with `RETAIN=1`,
+`mqttHandlePubRetain()` stores the retained message synchronously within
+the `readLoop`. On topologies where JetStream is remote (such as leaf
+nodes with `mqtt { js_domain: ... }`), a backlog of retained messages
+stalls the `readLoop`, causing keepalive timeouts and client
+disconnects.
 
-**File**: `server/jetstream_batching.go` (modified, +6/-6)
+For QoS1 and QoS2, the retained message store now goes through the async
+ack pipeline. `PUBACK`/`PUBCOMP` are still only sent after the store
+succeeds, and a failed store closes the connection. QoS0 and wills still
+store synchronously.
+
+**File**: `server/mqtt.go` (modified, +20/-5)
 ```diff
-@@ -590,12 +590,6 @@ func checkMsgHeadersPreClusteredProposal(
- 	var incr *big.Int
- 	var hasSchedule bool
+@@ -4832,10 +4832,12 @@ func (s *Server) mqttAckLoop(c *client, pipe *mqttAckPipeline) {
+ 				}
+ 				return
+ 			}
+-			c.mu.Lock()
+-			trace := c.trace
+-			c.mu.Unlock()
+-			c.mqttEnqueuePubResponse(p.resp, p.pi, trace)
++			if p.resp != 0 {
++				c.mu.Lock()
++				trace := c.trace
++				c.mu.Unlock()
++				c.mqttEnqueuePubResponse(p.resp, p.pi, trace)
++			}
+ 			p.returnToPool()
  
--	// Do this before staging any proposal state. All clustered publish paths,
--	// including atomic and fast batches, use this helper.
--	if mset.store.Type() == FileStorage && isFileStoreMsgTooLarge(fileStoreMsgSize(subject, hdr, msg)) {
--		return hdr, msg, 0, NewJSStreamStoreFailedError(ErrMsgTooLarge), ErrMsgTooLarge
--	}
--
- 	// Some header checks must be checked pre proposal.
- 	if len(hdr) > 0 {
- 		// Since we encode header len as u16 make sure we do not exceed.
-@@ -997,6 +991,12 @@ func checkMsgHeadersPreClusteredProposal(
- 		}
- 	}
- 
-+	// Check the message as it will be stored, since the headers above can make it grow.
-+	// All clustered publish paths, including atomic and fast batches, use this helper.
-+	if mset.store.Type() == FileStorage && isFileStoreMsgTooLarge(fileStoreMsgSize(subject, hdr, msg)) {
-+		return hdr, msg, 0, NewJSStreamStoreFailedError(ErrMsgTooLarge), ErrMsgTooLarge
-+	}
+ 		case <-pipe.quitCh:
+@@ -5380,7 +5382,20 @@ func (c *client) mqttHandlePubRetain() {
+ 	// Earlier messages from this read may have left a connection in c.pcd.
+ 	// It won't flush the store request until we flush it.
+ 	c.flushClients(0)
+-	_, err := asm.jsa.storeMsg(mqttRetainedMsgsStreamSubject+key, hdr, rmBytes)
 +
- 	// Track inflight.
- 	// Store the subject to ensure other messages in this batch using
- 	// an expected check or rollup on the same subject fail.
++	subject := mqttRetainedMsgsStreamSubject + key
++	var err error
++	if pp.hasClientPI() {
++		// QoS1 PUBLISH or QoS2 PUBREL delivery: pipelined, not blocking the readLoop.
++		// Its PUBACK/PUBCOMP is queued behind this entry, so waits for the store.
++		jsa := c.mqtt.sess.jsa
++		p := newMQTTPipelined(0, pp.pi)
++		p.submitStore(jsa, subject, hdr, rmBytes, _EMPTY_)
++		err = c.srv.mqttPipelinePush(c, jsa, p)
++	} else {
++		// QoS0 and wills owe no response, stored synchronously.
++		_, err = asm.jsa.storeMsg(subject, hdr, rmBytes)
++	}
+ 	if err != nil {
+ 		c.mu.Lock()
+ 		acc := c.acc
 ```
 
-**File**: `server/jetstream_batching_test.go` (modified, +74/-54)
+**File**: `server/mqtt_test.go` (modified, +135/-0)
 ```diff
-@@ -6093,66 +6093,86 @@ func TestJetStreamFastBatchPublishStoreError(t *testing.T) {
+@@ -11819,3 +11819,138 @@ func TestMQTTQoS2UntrackedPubRecNotStored(t *testing.T) {
+ 	testMQTTSendPIPacket(mqttPacketPubComp, t, c, rpi)
+ 	testMQTTExpectNothing(t, r)
+ }
++
++// https://github.com/nats-io/nats-server/issues/8790
++func TestMQTTQoS1RetainPubAckPipelineOrderAndPing(t *testing.T) {
++	o := testMQTTDefaultOptions()
++	s := testMQTTRunServer(t, o)
++	defer testMQTTShutdownServer(s)
++
++	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcp.Close()
++	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
++
++	// Send a burst of QoS 1 retained messages back-to-back without waiting for PUBACKs.
++	const numMsgs = 50
++	for pi := uint16(1); pi <= numMsgs; pi++ {
++		testMQTTSendPublishPacket(t, mcp, 1, false, true, "foo", pi, []byte(fmt.Sprintf("msg-%d", pi)))
++	}
++
++	// Send PINGREQ immediately after the burst: readLoop must not be blocked
++	// waiting for JetStream acks, and must promptly respond with PINGRESP.
++	w := newMQTTWriter(0)
++	w.WriteByte(mqttPacketPing)
++	w.WriteByte(0)
++	mcp.Write(w.Bytes())
++
++	// Read packets until we receive all PUBACKs in order and the PINGRESP.
++	var gotPingResp bool
++	var nextPI uint16 = 1
++	for nextPI <= numMsgs || !gotPingResp {
++		b, _ := testMQTTReadPacket(t, mpr)
++		switch pt := b & mqttPacketMask; pt {
++		case mqttPacketPubAck:
++			rpi, err := mpr.readUint16("packet identifier")
++			if err != nil {
++				t.Fatalf("Error reading packet identifier: %v", err)
++			}
++			if rpi != nextPI {
++				t.Fatalf("Expected PUBACK for pi=%v, got pi=%v (out of order)", nextPI, rpi)
++			}
++			nextPI++
++		case mqttPacketPingResp:
++			gotPingResp = true
++		default:
++			t.Fatalf("Unexpected packet type: %x", pt)
++		}
++	}
++	if !gotPingResp {
++		t.Fatal("Expected PINGRESP")
++	}
++
++	// Verify that a new subscriber receives the latest retained message with RETAIN=1.
++	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcs.Close()
++	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
++	testMQTTSub(t, 1, mcs, msr, []*mqttFilter{{filter: "foo", qos: 1}}, []byte{1})
++
++	pflags, _ := testMQTTGetPubMsg(t, mcs, msr, "foo", []byte(fmt.Sprintf("msg-%d", numMsgs)))
++	if !mqttIsRetained(pflags) {
++		t.Fatalf("Expected retained flag on received message, got %v", pflags)
++	}
++}
++
++func TestMQTTQoS2RetainPubCompPipeline(t *testing.T) {
++	o := testMQTTDefaultOptions()
++	s := testMQTTRunServer(t, o)
++	defer testMQTTShutdownServer(s)
++
++	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub2", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcp.Close()
++	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
++
++	// Send QoS2 PUBLISH with RETAIN=1.
++	pi := uint16(42)
++	testMQTTSendPublishPacket(t, mcp, 2, false, true, "bar", pi, []byte("qos2-retained"))
++
++	// Receive PUBREC.
++	testMQTTReadPIPacket(mqttPacketPubRec, t, mpr, pi)
++
++	// Send PUBREL.
++	testMQTTSendPIPacket(mqttPacketPubRel|0x2, t, mcp, pi)
++
++	// Receive PUBCOMP (waited for delivery store, held delete, and retain store).
++	testMQTTReadPIPacket(mqttPacketPubComp, t, mpr, pi)
++
++	// Send PINGREQ to ensure readLoop is responsive.
++	testMQTTFlush(t, mcp, nil, mpr)
++
++	// Verify subscriber gets the retained message.
++	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub2", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcs.Close()
++	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
++	testMQTTSub(t, 1, mcs, msr, []*mqttFilter{{filter: "bar", qos: 2}}, []byte{2})
++
++	pflags, _ := testMQTTGetPubMsg(t, mcs, msr, "bar", []byte("qos2-retained"))
++	if !mqttIsRetained(pflags) {
++		t.Fatalf("Expected retained flag, got %v", pflags)
++	}
++}
++
++func TestMQTTQoS0RetainSynchronous(t *testing.T) {
++	o := testMQTTDefaultOptions()
++	s := testMQTTRunServer(t, o)
++	defer testMQTTShutdownServer(s)
++
++	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub0", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcp.Close()
++	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
++
++	// Send a burst of QoS 0 retained messages back-to-back.
++	const numMsgs = 50
++	for i := 1; i <= numMsgs; i++ {
++		testMQTTSendPublishPacket(t, mcp, 0, false, true, "baz", 0, []byte(fmt.Sprintf("msg-%d", i)))
++	}
++
++	// Send PINGREQ immediately after the burst to ensure no PUBACKs are emitted.
++	w := newMQTTWriter(0)
++	w.WriteByte(mqttPacketPing)
++	w.WriteByte(0)
++	mcp.Write(w.Bytes())
++
++	b, _ := testMQTTReadPacket(t, mpr)
++	if pt := b & mqttPacketMask; pt != mqttPacketPingResp {
++		t.Fatalf("Expected PINGRESP, got packet type %x", pt)
++	}
++
++	// Verify that a new subscriber immediately receives the latest retained message with RETAIN=1.
++	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub0", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcs.Close()
++	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
++	testMQTTSub(t, 1, mcs, msr, []*
+```
+
+---
+
+### Incident Patch 3: `302f7133` (2026-11-23)
+**Commit Message**: Fix AckAll ack floor jump when terminating deleted pending messages (#8659)
+
+When a pending message gets deleted from the stream (filtered purge,
+retention limits), the consumer terminates its delivery so it isn't
+redelivered forever. Under `AckPolicy: All` that termination went
+through the regular ack path, which moves the ack floor to the
+terminated message's sequence and drops every pending entry below it.
+Any unacknowledged message sitting below the deleted one was silently
+treated as acked and never came back. Resolves #8648, which has a full
+client-level repro of this.
+
+Two places feed into it:
+
+1. `processTermLocked` ran the terminated message through the same
+`AckAll` branch in `processAckMsgLocked` as a normal ack, jumping
+`adflr`/`asflr` and clearing `pending <= sseq`.
+2. `consumer.purge` skipped its per-message pending check entirely when
+the purge didn't move the stream's first sequence past the current ack
+floor (the `o.asflr < sseq` guard), so store-deleted messages stayed
+pending until a redelivery attempt failed to load them and hit the term
+path above. And when the purge path did remove deleted entries, it
+pushed `adflr` past lower still-pending entries as a side e
+
+**File**: `server/consumer.go` (modified, +73/-43)
+```diff
+@@ -2918,7 +2918,7 @@ func (o *consumer) processAck(subject, reply string, hdr int, rmsg []byte) {
+ 		if buf := msg[len(AckTerm):]; len(buf) > 0 {
+ 			reason = string(bytes.TrimSpace(buf))
+ 		}
+-		if !o.processTerm(sseq, dseq, dc, reason, reply) {
++		if !o.processTerm(sseq, dseq, dc, reason, reply, false) {
+ 			// We handle replies for acks in updateAcks
+ 			skipAckReply = true
+ 		}
+@@ -3223,20 +3223,26 @@ func (o *consumer) addReplicatedQueuedMsg(pmsg *jsPubMsg) {
  }
  
- func TestJetStreamFastBatchPublishMsgTooLargeSingleReply(t *testing.T) {
--	conf := createConfFile(t, []byte(fmt.Sprintf(`
--		listen: 127.0.0.1:-1
--		max_payload: %d
--		jetstream: {store_dir: %q}
--	`, 40*1024*1024, t.TempDir())))
--	s, _ := RunServerWithConfig(conf)
--	defer s.Shutdown()
-+	test := func(t *testing.T, replicas int) {
-+		tmpl := strings.Replace(jsClusterTempl, "server_name: %s", fmt.Sprintf("server_name: %%s\n\tmax_payload: %d", 40*1024*1024), 1)
-+		c := createJetStreamClusterWithTemplate(t, tmpl, "R3S", 3)
-+		defer c.shutdown()
+ // Lock should be held.
+-func (o *consumer) updateAcks(dseq, sseq uint64, reply string) {
++func (o *consumer) updateAcks(dseq, sseq uint64, reply string, explicit bool) {
+ 	if o.isClustered() {
+ 		// Inline for now, use variable compression.
+-		var b [2*binary.MaxVarintLen64 + 1]byte
++		// A trailing byte marks the ack as explicit; older versions ignore it
++		// when decoding and apply regular ack semantics.
++		var b [2*binary.MaxVarintLen64 + 2]byte
+ 		b[0] = byte(updateAcksOp)
+ 		n := 1
+ 		n += binary.PutUvarint(b[n:], dseq)
+ 		n += binary.PutUvarint(b[n:], sseq)
++		if explicit {
++			b[n] = 1
++			n++
++		}
+ 		o.propose(b[:n])
+ 		if reply != _EMPTY_ {
+ 			o.addAckReply(sseq, reply)
+ 		}
+ 	} else if o.store != nil {
+-		o.store.UpdateAcks(dseq, sseq)
++		o.store.UpdateAcks(dseq, sseq, explicit)
+ 		if reply != _EMPTY_ {
+ 			// Already locked so send direct.
+ 			o.outq.sendMsg(reply, nil)
+@@ -3424,13 +3430,16 @@ func (o *consumer) processNak(sseq, dseq, dc uint64, nak []byte) {
+ // Returns `true` if the ack was processed in place and the sender can now respond
+ // to the client, or `false` if there was an error or the ack is replicated (in which
+ // case the reply will be sent later).
+-func (o *consumer) processTerm(sseq, dseq, dc uint64, reason, reply string) bool {
+-	return o.processTermLocked(sseq, dseq, dc, reason, reply, true)
++// explicit reports that this term is scoped to sseq only, e.g. the message was
++// deleted from the stream. Under AckAll/AckFlowControl an explicit term must not
++// ack the messages below sseq like a client-initiated term would.
++func (o *consumer) processTerm(sseq, dseq, dc uint64, reason, reply string, explicit bool) bool {
++	return o.processTermLocked(sseq, dseq, dc, reason, reply, true, explicit)
+ }
  
--	nc := clientConnectToServer(t, s)
--	defer nc.Close()
-+		nc := clientConnectToServer(t, c.randomServer())
-+		defer nc.Close()
+-func (o *consumer) processTermLocked(sseq, dseq, dc uint64, reason, reply string, needLock bool) bool {
++func (o *consumer) processTermLocked(sseq, dseq, dc uint64, reason, reply string, needLock, explicit bool) bool {
+ 	// Treat like an ack to suppress redelivery.
+-	ackedInPlace := o.processAckMsgLocked(sseq, dseq, dc, reply, false, needLock)
++	ackedInPlace := o.processAckMsgLocked(sseq, dseq, dc, reply, false, needLock, explicit)
  
--	_, err := jsStreamCreate(t, nc, &StreamConfig{
--		Name:              "TEST",
--		Subjects:          []string{"foo.>"},
--		Storage:           FileStorage,
--		AllowMsgSchedules: true,
--		AllowBatchPublish: true,
--	})
--	require_NoError(t, err)
--	mset, err := s.globalAccount().lookupStream("TEST")
--	require_NoError(t, err)
-+		_, err := jsStreamCreate(t, nc, &StreamConfig{
-+			Name:              "TEST",
-+			Subjects:          []string{"foo.>"},
-+			Storage:           FileStorage,
-+			Replicas:          replicas,
-+			AllowMsgSchedules: true,
-+			AllowBatchPublish: true,
+ 	if needLock {
+ 		o.mu.Lock()
+@@ -3836,10 +3845,10 @@ func (o *consumer) sampleAck(sseq, dseq, dc uint64) {
+ // to the client, or `false` if there was an error or the ack is replicated (in which
+ // case the reply will be sent later).
+ func (o *consumer) processAckMsg(sseq, dseq, dc uint64, reply string, doSample bool) bool {
+-	return o.processAckMsgLocked(sseq, dseq, dc, reply, doSample, true)
++	return o.processAckMsgLocked(sseq, dseq, dc, reply, doSample, true, false)
+ }
+ 
+-func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSample bool, needLock bool) bool {
++func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSample bool, needLock, explicit bool) bool {
+ 	lock := func() {
+ 		if needLock {
+ 			o.mu.Lock()
+@@ -3911,6 +3920,24 @@ func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSa
+ 		delete(o.rdc, sseq)
+ 		o.removeFromRedeliverQueue(sseq)
+ 	case AckAll, AckFlowControl:
++		if explicit {
++			// Server-side removal of a message that was deleted from the stream.
++			// Scoped to this message only, like an explicit ack: the pending
++			// entries below it are left alone, and the floor only moves across
++			// sequences that are already clear.
++			if p, ok := o.pending[sseq]; ok {
++				if o.maxp > 0 && len(o.pending) >= o.maxp {
++					needSignal = true
++				}
++				delete(o.pending, sseq)
++				// Use the original deliver sequence from our pending record.
++				dseq = p.Sequence
++				o.moveAckFloor(dseq, sseq)
++			}
++			delete(o.rdc, sseq)
++			o.removeFromRedeliverQueue(sseq)
++			break
++		}
+ 		// no-op
+ 		if dseq <= o.adflr || sseq <= o.asflr {
+ 			unlock()
+@@ -3971,8 +3998,9 @@ func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSa
+ 	if ackInPlace {
+ 		reply = _EMPTY_
+ 	}
+-	// Update underlying store.
+-	o.updateAcks(dseq, sseq, reply)
++	// Update underlying store. Client acks and terms are regular acks; a
++	// server-side removal of a deleted message is scoped as an explicit ack.
++	o.updateAcks(dseq, sseq, reply, explicit)
+ 	unlock()
+ 
+ 	if ackInPlace {
+@@ -5129,7 +5157,7 @@ func (o *consumer) getNextMsg() (*jsPubMsg, uint64, error) {
+ 				pmsg.returnToPool()
+ 				pmsg = nil
+ 				if p, ok := o.pending[seq]; ok {
+-					o.processTermLocked(seq, p.Sequence, dc-1, ackTermUnackedLimitsReas
+```
+
+**File**: `server/filestore.go` (modified, +5/-2)
+```diff
+@@ -14342,7 +14342,7 @@ func (o *consumerFileStore) UpdateDelivered(dseq, sseq, dc uint64, ts int64) err
+ }
+ 
+ // UpdateAcks is called whenever a consumer with explicit ack or ack all acks a message.
+-func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64) error {
++func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64, explicit bool) error {
+ 	o.mu.Lock()
+ 	defer o.mu.Unlock()
+ 
+@@ -14379,7 +14379,10 @@ func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64) error {
+ 	// Done with the consistency checks, we'll always kick for below updates.
+ 	kick = true
+ 
+-	if ackAll {
++	// Check for AckAll here (or AckFlowControl which functions like AckAll).
++	// An explicit ack is scoped to this message only, so it falls through to
++	// the per-message path even under AckAll.
++	if !explicit && ackAll {
+ 		// Use the original delivery sequence.
+ 		if p := o.state.Pending[sseq]; dseq > p.Sequence && p.Sequence > 0 {
+ 			dseq = p.Sequence
+```
+
+**File**: `server/filestore_test.go` (modified, +7/-7)
+```diff
+@@ -3143,11 +3143,11 @@ func TestFileStoreConsumerRedeliveredLost(t *testing.T) {
+ 			t.Fatalf("Did not recover pending correctly")
+ 		}
+ 
+-		o.UpdateAcks(7, 3)
+-		o.UpdateAcks(6, 2)
++		o.UpdateAcks(7, 3, false)
++		o.UpdateAcks(6, 2, false)
+ 
+ 		restartConsumer()
+-		o.UpdateAcks(4, 1)
++		o.UpdateAcks(4, 1, false)
+ 
+ 		state, _ := o.State()
+ 		if len(state.Pending) != 0 {
+@@ -3195,7 +3195,7 @@ func TestFileStoreConsumerUpdateAcksFlushesRedelivered(t *testing.T) {
+ 		// Acking sseq 1 deletes it from Redelivered, but UpdateAcks bails out with
+ 		// ErrStoreMsgNotFound since it is no longer pending. The deletion must still
+ 		// be flushed.
+-		require_Error(t, o.UpdateAcks(2, 1), ErrStoreMsgNotFound)
++		require_Error(t, o.UpdateAcks(2, 1, false), ErrStoreMsgNotFound)
+ 
+ 		restartConsumer()
+ 		defer o.Stop()
+@@ -3355,7 +3355,7 @@ func TestFileStoreConsumerDeliveredUpdates(t *testing.T) {
+ 		testDelivered(5, 130)
+ 
+ 		// If we try to do an ack this should err since we are not configured with ack policy.
+-		if err := o.UpdateAcks(1, 100); err != ErrNoAckPolicy {
++		if err := o.UpdateAcks(1, 100, false); err != ErrNoAckPolicy {
+ 			t.Fatalf("Expected a no ack policy error on update acks, got %v", err)
+ 		}
+ 		// Also if we do an update with a delivery count of anything but 1 here should also give same error.
+@@ -3413,7 +3413,7 @@ func TestFileStoreConsumerDeliveredAndAckUpdates(t *testing.T) {
+ 
+ 		testBadAck := func(dseq, sseq uint64) {
+ 			t.Helper()
+-			if err := o.UpdateAcks(dseq, sseq); err == nil {
++			if err := o.UpdateAcks(dseq, sseq, false); err == nil {
+ 				t.Fatalf("Expected error but got none")
+ 			}
+ 		}
+@@ -3422,7 +3422,7 @@ func TestFileStoreConsumerDeliveredAndAckUpdates(t *testing.T) {
+ 
+ 		testAck := func(dseq, sseq, dflr, sflr uint64) {
+ 			t.Helper()
+-			if err := o.UpdateAcks(dseq, sseq); err != nil {
++			if err := o.UpdateAcks(dseq, sseq, false); err != nil {
+ 				t.Fatalf("Unexpected error: %v", err)
+ 			}
+ 			pending--
+```
+
+**File**: `server/jetstream_cluster.go` (modified, +17/-9)
+```diff
+@@ -9277,12 +9277,12 @@ func (js *jetStream) applyConsumerMsgOpLocked(o *consumer, buf []byte) (afterUnl
+ 			return nil, err
+ 		}
+ 	case updateAcksOp:
+-		dseq, sseq, err := decodeAckUpdate(buf[1:])
++		dseq, sseq, explicit, err := decodeAckUpdate(buf[1:])
+ 		if err != nil {
+ 			logDecodeErr("ack")
+ 			return nil, err
+ 		}
+-		mset, ackAllSeqs, err := o.processReplicatedAckLocked(dseq, sseq)
++		mset, ackAllSeqs, err := o.processReplicatedAckLocked(dseq, sseq, explicit)
+ 		if err == errConsumerClosed {
+ 			return nil, err
+ 		}
+@@ -9406,12 +9406,14 @@ var errConsumerClosed = errors.New("consumer closed")
+ // processReplicatedAckLocked stores a replicated ack.
+ // Returns the stream if the acked messages must still be acked on it, after the lock is released.
+ // Lock should be held.
+-func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64) (*stream, []uint64, error) {
++func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64, explicit bool) (*stream, []uint64, error) {
+ 	// Update activity.
+ 	o.lat = time.Now()
+ 
+ 	var ackAllSeqs []uint64
+-	if o.retention != LimitsPolicy && (o.cfg.AckPolicy == AckAll || o.cfg.AckPolicy == AckFlowControl) {
++	// An explicit ack is scoped to the message itself, so it does not collect
++	// the messages below it even under AckAll.
++	if !explicit && o.retention != LimitsPolicy && (o.cfg.AckPolicy == AckAll || o.cfg.AckPolicy == AckFlowControl) {
+ 		// Always use the store state, as o.asflr is skipped ahead already.
+ 		// Capture before updating store, which clears the pending below.
+ 		state, err := o.store.BorrowState()
+@@ -9431,7 +9433,7 @@ func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64) (*stream, []uin
+ 
+ 	// Do actual ack update to store.
+ 	// Always do this to have it recorded.
+-	o.store.UpdateAcks(dseq, sseq)
++	o.store.UpdateAcks(dseq, sseq, explicit)
+ 
+ 	mset := o.mset
+ 	if o.closed || mset == nil {
+@@ -9459,16 +9461,22 @@ var errBadDeliveredUpdate = errors.New("jetstream cluster bad replicated deliver
+ var errBadSkipUpdate = errors.New("jetstream cluster bad replicated skip update")
+ var errBadResetUpdate = errors.New("jetstream cluster bad replicated reset update")
+ 
+-func decodeAckUpdate(buf []byte) (dseq, sseq uint64, err error) {
++func decodeAckUpdate(buf []byte) (dseq, sseq uint64, explicit bool, err error) {
+ 	var bi, n int
+ 	if dseq, n = binary.Uvarint(buf); n <= 0 {
+-		return 0, 0, errBadAckUpdate
++		return 0, 0, false, errBadAckUpdate
+ 	}
+ 	bi += n
+ 	if sseq, n = binary.Uvarint(buf[bi:]); n <= 0 {
+-		return 0, 0, errBadAckUpdate
++		return 0, 0, false, errBadAckUpdate
+ 	}
+-	return dseq, sseq, nil
++	bi += n
++	// Optional trailing byte marks this ack as explicit. Versions that predate
++	// it stop after the two sequences and apply regular ack semantics.
++	if bi < len(buf) && buf[bi] == 1 {
++		explicit = true
++	}
++	return dseq, sseq, explicit, nil
+ }
+ 
+ func decodeDeliveredUpdate(buf []byte) (dseq, sseq, dc uint64, ts int64, err error) {
+```
+
+**File**: `server/jetstream_cluster_4_test.go` (modified, +13/-2)
+```diff
+@@ -9279,11 +9279,22 @@ func TestJetStreamClusterDecodeUpdatesRejectMalformed(t *testing.T) {
+ 	t.Run("AckUpdate", func(t *testing.T) {
+ 		valid := binary.AppendUvarint(nil, 10)
+ 		valid = binary.AppendUvarint(valid, 20)
+-		if _, _, err := decodeAckUpdate(valid); err != nil {
++		if _, _, explicit, err := decodeAckUpdate(valid); err != nil {
+ 			t.Fatalf("expected valid ack update to decode, got %v", err)
++		} else if explicit {
++			t.Fatalf("expected explicit to default to false")
++		}
++		// An optional trailing byte marks the update as explicit.
++		marked := binary.AppendUvarint(nil, 10)
++		marked = binary.AppendUvarint(marked, 20)
++		marked = append(marked, 1)
++		if _, _, explicit, err := decodeAckUpdate(marked); err != nil {
++			t.Fatalf("expected valid explicit ack update to decode, got %v", err)
++		} else if !explicit {
++			t.Fatalf("expected trailing byte to decode as explicit")
+ 		}
+ 		for _, buf := range [][]byte{nil, valid[:1]} {
+-			if _, _, err := decodeAckUpdate(buf); err != errBadAckUpdate {
++			if _, _, _, err := decodeAckUpdate(buf); err != errBadAckUpdate {
+ 				t.Fatalf("expected errBadAckUpdate for %v, got %v", buf, err)
+ 			}
+ 		}
+```
+
+**File**: `server/jetstream_test.go` (modified, +351/-0)
+```diff
+@@ -2643,6 +2643,357 @@ func TestJetStreamWorkQueueTerminateDelivery(t *testing.T) {
+ 	}
+ }
+ 
++func TestJetStreamAckAllTermDeletedPendingDoesNotAckBelow(t *testing.T) {
++	cases := []struct {
++		name    string
++		mconfig *StreamConfig
++	}{
++		{"MemoryStore", &StreamConfig{Name: "TERMALL", Subjects: []string{"n.>"}, Storage: MemoryStorage}},
++		{"FileStore", &StreamConfig{Name: "TERMALL", Subjects: []string{"n.>"}, Storage: FileStorage}},
++	}
++	for _, c := range cases {
++		t.Run(c.name, func(t *testing.T) {
++			s := RunBasicJetStreamServer(t)
++			defer s.Shutdown()
++
++			mset, err := s.GlobalAccount().addStream(c.mconfig)
++			require_NoError(t, err)
++			defer mset.delete()
++
++			ackWait := 100 * time.Millisecond
++			o, err := mset.addConsumer(&ConsumerConfig{Durable: "C", AckPolicy: AckAll, AckWait: ackWait})
++			require_NoError(t, err)
++			defer o.delete()
++
++			nc := clientConnectToServer(t, s)
++			defer nc.Close()
++
++			getMsg := func() *nats.Msg {
++				t.Helper()
++				m, err := nc.Request(o.requestNextMsgSubject(), nil, time.Second)
++				require_NoError(t, err)
++				return m
++			}
++
++			// First message is acked so the ack floor moves off zero.
++			sendStreamMsg(t, nc, "n.a", "m1")
++			getMsg().Respond(nil)
++			checkFor(t, time.Second, 10*time.Millisecond, func() error {
++				o.mu.RLock()
++				defer o.mu.RUnlock()
++				if o.asflr != 1 {
++					return fmt.Errorf("expected ack floor 1, got %d", o.asflr)
++				}
++				return nil
++			})
++
++			// Four more messages, the middle two share a subject that gets purged.
++			sendStreamMsg(t, nc, "n.a", "m2") // sseq 2
++			sendStreamMsg(t, nc, "n.x", "m3") // sseq 3
++			sendStreamMsg(t, nc, "n.x", "m4") // sseq 4
++			sendStreamMsg(t, nc, "n.b", "m5") // sseq 5
++
++			// Fetch all four but do not ack them.
++			for i := 0; i < 4; i++ {
++				getMsg()
++			}
++
++			// Deleting pending messages 3 and 4 terminates their delivery.
++			purged, err := mset.purge(&JSApiStreamPurgeRequest{Subject: "n.x"})
++			require_NoError(t, err)
++			require_Equal(t, purged, 2)
++
++			// The terminations must not drop message 2, which sits below them
++			// and was never acked.
++			checkFor(t, time.Second, 10*time.Millisecond, func() error {
++				o.mu.RLock()
++				defer o.mu.RUnlock()
++				if len(o.pending) != 2 {
++					return fmt.Errorf("expected 2 pending, got %d", len(o.pending))
++				}
++				return nil
++			})
++			o.mu.RLock()
++			_, ok2 := o.pending[2]
++			_, ok5 := o.pending[5]
++			adflr, asflr := o.adflr, o.asflr
++			o.mu.RUnlock()
++			if !ok2 || !ok5 {
++				t.Fatalf("expected pending messages 2 and 5, got 2=%v 5=%v", ok2, ok5)
++			}
++			if adflr != 1 || asflr != 1 {
++				t.Fatalf("termination of deleted pending messages moved ack floor to %d/%d, expected 1/1", adflr, asflr)
++			}
++
++			// Once ackWait lapses the survivors must be redelivered.
++			time.Sleep(3 * ackWait)
++			m := getMsg()
++			if sseq, _, _, _, _ := ackReplyInfo(m.Reply); sseq != 2 {
++				t.Fatalf("expected redelivery of message 2, got %d", sseq)
++			}
++			m = getMsg()
++			if sseq, _, _, _, _ := ackReplyInfo(m.Reply); sseq != 5 {
++				t.Fatalf("expected redelivery of message 5, got %d", sseq)
++			}
 +		})
-+		require_NoError(t, err)
-+		c.waitOnStreamLeader(globalAccountName, "TEST")
-+		sl := c.streamLeader(globalAccountName, "TEST")
-+		mset, err := sl.globalAccount().lookupStream("TEST")
-+		require_NoError(t, err)
- 
--	inbox := nats.NewInbox()
--	sub, err := nc.SubscribeSync(fmt.Sprintf("%s.>", inbox))
--	require_NoError(t, err)
--	defer sub.Drain()
-+		// Subscribe on the stream leader, so the replies don't depend on interest propagation.
-+		nc.Close()
-+		nc = clientConnectToServer(t, sl)
-+		inbox := nats.NewInbox()
-+		sub, err := nc.SubscribeSync(fmt.Sprintf("%s.>", inbox))
-+		require_NoError(t, err)
-+		defer sub.Drain()
-+		require_NoError(t, nc.Flush())
- 
--	// The message fits the file store record limit as received, but not after the schedule's rollup header is added.
--	schedule := time.Now().Add(time.Hour).Format(time.RFC3339Nano)
--	hdr := genHeader(nil, JSSchedulePattern, fmt.Sprintf("@at %s", schedule))
--	hdr = genHeader(hdr, JSScheduleTarget, "foo.target")
--	msg := make([]byte, rlBadThresh-5-fileStoreMsgSize("foo.schedule", hdr, nil))
--	require_Equal(t, fileStoreMsgSize("foo.schedule", hdr, msg), rlBadThresh-5)
--	require_True(t, isFileStoreMsgTooLarge(fileStoreMsgSize("foo.schedule", genHeader(hdr, JSMsgRollup, JSMsgRollupSubject), msg)))
--
--	reply := generateFastBatchReply(inbox, "uuid", 1, 0, FastBatchGapFail, FastBatchOpStart)
--	batch, _ := getFastBatch(reply, hdr)
--	require_NotNil(t, batch)
--	defer batch.returnToPool()
--	require_Error(t, mset.processJetStreamFastBatchMsg(batch, "foo.schedule", reply, hdr, msg, nil), ErrMsgTooLarge)
--
--	// The first message gets the initial flow control message.
--	rmsg, err := sub.NextMsg(time.Second)
--	require_NoError(t, err)
--	var batchFlowAck BatchFlowAck
--	require_NoError(t, json.Unmarshal(rmsg.Data, &batchFlowAck))
--	require_Equal(t, batchFlowAck.Type, "ack")
-+		// The message fits the file store record limit as received, but not after the schedule's rollup header is added.
-+		schedule := time.Now().Add(time.Hour).Format(time.RFC3339Nano)
-+		hdr := genHeader(nil, JSSchedulePattern, fmt.Sprintf("@at %s", schedule))
-+		hdr = genHeader(hdr, JSScheduleTarget, "foo.target")
-+		msg := make([]byte, rlBadThresh-5-fileStoreMsgSize("foo.schedule", hdr, nil))
-+		require_Equal(t, fileStoreMsgSize("foo.schedule", hdr, msg), rlBadThresh-5)
-+		require_True(t, isFileStoreMsgTooLarge(fileStoreMsgSize("foo.schedule", genHeader(hdr, JSMsgRollup, JSMsgRollupSubject), msg)))
- 
--	// The error must be replied to only once.
--	rmsg, err = sub.NextMsg(time.Second)
--	require_NoError(t, err)
--	var pubAck JSPubAckResponse
--	require_NoError(t, json.Unmarshal(rmsg.Data, &pubAck))
--	require_NotNil(t, pubAck.Error)
--	require_Error(t, pubAck.Error, NewJSStreamStoreFailedError(ErrMsgTooLarge))
--	rmsg, err = sub.NextMsg(250 * time.Millisecond)
--	if err == nil {
--		t.Fatalf("Unexpected second reply: %s", rmsg.Data)
-+		reply := generateFastBatchReply(inbox, "uuid", 1, 0, FastBatchGapFail, FastBatchOpStart)
-+		batch, _ := getFastBatch(reply, hdr)
-+		require_NotNil(t, batch)
-+		defer batch.returnToPool()
-+		err = mset.processJetStreamFastBatchMsg(batch, "foo.schedule", reply, hdr, msg, nil)
++	}
++}
 +
-+		// The first message gets the initial flow control message.
-+		rmsg, rerr := sub.NextMsg(time.Second)
-+		require_NoError(t, rerr)
-+		var batchFlowAck BatchFlowAck
-+		require_NoError(t, json.Unmarshal(rmsg.Data, &batchFlowAck))
-+		require_Equal(t, batchFlowAck.Type, "ack")
++func TestJetStreamAckAllClientTermAcksBelow(t *testing.T) {
++	cases := []struct {
++		name    string
++		mconfig *StreamConfig
++	}{
++		{"MemoryStore", &StreamConfig{Name: "TERMCLIENT", Subjects: []string{"n.>"}, Storage: MemoryStorage}},
++		{"FileStore", &StreamConfig{Name: "TERMCLIENT", Subjects: []string{"n.>"}, Storage: FileStorage}},
++	}
++	for _, c := range cases {
++		t.Run(c.name, func(t *testing.T) {
++			s := RunBasicJetStreamServer(t)
++			defer s.Shutdown()
 +
-+		// The error must be replied to only once.
-+		rmsg, rerr = sub.NextMsg(time.Second)
-+		require_NoError(t, rerr)
-+		var pubAck JSPubAckResponse
-+		require_NoError(t, json.Unmarshal(rmsg.Data, &pubAck))
-+		require_NotNil(t
++			mset, err := s.GlobalAccount().addStream(c.mconfig)
++			require_NoError(t, err)
++			defer mset.delete()
++
++			o, err := mset.addConsumer(&ConsumerConfig{Durable: "C", AckPolicy: AckAll, AckWait: 100 * time.Millisecond})
++			require_NoError(t, err)
++			defer o.delete()
++
++			nc := clientConnectToServer(t, s)
++			defer nc.Close()
++
++			getMsg := func() *nats.Msg {
++				t.Helper()
++				m, err := nc.Request(o.requestNextMsgSubject(), nil, time.Second)
++				require_NoError(t, err)
++				return m
++			}
++
++			sendStreamMsg(t, nc, "n.a", "m1")
++			sendStreamMsg(t, nc, "n.a", "m2")
++			sendStreamMsg(t, nc, "n.a", "m3")
++
++			// Fetch all three, then terminate the last one from the client.
++			getMsg()
++			getMsg()
++			m := getMsg()
++			m.Respond(AckTerm)
++
++			// A client-initiated term keeps its long-standing behavior: under
++			// AckAll it works like an ack, so the messages below it are acked
++			// too and nothing is redelivered.
++			checkFor(t, time.Second, 10*time.Millisecond, func() error {
++				o.mu.RLock()
++				defer o.mu.RUnlock()
++				if len(o.pending) != 0 {
++					return fmt.Errorf("expected no pending, got %d", len(o.pending))
++				}
++				if o.asflr != 3 {
++					return fmt.Errorf("expected ack floor 3, got %d", o.asflr)
++				}
++				return nil
++			})
++		})
++	}
++}
++
++func TestJetStreamAckAllTermDeletedPendingViaStoreRemoveDoesNotAckBelow(t *testing.T) {
+
+```
+
+**File**: `server/memstore.go` (modified, +5/-2)
+```diff
+@@ -2975,7 +2975,7 @@ func (o *consumerMemStore) UpdateDelivered(dseq, sseq, dc uint64, ts int64) erro
+ 	return nil
+ }
+ 
+-func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64) error {
++func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64, explicit bool) error {
+ 	o.mu.Lock()
+ 	defer o.mu.Unlock()
+ 
+@@ -2999,7 +2999,10 @@ func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64) error {
+ 		return ErrStoreMsgNotFound
+ 	}
+ 
+-	if ackAll {
++	// Check for AckAll here (or AckFlowControl which functions like AckAll).
++	// An explicit ack is scoped to this message only, so it falls through to
++	// the per-message path even under AckAll.
++	if !explicit && ackAll {
+ 		// Use the original delivery sequence.
+ 		if p := o.state.Pending[sseq]; dseq > p.Sequence && p.Sequence > 0 {
+ 			dseq = p.Sequence
+```
+
+**File**: `server/store.go` (modified, +4/-1)
+```diff
+@@ -440,7 +440,10 @@ type ConsumerStore interface {
+ 	Reset(sseq uint64) error
+ 	HasState() bool
+ 	UpdateDelivered(dseq, sseq, dc uint64, ts int64) error
+-	UpdateAcks(dseq, sseq uint64) error
++	// explicit reports that this update acks sseq only, e.g. the message was
++	// deleted from the stream. Under AckAll/AckFlowControl an explicit ack
++	// must not ack messages below sseq like a regular ack would.
++	UpdateAcks(dseq, sseq uint64, explicit bool) error
+ 	RemoveRedeliveredBelow(seq uint64)
+ 	GetConfig() *ConsumerConfig
+ 	UpdateConfig(cfg *ConsumerConfig) error
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8909** (closed): Optimize exact-subject pending counts at the latest sequence (@MoonShiesty)
-- **PR #8907** (2026-11-18): [FIXED] Batch account limits, store errors & trace-only messages (@MauriceVanVeen)
-- **PR #8905** (2026-11-17): updated accConnsUpdate to use a read lock instead of a write lock. (@cfedersp)
-- **PR #8902** (2026-11-16): [FIXED] MQTT: readLoop JetStream requests stuck behind a pending route (@MauriceVanVeen)
-- **PR #8901** (2026-11-16): [FIXED] Data race between filestore ConsumerStore and UpdateConfig (@sciascid)
-- **PR #8900** (2026-11-16): [FIXED] memory store SkipMsgs sequence could overflow (@sciascid)
+- **PR #8930** (2026-11-23): [FIXED] Consumers not woken after stream catchup completes (@MauriceVanVeen)
+- **PR #8927** (2026-11-23): [FIXED] JetStream: Avoid stream option races during reload (@Zitniks)
+- **PR #8923** (2026-11-23): [FIXED] Validate source FilterSubject on stream updates (@sohailshk)
+- **PR #8922** (2026-11-20): [FIXED] Filestore tombstones lost around empty blocks and compaction (@MauriceVanVeen)
+- **PR #8920** (2026-11-20): [FIXED] Filestore compression, empty block and subject state fixes (@MauriceVanVeen)
+- **PR #8919** (2026-11-20): [FIXED] Truncate and FilteredState differing between file and memory store (@MauriceVanVeen)
 
 ---
 
@@ -3725,29 +3601,55 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. (2.16) [FIXED] Send async INFO to clients when max_payload limit changes
+## X. [FIXED] Validate source FilterSubject on stream updates
 
 **RULE**:
-When implementing operations in `server/accounts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/jetstream_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba5c7e53`: (2.16) [FIXED] Send async INFO to clients when max_payload limit changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e319bdf`: [FIXED] Validate source FilterSubject on stream updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/accounts.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/jetstream_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	s.mu.RLock()
-	info := s.copyInfo()
-	s.mu.RUnlock()
+func TestJetStreamStreamUpdateInvalidSourceFilterSubject(t *testing.T) {
+	s := RunBasicJetStreamServer(t)
+	defer s.Shutdown()
 
-		oldMpay := atomic.LoadInt32(&c.mpay)
-		mpayChanged := oldMpay != atomic.LoadInt32(&c.mpay)
-		if mpayChanged {
-			c.sendAsyncInfo(info)
-		}
+	nc, js := jsClientConnect(t, s)
+	defer nc.Close()
+
+	_, err := js.AddStream(&nats.StreamConfig{Name: "ORIGIN", Subjects: []string{"origin.>"}})
+	require_NoError(t, err)
+
+	invalid := []string{"origin..x", "origin x", "origin.>.x", ".origin"}
+
+	// Creating a stream with an invalid source filter subject errors.
+	for _, filter := range invalid {
+		_, err = js.AddStream(&nats.StreamConfig{
+			Name:    "SOURCE",
+			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
+		})
+		require_Error(t, err)
+	}
+
+	cfg := &nats.StreamConfig{
+		Name:    "SOURCE",
+		Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: "origin.valid"}},
+	}
+	_, err = js.AddStream(cfg)
+	require_NoError(t, err)
+
+	// So does updating an existing stream, and the stored config must not change.
+	for _, filter := range invalid {
+		_, err = js.UpdateStream(&nats.StreamConfig{
+			Name:    "SOURCE",
+			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
+		})
+		require_Error(t, err, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, filter))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3757,7 +3659,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba5c7e53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e319bdf` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

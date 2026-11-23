@@ -12491,3 +12491,6 @@ Every entry in this ledger must capture:
 | `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `56cfd65d` | Multi-dimensional audit evidence | 2026-11-23T20:38:55.583Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `da971852` | Multi-dimensional audit evidence | 2026-11-23T20:38:57.458Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `605fb5eb` | Multi-dimensional audit evidence | 2026-11-23T20:39:00.569Z |
+| `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-23T20:47:42.240Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `5a7a03c3` | Multi-dimensional audit evidence | 2026-11-23T20:47:51.538Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `bcd7b33c` | Multi-dimensional audit evidence | 2026-11-23T20:47:56.219Z |

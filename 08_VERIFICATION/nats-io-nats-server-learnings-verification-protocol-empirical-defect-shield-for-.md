@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T17:21:17.032Z",
+  "timestamp": "2026-11-23T20:48:01.064Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nats-io-nats-server-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nats-io-nats-server-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T17:21:17.032Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T20:48:01.064Z`  
 > **Learning ID**: `LEARN-EVO-nats-io-nats-server-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `a0385c9a`  
+> **Source Version**: `5a7a03c3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:20:55.443Z  
+> **Timestamp**: 2026-11-23T20:47:50.249Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:20:55.275Z  
+> **Harvest Timestamp**: 2026-11-23T20:47:50.241Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21078 stars
+- **Stars / Engagement**: 21123 stars
 
 ---
 
@@ -2751,765 +2751,848 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20df9dfc` (2026-11-20)
-**Commit Message**: [FIXED] Filestore compression, empty block and subject state fixes (#8920)
+### Incident Patch 1: `6e319bdf` (2026-11-23)
+**Commit Message**: [FIXED] Validate source FilterSubject on stream updates (#8923)
 
-A block's compression wasn't recovered when rebuilding its state, so
-after a restart it was handled as uncompressed. A compressed block could
-also end up as the last block and get appended to, either after recovery
-removed the empty block after it or after a truncate.
+## Problem
+Stream creation validates source `FilterSubject` values, but stream
+updates do not apply the same validation.
 
-Empty blocks were a recurring source of wrong state: compacting or
-rebuilding took the first sequence from an empty block, compacting the
-last block to empty kept the removed messages, and converting the cipher
-of an empty block failed.
+As a result, an update containing an invalid filter such as `origin..x`
+can be accepted and persisted. The sourcing stream then stops receiving
+messages without reporting an error. In a single-server setup, the
+stream can also fail to load after a restart. In clustered deployments,
+the stream can go offline across all peers.
 
-The per-subject `fblk`/`lblk` could go stale after truncate and
-compaction, giving a wrong `FilteredState` last sequence, and a
-mismatched subject count made `MaxMsgsPer` enforcement in `storeRawMsg`
-spin forever.
+## Solution
+Add source `FilterSubject` validation to `checkStreamCfgLocked`, using
+the same validation and error handling already applied to
+SubjectTransforms sources.
 
-Also fixes the consumer file store marking its state clean after writing
-a buffer encoded before a concurrent update, losing that update.
+Invalid updates are now rejected before the configuration is committed.
+In clustered deployments, the meta leader's pre-check prevents invalid
+proposals from being applied.
 
-**File**: `server/filestore.go` (modified, +203/-52)
+This also ensures that peers retain their existing valid configuration
+if an invalid update reaches the meta layer.
+
+## Tests
+Added `TestJetStreamStreamUpdateInvalidSourceFilterSubject` in
+`server/jetstream_test.go`.
+
+The test covers invalid filters:
+
+* `origin..x`
+* `origin x`
+* `origin.>.x`
+* `.origin`
+
+It verifies that both creation and 
+
+**File**: `server/jetstream_test.go` (modified, +41/-0)
 ```diff
-@@ -1507,10 +1507,11 @@ func (fs *fileStore) rebuildStateLocked(ld *LostStreamData) {
- 
- 	for _, mb := range fs.blks {
- 		mb.mu.RLock()
-+		firstWithMsgs := fs.state.Msgs == 0 && mb.msgs > 0
- 		fs.state.Msgs += mb.msgs
- 		fs.state.Bytes += mb.bytes
- 		fseq := atomic.LoadUint64(&mb.first.seq)
--		if fs.state.FirstSeq == 0 || (fseq < fs.state.FirstSeq && mb.first.ts != 0) {
-+		if fs.state.FirstSeq == 0 || firstWithMsgs || (fseq < fs.state.FirstSeq && mb.first.ts != 0) {
- 			fs.state.FirstSeq = fseq
- 			if mb.first.ts == 0 {
- 				fs.state.FirstTime = time.Time{}
-@@ -1520,7 +1521,7 @@ func (fs *fileStore) rebuildStateLocked(ld *LostStreamData) {
- 		}
- 		// Preserve last time, could have erased the last message in one block, and then
- 		// have a tombstone with the proper timestamp afterward in another block
--		if lseq := atomic.LoadUint64(&mb.last.seq); lseq >= fs.state.LastSeq {
-+		if lseq := atomic.LoadUint64(&mb.last.seq); lseq > fs.state.LastSeq || (lseq == fs.state.LastSeq && mb.last.ts != 0) {
- 			fs.state.LastSeq = lseq
- 			if mb.last.ts == 0 {
- 				fs.state.LastTime = time.Time{}
-@@ -1530,6 +1531,11 @@ func (fs *fileStore) rebuildStateLocked(ld *LostStreamData) {
- 		}
- 		mb.mu.RUnlock()
+@@ -25955,6 +25955,47 @@ func TestJetStreamFlowControlCrossAccountFanOut(t *testing.T) {
  	}
-+	// Without messages the first sequence comes after the last, not where an empty block starts.
-+	if fs.state.Msgs == 0 {
-+		fs.state.FirstSeq = fs.state.LastSeq + 1
-+		fs.state.FirstTime = time.Time{}
+ }
+ 
++func TestJetStreamStreamUpdateInvalidSourceFilterSubject(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
++	defer s.Shutdown()
++
++	nc, js := jsClientConnect(t, s)
++	defer nc.Close()
++
++	_, err := js.AddStream(&nats.StreamConfig{Name: "ORIGIN", Subjects: []string{"origin.>"}})
++	require_NoError(t, err)
++
++	invalid := []string{"origin..x", "origin x", "origin.>.x", ".origin"}
++
++	// Creating a stream with an invalid source filter subject errors.
++	for _, filter := range invalid {
++		_, err = js.AddStream(&nats.StreamConfig{
++			Name:    "SOURCE",
++			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
++		})
++		require_Error(t, err)
 +	}
- }
- 
- // Attempt to convert the cipher used for this message block.
-@@ -1588,7 +1594,15 @@ func (mb *msgBlock) convertCipher() error {
- 			return err
- 		}
- 
--		buf, _ := mb.loadBlock(nil)
-+		buf, err := mb.loadBlock(nil)
-+		if err != nil {
-+			return err
-+		}
-+		// An empty block has nothing to convert, it only needs new keys.
-+		if len(buf) == 0 {
-+			recycleMsgBlockBuf(buf)
-+			return fs.genEncryptionKeysForBlock(mb)
-+		}
- 		bek.XORKeyStream(buf, buf)
- 		// Check for compression, and make sure we can parse with old cipher and key file.
- 		if nbuf, err := mb.decompressIfNeeded(buf); err != nil {
-@@ -1632,6 +1646,11 @@ func (mb *msgBlock) convertToEncrypted() error {
- 	if err != nil {
- 		return err
- 	}
-+	// An empty block has nothing to convert.
-+	if len(buf) == 0 {
-+		recycleMsgBlockBuf(buf)
-+		return nil
++
++	cfg := &nats.StreamConfig{
++		Name:    "SOURCE",
++		Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: "origin.valid"}},
 +	}
- 	// Check for compression.
- 	if buf, err = mb.decompressIfNeeded(buf); err != nil {
- 		return err
-@@ -1717,9 +1736,12 @@ func (mb *msgBlock) rebuildStateLocked() (*LostStreamData, []uint64, error) {
- 		return nil, nil, err
- 	}
- 	// Check for compression.
--	if buf, err = mb.decompressIfNeeded(buf); err != nil {
-+	var alg StoreCompression
-+	if buf, alg, err = mb.decode(buf); err != nil {
- 		return nil, nil, err
- 	}
-+	// Remember how the block is stored on disk, since it isn't recovered otherwise.
-+	mb.cmp = alg
- 	return mb.rebuildStateFromBufLocked(buf, true)
- }
- 
-@@ -2795,6 +2817,16 @@ func (fs *fileStore) recoverMsgs() error {
- 
- 	if len(fs.blks) > 0 {
- 		fs.lmb = fs.blks[len(fs.blks)-1]
-+		// A compressed block can't be appended to, new records would be written uncompressed.
-+		// It ends up as the last block if the one after it was empty and got removed above.
-+		fs.lmb.mu.RLock()
-+		compressed := fs.lmb.cmp != NoCompression
-+		fs.lmb.mu.RUnlock()
-+		if compressed {
-+			if _, err = fs.newMsgBlockForWrite(); err != nil {
-+				return err
-+			}
-+		}
- 	} else if _, err = fs.newMsgBlockForWrite(); err != nil {
- 		return err
- 	}
-@@ -3928,6 +3960,7 @@ func (fs *fileStore) numFilteredPendingWithLast(filter string, last bool, ss *Si
- 
- 		// Hold this outside loop for psim fblk updates when done.
- 		i := start + 1
-+		var fmb *msgBlock
- 		for ; i <= stop; i++ {
- 			mb := fs.bim[i]
- 			if mb == nil {
-@@ -3937,43 +3970,53 @@ func (fs *fileStore) numFilteredPendingWithLast(filter string, last bool, ss *Si
- 				return err
- 			} else if f > 0 {
- 				ss.First = f
-+				fmb = mb
- 				break
- 			}
- 		}
- 		// Update fblk since fblk was outdated.
- 		// We only require read lock here as that is desirable,
- 		// so we need to do this in a go routine to acquire write lock.
--		go func() {
--			fs.mu.Lock()
--			defer fs.mu.Unlock()
--			if !wc {
--				if info, ok := fs.psim.Find(stringToBytes(filter)); ok {
--					if i > info.fblk {
--						info.fblk = i
--					}
--				}
--			} else {
--				fs.psim.Match(stringToBytes(filter), func(subj []byte, psi *psi) {
--					if i > psi.fblk {
--						psi.fblk = i
--					}
--				})
--			}
--		}()
-+		if fmb != nil {
-+			go fs.updateFirstBlock(filter, wc, i, fmb)
-+		}
- 	}
- 	// Now gather last sequence if asked to do so.
- 	if last {
--		if mb = fs.bim[stop]; mb != nil {
--			_, _, l, err := mb.filteredPending(filter, wc, 0)
--			if err != nil {
--				return err
--			}
--			ss.Last = l
-+		_, l, err := fs.lastSeqLocked(filter)
-+		if err != nil {
-+			return err
- 		}
-+		ss.Last = l
- 	}
- 	return nil
- }
- 
-+// updateFirstBlock moves fblk up to index i for subjects matching the filter.
-+// mb is the block at index i that holds the first match.
-+func (fs *fileStore) updateFirstBlock(filter string, wc bool, i uint32, mb *msgBlock) 
++	_, err = js.AddStream(cfg)
++	require_NoError(t, err)
++
++	// So does updating an existing stream, and the stored config must not change.
++	for _, filter := range invalid {
++		_, err = js.UpdateStream(&nats.StreamConfig{
++			Name:    "SOURCE",
++			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
++		})
++		require_Error(t, err, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, filter)))
++	}
++	si, err := js.StreamInfo("SOURCE")
++	require_NoError(t, err)
++	require_Equal(t, si.Config.Sources[0].FilterSubject, "origin.valid")
++}
++
+ func TestJetStreamStreamCheckSourcesWithExternal(t *testing.T) {
+ 	s := RunBasicJetStreamServer(t)
+ 	defer s.Shutdown()
 ```
 
-**File**: `server/filestore_test.go` (modified, +962/-20)
+**File**: `server/stream.go` (modified, +3/-0)
 ```diff
-@@ -3163,6 +3163,82 @@ func TestFileStoreConsumerFlusher(t *testing.T) {
- 	})
- }
+@@ -2299,6 +2299,9 @@ func (s *Server) checkStreamCfgLocked(config *StreamConfig, acc *Account, pedant
+ 		if src.FilterSubject != _EMPTY_ && len(src.SubjectTransforms) != 0 {
+ 			return StreamConfig{}, NewJSSourceMultipleFiltersNotAllowedError()
+ 		}
++		if src.FilterSubject != _EMPTY_ && !IsValidSubject(src.FilterSubject) {
++			return StreamConfig{}, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, src.FilterSubject))
++		}
  
-+func TestFileStoreConsumerOutdatedStateWriteKeepsDirty(t *testing.T) {
-+	fs, err := newFileStore(FileStoreConfig{StoreDir: t.TempDir()}, StreamConfig{Name: "zzz", Storage: FileStorage})
-+	require_NoError(t, err)
-+	defer fs.Stop()
-+
-+	cfg := &ConsumerConfig{AckPolicy: AckExplicit}
-+	o, err := fs.ConsumerStore("o22", time.Time{}, cfg)
-+	require_NoError(t, err)
-+	oc := o.(*consumerFileStore)
-+
-+	// Let the flusher write once, it then waits before writing again.
-+	ts := time.Now().UnixNano()
-+	require_NoError(t, o.UpdateDelivered(1, 1, 1, ts))
-+	checkFor(t, time.Second, time.Millisecond, func() error {
-+		oc.mu.Lock()
-+		defer oc.mu.Unlock()
-+		if oc.dirty || oc.writing {
-+			return fmt.Errorf("Not flushed yet")
-+		}
-+		return nil
-+	})
-+
-+	// Write a state that's outdated by the time it's written.
-+	buf, err := o.EncodedState()
-+	require_NoError(t, err)
-+	require_NoError(t, o.UpdateDelivered(2, 2, 1, ts))
-+	require_NoError(t, oc.writeState(buf))
-+
-+	// The last update must still be written when stopping.
-+	require_NoError(t, o.Stop())
-+	o, err = fs.ConsumerStore("o22", time.Time{}, cfg)
-+	require_NoError(t, err)
-+	defer o.Stop()
-+
-+	state, err := o.State()
-+	require_NoError(t, err)
-+	require_Equal(t, state.Delivered.Consumer, 2)
-+}
-+
-+func TestFileStoreConsumerSkippedStateWriteKicksFlusher(t *testing.T) {
-+	fs, err := newFileStore(FileStoreConfig{StoreDir: t.TempDir()}, StreamConfig{Name: "zzz", Storage: FileStorage})
-+	require_NoError(t, err)
-+	defer fs.Stop()
-+
-+	cfg := &ConsumerConfig{AckPolicy: AckExplicit}
-+	o, err := fs.ConsumerStore("o22", time.Time{}, cfg)
-+	require_NoError(t, err)
-+	defer o.Stop()
-+	oc := o.(*consumerFileStore)
-+
-+	// Pretend another write is in flight, so this one is skipped.
-+	oc.mu.Lock()
-+	oc.writing = true
-+	oc.mu.Unlock()
-+	require_NoError(t, o.SetStarting(5))
-+	oc.mu.Lock()
-+	oc.writing = false
-+	oc.mu.Unlock()
-+
-+	// The flusher must write the skipped state afterward, without another update or a stop.
-+	checkFor(t, 2*time.Second, 10*time.Millisecond, func() error {
-+		buf, err := os.ReadFile(oc.ifn)
-+		if err != nil {
-+			return err
-+		}
-+		state, err := decodeConsumerState(buf)
-+		if err != nil {
-+			return err
-+		}
-+		if state.Delivered.Stream != 5 || state.AckFloor.Stream != 5 {
-+			return fmt.Errorf("Skipped state not written yet: %+v", state)
-+		}
-+		return nil
-+	})
-+}
-+
- func TestFileStoreConsumerDeliveredUpdates(t *testing.T) {
- 	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
- 		fs, err := newFileStoreWithCreated(fcfg, StreamConfig{Name: "zzz", Storage: FileStorage}, time.Now(), prf(&fcfg), nil)
-@@ -3862,7 +3938,9 @@ func TestFileStoreSparseCompaction(t *testing.T) {
- 		fs.mu.RUnlock()
- 		require_Len(t, blks, 1)
- 		state := fs.State()
-+		fs.mu.Lock()
- 		_, err = fs.newMsgBlockForWrite()
-+		fs.mu.Unlock()
- 		require_NoError(t, err)
- 		require_NoError(t, fs.writeTombstone(state.LastSeq, state.LastTime.UnixNano()))
- 
-@@ -5248,6 +5326,345 @@ func TestFileStoreCompactAllWithDanglingLMB(t *testing.T) {
- 	})
- }
- 
-+func TestFileStoreCompactEmptyLastBlockMaxMsgsPer(t *testing.T) {
-+	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-+		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo", "bar"}, Storage: FileStorage, MaxMsgsPer: 2}
-+		fs, err := newFileStoreWithCreated(fcfg, cfg, time.Now(), prf(&fcfg), nil)
-+		require_NoError(t, err)
-+		defer fs.Stop()
-+
-+		for _, subj := range []string{"foo", "foo", "bar"} {
-+			_, _, err = fs.StoreMsg(subj, nil, nil, 0)
-+			require_NoError(t, err)
-+		}
-+		_, err = fs.PurgeEx("bar", 0, 0)
-+		require_NoError(t, err)
-+
-+		// Compacting empties the last block, but it must not hold on to the removed messages.
-+		purged, err := fs.Compact(3)
-+		require_NoError(t, err)
-+		require_Equal(t, purged, 2)
-+		fs.mu.RLock()
-+		lmb := fs.lmb
-+		fs.mu.RUnlock()
-+		lmb.mu.RLock()
-+		fseq, lseq := lmb.first.seq, lmb.last.seq
-+		lmb.mu.RUnlock()
-+		require_Equal(t, fseq, 4)
-+		require_Equal(t, lseq, 3)
-+
-+		for range 2 {
-+			_, _, err = fs.StoreMsg("foo", nil, nil, 0)
-+			require_NoError(t, err)
-+		}
-+
-+		// Reloading the subject state must not bring back the removed messages.
-+		lmb.mu.Lock()
-+		lmb.fss = nil
-+		lmb.clearCacheAndOffset()
-+		lmb.mu.Unlock()
-+		require_Equal(t, fs.SubjectsState("foo")["foo"], SimpleState{Msgs: 2, First: 4, Last: 5})
-+
-+		// Enforcing MaxMsgsPer used to spin forever on the removed messages.
-+		done := make(chan error, 1)
-+		go func() {
-+			_, _, err := fs.StoreMsg("foo", nil, nil, 0)
-+			done <- err
-+		}()
-+		select {
-+		case err = <-done:
-+			require_NoError(t, err)
-+		case <-time.After(5 * time.Second):
-+			fs.Stop()
-+			t.Fatal("Storing message did not return")
-+		}
-+		require_Equal(t, fs.SubjectsState("foo")["foo"], SimpleState{Msgs: 2, First: 5, Last: 6})
-+	})
-+}
-+
-+func TestFileStoreCompactFirstSeqNotFromEmptyBlock(t *testing.T) {
-+	testFileStoreAllPermutations(t, func(t *testing.T, fcf
+ 		for _, tr := range src.SubjectTransforms {
+ 			if tr.Source != _EMPTY_ && !IsValidSubject(tr.Source) {
 ```
 
 ---
 
-### Incident Patch 2: `e1a817d9` (2026-11-19)
-**Commit Message**: [FIXED] Filestore encryption conversion failing on empty block
+### Incident Patch 2: `dcdafc24` (2026-11-23)
+**Commit Message**: [FIXED] MQTT: Pipeline retained message stores to avoid blocking read… (#8801)
 
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+Resolves #8790
+  
+When an MQTT client sends a PUBLISH with `RETAIN=1`,
+`mqttHandlePubRetain()` stores the retained message synchronously within
+the `readLoop`. On topologies where JetStream is remote (such as leaf
+nodes with `mqtt { js_domain: ... }`), a backlog of retained messages
+stalls the `readLoop`, causing keepalive timeouts and client
+disconnects.
 
-**File**: `server/filestore.go` (modified, +14/-1)
+For QoS1 and QoS2, the retained message store now goes through the async
+ack pipeline. `PUBACK`/`PUBCOMP` are still only sent after the store
+succeeds, and a failed store closes the connection. QoS0 and wills still
+store synchronously.
+
+**File**: `server/mqtt.go` (modified, +20/-5)
 ```diff
-@@ -1588,7 +1588,15 @@ func (mb *msgBlock) convertCipher() error {
- 			return err
- 		}
+@@ -4832,10 +4832,12 @@ func (s *Server) mqttAckLoop(c *client, pipe *mqttAckPipeline) {
+ 				}
+ 				return
+ 			}
+-			c.mu.Lock()
+-			trace := c.trace
+-			c.mu.Unlock()
+-			c.mqttEnqueuePubResponse(p.resp, p.pi, trace)
++			if p.resp != 0 {
++				c.mu.Lock()
++				trace := c.trace
++				c.mu.Unlock()
++				c.mqttEnqueuePubResponse(p.resp, p.pi, trace)
++			}
+ 			p.returnToPool()
  
--		buf, _ := mb.loadBlock(nil)
-+		buf, err := mb.loadBlock(nil)
-+		if err != nil {
-+			return err
-+		}
-+		// An empty block has nothing to convert, it only needs new keys.
-+		if len(buf) == 0 {
-+			recycleMsgBlockBuf(buf)
-+			return fs.genEncryptionKeysForBlock(mb)
-+		}
- 		bek.XORKeyStream(buf, buf)
- 		// Check for compression, and make sure we can parse with old cipher and key file.
- 		if nbuf, err := mb.decompressIfNeeded(buf); err != nil {
-@@ -1632,6 +1640,11 @@ func (mb *msgBlock) convertToEncrypted() error {
- 	if err != nil {
- 		return err
- 	}
-+	// An empty block has nothing to convert.
-+	if len(buf) == 0 {
-+		recycleMsgBlockBuf(buf)
-+		return nil
+ 		case <-pipe.quitCh:
+@@ -5380,7 +5382,20 @@ func (c *client) mqttHandlePubRetain() {
+ 	// Earlier messages from this read may have left a connection in c.pcd.
+ 	// It won't flush the store request until we flush it.
+ 	c.flushClients(0)
+-	_, err := asm.jsa.storeMsg(mqttRetainedMsgsStreamSubject+key, hdr, rmBytes)
++
++	subject := mqttRetainedMsgsStreamSubject + key
++	var err error
++	if pp.hasClientPI() {
++		// QoS1 PUBLISH or QoS2 PUBREL delivery: pipelined, not blocking the readLoop.
++		// Its PUBACK/PUBCOMP is queued behind this entry, so waits for the store.
++		jsa := c.mqtt.sess.jsa
++		p := newMQTTPipelined(0, pp.pi)
++		p.submitStore(jsa, subject, hdr, rmBytes, _EMPTY_)
++		err = c.srv.mqttPipelinePush(c, jsa, p)
++	} else {
++		// QoS0 and wills owe no response, stored synchronously.
++		_, err = asm.jsa.storeMsg(subject, hdr, rmBytes)
 +	}
- 	// Check for compression.
- 	if buf, err = mb.decompressIfNeeded(buf); err != nil {
- 		return err
+ 	if err != nil {
+ 		c.mu.Lock()
+ 		acc := c.acc
 ```
 
-**File**: `server/filestore_test.go` (modified, +52/-0)
+**File**: `server/mqtt_test.go` (modified, +135/-0)
 ```diff
-@@ -16833,6 +16833,58 @@ func TestFileStoreConvertToEncryptedDoesNotResurrectXoredCache(t *testing.T) {
- 	require_NotEqual(t, len(mb.cache.buf), 0)
+@@ -11819,3 +11819,138 @@ func TestMQTTQoS2UntrackedPubRecNotStored(t *testing.T) {
+ 	testMQTTSendPIPacket(mqttPacketPubComp, t, c, rpi)
+ 	testMQTTExpectNothing(t, r)
+ }
++
++// https://github.com/nats-io/nats-server/issues/8790
++func TestMQTTQoS1RetainPubAckPipelineOrderAndPing(t *testing.T) {
++	o := testMQTTDefaultOptions()
++	s := testMQTTRunServer(t, o)
++	defer testMQTTShutdownServer(s)
++
++	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcp.Close()
++	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
++
++	// Send a burst of QoS 1 retained messages back-to-back without waiting for PUBACKs.
++	const numMsgs = 50
++	for pi := uint16(1); pi <= numMsgs; pi++ {
++		testMQTTSendPublishPacket(t, mcp, 1, false, true, "foo", pi, []byte(fmt.Sprintf("msg-%d", pi)))
++	}
++
++	// Send PINGREQ immediately after the burst: readLoop must not be blocked
++	// waiting for JetStream acks, and must promptly respond with PINGRESP.
++	w := newMQTTWriter(0)
++	w.WriteByte(mqttPacketPing)
++	w.WriteByte(0)
++	mcp.Write(w.Bytes())
++
++	// Read packets until we receive all PUBACKs in order and the PINGRESP.
++	var gotPingResp bool
++	var nextPI uint16 = 1
++	for nextPI <= numMsgs || !gotPingResp {
++		b, _ := testMQTTReadPacket(t, mpr)
++		switch pt := b & mqttPacketMask; pt {
++		case mqttPacketPubAck:
++			rpi, err := mpr.readUint16("packet identifier")
++			if err != nil {
++				t.Fatalf("Error reading packet identifier: %v", err)
++			}
++			if rpi != nextPI {
++				t.Fatalf("Expected PUBACK for pi=%v, got pi=%v (out of order)", nextPI, rpi)
++			}
++			nextPI++
++		case mqttPacketPingResp:
++			gotPingResp = true
++		default:
++			t.Fatalf("Unexpected packet type: %x", pt)
++		}
++	}
++	if !gotPingResp {
++		t.Fatal("Expected PINGRESP")
++	}
++
++	// Verify that a new subscriber receives the latest retained message with RETAIN=1.
++	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcs.Close()
++	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
++	testMQTTSub(t, 1, mcs, msr, []*mqttFilter{{filter: "foo", qos: 1}}, []byte{1})
++
++	pflags, _ := testMQTTGetPubMsg(t, mcs, msr, "foo", []byte(fmt.Sprintf("msg-%d", numMsgs)))
++	if !mqttIsRetained(pflags) {
++		t.Fatalf("Expected retained flag on received message, got %v", pflags)
++	}
++}
++
++func TestMQTTQoS2RetainPubCompPipeline(t *testing.T) {
++	o := testMQTTDefaultOptions()
++	s := testMQTTRunServer(t, o)
++	defer testMQTTShutdownServer(s)
++
++	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub2", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcp.Close()
++	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
++
++	// Send QoS2 PUBLISH with RETAIN=1.
++	pi := uint16(42)
++	testMQTTSendPublishPacket(t, mcp, 2, false, true, "bar", pi, []byte("qos2-retained"))
++
++	// Receive PUBREC.
++	testMQTTReadPIPacket(mqttPacketPubRec, t, mpr, pi)
++
++	// Send PUBREL.
++	testMQTTSendPIPacket(mqttPacketPubRel|0x2, t, mcp, pi)
++
++	// Receive PUBCOMP (waited for delivery store, held delete, and retain store).
++	testMQTTReadPIPacket(mqttPacketPubComp, t, mpr, pi)
++
++	// Send PINGREQ to ensure readLoop is responsive.
++	testMQTTFlush(t, mcp, nil, mpr)
++
++	// Verify subscriber gets the retained message.
++	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub2", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcs.Close()
++	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
++	testMQTTSub(t, 1, mcs, msr, []*mqttFilter{{filter: "bar", qos: 2}}, []byte{2})
++
++	pflags, _ := testMQTTGetPubMsg(t, mcs, msr, "bar", []byte("qos2-retained"))
++	if !mqttIsRetained(pflags) {
++		t.Fatalf("Expected retained flag, got %v", pflags)
++	}
++}
++
++func TestMQTTQoS0RetainSynchronous(t *testing.T) {
++	o := testMQTTDefaultOptions()
++	s := testMQTTRunServer(t, o)
++	defer testMQTTShutdownServer(s)
++
++	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub0", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcp.Close()
++	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
++
++	// Send a burst of QoS 0 retained messages back-to-back.
++	const numMsgs = 50
++	for i := 1; i <= numMsgs; i++ {
++		testMQTTSendPublishPacket(t, mcp, 0, false, true, "baz", 0, []byte(fmt.Sprintf("msg-%d", i)))
++	}
++
++	// Send PINGREQ immediately after the burst to ensure no PUBACKs are emitted.
++	w := newMQTTWriter(0)
++	w.WriteByte(mqttPacketPing)
++	w.WriteByte(0)
++	mcp.Write(w.Bytes())
++
++	b, _ := testMQTTReadPacket(t, mpr)
++	if pt := b & mqttPacketMask; pt != mqttPacketPingResp {
++		t.Fatalf("Expected PINGRESP, got packet type %x", pt)
++	}
++
++	// Verify that a new subscriber immediately receives the latest retained message with RETAIN=1.
++	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub0", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
++	defer mcs.Close()
++	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
++	testMQTTSub(t, 1, mcs, msr, []*
+```
+
+---
+
+### Incident Patch 3: `302f7133` (2026-11-23)
+**Commit Message**: Fix AckAll ack floor jump when terminating deleted pending messages (#8659)
+
+When a pending message gets deleted from the stream (filtered purge,
+retention limits), the consumer terminates its delivery so it isn't
+redelivered forever. Under `AckPolicy: All` that termination went
+through the regular ack path, which moves the ack floor to the
+terminated message's sequence and drops every pending entry below it.
+Any unacknowledged message sitting below the deleted one was silently
+treated as acked and never came back. Resolves #8648, which has a full
+client-level repro of this.
+
+Two places feed into it:
+
+1. `processTermLocked` ran the terminated message through the same
+`AckAll` branch in `processAckMsgLocked` as a normal ack, jumping
+`adflr`/`asflr` and clearing `pending <= sseq`.
+2. `consumer.purge` skipped its per-message pending check entirely when
+the purge didn't move the stream's first sequence past the current ack
+floor (the `o.asflr < sseq` guard), so store-deleted messages stayed
+pending until a redelivery attempt failed to load them and hit the term
+path above. And when the purge path did remove deleted entries, it
+pushed `adflr` past lower still-pending entries as a side e
+
+**File**: `server/consumer.go` (modified, +73/-43)
+```diff
+@@ -2918,7 +2918,7 @@ func (o *consumer) processAck(subject, reply string, hdr int, rmsg []byte) {
+ 		if buf := msg[len(AckTerm):]; len(buf) > 0 {
+ 			reason = string(bytes.TrimSpace(buf))
+ 		}
+-		if !o.processTerm(sseq, dseq, dc, reason, reply) {
++		if !o.processTerm(sseq, dseq, dc, reason, reply, false) {
+ 			// We handle replies for acks in updateAcks
+ 			skipAckReply = true
+ 		}
+@@ -3223,20 +3223,26 @@ func (o *consumer) addReplicatedQueuedMsg(pmsg *jsPubMsg) {
  }
  
-+func TestFileStoreEmptyBlockNotConverted(t *testing.T) {
-+	for _, test := range []struct {
-+		title     string
-+		from, to  StoreCipher
-+		removeKey bool
+ // Lock should be held.
+-func (o *consumer) updateAcks(dseq, sseq uint64, reply string) {
++func (o *consumer) updateAcks(dseq, sseq uint64, reply string, explicit bool) {
+ 	if o.isClustered() {
+ 		// Inline for now, use variable compression.
+-		var b [2*binary.MaxVarintLen64 + 1]byte
++		// A trailing byte marks the ack as explicit; older versions ignore it
++		// when decoding and apply regular ack semantics.
++		var b [2*binary.MaxVarintLen64 + 2]byte
+ 		b[0] = byte(updateAcksOp)
+ 		n := 1
+ 		n += binary.PutUvarint(b[n:], dseq)
+ 		n += binary.PutUvarint(b[n:], sseq)
++		if explicit {
++			b[n] = 1
++			n++
++		}
+ 		o.propose(b[:n])
+ 		if reply != _EMPTY_ {
+ 			o.addAckReply(sseq, reply)
+ 		}
+ 	} else if o.store != nil {
+-		o.store.UpdateAcks(dseq, sseq)
++		o.store.UpdateAcks(dseq, sseq, explicit)
+ 		if reply != _EMPTY_ {
+ 			// Already locked so send direct.
+ 			o.outq.sendMsg(reply, nil)
+@@ -3424,13 +3430,16 @@ func (o *consumer) processNak(sseq, dseq, dc uint64, nak []byte) {
+ // Returns `true` if the ack was processed in place and the sender can now respond
+ // to the client, or `false` if there was an error or the ack is replicated (in which
+ // case the reply will be sent later).
+-func (o *consumer) processTerm(sseq, dseq, dc uint64, reason, reply string) bool {
+-	return o.processTermLocked(sseq, dseq, dc, reason, reply, true)
++// explicit reports that this term is scoped to sseq only, e.g. the message was
++// deleted from the stream. Under AckAll/AckFlowControl an explicit term must not
++// ack the messages below sseq like a client-initiated term would.
++func (o *consumer) processTerm(sseq, dseq, dc uint64, reason, reply string, explicit bool) bool {
++	return o.processTermLocked(sseq, dseq, dc, reason, reply, true, explicit)
+ }
+ 
+-func (o *consumer) processTermLocked(sseq, dseq, dc uint64, reason, reply string, needLock bool) bool {
++func (o *consumer) processTermLocked(sseq, dseq, dc uint64, reason, reply string, needLock, explicit bool) bool {
+ 	// Treat like an ack to suppress redelivery.
+-	ackedInPlace := o.processAckMsgLocked(sseq, dseq, dc, reply, false, needLock)
++	ackedInPlace := o.processAckMsgLocked(sseq, dseq, dc, reply, false, needLock, explicit)
+ 
+ 	if needLock {
+ 		o.mu.Lock()
+@@ -3836,10 +3845,10 @@ func (o *consumer) sampleAck(sseq, dseq, dc uint64) {
+ // to the client, or `false` if there was an error or the ack is replicated (in which
+ // case the reply will be sent later).
+ func (o *consumer) processAckMsg(sseq, dseq, dc uint64, reply string, doSample bool) bool {
+-	return o.processAckMsgLocked(sseq, dseq, dc, reply, doSample, true)
++	return o.processAckMsgLocked(sseq, dseq, dc, reply, doSample, true, false)
+ }
+ 
+-func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSample bool, needLock bool) bool {
++func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSample bool, needLock, explicit bool) bool {
+ 	lock := func() {
+ 		if needLock {
+ 			o.mu.Lock()
+@@ -3911,6 +3920,24 @@ func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSa
+ 		delete(o.rdc, sseq)
+ 		o.removeFromRedeliverQueue(sseq)
+ 	case AckAll, AckFlowControl:
++		if explicit {
++			// Server-side removal of a message that was deleted from the stream.
++			// Scoped to this message only, like an explicit ack: the pending
++			// entries below it are left alone, and the floor only moves across
++			// sequences that are already clear.
++			if p, ok := o.pending[sseq]; ok {
++				if o.maxp > 0 && len(o.pending) >= o.maxp {
++					needSignal = true
++				}
++				delete(o.pending, sseq)
++				// Use the original deliver sequence from our pending record.
++				dseq = p.Sequence
++				o.moveAckFloor(dseq, sseq)
++			}
++			delete(o.rdc, sseq)
++			o.removeFromRedeliverQueue(sseq)
++			break
++		}
+ 		// no-op
+ 		if dseq <= o.adflr || sseq <= o.asflr {
+ 			unlock()
+@@ -3971,8 +3998,9 @@ func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSa
+ 	if ackInPlace {
+ 		reply = _EMPTY_
+ 	}
+-	// Update underlying store.
+-	o.updateAcks(dseq, sseq, reply)
++	// Update underlying store. Client acks and terms are regular acks; a
++	// server-side removal of a deleted message is scoped as an explicit ack.
++	o.updateAcks(dseq, sseq, reply, explicit)
+ 	unlock()
+ 
+ 	if ackInPlace {
+@@ -5129,7 +5157,7 @@ func (o *consumer) getNextMsg() (*jsPubMsg, uint64, error) {
+ 				pmsg.returnToPool()
+ 				pmsg = nil
+ 				if p, ok := o.pending[seq]; ok {
+-					o.processTermLocked(seq, p.Sequence, dc-1, ackTermUnackedLimitsReas
+```
+
+**File**: `server/filestore.go` (modified, +5/-2)
+```diff
+@@ -14342,7 +14342,7 @@ func (o *consumerFileStore) UpdateDelivered(dseq, sseq, dc uint64, ts int64) err
+ }
+ 
+ // UpdateAcks is called whenever a consumer with explicit ack or ack all acks a message.
+-func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64) error {
++func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64, explicit bool) error {
+ 	o.mu.Lock()
+ 	defer o.mu.Unlock()
+ 
+@@ -14379,7 +14379,10 @@ func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64) error {
+ 	// Done with the consistency checks, we'll always kick for below updates.
+ 	kick = true
+ 
+-	if ackAll {
++	// Check for AckAll here (or AckFlowControl which functions like AckAll).
++	// An explicit ack is scoped to this message only, so it falls through to
++	// the per-message path even under AckAll.
++	if !explicit && ackAll {
+ 		// Use the original delivery sequence.
+ 		if p := o.state.Pending[sseq]; dseq > p.Sequence && p.Sequence > 0 {
+ 			dseq = p.Sequence
+```
+
+**File**: `server/filestore_test.go` (modified, +7/-7)
+```diff
+@@ -3143,11 +3143,11 @@ func TestFileStoreConsumerRedeliveredLost(t *testing.T) {
+ 			t.Fatalf("Did not recover pending correctly")
+ 		}
+ 
+-		o.UpdateAcks(7, 3)
+-		o.UpdateAcks(6, 2)
++		o.UpdateAcks(7, 3, false)
++		o.UpdateAcks(6, 2, false)
+ 
+ 		restartConsumer()
+-		o.UpdateAcks(4, 1)
++		o.UpdateAcks(4, 1, false)
+ 
+ 		state, _ := o.State()
+ 		if len(state.Pending) != 0 {
+@@ -3195,7 +3195,7 @@ func TestFileStoreConsumerUpdateAcksFlushesRedelivered(t *testing.T) {
+ 		// Acking sseq 1 deletes it from Redelivered, but UpdateAcks bails out with
+ 		// ErrStoreMsgNotFound since it is no longer pending. The deletion must still
+ 		// be flushed.
+-		require_Error(t, o.UpdateAcks(2, 1), ErrStoreMsgNotFound)
++		require_Error(t, o.UpdateAcks(2, 1, false), ErrStoreMsgNotFound)
+ 
+ 		restartConsumer()
+ 		defer o.Stop()
+@@ -3355,7 +3355,7 @@ func TestFileStoreConsumerDeliveredUpdates(t *testing.T) {
+ 		testDelivered(5, 130)
+ 
+ 		// If we try to do an ack this should err since we are not configured with ack policy.
+-		if err := o.UpdateAcks(1, 100); err != ErrNoAckPolicy {
++		if err := o.UpdateAcks(1, 100, false); err != ErrNoAckPolicy {
+ 			t.Fatalf("Expected a no ack policy error on update acks, got %v", err)
+ 		}
+ 		// Also if we do an update with a delivery count of anything but 1 here should also give same error.
+@@ -3413,7 +3413,7 @@ func TestFileStoreConsumerDeliveredAndAckUpdates(t *testing.T) {
+ 
+ 		testBadAck := func(dseq, sseq uint64) {
+ 			t.Helper()
+-			if err := o.UpdateAcks(dseq, sseq); err == nil {
++			if err := o.UpdateAcks(dseq, sseq, false); err == nil {
+ 				t.Fatalf("Expected error but got none")
+ 			}
+ 		}
+@@ -3422,7 +3422,7 @@ func TestFileStoreConsumerDeliveredAndAckUpdates(t *testing.T) {
+ 
+ 		testAck := func(dseq, sseq, dflr, sflr uint64) {
+ 			t.Helper()
+-			if err := o.UpdateAcks(dseq, sseq); err != nil {
++			if err := o.UpdateAcks(dseq, sseq, false); err != nil {
+ 				t.Fatalf("Unexpected error: %v", err)
+ 			}
+ 			pending--
+```
+
+**File**: `server/jetstream_cluster.go` (modified, +17/-9)
+```diff
+@@ -9277,12 +9277,12 @@ func (js *jetStream) applyConsumerMsgOpLocked(o *consumer, buf []byte) (afterUnl
+ 			return nil, err
+ 		}
+ 	case updateAcksOp:
+-		dseq, sseq, err := decodeAckUpdate(buf[1:])
++		dseq, sseq, explicit, err := decodeAckUpdate(buf[1:])
+ 		if err != nil {
+ 			logDecodeErr("ack")
+ 			return nil, err
+ 		}
+-		mset, ackAllSeqs, err := o.processReplicatedAckLocked(dseq, sseq)
++		mset, ackAllSeqs, err := o.processReplicatedAckLocked(dseq, sseq, explicit)
+ 		if err == errConsumerClosed {
+ 			return nil, err
+ 		}
+@@ -9406,12 +9406,14 @@ var errConsumerClosed = errors.New("consumer closed")
+ // processReplicatedAckLocked stores a replicated ack.
+ // Returns the stream if the acked messages must still be acked on it, after the lock is released.
+ // Lock should be held.
+-func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64) (*stream, []uint64, error) {
++func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64, explicit bool) (*stream, []uint64, error) {
+ 	// Update activity.
+ 	o.lat = time.Now()
+ 
+ 	var ackAllSeqs []uint64
+-	if o.retention != LimitsPolicy && (o.cfg.AckPolicy == AckAll || o.cfg.AckPolicy == AckFlowControl) {
++	// An explicit ack is scoped to the message itself, so it does not collect
++	// the messages below it even under AckAll.
++	if !explicit && o.retention != LimitsPolicy && (o.cfg.AckPolicy == AckAll || o.cfg.AckPolicy == AckFlowControl) {
+ 		// Always use the store state, as o.asflr is skipped ahead already.
+ 		// Capture before updating store, which clears the pending below.
+ 		state, err := o.store.BorrowState()
+@@ -9431,7 +9433,7 @@ func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64) (*stream, []uin
+ 
+ 	// Do actual ack update to store.
+ 	// Always do this to have it recorded.
+-	o.store.UpdateAcks(dseq, sseq)
++	o.store.UpdateAcks(dseq, sseq, explicit)
+ 
+ 	mset := o.mset
+ 	if o.closed || mset == nil {
+@@ -9459,16 +9461,22 @@ var errBadDeliveredUpdate = errors.New("jetstream cluster bad replicated deliver
+ var errBadSkipUpdate = errors.New("jetstream cluster bad replicated skip update")
+ var errBadResetUpdate = errors.New("jetstream cluster bad replicated reset update")
+ 
+-func decodeAckUpdate(buf []byte) (dseq, sseq uint64, err error) {
++func decodeAckUpdate(buf []byte) (dseq, sseq uint64, explicit bool, err error) {
+ 	var bi, n int
+ 	if dseq, n = binary.Uvarint(buf); n <= 0 {
+-		return 0, 0, errBadAckUpdate
++		return 0, 0, false, errBadAckUpdate
+ 	}
+ 	bi += n
+ 	if sseq, n = binary.Uvarint(buf[bi:]); n <= 0 {
+-		return 0, 0, errBadAckUpdate
++		return 0, 0, false, errBadAckUpdate
+ 	}
+-	return dseq, sseq, nil
++	bi += n
++	// Optional trailing byte marks this ack as explicit. Versions that predate
++	// it stop after the two sequences and apply regular ack semantics.
++	if bi < len(buf) && buf[bi] == 1 {
++		explicit = true
++	}
++	return dseq, sseq, explicit, nil
+ }
+ 
+ func decodeDeliveredUpdate(buf []byte) (dseq, sseq, dc uint64, ts int64, err error) {
+```
+
+**File**: `server/jetstream_cluster_4_test.go` (modified, +13/-2)
+```diff
+@@ -9279,11 +9279,22 @@ func TestJetStreamClusterDecodeUpdatesRejectMalformed(t *testing.T) {
+ 	t.Run("AckUpdate", func(t *testing.T) {
+ 		valid := binary.AppendUvarint(nil, 10)
+ 		valid = binary.AppendUvarint(valid, 20)
+-		if _, _, err := decodeAckUpdate(valid); err != nil {
++		if _, _, explicit, err := decodeAckUpdate(valid); err != nil {
+ 			t.Fatalf("expected valid ack update to decode, got %v", err)
++		} else if explicit {
++			t.Fatalf("expected explicit to default to false")
++		}
++		// An optional trailing byte marks the update as explicit.
++		marked := binary.AppendUvarint(nil, 10)
++		marked = binary.AppendUvarint(marked, 20)
++		marked = append(marked, 1)
++		if _, _, explicit, err := decodeAckUpdate(marked); err != nil {
++			t.Fatalf("expected valid explicit ack update to decode, got %v", err)
++		} else if !explicit {
++			t.Fatalf("expected trailing byte to decode as explicit")
+ 		}
+ 		for _, buf := range [][]byte{nil, valid[:1]} {
+-			if _, _, err := decodeAckUpdate(buf); err != errBadAckUpdate {
++			if _, _, _, err := decodeAckUpdate(buf); err != errBadAckUpdate {
+ 				t.Fatalf("expected errBadAckUpdate for %v, got %v", buf, err)
+ 			}
+ 		}
+```
+
+**File**: `server/jetstream_test.go` (modified, +351/-0)
+```diff
+@@ -2643,6 +2643,357 @@ func TestJetStreamWorkQueueTerminateDelivery(t *testing.T) {
+ 	}
+ }
+ 
++func TestJetStreamAckAllTermDeletedPendingDoesNotAckBelow(t *testing.T) {
++	cases := []struct {
++		name    string
++		mconfig *StreamConfig
 +	}{
-+		// A kill during rollover leaves the new block without its key.
-+		{title: "MissingKey", from: AES, to: AES, removeKey: true},
-+		{title: "PlaintextToEncrypted", from: NoCipher, to: AES},
-+		{title: "CipherChange", from: AES, to: ChaCha},
-+	} {
-+		t.Run(test.title, func(t *testing.T) {
-+			fcfg := FileStoreConfig{StoreDir: t.TempDir(), Cipher: test.from}
-+			cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
-+			created := time.Now()
-+			fs, err := newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
-+			require_NoError(t, err)
-+			defer fs.Stop()
++		{"MemoryStore", &StreamConfig{Name: "TERMALL", Subjects: []string{"n.>"}, Storage: MemoryStorage}},
++		{"FileStore", &StreamConfig{Name: "TERMALL", Subjects: []string{"n.>"}, Storage: FileStorage}},
++	}
++	for _, c := range cases {
++		t.Run(c.name, func(t *testing.T) {
++			s := RunBasicJetStreamServer(t)
++			defer s.Shutdown()
 +
-+			_, _, err = fs.StoreMsg("foo", nil, []byte("msg"), 0)
++			mset, err := s.GlobalAccount().addStream(c.mconfig)
 +			require_NoError(t, err)
++			defer mset.delete()
 +
-+			// Roll over to a new block that's never written to.
-+			fs.mu.Lock()
-+			mb, err := fs.newMsgBlockForWrite()
-+			fs.mu.Unlock()
++			ackWait := 100 * time.Millisecond
++			o, err := mset.addConsumer(&ConsumerConfig{Durable: "C", AckPolicy: AckAll, AckWait: ackWait})
 +			require_NoError(t, err)
-+			require_NoError(t, fs.Stop())
++			defer o.delete()
 +
-+			if test.removeKey {
-+				require_NoError(t, os.Remove(mb.kfn))
++			nc := clientConnectToServer(t, s)
++			defer nc.Close()
++
++			getMsg := func() *nats.Msg {
++				t.Helper()
++				m, err := nc.Request(o.requestNextMsgSubject(), nil, time.Second)
++				require_NoError(t, err)
++				return m
 +			}
-+			// The server removes the meta key on a cipher change, so it gets regenerated.
-+			if test.from != NoCipher && test.from != test.to {
-+				require_NoError(t, os.Remove(filepath.Join(fcfg.StoreDir, JetStreamMetaFileKey)))
++
++			// First message is acked so the ack floor moves off zero.
++			sendStreamMsg(t, nc, "n.a", "m1")
++			getMsg().Respond(nil)
++			checkFor(t, time.Second, 10*time.Millisecond, func() error {
++				o.mu.RLock()
++				defer o.mu.RUnlock()
++				if o.asflr != 1 {
++					return fmt.Errorf("expected ack floor 1, got %d", o.asflr)
++				}
++				return nil
++			})
++
++			// Four more messages, the middle two share a subject that gets purged.
++			sendStreamMsg(t, nc, "n.a", "m2") // sseq 2
++			sendStreamMsg(t, nc, "n.x", "m3") // sseq 3
++			sendStreamMsg(t, nc, "n.x", "m4") // sseq 4
++			sendStreamMsg(t, nc, "n.b", "m5") // sseq 5
++
++			// Fetch all four but do not ack them.
++			for i := 0; i < 4; i++ {
++				getMsg()
 +			}
-+			// Without the index every block is recovered from disk.
-+			require_NoError(t, os.Remove(filepath.Join(fcfg.StoreDir, msgDir, streamStreamStateFile)))
 +
-+			fcfg.Cipher = test.to
-+			fs, err = newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
++			// Deleting pending messages 3 and 4 terminates their delivery.
++			purged, err := mset.purge(&JSApiStreamPurgeRequest{Subject: "n.x"})
 +			require_NoError(t, err)
-+			defer fs.Stop()
++			require_Equal(t, purged, 2)
 +
-+			require_Equal(t, fs.State().Msgs, 1)
-+			sm, err := fs.LoadMsg(1, nil)
-+			require_NoError(t, err)
-+			require_Equal(t, string(sm.msg), "msg")
++			// The terminations must not drop message 2, which sits below them
++			// and was never acked.
++			checkFor(t, time.Second, 10*time.Millisecond, func() error {
++				o.mu.RLock()
++				defer o.mu.RUnlock()
++				if len(o.pending) != 2 {
++					return fmt.Errorf("expected 2 pending, got %d", len(o.pending))
++				}
++				return nil
++			})
++			o.mu.RLock()
++			_, ok2 := o.pending[2]
++			_, ok5 := o.pending[5]
++			adflr, asflr := o.adflr, o.asflr
++			o.mu.RUnlock()
++			if !ok2 || !ok5 {
++				t.Fatalf("expected pending messages 2 and 5, got 2=%v 5=%v", ok2, ok5)
++			}
++			if adflr != 1 || asflr != 1 {
++				t.Fatalf("termination of deleted pending messages moved ack floor to %d/%d, expected 1/1", adflr, asflr)
++			}
++
++			// Once ackWait lapses the survivors must be redelivered.
++			time.Sleep(3 * ackWait)
++			m := getMsg()
++			if sseq, _, _, _, _ := ackReplyInfo(m.Reply); sseq != 2 {
++				t.Fatalf("expected redelivery of message 2, got %d", sseq)
++			}
++			m = getMsg()
++			if sseq, _, _, _, _ := ackReplyInfo(m.Reply); sseq != 5 {
++				t.Fatalf("expected redelivery of message 5, got %d", sseq)
++			}
 +		})
 +	}
 +}
 +
- func TestFileStoreRemoveMsgViaLimitsCallbackAliasedSubj(t *testing.T) {
- 	fs, err := newFileStore(
- 		FileStoreConfig{StoreDir: t.TempDir()},
-```
-
----
-
-### Incident Patch 3: `d8d1c8e8` (2026-11-20)
-**Commit Message**: [FIXED] Filestore tombstones lost around empty blocks and compaction (#8922)
-
-Empty blocks with tombstones for prior blocks are kept since
-https://github.com/nats-io/nats-server/pull/7387, but several paths
-still treated them as removable or lost their tombstones. `Truncate`
-dropped the tombstones stored after the selected block's last message,
-recovery dropped empty non-last blocks, and writing `index.db` counted
-empty blocks in its consistency check. `removeMsgBlock` kept a block for
-its prior tombstones without removing its messages, wrote a tombstone
-for the last message when removing an empty block even though a prior
-block still stored it, and emptying such a block wrote no tombstone, so
-an outdated `index.db` went undetected.
-
-Marked for 2.16: Removing a block's first messages also doesn't rewrite
-it, so they remain stored below its first sequence, but compaction
-dropped the tombstones for those and a rebuild brought the messages
-back. Blocks now track their lowest stored sequence, persisted in
-`index.db` v5.
-
-**File**: `server/filestore.go` (modified, +165/-31)
-```diff
-@@ -230,8 +230,11 @@ type fileStore struct {
- // Represents a message store block and its data.
- type msgBlock struct {
- 	// Here for 32bit systems and atomic.
--	first       msgId
--	last        msgId
-+	first msgId
-+	last  msgId
-+	// Lowest sequence of a message still stored on disk, or zero if unknown.
-+	// Can be below first, since removing the first message doesn't rewrite the block.
-+	rfseq       uint64
- 	mu          sync.RWMutex
- 	fs          *fileStore
- 	aek         cipher.AEAD
-@@ -1772,6 +1775,9 @@ func (mb *msgBlock) rebuildStateFromBufLocked(buf []byte, allowTruncate bool) (*
- 		maxTombstoneTs  int64
- 	)
- 
-+	// Lowest message stored, can be below our first.
-+	rfseq := uint64(math.MaxUint64)
-+
- 	defer func() {
- 		// For empty msg blocks make sure we recover last seq correctly based off of first.
- 		// Or if we seem to have no messages but had a tombstone, which we use to remember
-@@ -1789,6 +1795,7 @@ func (mb *msgBlock) rebuildStateFromBufLocked(buf []byte, allowTruncate bool) (*
- 				}
- 			}
- 		}
-+		atomic.StoreUint64(&mb.rfseq, min(rfseq, atomic.LoadUint64(&mb.first.seq)))
- 	}()
- 
- 	var le = binary.LittleEndian
-@@ -1932,6 +1939,10 @@ func (mb *msgBlock) rebuildStateFromBufLocked(buf []byte, allowTruncate bool) (*
- 			continue
- 		}
- 
-+		if seq != 0 && seq&ebit == 0 {
-+			rfseq = min(rfseq, seq)
-+		}
-+
- 		fseq := atomic.LoadUint64(&mb.first.seq)
- 		// This is an old erased message, or a new one that we can track.
- 		if seq == 0 || seq&ebit != 0 || seq < fseq {
-@@ -2234,13 +2245,18 @@ func (fs *fileStore) recoverFullState() (rerr error) {
- 			if version >= 3 {
- 				schedules = readU64()
- 			}
-+			var rfseq uint64
-+			if version >= 5 {
-+				rfseq = readU64()
-+			}
- 			if bi < 0 {
- 				_ = os.Remove(fn)
- 				return errCorruptState
- 			}
- 			mb := fs.initMsgBlock(index)
- 			atomic.StoreUint64(&mb.first.seq, fseq)
- 			atomic.StoreUint64(&mb.last.seq, lseq)
-+			atomic.StoreUint64(&mb.rfseq, rfseq)
- 			mb.msgs, mb.bytes = lseq-fseq+1, nbytes
- 			mb.first.ts, mb.last.ts = fts+baseTime, lts+baseTime
- 			mb.ttls = ttls
-@@ -2265,13 +2281,11 @@ func (fs *fileStore) recoverFullState() (rerr error) {
- 			// still exists on disk and report it as lost if not.
- 			mb.closed = true
- 
--			// Only add in if not empty or the lmb.
-+			// Always add, an empty block can still contain tombstones for prior blocks.
-+			fs.addMsgBlock(mb)
-+			// An empty block holds no messages, so it can't contribute to the tracking state, unless it's the lmb.
- 			if mb.msgs > 0 || i == lastIndex {
--				fs.addMsgBlock(mb)
- 				updateTrackingState(&mstate, mb)
--			} else {
--				// Mark dirty to cleanup.
--				fs.dirty++
- 			}
- 		}
- 	}
-@@ -2346,8 +2360,14 @@ func (fs *fileStore) recoverFullState() (rerr error) {
- 	}
- 
- 	var rebuild bool
-+	var removed []*msgBlock
- 	for _, mb := range fs.blks {
- 		if mb.closed {
-+			// An empty block that was already removed has nothing to recover, so only drop it.
-+			if mb.msgs == 0 && mb != fs.lmb {
-+				removed = append(removed, mb)
-+				continue
-+			}
- 			rebuild = true
- 			if ld, _, _ := mb.rebuildState(); ld != nil {
- 				fs.addLostData(ld)
-@@ -2358,6 +2378,10 @@ func (fs *fileStore) recoverFullState() (rerr error) {
- 	if rebuild {
- 		return errPriorState
- 	}
-+	// Also marks dirty, so the next full state no longer contains them.
-+	for _, mb := range removed {
-+		fs.removeMsgBlockFromList(mb)
-+	}
- 
- 	// We check first and last seq and number of msgs and bytes. If there is a difference,
- 	// return and error so we rebuild from the message block state on disk.
-@@ -5394,6 +5418,8 @@ func (fs *fileStore) newMsgBlockForWrite() (*msgBlock, error) {
- 	// Remember our last sequence number.
- 	atomic.StoreUint64(&mb.first.seq, fs.state.LastSeq+1)
- 	atomic.StoreUint64(&mb.last.seq, fs.state.LastSeq)
-+	// A new block doesn't store anything below its first sequence.
-+	atomic.StoreUint64(&mb.rfseq, fs.state.LastSeq+1)
- 	mb.mu.Unlock()
- 
- 	// Now do local hash.
-@@ -6490,11 +6516,10 @@ func (fs *fileStore) removeMsgFromBlock(mb *msgBlock, seq uint64, secure, viaLim
- 		ttl, _ = getMessageTTL(sm.hdr)
- 	}
- 
--	// Check if we need to write a deleted record tombstone.
--	// This is for user initiated removes or to hold the first seq
--	// when the last block is empty.
--	// If not via limits and not empty (empty writes tombstone below if last) write tombstone.
--	if !viaLimits && !isEmpty && sm != nil {
-+	// Write a tombstone for user initiated removes.
-+	// An emptied block is removed instead, which writes a tombstone if needed.
-+	// Unless it's kept for its prior tombstones, then the tombstone ensures an outdated index.db is detected.
-+	if !viaLimits && sm != nil && (!isEmpty || mb.numPriorTombsLocked() > 0) {
- 		mb.mu.Unlock() // Only safe way to checkLastBlock is to unlock here...
- 		lmb, err := fs.checkLastBlock(emptyRecordLen)
- 		if err != nil {
-@@ -6786,12 +6811,10 @@ func (mb *msgBlock) compactWithFloor(floor uint64, fsDmap *interiorDeletes) erro
- 			// Check for tombstones.
- 			if seq&tbit != 0 {
- 				seq = seq &^ tbit
--				
-```
-
-**File**: `server/filestore_test.go` (modified, +617/-1)
-```diff
-@@ -1207,6 +1207,79 @@ func TestFileStoreStreamTruncateDeletedSequence(t *testing.T) {
- 	})
- }
- 
-+func TestFileStoreStreamTruncateKeepsPriorTombstones(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		before   int
-+		remove   []uint64
-+		after    int
-+		truncate uint64
++func TestJetStreamAckAllClientTermAcksBelow(t *testing.T) {
++	cases := []struct {
++		name    string
++		mconfig *StreamConfig
 +	}{
-+		{"AtLastRemoved", 3, []uint64{1, 3}, 0, 3},
-+		{"BelowLast", 3, []uint64{1}, 0, 2},
-+		{"TombstoneKeptInBlock", 2, []uint64{1}, 2, 3},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-+				cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
-+				created := time.Now()
++		{"MemoryStore", &StreamConfig{Name: "TERMCLIENT", Subjects: []string{"n.>"}, Storage: MemoryStorage}},
++		{"FileStore", &StreamConfig{Name: "TERMCLIENT", Subjects: []string{"n.>"}, Storage: FileStorage}},
++	}
++	for _, c := range cases {
++		t.Run(c.name, func(t *testing.T) {
++			s := RunBasicJetStreamServer(t)
++			defer s.Shutdown()
 +
-+				fs, err := newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
++			mset, err := s.GlobalAccount().addStream(c.mconfig)
++			require_NoError(t, err)
++			defer mset.delete()
++
++			o, err := mset.addConsumer(&ConsumerConfig{Durable: "C", AckPolicy: AckAll, AckWait: 100 * time.Millisecond})
++			require_NoError(t, err)
++			defer o.delete()
++
++			nc := clientConnectToServer(t, s)
++			defer nc.Close()
++
++			getMsg := func() *nats.Msg {
++				t.Helper()
++				m, err := nc.Request(o.requestNextMsgSubject(), nil, time.Second)
 +				require_NoError(t, err)
-+				defer fs.Stop()
++				return m
++			}
 +
-+				storeMsgs := func(n int) {
-+					for range n {
-+						_, _, err := fs.StoreMsg("foo", nil, []byte("ok"), 0)
-+						require_NoError(t, err)
-+					}
-+				}
++			sendStreamMsg(t, nc, "n.a", "m1")
++			sendStreamMsg(t, nc, "n.a", "m2")
++			sendStreamMsg(t, nc, "n.a", "m3")
 +
-+				// The tombstones are stored after the messages stored before.
-+				storeMsgs(test.before)
-+				for _, seq := range test.remove {
-+					removed, err := fs.RemoveMsg(seq)
-+					require_NoError(t, err)
-+					require_True(t, removed)
-+				}
-+				storeMsgs(test.after)
++			// Fetch all three, then terminate the last one from the client.
++			getMsg()
++			getMsg()
++			m := getMsg()
++			m.Respond(AckTerm)
 +
-+				// The block is cut after the last message up to the truncated sequence.
-+				// Tombstones stored after it are lost, the ones before it are kept in the block.
-+				require_NoError(t, fs.Truncate(test.truncate))
-+				expected := fs.State()
-+				require_Equal(t, expected.Msgs, test.truncate-uint64(len(test.remove)))
-+				require_Equal(t, expected.FirstSeq, 2)
-+				require_Equal(t, expected.LastSeq, test.truncate)
-+
-+				// Only the lost tombstones are stored again, the kept ones must not be duplicated.
-+				var tombs []uint64
-+				fs.mu.RLock()
-+				for _, mb := range fs.blks {
-+					for _, tomb := range mb.tombs() {
-+						tombs = append(tombs, tomb.seq)
-+					}
++			// A client-initiated term keeps its long-standing behavior: under
++			// AckAll it works like an ack, so the messages below it are acked
++			// too and nothing is redelivered.
++			checkFor(t, time.Second, 10*time.Millisecond, func() error {
++				o.mu.RLock()
++				defer o.mu.RUnlock()
++				if len(o.pending) != 0 {
++					return fmt.Errorf("expected no pending, got %d", len(o.pending))
 +				}
-+				fs.mu.RUnlock()
-+				slices.Sort(tombs)
-+				for i := 1; i < len(tombs); i++ {
-+					require_NotEqual(t, tombs[i], tombs[i-1])
++				if o.asflr != 3 {
++					return fmt.Errorf("expected ack floor 3, got %d", o.asflr)
 +				}
-+
-+				// Recover without index.db to verify the first message stays removed.
-+				require_NoError(t, fs.Stop())
-+				require_NoError(t, os.Remove(filepath.Join(fcfg.StoreDir, msgDir, streamStreamStateFile)))
-+				fs, err = newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
-+				require_NoError(t, err)
-+				defer fs.Stop()
-+				if state := fs.State(); !reflect.DeepEqual(state, expected) {
-+					t.Fatalf("Expected state\n of %+v, \ngot %+v without index.db state", expected, state)
-+				}
++				return nil
 +			})
 +		})
 +	}
 +}
 +
- func TestFileStoreStreamTruncateDeletedWithCompactedPrefix(t *testing.T) {
- 	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
- 		fcfg.BlockSize = 120
-@@ -5439,6 +5512,49 @@ func TestFileStoreCompactFirstSeqNotFromEmptyBlock(t *testing.T) {
- 	})
++func TestJetStreamAckAllTermDeletedPendingViaStoreRemoveDoesNotAckBelow(t *testing.T) {
+
+```
+
+**File**: `server/memstore.go` (modified, +5/-2)
+```diff
+@@ -2975,7 +2975,7 @@ func (o *consumerMemStore) UpdateDelivered(dseq, sseq, dc uint64, ts int64) erro
+ 	return nil
  }
  
-+func TestFileStoreWriteFullStateWithLeftoverEmptyBlocks(t *testing.T) {
-+	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-+		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
-+		created := time.Now()
-+		fs, err := newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
-+		require_NoError(t, err)
-+		defer fs.Stop()
-+
-+		// 1.blk only holds a skipped sequence.
-+		_, err = fs.SkipMsg(0)
-+		require_NoError(t, err)
-+		// 2.blk has its first message removed.
-+		fs.mu.Lock()
-+		_, err = fs.newMsgBlockForWrite()
-+		fs.mu.Unlock()
-+		require_NoError(t, err)
-+		_, _, err = fs.StoreMsg("foo", nil, nil, 0)
-+		require_NoError(t, err)
-+		_, _, err = fs.StoreMsg("foo", nil, nil, 0)
-+		require_NoError(t, err)
-+		_, err = fs.RemoveMsg(2)
-+		require_NoError(t, err)
-+
-+		before := fs.State()
-+		require_Equal(t, before.Msgs, 1)
-+		require_Equal(t, before.FirstSeq, 3)
-+		require_Equal(t, before.LastSeq, 3)
-+
-+		// The empty block must not be seen as an inconsistency.
-+		require_NoError(t, fs.forceWriteFullState())
-+
-+		// And recovering from the written state must not change it.
-+		fs.Stop()
-+		fs, err = newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
-+		require_NoError(t, err)
-+		defer fs.Stop()
-+
-+		if state := fs.State(); !reflect.DeepEqual(state, before) {
-+			t.Fatalf("Expected state\n of %+v, \ngot %+v", before, state)
-+		}
-+	})
-+}
-+
- func TestFileStoreRebuildStateFirstSeqWithLeftoverEmptyBlocks(t *testing.T) {
- 	t.Run("NoMessages", func(t *testing.T) {
- 		testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-@@ -14016,6 +14132,57 @@ func TestFileStoreTombstonesNoFirstSeqRollback(t *testing.T) {
- 	})
- }
+-func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64) error {
++func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64, explicit bool) error {
+ 	o.mu.Lock()
+ 	defer o.mu.Unlock()
  
-+func TestFileStoreTombstonesRemoveBlockKeepsLastMsg(t *testing.T) {
-+	for _, test := range []struct {
-+		name   string
-+		remove uint64
-+	}{
-+		{"LastStored", 29},
-+		{"LastRemoved", 30},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-+				fcfg.BlockSize = 10 * 33 // 10 messages per block.
-+				cfg := StreamConfig{Name: "zzz", Subjects: []
+@@ -2999,7 +2999,10 @@ func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64) error {
+ 		return ErrStoreMsgNotFound
+ 	}
+ 
+-	if ackAll {
++	// Check for AckAll here (or AckFlowControl which functions like AckAll).
++	// An explicit ack is scoped to this message only, so it falls through to
++	// the per-message path even under AckAll.
++	if !explicit && ackAll {
+ 		// Use the original delivery sequence.
+ 		if p := o.state.Pending[sseq]; dseq > p.Sequence && p.Sequence > 0 {
+ 			dseq = p.Sequence
+```
+
+**File**: `server/store.go` (modified, +4/-1)
+```diff
+@@ -440,7 +440,10 @@ type ConsumerStore interface {
+ 	Reset(sseq uint64) error
+ 	HasState() bool
+ 	UpdateDelivered(dseq, sseq, dc uint64, ts int64) error
+-	UpdateAcks(dseq, sseq uint64) error
++	// explicit reports that this update acks sseq only, e.g. the message was
++	// deleted from the stream. Under AckAll/AckFlowControl an explicit ack
++	// must not ack messages below sseq like a regular ack would.
++	UpdateAcks(dseq, sseq uint64, explicit bool) error
+ 	RemoveRedeliveredBelow(seq uint64)
+ 	GetConfig() *ConsumerConfig
+ 	UpdateConfig(cfg *ConsumerConfig) error
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8930** (2026-11-23): [FIXED] Consumers not woken after stream catchup completes (@MauriceVanVeen)
+- **PR #8927** (2026-11-23): [FIXED] JetStream: Avoid stream option races during reload (@Zitniks)
+- **PR #8923** (2026-11-23): [FIXED] Validate source FilterSubject on stream updates (@sohailshk)
 - **PR #8922** (2026-11-20): [FIXED] Filestore tombstones lost around empty blocks and compaction (@MauriceVanVeen)
 - **PR #8920** (2026-11-20): [FIXED] Filestore compression, empty block and subject state fixes (@MauriceVanVeen)
 - **PR #8919** (2026-11-20): [FIXED] Truncate and FilteredState differing between file and memory store (@MauriceVanVeen)
-- **PR #8918** (2026-11-20): [FIXED] Send MaxDelivery advisor message when reach (@huynguyen7)
-- **PR #8915** (2026-11-20): [FIXED] LeafNode: possible dropped delivery on subscription close (@kozlovic)
-- **PR #8909** (closed): Optimize exact-subject pending counts at the latest sequence (@MoonShiesty)
 
 ---
 
@@ -3529,86 +3612,65 @@ back. Blocks now track their lowest stored sequence, persisted in
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Filestore compression, empty block and subject state fixes
+## X. [FIXED] Validate source FilterSubject on stream updates
 
 **RULE**:
-When implementing operations in `server/filestore.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/jetstream_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20df9dfc`: [FIXED] Filestore compression, empty block and subject state fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e319bdf`: [FIXED] Validate source FilterSubject on stream updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/filestore.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/jetstream_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		firstWithMsgs := fs.state.Msgs == 0 && mb.msgs > 0
-		if fs.state.FirstSeq == 0 || firstWithMsgs || (fseq < fs.state.FirstSeq && mb.first.ts != 0) {
-		if lseq := atomic.LoadUint64(&mb.last.seq); lseq > fs.state.LastSeq || (lseq == fs.state.LastSeq && mb.last.ts != 0) {
-	// Without messages the first sequence comes after the last, not where an empty block starts.
-	if fs.state.Msgs == 0 {
-		fs.state.FirstSeq = fs.state.LastSeq + 1
-		fs.state.FirstTime = time.Time{}
+func TestJetStreamStreamUpdateInvalidSourceFilterSubject(t *testing.T) {
+	s := RunBasicJetStreamServer(t)
+	defer s.Shutdown()
+
+	nc, js := jsClientConnect(t, s)
+	defer nc.Close()
+
+	_, err := js.AddStream(&nats.StreamConfig{Name: "ORIGIN", Subjects: []string{"origin.>"}})
+	require_NoError(t, err)
+
+	invalid := []string{"origin..x", "origin x", "origin.>.x", ".origin"}
+
+	// Creating a stream with an invalid source filter subject errors.
+	for _, filter := range invalid {
+		_, err = js.AddStream(&nats.StreamConfig{
+			Name:    "SOURCE",
+			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
+		})
+		require_Error(t, err)
 	}
-		buf, err := mb.loadBlock(nil)
-		if err != nil {
-			return err
-		}
-		// An empty block has nothing to convert, it only needs new keys.
-		if len(buf) == 0 {
-			recycleMsgBlockBuf(buf)
-			return fs.genEncryptionKeysForBlock(mb)
-		}
-	// An empty block has nothing to convert.
-	if len(buf) == 0 {
-		recycleMsgBlockBuf(buf)
-		return nil
+
+	cfg := &nats.StreamConfig{
+		Name:    "SOURCE",
+		Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: "origin.valid"}},
 	}
-	var alg StoreCompression
-	if buf, alg, err = mb.decode(buf); err != nil {
-	// Remember how the block is stored on disk, since it isn't recovered otherwise.
-	mb.cmp = alg
-		// A compressed block can't be appended to, new records would be written uncompressed.
-		// It ends up as the last block if the one after it was empty and got removed above.
-		fs.lmb.mu.RLock()
-		compressed := fs.lmb.cm
+	_, err = js.AddStream(cfg)
+	require_NoError(t, err)
+
+	// So does updating an existing stream, and the stored config must not change.
+	for _, filter := range invalid {
+		_, err = js.UpdateStream(&nats.StreamConfig{
+			Name:    "SOURCE",
+			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
+		})
+		require_Error(t, err, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, filter))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		if fs.state.FirstSeq == 0 || (fseq < fs.state.FirstSeq && mb.first.ts != 0) {
-		if lseq := atomic.LoadUint64(&mb.last.seq); lseq >= fs.state.LastSeq {
-		buf, _ := mb.loadBlock(nil)
-	if buf, err = mb.decompressIfNeeded(buf); err != nil {
-		go func() {
-			fs.mu.Lock()
-			defer fs.mu.Unlock()
-			if !wc {
-				if info, ok := fs.psim.Find(stringToBytes(filter)); ok {
-					if i > info.fblk {
-						info.fblk = i
-					}
-				}
-			} else {
-				fs.psim.Match(stringToBytes(filter), func(subj []byte, psi *psi) {
-					if i > psi.fblk {
-						psi.fblk = i
-					}
-				})
-			}
-		}()
-		if mb = fs.bim[stop]; mb != nil {
-			_, _, l, err := mb.filteredPending(filter, wc, 0)
-			if err != nil {
-				return err
-			}
-			ss.Last = l
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20df9dfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e319bdf` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T20:39:06.217Z",
+  "last_updated": "2026-11-23T20:48:02.395Z",
   "total_records": 2448,
   "domains": {
     "A": {
@@ -12862,8 +12862,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "repository": "nats-io/nats-server",
-      "content_hash": "8428f31afd2325b9fbae97c29b8e41cd59bf09d2b613464d694fb71b88deb0f0",
-      "created_at": "2026-11-19T14:28:31.251Z"
+      "content_hash": "8b0895cf9de7d85f1578747184c67718203d2c72d740d8e632019fa93384330a",
+      "created_at": "2026-11-23T20:47:52.078Z"
     },
     "DOM-D-3A6226D8": {
       "record_id": "DOM-D-3A6226D8",
@@ -12973,8 +12973,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-learnings-technical-construction-intelligence-nats-io-nats-s.md",
       "repository": "nats-io-nats-server-learnings",
-      "content_hash": "15cfd2d6ac2cb5f36c62d689d2a1140ab44e42720f520529c6105e79cc00941f",
-      "created_at": "2026-11-19T14:28:42.095Z"
+      "content_hash": "b6ce7615bc4d15a5a498994f37ededddc17a6a7c7d1c82af049bfea112758051",
+      "created_at": "2026-11-23T20:48:01.422Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
@@ -18543,8 +18543,8 @@
       "title": "Research & Knowledge Intelligence: nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro.md",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "content_hash": "6edab878efb99c062d90419eaf346f0f7d85b4751160f667dbeedfdfc9cd09bb",
-      "created_at": "2026-11-19T13:21:47.646Z"
+      "content_hash": "1aee1f470e8ca8f52f1a54deee082e652e8a83da8e4e205126fc0ae2038d4aeb",
+      "created_at": "2026-11-23T20:47:42.513Z"
     },
     "domain_intelligence-architecture-intelligence-onejs-one-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-onejs-one-core-invariants",
@@ -18561,8 +18561,8 @@
       "title": "Research & Knowledge Intelligence: hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro.md",
       "repository": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings",
-      "content_hash": "df619cc5332fbd820151dc9161bb75bcc2dadd7a92db40ff01fd4a741ca5ebd4",
-      "created_at": "2026-11-19T13:22:05.748Z"
+      "content_hash": "cfccfaff47d8143687256426dd63da4648810311f4419521c3ddadfbb39d2a79",
+      "created_at": "2026-11-23T20:48:00.167Z"
     },
     "DOM-F-053419E8": {
       "record_id": "DOM-F-053419E8",
@@ -27999,8 +27999,8 @@
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "repository": "RediSearch/RediSearch",
-      "content_hash": "e5130088507e0afb7c28982e126293745f365cc6ab8eb02bbff60ae9905efdea",
-      "created_at": "2026-11-22T18:52:51.510Z"
+      "content_hash": "49c404fe8907fcd38dc11baf99a9d41dea8c14fb8116e773c8d8893ba58132cc",
+      "created_at": "2026-11-23T20:47:56.732Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
@@ -36124,8 +36124,8 @@
       "title": "Architecture Intelligence: redisearch-redisearch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-learnings-architecture-intelligence-redisearch-redisearch-.md",
       "repository": "redisearch-redisearch-learnings",
-      "content_hash": "c1a8e23f69b20d3938df87f07f03b35743a98d1428bc60484e79d30984dfd448",
-      "created_at": "2026-11-22T18:52:57.775Z"
+      "content_hash": "a81adbfed48a1c009e7e3c4df1407fe30af14a0c80fc05bdf75539657d073b98",
+      "created_at": "2026-11-23T20:48:02.395Z"
     },
     "DOM-J-FBEC7580": {
       "record_id": "DOM-J-FBEC7580",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:39:06.047Z",
+  "last_updated": "2026-11-23T20:48:02.179Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50954,6 +50954,55 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-MG1B",
+      "directive_title": "[FIXED] Validate source FilterSubject on stream updates",
+      "source_repo": "nats-io-nats-server-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MG1B-fixed-validate-source-filtersubject-on-stream-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-MGSD",
+      "directive_title": "[MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on R",
+      "source_repo": "redisearch-redisearch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MGSD-mod-21404-ci-install-llvm-21-from-el8-appstream-and-el9-epel-to-keep-lto-on-r.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-C35648",
+      "directive_title": "Forensic Learning Record (Deep Inspection): nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C35648-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-BE1624",
+      "directive_title": "[FIXED] Validate source FilterSubject on stream updates",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BE1624--fixed-validate-source-filtersubject-on-.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-893239",
+      "directive_title": "[MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on R",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "redisearch-redisearch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-893239--mod-21404-ci-install-llvm-21-from-el8-a.md",
+      "staged_date": "2026-11-23"
     }
   ]
 }

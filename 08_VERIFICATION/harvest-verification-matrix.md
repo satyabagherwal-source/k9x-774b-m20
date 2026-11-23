@@ -12458,3 +12458,6 @@
 | `CYCLE-20261123-AR17` | `2026-11-23T20:38:55.579Z` | `go-kratos/kratos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10114` | Yes (`eecf0022...`) |
 | `CYCLE-20261123-ASH9` | `2026-11-23T20:38:57.453Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10115` | Yes (`2f8a1607...`) |
 | `CYCLE-20261123-AUVO` | `2026-11-23T20:39:00.564Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10116` | Yes (`670d00d8...`) |
+| `CYCLE-20261123-M1EJ` | `2026-11-23T20:47:42.235Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`aae612f3...`) |
+| `CYCLE-20261123-M8KT` | `2026-11-23T20:47:51.533Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10117` | Yes (`b5689b4d...`) |
+| `CYCLE-20261123-MC6V` | `2026-11-23T20:47:56.215Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10118` | Yes (`58de5061...`) |

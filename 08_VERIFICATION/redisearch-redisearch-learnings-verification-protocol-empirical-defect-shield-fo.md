@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T18:52:57.482Z",
+  "timestamp": "2026-11-23T20:48:02.047Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-redisearch-redisearch-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [redisearch-redisearch-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T18:52:57.482Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T20:48:02.047Z`  
 > **Learning ID**: `LEARN-EVO-redisearch-redisearch-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `3357e86a`  
+> **Source Version**: `bcd7b33c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T18:52:50.010Z  
+> **Timestamp**: 2026-11-23T20:47:54.936Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:52:50.005Z  
+> **Harvest Timestamp**: 2026-11-23T20:47:54.928Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1872,421 +1872,164 @@ export interface Profile<X = {}> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3357e86a` (2026-11-22)
-**Commit Message**: [MOD-20697] Stop vector queries on memory pressure (#12379)
+### Incident Patch 1: `bcd7b33c` (2026-11-23)
+**Commit Message**: [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma (#12482)
 
-* Add a stop callback decoupled from the timeout callback
+Port of #12433.
 
-Carried from https://github.com/RedisAI/VectorSimilarity/pull/1089
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Stop vector range queries on memory pressure before copying the reply
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12133
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Stop batched vector KNN queries on memory pressure before a further batch
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12134
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Read query memory in VecSim's stop callback
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12141
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Do not reserve the SVS batch size up front
-
-The SVS batch iterator reserved n_res result slots before producing any
-result. n_res comes from the caller's batch size, which can be as large as
-a user-supplied K, so a filtered SVS KNN made one allocation proportional to
-it that no stop checkpoint can interrupt. The results vector grows as
-results are produced, and the iterator already checks for a s
-
-**File**: `src/debug_commands.c` (modified, +3/-9)
+**File**: `.github/workflows/task-get-config.yml` (modified, +4/-2)
 ```diff
-@@ -27,6 +27,7 @@
- #include "inverted_index_ffi.h"
- #include "tag_index.h"
- #include "iterators_ffi.h"
-+#include "iterators/vector_top_k.h"
- #include "numeric_range_tree_ffi.h"
- #include "sorting_vector_ffi.h"
- #include "sparse_vector_index_ffi.h"
-@@ -3783,11 +3784,6 @@ static inline int TimedOut_Always(QueryRequestLimits *timeout) {
-   return TIMED_OUT;
+@@ -202,16 +202,18 @@ jobs:
+                       'container': 'rockylinux:8',
+                       'setup_script': 'dnf update -y && dnf install -y git',
+                       'name': 'Rocky Linux 8 x86_64',
+-                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
++                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
+                   },
+                   "aarch64": {
+                       'container': 'rockylinux:8',
+                       'setup_script': 'dnf update -y && dnf install -y git',
+                       'name': 'Rocky Linux 8 ARM64',
+-                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
++                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
+                   }
+               },
+               "rockylinux:9": {
++                  # LLVM 21 comes from EPEL (install_llvm.sh); the official tarball
++                  # cannot run on EL9's libstdc++.
+                   "x86_64": {
+                       'container': 'rockylinux:9',
+                       'setup_script': 'dnf update -y && dnf install -y git',
+```
+
+**File**: `.install/install_llvm.sh` (modified, +99/-4)
+```diff
+@@ -178,6 +178,25 @@ llvm_major() {
+         -e 's/^LLD[[:space:]]+([0-9]+).*/\1/p'
  }
  
--// Global timeout callback for VecSim searches.
--// Need the redirection so tests can pass a mock function to test timeout behavior.
--// Defined in vector_top_k.c, called from the Rust vector top-k scan.
--extern int (*vecsimTimeoutCallback)(QueryRequestLimits *timeout);
--
- /**
-  * FT.DEBUG VECSIM_MOCK_TIMEOUT <enable|disable>
-  * Set the timeout callback for VecSim searches globally
-@@ -3803,12 +3799,10 @@ DEBUG_COMMAND(VecSimMockTimeout) {
-   }
-   const char *op = RedisModule_StringPtrLen(argv[2], NULL);
-   if (!strcmp("enable", op)) {
--    vecsimTimeoutCallback = TimedOut_Always;
--    VecSim_SetTimeoutCallbackFunction((timeoutCallbackFunction)TimedOut_Always);
-+    RS_VecSimSetTimeoutCallback(TimedOut_Always);
-     return RedisModule_ReplyWithSimpleString(ctx, "OK");
-   } else if (!strcmp("disable", op)) {
--    vecsimTimeoutCallback = VecSim_TimedOut;
--    VecSim_SetTimeoutCallbackFunction((timeoutCallbackFunction)VecSim_TimedOut);
-+    RS_VecSimSetTimeoutCallback(NULL);
-     return RedisModule_ReplyWithSimpleString(ctx, "OK");
-   } else {
-     return RedisModule_ReplyWithError(ctx, "Invalid command for 'VECSIM_MOCK_TIMEOUT'");
-```
-
-**File**: `src/iterators/iterator_api.h` (modified, +3/-3)
-```diff
-@@ -24,7 +24,7 @@ typedef enum IteratorStatus {
-   ITERATOR_OK,
-   ITERATOR_NOTFOUND,
-   ITERATOR_EOF,
--  ITERATOR_TIMEOUT,
-+  ITERATOR_STOPPED, // Ended early on a timeout or a requested stop; the request's limits say which.
- } IteratorStatus;
- 
- typedef enum ValidateStatus {
-@@ -95,7 +95,7 @@ typedef struct QueryIterator {
-    *  On ITERATOR_EOF it must instead set `atEOF` and clear `current` to NULL, leaving
-    *  `lastDocId` on the last result it yielded: there is nothing to point at, and an
-    *  iterator that owns its result frees it on the way past the end.
--   *  On ITERATOR_TIMEOUT both `current` and `lastDocId` are untouched — the iterator has
-+   *  On ITERATOR_STOPPED both `current` and `lastDocId` are untouched — the iterator has
-    *  not moved, and a later call may still find a result where it stands.
-    *  @returns ITERATOR_OK on normal operation, or any other `IteratorStatus` except `ITERATOR_NOTFOUND`
-    */
-@@ -112,7 +112,7 @@ typedef struct QueryIterator {
-    *  Otherwise the relevant IteratorStatus is returned, under the same post-conditions as
-    *  `Read`: ITERATOR_EOF sets `atEOF` and clears `current` to NULL while leaving
-    *  `lastDocId` where the last yield left it — never on `docId`, which the iterator has no
--   *  result to back — and ITERATOR_TIMEOUT touches neither.
-+   *  result to back — and ITERATOR_STOPPED touches neither.
-    */
-   IteratorStatus (*SkipTo)(struct QueryIterator *self, t_docId docId);
- 
-```
-
-**File**: `src/iterators/optimizer_reader.c` (modified, +5/-0)
-```diff
-@@ -196,13 +196,18 @@ IteratorStatus OPT_Read(QueryIterator *self) {
-       if (numericRes == NULL || childRes->docId == numericRes->docId) {
-         rc1 = child->Read(child);
-         if (rc1 == ITERATOR_EOF) break;
-+        if (rc1 == ITERATOR_STOPPED) return ITERATOR_STOPPED;
-         rc2 = numeric->SkipTo(numeric, child->lastDocId);
-       } else if (childRes->docId > numericRes->docId) {
-         rc2 = numeric->SkipTo(numeric, childRes->docId);
-       } else {
-         rc1 = child->SkipTo(child, numericRes->docId);
-       }
- 
-+      // A stopped child leaves `current` untouched, possibly NULL.
-+      if (rc1 == ITERATOR_STOPPED || rc2 == ITERATOR_STOPPED) {
-+        return ITERATOR_STOPPED;
-+      }
-       if (rc1 == ITERATOR_EOF || rc2 == ITERATOR_EOF) {
-         break;
-       }
-```
-
-**File**: `src/iterators/vector_top_k.c` (modified, +22/-1)
-```diff
-@@ -8,9 +8,10 @@
- */
- 
- #include "vector_top_k.h"
-+#include "query_memory.h"
- #include "util/timeout.h"
- 
--// Global timeout callback for VecSim searches.
-+// Timeout check of VecSim's stop callback (RS_VecSimShouldStop) and of the Rust adhoc scan.
- // Need the redirection so tests can pass a mock function to test timeout behavior.
- int (*vecsimTimeoutCallback)(QueryRequestLimits *timeout) = VecSim_TimedOut;
- 
-@@ -19,3 +20,23 @@ int (*vecsimTimeoutCallback)(QueryRequestLimits *timeout) = VecSim_TimedOut;
- int RS_VecSimCheckTimeout(QueryRequestLimits *timeout) {
-   return vecsimTimeoutCallback(timeout);
- }
-+
-+int RS_VecSimShouldStop(void *ctx) {
-+  QueryRequestLimits *limits = ctx;
-+  // Compared with the default so the common case skips the indirect call.
-+  int (*timedOut)(QueryRequestLimits *) = vecsimTimeoutCallback;
-+  const int stopped = timedOut == VecSim_TimedOut ? VecSim_TimedOut(limits) : timedOut(limits);
-+  return stopped || QueryMemory_Checkpoint(limits);
++# The official LLVM tarballs are built on Ubuntu 22.04 and need GLIBCXX_3.4.30
++# from libstdc++. EL9 (GCC 11) stops at 3.4.29, so a tarball clang cannot even
++# start there: "version `GLIBCXX_3.4.30' not found (required by clang-21)".
++TARBALL_MIN_GLIBCXX="3.4.30"
++tarball_runtime_ok() {
++    local lib
++    lib=$(ls /usr/lib64/libstdc++.so.6 /usr/lib/*-linux-gnu/libstdc++.so.6 2>/dev/null | head -1)
++    [[ -n "$lib" ]] || return 0  # nothing to check against; let the tarball try
++    grep -aq "GLIBCXX_${TARBALL_MIN_GLIBCXX}" "$lib"
 +}
 +
-+void RS_VecSimSetTimeoutCallback(int (*callback)(QueryRequestLimits *timeout)) {
-+  vecsimTimeoutCallback = callback ? callback : VecSim_TimedOut;
++# Keep whatever clang the distro ships, for bindgen's libclang only: LTO needs
++# clang-${LLVM_VER} and stays off (task-get-config sets enable_lto accordingly).
++accept_native_libclang() {
++    command -v clang &>/dev/null || return 1
++    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=/usr/lib64" >> "$GITHUB_ENV"
++    export LIBCLANG_PATH=/usr/lib64
 +}
 +
-+int RS_VecSimCheckMemory(QueryRequestLimits *timeout) {
-+  return QueryMemory_CheckpointExact(timeout);
+ accept_native_llvm() {
+     local clang_cmd="$1"
+     local lld_cmd="$2"
+@@ -189,9 +208,41 @@ accept_native_llvm() {
+     actual=$(llvm_major "$clang_cmd")
+     [[ "$actual" == "$LLVM_VER" ]] || return 1
+ 
+-    # RHEL-family puts shared libs in /usr/lib64; expose for bindgen/clang-sys.
+-    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=/usr/lib64" >> "$GITHUB_ENV"
+-    export LIBCLANG_PATH=/usr/lib64
++    # RHEL-family puts shared libs in /usr/lib64, except for side-by-side LLVM
++    # packages (EPEL's clang21) that use their own libdir; expose it for
++    # bindgen/clang-sys.
++    local libdir=/usr/lib64 cfg_libdir=""
++    if command -v "llvm-config-${LLVM_VER}" &>/dev/null; then
++        cfg_libdir=$("llvm-config-${LLVM_VER}" --libdir 2>/dev/null || true)
++        if [[ -n "$cfg_libdir" ]] && compgen -G "${cfg_libdir}/libclang*.so*" >/dev/null; then
++            libdir="$cfg_libdir"
++        fi
++    fi
++    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=${libdir}" >> "$GITHUB_ENV"
++    export LIBCLANG_PATH="$libdir"
 +}
 +
-+int RS_VecSimCheckMemoryEvery(QueryRequestLimits *timeout) {
-+  return QueryMemory_Checkpoint(timeout);
++# On EL8 LLVM ${LLVM_VER} and the newer default are versions of the same
++# packages, so any later `dnf update` or `dnf install clang` (other modules'
++# bootstrap scripts do both) silently moves them to the newer LLVM and breaks
++# LTO. Lock the installed LLVM packages at their current versions.
++lock_llvm_packages() {
++    $MODE dnf install -y python3-dnf-plugin-versionlock >/dev/null 2>&1 || return 1
++    local pkgs
++    pkgs=$(rpm -qa --qf '%{NAME}-%{VERSION}-%{RELEASE}\n' 'clang*' 'llvm*' 'lld*' 'libomp*' 'compiler-rt*' 2>/dev/null)
++    [[ -n "$pkgs" ]] || return 1
++    # shellcheck disable=SC2086
++    $MODE dnf versionlock add $pkgs >/dev/null 2>&1
 +}
++
++# EPEL carries LLVM ${LLVM_VER} side by side with the distro's newer default
++# (EL9 only ships the newer one), under versioned package names.
++install_epel_llvm() {
++    $MODE dnf install -y epel-release dnf-plugins-core >/dev/null 2>&1 || return 1
++    $MODE dnf config-manager --set-enabled crb >/dev/null 2>&1 \
++        || $MODE dnf config-manager --set-enabled powertools >/dev/null 2>&1 || true
++    $MODE dnf install -y --nobest "clang${LLVM_VER}" "clang${LLVM_VER}-devel" \
++        "lld${LLVM_VER}" "llvm${LLVM_VER}" 2>/dev/null
+ }
+ 
+ # ---------------------------------------------------------------------------
+@@ -344,12 +395,34 @@ install_llvm() {
+                 "clang-${LLVM_VER}" "lld-${LLVM_VER}" "clang-devel-${LLVM_VER}" 2>/dev/null \
+                 && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
+             echo ">>> Installed clang-${LLVM_VER} from native dnf repos"
++        # EL8 keeps LLVM ${LLVM_VER} in AppStream as version ${LLVM_VER}.x of the
++        # unversioned packages, not as clang-${LLVM_VER}.
++        elif $MODE dnf install -y --nobest --skip-broken \
++                "clang-${LLVM_VER}.*" "lld-${LLVM_VER}.*" "clang-devel-${LLVM_VER}.*" "llvm-${LLVM_VER}.*" 2>/dev/null \
++                && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
++            lock_llvm_packages \
++                && echo ">>> Locked LLVM ${LLVM_VER}.x packages against later dnf updates" \
++                || echo ">>> WARNING: could not lock LLVM ${LLVM_VER}.x packages; a later dnf update may replace them" >&2
++            echo ">>> Installed clang ${LLVM_VER}.x from native dnf repos (versioned package spec)"
++        elif install_epel_llvm && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
++            echo ">>> Installed clang ${LLVM_VER} from EPEL"
+         elif $MODE dnf install -y --nobest --skip-broken clang lld clang-devel 2>/dev/null \
+                 && accept_native_llvm clang lld; then
+             echo ">>> Installed default clang from native dnf repos (may not be ${LLVM_VER})"
+         elif $MODE yum install -y clang lld clang-devel 2>/dev/null \
+                 && accept_native_llvm clang lld; then
+             echo ">>> Installed clang from native yum repos"
++        elif ! tar
 ```
 
-**File**: `src/iterators/vector_top_k.h` (modified, +22/-0)
+**File**: `.install/rocky_linux_8.sh` (modified, +6/-1)
 ```diff
-@@ -19,6 +19,28 @@ extern "C" {
- // vector top-k adhoc-BF scan so it polls the query deadline like the C path does.
- int RS_VecSimCheckTimeout(QueryRequestLimits *timeout);
+@@ -24,7 +24,7 @@ dnf_install epel-release
+ dnf_install gcc-toolset-13-gcc gcc-toolset-13-gcc-c++ \
+     gcc-toolset-13-libatomic-devel make wget git openssl openssl-devel \
+     bzip2-devel libffi-devel zlib-devel tar xz which rsync \
+-    clang curl clang-devel lld gdb
++    curl gdb
  
-+// Replaces the timeout check behind RS_VecSimCheckTimeout and RS_VecSimShouldStop, for the
-+// FT.DEBUG timeout mock; NULL restores the default.
-+void RS_VecSimSetTimeoutCallback(int (*callback)(QueryRequestLimits *timeout));
+ # We need Python headers to build psutil@5.x.y from
+ # source, since it only started providing wheels for aarch64
+@@ -60,3 +60,8 @@ else
+     _toolset13_shim_ok as as || _run ln -sf "$_toolset13_bindir/as" /usr/local/bin/as
+     _toolset13_shim_ok make make || _run ln -sf "$_toolset13_bindir/make" /usr/local/bin/make
+ fi
 +
-+// The memory checkpoint of the Rust vector iterators. Returns nonzero when the query should stop
-+// (see QueryMemory_CheckpointExact), which under memory pressure first requests the memory stop.
-+// Reads memory on every call, outside the request's amortized cadence of QueryMemory_Checkpoint,
-+// for sites reached once per range call or KNN batch.
-+int RS_VecSimCheckMemory(QueryRequestLimits *timeout);
-+
-+// VecSim's stop callback (VecSim_SetStopCallbackFunction), called with the query's
-+// QueryRequestLimits at every search step. Returns nonzero when the query timed out or, per the
-+// amortized QueryMemory_Checkpoint, memory is under pressure; either ends the search as
-+// VecSim_QueryReply_Stopped, and the request's memory stop tells an OOM stop from a timeout.
-+// Callable from any thread: queries on different workers share it, and SVS searches in parallel.
-+int RS_VecSimShouldStop(void *ctx);
-+
-+// The memory checkpoint of a per-document loop (the adhoc-BF scan), where a read per call would
-+// cost more than the work between calls. Like RS_VecSimCheckMemory, but on the amortized cadence
-+// of QueryMemory_Checkpoint.
-+int RS_VecSimCheckMemoryEvery(QueryRequestLimits *timeout);
-+
- #ifdef __cplusplus
- }
- #endif
-```
-
-**File**: `src/module-init/module-init.c` (modified, +2/-1)
-```diff
-@@ -32,6 +32,7 @@
- #include "util/logging.h"
- #include "asm_state_machine.h"
- #include "vecsim/vec_sim_common.h"
-+#include "iterators/vector_top_k.h"
- #include "aggregate/functions/function.h"
- #include "gc/gc.h"
- #include "hiredis/sds.h"
-@@ -147,7 +148,7 @@ int RediSearch_Init(RedisModuleCtx *ctx) {
-   // and may allocate VecSim internal structures (shared SVS thread pool).
-   VecSimMemoryFunctions vecsimMemoryFunctions = {.allocFunction = rm_malloc, .callocFunction = rm_calloc, .reallocFunction = rm_realloc, .freeFunction = rm_free};
-   VecSim_SetMemoryFunctions(vecsimMemoryFunctions);
--  VecSim_SetTimeoutCallbackFunction((timeoutCallbackFunction)VecSim_TimedOut);
-+  VecSim_SetStopCallbackFunction(RS_VecSimShouldStop);
-   VecSim_SetLogCallbackFunction(VecSimLogCallback);
- 
-   // Init threadpool.
-```
-
-**File**: `src/query_memory.c` (modified, +14/-22)
-```diff
-@@ -14,17 +14,18 @@
- #include "config.h"
- #include "util/redis_mem_info.h"
- 
--static _Atomic(uint32_t) ratioReadInterval = QUERY_MEMORY_RATIO_READ_INTERVAL;
-+RS_Atomic(uint32_t) QueryMemory_ratioReadInterval = QUERY_MEMORY_RATIO_READ_INTERVAL;
-+RS_Atomic(uint32_t) QueryMemory_pressureArmed = 0;
- static _Atomic(float) forcedRatio = -1;
- static _Atomic(uint64_t) pressureAtCall = 0;
- static _Atomic(uint64_t) checkpointCalls = 0;
- 
- void QueryMemoryDebug_SetRatioReadInterval(uint32_t interval) {
--  atomic_store_explicit(&ratioReadInterval, interval, memory_order_relaxed);
-+  atomic_store_explicit(&QueryMemory_ratioReadInterval, interval, memory_order_relaxed);
- }
- 
- uint32_t QueryMemory_GetRatioReadInterval(void) {
--  return atomic_load_explicit(&ratioReadInterval, memory_order_relaxed);
-+  return atomic_load_explicit(&QueryMemory_ratioReadInterval, memory_order_relaxed);
- }
- 
- void QueryMemory_SetForcedRatio(float ratio) {
-@@ -39,6 +40,7 @@ void QueryMemory_SetPressureAtCall(uint64_t n) {
-   atomic_store_explicit(&pressureAtCall, 0, memory_order_relaxed);
-   atomic_store_explicit(&checkpointCalls, 0, memory_order_relaxed);
-   atomic_store_explicit(&pressureAtCall, n, memory_order_relaxed);
-+  atomic_store_explicit(&QueryMemory_pressureArmed, n != 0, memory_order_relaxed);
- }
- 
- uint64_t QueryMemory_GetPressureAtCall(void) {
-@@ -52,6 +54,7 @@ uint64_t QueryMemory_GetCheckpointCalls(void) {
- void QueryMemory_ResetFakePressure(void) {
-   QueryMemory_SetForcedRatio(-1);
-   atomic_store_explicit(&pressureAtCall, 0, memory_order_relaxed);
-+  atomic_store_explicit(&QueryMemory_pressureArmed, 0, memory_order_relaxed);
-   atomic_store_explicit(&checkpointCalls, 0, memory_order_relaxed);
-   QueryMemoryDebug_SetRatioReadInterval(QUERY_MEMORY_RATIO_READ_INTERVAL);
- }
-@@ -88,30 +91,19 @@ static bool memoryStops(QueryRequestLimits *limits, bool forcedPressure) {
-   return true;
- }
- 
--bool QueryMemory_Checkpoint(QueryRequestLimits *limits, uint32_t *counter) {
--  if (limits && QueryRequestLimits_IsMemoryStopped(limits)) {
-+bool QueryMemory_CheckpointSlow(QueryRequestLimits *limits) {
-+  if (QueryRequestLimits_IsMemoryStopped(limits)) {
-     return true;
-   }
-   const bool forcedPressure = isPressureAtThisCall();
--  const uint32_t interval = QueryMemory_GetRatioReadInterval();
--  // Both counters advance on every call, so a site that is called too rarely to reach the
--  // interval alone still triggers a read through the request-wide count.
--  bool due = ++*counter >= interval;
--  if (limits) {
--    // Load and store, not fetch_add: a lost increment only delays a read, and this avoids an
--    // atomic RMW on the hot path.
--    const uint32_t shared =
--        atomic_load_explicit(&limits->memory.counter, memory_order_relaxed) + 1;
--    atomic_store_explicit(&limits->memory.counter, shared, memory_order_relaxed);
--    due |= shared >= interval;
--  }
--  if (!forcedPressure && !due) {
-+  if (!QueryMemory_CountCall(limits) && !forcedPressure) {
-     return false;
-   }
--  *counter = 0;
--  if (limits) {
--    atomic_store_explicit(&limits->memory.counter, 0, memory_order_relaxed);
--  }
-+  return QueryMemory_ReadAndReset(limits, forcedPressure);
-+}
-+
-+bool QueryMemory_ReadAndReset(QueryRequestLimits *limits, bool forcedPressure) {
-+  atomic_store_explicit(&limits->memory.counter, 0, memory_order_relaxed);
-   return memoryStops(limits, forcedPressure);
- }
- 
-```
-
-**File**: `src/query_memory.h` (modified, +44/-15)
-```diff
-@@ -27,26 +27,55 @@ extern "C" {
-  *
-  * Returns true when the query should stop: a memory stop was already
-  * requested, or this call found memory at or above REDIS_MEMORY_OOM_RATIO, in which case it
-- * requests a memory stop first. Memory is read when either the caller's
-- * `counter` or the request's shared memory.counter reaches
-- * QUERY_MEMORY_RATIO_READ_INTERVAL, so calls from all sites of a request add
-- * up and a site called fewer times than the interval still contributes to a
-- * read. A read resets both counters. Priming `counter` to the interval minus
-- * one reads on the next call. The other calls only read the request's flags.
-- * Each site owns its counter, zero-initialized, and must not share it between
-- * threads. With a NULL `limits` only `counter` counts.
-+ * requests a memory stop first. Memory is read when the request's memory.counter reaches
-+ * QUERY_MEMORY_RATIO_READ_INTERVAL, so calls from all sites of a request add up; the read resets
-+ * it. The other calls only read the request's flags. `limits` must not be NULL.
-  *
-  * The memory check is off, and only an already requested memory stop is
-  * reported, when ON_OOM is IGNORE, when no memory limit is configured, and when the server lacks
-  * RedisModule_GetUsedMemoryRatioEstimate; the fake pressure below overrides
-- * the last two. Callable with or without the GIL, from any thread. The shared
-- * request counter is a relaxed atomic, so concurrent calls only shift when
-- * memory is read. Each site's own `counter` must not be shared between
-- * threads. The ON_OOM policy is the global one, read with a
-- * relaxed atomic load because CONFIG SET writes it on the main thread. A NULL `limits` (no
-- * owning request) still reports pressure but records no memory stop.
-+ * the last two. Callable with or without the GIL, from any thread. The request counter is a
-+ * relaxed atomic, so concurrent calls only shift when memory is read. The ON_OOM policy is the
-+ * global one, read with a relaxed atomic load because CONFIG SET writes it on the main thread.
-  */
--bool QueryMemory_Checkpoint(QueryRequestLimits *limits, uint32_t *counter);
-+static inline bool QueryMemory_Checkpoint(QueryRequestLimits *limits);
-+
-+/* Process-wide state of the inline fast path of QueryMemory_Checkpoint, written only through the
-+ * debug and test hooks below. */
-+extern RS_Atomic(uint32_t) QueryMemory_ratioReadInterval;
-+extern RS_Atomic(uint32_t) QueryMemory_pressureArmed;
-+
-+/** The full checkpoint, used while a fake pressure is armed. Same semantics as the fast path. */
-+bool QueryMemory_CheckpointSlow(QueryRequestLimits *limits);
-+
-+/** The memory read of a due checkpoint, or of a forced pressure: resets the call counter first. */
-+bool QueryMemory_ReadAndReset(QueryRequestLimits *limits, bool forcedPressure);
-+
-+/**
-+ * Counts one checkpoint call in the request's counter and returns whether it reached the read
-+ * interval. Shared by the fast path and QueryMemory_CheckpointSlow.
-+ */
-+static inline bool QueryMemory_CountCall(QueryRequestLimits *limits) {
-+  // Load and store, not fetch_add: a lost increment only delays a read, and this avoids an
-+  // atomic RMW on the hot path.
-+  const uint32_t calls = RS_AtomicUintLoadRelaxed(&limits->memory.counter) + 1;
-+  RS_AtomicUintStoreRelaxed(&limits->memory.counter, calls);
-+  return calls >= RS_AtomicUintLoadRelaxed(&QueryMemory_ratioReadInterval);
-+}
-+
-+static inline bool QueryMemory_Checkpoint(QueryRequestLimits *limits) {
-+  RS_ASSERT(limits);
-+  if (QueryRequestLimits_IsMemoryStopped(limits)) {
-+    return true;
-+  }
-+  if (__builtin_expect(RS_AtomicUintLoadRelaxed(&QueryMemory_pressureArmed) != 0, 0)) {
-+    return QueryMemory_CheckpointSlow(limits);
-+  }
-+  if (__builtin_expect(!QueryMemory_CountCall(limits), 1)) {
-+    return false;
-+  }
-+  return QueryMemory_ReadAndReset(limits, false);
-+}
- 
- /**
-  * The non-amortized checkpoint: reads memory on every call and touches no
-```
-
----
-
-### Incident Patch 2: `08831b5e` (2026-11-22)
-**Commit Message**: CI: fix codeql-action version comments flagged by zizmor (#12459)
-
-zizmor's ref-version-mismatch audit fails the zizmor job on every PR:
-commit 33d7b85 of github/codeql-action is tag v4.39.3, not v4.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/task-vecsim-checks.yml` (modified, +2/-2)
-```diff
-@@ -20,13 +20,13 @@ jobs:
-         with:
-           submodules: recursive
-           persist-credentials: false
--      - uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-+      - uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-         with:
-           languages: c-cpp
-           build-mode: manual
-       - name: Build VecSim for analysis
-         run: make -C src/vecsim build NO_TESTS=1
--      - uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-+      - uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-         with:
-           category: vecsim
- 
++# Install the pinned LLVM (see LLVM_VERSION.sh) for LTO. Unversioned
++# `clang`/`lld` packages track the distro's current LLVM, which can move past
++# the version Rust uses and break cross-language LTO.
++source "$(dirname "${BASH_SOURCE[0]}")/install_llvm.sh" $MODE
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12507** (closed): Switch token separators to Rust and remove the C implementation (@gdesmott)
+- **PR #12505** (closed): Add Rust token separator scanning and C comparison benchmarks (@gdesmott)
+- **PR #12503** (closed): Extract token separator implementation into toksep.c (@gdesmott)
+- **PR #12497** (closed): [MOD-14129] Preserve restore compatibility for disk TAG snapshots (@dor-forer)
+- **PR #12484** (2026-11-23): [8.8] [MOD-21404] CI: install LLVM 21 from the EL8 AppStream to keep LTO on Rocky 8 (@oshadmi)
 - **PR #12483** (2026-11-22): [8.10] [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma (@oshadmi)
-- **PR #12481** (2026-11-22): [8.4] CI: pin cargo-deny to 0.21.0 in the lint job (@oshadmi)
-- **PR #12480** (2026-11-22): [8.6-rse] CI: pin cargo-deny to 0.21.0 in the lint job (@oshadmi)
-- **PR #12479** (2026-11-22): [8.6] CI: pin cargo-deny to 0.21.0 in the lint job (@oshadmi)
-- **PR #12478** (2026-11-22): [8.8-rse] CI: pin cargo-deny to 0.21.0 in the lint job (@oshadmi)
-- **PR #12477** (2026-11-22): [8.8] CI: pin cargo-deny to 0.21.0 in the lint job (@oshadmi)
 
 ---
 
@@ -2306,41 +2049,35 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-20697] Stop vector queries on memory pressure
+## X. [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on R
 
 **RULE**:
-When implementing operations in `src/debug_commands.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/task-get-config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3357e86a`: [MOD-20697] Stop vector queries on memory pressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcd7b33c`: [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/debug_commands.c`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/task-get-config.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#include "iterators/vector_top_k.h"
-    RS_VecSimSetTimeoutCallback(TimedOut_Always);
-    RS_VecSimSetTimeoutCallback(NULL);
+                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
+                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
+                  # LLVM 21 comes from EPEL (install_llvm.sh); the official tarball
+                  # cannot run on EL9's libstdc++.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Global timeout callback for VecSim searches.
-// Need the redirection so tests can pass a mock function to test timeout behavior.
-// Defined in vector_top_k.c, called from the Rust vector top-k scan.
-extern int (*vecsimTimeoutCallback)(QueryRequestLimits *timeout);
-
-    vecsimTimeoutCallback = TimedOut_Always;
-    VecSim_SetTimeoutCallbackFunction((timeoutCallbackFunction)TimedOut_Always);
-    vecsimTimeoutCallback = VecSim_TimedOut;
-    VecSim_SetTimeoutCallbackFunction((timeoutCallbackFunction)VecSim_TimedOut);
+                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
+                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3357e86a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcd7b33c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

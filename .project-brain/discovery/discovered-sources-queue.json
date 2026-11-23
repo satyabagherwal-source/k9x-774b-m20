@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T20:39:05.782Z",
+  "updated_at": "2026-11-23T20:48:00.811Z",
   "stats": {
-    "total_discovered": 8034,
-    "approved_pending_harvest": 7605,
+    "total_discovered": 8035,
+    "approved_pending_harvest": 7606,
     "harvested_count": 0,
     "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7599,
+      "COMMUNITY_AND_EXPERT": 7600,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -173768,6 +173768,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
         "fileName": "go-kratos-kratos-learnings.md"
+      }
+    },
+    "SRC-8A870F24E3B9": {
+      "id": "SRC-8A870F24E3B9",
+      "url": "https://github.com/nats-io/nats-server/issues/8790",
+      "title": "https://github.com/nats-io/nats-server/issues/8790",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:48:00.811Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
       }
     }
   }

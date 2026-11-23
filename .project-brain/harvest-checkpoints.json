@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T20:39:00.578Z",
+  "last_updated": "2026-11-23T20:47:56.231Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1880,14 +1880,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "d8165b052b7c000a72a4844bcabfc8a8ace47fd45927a76259a05004bf36f514",
-      "verified_at": "2026-11-19T13:21:47.443Z",
+      "content_hash": "aae612f3213bbe6a691ab95b62042ac41f51facc1c04f91394780ac54f3f52d9",
+      "verified_at": "2026-11-23T20:47:42.252Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T13:21:47.443Z"
+      "last_updated": "2026-11-23T20:47:42.252Z"
     },
     "ZHangZHengEric/Sage": {
       "repository": "ZHangZHengEric/Sage",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "681990028914b65910c1956508ac3c7a35268279c83f10882544f52427efe1fb",
-      "verified_at": "2026-11-22T18:52:51.112Z",
+      "content_hash": "58de50613d5d089d54951748551e0721c0a4a70bbb413da04d33337be7016c5e",
+      "verified_at": "2026-11-23T20:47:56.230Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:52:51.112Z"
+      "last_updated": "2026-11-23T20:47:56.230Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "72fa071d522da73f32de84419196ea2fd98e138accf309f14f4252231b07f250",
-      "verified_at": "2026-11-20T17:20:56.415Z",
+      "content_hash": "b5689b4decb61adc1943d863067f5b98ed68a67363cfb7d8c962a40dec789a5d",
+      "verified_at": "2026-11-23T20:47:51.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:20:56.415Z"
+      "last_updated": "2026-11-23T20:47:51.550Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",

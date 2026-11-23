@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "d8165b052b7c000a72a4844bcabfc8a8ace47fd45927a76259a05004bf36f514",
-    "lastHarvestedAt": "2026-11-19T13:21:47.434Z",
+    "contentHash": "aae612f3213bbe6a691ab95b62042ac41f51facc1c04f91394780ac54f3f52d9",
+    "lastHarvestedAt": "2026-11-23T20:47:42.240Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "3357e86a",
+    "sourceVersion": "bcd7b33c",
     "license": "NOASSERTION",
-    "contentHash": "681990028914b65910c1956508ac3c7a35268279c83f10882544f52427efe1fb",
-    "lastHarvestedAt": "2026-11-22T18:52:51.104Z",
+    "contentHash": "58de50613d5d089d54951748551e0721c0a4a70bbb413da04d33337be7016c5e",
+    "lastHarvestedAt": "2026-11-23T20:47:56.219Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "a0385c9a",
+    "sourceVersion": "5a7a03c3",
     "license": "Apache-2.0",
-    "contentHash": "72fa071d522da73f32de84419196ea2fd98e138accf309f14f4252231b07f250",
-    "lastHarvestedAt": "2026-11-20T17:20:56.408Z",
+    "contentHash": "b5689b4decb61adc1943d863067f5b98ed68a67363cfb7d8c962a40dec789a5d",
+    "lastHarvestedAt": "2026-11-23T20:47:51.538Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
