@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T07:05:42.614Z",
+  "last_updated": "2026-11-23T07:18:41.208Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23904,
+  "total_items": 23906,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "00e122a03603516306d98e126302e7bcbb7ec49d45ceee9a2dbdae06e0baff46",
+      "content_hash": "32617515c43ed3ccb72ecca99a3b65dbd2213bfeaf2adfcf9e1f90a3487c56c9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:37:48.917Z"
+      "persisted_at": "2026-11-23T07:18:41.054Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e98fc4e0c1befac9d21b7731cf5116bd354eff8bf16c67ac5caeabb2f6ba9a05",
+      "content_hash": "0f8fc8e2aab14ab277ec8d14734de66a134944da35f2d2f7186a1d59654163c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:37:49.148Z"
+      "persisted_at": "2026-11-23T07:18:41.208Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -223697,7 +223697,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "fc468bf53611226ce5659bf4365bb2dc5734cfc78ef8bda7a07d9374e430212a",
+      "content_hash": "4f8e3326db41b135fc3ce537830ffbd427839e6c1f57dae0fdaeadde0562392b",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "promoted_rules": [],
@@ -223706,7 +223706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T21:50:06.462Z",
+      "verified_at": "2026-11-23T07:18:26.297Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223723,9 +223723,9 @@
       "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-3-medium Core Invariants",
       "repository": "stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "8c1b540a7dd52555e1f34a8c17a6d3a6611201e2a95a7a7708970b41f5c6dea6",
+      "content_hash": "6b84890ec20bf069aa62e10c0d4bfcab0eb91da0c4730475868435e0ebcf5334",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:50:06.851Z"
+      "persisted_at": "2026-11-23T07:18:26.698Z"
     },
     "learn-github-sceneview-sceneview": {
       "learning_id": "learn-github-sceneview-sceneview",
@@ -224125,9 +224125,9 @@
       "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-3-medium-learnings Core Invariants",
       "repository": "hf-stabilityai-stable-diffusion-3-medium-learnings",
       "source_version": "HEAD",
-      "content_hash": "256be0d12ca52f05f76117191bf8a1f8c38b3ff9468b5763a05e071ecf808fca",
+      "content_hash": "e32e59d13c35f0a70ff9c88a4fe0ddd72ecdb5df07e040cf53905e8d97c08349",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:50:22.008Z"
+      "persisted_at": "2026-11-23T07:18:39.861Z"
     },
     "candidate_directive-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back": {
       "item_id": "candidate_directive-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back",
@@ -240648,13 +240648,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-sdai-kmp",
+      "slug": "shifthackz-stable-diffusion-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
-      "source_version": "82ebd42d",
-      "content_hash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "13783c34",
+      "content_hash": "26a2ad5cd7a75a31d8a40e986e5eb0d67a80407b1485373a20105293483cf8aa",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": 8552,
@@ -240670,6 +240670,11 @@
           "number": 9525,
           "title": "Announce nightly builds and attach APKs in Telegram comments",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10034,
+          "title": "Refine shared UI controls and platform navigation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240677,7 +240682,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T06:01:27.006Z",
+      "verified_at": "2026-11-23T07:18:36.194Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240728,13 +240733,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shifthackz-sdai-kmp-verification-protocol-empirical-defect-shield-for-shifthackz.md",
+      "relative_path": "08_VERIFICATION/shifthackz-stable-diffusion-kmp-verification-protocol-empirical-defect-shield-fo.md",
       "title": "Verification Protocol: Empirical Defect Shield for ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "source_version": "82ebd42d",
-      "content_hash": "e238ca7bde4b4d5d9caceee796b02418584cab00c7c3773d33ed49f9fd78a130",
+      "source_version": "13783c34",
+      "content_hash": "2739fc1317e87e8cb72e6a4a7b70dc74f582eba3d81f8040cfab3669f3b4f81a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:01:27.679Z"
+      "persisted_at": "2026-11-23T07:18:36.874Z"
     },
     "learn-github-nolabs-ai-nono": {
       "learning_id": "learn-github-nolabs-ai-nono",
@@ -255054,13 +255059,13 @@
       "item_id": "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-sdai-kmp-quality-verification-intelligence-shifthackz-sdai-kmp-core-i.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-stable-diffusion-kmp-quality-verification-intelligence-shifthackz-sda.md",
       "title": "Quality & Verification Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "source_version": "440ea2b0",
-      "content_hash": "e561b810d586861a6d4af5609138b21564908a30f55951104b53a92659f8d3fc",
+      "source_version": "13783c34",
+      "content_hash": "6b6cb5da2e2b4a8722814925f77bdd463c2a18730fad0b10d8cb274250100c76",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:07:44.239Z"
+      "persisted_at": "2026-11-23T07:18:36.728Z"
     },
     "learn-github-saltstack-salt": {
       "learning_id": "learn-github-saltstack-salt",
@@ -255182,9 +255187,9 @@
       "title": "Quality & Verification Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "84fdd4fcb8f74aeaa4471a37cdad8d03b6ed1ecf97986af838b65ecea9f6f6cf",
+      "content_hash": "dab4e64868a46bdbb0d013ef74e4809d4bf776ee786a37e3cd4727a85d8c7636",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:17:37.293Z"
+      "persisted_at": "2026-11-23T07:18:40.381Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-stable-diffusion-km": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-stable-diffusion-km",
@@ -255194,9 +255199,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for shifthackz-stable-diffusion-kmp-learnings",
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "c70200878a726bf560fa3fa8463c5bc21a17416a134d8a1a7d02c99b0854a7ff",
+      "content_hash": "2a5ec0f2e2b378b3a48b57a4ccfeec351a90ba233365e5cdbfd7ede8217b089b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:11:31.638Z"
+      "persisted_at": "2026-11-23T07:18:40.533Z"
     },
     "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants",
@@ -318882,13 +318887,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-92J3-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PMO8-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1740fba6fc75e27ed2e0b18fdca15bbe520878f4d1b3d1f39b2fc51fc0a7a45c",
+      "content_hash": "fc9313ff3d856eb12216ded18dc3d075f4935989086c26595cf3edaff9836cff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:37:48.693Z"
+      "persisted_at": "2026-11-23T07:18:40.907Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -325548,6 +325553,32 @@
       "content_hash": "f505ed7987bc6f22419614b91685f548f19848a0d8fa80cf156f40290bb12057",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T06:37:47.630Z"
+    },
+    "rule-10034": {
+      "learning_id": "rule-10034",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10034,
+      "title": "Refine shared UI controls and platform navigation",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "13783c34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T07:18:36.194Z"
+    },
+    "candidate_directive-refine-shared-ui-controls-and-platform-navigation": {
+      "item_id": "candidate_directive-refine-shared-ui-controls-and-platform-navigation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PM5G-refine-shared-ui-controls-and-platform-navigation.md",
+      "title": "Refine shared UI controls and platform navigation",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7b24f738492df71a2c8b0b1e37b1957fe0198a09cf7d9bf42a68b25b00654cd3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T07:18:40.231Z"
     }
   },
   "ai-builder-brain": {

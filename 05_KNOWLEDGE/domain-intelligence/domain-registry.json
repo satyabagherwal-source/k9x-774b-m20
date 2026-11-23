@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T07:05:42.392Z",
+  "last_updated": "2026-11-23T07:18:41.054Z",
   "total_records": 2398,
   "domains": {
     "A": {
@@ -9131,8 +9131,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "00e122a03603516306d98e126302e7bcbb7ec49d45ceee9a2dbdae06e0baff46",
-      "created_at": "2026-11-23T06:37:48.917Z"
+      "content_hash": "32617515c43ed3ccb72ecca99a3b65dbd2213bfeaf2adfcf9e1f90a3487c56c9",
+      "created_at": "2026-11-23T07:18:41.054Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -13321,8 +13321,8 @@
       "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-3-medium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-research-knowledge-intelligence-stabili.md",
       "repository": "stabilityai/stable-diffusion-3-medium",
-      "content_hash": "8c1b540a7dd52555e1f34a8c17a6d3a6611201e2a95a7a7708970b41f5c6dea6",
-      "created_at": "2026-11-18T21:50:06.851Z"
+      "content_hash": "6b84890ec20bf069aa62e10c0d4bfcab0eb91da0c4730475868435e0ebcf5334",
+      "created_at": "2026-11-23T07:18:26.698Z"
     },
     "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants",
@@ -13399,8 +13399,8 @@
       "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-3-medium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-learnings-research-knowledge-intelligen.md",
       "repository": "hf-stabilityai-stable-diffusion-3-medium-learnings",
-      "content_hash": "256be0d12ca52f05f76117191bf8a1f8c38b3ff9468b5763a05e071ecf808fca",
-      "created_at": "2026-11-18T21:50:22.008Z"
+      "content_hash": "e32e59d13c35f0a70ff9c88a4fe0ddd72ecdb5df07e040cf53905e8d97c08349",
+      "created_at": "2026-11-23T07:18:39.861Z"
     },
     "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants",
@@ -23462,10 +23462,10 @@
       "record_id": "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants",
       "domain_letter": "K",
       "title": "Quality & Verification Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-sdai-kmp-quality-verification-intelligence-shifthackz-sdai-kmp-core-i.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-stable-diffusion-kmp-quality-verification-intelligence-shifthackz-sda.md",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "content_hash": "e561b810d586861a6d4af5609138b21564908a30f55951104b53a92659f8d3fc",
-      "created_at": "2026-11-18T06:07:44.239Z"
+      "content_hash": "6b6cb5da2e2b4a8722814925f77bdd463c2a18730fad0b10d8cb274250100c76",
+      "created_at": "2026-11-23T07:18:36.728Z"
     },
     "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants",
@@ -23491,8 +23491,8 @@
       "title": "Quality & Verification Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-stable-diffusion-kmp-learnings-quality-verification-intelligence-shif.md",
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
-      "content_hash": "84fdd4fcb8f74aeaa4471a37cdad8d03b6ed1ecf97986af838b65ecea9f6f6cf",
-      "created_at": "2026-11-16T02:17:37.293Z"
+      "content_hash": "dab4e64868a46bdbb0d013ef74e4809d4bf776ee786a37e3cd4727a85d8c7636",
+      "created_at": "2026-11-23T07:18:40.381Z"
     },
     "DOM-D-E52861DE": {
       "record_id": "DOM-D-E52861DE",

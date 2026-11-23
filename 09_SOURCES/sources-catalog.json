@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "fc468bf53611226ce5659bf4365bb2dc5734cfc78ef8bda7a07d9374e430212a",
-    "lastHarvestedAt": "2026-11-18T21:50:06.667Z",
+    "contentHash": "4f8e3326db41b135fc3ce537830ffbd427839e6c1f57dae0fdaeadde0562392b",
+    "lastHarvestedAt": "2026-11-23T07:18:26.500Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {
@@ -8593,10 +8593,10 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
-    "sourceVersion": "82ebd42d",
+    "sourceVersion": "13783c34",
     "license": "AGPL-3.0",
-    "contentHash": "aed8459abce934d5e4d70cab0c0befa6d0abeea4e262becec984e9e9d0f30ef9",
-    "lastHarvestedAt": "2026-11-20T06:10:56.091Z",
+    "contentHash": "26a2ad5cd7a75a31d8a40e986e5eb0d67a80407b1485373a20105293483cf8aa",
+    "lastHarvestedAt": "2026-11-23T07:18:36.375Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
   },
   "android-kotlin-multiplatform-samples": {

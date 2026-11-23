@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T07:05:28.011Z",
+  "last_updated": "2026-11-23T07:18:36.384Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1220,14 +1220,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "fc468bf53611226ce5659bf4365bb2dc5734cfc78ef8bda7a07d9374e430212a",
-      "verified_at": "2026-11-18T21:50:06.674Z",
+      "content_hash": "4f8e3326db41b135fc3ce537830ffbd427839e6c1f57dae0fdaeadde0562392b",
+      "verified_at": "2026-11-23T07:18:26.507Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T21:50:06.674Z"
+      "last_updated": "2026-11-23T07:18:26.507Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",
@@ -18306,14 +18306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shifthackz-sdai-kmp",
-      "content_hash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
-      "verified_at": "2026-11-21T06:01:27.201Z",
+      "content_hash": "26a2ad5cd7a75a31d8a40e986e5eb0d67a80407b1485373a20105293483cf8aa",
+      "verified_at": "2026-11-23T07:18:36.383Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T06:01:27.201Z"
+      "last_updated": "2026-11-23T07:18:36.383Z"
     },
     "qybaihe/bla": {
       "repository": "qybaihe/bla",

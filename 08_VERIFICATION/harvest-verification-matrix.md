@@ -12291,3 +12291,5 @@
 | `CYCLE-20261123-JH5Z` | `2026-11-23T06:45:54.215Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8822` | Yes (`e8e73113...`) |
 | `CYCLE-20261123-TPNT` | `2026-11-23T06:53:51.785Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`66e6128f...`) |
 | `CYCLE-20261123-8MUX` | `2026-11-23T07:05:27.993Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`eaf7ed6e...`) |
+| `CYCLE-20261123-PBJZ` | `2026-11-23T07:18:26.495Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`4f8e3326...`) |
+| `CYCLE-20261123-PJ6C` | `2026-11-23T07:18:36.372Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10034` | Yes (`26a2ad5c...`) |
