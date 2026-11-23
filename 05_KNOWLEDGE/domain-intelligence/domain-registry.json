@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T18:03:30.048Z",
-  "total_records": 2437,
+  "last_updated": "2026-11-23T18:16:06.779Z",
+  "total_records": 2438,
   "domains": {
     "A": {
       "total": 20,
@@ -1119,7 +1119,7 @@
       ]
     },
     "G": {
-      "total": 424,
+      "total": 425,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1544,7 +1544,8 @@
         "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants",
         "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants",
-        "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-stakater-reloader-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9170,8 +9171,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f32287c4e1c13793fefb07bbd2a1d307290118bf265d75ed3e8f3e9eda76459f",
-      "created_at": "2026-11-23T18:03:30.048Z"
+      "content_hash": "c746c24144997de16b3cba051e24c065e7f17b6beced35512bafd9d121c121bc",
+      "created_at": "2026-11-23T18:16:06.779Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17205,8 +17206,8 @@
       "title": "Research & Knowledge Intelligence: google/embeddinggemma-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-embeddinggemma-2-research-knowledge-intelligence-google-embeddinggemma.md",
       "repository": "google/embeddinggemma-2",
-      "content_hash": "e8dcfa6c0f0e1b74093f76bf797d393345d742eb2bba539d534fb76dd53d000e",
-      "created_at": "2026-11-19T07:06:20.748Z"
+      "content_hash": "0e61a6f55100f0116620fbd0a251260af88b39f79ef20d1f281765d3c852c3e9",
+      "created_at": "2026-11-23T18:15:55.838Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants",
@@ -17292,8 +17293,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-embeddinggemma-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-embeddinggemma-2-learnings-research-knowledge-intelligence-hf-google-e.md",
       "repository": "hf-google-embeddinggemma-2-learnings",
-      "content_hash": "f1d34d1a17b9aa0859e6b22fac16d7dcf9d8a9dcdd57e16e502647da719fb099",
-      "created_at": "2026-11-19T07:06:42.730Z"
+      "content_hash": "17ff641d9ba50f6b4c936c69bd1155919dce19eb057a6164eb7a56fac25d1f02",
+      "created_at": "2026-11-23T18:16:05.316Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari",
@@ -28480,8 +28481,8 @@
       "title": "Architecture Intelligence: stakater/Reloader Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-stakater-reloader-architecture-intelligence-stakater-reloader-core-invariants.md",
       "repository": "stakater/Reloader",
-      "content_hash": "bd09aee83f351787457bf9642aa05b35e55231d03d73ca5e7cdd6f9617a30471",
-      "created_at": "2026-11-17T16:46:53.070Z"
+      "content_hash": "8df814157e578c97410cfbab1f80dcfafc3e942384bd371f8855ae85fb994b4a",
+      "created_at": "2026-11-23T18:16:02.123Z"
     },
     "DOM-D-66A27B84": {
       "record_id": "DOM-D-66A27B84",
@@ -40896,6 +40897,15 @@
       "repository": "prometheus-prometheus-learnings",
       "content_hash": "9506896ffaf90bc0ac430e022dd550c6a54a2375a0416a528e0beb64cd719bb8",
       "created_at": "2026-11-23T17:38:04.484Z"
+    },
+    "domain_intelligence-architecture-intelligence-stakater-reloader-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-stakater-reloader-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: stakater-reloader-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-stakater-reloader-learnings-architecture-intelligence-stakater-reloader-learning.md",
+      "repository": "stakater-reloader-learnings",
+      "content_hash": "2cd15a5c3c05b7ae51c28dc9cf77493549ca7b8d24281c292722329ad1768386",
+      "created_at": "2026-11-23T18:16:06.003Z"
     }
   }
 }

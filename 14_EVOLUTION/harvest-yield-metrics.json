@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T18:03:23.982Z",
-  "total_cycles_completed": 11802,
-  "total_learnings_persisted": 11802,
-  "total_rules_promoted": 10929,
+  "last_updated": "2026-11-23T18:16:01.723Z",
+  "total_cycles_completed": 11804,
+  "total_learnings_persisted": 11804,
+  "total_rules_promoted": 10930,
   "history": [
-    {
-      "timestamp": "2026-11-22T21:48:59.834Z",
-      "repository": "vanniktech/gradle-maven-publish-plugin",
-      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T21:49:09.980Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T21:56:56.045Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T18:03:23.982Z",
       "repository": "apache/zookeeper",
       "learningId": "learn-github-apache-zookeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T18:15:55.627Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T18:16:01.723Z",
+      "repository": "stakater/Reloader",
+      "learningId": "learn-github-stakater-reloader",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

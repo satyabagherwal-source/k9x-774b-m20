@@ -12411,3 +12411,5 @@
 | `CYCLE-20261123-EZA7` | `2026-11-23T17:54:15.199Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10088` | Yes (`2c86ea0f...`) |
 | `CYCLE-20261123-QETL` | `2026-11-23T18:03:08.553Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`bdc04db7...`) |
 | `CYCLE-20261123-QQPU` | `2026-11-23T18:03:23.970Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10089` | Yes (`aa7d0040...`) |
+| `CYCLE-20261123-6UOW` | `2026-11-23T18:15:55.616Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`5f4b1cd1...`) |
+| `CYCLE-20261123-6ZE9` | `2026-11-23T18:16:01.713Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10090` | Yes (`6c7439ef...`) |

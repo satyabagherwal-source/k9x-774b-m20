@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T18:03:30.271Z",
+  "last_updated": "2026-11-23T18:16:06.952Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24098,
+  "total_items": 24101,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f32287c4e1c13793fefb07bbd2a1d307290118bf265d75ed3e8f3e9eda76459f",
+      "content_hash": "c746c24144997de16b3cba051e24c065e7f17b6beced35512bafd9d121c121bc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T18:03:30.048Z"
+      "persisted_at": "2026-11-23T18:16:06.779Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1cbbecc33712b5c3c80d1a05f026cafff3c2fa1eec647f671daff53a445de26d",
+      "content_hash": "4968d015ee8c8d8e92afeee788b982c7a8072ba86930e9feeda38b1e448f8900",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:03:30.271Z"
+      "persisted_at": "2026-11-23T18:16:06.952Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -234694,7 +234694,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/embeddinggemma-2",
       "source_version": "hf-google-embeddinggemma-2",
-      "content_hash": "908315c113f96aa16bcc2e587d4fe19ef68b1d6f2a4b209b5426f64f38e54cfc",
+      "content_hash": "5f4b1cd153df9739c37a255ab635a1b23469bf62ae6913d67c0de7cc4eb60ba7",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "promoted_rules": [],
@@ -234703,7 +234703,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T07:06:20.274Z",
+      "verified_at": "2026-11-23T18:15:55.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234720,9 +234720,9 @@
       "title": "Research & Knowledge Intelligence: google/embeddinggemma-2 Core Invariants",
       "repository": "google/embeddinggemma-2",
       "source_version": "hf-google-embeddinggemma-2",
-      "content_hash": "e8dcfa6c0f0e1b74093f76bf797d393345d742eb2bba539d534fb76dd53d000e",
+      "content_hash": "0e61a6f55100f0116620fbd0a251260af88b39f79ef20d1f281765d3c852c3e9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T07:06:20.748Z"
+      "persisted_at": "2026-11-23T18:15:55.838Z"
     },
     "learn-github-astral-sh-uv": {
       "learning_id": "learn-github-astral-sh-uv",
@@ -235087,9 +235087,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-embeddinggemma-2-learnings Core Invariants",
       "repository": "hf-google-embeddinggemma-2-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1d34d1a17b9aa0859e6b22fac16d7dcf9d8a9dcdd57e16e502647da719fb099",
+      "content_hash": "17ff641d9ba50f6b4c936c69bd1155919dce19eb057a6164eb7a56fac25d1f02",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T07:06:42.730Z"
+      "persisted_at": "2026-11-23T18:16:05.316Z"
     },
     "candidate_directive-ios-confirm-foldable-rotation-from-the-lit-panel-in-either-simulator-set": {
       "item_id": "candidate_directive-ios-confirm-foldable-rotation-from-the-lit-panel-in-either-simulator-set",
@@ -260134,8 +260134,8 @@
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "5f3fdbdc",
-      "content_hash": "af427e774b3eeae9ef0ad50307353136b733ad2cd6294081a6db36cb2c696460",
+      "source_version": "6002095f",
+      "content_hash": "6c7439ef44d01f1f9fe535122458c170808185093909fbc4204e94d14f1b3a25",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "promoted_rules": [
@@ -260148,6 +260148,11 @@
           "number": 9010,
           "title": "bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10090,
+          "title": "Empirical Invariant Guard in handler.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260155,7 +260160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:46:52.590Z",
+      "verified_at": "2026-11-23T18:16:01.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260209,10 +260214,10 @@
       "relative_path": "08_VERIFICATION/stakater-reloader-verification-protocol-empirical-defect-shield-for-stakater-rel.md",
       "title": "Verification Protocol: Empirical Defect Shield for stakater/Reloader",
       "repository": "stakater/Reloader",
-      "source_version": "5f3fdbdc",
-      "content_hash": "e83fb3d578e911888f9684f1157cdf211c6bb205e1457133f4ba06a4b71c3e0c",
+      "source_version": "6002095f",
+      "content_hash": "91827143810111b024bc88017eeb50fbfbd3abce5e996b9773f04bf3f218aab6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:46:53.204Z"
+      "persisted_at": "2026-11-23T18:16:02.296Z"
     },
     "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf": {
       "learning_id": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
@@ -260285,9 +260290,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for stakater-reloader-learnings",
       "repository": "stakater-reloader-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1865ddaed252684b8a360efc985207fb358c61ac49bb2d6cfb825b7e6b19757",
+      "content_hash": "e7eadde47b7edb517488a077d91816e28db0d9d5c486c170cd61019846cc5210",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:09:25.578Z"
+      "persisted_at": "2026-11-23T18:16:06.180Z"
     },
     "learn-huggingface-liquidai-lfm3-audio-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-audio-2b",
@@ -278179,10 +278184,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-stakater-reloader-architecture-intelligence-stakater-reloader-core-invariants.md",
       "title": "Architecture Intelligence: stakater/Reloader Core Invariants",
       "repository": "stakater/Reloader",
-      "source_version": "5f3fdbdc",
-      "content_hash": "bd09aee83f351787457bf9642aa05b35e55231d03d73ca5e7cdd6f9617a30471",
+      "source_version": "6002095f",
+      "content_hash": "8df814157e578c97410cfbab1f80dcfafc3e942384bd371f8855ae85fb994b4a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T16:46:53.070Z"
+      "persisted_at": "2026-11-23T18:16:02.123Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in",
@@ -319158,13 +319163,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QV8E-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7366-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2cb6586b9315f7ff095d57af57e1bce03e00bbd6f4f645f5ff9f8bc674a1fdb8",
+      "content_hash": "34800a41f41588820886b117f6b547779303c03cdf57a077ad3035cfe04362a3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:03:29.828Z"
+      "persisted_at": "2026-11-23T18:16:06.609Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -328399,6 +328404,44 @@
       "content_hash": "c0912ebf11b80508e5e96cc9f80709cde91bf43788c7c53f46828b465ba2d351",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T18:03:28.821Z"
+    },
+    "rule-10090": {
+      "learning_id": "rule-10090",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10090,
+      "title": "Empirical Invariant Guard in handler.go",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "6002095f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T18:16:01.504Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-handler-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-handler-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-72KJ-empirical-invariant-guard-in-handler-go.md",
+      "title": "Empirical Invariant Guard in handler.go",
+      "repository": "stakater-reloader-learnings",
+      "source_version": "HEAD",
+      "content_hash": "699df8e2f0e5dd93fe4db6a27864d3a79f7c97a2e16beffd7ec90498777d9431",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T18:16:05.828Z"
+    },
+    "domain_intelligence-architecture-intelligence-stakater-reloader-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-stakater-reloader-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-stakater-reloader-learnings-architecture-intelligence-stakater-reloader-learning.md",
+      "title": "Architecture Intelligence: stakater-reloader-learnings Core Invariants",
+      "repository": "stakater-reloader-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2cd15a5c3c05b7ae51c28dc9cf77493549ca7b8d24281c292722329ad1768386",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T18:16:06.003Z"
     }
   },
   "ai-builder-brain": {

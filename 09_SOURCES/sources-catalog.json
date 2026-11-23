@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "908315c113f96aa16bcc2e587d4fe19ef68b1d6f2a4b209b5426f64f38e54cfc",
-    "lastHarvestedAt": "2026-11-19T07:06:20.516Z",
+    "contentHash": "5f4b1cd153df9739c37a255ab635a1b23469bf62ae6913d67c0de7cc4eb60ba7",
+    "lastHarvestedAt": "2026-11-23T18:15:55.621Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -6513,10 +6513,10 @@
     "repository": "stakater/Reloader",
     "platform": "github",
     "sourceUrl": "https://github.com/stakater/Reloader",
-    "sourceVersion": "5f3fdbdc",
+    "sourceVersion": "6002095f",
     "license": "Apache-2.0",
-    "contentHash": "af427e774b3eeae9ef0ad50307353136b733ad2cd6294081a6db36cb2c696460",
-    "lastHarvestedAt": "2026-11-17T16:46:52.765Z",
+    "contentHash": "6c7439ef44d01f1f9fe535122458c170808185093909fbc4204e94d14f1b3a25",
+    "lastHarvestedAt": "2026-11-23T18:16:01.718Z",
     "learningId": "learn-github-stakater-reloader"
   },
   "pathwaycom-llm-app": {

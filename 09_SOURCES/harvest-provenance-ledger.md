@@ -12444,3 +12444,5 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `79e960f9` | Multi-dimensional audit evidence | 2026-11-23T17:54:15.203Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T18:03:08.558Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `9438aa66` | Multi-dimensional audit evidence | 2026-11-23T18:03:23.975Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T18:15:55.621Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `6002095f` | Multi-dimensional audit evidence | 2026-11-23T18:16:01.718Z |

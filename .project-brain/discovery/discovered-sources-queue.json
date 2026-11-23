@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T17:54:19.156Z",
+  "updated_at": "2026-11-23T18:16:05.564Z",
   "stats": {
-    "total_discovered": 7955,
+    "total_discovered": 7956,
     "approved_pending_harvest": 7527,
     "harvested_count": 0,
-    "rejected_count": 428,
+    "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7520,
+      "COMMUNITY_AND_EXPERT": 7521,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -172037,6 +172037,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
         "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-7AC1A3646B4F": {
+      "id": "SRC-7AC1A3646B4F",
+      "url": "http://schema.org/extensions",
+      "title": "http://schema.org/extensions",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T18:16:05.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stakater-reloader-learnings.md",
+        "fileName": "stakater-reloader-learnings.md"
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T18:03:23.988Z",
+  "last_updated": "2026-11-23T18:16:01.726Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -830,14 +830,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
-      "content_hash": "908315c113f96aa16bcc2e587d4fe19ef68b1d6f2a4b209b5426f64f38e54cfc",
-      "verified_at": "2026-11-19T07:06:20.526Z",
+      "content_hash": "5f4b1cd153df9739c37a255ab635a1b23469bf62ae6913d67c0de7cc4eb60ba7",
+      "verified_at": "2026-11-23T18:15:55.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T07:06:20.526Z"
+      "last_updated": "2026-11-23T18:15:55.630Z"
     },
     "unsloth/embeddinggemma-2-GGUF": {
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -9861,14 +9861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stakater-reloader",
-      "content_hash": "af427e774b3eeae9ef0ad50307353136b733ad2cd6294081a6db36cb2c696460",
-      "verified_at": "2026-11-17T16:46:52.773Z",
+      "content_hash": "6c7439ef44d01f1f9fe535122458c170808185093909fbc4204e94d14f1b3a25",
+      "verified_at": "2026-11-23T18:16:01.726Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:46:52.773Z"
+      "last_updated": "2026-11-23T18:16:01.726Z"
     },
     "amir1376/ab-download-manager": {
       "repository": "amir1376/ab-download-manager",

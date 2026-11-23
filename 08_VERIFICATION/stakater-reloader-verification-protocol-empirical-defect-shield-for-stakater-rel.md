@@ -4,22 +4,22 @@
 {
   "source_repository": "stakater/Reloader",
   "source_url": "https://github.com/stakater/Reloader",
-  "source_version": "5f3fdbdc",
+  "source_version": "6002095f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T16:46:52.949Z",
+  "timestamp": "2026-11-23T18:16:01.948Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-stakater-reloader",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [stakater/Reloader](https://github.com/stakater/Reloader) (Revision: `5f3fdbdc`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T16:46:52.949Z`  
+> **Provenance**: Harvested from [stakater/Reloader](https://github.com/stakater/Reloader) (Revision: `6002095f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T18:16:01.948Z`  
 > **Learning ID**: `learn-github-stakater-reloader`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `stakater/Reloader` (Commit: `5f3fdbdc`)
+- **Target Repository**: `stakater/Reloader` (Commit: `6002095f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:46:51.827Z  
+> **Harvest Timestamp**: 2026-11-23T18:16:00.633Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling upgrades on Pods with their associated Deployment, StatefulSet, DaemonSet and DeploymentConfig – [✩Star] if you're using it!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10576 stars
+- **Stars / Engagement**: 10591 stars
 
 ---
 
@@ -1304,11 +1304,11 @@ func ApplyFlags(cfg *config.Config, log logr.Logger) error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1281** (2026-11-16): **fix: bump golang.org/x/net to v0.62.0 on v2**
-  *Symptoms*: #1273 fixed #1272 on `master`, but `v2` is still on `golang.org/x/net` v0.58.0. This is the same bump for `v2`: `golang.org/x/net` to v0.62.0, and the other `golang.org/x` modules to exactly the versions `master` has now. Only `go.mod` and `go.sum` change.  ```console $ go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...   # before Your code is affected by 7 vulnerabilities from 1 module and the Go standard library. $ go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...   # after Your code is affected by 2 vulnerabilities from the Go standard library. ```  The two left are in my local Go 1.27.2 toolchain, not in a module. `go build ./...` and the unit tests in `internal/` and `pkg/` pass; I did not run the e2e suites, which need a cluster. 
+- **Issue #1299** (2026-11-23): **chore(chart): bump to 3.0.0-beta.6 for v2.0.0-beta.3**
+  *Symptoms*: Points the chart at `v2.0.0-beta.3` (#1281) and bumps the chart version to `3.0.0-beta.6`, which also publishes the chart changes from #1271 and #1264.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-- **Issue #1280** (2026-11-11): **chore: bump Helm chart to 2.2.20 (appVersion v1.4.24)**
-  *Symptoms*: `v1.4.24` ships the golang.org/x/net v0.62.0 bump for CVE-2026-78661 and CVE-2026-97045 (#1273), the pause-resume retry fix (#1266), the webhook non-2xx handling fix (#1269) and the configurable NetworkPolicy egress (#1262). The chart still deploys `v1.4.23`.  Point the chart at `v1.4.24` and bump the chart version. The `release/helm-chart` label publishes it on merge.  ## Before/After | | Before | After | |---|---|---| | Chart `version` | `2.2.19` | `2.2.20` | | `appVersion`, `image.tag`, version label | `v1.4.23` | `v1.4.24` |  Example: `helm upgrade reloader stakater/reloader --version 2.2.20` deploys `ghcr.io/stakater/reloader:v1.4.24`. 
+- **Issue #1298** (2026-11-23): **chore: bump Helm chart to 2.2.21 (appVersion v1.4.25)**
+  *Symptoms*: Points the chart at `v1.4.25` (#1283, #1274, #1275) and bumps the chart version to `2.2.21`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1325,336 +1325,272 @@ func ApplyFlags(cfg *config.Config, log logr.Logger) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a11daedb` (2026-11-11)
-**Commit Message**: fix: bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045
+### Incident Patch 1: `f1d193f8` (2026-11-23)
+**Commit Message**: Merge pull request #1270 from egezamb/fix/skip-suspended-cronjob
 
-#1273 did this on master; v2 was still on golang.org/x/net v0.58.0. The other golang.org/x modules move in lockstep to the same versions as master.
+fix(cronjob): skip creating a Job when the CronJob is suspended
 
-**File**: `go.mod` (modified, +8/-8)
+**File**: `internal/pkg/controller/handler.go` (modified, +10/-2)
 ```diff
-@@ -249,16 +249,16 @@ require (
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
- 	golang.org/x/exp/typeparams v0.0.0-20251023183803-a4bb9ffd2546 // indirect
--	golang.org/x/mod v0.40.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
--	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
-```
-
-**File**: `go.sum` (modified, +16/-16)
-```diff
-@@ -611,8 +611,8 @@ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.13.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
--golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
--golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
-@@ -626,8 +626,8 @@ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
- golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
- golang.org/x/net v0.16.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-@@ -639,8 +639,8 @@ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -660,18 +660,18 @@ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
--golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 h1:ZUSxONxc981v7AW7QUg+I9WwZzSTTJ019ENBYr5pV/Q=
--golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5/go.mod h1:LVehoXe41cL5SCVQilsV7Gg6BNG+Js6P9PhSbYTIUkQ=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
-+golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
- golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
- golang.org/x/term v0.12.0/go.mod h1:owVbMEjm3cBLCHdkQu9b1opXd4ETQWc3BhuQGKgXgvU=
- golang.org/x/term v0.13.0/go.mod h1:LTmsnFJwVN6bCy1rVCoS+qHT1HhALEFxKncY3WNNh4U=
--golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
--golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
- gol
-```
-
----
-
-### Incident Patch 2: `ea1a0a89` (2026-11-06)
-**Commit Message**: fix(manifests): grant update on cronjobs/finalizers for kubectl installs
-
-Review of #1271: deployments/kubernetes/manifests/clusterrole.yaml and the
-generated reloader.yaml had the same gap as the chart, so CronJob reloads
-still failed on OpenShift for kubectl apply installs. reloader.yaml is
-regenerated with make k8s-manifests; the only change in it is this rule.
-
-**File**: `deployments/kubernetes/manifests/clusterrole.yaml` (modified, +6/-0)
-```diff
-@@ -42,6 +42,12 @@ rules:
-     verbs:
-       - list
-       - get
-+  - apiGroups:
-+      - "batch"
-+    resources:
-+      - cronjobs/finalizers
-+    verbs:
-+      - update
-   - apiGroups:
-       - "batch"
-     resources:
-```
-
-**File**: `deployments/kubernetes/reloader.yaml` (modified, +6/-0)
-```diff
-@@ -63,6 +63,12 @@ rules:
-   verbs:
-   - list
-   - get
-+- apiGroups:
-+  - batch
-+  resources:
-+  - cronjobs/finalizers
-+  verbs:
-+  - update
- - apiGroups:
-   - batch
-   resources:
-```
-
----
-
-### Incident Patch 3: `06146b39` (2026-11-06)
-**Commit Message**: fix(chart): grant cronjobs/finalizers unless both CronJobs and Jobs are ignored
-
-Review of #1271: a Job that a CronJob created keeps its ownerReference
-(blockOwnerDeletion) when Reloader recreates it, so ignoreCronJobs: true
-with ignoreJobs: false still needs the rule. The negative tests now use
-notContains with the same block as the positive ones, so they cannot
-pass when a filter matches nothing, and cover the scoped namespace
-Roles and the CronJobs-only case.
-
-**File**: `deployments/kubernetes/chart/reloader/templates/_helpers.tpl` (modified, +4/-0)
-```diff
-@@ -287,6 +287,10 @@ the rule set is defined once. Expects the root context ($) as its argument.
-       - watch
-       - update
-       - patch
-+{{- end }}
-+{{- /* A Job recreated from a CronJob keeps its ownerReference (blockOwnerDeletion), so the Job
-+       path needs this too: it is left out only when both CronJobs and Jobs are ignored. */}}
-+{{- if not (and .Values.reloader.ignoreCronJobs .Values.reloader.ignoreJobs) }}
-   - apiGroups:
-       - "batch"
-     resources:
-```
-
-**File**: `deployments/kubernetes/chart/reloader/templates/clusterrole.yaml` (modified, +4/-0)
-```diff
-@@ -89,6 +89,10 @@ rules:
-       - watch
-       - update
-       - patch
-+{{- end }}
-+{{- /* A Job recreated from a CronJob keeps its ownerReference (blockOwnerDeletion), so the Job
-+       path needs this too: it is left out only when both CronJobs and Jobs are ignored. */}}
-+{{- if not (and .Values.reloader.ignoreCronJobs .Values.reloader.ignoreJobs) }}
-   - apiGroups:
-       - "batch"
-     resources:
-```
-
-**File**: `deployments/kubernetes/chart/reloader/tests/cronjob_rbac_test.yaml` (modified, +91/-12)
-```diff
-@@ -40,18 +40,90 @@ tests:
-             verbs:
-               - update
+@@ -2,6 +2,7 @@ package controller
  
--  - it: does not grant cronjobs/finalizers in the ClusterRole when CronJobs are ignored
-+  - it: grants update on cronjobs/finalizers in each scoped namespace's Role
-+    template: role.yaml
-+    documentSelector:
-+      path: metadata.namespace
-+      value: team-b
-+    set:
-+      reloader:
-+        watchGlobally: false
-+        namespaces:
-+          - team-a
-+          - team-b
-+    asserts:
-+      - isKind:
-+          of: Role
-+      - contains:
-+          path: rules
-+          content:
-+            apiGroups:
-+              - "batch"
-+            resources:
-+              - cronjobs/finalizers
-+            verbs:
-+              - update
-+
-+  # A Job that a CronJob created keeps its ownerReference when Reloader recreates it, so the rule
-+  # stays while Jobs are still reloaded.
-+  - it: still grants cronjobs/finalizers in the ClusterRole when only CronJobs are ignored
-+    template: clusterrole.yaml
-+    set:
-+      reloader:
-+        watchGlobally: true
-+        ignoreCronJobs: true
-+        ignoreJobs: false
-+    asserts:
-+      - contains:
-+          path: rules
-+          content:
-+            apiGroups:
-+              - "batch"
-+            resources:
-+              - cronjobs/finalizers
-+            verbs:
-+              - update
-+
-+  - it: still grants cronjobs/finalizers in the namespaced Role when only CronJobs are ignored
-+    template: role.yaml
-+    documentSelector:
-+      path: metadata.name
-+      value: RELEASE-NAME-reloader-role
-+    set:
-+      reloader:
-+        watchGlobally: false
-+        ignoreCronJobs: true
-+        ignoreJobs: false
-+    asserts:
-+      - contains:
-+          path: rules
-+          content:
-+            apiGroups:
-+              - "batch"
-+            resources:
-+              - cronjobs/finalizers
-+            verbs:
-+              - update
-+
-+  - it: does not grant cronjobs/finalizers in the ClusterRole when CronJobs and Jobs are ignored
-     template: clusterrole.yaml
-     set:
-       reloader:
-         watchGlobally: true
-         ignoreCronJobs: true
-+        ignoreJobs: true
-     asserts:
--      - exists:
--          path: rules[?(@.resources[0] == "cronjobs/finalizers")]
--        not: true
-+      - notContains:
-+          path: rules
-+          content:
-+            apiGroups:
-+              - "batch"
-+            resources:
-+              - cronjobs/finalizers
-+            verbs:
-+              - update
+ import (
+ 	"context"
++	"slices"
+ 	"time"
  
--  - it: does not grant cronjobs/finalizers in the namespaced Role when CronJobs are ignored
-+  - it: does not grant cronjobs/finalizers in the namespaced Role when CronJobs and Jobs are ignored
-     template: role.yaml
-     documentSelector:
-       path: metadata.name
-@@ -60,26 +132,33 @@ tests:
-       reloader:
-         watchGlobally: false
-         ignoreCronJobs: true
-+        ignoreJobs: true
-     asserts:
--      - exists:
--          path: rules[?(@.resources[0] == "cronjobs/finalizers")]
--        not: true
-+      - notContains:
-+          path: rules
-+          content:
-+            apiGroups:
-+              - "batch"
-+            resources:
-+              - cronjobs/finalizers
-+            verbs:
-+              - update
+ 	"github.com/go-logr/logr"
+@@ -53,7 +54,9 @@ func (h *ReloadHandler) Process(
+ 		h.Collectors.RecordWorkloadsScanned(kind, count)
+ 	}
  
--  - it: grants update on cronjobs/finalizers in each scoped namespace's Role
-+  - it: does not grant cronjobs/finalizers in a scoped namespace's Role when CronJobs and Jobs are ignored
-     template: role.yaml
-     documentSelector:
-       path: metadata.namespace
-       value: team-b
-     set:
-       reloader:
-         watchGlobally: false
-+        ignoreCronJobs: true
-+        ignoreJobs: true
-         namespaces:
-           - team-a
-           - team-b
-     asserts:
--      - isKind:
--          of: Role
--      - contains:
-+      - notContains:
-           path: rules
-           content:
-             apiGroups:
+-	decisions := reload.FilterDecisions(getDecisions(workloads))
++	all := getDecisions(workloads)
++	suspended := slices.ContainsFunc(all, func(d reload.ReloadDecision) bool { return d.Suspended })
++	decisions := reload.FilterDecisions(all)
+ 
+ 	matchedByKind := make(map[string]int)
+ 	for _, d := range decisions {
+@@ -63,7 +66,12 @@ func (h *ReloadHandler) Process(
+ 		h.Collectors.RecordWorkloadsMatched(kind, count)
+ 	}
+ 
+-	if len(decisions) == 0 {
++	// Like the other skipped_total reasons, this counts the event, with one reason at most. Each
++	// suspended workload is still named in the "skipping reload of suspended workload" log line.
++	switch {
++	case len(decisions) == 0 && suspended:
++		h.Collectors.RecordSkipped("suspended")
++	case len(decisions) == 0:
+ 		h.Collectors.RecordSkipped("no_match")
+ 	}
+ 
+```
+
+**File**: `internal/pkg/controller/suspended_metrics_test.go` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++package controller_test
++
++import (
++	"testing"
++
++	dto "github.com/prometheus/client_model/go"
++	"k8s.io/apimachinery/pkg/runtime"
++
++	"github.com/stakater/Reloader/internal/pkg/controller"
++	"github.com/stakater/Reloader/internal/pkg/testutil"
++	"github.com/stakater/Reloader/pkg/config"
++)
++
++// A change that matches only suspended CronJobs is skipped once, as "suspended", however many
++// CronJobs there are, and is not also counted as "no_match". A change that matches a running
++// workload as well is not skipped at all.
++func TestConfigMapReconciler_SuspendedSkipCountedOncePerEvent(t *testing.T) {
++	suspendedCronJob := func(cfg *config.Config, name string) runtime.Object {
++		cj := testutil.NewCronJobWithAnnotations(name, "default", map[string]string{cfg.Annotations.ConfigmapReload: "test-cm"})
++		suspend := true
++		cj.Spec.Suspend = &suspend
++		return cj
++	}
++	for name, c := range map[string]struct {
++		extra                      func(*config.Config) []runtime.Object
++		wantSuspended, wantNoMatch float64
++	}{
++		"three suspended CronJobs": {func(cfg *config.Config) []runtime.Object {
++			return []runtime.Object{suspendedCronJob(cfg, "a"), suspendedCronJob(cfg, "b"), suspendedCronJob(cfg, "c")}
++		}, 1, 0},
++		"a suspended CronJob next to a Deployment": {func(cfg *config.Config) []runtime.Object {
++			return []runtime.Object{suspendedCronJob(cfg, "a"),
++				testutil.NewDeployment("web", "default", map[string]string{cfg.Annotations.ConfigmapReload: "test-cm"})}
++		}, 0, 0},
++		"nothing matches": {func(cfg *config.Config) []runtime.Object { return nil }, 0, 1},
++	} {
++		t.Run(name, func(t *testing.T) {
++			cfg := config.NewDefault()
++			objects := append([]runtime.Object{testutil.NewConfigMap("test-cm", "default")}, c.extra(cfg)...)
++			deps := newTestDeps(t, cfg, objects...)
++			reconciler := controller.NewConfigMapReconciler(deps.client.Build(), deps.log, deps.cfg, deps.reloadService,
++				deps.registry, deps.collectors, deps.eventRecorder, deps.webhookClient, deps.alerter, nil, nil)
++			assertReconcileSuccess(t, reconciler, reconcileRequest("test-cm", "default"))
++
++			skipped := func(reason string) float64 {
++				m := &dto.Metric{}
++				if err := deps.collectors.SkippedTotal.WithLabelValues(reason).Write(m); err != nil {
++					t.Fatal(err)
++				}
++				return m.GetCounter().GetValue()
++			}
++			if got := skipped("suspended"); got != c.wantSuspended {
++				t.Errorf("skipped_total{reason=suspended} = %v, want %v", got, c.wantSuspended)
++			}
++			if got := skipped("no_match"); got != c.wantNoMatch {
++				t.Errorf("skipped_total{reason=no_match} = %v, want %v", got, c.wantNoMatch)
++			}
++		})
++	}
++}
+```
+
+**File**: `internal/pkg/reload/decision.go` (modified, +2/-0)
+```diff
+@@ -17,6 +17,8 @@ type ReloadDecision struct {
+ 	Reason string
+ 	// Hash is the computed hash of the resource content.
+ 	Hash string
++	// Suspended is true when the workload matched but is suspended, so it is not reloaded.
++	Suspended bool
+ }
+ 
+ // FilterDecisions returns only decisions where ShouldReload is true.
+```
+
+**File**: `internal/pkg/reload/service.go` (modified, +13/-1)
+```diff
+@@ -116,13 +116,25 @@ func (s *Service) processResource(
+ 			shouldReload = false
+ 		}
+ 
++		// A suspended workload is decided here, before it is counted as matched, logged as
++		// reloading or sent to a webhook (#822).
++		suspended := shouldReload && wl.IsSuspended()
++		reason := matchResult.Reason
++		if suspended {
++			shouldReload = false
++			reason = "workload is suspended"
++			s.log.Info("skipping reload of suspended workload",
++				"kind", wl.Kind(), "workload", wl.GetName(), "namespace", wl.GetNamespace())
++		}
++
+ 		decisions = append(
+ 			decisions, ReloadDecision{
+ 				Workload:     wl,
+ 				ShouldReload: shouldReload,
+ 				AutoReload:   matchResult.AutoReload,
+-				Reason:       matchResult.Reason,
++				Reason:       reason,
+ 				Hash:         hash,
++				Suspended:    suspended,
+ 			},
+ 		)
+ 	}
+```
+
+**File**: `internal/pkg/reload/service_test.go` (modified, +40/-0)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	appsv1 "k8s.io/api/apps/v1"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/utils/ptr"
+ 	csiv1 "sigs.k8s.io/secrets-store-csi-driver/apis/v1"
+ 
+ 	"github.com/stakater/Reloader/internal/pkg/testutil"
+@@ -77,6 +78,45 @@ func TestService_ProcessConfigMap_AutoReload(t *testing.T) {
+ 	}
+ }
+ 
++func TestService_ProcessConfigMap_SuspendedCronJob(t *testing.T) {
++	tests := []struct {
++		name          string
++		suspend       *bool
++		wantReload    bool
++		wantSuspended bool
++	}{
++		{name: "suspended", suspend: ptr.To(true), wantReload: false, wantSuspended: true},
++		{name: "not suspended", suspend: ptr.To(false), wantReload: true, wantSuspended: false},
++		{name: "suspend unset", suspend: nil, wantReload: true, wantSuspended: false},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			svc := NewService(config.NewDefault(), testr.New(t))
++			cj := testutil.NewCronJobWithAnnotations("test-cj", "default", map[string]string{
++				"configmap.reloader.stakater.com/reload": "test-cm",
++			})
++			cj.Spec.Suspend = tt.suspend
++			cm := &corev1.ConfigMap{
++				ObjectMeta: metav1.ObjectMeta{Name: "test-cm", Namespace: "default"},
++				Data:       map[string]string{"key": "value"},
++			}
++
++			decisions := svc.Process(ConfigMapChange{ConfigMap: cm, EventType: EventTypeUpdate},
++				[]workload.Workload{workload.NewCronJobWorkload(cj)})
++
++			if len(decisions) != 1 {
++				t.Fatalf("Expected 1 decision, got %d", len(decisions))
++			}
++			if decisions[0].ShouldReload != tt.wantReload {
++				t.Errorf("ShouldReload = %v, want %v", decisions[0].ShouldReload, tt.wantReload)
++			}
++			if decisions[0].Suspended != tt.wantSuspended {
++				t.Errorf("Suspended = %v, want %v", decisions[0].Suspended, tt.wantSuspended)
++			}
++		})
++	}
++}
++
+ func TestService_ProcessConfigMap_ExplicitAnnotation(t *testing.T) {
+ 	cfg := config.NewDefault()
+ 	svc := NewService(cfg, testr.New(t))
+```
+
+**File**: `internal/pkg/workload/base.go` (modified, +6/-0)
+```diff
+@@ -151,6 +151,12 @@ func (b *BaseWorkload[T]) UsesSecret(name string) bool {
+ 	return SpecUsesSecret(&template.Spec, name)
+ }
+ 
++// IsSuspended reports whether the workload is paused so that Reloader must not start it. Only a
++// suspended CronJob is; every other kind returns false.
++func (b *BaseWorkload[T]) IsSuspended() bool {
++	return false
++}
++
+ func (b *BaseWorkload[T]) GetOwnerReferences() []metav1.OwnerReference {
+ 	return b.accessor.GetObjectMeta().OwnerReferences
+ }
+```
+
+**File**: `internal/pkg/workload/cronjob.go` (modified, +7/-0)
+```diff
+@@ -59,6 +59,13 @@ func (w *CronJobWorkload) UpdateStrategy() UpdateStrategy {
+ 	return UpdateStrategyCreateNew
+ }
+ 
++// IsSuspended reports whether the CronJob has spec.suspend set. Suspend stops new runs, so Reloader
++// does not start one either (#822).
++func (w *CronJobWorkload) IsSuspended() bool {
++	suspend := w.Object().Spec.Suspend
++	return suspend != nil && *suspend
++}
++
+ // PerformSpecialUpdate creates a new Job from the CronJob's template.
+ // This triggers an immediate execution of the CronJob with updated config.
+ func (w *CronJobWorkload) PerformSpecialUpdate(ctx context.Context, c client.Client) (bool, error) {
+```
+
+**File**: `internal/pkg/workload/interface.go` (modified, +4/-0)
+```diff
+@@ -82,6 +82,10 @@ type WorkloadReader interface {
+ 
+ 	// GetOwnerReferences returns the owner references of the workload.
+ 	GetOwnerReferences() []metav1.OwnerReference
++
++	// IsSuspended reports whether the workload is paused, such as a CronJob with spec.suspend
++	// set, so that a reload must not start it.
++	IsSuspended() bool
+ }
+ 
+ // WorkloadMatcher provides methods for checking resource usage.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1299** (2026-11-23): chore(chart): bump to 3.0.0-beta.6 for v2.0.0-beta.3 (@msafwankarim)
+- **PR #1298** (2026-11-23): chore: bump Helm chart to 2.2.21 (appVersion v1.4.25) (@msafwankarim)
+- **PR #1297** (2026-11-20): Bump version to 1.4.25 on release-v1.4.25 branch (@github-actions[bot])
+- **PR #1283** (2026-11-20): fix(controller): skip initial-list adds for reloadOnCreate in scoped mode (@D3strukt0r)
 - **PR #1281** (2026-11-16): fix: bump golang.org/x/net to v0.62.0 on v2 (@egezamb)
 - **PR #1280** (2026-11-11): chore: bump Helm chart to 2.2.20 (appVersion v1.4.24) (@SyedaFatimaKazmi)
-- **PR #1279** (closed): Release v1.4.24 (@SyedaFatimaKazmi)
-- **PR #1278** (2026-11-11): Bump version to 1.4.24 on release-v1.4.24 branch (@github-actions[bot])
-- **PR #1275** (2026-11-16): fix(chart): point monitor namespaceSelector at the namespace value (@lbarrosby)
-- **PR #1274** (2026-11-16): fix: honor exclude annotations set on the pod template (@lbarrosby)
 
 ---
 
@@ -1674,45 +1610,41 @@ Roles and the CronJobs-only case.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045
+## X. Empirical Invariant Guard in handler.go
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/pkg/controller/handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a11daedb`: bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1d193f8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pkg/controller/handler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/mod v0.41.0 // indirect
-	golang.org/x/net v0.62.0 // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
+	"slices"
+	all := getDecisions(workloads)
+	suspended := slices.ContainsFunc(all, func(d reload.ReloadDecision) bool { return d.Suspended })
+	decisions := reload.FilterDecisions(all)
+	// Like the other skipped_total reasons, this counts the event, with one reason at most. Each
+	// suspended workload is still named in the "skipping reload of suspended workload" log line.
+	switch {
+	case len(decisions) == 0 && suspended:
+		h.Collectors.RecordSkipped("suspended")
+	case len(decisions) == 0:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	golang.org/x/mod v0.40.0 // indirect
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
-	golang.org/x/term v0.45.0 // indirect
-	golang.org/x/text v0.41.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
+	decisions := reload.FilterDecisions(getDecisions(workloads))
+	if len(decisions) == 0 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a11daedb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1d193f8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
