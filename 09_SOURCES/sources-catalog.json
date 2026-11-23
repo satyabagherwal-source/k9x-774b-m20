@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "1e56cb9eeb722c83ace7145ce4f33540e6a4d36db3572c4dfb7a05b2b0da4c03",
-    "lastHarvestedAt": "2026-11-19T17:42:49.261Z",
+    "contentHash": "db2fb7bdd3a9ded4d23a119fdd12331148fef1d49a05d555dbd3685073c23165",
+    "lastHarvestedAt": "2026-11-23T23:39:46.262Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "01f673c4",
+    "sourceVersion": "da6276d7",
     "license": "BSD-3-Clause",
-    "contentHash": "e5ee3e137a6f0196687b67748f048a33cf8281a7274f6d89b379bfd6d0e33919",
-    "lastHarvestedAt": "2026-11-23T19:26:16.528Z",
+    "contentHash": "e134d954b7e12ccc9076a4cec0b3d20df16bc34bdb8e78e52b7740f59bc69328",
+    "lastHarvestedAt": "2026-11-23T23:39:56.838Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "675ba816",
+    "sourceVersion": "6bbeecff",
     "license": "MIT",
-    "contentHash": "a5272a2235f450c8f80cd1c771912448a8d2d1ff017bbe56cf32ce9d1be438f1",
-    "lastHarvestedAt": "2026-11-22T15:55:53.159Z",
+    "contentHash": "b5ffca2816e2ee437806e135d4fded9b129ab108c8a4d6d3b7bba306481a7ca6",
+    "lastHarvestedAt": "2026-11-23T23:39:47.584Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

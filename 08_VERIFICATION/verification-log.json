@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-FSB0",
-    "timestamp": "2026-11-22T03:11:24.684Z",
-    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-    "contentHash": "1b047ef18cca3cd94e25a2b7523d3ff06b42686134bfab49118768de9c1e541f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-FT5C",
-    "timestamp": "2026-11-22T03:11:25.776Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "bd927176fb283174a7b5896d22fb32c7c4db62d5b1e161747208292e5573243c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-G2YO",
-    "timestamp": "2026-11-22T03:11:38.496Z",
-    "repository": "giancarloerra/SocratiCode",
-    "learningId": "learn-github-giancarloerra-socraticode",
-    "contentHash": "74f622beb8fc36202d1de161ca80870bebf73b1e8d1d4476114f285d6aae92c6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-G473",
     "timestamp": "2026-11-22T03:11:40.095Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7447,51 @@
     "contentHash": "358cedec9071dca13db6ca105bb37b65ac63893a4bd512f149cc721454d414e8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-RBGX",
+    "timestamp": "2026-11-23T23:39:46.257Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "db2fb7bdd3a9ded4d23a119fdd12331148fef1d49a05d555dbd3685073c23165",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-RCHO",
+    "timestamp": "2026-11-23T23:39:47.580Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "b5ffca2816e2ee437806e135d4fded9b129ab108c8a4d6d3b7bba306481a7ca6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-RJMQ",
+    "timestamp": "2026-11-23T23:39:56.834Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "e134d954b7e12ccc9076a4cec0b3d20df16bc34bdb8e78e52b7740f59bc69328",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

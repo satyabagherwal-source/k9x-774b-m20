@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
   "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T17:42:49.465Z",
+  "timestamp": "2026-11-23T23:39:46.462Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-35B-A3B-gguf](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf) (Revision: `hf-openbmb`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T17:42:49.465Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T23:39:46.462Z`  
 > **Learning ID**: `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T17:37:47.880Z  
+> **Harvest Timestamp**: 2026-11-23T23:39:45.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 422572 downloads | 469 likes
+- **Stars / Engagement**: 430781 downloads | 473 likes
 
 ---
 

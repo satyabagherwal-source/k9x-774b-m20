@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T13:13:24.262Z",
+  "timestamp": "2026-11-23T23:40:26.713Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T13:13:24.262Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T23:40:26.713Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale-tailscale-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `c8ba9da5`  
+> **Source Version**: `da6276d7`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T13:08:27.312Z  
+> **Timestamp**: 2026-11-23T23:39:56.359Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T13:08:27.307Z  
+> **Harvest Timestamp**: 2026-11-23T23:39:56.354Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39367 stars
+- **Stars / Engagement**: 39534 stars
 
 ---
 
@@ -828,13 +828,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22450** (2026-11-17): **wireguard-go: wakes up once a second when idle**
-  *Symptoms*: I noticed when working on a new version of natlab that runs the Linux kernel within Go synctest tests that an idle Tailscale wakes up once a second interacting the Linux kernel.  Turns out that it's the hack for checking for network namespace moves (moving the tun device), which Tailscale doesn't even use, and which is also seemingly broken in modern kernels. (I didn't bisect whenever it last worked)  Tracking bug to fix that and stop its once/second wake-ups.  /cc @raggi 
-  **Post-Mortem & Fix Analysis**:
-  > Hahahah, asking Claude to look at the Linux git repo to figure if/when this code ever worked, starting by trying to find whether it worked when it was first written, and then bisecting...  ``` ● The hack only ever worked on Linux 4.5 through 5.0, and the 2019   stable backports broke it on the older series too. It was written in   November 2017, against roughly 4.14, where it did work.    When it worked:   - v4.5: commit 1bd4978a88ac ("tun: honor IFF_UP in tun_get_user()")     added if (!(tun->dev->flags & IFF_UP)) return -EIO; as the first     statement in tun_get_user. A zero-length write on a down interface     therefore got EIO. On an up interface it fell through to the     packet-info length check and got EINVAL.   - Before v4.5 there was no IFF_UP check in the write path, so a     zero-length write always got EINVAL, meaning "up".   - Evidence it was designed around this: in wireguard-go, the hack     was added 2017-11-29 (471f7ff, "Added cross namespace TUN status     detection"
+- **Issue #22582** (2026-11-23): **client/systray: SIGINT and SIGTERM exit with status 1 during normal shutdown**
+  *Symptoms*: ### What is the issue?  On upstream main eaf3fc8daf90fb18714e21df38258db2ae33184a, stopping the Linux tray with SIGINT or SIGTERM cancels its IPN bus watch. watchIPNBus then treats context.Canceled as fatal and terminates the process with status 1.  The signal handler calls onExit directly, which cleans up handlers but does not stop the native tray loop. The fatal watcher currently terminates the process instead. Removing the fatal alone would leave that loop running.  ### Steps to reproduce  I reproduced this using the actual Menu.Run and tray library in subprocesses, with a private D-Bus session, a fake StatusNotifierWatcher, and a fake tailscaled LocalAPI streaming watch endpoint. No live tailnet or desktop session is needed.  Apply the attached clean-shutdown-tests.patch to this exact upstream commit and run:      ./tool/go test -race ./client/systray -run '^TestShutdownSignals$' -count=1 -v  Both signal cases exit with status 1 and log:      exiting     ipnbus error: context canceled     watchIPNBus: ipnbus error: context canceled  The test also reproduced status 1 for the D-Bus Quit action. That path may be scheduling-dependent because Run can return before the watcher reaches log.Fatal.  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Debian GNU/Linux 13; Linux 6.12.111+deb13-amd64  ### Tailscale version  1.104.7  ### Other software  _No response_  ### Bug report  _No response_
 
-- **Issue #22379** (2026-11-16): **magicsock: peer home DERP stays stale after a delta: updateNodes fast path skips a full netmap that equals the unpatched peersByID snapshot**
-  *Symptoms*: ### What is the issue?  A peer's home DERP region can go stale in magicsock and stay stale until an unrelated netmap change, while the control plane and the client's own netmap hold the correct value. Packets for that peer are then sent to a DERP region the peer has left. If the two nodes have no other path (no direct UDP in either direction until a CallMeMaybe gets through), the peer is unreachable.  **Mechanism (v1.104.5, also present at v1.102.5 and on `main` at 59064619a):**  1. `Conn.UpdateNetmapDelta` applies `NodeMutationDERPHome` by calling `ep.setDERPHome` only. It does not update `c.peersByID`. The field comment says so: "per-field NodeMutation patches received in UpdateNetmapDelta are never applied to these snapshots" (`wgengine/magicsock/magicsock.go`, `peersByID`). 2. `Conn.updateNodes` has a fast path that returns early when every peer in the incoming full netmap `Equal`s its `peersByID` snapshot. 3. So: a full netmap (or upsert) records home = A in both the endpoint and the snapshot. A delta moves the endpoint to B; the snapshot still says A. The peer moves back to A, and that change reaches magicsock inside a full netmap rather than as a delta. The node equals the stale snapshot, the fast path skips it, and `ep.derpAddr` stays on B.  The change back to A arrives inside a full netmap whenever the `MapResponse` carrying the `DERPRegion` patch also carries any field in `mapResponseContainsNonPatchFields` (`Node`, `DERPMap`, `DNSConfig`, `Health`, `DisplayMessages
+- **Issue #22574** (2026-11-23): **Funnel: 2 of 3 edges slow (~5 s TLS) or failing since 2026-11-22 05:31 UTC, ingress via DERP fra**
+  *Symptoms*: ### What is the issue?  Since 2026-11-22 05:31 UTC, Funnel requests to one of my nodes intermittently fail. Callers get "Bad Gateway" or time out after about 5 s. Nothing changed on my side. The node's log had zero TLS handshake errors for the 46 hours before (back to 2026-11-20 07:32 UTC); since then about 35-40 per hour.  Testing each Funnel edge separately (public DNS, `curl --resolve NAME:443:EDGE`, 20 requests each, 2026-11-22 07:37-07:44 UTC; the app answers 403 to "/" by design, so any HTTP code means TLS completed):  | Edge | Result | Time until TLS done | |---|---|---| | 185.40.234.172 | 20/20 ok | 0.16-0.41 s | | 185.40.234.37 | 19/20 ok, 1 failed | 3.7-13.7 s, mostly ~5.4 s | | 185.40.234.210 | 16/20 ok, 4 failed | ~5.4 s, some 10.8-13.8 s |  So one edge is healthy and two are consistently slow or failing, which explains why it looks intermittent: it depends on which edge the caller hits. A warm test (2 requests 10 s apart to 185.40.234.37) was still slow: 3.2 s, then 2.3 s.  On the node: - `peerapi_ingress` went from 138 to 211 during the test, so connections reach the node; the delay is in the relay-to-node leg. - All `funnel-ingress-node` peers have empty `CurAddr` (no direct path); the three active ones have `Relay: fra`. Node metrics: ~1,986 packets received via DERP vs 49 direct. - `tailscale netcheck` on the node: UDP yes, IPv4 yes, MappingVariesByDestIP false, nearest DERP Frankfurt 29.7 ms. - Each failure logs the same pattern (addresses redacted):  ``` 07
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -851,495 +849,546 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8ba9da5` (2026-11-20)
-**Commit Message**: ipn/store/kubestore: cache TLS certs briefly on write replicas (#22103)
+### Incident Patch 1: `7caf9edb` (2026-11-23)
+**Commit Message**: appc,feature/conn25: build split DNS routes from the parsed config
 
-The write replica of an HA ProxyGroup (cert share "rw") doesn't keep TLS
-certs in memory, so that it notices a recreated, empty cert Secret and
-issues a new cert. As a result, it read the cert Secret from the API
-server on every TLS handshake, with a 30s timeout. When the API server
-was slow or unavailable, handshakes on that replica waited for the read,
-and feature/acme repeated the read under the per-domain lock. Clients
-with a 10s handshake timeout, such as kubectl, failed.
+On every self node change, conn25 parsed the app connector capability
+twice: once in configFromNodeView, and again in appc.AppDNSRoutes to
+build the split DNS routes. Build the routes from the config we already
+have instead, and move DNSAddrScheme into feature/conn25 along with it.
 
-This commit adds a small per-domain cache of the last-known-good cert
-and key for write replicas. The replica serves a cached cert for 30s
-before it reads the Secret again. When it has a cached cert, the read
-uses a 3s timeout, and on an error other than not found or forbidden
-the replica serves the cached cert and waits another 30s before the
-next read. A read that finds the Secret missing, forbidden or empty
-removes the cached cert and returns ipn.ErrStateNotExist as before, so
-a recreated Ingress still gets a new cert, at most 30s later.
-Concurrent reads of the same Secret share one GET, and a read that is
-in flight when a cert is wr
+With appc/conn25.go gone, conn25 no longer depends on appc, so
+TestOmitAppConnectors no longer needs to omit conn25 too.
 
-**File**: `ipn/store/kubestore/store_kube.go` (modified, +139/-17)
+Fixes tailscale/corp#51400
+Fixes tailscale/corp#51402
+
+Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
+
+**File**: `appc/conn25.go` (removed, +0/-57)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"net/http"
- 	"os"
- 	"strings"
-+	"sync"
- 	"time"
+@@ -1,57 +0,0 @@
+-// Copyright (c) Tailscale Inc & contributors
+-// SPDX-License-Identifier: BSD-3-Clause
+-
+-package appc
+-
+-import (
+-	"fmt"
+-	"strings"
+-
+-	"tailscale.com/tailcfg"
+-	"tailscale.com/tailcfg/nodecap"
+-	"tailscale.com/types/appctype"
+-	"tailscale.com/types/dnstype"
+-)
+-
+-const AppConnectorAttrName = "tailscale.com/app-connectors"
+-
+-// DNSAddrScheme is the custom URI scheme used for conn25-managed split DNS
+-// entries to determine the destination at query time rather than configuration
+-// time.
+-const DNSAddrScheme = "tailscale-app"
+-
+-// AppDNSRoutes returns split DNS routes, keyed by domain suffix, for the app
+-// domains configured in self's capability map. Each route resolves via the
+-// [DNSAddrScheme] scheme naming the app, so the connector that serves it is
+-// chosen at query time. It returns nil if the node lacks Connectors 2025 apps.
+-func AppDNSRoutes(hasCap func(c nodecap.Cap) bool, self tailcfg.NodeView) map[string][]*dnstype.Resolver {
+-	if !hasCap(AppConnectorAttrName) {
+-		return nil
+-	}
+-
+-	apps, err := tailcfg.UnmarshalNodeCapViewJSON[appctype.AppConnectorAttr](self.CapMap(), AppConnectorAttrName)
+-	if err != nil {
+-		return nil
+-	}
+-
+-	appNamesByDomain := map[string]string{}
+-	for _, app := range apps {
+-		// conn25 apps are provided under [AppConnectorAttrName] with the Mode
+-		// field set to [appctype.AppConnectorModeMagicIP].
+-		if app.Mode != appctype.MagicIP {
+-			continue
+-		}
+-		for _, domain := range app.Domains {
+-			domain, _ = strings.CutPrefix(domain, "*.")
+-			domain = strings.ToLower(domain)
+-			// in the case of multiple apps specifying the same domain (which is misconfiguration
+-			// that should be validated at point of input) last write wins.
+-			appNamesByDomain[domain] = app.Name
+-		}
+-	}
+-	m := make(map[string][]*dnstype.Resolver, len(appNamesByDomain))
+-	for domain, appName := range appNamesByDomain {
+-		m[domain] = []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
+-	}
+-	return m
+-}
+```
+
+**File**: `appc/conn25_test.go` (removed, +0/-203)
+```diff
+@@ -1,203 +0,0 @@
+-// Copyright (c) Tailscale Inc & contributors
+-// SPDX-License-Identifier: BSD-3-Clause
+-
+-package appc
+-
+-import (
+-	"encoding/json"
+-	"fmt"
+-	"testing"
+-
+-	"github.com/google/go-cmp/cmp"
+-	"tailscale.com/tailcfg"
+-	"tailscale.com/tailcfg/nodecap"
+-	"tailscale.com/types/appctype"
+-	"tailscale.com/types/dnstype"
+-)
+-
+-func TestAppDNSRoutes(t *testing.T) {
+-	getBytesForAttr := func(name string, domains []string, tags []string, mode appctype.Mode) []byte {
+-		attr := appctype.AppConnectorAttr{
+-			Name:       name,
+-			Domains:    domains,
+-			Connectors: tags,
+-			Mode:       mode,
+-		}
+-		bs, err := json.Marshal(attr)
+-		if err != nil {
+-			t.Fatalf("test setup: %v", err)
+-		}
+-		return bs
+-	}
+-	appOneBytes := getBytesForAttr(
+-		"app1",
+-		[]string{"example.com"},
+-		[]string{"tag:one"},
+-		appctype.MagicIP,
+-	)
+-	appTwoBytes := getBytesForAttr(
+-		"app2",
+-		[]string{"a.example.com"},
+-		[]string{"tag:two"},
+-		appctype.MagicIP,
+-	)
+-	appThreeBytes := getBytesForAttr(
+-		"app3",
+-		[]string{"woo.b.example.com", "hoo.b.example.com"},
+-		[]string{"tag:three1", "tag:three2"},
+-		appctype.MagicIP,
+-	)
+-	appFourBytes := getBytesForAttr(
+-		"app4",
+-		[]string{"woo.b.example.com", "c.example.com"},
+-		[]string{"tag:four1", "tag:four2"},
+-		appctype.MagicIP,
+-	)
+-	appFiveBytes := getBytesForAttr(
+-		"app5",
+-		[]string{"*.example.com", "example.com"},
+-		[]string{"tag:one"},
+-		appctype.MagicIP,
+-	)
+-	appSixBytes := getBytesForAttr(
+-		"app6",
+-		[]string{"*.Example.com", "EXAMPLE.com", "EXAMPLE.COM"},
+-		[]string{"tag:one"},
+-		appctype.MagicIP,
+-	)
+-	subnetAppBytes := getBytesForAttr(
+-		"subnet-app",
+-		[]string{"subnet.example.com"},
+-		[]string{"tag:one"},
+-		appctype.Subnet,
+-	)
+-
+-	resolver := func(appName string) []*dnstype.Resolver {
+-		return []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
+-	}
+-
+-	for _, tt := range []struct {
+-		name   string
+-		hasCap bool
+-		config []tailcfg.RawMessage
+-		want   map[string][]*dnstype.Resolver
+-	}{
+-		{
+-			name:   "no-capability", // hasCap false should return nil regardless of config.
+-			hasCap: false,
+-		},
+-		{
+-			name:   "no-apps", // hasCap true but no configured apps returns an empty map.
+-			hasCap: true,
+-			want:   map[string][]*dnstype.Resolver{},
+-		},
+-		{
+-			name:   "bad-config", // bad config should return nil rather than error.
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(`hey`)},
+-		},
+-		{
+-			name:   "single-app",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(appOneBytes)},
+-			want: map[string][]*dnstype.Resolver{
+-				"example.com": resolver("app1"),
+-			},
+-		},
+-		{
+-			name:   "single-app-multi-domain",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(appThreeBytes)},
+-			want: map[string][]*dnstype.Resolver{
+-				"woo.b.example.com": resolver("app3"),
+-				"hoo.b.example.com": resolver("app3"),
+-			},
+-		},
+-		{
+-			name:   "multi-app-no-overlap",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{
+-				tailcfg.RawMessage(appOneBytes),
+-				tailcfg.RawMessage(appTwoBytes),
+-			},
+-			want: map[string][]*dnstype.Resolver{
+-				"example.com":   resolver("app1"),
+-				"a.example.com": resolver("app2"),
+-			},
+-		},
+-		{
+-			name:   "domain-collision-last-write-wins",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{
+-				tailcfg.RawMessage(appThreeBytes), // app3: woo.b.example.com, hoo.b.example.com
+-				tailcfg.RawMessage(appFourBytes),  // app4: woo.b.example.com, c.example.com
+-			},
+-			want: map[string][]*dnstype.Resolver{
+-				// app4 overwrites app3 for the shared domain
+-				"woo.b.example.com": resolver("app4"),
+-				"hoo.b.example.com": resolver("app3"),
+-				"c.example.com":     resolver("app4"),
+-			},
+-		},
+-		{
+-			name:   "wildcards-are-stripped-and-deduped",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(appFiveBytes)},
+-			want: map[string][]*dnstype.Resolver{
+-				// *.example.com and example.com should both normalize to example.com.
+-				"example.com": resolver("app5"),
+-			},
+-		},
+-		{
+-			name:   "domains-are-normalized-and-deduped",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(appSixBytes)},
+-			want: map[string][]*dnstype.Resolver{
+-				// *.Example.com, EXAMPLE.com, EXAMPLE.COM should all normalize to example.com.
+-				"example.com": resolver("app6"),
+-			},
+-		},
+-		{
+-			name:   "sub-domains-and-top-domains-do-not-collide",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{
+-				tailcfg.RawMessage(appTwoBytes),
+-				tailcfg.RawMessage(appFiveBytes),
+-			},
+-			want: map[string][]*dnstype.Resolver{
+-				// *.example.com normalizes to example.com; a.example.com remains distinct.
+-				"a.example.com": resolver("app2"),
+-				"example.com":   resolver("app5"),
+-			},
+-		},
+-		{
+-			name:   "only-conn25-processed",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{
+-				tailcfg.RawMessage(appOneBytes),
+-				tailcfg.RawMessage(subnetAp
+```
+
+**File**: `cmd/tailscaled/depaware.txt` (modified, +1/-1)
+```diff
+@@ -257,7 +257,7 @@ tailscale.com/cmd/tailscaled dependencies: (generated by github.com/tailscale/de
+         gvisor.dev/gvisor/pkg/tcpip/transport/udp                    from gvisor.dev/gvisor/pkg/tcpip/adapters/gonet+
+         gvisor.dev/gvisor/pkg/waiter                                 from gvisor.dev/gvisor/pkg/context+
+         tailscale.com                                                from tailscale.com/version
+-        tailscale.com/appc                                           from tailscale.com/ipn/ipnlocal+
++        tailscale.com/appc                                           from tailscale.com/ipn/ipnlocal
+      💣 tailscale.com/atomicfile                                     from tailscale.com/ipn+
+   LD    tailscale.com/chirp                                          from tailscale.com/feature/bird
+         tailscale.com/client/local                                   from tailscale.com/client/web+
+```
+
+**File**: `cmd/tailscaled/deps_test.go` (modified, +1/-3)
+```diff
+@@ -86,9 +86,7 @@ func TestOmitAppConnectors(t *testing.T) {
+ 	deptest.DepChecker{
+ 		GOOS:   "linux",
+ 		GOARCH: "amd64",
+-		// conn25 also uses appc, so omit it too to check that nothing
+-		// else pulls appc in.
+-		Tags: "ts_omit_appconnectors,ts_omit_conn25,ts_include_cli",
++		Tags:   "ts_omit_appconnectors,ts_include_cli",
+ 		BadDeps: map[string]string{
+ 			"tailscale.com/appc":                  msg,
+ 			"tailscale.com/feature/appconnectors": msg,
+```
+
+**File**: `feature/conn25/conn25.go` (modified, +37/-6)
+```diff
+@@ -26,7 +26,6 @@ import (
  
- 	"tailscale.com/envknob"
-@@ -24,9 +25,11 @@ import (
- 	"tailscale.com/kube/kubeapi"
- 	"tailscale.com/kube/kubeclient"
- 	"tailscale.com/kube/kubetypes"
-+	"tailscale.com/tstime"
- 	"tailscale.com/types/logger"
- 	"tailscale.com/util/dnsname"
- 	"tailscale.com/util/mak"
-+	"tailscale.com/util/singleflight"
+ 	"go4.org/netipx"
+ 	"golang.org/x/net/dns/dnsmessage"
+-	"tailscale.com/appc"
+ 	"tailscale.com/feature"
+ 	"tailscale.com/ipn"
+ 	"tailscale.com/ipn/ipnext"
+@@ -169,9 +168,9 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ 		return errors.New("dns manager resolver not ready")
+ 	}
+ 
+-	if err := r.RegisterCustomScheme(appc.DNSAddrScheme, func(addr string) (string, error) {
++	if err := r.RegisterCustomScheme(DNSAddrScheme, func(addr string) (string, error) {
+ 		scheme, appName, ok := strings.Cut(addr, ":")
+-		if !ok || scheme != appc.DNSAddrScheme {
++		if !ok || scheme != DNSAddrScheme {
+ 			return "", fmt.Errorf("unexpected conn25 scheme %q", scheme)
+ 		}
+ 
+@@ -266,7 +265,7 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ 	})
+ 
+ 	// Route DNS queries for app domains to the connector that serves
+-	// them, chosen at query time via the [appc.DNSAddrScheme] scheme.
++	// them, chosen at query time via the [DNSAddrScheme] scheme.
+ 	e.host.Hooks().ExtraDNSRoutes.Set(func() map[string][]*dnstype.Resolver {
+ 		if !e.conn25.isConfigured() {
+ 			return nil
+@@ -468,7 +467,7 @@ func (e *extension) onSelfChange(selfNode tailcfg.NodeView) {
+ 	}
+ 	// Store the routes only once the config parsed, so a bad self node
+ 	// leaves the previous routes and config in place together.
+-	e.conn25.appDNSRoutes.Store(appc.AppDNSRoutes(selfNode.HasCap, selfNode))
++	e.conn25.appDNSRoutes.Store(cfg.appDNSRoutes())
+ 	e.conn25.reconfig(cfg)
+ }
+ 
+@@ -508,7 +507,7 @@ type Conn25 struct {
+ 	prefsAdvertiseConnector atomic.Bool
+ 
+ 	// appDNSRoutes holds the split DNS routes for the app domains in the
+-	// self node's capabilities, as returned by [appc.AppDNSRoutes]. It is
++	// self node's capabilities, as returned by [config.appDNSRoutes]. It is
+ 	// recomputed on each self node change and served to
+ 	// [ipnext.Hooks.ExtraDNSRoutes]. The map must not be mutated once stored.
+ 	appDNSRoutes syncs.AtomicValue[map[string][]*dnstype.Resolver]
+@@ -748,6 +747,11 @@ type ConnectorTransitIPResponse struct {
+ const (
+ 	AppConnectorAttrName                     = "tailscale.com/app-connectors"
+ 	AppConnectorsExperimentalIPPoolsAttrName = "tailscale.com/app-connectors-experimental-ippools"
++
++	// DNSAddrScheme is the custom URI scheme used for conn25-managed split DNS
++	// entries to determine the destination at query time rather than configuration
++	// time.
++	DNSAddrScheme = "tailscale-app"
  )
  
- func init() {
-@@ -44,6 +47,17 @@ const (
- 	// state Secret and emit an Event.
- 	timeout = 30 * time.Second
+ // ipSets wraps all the IPSets the config needs.
+@@ -893,6 +897,33 @@ func (cfg *config) getAppsForConnectorDomain(domain dnsname.FQDN, prefsAdvertise
+ 	return appNames
+ }
  
-+	// rwCertTTL is how long a write replica serves a TLS cert from its
-+	// in-memory cache before it reads the cert Secret again. A short TTL
-+	// limits how long the replica can serve a stale cert after the cert
-+	// Secret is recreated, for example after Ingress recreation.
-+	rwCertTTL = 30 * time.Second
-+	// rwCertFallbackTimeout is the timeout for a write replica's cert
-+	// Secret read when it has a last-known-good cert to fall back to.
-+	// TLS handshakes wait for this read, so it must be much shorter than
-+	// typical client handshake timeouts (10s for kubectl).
-+	rwCertFallbackTimeout = 3 * time.Second
-+
- 	reasonTailscaleStateUpdated      = "TailscaledStateUpdated"
- 	reasonTailscaleStateLoaded       = "TailscaleStateLoaded"
- 	reasonTailscaleStateUpdateFailed = "TailscaleStateUpdateFailed"
-@@ -90,6 +104,32 @@ type Store struct {
- 	// memory holds the latest tailscale state. Writes write state to a kube
- 	// Secret and memory, Reads read from memory.
- 	memory mem.Store
-+
-+	// clock is used for rwCerts expiry.
-+	clock tstime.DefaultClock
-+
-+	// certReads deduplicates concurrent cert Secret reads per domain.
-+	certReads singleflight.Group[string, *rwCert]
-+
-+	// rwCertsMu guards rwCerts.
-+	rwCertsMu sync.Mutex
-+	// rwCerts holds the last-known-good TLS cert and key per domain for
-+	// write replicas (cert share "rw"). Write replicas don't keep certs in
-+	// memory, so that they notice a recreated, empty cert Secret and issue
-+	// a new cert. Instead, they use rwCerts to skip Secret reads for
-+	// rwCertTTL and to keep serving TLS when the API server is unavailable.
-+	// Entries are never modified, only replaced, so that a read can tell
-+	// whether a write replaced the entry while the read was in flight.
-+	rwCerts map[string]*rwCert
++// appDNSRoutes returns split DNS routes, keyed by domain suffix, for the app
++// domains in cfg. Each route resolves via the [DNSAddrScheme] scheme naming
++// the app, so the connector that serves it is chosen at query time. It
++// returns nil if cfg is not configured.
++func (cfg *config) appDNSRoutes() map[string][]*dnstype.Resolver {
++	if !cfg.isConfigured {
++		return nil
++	}
++	m := make(map[string][]*dnstype.Resolver, len(cfg.appNamesByDomain)+len(cfg.appNamesByWCDomain))
++	add := func(byDomain map[dnsname.FQDN][]string) {
++		for domain, appNames := range byDomain {
++			if len(appNames) == 0 {
++				continue
++			}
++			// In the case of multiple apps specifying the same domain (which is misconfiguration
++			// that should be validated at point of input), the last one in the config list wins.
++			appName := appNames[len(appNames)-1]
++			m[domain.WithoutTrailingDot()] = []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
++		}
++	}
++	// If an exact and a wildcard domain coincide, the exact domain's app
++	// takes the route, so add it last.
++	add(cfg.appNamesByWCDomain)
++	add(cfg.appNamesByDomain)
++	return m
 +}
 +
-+// rwCert is a TLS cert and key cached by a write replica.
-+type rwCert struct {
-+	// cert and key are returned to every reader of the cache entry, so
-+	// they must not be modified.
-+	cert, key []byte
-+	// recheckAt is when the replica reads the cert Secret again.
-+	recheckAt time.Time
- }
- 
- // New returns a new Store that persists state to Kubernets Secret(s).
-@@ -153,7 +193,8 @@ func newWithClient(logf logger.Logf, c kubeclient.Client, secretName string) (*S
- 	// Write replicas never load certs in-memory to avoid a situation where,
- 	// after Ingress recreation (and the associated cert Secret recreation), new
- 	// TLS certs don't get issued because the write replica still has certs
--	// in-memory. Instead, write replicas fetch certs from Secret on each request.
-+	// in-memory. Instead, write replicas fetch certs from Secret, with a short
-+	// TTL cache (see rwCerts).
- 	if s.certShareMode == "ro" {
- 		sel := s.certSecretSelector()
- 		if err := s.loadCerts(context.Background(), sel); err != nil {
-@@ -365,20 +406,24 @@ func (s *Store) WriteTLSCertAndKey(domain string, cert, key []byte) (err error)
- 	// TODO(irbekrm): certs for write replicas are currently not
- 	// written to memory to avoid out of sync memory state after
- 	// Ingress resources have been recreated.  This means that TLS
--	// certs for write replicas are retrieved from the Secret on
--	// each HTTPS request. This is a temporary solution till we
-+	// certs for write replicas are retrieved from the Secret once
-+	// rwCertTTL has passed. This is a temporary solution till we
- 	// implement a Secret watch.
- 	if s.certShareMode != "rw" {
- 		s.memory.WriteState(ipn.StateKey(domain+".crt"), cert)
- 		s.memory.WriteState(ipn.StateKey(domain+".key"), key)
-+	} else {
-+		s.setRWCert(domain, cert, key)
- 	}
- 	return nil
- }
- 
- // ReadTLSCertAndKey reads a TLS cert and key from memory or from a
- // domain-specific Secret. It first checks the in-memory store, if not found in
- // memory and running cert store in read-only mode, looks up a Secret.
--// Note that write replicas of HA Ingress always retrieve TLS certs from Secrets.
-+// Write replicas of HA Ingress don't use the in-memory store. They read the
-+// Secret at most once per rwCertTTL, and serve the last-known-good cert if the
-+// read fails with an error other than not found or forbidden.
- func (s *Store) ReadTLSCertAndKey(domain string) (cert, key []byte, err error) {
- 	if err := dnsname.ValidHostname(domain); err != nil {
- 		return nil, nil, fmt.Errorf("invalid domain name %q: %w", domain, err)
-@@ -396,14 +441,40 @@ func (s *Store) ReadTLSCertAndKey(domain string) (cert, key []byte, err error) {
- 		return nil, nil, ipn.ErrStateNotExist
- 	}
- 
--	ctx, cancel := context.WithTimeout(
+ func (e *extension) sendLoop(ctx context.Context) {
+ 	for {
+ 		select {
 ```
 
-**File**: `ipn/store/kubestore/store_kube_test.go` (modified, +402/-0)
+**File**: `feature/conn25/conn25_test.go` (modified, +136/-0)
 ```diff
-@@ -8,9 +8,14 @@ import (
- 	"context"
- 	"crypto/sha256"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"strings"
-+	"sync"
-+	"sync/atomic"
- 	"testing"
-+	"testing/synctest"
-+	"time"
- 
- 	"github.com/google/go-cmp/cmp"
- 	"tailscale.com/envknob"
-@@ -19,6 +24,8 @@ import (
- 	"tailscale.com/kube/kubeapi"
- 	"tailscale.com/kube/kubeclient"
- 	"tailscale.com/kube/kubetypes"
-+	"tailscale.com/tstest"
-+	"tailscale.com/tstime"
- )
- 
- func TestKubernetesPodMigrationWithTPMAttestationKey(t *testing.T) {
-@@ -635,6 +642,401 @@ func TestReadTLSCertAndKey(t *testing.T) {
- 	}
- }
- 
-+func TestReadTLSCertAndKeyWriteReplicaCache(t *testing.T) {
-+	const testDomain = "my-app.tailnetxyz.ts.net"
-+
-+	var (
-+		secretData   map[string][]byte
-+		secretGetErr error
-+		gets         int
-+		lastTimeout  time.Duration
-+	)
-+	client := &kubeclient.FakeClient{
-+		GetSecretImpl: func(ctx context.Context, name string) (*kubeapi.Secret, error) {
-+			gets++
-+			if deadline, ok := ctx.Deadline(); ok {
-+				lastTimeout = time.Until(deadline)
-+			}
-+			if secretGetErr != nil {
-+				return nil, secretGetErr
-+			}
-+			return &kubeapi.Secret{Data: secretData}, nil
-+		},
-+		JSONPatchResourceImpl: func(context.Context, string, string, []kubeclient.JSONPatch) error {
-+			return nil
-+		},
+@@ -4138,6 +4138,142 @@ func TestHandleHookReplyToDNSQueries(t *testing.T) {
+ // for the app domains in the self node's capabilities, and supplies none
+ // before the self node is known, when this node is itself a connector, or
+ // after a switch to a different node.
++func TestAppDNSRoutes(t *testing.T) {
++	app := func(name string, mode appctype.Mode, domains ...string) appctype.AppConnectorAttr {
++		return appctype.AppConnectorAttr{
++			Name:       name,
++			Domains:    domains,
++			Connectors: []string{"tag:" + name},
++			Mode:       mode,
++		}
 +	}
-+	clock := tstest.NewClock(tstest.ClockOpts{})
-+	s := &Store{
-+		client:        client,
-+		secretName:    "ts-state",
-+		certShareMode: "rw",
-+		clock:         tstime.DefaultClock{Clock: clock},
-+		logf:          t.Logf,
-+	}
-+	tlsData := func(cert, key string) map[string][]byte {
-+		return map[string][]byte{"tls.crt": []byte(cert), "tls.key": []byte(key)}
++	resolver := func(appName string) []*dnstype.Resolver {
++		return []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
 +	}
 +
-+	steps := []struct {
-+		name         string
-+		advance      time.Duration
-+		secretData   map[string][]byte
-+		secretGetErr error
-+		// write, if set, writes cert and key with WriteTLSCertAndKey
-+		// before the read.
-+		write       map[string][]byte
-+		wantCert    string
-+		wantKey     string
-+		wantErr     error
-+		wantGet     bool
-+		wantTimeout time.Duration // max GetSecret timeout, if wantGet
-+	}{
-+		{
-+			name:         "no_cache_api_error",
-+			secretGetErr: errors.New("api error"),
-+			wantErr:      errors.New("api error"),
-+			wantGet:      true,
-+			wantTimeout:  timeout,
-+		},
-+		{
-+			name:        "first_read_from_secret",
-+			secretData:  tlsData("cert-a", "key-a"),
-+			wantCert:    "cert-a",
-+			wantKey:     "key-a",
-+			wantGet:     true,
-+			wantTimeout: timeout,
-+		},
-+		{
-+			name:       "within_ttl_served_from_cache",
-+			advance:    rwCertTTL / 2,
-+			secretData: tlsData("cert-b", "key-b"),
-+			wantCert:   "cert-a",
-+			wantKey:    "key-a",
-+		},
-+		{
-+			name:        "after_ttl_read_from_secret",
-+			advance:     rwCertTTL,
-+			secretData:  tlsData("cert-b", "key-b"),
-+			wantCert:    "cert-b",
-+			wantKey:     "key-b",
-+			wantGet:     true,
-+			wantTimeout: rwCertFallbackTimeout,
-+		},
-+		{
-+			name:         "after_ttl_api_error_serves_last_known_good",
-+			advance:      rwCertTTL,
-+			secretGetErr: errors.New("api error"),
-+			wantCert:     "cert-b",
-+			wantKey:      "key-b",
-+			wantGet:      true,
-+			wantTimeout:  rwCertFallbackTimeout,
-+		},
-+		{
-+			name:         "after_fallback_served_from_cache",
-+			advance:      rwCertTTL / 2,
-+			secretGetErr: errors.New("api error"),
-+			wantCert:     "cert-b",
-+			wantKey:      "key-b",
-+		},
-+		{
-+			name:       "after_ttl_secret_emptied",
-+			advance:    rwCertTTL,
-+			secretData: map[string][]byte{},
-+			wantErr:    ipn.ErrStateNotExist,
-+			wantGet:    true,
-+		},
-+		{
-+			name:         "emptied_secret_clears_cache",
-+			secretGetErr: errors.New("api error"),
-+			wantErr:      errors.New("api error"),
-+			wantGet:      true,
-+			wantTimeout:  timeout,
-+		},
-+		{
-+			name:       "written_cert_served_from_cache",
-+			write:      tlsData("cert-c", "key-c"),
-+			secretData: tlsData("cert-c", "key-c"),
-+			wantCert:   "cert-c",
-+			wantKey:    "key-c",
-+		},
-+		{
-+			name:         "after_ttl_secret_not_found",
-+			advance:      rwCertTTL,
-+			secretGetErr: &kubeapi.Status{Code: 404},
-+			wantErr:      ipn.ErrStateNotExist,
-+			wantGet:      true,
-+		},
-+		{
-+			name:         "not_found_clears_cache",
-+			secretGetErr: errors.New("api error"),
-+			wantErr:      errors.New("api error"),
-+			wantGet:      true,
-+			wantTimeout:  timeout,
-+		},
-+		{
-+			name:       "written_cert_served_from_cache_again",
-+			write:      tlsData("cert-d", "key-d"),
-+			secretData: tlsData("cert-d", "key-d"),
-+			wantCert:   "cert-d",
-+			wantKey:    "key-d",
-+		},
-+		{
-+			name:         "after_ttl_secret_forbidden",
-+			advance:      rwCertTTL,
-+			secretGetErr: &kubeapi.Status{Code: 403},
-+			wantErr:      ipn.ErrStateNotExist,
-+			wantGet:      true,
-+		},
-+		{
-+			name:         "forbidden_clears_cache",
-+			secretGetErr: errors.New("api error"),
-+			wantErr:      errors.New("api error"),
-+			wantGet:      true,
-+			wantTimeout:  timeout,
-+		},
-+	}
-+	for _, st := range steps {
-+		clock.Advance(st.advance)
-+		secretData = st.secretData
-+		secretGetErr = st.secretGetErr
-+		if s
-```
-
----
-
-### Incident Patch 2: `519a9f50` (2026-11-20)
-**Commit Message**: k8s-operator: stop PortRanges.All() at the last port in the range (#21305)
-
-* k8s-operator: stop PortRanges.All() at the last port in the range
-
-PortRanges.All() walks a range with a uint16 counter and a port <= end
-condition. When end is 65535 the increment wraps back to zero instead
-of ending the loop, so the iterator restarts at 0 and yields the whole
-port space again, and again.
-
-ClashesWith is the caller that drains All(), so it is where this
-shows. With one ProxyClass holding 40000-65535, validating a second
-one holding 30000-30100 walks up to 65535, wraps, and reaches 30000 on
-the next pass, where Contains returns true. The two ranges are
-disjoint, but the second ProxyClass is rejected as clashing and never
-goes valid. allocatePorts stops at the first free port so it returns,
-but once past 65535 the port it picks is outside the range that was
-configured.
-
-endPort is only bounded by the cluster's --service-node-port-range, so
-65535 is reachable on a cluster configured up to it.
-
-Yield end and then stop. Also skip a range whose Port is above its
-EndPort, which the old condition did for free and the new one would
-not.
-
-Fixes #21304
-
-Change-Id: I7d60b133a4a83678bc6aba76c5f9b6b6e
-
-**File**: `k8s-operator/apis/v1alpha1/types_proxyclass.go` (modified, +2/-2)
-```diff
-@@ -133,8 +133,8 @@ func (prs PortRanges) All() iter.Seq[uint16] {
- 				end = pr.Port
- 			}
- 
--			for port := pr.Port; port <= end; port++ {
--				if !yield(port) {
-+			for port := int(pr.Port); port <= int(end); port++ {
-+				if !yield(uint16(port)) {
- 					return
- 				}
- 			}
-```
-
-**File**: `k8s-operator/apis/v1alpha1/types_proxyclass_test.go` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package v1alpha1
-+
-+import (
-+	"slices"
-+	"testing"
-+)
-+
-+func TestPortRangesAll(t *testing.T) {
-+	tests := []struct {
++	for _, tt := range []struct {
 +		name string
-+		prs  PortRanges
-+		want []uint16
++		apps []appctype.AppConnectorAttr
++		want map[string][]*dnstype.Resolver
 +	}{
 +		{
-+			name: "single_port",
-+			prs:  PortRanges{{Port: 30000}},
-+			want: []uint16{30000},
++			name: "no-apps", // an unconfigured config has no routes.
 +		},
 +		{
-+			name: "small_range",
-+			prs:  PortRanges{{Port: 30000, EndPort: 30002}},
-+			want: []uint16{30000, 30001, 30002},
++			name: "only-subnet-apps", // no conn25 apps means unconfigured.
++			apps: []appctype.AppConnectorAttr{app("subnet-app", appctype.Subnet, "subnet.example.com")},
 +		},
 +		{
-+			name: "range_ending_at_max_port",
-+			prs:  PortRanges{{Port: 65533, EndPort: 65535}},
-+			want: []uint16{65533, 65534, 65535},
++			name: "single-app",
++			apps: []appctype.AppConnectorAttr{app("app1", appctype.MagicIP, "example.com")},
++			want: map[string][]*dnstype.Resolver{
++				"example.com": resolver("app1"),
++			},
 +		},
 +		{
-+			name: "single_max_port",
-+			prs:  PortRanges{{Port: 65535}},
-+			want: []uint16{65535},
++			name: "single-app-multi-domain",
++			apps: []appctype.AppConnectorAttr{app("app3", appctype.MagicIP, "woo.b.example.com", "hoo.b.example.com")},
++			want: map[string][]*dnstype.Resolver{
++				"woo.b.example.com": resolver("app3"),
++				"hoo.b.example.com": resolver("app3"),
++			},
 +		},
 +		{
-+			name: "multiple_ranges",
-+			prs:  PortRanges{{Port: 30000, EndPort: 30001}, {Port: 65535}},
-+			want: []uint16{30000, 30001, 65535},
++			name: "multi-app-no-overlap",
++			apps: []appctype.AppConnectorAttr{
++				app("app1", appctype.MagicIP, "example.com"),
++				app("app2", appctype.MagicIP, "a.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				"example.com":   resolver("app1"),
++				"a.example.com": resolver("app2"),
++			},
 +		},
 +		{
-+			name: "inverted_range_yields_nothing",
-+			prs:  PortRanges{{Port: 30100, EndPort: 30000}},
-+			want: nil,
++			name: "domain-collision-last-wins",
++			apps: []appctype.AppConnectorAttr{
++				app("app3", appctype.MagicIP, "woo.b.example.com", "hoo.b.example.com"),
++				app("app4", appctype.MagicIP, "woo.b.example.com", "c.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				// app4 is listed last, so takes the shared domain.
++				"woo.b.example.com": resolver("app4"),
++				"hoo.b.example.com": resolver("app3"),
++				"c.example.com":     resolver("app4"),
++			},
 +		},
-+	}
-+
-+	for _, tt := range tests {
++		{
++			name: "wildcard-collision-last-wins",
++			apps: []appctype.AppConnectorAttr{
++				app("app1", appctype.MagicIP, "*.example.com"),
++				app("app2", appctype.MagicIP, "*.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				"example.com": resolver("app2"),
++			},
++		},
++		{
++			name: "exact-beats-wildcard",
++			apps: []appctype.AppConnectorAttr{
++				app("app1", appctype.MagicIP, "example.com"),
++				app("app2", appctype.MagicIP, "*.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				// The exact app wins even though the wildcard app is listed last.
++				"example.com": resolver("app1"),
++			},
++		},
++		{
++			name: "wildcards-are-stripped-and-deduped",
++			apps: []appctype.AppConnectorAttr{app("app5", appctype.MagicIP, "*.example.com", "example.com")},
++			want: map[string][]*dnstype.Resolver{
++				// *.example.com and example.com should both normalize to example.com.
++				"example.com": resolver("app5"),
++			},
++		},
++		{
++			name: "domains-are-normalized-and-deduped",
++			apps: []appctype.AppConnectorAttr{app("app6", appctype.MagicIP, "*.Example.com", "EXAMPLE.com", "EXAMPLE.COM", "example.com.")},
++			want: map[string][]*dnstype.Resolver{
++				// All variants should normalize to example.com.
++				"example.com": resolver("app6"),
++			},
++		},
++		{
++			name: "sub-domains-and-top-domains-do-not-collide",
++			apps: []appctype.AppConnectorAttr{
++				app("app2", appctype.MagicIP, "a.example.com"),
++				app("app5", appctype.MagicIP, "*.example.com", "example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				// *.example.com normalizes to example.com; a.example.com remains distinct.
++				"a.example.com": resolver("app2"),
++				"example.com":   resolver("app5"),
++			},
++		},
++		{
++			name: "only-conn25-processed",
++			apps: []appctype.AppConnectorAttr{
++				app("app1", appctype.MagicIP, "example.com"),
++				app("subnet-app", appctype.Subnet, "subnet.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				// The app that's a subnet router should not show up here,
++				// since we only deal with conn25 apps.
++				"example.com": resolver("app1"),
++			},
++		},
++	} {
 +		t.Run(tt.name, func(t *testing.T) {
-+			var got []uint16
-+			for p := range tt.prs.All() {
-+				got = append(got, p)
-+				if len(got) > len(tt.want) {
-+					t.Fatalf("All() yielded more than the %d expected ports; got %v...", len(tt.want), got)
-+				}
-+			}
-+			if !slices.Equal(got, tt.want) {
-+				t.Errorf("All() = %v, want %v", got, tt.want)
++			cfg := mustConfig(t, makeSelfNode(t, tt.apps, appctype.Conn25PoolsAttr{}, nil))
++			got := cfg.appDNSRoutes()
++			if diff := cmp.Diff(tt.want, got); diff != "" {
++				t.Fatalf("appDNSRoutes (-want, +got):\n%s", diff)
 +			}
 +		})
 +	}
 +}
 +
-+func TestPortRangesClashesWith(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		prs  PortRanges
-+		pr   PortRange
-+		want bool
-+	}{
-+		{
-+			name: "overlapping",
-+			prs:  PortRanges{{Port: 30000, EndPort: 30100}},
-+			pr:   PortRange{Port: 30050, EndPort: 30150},
-+			want: true,
-+		},
-+		{
-+			name: "disjoint",
-+			prs:  PortRanges{{Port: 30000, EndPort: 30100}},
-+			pr:   PortRange{Port: 30101, EndPort: 30200},
-+			want: false,
-+		},
-+		{
-+			name: "disjoint_below_range_ending_at_max_port",
-+			prs:  PortRanges{{Port: 40000, EndPort: 65535}},
-+			pr:   PortRange{Port: 30000, EndPort: 30100},
-+			want: false,
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			if got := tt.prs.ClashesWith(tt.pr); got != tt.want {
-+				t.Errorf("ClashesWith(%s) = %v, want %v", tt.pr, got, tt.want)
-+			}
-+		})
-+	}
-+}
+ func TestExtraDNSRoutesHook(t *testing.T) {
+ 	ext := &extension{
+ 		conn25:  newConn25(logger.Discard),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22518** (2026-11-19): go.mod: bump wg-go for hybrid pq log details (@jwhited)
-- **PR #22513** (2026-11-19): feature/conn25: guard against an unusable Transit IP (@mazdakn)
-- **PR #22508** (2026-11-19): wgengine/magicsock: update packetLooksLike docs (@jwhited)
-- **PR #22506** (2026-11-18): tstest/natlab: Fix typo in README sample command (@fmarier)
-- **PR #22505** (closed): tstest/natlab: Fix invalid example command in README (@fmarier)
-- **PR #22503** (2026-11-19): go.toolchain.rev: bump Go toolchain [release-branch] (@bradfitz)
+- **PR #22612** (2026-11-23): VERSION.txt: this is v1.107.0 (@nickoneill)
+- **PR #22611** (2026-11-23): net/dns: retry failed hosts file updates in the background on Windows (@nickkhyl)
+- **PR #22610** (2026-11-23): derp/derpserver: add rate limiting exemption by IP (@mikeodr)
+- **PR #22607** (2026-11-23): feature/conn25: enforce token verification (@franbull)
+- **PR #22604** (2026-11-23): appc,feature/conn25: build split DNS routes from the parsed config (@mzbenami)
+- **PR #22594** (closed): mikeodr/rpf 7 natlab tests (@mikeodr)
 
 ---
 
@@ -1353,68 +1402,6 @@ Change-Id: I7d60b133a4a83678bc6aba76c5f9b6b6e
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ipn/store/kubestore: cache TLS certs briefly on write replicas
-
-**RULE**:
-When implementing operations in `ipn/store/kubestore/store_kube.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `c8ba9da5`: ipn/store/kubestore: cache TLS certs briefly on write replicas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/store/kubestore/store_kube.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-	"sync"
-	"tailscale.com/tstime"
-	"tailscale.com/util/singleflight"
-	// rwCertTTL is how long a write replica serves a TLS cert from its
-	// in-memory cache before it reads the cert Secret again. A short TTL
-	// limits how long the replica can serve a stale cert after the cert
-	// Secret is recreated, for example after Ingress recreation.
-	rwCertTTL = 30 * time.Second
-	// rwCertFallbackTimeout is the timeout for a write replica's cert
-	// Secret read when it has a last-known-good cert to fall back to.
-	// TLS handshakes wait for this read, so it must be much shorter than
-	// typical client handshake timeouts (10s for kubectl).
-	rwCertFallbackTimeout = 3 * time.Second
-
-
-	// clock is used for rwCerts expiry.
-	clock tstime.DefaultClock
-
-	// certReads deduplicates concurrent cert Secret reads per domain.
-	certReads singleflight.Group[string, *rwCert]
-
-	// rwCertsMu guards rwCerts.
-	rwCertsMu sync.Mutex
-	// rwCerts holds the last-known-good TLS cert and key per domain for
-	// write replicas (cert share "rw"). Write replicas don't keep certs in
-	// memory, so that they notice a recreated, empty cert Secret and issue
-	// a new cert. Instead, they use rwCerts to skip Secret reads for
-	// rw
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-	// in-memory. Instead, write replicas fetch certs from Secret on each request.
-	// certs for write replicas are retrieved from the Secret on
-	// each HTTPS request. This is a temporary solution till we
-// Note that write replicas of HA Ingress always retrieve TLS certs from Secrets.
-	ctx, cancel := context.WithTimeout(
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8ba9da5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

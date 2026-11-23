@@ -12546,3 +12546,7 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `c2a50c31` | Multi-dimensional audit evidence | 2026-11-23T23:31:27.318Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `a389daa1` | Multi-dimensional audit evidence | 2026-11-23T23:31:31.655Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `22e51338` | Multi-dimensional audit evidence | 2026-11-23T23:31:35.935Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-23T23:39:46.262Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `6bbeecff` | Multi-dimensional audit evidence | 2026-11-23T23:39:47.584Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `da6276d7` | Multi-dimensional audit evidence | 2026-11-23T23:39:56.838Z |
+| `learn-dom-d-e322f459` | `project://tailscale-tailscale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | 2026-11-23T23:40:26.571Z |

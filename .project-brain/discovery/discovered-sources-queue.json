@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T23:31:41.739Z",
+  "updated_at": "2026-11-23T23:40:00.009Z",
   "stats": {
-    "total_discovered": 8096,
-    "approved_pending_harvest": 7664,
+    "total_discovered": 8097,
+    "approved_pending_harvest": 7665,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7650,
+      "COMMUNITY_AND_EXPERT": 7651,
       "OFFICIAL_DOCUMENTATION": 260,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -175111,6 +175111,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
         "fileName": "typewhisper-typewhisper-mac-learnings.md"
+      }
+    },
+    "SRC-D0D82293171F": {
+      "id": "SRC-D0D82293171F",
+      "url": "https://github.com/tokio-rs/tokio/issues/6970",
+      "title": "https://github.com/tokio-rs/tokio/issues/6970",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T23:40:00.009Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
       }
     }
   }

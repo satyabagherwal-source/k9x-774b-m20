@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T23:31:42.119Z",
-  "total_records": 2465,
+  "last_updated": "2026-11-23T23:40:26.828Z",
+  "total_records": 2466,
   "domains": {
     "A": {
       "total": 20,
@@ -67,7 +67,7 @@
       ]
     },
     "D": {
-      "total": 942,
+      "total": 943,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1010,7 +1010,8 @@
         "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-inclusionai-ling-3-2-air-core-invariants",
         "DOM-D-7E47FE9B",
-        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar",
+        "DOM-D-E322F459"
       ]
     },
     "E": {
@@ -17017,8 +17018,8 @@
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "repository": "tokio-rs/tokio",
-      "content_hash": "7b21876ec05abbf36c9b7f38ece6a92f67bdd99da5e753d4f2bb7418207edebc",
-      "created_at": "2026-11-22T15:55:53.685Z"
+      "content_hash": "e56dad796bfc2ebb0f152c0440ad63c817153c3cb9f8e7a56421a06eeb1ead61",
+      "created_at": "2026-11-23T23:39:47.974Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
@@ -17044,8 +17045,8 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-learnings-technical-construction-intelligence-tokio-rs-tokio-lear.md",
       "repository": "tokio-rs-tokio-learnings",
-      "content_hash": "5aef0c9fac4323a281c574ff0a7de96afd29cd21bb0c5b366fa81f396bfbaf28",
-      "created_at": "2026-11-22T15:59:02.297Z"
+      "content_hash": "99447d936ae1f108d38d2c15bf99a140423f6cff0243586a7d18c0d6902af0f0",
+      "created_at": "2026-11-23T23:40:00.397Z"
     },
     "DOM-D-65E545AD": {
       "record_id": "DOM-D-65E545AD",
@@ -32107,8 +32108,8 @@
       "title": "Technical Construction Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-technical-construction-intelligence-tailscale-tailscale-core.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "3ed7bddb57a781e3d998357f9ee9fe357f3342d72fbc2589d4fe5e934ca03595",
-      "created_at": "2026-11-20T13:08:28.638Z"
+      "content_hash": "32e10e98aa459abd4b7b2115a040715c09e3e2fdd60590cdf0fbb557f779280b",
+      "created_at": "2026-11-23T23:39:57.056Z"
     },
     "DOM-D-714854BB": {
       "record_id": "DOM-D-714854BB",
@@ -32158,8 +32159,8 @@
       "title": "Technical Construction Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-learnings-technical-construction-intelligence-tailscale-tail.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "bf9c5995697f81faf87cb4139f49a17993fbc7650d83b9c82992ac6cdfb0a7a7",
-      "created_at": "2026-11-20T13:13:24.525Z"
+      "content_hash": "4e5ebc581adb24047c3c4f2cefc04b4da88a31a8dd8b24a57a00d8b9f7a95ba1",
+      "created_at": "2026-11-23T23:40:26.828Z"
     },
     "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants",
@@ -34108,8 +34109,8 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-research-knowledge-intelligence-openbmb-mi.md",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "content_hash": "d79479ca40799de64577236563de5ee71978c471cb64e1d5ae138c1316165d82",
-      "created_at": "2026-11-19T17:42:49.466Z"
+      "content_hash": "00c896ac8c1f9f58083c4135782c665798e70b28079df534aa66c2811b6cd737",
+      "created_at": "2026-11-23T23:39:46.462Z"
     },
     "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants",
@@ -34168,8 +34169,8 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
-      "content_hash": "65042910b5862c01be742e445f2b79a4cf8637a45c6583e568b55687439b5f8f",
-      "created_at": "2026-11-19T17:43:22.822Z"
+      "content_hash": "068e0986627f272f6069225ca6bb390d22e133fd4d5f2d60a5e6a3512859f1e8",
+      "created_at": "2026-11-23T23:40:00.894Z"
     },
     "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants",
@@ -41292,6 +41293,48 @@
       "repository": "karmada-io-karmada-learnings",
       "content_hash": "9b5b096c470a56265684659cf80b112ecbc4efc48681a954c5bbebed8732ff8e",
       "created_at": "2026-11-23T23:10:07.067Z"
+    },
+    "DOM-D-E322F459": {
+      "record_id": "DOM-D-E322F459",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): tailscale/tailscale",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  \n> **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  \n> **Source Version**: `da6276d7`  \n> **License**: BSD-3-Clause  \n> **Synthesized By**: zero-clone-stru",
+      "content_hash": "9c96e5adbf55c7bc6bd291f4fd1037072ae637cfa3c147cd3983a7a20e872ac0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  \n> **Source**: github ([https://github.com/tailsc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  \n> **Source**: github ([https://github.com/tailsc",
+      "provenance": {
+        "source_uri": "project://tailscale-tailscale/tailscale-tailscale-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T23:40:01.055Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tailscale-tailscale)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of tailscale-tailscale"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T23:40:26.539Z"
     }
   }
 }

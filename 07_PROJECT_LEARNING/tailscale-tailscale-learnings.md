@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `01f673c4`  
+> **Source Version**: `da6276d7`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T19:26:15.481Z  
+> **Timestamp**: 2026-11-23T23:39:56.359Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:26:15.475Z  
+> **Harvest Timestamp**: 2026-11-23T23:39:56.354Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39531 stars
+- **Stars / Engagement**: 39534 stars
 
 ---
 
@@ -821,59 +821,546 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7294a69d` (2026-11-22)
-**Commit Message**: tsnet: fail the test instead of panicking when a ping times out in test helpers
+### Incident Patch 1: `7caf9edb` (2026-11-23)
+**Commit Message**: appc,feature/conn25: build split DNS routes from the parsed config
 
-setupTwoClientTest and TestDialThroughExitNode used
-must.Get(lc.Ping(...)) to wait for the TSMP path to come up. When that
-ping timed out, must.Get panicked, killing the whole tsnet test binary.
-The flakes dashboard then blamed every test that was running or paused
-at the time (TestPacketFilterFromNetmap, TestListenService, TestListen*,
-TestDialUDP, ...), not just the one whose ping failed.
+On every self node change, conn25 parsed the app connector capability
+twice: once in configFromNodeView, and again in appc.AppDNSRoutes to
+build the split DNS routes. Build the routes from the config we already
+have instead, and move DNSAddrScheme into feature/conn25 along with it.
 
-Use t.Fatalf instead so a failed ping fails only its own test.
+With appc/conn25.go gone, conn25 no longer depends on appc, so
+TestOmitAppConnectors no longer needs to omit conn25 too.
 
-The underlying ping failure was the wireguard-go duplicate handshake
-initiation race, fixed by the wireguard-go bump in #22537.
+Fixes tailscale/corp#51400
+Fixes tailscale/corp#51402
 
-Updates #22551
+Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
 
-Change-Id: I227852aaa576e500df036bb1700fe6c7589b0a25
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-
-**File**: `tsnet/tsnet_test.go` (modified, +6/-2)
+**File**: `appc/conn25.go` (removed, +0/-57)
 ```diff
-@@ -615,7 +615,9 @@ func TestDialThroughExitNode(t *testing.T) {
- 	// Ping to make sure the connection is up.
- 	pingCtx, cancelPing := pingTimeout(ctx)
- 	defer cancelPing()
--	must.Get(lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP))
-+	if _, err := lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP); err != nil {
-+		t.Fatalf("TSMP ping s2 -> s1: %v", err)
+@@ -1,57 +0,0 @@
+-// Copyright (c) Tailscale Inc & contributors
+-// SPDX-License-Identifier: BSD-3-Clause
+-
+-package appc
+-
+-import (
+-	"fmt"
+-	"strings"
+-
+-	"tailscale.com/tailcfg"
+-	"tailscale.com/tailcfg/nodecap"
+-	"tailscale.com/types/appctype"
+-	"tailscale.com/types/dnstype"
+-)
+-
+-const AppConnectorAttrName = "tailscale.com/app-connectors"
+-
+-// DNSAddrScheme is the custom URI scheme used for conn25-managed split DNS
+-// entries to determine the destination at query time rather than configuration
+-// time.
+-const DNSAddrScheme = "tailscale-app"
+-
+-// AppDNSRoutes returns split DNS routes, keyed by domain suffix, for the app
+-// domains configured in self's capability map. Each route resolves via the
+-// [DNSAddrScheme] scheme naming the app, so the connector that serves it is
+-// chosen at query time. It returns nil if the node lacks Connectors 2025 apps.
+-func AppDNSRoutes(hasCap func(c nodecap.Cap) bool, self tailcfg.NodeView) map[string][]*dnstype.Resolver {
+-	if !hasCap(AppConnectorAttrName) {
+-		return nil
+-	}
+-
+-	apps, err := tailcfg.UnmarshalNodeCapViewJSON[appctype.AppConnectorAttr](self.CapMap(), AppConnectorAttrName)
+-	if err != nil {
+-		return nil
+-	}
+-
+-	appNamesByDomain := map[string]string{}
+-	for _, app := range apps {
+-		// conn25 apps are provided under [AppConnectorAttrName] with the Mode
+-		// field set to [appctype.AppConnectorModeMagicIP].
+-		if app.Mode != appctype.MagicIP {
+-			continue
+-		}
+-		for _, domain := range app.Domains {
+-			domain, _ = strings.CutPrefix(domain, "*.")
+-			domain = strings.ToLower(domain)
+-			// in the case of multiple apps specifying the same domain (which is misconfiguration
+-			// that should be validated at point of input) last write wins.
+-			appNamesByDomain[domain] = app.Name
+-		}
+-	}
+-	m := make(map[string][]*dnstype.Resolver, len(appNamesByDomain))
+-	for domain, appName := range appNamesByDomain {
+-		m[domain] = []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
+-	}
+-	return m
+-}
+```
+
+**File**: `appc/conn25_test.go` (removed, +0/-203)
+```diff
+@@ -1,203 +0,0 @@
+-// Copyright (c) Tailscale Inc & contributors
+-// SPDX-License-Identifier: BSD-3-Clause
+-
+-package appc
+-
+-import (
+-	"encoding/json"
+-	"fmt"
+-	"testing"
+-
+-	"github.com/google/go-cmp/cmp"
+-	"tailscale.com/tailcfg"
+-	"tailscale.com/tailcfg/nodecap"
+-	"tailscale.com/types/appctype"
+-	"tailscale.com/types/dnstype"
+-)
+-
+-func TestAppDNSRoutes(t *testing.T) {
+-	getBytesForAttr := func(name string, domains []string, tags []string, mode appctype.Mode) []byte {
+-		attr := appctype.AppConnectorAttr{
+-			Name:       name,
+-			Domains:    domains,
+-			Connectors: tags,
+-			Mode:       mode,
+-		}
+-		bs, err := json.Marshal(attr)
+-		if err != nil {
+-			t.Fatalf("test setup: %v", err)
+-		}
+-		return bs
+-	}
+-	appOneBytes := getBytesForAttr(
+-		"app1",
+-		[]string{"example.com"},
+-		[]string{"tag:one"},
+-		appctype.MagicIP,
+-	)
+-	appTwoBytes := getBytesForAttr(
+-		"app2",
+-		[]string{"a.example.com"},
+-		[]string{"tag:two"},
+-		appctype.MagicIP,
+-	)
+-	appThreeBytes := getBytesForAttr(
+-		"app3",
+-		[]string{"woo.b.example.com", "hoo.b.example.com"},
+-		[]string{"tag:three1", "tag:three2"},
+-		appctype.MagicIP,
+-	)
+-	appFourBytes := getBytesForAttr(
+-		"app4",
+-		[]string{"woo.b.example.com", "c.example.com"},
+-		[]string{"tag:four1", "tag:four2"},
+-		appctype.MagicIP,
+-	)
+-	appFiveBytes := getBytesForAttr(
+-		"app5",
+-		[]string{"*.example.com", "example.com"},
+-		[]string{"tag:one"},
+-		appctype.MagicIP,
+-	)
+-	appSixBytes := getBytesForAttr(
+-		"app6",
+-		[]string{"*.Example.com", "EXAMPLE.com", "EXAMPLE.COM"},
+-		[]string{"tag:one"},
+-		appctype.MagicIP,
+-	)
+-	subnetAppBytes := getBytesForAttr(
+-		"subnet-app",
+-		[]string{"subnet.example.com"},
+-		[]string{"tag:one"},
+-		appctype.Subnet,
+-	)
+-
+-	resolver := func(appName string) []*dnstype.Resolver {
+-		return []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
+-	}
+-
+-	for _, tt := range []struct {
+-		name   string
+-		hasCap bool
+-		config []tailcfg.RawMessage
+-		want   map[string][]*dnstype.Resolver
+-	}{
+-		{
+-			name:   "no-capability", // hasCap false should return nil regardless of config.
+-			hasCap: false,
+-		},
+-		{
+-			name:   "no-apps", // hasCap true but no configured apps returns an empty map.
+-			hasCap: true,
+-			want:   map[string][]*dnstype.Resolver{},
+-		},
+-		{
+-			name:   "bad-config", // bad config should return nil rather than error.
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(`hey`)},
+-		},
+-		{
+-			name:   "single-app",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(appOneBytes)},
+-			want: map[string][]*dnstype.Resolver{
+-				"example.com": resolver("app1"),
+-			},
+-		},
+-		{
+-			name:   "single-app-multi-domain",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(appThreeBytes)},
+-			want: map[string][]*dnstype.Resolver{
+-				"woo.b.example.com": resolver("app3"),
+-				"hoo.b.example.com": resolver("app3"),
+-			},
+-		},
+-		{
+-			name:   "multi-app-no-overlap",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{
+-				tailcfg.RawMessage(appOneBytes),
+-				tailcfg.RawMessage(appTwoBytes),
+-			},
+-			want: map[string][]*dnstype.Resolver{
+-				"example.com":   resolver("app1"),
+-				"a.example.com": resolver("app2"),
+-			},
+-		},
+-		{
+-			name:   "domain-collision-last-write-wins",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{
+-				tailcfg.RawMessage(appThreeBytes), // app3: woo.b.example.com, hoo.b.example.com
+-				tailcfg.RawMessage(appFourBytes),  // app4: woo.b.example.com, c.example.com
+-			},
+-			want: map[string][]*dnstype.Resolver{
+-				// app4 overwrites app3 for the shared domain
+-				"woo.b.example.com": resolver("app4"),
+-				"hoo.b.example.com": resolver("app3"),
+-				"c.example.com":     resolver("app4"),
+-			},
+-		},
+-		{
+-			name:   "wildcards-are-stripped-and-deduped",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(appFiveBytes)},
+-			want: map[string][]*dnstype.Resolver{
+-				// *.example.com and example.com should both normalize to example.com.
+-				"example.com": resolver("app5"),
+-			},
+-		},
+-		{
+-			name:   "domains-are-normalized-and-deduped",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{tailcfg.RawMessage(appSixBytes)},
+-			want: map[string][]*dnstype.Resolver{
+-				// *.Example.com, EXAMPLE.com, EXAMPLE.COM should all normalize to example.com.
+-				"example.com": resolver("app6"),
+-			},
+-		},
+-		{
+-			name:   "sub-domains-and-top-domains-do-not-collide",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{
+-				tailcfg.RawMessage(appTwoBytes),
+-				tailcfg.RawMessage(appFiveBytes),
+-			},
+-			want: map[string][]*dnstype.Resolver{
+-				// *.example.com normalizes to example.com; a.example.com remains distinct.
+-				"a.example.com": resolver("app2"),
+-				"example.com":   resolver("app5"),
+-			},
+-		},
+-		{
+-			name:   "only-conn25-processed",
+-			hasCap: true,
+-			config: []tailcfg.RawMessage{
+-				tailcfg.RawMessage(appOneBytes),
+-				tailcfg.RawMessage(subnetAp
+```
+
+**File**: `cmd/tailscaled/depaware.txt` (modified, +1/-1)
+```diff
+@@ -257,7 +257,7 @@ tailscale.com/cmd/tailscaled dependencies: (generated by github.com/tailscale/de
+         gvisor.dev/gvisor/pkg/tcpip/transport/udp                    from gvisor.dev/gvisor/pkg/tcpip/adapters/gonet+
+         gvisor.dev/gvisor/pkg/waiter                                 from gvisor.dev/gvisor/pkg/context+
+         tailscale.com                                                from tailscale.com/version
+-        tailscale.com/appc                                           from tailscale.com/ipn/ipnlocal+
++        tailscale.com/appc                                           from tailscale.com/ipn/ipnlocal
+      💣 tailscale.com/atomicfile                                     from tailscale.com/ipn+
+   LD    tailscale.com/chirp                                          from tailscale.com/feature/bird
+         tailscale.com/client/local                                   from tailscale.com/client/web+
+```
+
+**File**: `cmd/tailscaled/deps_test.go` (modified, +1/-3)
+```diff
+@@ -86,9 +86,7 @@ func TestOmitAppConnectors(t *testing.T) {
+ 	deptest.DepChecker{
+ 		GOOS:   "linux",
+ 		GOARCH: "amd64",
+-		// conn25 also uses appc, so omit it too to check that nothing
+-		// else pulls appc in.
+-		Tags: "ts_omit_appconnectors,ts_omit_conn25,ts_include_cli",
++		Tags:   "ts_omit_appconnectors,ts_include_cli",
+ 		BadDeps: map[string]string{
+ 			"tailscale.com/appc":                  msg,
+ 			"tailscale.com/feature/appconnectors": msg,
+```
+
+**File**: `feature/conn25/conn25.go` (modified, +37/-6)
+```diff
+@@ -26,7 +26,6 @@ import (
+ 
+ 	"go4.org/netipx"
+ 	"golang.org/x/net/dns/dnsmessage"
+-	"tailscale.com/appc"
+ 	"tailscale.com/feature"
+ 	"tailscale.com/ipn"
+ 	"tailscale.com/ipn/ipnext"
+@@ -169,9 +168,9 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ 		return errors.New("dns manager resolver not ready")
+ 	}
+ 
+-	if err := r.RegisterCustomScheme(appc.DNSAddrScheme, func(addr string) (string, error) {
++	if err := r.RegisterCustomScheme(DNSAddrScheme, func(addr string) (string, error) {
+ 		scheme, appName, ok := strings.Cut(addr, ":")
+-		if !ok || scheme != appc.DNSAddrScheme {
++		if !ok || scheme != DNSAddrScheme {
+ 			return "", fmt.Errorf("unexpected conn25 scheme %q", scheme)
+ 		}
+ 
+@@ -266,7 +265,7 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ 	})
+ 
+ 	// Route DNS queries for app domains to the connector that serves
+-	// them, chosen at query time via the [appc.DNSAddrScheme] scheme.
++	// them, chosen at query time via the [DNSAddrScheme] scheme.
+ 	e.host.Hooks().ExtraDNSRoutes.Set(func() map[string][]*dnstype.Resolver {
+ 		if !e.conn25.isConfigured() {
+ 			return nil
+@@ -468,7 +467,7 @@ func (e *extension) onSelfChange(selfNode tailcfg.NodeView) {
+ 	}
+ 	// Store the routes only once the config parsed, so a bad self node
+ 	// leaves the previous routes and config in place together.
+-	e.conn25.appDNSRoutes.Store(appc.AppDNSRoutes(selfNode.HasCap, selfNode))
++	e.conn25.appDNSRoutes.Store(cfg.appDNSRoutes())
+ 	e.conn25.reconfig(cfg)
+ }
+ 
+@@ -508,7 +507,7 @@ type Conn25 struct {
+ 	prefsAdvertiseConnector atomic.Bool
+ 
+ 	// appDNSRoutes holds the split DNS routes for the app domains in the
+-	// self node's capabilities, as returned by [appc.AppDNSRoutes]. It is
++	// self node's capabilities, as returned by [config.appDNSRoutes]. It is
+ 	// recomputed on each self node change and served to
+ 	// [ipnext.Hooks.ExtraDNSRoutes]. The map must not be mutated once stored.
+ 	appDNSRoutes syncs.AtomicValue[map[string][]*dnstype.Resolver]
+@@ -748,6 +747,11 @@ type ConnectorTransitIPResponse struct {
+ const (
+ 	AppConnectorAttrName                     = "tailscale.com/app-connectors"
+ 	AppConnectorsExperimentalIPPoolsAttrName = "tailscale.com/app-connectors-experimental-ippools"
++
++	// DNSAddrScheme is the custom URI scheme used for conn25-managed split DNS
++	// entries to determine the destination at query time rather than configuration
++	// time.
++	DNSAddrScheme = "tailscale-app"
+ )
+ 
+ // ipSets wraps all the IPSets the config needs.
+@@ -893,6 +897,33 @@ func (cfg *config) getAppsForConnectorDomain(domain dnsname.FQDN, prefsAdvertise
+ 	return appNames
+ }
+ 
++// appDNSRoutes returns split DNS routes, keyed by domain suffix, for the app
++// domains in cfg. Each route resolves via the [DNSAddrScheme] scheme naming
++// the app, so the connector that serves it is chosen at query time. It
++// returns nil if cfg is not configured.
++func (cfg *config) appDNSRoutes() map[string][]*dnstype.Resolver {
++	if !cfg.isConfigured {
++		return nil
 +	}
- 
- 	must.Get(lc2.EditPrefs(ctx, &ipn.MaskedPrefs{
- 		Prefs: ipn.Prefs{
-@@ -2923,7 +2925,9 @@ func setupTwoClientTest(t *testing.T, useTUN bool) *listenTest {
- 
- 	pingCtx, cancelPing := pingTimeout(ctx)
- 	defer cancelPing()
--	must.Get(lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP))
-+	if _, err := lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP); err != nil {
-+		t.Fatalf("TSMP ping s1 -> s2: %v", err)
++	m := make(map[string][]*dnstype.Resolver, len(cfg.appNamesByDomain)+len(cfg.appNamesByWCDomain))
++	add := func(byDomain map[dnsname.FQDN][]string) {
++		for domain, appNames := range byDomain {
++			if len(appNames) == 0 {
++				continue
++			}
++			// In the case of multiple apps specifying the same domain (which is misconfiguration
++			// that should be validated at point of input), the last one in the config list wins.
++			appName := appNames[len(appNames)-1]
++			m[domain.WithoutTrailingDot()] = []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
++		}
 +	}
- 
- 	return &listenTest{
- 		control: control,
++	// If an exact and a wildcard domain coincide, the exact domain's app
++	// takes the route, so add it last.
++	add(cfg.appNamesByWCDomain)
++	add(cfg.appNamesByDomain)
++	return m
++}
++
+ func (e *extension) sendLoop(ctx context.Context) {
+ 	for {
+ 		select {
+```
+
+**File**: `feature/conn25/conn25_test.go` (modified, +136/-0)
+```diff
+@@ -4138,6 +4138,142 @@ func TestHandleHookReplyToDNSQueries(t *testing.T) {
+ // for the app domains in the self node's capabilities, and supplies none
+ // before the self node is known, when this node is itself a connector, or
+ // after a switch to a different node.
++func TestAppDNSRoutes(t *testing.T) {
++	app := func(name string, mode appctype.Mode, domains ...string) appctype.AppConnectorAttr {
++		return appctype.AppConnectorAttr{
++			Name:       name,
++			Domains:    domains,
++			Connectors: []string{"tag:" + name},
++			Mode:       mode,
++		}
++	}
++	resolver := func(appName string) []*dnstype.Resolver {
++		return []*dnstype.Resolver{{Addr: fmt.Sprintf("%s:%s", DNSAddrScheme, appName), UseWithExitNode: true}}
++	}
++
++	for _, tt := range []struct {
++		name string
++		apps []appctype.AppConnectorAttr
++		want map[string][]*dnstype.Resolver
++	}{
++		{
++			name: "no-apps", // an unconfigured config has no routes.
++		},
++		{
++			name: "only-subnet-apps", // no conn25 apps means unconfigured.
++			apps: []appctype.AppConnectorAttr{app("subnet-app", appctype.Subnet, "subnet.example.com")},
++		},
++		{
++			name: "single-app",
++			apps: []appctype.AppConnectorAttr{app("app1", appctype.MagicIP, "example.com")},
++			want: map[string][]*dnstype.Resolver{
++				"example.com": resolver("app1"),
++			},
++		},
++		{
++			name: "single-app-multi-domain",
++			apps: []appctype.AppConnectorAttr{app("app3", appctype.MagicIP, "woo.b.example.com", "hoo.b.example.com")},
++			want: map[string][]*dnstype.Resolver{
++				"woo.b.example.com": resolver("app3"),
++				"hoo.b.example.com": resolver("app3"),
++			},
++		},
++		{
++			name: "multi-app-no-overlap",
++			apps: []appctype.AppConnectorAttr{
++				app("app1", appctype.MagicIP, "example.com"),
++				app("app2", appctype.MagicIP, "a.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				"example.com":   resolver("app1"),
++				"a.example.com": resolver("app2"),
++			},
++		},
++		{
++			name: "domain-collision-last-wins",
++			apps: []appctype.AppConnectorAttr{
++				app("app3", appctype.MagicIP, "woo.b.example.com", "hoo.b.example.com"),
++				app("app4", appctype.MagicIP, "woo.b.example.com", "c.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				// app4 is listed last, so takes the shared domain.
++				"woo.b.example.com": resolver("app4"),
++				"hoo.b.example.com": resolver("app3"),
++				"c.example.com":     resolver("app4"),
++			},
++		},
++		{
++			name: "wildcard-collision-last-wins",
++			apps: []appctype.AppConnectorAttr{
++				app("app1", appctype.MagicIP, "*.example.com"),
++				app("app2", appctype.MagicIP, "*.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				"example.com": resolver("app2"),
++			},
++		},
++		{
++			name: "exact-beats-wildcard",
++			apps: []appctype.AppConnectorAttr{
++				app("app1", appctype.MagicIP, "example.com"),
++				app("app2", appctype.MagicIP, "*.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				// The exact app wins even though the wildcard app is listed last.
++				"example.com": resolver("app1"),
++			},
++		},
++		{
++			name: "wildcards-are-stripped-and-deduped",
++			apps: []appctype.AppConnectorAttr{app("app5", appctype.MagicIP, "*.example.com", "example.com")},
++			want: map[string][]*dnstype.Resolver{
++				// *.example.com and example.com should both normalize to example.com.
++				"example.com": resolver("app5"),
++			},
++		},
++		{
++			name: "domains-are-normalized-and-deduped",
++			apps: []appctype.AppConnectorAttr{app("app6", appctype.MagicIP, "*.Example.com", "EXAMPLE.com", "EXAMPLE.COM", "example.com.")},
++			want: map[string][]*dnstype.Resolver{
++				// All variants should normalize to example.com.
++				"example.com": resolver("app6"),
++			},
++		},
++		{
++			name: "sub-domains-and-top-domains-do-not-collide",
++			apps: []appctype.AppConnectorAttr{
++				app("app2", appctype.MagicIP, "a.example.com"),
++				app("app5", appctype.MagicIP, "*.example.com", "example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				// *.example.com normalizes to example.com; a.example.com remains distinct.
++				"a.example.com": resolver("app2"),
++				"example.com":   resolver("app5"),
++			},
++		},
++		{
++			name: "only-conn25-processed",
++			apps: []appctype.AppConnectorAttr{
++				app("app1", appctype.MagicIP, "example.com"),
++				app("subnet-app", appctype.Subnet, "subnet.example.com"),
++			},
++			want: map[string][]*dnstype.Resolver{
++				// The app that's a subnet router should not show up here,
++				// since we only deal with conn25 apps.
++				"example.com": resolver("app1"),
++			},
++		},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			cfg := mustConfig(t, makeSelfNode(t, tt.apps, appctype.Conn25PoolsAttr{}, nil))
++			got := cfg.appDNSRoutes()
++			if diff := cmp.Diff(tt.want, got); diff != "" {
++				t.Fatalf("appDNSRoutes (-want, +got):\n%s", diff)
++			}
++		})
++	}
++}
++
+ func TestExtraDNSRoutesHook(t *testing.T) {
+ 	ext := &extension{
+ 		conn25:  newConn25(logger.Discard),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22612** (2026-11-23): VERSION.txt: this is v1.107.0 (@nickoneill)
+- **PR #22611** (2026-11-23): net/dns: retry failed hosts file updates in the background on Windows (@nickkhyl)
+- **PR #22610** (2026-11-23): derp/derpserver: add rate limiting exemption by IP (@mikeodr)
+- **PR #22607** (2026-11-23): feature/conn25: enforce token verification (@franbull)
+- **PR #22604** (2026-11-23): appc,feature/conn25: build split DNS routes from the parsed config (@mzbenami)
 - **PR #22594** (closed): mikeodr/rpf 7 natlab tests (@mikeodr)
-- **PR #22591** (2026-11-23): wgengine/router: add envknob to disable src_valid_mark (@mikeodr)
-- **PR #22586** (2026-11-23): go.mod: bump 5 modules (@tailscale-code-updater[bot])
-- **PR #22583** (2026-11-23): client/systray: shut down cleanly on termination signals (@fQwQf)
-- **PR #22581** (2026-11-22): feature/androidbin: register fallback in Android cgo builds (@lozbrown)
-- **PR #22580** (2026-11-23): net/dnsfallback: continue to remove the DNS fallback mechanism (@bradfitz)
 
 ---
 
@@ -887,40 +1374,3 @@ Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. tsnet: fail the test instead of panicking when a ping times out in test helpers
-
-**RULE**:
-When implementing operations in `tsnet/tsnet_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `7294a69d`: tsnet: fail the test instead of panicking when a ping times out in test helpers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsnet/tsnet_test.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-	if _, err := lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP); err != nil {
-		t.Fatalf("TSMP ping s2 -> s1: %v", err)
-	}
-	if _, err := lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP); err != nil {
-		t.Fatalf("TSMP ping s1 -> s2: %v", err)
-	}
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-	must.Get(lc2.Ping(pingCtx, s1ip, tailcfg.PingTSMP))
-	must.Get(lc1.Ping(pingCtx, s2ip4, tailcfg.PingTSMP))
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7294a69d` are properly handled with clean fallback behavior.

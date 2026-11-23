@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T15:59:01.931Z",
+  "timestamp": "2026-11-23T23:40:00.123Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tokio-rs-tokio-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tokio-rs-tokio-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T15:59:01.931Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T23:40:00.123Z`  
 > **Learning ID**: `LEARN-EVO-tokio-rs-tokio-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `675ba816`  
+> **Source Version**: `6bbeecff`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T15:55:51.833Z  
+> **Timestamp**: 2026-11-23T23:39:46.559Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T15:55:51.603Z  
+> **Harvest Timestamp**: 2026-11-23T23:39:46.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33767 stars
+- **Stars / Engagement**: 33772 stars
 
 ---
 
@@ -1963,11 +1963,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8820** (2026-11-21): **update `tokio/lib.rs` docs to mention `wasm32-wasip3` support**
-  *Symptoms*: <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Please read the commit message guidelines when writing your PR description: https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md#commit-message-guidelines  Bug fixes and new features should include tests.  Contributors guide: https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md  The contributors guide includes instructions for running rustfmt and building the documentation, which requires special commands beyond `cargo fmt` and `cargo doc`. --> 
+- **Issue #8826** (2026-11-23): **net: report vectored write support on named pipes**
+  *Symptoms*: `NamedPipeServer` and `NamedPipeClient` return the default `false` from `is_write_vectored`, although their vectored writes use every buffer since mio 1.2.5 (tokio-rs/mio#2013), the minimum version since #8438. So `write_buf`, `write_all_buf` and tokio-util's `poll_write_buf` pass only the first chunk of a `Buf` per write, and on a message mode pipe each chunk becomes its own message. Thus, return `true`, as `TcpStream`, `UnixStream` and the unix pipe `Sender` do.  Fixes: #6970 
 
-- **Issue #8818** (2026-11-21): **enable `wasm32-wasip3` support**
-  *Symptoms*: This just requires a `rand` version bump to fix a `wasm32-wasip3` compatibility issue in `getrandom`.  Note that this only provides parity with `wasm32-wasip2`, feature-wise. However, (cooperative) multithreading support is expected to stabilize for `wasm32-wasip3` in the next few months, allowing `std::thread::spawn` and friends to work, at which point we'll be able to support a lot more of Tokio's features (e.g. name lookup, filesystem, etc.) and mostly treat it like any other posix-style platform.  <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Please read the commit message guidelines when writing your PR description: https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md#commit-message-guidelines  Bug fixes and new features should include tests.  Contributors guide: https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md  The contributors guide includes instructions for running rustfmt and building the documentation, which requires special commands beyond `cargo fmt` and `cargo doc`. --> 
+- **Issue #8824** (2026-11-23): **tokio-test: correct `assert_elapsed!` docs**
+  *Symptoms*: The `assert_elapsed!` docs say it accepts the duration ±1ms, but it only accepts elapsed times from `dur` to `dur` + 1ms. Its example sits in an `async fn` that is never called, and on a real clock the 50ms sleep takes about 52ms, so the example fails when run. Thus, describe the actual range, note that the macro expects a paused clock, and run the example with `start_paused = true`.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1984,303 +1984,192 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `675ba816` (2026-11-21)
-**Commit Message**: wasm: update `lib.rs` docs to mention `wasm32-wasip3` support (#8820)
+### Incident Patch 1: `6bbeecff` (2026-11-23)
+**Commit Message**: tokio-test: correct `assert_elapsed!` docs (#8824)
 
-**File**: `tokio/src/lib.rs` (modified, +10/-9)
+The `assert_elapsed!` docs say it accepts the duration ±1ms, but it only
+accepts elapsed times from `dur` to `dur` + 1ms. Its example sits in an
+`async fn` that is never called, and on a real clock the 50ms sleep
+takes about 52ms, so the example fails when run. Thus, describe the
+actual range, note that the macro expects a paused clock, and run the
+example with `start_paused = true`.
+
+**File**: `tokio-test/src/macros.rs` (modified, +8/-2)
 ```diff
-@@ -462,15 +462,16 @@
- //!
- //! ### `WASI` support
- //!
--//! The `wasm32-wasip1` and `wasm32-wasip2` targets support the above features.
--//! Timers work correctly as blocking the thread is supported.
--//!
--//! Under the `tokio_unstable` flag, these targets support the use
--//! of `tokio::net`. On `wasm32-wasip1`, not all methods are available on the
--//! networking types as this target does not support the creation of new
--//! sockets from within `WASM`. Because of this, sockets must currently be
--//! created via the `FromRawFd` trait on `wasm32-wasip1`. The `wasm32-wasip2`
--//! target does not have this limitation.
-+//! The `wasm32-wasip1`, `wasm32-wasip2`, and `wasm32-wasip3` targets support
-+//! the above features.  Timers work correctly as blocking the thread is
-+//! supported.
-+//!
-+//! Under the `tokio_unstable` flag, these targets support the use of
-+//! `tokio::net`. On `wasm32-wasip1`, not all methods are available on the
-+//! networking types as this target does not support the creation of new sockets
-+//! from within `WASM`. Because of this, sockets must currently be created via
-+//! the `FromRawFd` trait on `wasm32-wasip1`. The `wasm32-wasip2` and
-+//! `wasm32-wasip3` targets do not have this limitation.
- //!
- //! ### Emscripten support
- //!
+@@ -250,13 +250,19 @@ macro_rules! assert_err {
+     }};
+ }
+ 
+-/// Asserts that an exact duration has elapsed since the start instant ±1ms.
++/// Asserts that at least `dur`, and at most `dur` + 1ms, has elapsed since the
++/// start instant.
++///
++/// This is intended for use with a paused clock, for example with
++/// `#[tokio::test(start_paused = true)]`. With a real clock, a sleep can
++/// overshoot by more than 1ms and the assertion will fail.
+ ///
+ /// ```rust
+ /// use tokio::time::{self, Instant};
+ /// use std::time::Duration;
+ /// use tokio_test::assert_elapsed;
+-/// # async fn test_time_passed() {
++/// # #[tokio::main(flavor = "current_thread", start_paused = true)]
++/// # async fn main() {
+ ///
+ /// let start = Instant::now();
+ /// let dur = Duration::from_millis(50);
 ```
 
 ---
 
-### Incident Patch 2: `8bdf1e9d` (2026-11-21)
-**Commit Message**: wasm: support the net feature on Emscripten (#8438)
+### Incident Patch 2: `8526eecb` (2026-11-23)
+**Commit Message**: net: report vectored write support on named pipes (#8826)
 
-**File**: `.github/workflows/ci.yml` (modified, +7/-7)
-```diff
-@@ -20,7 +20,7 @@ env:
-   # Pin a specific miri version
-   rust_miri_nightly: nightly-2026-08-17
-   rust_emscripten_nightly: nightly-2026-08-17
--  emsdk_version: '6.0.10'
-+  emsdk_version: '7.0.0'
-   rust_clippy: '1.95'
-   # When updating this, also update:
-   # - README.md
-@@ -1232,18 +1232,18 @@ jobs:
-           tool: cargo-hack
- 
-       - name: Check tokio feature matrix for emscripten
--        run: cargo hack check -p tokio --each-feature --exclude-features full,net,process,signal,rt-multi-thread,io-uring,taskdump,schedule-latency --target wasm32-unknown-emscripten
-+        run: cargo hack check -p tokio --each-feature --exclude-features full,process,signal,rt-multi-thread,io-uring,taskdump,schedule-latency --target wasm32-unknown-emscripten
-         working-directory: tokio
- 
-       - name: Test tokio for emscripten (JSPI)
--        run: cargo test -p tokio --target wasm32-unknown-emscripten --features "rt,time,sync,macros,fs,io-util,io-std,test-util" --tests
-+        run: cargo test -p tokio --target wasm32-unknown-emscripten --features "rt,time,sync,macros,fs,io-util,io-std,test-util,net" --tests
-         working-directory: tokio
-         env:
-           CARGO_TARGET_WASM32_UNKNOWN_EMSCRIPTEN_RUNNER: node
--          RUSTFLAGS: "-Dwarnings -Clink-args=-sALLOW_MEMORY_GROWTH=1 -Clink-args=-sEXIT_RUNTIME=1 -Clink-args=-sJSPI -Clink-args=-sSTACK_SIZE=1048576 -Clink-args=-sMODULARIZE=instance -Clink-args=-sAUTO_INIT -Clink-args=-Wno-experimental"
-+          RUSTFLAGS: "-Dwarnings -Clink-args=-sALLOW_MEMORY_GROWTH=1 -Clink-args=-sEXIT_RUNTIME=1 -Clink-args=-sJSPI -Clink-args=-sSTACK_SIZE=1048576 -Clink-args=-sMODULARIZE=instance -Clink-args=-sAUTO_INIT -Clink-args=-Wno-experimental -Clink-args=-sNODERAWSOCKETS -Clink-args=-sNODERAWFS"
- 
-       - name: Test tokio for emscripten (non-JSPI)
--        run: cargo test -p tokio --target wasm32-unknown-emscripten --features "rt,time,sync,macros,fs,io-util,io-std,test-util" --test rt_emscripten_block_on --test sync_emscripten_blocking
-+        run: cargo test -p tokio --target wasm32-unknown-emscripten --features "rt,time,sync,macros,fs,io-util,io-std,test-util,net" --test rt_emscripten_block_on --test sync_emscripten_blocking
-         working-directory: tokio
-         env:
-           CARGO_TARGET_WASM32_UNKNOWN_EMSCRIPTEN_RUNNER: node
-@@ -1257,11 +1257,11 @@ jobs:
-           components: rust-src
- 
-       - name: Test tokio for emscripten (pthreads)
--        run: cargo +${{ env.rust_emscripten_nightly }} test -Zbuild-std=std,panic_abort -p tokio --target wasm32-unknown-emscripten --features "rt,rt-multi-thread,time,sync,macros,fs,io-util,io-std,test-util" --tests
-+        run: cargo +${{ env.rust_emscripten_nightly }} test -Zbuild-std=std,panic_abort -p tokio --target wasm32-unknown-emscripten --features "rt,rt-multi-thread,time,sync,macros,fs,io-util,io-std,test-util,net" --tests
-         working-directory: tokio
-         env:
-           CARGO_TARGET_WASM32_UNKNOWN_EMSCRIPTEN_RUNNER: node
--          RUSTFLAGS: "-Dwarnings -Ctarget-feature=+atomics,+bulk-memory,+mutable-globals -Clink-args=-pthread -Clink-args=-sPTHREAD_POOL_SIZE=8 -Clink-args=-sINITIAL_MEMORY=134217728 -Clink-args=-sEXIT_RUNTIME=1 -Clink-args=-sSTACK_SIZE=1048576"
-+          RUSTFLAGS: "-Dwarnings -Ctarget-feature=+atomics,+bulk-memory,+mutable-globals -Clink-args=-pthread -Clink-args=-sPTHREAD_POOL_SIZE=8 -Clink-args=-sPROXY_TO_PTHREAD -Clink-args=-sINITIAL_MEMORY=134217728 -Clink-args=-sEXIT_RUNTIME=1 -Clink-args=-sSTACK_SIZE=1048576 -Clink-args=-sNODERAWSOCKETS -Clink-args=-sNODERAWFS"
- 
-   check-external-types:
-     name: check-external-types (${{ matrix.os }})
-```
+`NamedPipeServer` and `NamedPipeClient` return the default `false` from
+`is_write_vectored`, although their vectored writes use every buffer
+since mio 1.2.5. So `write_buf`, `write_all_buf` and `poll_write_buf`
+pass only the first chunk of a `Buf` per write. Thus, return `true`, as
+`TcpStream` and `UnixStream` do.
 
-**File**: `spellcheck.dic` (modified, +3/-1)
-```diff
-@@ -1,4 +1,4 @@
--334
-+336
- &
- +
- 0o777
-@@ -112,6 +112,7 @@ WebAssembly
- ZST
- \
- accessors
-+activations
- adaptor
- adaptors
- ambient
-@@ -174,6 +175,7 @@ enqueue
- enqueued
- enum
- eof
-+epoll
- errored
- expirations
- fcntl
-```
+Fixes: #6970
 
-**File**: `tokio/Cargo.toml` (modified, +2/-2)
+**File**: `tokio/src/net/windows/named_pipe.rs` (modified, +8/-0)
 ```diff
-@@ -97,7 +97,7 @@ pin-project-lite = "0.2.11"
- 
- # Everything else is optional...
- bytes = { version = "1.2.1", optional = true }
--mio = { version = "1.2.0", optional = true, default-features = false }
-+mio = { version = "1.2.5", optional = true, default-features = false }
- # Excluded from `full`; if used, the MSRV follows `parking_lot`'s.
- parking_lot = { version = "0.13.0", optional = true }
- 
-@@ -114,7 +114,7 @@ tracing = { version = "0.1.29", default-features = false, features = ["std"], op
- [target.'cfg(all(tokio_unstable, target_os = "linux"))'.dependencies]
- io-uring = { version = "0.7.11", default-features = false, optional = true }
- libc = { version = "0.2.168", optional = true }
--mio = { version = "1.2.0", default-features = false, features = ["os-poll", "os-ext"], optional = true }
-+mio = { version = "1.2.5", default-features = false, features = ["os-poll", "os-ext"], optional = true }
- slab = { version = "0.4.9", optional = true }
- backtrace = { version = "0.3.58", optional = true }
- 
-```
-
-**File**: `tokio/src/lib.rs` (modified, +23/-10)
-```diff
-@@ -21,7 +21,10 @@
- #![cfg_attr(docsrs, feature(doc_cfg))]
- #![cfg_attr(docsrs, allow(unused_attributes))]
- #![cfg_attr(loom, allow(dead_code, unreachable_pub))]
--#![cfg_attr(windows, allow(rustdoc::broken_intra_doc_links))]
-+#![cfg_attr(
-+    any(windows, target_family = "wasm"),
-+    allow(rustdoc::broken_intra_doc_links)
-+)]
- 
- //! A runtime for writing reliable network applications without compromising speed.
- //!
-@@ -472,10 +475,10 @@
- //! ### Emscripten support
- //!
- //! The `wasm32-unknown-emscripten` target supports the single-threaded runtime
--//! with the `rt`, `time`, `sync`, `macros`, `fs`, `io-util`, `io-std`, and
--//! `test-util` features. The `rt-multi-thread` feature is additionally
--//! supported when building with Emscripten pthreads (`-pthread`). The `net`,
--//! `process`, and `signal` features are not supported.
-+//! with the `rt`, `time`, `sync`, `macros`, `fs`, `io-util`, `io-std`,
-+//! `test-util`, and `net` features. The `rt-multi-thread` feature is
-+//! additionally supported when building with Emscripten pthreads (`-pthread`).
-+//! The `process` and `signal` features are not supported.
- //!
- //! Emscripten's filesystem is synchronous, so `tokio::fs` and `io-std` run
- //! their operations inline on the calling thread rather than on the blocking
-@@ -490,6 +493,19 @@
- //! `WebAssembly.promising`. A wait from any other activation throws
- //! `WebAssembly.SuspendError`. That is a foreign exception rather than a Rust
- //! panic, so it can't be caught by `catch_unwind`.
-+//!
-+//! `net` uses the standard `mio` epoll reactor over Emscripten's sockets. The
-+//! I/O driver's wait is a blocking `epoll_wait`, which needs either JSPI
-+//! (suspending on the host event loop) or pthreads with `-sPROXY_TO_PTHREAD`
-+//! (blocking on a worker). Built with `-sNODERAWSOCKETS` (real Node sockets),
-+//! [`TcpStream`](crate::net::TcpStream),
-+//! [`TcpListener`](crate::net::TcpListener), [`UdpSocket`](crate::net::UdpSocket),
-+//! stream `AF_UNIX` sockets ([`UnixStream`](crate::net::UnixStream),
-+//! [`UnixListener`](crate::net::UnixListener), [`UnixSocket`](crate::net::UnixSocket)),
-+//! [`lookup_host`](crate::net::lookup_host), and
-+//! [`AsyncFd`](crate::io::unix::AsyncFd) behave as on native. Node has no
-+//! `socketpair(2)` (so `UnixStream::pair`), no datagram `AF_UNIX` (so
-+//! `UnixDatagram`), and no `SO_PEERCRED` (so `peer_cred`).
- 
- // Test that pointer width is compatible. This asserts that e.g. usize is at
- // least 32 bits, which a lot of components in Tokio currently assumes.
-@@ -515,11 +531,8 @@ compile_error! {
- ))]
- compile_error!("Only features sync,macros,io-util,rt,time are supported on wasm.");
- 
--#[cfg(all(
--    target_os = "emscripten",
--    any(feature = "net", feature = "process", feature = "signal")
--))]
--compile_error!("Features net,process,signal are not supported on wasm32-unknown-emscripten.");
-+#[cfg(all(target_os = "emscripten", any(feature = "process", feature = "signal")))]
-+compile_error!("Features process,signal are not supported on wasm32-unknown-emscripten.");
- 
- #[cfg(all(
-     target_os = "emscripten",
-```
-
-**File**: `tokio/src/net/mod.rs` (modified, +3/-0)
-```diff
-@@ -53,6 +53,9 @@ cfg_net! {
- 
- cfg_net_unix! {
-     pub mod unix;
-+    // Node has no datagram `AF_UNIX` sockets.
-+    #[cfg(not(target_os = "emscripten"))]
-+    #[cfg_attr(docsrs, doc(cfg(not(target_os = "emscripten"))))]
-     pub use unix::datagram::socket::UnixDatagram;
-     pub use unix::listener::UnixListener;
-     pub use unix::stream::UnixStream;
-```
-
-**File**: `tokio/src/net/unix/mod.rs` (modified, +1/-0)
-```diff
-@@ -3,6 +3,7 @@
- // unintentionally defined as a public module. Hide it from the documentation
- // instead of changing it to a private module to avoid breakage.
- #[doc(hidden)]
-+#[cfg(not(target_os = "emscripten"))]
- pub mod datagram;
- 
- pub(crate) mod listener;
-```
-
-**File**: `tokio/src/net/unix/socket.rs` (modified, +16/-2)
-```diff
-@@ -6,7 +6,10 @@ use std::os::unix::io::{AsFd, AsRawFd, BorrowedFd, FromRawFd, IntoRawFd, RawFd};
- #[cfg(any(target_os = "linux", target_os = "android"))]
- use crate::net::unix::Permissions;
- 
--use crate::net::{UnixDatagram, UnixListener, UnixStream};
-+use crate::net::{UnixListener, UnixStream};
-+// Datagram AF_UNIX is unavailable on emscripten's node backend (stream-only).
-+#[cfg(not(target_os = "emscripten"))]
-+use crate::net::UnixDatagram;
- 
- cfg_net_unix! {
-     /// A Unix socket that has not yet been converted to a [`UnixStream`], [`UnixDatagram`], or
-@@ -96,7 +99,16 @@ cfg_net_unix! {
- 
- impl UnixSocket {
-     fn ty(&self) -> socket2::Type {
--        self.inner.r#type().unwrap()
-+        // emscripten's node backend has no `getsockopt(SO_TYPE)`, and datagram
-+        // sockets are unavailable there, so every `UnixSocket` is a stream.
-+        #[cfg(target_os = "emscripten")]
-+        {
-+            socket2::Type::STREAM
-+        }
-+        #[cfg(not(target_os = "emscripten"))]
-+        {
-+            self.inner.r#type().unwrap()
-+        }
+@@ -919,6 +919,10 @@ impl AsyncWrite for NamedPipeServer {
+         self.io.poll_write_vectored(cx, bufs)
      }
  
-     /// Creates a new Unix datagram socket.
-@@ -107,6 +119,7 @@ impl UnixSocket {
-     ///
-     /// On success, the newly created [`UnixSocket`] is returned. If an error is
-     /// encountered, it is returned instead.
-+    #[cfg(not(target_os = "emscripten"))]
-     pub fn new_datagram() -> io::Result<UnixSocket> {
-         UnixSocket::new(socket2::Type::DGRAM)
++    fn is_write_vectored(&self) -> bool {
++        true
++    }
++
+     fn poll_flush(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+         Poll::Ready(Ok(()))
      }
-@@ -229,6 +242,7 @@ impl UnixSocket {
-     /// Calling this function on a socket created by [`new_stream`] will return an error.
-     ///
-     /// [`new_stream`]: `UnixSocket::new_stream`
-+    #[cfg(not(target_os = "emscripten"))]
-     pub fn datagram(self) -> io::Result<UnixDatagram> {
-         if self.ty() == socket2::Type::STREAM {
-             return Err(io::Error::other(
+@@ -1710,6 +1714,10 @@ impl AsyncWrite for NamedPipeClient {
+         self.io.poll_write_vectored(cx, bufs)
+     }
+ 
++    fn is_write_vectored(&self) -> bool {
++        true
++    }
++
+     fn poll_flush(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+         Poll::Ready(Ok(()))
+     }
 ```
 
-**File**: `tokio/src/net/unix/stream.rs` (modified, +2/-0)
+**File**: `tokio/tests/net_named_pipe.rs` (modified, +86/-2)
 ```diff
-@@ -910,6 +910,8 @@ impl UnixStream {
-     /// This function will create a pair of interconnected Unix sockets for
-     /// communicating back and forth between one another. Each socket will
-     /// be associated with the default event loop's handle.
-+    // Node has no `socketpair(2)`.
-+    #[cfg(not(target_os = "emscripten"))]
-     pub fn pair() -> io::Result<(UnixStream, UnixStream)> {
-         let (a, b) = mio::net::UnixStream::pair()?;
-         let a = UnixStream::new(a)?;
+@@ -1,9 +1,10 @@
+ #![cfg(feature = "full")]
+ #![cfg(windows)]
+ 
+-use std::io;
++use bytes::Buf;
++use std::io::{self, IoSlice, IoSliceMut};
+ use std::time::Duration;
+-use tokio::io::{AsyncReadExt, AsyncWriteExt};
++use tokio::io::{AsyncReadExt, AsyncWrite, AsyncWriteExt};
+ use tokio::net::windows::named_pipe::{ClientOptions, PipeMode, ServerOptions};
+ use tokio::time;
+ use windows_sys::Win32::Foundation::{ERROR_NO_DATA, ERROR_PIPE_BUSY};
+@@ -397,3 +398,86 @@ async fn test_named_pipe_access() -> io::Result<()> {
+     }
+     Ok(())
+ }
++
++// This tests that `try_write_vectored` and `try_read_vectored` use every
++// buffer, in both directions.
++//
++// Regression test for: https://github.com/tokio-rs/tokio/issues/6970
++#[tokio::test]
++async fn test_named_pipe_try_io_vectored() -> io::Result<()> {
++    const PIPE_NAME: &str = r"\\.\pipe\test-named-pipe-try-io-vectored";
++
++    let server = ServerOptions::new().create(PIPE_NAME)?;
++    let client = ClientOptions::new().open(PIPE_NAME)?;
++    server.connect().await?;
++
++    let bufs = [IoSlice::new(b"hello "), IoSlice::new(b"world")];
++
++    // client to server
++    client.writable().await?;
++    assert_eq!(client.try_write_vectored(&bufs)?, 11);
++
++    let mut head = [0u8; 4];
++    let mut tail = [0u8; 16];
++    let n = loop {
++        server.readable().await?;
++        let mut bufs = [IoSliceMut::new(&mut head), IoSliceMut::new(&mut tail)];
++        match server.try_read_vectored(&mut bufs) {
++            Ok(n) => break n,
++            Err(e) if e.kind() == io::ErrorKind::WouldBlock => continue,
++            Err(e) => return Err(e),
++        }
++    };
++    assert_eq!(n, 11);
++    assert_eq!(&head, b"hell");
++    assert_eq!(&tail[..7], b"o world");
++
++    // server to client
++    server.writable().await?;
++    assert_eq!(server.try_write_vectored(&bufs)?, 11);
++
++    let mut head = [0u8; 4];
++    let mut tail = [0u8; 16];
++    let n = loop {
++        client.readable().await?;
++        let mut bufs = [IoSliceMut::new(&mut head), IoSliceMut::new(&mut tail)];
++        match client.try_read_vectored(&mut bufs) {
++            Ok(n) => break n,
++            Err(e) if e.kind() == io::ErrorKind::WouldBlock => continue,
++            Err(e) => return Err(e),
++        }
++    };
++    assert_eq!(n, 11);
++    assert_eq!(&head, b"hell");
++    assert_eq!(&tail[..7], b"o world");
++
++    Ok(())
++}
++
++// This tests that the `AsyncWrite` impls report vectored writes as supported,
++// so that `write_buf` passes every chunk of a `Buf` to the pipe in one write.
++#[tokio::test]
++async fn test_named_pipe_write_buf_vectored() -> io::Result<()> {
++    const PIPE_NAME: &str = r"\\.\pipe\test-named-pipe-write-buf-vectored";
++
++    let mut server = ServerOptions::new().create(PIPE_NAME)?;
++    let mut client = ClientOptions::new().open(PIPE_NAME)?;
++    server.connect().await?;
++
++    assert!(server.is_write_vectored());
++    assert!(client.is_write_vectored());
++
++    let mut buf = [0u8; 11];
++
++    let mut chunks = Buf::chain(&b"hello "[..], &b"world"[..]);
++    assert_eq!(client.write_buf(&mut chunks).await?, 11);
++    server.read_exact(&mut buf).await?;
++    assert_eq!(&buf, b"hello world");
++
++    let mut chunks = Buf::chain(&b"hello "[..], &b"world"[..]);
++    assert_eq!(server.write_buf(&mut chunks).await?, 11);
++    client.read_exact(&mut buf).await?;
++    assert_eq!(&buf, b"hello world");
++
++    Ok(())
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8826** (2026-11-23): net: report vectored write support on named pipes (@waltuov)
+- **PR #8824** (2026-11-23): tokio-test: correct `assert_elapsed!` docs (@thejesh23)
 - **PR #8820** (2026-11-21): update `tokio/lib.rs` docs to mention `wasm32-wasip3` support (@dicej)
 - **PR #8818** (2026-11-21): enable `wasm32-wasip3` support (@dicej)
 - **PR #8817** (closed): codec: add a protobuf style varint length codec (@StrikeRougeAgent)
 - **PR #8816** (closed): net: require mio 1.2.5 for vectored named pipe io (@StrikeRougeAgent)
-- **PR #8814** (closed): runtime: share the current-thread waker vtable (@LingaoM)
-- **PR #8811** (2026-11-20): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
 
 ---
 
@@ -2300,48 +2189,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wasm: update `lib.rs` docs to mention `wasm32-wasip3` support
+## X. tokio-test: correct `assert_elapsed!` docs
 
 **RULE**:
-When implementing operations in `tokio/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio-test/src/macros.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `675ba816`: wasm: update `lib.rs` docs to mention `wasm32-wasip3` support. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bbeecff`: tokio-test: correct `assert_elapsed!` docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio-test/src/macros.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! The `wasm32-wasip1`, `wasm32-wasip2`, and `wasm32-wasip3` targets support
-//! the above features.  Timers work correctly as blocking the thread is
-//! supported.
-//!
-//! Under the `tokio_unstable` flag, these targets support the use of
-//! `tokio::net`. On `wasm32-wasip1`, not all methods are available on the
-//! networking types as this target does not support the creation of new sockets
-//! from within `WASM`. Because of this, sockets must currently be created via
-//! the `FromRawFd` trait on `wasm32-wasip1`. The `wasm32-wasip2` and
-//! `wasm32-wasip3` targets do not have this limitation.
+/// Asserts that at least `dur`, and at most `dur` + 1ms, has elapsed since the
+/// start instant.
+///
+/// This is intended for use with a paused clock, for example with
+/// `#[tokio::test(start_paused = true)]`. With a real clock, a sleep can
+/// overshoot by more than 1ms and the assertion will fail.
+/// # #[tokio::main(flavor = "current_thread", start_paused = true)]
+/// # async fn main() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-//! The `wasm32-wasip1` and `wasm32-wasip2` targets support the above features.
-//! Timers work correctly as blocking the thread is supported.
-//!
-//! Under the `tokio_unstable` flag, these targets support the use
-//! of `tokio::net`. On `wasm32-wasip1`, not all methods are available on the
-//! networking types as this target does not support the creation of new
-//! sockets from within `WASM`. Because of this, sockets must currently be
-//! created via the `FromRawFd` trait on `wasm32-wasip1`. The `wasm32-wasip2`
-//! target does not have this limitation.
+/// Asserts that an exact duration has elapsed since the start instant ±1ms.
+/// # async fn test_time_passed() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `675ba816` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bbeecff` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

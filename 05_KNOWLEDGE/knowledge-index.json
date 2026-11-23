@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T23:31:42.442Z",
+  "last_updated": "2026-11-23T23:40:26.828Z",
   "total_verified_learnings": 9087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24272,
+  "total_items": 24275,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223625,8 +223625,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "01f673c4",
-      "content_hash": "e5ee3e137a6f0196687b67748f048a33cf8281a7274f6d89b379bfd6d0e33919",
+      "source_version": "da6276d7",
+      "content_hash": "e134d954b7e12ccc9076a4cec0b3d20df16bc34bdb8e78e52b7740f59bc69328",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -223766,7 +223766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:26:16.304Z",
+      "verified_at": "2026-11-23T23:39:56.612Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234323,8 +234323,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "675ba816",
-      "content_hash": "a5272a2235f450c8f80cd1c771912448a8d2d1ff017bbe56cf32ce9d1be438f1",
+      "source_version": "6bbeecff",
+      "content_hash": "b5ffca2816e2ee437806e135d4fded9b129ab108c8a4d6d3b7bba306481a7ca6",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -234352,6 +234352,11 @@
           "number": 9946,
           "title": "update `lib.rs` docs to mention `wasm32-wasip3` support",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10148,
+          "title": "correct `assert_elapsed!` docs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234359,7 +234364,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T15:55:52.889Z",
+      "verified_at": "2026-11-23T23:39:47.387Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234401,10 +234406,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "repository": "tokio-rs/tokio",
-      "source_version": "675ba816",
-      "content_hash": "7b21876ec05abbf36c9b7f38ece6a92f67bdd99da5e753d4f2bb7418207edebc",
+      "source_version": "6bbeecff",
+      "content_hash": "e56dad796bfc2ebb0f152c0440ad63c817153c3cb9f8e7a56421a06eeb1ead61",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T15:55:53.685Z"
+      "persisted_at": "2026-11-23T23:39:47.974Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio",
@@ -234413,10 +234418,10 @@
       "relative_path": "08_VERIFICATION/tokio-rs-tokio-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio.md",
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs/tokio",
       "repository": "tokio-rs/tokio",
-      "source_version": "675ba816",
-      "content_hash": "8ede386a2cd8d85db3700aef00916260c3f4fbd2bf006362d39421940469840e",
+      "source_version": "6bbeecff",
+      "content_hash": "15ac65e2ccb764608ed9873c75a6a2e3805f19d2e30da4bae9cc11a745070a40",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:55:53.914Z"
+      "persisted_at": "2026-11-23T23:39:48.156Z"
     },
     "learn-github-starrocks-starrocks": {
       "learning_id": "learn-github-starrocks-starrocks",
@@ -234626,9 +234631,9 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "5aef0c9fac4323a281c574ff0a7de96afd29cd21bb0c5b366fa81f396bfbaf28",
+      "content_hash": "99447d936ae1f108d38d2c15bf99a140423f6cff0243586a7d18c0d6902af0f0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T15:59:02.297Z"
+      "persisted_at": "2026-11-23T23:40:00.397Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings",
@@ -234638,9 +234643,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs-tokio-learnings",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "671ffa91a698273273c2fcb686814e28b3061b5e0d9d8403dca22f00de9bf85b",
+      "content_hash": "a19183d369188110aacf22eca64d4acb7bc3961008adca8cf5507204325e2bf1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:59:02.519Z"
+      "persisted_at": "2026-11-23T23:40:00.557Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant",
@@ -244239,7 +244244,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "1e56cb9eeb722c83ace7145ce4f33540e6a4d36db3572c4dfb7a05b2b0da4c03",
+      "content_hash": "db2fb7bdd3a9ded4d23a119fdd12331148fef1d49a05d555dbd3685073c23165",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "promoted_rules": [
@@ -244259,7 +244264,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T17:42:49.009Z",
+      "verified_at": "2026-11-23T23:39:46.036Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -292991,10 +292996,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-technical-construction-intelligence-tailscale-tailscale-core.md",
       "title": "Technical Construction Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "c8ba9da5",
-      "content_hash": "3ed7bddb57a781e3d998357f9ee9fe357f3342d72fbc2589d4fe5e934ca03595",
+      "source_version": "da6276d7",
+      "content_hash": "32e10e98aa459abd4b7b2115a040715c09e3e2fdd60590cdf0fbb557f779280b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T13:08:28.638Z"
+      "persisted_at": "2026-11-23T23:39:57.056Z"
     },
     "rule-9268": {
       "learning_id": "rule-9268",
@@ -293030,9 +293035,9 @@
       "title": "Technical Construction Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf9c5995697f81faf87cb4139f49a17993fbc7650d83b9c82992ac6cdfb0a7a7",
+      "content_hash": "4e5ebc581adb24047c3c4f2cefc04b4da88a31a8dd8b24a57a00d8b9f7a95ba1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T13:13:24.525Z"
+      "persisted_at": "2026-11-23T23:40:26.828Z"
     },
     "rule-9269": {
       "learning_id": "rule-9269",
@@ -299611,9 +299616,9 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B-gguf Core Invariants",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "d79479ca40799de64577236563de5ee71978c471cb64e1d5ae138c1316165d82",
+      "content_hash": "00c896ac8c1f9f58083c4135782c665798e70b28079df534aa66c2811b6cd737",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T17:42:49.466Z"
+      "persisted_at": "2026-11-23T23:39:46.462Z"
     },
     "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants",
@@ -299635,9 +299640,9 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings Core Invariants",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "65042910b5862c01be742e445f2b79a4cf8637a45c6583e568b55687439b5f8f",
+      "content_hash": "068e0986627f272f6069225ca6bb390d22e133fd4d5f2d60a5e6a3512859f1e8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T17:43:22.822Z"
+      "persisted_at": "2026-11-23T23:40:00.894Z"
     },
     "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants",
@@ -330959,6 +330964,44 @@
       "content_hash": "2fa5695cef49b2c442770221efb69210e377882f6b75f5dfc9e1b8f0b1312e76",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T23:31:36.162Z"
+    },
+    "rule-10148": {
+      "learning_id": "rule-10148",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10148,
+      "title": "correct `assert_elapsed!` docs",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "6bbeecff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T23:39:47.387Z"
+    },
+    "candidate_directive-correct-assert_elapsed-docs": {
+      "item_id": "candidate_directive-correct-assert_elapsed-docs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RCNP-correct-assert_elapsed-docs.md",
+      "title": "correct `assert_elapsed!` docs",
+      "repository": "tokio-rs/tokio",
+      "source_version": "6bbeecff",
+      "content_hash": "e462ee05138957b784f0f9b2569c8c1a03e407f3d9c991655983775f233819d1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:39:47.800Z"
+    },
+    "candidate_directive-tokio-test-correct-assert_elapsed-docs": {
+      "item_id": "candidate_directive-tokio-test-correct-assert_elapsed-docs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RM9D-tokio-test-correct-assert_elapsed-docs.md",
+      "title": "tokio-test: correct `assert_elapsed!` docs",
+      "repository": "tokio-rs-tokio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5e3d6a12265b180bda52553f3fd95d1e01f7bd4fe5d7edfc5d4b1141ccf5072c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T23:40:00.244Z"
     }
   },
   "ai-builder-brain": {

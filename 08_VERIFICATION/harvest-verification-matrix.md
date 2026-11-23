@@ -12513,3 +12513,7 @@
 | `CYCLE-20261123-GMHD` | `2026-11-23T23:31:27.313Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10145` | Yes (`b50b6d38...`) |
 | `CYCLE-20261123-GPTU` | `2026-11-23T23:31:31.650Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10146` | Yes (`d71906c5...`) |
 | `CYCLE-20261123-GT4Q` | `2026-11-23T23:31:35.930Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10147` | Yes (`358cedec...`) |
+| `CYCLE-20261123-RBGX` | `2026-11-23T23:39:46.257Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`db2fb7bd...`) |
+| `CYCLE-20261123-RCHO` | `2026-11-23T23:39:47.580Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10148` | Yes (`b5ffca28...`) |
+| `CYCLE-20261123-RJMQ` | `2026-11-23T23:39:56.834Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | Yes (`e134d954...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T23:40:26.571Z` | `tailscale-tailscale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E322F459` [Domain D] | Yes (`9c96e5ad...`) |
