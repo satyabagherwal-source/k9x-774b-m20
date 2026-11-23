@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T03:47:09.240Z",
+  "last_updated": "2026-11-23T04:00:24.841Z",
   "total_records": 2389,
   "domains": {
     "A": {
@@ -11492,8 +11492,8 @@
       "title": "Research & Knowledge Intelligence: amazon/chronos-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-amazon-chronos-2-research-knowledge-intelligence-amazon-chronos-2-core-invari.md",
       "repository": "amazon/chronos-2",
-      "content_hash": "781dd82a59ca06c20ec2509954ffe3d9d0784a669f14ab1e8db2135d08464a61",
-      "created_at": "2026-11-18T18:00:19.740Z"
+      "content_hash": "37150030551f898055cbca7a4cfa962bbdb9c595014483be4334218a8c97504c",
+      "created_at": "2026-11-23T04:00:03.015Z"
     },
     "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants",
@@ -11552,8 +11552,8 @@
       "title": "Research & Knowledge Intelligence: hf-amazon-chronos-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-amazon-chronos-2-learnings-research-knowledge-intelligence-hf-amazon-chronos-.md",
       "repository": "hf-amazon-chronos-2-learnings",
-      "content_hash": "52742ee2b6bffa446dcee423be813040a20cb389559ccc0f7ddb87325406d68e",
-      "created_at": "2026-11-18T18:00:30.941Z"
+      "content_hash": "e48fbc1996471a55818001ac6e9b927712e38b390fce5998d9fcc8607e78c0f6",
+      "created_at": "2026-11-23T04:00:24.215Z"
     },
     "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings": {
       "record_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings",
@@ -12446,8 +12446,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "331b550c90379efed077386be8a4fa187b6d93af654fa05b3af0f5103d671eb2",
-      "created_at": "2026-11-22T16:28:27.642Z"
+      "content_hash": "ecf0e615b835587d19499ffe5afd00801877662af08c7376d0b3fe5a5f60df37",
+      "created_at": "2026-11-23T04:00:19.604Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -20779,8 +20779,8 @@
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "repository": "GitoxideLabs/gitoxide",
-      "content_hash": "08dd2625532cb83781c783b07a2f1d32eb084091f68d65c357d04cff4e613268",
-      "created_at": "2026-11-21T20:24:53.527Z"
+      "content_hash": "c80c272736dd892ae703cb48fcbf4859f2e381436c6a755eb8f930dad0c615fc",
+      "created_at": "2026-11-23T04:00:05.921Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
@@ -20797,8 +20797,8 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-learnings-architecture-intelligence-gitoxidelabs-gitoxide-.md",
       "repository": "gitoxidelabs-gitoxide-learnings",
-      "content_hash": "dfff3ec6cce0e85d351fe778a029ed498a3f24d94671d7ea30667ef1c4890e46",
-      "created_at": "2026-11-21T20:25:09.504Z"
+      "content_hash": "f1bab2e7bece7c2a6fbf068de9e84cd350abbccb4dc706ec6359ba35ea31e5c9",
+      "created_at": "2026-11-23T04:00:23.678Z"
     },
     "DOM-J-C5E210D6": {
       "record_id": "DOM-J-C5E210D6",
@@ -21205,8 +21205,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "30a52fefd63ad7dece1b281b3fa174fb4d19faeda4cece2f258d4933d48191a0",
-      "created_at": "2026-11-22T02:09:16.907Z"
+      "content_hash": "2d4de0a5005d24d77974ce0620834671ebbd2e333c73dd88a369e47e0750d376",
+      "created_at": "2026-11-23T04:00:17.649Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -24977,8 +24977,8 @@
       "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-learnings-architecture-intelligence-paradedb-paradedb-learning.md",
       "repository": "paradedb-paradedb-learnings",
-      "content_hash": "14002608dd3728f03b00e1d82750938bc7f549f70f0a34d0961300ba76ffee5f",
-      "created_at": "2026-11-22T02:09:21.134Z"
+      "content_hash": "481e3500d517c3583b13b72ec428604b5391b6fa5d99d40ceffaad77bbdb681c",
+      "created_at": "2026-11-23T04:00:24.841Z"
     },
     "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants",

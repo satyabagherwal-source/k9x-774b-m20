@@ -12254,3 +12254,7 @@
 | `CYCLE-20261123-5GII` | `2026-11-23T03:47:02.490Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10015` | Yes (`8b5d6dfa...`) |
 | `CYCLE-20261123-5HIH` | `2026-11-23T03:47:03.785Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`6a6ed33e...`) |
 | `CYCLE-20261123-5HS9` | `2026-11-23T03:47:04.137Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10016` | Yes (`cbcf2a87...`) |
+| `CYCLE-20261123-M6M5` | `2026-11-23T04:00:02.813Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`99b551c8...`) |
+| `CYCLE-20261123-M8P7` | `2026-11-23T04:00:05.515Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10017` | Yes (`e5820ba1...`) |
+| `CYCLE-20261123-MHRA` | `2026-11-23T04:00:17.254Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10018` | Yes (`6dd856ce...`) |
+| `CYCLE-20261123-MJ9U` | `2026-11-23T04:00:19.218Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`06e57086...`) |

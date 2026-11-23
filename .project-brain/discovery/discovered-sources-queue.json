@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T03:47:08.863Z",
+  "updated_at": "2026-11-23T04:00:23.281Z",
   "stats": {
-    "total_discovered": 7741,
-    "approved_pending_harvest": 7325,
+    "total_discovered": 7755,
+    "approved_pending_harvest": 7339,
     "harvested_count": 0,
     "rejected_count": 416,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7312,
+      "COMMUNITY_AND_EXPERT": 7326,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -167413,6 +167413,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
         "fileName": "databendlabs-databend-learnings.md"
+      }
+    },
+    "SRC-9C3C0B34577A": {
+      "id": "SRC-9C3C0B34577A",
+      "url": "https://www.conventionalcommits.org/",
+      "title": "https://www.conventionalcommits.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:22.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-5EE5067860D7": {
+      "id": "SRC-5EE5067860D7",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/df27410adf06a49413eb84b9d6bc0a633ff94b78",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/df27410adf06a49413eb84b9d6bc0a633ff94b78",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:22.684Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-49674ECE30F3": {
+      "id": "SRC-49674ECE30F3",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/689a72495f618743599e5e2ba65f278b98079d33",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/689a72495f618743599e5e2ba65f278b98079d33",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:22.736Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-C194A43E59C8": {
+      "id": "SRC-C194A43E59C8",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/dd5e45b5adbc951f2699d1ed1f59513320516a65",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/dd5e45b5adbc951f2699d1ed1f59513320516a65",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:22.785Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-1BAB3938FFCB": {
+      "id": "SRC-1BAB3938FFCB",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/a77e8d4170486d8c098faa58ab0774b1eb2a2e85",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/a77e8d4170486d8c098faa58ab0774b1eb2a2e85",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:22.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-6B23F0D84585": {
+      "id": "SRC-6B23F0D84585",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/1238c01ed7f26f5e7fabf58c79e6f9a39889459a",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/1238c01ed7f26f5e7fabf58c79e6f9a39889459a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:22.899Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-F0E37C211BA5": {
+      "id": "SRC-F0E37C211BA5",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/9dd78c800d554c18fc99816bf922c93d71402881",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/9dd78c800d554c18fc99816bf922c93d71402881",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:22.946Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-860C29BE6E23": {
+      "id": "SRC-860C29BE6E23",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/16940c743ac2688de34fc854906469ed061d6a56",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/16940c743ac2688de34fc854906469ed061d6a56",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:22.992Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-AD4B649F9430": {
+      "id": "SRC-AD4B649F9430",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/c4a28f8c9331603ee2e2928974ee587a23026c49",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/c4a28f8c9331603ee2e2928974ee587a23026c49",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:23.038Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-D7E551F3962A": {
+      "id": "SRC-D7E551F3962A",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/12eff45f0e16fa7a9f75086034ccb0198f55b9f3",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/12eff45f0e16fa7a9f75086034ccb0198f55b9f3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:23.085Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-B4A2F1E103D2": {
+      "id": "SRC-B4A2F1E103D2",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/e70c28a53b6de99a066741bf0285b62527f0a699",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/e70c28a53b6de99a066741bf0285b62527f0a699",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:23.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-FB7EE070E6B2": {
+      "id": "SRC-FB7EE070E6B2",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/8050181d59102772e3f1148f28e140e1986d05ee",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/8050181d59102772e3f1148f28e140e1986d05ee",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:23.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-EDA88312DE72": {
+      "id": "SRC-EDA88312DE72",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/8bf25a232d00f71f73b964f39d509ac9ae976efe",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/8bf25a232d00f71f73b964f39d509ac9ae976efe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:23.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-E6BFD34B71BF": {
+      "id": "SRC-E6BFD34B71BF",
+      "url": "https://github.com/GitoxideLabs/gitoxide/commit/e87b6eefbcaa77156ddee85576c847e395ec0586",
+      "title": "https://github.com/GitoxideLabs/gitoxide/commit/e87b6eefbcaa77156ddee85576c847e395ec0586",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T04:00:23.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
       }
     }
   }

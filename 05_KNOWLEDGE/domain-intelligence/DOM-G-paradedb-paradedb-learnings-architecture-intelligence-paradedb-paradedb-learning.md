@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T02:09:20.928Z",
+  "timestamp": "2026-11-23T04:00:24.556Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-paradedb-paradedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [paradedb-paradedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T02:09:20.928Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T04:00:24.556Z`  
 > **Learning ID**: `LEARN-EVO-paradedb-paradedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), E (Creative Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from paradedb-paradedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `82d66f9e`  
+> **Source Version**: `0b859805`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T02:09:15.801Z  
+> **Timestamp**: 2026-11-23T04:00:16.247Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:09:15.796Z  
+> **Harvest Timestamp**: 2026-11-23T04:00:16.241Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9554 stars
+- **Stars / Engagement**: 9556 stars
 
 ---
 
@@ -2267,820 +2267,852 @@ impl SolvePostgresExpressions for DataFusionAggState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e0eeecd` (2026-11-21)
-**Commit Message**: fix: Solve AggregateScan parameters before entering a runtime. (#7605)
+### Incident Patch 1: `56a759e6` (2026-11-22)
+**Commit Message**: perf: evaluate integer `+`, `-`, `*` natively in Join Scan with overflow checks (#7388)
 
 # Ticket(s) Closed
 
-- Closes #7593
+- Closes #7134
 
 ## What
 
-Fixes DataFusion `AggregateScan` queries (`SELECT DISTINCT`, `GROUP BY`,
-`FILTER`) whose predicates evaluate an `InitPlan` containing a ParadeDB
-`BaseScan` (parallel or serial). Previously, parallel `InitPlan`s failed
-with `es_query_dsa must be set during parallel initialization or
-execution`, and serial `ColumnarExecState` `InitPlan`s panicked with
-`Cannot start a runtime from within a runtime`. Also fixes
-parallel-aware `BaseScan` queries with a bitmap intersection child
-failing outside parallel mode (e.g., PL/pgSQL `SELECT INTO`), and makes
-`pdb.agg(..., 'threshold')` with runtime expressions resolve against the
-solved row estimate.
+Join Scan evaluates integer `+`, `-`, `*` natively again, with checked
+UDFs (`pdb_int_add/sub/mul`) that still raise PostgreSQL's `integer out
+of range` (SQLSTATE 22003). Aggregate Scan gets this too, since it
+shares the same translator.
 
 ## Why
 
-Unlike `BaseScan`, Tantivy `AggregateScan`, and `JoinScan`, the
-DataFusion `AggregateScan` path left runtime Postgres expressions
-unsolved until `PgSearchTableProvider::scan`, which runs inside
-`PgTokioRuntime::block_on`. Inside `block_on`, `HeldInterrupts` forces
-PostgreSQL's `InitializeParallelDSM` into its private-memory fallback
-(`es_query_dsa == NULL`), and an active Tokio runtime panics if an
-`InitPlan` itself enters `bl
+#7103 fixed overflow wrapping (#6931) by sending all integer `+ - *` to
+the PostgreSQL fallback, which is correct but evaluates every row
+through PostgreSQL.
 
-**File**: `basescan/src/postgres/customscan/basescan/mod.rs` (modified, +18/-12)
+## How
+
+- Operands are cast to the operator's result type, so cross-width
+operators (`int24pl`, `int48mul`) check at PostgreSQL's width.
+- Only plain integer arithmetic (columns, constants, nested integer `+ -
+*`) runs natively. Anything else keeps the whole expression on the
+fallback, since other native translations differ from PostgreSQL in edge
+cases (`/` by zero, `abs(INT_MIN)`).
+- Chains deeper than 16 operators fall back as one call. Join Scan
+serializes every plan to protobuf, which can't be decoded past 100
+nesting levels, and each nested call adds 2.
+
+## Tests
+
+- `issue_6931` covers each width, NULLs, SQLSTATE, the fallback cases,
+the 16/17 de
+
+**File**: `docs/project/changelog/unreleased/7388.performance.mdx` (added, +5/-0)
 ```diff
-@@ -139,8 +139,10 @@ impl BaseScan {
-     ///    segment view with `MvccSatisfies::ParallelWorker`.
-     ///
-     /// 2. **Serial or Replicated Scan** (no `parallel_state`):
--    ///    Either the main backend running a serial path, or a `parallel_safe` but not
--    ///    `parallel_aware` scan inside a worker (e.g. the inner side of a Parallel Hash Join).
-+    ///    Either the main backend running a serial path, a `parallel_safe` but not
-+    ///    `parallel_aware` scan inside a worker (e.g. the inner side of a Parallel Hash Join),
-+    ///    or a `parallel_aware` scan running locally on the leader when `es_use_parallel_mode`
-+    ///    is false or `InitializeParallelDSM` falls back to private memory (`es_query_dsa == NULL`).
-     ///    Each such scan reads the full data set on its own, so it opens with
-     ///    `MvccSatisfies::Snapshot`. The leader's very first open falls here too: it runs from
-     ///    `estimate_dsm_custom_scan`, before any DSM is attached, and it is the open the
-@@ -238,16 +240,6 @@ impl BaseScan {
-         state.custom_state_mut().search_reader = Some(search_reader);
-         state.custom_state_mut().score_explanation_weight.take();
- 
--        let parallel_aware = unsafe { (*(*state.planstate()).plan).parallel_aware };
--        if !parallel_aware
--            && let Some(cell) = state.custom_state().bitmap_cell.clone()
--            && cell.get().is_none()
--            && let Some(bitmap_exec) = state.custom_state_mut().bitmap_exec.as_mut()
--            && let Some(source) = unsafe { bitmap_exec.private_source() }
--        {
--            cell.fill(source);
--        }
--
-         let csstate = addr_of_mut!(state.csstate);
-         state.custom_state_mut().init_exec_method(csstate);
- 
-@@ -2208,6 +2200,20 @@ impl CustomScan for BaseScan {
-         if state.custom_state().search_reader.is_none() {
-             Self::init_search_reader(state);
-         }
-+        // Populate the private bitmap cursor source when running without attached parallel DSM
-+        // state. Handling this here (rather than gating on `!plan.parallel_aware` in
-+        // `init_search_reader`) covers both genuinely serial scans and `parallel_aware` scans
-+        // that fell back to leader-only local execution (e.g. `es_use_parallel_mode = false` or
-+        // PostgreSQL's `InitializeParallelDSM` private-memory fallback with `es_query_dsa == NULL`),
-+        // without eagerly building a private bitmap during `estimate_dsm_custom_scan`.
-+        if state.custom_state().parallel.is_none()
-+            && let Some(cell) = state.custom_state().bitmap_cell.clone()
-+            && cell.get().is_none()
-+            && let Some(bitmap_exec) = state.custom_state_mut().bitmap_exec.as_mut()
-+            && let Some(source) = unsafe { bitmap_exec.private_source() }
-+        {
-+            cell.fill(source);
-+        }
-         // Build the leader's routing plan on first execution; workers wait for publication
-         // only when they need the plan, after evaluating their segment filters.
-         if state.custom_state().vector_routing_pending {
+@@ -0,0 +1,5 @@
++---
++header: performance
++---
++
++Join Scan evaluates `smallint`, `integer` and `bigint` `+`, `-` and `*` natively instead of through a PostgreSQL expression per row, while still raising PostgreSQL's `smallint out of range`, `integer out of range` and `bigint out of range` errors (#7134).
 ```
 
-**File**: `basescan/src/postgres/customscan/basescan/parallel.rs` (modified, +35/-13)
+**File**: `joinscan/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +127/-10)
 ```diff
-@@ -130,6 +130,16 @@ impl ParallelQueryCapable for BaseScan {
-         pcxt: *mut pg_sys::ParallelContext,
-         coordinate: *mut c_void,
-     ) {
-+        let Some(area) = try_query_area(state) else {
-+            // PostgreSQL's `InitializeParallelDSM` fell back to backend-private memory
-+            // (`pcxt->seg == NULL`, `pcxt->nworkers == 0`, `pei->area == NULL`), e.g. due to
-+            // DSM exhaustion or held interrupts. No workers will launch, so leave `parallel`
-+            // unattached and let the leader run serially (matching PostgreSQL's
-+            // `ExecBitmapHeapInitializeDSM`).
-+            debug_assert!(unsafe { (*pcxt).seg.is_null() && (*pcxt).nworkers == 0 });
-+            return;
-+        };
-+
-         let args = state.custom_state().parallel_scan_args();
+@@ -25,22 +25,119 @@
+ //! MinMaxExpr, ScalarArrayOpExpr, and CoerceViaIO — plus a UDF fallback hook
+ //! (`try_wrap_as_udf`) for opaque expressions.
  
-         unsafe {
-@@ -139,7 +149,7 @@ impl ParallelQueryCapable for BaseScan {
-             state
-                 .custom_state_mut()
-                 .attach_parallel(pscan_state, ParallelRole::Leader);
--            leader_publish_query(state, &mut *pscan_state);
-+            leader_publish_query(state, &mut *pscan_state, area);
++use datafusion::arrow::datatypes::DataType;
+ use datafusion::common::ScalarValue;
+ use datafusion::logical_expr::expr::{Case, InList, ScalarFunction};
+-use datafusion::logical_expr::{BinaryExpr, Expr, Operator, ScalarUDF, col, lit};
++use datafusion::logical_expr::{BinaryExpr, Expr, Operator, ScalarUDF, cast, col, lit};
+ use pgrx::{PgList, pg_sys};
+ use std::ffi::CStr;
+ use std::sync::Arc;
  
-             if !(*pcxt).seg.is_null()
-                 && let Some(trace) = state.custom_state().io_trace.clone()
-@@ -162,7 +172,6 @@ impl ParallelQueryCapable for BaseScan {
-             let planned_workers = (*pcxt).nworkers as u32;
-             (*pscan_state).bitmap_slots = planned_workers + 1;
-             leader_publish_bitmap(state, pscan_state);
--            let area = query_area(state);
-             state
-                 .custom_state_mut()
-                 .leader_publish_vector_routing_plan(area, pg_sys::parallel_leader_participation);
-@@ -173,6 +182,14 @@ impl ParallelQueryCapable for BaseScan {
-         state: &mut CustomScanStateWrapper<Self>,
-         coordinate: *mut c_void,
-     ) {
-+        let Some(area) = try_query_area(state) else {
-+            // Same private-memory fallback as `initialize_dsm_custom_scan` (matching
-+            // PostgreSQL's `ExecBitmapHeapReInitializeDSM`): no workers will launch, and
-+            // `rescan_custom_scan` resets local state because `parallel` is `None`.
-+            debug_assert!(state.custom_state().parallel.is_none());
-+            return;
-+        };
-+
-         // The one place the shared segment work queue is reset for a rescan.
-         // PostgreSQL guarantees this runs while no workers are attached (see
-         // nodeGather.c: "ReInitializeDSM should reset only shared state, ReScan
-@@ -205,10 +222,9 @@ impl ParallelQueryCapable for BaseScan {
-         if state.custom_state().needs_vector_routing() {
-             BaseScan::init_search_reader(state);
-         }
--        unsafe { leader_publish_query(state, pscan_state) };
-+        unsafe { leader_publish_query(state, pscan_state, area) };
-         unsafe { leader_publish_bitmap(state, pscan_state) };
-         unsafe {
--            let area = query_area(state);
-             state
-                 .custom_state_mut()
-                 .leader_publish_vector_routing_plan(area, pg_sys::parallel_leader_participation)
-@@ -238,25 +254,31 @@ impl ParallelQueryCapable for BaseScan {
-     }
- }
+ use crate::api::HashSet;
+ use crate::postgres::customscan::collation_semantics::{CollationOperation, collation_supports};
++use crate::postgres::customscan::datafusion::int_arith::{IntOp, int_arith_udf};
+ use crate::postgres::customscan::datafusion::translator::{
+     PredicateTranslator, node_tag_debug, type_name,
+ };
+ use crate::postgres::customscan::expr_eval::InputVarInfo;
+ use crate::postgres::customscan::pg_expr_udf::{InputDecode, PgExprUdf};
+ use crate::postgres::node::NodeExt;
  
--/// The parallel query's DSA area. Postgres installs it on the EState around the DSM
--/// callbacks and local execution in the leader, and for the whole run in a worker.
--pub(super) fn query_area(state: &CustomScanStateWrapper<BaseScan>) -> *mut dsa_area {
-+/// The parallel query's DSA area, if Postgres created a DSM segment for this parallel context.
-+/// Returns `None` when `InitializeParallelDSM` fell back to backend-private memory
-+/// (`pcxt->seg == NULL`, `pcxt->nworkers == 0`, `pei->area == NULL`).
-+pub(super) fn try_query_area(state: &CustomScanStateWrapper<BaseScan>) -> Option<*mut dsa_area> {
-     let area = unsafe { (*state.csstate.ss.ps.state).es_query_dsa };
--    assert!(
--        !area.is_null(),
--        "es_query_dsa must be set during parallel initialization or execution"
--    );
--    area
-+    (!area.is_null()).then_some(area)
++/// Arrow type of a PostgreSQL integer type, `None` for any other type.
++fn int_arrow_type(type_oid: pg_sys::Oid) -> Option<DataType> {
++    match type_oid {
++        pg_sys::INT2OID => Some(DataType::Int16),
++        pg_sys::INT4OID => Some(DataType::Int32),
++        pg_sys::INT8OID => Some(DataType::Int64),
++        _ => None,
++    }
 +}
 +
-+/// The parallel query's DSA area, required for workers and leader paths that attached parallel
-+/// DSM state. Leader DSM init/reinit use [`try_query_area`] because PostgreSQL's private-memory
-+/// fallback leaves `es_query_dsa` null.
-+pub(super) fn query_area(state: &CustomScanStateWrapper<BaseScan>) -> *mut dsa_area {
-+    try_query_area(state)
-+        .expect("es_query_dsa must be set during parallel initialization or execution")
- }
- 
- /// Leader-only: hand the coming round's workers the solved query.
- unsafe fn leader_publish_query(
-     state: &mut CustomScanStateWrapper<BaseScan>,
-     pscan_state: &mut ParallelScanState,
-+    area: *mut dsa_area,
- ) {
-     let query = serde_json::to_vec(&state.custom_state().search_query_input())
-         .expect("should be able to serialize query");
--    unsafe { pscan_state.publish_query(query_area(state), &query) };
-+    unsafe { pscan_state.publish_query(area, &query) };
- }
- 
- /// Leader-only: ensure th
++/// The checked integer operation PostgreSQL's integer `+`, `-` or `*` function
++/// `funcid` performs, at any operand widths. Keyed by function rather than
++/// operator symbol, so a user operator named `-` over `int4pl` still adds.
++fn int_arith_op(funcid: pg_sys::Oid) -> Option<IntOp> {
++    match funcid.to_u32() {
++        pg_sys::F_INT2PL
++        | pg_sys::F_INT4PL
++        | pg_sys::F_INT8PL
++        | pg_sys::F_INT24PL
++        | pg_sys::F_INT42PL
++        | pg_sys::F_INT28PL
++        | pg_sys::F_INT82PL
++        | pg_sys::F_INT48PL
++        | pg_sys::F_INT84PL => Some(IntOp::Add),
++        pg_sys::F_INT2MI
++        | pg_sys::F_INT4MI
++        | pg_sys::F_INT8MI
++        | pg_sys::F_INT24MI
++        | pg_sys::F_INT42MI
++        | pg_sys::F_INT28MI
++        | pg_sys::F_INT82MI
++        | pg_sys::F_INT48MI
++        | pg_sys::F_INT84MI => Some(IntOp::Sub),
++        pg_sys::F_INT2MUL
++        | pg_sys::F_INT4MUL
++        | pg_sys::F_INT8MUL
++        | pg_sys::F_INT24MUL
++        | pg_sys::F_INT42MUL
++        | pg_sys::F_INT28MUL
++        | pg_sys::F_INT82MUL
++        | pg_sys::F_INT48MUL
++        | pg_sys::F_INT84MUL => Some(IntOp::Mul),
++        _ => None,
++    }
++}
++
++/// Deepest chain of integer `+`, `-` and `*` evaluated natively. Each nested
++/// `pdb_int_*` call adds two protobuf levels to the serialized plan, which prost
++/// decodes only up to 100 deep and encodes by unbounded recursion on the backend
++/// stack. A deeper chain falls back as one PostgreSQL call of constant depth.
++/// 16 calls take about 40 levels, leaving the rest for the surrounding plan.
++const MAX_NATIVE_INT_ARITH_DEPTH: u32 = 16;
++
++/// Depth of `node` as a tree of integer `+`, `-` and `*` over columns and
++/// constants, or `None` if it contains anything else or is deeper than `budget`.
++///
++/// Only those translate natively with exactly PostgreSQL's results and errors,
++/// so only those may feed the native checked integer UDFs. Other native
++/// translations differ from PostgreSQL in edge cases (integer `/` by zero,
++/// `abs(INT_MIN)`, `ln(0)`, float `-0.0 = 0.0`, `oid::int4` above 2^31), which
++/// the UDF fallback avoids by evaluating the whole expression.
++unsafe fn plain_int_arith_depth(node: *mut pg_sys::Node, budget: u32) -> Option<u32> {
++    if node.is_null() {
++        return None;
++    }
++    match (*node).type_ {
++        pg_sys::NodeTag::T_Var | pg_sys::NodeTag::T_Const => Some(0),
++        pg_sys::NodeTag::T_OpExpr => {
++            let op = node as *mut pg_sys::OpExpr;
++            int_arith_op(pg_sys::get_opcode((*op).opno))?;
++            let child_budget = budget.checked_sub(1)?;
++            let mut depth = 0;
++            for arg in PgList::<pg_sys::Node>::from_pg((*op).args).iter_ptr() {
++                depth = depth.max(plain_int_arith_depth(arg, child_budget)?);
++            }
++            Some(depth + 1)
++        }
++        _ => None,
++    }
++}
++
++/// `operand` cast to `result_type` for a `pdb_int_*` call, except a nested
++/// integer `+`, `-` or `*` already returning that type, which skips the cast and
++/// its two plan levels. Columns keep it: integer fast fields arrive as `Int64`.
++unsafe fn int_arith_operand(arg: *mut pg_sys::Node, operand: Expr, result_type: &DataType) -> Expr {
++    let is_same_width_int_arith = (*arg).type_ == pg_sys::NodeTag::T_OpExpr
++        && int_arrow_type((*(arg as *mut pg_sys::OpExpr)).opresulttype).as_ref()
++            == Some(result_type);
++    if is_same_width_int_arith {
++        operand
++    } else {
++        cast(operand, result_type.clone())
++    }
++}
++
+ const PVC_RECURSE_ALL: i32 = (pg_sys::PVC_RECU
 ```
 
-**File**: `basescan/src/postgres/customscan/basescan/scan_state.rs` (modified, +4/-3)
+**File**: `joinscan/src/postgres/customscan/datafusion/int_arith.rs` (added, +371/-0)
 ```diff
-@@ -698,9 +698,10 @@ impl SolvePostgresExpressions for BaseScanState {
+@@ -0,0 +1,371 @@
++// Copyright (c) 2023-2026 ParadeDB, Inc.
++//
++// This file is part of ParadeDB - Postgres for Search and Analytics
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU Affero General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU Affero General Public License for more details.
++//
++// You should have received a copy of the GNU Affero General Public License
++// along with this program. If not, see <http://www.gnu.org/licenses/>.
++
++//! Vectorized integer `+`, `-` and `*` with PostgreSQL overflow semantics.
++//!
++//! DataFusion's planner builds `BinaryExpr` with wrapping integer kernels, so
++//! `2147483647 + 1` silently becomes `-2147483648` where PostgreSQL raises
++//! `integer out of range`. These UDFs use Arrow's checked kernels instead and
++//! raise PostgreSQL's error on overflow.
++//!
++//! Both arguments must already have the operator's result type. PostgreSQL's
++//! cross-width operators (`int24pl`, `int48mul`, ...) widen the narrower operand
++//! and compute at the result width, so the translator casts both operands to the
++//! Arrow type of `opresulttype` and the overflow check runs at that width.
++
++use std::convert::Infallible;
++use std::sync::{Arc, LazyLock};
++
++use arrow_array::{ArrayRef, Datum};
++use datafusion::arrow::compute::kernels::numeric;
++use datafusion::arrow::datatypes::DataType;
++use datafusion::arrow::error::ArrowError;
++use datafusion::common::{Result, ScalarValue};
++use datafusion::error::DataFusionError;
++use datafusion::logical_expr::{
++    ColumnarValue, ScalarFunctionArgs, ScalarUDF, ScalarUDFImpl, Signature, TypeSignature,
++    Volatility,
++};
++use pgrx::{PgSqlErrorCode, pg_sys};
++
++pub const INT_ADD_UDF_NAME: &str = "pdb_int_add";
++pub const INT_SUB_UDF_NAME: &str = "pdb_int_sub";
++pub const INT_MUL_UDF_NAME: &str = "pdb_int_mul";
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++pub enum IntOp {
++    Add,
++    Sub,
++    Mul,
++}
++
++impl IntOp {
++    fn name(self) -> &'static str {
++        match self {
++            IntOp::Add => INT_ADD_UDF_NAME,
++            IntOp::Sub => INT_SUB_UDF_NAME,
++            IntOp::Mul => INT_MUL_UDF_NAME,
++        }
++    }
++
++    /// Arrow's `add`, `sub` and `mul` return `ArithmeticOverflow` for integers;
++    /// the `*_wrapping` variants are what `BinaryExpr` uses.
++    fn apply(self, a: &dyn Datum, b: &dyn Datum) -> Result<ArrayRef, ArrowError> {
++        match self {
++            IntOp::Add => numeric::add(a, b),
++            IntOp::Sub => numeric::sub(a, b),
++            IntOp::Mul => numeric::mul(a, b),
++        }
++    }
++}
++
++/// PostgreSQL's overflow message at the given result width.
++fn out_of_range_message(ty: &DataType) -> Option<&'static str> {
++    match ty {
++        DataType::Int16 => Some("smallint out of range"),
++        DataType::Int32 => Some("integer out of range"),
++        DataType::Int64 => Some("bigint out of range"),
++        _ => None,
++    }
++}
++
++fn compute(op: IntOp, a: &ColumnarValue, b: &ColumnarValue) -> Result<ColumnarValue> {
++    let ty = a.data_type();
++    if ty != b.data_type() || out_of_range_message(&ty).is_none() {
++        return Err(DataFusionError::Internal(format!(
++            "{} expects two Int16, Int32 or Int64 arguments of the same type, got ({ty}, {})",
++            op.name(),
++            b.data_type()
++        )));
++    }
++
++    let result = match (a, b) {
++        (ColumnarValue::Array(a), ColumnarValue::Array(b)) => op.apply(a, b),
++        (ColumnarValue::Scalar(a), ColumnarValue::Array(b)) => op.apply(&a.to_scalar()?, b),
++        (ColumnarValue::Array(a), ColumnarValue::Scalar(b)) => op.apply(a, &b.to_scalar()?),
++        (ColumnarValue::Scalar(a), ColumnarValue::Scalar(b)) => {
++            let array = op
++                .apply(&a.to_scalar()?, &b.to_scalar()?)
++                .map_err(|err| raise(err, &ty))?;
++            return Ok(ColumnarValue::Scalar(ScalarValue::try_from_array(
++                array.as_ref(),
++                0,
++            )?));
++        }
++    };
++    result
++        .map(ColumnarValue::Array)
++        .map_err(|err| raise(err, &ty))
++}
++
++/// Raise PostgreSQL's overflow error on the main thread, so the leader reports
++/// SQLSTATE 22003. MPP workers get it back as an execution error.
++fn raise(err: ArrowError, ty: &DataType) -> DataFusionError {
++    let ArrowError::ArithmeticOverflow(_) = err else {
++        return err.into();
++    };
++    let Some(msg) = out_of_range_message(ty) else {
++        return err.into();
++    };
++    match crate::postgres::customscan::mpp::try_run_on_main_thread(move |_| -> Result<Infallible> {
++        pg_sys::ereport!(
++            ERROR,
++       
+```
+
+**File**: `joinscan/src/postgres/customscan/datafusion/mod.rs` (modified, +11/-1)
+```diff
+@@ -33,6 +33,7 @@ use std::sync::Arc;
+ 
+ pub mod explain;
+ mod expr_translators;
++pub mod int_arith;
+ pub mod pdb_agg_udaf;
+ pub mod translator;
+ 
+@@ -55,7 +56,16 @@ pub fn all_pg_search_udafs() -> Vec<Arc<AggregateUDF>> {
+ 
+ /// All stateless pg_search scalar UDFs registered into SessionState.
+ pub fn all_pg_search_udfs() -> Vec<Arc<ScalarUDF>> {
+-    vec![timestamp_to_date::timestamp_to_date_udf()]
++    let mut udfs = vec![timestamp_to_date::timestamp_to_date_udf()];
++    udfs.extend(int_arith::int_arith_udfs());
++    udfs
++}
++
++/// Resolve a stateless pg_search scalar UDF by name, for the plan codecs.
++pub fn udf_by_name(name: &str) -> Option<Arc<ScalarUDF>> {
++    all_pg_search_udfs()
++        .into_iter()
++        .find(|udf| udf.name() == name)
+ }
+ 
+ /// Resolve a pg_search aggregate UDAF by name, for the plan codecs.
+```
+
+**File**: `joinscan/src/scan/udf_codec.rs` (modified, +3/-9)
+```diff
+@@ -28,9 +28,7 @@ use std::sync::Arc;
+ use datafusion::common::{DataFusionError, Result};
+ use datafusion::logical_expr::ScalarUDF;
+ 
+-use crate::postgres::customscan::datafusion::timestamp_to_date::{
+-    TIMESTAMP_TO_DATE_UDF_NAME, timestamp_to_date_udf,
+-};
++use crate::postgres::customscan::datafusion::udf_by_name;
+ use crate::postgres::customscan::pg_expr_udf::{PG_EXPR_UDF_PREFIX, PgExprUdf};
+ 
+ /// Decode a `pg_search` scalar UDF.
+@@ -47,11 +45,7 @@ pub(crate) fn try_decode_pg_search_udf(name: &str, buf: &[u8]) -> Result<Option<
+         return Ok(Some(Arc::new(ScalarUDF::new_from_impl(udf))));
      }
  
-     /// Install the late-bound source cell. Workers attach the published claim
--    /// table immediately; the leader's (or a serial scan's) cell is filled after
--    /// its reader opens (serial: privately in `init_search_reader`; parallel:
--    /// with the shared view at DSM initialization).
-+    /// table immediately; the leader's (or a serial scan's) cell is filled once
-+    /// its reader opens (parallel with attached DSM: with the shared view at
-+    /// DSM initialization; serial or local fallback without attached DSM:
-+    /// privately in `exec_custom_scan`).
-     fn bitmap_source_cell(&mut self, _planstate: *mut pg_sys::PlanState) -> Option<BitmapCell> {
-         self.bitmap_exec.as_ref()?;
-         let cell = self
+-    if name == TIMESTAMP_TO_DATE_UDF_NAME {
+-        return Ok(Some(timestamp_to_date_udf()));
+-    }
+-
+-    Ok(None)
++    Ok(udf_by_name(name))
+ }
+ 
+ /// Encode a `pg_search` scalar UDF into `buf`.
+@@ -73,5 +67,5 @@ pub(crate) fn try_encode_pg_search_udf(node: &ScalarUDF, buf: &mut Vec<u8>) -> R
+         return Ok(true);
+     }
+ 
+-    Ok(name == TIMESTAMP_TO_DATE_UDF_NAME)
++    Ok(udf_by_name(name).is_some())
+ }
 ```
 
-**File**: `docs/project/changelog/unreleased/7605.bugfix.mdx` (added, +5/-0)
+**File**: `pg_search/tests/pg_regress/expected/issue_6931.out` (modified, +660/-2)
+```diff
+@@ -6,7 +6,7 @@ INSERT INTO issue_6931_e VALUES (1, 'x', 1), (2, 'y', 0);
+ CREATE INDEX issue_6931_i_idx ON issue_6931_i USING paradedb (id, body, a, w);
+ CREATE INDEX issue_6931_e_idx ON issue_6931_e USING paradedb (id, tag, b);
+ SET paradedb.enable_join_custom_scan = on;
+--- Integer arithmetic in a Join Scan is evaluated by PostgreSQL
++-- Integer arithmetic in a Join Scan runs natively with overflow checks
+ EXPLAIN (COSTS OFF)
+ SELECT i.id FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
+ WHERE i.body @@@ 'alpha' AND (i.w + e.b) > 0 LIMIT 10;
+@@ -21,7 +21,7 @@ WHERE i.body @@@ 'alpha' AND (i.w + e.b) > 0 LIMIT 10;
+      : ProjectionExec: expr=[id@1 as col_1, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
+      :   GlobalLimitExec: skip=0, fetch=10
+      :     VisibilityFilterExec: tables=[i, e]
+-     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@1)], filter=pdb_eval_expr_opexpr_e8373b5a(w@0, b@1) > 0
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@1)], filter=pdb_int_add(w@0, b@1) > 0
+      :         CooperativeExec
+      :           PgSearchScan: table=i, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"alpha","lenient":null,"conjunction_mode":null}}}}
+      :         CooperativeExec
+@@ -53,6 +53,664 @@ WHERE i.body @@@ 'beta' AND (i.w + e.b) > 0 LIMIT 10;
+   2 | 10 | 5 | 10
+ (1 row)
+ 
++-- Each width and mixed widths: operands widen to the operator's result type,
++-- and overflow is checked at that width.
++CREATE TABLE issue_6931_l (id int PRIMARY KEY, body text, s int2, a int4, w int8);
++CREATE TABLE issue_6931_r (id int PRIMARY KEY, tag text, t int2, b int4, c int8);
++INSERT INTO issue_6931_l VALUES
++    (1, 'max', 32767, 2147483647, 9223372036854775807),
++    (2, 'min', -32768, -2147483648, -9223372036854775808),
++    (3, 'small', 3, 5, 10),
++    (4, 'nulls', NULL, NULL, NULL),
++    (5, 'minneg', -32768, -2147483648, -9223372036854775808);
++INSERT INTO issue_6931_r VALUES
++    (1, 'one', 1, 1, 1),
++    (2, 'one', 1, 1, 1),
++    (3, 'two', 2, 2, 2),
++    (4, 'one', 1, 1, 1),
++    (5, 'neg', -1, -1, -1);
++CREATE INDEX issue_6931_l_idx ON issue_6931_l USING paradedb (id, body, s, a, w);
++CREATE INDEX issue_6931_r_idx ON issue_6931_r USING paradedb (id, tag, t, b, c);
++EXPLAIN (COSTS OFF)
++SELECT l.id, l.s + r.t AS ss, l.s * r.b AS sa, l.a - r.c AS ac
++FROM issue_6931_l l JOIN issue_6931_r r ON r.id = l.id
++WHERE l.body @@@ 'small' ORDER BY l.id LIMIT 10;
++                                                                                                          QUERY PLAN                                                                                                          
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: l INNER r
++   Join Cond: r.id = l.id
++   Limit: 10
++   Order By: r.id asc
++   DataFusion Physical Plan: 
++     : SortExec: TopK(fetch=10), expr=[col_1@0 ASC NULLS LAST], preserve_partitioning=[false]
++     :   ProjectionExec: expr=[id@0 as col_1, pdb_int_add(CAST(s@1 AS Int16), CAST(t@2 AS Int16)) as col_2, pdb_int_mul(CAST(s@1 AS Int32), CAST(b@3 AS Int32)) as col_3, pdb_int_sub(a@4, c@5) as col_4, ctid_0@6 as ctid_0]
++     :     VisibilityFilterExec: tables=[l, r], pruned=[r]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@0)]
++     :         CooperativeExec
++     :           PgSearchScan: table=l, segments=1, dynamic_filters=1, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"small","lenient":null,"conjunction_mode":null}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=r, segments=1, dynamic_filters=1, query="all"
++(14 rows)
++
++-- Results match PostgreSQL, NULLs propagate, and a mixed-width result does not
++-- overflow at the narrower operand's width (32767 + 1 is an integer).
++SELECT l.id, l.s + r.t AS ss, l.s + r.b AS sb, l.s * r.b AS sb2, l.a - r.c AS ac,
++       l.w * r.t AS wt, l.a * 2 AS a2
++FROM issue_6931_l l JOIN issue_6931_r r ON r.id = l.id
++WHERE l.body @@@ 'small OR nulls' ORDER BY l.id LIMIT 10;
++ id | ss | sb | sb2 | ac | wt | a2 
++----+----+----+-----+----+----+----
++  3 |  5 |  5 |   6 |  3 | 20 | 10
++  4 |    |    |     |    |    |   
++(2 rows)
++
++SELECT l.id, l.s + r.b AS sb, l.a + r.c AS ac
++FROM issue_6931_l l JOIN issue_6931_r r ON r.id = l.id
++WHERE l.body @@@ 'max' ORDER BY l.id LIMIT 10;
++ id |  sb   |     ac     
++----+-------+------------
++  1 | 32768 | 2147483648
++(1 row)
++
++-- The overflow cases below run in the native pdb_int_* UDFs, in projections
++-- and in join filters, not in the PostgreSQL fallback.
++EXPLAIN (COSTS OFF)
++SELECT l.id, l.s + r.t FROM issue_6931_l l JOIN issue_6931_r r ON r.id = l.id
++WHERE l.body @@@ 'max' LIMIT 10;
++             
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_distinct_expr.out` (modified, +1/-1)
+```diff
+@@ -206,7 +206,7 @@ ORDER BY p.name
+    Order By: p.name asc
+    DataFusion Physical Plan: 
+      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
+-     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_06483cda(supplier_id@1, id@3) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
++     :   AggregateExec: mode=Single, gby=[pdb_int_add(pdb_int_mul(CAST(supplier_id@1 AS Int32), 10), CAST(id@3 AS Int32)) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
+      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
+      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, id@5, ctid_1@1]
+      :         CooperativeExec
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_order_from_path.out` (modified, +3/-3)
+```diff
+@@ -223,8 +223,8 @@ JOIN jo_reviews r ON r.book_id = b.id
+ JOIN jo_authors a ON a.id > b.author_id + r.rating
+ WHERE a.bio @@@ 'orchid'
+ ORDER BY b.id, r.id LIMIT 5;
+-                                                                                                                               QUERY PLAN                                                                                                                                
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++                                                                                                                                     QUERY PLAN                                                                                                                                      
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Join Scan)
+    Relation Tree: (b INNER r) INNER a
+    Join Cond: r.book_id = b.id
+@@ -239,7 +239,7 @@ ORDER BY b.id, r.id LIMIT 5;
+      :         NestedLoopJoinExec: join_type=Inner, filter=id@0 > join_proj_push_down_1@1, projection=[id@0, ctid_2@1, ctid_0@2, author_id@3, id@4, ctid_1@5, rating@6, book_id@7, id@8]
+      :           CooperativeExec
+      :             PgSearchScan: table=a, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"bio","query_string":"orchid","lenient":null,"conjunction_mode":null}}}}
+-     :           ProjectionExec: expr=[ctid_0@0 as ctid_0, author_id@1 as author_id, id@2 as id, ctid_1@3 as ctid_1, rating@4 as rating, book_id@5 as book_id, id@6 as id, CAST(pdb_eval_expr_opexpr_6edbbeb8(author_id@1, rating@4) AS Int64) as join_proj_push_down_1]
++     :           ProjectionExec: expr=[ctid_0@0 as ctid_0, author_id@1 as author_id, id@2 as id, ctid_1@3 as ctid_1, rating@4 as rating, book_id@5 as book_id, id@6 as id, CAST(pdb_int_add(CAST(author_id@1 AS Int32), CAST(rating@4 AS Int32)) AS Int64) as join_proj_push_down_1]
+      :             HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@2, book_id@2)]
+      :               CooperativeExec
+      :                 PgSearchScan: table=b, segments=1, query="all"
+```
+
+---
+
+### Incident Patch 2: `0b859805` (2026-11-22)
+**Commit Message**: fix: resolve aggregate FILTER vars through fast-field mapping (#7621)
+
+Fixes #7517.
+
+### Root Cause
+In `joinscan/src/postgres/customscan/aggregatescan/datafusion_build.rs`:
+1. `FilterExpr::from_pg_node` resolved `T_Var` in `FILTER` clauses with
+`source.get_attname(varattno)` instead of resolving the heap attribute
+through the index's fast-field mapping
+(`source.resolve_fast_field(ResTarget::Attno(attno), Access::Scalar)`).
+When an index alias matched another SQL column's name (e.g. `maker`
+aliased as `category`, `category` aliased as `brand`),
+`FilterExpr::to_datafusion` read the wrong indexed field; when an
+aliased column had no colliding name, DataFusion failed with a schema
+error (`No field named ...`).
+2. `populate_required_fields` ignored the `attno` already stored on
+`FilterColumnRef` and looked up `context.get_attno_by_name(&field_name)`
+instead, so an aliased fast field referenced only in `FILTER` would not
+be registered.
+
+### Changes
+- Resolve `FILTER` `T_Var` nodes through
+`source.resolve_fast_field(ResTarget::Attno(attno), Access::Scalar)` and
+store `resolved.field.name()` in `FilterColumnRef`.
+- Register `FILTER` columns in `populate_required_fields` directly via
+their 
+
+**File**: `docs/project/changelog/unreleased/7621.bugfix.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+- Fixed aggregate and `DISTINCT` queries with subqueries in search predicates failing at execution time (#7593), and resolved runtime predicates before evaluating `pdb.agg(..., 'threshold')` visibility. Also fixed parallel search queries with bitmap intersection failing when run outside parallel mode.
++- Fixed aggregate `FILTER` clauses over joins reading the wrong indexed field or failing with a schema error when an index alias differs from or collides with a SQL column name (#7517).
 ```
 
-**File**: `index_read/src/postgres/customscan/solve_expr.rs` (modified, +6/-5)
+**File**: `joinscan/src/postgres/customscan/aggregatescan/datafusion_build.rs` (modified, +13/-10)
 ```diff
-@@ -34,7 +34,7 @@
- //! | Context | Created | Per-tuple memory reset | Use it for |
- //! |---|---|---|---|
- //! | `ps_ExprContext` | PostgreSQL, in `ExecInitCustomScan` | by the scan, per row | evaluating heap filters, snippets, projection |
--//! | runtime context (`BaseScanState::runtime_context`, `AggregateScanState::runtime_context`) | [`SolvePostgresExpressions::init_expr_context`], only when the base query has something to solve | once, at the start of each solve | the solved query |
-+//! | runtime context (`BaseScanState::runtime_context`, `AggregateScanState::runtime_context`, `DataFusionAggState::runtime_context`) | [`SolvePostgresExpressions::init_expr_context`], only when the base query has something to solve | once, at the start of each solve | the solved query |
- //!
- //! Both live in the EState's per-query memory and are freed with it.
- //!
-@@ -50,6 +50,10 @@
- //! 3. Nothing else resets the runtime context between solves.
- //! 4. Before solving again (rescan), drop everything that still points into the old solved
- //!    query: the reader and its scorers. The new solve starts with a reset that frees it.
-+//! 5. Solve on the Postgres main thread before entering `PgTokioRuntime::block_on`. Evaluating
-+//!    an `InitPlan` inside `block_on` runs under `HeldInterrupts` (forcing PostgreSQL's
-+//!    `InitializeParallelDSM` into its private-memory fallback with `es_query_dsa == NULL`) and
-+//!    panics if the `InitPlan` itself enters `block_on`.
- //!
- //! # Why a second context
- //!
-@@ -63,10 +67,7 @@
- //! # Scans outside this trait
- //!
- //! JoinScan solves `JoinCSClause` in `ps_ExprContext`, which it never resets per row because
--//! DataFusion produces its rows. The DataFusion aggregate does reset `ps_ExprContext` per row,
--//! so it cannot solve there; each source solves in `PgSearchTableProvider::scan` into a context
--//! created for that source alone (`aggregatescan/datafusion_exec.rs`), so one source's reset
--//! cannot free another's query.
-+//! DataFusion produces its rows (and still solves before entering `PgTokioRuntime::block_on`).
- 
- use crate::api::operator::searchqueryinput_typoid;
- use crate::nodecast;
-```
-
-**File**: `index_read/src/scan/info.rs` (modified, +0/-21)
-```diff
-@@ -265,27 +265,6 @@ impl ScanMode {
-     pub fn has_parameters(&self) -> bool {
-         self.queries().any(|q| q.has_parameters())
-     }
--
--    /// Initialize runtime `PostgresExpression` nodes in this scan mode against `planstate`.
--    pub fn init_postgres_expressions(&mut self, planstate: *mut pg_sys::PlanState) {
--        for q in self.queries_mut() {
--            q.init_postgres_expressions(planstate);
--        }
--    }
--
--    /// Solve all runtime `PostgresExpression` and parameterized heap filters in this scan mode.
--    /// Resets `ecxt_per_tuple_memory` once up front, then solves each query with the no-reset
--    /// variant (rule 2 in `solve_expr.rs`).
--    pub fn solve_postgres_expressions(&mut self, expr_context: *mut pg_sys::ExprContext) {
--        assert!(
--            !expr_context.is_null(),
--            "expr_context was never initialized"
--        );
--        unsafe { pg_sys::MemoryContextReset((*expr_context).ecxt_per_tuple_memory) };
--        for q in self.queries_mut() {
--            q.solve_postgres_expressions_no_reset(expr_context);
--        }
--    }
- }
- 
- /// Information about a scan of a ParadeDB table.
-```
-
-**File**: `joinscan/src/postgres/customscan/aggregatescan/datafusion_exec.rs` (modified, +19/-29)
-```diff
-@@ -141,7 +141,7 @@ pub async fn build_join_aggregate_plan(
-         custom_exprs,
-         custom_scan_tlist,
-         expr_context,
--        planstate,
-+        planstate.is_none(),
-         mpp_manifests,
-     )
-     .await?;
-@@ -637,11 +637,8 @@ fn build_pdb_aggregate_plan(
- 
-     let mut level_plans = Vec::with_capacity(groups.len());
- 
--    // Cloned union groups must not share a provider's runtime state: each group needs its own
--    // `ExprContext` (solving parameters resets per-tuple memory), and under MPP each scan claims
--    // segments from the pool its `source_idx` names (clones sharing the original's indexes would
--    // split every pool between them, so groups past the first get pools one source list apart,
--    // matching the launch's `i % sources` manifest replay).
-+    // Under MPP, cloned union groups must not share segment pools: each group past the first gets
-+    // pools one source list apart (matching the launch's `i % sources` manifest replay).
-     let pool_stride = plan.sources().len();
-     for (group_idx, (needed_keys, levels_in_group)) in groups.into_iter().enumerate() {
-         let mut level_plan = if group_idx == 0 {
-@@ -772,8 +769,8 @@ fn build_pdb_aggregate_plan(
-     }
- }
- 
--/// Give every `PgSearchTableProvider` in a cloned union group its own runtime `ExprContext`
--/// and, under MPP, move its segment claims to the pool `offset` past its own.
-+/// Under MPP, move every `PgSearchTableProvider` in a cloned union group to the segment pool
-+/// `offset` past its own.
- fn isolate_cloned_sources(plan: LogicalPlan, offset: usize) -> Result<LogicalPlan> {
-     plan.transform(|node| {
-         let LogicalPlan::TableScan(mut scan) = node else {
-@@ -782,11 +779,11 @@ fn isolate_cloned_sources(plan: LogicalPlan, offset: usize) -> Result<LogicalPla
-         let Some(provider) = pg_search_provider_from_scan(&scan) else {
-             return Ok(Transformed::no(LogicalPlan::TableScan(scan)));
-         };
-+        let Some(idx) = provider.source_idx() else {
-+            return Ok(Transformed::no(LogicalPlan::TableScan(scan)));
-+        };
-         let mut provider = provider.clone();
--        if let Some(idx) = provider.source_idx() {
--            provider.set_source_idx(idx + offset);
--        }
--        provider.ensure_own_expr_context();
-+        provider.set_source_idx(idx + offset);
-         scan.source = Arc::new(DefaultTableSource::new(Arc::new(provider)));
-         Ok(Transformed::yes(LogicalPlan::TableScan(scan)))
-     })
-@@ -1070,7 +1067,7 @@ fn build_relnode_df<'a>(
-     custom_exprs: *mut pg_sys::List,
-     custom_scan_tlist: *mut pg_sys::List,
-     expr_context: Option<*mut pg_sys::ExprContext>,
--    planstate: Option<*mut pg_sys::PlanState>,
-+    explain_only: bool,
-     mpp_manifests: Option<&'a [SearchIndexManifest]>,
- ) -> LocalBoxFuture<'a, Result<DataFrame>> {
-     async move {
-@@ -1083,7 +1080,7 @@ fn build_relnode_df<'a>(
-                     top_level_plan,
-                     plan_position,
-                     expr_context,
--                    planstate,
-+                    explain_only,
-                     mpp_manifests,
-                 )
-                 .await?;
-@@ -1099,7 +1096,7 @@ fn build_relnode_df<'a>(
-                     custom_exprs,
-                     custom_scan_tlist,
-                     expr_context,
--                    planstate,
-+                    explain_only,
-                     mpp_manifests,
-                 )
-                 .await?;
-@@ -1110,7 +1107,7 @@ fn build_relnode_df<'a>(
-                     custom_exprs,
-                     custom_scan_tlist,
-                     expr_context,
--                    planstate,
-+                    explain_only,
-                     mpp_manifests,
-                 )
-                 .await?;
-@@ -1127,7 +1124,7 @@ fn build_relnode_df<'a>(
-                     custom_exprs,
-                     custom_scan_tlist,
-                     expr_context,
--                    planstate,
-+                    explain_only,
-                     mpp_manifests,
-                 )
-                 .await?;
-@@ -1180,7 +1177,7 @@ fn build_relnode_df<'a>(
-                     custom_exprs,
-                     custom_scan_tlist,
-                     expr_context,
--                    planstate,
-+                    explain_only,
-                     mpp_manifests,
-                 )
-                 .await?;
-@@ -1427,7 +1424,7 @@ async fn build_source_df(
-     plan: &RelNode,
-     plan_position: usize,
-     expr_context: Option<*mut pg_sys::ExprContext>,
--    planstate: Option<*mut pg_sys::PlanState>,
-+    explain_only: bool,
-     mpp_manifests: Option<&[SearchIndexManifest]>,
- ) -> Result<DataFrame> {
-     let scan_info = source.scan_info.clone();
-@@ -1461,17 +1458,10 @@ async fn build_source_df(
-             provider.add_match_tag_column(&tq.tag_name);
-         }
-     }
--    // HeapFilter queries (e.g. `=` on a column indexed via a
--    // `pdb.literal` cast) compile to runtime Postgres expressions
-```
-
-**File**: `joinscan/src/postgres/customscan/aggregatescan/mod.rs` (modified, +34/-10)
-```diff
-@@ -961,13 +961,15 @@ impl CustomScan for AggregateScan {
-                     let cscan = builder.args().cscan;
-                     ((*cscan).custom_exprs, (*cscan).custom_scan_tlist)
-                 };
--                builder.custom_state().datafusion_state = Some(scan_state::DataFusionAggState {
-+                let mut df_state = scan_state::DataFusionAggState {
-                     plan,
-                     targetlist,
-                     topk,
-                     custom_exprs,
-                     custom_scan_tlist,
-                     having_filter,
-+                    base: None,
-+                    runtime_context: None,
-                     runtime: None,
-                     physical_plan: None,
-                     stream: None,
-@@ -981,7 +983,15 @@ impl CustomScan for AggregateScan {
-                     mpp: MppLifecycle::from_plan(parallel_mode_ok),
-                     launch_timing: None,
-                     spilled: Arc::new(AtomicBool::new(false)),
--                });
-+                };
-+                if df_state.has_postgres_expressions() || df_state.has_parameters() {
-+                    df_state.base = Some(scan_state::DataFusionAggBase {
-+                        plan: df_state.plan.clone(),
-+                        targetlist: df_state.targetlist.clone(),
-+                        having_filter: df_state.having_filter.clone(),
-+                    });
-+                }
-+                builder.custom_state().datafusion_state = Some(df_state);
-                 builder.build()
+@@ -1868,12 +1868,15 @@ impl FilterExpr {
+                             return None;
+                         }
+                         let source = sources.iter().find(|s| s.heap_rti == rti)?;
+-                        let name = source.get_attname(unsafe { (*var).varattno })?;
++                        let field_name = source
++                            .resolve_fast_field(ResTarget::Attno(attno), Access::Scalar)
++                            .map(|r| r.field.name())
++                            .or_else(|| source.get_attname(attno).map(|n| n.into_inner()))?;
+                         Some(Self::ColumnRef(FilterColumnRef {
+                             plan_position: pp,
+                             rti: source.heap_rti,
+-                            attno: unsafe { (*var).varattno },
+-                            field_name: name.into_inner(),
++                            attno,
++                            field_name,
+                         }))
+                     }
+                     FilterExprBuildContext::Having {
+@@ -2185,26 +2188,26 @@ pub unsafe fn populate_required_fields(
              }
          }
-@@ -1197,10 +1207,15 @@ impl CustomScan for AggregateScan {
-         estate: *mut pg_sys::EState,
-         eflags: i32,
-     ) {
--        if state.custom_state().is_datafusion_backend() {
-+        if let Some(df_state) = state.custom_state_mut().datafusion_state.as_mut() {
-             // DataFusion logical/physical planning and any MPP manifest pinning / worker launch
-             // happen lazily on first `exec_custom_scan`, once `ExecutePlan` has initialized
--            // `estate->es_use_parallel_mode`.
-+            // `estate->es_use_parallel_mode`. Only allocate the dedicated `runtime_context`
-+            // (separate from `ps_ExprContext`, which is reset per emitted row) when the query
-+            // has runtime expressions or parameters to solve.
-+            if eflags & (pg_sys::EXEC_FLAG_EXPLAIN_ONLY as i32) == 0 {
-+                df_state.runtime_context = unsafe { df_state.init_expr_context(estate) };
-+            }
-             return;
+ 
+-        // Aggregate FILTER clauses - referenced by name, so resolve attno
+-        // first via the tuple desc.
++        // Aggregate FILTER clauses - match by plan_position and register by
++        // stored attno so aliased fast fields are resolved through the index
++        // mapping rather than looked up by heap column name.
+         for agg in &targetlist.aggregates {
+             let Some(ref filter) = agg.filter else {
+                 continue;
+             };
+             for FilterColumnRef {
+                 plan_position,
++                attno,
+                 field_name,
+                 ..
+             } in filter.collect_column_refs()
+             {
+                 if source.plan_position != plan_position {
+                     continue;
+                 }
+-                if let Some(attno) = context.get_attno_by_name(&field_name) {
+-                    require_fast_field(source, &context, attno, || {
+-                        format!("FILTER column '{field_name}'")
+-                    })?;
+-                }
++                require_fast_field(source, &context, attno, || {
++                    format!("FILTER column '{field_name}' (attno={attno})")
++                })?;
+             }
          }
  
-@@ -2228,12 +2243,9 @@ impl AggregateScan {
-             "aggregate scan slot must be initialized"
-         );
- 
--        // Capture before the mutable borrow on `datafusion_state`. Threaded
--        // down to each `PgSearchTableProvider` so HeapFilter queries (`=`
--        // on a `pdb.literal`-cast column, etc.) can resolve their runtime
--        // expressions. A provider with something to solve gets a context of its
--        // own from the planstate (see `build_source_df` in datafusion_exec.rs);
--        // `ps_ExprContext` is what every provider's reader evaluates in.
-+        // Capture before the mutable borrow on `datafusion_state`. `ps_ExprContext` is
-+        // threaded down to each `PgSearchTableProvider` for per-row heap filter evaluation;
-+        // runtime expressions and parameters are pre-solved below into `runtime_context`.
-         let ps_expr_context = state.csstate.ss.ps.ps_ExprContext;
-         let runtime_expr_context = (!ps_expr_context.is_null()).then_some(ps_expr_context);
-         let ps = state.planstate();
-@@ -2247,6 +2259,18 @@ impl AggregateScan {
- 
-         // First call: build and execute the DataFusion plan
-         if first_call {
-+            // Solve all runtime Postgres expressions and parameters on the main thread before
-+            // entering `PgTokioRuntime::block_on` (#7593): `block_on` holds `HeldInterrupts`
-+            // (breaking parallel InitPlan DSM allocation) and installs a Tokio runtime context
-+            // (panicking if an InitPlan itself calls `block_on`).
-+            let df_state = state
-+                .custom_state_mut()
-+                .datafusion_state
-+                .as_mut()
-+                .expect("DataFusion state must be initialized");
-+            let runtime_context = df_state.runtime_context;
-+            df_state.prepare_query_for_execution(ps, runtime_context);
-+
-             let runtime = PgTokioRuntime::new()
-                 .unwrap_or_else(|e| pgrx::error!("Failed to create tokio runtime: {}", e));
- 
 ```
 
----
-
-### Incident Patch 2: `5dd2b5bd` (2026-11-20)
-**Commit Message**: chore: Add UUID primary / foreign keys for stackoverflow (#7608)
-
-## What
-
-Adds generated `UUID` join keys (`users.user_uuid`,
-`stackoverflow_posts.owner_user_uuid`, `badges.user_uuid`) and `_uuid`
-variants of `join_permissioned_search_*` and
-`join_aggregate_topk_count_*` to `benchmarks/datasets/stackoverflow/`.
-
-## Why
-
-Existing Stack Overflow join benchmarks only join on `INTEGER` keys and
-do not cover `UUID` / `StrColumn` dynamic filter pushdown, hash joins,
-or `RankJoinExec` term-dictionary lookups.
-
-## How
-
-- Adds `STORED` generated `md5(...)::uuid` columns in
-`create_tables.sql` and indexes them in `indexes/bm25.sql` (leaving S3
-CSVs and existing integer `partition_by` clauses unchanged).
-- Mirrors the six join query tiers under `*_uuid/` without
-`range_partitioned` variants.
-
-## Tests
-
-Tested locally. After this merges we'll need to rebuild the heap
-snapshots.
-
-**File**: `benchmarks/datasets/stackoverflow/create_tables.sql` (modified, +10/-3)
+**File**: `pg_search/tests/pg_regress/expected/aggregate_join_filter_alias.out` (added, +205/-0)
 ```diff
-@@ -30,7 +30,10 @@ CREATE TABLE stackoverflow_posts (
-     -- format. Generated so the sampled CSVs stay unchanged: COPY skips
-     -- generated columns. amount78 mimics uint256-style token amounts.
-     amount15 NUMERIC(15, 2) GENERATED ALWAYS AS (view_count::numeric / 100) STORED,
--    amount78 NUMERIC(78, 0) GENERATED ALWAYS AS ('1e70'::numeric + view_count) STORED
-+    amount78 NUMERIC(78, 0) GENERATED ALWAYS AS ('1e70'::numeric + view_count) STORED,
-+    -- Deterministic full-entropy UUID join key mirroring owner_user_id.
-+    -- Explicit ::text cast avoids STABLE textanycat; preserves NULL when owner_user_id IS NULL.
-+    owner_user_uuid UUID GENERATED ALWAYS AS (md5('user-' || owner_user_id::text)::uuid) STORED
- );
- 
- CREATE TABLE badges (
-@@ -39,7 +42,9 @@ CREATE TABLE badges (
-     date TIMESTAMP,
-     user_id INTEGER,
-     class INTEGER,
--    tag_based BOOLEAN
-+    tag_based BOOLEAN,
-+    -- Deterministic full-entropy UUID join key mirroring user_id.
-+    user_uuid UUID GENERATED ALWAYS AS (md5('user-' || user_id::text)::uuid) STORED
- );
- 
- CREATE TABLE comments (
-@@ -65,5 +70,7 @@ CREATE TABLE users (
-     down_votes INTEGER,
-     views INTEGER,
-     profile_image_url VARCHAR,
--    website_url VARCHAR
-+    website_url VARCHAR,
-+    -- Deterministic full-entropy UUID join key mirroring id.
-+    user_uuid UUID GENERATED ALWAYS AS (md5('user-' || id::text)::uuid) STORED
- );
+@@ -0,0 +1,205 @@
++-- =====================================================================
++-- Issue #7517: Aggregate FILTER with aliased index fields
++-- =====================================================================
++-- Verifies that FILTER Vars resolve through the heap-column-to-fast-field
++-- mapping (not the heap attribute name) and register their fast fields by
++-- stored attno, covering both:
++--   1. An index alias that collides with another SQL column's name
++--      (maker aliased as 'category', category aliased as 'brand').
++--   2. An aliased column referenced only in FILTER (not in GROUP BY or
++--      aggregate arguments).
++CREATE EXTENSION IF NOT EXISTS pg_search CASCADE;
++SET max_parallel_workers_per_gather = 0;
++SET paradedb.enable_columnar_exec = on;
++SET paradedb.enable_join_custom_scan = on;
++SET paradedb.enable_aggregate_custom_scan = on;
++CREATE TABLE filter_alias_products (
++    id int PRIMARY KEY,
++    category text,
++    maker text
++);
++CREATE TABLE filter_alias_orders (
++    id int PRIMARY KEY,
++    product_id int
++);
++INSERT INTO filter_alias_products VALUES
++    (1, 'hats', 'acme'),
++    (2, 'shoes', 'zenith');
++INSERT INTO filter_alias_orders VALUES
++    (10, 1),
++    (11, 1),
++    (12, 2);
++-- Indexed 'category' holds SQL column 'maker'; indexed 'brand' holds SQL
++-- column 'category'.
++CREATE INDEX filter_alias_products_idx ON filter_alias_products
++USING paradedb (
++    id,
++    (maker::pdb.literal('alias=category')),
++    (category::pdb.literal('alias=brand'))
++);
++CREATE INDEX filter_alias_orders_idx ON filter_alias_orders
++USING paradedb (id, product_id);
++-- =====================================================================
++-- Test 1: pdb.agg() + FILTER when index alias collides with heap column
++-- Previously read indexed 'category' (maker) instead of indexed 'brand'
++-- (p.category) and returned {"value":0.0} instead of {"value":2.0}.
++-- =====================================================================
++EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
++SELECT pdb.agg('{"value_count":{"field":"category"}}')
++       FILTER (WHERE p.category = 'hats') AS filtered_count
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all();
++                                                                   QUERY PLAN                                                                    
++-------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Aggregate Scan)
++   Backend: DataFusion
++   Indexes: filter_alias_products_idx (p), filter_alias_orders_idx (o)
++   Aggregates: pdb.agg({"value_count":{"field":"category"}})
++   DataFusion Physical Plan: 
++     : AggregateExec: mode=Single, gby=[], aggr=[count(p_0.category) FILTER (WHERE p_0.brand = Utf8View("hats")) as __pdb_m0]
++     :   HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, product_id@0)], projection=[brand@0, category@2]
++     :     CooperativeExec
++     :       PgSearchScan: table=p, segments=1, eager=[brand, category], visibility=eager, query={"with_index":{"query":{"all":{"field":"id"}}}}
++     :     CooperativeExec
++     :       PgSearchScan: table=o, segments=1, dynamic_filters=1, visibility=eager, query="all"
++(11 rows)
++
++SELECT pdb.agg('{"value_count":{"field":"category"}}')
++       FILTER (WHERE p.category = 'hats') AS filtered_count
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all();
++ filtered_count 
++----------------
++ {"value": 2.0}
++(1 row)
++
++-- Equivalent WHERE form
++SELECT pdb.agg('{"value_count":{"field":"category"}}') AS where_count
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all() AND p.category = 'hats';
++  where_count   
++----------------
++ {"value": 2.0}
++(1 row)
++
++-- Native Postgres reference
++SET paradedb.enable_aggregate_custom_scan = off;
++SELECT count(p.maker) FILTER (WHERE p.category = 'hats') AS native_count
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id;
++ native_count 
++--------------
++            2
++(1 row)
++
++SET paradedb.enable_aggregate_custom_scan = on;
++-- =====================================================================
++-- Test 2: Standard SQL aggregate with FILTER on aliased-only column
++-- Ensures populate_required_fields registers FILTER columns by stored
++-- attno even when the aliased column is not referenced elsewhere.
++-- =====================================================================
++EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
++SELECT count(*) FILTER (WHERE p.category = 'hats') AS hat_orders,
++       count(*) FILTER (WHERE p.maker = 'zenith') AS zenith_orders
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all();
++                                                                                   
 ```
 
-**File**: `benchmarks/datasets/stackoverflow/indexes/bm25.sql` (modified, +4/-1)
+**File**: `pg_search/tests/pg_regress/sql/aggregate_join_filter_alias.sql` (added, +138/-0)
 ```diff
-@@ -15,7 +15,8 @@ USING bm25 (
-     amount15,
-     amount78,
-     (owner_display_name::pdb.unicode_words('columnar=true')),
--    owner_user_id
-+    owner_user_id,
-+    owner_user_uuid
- ) WITH (
-     -- Join keys: comments.post_id = id, users.id = owner_user_id.
-     -- TODO: Explore removing multi-key partitioning in the future once range-partitioning
-@@ -30,6 +31,7 @@ USING bm25 (
-     (name::pdb.unicode_words('columnar=true')),
-     date,
-     user_id,
-+    user_uuid,
-     class,
-     tag_based
- ) WITH (
-@@ -53,6 +55,7 @@ USING bm25 (
- CREATE INDEX users_idx ON users
- USING bm25 (
-     id,
-+    user_uuid,
-     (about_me::pdb.unicode_words('columnar=true')),
-     (display_name::pdb.unicode_words('columnar=true')),
-     reputation
-```
-
-**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_high_selectivity_uuid/README.md` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+# TopK Aggregate on JOIN, High Selectivity (DataFusion, UUID Join Key)
+@@ -0,0 +1,138 @@
++-- =====================================================================
++-- Issue #7517: Aggregate FILTER with aliased index fields
++-- =====================================================================
++-- Verifies that FILTER Vars resolve through the heap-column-to-fast-field
++-- mapping (not the heap attribute name) and register their fast fields by
++-- stored attno, covering both:
++--   1. An index alias that collides with another SQL column's name
++--      (maker aliased as 'category', category aliased as 'brand').
++--   2. An aliased column referenced only in FILTER (not in GROUP BY or
++--      aggregate arguments).
 +
-+- Join: `stackoverflow_posts -> badges` over unpartitioned full-entropy `UUID` keys (`badges.user_uuid = stackoverflow_posts.owner_user_uuid`)
-+- Description: Mirrors `join_aggregate_topk_count_high_selectivity` with deterministic `md5(...)::uuid` join keys (`GROUP BY badges.name`, `ORDER BY COUNT(*) DESC LIMIT 10`).
++CREATE EXTENSION IF NOT EXISTS pg_search CASCADE;
++SET max_parallel_workers_per_gather = 0;
++SET paradedb.enable_columnar_exec = on;
++SET paradedb.enable_join_custom_scan = on;
++SET paradedb.enable_aggregate_custom_scan = on;
 +
-+## Query Info (statistics from 20m dataset):
++CREATE TABLE filter_alias_products (
++    id int PRIMARY KEY,
++    category text,
++    maker text
++);
 +
-+- `'postgres'` selectivity on `stackoverflow_posts.body`: ~0.13% (~26K matches).
-+  Under database convention, this narrow filter represents high selectivity (filters out ~99.87% of rows).
-+  Without range co-partitioning on the UUID join keys, build-side cardinality (~26K rows) exercises small/medium UUID hash joins above the `InList` cap (and cross-process dynamic filter pushdown once supported).
++CREATE TABLE filter_alias_orders (
++    id int PRIMARY KEY,
++    product_id int
++);
 +
-+## Variant Omissions
++INSERT INTO filter_alias_products VALUES
++    (1, 'hats', 'acme'),
++    (2, 'shoes', 'zenith');
 +
-+- `range_partitioned.sql` is omitted because the BM25 indexes are not range-partitioned on the UUID columns.
-+- Native PostgreSQL aggregation and `basescan.sql` are omitted for the same reasons noted in `../join_aggregate_topk_count_high_selectivity/README.md`.
-```
-
-**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_high_selectivity_uuid/hash_partitioned.sql` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+-- DataFusion TopK aggregate scan
-+SET work_mem TO '8GB'; SET paradedb.enable_aggregate_custom_scan TO on; SET paradedb.enable_range_partitioned_join TO off; SELECT
-+    b.name,
-+    COUNT(*)
-+FROM stackoverflow_posts p
-+JOIN badges b ON b.user_uuid = p.owner_user_uuid
-+WHERE
-+    p.body ||| 'postgres'
-+GROUP BY
-+    b.name
-+ORDER BY
-+    COUNT(*) DESC
-+LIMIT 10;
-```
-
-**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_low_selectivity_uuid/README.md` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+# TopK Aggregate on JOIN, Low Selectivity (DataFusion, UUID Join Key)
++INSERT INTO filter_alias_orders VALUES
++    (10, 1),
++    (11, 1),
++    (12, 2);
 +
-+- Join: `stackoverflow_posts -> badges` over unpartitioned full-entropy `UUID` keys (`badges.user_uuid = stackoverflow_posts.owner_user_uuid`)
-+- Description: Mirrors `join_aggregate_topk_count_low_selectivity` with deterministic `md5(...)::uuid` join keys (`GROUP BY badges.name`, `ORDER BY COUNT(*) DESC LIMIT 10`).
++-- Indexed 'category' holds SQL column 'maker'; indexed 'brand' holds SQL
++-- column 'category'.
++CREATE INDEX filter_alias_products_idx ON filter_alias_products
++USING paradedb (
++    id,
++    (maker::pdb.literal('alias=category')),
++    (category::pdb.literal('alias=brand'))
++);
 +
-+## Query Info (statistics from 20m dataset):
++CREATE INDEX filter_alias_orders_idx ON filter_alias_orders
++USING paradedb (id, product_id);
 +
-+- `'javascript'` selectivity on `stackoverflow_posts.body`: ~4.05% (~811K matches, fanning out to ~149M joined badge rows).
-+  Without range co-partitioning on the UUID join keys, build-side cardinality (~811K rows) exercises very large UUID hash joins with high fanout (and cross-process dynamic filter pushdown once supported).
++-- =====================================================================
++-- Test 1: pdb.agg() + FILTER when index alias collides with heap column
++-- Previously read indexed 'category' (maker) instead of indexed 'brand'
++-- (p.category) and returned {"value":0.0} instead of {"value":2.0}.
++-- =====================================================================
++EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
++SELECT pdb.agg('{"value_count":{"field":"category"}}')
++       FILTER (WHERE p.category = 'hats') AS filtered_count
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all();
 +
-+## Variant Omissions
++SELECT pdb.agg('{"value_count":{"field":"category"}}')
++       FILTER (WHERE p.category = 'hats') AS filtered_count
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all();
 +
-+- `range_partitioned.sql` is omitted because the BM25 indexes are not range-partitioned on the UUID columns.
-+- Native PostgreSQL aggregation and `basescan.sql` are omitted for the same reasons noted in `../join_aggregate_topk_count_low_selectivity/README.md`.
-```
-
-**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_low_selectivity_uuid/hash_partitioned.sql` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+-- DataFusion TopK aggregate scan
-+SET work_mem TO '8GB'; SET paradedb.enable_aggregate_custom_scan TO on; SET paradedb.enable_range_partitioned_join TO off; SELECT
-+    b.name,
-+    COUNT(*)
-+FROM stackoverflow_posts p
-+JOIN badges b ON b.user_uuid = p.owner_user_uuid
-+WHERE
-+    p.body ||| 'javascript'
-+GROUP BY
-+    b.name
-+ORDER BY
-+    COUNT(*) DESC
-+LIMIT 10;
-```
-
-**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_medium_selectivity_uuid/README.md` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+# TopK Aggregate on JOIN, Medium Selectivity (DataFusion, UUID Join Key)
++-- Equivalent WHERE form
++SELECT pdb.agg('{"value_count":{"field":"category"}}') AS where_count
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all() AND p.category = 'hats';
 +
-+- Join: `stackoverflow_posts -> badges` over unpartitioned full-entropy `UUID` keys (`badges.user_uuid = stackoverflow_posts.owner_user_uuid`)
-+- Description: Mirrors `join_aggregate_topk_count_medium_selectivity` with deterministic `md5(...)::uuid` join keys (`GROUP BY badges.name`, `ORDER BY COUNT(*) DESC LIMIT 10`).
++-- Native Postgres reference
++SET paradedb.enable_aggregate_custom_scan = off;
++SELECT count(p.maker) FILTER (WHERE p.category = 'hats') AS native_count
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id;
++SET paradedb.enable_aggregate_custom_scan = on;
 +
-+## Query Info (statistics from 20m dataset):
++-- =====================================================================
++-- Test 2: Standard SQL aggregate with FILTER on aliased-only column
++-- Ensures populate_required_fields registers FILTER columns by stored
++-- attno even when the aliased column is not referenced elsewhere.
++-- =====================================================================
++EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
++SELECT count(*) FILTER (WHERE p.category = 'hats') AS hat_orders,
++       count(*) FILTER (WHERE p.maker = 'zenith') AS zenith_orders
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all();
 +
-+- `'regex'` selectivity on `stackoverflow_posts.body`: ~0.90% (~179K matches).
-+  Without range co-partitioning on the UUID join keys, build-side cardinality (~179K rows) exercises medium/large UUID hash joins (and cross-process dynamic filter pushdown once supported).
++SELECT count(*) FILTER (WHERE p.category = 'hats') AS hat_orders,
++       count(*) FILTER (WHERE p.maker = 'zenith') AS zenith_orders
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all();
 +
-+## Variant Omissions
++-- Native Postgres parity
++SET paradedb.enable_aggregate_custom_scan = off;
++SELECT count(*) FILTER (WHERE p.category = 'hats') AS hat_orders,
++       count(*) FILTER (WHERE p.maker = 'zenith') AS zenith_orders
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all();
++SET paradedb.enable_aggregate_custom_scan = on;
 +
-+- `range_partitioned.sql` is omitted because the BM25 indexes are not range-partitioned on the UUID columns.
-+- Native PostgreSQL aggregation and `basescan.sql` are omitted for the same reasons noted in `../join_aggregate_topk_count_medium_selectivity/README.md`.
-```
-
-**File**: `benchmarks/datasets/stackoverflow/queries/join_aggregate_topk_count_medium_selectivity_uuid/hash_partitioned.sql` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+-- DataFusion TopK aggregate scan
-+SET work_mem TO '8GB'; SET paradedb.enable_aggregate_custom_scan TO on; SET paradedb.enable_range_partitioned_join TO off; SELECT
-+    b.name,
-+    COUNT(*)
-+FROM stackoverflow_posts p
-+JOIN badges b ON b.user_uuid = p.owner_user_uuid
-+WHERE
-+    p.body ||| 'regex'
-+GROUP BY
-+    b.name
-+ORDER BY
-+    COUNT(*) DESC
-+LIMIT 10;
-```
-
----
-
-### Incident Patch 3: `d9317887` (2026-11-21)
-**Commit Message**: fix: select EF Core docs smoke snippets by command (#7615)
-
-## What
-
-Select the EF Core setup commands by their contents and explicitly run
-the optional VectorData install snippet.
-
-## Why
-
-Adding the VectorData callout shifted the Bash snippet positions. The
-docs smoke test installed the package where it expected to create the
-migration, then raised `StopIteration` while looking for the missing
-migration file.
-
-[Failed PostgreSQL 18 docs smoke
-test](https://github.com/paradedb/paradedb/actions/runs/44724576728/job/136248903688?pr=7601)
-
-## Tests
-
-- Exercised `setup_efcore` against the current docs with mocked shell
-execution. Verified command order, migration seed insertion, and setup
-coverage.
-- Ran `git diff --check`.
-
-**File**: `.github/scripts/smoke_test_getting_started.py` (modified, +26/-6)
-```diff
-@@ -56,11 +56,22 @@ def run(command, cwd, env, source=None):
-     subprocess.run(command, cwd=cwd, env=env, input=source, text=True, check=True)
- 
- 
--def block(target, info=None, index=0):
--    """Read a numbered fence from a getting-started language tab."""
-+def block(target, info=None, index=0, *, command=None):
-+    """Read a fence from a getting-started language tab."""
-     fences = FENCE_PATTERN.findall(TABS[LABELS[target]])
-     if info is not None:
-         fences = [(label, body) for label, body in fences if label == info]
-+    if command is not None:
-+        fences = [
-+            (label, body)
-+            for label, body in fences
-+            if any(
-+                line == command or line.startswith(command + " ")
-+                for line in map(str.strip, body.splitlines())
-+            )
-+        ]
-+        if len(fences) != 1:
-+            raise ValueError(f"Expected one {target} fence containing {command!r}")
-     info, body = fences[index]
-     CONSUMED_FENCES.add(fence_digest(info, body))
-     return body
-@@ -288,11 +299,20 @@ def setup_rails(cwd, env):
- 
- def setup_efcore(cwd, env):
-     """Execute EF Core migration creation, seed insertion and tutorial query."""
--    shell(block("efcore", "bash", 0), cwd, env)
-+    shell(block("efcore", "bash", command="dotnet new tool-manifest"), cwd, env)
-+    shell(
-+        block("efcore", "bash", command="dotnet add package ParadeDB.VectorData"),
-+        cwd,
-+        env,
-+    )
-     (cwd / "Program.cs").write_text(
-         connection_text(block("efcore", "cs Program.cs"), env)
-     )
--    shell(block("efcore", "bash", 1), cwd, env)
-+    shell(
-+        block("efcore", "bash", command="dotnet ef migrations add CreateMockItems"),
-+        cwd,
-+        env,
-+    )
-     migration = next((cwd / "Migrations").glob("*_CreateMockItems.cs"))
-     source = migration.read_text()
-     # Insert exactly where the prose requests: at the end of Up, before Down.
-@@ -303,7 +323,7 @@ def setup_efcore(cwd, env):
-     ).start() + source.index("protected override void Up")
-     source = source[:end] + block("efcore", "cs", 1) + "\n" + source[end:]
-     migration.write_text(source)
--    shell(block("efcore", "bash", 2), cwd, env)
-+    shell(block("efcore", "bash", command="dotnet ef database update"), cwd, env)
-     program = cwd / "Program.cs"
-     source = program.read_text().replace(
-         "// Replace this with the query you want to run.",
-@@ -319,7 +339,7 @@ def setup_efcore(cwd, env):
-         ),
-     )
-     program.write_text(source)
--    shell(block("efcore", "bash", 3), cwd, env)
-+    shell(block("efcore", "bash", command="dotnet run"), cwd, env)
- 
- 
- def validate_setup_coverage(target):
++-- =====================================================================
++-- Test 3: GROUP BY + FILTER with aliased columns
++-- =====================================================================
++EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
++SELECT p.maker, count(*) FILTER (WHERE p.category = 'hats') AS hat_orders
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all()
++GROUP BY p.maker
++ORDER BY p.maker;
++
++SELECT p.maker, count(*) FILTER (WHERE p.category = 'hats') AS hat_orders
++FROM filter_alias_products p
++JOIN filter_alias_orders o ON p.id = o.product_id
++WHERE p.id @@@ pdb.all()
++GROUP BY p.maker
++ORDER BY p.maker;
++
++-- Native Postgres par
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7626** (2026-11-22): fix: resolve aggregate FILTER vars through fast-field mapping (@paradedb-github-bot[bot])
+- **PR #7625** (2026-11-22): docs: Route PostHog analytics through the managed proxy (@philippemnoel)
+- **PR #7624** (2026-11-22): docs: update ParadeDB MCP integration (@philippemnoel)
+- **PR #7622** (closed): feat(tokenizers): support additional stopword languages (@somiljain2006)
+- **PR #7621** (2026-11-22): fix: resolve aggregate FILTER vars through fast-field mapping (@tuannx)
 - **PR #7620** (2026-11-22): docs: Remove completed native vector search roadmap item (@philippemnoel)
-- **PR #7618** (2026-11-21): docs: update ORM release versions and dependencies (@philippemnoel)
-- **PR #7616** (2026-11-21): docs: Clarify that search runs in the same Postgres database (@philippemnoel)
-- **PR #7615** (2026-11-21): fix: select EF Core docs smoke snippets by command (@philippemnoel)
-- **PR #7612** (2026-11-21): fix: Solve AggregateScan parameters before entering a runtime. (@paradedb-github-bot[bot])
-- **PR #7608** (2026-11-20): chore: Add UUID primary / foreign keys for stackoverflow (@stuhood)
 
 ---
 
@@ -3100,56 +3132,35 @@ coverage.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Solve AggregateScan parameters before entering a runtime.
+## X. evaluate integer `+`, `-`, `*` natively in Join Scan with overflow checks
 
 **RULE**:
-When implementing operations in `basescan/src/postgres/customscan/basescan/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/7388.performance.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e0eeecd`: Solve AggregateScan parameters before entering a runtime.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56a759e6`: evaluate integer `+`, `-`, `*` natively in Join Scan with overflow checks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `basescan/src/postgres/customscan/basescan/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7388.performance.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    ///    Either the main backend running a serial path, a `parallel_safe` but not
-    ///    `parallel_aware` scan inside a worker (e.g. the inner side of a Parallel Hash Join),
-    ///    or a `parallel_aware` scan running locally on the leader when `es_use_parallel_mode`
-    ///    is false or `InitializeParallelDSM` falls back to private memory (`es_query_dsa == NULL`).
-        // Populate the private bitmap cursor source when running without attached parallel DSM
-        // state. Handling this here (rather than gating on `!plan.parallel_aware` in
-        // `init_search_reader`) covers both genuinely serial scans and `parallel_aware` scans
-        // that fell back to leader-only local execution (e.g. `es_use_parallel_mode = false` or
-        // PostgreSQL's `InitializeParallelDSM` private-memory fallback with `es_query_dsa == NULL`),
-        // without eagerly building a private bitmap during `estimate_dsm_custom_scan`.
-        if state.custom_state().parallel.is_none()
-            && let Some(cell) = state.custom_state().bitmap_cell.clone()
-            && cell.get().is_none()
-            && let Some(bitmap_exec) = state.custom_state_mut().bitmap_exec.as_mut()
-            &
+---
+header: performance
+---
+
+Join Scan evaluates `smallint`, `integer` and `bigint` `+`, `-` and `*` natively instead of through a PostgreSQL expression per row, while still raising PostgreSQL's `smallint out of range`, `integer out of range` and `bigint out of range` errors (#7134).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    ///    Either the main backend running a serial path, or a `parallel_safe` but not
-    ///    `parallel_aware` scan inside a worker (e.g. the inner side of a Parallel Hash Join).
-        let parallel_aware = unsafe { (*(*state.planstate()).plan).parallel_aware };
-        if !parallel_aware
-            && let Some(cell) = state.custom_state().bitmap_cell.clone()
-            && cell.get().is_none()
-            && let Some(bitmap_exec) = state.custom_state_mut().bitmap_exec.as_mut()
-            && let Some(source) = unsafe { bitmap_exec.private_source() }
-        {
-            cell.fill(source);
-        }
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e0eeecd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56a759e6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

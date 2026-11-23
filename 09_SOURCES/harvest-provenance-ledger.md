@@ -12287,3 +12287,7 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `1adb9678` | Multi-dimensional audit evidence | 2026-11-23T03:47:02.495Z |
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T03:47:03.790Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `17bcab80` | Multi-dimensional audit evidence | 2026-11-23T03:47:04.141Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-23T04:00:02.817Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `2f9654ef` | Multi-dimensional audit evidence | 2026-11-23T04:00:05.519Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `0b859805` | Multi-dimensional audit evidence | 2026-11-23T04:00:17.258Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5915d306` | Multi-dimensional audit evidence | 2026-11-23T04:00:19.223Z |

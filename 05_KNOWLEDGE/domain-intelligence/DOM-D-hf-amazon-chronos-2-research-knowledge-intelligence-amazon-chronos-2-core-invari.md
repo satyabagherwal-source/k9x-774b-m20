@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/amazon/chronos-2",
   "source_version": "hf-amazon-chronos-2",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T18:00:19.740Z",
+  "timestamp": "2026-11-23T04:00:03.015Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [amazon/chronos-2](https://huggingface.co/amazon/chronos-2) (Revision: `hf-amazon-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T18:00:19.740Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T04:00:03.015Z`  
 > **Learning ID**: `learn-huggingface-amazon-chronos-2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/amazon/chronos-2](https://huggingface.co/amazon/chronos-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T18:00:18.975Z  
+> **Harvest Timestamp**: 2026-11-23T04:00:02.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: time-series-forecasting
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8165291 downloads | 577 likes
+- **Stars / Engagement**: 9230270 downloads | 578 likes
 
 ---
 

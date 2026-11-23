@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T03:47:09.418Z",
+  "last_updated": "2026-11-23T04:00:25.012Z",
   "total_verified_learnings": 9076,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23844,
+  "total_items": 23848,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "a129ffd9",
-      "content_hash": "fbbc9a5452eff63ac4fbb3ea7585538a32217010b8bc826cf0b8e566dc159a88",
+      "source_version": "5915d306",
+      "content_hash": "c44803cd4671adcd7f3360038758f005990683a0424efe09c5babb9a09cb2d29",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T16:28:27.877Z"
+      "persisted_at": "2026-11-23T04:00:19.766Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -217950,8 +217950,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "82d66f9e",
-      "content_hash": "ea7bef097757f303d61d7fe42df1fa2321a8f3bec6676a41df2917e669ddd502",
+      "source_version": "0b859805",
+      "content_hash": "6dd856ce8fff7d8f620dd2ee69d3c55116822ca87ed8b543b13f29b329203b9f",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -217989,6 +217989,11 @@
           "number": 9880,
           "title": "Solve AggregateScan parameters before entering a runtime.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10018,
+          "title": "evaluate integer `+`, `-`, `*` natively in Join Scan with overflow checks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217996,7 +218001,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T02:09:16.426Z",
+      "verified_at": "2026-11-23T04:00:17.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218050,10 +218055,10 @@
       "relative_path": "08_VERIFICATION/paradedb-paradedb-verification-protocol-empirical-defect-shield-for-paradedb-par.md",
       "title": "Verification Protocol: Empirical Defect Shield for paradedb/paradedb",
       "repository": "paradedb/paradedb",
-      "source_version": "82d66f9e",
-      "content_hash": "f58b4d3f4f69e2af1a2ead0dfd56591638b2bb558a94dbbf9cbc05f73128a039",
+      "source_version": "0b859805",
+      "content_hash": "76e31f82457e3ff93e14281f9ff35cf8563335f44c1d829ac2f3a52a3a574190",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:09:17.035Z"
+      "persisted_at": "2026-11-23T04:00:17.811Z"
     },
     "learn-huggingface-amazon-chronos-2": {
       "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -218064,7 +218069,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "bef1a6bd8077bbe26a5806ca457bde930963dd55c4c4f866013ed00ffcb0516c",
+      "content_hash": "99b551c899d10f2b4ebeb21f2263f252cd87b73e7501b7a78ab4d19bd002ad0e",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "promoted_rules": [],
@@ -218073,7 +218078,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T18:00:19.356Z",
+      "verified_at": "2026-11-23T04:00:02.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218090,9 +218095,9 @@
       "title": "Research & Knowledge Intelligence: amazon/chronos-2 Core Invariants",
       "repository": "amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "781dd82a59ca06c20ec2509954ffe3d9d0784a669f14ab1e8db2135d08464a61",
+      "content_hash": "37150030551f898055cbca7a4cfa962bbdb9c595014483be4334218a8c97504c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T18:00:19.740Z"
+      "persisted_at": "2026-11-23T04:00:03.015Z"
     },
     "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants",
@@ -218126,9 +218131,9 @@
       "title": "Research & Knowledge Intelligence: hf-amazon-chronos-2-learnings Core Invariants",
       "repository": "hf-amazon-chronos-2-learnings",
       "source_version": "HEAD",
-      "content_hash": "52742ee2b6bffa446dcee423be813040a20cb389559ccc0f7ddb87325406d68e",
+      "content_hash": "e48fbc1996471a55818001ac6e9b927712e38b390fce5998d9fcc8607e78c0f6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T18:00:30.941Z"
+      "persisted_at": "2026-11-23T04:00:24.215Z"
     },
     "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings": {
       "item_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings",
@@ -219959,8 +219964,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "a129ffd9",
-      "content_hash": "702c971e8c21b1a184f127131d7ed4e44d3d94f8b9530ff406c519a135a399a2",
+      "source_version": "5915d306",
+      "content_hash": "06e57086532b33ed6b87b25cbdbb5e2eecb8c6a0bd6839353efd32b084bf3170",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220140,7 +220145,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:28:26.801Z",
+      "verified_at": "2026-11-23T04:00:19.026Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221131,10 +221136,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "a129ffd9",
-      "content_hash": "331b550c90379efed077386be8a4fa187b6d93af654fa05b3af0f5103d671eb2",
+      "source_version": "5915d306",
+      "content_hash": "ecf0e615b835587d19499ffe5afd00801877662af08c7376d0b3fe5a5f60df37",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T16:28:27.642Z"
+      "persisted_at": "2026-11-23T04:00:19.604Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -237766,13 +237771,13 @@
       "item_id": "candidate_directive-update-lock-file",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PVDO-update-lock-file.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MJG1-update-lock-file.md",
       "title": "update lock file",
       "repository": "dathere/qsv",
-      "source_version": "52f21a8b",
-      "content_hash": "ea19db0b35d2f8d527d08e1745b58023ae1945d3b06e60069692fcdbb034875c",
+      "source_version": "5915d306",
+      "content_hash": "2642afe7da8c7c8177f716c1007fb51f2db0d4ae7562fd2f773416227d8121fe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:24:25.122Z"
+      "persisted_at": "2026-11-23T04:00:19.445Z"
     },
     "learn-huggingface-qwen-qwen-image-2-1-turbo": {
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
@@ -246182,8 +246187,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "aa9d8f14",
-      "content_hash": "3cd313beea2458a11915cc25e0a8c3c525e7bf3c1cf448739a0ee60b94bc6fb0",
+      "source_version": "2f9654ef",
+      "content_hash": "e5820ba17fe38e3e0eea30eacb6666b7bcacfc72e24f6b9e506504e5e64a670e",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -246236,6 +246241,11 @@
           "number": 9832,
           "title": "treat empty `GIT_CONFIG_COUNT` as zero",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10017,
+          "title": "Release gix-date v0.19.0, gix-actor v0.45.0, gix-trace v0.3.2, gix-validate v0.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246243,7 +246253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:24:52.793Z",
+      "verified_at": "2026-11-23T04:00:05.306Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246285,10 +246295,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "aa9d8f14",
-      "content_hash": "08dd2625532cb83781c783b07a2f1d32eb084091f68d65c357d04cff4e613268",
+      "source_version": "2f9654ef",
+      "content_hash": "c80c272736dd892ae703cb48fcbf4859f2e381436c6a755eb8f930dad0c615fc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T20:24:53.527Z"
+      "persisted_at": "2026-11-23T04:00:05.921Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide",
@@ -246297,10 +246307,10 @@
       "relative_path": "08_VERIFICATION/gitoxidelabs-gitoxide-verification-protocol-empirical-defect-shield-for-gitoxide.md",
       "title": "Verification Protocol: Empirical Defect Shield for GitoxideLabs/gitoxide",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "aa9d8f14",
-      "content_hash": "fa65c46644d92faea4042c4f35201bb986497b68e91a157c2680a920dc899142",
+      "source_version": "2f9654ef",
+      "content_hash": "f1110d9f2c1ee2f58adc7a22e0c2e6ff67e0f77f0661a787679463c0b0621d1c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T20:24:53.749Z"
+      "persisted_at": "2026-11-23T04:00:06.095Z"
     },
     "learn-github-melnixdev-seo-crawl-audit": {
       "learning_id": "learn-github-melnixdev-seo-crawl-audit",
@@ -246472,9 +246482,9 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "dfff3ec6cce0e85d351fe778a029ed498a3f24d94671d7ea30667ef1c4890e46",
+      "content_hash": "f1bab2e7bece7c2a6fbf068de9e84cd350abbccb4dc706ec6359ba35ea31e5c9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T20:25:09.504Z"
+      "persisted_at": "2026-11-23T04:00:23.678Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide-learning",
@@ -246484,9 +246494,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gitoxidelabs-gitoxide-learnings",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ee8dc5904fae46b869de3fcb91bd0ce6ec81efdd4ab9731447b70d673309cc7",
+      "content_hash": "d10c0b835501ec62f6bc6ac9a407fb514ad1db3797816863b93d96d45a3e928b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T20:25:09.723Z"
+      "persisted_at": "2026-11-23T04:00:23.846Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv": {
       "item_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv",
@@ -247497,10 +247507,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "repository": "paradedb/paradedb",
-      "source_version": "82d66f9e",
-      "content_hash": "30a52fefd63ad7dece1b281b3fa174fb4d19faeda4cece2f258d4933d48191a0",
+      "source_version": "0b859805",
+      "content_hash": "2d4de0a5005d24d77974ce0620834671ebbd2e333c73dd88a369e47e0750d376",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T02:09:16.907Z"
+      "persisted_at": "2026-11-23T04:00:17.649Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
@@ -262728,9 +262738,9 @@
       "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
       "repository": "paradedb-paradedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "14002608dd3728f03b00e1d82750938bc7f549f70f0a34d0961300ba76ffee5f",
+      "content_hash": "481e3500d517c3583b13b72ec428604b5391b6fa5d99d40ceffaad77bbdb681c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T02:09:21.134Z"
+      "persisted_at": "2026-11-23T04:00:24.841Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb-learnings",
@@ -262740,9 +262750,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for paradedb-paradedb-learnings",
       "repository": "paradedb-paradedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3d71facebf2e149299d3d070930a80a1810fc007cf13bf2b491c4840dea0945",
+      "content_hash": "c1a151f2179af5ec649f603b360d719ef420a0de8ee2a68818df417672d560a3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:09:21.262Z"
+      "persisted_at": "2026-11-23T04:00:25.012Z"
     },
     "rule-8794": {
       "learning_id": "rule-8794",
@@ -324687,6 +324697,58 @@
       "content_hash": "61e988917c3bf3e893d8c73fda3ce823d1ad212c533849b444c8f61326ebad91",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T03:47:09.071Z"
+    },
+    "rule-10017": {
+      "learning_id": "rule-10017",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10017,
+      "title": "Release gix-date v0.19.0, gix-actor v0.45.0, gix-trace v0.3.2, gix-validate v0.1",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "2f9654ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T04:00:05.306Z"
+    },
+    "candidate_directive-release-gix-date-v0-19-0-gix-actor-v0-45-0-gix-trace-v0-3-2-gix-validate-v0-1": {
+      "item_id": "candidate_directive-release-gix-date-v0-19-0-gix-actor-v0-45-0-gix-trace-v0-3-2-gix-validate-v0-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MML3-release-gix-date-v0-19-0-gix-actor-v0-45-0-gix-trace-v0-3-2-gix-validate-v0-1.md",
+      "title": "Release gix-date v0.19.0, gix-actor v0.45.0, gix-trace v0.3.2, gix-validate v0.1",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1e440420c5be76f47a46cf07a960dacfbe2f54a5b821db6109740bac55a9895d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T04:00:23.515Z"
+    },
+    "rule-10018": {
+      "learning_id": "rule-10018",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10018,
+      "title": "evaluate integer `+`, `-`, `*` natively in Join Scan with overflow checks",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "0b859805",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T04:00:17.061Z"
+    },
+    "candidate_directive-evaluate-integer-natively-in-join-scan-with-overflow-checks": {
+      "item_id": "candidate_directive-evaluate-integer-natively-in-join-scan-with-overflow-checks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MNHF-evaluate-integer-natively-in-join-scan-with-overflow-checks.md",
+      "title": "evaluate integer `+`, `-`, `*` natively in Join Scan with overflow checks",
+      "repository": "paradedb-paradedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7ea1536cc984fa330be342b6f8999066b642d49a67b492965b0bca52a32e633a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T04:00:24.679Z"
     }
   },
   "ai-builder-brain": {

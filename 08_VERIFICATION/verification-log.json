@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-MCNB",
-    "timestamp": "2026-11-21T03:28:50.567Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "23c0699b5341198f75ae032cf94ae27096fa60ef61a9b9b775c053c19b5cf0a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-WDEO",
-    "timestamp": "2026-11-21T03:36:38.112Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "8bc5a4317998f3c31d8a2085b54a9174480e76de174a1ddeecfeaa8feb136b0d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-WH6E",
-    "timestamp": "2026-11-21T03:36:42.998Z",
-    "repository": "ShiGuangSchedule/shiguangschedule",
-    "learningId": "learn-github-shiguangschedule-shiguangschedule",
-    "contentHash": "1313f0ec6eb03146312fecb8e031b6454f88ca1ff9f7225fa35d905299f5576b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-WJ7N",
-    "timestamp": "2026-11-21T03:36:45.635Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "6ad9fbc60d194fa0713652f9574e550c543bde44e70fee5f569e7d7e055b43dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-WMSX",
     "timestamp": "2026-11-21T03:36:50.289Z",
     "repository": "HelixDB/helix-db",
@@ -7490,6 +7430,66 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "cbcf2a8727f31a858881659eafc8fed86c292a427bf69582a25f0ee0c6616419",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-M6M5",
+    "timestamp": "2026-11-23T04:00:02.813Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "99b551c899d10f2b4ebeb21f2263f252cd87b73e7501b7a78ab4d19bd002ad0e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-M8P7",
+    "timestamp": "2026-11-23T04:00:05.515Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "e5820ba17fe38e3e0eea30eacb6666b7bcacfc72e24f6b9e506504e5e64a670e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-MHRA",
+    "timestamp": "2026-11-23T04:00:17.254Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "6dd856ce8fff7d8f620dd2ee69d3c55116822ca87ed8b543b13f29b329203b9f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-MJ9U",
+    "timestamp": "2026-11-23T04:00:19.218Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "06e57086532b33ed6b87b25cbdbb5e2eecb8c6a0bd6839353efd32b084bf3170",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

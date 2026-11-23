@@ -795,8 +795,8 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "bef1a6bd8077bbe26a5806ca457bde930963dd55c4c4f866013ed00ffcb0516c",
-    "lastHarvestedAt": "2026-11-18T18:00:19.561Z",
+    "contentHash": "99b551c899d10f2b4ebeb21f2263f252cd87b73e7501b7a78ab4d19bd002ad0e",
+    "lastHarvestedAt": "2026-11-23T04:00:02.817Z",
     "learningId": "learn-huggingface-amazon-chronos-2"
   },
   "hf-compvis-stable-diffusion-v1-4": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "a129ffd9",
+    "sourceVersion": "5915d306",
     "license": "NOASSERTION",
-    "contentHash": "702c971e8c21b1a184f127131d7ed4e44d3d94f8b9530ff406c519a135a399a2",
-    "lastHarvestedAt": "2026-11-22T16:28:27.086Z",
+    "contentHash": "06e57086532b33ed6b87b25cbdbb5e2eecb8c6a0bd6839353efd32b084bf3170",
+    "lastHarvestedAt": "2026-11-23T04:00:19.223Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "aa9d8f14",
+    "sourceVersion": "2f9654ef",
     "license": "Apache-2.0",
-    "contentHash": "3cd313beea2458a11915cc25e0a8c3c525e7bf3c1cf448739a0ee60b94bc6fb0",
-    "lastHarvestedAt": "2026-11-21T20:24:53.052Z",
+    "contentHash": "e5820ba17fe38e3e0eea30eacb6666b7bcacfc72e24f6b9e506504e5e64a670e",
+    "lastHarvestedAt": "2026-11-23T04:00:05.519Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "82d66f9e",
+    "sourceVersion": "0b859805",
     "license": "AGPL-3.0",
-    "contentHash": "ea7bef097757f303d61d7fe42df1fa2321a8f3bec6676a41df2917e669ddd502",
-    "lastHarvestedAt": "2026-11-22T02:09:16.603Z",
+    "contentHash": "6dd856ce8fff7d8f620dd2ee69d3c55116822ca87ed8b543b13f29b329203b9f",
+    "lastHarvestedAt": "2026-11-23T04:00:17.258Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
