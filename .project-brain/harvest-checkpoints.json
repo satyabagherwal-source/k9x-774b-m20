@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T20:47:56.231Z",
+  "last_updated": "2026-11-23T20:56:21.015Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1909,14 +1909,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam3",
-      "content_hash": "f250847e10ad20a330ee5649495fb3a227c97ad5bc80708cbfca1814bc47a417",
-      "verified_at": "2026-11-19T13:35:15.576Z",
+      "content_hash": "da83616c00bfa93c5d31dadccd889aaebc72a314e8d9eaab5101324e171db275",
+      "verified_at": "2026-11-23T20:56:06.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T13:35:15.576Z"
+      "last_updated": "2026-11-23T20:56:06.917Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "cfcf0f4b19dae7c40824e8b53fb2d1f215b23aa6baf285656512b4423ee0a293",
-      "verified_at": "2026-11-22T19:01:47.564Z",
+      "content_hash": "ff25fc6955f73718eaad256a49cbad41c83dca184601487e7e8557eaf03ce172",
+      "verified_at": "2026-11-23T20:56:21.014Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:01:47.564Z"
+      "last_updated": "2026-11-23T20:56:21.014Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -14721,14 +14721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sozercan-kaset",
-      "content_hash": "4d721833db4b6aa942be50f44df336fcf2219b69c037c87a9d172cb701debacc",
-      "verified_at": "2026-11-16T23:03:44.039Z",
+      "content_hash": "0fed78b16876654cafdac506d238f5b9b3870ace7f03ca5e2e593097729404e1",
+      "verified_at": "2026-11-23T20:56:13.730Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:03:44.039Z"
+      "last_updated": "2026-11-23T20:56:13.730Z"
     },
     "digitalbazaar/pyld": {
       "repository": "digitalbazaar/pyld",

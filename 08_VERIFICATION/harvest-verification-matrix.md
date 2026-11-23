@@ -12461,3 +12461,6 @@
 | `CYCLE-20261123-M1EJ` | `2026-11-23T20:47:42.235Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`aae612f3...`) |
 | `CYCLE-20261123-M8KT` | `2026-11-23T20:47:51.533Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10117` | Yes (`b5689b4d...`) |
 | `CYCLE-20261123-MC6V` | `2026-11-23T20:47:56.215Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10118` | Yes (`58de5061...`) |
+| `CYCLE-20261123-WUT5` | `2026-11-23T20:56:06.905Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`da83616c...`) |
+| `CYCLE-20261123-X02E` | `2026-11-23T20:56:13.718Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10119` | Yes (`0fed78b1...`) |
+| `CYCLE-20261123-X5OR` | `2026-11-23T20:56:21.003Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10120` | Yes (`ff25fc69...`) |

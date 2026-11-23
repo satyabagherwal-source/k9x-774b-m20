@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T20:48:02.395Z",
-  "total_records": 2448,
+  "last_updated": "2026-11-23T20:56:26.293Z",
+  "total_records": 2450,
   "domains": {
     "A": {
       "total": 20,
@@ -67,7 +67,7 @@
       ]
     },
     "D": {
-      "total": 937,
+      "total": 939,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1005,7 +1005,9 @@
         "DOM-D-864519D2",
         "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants",
         "DOM-D-5695D6C2",
-        "DOM-D-9A12E1C8"
+        "DOM-D-9A12E1C8",
+        "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-learnings-core-invariants"
       ]
     },
     "E": {
@@ -8281,8 +8283,8 @@
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "df3d524f88992de6c79c08b777c90f45cd0f791f53dde71adb046a09c40307f9",
-      "created_at": "2026-11-22T19:01:48.081Z"
+      "content_hash": "058d26441d225142a3cb4e910b0b8052f89fff042dd6cd7fc192b5c7ff0cd886",
+      "created_at": "2026-11-23T20:56:21.385Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -8299,8 +8301,8 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-learnings-technical-construction-intelligence-dragonflydb-.md",
       "repository": "dragonflydb-dragonfly-learnings",
-      "content_hash": "d32b65ecfc854d413bcfd35e0612c9a20267ec98aab2bf63b8325ace994e06a9",
-      "created_at": "2026-11-22T19:01:53.472Z"
+      "content_hash": "b0236ca6b20cce4741d2844c6c4109ad8a4e8970fd4ffcc05a284fa2d5aeecb8",
+      "created_at": "2026-11-23T20:56:26.293Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -18630,8 +18632,8 @@
       "title": "Research & Knowledge Intelligence: facebook/sam3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-research-knowledge-intelligence-facebook-sam3-core-invariants.md",
       "repository": "facebook/sam3",
-      "content_hash": "30286e1a12f597e2a7a56686a016468d917885a8b07098d36d4c2313f80ef2a3",
-      "created_at": "2026-11-19T13:35:15.749Z"
+      "content_hash": "67965c483af69e7ea4d58415ed522a578684a15825fcd68c911243da52d950d5",
+      "created_at": "2026-11-23T20:56:07.121Z"
     },
     "DOM-D-DD21AD65": {
       "record_id": "DOM-D-DD21AD65",
@@ -18681,8 +18683,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebook-sam3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-learnings-research-knowledge-intelligence-hf-facebook-sam3-lear.md",
       "repository": "hf-facebook-sam3-learnings",
-      "content_hash": "0300f5bf73bf03f82fa3b1ecf738fb52d5a6ad1d0f91fb0a85df140fa1dff7f5",
-      "created_at": "2026-11-19T13:35:29.642Z"
+      "content_hash": "854b8e5b922fe160d9f6b49c510935b2cbeade35987d5bc34d4c84db69597d8d",
+      "created_at": "2026-11-23T20:56:24.537Z"
     },
     "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria",
@@ -41056,6 +41058,24 @@
       "repository": "go-kratos-kratos-learnings",
       "content_hash": "7db541826a080a7ff87a10ddd602ff005bc9d890e097b53e5777500321fdfacd",
       "created_at": "2026-11-23T20:39:06.217Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sozercan/kaset Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sozercan-kaset-research-knowledge-intelligence-sozercan-kaset-core-invariants.md",
+      "repository": "sozercan/kaset",
+      "content_hash": "fcfe69b5c6d240397da4b0da2402fa1c3e2c1ba7d6abd2cf8e930656e27ddb24",
+      "created_at": "2026-11-23T20:56:14.097Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sozercan-kaset-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sozercan-kaset-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sozercan-kaset-learnings-research-knowledge-intelligence-sozercan-kaset-learning.md",
+      "repository": "sozercan-kaset-learnings",
+      "content_hash": "67c56aa24e60b9d71727e59ffe788fb9984cabe47f01816020c07b8788c09566",
+      "created_at": "2026-11-23T20:56:25.255Z"
     }
   }
 }

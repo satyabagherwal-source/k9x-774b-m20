@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "f250847e10ad20a330ee5649495fb3a227c97ad5bc80708cbfca1814bc47a417",
-    "lastHarvestedAt": "2026-11-19T13:35:15.568Z",
+    "contentHash": "da83616c00bfa93c5d31dadccd889aaebc72a314e8d9eaab5101324e171db275",
+    "lastHarvestedAt": "2026-11-23T20:56:06.909Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "24104b84",
+    "sourceVersion": "6cbd2241",
     "license": "NOASSERTION",
-    "contentHash": "cfcf0f4b19dae7c40824e8b53fb2d1f215b23aa6baf285656512b4423ee0a293",
-    "lastHarvestedAt": "2026-11-22T19:01:47.553Z",
+    "contentHash": "ff25fc6955f73718eaad256a49cbad41c83dca184601487e7e8557eaf03ce172",
+    "lastHarvestedAt": "2026-11-23T20:56:21.007Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -9783,10 +9783,10 @@
     "repository": "sozercan/kaset",
     "platform": "github",
     "sourceUrl": "https://github.com/sozercan/kaset",
-    "sourceVersion": "ebaa1858",
+    "sourceVersion": "957c1db4",
     "license": "MIT",
-    "contentHash": "4d721833db4b6aa942be50f44df336fcf2219b69c037c87a9d172cb701debacc",
-    "lastHarvestedAt": "2026-11-16T23:03:44.029Z",
+    "contentHash": "0fed78b16876654cafdac506d238f5b9b3870ace7f03ca5e2e593097729404e1",
+    "lastHarvestedAt": "2026-11-23T20:56:13.722Z",
     "learningId": "learn-github-sozercan-kaset"
   },
   "digitalbazaar-pyld": {

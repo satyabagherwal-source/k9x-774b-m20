@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T20:47:59.708Z",
-    "lastVerified": "2026-11-23T20:47:59.708Z",
+    "lastChecked": "2026-11-23T20:56:24.198Z",
+    "lastVerified": "2026-11-23T20:56:24.198Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -380,8 +380,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T20:22:05.378Z",
-    "lastVerified": "2026-11-23T20:22:05.378Z",
+    "lastChecked": "2026-11-23T20:56:18.812Z",
+    "lastVerified": "2026-11-23T20:56:18.812Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -723,12 +723,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "defguard-defguard": {
-    "name": "DefGuard/defguard",
+    "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T16:53:41.262Z",
-    "lastVerified": "2026-11-23T16:53:41.262Z",
+    "lastChecked": "2026-11-23T20:56:13.823Z",
+    "lastVerified": "2026-11-23T20:56:13.823Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -737,7 +737,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0eb2f794"
   },
   "topoteretes-cognee": {
     "name": "cognee",
@@ -1732,9 +1733,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-22T20:00:21.891Z",
+    "lastChecked": "2026-11-23T20:56:11.311Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-22T20:00:21.891Z"
+    "lastVerified": "2026-11-23T20:56:11.311Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -7085,14 +7086,14 @@
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-22T19:01:46.253Z",
-    "lastVerified": "2026-11-22T19:01:46.253Z",
+    "lastChecked": "2026-11-23T20:56:19.981Z",
+    "lastVerified": "2026-11-23T20:56:19.981Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "cfcf0f4b19dae7c40824e8b53fb2d1f215b23aa6baf285656512b4423ee0a293",
+    "contentHash": "ff25fc6955f73718eaad256a49cbad41c83dca184601487e7e8557eaf03ce172",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7902,9 +7903,9 @@
   "str4d-rage": {
     "name": "rage",
     "officialUrl": "https://github.com/str4d/rage",
-    "lastChecked": "2026-11-22T10:03:38.389Z",
+    "lastChecked": "2026-11-23T20:56:03.818Z",
     "revisionIdentifier": "b5b68c4f",
-    "lastVerified": "2026-11-22T10:03:38.389Z"
+    "lastVerified": "2026-11-23T20:56:03.818Z"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",
@@ -8076,12 +8077,12 @@
     "officialUrl": "https://huggingface.co/facebook/sam3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T13:35:14.950Z",
-    "lastVerified": "2026-11-19T13:35:14.950Z",
+    "lastChecked": "2026-11-23T20:56:06.333Z",
+    "lastVerified": "2026-11-23T20:56:06.333Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-facebook-sam3",
-    "contentHash": "f250847e10ad20a330ee5649495fb3a227c97ad5bc80708cbfca1814bc47a417",
+    "contentHash": "da83616c00bfa93c5d31dadccd889aaebc72a314e8d9eaab5101324e171db275",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11333,11 +11334,21 @@
     "lastVerified": "2026-11-20T22:07:12.940Z"
   },
   "sozercan-kaset": {
-    "name": "kaset",
+    "name": "sozercan/kaset",
     "officialUrl": "https://github.com/sozercan/kaset",
-    "lastChecked": "2026-11-20T22:07:15.327Z",
-    "revisionIdentifier": "ebaa1858",
-    "lastVerified": "2026-11-20T22:07:15.327Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-23T20:56:12.679Z",
+    "lastVerified": "2026-11-23T20:56:12.679Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sozercan-kaset",
+    "contentHash": "0fed78b16876654cafdac506d238f5b9b3870ace7f03ca5e2e593097729404e1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "andythefactory-newspaper4k": {
     "name": "newspaper4k",

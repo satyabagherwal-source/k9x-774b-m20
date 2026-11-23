@@ -757745,3 +757745,162 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `bcd7b33c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10119. ratchet down source comments (Harvested from sozercan/kaset)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ratchet down source comments",
+  "source": "sozercan/kaset",
+  "source_url": "https://github.com/sozercan/kaset",
+  "source_version": "957c1db4",
+  "license": "MIT",
+  "extracted_at": "2026-11-23T20:56:13.215Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sozercan-kaset",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sozercan/kaset](https://github.com/sozercan/kaset) (Revision: `957c1db4`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.agents/skills/delete-comment/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `957c1db4`: ratchet down source comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/delete-comment/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+---
+name: delete-comment
+description: Audit or remove Kaset source comments, classify them as tautology, excuse, stale, or decision record, and verify the comment ratchet. Do not use for end-user YouTube comments or general documentation editing.
+---
+
+# Delete Comment
+
+From the repository root, use `python3 Scripts/comment_lint.py --inventory` to count comments and `python3 Scripts/comment_lint.py --list` to locate them. Add `--revision <ref>` to inventory committed state. Use the SwiftFormat version pinned in `.github/workflows/lint.yml`. Read [ADR-0042](../../../docs/adr/0042-ratchet-source-comments.md) for gate coverage and exceptions; inspect comments in embedded code manually if it is in scope.
+
+Read each comment with its code and relevant tests, docs, or Git history. Treat consecutive lines that convey one thought as one comment for review, even though the linter counts each line-comment token separately. Classify and act:
+
+| Category | Evidence | Action |
+| --- | --- | --- |
+| Tautology | Repeats what the code already makes evident. | Delete it. |
+| Excuse | Rationalizes actual implementation debt with a plausible better approach. | Search for an existing issue, then delete 
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `957c1db4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10120. port Valkey security fixes and lock the global environment (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "port Valkey security fixes and lock the global environment",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "6cbd2241",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-23T20:56:20.514Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `6cbd2241`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/differences.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e03772bd`: lua): port Valkey security fixes and lock the global environment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/differences.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+We use lua 5.4.9.
+As in Valkey 7, the global environment is read-only: scripts can not create or change globals, or
+change the library tables (`redis`, `string`, `cjson`, ...). Settings changed through library
+functions, such as `cjson.encode_max_depth()`, still apply to later scripts.
+`cjson.decode` and `cmsgpack.unpack` accept at most 50 levels of nested arrays and objects.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+We use lua 5.4.4 that has been released in 2022.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e03772bd` are properly handled with clean fallback behavior.

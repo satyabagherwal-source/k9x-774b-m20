@@ -12494,3 +12494,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-23T20:47:42.240Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `5a7a03c3` | Multi-dimensional audit evidence | 2026-11-23T20:47:51.538Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `bcd7b33c` | Multi-dimensional audit evidence | 2026-11-23T20:47:56.219Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-23T20:56:06.909Z |
+| `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `957c1db4` | Multi-dimensional audit evidence | 2026-11-23T20:56:13.722Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `6cbd2241` | Multi-dimensional audit evidence | 2026-11-23T20:56:21.007Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T19:01:53.125Z",
+  "timestamp": "2026-11-23T20:56:26.018Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dragonflydb-dragonfly-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dragonflydb-dragonfly-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T19:01:53.125Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T20:56:26.018Z`  
 > **Learning ID**: `LEARN-EVO-dragonflydb-dragonfly-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dragonflydb-dragonfly-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `24104b84`  
+> **Source Version**: `6cbd2241`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T19:01:46.261Z  
+> **Timestamp**: 2026-11-23T20:56:19.987Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:01:46.253Z  
+> **Harvest Timestamp**: 2026-11-23T20:56:19.981Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31903 stars
+- **Stars / Engagement**: 31921 stars
 
 ---
 
@@ -2349,38 +2349,1130 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24104b84` (2026-11-22)
-**Commit Message**: fix(tests): expect the bare user name from ACL WHOAMI in ExternalAuth (#8862)
+### Incident Patch 1: `e03772bd` (2026-11-23)
+**Commit Message**: fix(lua): port Valkey security fixes and lock the global environment (#8865)
 
-ServerFamilyTest.ExternalAuth came with #8768 while ACL WHOAMI still replied "User is <name>".
-#8857 made WHOAMI reply with the user name only, and its CI ran on a merge commit that did not
-include #8768, so both landed on main and the test fails there now.
+Port the cjson/strbuf/cmsgpack overflow fixes for CVE-2022-24834 and the
+cmsgpack Lua C API fix from Valkey, limit cmsgpack decode nesting to 50
+levels and fix the cjson integer conversion upper bound.
 
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+Switch to the Dragonfly-5.4.9 Lua fork and use its read-only tables to make
+the global table, the library tables and the string metatable read-only, so
+scripts can not change state seen by later scripts. This replaces the
+protected rawset/setmetatable wrappers, which crashed on a non-table second
+argument. Script bodies are compiled as their own chunk in text mode, so no
+part of a body runs when it is loaded and bytecode is rejected.
 
-**File**: `src/server/server_family_test.cc` (modified, +2/-2)
+SCRIPT FLAGS now validates all flags before applying them, and script error
+replies use a fixed error type so error stats stay bounded.
+
+Also update ServerFamilyTest.ExternalAuth to the bare user name ACL WHOAMI
+replies with since #8857.
+
+Fixes #8864
+
+Signed-off-by: Roman Gershman <[REDACTED_EMAIL]>
+
+**File**: `docs/differences.md` (modified, +6/-1)
 ```diff
-@@ -1426,9 +1426,9 @@ TEST_F(ServerFamilyTest, ExternalAuth) {
-   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", "local"}),
-               ErrArg("WRONGPASS invalid username-password pair or user is disabled."));
-   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", password}), "OK");
--  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "User is alice");
-+  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "alice");
-   EXPECT_THAT(Run("token", {"AUTH", token}), "OK");
--  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "User is alice");
-+  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "alice");
-   absl::SetFlag(&FLAGS_auth_validate_url, "");
-   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", "local"}),
-               ErrArg("WRONGPASS invalid username-password pair or user is disabled."));
+@@ -30,9 +30,14 @@ the key has none, otherwise GT or LT alone decides. Redis rejects these combinat
+ incompatible.
+ 
+ ## Lua
+-We use lua 5.4.4 that has been released in 2022.
++We use lua 5.4.9.
+ That means we also support [lua integers](https://github.com/redis/redis/issues/5261).
+ 
++As in Valkey 7, the global environment is read-only: scripts can not create or change globals, or
++change the library tables (`redis`, `string`, `cjson`, ...). Settings changed through library
++functions, such as `cjson.encode_max_depth()`, still apply to later scripts.
++`cjson.decode` and `cmsgpack.unpack` accept at most 50 levels of nested arrays and objects.
++
+ Script replies may nest tables at most 128 levels deep; a deeper table is replaced by the error
+ `reached lua stack limit`. A table reached several times, such as a shared or cyclic one, is
+ serialized once per reference, and a reply may expand to 2^20 elements beyond one per 16 bytes of
+```
+
+**File**: `src/core/interpreter.cc` (modified, +59/-110)
+```diff
+@@ -5,6 +5,7 @@
+ #include "core/interpreter.h"
+ 
+ #include <absl/base/casts.h>
++#include <absl/container/flat_hash_set.h>
+ #include <absl/container/inlined_vector.h>
+ #include <absl/strings/ascii.h>
+ #include <absl/strings/str_cat.h>
+@@ -325,13 +326,61 @@ constexpr size_t kExtraReplyElements = 1 << 20;
+ // Replaces a table whose elements do not fit in the reply's budget.
+ constexpr string_view kReplySizeError = "ERR reached lua reply size limit";
+ 
++// Pops the value on top of the stack and assigns it to the global `name`. Bypasses the read-only
++// protection of the global table (and its metamethods), so it must not be reachable from scripts.
++void SetGlobalUnprotected(lua_State* lua, const char* name) {
++  lua_pushglobaltable(lua);
++  bool readonly = lua_isreadonlytable(lua, -1);
++  lua_insert(lua, -2);  // Stack: _G value
++  lua_pushstring(lua, name);
++  lua_insert(lua, -2);  // Stack: _G name value
++  lua_enablereadonlytable(lua, -3, 0);
++  lua_rawset(lua, -3);
++  lua_enablereadonlytable(lua, -1, readonly);
++  lua_pop(lua, 1);
++}
++
++// Marks the table on top of the stack, its metatable and all tables reachable from them read-only.
++void ProtectTablesRecursively(lua_State* lua, absl::flat_hash_set<const void*>* visited) {
++  if (!visited->insert(lua_topointer(lua, -1)).second)
++    return;
++
++  CHECK(lua_checkstack(lua, 3));
++  lua_enablereadonlytable(lua, -1, 1);
++  if (lua_getmetatable(lua, -1)) {
++    ProtectTablesRecursively(lua, visited);
++    lua_pop(lua, 1);
++  }
++
++  lua_pushnil(lua);
++  while (lua_next(lua, -2) != 0) {
++    if (lua_type(lua, -1) == LUA_TTABLE)
++      ProtectTablesRecursively(lua, visited);
++    lua_pop(lua, 1);
++  }
++}
++
++// Makes the global environment read-only, so a script can not change state seen by later scripts:
++// the global table, every table reachable from it (the libraries) and the metatable of strings.
++void ProtectGlobalState(lua_State* lua) {
++  absl::flat_hash_set<const void*> visited;
++  lua_pushglobaltable(lua);
++  ProtectTablesRecursively(lua, &visited);
++  lua_pop(lua, 1);
++
++  lua_pushliteral(lua, "");
++  CHECK(lua_getmetatable(lua, -1));
++  ProtectTablesRecursively(lua, &visited);
++  lua_pop(lua, 2);
++}
++
+ void SetGlobalArrayInternal(lua_State* lua, const char* name, Interpreter::SliceSpan args) {
+   lua_createtable(lua, args.size(), 0);
+   for (size_t j = 0; j < args.size(); j++) {
+     lua_pushlstring(lua, args[j].data(), args[j].size());
+     lua_rawseti(lua, -2, j + 1);
+   }
+-  lua_setglobal(lua, name);
++  SetGlobalUnprotected(lua, name);
+ }
+ 
+ /* In case the error set into the Lua stack by PushError() was generated
+@@ -352,75 +401,6 @@ void LoadLibrary(lua_State* lua, const char* libname, lua_CFunction luafunc) {
+   lua_call(lua, 1, 0);
+ }
+ 
+-// Returns true if the table at stack index idx is _G, its metatable, or any global table value.
+-bool IsGlobalTableOrMetatable(lua_State* lua, int idx) {
+-  lua_pushglobaltable(lua);
+-
+-  // Check if idx is _G itself.
+-  if (lua_rawequal(lua, idx, -1)) {
+-    lua_pop(lua, 1);
+-    return true;
+-  }
+-
+-  // Check if metatable of _G.
+-  bool has_mt = lua_getmetatable(lua, -1);
+-  if (has_mt) {
+-    lua_remove(lua, -2);
+-    bool eq = lua_rawequal(lua, idx, -1);
+-    lua_pop(lua, 1);
+-    if (eq) {
+-      return true;
+-    }
+-  } else {
+-    lua_pop(lua, 1);
+-  }
+-
+-  // Check if idx is any table stored directly as a global value.
+-  lua_pushglobaltable(lua);
+-  lua_pushnil(lua);
+-  while (lua_next(lua, -2) != 0) {
+-    if (lua_type(lua, -1) == LUA_TTABLE && lua_rawequal(lua, idx, -1)) {
+-      lua_pop(lua, 3);
+-      return true;
+-    }
+-    lua_pop(lua, 1);
+-  }
+-
+-  lua_pop(lua, 1);
+-
+-  return false;
+-}
+-
+-// Protected replacement for rawset: blocks writes to _G or its metatable.
+-int ProtectedRawset(lua_State* lua) {
+-  int argc = lua_gettop(lua);
+-  if (argc != 3 || lua_type(lua, 1) != LUA_TTABLE) {
+-    lua_pushstring(lua, "rawset requires a table and two arguments");
+-    return lua_error(lua);
+-  }
+-  if (IsGlobalTableOrMetatable(lua, 1)) {
+-    lua_pushstring(lua, "Script attempted to access rawset with global environment");
+-    return lua_error(lua);
+-  }
+-  lua_rawset(lua, 1);
+-  return 1;
+-}
+-
+-// Protected replacement for setmetatable: blocks replacing metatable of _G or its metatable.
+-int ProtectedSetmetatable(lua_State* lua) {
+-  int argc = lua_gettop(lua);
+-  if (argc != 2 || lua_type(lua, 1) != LUA_TTABLE) {
+-    lua_pushstring(lua, "setmetatable requires a table and one argument");
+-    return lua_error(lua);
+-  }
+-  if (IsGlobalTableOrMetatable(lua, 1)) {
+-    lua_pushstring(lua, "Script attempted to set metatable of global environment");
+-    return lua_error(lua);
+-  }
+-  lua_setmetatable(lua, 1);
+-  return 1;
+-}
+-
+ void InitLua(lua_State* lua) {
+   Require(lua, "", luaopen_base);
+   Require(lua, LUA_TABLIBNAME, luaopen_table);
+@@ -458,17 +438,8 @@ void InitLua(lua_State* lua) {
+     const char code[] = R"(
+ local dbg=debug
+ local mt = {}
+-local _orig_rawset=rawset
+ setmetatable(_G, mt)
+-mt._
+```
+
+**File**: `src/core/interpreter_test.cc` (modified, +242/-59)
+```diff
+@@ -29,6 +29,7 @@ ABSL_DECLARE_FLAG(uint64_t, lua_mem_gc_threshold);
+ 
+ namespace dfly {
+ using namespace std;
++using testing::HasSubstr;
+ 
+ class TestSerializer : public ObjectExplorer {
+  public:
+@@ -153,13 +154,12 @@ bool InterpreterTest::Execute(string_view script, size_t max_elements) {
+ 
+ TEST_F(InterpreterTest, Basic) {
+   RunInline(R"(
+-    function foo(n)
++    return function(n)
+       return n,n+1
+     end)",
+-            "code1");
++            "code1", 1);
+ 
+-  int type = lua_getglobal(lua(), "foo");
+-  ASSERT_EQ(LUA_TFUNCTION, type);
++  ASSERT_EQ(LUA_TFUNCTION, lua_type(lua(), -1));
+   lua_pushnumber(lua(), 42);
+   lua_pcall(lua(), 1, 2, 0);
+   int val1 = lua_tointeger(lua(), -1);
+@@ -197,7 +197,7 @@ TEST_F(InterpreterTest, Basic) {
+ 
+ TEST_F(InterpreterTest, UnknownFunc) {
+   string_view code(R"(
+-    function foo(n)
++    local function foo(n)
+       return myunknownfunc(1, n)
+     end)");
+ 
+@@ -558,6 +558,117 @@ TEST_F(InterpreterTest, CjsonMaxDepth) {
+   EXPECT_EQ("bool(1)", ser_.res);
+ }
+ 
++// Strings are encoded with growth checks, also when escapes make the output much longer.
++TEST_F(InterpreterTest, CjsonEncodeEscapes) {
++  ASSERT_TRUE(Execute(R"(
++    for _, n in ipairs({1, 100, 10000, 100000}) do
++      local s = string.rep('\0', n)
++      local encoded = cjson.encode(s)
++      assert(#encoded == n * 6 + 2, #encoded)
++      assert(cjson.decode(encoded) == s)
++      encoded = cjson.encode({string.rep('"\\/', n)})
++      assert(#encoded == n * 6 + 4, #encoded)
++    end
++    local map = {s = string.rep('x', 70000), a = {'Some', 'String', 'Array'}, n = 100, b = true}
++    local decoded = cjson.decode(cjson.encode(map))
++    assert(decoded.s == map.s and decoded.a[3] == 'Array' and decoded.n == 100 and decoded.b)
++    local ok, err = pcall(cjson.decode, '[1, 2')
++    assert(not ok and err:find('at character 6', 1, true), err)
++    return true
++  )")) << error_;
++  EXPECT_EQ("bool(1)", ser_.res);
++}
++
++// Whole numbers become integers only when they fit into lua_Integer.
++TEST_F(InterpreterTest, CjsonIntegerBounds) {
++  EXPECT_TRUE(Execute(R"(
++    local res = {}
++    for _, s in ipairs({'9223372036854775808', '-9223372036854775808', '9223372036854774784',
++                        '1e19', '-1e19', '42', '42.5'}) do
++      table.insert(res, math.type(cjson.decode(s)))
++    end
++    return res
++  )")) << error_;
++  EXPECT_EQ("[str(float) str(integer) str(integer) str(float) str(float) str(integer) str(float)]",
++            ser_.res);
++}
++
++TEST_F(InterpreterTest, CmsgpackMaxDepth) {
++  ASSERT_TRUE(Execute(R"(
++    -- Arrays and maps with a single element, nested 'depth' times.
++    local function nested_array(depth)
++      return string.rep('\x91', depth) .. '\x01'
++    end
++    local function nested_map(depth)
++      return string.rep('\x81\x01', depth) .. '\x01'
++    end
++    for _, nested in ipairs({nested_array, nested_map}) do
++      local value = cmsgpack.unpack(nested(50))
++      for i = 1, 50 do
++        value = value[1]
++      end
++      assert(value == 1)
++      for _, depth in ipairs({51, 1000, 100000}) do
++        local ok, err = pcall(cmsgpack.unpack, nested(depth))
++        assert(not ok and err:find('Too many nested data structures', 1, true), err)
++      end
++    end
++
++    -- The limit applies to each top level value, not to the sum of them.
++    local offset, value = cmsgpack.unpack_one(nested_array(50) .. nested_array(50))
++    assert(offset == 51 and type(value) == 'table')
++    offset, value = cmsgpack.unpack_one(nested_array(50) .. nested_array(50), offset)
++    assert(offset == -1 and type(value) == 'table')
++    return true
++  )")) << error_;
++  EXPECT_EQ("bool(1)", ser_.res);
++}
++
++TEST_F(InterpreterTest, CmsgpackRoundTrip) {
++  ASSERT_TRUE(Execute(R"(
++    local strs = {string.rep('x', 30), string.rep('x', 250), string.rep('x', 65530),
++                  string.rep('x', 100000)}
++    local big_array, big_map = {}, {}
++    for i = 1, 100000 do
++      big_array[i] = i
++      big_map[tostring(i)] = i
++    end
++    local map = {s1 = strs[1], s2 = strs[2], s3 = strs[3], s4 = strs[4], d = 0.1, i1 = 1,
++                 i2 = 2^40, i3 = -3147483648, a1 = {1, 2, 3}, a2 = big_array, m = big_map,
++                 b = false}
++    local decoded = cmsgpack.unpack(cmsgpack.pack(map))
++    for k, v in pairs(map) do
++      if type(v) ~= 'table' then
++        assert(decoded[k] == v, k)
++      end
++    end
++    assert(#decoded.a2 == 100000 and decoded.a2[100000] == 100000)
++    assert(decoded.m['100000'] == 100000)
++
++    local packed = cmsgpack.pack(strs[1], strs[2], strs[3], strs[4])
++    local offset, obj = 0
++    for i = 1, 4 do
++      offset, obj = cmsgpack.unpack_limit(packed, 1, offset)
++      assert(obj == strs[i], i)
++    end
++    assert(offset == -1)
++
++    local ok, err = pcall(cmsgpack.unpack_limit, packed, -1, 0)
++    assert(not ok and err:find('offset of 0 and limit of -1', 1, true), err)
++    ok, err = pcall(cmsgpack.unpack_one, packed, #packed + 1)
++    assert(not ok a
+```
+
+**File**: `src/external_libs.cmake` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ add_third_party(
+   lua
+   GIT_REPOSITORY https://github.com/dragonflydb/lua
+-  GIT_TAG Dragonfly-5.4.6a
++  GIT_TAG Dragonfly-5.4.9
+   CONFIGURE_COMMAND echo
+   BUILD_IN_SOURCE 1
+   BUILD_COMMAND ${DFLY_TOOLS_MAKE} all
+```
+
+**File**: `src/redis/lua/cjson/lua_cjson.c` (modified, +17/-17)
+```diff
+@@ -39,6 +39,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include <math.h>
++#include <stdint.h>
+ #include <limits.h>
+ #include <lua.h>
+ #include <lauxlib.h>
+@@ -139,13 +140,13 @@ typedef struct {
+ 
+ typedef struct {
+     json_token_type_t type;
+-    int index;
++    size_t index;
+     union {
+         const char *string;
+         double number;
+         int boolean;
+     } value;
+-    int string_len;
++    size_t string_len;
+ } json_token_t;
+ 
+ static const char *char2escape[256] = {
+@@ -466,27 +467,24 @@ static void json_encode_exception(lua_State *l, json_config_t *cfg, strbuf_t *js
+ static void json_append_string(lua_State *l, strbuf_t *json, int lindex)
+ {
+     const char *escstr;
+-    int i;
+     const char *str;
+-    size_t len;
++    size_t i, len;
+ 
+     str = lua_tolstring(l, lindex, &len);
+ 
+-    /* Worst case is len * 6 (all unicode escapes).
+-     * This buffer is reused constantly for small strings
+-     * If there are any excess pages, they won't be hit anyway.
+-     * This gains ~5% speedup. */
+-    strbuf_ensure_empty_length(json, len * 6 + 2);
++    if (len > SIZE_MAX - 3)
++        abort(); /* Overflow check */
++    strbuf_ensure_empty_length(json, len + 2);
+ 
+     strbuf_append_char_unsafe(json, '\"');
+     for (i = 0; i < len; i++) {
+         escstr = char2escape[(unsigned char)str[i]];
+         if (escstr)
+             strbuf_append_string(json, escstr);
+         else
+-            strbuf_append_char_unsafe(json, str[i]);
++            strbuf_append_char(json, str[i]);
+     }
+-    strbuf_append_char_unsafe(json, '\"');
++    strbuf_append_char(json, '\"');
+ }
+ 
+ /* Find the size of the array on the top of the Lua stack
+@@ -709,7 +707,7 @@ static int json_encode(lua_State *l)
+     strbuf_t local_encode_buf;
+     strbuf_t *encode_buf;
+     char *json;
+-    int len;
++    size_t len;
+ 
+     luaL_argcheck(l, lua_gettop(l) == 1, 1, "expected 1 argument");
+ 
+@@ -1112,8 +1110,8 @@ static void json_throw_parse_error(lua_State *l, json_parse_t *json,
+         found = json_token_type_name[token->type];
+ 
+     /* Note: token->index is 0 based, display starting from 1 */
+-    luaL_error(l, "Expected %s but found %s at character %d",
+-               exp, found, token->index + 1);
++    luaL_error(l, "Expected %s but found %s at character %I",
++               exp, found, (lua_Integer)(token->index + 1));
+ }
+ 
+ static inline void json_decode_ascend(json_parse_t *json)
+@@ -1234,9 +1232,11 @@ static void json_process_value(lua_State *l, json_parse_t *json,
+         double num = token->value.number;
+         double intpart;
+         /* Convert to integer when possible for Lua 5.1 compatibility.
+-         * This ensures tostring(cjson.decode('{"id":42}').id) returns "42" not "42.0" */
+-        if (modf(num, &intpart) == 0.0 &&
+-            intpart >= LUA_MININTEGER && intpart <= LUA_MAXINTEGER) {
++         * This ensures tostring(cjson.decode('{"id":42}').id) returns "42" not "42.0".
++         * LUA_MAXINTEGER rounds up to 2^63 as a double, so the upper bound must be exclusive,
++         * otherwise 2^63 passes the check and the cast below is undefined behavior. */
++        if (modf(num, &intpart) == 0.0 && intpart >= (double)LUA_MININTEGER &&
++            intpart < -(double)LUA_MININTEGER) {
+             lua_pushinteger(l, (lua_Integer)intpart);
+         } else {
+             lua_pushnumber(l, num);
+```
+
+**File**: `src/redis/lua/cjson/strbuf.c` (modified, +27/-81)
+```diff
+@@ -26,6 +26,7 @@
+ #include <stdlib.h>
+ #include <stdarg.h>
+ #include <string.h>
++#include <stdint.h>
+ 
+ #include "strbuf.h"
+ 
+@@ -38,22 +39,22 @@ static void die(const char *fmt, ...)
+     va_end(arg);
+     fprintf(stderr, "\n");
+ 
+-    exit(-1);
++    abort();
+ }
+ 
+-void strbuf_init(strbuf_t *s, int len)
++void strbuf_init(strbuf_t *s, size_t len)
+ {
+-    int size;
++    size_t size;
+ 
+-    if (len <= 0)
++    if (!len)
+         size = STRBUF_DEFAULT_SIZE;
+     else
+-        size = len + 1;         /* \0 terminator */
+-
++        size = len + 1;
++    if (size < len)
++        die("Overflow, len: %zu", len);
+     s->buf = NULL;
+     s->size = size;
+     s->length = 0;
+-    s->increment = STRBUF_DEFAULT_INCREMENT;
+     s->dynamic = 0;
+     s->reallocs = 0;
+     s->debug = 0;
+@@ -65,7 +66,7 @@ void strbuf_init(strbuf_t *s, int len)
+     strbuf_ensure_null(s);
+ }
+ 
+-strbuf_t *strbuf_new(int len)
++strbuf_t *strbuf_new(size_t len)
+ {
+     strbuf_t *s;
+ 
+@@ -81,20 +82,10 @@ strbuf_t *strbuf_new(int len)
+     return s;
+ }
+ 
+-void strbuf_set_increment(strbuf_t *s, int increment)
+-{
+-    /* Increment > 0:  Linear buffer growth rate
+-     * Increment < -1: Exponential buffer growth rate */
+-    if (increment == 0 || increment == -1)
+-        die("BUG: Invalid string increment");
+-
+-    s->increment = increment;
+-}
+-
+ static inline void debug_stats(strbuf_t *s)
+ {
+     if (s->debug) {
+-        fprintf(stderr, "strbuf(%lx) reallocs: %d, length: %d, size: %d\n",
++        fprintf(stderr, "strbuf(%lx) reallocs: %d, length: %zd, size: %zd\n",
+                 (long)s, s->reallocs, s->length, s->size);
+     }
+ }
+@@ -113,7 +104,7 @@ void strbuf_free(strbuf_t *s)
+         free(s);
+ }
+ 
+-char *strbuf_free_to_string(strbuf_t *s, int *len)
++char *strbuf_free_to_string(strbuf_t *s, size_t *len)
+ {
+     char *buf;
+ 
+@@ -131,57 +122,61 @@ char *strbuf_free_to_string(strbuf_t *s, int *len)
+     return buf;
+ }
+ 
+-static int calculate_new_size(strbuf_t *s, int len)
++static size_t calculate_new_size(strbuf_t *s, size_t len)
+ {
+-    int reqsize, newsize;
++    size_t reqsize, newsize;
+ 
+     if (len <= 0)
+         die("BUG: Invalid strbuf length requested");
+ 
+     /* Ensure there is room for optional NULL termination */
+     reqsize = len + 1;
++    if (reqsize < len)
++        die("Overflow, len: %zu", len);
+ 
+     /* If the user has requested to shrink the buffer, do it exactly */
+     if (s->size > reqsize)
+         return reqsize;
+ 
+     newsize = s->size;
+-    if (s->increment < 0) {
++    if (reqsize >= SIZE_MAX / 2) {
++        newsize = reqsize;
++    } else {
+         /* Exponential sizing */
+         while (newsize < reqsize)
+-            newsize *= -s->increment;
+-    } else {
+-        /* Linear sizing */
+-        newsize = ((newsize + s->increment - 1) / s->increment) * s->increment;
++            newsize *= 2;
+     }
+ 
++    if (newsize < reqsize)
++        die("BUG: strbuf length would overflow, len: %zu", len);
++
+     return newsize;
+ }
+ 
+ 
+ /* Ensure strbuf can handle a string length bytes long (ignoring NULL
+  * optional termination). */
+-void strbuf_resize(strbuf_t *s, int len)
++void strbuf_resize(strbuf_t *s, size_t len)
+ {
+-    int newsize;
++    size_t newsize;
+ 
+     newsize = calculate_new_size(s, len);
+ 
+     if (s->debug > 1) {
+-        fprintf(stderr, "strbuf(%lx) resize: %d => %d\n",
++        fprintf(stderr, "strbuf(%lx) resize: %zd => %zd\n",
+                 (long)s, s->size, newsize);
+     }
+ 
+     s->size = newsize;
+     s->buf = realloc(s->buf, s->size);
+     if (!s->buf)
+-        die("Out of memory");
++        die("Out of memory, len: %zu", len);
+     s->reallocs++;
+ }
+ 
+ void strbuf_append_string(strbuf_t *s, const char *str)
+ {
+-    int space, i;
++    size_t i, space;
+ 
+     space = strbuf_empty_length(s);
+ 
+@@ -197,55 +192,6 @@ void strbuf_append_string(strbuf_t *s, const char *str)
+     }
+ }
+ 
+-/* strbuf_append_fmt() should only be used when an upper bound
+- * is known for the output string. */
+-void strbuf_append_fmt(strbuf_t *s, int len, const char *fmt, ...)
+-{
+-    va_list arg;
+-    int fmt_len;
+-
+-    strbuf_ensure_empty_length(s, len);
+-
+-    va_start(arg, fmt);
+-    fmt_len = vsnprintf(s->buf + s->length, len, fmt, arg);
+-    va_end(arg);
+-
+-    if (fmt_len < 0)
+-        die("BUG: Unable to convert number");  /* This should never happen.. */
+-
+-    s->length += fmt_len;
+-}
+-
+-/* strbuf_append_fmt_retry() can be used when the there is no known
+- * upper bound for the output string. */
+-void strbuf_append_fmt_retry(strbuf_t *s, const char *fmt, ...)
+-{
+-    va_list arg;
+-    int fmt_len, try;
+-    int empty_len;
+-
+-    /* If the first attempt to append fails, resize the buffer appropriately
+-     * and try again */
+-    for (try = 0; ; try++) {
+-        va_start(arg, fmt);
+-        /* Append the new formatted string */
+-        /* fmt_len is the length of the string required, excluding the
+-         * trailing NULL */
+-        empty_len = strbuf_empty_length(s);
+-        /* Add 1 since there is also space to 
+```
+
+**File**: `src/redis/lua/cjson/strbuf.h` (modified, +19/-27)
+```diff
+@@ -27,15 +27,13 @@
+ 
+ /* Size: Total bytes allocated to *buf
+  * Length: String length, excluding optional NULL terminator.
+- * Increment: Allocation increments when resizing the string buffer.
+  * Dynamic: True if created via strbuf_new()
+  */
+ 
+ typedef struct {
+     char *buf;
+-    int size;
+-    int length;
+-    int increment;
++    size_t size;
++    size_t length;
+     int dynamic;
+     int reallocs;
+     int debug;
+@@ -44,32 +42,26 @@ typedef struct {
+ #ifndef STRBUF_DEFAULT_SIZE
+ #define STRBUF_DEFAULT_SIZE 1023
+ #endif
+-#ifndef STRBUF_DEFAULT_INCREMENT
+-#define STRBUF_DEFAULT_INCREMENT -2
+-#endif
+ 
+ /* Initialise */
+-extern strbuf_t *strbuf_new(int len);
+-extern void strbuf_init(strbuf_t *s, int len);
+-extern void strbuf_set_increment(strbuf_t *s, int increment);
++extern strbuf_t *strbuf_new(size_t len);
++extern void strbuf_init(strbuf_t *s, size_t len);
+ 
+ /* Release */
+ extern void strbuf_free(strbuf_t *s);
+-extern char *strbuf_free_to_string(strbuf_t *s, int *len);
++extern char *strbuf_free_to_string(strbuf_t *s, size_t *len);
+ 
+ /* Management */
+-extern void strbuf_resize(strbuf_t *s, int len);
+-static int strbuf_empty_length(strbuf_t *s);
+-static int strbuf_length(strbuf_t *s);
+-static char *strbuf_string(strbuf_t *s, int *len);
+-static void strbuf_ensure_empty_length(strbuf_t *s, int len);
++extern void strbuf_resize(strbuf_t *s, size_t len);
++static size_t strbuf_empty_length(strbuf_t *s);
++static size_t strbuf_length(strbuf_t *s);
++static char *strbuf_string(strbuf_t *s, size_t *len);
++static void strbuf_ensure_empty_length(strbuf_t *s, size_t len);
+ static char *strbuf_empty_ptr(strbuf_t *s);
+-static void strbuf_extend_length(strbuf_t *s, int len);
++static void strbuf_extend_length(strbuf_t *s, size_t len);
+ 
+ /* Update */
+-extern void strbuf_append_fmt(strbuf_t *s, int len, const char *fmt, ...);
+-extern void strbuf_append_fmt_retry(strbuf_t *s, const char *format, ...);
+-static void strbuf_append_mem(strbuf_t *s, const char *c, int len);
++static void strbuf_append_mem(strbuf_t *s, const char *c, size_t len);
+ extern void strbuf_append_string(strbuf_t *s, const char *str);
+ static void strbuf_append_char(strbuf_t *s, const char c);
+ static void strbuf_ensure_null(strbuf_t *s);
+@@ -87,12 +79,12 @@ static inline int strbuf_allocated(strbuf_t *s)
+ 
+ /* Return bytes remaining in the string buffer
+  * Ensure there is space for a NULL terminator. */
+-static inline int strbuf_empty_length(strbuf_t *s)
++static inline size_t strbuf_empty_length(strbuf_t *s)
+ {
+     return s->size - s->length - 1;
+ }
+ 
+-static inline void strbuf_ensure_empty_length(strbuf_t *s, int len)
++static inline void strbuf_ensure_empty_length(strbuf_t *s, size_t len)
+ {
+     if (len > strbuf_empty_length(s))
+         strbuf_resize(s, s->length + len);
+@@ -103,12 +95,12 @@ static inline char *strbuf_empty_ptr(strbuf_t *s)
+     return s->buf + s->length;
+ }
+ 
+-static inline void strbuf_extend_length(strbuf_t *s, int len)
++static inline void strbuf_extend_length(strbuf_t *s, size_t len)
+ {
+     s->length += len;
+ }
+ 
+-static inline int strbuf_length(strbuf_t *s)
++static inline size_t strbuf_length(strbuf_t *s)
+ {
+     return s->length;
+ }
+@@ -124,14 +116,14 @@ static inline void strbuf_append_char_unsafe(strbuf_t *s, const char c)
+     s->buf[s->length++] = c;
+ }
+ 
+-static inline void strbuf_append_mem(strbuf_t *s, const char *c, int len)
++static inline void strbuf_append_mem(strbuf_t *s, const char *c, size_t len)
+ {
+     strbuf_ensure_empty_length(s, len);
+     memcpy(s->buf + s->length, c, len);
+     s->length += len;
+ }
+ 
+-static inline void strbuf_append_mem_unsafe(strbuf_t *s, const char *c, int len)
++static inline void strbuf_append_mem_unsafe(strbuf_t *s, const char *c, size_t len)
+ {
+     memcpy(s->buf + s->length, c, len);
+     s->length += len;
+@@ -142,7 +134,7 @@ static inline void strbuf_ensure_null(strbuf_t *s)
+     s->buf[s->length] = 0;
+ }
+ 
+-static inline char *strbuf_string(strbuf_t *s, int *len)
++static inline char *strbuf_string(strbuf_t *s, size_t *len)
+ {
+     if (len)
+         *len = s->length;
+```
+
+**File**: `src/redis/lua/cmsgpack/lua_cmsgpack.c` (modified, +43/-16)
+```diff
+@@ -18,6 +18,12 @@
+     #define LUACMSGPACK_MAX_NESTING  16 /* Max tables nesting. */
+ #endif
+ 
++/* Max nesting of arrays and maps when decoding. Decoding recurses once per level, so the limit
++ * bounds the stack use of the Dragonfly fiber running the script. Matches the cjson limit. */
++#ifndef LUACMSGPACK_MAX_DECODE_NESTING
++    #define LUACMSGPACK_MAX_DECODE_NESTING  50
++#endif
++
+ /* Check if float or double can be an integer without loss of precision */
+ #define IS_INT_TYPE_EQUIVALENT(x, T) (!isinf(x) && (T)(x) == (x))
+ 
+@@ -117,7 +123,9 @@ mp_buf *mp_buf_new(lua_State *L) {
+ 
+ void mp_buf_append(lua_State *L, mp_buf *buf, const unsigned char *s, size_t len) {
+     if (buf->free < len) {
+-        size_t newsize = (buf->len+len)*2;
++        size_t newsize = buf->len+len;
++        if (newsize < buf->len || newsize >= SIZE_MAX/2) abort();
++        newsize *= 2;
+ 
+         buf->b = (unsigned char*)mp_realloc(L, buf->b, buf->len + buf->free, newsize);
+         buf->free = newsize - buf->len;
+@@ -144,17 +152,20 @@ void mp_buf_free(lua_State *L, mp_buf *buf) {
+ #define MP_CUR_ERROR_NONE   0
+ #define MP_CUR_ERROR_EOF    1   /* Not enough data to complete operation. */
+ #define MP_CUR_ERROR_BADFMT 2   /* Bad data format */
++#define MP_CUR_ERROR_NESTING 3  /* Arrays and maps nested too deep */
+ 
+ typedef struct mp_cur {
+     const unsigned char *p;
+     size_t left;
+     int err;
++    int depth;  /* Nesting level of the array or map being decoded. */
+ } mp_cur;
+ 
+ void mp_cur_init(mp_cur *cursor, const unsigned char *s, size_t len) {
+     cursor->p = s;
+     cursor->left = len;
+     cursor->err = MP_CUR_ERROR_NONE;
++    cursor->depth = 0;
+ }
+ 
+ #define mp_cur_consume(_c,_len) do { _c->p += _len; _c->left -= _len; } while(0)
+@@ -173,7 +184,7 @@ void mp_cur_init(mp_cur *cursor, const unsigned char *s, size_t len) {
+ 
+ void mp_encode_bytes(lua_State *L, mp_buf *buf, const unsigned char *s, size_t len) {
+     unsigned char hdr[5];
+-    int hdrlen;
++    size_t hdrlen;
+ 
+     if (len < 32) {
+         hdr[0] = 0xa0 | (len&0xff); /* fix raw */
+@@ -220,7 +231,7 @@ void mp_encode_double(lua_State *L, mp_buf *buf, double d) {
+ 
+ void mp_encode_int(lua_State *L, mp_buf *buf, int64_t n) {
+     unsigned char b[9];
+-    int enclen;
++    size_t enclen;
+ 
+     if (n >= 0) {
+         if (n <= 127) {
+@@ -290,9 +301,9 @@ void mp_encode_int(lua_State *L, mp_buf *buf, int64_t n) {
+     mp_buf_append(L,buf,b,enclen);
+ }
+ 
+-void mp_encode_array(lua_State *L, mp_buf *buf, int64_t n) {
++void mp_encode_array(lua_State *L, mp_buf *buf, uint64_t n) {
+     unsigned char b[5];
+-    int enclen;
++    size_t enclen;
+ 
+     if (n <= 15) {
+         b[0] = 0x90 | (n & 0xf);    /* fix array */
+@@ -313,7 +324,7 @@ void mp_encode_array(lua_State *L, mp_buf *buf, int64_t n) {
+     mp_buf_append(L,buf,b,enclen);
+ }
+ 
+-void mp_encode_map(lua_State *L, mp_buf *buf, int64_t n) {
++void mp_encode_map(lua_State *L, mp_buf *buf, uint64_t n) {
+     unsigned char b[5];
+     int enclen;
+ 
+@@ -435,6 +446,7 @@ int table_is_an_array(lua_State *L) {
+ 
+     stacktop = lua_gettop(L);
+ 
++    luaL_checkstack(L, 2, "in function table_is_an_array");
+     lua_pushnil(L);
+     while(lua_next(L,-2)) {
+         /* Stack: ... key value */
+@@ -552,6 +564,11 @@ void mp_decode_to_lua_array(lua_State *L, mp_cur *c, size_t len) {
+     assert(len <= UINT_MAX);
+     int index = 1;
+ 
++    if (c->depth >= LUACMSGPACK_MAX_DECODE_NESTING) {
++        c->err = MP_CUR_ERROR_NESTING;
++        return;
++    }
++    c->depth++;
+     lua_newtable(L);
+     luaL_checkstack(L, 1, "in function mp_decode_to_lua_array");
+     while(len--) {
+@@ -560,10 +577,16 @@ void mp_decode_to_lua_array(lua_State *L, mp_cur *c, size_t len) {
+         if (c->err) return;
+         lua_settable(L,-3);
+     }
++    c->depth--;
+ }
+ 
+ void mp_decode_to_lua_hash(lua_State *L, mp_cur *c, size_t len) {
+     assert(len <= UINT_MAX);
++    if (c->depth >= LUACMSGPACK_MAX_DECODE_NESTING) {
++        c->err = MP_CUR_ERROR_NESTING;
++        return;
++    }
++    c->depth++;
+     lua_newtable(L);
+     while(len--) {
+         mp_decode_to_lua_type(L,c); /* key */
+@@ -572,6 +595,7 @@ void mp_decode_to_lua_hash(lua_State *L, mp_cur *c, size_t len) {
+         if (c->err) return;
+         lua_settable(L,-3);
+     }
++    c->depth--;
+ }
+ 
+ /* Decode a Message Pack raw object pointed by the string cursor 'c' to
+@@ -790,7 +814,7 @@ void mp_decode_to_lua_type(lua_State *L, mp_cur *c) {
+     }
+ }
+ 
+-int mp_unpack_full(lua_State *L, int limit, int offset) {
++int mp_unpack_full(lua_State *L, lua_Integer limit, lua_Integer offset) {
+     size_t len;
+     const char *s;
+     mp_cur c;
+@@ -801,11 +825,11 @@ int mp_unpack_full(lua_State *L, int limit, int offset) {
+ 
+     if (offset < 0 || limit < 0) /* requesting negative off or lim is invalid */
+         return luaL_error(L,
+-            "Invalid request to unpack with offset of %d and limit of %d.",
+-            offset, len);
+-    else if (offset > len)
++            "Invalid request to unpack with of
+```
+
+---
+
+### Incident Patch 2: `9d1a546a` (2026-11-23)
+**Commit Message**: fix(zset): handle lex sentinel bounds and unchanged scores in SortedMap (#8870)
+
+GetLexRange and DeleteRangeByLex compared members against the "-" and "+" sentinels with
+sdscmp, so a range such as [x - matched every member that sorts below "minstring". On sorted
+sets above zset_max_listpack_entries, ZRANGEBYLEX key - - returned the whole set and
+ZREMRANGEBYLEX key - - deleted it. Share LexCount's empty-range check with both functions.
+
+AddElem reported ZADD_OUT_UPDATED when an existing member kept its score, so ZADD CH returned 1
+for an unchanged member. Leave the flags clear and skip the tree reinsert in that case, matching
+the listpack encoding and Redis.
+
+Signed-off-by: Roman Gershman <[REDACTED_EMAIL]>
+
+**File**: `src/core/sorted_map.cc` (modified, +20/-11)
+```diff
+@@ -229,6 +229,13 @@ SortedMap::ScoredArray CollectByPath(BPTreePath<SortedMap::ScoreSds> path, const
+   return out;
+ }
+ 
++// Ranges that will always be empty - (+inf, anything) or (anything, -inf).
++// Must be checked before comparing members against range bounds, since sdscmp
++// does not understand the sentinel strings.
++bool IsEmptyLexRange(const zlexrangespec& range) {
++  return range.min == cmaxstring || range.max == cminstring;
++}
++
+ }  // namespace
+ 
+ double ZzlGetScore(const uint8_t* sptr) {
+@@ -696,28 +703,35 @@ int SortedMap::AddElem(double score, std::string_view ele, int in_flags, int* ou
+     return 1;
+   }
+ 
++  const double curscore = GetObjScore(obj);
+   if (in_flags & ZADD_IN_INCR) {
+-    score += GetObjScore(obj);
++    score += curscore;
+     if (isnan(score)) {
+       *out_flags = ZADD_OUT_NAN;
+       return 0;
+     }
+   }
+ 
+   // GT/LT? Only update if score is greater/less than current.
+-  double curscore = GetObjScore(obj);
+   if (((in_flags & ZADD_IN_LT) && score >= curscore) ||
+       ((in_flags & ZADD_IN_GT) && score <= curscore)) {
+     *out_flags = ZADD_OUT_NOP;
+     return 1;
+   }
+ 
++  *newscore = score;
++
++  // Like Redis, an unchanged score is neither a NOP nor an update.
++  if (score == curscore) {
++    *out_flags = 0;
++    return 1;
++  }
++
+   // Update the score.
+   CHECK(score_tree->Delete(obj));
+   SetObjScore(obj, score);
+   CHECK(score_tree->Insert(obj));
+   *out_flags = ZADD_OUT_UPDATED;
+-  *newscore = score;
+   return 1;
+ }
+ 
+@@ -799,7 +813,7 @@ SortedMap::ScoredArray SortedMap::GetRange(const zrangespec& range, unsigned off
+ 
+ SortedMap::ScoredArray SortedMap::GetLexRange(const zlexrangespec& range, unsigned offset,
+                                               unsigned limit, bool reverse) const {
+-  if (score_tree->Size() <= offset || limit == 0)
++  if (score_tree->Size() <= offset || limit == 0 || IsEmptyLexRange(range))
+     return {};
+ 
+   detail::BPTreePath<ScoreSds> path;
+@@ -949,7 +963,7 @@ size_t SortedMap::DeleteRangeByScore(const zrangespec& range) {
+ }
+ 
+ size_t SortedMap::DeleteRangeByLex(const zlexrangespec& range) {
+-  if (score_tree->Size() == 0)
++  if (score_tree->Size() == 0 || IsEmptyLexRange(range))
+     return 0;
+ 
+   size_t deleted = 0;
+@@ -1078,14 +1092,9 @@ size_t SortedMap::Count(const zrangespec& range) const {
+ }
+ 
+ size_t SortedMap::LexCount(const zlexrangespec& range) const {
+-  if (score_tree->Size() == 0)
++  if (score_tree->Size() == 0 || IsEmptyLexRange(range))
+     return 0;
+ 
+-  // Ranges that will always be zero - (+inf, anything) or (anything, -inf)
+-  if (range.min == cmaxstring || range.max == cminstring) {
+-    return 0;
+-  }
+-
+   uint32_t min_rank = 0;
+   detail::BPTreePath<ScoreSds> path;
+ 
+```
+
+**File**: `src/core/sorted_map_test.cc` (modified, +36/-0)
+```diff
+@@ -60,6 +60,42 @@ TEST_F(SortedMapTest, Add) {
+   sdsfree(ele);
+ }
+ 
++TEST_F(SortedMapTest, AddUnchangedScore) {
++  ASSERT_TRUE(sm_.InsertNew(3, "a"));
++
++  // An unchanged score is neither added nor updated.
++  auto expect_unchanged = [&](double score, int in_flags) {
++    SCOPED_TRACE(in_flags);
++    int out_flags = -1;
++    double new_score = 0;
++    EXPECT_EQ(1, sm_.AddElem(score, "a", in_flags, &out_flags, &new_score));
++    EXPECT_EQ(0, out_flags);
++    EXPECT_EQ(3, new_score);
++  };
++
++  expect_unchanged(3, ZADD_IN_NONE);
++  expect_unchanged(3, ZADD_IN_XX);
++  expect_unchanged(0, ZADD_IN_INCR);
++}
++
++TEST_F(SortedMapTest, LexRangesWithSentinelBounds) {
++  // Members sort both below and above the sentinels' internal representation.
++  for (string_view member : {"a", "z"}) {
++    for (sds sentinel : {cminstring, cmaxstring}) {
++      SCOPED_TRACE(StrCat(member, " ", sentinel == cminstring ? "-" : "+"));
++      SortedMap map;
++      ASSERT_TRUE(map.InsertNew(1, member));
++      zlexrangespec range{.min = sentinel, .max = sentinel, .minex = 0, .maxex = 0};
++
++      EXPECT_EQ(0, map.LexCount(range));
++      EXPECT_THAT(map.GetLexRange(range, 0, 1, false), testing::IsEmpty());
++      EXPECT_THAT(map.GetLexRange(range, 0, 1, true), testing::IsEmpty());
++      EXPECT_EQ(0, map.DeleteRangeByLex(range));
++      EXPECT_EQ(1, map.GetScore(member));
++    }
++  }
++}
++
+ TEST_F(SortedMapTest, Scan) {
+   for (unsigned i = 0; i < 972; ++i) {
+     sm_.InsertNew(i, StrCat(i));
+```
+
+**File**: `src/server/zset_family_test.cc` (modified, +32/-0)
+```diff
+@@ -483,6 +483,38 @@ TEST_F(ZSetFamilyTest, ByLex) {
+   ASSERT_THAT(resp, RespElementsAre("foo"));
+ }
+ 
++// Sorted sets above zset_max_listpack_entries use SortedMap.
++TEST_F(ZSetFamilyTest, ByLexSentinelBoundsBig) {
++  vector<string> args = {"zadd", "key"};
++  for (unsigned i = 0; i < 200; ++i) {
++    args.push_back("0");
++    args.push_back(absl::StrCat("k", absl::Dec(i, absl::kZeroPad3)));
++  }
++  Run(args);
++
++  for (auto [min, max] : vector<pair<string, string>>{{"-", "-"}, {"[k005", "-"}, {"+", "+"}}) {
++    SCOPED_TRACE(min + " " + max);
++    EXPECT_THAT(Run({"zrangebylex", "key", min, max}), ArrLen(0));
++    EXPECT_THAT(Run({"zrevrangebylex", "key", max, min}), ArrLen(0));
++    EXPECT_EQ(0, CheckedInt({"zlexcount", "key", min, max}));
++    EXPECT_EQ(0, CheckedInt({"zremrangebylex", "key", min, max}));
++  }
++  EXPECT_EQ(200, CheckedInt({"zcard", "key"}));
++}
++
++TEST_F(ZSetFamilyTest, ZAddChUnchangedScoreBig) {
++  vector<string> args = {"zadd", "key"};
++  for (unsigned i = 0; i < 200; ++i) {
++    args.push_back(absl::StrCat(i));
++    args.push_back(absl::StrCat("m", i));
++  }
++  Run(args);
++
++  EXPECT_EQ(0, CheckedInt({"zadd", "key", "ch", "5", "m5"}));
++  EXPECT_EQ(0, CheckedInt({"zadd", "key", "ch", "xx", "5", "m5"}));
++  EXPECT_EQ(1, CheckedInt({"zadd", "key", "ch", "6", "m5", "7", "m7"}));
++}
++
+ TEST_F(ZSetFamilyTest, ZRevRangeByLex) {
+   Run({
+       "zadd", "key",      "0", "alpha", "0", "bar",   "0", "cool", "0", "down",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8871** (2026-11-23): chore: update helio to abseil 20260817.0 (@vyavdoshenko)
+- **PR #8870** (2026-11-23): fix(zset): handle lex sentinel bounds and unchanged scores in SortedMap (@romange)
+- **PR #8865** (2026-11-23): fix(lua): port Valkey security fixes and lock the global environment (@romange)
 - **PR #8862** (2026-11-22): fix(tests): expect the bare user name from ACL WHOAMI in ExternalAuth (@vyavdoshenko)
+- **PR #8860** (2026-11-23): refactor: drop ascii validation (@BorysTheDev)
 - **PR #8857** (2026-11-20): fix: correct connection replies and client tracking (@vyavdoshenko)
-- **PR #8855** (2026-11-20): fix(acl): test_acl_load_updates_default_user_connections (@kostasrim)
-- **PR #8847** (2026-11-19): fix(acl): apply reloaded default user rules on ACL LOAD (@kostasrim)
-- **PR #8845** (2026-11-20): fix: match RESP3 reply shapes of JSON and probabilistic commands (@vyavdoshenko)
-- **PR #8844** (2026-11-19): fix: stack smashing in journal (@BorysTheDev)
 
 ---
 
@@ -2400,33 +3492,36 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests): expect the bare user name from ACL WHOAMI in ExternalAuth
+## X. lua): port Valkey security fixes and lock the global environment
 
 **RULE**:
-When implementing operations in `src/server/server_family_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/differences.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24104b84`: tests): expect the bare user name from ACL WHOAMI in ExternalAuth. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e03772bd`: lua): port Valkey security fixes and lock the global environment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/server_family_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/differences.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "alice");
-  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "alice");
+We use lua 5.4.9.
+As in Valkey 7, the global environment is read-only: scripts can not create or change globals, or
+change the library tables (`redis`, `string`, `cjson`, ...). Settings changed through library
+functions, such as `cjson.encode_max_depth()`, still apply to later scripts.
+`cjson.decode` and `cmsgpack.unpack` accept at most 50 levels of nested arrays and objects.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "User is alice");
-  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "User is alice");
+We use lua 5.4.4 that has been released in 2022.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24104b84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e03772bd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

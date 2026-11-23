@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-CJB9",
-    "timestamp": "2026-11-21T22:56:56.517Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-O6PD",
-    "timestamp": "2026-11-21T23:06:00.049Z",
-    "repository": "burner22/numbat",
-    "learningId": "learn-huggingface-burner22-numbat",
-    "contentHash": "b9d1522ad3cb53075528dfbb51b69210de556a785c4a889ee02014d16dee4965",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-OHS2",
-    "timestamp": "2026-11-21T23:06:14.402Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "f65c33024745ca8348063a7489b2ced05825a8c2190a32b8b92fc419fbb842dd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-D9ZO",
     "timestamp": "2026-11-21T23:25:30.708Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7445,51 @@
     "repository": "RediSearch/RediSearch",
     "learningId": "learn-github-redisearch-redisearch",
     "contentHash": "58de50613d5d089d54951748551e0721c0a4a70bbb413da04d33337be7016c5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-WUT5",
+    "timestamp": "2026-11-23T20:56:06.905Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "da83616c00bfa93c5d31dadccd889aaebc72a314e8d9eaab5101324e171db275",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-X02E",
+    "timestamp": "2026-11-23T20:56:13.718Z",
+    "repository": "sozercan/kaset",
+    "learningId": "learn-github-sozercan-kaset",
+    "contentHash": "0fed78b16876654cafdac506d238f5b9b3870ace7f03ca5e2e593097729404e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-X5OR",
+    "timestamp": "2026-11-23T20:56:21.003Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "ff25fc6955f73718eaad256a49cbad41c83dca184601487e7e8557eaf03ce172",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

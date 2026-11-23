@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:47:56.226Z",
-  "total_cycles_completed": 11850,
-  "total_learnings_persisted": 11850,
-  "total_rules_promoted": 10960,
+  "last_updated": "2026-11-23T20:56:21.012Z",
+  "total_cycles_completed": 11853,
+  "total_learnings_persisted": 11853,
+  "total_rules_promoted": 10962,
   "history": [
-    {
-      "timestamp": "2026-11-23T03:47:03.795Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T03:47:04.146Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T04:00:02.822Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T04:00:05.525Z",
       "repository": "GitoxideLabs/gitoxide",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T20:47:56.226Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:56:06.915Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:56:13.727Z",
+      "repository": "sozercan/kaset",
+      "learningId": "learn-github-sozercan-kaset",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:56:21.012Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

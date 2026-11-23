@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:48:02.179Z",
+  "last_updated": "2026-11-23T20:56:26.134Z",
   "directives": [
     {
       "id": "CD-001",
@@ -51003,6 +51003,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-893239--mod-21404-ci-install-llvm-21-from-el8-a.md",
       "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-X8UH",
+      "directive_title": "ratchet down source comments",
+      "source_repo": "sozercan-kaset-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-X8UH-ratchet-down-source-comments.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-X5UZ",
+      "directive_title": "port Valkey security fixes and lock the global environment",
+      "source_repo": "dragonflydb/dragonfly",
+      "source_commit": "6cbd2241",
+      "staged_file": "11_INBOX/candidate-directives/CD-X5UZ-port-valkey-security-fixes-and-lock-the-global-environment.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-6C0CDB",
+      "directive_title": "ratchet down source comments",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sozercan-kaset",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6C0CDB-ratchet-down-source-comments.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-X9N7",
+      "directive_title": "lua): port Valkey security fixes and lock the global environment",
+      "source_repo": "dragonflydb-dragonfly-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-X9N7-lua-port-valkey-security-fixes-and-lock-the-global-environment.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
     }
   ]
 }
