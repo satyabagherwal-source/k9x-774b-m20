@@ -12374,3 +12374,4 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `0383d4d1` | Multi-dimensional audit evidence | 2026-11-23T14:46:36.402Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `8947fa71` | Multi-dimensional audit evidence | 2026-11-23T14:46:40.520Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ecf1cb0e` | Multi-dimensional audit evidence | 2026-11-23T14:46:42.220Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-23T14:55:19.393Z |

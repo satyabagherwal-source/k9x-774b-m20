@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-41IY",
-    "timestamp": "2026-11-21T13:30:27.898Z",
-    "repository": "cachix/devenv",
-    "learningId": "learn-github-cachix-devenv",
-    "contentHash": "118ee830f2285f18490a4fbd4b2d2c90991a087c3113a3a1d9c6300a3d4f8c10",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-480A",
     "timestamp": "2026-11-21T13:30:36.298Z",
     "repository": "opentofu/opentofu",
@@ -7492,6 +7477,21 @@
     "contentHash": "793b3f5ca7b7b9c4779a88b61da3c18588de8d8e3eae098cbe3e0223fc81b3ef",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-0VH7",
+    "timestamp": "2026-11-23T14:55:19.387Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "1243dd58a2a22d502bc63c80bea59a690cd8549b7bd4eca3da238c02eacd7ba4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

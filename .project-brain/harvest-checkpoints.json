@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T14:46:42.229Z",
+  "last_updated": "2026-11-23T14:55:19.404Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1505,14 +1505,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
-      "content_hash": "7b4c9eb787cbb0e457dff3a11c85f78d7d0c094b910e2acf77556cb8dee56643",
-      "verified_at": "2026-11-19T01:05:59.557Z",
+      "content_hash": "1243dd58a2a22d502bc63c80bea59a690cd8549b7bd4eca3da238c02eacd7ba4",
+      "verified_at": "2026-11-23T14:55:19.403Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:05:59.557Z"
+      "last_updated": "2026-11-23T14:55:19.403Z"
     },
     "openai-community/gpt2": {
       "repository": "openai-community/gpt2",

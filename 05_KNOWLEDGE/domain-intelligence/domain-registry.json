@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T14:46:47.166Z",
+  "last_updated": "2026-11-23T14:55:33.575Z",
   "total_records": 2421,
   "domains": {
     "A": {
@@ -8236,8 +8236,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a00f0dff24fc133f46bb479f4f8face814e5733e447eaf1b014cd87a34f9863b",
-      "created_at": "2026-11-23T09:29:55.106Z"
+      "content_hash": "73d92ed5cbfcb44bd17dbea25c3ff5e3700c436b7ff24a887f8a79142769a5f3",
+      "created_at": "2026-11-23T14:55:33.575Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9154,8 +9154,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "cfdce15d93d4d37b12b5a8927514c8d6f37ee60e38a5f36376b62ba6528301f8",
-      "created_at": "2026-11-23T09:29:53.630Z"
+      "content_hash": "d601d4bf92e7ae33adba63be22413925a9372db02e9554f81a2817d4dd1a581a",
+      "created_at": "2026-11-23T14:55:32.103Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15152,8 +15152,8 @@
       "title": "Research & Knowledge Intelligence: FacebookAI/xlm-roberta-base Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-research-knowledge-intelligence-facebookai-xlm-ro.md",
       "repository": "FacebookAI/xlm-roberta-base",
-      "content_hash": "f67cc5523fabf94ff48e7de684d844f19fdd0f626743263e43a9ff6f2c2fd225",
-      "created_at": "2026-11-19T01:05:59.729Z"
+      "content_hash": "480b72f92e638c543c3c21b2dbfc6bdc9b5fe21dc974bc1b9d8286faffcc7a8c",
+      "created_at": "2026-11-23T14:55:19.677Z"
     },
     "DOM-D-F08B07B4": {
       "record_id": "DOM-D-F08B07B4",
@@ -15203,8 +15203,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebookai-xlm-roberta-base-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-learnings-research-knowledge-intelligence-hf-face.md",
       "repository": "hf-facebookai-xlm-roberta-base-learnings",
-      "content_hash": "104d39216b9246df42d8d94c4e3f63d109bc46fa0285655999eb47a7c5fe7dbe",
-      "created_at": "2026-11-19T01:06:12.203Z"
+      "content_hash": "d6ca694b513d69eb4b458dfdfe391627c646590c14f5e3c04b0aca60795e84ec",
+      "created_at": "2026-11-23T14:55:31.277Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",

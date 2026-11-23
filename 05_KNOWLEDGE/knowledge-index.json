@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T14:46:47.330Z",
+  "last_updated": "2026-11-23T14:55:33.575Z",
   "total_verified_learnings": 9082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a00f0dff24fc133f46bb479f4f8face814e5733e447eaf1b014cd87a34f9863b",
+      "content_hash": "73d92ed5cbfcb44bd17dbea25c3ff5e3700c436b7ff24a887f8a79142769a5f3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T09:29:55.106Z"
+      "persisted_at": "2026-11-23T14:55:33.575Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cfdce15d93d4d37b12b5a8927514c8d6f37ee60e38a5f36376b62ba6528301f8",
+      "content_hash": "d601d4bf92e7ae33adba63be22413925a9372db02e9554f81a2817d4dd1a581a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T09:29:53.630Z"
+      "persisted_at": "2026-11-23T14:55:32.103Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d619f8956038bd9f18de1715c7d8d8ba9ba40e1db50f89799162bfa35de326e0",
+      "content_hash": "750a480495ec38fb45658be2a8d06ee3d518ba39f28f405a82d980895d2aeb10",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T09:29:53.862Z"
+      "persisted_at": "2026-11-23T14:55:32.319Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -228844,7 +228844,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "7b4c9eb787cbb0e457dff3a11c85f78d7d0c094b910e2acf77556cb8dee56643",
+      "content_hash": "1243dd58a2a22d502bc63c80bea59a690cd8549b7bd4eca3da238c02eacd7ba4",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [],
@@ -228853,7 +228853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:05:59.370Z",
+      "verified_at": "2026-11-23T14:55:19.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228870,9 +228870,9 @@
       "title": "Research & Knowledge Intelligence: FacebookAI/xlm-roberta-base Core Invariants",
       "repository": "FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "f67cc5523fabf94ff48e7de684d844f19fdd0f626743263e43a9ff6f2c2fd225",
+      "content_hash": "480b72f92e638c543c3c21b2dbfc6bdc9b5fe21dc974bc1b9d8286faffcc7a8c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T01:05:59.729Z"
+      "persisted_at": "2026-11-23T14:55:19.677Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in",
@@ -228882,9 +228882,9 @@
       "title": "Research & Knowledge Intelligence: hf-facebookai-xlm-roberta-base-learnings Core Invariants",
       "repository": "hf-facebookai-xlm-roberta-base-learnings",
       "source_version": "HEAD",
-      "content_hash": "104d39216b9246df42d8d94c4e3f63d109bc46fa0285655999eb47a7c5fe7dbe",
+      "content_hash": "d6ca694b513d69eb4b458dfdfe391627c646590c14f5e3c04b0aca60795e84ec",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T01:06:12.203Z"
+      "persisted_at": "2026-11-23T14:55:31.277Z"
     },
     "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12": {
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
@@ -318987,13 +318987,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ED4T-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1541-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "aad5969f62cc25db074ea9fceb3295014d3b9153e5f5e25aa55ef6637b353626",
+      "content_hash": "4aa5b176c76868059555a81b9977cf76698364f9a4da70e9f68d06b3aaeee8c5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T09:29:53.411Z"
+      "persisted_at": "2026-11-23T14:55:31.879Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
