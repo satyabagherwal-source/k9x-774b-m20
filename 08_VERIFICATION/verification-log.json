@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-GSGE",
-    "timestamp": "2026-11-21T03:52:30.734Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-AM0U",
-    "timestamp": "2026-11-21T04:15:42.078Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-GWKP",
-    "timestamp": "2026-11-21T04:20:35.689Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "7f0b01749f96a215dc99d037993c06bc107c144d458afbbfdeb236d03b5ab594",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-4PRU",
-    "timestamp": "2026-11-21T04:39:06.618Z",
-    "repository": "kirillzyusko/react-native-keyboard-controller",
-    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "d9d9f8b41821ded9c4df6d854b50f8e8288c978b9d4dec3067700e729333d340",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-4RGB",
     "timestamp": "2026-11-21T04:39:08.795Z",
     "repository": "meshery/meshery",
@@ -7490,6 +7430,66 @@
     "repository": "Kuberwastaken/claurst",
     "learningId": "learn-github-kuberwastaken-claurst",
     "contentHash": "3363025640c1745dc14c30fb5c9576d2f3972387d1839a358515ef28dccbe244",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZP14",
+    "timestamp": "2026-11-23T05:06:32.440Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "977fae8ac56e93863fbcd7f775526f66f0ef327dda21d8b1f1451e45422763fc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZUTR",
+    "timestamp": "2026-11-23T05:06:39.951Z",
+    "repository": "EhPanda-Team/EhPanda",
+    "learningId": "learn-github-ehpanda-team-ehpanda",
+    "contentHash": "5784b2dc4a88d2a55f77fb77015b3f705a42822f74d0c14476f99b0718e63823",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-ZWCW",
+    "timestamp": "2026-11-23T05:06:41.936Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "52beac9861b277a2605b6ea7d5e57fb74a5f4f9bff8c0b8087828b273217bae9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-00YP",
+    "timestamp": "2026-11-23T05:06:47.905Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "4df84ffe41086e269cc2f9d45f9eba018a18f6b08e0a883763f91e4dbb5b3488",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

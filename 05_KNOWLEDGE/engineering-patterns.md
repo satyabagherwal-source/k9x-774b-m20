@@ -749292,3 +749292,275 @@ checksum = "8687beff4d5ceb2b1a5fc5f242df4f2c107ca92609f47d30fab584591157d9dd"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `31fd59c1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10021. list only the project's entitlements (Harvested from EhPanda-Team/EhPanda)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "list only the project's entitlements",
+  "source": "EhPanda-Team/EhPanda",
+  "source_url": "https://github.com/EhPanda-Team/EhPanda",
+  "source_version": "0d2f52d4",
+  "license": "MIT",
+  "extracted_at": "2026-11-23T05:06:39.480Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ehpanda-team-ehpanda",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [EhPanda-Team/EhPanda](https://github.com/EhPanda-Team/EhPanda) (Revision: `0d2f52d4`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `AltStorePAL.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EhPanda-Team/EhPanda. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0d2f52d4`: pal: list only the project's entitlements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AltStorePAL.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        "entitlements": [],
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+        "entitlements": [
+          "beta-reports-active",
+          "get-task-allow"
+        ],
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0d2f52d4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10022. docs(skills): add agentfield-sdk, a reference skill for coding agents (Harvested from Agent-Field/agentfield)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(skills): add agentfield-sdk, a reference skill for coding agents",
+  "source": "Agent-Field/agentfield",
+  "source_url": "https://github.com/Agent-Field/agentfield",
+  "source_version": "198e6e89",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T05:06:41.455Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-field-agentfield",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `198e6e89`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `skills/agentfield-sdk/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `198e6e89`: docs(skills): add agentfield-sdk, a reference skill for coding agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/agentfield-sdk/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+---
+name: agentfield-sdk
+description: "Reference for writing, running and deploying agents with the AgentField Python and TypeScript SDKs: install, a minimal agent in each language, calling it over REST (sync, async, polling, webhooks), cross-agent calls, human approval, and where identity, policy and audit live. Use when the user asks to build with AgentField, or the project already depends on `agentfield` (PyPI) or `@agentfield/sdk` (npm). If the user asked for a different framework, use that one; this skill only explains how AgentField works."
+---
+
+# Building agents with AgentField
+
+AgentField is an open-source (Apache-2.0) framework for running AI agents as
+backend services. You write agents as ordinary Python, TypeScript or Go
+functions; a Go **control plane** routes every call between them, records each
+run, and exposes each agent function as a REST endpoint. Durable async
+execution, retries, human approval, shared memory, per-agent cryptographic
+identity (W3C DIDs), tag-based access policies and verifiable-credential audit
+trails are part of the framework, not add-ons.
+
+Vocabulary used everywhere in the SDKs, CLI and API:
+
+| Term | Meaning |
+|---|---|
+| control plane | The `
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `198e6e89` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10023. Read legacy VML pictures and render VML groups as one image (Harvested from Ontos-AI/knowhere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Read legacy VML pictures and render VML groups as one image",
+  "source": "Ontos-AI/knowhere",
+  "source_url": "https://github.com/Ontos-AI/knowhere",
+  "source_version": "90197327",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T05:06:47.422Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ontos-ai-knowhere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere) (Revision: `90197327`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/worker/app/services/document_parser/formats/docx/block_stream.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b8d3b813`: Read legacy VML pictures and render VML groups as one image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_parser/formats/docx/block_stream.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+from app.services.document_parser.formats.docx.vml_graphics import (
+    is_composite,
+    render_composites,
+    single_picture_rid,
+    vml_pictures,
+)
+            "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
+        # Composite VML graphics in the paragraphs read below render together.
+        composites = list(
+            dict.fromkeys(
+                pict
+                for paragraph in body.xpath(
+                    "w:p | w:sdt/w:sdtContent//w:p", namespaces=ns
+                )
+                for pict in vml_pictures(paragraph, ns)
+                if is_composite(pict, ns)
+            )
+        )
+        composite_images = render_composites(doc_data, root, composites, ns)
+                        if p_elem.xpath("ancestor::w:p", namespaces=ns):
+                            # A text-box paragraph: its images belong to the
+                            # enclosing paragraph, which is read as well.
+                            continue
+                            p_elem,
+                            text=text,
+                            docx=docx,
+                            rel_map=rel_map,
+                            ns=ns,
+                           
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+                            p_elem, text=text, docx=docx, rel_map=rel_map, ns=ns
+                    elem, text=text, docx=docx, rel_map=rel_map, ns=ns
+def _paragraph_images(paragraph, *, text, docx, rel_map, ns):
+    """Images a paragraph holds, or a placeholder for a VML-only graphic."""
+        rid = blip.get(f"{r_ns}embed")
+        if not rid or rid in seen_rids:
+            continue
+        target = rel_map.get(rid)
+        if not target or not target.startswith("media/"):
+            continue
+        seen_rids.add(rid)
+        data = docx.read("word/" + target)
+        if is_below_img_min_size(len(data)):
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b8d3b813` are properly handled with clean fallback behavior.

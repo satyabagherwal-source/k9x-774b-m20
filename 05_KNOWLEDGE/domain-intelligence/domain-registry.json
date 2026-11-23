@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T04:58:35.918Z",
+  "last_updated": "2026-11-23T05:06:53.320Z",
   "total_records": 2391,
   "domains": {
     "A": {
@@ -11905,8 +11905,8 @@
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "repository": "Ontos-AI/knowhere",
-      "content_hash": "c51be6aeb0476a4cc3a75ec1da2a55f24507e92265583cf8441186a09fcd04ed",
-      "created_at": "2026-11-19T19:12:09.384Z"
+      "content_hash": "79ecec73165878e9fcba8c250e624c785bc226a6ad2020f7f772506d7030520b",
+      "created_at": "2026-11-23T05:06:48.286Z"
     },
     "DOM-J-44A35728": {
       "record_id": "DOM-J-44A35728",
@@ -16640,8 +16640,8 @@
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "repository": "Agent-Field/agentfield",
-      "content_hash": "4d9e04d62943664f03bd5ea8c438469a4c24ec815aa6b577790288e9463b37e4",
-      "created_at": "2026-11-22T04:05:01.762Z"
+      "content_hash": "3654b27640a1d62d85b3f98350fb4ca6f889f2c9058fc51338d425e085b0d19e",
+      "created_at": "2026-11-23T05:06:42.301Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
@@ -16718,8 +16718,8 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-learnings-technical-construction-intelligence-agent-field.md",
       "repository": "agent-field-agentfield-learnings",
-      "content_hash": "0c63978fcb13013e9122cf81f8d63a6557e67c751c1a5e3f059d50f98cac4366",
-      "created_at": "2026-11-22T04:05:12.250Z"
+      "content_hash": "4376acb8f4d4e05e4fa0d27d8f867bbf4389d487f4dcf59446eacc9e7b972f60",
+      "created_at": "2026-11-23T05:06:53.320Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants",
@@ -23145,8 +23145,8 @@
       "title": "Architecture Intelligence: EhPanda-Team/EhPanda Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ehpanda-team-ehpanda-architecture-intelligence-ehpanda-team-ehpanda-core-invaria.md",
       "repository": "EhPanda-Team/EhPanda",
-      "content_hash": "ac2723cc9ca69a893da92562acc9959afa00ae4ea8caf167268876456e898cbc",
-      "created_at": "2026-11-16T00:17:36.723Z"
+      "content_hash": "b97c9665ff621e6d664090a299f6d26f373e989da06bffda21e51eb68d422275",
+      "created_at": "2026-11-23T05:06:40.312Z"
     },
     "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-core-invariants",
@@ -23172,8 +23172,8 @@
       "title": "Architecture Intelligence: ehpanda-team-ehpanda-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ehpanda-team-ehpanda-learnings-architecture-intelligence-ehpanda-team-ehpanda-le.md",
       "repository": "ehpanda-team-ehpanda-learnings",
-      "content_hash": "65dea99799be8b81a87946f961b6d6fd7b748420383953d33751296fdfdc0fcf",
-      "created_at": "2026-11-16T00:17:47.867Z"
+      "content_hash": "f520e01f3c21f1f6a73b3a102660c75fa8c71190b6c3ed8ef501f8156ebe705d",
+      "created_at": "2026-11-23T05:06:52.296Z"
     },
     "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-apache-shardingsphere-learnings-core-invariants",
@@ -32189,8 +32189,8 @@
       "title": "Research & Knowledge Intelligence: openai/whisper-large-v3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-whisper-large-v3-research-knowledge-intelligence-openai-whisper-large-.md",
       "repository": "openai/whisper-large-v3",
-      "content_hash": "d4b6860422d609b28c9aac359410022fb7f7d9b6df199f2c3ef5117294a3bfec",
-      "created_at": "2026-11-18T19:34:14.511Z"
+      "content_hash": "f2c59261445f56021bb82a4c6412633628832a55cf87d07012a7b9083dc03354",
+      "created_at": "2026-11-23T05:06:32.644Z"
     },
     "DOM-D-30CF6F55": {
       "record_id": "DOM-D-30CF6F55",
@@ -32240,8 +32240,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-whisper-large-v3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-whisper-large-v3-learnings-research-knowledge-intelligence-hf-openai-w.md",
       "repository": "hf-openai-whisper-large-v3-learnings",
-      "content_hash": "63bc96b2f60b6eb30156345c308c089b287f0f758d7a15538f1ac9ef7e621ecb",
-      "created_at": "2026-11-18T19:35:04.359Z"
+      "content_hash": "6edc3172ff5668b7d86fe7c10177c4b7664eab38bba8343b71bcdedf764f3b3d",
+      "created_at": "2026-11-23T05:06:51.452Z"
     },
     "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-core-invariants",

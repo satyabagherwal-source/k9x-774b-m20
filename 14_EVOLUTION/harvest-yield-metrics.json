@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T04:58:23.664Z",
-  "total_cycles_completed": 11662,
-  "total_learnings_persisted": 11662,
-  "total_rules_promoted": 10849,
+  "last_updated": "2026-11-23T05:06:47.914Z",
+  "total_cycles_completed": 11666,
+  "total_learnings_persisted": 11666,
+  "total_rules_promoted": 10852,
   "history": [
-    {
-      "timestamp": "2026-11-22T08:22:56.441Z",
-      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T08:41:01.235Z",
-      "repository": "laion/clap-htsat-fused",
-      "learningId": "learn-huggingface-laion-clap-htsat-fused",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T09:11:04.918Z",
-      "repository": "adventists-ai/Sophon-Realtime-v1",
-      "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T09:25:49.241Z",
-      "repository": "deepseek-ai/DeepSeek-V3.2",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T09:26:05.687Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-23T04:58:23.664Z",
       "repository": "Kuberwastaken/claurst",
       "learningId": "learn-github-kuberwastaken-claurst",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:06:32.449Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-openai-whisper-large-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:06:39.960Z",
+      "repository": "EhPanda-Team/EhPanda",
+      "learningId": "learn-github-ehpanda-team-ehpanda",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:06:41.945Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T05:06:47.914Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

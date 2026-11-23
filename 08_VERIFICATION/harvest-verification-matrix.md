@@ -12264,3 +12264,7 @@
 | `CYCLE-20261123-F1RZ` | `2026-11-23T04:50:29.183Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`0a37b9a2...`) |
 | `CYCLE-20261123-P6LP` | `2026-11-23T04:58:21.997Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`b6901441...`) |
 | `CYCLE-20261123-P7VR` | `2026-11-23T04:58:23.655Z` | `Kuberwastaken/claurst` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10020` | Yes (`33630256...`) |
+| `CYCLE-20261123-ZP14` | `2026-11-23T05:06:32.440Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`977fae8a...`) |
+| `CYCLE-20261123-ZUTR` | `2026-11-23T05:06:39.951Z` | `EhPanda-Team/EhPanda` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10021` | Yes (`5784b2dc...`) |
+| `CYCLE-20261123-ZWCW` | `2026-11-23T05:06:41.936Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10022` | Yes (`52beac98...`) |
+| `CYCLE-20261123-00YP` | `2026-11-23T05:06:47.905Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10023` | Yes (`4df84ffe...`) |

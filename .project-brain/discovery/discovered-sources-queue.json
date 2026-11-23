@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T04:58:33.994Z",
+  "updated_at": "2026-11-23T05:06:52.954Z",
   "stats": {
-    "total_discovered": 7762,
-    "approved_pending_harvest": 7345,
+    "total_discovered": 7768,
+    "approved_pending_harvest": 7349,
     "harvested_count": 0,
-    "rejected_count": 417,
+    "rejected_count": 419,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7333,
+      "COMMUNITY_AND_EXPERT": 7339,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -167868,6 +167868,124 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
         "fileName": "kuberwastaken-claurst-learnings.md"
+      }
+    },
+    "SRC-38A886F70AF4": {
+      "id": "SRC-38A886F70AF4",
+      "url": "https://raw.githubusercontent.com/EhPanda-Team/ehpanda-assets/main/app-marketplace/icon.png",
+      "title": "https://raw.githubusercontent.com/EhPanda-Team/ehpanda-assets/main/app-marketplace/icon.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T05:06:51.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-C8C698D2178F": {
+      "id": "SRC-C8C698D2178F",
+      "url": "https://raw.githubusercontent.com/EhPanda-Team/ehpanda-assets/main/app-marketplace/header.png",
+      "title": "https://raw.githubusercontent.com/EhPanda-Team/ehpanda-assets/main/app-marketplace/header.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T05:06:51.831Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-38FFE60AB144": {
+      "id": "SRC-38FFE60AB144",
+      "url": "https://ehpanda.app/",
+      "title": "https://ehpanda.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T05:06:51.879Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-4D2B6C4E8C53": {
+      "id": "SRC-4D2B6C4E8C53",
+      "url": "https://example.com/icon.png",
+      "title": "https://example.com/icon.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T05:06:51.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
+        "fileName": "ehpanda-team-ehpanda-learnings.md"
+      }
+    },
+    "SRC-720773C609D6": {
+      "id": "SRC-720773C609D6",
+      "url": "https://agentfield.ai/install.sh",
+      "title": "https://agentfield.ai/install.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T05:06:52.884Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-1543104B9443": {
+      "id": "SRC-1543104B9443",
+      "url": "http://localhost:8080/api/v1/execute/hello-world.say_hello%60",
+      "title": "http://localhost:8080/api/v1/execute/hello-world.say_hello%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T05:06:52.954Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
       }
     }
   }

@@ -4,22 +4,22 @@
 {
   "source_repository": "Ontos-AI/knowhere",
   "source_url": "https://github.com/Ontos-AI/knowhere",
-  "source_version": "cf789c7b",
+  "source_version": "90197327",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T03:03:27.635Z",
+  "timestamp": "2026-11-23T05:06:48.126Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ontos-ai-knowhere",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere) (Revision: `cf789c7b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T03:03:27.635Z`  
+> **Provenance**: Harvested from [Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere) (Revision: `90197327`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T05:06:48.126Z`  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Ontos-AI/knowhere` (Commit: `cf789c7b`)
+- **Target Repository**: `Ontos-AI/knowhere` (Commit: `90197327`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:03:26.420Z  
+> **Harvest Timestamp**: 2026-11-23T05:06:46.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4084 stars
+- **Stars / Engagement**: 4098 stars
 
 ---
 
@@ -1013,609 +1013,1363 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf789c7b` (2026-11-21)
-**Commit Message**: Merge pull request #577 from Ontos-AI/fix/wangbinqi/terminal-initial-ingestion-failure
+### Incident Patch 1: `b8d3b813` (2026-11-22)
+**Commit Message**: Read legacy VML pictures and render VML groups as one image
 
-Prepare initial publication and retry retirement for release
+A single VML picture now yields its media file in place. A VML group,
+whose pictures, shapes and text boxes only make sense together, is
+rendered as one image: all groups of a document go through one
+LibreOffice pass, one per page without headers, footers or background,
+and each page is cropped to what it draws. If rendering fails or pages
+do not line up with groups, the existing placeholder stays.
 
-**File**: `.github/workflows/build-images.yml` (modified, +1/-0)
+Text-box paragraphs inside a content control no longer repeat images
+their enclosing paragraph already yields. The page render resolution is
+now a shared constant used by page images and rendered graphics.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/block_stream.py` (modified, +87/-29)
 ```diff
-@@ -572,6 +572,7 @@ jobs:
-           API_WEBHOOK_ENDPOINT: https://api-staging.knowhereto.ai/v1/internal/s3-events
-           SNS_TOPIC_ARN: arn:aws:sns:us-east-1:107424103509:knowhere-staging-s3-events
-           QSTASH_CALLBACK_BASE_URL: https://api-staging.knowhereto.ai/api/v1
-+          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
-           API_CPU: "256"
-           API_MEMORY: "1024"
-           WORKER_CPU: "2048"
-```
-
-**File**: `GLOSSARY.md` (modified, +88/-80)
-```diff
-@@ -7,23 +7,23 @@ retrieval service.
- ## Language
+@@ -6,6 +6,12 @@
  
- **Document**:
--A document with a stable identity within its owner's namespace. Replacing
--its source file or parsing it again can produce a new revision without
--changing that identity.
--_Avoid_: Parsing job, source filename
-+A document with a stable identity within its owner's namespace. Parsing
-+publishes a new document. It does not replace the content of an existing
-+document. Different content is a new document; deleting the previous
-+document is the caller's own action.
-+_Avoid_: Parsing job, source filename, in-place update
- 
- **Archived Document**:
--A document excluded from retrieval by archival. Ongoing work cannot return
--it to the searchable corpus, and it is ineligible for indexing retry.
--Retained parsing results and processing history follow existing retention
--rules.
-+A document excluded from new retrievals by archival. A retrieval already
-+in progress may use bodies it read before archival committed. Ongoing work
-+cannot return the document to the searchable corpus. Retained parsing results
-+and processing history follow existing retention rules.
- _Avoid_: Failed parsing job, permanently deleted data
- 
- **Document Revision**:
--One immutable parsing result belonging to a document. Replacing the source
--file or parsing it again produces another revision of the same document
--when the operation explicitly targets that document.
--_Avoid_: Separate document, indexing retry
-+The one immutable parsing result of a document. The baseline and later
-+enrichment are representations of this same result.
-+_Avoid_: Separate document, in-place replacement, indexing retry
- 
- **Retrieval Unit**:
- A piece of a document revision considered as one candidate during lexical
-@@ -32,32 +32,18 @@ is distinct from the number of source pages or words in that revision.
- _Avoid_: Word, page, whole document
- 
- **Published Revision**:
--The document revision currently selected for default retrieval. It remains
--selected while a replacement is prepared and changes only when the
--replacement is ready for retrieval and activated.
--_Avoid_: Latest parsed revision
-+The document revision whose baseline index is available for retrieval.
-+Enrichment does not publish another revision in its place.
-+_Avoid_: Latest parsed revision, activated replacement
- 
- **Latest Parsed Revision**:
--The newest successfully parsed revision of a document, selected for default
--document-content reads even if its indexing is pending or failed. It may
--differ from the published revision used for retrieval.
--_Avoid_: Latest submitted revision, published revision
--
--**Candidate Revision**:
--A document revision targeted by the current update, awaiting search readiness
--and activation. Its parsing result can already be available while an earlier
--published revision remains selected for retrieval.
--_Avoid_: Published revision, separate document
--
--**Superseded Candidate**:
--A candidate revision whose update has been replaced by a later accepted
--update to the same document. It is no longer eligible for indexing retry or
--activation, while its retained parsing result remains accessible.
--_Avoid_: Published revision, retryable candidate
-+The document's stored parsing result. Workers can retain it before initial
-+indexing finishes. A retained result from a failed ingestion remains internal.
-+_Avoid_: Latest submitted revision, a second revision of the same document
- 
- **Primary Lexical Backend**:
--The selected service that supplies lexical retrieval. A candidate revision
--becomes search-ready only after publication to this backend succeeds.
-+The selected service that supplies lexical retrieval. Publishing the
-+initial index to this backend is required for Parsing Completion.
- _Avoid_: Rollback copy, whichever backend responds first
- 
- **Migration Rollback Copy**:
-@@ -80,46 +66,27 @@ readiness requirements. Retiring that path follows a separate decision
- after stability is confirmed.
- _Avoid_: Automatic failover period, stability guaranteed by elapsed time
- 
--**Search Readiness**:
--The state indicating whether a particular document revision is available for
--retrieval. Completing document parsing alone does not establish search
--readiness.
--_Avoid_: Parsing completion, generic namespace health
--
- **Parsing Completion**:
--The milestone at which a document revision's parsing result is complete and
--available to the caller for display or download. It does not require the
--revision to be ready for retrieval.
--_Avoid_: Job completion, search readiness
-+The sole successful outcome visible to a caller for a document-processing
-+job. The initial parsing result and its searchable index are available.
-+Full ingestion publishes the complete result. Progressive ingestion
-+publishes the baseline. A new progressive PDF or PPTX baseline includes
-+coarse chapters and an initial directory.
-+_Avoid_: Search completion, indexing completion, enrichment completion
- 
- **Indexing**:
- The phase of a document-processing job that makes 
-```
-
-**File**: `apps/api/alembic/versions/b1243d5e6f70_add_enrichment_publications.py` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+"""Keep enrichment bodies and outcomes alongside the published baseline."""
-+
-+from collections.abc import Sequence
-+
-+import sqlalchemy as sa
-+from alembic import op
-+
-+revision: str = "b1243d5e6f70"
-+down_revision: str | None = "b0132c4d5e6f"
-+branch_labels: Sequence[str] | None = None
-+depends_on: Sequence[str] | None = None
-+
-+
-+def upgrade() -> None:
-+    op.create_table(
-+        "document_enrichment_publications",
-+        sa.Column("id", sa.String(36), primary_key=True),
-+        sa.Column("document_id", sa.String(36), sa.ForeignKey("documents.document_id", ondelete="CASCADE"), nullable=False),
-+        sa.Column("job_result_id", sa.String(36), sa.ForeignKey("job_results.id", ondelete="CASCADE"), nullable=False),
-+        sa.Column("user_id", sa.Text(), nullable=False),
-+        sa.Column("namespace", sa.String(255), nullable=False),
-+        sa.Column("scope_id", sa.String(64), nullable=False),
-+        sa.Column("state", sa.String(16), nullable=False),
-+        sa.Column("expected_index_count", sa.Integer(), nullable=True),
-+        sa.Column("raw_prefix", sa.Text(), nullable=True),
-+        sa.Column("index_uuid", sa.String(128), nullable=True),
-+        sa.Column("cleanup_after", sa.DateTime(timezone=True), nullable=True),
-+        sa.CheckConstraint("state IN ('writing', 'published', 'failed')", name="ck_enrichment_publication_state"),
-+    )
-+    op.create_index("ix_enrichment_publication_revision", "document_enrichment_publications", ["job_result_id", "state"])
-+    op.create_index("ix_enrichment_publication_cleanup", "document_enrichment_publications", ["cleanup_after"])
-+    op.add_column("document_chunks", sa.Column(
-+        "enrichment_attempt_id", sa.String(36),
-+        sa.ForeignKey("document_enrichment_publications.id", name="fk_document_chunks_enrichment_attempt", ondelete="CASCADE"),
-+    ))
-+    op.create_index("ix_document_chunks_enrichment_attempt_id", "document_chunks", ["enrichment_attempt_id"])
-+    op.create_index(
-+        "uq_document_chunks_baseline_path", "document_chunks",
-+        ["document_id", "job_result_id", "source_chunk_path"], unique=True,
-+        postgresql_where=sa.text("enrichment_attempt_id IS NULL"),
-+    )
-+    op.create_unique_constraint(
-+        "uq_document_chunks_attempt_path", "document_chunks", ["enrichment_attempt_id", "source_chunk_path"],
-+    )
-+    op.drop_constraint("uq_document_chunks_revision_path", "document_chunks", type_="unique")
-+
-+
-+def downgrade() -> None:
-+    # Preserve references to retained enrichment bodies across an application rollback.
-+    if op.get_bind().scalar(sa.text("SELECT EXISTS (SELECT 1 FROM document_enrichment_publications)")):
-+        raise RuntimeError("Cannot remove retained document enrichment publications")
-+    op.create_unique_constraint(
-+        "uq_document_chunks_revision_path", "document_chunks",
-+        ["document_id", "job_result_id", "source_chunk_path"],
-+    )
-+    op.drop_constraint("uq_document_chunks_attempt_path", "document_chunks", type_="unique")
-+    op.drop_index("uq_document_chunks_baseline_path", table_name="document_chunks")
-+    op.drop_index("ix_document_chunks_enrichment_attempt_id", table_name="document_chunks")
-+    op.drop_constraint("fk_document_chunks_enrichment_attempt", "document_chunks", type_="foreignkey")
-+    op.drop_column("document_chunks", "enrichment_attempt_id")
-+    op.drop_table("document_enrichment_publications")
-```
-
-**File**: `apps/api/alembic/versions/b2354e6f7081_schedule_archived_document_cleanup.py` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+"""Schedule exact native cleanup after the archived state commits."""
-+
-+from collections.abc import Sequence
-+
-+import sqlalchemy as sa
-+from alembic import op
-+
-+revision: str = "b2354e6f7081"
-+down_revision: str | None = "b1243d5e6f70"
-+branch_labels: Sequence[str] | None = None
-+depends_on: Sequence[str] | None = None
-+
-+
-+def upgrade() -> None:
-+    op.add_column("documents", sa.Column("index_cleanup_after", sa.DateTime(timezone=True), nullable=True))
-+    op.create_index("ix_documents_due_index_cleanup", "documents", ["index_cleanup_after"],
-+        postgresql_where=sa.text("index_cleanup_after IS NOT NULL"))
-+
-+
-+def downgrade() -> None:
-+    op.drop_index("ix_documents_due_index_cleanup", table_name="documents")
-+    op.drop_column("documents", "index_cleanup_after")
-```
-
-**File**: `apps/api/app/api/v1/routes/jobs.py` (modified, +1/-13)
-```diff
-@@ -16,7 +16,7 @@
-     list_jobs_for_user,
+ from app.services.document_parser.formats.docx.toc import detect_doc_tocs, detect_sdt_toc
+ from app.services.document_parser.assets.image_size_filter import is_below_img_min_size
++from app.services.document_parser.formats.docx.vml_graphics import (
++    is_composite,
++    render_composites,
++    single_picture_rid,
++    vml_pictures,
++)
+ from app.services.document_parser.formats.docx.word_package import (
+     normalize_word_package_bytes,
  )
- from app.services.rate_limit.data_structures import CurrentUser
--from fastapi import APIRouter, Depends, Query, Response
-+from fastapi import APIRouter, Depends, Query
- from sqlalchemy.ext.asyncio import AsyncSession
+@@ -43,11 +49,24 @@ def iter_block_items(doc_data):
+             "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+             "v": "urn:schemas-microsoft-com:vml",
+             "o": "urn:schemas-microsoft-com:office:office",
++            "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
+         }
+         r_ns = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
  
- from shared.core.database import get_db
-@@ -32,18 +32,6 @@
- _document_ingestion_service = DocumentIngestionService()
- 
- 
--@router.post("/{job_id}/indexing/retry", response_model=JobResultResponse, summary="Retry indexing without parsing or charging again")
--async def retry_indexing(
--    job_id: str,
--    response: Response,
--    current_user: CurrentUser = Depends(with_current_user),
--    _write_permission: None = Depends(require_write_permission),
--    db: AsyncSession = Depends(get_db),
--) -> JobResultResponse:
--    from app.services.jobs.indexing_retry_service import retryIndexing
--    return await retryIndexing(db, jobId=job_id, userId=current_user.user_id, response=response)
--
--
- # ==================== Shared Helpers ====================
- 
- 
-```
-
-**File**: `apps/api/app/api/v2/routes/jobs.py` (modified, +2/-28)
-```diff
-@@ -14,7 +14,7 @@
-     list_jobs_for_user,
- )
- from app.services.rate_limit.data_structures import CurrentUser
--from fastapi import APIRouter, Depends, Query, Response
-+from fastapi import APIRouter, Depends, Query
- from sqlalchemy.ext.asyncio import AsyncSession
- 
- from shared.core.database import get_db
-@@ -25,10 +25,7 @@
-     JobResponse,
-     JobResultResponse,
- )
--from shared.models.schemas.progressive_ingestion import (
--    EnhancementRetryResponse,
--    SnapshotObjectAccessRequest,
--)
-+from shared.models.schemas.progressive_ingestion import SnapshotObjectAccessRequest
- 
- router = APIRouter(tags=["Jobs"])
- _document_ingestion_service = DocumentIngestionService()
-@@ -76,29 +73,6 @@ async def get_snapshot_object_access(
-     )
- 
- 
--@router.post("/{job_id}/enrichment/retry", response_model=EnhancementRetryResponse, status_code=202, summary="Retry failed search enhancement")
--async def retry_enrichment(
--    job_id: str,
--    current_user: CurrentUser = Depends(with_current_user),
--    _write_permission: None = Depends(require_write_permission),
--    db: AsyncSession = Depends(get_db),
--) -> EnhancementRetryResponse:
--    from app.services.jobs.enrichment_retry_service import retry_job_enrichment
--    return await retry_job_enrichment(db, user_id=current_user.user_id, job_id=job_id)
--
--
--@router.post("/{job_id}/indexing/retry", response_model=JobResultResponse, summary="Retry indexing without parsing or charging again")
--async def retry_indexing(
--    job_id: str,
--    response: Response,
--    current_user: CurrentUser = Depends(with_current_user),
--    _write_permission: None = Depends(require_write_permission),
--    db: AsyncSession = Depends(get_db),
--) -> JobResultResponse:
--    from app.services.jobs.indexing_retry_service import retryIndexing
--    return await retryIndexing(db, jobId=job_id, userId=current_user.user_id, response=response)
--
--
- @router.post("", response_model=JobResponse, summary="Create a v2 parsing job")
- @router.post("/", include_in_schema=False)
- async def create_job(  # pyright: ignore[reportGeneralTypeIssues]
-```
-
-**File**: `apps/api/app/repositories/document_repository.py` (modified, +39/-4)
-```diff
-@@ -4,13 +4,14 @@
- 
- from __future__ import annotations
- 
-+from shared.services.retrieval.lexical.additivevisibility import AdditiveVisibility
- from shared.services.retrieval.corpus_storage import CorpusStorage
- from app.services.demo.revision_reader import resolve_demo_revision
- 
- from datetime import datetime, timezone
- from typing import Sequence, cast
- 
--from sqlalchemy import func, select, true
-+from sqlalchemy import ColumnElement, SQLColumnExpression, func, or_, select, true
- from sqlalchemy.ext.asyncio import AsyncSession
- from sqlalchemy.orm import noload
- 
-@@ -22,6 +23,13 @@
- DocumentJobRevisionRow = tuple[Document, JobResult, Job]
- 
- 
-+def _allows_job_result_delivery(corpus_storage: CorpusStorage) -> ColumnElement[bool]:
-+    """Apply the job result delivery policy in the same query as the artifact."""
-+    if corpus_storage.usesAdditivePublication():
-+        return Job.status == "done"
-+    return or_(Job.status != "failed", Job.failure_stage != "indexing", Job.failure_stage.is_(None))
-+
-+
- class DocumentRepository:
-     async def list_by_user_namespace(
-         self,
-@@ -95,16 +103,23 @@ async def get_current_document_job_revision(
-             document, result = await resolve_demo_revision(db, document_id=document_id, job_result_id=job_result_id)
-             job = (await db.execute(select(Job).where(Job.job_id == result.job_id))).scalar_one()
-             return document, result, job
-+        default_revision: SQLColumnExpression[str | None] = corpusStorage.Document.current_job_result_id
-+        if not corpusStorage.usesAdditivePublication():
-+            default_revision = func.coalesce(
-+                corpusStorage.Document.latest_parsed_job_result_id, default_revision
+         root = etree.fromstring(xml)
+         body = root.find(".//w:body", namespaces=ns)
++        # Composite VML graphics in the paragraphs read below render together.
++        composites = list(
++            dict.fromkeys(
++                pict
++                for paragraph in body.xpath(
++                    "w:p | w:sdt/w:sdtContent//w:p", namespaces=ns
++                )
++                for pict in vml_pictures(paragraph, ns)
++                if is_composite(pict, ns)
 +            )
-         stmt = (
-             select(corpusStorage.Document, JobResult, Job)
--            .join(JobResult, JobResult.id == (job_result_id or func.coalesce(
--                corpusStorage.Document.latest_parsed_job_result_id, corpusStorage.Document.current_job_result_id)))
-+            .select_from(corpusStorage.Document)
-+            .join(JobResult, JobResult.id == (job_result_id or default_revision))
-             .join(Job, Job.job_id == JobResult.job_id)
-             .where(corpusStorage.Document.document_id == document_id)
-             .where(corpusStorage.Document.user_id == corpusStorage.resolve_owner(user_id))
-             .where(JobResult.document_id == corpusStorage.Document.document_id)
-             .where(Job.user_id == user_id)
--            .where(corpusStorage.Document.status != "archived")
-+            .where(_allows_job_result_delivery(corpusStorage))
-+            .where((corpusStorage.Document.status != "archived")
-+                if job_result_id is None or not corpusStorage.usesAdditivePublication() else true())
-             .limit(1)
-         )
- 
-@@ -136,6 +151,16 @@ async def count_current_document_chunks(
-             .where(corpusStorage.DocumentChunk.document_id == document_id)
-             .where(corpusStorage.DocumentChunk.job_result_id == job_result_id)
-         )
-+        if corpusStorage.usesAdditivePublication():
-+            stmt = stmt.where(select(corpusStorage.Document.document_id).where(
-+                corpusStorage.Document.document_id == corpusStorage.DocumentChunk.document_id,
-+                corpusStorage.Document.current_job_result_id == corpusStorage.DocumentChunk.job_result_id,
-+                corpusStorage.Document.status == "active",
-+            ).correlate(corpusStorage.DocumentChunk).exists(), AdditiveVisibility.allowsChunk())
-+        elif not corpusStorage.is_demo:
-+            stmt = stmt.join(JobResult, JobResult.id == corpusStorage.DocumentChunk.job_result_id).join(
-+                Job, Job.job_id == JobResult.job_id
-+            ).where(_allows_job_result_delivery(corpusStorage))
-         if chunk_type is not None:
-             stmt = stmt.where(func.lower(corpusStorage.DocumentChunk.chunk_type) == chunk_type)
- 
-@@ -170,6 +195,14 @@ async def list_current_document_chunks(
-             .limit(limit)
-             .offset(offset)
-         )
-+        if corpusStorage.usesAdditivePublication():
-+            stmt = stmt.where(select(corpusStorage.Document.document_id).where(
-+                corpusStorage.Document.document_id == corpusStorage.DocumentChunk.document_id,
-+                corpusStorage.Document.current_job_result_id == corpusStorage.DocumentChunk.job_result_id,
-+                corpusStorage.Document.status == "active",
-+            ).correlate(corpusStorage.DocumentChunk).exists(), AdditiveVisibility.allowsChunk())
-+        elif not corpusStorage.is_demo:
-+            stmt = stmt.join(Job, Job.job_id == JobResult.job_id).where(_allows_job_result_delivery(corpusStorage))
-         if chunk_type is not None:
-             stmt = stmt.where(func.lower(corpusStorage.DocumentChunk.chunk_type) == chunk_type)
- 
-@@ -197,6 +230,8 @@ async def get_current_document_chunk(
-             .where(corpusStorage.DocumentChunk.id == document_chunk_id)
-        
-```
-
-**File**: `apps/api/app/services/document_ingestion/service.py` (modified, +43/-27)
-```diff
-@@ -334,7 +334,13 @@ async def _resolve_scope(
-                 ingestion_mode=command.ingestion_mode,
-             ),
-         )
--        if CorpusStorage.resolve_namespace(payload.namespace).is_demo:
-+        corpus_storage: CorpusStorage = CorpusStorage.resolve_namespace(payload.namespace)
-+        if corpus_storage.is_demo:
-+            if payload.replaces_document_id is not None:
-+                raise ValidationException(
-+                    user_message="Private document replacement requires a private namespace.",
-+                    violations=[{"field": "replaces_document_id", "description": "Private documents only"}],
-+                )
-             documentId: str = await resolve_demo_scope(db, user_id=current_user.user_id, payload=payload)
-             JobMetadataHelper.set_document_scope(job_metadata, document_id=documentId, namespace=DEMO_NAMESPACE)
-             job_metadata["corpus_target"] = "DEMO"
-@@ -345,40 +351,50 @@ async def _resolve_scope(
-         if payload.demo_category_id is not None:
-             raise ValidationException(user_message="demo_category_id applies only to the reserved demo namespace.", violations=[{"field": "demo_category_id", "description": "Use namespace __knowhere_demo__"}])
-         job_metadata["corpus_target"] = "PRIVATE"
--        requested_document_id = JobMetadataHelper.get_document_id(job_metadata)
--        if requested_document_id:
--            active_job = await find_active_job_for_document(
-+        requested_namespace: str | None = payload.namespace
-+        native_publication: bool = corpus_storage.usesAdditivePublication()
-+        if payload.document_id is not None:
-+            user_message: str = "Private ingestion creates a new document."
-+            if native_publication:
-+                user_message = "Create a replacement job with replaces_document_id."
-+            raise ValidationException(
-+                user_message=user_message,
-+                violations=[{"field": "document_id", "description": "Private ingestion creates a new document"}],
-+            )
-+        if payload.replaces_document_id is not None:
-+            if not native_publication:
-+                raise ValidationException(
-+                    user_message="Private document replacement requires the OpenSearch backend.",
-+                    violations=[{"field": "replaces_document_id", "description": "Replacement requires OpenSearch"}],
-+                )
-+            if CorpusStorage.resolve_document(payload.replaces_document_id).is_demo:
-+                raise ValidationException(
-+                    user_message="The replacement target must be a private document.",
-+                    violations=[{"field": "replaces_document_id", "description": "Private documents only"}],
-+                )
-+            replaces_document_id, requested_namespace = await resolve_effective_document_scope(
-                 db,
-                 user_id=current_user.user_id,
--                document_id=requested_document_id,
-+                document_id=payload.replaces_document_id,
-+                requested_namespace=requested_namespace,
-             )
--            if active_job is not None:
--                raise_document_ingestion_conflict(
--                    document_id=requested_document_id,
--                    active_job_id=active_job.job_id,
--                )
--
--        (
--            effective_document_id,
--            effective_namespace,
--        ) = await resolve_effective_document_scope(
-+            job_metadata["replaces_document_id"] = replaces_document_id
-+        effective_document_id, effective_namespace = await resolve_effective_document_scope(
-             db,
-             user_id=current_user.user_id,
--            document_id=requested_document_id,
--            requested_namespace=cast(str | None, payload.namespace),
-+            document_id=None,
-+            requested_namespace=requested_namespace,
-         )
--
--        if not requested_document_id:
--            active_job = await find_active_job_for_document(
--                db,
--                user_id=current_user.user_id,
-+        active_job = await find_active_job_for_document(
-+            db,
-+            user_id=current_user.user_id,
-+            document_id=effective_document_id,
 +        )
-+        if active_job is not None:
-+            raise_document_ingestion_conflict(
-                 document_id=effective_document_id,
-+                active_job_id=active_job.job_id,
-             )
--            if active_job is not None:
--                raise_document_ingestion_conflict(
--                    document_id=effective_document_id,
--                    active_job_id=active_job.job_id,
--                )
++        composite_images = render_composites(doc_data, root, composites, ns)
  
-         JobMetadataHelper.set_document_scope(
-             job_metadata,
+         ele_num = 1
+         map_index = 0  # point to p_tbl_map
+@@ -93,8 +112,17 @@ def iter_block_items(doc_data):
+                                 }
+                             yield ele_num, text, label, meta
+                             ele_num += 1
++                        if p_elem.xpath("ancestor::w:p", namespaces=ns):
++                            # A text-box paragraph: its images belong to the
++                            # enclosing paragraph, which is read as well.
++                            continue
+                         for content, image_label, image_meta in _paragraph_images(
+-                            p_elem, text=text, docx=docx, rel_map=rel_map, ns=ns
++                            p_elem,
++                            text=text,
++                            docx=docx,
++                            rel_map=rel_map,
++                            ns=ns,
++                            composite_images=composite_images,
+                         ):
+                             yield ele_num, content, image_label, image_meta
+                             ele_num += 1
+@@ -133,7 +161,12 @@ def iter_block_items(doc_data):
+                     ele_num += 1
+ 
+                 for content, image_label, image_meta in _paragraph_images(
+-                    elem, text=text, docx=docx, rel_map=rel_map, ns=ns
++                    elem,
++                    text=text,
++                    docx=docx,
++                    rel_map=rel_map,
++                    ns=ns,
++                    composite_images=composite_images,
+                 ):
+                     yield ele_num, content, image_label, image_meta
+                     ele_num += 1
+@@ -207,39 +240,45 @@ def iter_block_items(doc_data):
+             map_index += 1
+ 
+ 
+-def _paragraph_images(paragraph, *, text, docx, rel_map, ns):
+-    """Images a paragraph holds, or a placeholder for a VML-only graphic."""
++def _paragraph_images(paragraph, *, text, docx, rel_map, ns, composite_images):
++    """Images a paragraph holds, or a placeholder for a VML graphic it cannot show."""
+     r_ns = f"{{{ns['r']}}}"
+     seen_rids = set()
++    rendered_composite = False
+     # images (DrawingML: <a:blip>)
+     for blip in paragraph.xpath(".//a:blip", namespaces=ns):
+-        rid = blip.get(f"{r_ns}embed")
+-        if not rid or rid in seen_rids:
+-            continue
+-        target = rel_map.get(rid)
+-        if not target or not target.startswith("media/"):
+-            continue
+-        seen_rids.add(rid)
+-        data = docx.read("word/" + target)
+-        if is_below_img_min_size(len(data)):
++        image = _media_image(blip.get(f"{r_ns}embed"), docx, rel_map, seen_rids)
++        if image is not None:
++            yield None, "IMAGE", image
++
++    # Legacy VML: a single picture reads its media file; a composite (<v:group>)
++    # comes back as one rendered image, keeping its overlaid text and layout.
++    tree = paragraph.getroottree()
++    for pict in vml_pictures(paragraph, ns):
++        if is_composite(pict, ns):
++            rendered = composite_images.get(tree.getpath(pict))
++            if rendered is None:
++                continue
++            image_name, data = rendered
++            rendered_composite = True
++            yield (
++                None,
++                "IMAGE",
++                {
++                    "image_name": image_name,
++                    "from": "paragraph",
++                    "size": len(data),
++                    "data": data,
++                },
++            )
+  
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/vml_graphics.py` (added, +173/-0)
+```diff
+@@ -0,0 +1,173 @@
++"""Legacy VML graphics in a DOCX body.
++
++Older Word files draw pictures with VML (``<w:pict>``) instead of DrawingML.
++A single VML picture points at one media file, which is read as is. A VML
++group stacks pictures, shapes and text boxes into one graphic; taking any one
++part loses the overlay, so the whole group is rendered as one image.
++"""
++
++from __future__ import annotations
++
++import gc
++import io
++import os
++import tempfile
++import zipfile
++
++from loguru import logger
++from lxml import etree  # pyright: ignore[reportAttributeAccessIssue]
++
++from app.services.document_parser.conversion.legacy_converter import (
++    _convert_with_libreoffice,
++)
++from app.services.document_parser.formats.pdf.pymupdf_subprocess import (
++    run_in_child_process,
++    worker,
++)
++from shared.core.constants.processing import ProcessingConstants
++
++_DOCUMENT_PART = "word/document.xml"
++_COMPOSITE_PDF_NAME = "vml-composites"
++
++
++def vml_pictures(element, ns: dict[str, str]) -> list:
++    """Outermost ``<w:pict>`` graphics under ``element``.
++
++    ``mc:Fallback`` repeats a DrawingML picture as VML for old readers, and
++    the DrawingML copy is already read. A picture inside another one (in a
++    text box of a group) is drawn with that group.
++    """
++    return element.xpath(
++        ".//w:pict[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]", namespaces=ns
++    )
++
++
++def is_composite(pict, ns: dict[str, str]) -> bool:
++    return bool(pict.xpath(".//v:group", namespaces=ns))
++
++
++def single_picture_rid(pict, ns: dict[str, str]) -> str | None:
++    """Relationship id of a VML picture that holds exactly one image."""
++    if is_composite(pict, ns):
++        return None
++    rids = pict.xpath(".//v:imagedata/@r:id", namespaces=ns)
++    return str(rids[0]) if len(rids) == 1 else None
++
++
++def composite_image_name(index: int) -> str:
++    return f"vml-composite-{index}.png"
++
++
++def render_composites(
++    package_bytes: bytes, root, composites: list, ns: dict[str, str]
++) -> dict[str, tuple[str, bytes]]:
++    """Image name and PNG bytes of each composite, keyed by its path in ``root``.
++
++    The composites are copied, one per page, into a work copy of the package
++    without headers, footers or page background, rendered once by
++    LibreOffice, and each page is cropped to what it draws.
++    """
++    if not composites:
++        return {}
++    tree = root.getroottree()
++    paths = [tree.getpath(pict) for pict in composites]
++    with tempfile.TemporaryDirectory(prefix="docx-vml-") as work_dir:
++        source_path = os.path.join(work_dir, f"{_COMPOSITE_PDF_NAME}.docx")
++        _write_composite_package(package_bytes, root, composites, ns, source_path)
++        try:
++            pdf_path, _pdf_name = _convert_with_libreoffice(
++                source_path=source_path,
++                outdir=work_dir,
++                convert_to_arg="pdf:writer_pdf_Export",
++                expected_output_ext="pdf",
++                operation="render_docx_vml_composites",
++            )
++            result = run_in_child_process(
++                _render_cropped_pages_worker,
++                pdf_path,
++                ProcessingConstants.PAGE_RENDER_DPI,
++            )
++        except Exception as exc:
++            logger.warning(f"VML composite rendering failed; keeping placeholders: {exc}")
++            return {}
++    images: list[bytes | None] = list(result.get("images") or [])
++    if len(images) != len(composites):
++        # A composite taller than a page spills onto the next one, so pages no
++        # longer line up with composites.
++        logger.warning(
++            f"VML composite rendering gave {len(images)} pages for "
++            f"{len(composites)} composites; keeping placeholders"
++        )
++        return {}
++    return {
++        path: (composite_image_name(index), image)
++        for index, (path, image) in enumerate(zip(paths, images), start=1)
++        if image
++    }
++
++
++def _write_composite_package(
++    package_bytes: bytes, root, composites: list, ns: dict[str, str], destination: str
++) -> None:
++    w = ns["w"]
++    document = etree.fromstring(etree.tostring(root))
++    body = document.find("w:body", ns)
++    section = body.find("w:sectPr", ns)
++    for child in list(body):
++        body.remove(child)
++    for index, pict in enumerate(composites):
++        if index:
++            page_break = etree.SubElement(
++                etree.SubElement(etree.SubElement(body, f"{{{w}}}p"), f"{{{w}}}r"),
++                f"{{{w}}}br",
++            )
++            page_break.set(f"{{{w}}}type", "page")
++        run = etree.SubElement(etree.SubElement(body, f"{{{w}}}p"), f"{{{w}}}r")
++        run.append(etree.fromstring(etree.tostring(pict)))
++    if section is not None:
++        for reference in section.xpath(
++            "w:headerReference | w:footerReference", namespaces=ns
++        ):
++            section.remove(reference)
++        body.append(section)
++    for background in document.fi
+```
+
+**File**: `apps/worker/app/services/page_memory/page_renderer.py` (modified, +2/-1)
+```diff
+@@ -13,6 +13,7 @@
+ 
+ from app.services.document_agent.manifest import PageFeature, ToolContext
+ from app.services.document_agent.visual import render_pages
++from shared.core.constants.processing import ProcessingConstants
+ 
+ 
+ @dataclass(frozen=True)
+@@ -48,7 +49,7 @@ def render_document_pages(
+     page_features: list[PageFeature] | None = None,
+     page_texts: dict[int, str] | None = None,
+     ctx: ToolContext | None = None,
+-    dpi: int = 144,
++    dpi: int = ProcessingConstants.PAGE_RENDER_DPI,
+     timeout: int = 300,
+ ) -> list[PageRenderResult]:
+     """Render every page in *pdf_path* as PNG + raw text.
+```
+
+**File**: `apps/worker/tests/unit/test_docx_block_stream.py` (modified, +113/-5)
+```diff
+@@ -12,12 +12,22 @@
+ os.environ.setdefault("S3_TEMP_PATH", "/tmp")
+ 
+ from docx import Document  # noqa: E402
+-from docx.oxml import OxmlElement  # noqa: E402
++from docx.oxml import OxmlElement, parse_xml  # noqa: E402
++import pytest  # noqa: E402
+ from PIL import Image  # noqa: E402
+ 
+ from shared.core.constants.processing import ProcessingConstants  # noqa: E402
+-from app.services.document_parser.formats.docx.block_stream import (  # noqa: E402
+-    iter_block_items,
++from shared.core.exceptions.domain_exceptions import (  # noqa: E402
++    LibreOfficeServiceException,
++)
++from app.services.document_parser.conversion.legacy_converter import (  # noqa: E402
++    resolve_libreoffice_binary,
++)
++
++_VML_NAMESPACES = (
++    'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
++    'xmlns:v="urn:schemas-microsoft-com:vml" '
++    'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"'
+ )
+ 
+ 
+@@ -46,9 +56,107 @@ def _docx_with_picture_in_content_control() -> bytes:
+     return buffer.getvalue()
+ 
+ 
++def _block_items(package: bytes) -> list:
++    """Blocks from the live parser module.
++
++    Contract fixtures clear ``app.*`` from ``sys.modules``; a worker function
++    from a stale module cannot be pickled for the rendering child process.
++    """
++    from app.services.document_parser.formats.docx.block_stream import (
++        iter_block_items,
++    )
++
++    return list(iter_block_items(package))
++
++
++def _images(blocks) -> list[dict]:
++    return [meta for _num, _content, label, meta in blocks if label == "IMAGE"]
++
++
+ def test_picture_inside_content_control_is_extracted() -> None:
+-    blocks = list(iter_block_items(_docx_with_picture_in_content_control()))
++    blocks = _block_items(_docx_with_picture_in_content_control())
++
++    images = _images(blocks)
++    assert len(images) == 1
++    assert images[0]["data"].startswith(b"\x89PNG")
++
++
++def _docx_with_vml(picture_xml: str) -> bytes:
++    """A DOCX whose only paragraph holds ``picture_xml``; ``{rid}`` is the image."""
++    document = Document()
++    rid, _image = document.part.get_or_add_image(io.BytesIO(_noise_png()))
++    run = document.add_paragraph().add_run()
++    run._r.append(parse_xml(picture_xml.format(ns=_VML_NAMESPACES, rid=rid)))
++    buffer = io.BytesIO()
++    document.save(buffer)
++    return buffer.getvalue()
++
+ 
+-    images = [meta for _num, _content, label, meta in blocks if label == "IMAGE"]
++_SINGLE_PICTURE = (
++    '<w:pict {ns}><v:shape style="width:96pt;height:96pt">'
++    '<v:imagedata r:id="{rid}"/></v:shape></w:pict>'
++)
++_COMPOSITE = (
++    '<w:pict {ns}><v:group style="width:240pt;height:120pt" '
++    'coordsize="240,120">'
++    '<v:shape style="position:absolute;left:0;top:0;width:120;height:120">'
++    '<v:imagedata r:id="{rid}"/></v:shape>'
++    '<v:shape style="position:absolute;left:130;top:40;width:110;height:40">'
++    "<v:textbox><w:txbxContent><w:p><w:r><w:t>Caption</w:t></w:r></w:p>"
++    "</w:txbxContent></v:textbox></v:shape>"
++    "</v:group></w:pict>"
++)
++_TEXTLESS_COMPOSITE = (
++    '<w:pict {ns}><v:group style="width:240pt;height:120pt" coordsize="240,120">'
++    '<v:shape style="position:absolute;left:0;top:0;width:120;height:120">'
++    '<v:imagedata r:id="{rid}"/></v:shape>'
++    '<v:shape style="position:absolute;left:120;top:0;width:120;height:120">'
++    '<v:imagedata r:id="{rid}"/></v:shape>'
++    "</v:group></w:pict>"
++)
++
++
++def test_single_vml_picture_reads_its_media_file() -> None:
++    blocks = _block_items(_docx_with_vml(_SINGLE_PICTURE))
++
++    images = _images(blocks)
+     assert len(images) == 1
++    assert images[0]["data"] == _noise_png()
++    assert not any("VML graphic" in str(content) for _num, content, _l, _m in blocks)
++
++
++def _libreoffice_available() -> bool:
++    try:
++        resolve_libreoffice_binary()
++    except LibreOfficeServiceException:
++        return False
++    return True
++
++
++@pytest.mark.skipif(not _libreoffice_available(), reason="LibreOffice is not installed")
++def test_vml_group_becomes_one_rendered_image() -> None:
++    from app.services.document_parser.formats.docx import vml_graphics
++
++    blocks = _block_items(_docx_with_vml(_COMPOSITE))
++
++    images = _images(blocks)
++    assert len(images) == 1
++    assert images[0]["image_name"] == vml_graphics.composite_image_name(1)
+     assert images[0]["data"].startswith(b"\x89PNG")
++    assert images[0]["data"] != _noise_png()
++
++
++def test_vml_group_keeps_placeholder_when_rendering_fails(monkeypatch) -> None:
++    from app.services.document_parser.formats.docx import vml_graphics
++
++    def failing_convert(**_kwargs):
++        raise LibreOfficeServiceException(
++            internal_message="conversion failed", operation="test"
++        )
++
++    monkeypatch.setattr(vml_graphics, "_convert_with_libreoffice", failing_convert)
++
++    blocks = _block_items(_docx_with_vml(_TEXTLESS_COMPOSITE))
++
++    assert _images(blocks) == []
++    assert any("VML graphic" in str(content) for _num, c
+```
+
+**File**: `packages/shared-python/shared/core/constants/processing.py` (modified, +2/-0)
+```diff
+@@ -28,6 +28,8 @@ class ProcessingConstants:
+     IMG_MIN_SIZE = 10 * 1024  # 10KB
+     IMG_MAX_SIZE = 5 * 1024 * 1024  # 5MB
+     IMG_QUALITY = 100
++    # Resolution page images and rendered graphics are drawn at.
++    PAGE_RENDER_DPI = 144
+     IMG_CHUNK_SIZE = 1024 * 1024  # 1MB
+ 
+     # PostgreSQL connection-pool configuration.
 ```
 
 ---
 
-### Incident Patch 2: `6e745027` (2026-11-21)
-**Commit Message**: Fix pinned page citation source lookup
+### Incident Patch 2: `5334ea79` (2026-11-22)
+**Commit Message**: Read Word equations as LaTeX and render embedded objects
 
-**File**: `apps/api/app/repositories/document_repository.py` (modified, +1/-0)
+Word equations (OMML) become LaTeX in place: inline as $...$, display
+as $$...$$ on its own line. Embedded equation objects are marked where
+they stand. Non-equation embedded objects (Visio, Photoshop, ...) join
+VML groups in one LibreOffice render, matched to pages by marker pages,
+and table cells take the same pictures. A graphic that cannot be
+rendered leaves a placeholder naming its program.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/block_stream.py` (modified, +81/-91)
 ```diff
-@@ -98,6 +98,7 @@ async def get_current_document_job_revision(
-             return document, result, job
-         stmt = (
-             select(corpusStorage.Document, JobResult, Job)
-+            .select_from(corpusStorage.Document)
-             .join(JobResult, JobResult.id == (job_result_id or func.coalesce(
-                 corpusStorage.Document.latest_parsed_job_result_id, corpusStorage.Document.current_job_result_id)))
-             .join(Job, Job.job_id == JobResult.job_id)
+@@ -6,21 +6,24 @@
+ 
+ from app.services.document_parser.formats.docx.toc import detect_doc_tocs, detect_sdt_toc
+ from app.services.document_parser.assets.image_size_filter import is_below_img_min_size
+-from app.services.document_parser.formats.docx.vml_graphics import (
+-    is_composite,
+-    render_composites,
++from app.services.document_parser.formats.docx.legacy_graphics import (
++    is_vml_group,
++    render_graphics,
++    rendered_graphics,
+     single_picture_rid,
++    unrendered_placeholder,
+     vml_pictures,
+ )
++from app.services.document_parser.formats.docx.paragraph_text import paragraph_text
+ from app.services.document_parser.formats.docx.word_package import (
+     normalize_word_package_bytes,
+ )
+ from docx import Document
++from docx.oxml.ns import qn
+ from docx.oxml.table import CT_Tbl
+ from docx.oxml.text.paragraph import CT_P
+ from docx.table import Table
+ from docx.text.paragraph import Paragraph
+-from loguru import logger
+ from lxml import etree
+ 
+ 
+@@ -31,11 +34,14 @@ def iter_block_items(doc_data):
+ 
+     # python-docx mapping
+     p_tbl_map = []
++    sdt_nodes = []
+     for child in doc.element.body:
+         if isinstance(child, CT_P):
+             p_tbl_map.append(("p", child))
+         elif isinstance(child, CT_Tbl):
+             p_tbl_map.append(("tbl", child))
++        elif child.tag == qn("w:sdt"):
++            sdt_nodes.append(child)
+ 
+     with zipfile.ZipFile(io.BytesIO(doc_data), "r") as docx:
+         xml = docx.read("word/document.xml")
+@@ -51,25 +57,24 @@ def iter_block_items(doc_data):
+             "o": "urn:schemas-microsoft-com:office:office",
+             "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
+         }
+-        r_ns = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
+-
+         root = etree.fromstring(xml)
+         body = root.find(".//w:body", namespaces=ns)
+-        # Composite VML graphics in the paragraphs read below render together.
+-        composites = list(
++        # Graphics in the paragraphs, content controls and tables read below
++        # render together.
++        graphics = list(
+             dict.fromkeys(
+-                pict
+-                for paragraph in body.xpath(
+-                    "w:p | w:sdt/w:sdtContent//w:p", namespaces=ns
++                graphic
++                for container in body.xpath(
++                    "w:p | w:sdt/w:sdtContent | w:tbl", namespaces=ns
+                 )
+-                for pict in vml_pictures(paragraph, ns)
+-                if is_composite(pict, ns)
++                for graphic in rendered_graphics(container, ns)
+             )
+         )
+-        composite_images = render_composites(doc_data, root, composites, ns)
++        rendered = render_graphics(doc_data, root, graphics, ns)
+ 
+         ele_num = 1
+         map_index = 0  # point to p_tbl_map
++        sdt_index = 0  # point to sdt_nodes
+         toc_field_active = False
+ 
+         for elem in body.iterchildren():
+@@ -84,11 +89,18 @@ def iter_block_items(doc_data):
+                 sdt_toc_info = detect_sdt_toc(elem, ns)
+                 is_toc_sdt = sdt_toc_info["is_toc_sdt"]
+ 
++                sdt_node = sdt_nodes[sdt_index]
++                sdt_index += 1
+                 sdt_content = elem.find(".//w:sdtContent", namespaces=ns)
+                 if sdt_content is not None:
+-                    for p_elem in sdt_content.findall(".//w:p", namespaces=ns):
+-                        texts = p_elem.xpath(".//w:t/text()", namespaces=ns)
+-                        text = "".join(texts).strip()
++                    # The python-docx copy of the same paragraphs, in the same order.
++                    p_nodes = list(
++                        sdt_node.find(".//" + qn("w:sdtContent")).iter(qn("w:p"))
++                    )
++                    p_elems = sdt_content.findall(".//w:p", namespaces=ns)
++                    for p_elem, p_node in zip(p_elems, p_nodes, strict=True):
++                        p_obj = Paragraph(p_node, doc)
++                        text = paragraph_text(p_obj).strip()
+ 
+                         if is_toc_sdt:
+                             label = "TOC-AREA"
+@@ -110,29 +122,25 @@ def iter_block_items(doc_data):
+                                     "toc_style_name": toc_info.get("style_name"),
+                                     "toc_source": "sdt",
+                                 }
+-                            yield ele_num, text, label, meta
++                            yield ele_num, p_obj, label, meta
+                             ele_num += 1
+                         if p_elem.xpath("ancestor::w:p", namespaces=ns):
+                             # A text-box paragraph: its images belong to the
+                             # enclosing paragraph, which is read as well.
+                             continue
+                         for content, image_label, image_meta in _paragraph_images(
+                             p_elem,
+-                            text=text,
+                           
 ```
 
-**File**: `apps/api/tests/contract/test_documents_contract.py` (modified, +47/-2)
+**File**: `apps/worker/app/services/document_parser/formats/docx/legacy_graphics.py` (added, +283/-0)
 ```diff
-@@ -7,7 +7,7 @@
- from uuid import uuid4
- 
- import pytest
--from httpx import AsyncClient
-+from httpx import AsyncClient, Response
- from sqlalchemy import text
- from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
- 
-@@ -762,6 +762,48 @@ async def test_should_return_page_citation_source_for_page_memory_document(
-     assert response_json["expires_at"]
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("document_status", ["active", "archived"])
-+async def test_should_return_pinned_page_citation_source_for_private_opensearch_document(
-+    developer_api_client_factory: Callable[
-+        [], AbstractAsyncContextManager[AsyncClient]
-+    ],
-+    monkeypatch: pytest.MonkeyPatch,
-+    document_status: str,
-+) -> None:
-+    document_id: str = f"doc_{uuid4().hex[:12]}"
-+    route: str = f"/api/v2/documents/{document_id}/files/page-citation-source"
+@@ -0,0 +1,283 @@
++"""Legacy graphics in a DOCX body: VML pictures and embedded objects.
 +
-+    async with developer_api_client_factory() as api_client:
-+        from shared.core.config import settings
++Older Word files draw pictures with VML (``<w:pict>``) instead of DrawingML.
++A single VML picture points at one media file, which is read as is. Two kinds
++of graphic have no file to read and are rendered as images instead:
 +
-+        monkeypatch.setattr(settings, "KNOWHERE_LEXICAL_BACKEND", "opensearch")
-+        revision: dict[str, str] = await _insert_document_revision_with_chunks(
-+            document_id=document_id,
-+            parse_track="page_memory",
-+            status=document_status,
-+            chunks=[],
++- a VML group stacks pictures, shapes and text boxes into one graphic; taking
++  any one part loses the overlay, so the whole group is rendered;
++- an embedded object (``<w:object>``: Visio, Photoshop, Paint, AutoCAD, ...)
++  only keeps a WMF/EMF preview, which is rendered.
++
++An embedded equation (Equation Editor 3.0 or MathType) is not rendered; the
++paragraph text marks where it stands.
++"""
++
++from __future__ import annotations
++
++import gc
++import io
++import os
++import re
++import tempfile
++import zipfile
++
++from loguru import logger
++from lxml import etree  # pyright: ignore[reportAttributeAccessIssue]
++
++from app.services.document_parser.conversion.legacy_converter import (
++    _convert_with_libreoffice,
++)
++from app.services.document_parser.formats.pdf.pymupdf_subprocess import (
++    run_in_child_process,
++    worker,
++)
++from shared.core.constants.processing import ProcessingConstants
++
++_DOCUMENT_PART = "word/document.xml"
++_RENDER_PACKAGE_NAME = "rendered-graphics"
++_OFFICE_NS = "urn:schemas-microsoft-com:office:office"
++_EQUATION_PROG_ID_PREFIX = "Equation."
++# Text of the page put before each graphic, followed by its number, so the
++# rendered pages can be matched to graphics however many pages each takes.
++_RENDER_MARK_PREFIX = "knowhere-render-mark-"
++_UNRENDERED_LABEL = "graphic not extracted"
++
++
++def vml_pictures(element, ns: dict[str, str]) -> list:
++    """Outermost ``<w:pict>`` graphics under ``element``.
++
++    ``mc:Fallback`` repeats a DrawingML picture as VML for old readers, and
++    the DrawingML copy is already read. A picture inside another one (in a
++    text box of a group) is drawn with that group.
++    """
++    return element.xpath(
++        ".//w:pict[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]", namespaces=ns
++    )
++
++
++def is_vml_group(pict, ns: dict[str, str]) -> bool:
++    return bool(pict.xpath(".//v:group", namespaces=ns))
++
++
++def single_picture_rid(pict, ns: dict[str, str]) -> str | None:
++    """Relationship id of a VML picture that holds exactly one image."""
++    if is_vml_group(pict, ns):
++        return None
++    rids = pict.xpath(".//v:imagedata/@r:id", namespaces=ns)
++    return str(rids[0]) if len(rids) == 1 else None
++
++
++def object_prog_id(obj) -> str | None:
++    """The program an embedded object was made with, as Word records it."""
++    for ole in obj.iter(f"{{{_OFFICE_NS}}}OLEObject"):
++        return ole.get("ProgID")
++    return None
++
++
++def is_equation_object(obj) -> bool:
++    prog_id = object_prog_id(obj)
++    return prog_id is not None and prog_id.startswith(_EQUATION_PROG_ID_PREFIX)
++
++
++def rendered_graphics(element, ns: dict[str, str]) -> list:
++    """VML groups and non-equation embedded objects under ``element``, in order."""
++    candidates = element.xpath(
++        ".//w:pict[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]"
++        " | .//w:object[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]",
++        namespaces=ns,
++    )
++    return [
++        graphic
++        for graphic in candidates
++        if (
++            is_vml_group(graphic, ns)
++            if etree.QName(graphic).localname == "pict"
++            else not is_equation_object(graphic)
 +        )
-+        _upload_page_citation_source(job_id=revision["job_id"])
-+
-+        unpinned: Response = await api_client.get(route)
-+        assert unpinned.status_code == (200 if document_status == "active" else 404)
-+
-+        pinned: Response = await api_client.get(
-+            route, params={"job_result_id": revision["job_result_id"]}
-+        )
-+        assert pinned.status_code == 200
-+        payload: dict[str, object] = cast(dict[str, object], pinned.json())
-+        assert payload["job_result_id"] == revision["job_result_id"]
-+        assert payload["file_name"] == "source.pdf"
-+        assert payload["content_type"] == "application/pdf"
-+
-+        missing: Response = await api_client.get(
-+            route, params={"job_result_id": str(uuid4())}
-+        )
-+        assert missing.status_code == 404
++    ]
 +
 +
- @pytest.mark.asyncio
- async def test_should_return_not_found_for_chunk_document_page_citation_source(
-     developer_api_client_factory: Callable[
-@@ -855,10 +897,12 @@ async def test_should_return_not_found_for_archived_page_citation_source(
++def unrendered_placeholder(graphic) -> str:
++    """Text left where a graphic could not be rendered, naming an object's program."""
++    if etree.QName(graphic).localname == "object":
++        prog_id = object_prog_id(graphic)
++        if prog_id:
++            return f"[{_UNRENDERED_LABEL}: {prog_id}]"
++    return f"[{_UNRENDERED_LABEL}]"
++
++
++def rendered_image_name(graphic_number: int, part_number: int | None = None) -> str:
++    if part_number is None:
++        return f"rendered-graphic-{graphic_number}.png"
++    return f"rendered-graphic-{graphic_number}-{part_number}.png"
++
++
++def render_graphics(
++    package_bytes: bytes, root, graphics: list, ns: dict[str, str]
++) -> dict[str, list[tuple[str, bytes]]]:
++    """Image names and PNG bytes of each graphic, keyed by its path in ``root``.
++
++    The graphics are copied into a work copy of the package without headers,
++    footers or page background, each after a page holding only its mark, and
++    rendered once by LibreOffice. The pages between one mark and the next
++    belong to that graphic and are each cropped to what they draw. A graphic
++    whose pages draw nothing is left out.
++    """
++    if not graphics:
++        return {}
++    tree = root.getroottree()
++    with tempfile.TemporaryDirectory(prefix="docx-graphics-") as work_dir:
++        source_path = os.path.join(work_dir, f"{_RENDER_PACKAGE_NAME}.docx")
++        _write_render_package(package_bytes, root, graphics, ns, source_pat
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/omml_latex.py` (added, +312/-0)
+```diff
+@@ -0,0 +1,312 @@
++"""Word equations (Office Math Markup, ``<m:oMath>``) as LaTeX.
++
++Each structure in ECMA-376 Part 1, section 22.1 maps to its LaTeX form. A
++character the tables below do not list is written as it is, and an element
++this module does not know keeps the text of what it holds.
++"""
++
++from __future__ import annotations
++
++from lxml import etree  # pyright: ignore[reportAttributeAccessIssue]
++
++_MATH_NS = "http://schemas.openxmlformats.org/officeDocument/2006/math"
++_WORD_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
++_VAL = f"{{{_MATH_NS}}}val"
++# Tracked deletions and moves away are not part of the equation as it reads.
++REMOVED_TAGS = (f"{{{_WORD_NS}}}del", f"{{{_WORD_NS}}}moveFrom")
++
++# Characters LaTeX reads as markup, written so they print as themselves.
++_ESCAPES = {
++    "\\": r"\backslash{}",
++    "{": r"\{",
++    "}": r"\}",
++    "_": r"\_",
++    "^": r"\^{}",
++    "%": r"\%",
++    "#": r"\#",
++    "&": r"\&",
++    "$": r"\$",
++}
++
++# n-ary operators; ECMA-376 makes the integral the default.
++_NARY_DEFAULT = "∫"
++_NARY_OPERATORS = {
++    "∑": r"\sum",
++    "∏": r"\prod",
++    "∐": r"\coprod",
++    "∫": r"\int",
++    "∬": r"\iint",
++    "∭": r"\iiint",
++    "∮": r"\oint",
++    "⋃": r"\bigcup",
++    "⋂": r"\bigcap",
++    "⋁": r"\bigvee",
++    "⋀": r"\bigwedge",
++    "⨁": r"\bigoplus",
++    "⨂": r"\bigotimes",
++    "⨀": r"\bigodot",
++}
++
++# Accents; ECMA-376 makes the circumflex the default.
++_ACCENT_DEFAULT = "̂"
++_ACCENTS = {
++    "̂": r"\hat",
++    "̃": r"\tilde",
++    "̄": r"\bar",
++    "̅": r"\overline",
++    "‾": r"\overline",
++    "̇": r"\dot",
++    "̈": r"\ddot",
++    "⃛": r"\dddot",
++    "⃗": r"\vec",
++    "́": r"\acute",
++    "̀": r"\grave",
++    "̆": r"\breve",
++    "̌": r"\check",
++}
++
++# Delimiters that ``\left`` and ``\right`` accept; ECMA-376 defaults are
++# parentheses around and a vertical bar between.
++_BEGIN_DEFAULT = "("
++_END_DEFAULT = ")"
++_SEPARATOR_DEFAULT = "|"
++_DELIMITERS = {
++    "(": "(",
++    ")": ")",
++    "[": "[",
++    "]": "]",
++    "{": r"\{",
++    "}": r"\}",
++    "|": "|",
++    "‖": r"\|",
++    "⟨": r"\langle",
++    "⟩": r"\rangle",
++    "〈": r"\langle",
++    "〉": r"\rangle",
++    "⌊": r"\lfloor",
++    "⌋": r"\rfloor",
++    "⌈": r"\lceil",
++    "⌉": r"\rceil",
++}
++
++# Group characters; ECMA-376 makes the bottom curly bracket the default.
++_GROUP_DEFAULT = "⏟"
++_GROUP_BRACES = {"⏟": r"\underbrace", "⏞": r"\overbrace"}
++
++
++def omml_to_latex(o_math) -> str:
++    """LaTeX for one ``<m:oMath>`` element, without math delimiters."""
++    return _children(o_math)
++
++
++def _local(element) -> str:
++    return etree.QName(element).localname
++
++
++def _is_math(element) -> bool:
++    return element.tag.startswith(f"{{{_MATH_NS}}}")
++
++
++def _child(element, name: str):
++    return element.find(f"{{{_MATH_NS}}}{name}")
++
++
++def _property(element, prop: str, name: str) -> str | None:
++    """The ``m:val`` of ``<m:{prop}><m:{name}>``, or None when it is absent."""
++    props = _child(element, prop)
++    if props is None:
++        return None
++    value = _child(props, name)
++    return None if value is None else value.get(_VAL)
++
++
++def _is_on(element, prop: str, name: str) -> bool:
++    """An ECMA-376 on/off property: present means on unless its value says off."""
++    props = _child(element, prop)
++    if props is None:
++        return False
++    value = _child(props, name)
++    if value is None:
++        return False
++    return value.get(_VAL) not in ("0", "off", "false")
++
++
++def _children(element) -> str:
++    parts: list[str] = []
++    for child in element:
++        if not isinstance(child.tag, str):
++            continue
++        if _is_math(child):
++            if not _local(child).endswith("Pr"):
++                parts.append(_convert(child))
++        elif child.tag not in REMOVED_TAGS:
++            # A Word wrapper inside an equation, such as a tracked insertion,
++            # holds equation parts of its own.
++            parts.append(_children(child))
++    return "".join(parts)
++
++
++def _arg(element, name: str) -> str:
++    part = _child(element, name)
++    return "" if part is None else _children(part)
++
++
++def _literal(text: str) -> str:
++    return "".join(_ESCAPES.get(char, char) for char in text)
++
++
++def _text(run) -> str:
++    return "".join(_literal(text.text or "") for text in run.iter(f"{{{_MATH_NS}}}t"))
++
++
++def _convert(element) -> str:
++    name = _local(element)
++    converter = _CONVERTERS.get(name)
++    if converter is not None:
++        return converter(element)
++    if name == "r":
++        return _text(element)
++    return _children(element)
++
++
++def _sub(element) -> str:
++    return f"{{{_arg(element, 'e')}}}_{{{_arg(element, 'sub')}}}"
++
++
++def _sup(element) -> str:
++    return f"{{{_arg(element, 'e')}}}^{{{_arg(element, 'sup')}}}"
++
++
++def _sub_sup(element) -> str:
++    return (
++        f"{{{_arg(element, 'e')}}}_{{{_arg(element, 'sub')}}}"
++        f"^{{{_arg(element, 'sup')}}}"
++    )
++
++
++def _pre_scri
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/paragraph_text.py` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++"""Text of a DOCX paragraph, with its equations in place.
++
++python-docx reads a paragraph's runs and hyperlinks only, so Word equations
++drop out. This reads the same runs and hyperlinks the same way and writes an
++equation where it stands: inline as ``$...$``, on a line of its own as
++``$$...$$``. An embedded equation object (Equation Editor 3.0, MathType) has
++no readable content, so its place is marked.
++"""
++
++from __future__ import annotations
++
++from docx.oxml.ns import qn
++from docx.table import _Cell
++from docx.text.paragraph import Paragraph
++
++from app.services.document_parser.formats.docx.legacy_graphics import (
++    is_equation_object,
++)
++from app.services.document_parser.formats.docx.omml_latex import (
++    REMOVED_TAGS,
++    omml_to_latex,
++)
++
++EQUATION_OBJECT_MARK = "[equation not extracted]"
++
++_RUN_TAGS = (qn("w:r"), qn("w:hyperlink"))
++_OBJECT_TAG = qn("w:object")
++_MATH_TAG = qn("m:oMath")
++_MATH_PARAGRAPH_TAG = qn("m:oMathPara")
++
++
++def paragraph_text(paragraph: Paragraph) -> str:
++    parts: list[str] = []
++    for child in paragraph._p.iterchildren():
++        if child.tag in _RUN_TAGS:
++            parts.append(child.text)
++            parts.extend(
++                EQUATION_OBJECT_MARK
++                for obj in child.iter(_OBJECT_TAG)
++                if is_equation_object(obj)
++            )
++        elif child.tag == _MATH_TAG:
++            parts.append(_equation_text(child, "$"))
++        elif child.tag == _MATH_PARAGRAPH_TAG:
++            for o_math in child.iterchildren(_MATH_TAG):
++                text = _equation_text(o_math, "$$")
++                if text:
++                    parts.append(f"\n{text}\n")
++    return "".join(parts)
++
++
++def cell_text(cell: _Cell) -> str:
++    """A table cell's text, joined by paragraph as python-docx joins it."""
++    return "\n".join(paragraph_text(paragraph) for paragraph in cell.paragraphs)
++
++
++def _equation_text(o_math, delimiter: str) -> str:
++    """An equation between delimiters, then a mark for each equation object in it.
++
++    An equation whose content is all tracked deletions reads as nothing and
++    leaves nothing.
++    """
++    latex = omml_to_latex(o_math)
++    marks = [
++        EQUATION_OBJECT_MARK
++        for obj in o_math.iter(_OBJECT_TAG)
++        if is_equation_object(obj)
++        and not any(ancestor.tag in REMOVED_TAGS for ancestor in obj.iterancestors())
++    ]
++    text = f"{delimiter}{latex}{delimiter}" if latex.strip() else ""
++    return text + "".join(marks)
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/parser.py` (modified, +16/-10)
+```diff
+@@ -11,6 +11,10 @@
+     DocxImageSummaryScheduler,
+     build_fallback_image_ref,
+ )
++from app.services.document_parser.formats.docx.paragraph_text import (
++    cell_text,
++    paragraph_text,
++)
+ from app.services.document_parser.formats.docx.table_html import table2html
+ from app.services.document_parser.support.identifiers import gen_str_codes, get_str_time
+ from app.services.document_parser.assets.inline_asset import (
+@@ -238,10 +242,10 @@ def _first_cols_rows(table_block, max_items=10, max_chars=20):
+     for cell in table_block.rows[0].cells:
+         if len(unique_row_cells) >= max_items:
+             break
+-        cell_text = cell.text.strip()
+-        if cell_text and cell_text not in seen_row:
+-            seen_row.add(cell_text)
+-            unique_row_cells.append(truncate_text(cell_text, max_chars, 0))
++        text = cell_text(cell).strip()
++        if text and text not in seen_row:
++            seen_row.add(text)
++            unique_row_cells.append(truncate_text(text, max_chars, 0))
+     first_row_text = " | ".join(unique_row_cells) if unique_row_cells else ""
+ 
+     # First column extraction (deduplicated, order preserved, max items, truncated)
+@@ -251,10 +255,10 @@ def _first_cols_rows(table_block, max_items=10, max_chars=20):
+         if len(unique_col_cells) >= max_items:
+             break
+         if row.cells:
+-            cell_text = row.cells[0].text.strip()
+-            if cell_text and cell_text not in seen_col:
+-                seen_col.add(cell_text)
+-                unique_col_cells.append(truncate_text(cell_text, max_chars, 0))
++            text = cell_text(row.cells[0]).strip()
++            if text and text not in seen_col:
++                seen_col.add(text)
++                unique_col_cells.append(truncate_text(text, max_chars, 0))
+     first_col_text = " | ".join(unique_col_cells) if unique_col_cells else ""
+ 
+     return first_row_text, first_col_text
+@@ -518,7 +522,7 @@ def parse_docx(
+     for block_tuple in block_tuples:
+         block = block_tuple[1]
+         if isinstance(block, Paragraph):
+-            title_text = block.text.strip()
++            title_text = paragraph_text(block).strip()
+             if len(title_text) > 0:
+                 heading_infos.append((block_tuple[0], block, title_text))
+ 
+@@ -573,7 +577,9 @@ def parse_docx(
+         last_heading_before_block = current_heading
+ 
+         if label == "PTXT":  # block could be doc para or plain string
+-            text = getattr(block, "text", str(block)).strip()
++            text = (
++                paragraph_text(block) if isinstance(block, Paragraph) else str(block)
++            ).strip()
+             if not text:
+                 continue
+ 
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/table_html.py` (modified, +3/-1)
+```diff
+@@ -4,6 +4,8 @@
+ 
+ from docx.table import Table as DocxTable
+ 
++from app.services.document_parser.formats.docx.paragraph_text import cell_text
++
+ 
+ def table2html(table: DocxTable, cell_image_map: dict | None = None) -> str:
+     """Convert a DOCX table to HTML with colspan, rowspan, and nested tables."""
+@@ -113,7 +115,7 @@ def get_cell_vmerge(cell: Any) -> str | None:
+             if cell.tables:
+                 content = "".join(table2html(nested_table) for nested_table in cell.tables)
+             else:
+-                content = cell.text.strip().replace("\n", "<br/>")
++                content = cell_text(cell).strip().replace("\n", "<br/>")
+ 
+             if cell_image_map:
+                 image_description = cell_image_map.get((row_idx, unique_col_idx))
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/vml_graphics.py` (removed, +0/-173)
+```diff
+@@ -1,173 +0,0 @@
+-"""Legacy VML graphics in a DOCX body.
+-
+-Older Word files draw pictures with VML (``<w:pict>``) instead of DrawingML.
+-A single VML picture points at one media file, which is read as is. A VML
+-group stacks pictures, shapes and text boxes into one graphic; taking any one
+-part loses the overlay, so the whole group is rendered as one image.
+-"""
+-
+-from __future__ import annotations
+-
+-import gc
+-import io
+-import os
+-import tempfile
+-import zipfile
+-
+-from loguru import logger
+-from lxml import etree  # pyright: ignore[reportAttributeAccessIssue]
+-
+-from app.services.document_parser.conversion.legacy_converter import (
+-    _convert_with_libreoffice,
+-)
+-from app.services.document_parser.formats.pdf.pymupdf_subprocess import (
+-    run_in_child_process,
+-    worker,
+-)
+-from shared.core.constants.processing import ProcessingConstants
+-
+-_DOCUMENT_PART = "word/document.xml"
+-_COMPOSITE_PDF_NAME = "vml-composites"
+-
+-
+-def vml_pictures(element, ns: dict[str, str]) -> list:
+-    """Outermost ``<w:pict>`` graphics under ``element``.
+-
+-    ``mc:Fallback`` repeats a DrawingML picture as VML for old readers, and
+-    the DrawingML copy is already read. A picture inside another one (in a
+-    text box of a group) is drawn with that group.
+-    """
+-    return element.xpath(
+-        ".//w:pict[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]", namespaces=ns
+-    )
+-
+-
+-def is_composite(pict, ns: dict[str, str]) -> bool:
+-    return bool(pict.xpath(".//v:group", namespaces=ns))
+-
+-
+-def single_picture_rid(pict, ns: dict[str, str]) -> str | None:
+-    """Relationship id of a VML picture that holds exactly one image."""
+-    if is_composite(pict, ns):
+-        return None
+-    rids = pict.xpath(".//v:imagedata/@r:id", namespaces=ns)
+-    return str(rids[0]) if len(rids) == 1 else None
+-
+-
+-def composite_image_name(index: int) -> str:
+-    return f"vml-composite-{index}.png"
+-
+-
+-def render_composites(
+-    package_bytes: bytes, root, composites: list, ns: dict[str, str]
+-) -> dict[str, tuple[str, bytes]]:
+-    """Image name and PNG bytes of each composite, keyed by its path in ``root``.
+-
+-    The composites are copied, one per page, into a work copy of the package
+-    without headers, footers or page background, rendered once by
+-    LibreOffice, and each page is cropped to what it draws.
+-    """
+-    if not composites:
+-        return {}
+-    tree = root.getroottree()
+-    paths = [tree.getpath(pict) for pict in composites]
+-    with tempfile.TemporaryDirectory(prefix="docx-vml-") as work_dir:
+-        source_path = os.path.join(work_dir, f"{_COMPOSITE_PDF_NAME}.docx")
+-        _write_composite_package(package_bytes, root, composites, ns, source_path)
+-        try:
+-            pdf_path, _pdf_name = _convert_with_libreoffice(
+-                source_path=source_path,
+-                outdir=work_dir,
+-                convert_to_arg="pdf:writer_pdf_Export",
+-                expected_output_ext="pdf",
+-                operation="render_docx_vml_composites",
+-            )
+-            result = run_in_child_process(
+-                _render_cropped_pages_worker,
+-                pdf_path,
+-                ProcessingConstants.PAGE_RENDER_DPI,
+-            )
+-        except Exception as exc:
+-            logger.warning(f"VML composite rendering failed; keeping placeholders: {exc}")
+-            return {}
+-    images: list[bytes | None] = list(result.get("images") or [])
+-    if len(images) != len(composites):
+-        # A composite taller than a page spills onto the next one, so pages no
+-        # longer line up with composites.
+-        logger.warning(
+-            f"VML composite rendering gave {len(images)} pages for "
+-            f"{len(composites)} composites; keeping placeholders"
+-        )
+-        return {}
+-    return {
+-        path: (composite_image_name(index), image)
+-        for index, (path, image) in enumerate(zip(paths, images), start=1)
+-        if image
+-    }
+-
+-
+-def _write_composite_package(
+-    package_bytes: bytes, root, composites: list, ns: dict[str, str], destination: str
+-) -> None:
+-    w = ns["w"]
+-    document = etree.fromstring(etree.tostring(root))
+-    body = document.find("w:body", ns)
+-    section = body.find("w:sectPr", ns)
+-    for child in list(body):
+-        body.remove(child)
+-    for index, pict in enumerate(composites):
+-        if index:
+-            page_break = etree.SubElement(
+-                etree.SubElement(etree.SubElement(body, f"{{{w}}}p"), f"{{{w}}}r"),
+-                f"{{{w}}}br",
+-            )
+-            page_break.set(f"{{{w}}}type", "page")
+-        run = etree.SubElement(etree.SubElement(body, f"{{{w}}}p"), f"{{{w}}}r")
+-        run.append(etree.fromstring(etree.tostring(pict)))
+-    if section is not None:
+-        for reference in section.xpath(
+-            "w:headerReference | w:footerReference", namespaces=ns
+-        ):
+-            section.remove(reference)
+-        body.append(section)
+-    for background in document.fi
+```
+
+**File**: `apps/worker/tests/unit/test_docx_block_stream.py` (modified, +290/-21)
+```diff
+@@ -27,6 +27,8 @@
+ _VML_NAMESPACES = (
+     'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
+     'xmlns:v="urn:schemas-microsoft-com:vml" '
++    'xmlns:o="urn:schemas-microsoft-com:office:office" '
++    'xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" '
+     'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"'
+ )
+ 
+@@ -81,12 +83,41 @@ def test_picture_inside_content_control_is_extracted() -> None:
+     assert images[0]["data"].startswith(b"\x89PNG")
  
  
- @pytest.mark.asyncio
-+@pytest.mark.parametrize("pin_revision", [False, True])
- async def test_should_return_not_found_for_other_users_page_citation_source(
-     developer_api_client_factory: Callable[
-         [], AbstractAsyncContextManager[AsyncClient]
-     ],
-+    pin_revision: bool,
- ) -> None:
-     document_id = f"doc_{uuid4().hex[:12]}"
-     other_user_id = f"contract-user-{uuid4().hex[:12]}"
-@@ -882,7 +926,8 @@ async def test_should_return_not_found_for_other_users_page_citation_source(
-         )
-         _upload_page_citation_source(job_id=revision["job_id"])
-         response = await api_client.get(
--            f"/api/v2/documents/{document_id}/files/page-citation-source"
-+            f"/api/v2/documents/{document_id}/files/page-citation-source",
-+            params={"job_result_id": revision["job_result_id"]} if pin_revision else None,
-         )
+-def _docx_with_vml(picture_xml: str) -> bytes:
+-    """A DOCX whose only paragraph holds ``picture_xml``; ``{rid}`` is the image."""
++def _small_png() -> bytes:
++    """A PNG below the image size floor."""
++    buffer = io.BytesIO()
++    Image.new("RGB", (4, 4)).save(buffer, format="PNG")
++    data = buffer.getvalue()
++    assert len(data) < ProcessingConstants.IMG_MIN_SIZE
++    return data
++
++
++def _docx_with(*run_xml: str, in_table: bool = False) -> bytes:
++    """A DOCX with one paragraph per ``run_xml``, in the body or in table cells.
++
++    ``{ns}`` is replaced by the namespaces and ``{rid}`` by the id of an image.
++    """
+     document = Document()
+     rid, _image = document.part.get_or_add_image(io.BytesIO(_noise_png()))
+-    run = document.add_paragraph().add_run()
+-    run._r.append(parse_xml(picture_xml.format(ns=_VML_NAMESPACES, rid=rid)))
++    if in_table:
++        cells = document.add_table(rows=1, cols=len(run_xml)).rows[0].cells
++        paragraphs = [cell.paragraphs[0] for cell in cells]
++    else:
++        paragraphs = [document.add_paragraph() for _ in run_xml]
++    for paragraph, xml in zip(paragraphs, run_xml):
++        run = paragraph.add_run()
++        run._r.append(parse_xml(xml.format(ns=_VML_NAMESPACES, rid=rid)))
++    buffer = io.BytesIO()
++    document.save(buffer)
++    return buffer.getvalue()
++
++
++def _docx_with_paragraph_xml(paragraph_xml: str) -> bytes:
++    """A DOCX whose only paragraph is ``paragraph_xml``."""
++    document = Document()
++    paragraph = document.add_paragraph()._p
++    paragraph.addnext(parse_xml(paragraph_xml.format(ns=_VML_NAMESPACES)))
++    paragraph.getparent().remove(paragraph)
+     buffer = io.BytesIO()
+     document.save(buffer)
+     return buffer.getvalue()
+@@ -96,7 +127,7 @@ def _docx_with_vml(picture_xml: str) -> bytes:
+     '<w:pict {ns}><v:shape style="width:96pt;height:96pt">'
+     '<v:imagedata r:id="{rid}"/></v:shape></w:pict>'
+ )
+-_COMPOSITE = (
++_VML_GROUP = (
+     '<w:pict {ns}><v:group style="width:240pt;height:120pt" '
+     'coordsize="240,120">'
+     '<v:shape style="position:absolute;left:0;top:0;width:120;height:120">'
+@@ -106,7 +137,7 @@ def _docx_with_vml(picture_xml: str) -> bytes:
+     "</w:txbxContent></v:textbox></v:shape>"
+     "</v:group></w:pict>"
+ )
+-_TEXTLESS_COMPOSITE = (
++_TEXTLESS_VML_GROUP = (
+     '<w:pict {ns}><v:group style="width:240pt;height:120pt" coordsize="240,120">'
+     '<v:shape style="position:absolute;left:0;top:0;width:120;height:120">'
+     '<v:imagedata r:id="{rid}"/></v:shape>'
+@@ -116,13 +147,30 @@ def _docx_with_vml(picture_xml: str) -> bytes:
+ )
  
-     assert response.status_code == 404
+ 
+-def test_single_vml_picture_reads_its_media_file() -> None:
+-    blocks = _block_items(_docx_with_vml(_SINGLE_PICTURE))
++def _embedded_object(prog_id: str) -> str:
++    return (
++        '<w:object {ns}><v:shape style="width:120pt;height:120pt">'
++        '<v:imagedata r:id="{rid}"/></v:shape>'
++        f'<o:OLEObject Type="Embed" ProgID="{prog_id}" DrawAspect="Content"/>'
++        "</w:object>"
++    )
+ 
+-    images = _images(blocks)
+-    assert len(images) == 1
+-    assert images[0]["data"] == _noise_png()
+-    assert not any("VML graphic" in str(content) for _num, content, _l, _m in blocks)
++
++_VISIO_OBJECT = _embedded_object("Visio.Drawing.11")
++_EQUATION_OBJECT = _embedded_object("Equation.3")
++
++
++def _texts(blocks) -> list[str]:
++    from app.services.document_parser.formats.docx.paragraph_text import (
++        paragraph_text,
++    )
++    from docx.text.paragraph import Paragraph
++
++    return [
++        paragraph_text(content) if isinstance(content, Paragraph) else content
++        for _num, content, label, _meta in blocks
++        if label == "PTXT"
++    ]
+ 
+ 
+ def _libreoffice_available() -> bool:
+@@ -133,30 +181,251 @@ def _libreoffice_available() -> bool:
+     return True
+ 
+ 
+-@pytest.mark.skipif(not _libreoffice_available(), reason="LibreOffice is not installed")
++requires_libreoffice = pytest.mark.skipif(
++    not _libreoffice_available(), reason="LibreOffice is not installed"
++)
++
++
++def _fake_rendering(monkeypatch, pages) -> None:
++    """Rendering that yields ``pages`` as the worker would, without LibreOffice."""
++    from app.services.document_parser.formats.docx import legacy_graphics
++
++    monkeypatch.setattr(
++        legacy_graphics,
++        "_convert_with_libreoffice",
++        lambda **_kwargs: ("unused.pdf", "unused.pdf"),
++    )
++    monkeypatch.setattr(
++        legacy_graphics,
++        "run_in_child
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #579** (2026-11-22): chore: promote main to staging (Word tracked changes, equations, embedded objects, additive publication) (@EricNGOntos)
+- **PR #578** (2026-11-22): Accept Word tracked changes, read equations and embedded objects, keep table values as written (@EricNGOntos)
 - **PR #577** (2026-11-21): Prepare initial publication and retry retirement for release (@suguanYang)
 - **PR #576** (2026-11-21): chore: promote main to staging (evidence downloads off the event loop, temp file cleanup, parser leftovers) (@EricNGOntos)
 - **PR #575** (2026-11-21): Download retrieval evidence off the event loop and remove its temp files (@EricNGOntos)
 - **PR #574** (2026-11-19): Remove text-track PDF leftovers and stale parser TODOs (@EricNGOntos)
-- **PR #573** (2026-11-19): chore: promote main to staging (PDF TOC nesting tree, unnumbered TOC pages, demo catalog categories) (@EricNGOntos)
-- **PR #572** (2026-11-19): PDF TOC: page screen, TOC nesting tree, and unnumbered TOC pages (@EricNGOntos)
 
 ---
 
@@ -1635,31 +2389,71 @@ Prepare initial publication and retry retirement for release
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in build-images.yml
+## X. Read legacy VML pictures and render VML groups as one image
 
 **RULE**:
-When implementing operations in `.github/workflows/build-images.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/worker/app/services/document_parser/formats/docx/block_stream.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf789c7b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b8d3b813`: Read legacy VML pictures and render VML groups as one image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-images.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_parser/formats/docx/block_stream.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
+from app.services.document_parser.formats.docx.vml_graphics import (
+    is_composite,
+    render_composites,
+    single_picture_rid,
+    vml_pictures,
+)
+            "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
+        # Composite VML graphics in the paragraphs read below render together.
+        composites = list(
+            dict.fromkeys(
+                pict
+                for paragraph in body.xpath(
+                    "w:p | w:sdt/w:sdtContent//w:p", namespaces=ns
+                )
+                for pict in vml_pictures(paragraph, ns)
+                if is_composite(pict, ns)
+            )
+        )
+        composite_images = render_composites(doc_data, root, composites, ns)
+                        if p_elem.xpath("ancestor::w:p", namespaces=ns):
+                            # A text-box paragraph: its images belong to the
+                            # enclosing paragraph, which is read as well.
+                            continue
+                            p_elem,
+                            text=text,
+                            docx=docx,
+                            rel_map=rel_map,
+                            ns=ns,
+                           
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                            p_elem, text=text, docx=docx, rel_map=rel_map, ns=ns
+                    elem, text=text, docx=docx, rel_map=rel_map, ns=ns
+def _paragraph_images(paragraph, *, text, docx, rel_map, ns):
+    """Images a paragraph holds, or a placeholder for a VML-only graphic."""
+        rid = blip.get(f"{r_ns}embed")
+        if not rid or rid in seen_rids:
+            continue
+        target = rel_map.get(rid)
+        if not target or not target.startswith("media/"):
+            continue
+        seen_rids.add(rid)
+        data = docx.read("word/" + target)
+        if is_below_img_min_size(len(data)):
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf789c7b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b8d3b813` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

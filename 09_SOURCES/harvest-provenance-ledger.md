@@ -12297,3 +12297,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-23T04:50:29.188Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-23T04:58:22.002Z |
 | `learn-github-kuberwastaken-claurst` | `https://github.com/Kuberwastaken/claurst` | `62b1b79f` | Multi-dimensional audit evidence | 2026-11-23T04:58:23.659Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-23T05:06:32.444Z |
+| `learn-github-ehpanda-team-ehpanda` | `https://github.com/EhPanda-Team/EhPanda` | `0d2f52d4` | Multi-dimensional audit evidence | 2026-11-23T05:06:39.955Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `198e6e89` | Multi-dimensional audit evidence | 2026-11-23T05:06:41.940Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `90197327` | Multi-dimensional audit evidence | 2026-11-23T05:06:47.909Z |

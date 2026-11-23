@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T00:17:47.669Z",
+  "timestamp": "2026-11-23T05:06:52.024Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ehpanda-team-ehpanda-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ehpanda-team-ehpanda-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T00:17:47.669Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T05:06:52.024Z`  
 > **Learning ID**: `LEARN-EVO-ehpanda-team-ehpanda-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 70%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ehpanda-team-ehpanda-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md`  
 > **Source**: github ([https://github.com/EhPanda-Team/EhPanda](https://github.com/EhPanda-Team/EhPanda))  
-> **Source Version**: `4d98daab`  
+> **Source Version**: `0d2f52d4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:17:35.677Z  
+> **Timestamp**: 2026-11-23T05:06:38.962Z  
 > **Learning ID**: `learn-github-ehpanda-team-ehpanda`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/EhPanda-Team/EhPanda](https://github.com/EhPanda-Team/EhPanda))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:17:35.672Z  
+> **Harvest Timestamp**: 2026-11-23T05:06:38.957Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An unofficial E-Hentai App for iOS built with SwiftUI & TCA.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4058 stars
+- **Stars / Engagement**: 4068 stars
 
 ---
 
@@ -1313,481 +1313,168 @@ private extension URL {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e232a09` (2026-11-12)
-**Commit Message**: build(deps): bump actions/download-artifact from 7 to 8, and point Dependabot at develop
+### Incident Patch 1: `0d2f52d4` (2026-11-20)
+**Commit Message**: pal: list only the project's entitlements
 
-Same change as Dependabot's #473, which targeted main. Dependabot now opens its
-pull requests against develop, where every change lands before a release.
-
-**File**: `.github/dependabot.yml` (modified, +1/-1)
+**File**: `AltStorePAL.json` (modified, +1/-4)
 ```diff
-@@ -7,7 +7,7 @@ updates:
-       day: 'monday'
-       interval: 'weekly'
-       timezone: 'UTC'
--    target-branch: 'main'
-+    target-branch: 'develop'
-     groups:
-       all-updates:
-         update-types:
-```
-
-**File**: `.github/workflows/snapshot-gate.yml` (modified, +6/-6)
-```diff
-@@ -189,7 +189,7 @@ jobs:
-           timeout_minutes: 999
-           command: xcodebuild -downloadPlatform iOS
-       - name: Download the test products
--        uses: actions/download-artifact@v7
-+        uses: actions/download-artifact@v8
-         with:
-           name: snapshot-gate-products
-           path: ${{ runner.temp }}
-@@ -267,7 +267,7 @@ jobs:
-       # shard's folder, so merged they make results/<shard>.
-       - name: Download the shard results
-         continue-on-error: true
--        uses: actions/download-artifact@v7
-+        uses: actions/download-artifact@v8
-         with:
-           pattern: shard-*
-           path: ${{ runner.temp }}/results
-@@ -313,7 +313,7 @@ jobs:
-           timeout_minutes: 999
-           command: xcodebuild -downloadPlatform iOS
-       - name: Download the test products
--        uses: actions/download-artifact@v7
-+        uses: actions/download-artifact@v8
-         with:
-           name: snapshot-gate-products
-           path: ${{ runner.temp }}
-@@ -403,7 +403,7 @@ jobs:
-           timeout_minutes: 999
-           command: xcodebuild -downloadPlatform iOS
-       - name: Download the test products
--        uses: actions/download-artifact@v7
-+        uses: actions/download-artifact@v8
-         with:
-           name: snapshot-gate-products
-           path: ${{ runner.temp }}
-@@ -491,14 +491,14 @@ jobs:
-           fi
-       - name: Download the shard results
-         continue-on-error: true
--        uses: actions/download-artifact@v7
-+        uses: actions/download-artifact@v8
-         with:
-           pattern: shard-*
-           path: ${{ runner.temp }}/results
-           merge-multiple: true
-       - name: Download the retried shard results
-         continue-on-error: true
--        uses: actions/download-artifact@v7
-+        uses: actions/download-artifact@v8
-         with:
-           pattern: retry-*
-           path: ${{ runner.temp }}/retry
-```
-
-**File**: `.github/workflows/snapshot-measure.yml` (modified, +1/-1)
-```diff
-@@ -106,7 +106,7 @@ jobs:
-           timeout_minutes: 999
-           command: xcodebuild -downloadPlatform iOS
-       - name: Download the test products
--        uses: actions/download-artifact@v7
-+        uses: actions/download-artifact@v8
-         with:
-           name: snapshot-measure-products
-           path: ${{ runner.temp }}
+@@ -116,10 +116,7 @@
+         ]
+       },
+       "appPermissions": {
+-        "entitlements": [
+-          "beta-reports-active",
+-          "get-task-allow"
+-        ],
++        "entitlements": [],
+         "privacy": {
+           "NSPhotoLibraryAddUsageDescription": "We need this permission to save images to your photo library."
+         }
 ```
 
 ---
 
-### Incident Patch 2: `9c10b9eb` (2026-11-13)
-**Commit Message**: feat(visual): mock download pages, declared Home repeats and offline replay for fixtures
+### Incident Patch 2: `ec39cc9a` (2026-11-20)
+**Commit Message**: Merge branch 'pal/altstore-pal-source'
 
-A complete download entry may set "mockPages": true: its folder is only its
-record, status and cover, so no page image is acquired (owner msg 5113). A
-mocked gallery may not be opened by a reader or gallery screen, and an entry
-without the flag keeps every page it holds real. "allowedRepeat" declares a
-download also visible on another screen (owner msgs 5109, 5110), and Home's
-"allowedRepeats" a gallery Home lists twice, once out of sight (5099, 5103).
-
-acquire-fixtures.py --replay rebuilds a selection offline from published
-versions with their provenance and never fetches.
-
-**File**: `Scripts/visual/acquire-fixtures.py` (modified, +30/-3)
+**File**: `.planning/STATE.md` (modified, +10/-0)
 ```diff
-@@ -51,6 +51,29 @@ def __call__(self, url):
-             self.last = time.monotonic()
+@@ -123,6 +123,16 @@ source_head: b5eca09d1
+   published contact link is out of the 3.0 plan (ROADMAP Phase 20 item 4 and SC4, D-05, 20-07, 20-08 amended), and
+   UGC-18-01 is marked complete. The App Store Connect Support URL is the GitHub repository page,
+   https://github.com/EhPanda-Team/EhPanda (guideline 1.5 is a Notarization guideline; 1.2 is not).
++- **20-08: first PAL source by hand (2026-11-21, owner decision).** Apple accepted 3.0.0 (163) for Notarization,
++  submitted outside `deploy-pal.yml` (no run yet); the App Store Connect key is not available yet, so the first
++  `AltStorePAL.json` was made by hand. ADP `453ead28-2d2b-49d1-a398-5a06ca29186b`, fetched with
++  `pal_publish.py fetch`: `manifest.json` (`appleItemId` 6832942312, the `marketplaceID`), `signature` and
++  `variant/<uuid>.ipa` for iPad and iPhone. **The variants are encrypted**, so `pal_publish.py publish` cannot read
++  entitlements or privacy from them; the entitlements (`beta-reports-active`, `get-task-allow`) come from the
++  signed build-163 archive (app and ShareExtension), the privacy key from `App/Info.plist`. The source was built
++  with the publish filter and passes `check_source(pal=True)`. Owner decision: the source identifier is
++  `app.ehpanda.altstore.pal`. Open: the ADP assets on the 3.0.0 release, the owner's install test on iPhone, how
++  `publish` gets entitlements from now on (owner decision pending), and `20-08-SUBMISSION.md`.
  
+ ## Phase 19 complete, with deferred items — 2026-11-11
  
-+class Replay:
-+    """Answers acquisition from published fixture versions instead of the network, for an offline rebuild.
-+
-+    Each URL resolves to the stored bytes, media type and retrieval time a source version's manifest lists for it,
-+    so a rebuilt version keeps the original provenance; a URL no source holds fails instead of reaching the network.
-+    """
-+
-+    def __init__(self, versions):
-+        self.responses = {}
-+        for version in versions:
-+            directory = fixtures.resolve_fixtures(version)
-+            for entry in fixtures.validate_fixtures(directory)['assets']:
-+                if entry['url'] is not None:
-+                    self.responses.setdefault(entry['url'], (directory / entry['path'], entry))
-+
-+    def __call__(self, url):
-+        key = fixtures.scrub(url)
-+        if key not in self.responses:
-+            raise ValueError(f'No source fixture holds {key}; an offline rebuild never fetches')
-+        path, entry = self.responses[key]
-+        return path.read_bytes(), entry['mime'], entry['retrievedAt']
-+
-+
- def now():
-     return datetime.now(timezone.utc).isoformat(timespec='seconds')
- 
-@@ -69,7 +92,8 @@ def acquire(selection_path, output, refresh=False, fetch=None, clock=now):
-         def retrieve(kind, gid, index, url):
-             fixtures.check_url(url, kind)
-             try:
--                data, declared = fetch(url)
-+                # A replay also answers when its source retrieved the response.
-+                data, declared, *retrieved = fetch(url)
-             except (OSError, http.client.HTTPException) as error:
-                 raise ValueError(f'{kind} {gid}: {fixtures.scrub(url)}: {type(error).__name__}: {error}') from None
-             stored, mime = fixtures.sanitize(kind, data, declared)
-@@ -78,7 +102,7 @@ def retrieve(kind, gid, index, url):
-             (writer.staging / relative).write_bytes(stored)
-             assets.append({'kind': kind, 'gid': gid, 'index': index, 'url': fixtures.scrub(url), 'path': relative,
-                            'mime': mime, 'bytes': len(stored), 'sha256': fixtures.sha256(stored),
--                           'retrievedAt': clock()})
-+                           'retrievedAt': retrieved[0] if retrieved else clock()})
-             return data
- 
-         fixtures.collect(selection, retrieve)
-@@ -94,10 +118,13 @@ def main():
-     parser.add_argument('--selection', type=Path, required=True, help='Selection JSON declaring galleries and scenes')
-     parser.add_argument('--output', type=Path, required=True, help='Fixture root, normally .capture/marketing')
-     parser.add_argument('--refresh', action='store_true', help='Acquire again although a version is published')
-+    parser.add_argument('--replay', type=Path, action='append', default=[], metavar='VERSION',
-+                        help='Rebuild offline from this published fixture version; repeatable. Never fetches.')
-     arguments = parser.parse_args()
-     signal.signal(signal.SIGTERM, interrupt)
-     try:
--        target, changed = acquire(arguments.selection, arguments.output, arguments.refresh)
-+        fetch = Replay(arguments.replay) if arguments.replay else None
-+        target, changed = acquire(arguments.selection, arguments.output, arguments.refresh, fetch=fetch)
-     except (OSError, ValueError, KeyboardInterrupt) as error:
-         parser.exit(1, f'Fixture acquisition failed: {type(error).__name__}: {error}\n')
-     print(f'{"Published" if changed else "Unchanged"}: {target}')
 ```
 
-**File**: `Scripts/visual/fixtures.py` (modified, +46/-7)
+**File**: `AltStorePAL.json` (added, +155/-0)
 ```diff
-@@ -28,6 +28,10 @@
- # DownloadDisplayStatus cases with their sortPriority. The two complete statuses carry no page progress.
- DOWNLOAD_STATUSES = {'active': 0, 'queued': 1, 'updateAvailable': 2, 'error': 3, 'inactive': 4, 'completed': 5}
- COMPLETE_DOWNLOADS = ('updateAvailable', 'completed')
-+# Optional download entry flags, each only ever true. `mockPages`: a complete download whose folder holds none of its
-+# page images, only its record and status; nothing may open it (owner msg 5113). `allowedRepeat`: the gallery may
-+# also be visible on another screen of the set (owner msgs 5109, 5110).
-+DOWNLOAD_FLAGS = ('mockPages', 'allowedRepeat')
- # Setting.prefetchLimit's default: how many pages around a built page the reader resolves ahead of time.
- PREFETCH_LIMIT = 10
- SCREENS = ('home', 'detail', 'comments', 'filters', 'reading', 'reading-live-text', 'downloads', 'laboratory')
-@@ -123,7 +127,8 @@ def screen_occurrences(scene, context='Scene'):
-     optional = tuple(key for key in ('detailGallery', 'commentsGallery') if key in scene)
-     keys(scene, ('home', 'flow', 'liveText', 'downloads') + optional, context)
-     home, flow, live_text, downloads = scene['home'], scene['flow'], scene['liveText'], scene['downloads']
--    keys(home, ('hero', 'frontpage', 'toplists'), f'{context} home')
-+    keys(home, ('hero', 'frontpage', 'toplists') + (('allowedRepeats',) if 'allowedRepeats' in home else ()),
-+         f'{context} home')
-     keys(home['hero'], ('galleries', 'selectedIndex'), f'{context} home hero')
-     keys(home['toplists'], TOPLISTS, f'{context} home toplists')
-     hero = gallery_ids(home['hero']['galleries'], f'{context} home hero')
-@@ -141,10 +146,15 @@ def screen_occurrences(scene, context='Scene'):
-         complete = entry['status'] in COMPLETE_DOWNLOADS
-         if complete and 'completedPages' in entry:
-             raise ValueError(f'{where} is {entry["status"]}, which carries no completedPages')
--        keys(entry, ('gallery', 'status') if complete else ('gallery', 'status', 'completedPages'), where)
-+        flags = tuple(flag for flag in DOWNLOAD_FLAGS if flag in entry)
-+        keys(entry, (('gallery', 'status') if complete else ('gallery', 'status', 'completedPages')) + flags, where)
-         gallery_ids([entry['gallery']], f'{where} gallery')
-         if not complete and not counting(entry['completedPages']):
-             raise ValueError(f'{where} completedPages must be a page count')
-+        if any(entry[flag] is not True for flag in flags):
-+            raise ValueError(f'{where} {", ".join(flags)} can only be true; leave a flag out instead')
-+        if 'mockPages' in entry and not complete:
-+            raise ValueError(f'{where} is {entry["status"]}: only a complete download can mock its pages')
-     rows = {screen: [] for screen in SCREENS}
-     rows['home'] = ([('hero', slot, gid) for slot, gid in enumerate(hero)]
-                     + [('frontpage', slot, gid)
-@@ -160,6 +170,19 @@ def screen_occurrences(scene, context='Scene'):
-     return rows
- 
- 
-+def home_repeats(scene, context='Scene'):
-+    """The galleries Home may show in two sections, once visibly and once out of sight (owner msgs 5099, 5103).
-+
-+    A repeat is declared rather than inferred, so an accidental repeat still fails; the capture checks that no
-+    declared gallery is visible twice.
-+    """
-+    allowed = scene['home'].get('allowedRepeats', [])
-+    gallery_ids(allowed, f'{context} home allowedRepeats')
-+    if not allowed and 'allowedRepeats' in scene['home'] or len(set(allowed)) != len(allowed):
-+        raise ValueError(f'{context} home allowedRepeats must list distinct galleries; leave it out for none')
-+    return allowed
-+
-+
- def validate_selection(selection):
-     keys(selection, ('schemaVersion', 'selectionID', 'selectionStatus', 'selectionAuthority', 'galleries', 'scenes'),
-          'Selection')
-@@ -194,18 +217,29 @@ def validate_selection(selection):
-     for name, scene in scenes.items():
-         if name not in SETS:
-             raise ValueError(f'Scene {name!r} is not a content set: {", ".join(SETS)}')
--        for screen, rows in screen_occurrences(scene, name).items():
-+        occurrences = screen_occurrences(scene, name)
-+        allowed = home_repeats(scene, name)
-+        for screen, rows in occurrences.items():
-             seen = {}
-             for section, slot, gid in rows:
-                 where = f'{name} {screen} {section}[{slot}]'
-                 if gid not in assigned:
-                     raise ValueError(f'{where} references undeclared gallery {gid}')
-                 if assigned[gid] != name:
-                     raise ValueError(f'{where}: gallery {gid} is assigned to {assigned[gid]}, not {name}')
--                if gid in seen:
--                    raise ValueError(f'{name} {screen} repeats gallery {gid} at {seen[gid]} and {section}[{slot}]')
--                seen[gid] = f'{section}[{slot}]'
-+                if gid in seen and not (screen == 'home' and gid in allowed an
-```
-
-**File**: `Scripts/visual/test_fixtures.py` (modified, +70/-0)
-```diff
-@@ -321,6 +321,39 @@ def test_a_download_of_the_flow_gallery_adds_its_pages_to_the_reader_resources(s
-                 self.assertEqual(reader_indices(manifest, 'imagePage'), list(listed))
-                 self.assertEqual(reader_indices(manifest, 'page'), list(pages))
- 
-+    def test_a_mocked_complete_download_holds_no_pages(self):
-+        # Owner msg 5113: a mocked complete download is only its record and status, so nothing of its pages is saved,
-+        # while the active download beside it keeps its real pages.
-+        for status in fixtures.COMPLETE_DOWNLOADS:
-+            with self.subTest(status):
-+                value = copy.deepcopy(self.selection)
-+                value['scenes']['nonexplicit']['downloads'][1] = {'gallery': '105', 'status': status,
-+                                                                  'mockPages': True}
-+                target, _ = self.acquire(value=value, refresh=True)
-+                manifest = fixtures.validate_fixtures(target)
-+                for kind in ('thumbnails', 'imagePage', 'page'):
-+                    self.assertEqual(reader_indices(manifest, kind, '105'), [])
-+                self.assertEqual(reader_indices(manifest, 'page', '104'), list(range(1, 13)))
-+                self.assertEqual(reader_indices(manifest, 'cover', '105'), [None])
-+
-+    def test_an_offline_replay_rebuilds_a_version_with_its_provenance(self):
-+        source, _ = self.acquire()
-+        value = copy.deepcopy(self.selection)
-+        value['selectionID'] = 'marketing-replayed'
-+        value['scenes']['nonexplicit']['downloads'][1]['mockPages'] = True
-+        replay = self.acquirer.Replay([source])
-+        target, _ = self.acquirer.acquire(self.write_selection(value), self.directory / 'replayed', fetch=replay,
-+                                          clock=Clock())
-+        rebuilt = {entry['path']: entry for entry in fixtures.validate_fixtures(target)['assets']}
-+        original = {entry['path']: entry for entry in fixtures.validate_fixtures(source)['assets']}
-+        self.assertTrue(rebuilt)
-+        self.assertLess(set(rebuilt), set(original))
-+        for path, entry in rebuilt.items():
-+            self.assertEqual(entry, original[path], path)
-+        value['scenes']['nonexplicit']['downloads'][0]['completedPages'] = 13
-+        with self.assertRaisesRegex(ValueError, 'never fetches'):
-+            self.acquirer.acquire(self.write_selection(value), self.directory / 'unreplayable', fetch=replay)
-+
-     def test_an_incomplete_download_holds_fewer_pages_than_its_gallery(self):
-         self.selection['scenes']['nonexplicit']['downloads'][0]['completedPages'] = 60
-         with self.assertRaisesRegex(ValueError, '104: the active download holds 60 of 60 pages'):
-@@ -534,6 +567,43 @@ def test_empty_selection_is_rejected_before_any_request(self):
-         value['scenes'] = {}
-         self.assert_rejected(value, 'Empty selection')
- 
-+    def test_home_repeats_only_declared_galleries_once(self):
-+        value = selection()
-+        home = value['scenes']['nonexplicit']['home']
-+        home['frontpage'].append('115')
-+        self.assert_rejected(copy.deepcopy(value), 'repeats gallery 115')
-+        home['allowedRepeats'] = ['115']
-+        fixtures.validate_selection(copy.deepcopy(value))
-+        home['frontpage'].append('115')
-+        self.assert_rejected(copy.deepcopy(value), 'repeats gallery 115')
-+        home['frontpage'].pop()
-+        for allowed, message in [(['115', '104'], 'Home shows once: 104'), ([], 'distinct galleries'),
-+                                 (['115', '115'], 'distinct galleries')]:
-+            with self.subTest(allowed):
-+                home['allowedRepeats'] = allowed
-+                self.assert_rejected(copy.deepcopy(value), message)
-+        # A declaration covers Home only: Downloads still never lists a gallery twice.
-+        home['allowedRepeats'] = ['115']
-+        value['scenes']['nonexplicit']['downloads'].append({'gallery': '104', 'status': 'queued',
-+                                                            'completedPages': 0})
-+        self.assert_rejected(value, 'downloads repeats gallery 104')
-+
-+    def test_download_flags_are_true_and_mocks_are_complete_and_never_opened(self):
-+        cases = [({'gallery': '105', 'status': 'completed', 'mockPages': False}, 'can only be true'),
-+                 ({'gallery': '105', 'status': 'completed', 'allowedRepeat': 1}, 'can only be true'),
-+                 ({'gallery': '105', 'status': 'inactive', 'completedPages': 0, 'mockPages': True},
-+                  'only a complete download can mock'),
-+                 ({'gallery': '105', 'status': 'completed', 'mock': True}, 'exactly the keys'),
-+                 ({'gallery': '101', 'status': 'updateAvailable', 'mockPages': True}, 'which a reader')]
-+        for entry, message in cases:
-+            with self.subTest(entry):
-+                value = selection()
-+                value['scenes']['nonexplicit']['downloads'][1] = entry
-+    
-```
-
----
-
-### Incident Patch 3: `fab34966` (2026-11-12)
-**Commit Message**: pal: the marketplace build's bundle ID is now app.ehpanda.store
-
-Its share extension is app.ehpanda.store.ShareExtension. The flavor's names, URL scheme and MARKETPLACE_* variables stay as they are.
-
-**File**: `.github/workflows/deploy-pal.yml` (modified, +3/-3)
-```diff
-@@ -17,8 +17,8 @@
- #   ASC_KEY_P8                the key's .p8 file, as text
- #   DIST_CERT_P12             the Apple Distribution certificate and its private key, a base64 .p12
- #   DIST_CERT_PASSWORD        the .p12's password
--#   PROFILE_APP               the App Store Connect profile for app.ehpanda.marketplace, base64
--#   PROFILE_SHARE_EXTENSION   the App Store Connect profile for app.ehpanda.marketplace.ShareExtension, base64
-+#   PROFILE_APP               the App Store Connect profile for app.ehpanda.store, base64
-+#   PROFILE_SHARE_EXTENSION   the App Store Connect profile for app.ehpanda.store.ShareExtension, base64
- #   TEAM_ID                   the team that owns the certificate and the profiles
- # Its variables:
- #   PAL_MARKETPLACE_ID        the app's Apple ID in App Store Connect (also the PAL source's marketplaceID)
-@@ -61,7 +61,7 @@ env:
-   PAL_PUBLISH_TOOL_PATH: './actions-tool/pal_publish.py'
-   RELEASE_NOTES_TOOL_PATH: './actions-tool/release_notes.py'
-   # The marketplace flavor (Config/Marketplace.xcconfig, included by the generated signing xcconfig).
--  MARKETPLACE_BUNDLE_ID: 'app.ehpanda.marketplace'
-+  MARKETPLACE_BUNDLE_ID: 'app.ehpanda.store'
-   MARKETPLACE_URL_SCHEME: 'ehpanda-marketplace'
-   BUILDS_PATH: '/tmp/action-builds'
-   ARCHIVE_PATH: '/tmp/action-builds/EhPanda-AltStorePAL.xcarchive'
-```
-
-**File**: `.planning/STATE.md` (modified, +1/-0)
-```diff
-@@ -48,6 +48,7 @@ source_head: b5eca09d1
-   `AltStorePAL.json` is not created. The public address will be https://ehpanda.app/AltStorePAL.json (owner msg
-   2822). Open items: the template still has the Classic copy, which 20-10 replaces with the PAL copy (D-25); 20-10's
-   `pal/` screenshot paths are stale (`app-marketplace/`). DIST-18-02 stays Pending.
-+  **Identifier changed (owner decision, 2026-11-13):** the marketplace flavor's bundle ID is now `app.ehpanda.store` (`BUNDLE_ID_SUFFIX = .store`) and its extension `app.ehpanda.store.ShareExtension`; the flavor's names, scheme `ehpanda-marketplace` and `MARKETPLACE_*` variables are unchanged. The `.marketplace` / `app.ehpanda.marketplace` mentions in the 20-01 and 20-03 records above are history.
- - **20-04 complete** (`4c61f5b80`, `dd15e0df9`, `ca17b8502`, `86bf6e313`, `1a2829de6`; `20-04-SUMMARY.md`):
-   `actions-tool/asc.py` (stdlib + openssl ES256; `check-build`, `wait-build`, `ensure-version` with
-   NOTARIZATION/MANUAL, `attach-build`, `submit`, `adp-id`; method-scoped allow-list with no record-making path;
-```
-
-**File**: `Config/Marketplace.xcconfig` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
- //     xcodebuild archive -xcconfig Config/Marketplace.xcconfig ...
- //
- // The marketplace build installs as its own app, so everything that identifies an install differs:
--// the bundle identifiers (`app.ehpanda.marketplace` and `app.ehpanda.marketplace.ShareExtension`,
-+// the bundle identifiers (`app.ehpanda.store` and `app.ehpanda.store.ShareExtension`,
- // through the suffix knob in `Signing.xcconfig`) and the URL scheme. The scheme differs for the same
- // reason the beta's does: with two flavors installed, a link shared from one flavor's extension must
- // never open the other. The Home Screen name stays "EhPanda" and the icon is the regular one. The
-@@ -19,7 +19,7 @@
- // Settings passed with `-xcconfig` apply to every target, Swift packages included, above the
- // project's own files and below any `NAME=value` given on the command line.
- 
--BUNDLE_ID_SUFFIX = .marketplace
-+BUNDLE_ID_SUFFIX = .store
- EHPANDA_DISPLAY_NAME = EhPanda
- EHPANDA_URL_SCHEME = ehpanda-marketplace
- EHPANDA_DISTRIBUTION_CHANNEL = altstorePAL
-```
-
-**File**: `actions-tool/altstore-pal.template.json` (modified, +2/-2)
-```diff
-@@ -25,12 +25,12 @@
-   "tintColor": "#557F72",
-   "nsfw": true,
-   "featuredApps": [
--    "app.ehpanda.marketplace"
+@@ -0,0 +1,155 @@
++{
++  "name": "EhPanda",
++  "identifier": "app.ehpanda.altstore.pal",
++  "subtitle": "The E-Hentai app crafted exclusively for iPhone and iPad.",
++  "localizedSubtitles": {
++    "en": "The E-Hentai app crafted exclusively for iPhone and iPad.",
++    "de": "Die E-Hentai-App, exklusiv für iPhone und iPad gebaut.",
++    "ja": "iPhone と iPad のためだけにつくり込んだ、E-Hentai アプリ。",
++    "ko": "iPhone과 iPad만을 위해 공들여 만든 E-Hentai 앱.",
++    "zh-Hans": "一款专为 iPhone 和 iPad 匠心打造的 E-Hentai App。",
++    "zh-Hant": "一款專為 iPhone 與 iPad 匠心打造的 E-Hentai App。"
++  },
++  "description": "The official source for EhPanda, from the EhPanda team.\n\nAdd it once and EhPanda stays up to date. Every new version appears here with its notes in your language.\n\nEhPanda is a free, open-source app for reading E-Hentai galleries on iPhone and iPad.",
++  "localizedDescriptions": {
++    "en": "The official source for EhPanda, from the EhPanda team.\n\nAdd it once and EhPanda stays up to date. Every new version appears here with its notes in your language.\n\nEhPanda is a free, open-source app for reading E-Hentai galleries on iPhone and iPad.",
++    "de": "Die offizielle Quelle für EhPanda, vom EhPanda-Team.\n\nEinmal hinzugefügt, bleibt EhPanda immer aktuell. Jede neue Version erscheint hier mit ihren Hinweisen in deiner Sprache.\n\nEhPanda ist eine kostenlose Open-Source-App zum Lesen von E-Hentai-Galerien auf iPhone und iPad.",
++    "ja": "EhPanda チームによる、EhPanda の公式ソースです。\n\n一度追加すれば、EhPanda は常に最新の状態に保たれます。新しいバージョンは、お使いの言語のリリースノートとともにここに表示されます。\n\nEhPanda は、iPhone と iPad で E-Hentai のギャラリーを読める、無料のオープンソースアプリです。",
++    "ko": "EhPanda 팀이 운영하는 EhPanda 공식 소스입니다.\n\n한 번만 추가하면 EhPanda를 항상 최신 상태로 유지할 수 있습니다. 새 버전은 사용하는 언어로 된 업데이트 내용과 함께 이곳에 표시됩니다.\n\nEhPanda는 iPhone과 iPad에서 E-Hentai 갤러리를 읽을 수 있는 무료 오픈 소스 앱입니다.",
++    "zh-Hans": "由 EhPanda 团队提供的 EhPanda 官方源。\n\n只需添加一次，EhPanda 就会保持最新。每个新版本都会显示在这里，并附上你所用语言的更新说明。\n\nEhPanda 是一款免费的开源应用，可在 iPhone 和 iPad 上阅读 E-Hentai 画廊。",
++    "zh-Hant": "由 EhPanda 團隊提供的 EhPanda 官方來源。\n\n只要加入一次，EhPanda 就會保持最新。每個新版本都會顯示在這裡，並附上你所用語言的更新說明。\n\nEhPanda 是一款免費的開源 App，可在 iPhone 和 iPad 上閱讀 E-Hentai 畫廊。"
++  },
++  "iconURL": "https://raw.githubusercontent.com/EhPanda-Team/ehpanda-assets/main/app-marketplace/icon.png",
++  "headerURL": "https://raw.githubusercontent.com/EhPanda-Team/ehpanda-assets/main/app-marketplace/header.png",
++  "website": "https://ehpanda.app",
++  "tintColor": "#557F72",
++  "nsfw": true,
++  "featuredApps": [
 +    "app.ehpanda.store"
-   ],
-   "apps": [
-     {
-       "name": "EhPanda",
--      "bundleIdentifier": "app.ehpanda.marketplace",
++  ],
++  "apps": [
++    {
++      "name": "EhPanda",
 +      "bundleIdentifier": "app.ehpanda.store",
-       "marketplaceID": "",
-       "developerName": "EhPanda Team",
-       "subtitle": "The E-Hentai app crafted exclusively for iPhone and iPad.",
++      "marketplaceID": "6832942312",
++      "developerName": "EhPanda Team",
++      "subtitle": "The E-Hentai app crafted exclusively for iPhone and iPad.",
++      "localizedSubtitles": {
++        "en": "The E-Hentai app crafted exclusively for iPhone and iPad.",
++        "de": "Die E-Hentai-App, exklusiv für iPhone und iPad gebaut.",
++        "ja": "iPhone と iPad のためだけにつくり込んだ、E-Hentai アプリ。",
++        "ko": "iPhone과 iPad만을 위해 공들여 만든 E-Hentai 앱.",
++        "zh-Hans": "一款专为 iPhone 和 iPad 匠心打造的 E-Hentai App。",
++        "zh-Hant": "一款專為 iPhone 與 iPad 匠心打造的 E-Hentai App。"
++      },
++      "localizedDescription": "EhPanda is a free, open-source app for E-Hentai on iPhone and iPad.\n\nSearch by category, rating, tag or page count, and save the searches you use often. Open a gallery to see its tags, rating, previews and comments, and find similar ones.\n\nRead by scrolling or turning pages, one or two pages at a time, with zoom, auto-play and Live Text translation. Download galleries to read offline, even in the background.\n\nSign in to use your favorites and watched tags. Toplists, tag translation, Hath archives and torrents are there too. If your network blocks E-Hentai, one switch in Settings gets you through.\n\nEhPanda is not affiliated with or endorsed by E-Hentai.",
++      "localizedDescriptions": {
++        "en": "EhPanda is a free, open-source app for E-Hentai on iPhone and iPad.\n\nSearch by category, rating, tag or page count, and save the searches you use often. Open a gallery to see its tags, rating, previews and comments, and find similar ones.\n\nRead by scrolling or turning pages, one or two pages at a time, with zoom, auto-play and Live Text translation. Download galleries to read offline, even in the background.\n\nSign in to use your favorites and watched tags. Toplists, tag translation, Hath archives and torrents are there too. If your network blocks E-Hentai, one switch in Settings gets you through.\n\nEhPanda is not affiliated with or endorsed by E-Hentai.",
++        "de": "EhPanda ist eine kostenlose Open-Source-App für E-Hentai auf iPhone und iPad.\n\nSuche nach Kategorie, Bewertung, Tag oder Seitenzahl und speichere Suchen, die du oft nutzt. Öffne eine Galerie, um Tags, Bewertung, Vorschauen und Kommentare zu sehen und ähnliche Galerien zu finden.\n\nLies durch Scrollen oder Blättern, eine oder zwei Seiten auf einmal, mit Zoom, automatischem Blättern und Überset
 ```
 
-**File**: `actions-tool/marketplace-signing.sh` (modified, +2/-2)
+**File**: `actions-tool/altstore-pal.template.json` (modified, +1/-1)
 ```diff
-@@ -35,8 +35,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
- MARKETPLACE_XCCONFIG_PATH="$ROOT/Config/Marketplace.xcconfig"
- EXPORT_OPTIONS_TEMPLATE="$ROOT/actions-tool/ExportOptions-marketplace.plist"
- # The marketplace flavor's identifiers (`app.ehpanda` + Marketplace.xcconfig's BUNDLE_ID_SUFFIX).
--APP_BUNDLE_ID="app.ehpanda.marketplace"
--SHARE_BUNDLE_ID="app.ehpanda.marketplace.ShareExtension"
-+APP_BUNDLE_ID="app.ehpanda.store"
-+SHARE_BUNDLE_ID="app.ehpanda.store.ShareExtension"
- # Xcode 16 and later read profiles from the first directory; earlier tools from the second.
- PROFILE_DIRS=(
-   "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+@@ -1,6 +1,6 @@
+ {
+   "name": "EhPanda",
+-  "identifier": "app.ehpanda.altstorepal",
++  "identifier": "app.ehpanda.altstore.pal",
+   "subtitle": "The E-Hentai app crafted exclusively for iPhone and iPad.",
+   "localizedSubtitles": {
+     "en": "The E-Hentai app crafted exclusively for iPhone and iPad.",
 ```
 
-**File**: `actions-tool/tests/fixtures/adp/manifest.json` (modified, +1/-1)
+**File**: `actions-tool/tests/test_altstore_add_version.py` (modified, +1/-1)
 ```diff
-@@ -1 +1 @@
--{"version":1,"bundleIdentifier":"app.ehpanda.marketplace","variants":[{"id":"fb855afc-8ce8-39b7-877e-63444105c95c","file":"fb855afc-8ce8-39b7-877e-63444105c95c.ipa"}],   "note":"synthetic fixture; the byte layout is deliberate"}
-\ No newline at end of file
-+{"version":1,"bundleIdentifier":"app.ehpanda.store","variants":[{"id":"fb855afc-8ce8-39b7-877e-63444105c95c","file":"fb855afc-8ce8-39b7-877e-63444105c95c.ipa"}],   "note":"synthetic fixture; the byte layout is deliberate"}
-\ No newline at end of file
+@@ -166,7 +166,7 @@ def test_the_beta_case_still_drops_betas_older_than_the_release(self):
+ PAL_PREFIX = "EhPanda-AltStorePAL-"
+ PAL_SOURCE = {
+     "name": "EhPanda",
+-    "identifier": "app.ehpanda.altstorepal",
++    "identifier": "app.ehpanda.altstore.pal",
+     "subtitle": "Subtitle.",
+     "description": "Description.",
+     "iconURL": "https://example.com/icon.png",
 ```
 
-**File**: `actions-tool/tests/fixtures/adp/variant/EhPanda.app/Info.plist` (modified, +1/-1)
+**File**: `actions-tool/tests/test_source_templates.py` (modified, +12/-2)
 ```diff
-@@ -5,7 +5,7 @@
- 	<key>CFBundleDisplayName</key>
- 	<string>EhPanda</string>
- 	<key>CFBundleIdentifier</key>
--	<string>app.ehpanda.marketplace</string>
-+	<string>app.ehpanda.store</string>
- 	<key>CFBundleShortVersionString</key>
- 	<string>3.0.0</string>
- 	<key>CFBundleVersion</key>
-```
-
-**File**: `actions-tool/tests/fixtures/adp/variant/EhPanda.app/PlugIns/ShareExtension.appex/Info.plist` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@
- <plist version="1.0">
- <dict>
- 	<key>CFBundleIdentifier</key>
--	<string>app.ehpanda.marketplace.ShareExtension</string>
-+	<string>app.ehpanda.store.ShareExtension</string>
- 	<key>CFBundleShortVersionString</key>
- 	<string>3.0.0</string>
- 	<key>CFBundleVersion</key>
+@@ -349,15 +349,25 @@ def pal_release(source, marketplace_id="6740000001", version="3.0.0", build="159
+ class PALTemplateTests(unittest.TestCase):
+     def test_the_pal_template_is_the_marketplace_app_with_no_versions(self):
+         app = PAL["apps"][0]
+-        self.assertEqual(PAL["identifier"], "app.ehpanda.altstorepal")
++        self.assertEqual(PAL["identifier"], "app.ehpanda.altstore.pal")
+         self.assertIs(PAL["nsfw"], True)
+         self.assertEqual(PAL["featuredApps"], ["app.ehpanda.store"])
+         self.assertEqual(app["bundleIdentifier"], "app.ehpanda.store")
+         self.assertEqual(app["marketplaceID"], "")
+         self.assertEqual(app["developerName"], "EhPanda Team")  # D-24
+         self.assertEqual(app["appPermissions"], {"entitlements": [], "privacy": {}})
+         self.assertEqual(app.get("versions", []), [])
+-        self.assertFalse((TOOLS.parent / "AltStorePAL.json").exists(), "only the first PAL publish creates it")
++
++    def test_the_published_pal_source_is_the_template_plus_what_a_publish_fills_in(self):
++        # The first AltStorePAL.json (3.0.0) was made by hand from the real ADP, with the publish filter and the
++        # entitlements of the signed build-163 archive, because the ADP's variants are encrypted.
++        published = json.loads((TOOLS.parent / "AltStorePAL.json").read_text(encoding="utf-8"))
++        self.assertEqual(languages.check_source(published, pal=True), [])
++        self.assertEqual({k: v for k, v in published.items() if k != "apps"},
++                         {k: v for k, v in PAL.items() if k != "apps"})
++        filled = {"marketplaceID", "appPermissions", "versions"}
++        self.assertEqual({k: v for k, v in published["apps"][0].items() if k not in filled},
++                         {k: v for k, v in PAL["apps"][0].items() if k not in filled})
+ 
+     def test_the_pal_template_has_the_classic_metadata(self):
+         # D-16: the website's copy, https://ehpanda.app and #557F72, as AltStore.json has them.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #476** (2026-11-20): Publish the AltStore PAL source for 3.0.0 (@chihchy)
+- **PR #475** (closed): Merge develop: AltStore PAL source and 3.0 follow-ups (@chihchy)
+- **PR #474** (2026-11-16): Updated Dependencies (@github-actions[bot])
 - **PR #473** (closed): build(deps): bump actions/download-artifact from 7 to 8 in the all-updates group (@dependabot[bot])
 - **PR #472** (2026-11-12): EhPanda 3.0.0 (@chihchy)
-- **PR #460** (2026-07-20): Bugfixes & Liquid Glass adaptation (@chihchy)
-- **PR #459** (closed): Update 2.8.0 sha256 checksum for AltStore (@i0ntempest)
-- **PR #457** (2026-07-09): Drop Core Data, persist light app data via `@Shared` (@chihchy)
-- **PR #456** (2026-07-05): Migrate localization to Xcode String Catalogs (@chihchy)
+- **PR #462** (2026-11-22): Bugfixes & Features (@dyphire)
 
 ---
 
@@ -1807,31 +1494,34 @@ Its share extension is app.ehpanda.store.ShareExtension. The flavor's names, URL
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump actions/download-artifact from 7 to 8, and point Dependabot at
+## X. pal: list only the project's entitlements
 
 **RULE**:
-When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EhPanda-Team/EhPanda. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AltStorePAL.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EhPanda-Team/EhPanda. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e232a09`: build(deps): bump actions/download-artifact from 7 to 8, and point Dependabot at develop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d2f52d4`: pal: list only the project's entitlements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AltStorePAL.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    target-branch: 'develop'
+        "entitlements": [],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-    target-branch: 'main'
+        "entitlements": [
+          "beta-reports-active",
+          "get-task-allow"
+        ],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e232a09` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d2f52d4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

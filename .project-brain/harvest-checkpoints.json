@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T04:58:23.668Z",
+  "last_updated": "2026-11-23T05:06:47.917Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1085,14 +1085,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "c2f22dcc2b67992f17182142f979a613917bb90562ae8b1d19fab25a875a7d56",
-      "verified_at": "2026-11-18T19:34:14.332Z",
+      "content_hash": "977fae8ac56e93863fbcd7f775526f66f0ef327dda21d8b1f1451e45422763fc",
+      "verified_at": "2026-11-23T05:06:32.452Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T19:34:14.332Z"
+      "last_updated": "2026-11-23T05:06:32.452Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "f4dcce4a0d5152910fa33b9e7d9220d1d44aae1d97a8df8a7acda8d1f2401546",
-      "verified_at": "2026-11-22T03:03:27.429Z",
+      "content_hash": "4df84ffe41086e269cc2f9d45f9eba018a18f6b08e0a883763f91e4dbb5b3488",
+      "verified_at": "2026-11-23T05:06:47.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:03:27.429Z"
+      "last_updated": "2026-11-23T05:06:47.917Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "54347a21b1477fc19caa974e3f9e4a960ed1c2b9c0a7516526e1b46e7537d527",
-      "verified_at": "2026-11-22T04:05:01.376Z",
+      "content_hash": "52beac9861b277a2605b6ea7d5e57fb74a5f4f9bff8c0b8087828b273217bae9",
+      "verified_at": "2026-11-23T05:06:41.948Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T04:05:01.376Z"
+      "last_updated": "2026-11-23T05:06:41.948Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -12666,14 +12666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ehpanda-team-ehpanda",
-      "content_hash": "cf9a0dfc65657508d548171c9fcbb296c5070cc0745ef68bfd88db552772d2a3",
-      "verified_at": "2026-11-16T00:17:36.473Z",
+      "content_hash": "5784b2dc4a88d2a55f77fb77015b3f705a42822f74d0c14476f99b0718e63823",
+      "verified_at": "2026-11-23T05:06:39.963Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:17:36.473Z"
+      "last_updated": "2026-11-23T05:06:39.963Z"
     },
     "thebaselab/codeapp": {
       "repository": "thebaselab/codeapp",

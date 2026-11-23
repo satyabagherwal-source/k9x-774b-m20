@@ -845,8 +845,8 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "c2f22dcc2b67992f17182142f979a613917bb90562ae8b1d19fab25a875a7d56",
-    "lastHarvestedAt": "2026-11-18T19:34:14.324Z",
+    "contentHash": "977fae8ac56e93863fbcd7f775526f66f0ef327dda21d8b1f1451e45422763fc",
+    "lastHarvestedAt": "2026-11-23T05:06:32.444Z",
     "learningId": "learn-huggingface-openai-whisper-large-v3"
   },
   "hf-black-forest-labs-flux.1-schnell": {
@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "cf789c7b",
+    "sourceVersion": "90197327",
     "license": "Apache-2.0",
-    "contentHash": "f4dcce4a0d5152910fa33b9e7d9220d1d44aae1d97a8df8a7acda8d1f2401546",
-    "lastHarvestedAt": "2026-11-22T03:03:27.422Z",
+    "contentHash": "4df84ffe41086e269cc2f9d45f9eba018a18f6b08e0a883763f91e4dbb5b3488",
+    "lastHarvestedAt": "2026-11-23T05:06:47.909Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "4e9fb95b",
+    "sourceVersion": "198e6e89",
     "license": "Apache-2.0",
-    "contentHash": "54347a21b1477fc19caa974e3f9e4a960ed1c2b9c0a7516526e1b46e7537d527",
-    "lastHarvestedAt": "2026-11-22T04:05:01.338Z",
+    "contentHash": "52beac9861b277a2605b6ea7d5e57fb74a5f4f9bff8c0b8087828b273217bae9",
+    "lastHarvestedAt": "2026-11-23T05:06:41.940Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -8413,10 +8413,10 @@
     "repository": "EhPanda-Team/EhPanda",
     "platform": "github",
     "sourceUrl": "https://github.com/EhPanda-Team/EhPanda",
-    "sourceVersion": "4d98daab",
+    "sourceVersion": "0d2f52d4",
     "license": "MIT",
-    "contentHash": "cf9a0dfc65657508d548171c9fcbb296c5070cc0745ef68bfd88db552772d2a3",
-    "lastHarvestedAt": "2026-11-16T00:17:36.466Z",
+    "contentHash": "5784b2dc4a88d2a55f77fb77015b3f705a42822f74d0c14476f99b0718e63823",
+    "lastHarvestedAt": "2026-11-23T05:06:39.955Z",
     "learningId": "learn-github-ehpanda-team-ehpanda"
   },
   "thebaselab-codeapp": {

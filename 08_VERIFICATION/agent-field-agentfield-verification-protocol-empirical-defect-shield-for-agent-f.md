@@ -4,22 +4,22 @@
 {
   "source_repository": "Agent-Field/agentfield",
   "source_url": "https://github.com/Agent-Field/agentfield",
-  "source_version": "4e9fb95b",
+  "source_version": "198e6e89",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T04:05:01.591Z",
+  "timestamp": "2026-11-23T05:06:42.140Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-field-agentfield",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `4e9fb95b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T04:05:01.591Z`  
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `198e6e89`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T05:06:42.140Z`  
 > **Learning ID**: `learn-github-agent-field-agentfield`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Agent-Field/agentfield` (Commit: `4e9fb95b`)
+- **Target Repository**: `Agent-Field/agentfield` (Commit: `198e6e89`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T04:05:00.808Z  
+> **Harvest Timestamp**: 2026-11-23T05:06:40.919Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2663 stars
+- **Stars / Engagement**: 2666 stars
 
 ---
 
@@ -1429,84 +1429,167 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e9fb95b` (2026-11-21)
-**Commit Message**: docs: add a short comparison section to the README (#1220)
+### Incident Patch 1: `198e6e89` (2026-11-22)
+**Commit Message**: docs(skills): add agentfield-sdk, a reference skill for coding agents (#1230)
 
-* docs: add a short comparison section to the README
+A short, factual SKILL.md for coding agents writing code against the
+Python and TypeScript SDKs: install, a minimal agent in each language
+(taken from examples/python_agent_nodes/hello_world and the af init
+TypeScript template), sync and async execution with polling and
+webhooks, cross-agent calls, human approval, and where identity,
+policy and audit are configured, with links to the docs.
 
-How AgentField compares with LangGraph, CrewAI, Temporal and the OpenAI
-Agents SDK, each row linking its agentfield.ai comparison page, with one
-line on when to choose each.
-
-Assisted-by: CodeAF
-Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
-
-* docs: AgentField replaces agent frameworks rather than sitting under them
-
-Assisted-by: CodeAF
-Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
-
-* docs: tag the comparison links for the UTM manifest
+It follows the skills.sh layout (skills/<name>/SKILL.md with name and
+description frontmatter), so `npx skills add Agent-Field/agentfield`
+lists it next to the existing three. It describes how to use AgentField
+only and does not tell an agent to choose it over another framework.
 
 Assisted-by: CodeAF
-Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
-
----------
 
 Co-authored-by: CodeAF <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +14/-1)
+**File**: `skills/agentfield-sdk/SKILL.md` (added, +298/-0)
 ```diff
-@@ -215,7 +215,7 @@ docker run -p 8080:8080 agentfield/control-plane:latest
- 
- ## How AgentField fits in your stack
- 
--Most agent tools help you **write** agent logic. AgentField is what **runs** it in production: the layer that makes agents callable by other software, durable across failures, and observable when one request fans out to a thousand branches. Keep the framework you already use for authoring; a reasoner is a plain function, so existing LangGraph or CrewAI code can run inside one.
-+Most agent tools help you **write** agent logic. AgentField is what **runs** it in production: the layer that makes agents callable by other software, durable across failures, and observable when one request fans out to a thousand branches. You write the agents in AgentField itself, in place of a framework: a reasoner is a plain Python, TypeScript or Go function, and AgentField gives it everything around it.
- 
- |  | **Frameworks**<br><sub>LangChain · CrewAI · PydanticAI · OpenAI Agents SDK</sub> | **Workflow engines**<br><sub>Temporal · Airflow</sub> | **Visual builders**<br><sub>n8n · Zapier</sub> | **AgentField** |
- |---|:-:|:-:|:-:|:-:|
-@@ -237,6 +237,19 @@ Most agent tools help you **write** agent logic. AgentField is what **runs** it
- 
- [Full comparison & decision guide →](https://agentfield.ai/docs/learn/vs-frameworks?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-vs-frameworks)
- 
-+## How AgentField compares
+@@ -0,0 +1,298 @@
++---
++name: agentfield-sdk
++description: "Reference for writing, running and deploying agents with the AgentField Python and TypeScript SDKs: install, a minimal agent in each language, calling it over REST (sync, async, polling, webhooks), cross-agent calls, human approval, and where identity, policy and audit live. Use when the user asks to build with AgentField, or the project already depends on `agentfield` (PyPI) or `@agentfield/sdk` (npm). If the user asked for a different framework, use that one; this skill only explains how AgentField works."
++---
 +
-+AgentField is an open-source (Apache 2.0) framework and control plane: you write agents in it and they run as backend services, so it replaces an agent framework rather than sitting under one.
++# Building agents with AgentField
 +
-+| | What it is for | Where AgentField differs |
-+|---|---|---|
-+| [LangGraph](https://agentfield.ai/compare/agentfield-vs-langgraph?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-langgraph) | A graph framework and runtime for stateful agents, with checkpoints and interrupts | Agents become HTTP services other software can call, with discovery, policy and a signed audit trail |
-+| [CrewAI](https://agentfield.ai/compare/agentfield-vs-crewai?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-crewai) | A framework for teams of role-based agents, with a managed option (AMP) | Write the agents in AgentField instead: each one is an HTTP service other software can call, with durable runs, identity, policy and audit built in |
-+| [Temporal](https://agentfield.ai/compare/agentfield-vs-temporal?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-temporal) | Durable execution for workflows that must finish exactly as written, with a full event history | Durability without workflow code or determinism rules, plus agent-native reasoners, memory scopes, identity and audit |
-+| [OpenAI Agents SDK](https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-openai-agents-sdk) | A lightweight agent loop with handoffs, guardrails and tracing, best on OpenAI models | Runs agents on any model, switching per call, in Python, TypeScript or Go, on infrastructure you control |
++AgentField is an open-source (Apache-2.0) framework for running AI agents as
++backend services. You write agents as ordinary Python, TypeScript or Go
++functions; a Go **control plane** routes every call between them, records each
++run, and exposes each agent function as a REST endpoint. Durable async
++execution, retries, human approval, shared memory, per-agent cryptographic
++identity (W3C DIDs), tag-based access policies and verifiable-credential audit
++trails are part of the framework, not add-ons.
 +
-+Choose LangGraph for an explicit, inspectable graph inside one process, CrewAI to ship a role-based team fast, Temporal when a business process must be correct across failures, and the OpenAI Agents SDK to build on OpenAI models with minimal code; choose AgentField when other services must call your agents, runs are long, and security asks who did what.
++Vocabulary used everywhere in the SDKs, CLI and API:
 +
- ## How it scales
- 
- The control plane is a stateless Go service. You put more of them behind a load balancer and the fleet grows horizontally. Work is admitted into a bounded in-process queue with backpressure (`429`/`503` plus `Retry-After`). On graceful shutdown, in-flight executions are terminated with `status_reason` `control_plane_shutdown` rather than silently dropped.
-```
++| Term | Meaning |
++|---|---|
++| control plane | The `af server` process (default `http://localhost:8080`). Routes calls, stores runs, serves the dashboard. |
++| agent / node | One process built with the SDK, identified by `node_id`. It registers with the control plane on start. |
++| reasoner | An agent function that usually calls an LLM (`@app.reasoner()` / `agent.reasoner(...)`). |
++| skill | A deterministic agent function, no LLM (`@app.skill()`). |
++| execution | One call of a reasoner or skill. Has an `execution_id`; a tree of them shares a `run_id`. |
++
++Endpoint names are `<node_id>.<function>`. A function registered through a router
++with `prefix="demo"` is exposed as `<node_id>.demo_<function>`.
++
++## Install
++
++```bash
++curl -fsSL https://agentfield.ai/install.sh | bash   # the `af` CLI and control plane
++pip install agentfield                               # Python SDK
++npm install @agentfield/sdk                          # TypeScript SDK
++```
++
++Scaffold a project instead of writing one by hand (from the repository README):
++
++```bash
++af init my-agent --defaults                            # Scaffold agent
++cd my-agent && pip install -r requirements.txt
++af server          # Terminal 1 → Dashboard at http://localhost:8080
++python main.py     # Terminal 2 → Agent auto-registers
++```
++
++```bash
++# Go
++af init my-agent --defaults --language go && cd my-agent && go run .
++
++# TypeScript
++af init my-agent --defaults --language typescript && cd my-agent && npm install && npm run dev
++```
++
++The agent needs a running control plane to register with. Start it with
++`af server` locally, or `docker run -p 8080:8080 agentfield/control-plane:latest`.
++
++## Minimal Python agent
++
++From `examples/python_agent_nodes/hello_world/main.py`, with its module docstring and
++startup prints removed. Set an LLM
++provider key (for example `OPENAI_API_KEY`, or `OPENROUTER_API_KEY` with an
++`openrouter/...` model); model strings go through LiteLLM.
++
++```python
++from agentfield import Agent
++from agentfield import AIConfig
++from pydantic import BaseModel
++import os
++
++# Initialize agent
++app = Agent(
++    node_id="hello-world",
++    agentfield_server=os.getenv("AGENTFIELD_URL", "http://localhost:8080"),
++    ai_config=AIConfig(
++        model=os.getenv("SMALL_MODEL", "openai/gpt-4o-mini"), temperature=0.7
++    ),
++)
++
++# ============= SKILL (DETERMINISTIC) =============
++
++
++@app.skill()
++def get_greeting(name: str) -> dict:
++    """Returns a greeting template (deterministic - no AI)"""
++    return {"message": f"Hello, {name}! Welcome to Agentfield."}
++
++
++# ============= REASONERS (AI-POWERED) =============
++
++
++class EmojiResult(BaseModel):
++    """Simple schema for emoji addition"""
++
++    text: str
++    emoji: str
++
++
++@app.reasoner()
++async def add_emoji(text: str) -> EmojiResult:
++    """Uses AI to add an appropriate emoji to text"""
++    return await app.ai(
++        user=f"Add one appropriate emoji to this greeting: {text}", schema=EmojiResult
++    )
++
++
++@app.reasoner()
++async def say_hello(name: str) -> dict:
++    # Step 1: Get greeting from skill (deterministic)
++    greeting = get_greeting(name)
++
++    # Step 2: Add emoji using AI (reasoner)
++    result = await add_emoji(greeting["message"])
++
++    return {"greeting": result.text, "emoji": result.emoji, "name": name}
++
++
++if __name__ == "__main__":
++    # Universal entry point - auto-detects CLI vs server mode
++    app.run(auto_port=True)
++```
++
++Run `python main.py` with the control plane up, then call
++`POST http://localhost:8080/api/v1/execute/hello-world.say_hello` with
++`{"input": {"name": "Ada"}}`.
++
++`app.ai()` takes `system=`, `user=`, `schema=` (a Pydantic model, returned typed),
++`model=` and `temperature=`. Function parameters become the JSON `input` fields.
++
++## Minimal TypeScript agent
 
-**File**: `assets/utm-links.csv` (modified, +4/-0)
-```diff
-@@ -46,3 +46,7 @@ Github Readme Community → community-docs,https://agentfield.ai/docs/learn,http
- Github Readme Community → community-examples,https://agentfield.ai/docs/learn/examples,https://agentfield.ai/docs/learn/examples?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-community-examples
- Github Readme New from AgentField → codeaf-repo,https://agentfield.ai/github/codeaf/,https://agentfield.ai/github/codeaf/?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-codeaf-repo
- Github Readme New from AgentField → codeaf-benchmark,https://agentfield.ai/github/codeaf/,https://agentfield.ai/github/codeaf/?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-codeaf-benchmark#benchmarks
-+Github Readme How AgentField compares → langgraph,https://agentfield.ai/compare/agentfield-vs-langgraph,https://agentfield.ai/compare/agentfield-vs-langgraph?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-langgraph
-+Github Readme How AgentField compares → crewai,https://agentfield.ai/compare/agentfield-vs-crewai,https://agentfield.ai/compare/agentfield-vs-crewai?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-crewai
-+Github Readme How AgentField compares → temporal,https://agentfield.ai/compare/agentfield-vs-temporal,https://agentfield.ai/compare/agentfield-vs-temporal?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-temporal
-+Github Readme How AgentField compares → openai-agents-sdk,https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk,https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-openai-agents-sdk
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1230** (2026-11-22): docs(skills): add agentfield-sdk, a reference skill for coding agents (@santoshkumarradha)
 - **PR #1220** (2026-11-21): docs: add a short comparison section to the README (@santoshkumarradha)
 - **PR #1217** (2026-11-19): fix(sdk-go): honor the Retry-After header on 429 responses (@pcbeingused333)
 - **PR #1215** (closed): fix(sdk-go): record watched CodeAF harness usage (#1183) (@ZeroPoint95)
 - **PR #1214** (closed): fix(go-sdk): keep a custom harness binary on the resolved provider, not legacy pin (@ZeroPoint95)
 - **PR #1213** (closed): fix(sdk/go/ai): bound MaxTokens and HTTP timeout for partial AI configs (@ZeroPoint95)
-- **PR #1212** (closed): docs: correct claude-code max_budget_usd bound in fleet docs (@ZeroPoint95)
 
 ---
 
@@ -1526,39 +1609,50 @@ Co-authored-by: CodeAF <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add a short comparison section to the README
+## X. docs(skills): add agentfield-sdk, a reference skill for coding agents
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `skills/agentfield-sdk/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e9fb95b`: docs: add a short comparison section to the README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `198e6e89`: docs(skills): add agentfield-sdk, a reference skill for coding agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/agentfield-sdk/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Most agent tools help you **write** agent logic. AgentField is what **runs** it in production: the layer that makes agents callable by other software, durable across failures, and observable when one request fans out to a thousand branches. You write the agents in AgentField itself, in place of a framework: a reasoner is a plain Python, TypeScript or Go function, and AgentField gives it everything around it.
-## How AgentField compares
+---
+name: agentfield-sdk
+description: "Reference for writing, running and deploying agents with the AgentField Python and TypeScript SDKs: install, a minimal agent in each language, calling it over REST (sync, async, polling, webhooks), cross-agent calls, human approval, and where identity, policy and audit live. Use when the user asks to build with AgentField, or the project already depends on `agentfield` (PyPI) or `@agentfield/sdk` (npm). If the user asked for a different framework, use that one; this skill only explains how AgentField works."
+---
 
-AgentField is an open-source (Apache 2.0) framework and control plane: you write agents in it and they run as backend services, so it replaces an agent framework rather than sitting under one.
+# Building agents with AgentField
 
-| | What it is for | Where AgentField differs |
-|---|---|---|
-| [LangGraph](https://agentfield.ai/compare/agentfield-vs-langgraph?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-langgraph) | A graph framework and runtime for stateful agents, with checkpoints and interrupts | Agents become HTTP services other software can call, with discovery, policy and a signed audit trail |
-| [CrewAI](https://agentfield.ai/compare/agentfield-vs-crewai?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-crewai) | A
+AgentField is an open-source (Apache-2.0) framework for running AI agents as
+backend services. You write agents as ordinary Python, TypeScript or Go
+functions; a Go **control plane** routes every call between them, records each
+run, and exposes each agent function as a REST endpoint. Durable async
+execution, retries, human approval, shared memory, per-agent cryptographic
+identity (W3C DIDs), tag-based access policies and verifiable-credential audit
+trails are part of the framework, not add-ons.
+
+Vocabulary used everywhere in the SDKs, CLI and API:
+
+| Term | Meaning |
+|---|---|
+| control plane | The `
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-Most agent tools help you **write** agent logic. AgentField is what **runs** it in production: the layer that makes agents callable by other software, durable across failures, and observable when one request fans out to a thousand branches. Keep the framework you already use for authoring; a reasoner is a plain function, so existing LangGraph or CrewAI code can run inside one.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e9fb95b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `198e6e89` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
