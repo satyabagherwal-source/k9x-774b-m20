@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for go/kratos/kratos
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for go-kratos/kratos
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "go/kratos/kratos",
-  "source_url": "https://github.com/go/kratos/kratos",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "go-kratos/kratos",
+  "source_url": "https://github.com/go-kratos/kratos",
+  "source_version": "56cfd65d",
+  "license": "MIT",
+  "timestamp": "2026-11-23T20:38:55.808Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-go-kratos-kratos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [go/kratos/kratos](https://github.com/go/kratos/kratos) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [go-kratos/kratos](https://github.com/go-kratos/kratos) (Revision: `56cfd65d`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T20:38:55.808Z`  
+> **Learning ID**: `learn-github-go-kratos-kratos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `go/kratos/kratos` (Commit: `historical`)
+- **Target Repository**: `go-kratos/kratos` (Commit: `56cfd65d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/go-kratos-kratos-learnings.md`  
-> **Source**: github ([https://github.com/go-kratos/kratos](https://github.com/go-kratos/kratos))  
-> **Source Version**: `dd0fb7df`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:57:59.652Z  
-> **Learning ID**: `learn-github-go-kratos-kratos`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): go-kratos/kratos
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/go-kratos-kratos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/go-kratos/kratos](https://github.com/go-kratos/kratos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:57:59.356Z  
+> **Harvest Timestamp**: 2026-11-23T20:38:54.512Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Your ultimate Go microservices framework for the cloud-native era.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 25994 stars
+- **Stars / Engagement**: 26043 stars
 
 ---
 
@@ -1060,180 +1046,153 @@ func fatal(err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd0fb7df` (2026-10-26)
-**Commit Message**: build(deps): bump github/codeql-action from 4 to 4.37.3 (#3863)
+### Incident Patch 1: `56cfd65d` (2026-11-23)
+**Commit Message**: ci: read PR files through the API in comment-check instead of checking out fork code (#3900)
 
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4 to 4.37.3.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4...v4.37.3)
+* ci: read PR files through the API in comment-check instead of checking out fork code
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.37.3
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Since actions/checkout v6.1.0, checkout refuses to check out fork pull
+request code in a pull_request_target workflow, so the check failed on
+every fork PR before looking at any file.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Windfarer <[REDACTED_EMAIL]>
+List the changed files with the pulls files API and read each one
+through the git blobs API at the PR head. Fork code is never checked
+out or run; the content is only passed to grep. The pattern, exclude
+rules and output format are unchanged.
 
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
+Only run the comment steps when the report step found non-English
+comments, so an API or setup error no longer posts an empty
+"found" comment.
+
+* ci: fail comment-check when the PR files list is incomplete
+
+The pulls files API returns at most 3000 files, even with pagination.
+For a larger PR the check would scan only the files it was given and
+could pass on an incomplete scan.
+
+Compare the number of files listed against the PR's changed_files
+before any filtering, and fail the step if fewer were listed. Removed
+files are now skipped inside the loop so the count covers every file.
+
+*
+
+**File**: `.github/workflows/comment-check.yml` (modified, +38/-18)
 ```diff
-@@ -14,9 +14,9 @@ jobs:
-       uses: actions/checkout@v7
- 
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@v4
-+      uses: github/codeql-action/init@v4.37.3
-       with:
-         languages: go
- 
-     - name: CodeQL Analysis
--      uses: github/codeql-action/analyze@v4
-+      uses: github/codeql-action/analyze@v4.37.3
-```
-
----
-
-### Incident Patch 2: `26d0365a` (2026-10-26)
-**Commit Message**: build(deps): bump actions/checkout from 6 to 7 (#3849)
-
-Bumps [actions/checkout](https://github.com/actions/checkout) from 6 to 7.
-- [Release notes](https://github.com/actions/checkout/releases)
-- [Changelog](https://github.com/actions/checkout/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/actions/checkout/compare/v6...v7)
-
----
-updated-dependencies:
-- dependency-name: actions/checkout
-  dependency-version: '7'
-  dependency-type: direct:production
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Windfarer <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ jobs:
- 
-     steps:
-     - name: Checkout repo
--      uses: actions/checkout@v6
-+      uses: actions/checkout@v7
- 
-     - name: Initialize CodeQL
-       uses: github/codeql-action/init@v4
-```
-
-**File**: `.github/workflows/comment-check.yml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ jobs:
+@@ -21,11 +21,9 @@ jobs:
        EXCLUDE_FILES: ".md .txt .html .css .min.js .mdx"
  
      steps:
--      - uses: actions/checkout@v6
-+      - uses: actions/checkout@v7
-         with:
-           ref: ${{ github.event.pull_request.head.ref }}
-           repository: ${{ github.event.pull_request.head.repo.full_name }}
-```
-
-**File**: `.github/workflows/gitee-sync.yml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - name: Checkout source code
--        uses: actions/checkout@v6
-+        uses: actions/checkout@v7
-       - name: Mirror Github to Gitee
-         uses: Yikun/hub-mirror-action@v1.5
-         with:
-```
-
-**File**: `.github/workflows/go.yml` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ jobs:
-           - 8091:8091
-           - 8093:8093
-     steps:
--      - uses: actions/checkout@v6
-+      - uses: actions/checkout@v7
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +2/-2)
-```diff
-@@ -15,7 +15,7 @@ jobs:
-       matrix: ${{ steps.set-matrix.outputs.matrix }}
-     steps:
-       - name: Checkout Repo
--        uses: actions/checkout@v6
-+        uses: actions/checkout@v7
+-      - uses: actions/checkout@v7
+-        with:
+-          ref: ${{ github.event.pull_request.head.ref }}
+-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+-          fetch-depth: 0
++      # The PR code is not checked out. This workflow runs on pull_request_target
++      # with the base repository's token, and actions/checkout refuses to check out
++      # fork code in that context. Changed files are read through the API as data.
  
-       - id: set-matrix
-         run: ./hack/resolve-modules.sh
-@@ -27,7 +27,7 @@ jobs:
-     strategy:
-       matrix: ${{ fromJson(needs.resolve-modules.outputs.matrix) }}
-     steps:
--      - uses: actions/checkout@v6
-+      - uses: actions/checkout@v7
-       - name: Lint
-         uses: golangci/golangci-lint-action@v7
-         with:
-```
-
----
-
-### Incident Patch 3: `201aabb8` (2026-10-26)
-**Commit Message**: build(deps): bump actions/cache from 5 to 6 (#3848)
-
-Bumps [actions/cache](https://github.com/actions/cache) from 5 to 6.
-- [Release notes](https://github.com/actions/cache/releases)
-- [Changelog](https://github.com/actions/cache/blob/main/RELEASES.md)
-- [Commits](https://github.com/actions/cache/compare/v5...v6)
-
----
-updated-dependencies:
-- dependency-name: actions/cache
-  dependency-version: '6'
-  dependency-type: direct:production
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Windfarer <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/go.yml` (modified, +1/-1)
-```diff
-@@ -54,7 +54,7 @@ jobs:
-           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+       # - name: Search for Non-English comments in the entire repository
+       #   run: |
+@@ -70,20 +68,38 @@ jobs:
+       #     done
  
-       - name: Module cache
--        uses: actions/cache@v5
-+        uses: actions/cache@v6
+       - name: Search for Non-English comments in PR diff files
++        env:
++          GH_TOKEN: ${{ github.token }}
++          REPO: ${{ github.repository }}
++          PR_NUMBER: ${{ github.event.pull_request.number }}
+         run: |
+-          set -e
++          set -eo pipefail
+           # Define the regex pattern to match Chinese characters
+           pattern='[\p{Han}]'
+             
+-          # Get the list of files changed in this PR compared to the base branch
+-          changed_files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
++          # Get the status, blob SHA and path of each file changed in this PR
++          gh api --paginate "repos/${REPO}/pulls/${PR_NUMBER}/files?per_page=100" \
++            --jq '.[] | [.status, .sha, .filename] | @tsv' > changed_files.tsv
++
++          # The files API returns at most 3000 files. Fail rather than pass on an incomplete scan.
++          expected_files=$(gh api "repos/${REPO}/pulls/${PR_NUMBER}" --jq '.changed_files')
++          listed_files=$(( $(wc -l < changed_files.tsv) ))
++          if [ "$listed_files" -lt "$expected_files" ]; then
++            echo "::error::Only ${listed_files} of ${expected_files} changed files could be listed through the API, so the PR could not be fully checked."
++            exit 1
++          fi
+             
+           # Loop over each changed file
+-          for file in $changed_files; do
++          while IFS=$'\t' read -r status blob_sha file; do
++            # Removed files have no content to check
++            if [ "$status" = "removed" ]; then
++              continue
++            fi
++
+             # Skip files in excluded directories
+             skip_file=false
+             for dir in ${EXCLUDE_DIRS}; do
+-              if [[ "$file" == ./$dir/* ]]; then
++              if [[ "$file" == $dir/* ]]; then
+                 skip_file=true
+                 break
+               fi
+@@ -102,14 +118,17 @@ jobs:
+               continue
+             fi
+        
++            # Fetch the file content at the PR head (fork blobs are reachable from the base repository)
++            gh api -H "Accept: application/vnd.github.raw" "repos/${REPO}/git/blobs/${blob_sha}" < /dev/null > file_content
++
+             # Use grep to find all comments containing Non-English characters in filtered files
+-            grep_output=$(grep -PnH "$pattern" "$file" || true)
++            grep_output=$(grep -Pn "$pattern" file_content || true)
+             if [ -n "$grep_output" ]; then
+-              # Insert a tab after the line number, keeping the colon between the file path and line number
+-              formatted_output=$(echo "$grep_output" | sed 's/^\(.*:[0-9]\+\):/\1\t/')
++              # Prefix the file path and insert a tab after the line number
++              formatted_output=$(printf '%s\n' "$grep_output" | while IFS= read -r line; do printf '%s:%s\n' "$file" "$line"; done | sed 's/^\(.*:[0-9]\+\):/\1\t/')
+               echo "$formatted_output" >> non_english_comments.txt  # Save to file
+             fi
+-          done
++          done < changed_files.tsv
+ 
+       - name: Store non-English comments in ENV
+         run: |
+@@ -122,6 +141,7 @@ jobs:
+           fi
+ 
+       - name: Output non-English comments if found
++        id: report
+         run: |
+           if [ -s non_english_comments.txt ]; then
+             echo "Non-English comments found in the following locations:"
+@@ -132,19 +152,19 @@ jobs:
+           fi
+       
+       - name: Find Comment
+-        if: failure() && github.event_name != 'workflow_dispatch'
++        if: failure() && steps.report.outcome == 'failure' && github.event_name != 'workflow_dispatch'
+         uses: peter-evans/find-comment@v4.0.0
+         id: fc
          with:
-           path: |
-             ~/.cache/go-build
+           issue-number: ${{ github.event.pull_request.number }}
+-          comment-author: "kratos-ci-bot"
++          comment-author: "github-actions[bot]"
+           body-includes: Non-English comments were found in the following locations
+ 
+       - name: Comment on PR if errors found
+-        if: failure() && github.event_name != 'workflow_dispatch' # This step runs only if the previous step fails
++        if: failure() && steps.report.outcome == 'failure' && github.event_name != 'workflow_dispatch' # This st
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #3902** (2026-10-21): fix(transport): escape path values and fix form encoding (@tonybase)
 - **PR #3901** (2026-10-20): feat(contrib): add oauth2 middleware (@tonybase)
+- **PR #3900** (2026-11-23): ci: read PR files through the API in comment-check instead of checking out fork code (@akpradheeph)
 - **PR #3891** (2026-10-20): fix(config): resolve bool placeholders to bool (@tonybase)
-- **PR #3863** (2026-10-26): build(deps): bump github/codeql-action from 4 to 4.37.3 (@dependabot[bot])
-- **PR #3862** (2026-10-26): build(deps): bump actions/setup-go from 6 to 7 (@dependabot[bot])
-- **PR #3849** (2026-10-26): build(deps): bump actions/checkout from 6 to 7 (@dependabot[bot])
+- **PR #3876** (closed): fix(ci): only write non-english comments file when findings exist (@ardi1s)
+- **PR #3865** (closed): fix(transport/grpc): support array values in gRPC header forwarding (#3857) (@waterWang)
 
 ---
 
@@ -1253,33 +1212,66 @@ Co-authored-by: Windfarer <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action from 4 to 4.37.3 (#3863)
+## X. ci: read PR files through the API in comment-check instead of checking out fork 
 
 **RULE**:
-When implementing operations in `.github/workflows/codeql-analysis.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in go-kratos/kratos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/comment-check.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in go-kratos/kratos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd0fb7df`: build(deps): bump github/codeql-action from 4 to 4.37.3 (#3863). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56cfd65d`: ci: read PR files through the API in comment-check instead of checking out fork code. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql-analysis.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/comment-check.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      uses: github/codeql-action/init@v4.37.3
-      uses: github/codeql-action/analyze@v4.37.3
+      # The PR code is not checked out. This workflow runs on pull_request_target
+      # with the base repository's token, and actions/checkout refuses to check out
+      # fork code in that context. Changed files are read through the API as data.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          set -eo pipefail
+          # Get the status, blob SHA and path of each file changed in this PR
+          gh api --paginate "repos/${REPO}/pulls/${PR_NUMBER}/files?per_page=100" \
+            --jq '.[] | [.status, .sha, .filename] | @tsv' > changed_files.tsv
+
+          # The files API returns at most 3000 files. Fail rather than pass on an incomplete scan.
+          expected_files=$(gh api "repos/${REPO}/pulls/${PR_NUMBER}" --jq '.changed_files')
+          listed_files=$(( $(wc -l < changed_files.tsv) ))
+          if [ "$listed_files" -lt "$expected_files" ]; then
+            echo "::error::Only ${listed_files} of ${expected_files} changed files could be listed through the API, so the PR could not be fully checked."
+            exit 1
+          fi
+          while IFS=$'\t' rea
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-      uses: github/codeql-action/init@v4
-      uses: github/codeql-action/analyze@v4
+// Induced defect failure mode:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0
+          set -e
+          # Get the list of files changed in this PR compared to the base branch
+          changed_files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+          for file in $changed_files; do
+              if [[ "$file" == ./$dir/* ]]; then
+            grep_output=$(grep -PnH "$pattern" "$file" || true)
+              # Insert a tab after the line number, keeping the colon between the file path and line number
+              formatted_output=$(echo "$grep_output" | sed 's/^\(.*:[0-9]\+\):/\1\t/')
+          done
+        if: failure() && github.event_name != 'workflow_dispatch'
+          comment-author: "kratos-ci-bot"
+        if: failure() && github.event_name != 'workflow_dispatch' # This step runs only if the previous step fails
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd0fb7df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56cfd65d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

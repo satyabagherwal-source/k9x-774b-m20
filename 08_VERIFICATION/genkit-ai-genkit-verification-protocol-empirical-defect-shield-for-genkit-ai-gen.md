@@ -4,22 +4,22 @@
 {
   "source_repository": "genkit-ai/genkit",
   "source_url": "https://github.com/genkit-ai/genkit",
-  "source_version": "e80aaa6b",
+  "source_version": "605fb5eb",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T17:15:37.201Z",
+  "timestamp": "2026-11-23T20:39:00.807Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-genkit-ai-genkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `e80aaa6b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T17:15:37.201Z`  
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `605fb5eb`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T20:39:00.807Z`  
 > **Learning ID**: `learn-github-genkit-ai-genkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `genkit-ai/genkit` (Commit: `e80aaa6b`)
+- **Target Repository**: `genkit-ai/genkit` (Commit: `605fb5eb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:15:35.603Z  
+> **Harvest Timestamp**: 2026-11-23T20:38:59.496Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6611 stars
+- **Stars / Engagement**: 6618 stars
 
 ---
 
@@ -66,10 +66,8 @@ PROVENANCE_END -->
  * limitations under the License.
  */
 
-import {
-  BaseRuntimeManager,
-  GenkitToolsError,
-} from '@genkit-ai/tools-common/manager';
+import type { BaseRuntimeManager } from '@genkit-ai/tools-common/manager';
+import { GenkitToolsError } from '@genkit-ai/tools-common/manager';
 import path from 'path';
 import { z } from 'zod';
 import {
@@ -312,8 +310,11 @@ import {
   startTelemetryServer,
 } from '@genkit-ai/telemetry-server';
 import type { Status } from '@genkit-ai/tools-common';
-import {
+import type {
   BaseRuntimeManager,
+  GenkitToolsError,
+} from '@genkit-ai/tools-common/manager';
+import {
   DEFAULT_REFLECTION_V2_HOST,
   ProcessManager,
   REFLECTION_SECRET_ENV,
@@ -321,7 +322,6 @@ import {
   RuntimeManager,
   generateReflectionSecret,
   reflectionV2Url,
-  type GenkitToolsError,
 } from '@genkit-ai/tools-common/manager';
 import { logger } from '@genkit-ai/tools-common/utils';
 import getPort, { portNumbers } from 'get-port';
@@ -557,8 +557,7 @@ export async function startDevProcessManager(
   const disableRealtimeTelemetry = options?.disableRealtimeTelemetry ?? false;
   const experimentalReflectionV2 = options?.experimentalReflectionV2 ?? false;
   // Derived from the env the child actually receives, so the manager and the
-  // runtime can never disagree, whichever path produced envVars.
-  const reflectionSecret: string | unde
+  // runtime can never disagree, whichever path produc
 ```
 
 ### Core Architecture Module: `genkit-tools/cli/src/utils/option-parsers.ts`
@@ -678,7 +677,7 @@ export function parseJson(value: string): any {
  */
 
 import { existsSync } from 'fs';
-import { basename, extname } from 'path';
+import { basename } from 'path';
 
 const RUNTIME_NODE = 'node';
 const RUNTIME_BUN = 'bun';
@@ -686,8 +685,6 @@ const RUNTIME_COMPILED = 'compiled-binary';
 
 const NODE_PATTERNS = ['node', 'nodejs'];
 const BUN_PATTERNS = ['bun'];
-
-const SCRIPT_EXTENSIONS = ['.js', '.mjs', '.cjs', '.ts', '.tsx', '.jsx'];
 
 /**
  * CLI runtime types supported by the detector
@@ -722,18 +719,6 @@ function safeExistsSync(path: string | undefined): boolean {
   } catch {
     return false;
   }
-}
-
-/**
- * Checks if the given path has a recognized script file extension
- * @param path - File path to check
- * @returns true if the path ends with a known script extension
- * @internal Kept for potential future use, though not currently used in detection logic
- */
-function isLikelyScriptFile(path: string | undefined): boolean {
-  if (!path) return false;
-  const ext = extname(path).toLowerCase();
-  return SCRIPT_EXTENSIONS.includes(ext);
 }
 
 /**
@@ -848,10 +833,10 @@ export function detectCLIRuntime(): CLIRuntimeInfo {
  * limitations under the License.
  */
 
-import { type SpawnOptions } from 'child_process';
+import type { SpawnOptions } from 'child_process';
 import { access, constants } from 'fs/promises';
 import { SERVER_HARNESS_COMMAND } from '../commands/server-harness.js';
-import { type CLIRuntimeInfo } from './runtime-detector.js';
+import type { CLIRuntimeInfo } from './runtime-detector.js';
 
 /**
  * Configuration for spawning a child process
@@ -997,7 +982,7 @@ import {
   stackTraceSpans,
 } from '@genkit-ai/tools-common/utils';
 import YAML from 'yaml';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 type FormattedPart = {
   type: 'toolCall' | 'toolResponse' | 'text' | 'media' | 'other';
@@ -1307,7 +1292,7 @@ export function formatTraceTree(trace: TraceData): string {
     }
   }
 
-  const rootSpan = sta
+  const rootSpan 
 ```
 
 ### Core Architecture Module: `genkit-tools/cli/src/utils/updates.ts`
@@ -1330,7 +1315,8 @@ export function formatTraceTree(trace: TraceData): string {
 
 import { GenkitToolsError } from '@genkit-ai/tools-common/manager';
 import { getUserSettings, logger } from '@genkit-ai/tools-common/utils';
-import axios, { AxiosInstance } from 'axios';
+import type { AxiosInstance } from 'axios';
+import axios from 'axios';
 import * as clc from 'colorette';
 import { arch, platform } from 'os';
 import semver from 'semver';
@@ -1945,11 +1931,11 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7277** (2026-11-23): **[PY] genkit-ollama drops tool requests from chat messages, so tool calls loop until max_turns**
+  *Symptoms*: **Describe the bug**  `genkit-ollama` drops the model's tool requests when it converts a Genkit request into Ollama chat messages. `OllamaModel.build_chat_messages` (`py/packages/genkit-ollama/src/genkit_ollama/_models.py`) copies only text, tool-response output and images into each `ollama.Message`:  ```python for text_part in message.content:     if text_part.text is not None:         item.content = (item.content or '') + text_part.text     elif text_part.tool_response is not None:         item.content = (item.content or '') + str(text_part.tool_response.output)     elif text_part.media is not None:         ... ```  A `tool_request` part is ignored, so the assistant message that asked for the tool reaches Ollama with empty content and no `tool_calls`, and the tool message that follows has no `tool_name`. The model receives a tool result for a call it never made, calls the tool again, and the generate loop ends with `ABORTED` / `Exceeded maximum tool call iterations`.  Any tool use through the Ollama plugin is affected: `ai.generate(tools=...)`, prompts with tools, and agents (`genkit.exp`), where every tool turn aborts.  **To Reproduce**  Ollama running locally with `gemma4:e4b` pulled.  ```python import asyncio  from genkit import Genkit, Message, Part, Role from genkit.model import ModelRequest from genkit_ollama import Ollama from genkit_ollama._models import OllamaModel from pydantic import BaseModel  ai = Genkit(plugins=[Ollama()]) calls = 0   class NoInput(BaseModel):
+
 - **Issue #6994** (2026-11-01): **[Go] Filesystem middleware: queued read_file injection breaks interrupt resume — "cannot resume generation unless the last message is by a model"**
   *Symptoms*: **Describe the bug**  The `Filesystem` middleware queues `read_file`'s file contents and appends them to `params.Request.Messages` as a user message at the **entry of the next Generate**. When a Generate ends with an interrupt (e.g. a `ToolApproval` hold) while an injection is still queued, the resume Generate injects that user message at its entry — **after** the model message carrying the tool requests. The turn-0 resume validation in `handleResumeOption` then fails, because it validates against the hook-revised message list (`turnOpts.Messages = req.Messages`):  ``` FAILED_PRECONDITION: handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request ```  The injected message already carries the `filesystemMiddlewareTool` metadata, but the resume validation does not skip it (unlike the `ToolApproval` judge, which deliberately does).  **To Reproduce**  Self-contained program below — no API key, no network: a stub OpenAI-compatible server scripts the model to answer one response with two parallel tool calls (`read_file go.mod`, pre-approved, runs and queues its contents; `edit_file go.mod`, held by `ToolApproval`). The caller then approves and resumes the edit.  ``` go mod tidy && go run . ```  Observed on genkit v1.14.0:  ``` handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request exit status 1 ```  Setting `applyWorkaround = true` in the same program (strip the messag
-
-- **Issue #6891** (2026-11-09): **[Python] genkit-vertexai: Model Garden OpenAI-compatible models fail with PydanticUserError TypeAdapter[ModelRequest] is not fully defined**
-  *Symptoms*: **Describe the bug**  In `genkit-vertexai` 0.12.0, every OpenAI-compatible Model Garden model (for example Llama) fails before any request is sent:  ``` pydantic.errors.PydanticUserError: `TypeAdapter[ModelRequest]` is not fully defined; you should define `ModelRequest` and all referenced types, then call `.rebuild()` on the instance. ```  **To Reproduce**  ```python import asyncio from genkit import Genkit from genkit_vertexai.model_garden import ModelGarden, model_garden_name  async def main():     ai = Genkit(plugins=[ModelGarden(project_id='my-project', location='us-east5')])     await ai.generate(         model=model_garden_name('meta/llama-4-maverick-17b-128e-instruct-maas'),         prompt='hi',     )  asyncio.run(main()) ```  Traceback (abridged):  ``` genkit/_core/_registry.py, line 739, in resolve_action genkit_vertexai/model_garden/modelgarden_plugin.py, line 100, in resolve genkit_vertexai/model_garden/modelgarden_plugin.py, line 156, in _create_model_action genkit/_ai/_model.py, line 396, in model genkit/_core/_action.py, line 478, in __init__ genkit/_core/_action.py, line 658, in _initialize_io_schemas pydantic/type_adapter.py, line 703, in json_schema pydantic/_internal/_mock_val_ser.py, line 72, in rebuild pydantic.errors.PydanticUserError: `TypeAdapter[ModelRequest]` is not fully defined ... ```  It fails while defining the model action, so no credentials or network call are involved.  **Expected behavior**  The Model Garden action is defined and the request 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1966,919 +1952,180 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e80aaa6b` (2026-11-20)
-**Commit Message**: feat(genkit-tools): add trajectory span-parser helpers and test span builders (#7226)
+### Incident Patch 1: `7bd9b7e9` (2026-11-23)
+**Commit Message**: build(genkit-tools): add test typecheck, baseline ESLint, and CI (#7294)
 
-**File**: `genkit-tools/common/src/utils/trajectory/span-parser.ts` (added, +288/-0)
+**File**: `.github/workflows/tests.yml` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,288 @@
-+/**
-+ * Copyright 2026 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+import type { RuntimeError } from '../../types/error.js';
-+import type {
-+  AgentInput,
-+  GenerationUsage,
-+  MessageData,
-+  NestedSpanData,
-+  Part,
-+  SpanData,
-+  ToolDefinition,
-+} from '../../types/index.js';
-+import {
-+  cleanActionName,
-+  getSpanName,
-+  getSpanStatus,
-+  isTruthyAttr,
-+  parseSpanJson,
-+  shortToolName,
-+} from '../trace.js';
-+
-+const PROMPT_SPAN_TYPES: ReadonlySet<unknown> = new Set([
-+  'prompt',
-+  'promptTemplate',
-+]);
-+
-+/**
-+ * Spans belonging to a single `Trajectory` (either the root trace/agent or an
-+ * individual nested `/agent/...` subagent), grouped by role during tree
-+ * traversal. Traversal stops at nested `/agent/...` boundaries so child
-+ * subagents are extracted into their own `Trajectory` entries.
-+ */
-+export interface TrajectorySpans {
-+  /** Maps each `spanId` in this trajectory to its parent span for ancestor/turn lookups. */
-+  parentMap: Map<string, NestedSpanData>;
-+  /** Model execution spans (`model` / `background-model`) in this trajectory. */
-+  modelSpans: NestedSpanData[];
-+  /** Tool execution spans (`tool` / `tool.v2`) in this trajectory. */
-+  toolSpans: NestedSpanData[];
-+  /** All spans belonging to this trajectory in traversal order. */
-+  scopeSpans: NestedSpanData[];
-+}
-+
-+/** Parsed structure of a model span's `genkit:input` JSON attribute. */
-+export interface ParsedModelInput {
-+  tools?: Partial<ToolDefinition>[];
-+  messages?: MessageData[];
-+}
-+
-+/** Parsed structure of a span's `genkit:input` JSON attribute. */
-+export type ParsedSpanInput = ParsedModelInput | AgentInput;
-+
-+/** Parsed structure of a span's `genkit:output` JSON attribute. */
-+export interface ParsedSpanOutput {
-+  message?: MessageData;
-+  finishReason?: string;
-+  finishMessage?: string;
-+  usage?: GenerationUsage;
-+  candidates?: Array<{
-+    message?: MessageData;
-+    finishReason?: string;
-+    usage?: GenerationUsage;
-+  }>;
-+  error?: RuntimeError;
-+}
-+
-+/** Normalized output extracted from a model execution span. */
-+export interface ModelOutputData {
-+  message?: MessageData;
-+  finishReason?: string;
-+  usage?: GenerationUsage;
-+  error?: RuntimeError;
-+}
-+
-+/** Parses a span JSON attribute and narrows it to a non-null, non-array object. */
-+export function parseSpanObject<T extends object>(val: unknown): T | undefined {
-+  const parsed = parseSpanJson<T>(val);
-+  return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-+    ? (parsed as T)
-+    : undefined;
-+}
-+
-+/**
-+ * Returns true if neither side specifies a conflicting tool call reference ID,
-+ * preventing name-based fallbacks from pairing mismatched parallel calls.
-+ */
-+export function hasCompatibleRef(
-+  reqRef?: string,
-+  candidateRef?: string
-+): boolean {
-+  return !reqRef || !candidateRef || reqRef === candidateRef;
-+}
-+
-+/**
-+ * Removes and returns the first item matching `reqRef` by exact ref, or falling back
-+ * to a compatible ref with matching short tool name.
-+ */
-+export function takeMatchingByRefOrName<T>(
-+  items: T[],
-+  reqRef: string | undefined,
-+  reqShortName: string,
-+  getRef: (item: T) => string | undefined,
-+  getName: (item: T) => string
-+): T | undefined {
-+  let idx = reqRef ? items.findIndex((item) => getRef(item) === reqRef) : -1;
-+  if (idx < 0) {
-+    idx = items.findIndex(
-+      (item) =>
-+        hasCompatibleRef(reqRef, getRef(item)) &&
-+        shortToolName(getName(item)) === reqShortName
-+    );
-+  }
-+  return idx >= 0 ? items.splice(idx, 1)[0] : undefined;
-+}
-+
-+/** Resolves the 0-based `turnIndex` and enclosing `runTurn-<N>` span for a span. */
-+export function getTurnContext(
-+  span: NestedSpanData,
-+  parentMap: ReadonlyMap<string, NestedSpanData>
-+): { turnIndex: number; turnSpan?: NestedSpanData } {
-+  let curr: NestedSpanData | undefined = span;
-+  const visited = new Set<string>();
-+  while (curr) {
-+    if (visited.has(curr.spanId)) {
-+      break;
-+    }
-+    visited.add(curr.spanId);
-+    const match = /^runTurn-(\d+)$/.exec(cleanActionName(getSpanName(curr)));
-+    if (match) {
-+      return {
-+        turnIndex: Math.max(0, Number.parseInt(match[1], 10) - 1),
-+        turnSpan: curr,
-+      };
-+    }
-+    curr = parentMap.get(curr.spanId);
-+  }
-+  return { turnIndex: 0, turnSpan: undefined };
-+}
-+
-+function toRuntimeError(err: {
-+  status?: unknown;
-+  message: string;
-+  details?: unknown;
-+}): RuntimeError {
-+
+@@ -54,6 +54,8 @@ jobs:
+         cache: pnpm
+     - name: Install dependencies and build
+       run: cd genkit-tools && pnpm install && pnpm build
++    - name: Lint and typecheck
++      run: cd genkit-tools && pnpm lint && pnpm typecheck
+     - name: Run tests
+       run: pnpm test:genkit-tools
+     - name: Validate working directory is clean
 ```
 
-**File**: `genkit-tools/common/tests/utils/trajectory/mock_data.ts` (added, +264/-0)
+**File**: `genkit-tools/AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,264 @@
-+/**
-+ * Copyright 2026 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+import type {
-+  GenerationUsage,
-+  MessageData,
-+  SpanData,
-+  ToolDefinition,
-+} from '../../../src/types/index.js';
-+import { makeSpan, makeTrace } from '../trace.js';
-+
-+export { makeSpan, makeTrace };
-+
-+type SpanOverrides = Partial<Omit<SpanData, 'attributes'>> & {
-+  attributes?: Record<string, unknown>;
-+};
-+
-+function stringifyIfDefined(val: unknown): Record<string, string> {
-+  return val !== undefined ? { value: JSON.stringify(val) } : {};
-+}
-+
-+/** Options for {@link makeAgentSpan}. */
-+export interface MakeAgentSpanOptions extends SpanOverrides {
-+  name?: string;
-+  sessionId?: string;
-+  input?: unknown;
-+  output?: unknown;
-+}
-+
-+/** Builds an `/agent/<name>` SpanData with serialized `genkit:input` / `genkit:output` attributes. */
-+export function makeAgentSpan(options: MakeAgentSpanOptions = {}): SpanData {
-+  const {
-+    name = 'weatherAgent',
-+    sessionId,
-+    input,
-+    output,
-+    attributes,
-+    ...rest
-+  } = options;
-+  const cleanName = name.replace(/^\/agent\//, '');
-+  const inAttr = stringifyIfDefined(input);
-+  const outAttr = stringifyIfDefined(output);
-+
-+  return makeSpan({
-+    spanId: 'root-agent',
-+    startTime: 100,
-+    endTime: 500,
-+    ...rest,
-+    displayName:
-+      rest.displayName ??
-+      (name.startsWith('/agent/') ? name : `/agent/${cleanName}`),
-+    attributes: {
-+      'genkit:type': 'action',
-+      'genkit:metadata:subtype': 'agent',
-+      'genkit:name': cleanName,
-+      ...(sessionId ? { 'genkit:metadata:agent:sessionId': sessionId } : {}),
-+      ...(inAttr.value !== undefined ? { 'genkit:input': inAttr.value } : {}),
-+      ...(outAttr.value !== undefined
-+        ? { 'genkit:output': outAttr.value }
-+        : {}),
-+      ...attributes,
-+    },
-+  });
-+}
-+
-+/** Options for {@link makeTurnSpan}. */
-+export interface MakeTurnSpanOptions extends SpanOverrides {
-+  turn?: number;
-+  input?: unknown;
-+  output?: unknown;
-+}
-+
-+/** Builds a `runTurn-<N>` flowStep SpanData with serialized `genkit:input` / `genkit:output` attributes. */
-+export function makeTurnSpan(options: MakeTurnSpanOptions = {}): SpanData {
-+  const { turn = 1, input, output, attributes, ...rest } = options;
-+  const inAttr = stringifyIfDefined(input);
-+  const outAttr = stringifyIfDefined(output);
-+
-+  return makeSpan({
-+    spanId: `turn-${turn}`,
-+    parentSpanId: 'root-agent',
-+    startTime: 105,
-+    endTime: 495,
-+    ...rest,
-+    displayName: rest.displayName ?? `runTurn-${turn}`,
-+    attributes: {
-+      'genkit:type': 'flowStep',
-+      ...(inAttr.value !== undefined ? { 'genkit:input': inAttr.value } : {}),
-+      ...(outAttr.value !== undefined
-+        ? { 'genkit:output': outAttr.value }
-+        : {}),
-+      ...attributes,
-+    },
-+  });
-+}
-+
-+/** Options for {@link makeModelSpan}. */
-+export interface MakeModelSpanOptions extends SpanOverrides {
-+  model?: string;
-+  messages?: Array<
-+    | MessageData
-+    | { role: string; content: unknown; metadata?: Record<string, unknown> }
-+  >;
-+  tools?: Partial<ToolDefinition>[];
-+  input?: unknown;
-+  outputMessage?: MessageData;
-+  finishReason?: string;
-+  usage?: GenerationUsage;
-+  outputError?: { message: string; details?: { stack?: string } };
-+  candidates?: unknown[];
-+  output?: unknown;
-+}
-+
-+/** Builds a `/model/<model>` SpanData hiding `genkit:input` / `genkit:output` JSON serialization. */
-+export function makeModelSpan(options: MakeModelSpanOptions = {}): SpanData {
-+  const {
-+    model = 'googleai/gemini-2.5-pro',
-+    messages,
-+    tools,
-+    input,
-+    outputMessage,
-+    finishReason,
-+    usage,
-+    outputError,
-+    candidates,
-+    output,
-+    attributes,
-+    ...rest
-+  } = options;
-+  const cleanModel = model.replace(/^\/model\//, '');
-+
-+  const resolvedInput =
-+    input !== undefined
-+      ? input
-+      : messages !== undefined || tools !== undefined
-+        ? {
-+            ...(messages !== undefined ? { messages } : {}),
-+            ...(tools !== undefined ? { tools } : {}),
-+          }
-+        : undefined;
-+
-+  const hasStructuredOutput =
-+    outputMessage !== undefined ||
-+    finishReason !== undefined ||
-+    usage !== undefined ||
-+    outputError !== undefined ||
-+    candidates !== undefined;
-+  const resolvedOutput =
-+    output !== undefined
-+      ? output
-+      : hasStructuredOutput
-+        ? {
-+            ...(outputMessage !== undefined 
-```
-
-**File**: `genkit-tools/common/tests/utils/trajectory/span-parser_test.ts` (added, +307/-0)
-```diff
-@@ -0,0 +1,307 @@
-+/**
-+ * Copyright 2026 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+import { describe, expect, it } from 'vitest';
-+import type { NestedSpanData } from '../../../src/types/index.js';
-+import {
-+  aggregateUsage,
-+  extractTextFromParts,
-+  getModelOutputData,
-+  getTurnContext,
-+  hasCompatibleRef,
-+  isExcludedFromTrajectory,
-+  isExplicitHistoryMessage,
-+  messageSignature,
-+  normalizeParts,
-+  takeMatchingByRefOrName,
-+} from '../../../src/utils/trajectory/span-parser.js';
-+import { makeModelSpan, makeSpan, makeTurnSpan } from './mock_data.js';
-+
-+describe('trajectory span-parser helpers', () => {
-+  describe('hasCompatibleRef', () => {
-+    it.each([
-+      {
-+        name: 'matching refs',
-+        reqRef: 'ref-1',
-+        candidateRef: 'ref-1',
-+        expected: true,
-+      },
-+      {
-+        name: 'missing candidate ref',
-+        reqRef: 'ref-1',
-+        candidateRef: undefined,
-+        expected: true,
-+      },
-+      {
-+        name: 'conflicting refs',
-+        reqRef: 'ref-1',
-+        candidateRef: 'ref-2',
-+        expected: false,
-+      },
-+    ])('returns $expected for $name', ({ reqRef, candidateRef, expected }) => {
-+      expect(hasCompatibleRef(reqRef, candidateRef)).toBe(expected);
-+    });
-+  });
-+
-+  describe('takeMatchingByRefOrName', () => {
-+    const makeItems = () => [
-+      { ref: 'ref-a', name: '/tool/search' },
-+      { ref: 'ref-b', name: '/tool/search' },
-+      { ref: undefined, name: '/tool.v2/mcp/lookup' },
-+    ];
-+
-+    it('matches by exact ref', () => {
-+      expect(
-+        takeMatchingByRefOrName(
-+          makeItems(),
-+          'ref-b',
-+          'search',
-+          (i) => i.ref,
-+          (i) => i.name
-+        )?.ref
-+      ).toBe('ref-b');
-+    });
-+
-+    it('returns undefined on conflicting refs instead of falling back to name', () => {
-+      expect(
-+        takeMatchingByRefOrName(
-+          makeItems(),
-+          'ref-missing',
-+          'search',
-+          (i) => i.ref,
-+          (i) => i.name
-+        )
-+      ).toBeUndefined();
-+    });
-+
-+    it('falls back to short tool name when candidate ref is undefined', () => {
-+      expect(
-+        takeMatchingByRefOrName(
-+          makeItems(),
-+          'ref-c',
-+          'lookup',
-+          (i) => i.ref,
-+          (i) => i.name
-+        )?.name
-+      ).toBe('/tool.v2/mcp/lookup');
-+    });
-+  });
-+
-+  describe('getTurnContext', () => {
-+    it('resolves 0-based turnIndex and turnSpan from enclosing runTurn-<N>', () => {
-+      const turn2 = makeTurnSpan({ turn: 2 }) as NestedSpanData;
-+      const model = makeModelSpan({
-+        parentSpanId: turn2.spanId,
-+      }) as NestedSpanData;
-+      const parentMap = new Map<string, NestedSpanData>([
-+        [model.spanId, turn2],
-+      ]);
-+
-+      expect(getTurnContext(model, parentMap)).toEqual({
-+        turnIndex: 1,
-+        turnSpan: turn2,
-+      });
-+    });
-+
-+    it('defaults to turnIndex 0 when no runTurn-<N> ancestor exists', () => {
-+      const model = makeModelSpan() as NestedSpanData;
-+
-+      expect(getTurnContext(model, new Map())).toEqual({
-+        turnIndex: 0,
-+        turnSpan: undefined,
-+      });
-+    });
-+
-+    it('terminates safely on cyclic parentMap links', () => {
-+      const cycleA = makeSpan({ spanId: 'cyc-a' }) as NestedSpanData;
-+      const cycleB = makeSpan({ spanId: 'cyc-b' }) as NestedSpanData;
-+      const cyclicParents = new Map<string, NestedSpanData>([
-+        ['cyc-a', cycleB],
-+        ['cyc-b', cycleA],
-+      ]);
-+
-+      expect(getTurnContext(cycleA, cyclicParents)).toEqual({
-+        turnIndex: 0,
-+        turnSpan: undefined,
-+      });
-+    });
-+  });
-+
-+  describe('getModelOutputData', () => {
-+    it('falls back to candidates[0] for message, finishReason, and usage', () => {
-+      const legacySpan = makeModelSpan({
-+        candidates: [
-+          {
-+            message: { role: 'model', content: [{ text: 'Truncated' }] },
-+            finishReason: 'length',
-+            usage: { inputTokens: 10, outputTokens: 5 },
-+          },
-+        ],
-+      });
-+
-+      expect(getModelOutputData(legacySpan)).toEqual({
-+        message: { role: 'model', content: [{ text: 'Truncated' }] },
-+        finishReason: 'length',
-+        usage: { inputTokens: 10, outputTokens: 5 },
-+        error: undefined,
-+      });
-+    });
-+
-+    it('extracts structured RuntimeError from genkit:output.error', () => {
-+      const structuredErrSpan = makeMo
-```
-
----
-
-### Incident Patch 2: `426cc62b` (2026-11-20)
-**Commit Message**: feat(genkit-tools): add trace span tree pruning and inspection helpers (#7225)
-
-**File**: `genkit-tools/common/src/utils/trace.ts` (modified, +181/-6)
-```diff
-@@ -14,10 +14,51 @@
-  * limitations under the License.
-  */
+@@ -11,4 +11,4 @@ This document defines high-level architectural and testing conventions for contr
  
--import type { NestedSpanData, TraceData } from '../types/index.js';
-+import type { NestedSpanData, SpanData, TraceData } from '../types/index.js';
-+
-+/** Options for {@link stackTraceSpans}. */
-+export interface StackTraceSpansOptions {
-+  /**
-+   * Optional predicate to exclude spans (along with their entire descendant
-+   * subtrees) when building the span tree.
-+   */
-+  exclude?: (span: NestedSpanData) => boolean;
+ - **CLI & MCP authoring**: When adding or modifying CLI commands (`cli/src/commands/`) or MCP tools (`cli/src/mcp/`), read and follow the `genkit-tools-cli` skill (`../.agents/skills/genkit-tools-cli/SKILL.md`).
+ - **Unit tests (`*.test.ts`)**: Whenever creating, modifying, fixing, or reviewing unit tests in `genkit-tools/`, read and follow the `genkit-tools-testing` skill (`../.agents/skills/genkit-tools-testing/SKILL.md`) first.
+-- **Verification**: Run tests from the package directory (e.g., `cd genkit-tools/common && pnpm test`) or `pnpm test:genkit-tools` from the repo root.
++- **Verification**: Run `cd genkit-tools && pnpm build && pnpm lint && pnpm typecheck` and `pnpm test:genkit-tools` from the repo root (or `pnpm test` in a package directory).
+```
+
+**File**: `genkit-tools/cli/package.json` (modified, +1/-0)
+```diff
+@@ -23,6 +23,7 @@
+   "main": "dist/index.js",
+   "scripts": {
+     "build": "pnpm genversion && tsc",
++    "typecheck": "pnpm genversion && tsc --noEmit -p tsconfig.test.json",
+     "build:watch": "tsc --watch",
+     "compile:bun": "bun build src/bin/genkit.ts --compile --outfile dist/bin/genkit --minify",
+     "test": "vitest run",
+```
+
+**File**: `genkit-tools/cli/tsconfig.test.json` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++{
++  "extends": "./tsconfig.json",
++  "compilerOptions": {
++    "noEmit": true,
++    "rootDir": "."
++  },
++  "include": ["src", "tests"]
 +}
-+
-+/**
-+ * Sorts spans chronologically by `startTime`, breaking ties deterministically by `spanId`.
-+ */
-+export function sortSpansChronologically(spans: SpanData[]): void {
-+  spans.sort(
-+    (a, b) => a.startTime - b.startTime || a.spanId.localeCompare(b.spanId)
+```
+
+**File**: `genkit-tools/common/package.json` (modified, +1/-0)
+```diff
+@@ -7,6 +7,7 @@
+   },
+   "scripts": {
+     "compile": "pnpm genversion && tsc",
++    "typecheck": "pnpm genversion && tsc --noEmit -p tsconfig.test.json",
+     "build:clean": "rimraf ./lib",
+     "build": "pnpm run build:clean && pnpm run compile",
+     "test": "vitest run",
+```
+
+**File**: `genkit-tools/common/tests/eval/local-file-eval-store.test.ts` (modified, +10/-8)
+```diff
+@@ -120,13 +120,15 @@ const mockReadlineForMigration = (keys: EvalRunKey[]) => {
+ };
+ 
+ const mockIndexFile = (keys: Record<string, EvalRunKey>) => {
+-  fs.promises.readFile = vi.fn<any>().mockResolvedValue(JSON.stringify(keys));
++  vi.spyOn(fs.promises, 'readFile').mockResolvedValue(
++    JSON.stringify(keys) as any
 +  );
-+}
-+
-+/** Checks whether a span attribute value represents boolean `true` or `'true'`. */
-+export function isTruthyAttr(val: unknown): boolean {
-+  return (
-+    val === true || (typeof val === 'string' && val.toLowerCase() === 'true')
+ };
+ 
+ const mockEvalRunFile = (evalRun: EvalRun) => {
+-  fs.promises.readFile = vi
+-    .fn<any>()
+-    .mockImplementation(async () => JSON.stringify(evalRun));
++  vi.spyOn(fs.promises, 'readFile').mockImplementation(
++    async () => JSON.stringify(evalRun) as any
 +  );
-+}
-+
-+function pruneSpanSubtree(
-+  node: NestedSpanData,
-+  exclude: (span: NestedSpanData) => boolean
-+): NestedSpanData | undefined {
-+  if (exclude(node)) return undefined;
-+  if (node.spans?.length) {
-+    node.spans = node.spans.filter((child) =>
-+      Boolean(pruneSpanSubtree(child, exclude))
-+    );
-+  }
-+  return node;
-+}
+ };
  
- /** Transforms flat spans from the trace data into a tree of spans. */
--export function stackTraceSpans(trace: TraceData): NestedSpanData | undefined {
-+export function stackTraceSpans(
-+  trace: TraceData,
-+  options?: StackTraceSpansOptions
-+): NestedSpanData | undefined {
-   if (!trace.spans || Object.keys(trace.spans).length === 0) return undefined;
-   let rootSpan: NestedSpanData | undefined = undefined;
+ describe('localFileEvalStore', () => {
+@@ -138,9 +140,9 @@ describe('localFileEvalStore', () => {
  
-@@ -46,14 +87,16 @@ export function stackTraceSpans(trace: TraceData): NestedSpanData | undefined {
+     // Setup default mocks for a clean state before each test
+     mockFsExists(() => false);
+-    fs.promises.writeFile = vi.fn<any>().mockResolvedValue(undefined);
+-    fs.promises.unlink = vi.fn<any>().mockResolvedValue(undefined);
+-    fs.writeFileSync = vi.fn<any>().mockImplementation(() => {});
++    vi.spyOn(fs.promises, 'writeFile').mockResolvedValue(undefined);
++    vi.spyOn(fs.promises, 'unlink').mockResolvedValue(undefined);
++    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
  
-   // Sort children by start times for each span.
-   treeSpans.forEach((span) => {
--    span.spans?.sort((a, b) => a.startTime - b.startTime);
-+    if (span.spans) sortSpansChronologically(span.spans);
+     evalStore = await LocalFileEvalStore.getEvalStore();
    });
+@@ -160,7 +162,7 @@ describe('localFileEvalStore', () => {
+     it('migrates to json file if txt index is found', async () => {
+       LocalFileEvalStore.reset();
+       mockFsExists((path) => path.toString().endsWith('index.txt'));
+-      fs.createReadStream = vi.fn<any>().mockReturnValue({} as any);
++      vi.spyOn(fs, 'createReadStream').mockReturnValue({} as any);
+       mockReadlineForMigration([EVAL_RUN_WITH_ACTION.key]);
  
--  return rootSpan;
-+  return rootSpan && options?.exclude
-+    ? pruneSpanSubtree(rootSpan, options.exclude)
-+    : rootSpan;
- }
- 
- /** Extracts the display type/subtype of a span. */
--export function getSpanType(span: NestedSpanData): string {
-+export function getSpanType(span: SpanData): string {
-   const attrs = span.attributes || {};
-   const kind = span.spanKind;
-   let kindStr = 'span';
-@@ -71,7 +114,7 @@ export function getSpanType(span: NestedSpanData): string {
- }
- 
- /** Extracts the status icon ('✔', '✖', or '') of a span. */
--export function getSpanStatus(span: NestedSpanData): string {
-+export function getSpanStatus(span: SpanData): string {
-   const attrs = span.attributes || {};
-   const state = attrs['genkit:state'] as string;
-   if (state) {
-@@ -83,3 +126,135 @@ export function getSpanStatus(span: NestedSpanData): string {
-   if (span.status?.code === 2) return '✖';
-   return '';
- }
-+
-+/**
-+ * Safely parses a JSON string attribute from a span, returning the value as-is
-+ * if already parsed, or the raw `string` when `JSON.parse` fails (e.g. plain-text
-+ * tool inputs/outputs). Callers expecting an object should narrow `typeof parsed === 'object'`.
-+ */
-+export function parseSpanJson<T = unknown>(
-+  val: unknown
-+): T | string | undefined {
-+  if (val === undefined || val === null) return undefined;
-+  if (typeof val === 'string') {
-+    const trimmed = val.trim();
-+    if (!trimmed) return undefined;
-+    try {
-+      return JSON.parse(trimmed) as T;
-+    } catch {
-+      return val;
-+    }
-+  }
-+  return val as T;
-+}
-+
-+/** Returns a span's `displayName` or `genkit:name` attribute. */
-+export function getSpanName(span: SpanData): string {
-+  return (
-+    span.displayName ||
-+    (span.attributes?.['genkit:name'] as string | undefined) ||
-+    ''
-+  );
-+}
-+
-+function hasSpanTypeOrSubtype(span: SpanData, target: string): boolean {
-+  const attrs = span.attributes;
-+  return (
-+    attrs?.['genkit:metadata:subtype'] === target ||
-+    attrs?.['genkit:type'] === target
-+  );
-+}
-+
-+/** Checks whether a span represents an agent boundary. */
-+export function isAgentSpan(span: SpanData): boolean {
-+  return (
-+    hasSpanTypeOrSubtype(span, 'agent') ||
-+    getSpanName(span).startsWith('/agent/')
-+  );
-+}
-+
-+/** Checks whether a span represents a model execution. */
-+export function isModelSpan(span: SpanData): boolean {
-+  const name = getSpanName(span);
-+  return (
-+    hasSpanTypeOrSubtype(span, 'model') ||
-+    hasSpanTypeOrSubtype(span, 'background-model') ||
-+    name.startsWith('/model/') ||
-+    name.startsWith('/background-model/')
-+  );
-+}
-+
-+/** Checks whether a span represents a tool execution. */
-+export function isToolSpan(span: SpanData): boolean {
-+  const name = getSpanName(span);
-+  return (
-+    hasSpanTypeOrSubtype(span, 'tool') ||
-+    hasSpanTypeOrSubtype(span, 'tool.v2') ||
-+    name.startsWith('/tool/') ||
-+    name.startsWith('/tool.v2/')
-+  );
+       await LocalFileEvalStore.getEvalStore();
 ```
 
-**File**: `genkit-tools/common/tests/utils/trace.ts` (modified, +51/-0)
+**File**: `genkit-tools/common/tsconfig.test.json` (added, +8/-0)
 ```diff
-@@ -191,3 +191,54 @@ export class MockTrace {
-     return this;
-   }
- }
-+
-+/** Builds a minimal valid SpanData for unit tests with optional field overrides. */
-+export function makeSpan(overrides: Partial<SpanData> = {}): SpanData {
-+  const spanId = overrides.spanId ?? 'span-1';
-+  return {
-+    traceId: 'trace-1',
-+    spanId,
-+    startTime: 100,
-+    endTime: 200,
-+    attributes: {},
-+    instrumentationLibrary: { name: 'genkit-tracer', version: 'v1' },
-+    spanKind: 'INTERNAL',
-+    status: { code: 0 },
-+    ...overrides,
-+    displayName: overrides.displayName ?? spanId,
-+  };
-+}
-+
-+/**
-+ * Builds a TraceData record auto-keyed by each span's `spanId`.
-+ * Infers `startTime` and `endTime` bounds from `spans` when not explicitly overridden.
-+ */
-+export function makeTrace(
-+  spans: SpanData[],
-+  overrides: Partial<TraceData> = {}
-+): TraceData {
-+  const traceId = overrides.traceId ?? spans[0]?.traceId ?? 'trace-1';
-+  const keyedSpans: Record<string, SpanData> = {};
-+  let minStart = Number.POSITIVE_INFINITY;
-+  let maxEnd = 0;
-+
-+  for (const span of spans) {
-+    keyedSpans[span.spanId] = overrides.traceId
-+      ? { ...span, traceId }
-+      : { ...span };
-+    if (span.startTime < minStart) minStart = span.startTime;
-+    if (span.endTime > maxEnd) maxEnd = span.endTime;
-+  }
-+
-+  return {
-+    traceId,
-+    ...(spans.length > 0
-+      ? {
-+          startTime: Number.isFinite(minStart) ? minStart : 0,
-+          endTime: maxEnd,
-+        }
-+      : {}),
-+    ...overrides,
-+    spans: overrides.spans ? { ...keyedSpans, ...overrides.spans } : keyedSpans,
-+  };
+@@ -0,0 +1,8 @@
++{
++  "extends": "./tsconfig.json",
++  "compilerOptions": {
++    "noEmit": true,
++    "rootDir": "."
++  },
++  "include": ["src", "tests"]
 +}
 ```
 
-**File**: `genkit-tools/common/tests/utils/trace_test.ts` (modified, +350/-49)
+**File**: `genkit-tools/eslint.config.mjs` (added, +40/-0)
 ```diff
-@@ -15,67 +15,368 @@
-  */
- 
- import { describe, expect, it } from 'vitest';
--import type { TraceData } from '../../src/types/index.js';
--import { getSpanStatus, stackTraceSpans } from '../../src/utils/index.js';
--import { BASE_FLOW_SPAN_ID, MockTrace } from './trace.js';
--
--const TEST_TRACE: TraceData = {
--  traceId: '7c273c22b219d077c6731a10d46b7d40',
--  startTime: 1714059149480,
--  endTime: 1714059149485.578,
--  displayName: 'multiSteps',
--  spans: {},
--};
-+import {
-+  cleanActionName,
-+  extractSessionIdFromTrace,
-+  getSpanName,
-+  getSpanStatus,
-+  getSpanType,
-+  isAgentSpan,
-+  isModelSpan,
-+  isToolSpan,
-+  isTruthyAttr,
-+  parseSpanJson,
-+  shortToolName,
-+  stackTraceSpans,
-+} from '../../src/utils/index.js';
-+import { BASE_FLOW_SPAN_ID, MockTrace, makeSpan, makeTrace } from './trace.js';
+@@ -0,0 +1,40 @@
++/**
++ * Copyright 2026 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
-+const PRUNE_BASELINE_TRACE = makeTrace([
-+  makeSpan({
-+    spanId: 'agent',
-+    displayName: '/agent/main',
-+    startTime: 105,
-+  }),
-+  makeSpan({ spanId: 'kept', parentSpanId: 'agent', startTime: 110 }),
-+  makeSpan({
-+    spanId: 'excluded-branch',
-+    parentSpanId: 'agent',
-+    startTime: 115,
-+    attributes: { skipMe: true },
-+  }),
-+  makeSpan({
-+    spanId: 'excluded-leaf',
-+    parentSpanId: 'excluded-branch',
-+    startTime: 116,
-+  }),
-+]);
- 
- describe('trace utils', () => {
--  it('returns root span', async () => {
--    const trace = new MockTrace('My input', 'My output')
--      .addSpan({
--        stepName: 'retrieverStep',
--        spanType: 'action',
--      })
--      .addSpan({
--        stepName: 'llmStep',
--        spanType: 'action',
--      })
--      .getTrace();
--
--    const span = stackTraceSpans(trace);
--
--    expect(span).toBeDefined();
--    expect(span!.spanId).toEqual(BASE_FLOW_SPAN_ID);
--    expect(span?.spans?.length).toBe(2);
--  });
-+  describe('stackTraceSpans', () => {
-+    it('returns root span and nests children from flat trace spans', () => {
-+      const trace = new MockTrace('My input', 'My output')
-+        .addSpan({ stepName: 'retrieverStep', spanType: 'action' })
-+        .addSpan({ stepName: 'llmStep', spanType: 'action' })
-+        .getTrace();
++// @ts-check
++import vitestPlugin from '@vitest/eslint-plugin';
++import eslintConfigPrettier from 'eslint-config-prettier';
++import { defineConfig } from 'eslint/config';
++import tseslint from 'typescript-eslint';
 +
-+      const span = stackTraceSpans(trace);
-+
-+      expect(span?.spanId).toEqual(BASE_FLOW_SPAN_ID);
-+      expect(span?.spans).toHaveLength(2);
-+    });
-+
-+    it('returns undefined if no spans', () => {
-+      expect(stackTraceSpans(makeTrace([]))).toBeUndefined();
-+    });
-+
-+    it('falls back to orphan span as root when parentSpanId is missing from trace', () => {
-+      const trace = makeTrace(
-+        [
-+          makeSpan({
-+            spanId: 'orphan',
-+            parentSpanId: 'missing-parent',
-+            startTime: 100,
-+          }),
-+          makeSpan({
-+            spanId: 'child',
-+            parentSpanId: 'orphan',
-+            startTime: 110,
-+          }),
-+        ],
-+        { traceId: 'trace-orphan' }
-+      );
-+
-+      const root = stackTraceSpans(trace);
-+
-+      expect(root?.spanId).toBe('orphan');
-+      expect(root?.spans?.map((s) => s.spanId)).toEqual(['child']);
-+    });
-+
-+    it('sorts sibling spans chronologically by startTime', () => {
-+      const trace = makeTrace([
-+        makeSpan({ spanId: 'agent', startTime: 100 }),
-+        makeSpan({
-+          spanId: 'child-late',
-+          parentSpanId: 'agent',
-+          startTime: 130,
-+        }),
-+        makeSpan({
-+          spanId: 'child-early',
-+          parentSpanId: 'agent',
-+          startTime: 110,
-+        }),
-+        makeSpan({
-+          spanId: 'child-mid',
-+          parentSpanId: 'agent',
-+          startTime: 120,
-+        }),
-+      ]);
-+
-+      expect(stackTraceSpans(trace)?.spans?.map((s) => s.spanId)).toEqual([
-+        'child-early',
-+        'child-mid',
-+        'child-late',
-+      ]);
-+    });
- 
--  it('returns undefined if no spans', async () => {
--    const span = stackTraceSpans(TEST_TRACE);
-+    it('breaks timestamp ties by spanId when sorting sibling spans', () => {
-+      const trace = makeTrace([
-+        makeSpan({ spanId: 'agent', startTime: 100 }),
-+        makeSpan({ spanId: 'child-b', parentSpanId: 'agent', startTime: 110 }),
-+        makeSpan({ spanId: 'child-a', parentSpanId: 'agent', startTime: 110 }),
-+      ]);
- 
--    expect(span).toBeUndefined();
-+      expect(stackTraceSpans(trace)?.spans?.map((s) => s.spanId)).toEqual([
-+        'child-a',
-+        'child-b',
-+      ]);
-+    });
-+
-+    it('prunes excluded spans and their descendant subtrees', () => {
-+      const root = stackTraceSpans(PRUNE_BASELINE_TRACE, {
-+        exclude: (s) => Boolean(s.attributes?.['skipMe']),
-+      });
-+
-+      expect(root?.spanId).toBe('agent');
-+      expect(root?.spans?.map((s) => s.spanId)).toEqual(['kept']);
-+    });
-+
-+    it('returns undefined when the root span itself is excluded', () => {
-+      expect(
-+        stackTraceSpans(PRUNE_BASELINE_TRACE, {
-+          exclude: (s) => s.spanId === 'agent',
-+        })
-+      ).toBeUndefined();
-+    });
-+  });
-+
-+  describe('getSpanType', () => {
-+    it.each([
++export default defineConfig(
++  {
++    ignores: ['**/dist/**', '**/lib/**', '**/node_modules/**', 'scripts/**'],
++  },
++  {
++    files: ['**/*.ts'],
++    extends: [tseslint.configs.base, eslintConfigPrettier],
++  },
++  {
++    files: ['**/*.test.ts'],
++    plugins: {
++      vitest: vitestPlugin,
++    },
++    rules: {
++      'vitest/no-focused-tests': 'error',
++    },
++  }
++);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7269** (2026-11-19): fix(js/plugins/google-genai): send tool_choice none/auto as string in Interactions (@ifielker)
-- **PR #7264** (closed): chore(py): dependency bounds policy, floor/newest CI, Dependabot major grouping (@huangjeff5)
-- **PR #7263** (2026-11-18): build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates (@dependabot[bot])
-- **PR #7262** (2026-11-18): fix(go): bump dotprompt to pick up the latest version (@pavelgj)
-- **PR #7259** (2026-11-18): build(deps-dev): bump prettier to ^3.9.10 and format (@MichaelDoyle)
-- **PR #7258** (2026-11-18): ci(workflows): pin GitHub Actions to commit SHAs in remaining workflows (@MichaelDoyle)
+- **PR #7304** (2026-11-23): chore(genkit-tools): enforce consistent type imports (@MichaelDoyle)
+- **PR #7303** (2026-11-23): chore(genkit-tools): enable switch, throw, equality, and return-await ESLint rules (@MichaelDoyle)
+- **PR #7302** (2026-11-23): chore(genkit-tools): use pnpm catalog for shared dependencies (@MichaelDoyle)
+- **PR #7301** (2026-11-23): chore(genkit-tools): enable type-aware async ESLint rules (@MichaelDoyle)
+- **PR #7299** (2026-11-23): chore(genkit-tools): enable recommended JS and TS ESLint rules (@MichaelDoyle)
+- **PR #7298** (2026-11-23): chore(genkit-tools): enable Vitest ESLint rules (@MichaelDoyle)
 
 ---
 
@@ -2898,64 +2145,22 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. genkit-tools): add trajectory span-parser helpers and test span builders
+## X. build(genkit-tools): add test typecheck, baseline ESLint, and CI
 
 **RULE**:
-When implementing operations in `genkit-tools/common/src/utils/trajectory/span-parser.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e80aaa6b`: genkit-tools): add trajectory span-parser helpers and test span builders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7bd9b7e9`: build(genkit-tools): add test typecheck, baseline ESLint, and CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/common/src/utils/trajectory/span-parser.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-/**
- * Copyright 2026 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import type { RuntimeError } from '../../types/error.js';
-import type {
-  AgentInput,
-  GenerationUsage,
-  MessageData,
-  NestedSpanData,
-  Part,
-  SpanData,
-  ToolDefinition,
-} from '../../types/index.js';
-import {
-  cleanActionName,
-  getSpanName,
-  getSpanStatus,
-  isTruthyAttr,
-  parseSpanJson,
-  shortToolName,
-} from '../trace.js';
-
-const PROMPT_SPAN_TYPES: ReadonlySet<unknown> = new Set([
-  'prompt',
-  'promptTemplate',
-]);
-
-/**
- * Spans belonging to a single `Trajectory` (either the root trace/agent or an
- * individual nested `/agent/...` subagent), grouped by role during tree
- * traversal.
+    - name: Lint and typecheck
+      run: cd genkit-tools && pnpm lint && pnpm typecheck
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2965,7 +2170,7 @@ const PROMPT_SPAN_TYPES: ReadonlySet<unknown> = new Set([
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e80aaa6b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7bd9b7e9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

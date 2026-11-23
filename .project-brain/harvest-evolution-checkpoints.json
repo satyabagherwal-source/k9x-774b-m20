@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:30:50.102Z",
+  "last_updated": "2026-11-23T20:39:06.531Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T20:00:24.380Z",
@@ -1673,7 +1673,7 @@
       "staged_for_review": 0
     },
     "iziz-libphonenumber-ios-learnings.md": {
-      "processed_at": "2026-11-13T08:22:31.178Z",
+      "processed_at": "2026-11-23T20:39:04.398Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2763,7 +2763,7 @@
       "staged_for_review": 0
     },
     "hf-francisring-prism-learnings.md": {
-      "processed_at": "2026-11-19T13:08:08.810Z",
+      "processed_at": "2026-11-23T20:39:03.983Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3776,9 +3776,14 @@
       "processed_at": "2026-11-23T15:29:12.325Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "go-kratos-kratos-learnings.md": {
+      "processed_at": "2026-11-23T20:39:05.398Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3513,
+  "total_dossiers_evaluated": 3516,
   "total_canonical_promoted": 489,
-  "total_staged_for_review": 2635
+  "total_staged_for_review": 2637
 }

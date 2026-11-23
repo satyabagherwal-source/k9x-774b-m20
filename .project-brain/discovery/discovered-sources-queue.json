@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T20:22:14.988Z",
+  "updated_at": "2026-11-23T20:39:05.782Z",
   "stats": {
-    "total_discovered": 8023,
-    "approved_pending_harvest": 7594,
+    "total_discovered": 8034,
+    "approved_pending_harvest": 7605,
     "harvested_count": 0,
     "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7588,
+      "COMMUNITY_AND_EXPERT": 7599,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -173526,6 +173526,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
         "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-2CECA425A0BC": {
+      "id": "SRC-2CECA425A0BC",
+      "url": "https://github.com/google/libphonenumber/pull/4098",
+      "title": "https://github.com/google/libphonenumber/pull/4098",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:04.497Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+        "fileName": "iziz-libphonenumber-ios-learnings.md"
+      }
+    },
+    "SRC-8BEB821AD9F7": {
+      "id": "SRC-8BEB821AD9F7",
+      "url": "https://github.com/iziz/libPhoneNumber-iOS/actions/runs/44445393395",
+      "title": "https://github.com/iziz/libPhoneNumber-iOS/actions/runs/44445393395",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:04.553Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+        "fileName": "iziz-libphonenumber-ios-learnings.md"
+      }
+    },
+    "SRC-DDBC525D5774": {
+      "id": "SRC-DDBC525D5774",
+      "url": "https://github.com/iziz/libPhoneNumber-iOS.git",
+      "title": "https://github.com/iziz/libPhoneNumber-iOS.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:04.609Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+        "fileName": "iziz-libphonenumber-ios-learnings.md"
+      }
+    },
+    "SRC-DD5A8CD0FF34": {
+      "id": "SRC-DD5A8CD0FF34",
+      "url": "https://github.com/go-kratos/kratos",
+      "title": "https://github.com/go-kratos/kratos",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:05.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+        "fileName": "go-kratos-kratos-learnings.md"
+      }
+    },
+    "SRC-C3D6D7FA43A5": {
+      "id": "SRC-C3D6D7FA43A5",
+      "url": "https://github.com/golang/go/blob/master/src/cmd/go/internal/vcs/vcs.go",
+      "title": "https://github.com/golang/go/blob/master/src/cmd/go/internal/vcs/vcs.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:05.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+        "fileName": "go-kratos-kratos-learnings.md"
+      }
+    },
+    "SRC-A5BA1FD19BCF": {
+      "id": "SRC-A5BA1FD19BCF",
+      "url": "https://go-review.googlesource.com/c/go/+/12226",
+      "title": "https://go-review.googlesource.com/c/go/+/12226",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:05.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+        "fileName": "go-kratos-kratos-learnings.md"
+      }
+    },
+    "SRC-AD1F69576C5E": {
+      "id": "SRC-AD1F69576C5E",
+      "url": "https://git-scm.com/docs/git-clone",
+      "title": "https://git-scm.com/docs/git-clone",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:05.582Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+        "fileName": "go-kratos-kratos-learnings.md"
+      }
+    },
+    "SRC-1926B225FC3F": {
+      "id": "SRC-1926B225FC3F",
+      "url": "https://github.com/go-kratos/kratos.git",
+      "title": "https://github.com/go-kratos/kratos.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:05.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+        "fileName": "go-kratos-kratos-learnings.md"
+      }
+    },
+    "SRC-23D14CF9F2D4": {
+      "id": "SRC-23D14CF9F2D4",
+      "url": "https://api.github.com/repos/%s/%s/releases/latest",
+      "title": "https://api.github.com/repos/%s/%s/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:05.682Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+        "fileName": "go-kratos-kratos-learnings.md"
+      }
+    },
+    "SRC-8EE87D50BF10": {
+      "id": "SRC-8EE87D50BF10",
+      "url": "https://api.github.com/repos/%s/%s/releases/tags/%s",
+      "title": "https://api.github.com/repos/%s/%s/releases/tags/%s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:05.731Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+        "fileName": "go-kratos-kratos-learnings.md"
+      }
+    },
+    "SRC-87B21961D8BB": {
+      "id": "SRC-87B21961D8BB",
+      "url": "https://api.github.com/repos/%s/%s/commits?pre_page=%25d&page=%25d&since=%25s",
+      "title": "https://api.github.com/repos/%s/%s/commits?pre_page=%25d&page=%25d&since=%25s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T20:39:05.782Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+        "fileName": "go-kratos-kratos-learnings.md"
       }
     }
   }

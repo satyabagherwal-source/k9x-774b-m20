@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T20:30:43.930Z",
+  "last_updated": "2026-11-23T20:39:00.578Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1865,14 +1865,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "e585a0b20c977af1b3b44c6cccb2c977d961897d287c2c04c94732b32978f909",
-      "verified_at": "2026-11-19T13:07:57.635Z",
+      "content_hash": "7e0ee4ebff94a1d1acef4e3223f38b76324df5f6817d2712f079f4e892f28b6a",
+      "verified_at": "2026-11-23T20:38:45.237Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T13:07:57.635Z"
+      "last_updated": "2026-11-23T20:38:45.237Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
-      "verified_at": "2026-11-23T16:37:10.183Z",
+      "content_hash": "2f8a1607f5a6dd379d6c4a345b1172a20be2debee01203d3c6f6afc0fc74b00d",
+      "verified_at": "2026-11-23T20:38:57.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:37:10.183Z"
+      "last_updated": "2026-11-23T20:38:57.466Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
-      "verified_at": "2026-11-21T17:15:36.925Z",
+      "content_hash": "670d00d8b6a4acf5165ded570fc74ae917e432ae753e41f365135b08cffc988b",
+      "verified_at": "2026-11-23T20:39:00.577Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:15:36.925Z"
+      "last_updated": "2026-11-23T20:39:00.578Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -10881,14 +10881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-go-kratos-kratos",
-      "content_hash": "20ceb7493f20fc5988ae1f98e03a58659ded240b6a353ffdcb78a7f8a3b26723",
-      "verified_at": "2026-10-27T10:58:00.085Z",
+      "content_hash": "eecf0022168ed4598ef2ce5909821152b8386def82ccfff6792f915c44c80603",
+      "verified_at": "2026-11-23T20:38:55.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:58:00.085Z"
+      "last_updated": "2026-11-23T20:38:55.592Z"
     },
     "Tencent-TDS/KuiklyUI": {
       "repository": "Tencent-TDS/KuiklyUI",
@@ -14631,14 +14631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iziz-libphonenumber-ios",
-      "content_hash": "3bb6d0abf031ad0e02d3731225220952ab60e19d3178d6fbfd0ba029fe3849f0",
-      "verified_at": "2026-11-13T08:22:02.393Z",
+      "content_hash": "5c48a167a5e6d7559a737009da2530048f3fbfbcfcffd42f99b717b9cb78d397",
+      "verified_at": "2026-11-23T20:38:52.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:22:02.393Z"
+      "last_updated": "2026-11-23T20:38:52.436Z"
     },
     "RDFLib/rdflib": {
       "repository": "RDFLib/rdflib",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T20:30:49.948Z",
-  "total_verified_learnings": 9084,
+  "last_updated": "2026-11-23T20:39:06.390Z",
+  "total_verified_learnings": 9086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24159,
+  "total_items": 24178,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113769,10 +113769,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "2011f567",
-      "content_hash": "a48ab7d9f380f8846524861d2a8a439447a20a39013b0a664a945e09909f6cdb",
+      "source_version": "da971852",
+      "content_hash": "8d9abd2ca7466e40bbe884029082c8541f23ad19e4214ace510aa664e4bb96a5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:37:10.578Z"
+      "persisted_at": "2026-11-23T20:38:57.861Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113781,10 +113781,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "2011f567",
-      "content_hash": "f23c572c66a981ab59face5d24b9e4654f9ed6d4a635207f215a8deff0d9f3d8",
+      "source_version": "da971852",
+      "content_hash": "4063a0459a3b87375ae4baa52c0bef3c8ee09640d9817ff00cc52e7e4f620a43",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:37:10.752Z"
+      "persisted_at": "2026-11-23T20:38:58.029Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113793,10 +113793,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "2011f567",
-      "content_hash": "075fa823bd48a23f0435bafdc919a1a7fbd5724c8931ef5782b604449839a89d",
+      "source_version": "da971852",
+      "content_hash": "fae96b4592833ebcd2e77520f364a4a643a0cdb170a79b352b1cdae9d665f9a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:37:10.899Z"
+      "persisted_at": "2026-11-23T20:38:58.169Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -238910,8 +238910,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "e80aaa6b",
-      "content_hash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
+      "source_version": "605fb5eb",
+      "content_hash": "670d00d8b6a4acf5165ded570fc74ae917e432ae753e41f365135b08cffc988b",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -238934,6 +238934,11 @@
           "number": 9809,
           "title": "add trajectory span-parser helpers and test span builders",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10116,
+          "title": "build(genkit-tools): add test typecheck, baseline ESLint, and CI",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238941,7 +238946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:15:36.649Z",
+      "verified_at": "2026-11-23T20:39:00.348Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238983,10 +238988,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
       "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
       "repository": "genkit-ai/genkit",
-      "source_version": "e80aaa6b",
-      "content_hash": "6b27fdd04ad03a026fa6dd1b6fa2301e871dae77fba76c8ead68073c524553fd",
+      "source_version": "605fb5eb",
+      "content_hash": "b1a2eada7fc01a75a1370c4742a5dffd6ee3c6177ac73bb0b186df6da7a4493f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T17:15:37.468Z"
+      "persisted_at": "2026-11-23T20:39:00.985Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-genkit-ai-genkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-genkit-ai-genkit",
@@ -238995,10 +239000,10 @@
       "relative_path": "08_VERIFICATION/genkit-ai-genkit-verification-protocol-empirical-defect-shield-for-genkit-ai-gen.md",
       "title": "Verification Protocol: Empirical Defect Shield for genkit-ai/genkit",
       "repository": "genkit-ai/genkit",
-      "source_version": "e80aaa6b",
-      "content_hash": "2aff72d58b1e6c136faa9977b4ef76da089eeccec514f988eba3ce4b6996feac",
+      "source_version": "605fb5eb",
+      "content_hash": "6823fc17a6dfb84dce97e5dd24bcb2672c55af4c2827a8b99b7812bab02209e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:15:37.689Z"
+      "persisted_at": "2026-11-23T20:39:01.161Z"
     },
     "candidate_directive-theytothem-avoid-flagging-coordinating-conjunction-for-they": {
       "item_id": "candidate_directive-theytothem-avoid-flagging-coordinating-conjunction-for-they",
@@ -239281,7 +239286,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "e585a0b20c977af1b3b44c6cccb2c977d961897d287c2c04c94732b32978f909",
+      "content_hash": "7e0ee4ebff94a1d1acef4e3223f38b76324df5f6817d2712f079f4e892f28b6a",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [],
@@ -239290,7 +239295,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T13:07:57.415Z",
+      "verified_at": "2026-11-23T20:38:44.975Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239307,9 +239312,9 @@
       "title": "Research & Knowledge Intelligence: FrancisRing/Prism Core Invariants",
       "repository": "FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "23b3b13954bd7902cc47e0de6b368e506098dd4d9bbc5e5a182beeb08dc0cd1e",
+      "content_hash": "76245cace615641ac98ee3d8b7914235f860775c9af765a5e21131d23727eb26",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T13:07:57.811Z"
+      "persisted_at": "2026-11-23T20:38:45.429Z"
     },
     "learn-github-gocd-gocd": {
       "learning_id": "learn-github-gocd-gocd",
@@ -239545,9 +239550,9 @@
       "title": "Research & Knowledge Intelligence: hf-francisring-prism-learnings Core Invariants",
       "repository": "hf-francisring-prism-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4f4a8fe77500ad8b2254c4d8e6068b44099074da2b52449f8ac42a24b368301",
+      "content_hash": "a4b574345cdd9942f77e873c6a45ef4eaf8129f14d4019116e4a1adef1a3a590",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T13:08:08.985Z"
+      "persisted_at": "2026-11-23T20:39:04.200Z"
     },
     "candidate_directive-search-keep-a-document-indexed-when-hincrby-fails": {
       "item_id": "candidate_directive-search-keep-a-document-indexed-when-hincrby-fails",
@@ -240994,8 +240999,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "2011f567",
-      "content_hash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
+      "source_version": "da971852",
+      "content_hash": "2f8a1607f5a6dd379d6c4a345b1172a20be2debee01203d3c6f6afc0fc74b00d",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -241043,6 +241048,11 @@
           "number": 10068,
           "title": "update url and stabilize proxy keep-alive test",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10115,
+          "title": "improve platform enrollment and audit delivery",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241050,7 +241060,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:37:09.959Z",
+      "verified_at": "2026-11-23T20:38:57.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -329304,6 +329314,276 @@
       "content_hash": "8ae166f0e673a41a1f0fa312e4457487dbaadd4b453d4aa6294e6cacaeb18f11",
       "domain_letter": "D",
       "persisted_at": "2026-11-23T20:30:47.903Z"
+    },
+    "learn-github-iziz-libphonenumber-ios": {
+      "learning_id": "learn-github-iziz-libphonenumber-ios",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "iziz/libPhoneNumber-iOS",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "slug": "iziz-libphonenumber-ios",
+      "platform": "github",
+      "source_url": "https://github.com/iziz/libPhoneNumber-iOS",
+      "source_version": "01c4c4f5",
+      "content_hash": "5c48a167a5e6d7559a737009da2530048f3fbfbcfcffd42f99b717b9cb78d397",
+      "dossier_path": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T20:38:52.188Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-merge-metadata-update-for-2-1-5": {
+      "item_id": "candidate_directive-merge-metadata-update-for-2-1-5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AORR-merge-metadata-update-for-2-1-5.md",
+      "title": "merge metadata update for 2.1.5",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "source_version": "01c4c4f5",
+      "content_hash": "19908a0c648056cdc65e8b5da6621362a87e1507cc6e12a6cc43c0a737b9df10",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T20:38:52.651Z"
+    },
+    "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iziz-libphonenumber-ios-architecture-intelligence-iziz-libphonenumber-ios-core-i.md",
+      "title": "Architecture Intelligence: iziz/libPhoneNumber-iOS Core Invariants",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "source_version": "01c4c4f5",
+      "content_hash": "40f35d8dab7651fb3ae4cb5b6090fd857a80fd6753883d3abca3060fcbf9e27d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T20:38:52.823Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-iziz-libphonenumber-ios": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iziz-libphonenumber-ios",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/iziz-libphonenumber-ios-verification-protocol-empirical-defect-shield-for-iziz-l.md",
+      "title": "Verification Protocol: Empirical Defect Shield for iziz/libPhoneNumber-iOS",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "source_version": "01c4c4f5",
+      "content_hash": "859cd25fb9e684f80fdc6376808ec239d33e7c17add574f83413f21aa5835bf6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T20:38:53.000Z"
+    },
+    "learn-github-go-kratos-kratos": {
+      "learning_id": "learn-github-go-kratos-kratos",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "go-kratos/kratos",
+      "repository": "go-kratos/kratos",
+      "slug": "go-kratos-kratos",
+      "platform": "github",
+      "source_url": "https://github.com/go-kratos/kratos",
+      "source_version": "56cfd65d",
+      "content_hash": "eecf0022168ed4598ef2ce5909821152b8386def82ccfff6792f915c44c80603",
+      "dossier_path": "07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10114,
+          "title": "read PR files through the API in comment-check instead of checking out fork",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T20:38:55.372Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10114": {
+      "learning_id": "rule-10114",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10114,
+      "title": "read PR files through the API in comment-check instead of checking out fork",
+      "source_url": "https://github.com/go-kratos/kratos",
+      "source_version": "56cfd65d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T20:38:55.372Z"
+    },
+    "candidate_directive-read-pr-files-through-the-api-in-comment-check-instead-of-checking-out-fork": {
+      "item_id": "candidate_directive-read-pr-files-through-the-api-in-comment-check-instead-of-checking-out-fork",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AR7K-read-pr-files-through-the-api-in-comment-check-instead-of-checking-out-fork.md",
+      "title": "read PR files through the API in comment-check instead of checking out fork",
+      "repository": "go-kratos/kratos",
+      "source_version": "56cfd65d",
+      "content_hash": "c861379d4d74972952140bd9660469ee0d95cce6150589d2410a50322523fb3b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T20:38:55.809Z"
+    },
+    "domain_intelligence-architecture-intelligence-go-kratos-kratos-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-go-kratos-kratos-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-go-kratos-kratos-architecture-intelligence-go-kratos-kratos-core-invariants.md",
+      "title": "Architecture Intelligence: go-kratos/kratos Core Invariants",
+      "repository": "go-kratos/kratos",
+      "source_version": "56cfd65d",
+      "content_hash": "e8923e0c127a1392311c04da8877964630685393d9e892c002a0a4026089ad3a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T20:38:55.980Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-go-kratos-kratos": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-go-kratos-kratos",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/go-kratos-kratos-verification-protocol-empirical-defect-shield-for-go-kratos-kra.md",
+      "title": "Verification Protocol: Empirical Defect Shield for go-kratos/kratos",
+      "repository": "go-kratos/kratos",
+      "source_version": "56cfd65d",
+      "content_hash": "5d0fa41cadfa3753faf1780b7b9e0c22e562206e3e2fb9aaf3ea262a66b515d2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T20:38:56.155Z"
+    },
+    "rule-10115": {
+      "learning_id": "rule-10115",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10115,
+      "title": "improve platform enrollment and audit delivery",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "da971852",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T20:38:57.243Z"
+    },
+    "candidate_directive-improve-platform-enrollment-and-audit-delivery": {
+      "item_id": "candidate_directive-improve-platform-enrollment-and-audit-delivery",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ASNT-improve-platform-enrollment-and-audit-delivery.md",
+      "title": "improve platform enrollment and audit delivery",
+      "repository": "nolabs-ai/nono",
+      "source_version": "da971852",
+      "content_hash": "0efc66370192cc5de5586532131d7f187ad322f877316b0e9c3fc410144d864e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T20:38:57.693Z"
+    },
+    "rule-10116": {
+      "learning_id": "rule-10116",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10116,
+      "title": "build(genkit-tools): add test typecheck, baseline ESLint, and CI",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "605fb5eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T20:39:00.348Z"
+    },
+    "candidate_directive-build-genkit-tools-add-test-typecheck-baseline-eslint-and-ci": {
+      "item_id": "candidate_directive-build-genkit-tools-add-test-typecheck-baseline-eslint-and-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AV2C-build-genkit-tools-add-test-typecheck-baseline-eslint-and-ci.md",
+      "title": "build(genkit-tools): add test typecheck, baseline ESLint, and CI",
+      "repository": "genkit-ai/genkit",
+      "source_version": "605fb5eb",
+      "content_hash": "7434d0fbb0ce61d057851e227943297920a1e157efedd43fa3a363f56b1e6bc2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T20:39:00.807Z"
+    },
+    "candidate_directive-release-merge-metadata-update-for-2-1-5": {
+      "item_id": "candidate_directive-release-merge-metadata-update-for-2-1-5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AY71-release-merge-metadata-update-for-2-1-5.md",
+      "title": "release): merge metadata update for 2.1.5",
+      "repository": "iziz-libphonenumber-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e40a25a29ca52902ff413f068622dcff617b34e08adbffcdf4470fb17bdd5143",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T20:39:04.865Z"
+    },
+    "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iziz-libphonenumber-ios-learnings-architecture-intelligence-iziz-libphonenumber-.md",
+      "title": "Architecture Intelligence: iziz-libphonenumber-ios-learnings Core Invariants",
+      "repository": "iziz-libphonenumber-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2050e70ecda343ef040a21d84505a687febe45f875dc3ca98fb0859863b8778f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T20:39:05.043Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-iziz-libphonenumber-ios-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iziz-libphonenumber-ios-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/iziz-libphonenumber-ios-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for iziz-libphonenumber-ios-learnings",
+      "repository": "iziz-libphonenumber-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a724bf87825f3df21a8d9c289b6f90b059620c95b6a1ed75b22f0ab3a0e694bc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T20:39:05.240Z"
+    },
+    "candidate_directive-ci-read-pr-files-through-the-api-in-comment-check-instead-of-checking-out-fork": {
+      "item_id": "candidate_directive-ci-read-pr-files-through-the-api-in-comment-check-instead-of-checking-out-fork",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AZ3Z-ci-read-pr-files-through-the-api-in-comment-check-instead-of-checking-out-fork.md",
+      "title": "ci: read PR files through the API in comment-check instead of checking out fork",
+      "repository": "go-kratos-kratos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e0943236f08c8e7c1aa338b73aa9d4c73438745375c28beb65984ca4c3db5e1a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T20:39:06.047Z"
+    },
+    "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-go-kratos-kratos-learnings-architecture-intelligence-go-kratos-kratos-learnings-.md",
+      "title": "Architecture Intelligence: go-kratos-kratos-learnings Core Invariants",
+      "repository": "go-kratos-kratos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7db541826a080a7ff87a10ddd602ff005bc9d890e097b53e5777500321fdfacd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T20:39:06.217Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-go-kratos-kratos-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-go-kratos-kratos-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/go-kratos-kratos-learnings-verification-protocol-empirical-defect-shield-for-go-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for go-kratos-kratos-learnings",
+      "repository": "go-kratos-kratos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e508f299cd263f5c8057f98a8379350be4828af71dabe16bb3afd08e6f5970d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T20:39:06.390Z"
     }
   },
   "ai-builder-brain": {

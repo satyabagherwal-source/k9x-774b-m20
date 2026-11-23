@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T20:30:49.767Z",
-  "total_records": 2444,
+  "last_updated": "2026-11-23T20:39:06.217Z",
+  "total_records": 2448,
   "domains": {
     "A": {
       "total": 20,
@@ -1121,7 +1121,7 @@
       ]
     },
     "G": {
-      "total": 427,
+      "total": 431,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1549,7 +1549,11 @@
         "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-stakater-reloader-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-ydb-platform-ydb-core-invariants",
-        "domain_intelligence-architecture-intelligence-ydb-platform-ydb-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-ydb-platform-ydb-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-core-invariants",
+        "domain_intelligence-architecture-intelligence-go-kratos-kratos-core-invariants",
+        "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9195,8 +9199,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "a48ab7d9f380f8846524861d2a8a439447a20a39013b0a664a945e09909f6cdb",
-      "created_at": "2026-11-23T16:37:10.578Z"
+      "content_hash": "8d9abd2ca7466e40bbe884029082c8541f23ad19e4214ace510aa664e4bb96a5",
+      "created_at": "2026-11-23T20:38:57.861Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -18314,8 +18318,8 @@
       "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
       "repository": "genkit-ai/genkit",
-      "content_hash": "6b27fdd04ad03a026fa6dd1b6fa2301e871dae77fba76c8ead68073c524553fd",
-      "created_at": "2026-11-21T17:15:37.468Z"
+      "content_hash": "b1a2eada7fc01a75a1370c4742a5dffd6ee3c6177ac73bb0b186df6da7a4493f",
+      "created_at": "2026-11-23T20:39:00.985Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
@@ -18470,8 +18474,8 @@
       "title": "Research & Knowledge Intelligence: FrancisRing/Prism Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-research-knowledge-intelligence-francisring-prism-core-inva.md",
       "repository": "FrancisRing/Prism",
-      "content_hash": "23b3b13954bd7902cc47e0de6b368e506098dd4d9bbc5e5a182beeb08dc0cd1e",
-      "created_at": "2026-11-19T13:07:57.811Z"
+      "content_hash": "76245cace615641ac98ee3d8b7914235f860775c9af765a5e21131d23727eb26",
+      "created_at": "2026-11-23T20:38:45.429Z"
     },
     "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants",
@@ -18530,8 +18534,8 @@
       "title": "Research & Knowledge Intelligence: hf-francisring-prism-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-learnings-research-knowledge-intelligence-hf-francisring-pr.md",
       "repository": "hf-francisring-prism-learnings",
-      "content_hash": "e4f4a8fe77500ad8b2254c4d8e6068b44099074da2b52449f8ac42a24b368301",
-      "created_at": "2026-11-19T13:08:08.985Z"
+      "content_hash": "a4b574345cdd9942f77e873c6a45ef4eaf8129f14d4019116e4a1adef1a3a590",
+      "created_at": "2026-11-23T20:39:04.200Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus",
@@ -41016,6 +41020,42 @@
       "repository": "kube-rs-kube-learnings",
       "content_hash": "7888bb6e704c743355d6c194fe42341dda75b85e1eca0dad460f0dba0d0114e5",
       "created_at": "2026-11-23T19:18:02.192Z"
+    },
+    "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: iziz/libPhoneNumber-iOS Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iziz-libphonenumber-ios-architecture-intelligence-iziz-libphonenumber-ios-core-i.md",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "content_hash": "40f35d8dab7651fb3ae4cb5b6090fd857a80fd6753883d3abca3060fcbf9e27d",
+      "created_at": "2026-11-23T20:38:52.823Z"
+    },
+    "domain_intelligence-architecture-intelligence-go-kratos-kratos-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-go-kratos-kratos-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: go-kratos/kratos Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-go-kratos-kratos-architecture-intelligence-go-kratos-kratos-core-invariants.md",
+      "repository": "go-kratos/kratos",
+      "content_hash": "e8923e0c127a1392311c04da8877964630685393d9e892c002a0a4026089ad3a",
+      "created_at": "2026-11-23T20:38:55.980Z"
+    },
+    "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-iziz-libphonenumber-ios-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: iziz-libphonenumber-ios-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iziz-libphonenumber-ios-learnings-architecture-intelligence-iziz-libphonenumber-.md",
+      "repository": "iziz-libphonenumber-ios-learnings",
+      "content_hash": "2050e70ecda343ef040a21d84505a687febe45f875dc3ca98fb0859863b8778f",
+      "created_at": "2026-11-23T20:39:05.043Z"
+    },
+    "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-go-kratos-kratos-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: go-kratos-kratos-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-go-kratos-kratos-learnings-architecture-intelligence-go-kratos-kratos-learnings-.md",
+      "repository": "go-kratos-kratos-learnings",
+      "content_hash": "7db541826a080a7ff87a10ddd602ff005bc9d890e097b53e5777500321fdfacd",
+      "created_at": "2026-11-23T20:39:06.217Z"
     }
   }
 }

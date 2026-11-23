@@ -12486,3 +12486,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-23T20:30:27.292Z |
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `2f18f2d9` | Multi-dimensional audit evidence | 2026-11-23T20:30:33.198Z |
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `941a292b` | Multi-dimensional audit evidence | 2026-11-23T20:30:43.919Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-23T20:38:45.230Z |
+| `learn-github-iziz-libphonenumber-ios` | `https://github.com/iziz/libPhoneNumber-iOS` | `01c4c4f5` | Multi-dimensional audit evidence | 2026-11-23T20:38:52.391Z |
+| `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `56cfd65d` | Multi-dimensional audit evidence | 2026-11-23T20:38:55.583Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `da971852` | Multi-dimensional audit evidence | 2026-11-23T20:38:57.458Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `605fb5eb` | Multi-dimensional audit evidence | 2026-11-23T20:39:00.569Z |

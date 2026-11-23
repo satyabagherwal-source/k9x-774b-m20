@@ -12453,3 +12453,8 @@
 | `CYCLE-20261123-ZUTZ` | `2026-11-23T20:30:27.287Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`787020d3...`) |
 | `CYCLE-20261123-ZZE2` | `2026-11-23T20:30:33.194Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10113` | Yes (`8b2607ac...`) |
 | `CYCLE-20261123-07NV` | `2026-11-23T20:30:43.915Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9969` | Yes (`2c55dd0b...`) |
+| `CYCLE-20261123-AJ1L` | `2026-11-23T20:38:45.225Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`7e0ee4eb...`) |
+| `CYCLE-20261123-AOKJ` | `2026-11-23T20:38:52.387Z` | `iziz/libPhoneNumber-iOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md` | Yes (`5c48a167...`) |
+| `CYCLE-20261123-AR17` | `2026-11-23T20:38:55.579Z` | `go-kratos/kratos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10114` | Yes (`eecf0022...`) |
+| `CYCLE-20261123-ASH9` | `2026-11-23T20:38:57.453Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10115` | Yes (`2f8a1607...`) |
+| `CYCLE-20261123-AUVO` | `2026-11-23T20:39:00.564Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10116` | Yes (`670d00d8...`) |

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:38.085Z",
+  "timestamp": "2026-11-23T20:39:04.737Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-iziz-libphonenumber-ios-learnings",
+  "learning_id": "LEARN-EVO-iziz-libphonenumber-ios-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [iziz-libphonenumber-ios-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:38.085Z`  
-> **Learning ID**: `LEARN-REEXTRACT-iziz-libphonenumber-ios-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-23T20:39:04.737Z`  
+> **Learning ID**: `LEARN-EVO-iziz-libphonenumber-ios-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md`  
 > **Source**: github ([https://github.com/iziz/libPhoneNumber-iOS](https://github.com/iziz/libPhoneNumber-iOS))  
-> **Source Version**: `91fcc745`  
+> **Source Version**: `01c4c4f5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T00:13:29.209Z  
+> **Timestamp**: 2026-11-23T20:38:51.878Z  
 > **Learning ID**: `learn-github-iziz-libphonenumber-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iziz/libPhoneNumber-iOS](https://github.com/iziz/libPhoneNumber-iOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T00:13:28.922Z  
+> **Harvest Timestamp**: 2026-11-23T20:38:51.872Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: iOS port of Google's libphonenumber with Objective-C core, Swift facade, SwiftUI input, and CocoaPods/SPM support
 - **Primary Language / Ecosystem**: Objective-C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2380 stars
+- **Stars / Engagement**: 2384 stars
 
 ---
 
@@ -1669,230 +1669,371 @@ var runtimeArray: [CGFloat] = []
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91fcc745` (2026-11-07)
-**Commit Message**: Merge pull request #459 from iziz/metadata-v9-0-43
+### Incident Patch 1: `01c4c4f5` (2026-11-22)
+**Commit Message**: chore(release): merge metadata update for 2.1.5
 
-chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1.4
+- Merge the Google libphonenumber v9.0.44 metadata refresh and align project and podspec versions to 2.1.5.
+- Include the shared Objective-C leading-zero cap and the upstream parity regression tests.
 
-**File**: `CHANGELOG.md` (modified, +19/-0)
+**File**: `CHANGELOG.md` (modified, +14/-0)
 ```diff
-@@ -9,6 +9,25 @@ as described in `docs/RELEASE_RUNBOOK.md`.
+@@ -9,6 +9,20 @@ as described in `docs/RELEASE_RUNBOOK.md`.
  
  ## Unreleased
  
-+## 2.1.4
++## 2.1.5
 +
-+Patch release. Refresh Google libphonenumber metadata from `v9.0.42` to
-+`v9.0.43`, including phone-number, carrier, and geocoding data. Phone-number
-+metadata changes affect nine regions: Benin, China, Germany, Ecuador,
-+Ethiopia, Georgia, Laos, Romania, and Zimbabwe. Carrier metadata grows from
-+32,099 to 32,255 prefix rows. Geocoding changes are limited to the English
-+(Zimbabwe and one Australian prefix) and Chinese databases. Short-number,
-+testing, and timezone data are unchanged. See `docs/METADATA_UPDATE_LOG.md`
-+for the upstream comparison and validation.
++Patch release. Refresh Google libphonenumber metadata from `v9.0.43` to
++`v9.0.44`, including phone-number data for 14 regions, short-number data for
++Costa Rica, New Zealand, South Korea, and Taiwan, and English and Chinese
++geocoding data. Carrier metadata grows from 32,255 to 32,379 prefix rows.
++See `docs/METADATA_UPDATE_LOG.md` for the upstream comparison and validation.
 +
 +### Fixed
 +
-+- Parsing an RFC3966 `tel:` URI with a long, invalid `phone-context` domain
-+  name no longer hangs. The domain-label patterns now follow Google's fix for
-+  catastrophic regular-expression backtracking
-+  ([google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070)),
-+  and `testParseRfc3966PhoneContextDomain` is ported from upstream.
++- Cap leading-zero padding at 10 digits when constructing a national significant
++  number, including for short-number validation. This follows Google's
++  [leading-zero fix](https://github.com/google/libphonenumber/pull/4098).
 +
- ## 2.1.3
+ ## 2.1.4
  
- Patch release. Refresh Google libphonenumber metadata from `v9.0.41` to
+ Patch release. Refresh Google libphonenumber metadata from `v9.0.42` to
 ```
 
-**File**: `docs/METADATA_UPDATE_LOG.md` (modified, +33/-0)
+**File**: `docs/METADATA_UPDATE_LOG.md` (modified, +28/-0)
 ```diff
-@@ -4,6 +4,39 @@ This file records upstream comparison results for metadata updates. Keep entries
+@@ -4,6 +4,34 @@ This file records upstream comparison results for metadata updates. Keep entries
  
  Metadata-only updates should ship as patch releases. Use a minor release only when the update also adds public API, new modules, or additive behavior beyond metadata freshness.
  
-+## 2026-11-07: Google libphonenumber v9.0.43
++## 2026-11-19: Google libphonenumber v9.0.44
 +
 +### Scope
 +
-+- Previous local metadata baseline: `v9.0.42`; new Google tag: `v9.0.43` (`86ea33cee5c22ab7e23b3de368e7cc7fa439a2b7`).
-+- Regenerated all metadata families. Main phone-number, carrier, and geocoding data changed; short-number and testing metadata are unchanged, and the timezone rows are byte-identical with only the recorded `upstream_ref` advancing.
-+- Main phone-number changes affect nine regions: `BJ`, `CN`, `DE`, `EC`, `ET`, `GE`, `LA`, `RO`, and `ZW`.
-+- Carrier data contains 32,255 prefix rows (up from 32,099) and 107 mobile-portable regions across 10 locales. Timezone data contains 3,240 prefix rows and 285 unique timezone IDs.
-+- The geocoding updater regenerated all 34 databases; only `en.db` and `zh.db` changed in content. `en.db` replaces 38 Zimbabwe (`263`) rows with 3 and drops the Australian prefix `61261069`; `zh.db` fixes three corrupted `86` descriptions (`861329598`, `861596511`, `861596512`). These match the upstream `resources/geocoding/en/263.txt`, `en/61.txt`, and `zh/86.txt` changes. The other 32 databases were regenerated with identical contents and were left at their committed bytes.
-+- Set all Xcode project and 13 podspec versions to `2.1.4`. This patch also carries the RFC3966 parsing fix below.
++- Updated the metadata baseline from `v9.0.43` to `v9.0.44` (`2a2aee91ebd03897a1d3894692b3e553bff35944`).
++- Updated main phone-number data for `BF`, `CN`, `DZ`, `EE`, `GY`, `HK`, `KR`, `NO`, `NZ`, `PA`, `PK`, `RU`, `SN`, and `YE`. Short-number data changed for `CR`, `KR`, `NZ`, and `TW`.
++- Carrier data contains 32,379 prefix rows across 10 locales and 107 mobile-portable regions. The timezone bundle records the new upstream ref and retains its 3,240 prefix rows and 285 unique timezone IDs. Testing metadata is identical to the previous baseline.
++- Regenerated 34 geocoding databases. The English database changes Burkina Faso and China entries, and the Chinese database changes China entries. The other databases retain their committed bytes after schema and row comparison.
++- Aligned all four Xcode projects and 13 podspecs to patch version `2.1.5`.
 +
 +### Upstream Logic And Resource Comparison
 +
-+- Compared tracked Google files from `v9.0.42` (`8d8d75272c35`) to `v9.0.43` (`86ea33cee5c2`): 18 files changed, covering generated JavaScript phone-number metadata, `PhoneNumberMetadata.xml`, 13 carrier resources, and three geocoding resources. Tracked JavaScript implementation and test files did not change between the tags.
-+- Google `master` (`981600cc587f`) is one implementation commit ahead of `v9.0.43`: [google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070) rewrites `RFC3966_DOMAINLABEL_` and `RFC3966_TOPLABEL_` so each hyphen run must be followed by an alphanumeric, removing catastrophic backtracking, and adds `testParseRfc3966PhoneContextDomain`. Ported both to `NBPhoneNumberUtil.m` and `NBPhoneNumberUtilTest.m`. Before the fix, the ported test did not finish within a 120-second timeout; after it, the test passes in 7 ms.
-+- Scheduled [Upstream Drift run `42329942884`](https://github.com/iziz/libPhoneNumber-iOS/actions/runs/42329942884) detected both gaps: the metadata freshness job exited with code 2 for `v9.0.43`, and the Google master parity job failed on the missing `testParseRfc3966PhoneContextDomain`.
-+- Test parity covers 173 upstream JavaScript tests at `v9.0.43` and 174 at `master`, against 182 local Objective-C tests; API parity covers 66 upstream public prototype methods and 93 local selectors. All four checks passed.
++- Compared the two tags and found 20 tracked changes across JavaScript sources, tests, and generated metadata, XML metadata, and carrier and geocoding resources. The comparison from `v9.0.44` to Google `master` (`a82c3ec0ceaf`) found zero tracked changes.
++- Ported the 10-zero cap from [google/libphonenumber#4098](https://github.com/google/libphonenumber/pull/4098) to the Objective-C national significant number helper, which short-number validation already uses. Added the two upstream test counterparts and removed the unused duplicate short-number helper.
++- [Upstream Drift run `44445393395`](https://github.com/iziz/libPhoneNumber-iOS/actions/runs/44445393395) reported that `v9.0.44` was available and detected both missing Objective-C tests. The new core test reproduced the mismatch before the fix with 11 requested zeros.
 +
 +### Validation
 +
-+- `swift scripts/updateMetadata.swift v9.0.43 --dry-run` and `swift scripts/updateMetadata.swift v9.0.43` passed; the wrapper's freshness check reports `v9.0.43` up to date.
-+- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.42 --upstream-ref v9.0.43 --output .build/release-2.1.4/source-drift` completed.
-+- `swift scripts/checkUpstreamTestParity.swift` and `swift scripts/checkUpstreamAPIParity.swift` passed with both `--upstream-ref v9.0.43` and `--upstream-ref master`.
-+- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.43 --upstream-ref master --output .build/release-2.1.4/source-drift-master` reports only `phonenumberutil.js` and `phonenumberutil_test.js`, the change ported above.
-+- `swift scripts/updateProjectVersions.swift 2.1.4` and its version consistency check passed.
-+- Decompressed the generated Objective-C gzip array and verified it decodes to the generated JSON for 254 phone-number regions, with a declared expanded length of 351,979 bytes. Short-number output is unchanged.
-+- SQLite integrity checks passed for the carrier, timezone, `en`, and `zh` databases. Both the carrier and timezone databases record `upstream_ref` `v9.0.43`.
-+- `swift test --scratch-path .build/validation-2.1.4` and `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test --scratch-path .build/validation-2.1.4` passed, each with 232 XCTest cases and 43 Swift Testing tests.
-+- `swift build -c release --scratch-path .build/validation-2.1.4` passed.
-+- `swift scripts/testXcodeSchemes.swift --destination 'id=80FE1FB5-892C-4402-9CA1-64A11DF26E15'` passed on the iPhone 18 Pro / iOS 27.0 simulator: `libPhoneNumber` (151 tests), `libPhoneNumberGeocoding` (20), and `libPhoneNumberShortNumber` (31).
-+- `swift scripts/checkMetadataFreshness.swift --current-ref v9.0.43 --output .build/release-2.1.4/final-freshness --fail-on-update` passed.
-+- `git diff --check` passed.
++- The metadata updater completed both dry-run and checked-in generation for `v9.0.44`. The update's freshness check reported the metadata up to date.
++- `swift scripts/checkMetadataFreshness.swift --fail-on-update` also passed using the baseline from this log.
++- Test parity passed against both `v9.0.44` and `master` with 176 upstream tests and 184 local tests. API parity passed against both refs with 66 upstream methods and 93 local selectors.
++- Decoded the embedded phone-number, short-number, and testing data and verified that they match the generated JSON and declared expanded lengths.
++- SQLite integrity checks passed for the carrier, timezone, and all 34 geocoding databases. Carrier and timezone rows match the generators' review JSON, and both bundles record `upstream_ref` `v9.0.44`.
++- `swift scripts/updateProjectVersions.swift 2.1.5` passed, including its version consistency check.
++- Both leading-zero regression tests passed. `swift test` passed under the default and Korean locales, each with 234 XCTest cases and 43 Swift Testing tests. `swift build -c release` passed.
++- `swift scripts/testXcodeSchemes.swift` passed on the iPhone 18 Pro simulator with iOS 27.0. The core, geocoding, and short-number schemes passed 152, 20, and 32 tests, respectively.
++- All 13 CocoaPods specifications passed `pod lib lint --allow-warnings`. `git diff --check` passed.
 +
- ## 2026-10-30: Google libphonenumber v9.0.42
+ ## 2026-11-07: Google libphonenumber v9.0.43
  
  ### Scope
 ```
 
-**File**: `generatedJSON/PhoneNumberMetaData.json` (modified, +95/-131)
+**File**: `generatedJSON/PhoneNumberMetaData.json` (modified, +58/-26)
 ```diff
-@@ -8057,15 +8057,14 @@
+@@ -7171,7 +7171,7 @@
        [
          null,
          null,
--        "(?:01\\d|8)\\d{7}",
-+        "01\\d{8}",
+-        "2(?:0(?:49|5[23]|6[5-7]|9[016-9])|4(?:4[569]|5[4-6]|6[5-7]|7[0179])|5(?:[34]\\d|50|6[5-8]))\\d{4}",
++        "2[045]\\d{6}",
          null,
          null,
          null,
-         null,
-         null,
-         null,
-         [
--          8,
-           10
-         ]
-       ],
-@@ -8076,12 +8075,7 @@
-         null,
-         null,
-         null,
--        "0120211234",
--        null,
--        null,
--        [
--          10
--        ]
-+        "0120211234"
-       ],
-       [
-         null,
-@@ -8090,12 +8084,7 @@
-         null,
-         null,
-         null,
--        "0195123456",
--        null,
--        null,
--        [
--          10
--        ]
-+        "0195123456"
-       ],
-       [
-         null,
-@@ -8156,15 +8145,15 @@
-       [
-         null,
-         null,
--        "857[58]\\d{4}",
-         null,
-         null,
-         null,
--        "85751234",
-+        null,
-+        null,
-         null,
-         null,
-         [
--          8
-+          -1
-         ]
-       ],
-       "BJ",
-@@ -8178,14 +8167,6 @@
-       null,
-       null,
-       [
--        [
--          null,
--          "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
--          "$1 $2 $3 $4",
--          [
--            "8"
--          ]
--        ],
+@@ -12929,7 +12929,7 @@
+             "1010"
+           ],
+           null,
+-          "$CC$1"
++          "$CC $1"
+         ],
          [
            null,
-           "(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-@@ -8229,15 +8210,15 @@
+@@ -13089,7 +13089,7 @@
+             "1010"
+           ],
+           null,
+-          "$CC$1"
++          "$CC $1"
+         ],
+         [
+           null,
+@@ -16243,7 +16243,7 @@
        [
          null,
          null,
--        "81\\d{6}",
+-        "5(?:4[0-29]|6[0-4])\\d{6}|(?:55|6\\d|7[7-9])\\d{7}",
++        "5(?:4[0-29]|6[0-5])\\d{6}|(?:55|6\\d|7[7-9])\\d{7}",
          null,
          null,
          null,
--        "81123456",
-+        null,
-+        null,
+@@ -16718,7 +16718,7 @@
+       [
          null,
          null,
-         [
--          8
-+          -1
-         ]
-       ],
-       null,
-@@ -12903,6 +12884,31 @@
-             "[1-9]123"
+-        "(?:5\\d{5}|8(?:1(?:0(?:0(?:00|[178]\\d)|[3-9]\\d\\d)|(?:1(?:0[2-6]|1\\d)|[2-79]\\d\\d)\\d)|2(?:0(?:0(?:00|4\\d)|[1-7]\\d\\d)|(?:(?:[124-69]\\d|3[5-9])\\d|7(?:[0-79]\\d|8[013-9])|8(?:[2-6]\\d|7[01]))\\d)|[349]\\d{4}))\\d\\d|5(?:(?:[02]\\d|5[0-478])\\d|1(?:[0-8]\\d|95)|6(?:4[0-4]|5[1-589]))\\d{3}",
++        "(?:5\\d{5}|8(?:1(?:0(?:0(?:00|[178]\\d)|[3-9]\\d\\d)|(?:1(?:0[2-6]|1\\d)|[2-79]\\d\\d)\\d)|2(?:0(?:0(?:00|4\\d)|[1-7]\\d\\d)|(?:(?:[124-69]\\d|3[5-9])\\d|7(?:[0-79]\\d|8[013-9])|8(?:[2-6]\\d|7[01]))\\d)|[349]\\d{4}))\\d\\d|5(?:(?:[02]\\d|5[0-478])\\d|1(?:[0-8]\\d|95)|4[67]0|6(?:4[0-4]|5[1-589]))\\d{3}",
+         null,
+         null,
+         null,
+@@ -16812,8 +16812,8 @@
+           "(\\d{3})(\\d{4})",
+           "$1 $2",
+           [
+-            "[369]|4[3-8]|5(?:[0-2]|5[0-478]|6[45])|7[1-9]|88",
+-            "[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"
++            "[369]|4[3-8]|5(?:[0-2]|4[67]|5[0-478]|6[45])|7[1-9]|88",
++            "[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|4[67]0|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"
            ]
          ],
+         [
+@@ -22565,7 +22565,7 @@
+       [
+         null,
+         null,
+-        "(?:2(?:1[6-9]|2[0-35-9]|3[1-4]|5[3-9]|6\\d|7[0-79])|3(?:2[25-9]|3\\d)|4(?:4[0-24]|5[56])|5(?:0[0-6]|16)|77[1-57])\\d{4}",
++        "(?:2(?:1[6-9]|2[0-35-9]|3[1-4]|5[3-9]|6\\d|7[0-79])|3(?:2[25-9]|3\\d)|4(?:4[0-24]|5[56])|5(?:0[0-6]|1[0-256])|77[1-57])\\d{4}",
+         null,
+         null,
+         null,
+@@ -22574,7 +22574,7 @@
+       [
+         null,
+         null,
+-        "(?:51[01]|6\\d\\d|7(?:[0-6]\\d|70|8[0167]))\\d{4}",
++        "(?:6\\d\\d|7(?:[0-6]\\d|70|8[016-9]))\\d{4}",
+         null,
+         null,
+         null,
+@@ -22629,11 +22629,16 @@
+       [
+         null,
+         null,
+-        "515\\d{4}",
+         null,
+         null,
+         null,
+-        "5151234"
++        null,
++        null,
++        null,
++        null,
 +        [
-+          null,
-+          "(\\d{2})(\\d{5})",
-+          "$1 $2",
-+          [
-+            "101",
-+            "1010",
-+            "10100"
-+          ],
-+          "0$1",
-+          "$CC $1"
-+        ],
-+        [
-+          null,
-+          "(\\d{2})(\\d{5,6})",
-+          "$1 $2",
-+          [
-+            "(?:10|2[0-57-9])[19]|3(?:[15]|35|49|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3|4[13]|5[1-5]|9[0-35-9])|[39]7[0-79]",
-+            "10(?:12|9[56])|2[0-57-9](?:1[02]|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))1",
-+            "10(?:123|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))12",
-+            "10(?:123|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))123"
-+          ],
-+          "0$1",
-+          "$CC $1"
-+        ],
++          -1
++        ]
+       ],
+       "GY",
+       592,
+@@ -22755,7 +22760,7 @@
+       [
+         null,
+         null,
+-        "(?:4(?:0(?:6[0-3]|9[3-6])|24[3-6]|44[0-35-9]|6(?:4[0-57-9]|6[0-6])|7(?:4[0-48]|6[0-5]))|5(?:25[3-7]|35[4-8]|73[0-6]|95[0-8])|6(?:26[013-8]|(?:66|78)[0-5])|7(?:0(?:7[1-8]|8[0-8])|10[1-4])|84(?:4[0-2]|8[0-35-9])|9(?:29[013-9]|39[014-9]|59[0-467]|899))\\d{4}|(?:4(?:4[0-35-9]|6[0-357-9]|7[0-35])|5(?:[1-59][0-46-9]|6[0-4689]|7[0-246-9])|6(?:0[1-9]|[13-59]\\d|[268][0-57-9]|7[0-79])|70[1-59]|84[0-39]|9(?:0[1-9]|1[02-9]|[2358][0-8]|[467]\\d))\\d{5}",
++        "(?:4(?:0(?:6[0-3]|9[3-6])|24[3-6]|44[0-35-9]|6(?:4[0-57-9]|6[0-6])|7(?:4[0-48]|6[0-5]))|5(?:25[3-7]|35[4-8]|73[0-6]|95[0-8])|6(?:26[013-8]|(?:66|78)[0-5])|7(?:0(?:7[1-8]|8[0-8])|10[1-4])|84(?:4[0-2]|5[01]|8[0-35-9])|9(?:29[013-9]|39[014-9]|59[0-467]|899))\\d{4}|(?:4(?:4[0-35-9]|6[0-357-9]|7[0-35])|5(?:[1-59][0-46-9]|6[0-4689]|7[0-246-9])|6(?:0[1-9]|[13-59]\\d|[268][0-57-9]|7[0-79])|70[1-59]|84[0-39]|9(?:0[1-9]|1[02-9]|[2358][0-8]|[467]\\d))\\d{5}",
+         null,
+         null,
+         null,
+@@ -29338,7 +29343,7 @@
+       [
+         null,
+         null,
+-        "1(?:5(?:22|33|44|66|77|88|99)|6(?:[07]0|44|6[0168]|88)|8(?:00|33|55|77|99))\\d{4}",
++        "1(?:5(?:22|33|44|5[15]|66|77|88|99)|6(?:[07]0|44|6[0168]|88)|8(?:00|33|44|55|66|77|99))\\d{4}",
+         null,
+         null,
+         null,
+@@ -38539,15 +38544,15 @@
+           "(\\d{3})(\\d{2})(\\d{3})",
+           "$1 $2 $3",
+           [
+-            "8"
++            "[489]"
+           ]
+         ],
          [
            null,
-           "(\\d{3})(\\d{4})",
-@@ -12956,12 +12962,23 @@
-           "0$1",
-           "$CC $1"
-         ],
-+        [
-+          null,
-+          "(\\d{4})(\\d{4})",
-+          "$1 $2",
-+          [
-+            "[1-9]",
-+            "1(?:0(?:[02-578]|1[1-9]|6[013-579]|9[0-47-9])|[1-9])|2(?:[0-57-9](?:[0-8]|9[0-47-9])|6)|[3-9]",
-+            "1(?:0(?:[02-578]|1[1-9]|6(?:[01457]|[39][5-8])|9[0-47-9])|[1-9])|26|3(?:[0268]|3[0-46-9]|4[0-8]|78|9[079])|4(?:[049]|1[034]|2[02-68]|[35]0|6[0-356]|8[014-9])|5(?:0|2[0-24-689]|4[0-2457-9]|6[057-9]|8[1-9]|90)|6(?:[0-24578]|3[046-9]|6[14-79]|9[03-9])|7(?:0[02-9]|2[0135-79]|3[23]|4[0-27-9]|6[1457]|8)|8(?:[046]|1[01459]|2[0-489]|5[023]|8[0-2459]|9[09])|9(?:0[0457]|1[08]|[268]|4[024-9]|5[06-9])|(?:2[0-57-9]|3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:[0-8]|9[0-47-9])",
-+            "1(?:0(?:[02-578]|1[1-9]|6(?:[01457]|[39][5-8])|9[0-47-9])|[1-9])|2(?:[0-57-9](?:[0-8]|9[0-47-9])|6)|3(?:[0268]|3[0-46-9]|4[0-8]|78|9[079])|4(?:[049]|1[034]|2[02-68]|[35]0|6[0-356]|8[014-9])|5(?:0|2[0-24-689]|4[0-2457-9]|6[057-9]|8[1-9]|90)|6(?:[0-24578]|3[046-9]|6[14-79]|9[03-9])|7(?:0[02-9]|2[0135-79]|3[23]|4[0-27-9]|6[1457]|8)|8(?:[046]|1[01459]|2[0-489]|5[023]|8[0-2459]|9[09])|9(?
+           "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
+           "$1 $2 $3 $4",
+           [
+-            "[2-79]"
++            "[235-7]"
+           ]
+         ]
+       ],
+@@ -39250,7 +39255,7 @@
+       [
+         null,
+         null,
+-        "[1289]\\d{9}|50\\d{5}(?:\\d{2,3})?|[27-9]\\d{7,8}|(?:[34]\\d|6[0-35-9])\\d{6}|8\\d{4,6}",
++        "11\\d{8,12}|[29]\\d{7,9}|(?:[34]\\d|6[0-35-9])\\d{6}|50\\d{5}(?:\\d{2,3})?|7\\d{7,8}|8\\d{4,9}",
+         null,
+         null,
+         null,
+@@ -39263,7 +39268,11 @@
+           7,
+           8,
+           9,
+-          10
++          10,
++          11,
++          12,
++          13,
+
+```
+
+**File**: `generatedJSON/ShortNumberMetadata.json` (modified, +17/-27)
+```diff
+@@ -6561,7 +6561,7 @@
+       [
+         null,
+         null,
+-        "[1359]\\d{2,3}",
++        "[19]\\d{2,3}",
+         null,
+         null,
+         null,
+@@ -6578,16 +6578,11 @@
+       [
+         null,
+         null,
+-        "112|911",
+-        null,
+-        null,
++        "1(?:02|1)2|911",
+         null,
+-        "112",
+         null,
+         null,
+-        [
+-          3
+-        ]
++        "112"
+       ],
+       [
+         null,
+@@ -6627,22 +6622,17 @@
+       [
+         null,
+         null,
+-        "112|911",
++        "1(?:02|1)2|911",
+         null,
+         null,
+         null,
+-        "112",
+-        null,
+-        null,
+-        [
+-          3
+-        ]
++        "112"
+       ],
+       null,
+       [
+         null,
+         null,
+-        "1(?:0(?:00|15|2[2-4679])|1(?:1[0-35-9]|2|37|[46]6|7[57]|8[79]|9[0-379])|2(?:00|[12]2|34|55)|3(?:21|33)|4(?:0[06]|1[4-6])|5(?:15|5[15])|693|7(?:00|1[7-9]|2[02]|[67]7)|975)|3855|5(?:0(?:30|49)|510)|911",
++        "1(?:0(?:0[0-2]|1[015]|2[0-46-8]|4[08])|1(?:0[015]|1[135-9]|2[125]?|3[2-4]|4[6-9]|55|6[1569]|7[67]|8[07]|9[0-49])|2(?:00|1[235]|2[12]|34)|3(?:11|2[12]|33)|4(?:1[14-6]|21)|5(?:15|20|5[05])|693|7(?:00|1[79]|2[02]|34|67)|818|975)|911",
+         null,
+         null,
+         null,
+@@ -6680,15 +6670,15 @@
+       [
+         null,
+         null,
+-        "(?:385|5(?:0[34]|51))\\d",
+         null,
+         null,
+         null,
+-        "3850",
++        null,
++        null,
+         null,
+         null,
+         [
+-          4
++          -1
+         ]
+       ]
+     ],
+@@ -15691,7 +15681,7 @@
+       [
+         null,
+         null,
+-        "1(?:[01679]114|3(?:0[01]|2|3[0-35-9]|45?|5[057]|6[569]|7[79]|8[2589]|9[0189])|55[15]\\d{4}|8(?:(?:11|44|66)\\d{4}|[28]))|1(?:0[015]|1\\d|2[01357-9]|41|8114)",
++        "1(?:0[015]|1\\d|2[01357-9]|3(?:0[01]|2|3[0-35-9]|45?|5[057]|6[569]|7[79]|8[2589]|9[0189])|41|[6-9]114)|18[28]|1811\\d{4}|1[01]114",
+         null,
+         null,
+         null,
+@@ -15730,11 +15720,11 @@
+       [
+         null,
+         null,
+-        "1(?:55|8[146])\\d{5}",
++        "181\\d{5}",
+         null,
+         null,
+         null,
+-        "15500000",
++        "18100000",
+         null,
+         null,
+         [
+@@ -22159,7 +22149,7 @@
+       [
+         null,
+         null,
+-        "018|1(?:(?:1|37)1|(?:23|94)4|7[03]7)|[2-57-9]\\d{2,3}|6(?:161|26[0-3]|742)",
++        "018|1(?:11|(?:23|94)4|3\\d\\d|7[03]7)|[2-57-9]\\d{2,3}|6(?:161|26[0-3]|742)",
+         null,
+         null,
+         null,
+@@ -22197,7 +22187,7 @@
+       [
+         null,
+         null,
+-        "018|(?:1(?:23|37|7[03]|94)|6(?:[12]6|74))\\d|[2-57-9]\\d{2,3}",
++        "018|(?:1(?:23|3\\d|7[03]|94)|6(?:[12]6|74))\\d|[2-57-9]\\d{2,3}",
+         null,
+         null,
+         null,
+@@ -29146,7 +29136,7 @@
+       [
+         null,
+         null,
+-        "11[0289]|1(?:81|92)\\d",
++        "1(?:1[0289]|81\\d|9(?:1[01]|2\\d))",
+         null,
+         null,
+         null,
+@@ -29205,7 +29195,7 @@
+       [
+         null,
+         null,
+-        "1(?:0[04-6]|1[0237-9]|3[389]|6[05-8]|7[07]|8(?:0|11)|9(?:19|22|5[057]|68|8[05]|9[15689]))",
++        "1(?:0[04-6]|1[0237-9]|3[389]|6[05-8]|7[07]|8(?:0|11)|9(?:1[019]|2[25]|5[057]|68|8[05]|9[15689]))",
+         null,
+         null,
+         null,
+@@ -29214,7 +29204,7 @@
+       [
+         null,
+         null,
+-        "1(?:65|9(?:1\\d|50|85|98))",
++        "1(?:65|9(?:19|50|85|98))",
+         null,
+         null,
+         null,
 ```
 
 **File**: `libPhoneNumber-Demo/libPhoneNumber-Demo-SPM.xcodeproj/project.pbxproj` (modified, +4/-4)
@@ -1901,8 +2042,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEBUG_INFORMATION_FORMAT = dwarf;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
  				ENABLE_TESTABILITY = YES;
@@ -1910,8 +2051,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
  				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
  				MTL_FAST_MATH = YES;
  				ONLY_ACTIVE_ARCH = YES;
@@ -1919,8 +2060,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				ENABLE_NS_ASSERTIONS = NO;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1928,8 +2069,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
  				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = NO;
  				MTL_FAST_MATH = YES;
  				SDKROOT = iphoneos;
@@ -1941,8 +2082,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEBUG_INFORMATION_FORMAT = dwarf;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
  				ENABLE_TESTABILITY = YES;
@@ -1950,8 +2091,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
  				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
  				MTL_FAST_MATH = YES;
  				ONLY_ACTIVE_ARCH = YES;
@@ -1959,8 +2100,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				ENABLE_NS_ASSERTIONS = NO;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1968,8 +2109,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
  				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = NO;
  				MTL_FAST_MATH = YES;
  				SDKROOT = iphoneos;
@@ -1981,8 +2122,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEAD_CODE_STRIPPING = YES;
  				DEBUG_INFORMATION_FORMAT = dwarf;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1990,8 +2131,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
  				MTL_FAST_MATH = YES;
  				ONLY_ACTIVE_ARCH = YES;
@@ -1999,8 +2140,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEAD_CODE_STRIPPING = YES;
  				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				ENABLE_NS_ASSERTIONS = NO;
@@ -2008,8 +2149,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = NO;
  				MTL_FAST_MATH = YES;
  				SDKROOT = macosx;
@@ -2021,8 +2162,8 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
  Pod::Spec.new do |s|
    s.name         = "libPhoneNumber-iOS-Swift"
    s.module_name  = "libPhoneNumberIOSSwift"
--  s.version      = "2.1.3"
-+  s.version      = "2.1.4"
+-  s.version      = "2.1.4"
++  s.version      = "2.1.5"
    s.summary      = "Swift-first umbrella facade for libPhoneNumber-iOS"
    s.description  = "Swift-first umbrella facade over the stable Objective-C libPhoneNumber-iOS core and optional geocoding and short-number modules."
    s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
@@ -2030,281 +2171,386 @@ chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1
    s.swift_versions = ["5.9", "6.0"]
    s.requires_arc = true
  
--  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
--  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.3'
--  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.3'
-+  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
-+  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.4'
-+  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.4'
+-  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
+-  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.4'
+-  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.4'
++  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.5'
++  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.5'
++  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.5'
  
    s.source_files = [
                      'libPhoneNumberIOSSwift/**/*.swift',
-```
-
-**File**: `libPhoneNumber-iOS-SwiftCarrier.podspec` (modified, +3/-3)
-```diff
-@@ -1,7 +1,7 @@
- Pod::Spec.new do |s|
-   s.name         = "libPhoneNumber-iOS-SwiftCarrier"
-   s.module_name  = "libPhoneNumberSwiftCarrier"
--  s.version      = "2.1.3"
-+  s.version      = "2.1.4"
-   s.summary      = "Swift-first carrier facade for libPhoneNumber-iOS"
-   s.description  = "Swift-first carrier metadata facade over libPhoneNumberCarrier."
-   s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
-@@ -26,8 +26,8 @@ Pod::Spec.new do |s|
-   s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
--  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
--  s.dependency 'libPhoneNumberCarrier', '~> 2.1.3'
-+  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
-+  s.dependency 'libPhoneNumberCarrier', '~> 2.1.4'
- 
-   s.source_files = [
-                     'libPhoneNumberSwiftCarrier/**/*.swift',
 ```
 
 ---
 
-### Incident Patch 2: `3c1009d1` (2026-11-07)
-**Commit Message**: chore(release): refresh metadata for 2.1.4
+### Incident Patch 2: `c89e7612` (2026-11-19)
+**Commit Message**: chore(release): refresh metadata for 2.1.5
 
-Refresh bundled Google libphonenumber metadata from v9.0.42 to v9.0.43
-(upstream commit 86ea33cee5c22ab7e23b3de368e7cc7fa439a2b7) and set every
-Xcode project and podspec version to the patch 2.1.4.
+- Regenerate phone-number, short-number, carrier, and geocoding data from Google libphonenumber v9.0.44.
+- Record the new upstream ref in the timezone bundle and align Xcode and CocoaPods versions to 2.1.5.
+- Cap leading-zero padding at 10 digits in the shared Objective-C utility and remove the duplicate short-number helper.
+- Add regression tests for the core and short-number paths and record the upstream comparison and validation.
 
-Phone-number changes affect BJ, CN, DE, EC, ET, GE, LA, RO, and ZW.
-Carrier data grows from 32,099 to 32,255 prefix rows. Geocoding changes
-are limited to en.db (Zimbabwe rows and one Australian prefix) and zh.db
-(three corrupted Chinese descriptions). Short-number and testing metadata
-are unchanged, and the timezone rows are byte-identical with only the
-recorded upstream_ref advancing.
-
-Also port Google's fix for catastrophic backtracking in the RFC3966
-phone-context domain-name check (google/libphonenumber#4070), along with
-the upstream testParseRfc3966PhoneContextDomain test. Before the fix the
-test did not finish within 120 seconds; it now passes in milliseconds.
-
-**File**: `CHANGELOG.md` (modified, +19/-0)
+**File**: `CHANGELOG.md` (modified, +14/-0)
 ```diff
-@@ -9,6 +9,25 @@ as described in `docs/RELEASE_RUNBOOK.md`.
+@@ -9,6 +9,20 @@ as described in `docs/RELEASE_RUNBOOK.md`.
  
  ## Unreleased
  
-+## 2.1.4
++## 2.1.5
 +
-+Patch release. Refresh Google libphonenumber metadata from `v9.0.42` to
-+`v9.0.43`, including phone-number, carrier, and geocoding data. Phone-number
-+metadata changes affect nine regions: Benin, China, Germany, Ecuador,
-+Ethiopia, Georgia, Laos, Romania, and Zimbabwe. Carrier metadata grows from
-+32,099 to 32,255 prefix rows. Geocoding changes are limited to the English
-+(Zimbabwe and one Australian prefix) and Chinese databases. Short-number,
-+testing, and timezone data are unchanged. See `docs/METADATA_UPDATE_LOG.md`
-+for the upstream comparison and validation.
++Patch release. Refresh Google libphonenumber metadata from `v9.0.43` to
++`v9.0.44`, including phone-number data for 14 regions, short-number data for
++Costa Rica, New Zealand, South Korea, and Taiwan, and English and Chinese
++geocoding data. Carrier metadata grows from 32,255 to 32,379 prefix rows.
++See `docs/METADATA_UPDATE_LOG.md` for the upstream comparison and validation.
 +
 +### Fixed
 +
-+- Parsing an RFC3966 `tel:` URI with a long, invalid `phone-context` domain
-+  name no longer hangs. The domain-label patterns now follow Google's fix for
-+  catastrophic regular-expression backtracking
-+  ([google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070)),
-+  and `testParseRfc3966PhoneContextDomain` is ported from upstream.
++- Cap leading-zero padding at 10 digits when constructing a national significant
++  number, including for short-number validation. This follows Google's
++  [leading-zero fix](https://github.com/google/libphonenumber/pull/4098).
 +
- ## 2.1.3
+ ## 2.1.4
  
- Patch release. Refresh Google libphonenumber metadata from `v9.0.41` to
+ Patch release. Refresh Google libphonenumber metadata from `v9.0.42` to
 ```
 
-**File**: `docs/METADATA_UPDATE_LOG.md` (modified, +33/-0)
+**File**: `docs/METADATA_UPDATE_LOG.md` (modified, +28/-0)
 ```diff
-@@ -4,6 +4,39 @@ This file records upstream comparison results for metadata updates. Keep entries
+@@ -4,6 +4,34 @@ This file records upstream comparison results for metadata updates. Keep entries
  
  Metadata-only updates should ship as patch releases. Use a minor release only when the update also adds public API, new modules, or additive behavior beyond metadata freshness.
  
-+## 2026-11-07: Google libphonenumber v9.0.43
++## 2026-11-19: Google libphonenumber v9.0.44
 +
 +### Scope
 +
-+- Previous local metadata baseline: `v9.0.42`; new Google tag: `v9.0.43` (`86ea33cee5c22ab7e23b3de368e7cc7fa439a2b7`).
-+- Regenerated all metadata families. Main phone-number, carrier, and geocoding data changed; short-number and testing metadata are unchanged, and the timezone rows are byte-identical with only the recorded `upstream_ref` advancing.
-+- Main phone-number changes affect nine regions: `BJ`, `CN`, `DE`, `EC`, `ET`, `GE`, `LA`, `RO`, and `ZW`.
-+- Carrier data contains 32,255 prefix rows (up from 32,099) and 107 mobile-portable regions across 10 locales. Timezone data contains 3,240 prefix rows and 285 unique timezone IDs.
-+- The geocoding updater regenerated all 34 databases; only `en.db` and `zh.db` changed in content. `en.db` replaces 38 Zimbabwe (`263`) rows with 3 and drops the Australian prefix `61261069`; `zh.db` fixes three corrupted `86` descriptions (`861329598`, `861596511`, `861596512`). These match the upstream `resources/geocoding/en/263.txt`, `en/61.txt`, and `zh/86.txt` changes. The other 32 databases were regenerated with identical contents and were left at their committed bytes.
-+- Set all Xcode project and 13 podspec versions to `2.1.4`. This patch also carries the RFC3966 parsing fix below.
++- Updated the metadata baseline from `v9.0.43` to `v9.0.44` (`2a2aee91ebd03897a1d3894692b3e553bff35944`).
++- Updated main phone-number data for `BF`, `CN`, `DZ`, `EE`, `GY`, `HK`, `KR`, `NO`, `NZ`, `PA`, `PK`, `RU`, `SN`, and `YE`. Short-number data changed for `CR`, `KR`, `NZ`, and `TW`.
++- Carrier data contains 32,379 prefix rows across 10 locales and 107 mobile-portable regions. The timezone bundle records the new upstream ref and retains its 3,240 prefix rows and 285 unique timezone IDs. Testing metadata is identical to the previous baseline.
++- Regenerated 34 geocoding databases. The English database changes Burkina Faso and China entries, and the Chinese database changes China entries. The other databases retain their committed bytes after schema and row comparison.
++- Aligned all four Xcode projects and 13 podspecs to patch version `2.1.5`.
 +
 +### Upstream Logic And Resource Comparison
 +
-+- Compared tracked Google files from `v9.0.42` (`8d8d75272c35`) to `v9.0.43` (`86ea33cee5c2`): 18 files changed, covering generated JavaScript phone-number metadata, `PhoneNumberMetadata.xml`, 13 carrier resources, and three geocoding resources. Tracked JavaScript implementation and test files did not change between the tags.
-+- Google `master` (`981600cc587f`) is one implementation commit ahead of `v9.0.43`: [google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070) rewrites `RFC3966_DOMAINLABEL_` and `RFC3966_TOPLABEL_` so each hyphen run must be followed by an alphanumeric, removing catastrophic backtracking, and adds `testParseRfc3966PhoneContextDomain`. Ported both to `NBPhoneNumberUtil.m` and `NBPhoneNumberUtilTest.m`. Before the fix, the ported test did not finish within a 120-second timeout; after it, the test passes in 7 ms.
-+- Scheduled [Upstream Drift run `42329942884`](https://github.com/iziz/libPhoneNumber-iOS/actions/runs/42329942884) detected both gaps: the metadata freshness job exited with code 2 for `v9.0.43`, and the Google master parity job failed on the missing `testParseRfc3966PhoneContextDomain`.
-+- Test parity covers 173 upstream JavaScript tests at `v9.0.43` and 174 at `master`, against 182 local Objective-C tests; API parity covers 66 upstream public prototype methods and 93 local selectors. All four checks passed.
++- Compared the two tags and found 20 tracked changes across JavaScript sources, tests, and generated metadata, XML metadata, and carrier and geocoding resources. The comparison from `v9.0.44` to Google `master` (`a82c3ec0ceaf`) found zero tracked changes.
++- Ported the 10-zero cap from [google/libphonenumber#4098](https://github.com/google/libphonenumber/pull/4098) to the Objective-C national significant number helper, which short-number validation already uses. Added the two upstream test counterparts and removed the unused duplicate short-number helper.
++- [Upstream Drift run `44445393395`](https://github.com/iziz/libPhoneNumber-iOS/actions/runs/44445393395) reported that `v9.0.44` was available and detected both missing Objective-C tests. The new core test reproduced the mismatch before the fix with 11 requested zeros.
 +
 +### Validation
 +
-+- `swift scripts/updateMetadata.swift v9.0.43 --dry-run` and `swift scripts/updateMetadata.swift v9.0.43` passed; the wrapper's freshness check reports `v9.0.43` up to date.
-+- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.42 --upstream-ref v9.0.43 --output .build/release-2.1.4/source-drift` completed.
-+- `swift scripts/checkUpstreamTestParity.swift` and `swift scripts/checkUpstreamAPIParity.swift` passed with both `--upstream-ref v9.0.43` and `--upstream-ref master`.
-+- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.43 --upstream-ref master --output .build/release-2.1.4/source-drift-master` reports only `phonenumberutil.js` and `phonenumberutil_test.js`, the change ported above.
-+- `swift scripts/updateProjectVersions.swift 2.1.4` and its version consistency check passed.
-+- Decompressed the generated Objective-C gzip array and verified it decodes to the generated JSON for 254 phone-number regions, with a declared expanded length of 351,979 bytes. Short-number output is unchanged.
-+- SQLite integrity checks passed for the carrier, timezone, `en`, and `zh` databases. Both the carrier and timezone databases record `upstream_ref` `v9.0.43`.
-+- `swift test --scratch-path .build/validation-2.1.4` and `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test --scratch-path .build/validation-2.1.4` passed, each with 232 XCTest cases and 43 Swift Testing tests.
-+- `swift build -c release --scratch-path .build/validation-2.1.4` passed.
-+- `swift scripts/testXcodeSchemes.swift --destination 'id=80FE1FB5-892C-4402-9CA1-64A11DF26E15'` passed on the iPhone 18 Pro / iOS 27.0 simulator: `libPhoneNumber` (151 tests), `libPhoneNumberGeocoding` (20), and `libPhoneNumberShortNumber` (31).
-+- `swift scripts/checkMetadataFreshness.swift --current-ref v9.0.43 --output .build/release-2.1.4/final-freshness --fail-on-update` passed.
-+- `git diff --check` passed.
++- The metadata updater completed both dry-run and checked-in generation for `v9.0.44`. The update's freshness check reported the metadata up to date.
++- `swift scripts/checkMetadataFreshness.swift --fail-on-update` also passed using the baseline from this log.
++- Test parity passed against both `v9.0.44` and `master` with 176 upstream tests and 184 local tests. API parity passed against both refs with 66 upstream methods and 93 local selectors.
++- Decoded the embedded phone-number, short-number, and testing data and verified that they match the generated JSON and declared expanded lengths.
++- SQLite integrity checks passed for the carrier, timezone, and all 34 geocoding databases. Carrier and timezone rows match the generators' review JSON, and both bundles record `upstream_ref` `v9.0.44`.
++- `swift scripts/updateProjectVersions.swift 2.1.5` passed, including its version consistency check.
++- Both leading-zero regression tests passed. `swift test` passed under the default and Korean locales, each with 234 XCTest cases and 43 Swift Testing tests. `swift build -c release` passed.
++- `swift scripts/testXcodeSchemes.swift` passed on the iPhone 18 Pro simulator with iOS 27.0. The core, geocoding, and short-number schemes passed 152, 20, and 32 tests, respectively.
++- All 13 CocoaPods specifications passed `pod lib lint --allow-warnings`. `git diff --check` passed.
 +
- ## 2026-10-30: Google libphonenumber v9.0.42
+ ## 2026-11-07: Google libphonenumber v9.0.43
  
  ### Scope
 ```
 
-**File**: `generatedJSON/PhoneNumberMetaData.json` (modified, +95/-131)
+**File**: `generatedJSON/PhoneNumberMetaData.json` (modified, +58/-26)
 ```diff
-@@ -8057,15 +8057,14 @@
+@@ -7171,7 +7171,7 @@
        [
          null,
          null,
--        "(?:01\\d|8)\\d{7}",
-+        "01\\d{8}",
+-        "2(?:0(?:49|5[23]|6[5-7]|9[016-9])|4(?:4[569]|5[4-6]|6[5-7]|7[0179])|5(?:[34]\\d|50|6[5-8]))\\d{4}",
++        "2[045]\\d{6}",
          null,
          null,
          null,
-         null,
-         null,
-         null,
-         [
--          8,
-           10
-         ]
-       ],
-@@ -8076,12 +8075,7 @@
-         null,
-         null,
-         null,
--        "0120211234",
--        null,
--        null,
--        [
--          10
--        ]
-+        "0120211234"
-       ],
-       [
-         null,
-@@ -8090,12 +8084,7 @@
-         null,
-         null,
-         null,
--        "0195123456",
--        null,
--        null,
--        [
--          10
--        ]
-+        "0195123456"
-       ],
-       [
-         null,
-@@ -8156,15 +8145,15 @@
-       [
-         null,
-         null,
--        "857[58]\\d{4}",
-         null,
-         null,
-         null,
--        "85751234",
-+        null,
-+        null,
-         null,
-         null,
-         [
--          8
-+          -1
-         ]
-       ],
-       "BJ",
-@@ -8178,14 +8167,6 @@
-       null,
-       null,
-       [
--        [
--          null,
--          "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
--          "$1 $2 $3 $4",
--          [
--            "8"
--          ]
--        ],
+@@ -12929,7 +12929,7 @@
+             "1010"
+           ],
+           null,
+-          "$CC$1"
++          "$CC $1"
+         ],
          [
            null,
-           "(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-@@ -8229,15 +8210,15 @@
+@@ -13089,7 +13089,7 @@
+             "1010"
+           ],
+           null,
+-          "$CC$1"
++          "$CC $1"
+         ],
+         [
+           null,
+@@ -16243,7 +16243,7 @@
        [
          null,
          null,
--        "81\\d{6}",
+-        "5(?:4[0-29]|6[0-4])\\d{6}|(?:55|6\\d|7[7-9])\\d{7}",
++        "5(?:4[0-29]|6[0-5])\\d{6}|(?:55|6\\d|7[7-9])\\d{7}",
          null,
          null,
          null,
--        "81123456",
-+        null,
-+        null,
+@@ -16718,7 +16718,7 @@
+       [
          null,
          null,
-         [
--          8
-+          -1
-         ]
-       ],
-       null,
-@@ -12903,6 +12884,31 @@
-             "[1-9]123"
+-        "(?:5\\d{5}|8(?:1(?:0(?:0(?:00|[178]\\d)|[3-9]\\d\\d)|(?:1(?:0[2-6]|1\\d)|[2-79]\\d\\d)\\d)|2(?:0(?:0(?:00|4\\d)|[1-7]\\d\\d)|(?:(?:[124-69]\\d|3[5-9])\\d|7(?:[0-79]\\d|8[013-9])|8(?:[2-6]\\d|7[01]))\\d)|[349]\\d{4}))\\d\\d|5(?:(?:[02]\\d|5[0-478])\\d|1(?:[0-8]\\d|95)|6(?:4[0-4]|5[1-589]))\\d{3}",
++        "(?:5\\d{5}|8(?:1(?:0(?:0(?:00|[178]\\d)|[3-9]\\d\\d)|(?:1(?:0[2-6]|1\\d)|[2-79]\\d\\d)\\d)|2(?:0(?:0(?:00|4\\d)|[1-7]\\d\\d)|(?:(?:[124-69]\\d|3[5-9])\\d|7(?:[0-79]\\d|8[013-9])|8(?:[2-6]\\d|7[01]))\\d)|[349]\\d{4}))\\d\\d|5(?:(?:[02]\\d|5[0-478])\\d|1(?:[0-8]\\d|95)|4[67]0|6(?:4[0-4]|5[1-589]))\\d{3}",
+         null,
+         null,
+         null,
+@@ -16812,8 +16812,8 @@
+           "(\\d{3})(\\d{4})",
+           "$1 $2",
+           [
+-            "[369]|4[3-8]|5(?:[0-2]|5[0-478]|6[45])|7[1-9]|88",
+-            "[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"
++            "[369]|4[3-8]|5(?:[0-2]|4[67]|5[0-478]|6[45])|7[1-9]|88",
++            "[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|4[67]0|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"
            ]
          ],
+         [
+@@ -22565,7 +22565,7 @@
+       [
+         null,
+         null,
+-        "(?:2(?:1[6-9]|2[0-35-9]|3[1-4]|5[3-9]|6\\d|7[0-79])|3(?:2[25-9]|3\\d)|4(?:4[0-24]|5[56])|5(?:0[0-6]|16)|77[1-57])\\d{4}",
++        "(?:2(?:1[6-9]|2[0-35-9]|3[1-4]|5[3-9]|6\\d|7[0-79])|3(?:2[25-9]|3\\d)|4(?:4[0-24]|5[56])|5(?:0[0-6]|1[0-256])|77[1-57])\\d{4}",
+         null,
+         null,
+         null,
+@@ -22574,7 +22574,7 @@
+       [
+         null,
+         null,
+-        "(?:51[01]|6\\d\\d|7(?:[0-6]\\d|70|8[0167]))\\d{4}",
++        "(?:6\\d\\d|7(?:[0-6]\\d|70|8[016-9]))\\d{4}",
+         null,
+         null,
+         null,
+@@ -22629,11 +22629,16 @@
+       [
+         null,
+         null,
+-        "515\\d{4}",
+         null,
+         null,
+         null,
+-        "5151234"
++        null,
++        null,
++        null,
++        null,
 +        [
-+          null,
-+          "(\\d{2})(\\d{5})",
-+          "$1 $2",
-+          [
-+            "101",
-+            "1010",
-+            "10100"
-+          ],
-+          "0$1",
-+          "$CC $1"
-+        ],
-+        [
-+          null,
-+          "(\\d{2})(\\d{5,6})",
-+          "$1 $2",
-+          [
-+            "(?:10|2[0-57-9])[19]|3(?:[15]|35|49|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3|4[13]|5[1-5]|9[0-35-9])|[39]7[0-79]",
-+            "10(?:12|9[56])|2[0-57-9](?:1[02]|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))1",
-+            "10(?:123|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))12",
-+            "10(?:123|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))123"
-+          ],
-+          "0$1",
-+          "$CC $1"
-+        ],
++          -1
++        ]
+       ],
+       "GY",
+       592,
+@@ -22755,7 +22760,7 @@
+       [
+         null,
+         null,
+-        "(?:4(?:0(?:6[0-3]|9[3-6])|24[3-6]|44[0-35-9]|6(?:4[0-57-9]|6[0-6])|7(?:4[0-48]|6[0-5]))|5(?:25[3-7]|35[4-8]|73[0-6]|95[0-8])|6(?:26[013-8]|(?:66|78)[0-5])|7(?:0(?:7[1-8]|8[0-8])|10[1-4])|84(?:4[0-2]|8[0-35-9])|9(?:29[013-9]|39[014-9]|59[0-467]|899))\\d{4}|(?:4(?:4[0-35-9]|6[0-357-9]|7[0-35])|5(?:[1-59][0-46-9]|6[0-4689]|7[0-246-9])|6(?:0[1-9]|[13-59]\\d|[268][0-57-9]|7[0-79])|70[1-59]|84[0-39]|9(?:0[1-9]|1[02-9]|[2358][0-8]|[467]\\d))\\d{5}",
++        "(?:4(?:0(?:6[0-3]|9[3-6])|24[3-6]|44[0-35-9]|6(?:4[0-57-9]|6[0-6])|7(?:4[0-48]|6[0-5]))|5(?:25[3-7]|35[4-8]|73[0-6]|95[0-8])|6(?:26[013-8]|(?:66|78)[0-5])|7(?:0(?:7[1-8]|8[0-8])|10[1-4])|84(?:4[0-2]|5[01]|8[0-35-9])|9(?:29[013-9]|39[014-9]|59[0-467]|899))\\d{4}|(?:4(?:4[0-35-9]|6[0-357-9]|7[0-35])|5(?:[1-59][0-46-9]|6[0-4689]|7[0-246-9])|6(?:0[1-9]|[13-59]\\d|[268][0-57-9]|7[0-79])|70[1-59]|84[0-39]|9(?:0[1-9]|1[02-9]|[2358][0-8]|[467]\\d))\\d{5}",
+         null,
+         null,
+         null,
+@@ -29338,7 +29343,7 @@
+       [
+         null,
+         null,
+-        "1(?:5(?:22|33|44|66|77|88|99)|6(?:[07]0|44|6[0168]|88)|8(?:00|33|55|77|99))\\d{4}",
++        "1(?:5(?:22|33|44|5[15]|66|77|88|99)|6(?:[07]0|44|6[0168]|88)|8(?:00|33|44|55|66|77|99))\\d{4}",
+         null,
+         null,
+         null,
+@@ -38539,15 +38544,15 @@
+           "(\\d{3})(\\d{2})(\\d{3})",
+           "$1 $2 $3",
+           [
+-            "8"
++            "[489]"
+           ]
+         ],
          [
            null,
-           "(\\d{3})(\\d{4})",
-@@ -12956,12 +12962,23 @@
-           "0$1",
-           "$CC $1"
-         ],
-+        [
-+          null,
-+          "(\\d{4})(\\d{4})",
-+          "$1 $2",
-+          [
-+            "[1-9]",
-+            "1(?:0(?:[02-578]|1[1-9]|6[013-579]|9[0-47-9])|[1-9])|2(?:[0-57-9](?:[0-8]|9[0-47-9])|6)|[3-9]",
-+            "1(?:0(?:[02-578]|1[1-9]|6(?:[01457]|[39][5-8])|9[0-47-9])|[1-9])|26|3(?:[0268]|3[0-46-9]|4[0-8]|78|9[079])|4(?:[049]|1[034]|2[02-68]|[35]0|6[0-356]|8[014-9])|5(?:0|2[0-24-689]|4[0-2457-9]|6[057-9]|8[1-9]|90)|6(?:[0-24578]|3[046-9]|6[14-79]|9[03-9])|7(?:0[02-9]|2[0135-79]|3[23]|4[0-27-9]|6[1457]|8)|8(?:[046]|1[01459]|2[0-489]|5[023]|8[0-2459]|9[09])|9(?:0[0457]|1[08]|[268]|4[024-9]|5[06-9])|(?:2[0-57-9]|3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:[0-8]|9[0-47-9])",
-+            "1(?:0(?:[02-578]|1[1-9]|6(?:[01457]|[39][5-8])|9[0-47-9])|[1-9])|2(?:[0-57-9](?:[0-8]|9[0-47-9])|6)|3(?:[0268]|3[0-46-9]|4[0-8]|78|9[079])|4(?:[049]|1[034]|2[02-68]|[35]0|6[0-356]|8[014-9])|5(?:0|2[0-24-689]|4[0-2457-9]|6[057-9]|8[1-9]|90)|6(?:[0-24578]|3[046-9]|6[14-79]|9[03-9])|7(?:0[02-9]|2[0135-79]|3[23]|4[0-27-9]|6[1457]|8)|8(?:[046]|1[01459]|2[0-489]|5[023]|8[0-2459]|9[09])|9(?
+           "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
+           "$1 $2 $3 $4",
+           [
+-            "[2-79]"
++            "[235-7]"
+           ]
+         ]
+       ],
+@@ -39250,7 +39255,7 @@
+       [
+         null,
+         null,
+-        "[1289]\\d{9}|50\\d{5}(?:\\d{2,3})?|[27-9]\\d{7,8}|(?:[34]\\d|6[0-35-9])\\d{6}|8\\d{4,6}",
++        "11\\d{8,12}|[29]\\d{7,9}|(?:[34]\\d|6[0-35-9])\\d{6}|50\\d{5}(?:\\d{2,3})?|7\\d{7,8}|8\\d{4,9}",
+         null,
+         null,
+         null,
+@@ -39263,7 +39268,11 @@
+           7,
+           8,
+           9,
+-          10
++          10,
++          11,
++          12,
++          13,
+
+```
+
+**File**: `generatedJSON/ShortNumberMetadata.json` (modified, +17/-27)
+```diff
+@@ -6561,7 +6561,7 @@
+       [
+         null,
+         null,
+-        "[1359]\\d{2,3}",
++        "[19]\\d{2,3}",
+         null,
+         null,
+         null,
+@@ -6578,16 +6578,11 @@
+       [
+         null,
+         null,
+-        "112|911",
+-        null,
+-        null,
++        "1(?:02|1)2|911",
+         null,
+-        "112",
+         null,
+         null,
+-        [
+-          3
+-        ]
++        "112"
+       ],
+       [
+         null,
+@@ -6627,22 +6622,17 @@
+       [
+         null,
+         null,
+-        "112|911",
++        "1(?:02|1)2|911",
+         null,
+         null,
+         null,
+-        "112",
+-        null,
+-        null,
+-        [
+-          3
+-        ]
++        "112"
+       ],
+       null,
+       [
+         null,
+         null,
+-        "1(?:0(?:00|15|2[2-4679])|1(?:1[0-35-9]|2|37|[46]6|7[57]|8[79]|9[0-379])|2(?:00|[12]2|34|55)|3(?:21|33)|4(?:0[06]|1[4-6])|5(?:15|5[15])|693|7(?:00|1[7-9]|2[02]|[67]7)|975)|3855|5(?:0(?:30|49)|510)|911",
++        "1(?:0(?:0[0-2]|1[015]|2[0-46-8]|4[08])|1(?:0[015]|1[135-9]|2[125]?|3[2-4]|4[6-9]|55|6[1569]|7[67]|8[07]|9[0-49])|2(?:00|1[235]|2[12]|34)|3(?:11|2[12]|33)|4(?:1[14-6]|21)|5(?:15|20|5[05])|693|7(?:00|1[79]|2[02]|34|67)|818|975)|911",
+         null,
+         null,
+         null,
+@@ -6680,15 +6670,15 @@
+       [
+         null,
+         null,
+-        "(?:385|5(?:0[34]|51))\\d",
+         null,
+         null,
+         null,
+-        "3850",
++        null,
++        null,
+         null,
+         null,
+         [
+-          4
++          -1
+         ]
+       ]
+     ],
+@@ -15691,7 +15681,7 @@
+       [
+         null,
+         null,
+-        "1(?:[01679]114|3(?:0[01]|2|3[0-35-9]|45?|5[057]|6[569]|7[79]|8[2589]|9[0189])|55[15]\\d{4}|8(?:(?:11|44|66)\\d{4}|[28]))|1(?:0[015]|1\\d|2[01357-9]|41|8114)",
++        "1(?:0[015]|1\\d|2[01357-9]|3(?:0[01]|2|3[0-35-9]|45?|5[057]|6[569]|7[79]|8[2589]|9[0189])|41|[6-9]114)|18[28]|1811\\d{4}|1[01]114",
+         null,
+         null,
+         null,
+@@ -15730,11 +15720,11 @@
+       [
+         null,
+         null,
+-        "1(?:55|8[146])\\d{5}",
++        "181\\d{5}",
+         null,
+         null,
+         null,
+-        "15500000",
++        "18100000",
+         null,
+         null,
+         [
+@@ -22159,7 +22149,7 @@
+       [
+         null,
+         null,
+-        "018|1(?:(?:1|37)1|(?:23|94)4|7[03]7)|[2-57-9]\\d{2,3}|6(?:161|26[0-3]|742)",
++        "018|1(?:11|(?:23|94)4|3\\d\\d|7[03]7)|[2-57-9]\\d{2,3}|6(?:161|26[0-3]|742)",
+         null,
+         null,
+         null,
+@@ -22197,7 +22187,7 @@
+       [
+         null,
+         null,
+-        "018|(?:1(?:23|37|7[03]|94)|6(?:[12]6|74))\\d|[2-57-9]\\d{2,3}",
++        "018|(?:1(?:23|3\\d|7[03]|94)|6(?:[12]6|74))\\d|[2-57-9]\\d{2,3}",
+         null,
+         null,
+         null,
+@@ -29146,7 +29136,7 @@
+       [
+         null,
+         null,
+-        "11[0289]|1(?:81|92)\\d",
++        "1(?:1[0289]|81\\d|9(?:1[01]|2\\d))",
+         null,
+         null,
+         null,
+@@ -29205,7 +29195,7 @@
+       [
+         null,
+         null,
+-        "1(?:0[04-6]|1[0237-9]|3[389]|6[05-8]|7[07]|8(?:0|11)|9(?:19|22|5[057]|68|8[05]|9[15689]))",
++        "1(?:0[04-6]|1[0237-9]|3[389]|6[05-8]|7[07]|8(?:0|11)|9(?:1[019]|2[25]|5[057]|68|8[05]|9[15689]))",
+         null,
+         null,
+         null,
+@@ -29214,7 +29204,7 @@
+       [
+         null,
+         null,
+-        "1(?:65|9(?:1\\d|50|85|98))",
++        "1(?:65|9(?:19|50|85|98))",
+         null,
+         null,
+         null,
 ```
 
 **File**: `libPhoneNumber-Demo/libPhoneNumber-Demo-SPM.xcodeproj/project.pbxproj` (modified, +4/-4)
@@ -2313,8 +2559,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEBUG_INFORMATION_FORMAT = dwarf;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
  				ENABLE_TESTABILITY = YES;
@@ -2322,8 +2568,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
  				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
  				MTL_FAST_MATH = YES;
  				ONLY_ACTIVE_ARCH = YES;
@@ -2331,8 +2577,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				ENABLE_NS_ASSERTIONS = NO;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2340,8 +2586,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
  				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = NO;
  				MTL_FAST_MATH = YES;
  				SDKROOT = iphoneos;
@@ -2353,8 +2599,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEBUG_INFORMATION_FORMAT = dwarf;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
  				ENABLE_TESTABILITY = YES;
@@ -2362,8 +2608,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
  				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
  				MTL_FAST_MATH = YES;
  				ONLY_ACTIVE_ARCH = YES;
@@ -2371,8 +2617,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				ENABLE_NS_ASSERTIONS = NO;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2380,8 +2626,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
  				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = NO;
  				MTL_FAST_MATH = YES;
  				SDKROOT = iphoneos;
@@ -2393,8 +2639,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEAD_CODE_STRIPPING = YES;
  				DEBUG_INFORMATION_FORMAT = dwarf;
  				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2402,8 +2648,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
  				MTL_FAST_MATH = YES;
  				ONLY_ACTIVE_ARCH = YES;
@@ -2411,8 +2657,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				CLANG_WARN_UNREACHABLE_CODE = YES;
  				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
  				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
+-				CURRENT_PROJECT_VERSION = 2.1.4;
++				CURRENT_PROJECT_VERSION = 2.1.5;
  				DEAD_CODE_STRIPPING = YES;
  				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				ENABLE_NS_ASSERTIONS = NO;
@@ -2420,8 +2666,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
  				GCC_WARN_UNUSED_FUNCTION = YES;
  				GCC_WARN_UNUSED_VARIABLE = YES;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
+-				MARKETING_VERSION = 2.1.4;
++				MARKETING_VERSION = 2.1.5;
  				MTL_ENABLE_DEBUG_INFO = NO;
  				MTL_FAST_MATH = YES;
  				SDKROOT = macosx;
@@ -2433,8 +2679,8 @@ test did not finish within 120 seconds; it now passes in milliseconds.
  Pod::Spec.new do |s|
    s.name         = "libPhoneNumber-iOS-Swift"
    s.module_name  = "libPhoneNumberIOSSwift"
--  s.version      = "2.1.3"
-+  s.version      = "2.1.4"
+-  s.version      = "2.1.4"
++  s.version      = "2.1.5"
    s.summary      = "Swift-first umbrella facade for libPhoneNumber-iOS"
    s.description  = "Swift-first umbrella facade over the stable Objective-C libPhoneNumber-iOS core and optional geocoding and short-number modules."
    s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
@@ -2442,48 +2688,24 @@ test did not finish within 120 seconds; it now passes in milliseconds.
    s.swift_versions = ["5.9", "6.0"]
    s.requires_arc = true
  
--  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
--  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.3'
--  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.3'
-+  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
-+  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.4'
-+  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.4'
+-  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
+-  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.4'
+-  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.4'
++  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.5'
++  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.5'
++  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.5'
  
    s.source_files = [
                      'libPhoneNumberIOSSwift/**/*.swift',
 ```
 
-**File**: `libPhoneNumber-iOS-SwiftCarrier.podspec` (modified, +3/-3)
-```diff
-@@ -1,7 +1,7 @@
- Pod::Spec.new do |s|
-   s.name         = "libPhoneNumber-iOS-SwiftCarrier"
-   s.module_name  = "libPhoneNumberSwiftCarrier"
--  s.version      = "2.1.3"
-+  s.version      = "2.1.4"
-   s.summary      = "Swift-first carrier facade for libPhoneNumber-iOS"
-   s.description  = "Swift-first carrier metadata facade over libPhoneNumberCarrier."
-   s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
-@@ -26,8 +26,8 @@ Pod::Spec.new do |s|
-   s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
--  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
--  s.dependency 'libPhoneNumberCarrier', '~> 2.1.3'
-+  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
-+  s.dependency 'libPhoneNumberCarrier', '~> 2.1.4'
- 
-   s.source_files = [
-                     'libPhoneNumberSwiftCarrier/**/*.swift',
-```
-
 #### Recent Merged Pull Requests:
+- **PR #461** (2026-11-22): chore(release): refresh metadata for 2.1.5 (@iziz)
+- **PR #460** (2026-11-13): Annotate core helper nullability for Swift (@heymansmile)
 - **PR #459** (2026-11-07): chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1.4 (@iziz)
 - **PR #458** (2026-10-30): chore(release): refresh metadata for 2.1.3 (@iziz)
 - **PR #457** (2026-10-08): chore(release): refresh metadata for 2.1.2 (@iziz)
 - **PR #456** (2026-09-25): chore(release): refresh metadata for 2.1.1 (@iziz)
-- **PR #455** (2026-09-17): chore(release): prepare 2.1.0 with Google metadata v9.0.39 (@iziz)
-- **PR #454** (2026-09-12): Remove the breaking changes so the next release can be 2.1.0 (@iziz)
 
 ---
 
@@ -2503,13 +2725,13 @@ test did not finish within 120 seconds; it now passes in milliseconds.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #459 from iziz/metadata-v9-0-43
+## X. release): merge metadata update for 2.1.5
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iziz/libPhoneNumber-iOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91fcc745`: Merge pull request #459 from iziz/metadata-v9-0-43. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01c4c4f5`: release): merge metadata update for 2.1.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Objective-C data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2517,35 +2739,30 @@ Subsystems managing Objective-C data structures, boundary deserialization, API p
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```objective-c
 // Verified production-grade fix pattern:
-## 2.1.4
+## 2.1.5
 
-Patch release. Refresh Google libphonenumber metadata from `v9.0.42` to
-`v9.0.43`, including phone-number, carrier, and geocoding data. Phone-number
-metadata changes affect nine regions: Benin, China, Germany, Ecuador,
-Ethiopia, Georgia, Laos, Romania, and Zimbabwe. Carrier metadata grows from
-32,099 to 32,255 prefix rows. Geocoding changes are limited to the English
-(Zimbabwe and one Australian prefix) and Chinese databases. Short-number,
-testing, and timezone data are unchanged. See `docs/METADATA_UPDATE_LOG.md`
-for the upstream comparison and validation.
+Patch release. Refresh Google libphonenumber metadata from `v9.0.43` to
+`v9.0.44`, including phone-number data for 14 regions, short-number data for
+Costa Rica, New Zealand, South Korea, and Taiwan, and English and Chinese
+geocoding data. Carrier metadata grows from 32,255 to 32,379 prefix rows.
+See `docs/METADATA_UPDATE_LOG.md` for the upstream comparison and validation.
 
 ### Fixed
 
-- Parsing an RFC3966 `tel:` URI with a long, invalid `phone-context` domain
-  name no longer hangs. The domain-label patterns now follow Google's fix for
-  catastrophic regular-expression backtracking
-  ([google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070)),
-  and `testParseRfc3966PhoneContextDomain` is ported from upstream.
+- Cap leading-zero padding at 10 digits when constructing a national significant
+  number, including for short-number validation. This follows Google's
+  [leading-zero fix](https://github.com/google/libphonenumber/pull/4098).
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```objective-c
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91fcc745` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01c4c4f5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

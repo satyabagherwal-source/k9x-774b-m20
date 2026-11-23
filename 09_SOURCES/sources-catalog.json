@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "e585a0b20c977af1b3b44c6cccb2c977d961897d287c2c04c94732b32978f909",
-    "lastHarvestedAt": "2026-11-19T13:07:57.628Z",
+    "contentHash": "7e0ee4ebff94a1d1acef4e3223f38b76324df5f6817d2712f079f4e892f28b6a",
+    "lastHarvestedAt": "2026-11-23T20:38:45.230Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "2011f567",
+    "sourceVersion": "da971852",
     "license": "Apache-2.0",
-    "contentHash": "70b959fd8b3283e579db8f7e7e0584308dde1ecd27d99dafa5a5c45da526de06",
-    "lastHarvestedAt": "2026-11-23T16:37:10.175Z",
+    "contentHash": "2f8a1607f5a6dd379d6c4a345b1172a20be2debee01203d3c6f6afc0fc74b00d",
+    "lastHarvestedAt": "2026-11-23T20:38:57.458Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "e80aaa6b",
+    "sourceVersion": "605fb5eb",
     "license": "Apache-2.0",
-    "contentHash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
-    "lastHarvestedAt": "2026-11-21T17:15:36.914Z",
+    "contentHash": "670d00d8b6a4acf5165ded570fc74ae917e432ae753e41f365135b08cffc988b",
+    "lastHarvestedAt": "2026-11-23T20:39:00.569Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -7223,10 +7223,10 @@
     "repository": "go-kratos/kratos",
     "platform": "github",
     "sourceUrl": "https://github.com/go-kratos/kratos",
-    "sourceVersion": "dd0fb7df",
+    "sourceVersion": "56cfd65d",
     "license": "MIT",
-    "contentHash": "20ceb7493f20fc5988ae1f98e03a58659ded240b6a353ffdcb78a7f8a3b26723",
-    "lastHarvestedAt": "2026-10-27T10:58:00.074Z",
+    "contentHash": "eecf0022168ed4598ef2ce5909821152b8386def82ccfff6792f915c44c80603",
+    "lastHarvestedAt": "2026-11-23T20:38:55.583Z",
     "learningId": "learn-github-go-kratos-kratos"
   },
   "tencent-tds-kuiklyui": {
@@ -9723,10 +9723,10 @@
     "repository": "iziz/libPhoneNumber-iOS",
     "platform": "github",
     "sourceUrl": "https://github.com/iziz/libPhoneNumber-iOS",
-    "sourceVersion": "b27567bb",
+    "sourceVersion": "01c4c4f5",
     "license": "Apache-2.0",
-    "contentHash": "3bb6d0abf031ad0e02d3731225220952ab60e19d3178d6fbfd0ba029fe3849f0",
-    "lastHarvestedAt": "2026-11-13T08:22:02.348Z",
+    "contentHash": "5c48a167a5e6d7559a737009da2530048f3fbfbcfcffd42f99b717b9cb78d397",
+    "lastHarvestedAt": "2026-11-23T20:38:52.391Z",
     "learningId": "learn-github-iziz-libphonenumber-ios"
   },
   "rdflib-rdflib": {

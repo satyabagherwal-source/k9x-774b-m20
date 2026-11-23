@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T20:30:43.925Z",
-  "total_cycles_completed": 11842,
-  "total_learnings_persisted": 11842,
-  "total_rules_promoted": 10955,
+  "last_updated": "2026-11-23T20:39:00.575Z",
+  "total_cycles_completed": 11847,
+  "total_learnings_persisted": 11847,
+  "total_rules_promoted": 10958,
   "history": [
-    {
-      "timestamp": "2026-11-23T00:48:32.775Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T00:56:20.859Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T00:56:22.593Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T00:56:31.441Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T03:27:40.716Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T03:27:47.709Z",
       "repository": "jellyfin/Swiftfin",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-23T20:30:43.925Z",
       "repository": "smallstep/cli",
       "learningId": "learn-github-smallstep-cli",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:38:45.235Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:38:52.433Z",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "learningId": "learn-github-iziz-libphonenumber-ios",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:38:55.589Z",
+      "repository": "go-kratos/kratos",
+      "learningId": "learn-github-go-kratos-kratos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:38:57.463Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T20:39:00.575Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
