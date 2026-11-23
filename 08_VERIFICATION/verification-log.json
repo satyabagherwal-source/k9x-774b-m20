@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-DWBN",
-    "timestamp": "2026-11-21T17:50:04.259Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "f18cc8e24aeb8ee4d7287bd633e71fb5976cda559fc2ff257978bc96e8be311a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-K5A9",
-    "timestamp": "2026-11-21T18:22:55.425Z",
-    "repository": "baidu/Unlimited-OCR-2",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-    "contentHash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-K8OK",
-    "timestamp": "2026-11-21T18:22:59.828Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "11050f995581b96687ceb775c05fd8c080f56ba3c00bee4e2a4fa8f8eb7b46fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-KD3J",
     "timestamp": "2026-11-21T18:23:05.551Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7445,51 @@
     "repository": "k3s-io/k3s",
     "learningId": "learn-github-k3s-io-k3s",
     "contentHash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-TS4B",
+    "timestamp": "2026-11-23T17:37:46.139Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "92b519089d0765c4a9d92141343583f968ae2ddb6b1c8a09fb4095714236de90",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-U1RX",
+    "timestamp": "2026-11-23T17:37:58.653Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "345d797a2d38a7f061df65aa6beb908233a75dea55186089e1ed45b66c88a466",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-U2Z6",
+    "timestamp": "2026-11-23T17:38:00.210Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "c61f317cd54780d63a787c7772270b3c8936017cf1a8ce45668a3998d1a45c61",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

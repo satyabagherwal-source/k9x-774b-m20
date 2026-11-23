@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T17:29:48.557Z",
+  "last_updated": "2026-11-23T17:38:05.502Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24082,
+  "total_items": 24086,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ffead11c",
-      "content_hash": "5fd96e5c8f28c11a296be4b8e200b49b397bb76d83a078e8c28bed13c4199cb6",
+      "source_version": "b0a4509e",
+      "content_hash": "efee34d053c72380a4c57925d4425edb8f8536079db3a18a9cd630f759e990b6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T15:45:55.293Z"
+      "persisted_at": "2026-11-23T17:38:00.622Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ffead11c",
-      "content_hash": "abe32f56efcf68d4e2324ac4ee9222eaa7e7e2836e23781642b12f7b12466ff9",
+      "source_version": "b0a4509e",
+      "content_hash": "397fcf39b3a23c1793d6d929f0df45618f6b55ff508bf423e017d45e98a525df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T15:45:55.449Z"
+      "persisted_at": "2026-11-23T17:38:00.798Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "e040ad62f476b993ceffca589814eb83bce0e1715acedd4ff923aaee3a264187",
+      "content_hash": "62dd6c8128c8bb518e8542f5407944c24ded3442357c0dfa57bf3d193bc49b21",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T03:27:59.589Z"
+      "persisted_at": "2026-11-23T17:38:05.329Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215948,13 +215948,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "ffead11c",
-      "content_hash": "285b095087ab8a38b61e34d56c0ac7678815a6f140b3832044b7e13e1aa79159",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "b0a4509e",
+      "content_hash": "c61f317cd54780d63a787c7772270b3c8936017cf1a8ce45668a3998d1a45c61",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216067,7 +216067,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:45:54.754Z",
+      "verified_at": "2026-11-23T17:37:59.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216081,26 +216081,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "0c437895",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "b0a4509e",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T08:11:45.877Z"
+      "verified_at": "2026-11-23T17:37:59.999Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-M8E4-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-U6SO-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "defguard-defguard-learnings",
+      "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7156b94ad0f244a5f5545f5f33be2f275565b4ea67e95b00364d3acc4a96734",
+      "content_hash": "1067f041e3b0637e86af260c49416a60d624c8e6741583a2f1facc8df10de80e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T08:12:01.665Z"
+      "persisted_at": "2026-11-23T17:38:05.163Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -216848,8 +216848,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "06170caa",
-      "content_hash": "b013df4c1cf6153889609c59a2c84086553a27eeae8aec6a1246d21e4b7c0702",
+      "source_version": "a5022ef6",
+      "content_hash": "345d797a2d38a7f061df65aa6beb908233a75dea55186089e1ed45b66c88a466",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -216892,6 +216892,11 @@
           "number": 9795,
           "title": "cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10084,
+          "title": "Empirical Invariant Guard in head.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216899,7 +216904,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:17:45.524Z",
+      "verified_at": "2026-11-23T17:37:58.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216953,10 +216958,10 @@
       "relative_path": "08_VERIFICATION/prometheus-prometheus-verification-protocol-empirical-defect-shield-for-promethe.md",
       "title": "Verification Protocol: Empirical Defect Shield for prometheus/prometheus",
       "repository": "prometheus/prometheus",
-      "source_version": "06170caa",
-      "content_hash": "4745cc23352b8f535822a01e0b44f4cee5d87bec6e1bd74354e6951c456a0438",
+      "source_version": "a5022ef6",
+      "content_hash": "9953def72bee725929429a5317778c8ee8afc29db5a3562085dbcae93353d1c3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:17:46.477Z"
+      "persisted_at": "2026-11-23T17:37:59.262Z"
     },
     "learn-github-lancedb-lancedb": {
       "learning_id": "learn-github-lancedb-lancedb",
@@ -220312,9 +220317,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "50befb3874637eeecd8bc36127431073e40d00f294243fce15c7750e4c6f0bea",
+      "content_hash": "43cd7c8817d00274d4c055da8e8dca1b8ca05a8650ab99768f83da04a3da5571",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T03:27:59.921Z"
+      "persisted_at": "2026-11-23T17:38:05.502Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -233884,7 +233889,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "b6aed37ca991a84b395ecb46a848b6f67e5e0bff92f0d9fd33dbabd4328cf211",
+      "content_hash": "92b519089d0765c4a9d92141343583f968ae2ddb6b1c8a09fb4095714236de90",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [],
@@ -233893,7 +233898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T05:54:42.504Z",
+      "verified_at": "2026-11-23T17:37:45.915Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233910,9 +233915,9 @@
       "title": "Research & Knowledge Intelligence: jialinyyzz/humanizer Core Invariants",
       "repository": "jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "dd8dc4a0ba3ba5efc35481ac0ac89059d77778a053ddf925ae3b8644babeeee3",
+      "content_hash": "1dad38050eaa9bbcb200974d09d582fd5cc020dd9b00ce93ff9e4828870e54b5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T05:54:42.876Z"
+      "persisted_at": "2026-11-23T17:37:46.356Z"
     },
     "learn-github-astral-sh-ruff": {
       "learning_id": "learn-github-astral-sh-ruff",
@@ -234127,9 +234132,9 @@
       "title": "Research & Knowledge Intelligence: hf-jialinyyzz-humanizer-learnings Core Invariants",
       "repository": "hf-jialinyyzz-humanizer-learnings",
       "source_version": "HEAD",
-      "content_hash": "4eb307f6f634b7a189fbe0d3e5473223013fb1b49065023a815aeacc0512ddc1",
+      "content_hash": "d93bc448144e212e3b7072456d6c8e95be7686e3bcdfac12a755c27593800f8f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T05:55:01.569Z"
+      "persisted_at": "2026-11-23T17:38:03.839Z"
     },
     "candidate_directive-ios-convert-degradationpreference-between-its-name-and-the-enum": {
       "item_id": "candidate_directive-ios-convert-degradationpreference-between-its-name-and-the-enum",
@@ -260091,9 +260096,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for prometheus-prometheus-learnings",
       "repository": "prometheus-prometheus-learnings",
       "source_version": "HEAD",
-      "content_hash": "337229233ea90f1c45811c6d6748824c80c310fc6bdd47d706936828064b9848",
+      "content_hash": "337505388f9b99d9b4c41a4f53c9eeac50e70af9e9f1623157b3dcd49f3e689e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:18:00.045Z"
+      "persisted_at": "2026-11-23T17:38:04.665Z"
     },
     "learn-github-stakater-reloader": {
       "learning_id": "learn-github-stakater-reloader",
@@ -328159,6 +328164,56 @@
       "content_hash": "a52aee9970c3b5fd2325ac8e9a2dcf9bdc8c4f075e0cf3a5d99456ce17f58c7e",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T17:29:45.358Z"
+    },
+    "rule-10084": {
+      "learning_id": "rule-10084",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10084,
+      "title": "Empirical Invariant Guard in head.go",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "a5022ef6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:37:58.439Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-head-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-head-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U651-empirical-invariant-guard-in-head-go.md",
+      "title": "Empirical Invariant Guard in head.go",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0e5dbe16758d16d3ef601baa60a29c39a0034da54ed356055600e33f97d6bbe8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T17:38:04.313Z"
+    },
+    "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-prometheus-prometheus-architecture-intelligence-prometheus-prometheus-core-invar.md",
+      "title": "Architecture Intelligence: prometheus/prometheus Core Invariants",
+      "repository": "prometheus/prometheus",
+      "source_version": "a5022ef6",
+      "content_hash": "fd0a170edec8f56ea3926d6ab2b785881b749125d144d3cdb7ee3befdcf74912",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T17:37:59.074Z"
+    },
+    "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-prometheus-prometheus-learnings-architecture-intelligence-prometheus-prometheus-.md",
+      "title": "Architecture Intelligence: prometheus-prometheus-learnings Core Invariants",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9506896ffaf90bc0ac430e022dd550c6a54a2375a0416a528e0beb64cd719bb8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T17:38:04.484Z"
     }
   },
   "ai-builder-brain": {

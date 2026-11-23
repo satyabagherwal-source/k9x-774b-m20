@@ -12432,3 +12432,6 @@ Every entry in this ledger must capture:
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `8ff3aef4` | Multi-dimensional audit evidence | 2026-11-23T17:29:33.849Z |
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `754f2bdb` | Multi-dimensional audit evidence | 2026-11-23T17:29:38.286Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `b5039cf8` | Multi-dimensional audit evidence | 2026-11-23T17:29:41.014Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-23T17:37:46.143Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `a5022ef6` | Multi-dimensional audit evidence | 2026-11-23T17:37:58.657Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `b0a4509e` | Multi-dimensional audit evidence | 2026-11-23T17:38:00.214Z |

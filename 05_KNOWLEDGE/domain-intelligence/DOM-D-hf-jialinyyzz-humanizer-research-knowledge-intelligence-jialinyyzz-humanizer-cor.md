@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/jialinyyzz/humanizer",
   "source_version": "hf-jialinyyzz-humanizer",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T05:54:42.876Z",
+  "timestamp": "2026-11-23T17:37:46.355Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-jialinyyzz-humanizer",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [jialinyyzz/humanizer](https://huggingface.co/jialinyyzz/humanizer) (Revision: `hf-jialiny`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T05:54:42.876Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T17:37:46.355Z`  
 > **Learning ID**: `learn-huggingface-jialinyyzz-humanizer`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/jialinyyzz/humanizer](https://huggingface.co/jialinyyzz/humanizer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T05:54:42.112Z  
+> **Harvest Timestamp**: 2026-11-23T17:37:45.452Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 424089 downloads | 2285 likes
+- **Stars / Engagement**: 484385 downloads | 2305 likes
 
 ---
 

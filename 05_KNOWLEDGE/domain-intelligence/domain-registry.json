@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T17:29:48.108Z",
-  "total_records": 2435,
+  "last_updated": "2026-11-23T17:38:05.329Z",
+  "total_records": 2437,
   "domains": {
     "A": {
       "total": 20,
@@ -1119,7 +1119,7 @@
       ]
     },
     "G": {
-      "total": 422,
+      "total": 424,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1542,7 +1542,9 @@
         "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-core-invariants",
         "domain_intelligence-architecture-intelligence-argoproj-argo-workflows-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-duongductrong-snapzy-core-invariants",
-        "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-duongductrong-snapzy-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants",
+        "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8539,10 +8541,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "5fd96e5c8f28c11a296be4b8e200b49b397bb76d83a078e8c28bed13c4199cb6",
-      "created_at": "2026-11-23T15:45:55.293Z"
+      "content_hash": "efee34d053c72380a4c57925d4425edb8f8536079db3a18a9cd630f759e990b6",
+      "created_at": "2026-11-23T17:38:00.622Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9774,8 +9776,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "e040ad62f476b993ceffca589814eb83bce0e1715acedd4ff923aaee3a264187",
-      "created_at": "2026-11-23T03:27:59.589Z"
+      "content_hash": "62dd6c8128c8bb518e8542f5407944c24ded3442357c0dfa57bf3d193bc49b21",
+      "created_at": "2026-11-23T17:38:05.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -16849,8 +16851,8 @@
       "title": "Research & Knowledge Intelligence: jialinyyzz/humanizer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jialinyyzz-humanizer-research-knowledge-intelligence-jialinyyzz-humanizer-cor.md",
       "repository": "jialinyyzz/humanizer",
-      "content_hash": "dd8dc4a0ba3ba5efc35481ac0ac89059d77778a053ddf925ae3b8644babeeee3",
-      "created_at": "2026-11-19T05:54:42.876Z"
+      "content_hash": "1dad38050eaa9bbcb200974d09d582fd5cc020dd9b00ce93ff9e4828870e54b5",
+      "created_at": "2026-11-23T17:37:46.356Z"
     },
     "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants",
@@ -16927,8 +16929,8 @@
       "title": "Research & Knowledge Intelligence: hf-jialinyyzz-humanizer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jialinyyzz-humanizer-learnings-research-knowledge-intelligence-hf-jialinyyzz-.md",
       "repository": "hf-jialinyyzz-humanizer-learnings",
-      "content_hash": "4eb307f6f634b7a189fbe0d3e5473223013fb1b49065023a815aeacc0512ddc1",
-      "created_at": "2026-11-19T05:55:01.569Z"
+      "content_hash": "d93bc448144e212e3b7072456d6c8e95be7686e3bcdfac12a755c27593800f8f",
+      "created_at": "2026-11-23T17:38:03.839Z"
     },
     "DOM-H-305CEBA3": {
       "record_id": "DOM-H-305CEBA3",
@@ -40876,6 +40878,24 @@
       "repository": "yvgude-lean-ctx-learnings",
       "content_hash": "a52aee9970c3b5fd2325ac8e9a2dcf9bdc8c4f075e0cf3a5d99456ce17f58c7e",
       "created_at": "2026-11-23T17:29:45.358Z"
+    },
+    "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: prometheus/prometheus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-prometheus-prometheus-architecture-intelligence-prometheus-prometheus-core-invar.md",
+      "repository": "prometheus/prometheus",
+      "content_hash": "fd0a170edec8f56ea3926d6ab2b785881b749125d144d3cdb7ee3befdcf74912",
+      "created_at": "2026-11-23T17:37:59.074Z"
+    },
+    "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-prometheus-prometheus-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: prometheus-prometheus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-prometheus-prometheus-learnings-architecture-intelligence-prometheus-prometheus-.md",
+      "repository": "prometheus-prometheus-learnings",
+      "content_hash": "9506896ffaf90bc0ac430e022dd550c6a54a2375a0416a528e0beb64cd719bb8",
+      "created_at": "2026-11-23T17:38:04.484Z"
     }
   }
 }

@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "b6aed37ca991a84b395ecb46a848b6f67e5e0bff92f0d9fd33dbabd4328cf211",
-    "lastHarvestedAt": "2026-11-19T05:54:42.697Z",
+    "contentHash": "92b519089d0765c4a9d92141343583f968ae2ddb6b1c8a09fb4095714236de90",
+    "lastHarvestedAt": "2026-11-23T17:37:46.143Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "ffead11c",
+    "sourceVersion": "b0a4509e",
     "license": "Apache-2.0",
-    "contentHash": "0f5bbb7e880550e53378f08bf7c8ca0dd2e5a51bb4ccf50f9295fdb971c2e6aa",
-    "lastHarvestedAt": "2026-11-23T13:06:58.686Z",
+    "contentHash": "c61f317cd54780d63a787c7772270b3c8936017cf1a8ce45668a3998d1a45c61",
+    "lastHarvestedAt": "2026-11-23T17:38:00.214Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "06170caa",
+    "sourceVersion": "a5022ef6",
     "license": "Apache-2.0",
-    "contentHash": "b013df4c1cf6153889609c59a2c84086553a27eeae8aec6a1246d21e4b7c0702",
-    "lastHarvestedAt": "2026-11-21T15:17:45.792Z",
+    "contentHash": "345d797a2d38a7f061df65aa6beb908233a75dea55186089e1ed45b66c88a466",
+    "lastHarvestedAt": "2026-11-23T17:37:58.657Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

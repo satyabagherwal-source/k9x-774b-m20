@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T17:29:44.564Z",
-    "lastVerified": "2026-11-23T17:29:44.564Z",
+    "lastChecked": "2026-11-23T17:38:03.473Z",
+    "lastVerified": "2026-11-23T17:38:03.473Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -173,12 +173,12 @@
     "revisionIdentifier": "9a44a8e8"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T17:03:43.300Z",
-    "lastVerified": "2026-11-23T17:03:43.300Z",
+    "lastChecked": "2026-11-23T17:37:57.721Z",
+    "lastVerified": "2026-11-23T17:37:57.721Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -187,7 +187,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c4528161"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1146,14 +1147,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T13:06:57.778Z",
-    "lastVerified": "2026-11-23T13:06:57.778Z",
+    "lastChecked": "2026-11-23T17:37:59.464Z",
+    "lastVerified": "2026-11-23T17:37:59.464Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "0f5bbb7e880550e53378f08bf7c8ca0dd2e5a51bb4ccf50f9295fdb971c2e6aa",
+    "contentHash": "c61f317cd54780d63a787c7772270b3c8936017cf1a8ce45668a3998d1a45c61",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5632,12 +5633,12 @@
     "lastVerified": "2026-11-23T14:12:42.689Z"
   },
   "apple-foundationdb": {
-    "name": "apple/foundationdb",
+    "name": "foundationdb",
     "officialUrl": "https://github.com/apple/foundationdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-22T13:59:13.896Z",
-    "lastVerified": "2026-11-22T13:59:13.896Z",
+    "lastChecked": "2026-11-23T17:37:55.304Z",
+    "lastVerified": "2026-11-23T17:37:55.304Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apple-foundationdb",
@@ -5646,7 +5647,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c06497f3"
   },
   "mlua-rs-mlua": {
     "name": "mlua-rs/mlua",
@@ -6421,9 +6423,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-22T05:27:57.580Z",
+    "lastChecked": "2026-11-23T17:37:42.770Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-22T05:27:57.580Z"
+    "lastVerified": "2026-11-23T17:37:42.770Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -7085,12 +7087,12 @@
     "officialUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T05:54:42.112Z",
-    "lastVerified": "2026-11-19T05:54:42.112Z",
+    "lastChecked": "2026-11-23T17:37:45.452Z",
+    "lastVerified": "2026-11-23T17:37:45.452Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "b6aed37ca991a84b395ecb46a848b6f67e5e0bff92f0d9fd33dbabd4328cf211",
+    "contentHash": "92b519089d0765c4a9d92141343583f968ae2ddb6b1c8a09fb4095714236de90",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7171,22 +7173,21 @@
     "lastVerified": "2026-11-22T09:04:28.606Z"
   },
   "prometheus-prometheus": {
-    "name": "prometheus",
+    "name": "prometheus/prometheus",
     "officialUrl": "https://github.com/prometheus/prometheus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T15:55:54.920Z",
-    "lastVerified": "2026-11-22T15:55:54.920Z",
+    "lastChecked": "2026-11-23T17:37:57.594Z",
+    "lastVerified": "2026-11-23T17:37:57.594Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "b013df4c1cf6153889609c59a2c84086553a27eeae8aec6a1246d21e4b7c0702",
+    "contentHash": "345d797a2d38a7f061df65aa6beb908233a75dea55186089e1ed45b66c88a466",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "06170caa"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "clickhouse-clickhouse": {
     "name": "ClickHouse/ClickHouse",
@@ -10841,9 +10842,9 @@
   "mazzzystar-queryable": {
     "name": "Queryable",
     "officialUrl": "https://github.com/mazzzystar/Queryable",
-    "lastChecked": "2026-11-20T17:20:47.617Z",
+    "lastChecked": "2026-11-23T17:37:47.771Z",
     "revisionIdentifier": "19825faa",
-    "lastVerified": "2026-11-20T17:20:47.617Z"
+    "lastVerified": "2026-11-23T17:37:47.771Z"
   },
   "fb55-css-select": {
     "name": "fb55/css-select",

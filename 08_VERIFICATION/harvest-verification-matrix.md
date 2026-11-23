@@ -12399,3 +12399,6 @@
 | `CYCLE-20261123-J89G` | `2026-11-23T17:29:33.844Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10082` | Yes (`a9a72670...`) |
 | `CYCLE-20261123-JBOO` | `2026-11-23T17:29:38.280Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md` | Yes (`38e13dbb...`) |
 | `CYCLE-20261123-JDSH` | `2026-11-23T17:29:41.009Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10083` | Yes (`949e4e3a...`) |
+| `CYCLE-20261123-TS4B` | `2026-11-23T17:37:46.139Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`92b51908...`) |
+| `CYCLE-20261123-U1RX` | `2026-11-23T17:37:58.653Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10084` | Yes (`345d797a...`) |
+| `CYCLE-20261123-U2Z6` | `2026-11-23T17:38:00.210Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`c61f317c...`) |
