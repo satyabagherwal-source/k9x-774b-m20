@@ -755,8 +755,8 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "0cf0b8b7b5a82bc133ab563a1a70ae74b92392367b66b8bb49f1703feecf4c92",
-    "lastHarvestedAt": "2026-11-18T17:51:06.063Z",
+    "contentHash": "6a6ed33e39d47a3826a849201443d33dd7771508397b9a0f1815d73bb4068754",
+    "lastHarvestedAt": "2026-11-23T03:47:03.790Z",
     "learningId": "learn-huggingface-google-t5-t5-small"
   },
   "hf-comfy-org-minimax-h3": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "dbfadb1c",
+    "sourceVersion": "1adb9678",
     "license": "NOASSERTION",
-    "contentHash": "88b28e538b8c9e42e8e5a6931c7bea19a380cd127d421865b73ccf29181af6c7",
-    "lastHarvestedAt": "2026-11-22T20:35:47.598Z",
+    "contentHash": "8b5d6dfa6be3feb5aad7068774016785eab1cd0d440e05a1cae6b8f6d00b4578",
+    "lastHarvestedAt": "2026-11-23T03:47:02.495Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "f469c616",
+    "sourceVersion": "17bcab80",
     "license": "Apache-2.0",
-    "contentHash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
-    "lastHarvestedAt": "2026-11-22T01:58:55.533Z",
+    "contentHash": "cbcf2a8727f31a858881659eafc8fed86c292a427bf69582a25f0ee0c6616419",
+    "lastHarvestedAt": "2026-11-23T03:47:04.141Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {

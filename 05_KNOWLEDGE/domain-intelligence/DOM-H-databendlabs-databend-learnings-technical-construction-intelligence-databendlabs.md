@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T01:58:59.672Z",
+  "timestamp": "2026-11-23T03:47:08.955Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-databendlabs-databend-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [databendlabs-databend-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T01:58:59.672Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T03:47:08.955Z`  
 > **Learning ID**: `LEARN-EVO-databendlabs-databend-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 74%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from databendlabs-databend-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `f469c616`  
+> **Source Version**: `17bcab80`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T01:58:54.409Z  
+> **Timestamp**: 2026-11-23T03:47:03.012Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T01:58:54.403Z  
+> **Harvest Timestamp**: 2026-11-23T03:47:03.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9502 stars
+- **Stars / Engagement**: 9504 stars
 
 ---
 
@@ -1224,11 +1224,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21157** (2026-11-21): **fix: task: watch the task messages again when the stream ends**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Since databend-meta v260629.9.0, which databend uses since #21146, only the meta leader serves watches: every watch stream of every query node ends when the meta leader changes. `TaskService` watched its task messages once. When that stream ended, `TaskService::work` returned, and the query node handled no task message until it restarted, so one leader change stopped scheduled tasks on every query node. An error while handling one message ended it too. Now it watches again, keeps the schedules it runs, and logs a message it fails to handle instead of stopping.  Tests: `test_subscribe_again`, in the new `src/query/service/src/task/subscription.rs`, checks that the subscription subscribes again when subscribing fails and when the stream errors or ends. `test_scheduled_task_runs_message`, in `src/query/service/src/task/service.rs`, checks which schedule is kept when a new watch brings a `ScheduleTask` message again. No test restarts a meta node under a running task service yet.  The first commit only moves the body of the message loop into `TaskService::handle_message`; it reads best with whitespace ignored.  ##### refactor: task: handle each message in `TaskService::handle_message` # Summary  `TaskService::work` passes each message of the watch stream to the new `TaskService::handle_message`, which holds the former body of its loop.  # Details  No behavior change: an er
+- **Issue #21162** (2026-11-22): **fix: planner: keep cached distributed and local plans apart**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  A follow-up of #21158, whose first CI run failed `test_private_tasks` on this bug: https://github.com/databendlabs/databend/pull/21158#issuecomment-7067658905  The plan cache gave a SELECT the cached plan of the same statement without checking whether that plan was made for a cluster or for a single node. A distributed plan fails with `UnknownFragmentExchange` in a context that plans locally, such as the one the task service plans its own queries in, and a local plan runs on one node of a cluster. The cache now keeps the distributed and the local plan of a statement apart.  Tests: `test_planner_cache_keeps_distributed_and_local_plans_apart`, in `src/query/service/tests/it/sql/planner/planner_cache.rs`, plans the same SELECT on a two-node cluster and on a single node, in both orders, and checks that the cluster gets a distributed plan and the single node a local one. No logic test covers it: in SQL, a statement is planned locally on a cluster through the `enforce_local` setting, and the cache already tells apart plans made under different settings.  ##### fix: planner: keep cached distributed and local plans apart # Summary  The plan cache keys a plan also on whether its statement is optimized for distributed execution, so a query gets only a plan made for where it runs: on a cluster, or on a single node.  # Details  `Planner::plan_stmt_with_materialized_view_rewrite` 
 
-- **Issue #21154** (2026-11-21): **bug: planner can mix tables from the old and new database after DROP/CREATE**
-  *Symptoms*: If database `d` is dropped and recreated while a query is being planned, the planner can take `d.a` from the old database and `d.b` from the new one.  **Repro (Catalog integration test)** 1. In one `QueryContext`, look up `d.a` (database ID `6`, table ID `11`). 2. In a separate context, drop `d`, recreate it under the same name (ID `18`), and create `d.b`. 3. In the **original** context, look up `d.b`, then `d.a` again.  **Actual:** `d.b` resolves in database `18`, but `d.a` still returns table `11` from database `6`. **Expected:** Reject the `d.b` lookup with `DatabaseVersionMismatched` rather than mixing two databases in one plan.  Reproduced on both `a85e50302c` (base) and `d345a9043a` (#21145): both retained table `11`; the base resolved `d` to `18` by name, and the PR recorded `18` in the query context. This predates the PR. 
+- **Issue #21160** (2026-11-22): **feat(cache): size the disk cache from its disk when max_bytes is unset**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Leaving `max_bytes` unset now sizes the disk cache from the disk it lives on, instead of using a fixed 20 GiB. By default the cache may use up to 85% of that disk: 5 points below `cache.disk.watermark_ratio` (default 90), minus what other files already use.  ```toml [cache] data_cache_storage = "disk"  [cache.disk] path = "/var/lib/databend/cache" # max_bytes unset: at startup, up to 85% of the file system under `path`/<tenant>, minus other files # watermark_ratio = 90  # default; the cache is sized 5 points below it ```  How it is sized, per query node at startup:  ``` max_bytes = Avail + cache files - Size × (105 - watermark_ratio)%    (capped at 1 TiB) ```  - `Size` / `Avail`: total and available bytes of the file system under `<path>/<tenant>`, as `df /var/lib/databend/cache/<tenant>` shows: the one the cache writes to, also when the tenant directory is a mount point. - `cache files`: the space taken by the files under `<path>/<tenant>` from the previous run (their blocks, not their lengths). They count as room, so restarts do not shrink the cache. - The 5-point headroom keeps a full cache off the watermark line, so other files growing a little do not turn every write into a disk-pressure eviction, and `watermark_ratio` is held to 95 in this mode: the pools count entries by length while the disk fills by blocks, so only the watermark keeps sub-block entries from f
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1245,327 +1245,863 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f469c616` (2026-11-22)
-**Commit Message**: refactor(query): output in-memory final aggregate results a block at a time (#21144)
+### Incident Patch 1: `c8df80e8` (2026-11-22)
+**Commit Message**: fix(query): bind grouped SELECTs after their keys are known (#20780)
 
-* refactor(query): output in-memory final aggregate results a block at a time
+* fix(query): keep outer types when decorrelation reuses inner columns
 
-The final aggregate turned all the groups of its hash table into blocks in one
-`process` call before pushing the first one, so the blocks of all the groups
-were held at once while the downstream waited. It now builds one block per
-`process`, and the next one only after the previous one was pushed.
+Decorrelation replaces an outer column with the inner column of an
+`inner = outer` predicate. When the outer column is nullable and the inner
+one is not, the enclosing expressions keep their nullable types and fail
+the type check, e.g. a correlated equality over a nullable outer column.
 
-The output blocks are coalesced by `BlockConcatStream`, which appends columns,
-instead of a one-partition `BlockPartitionStream`, which built partition indices
-for every block and copied the columns by them.
+Reuse the inner column only if it differs from the outer one at most in
+nullability or converts to it losslessly, and cast it to the outer type
+where it is substituted. Otherwise fall back to joining the outer plan.
 
-The top N, spilled-bucket and memory-pressure outputs still output at once.
+* fix(query): keep histograms through casts that only add nullability
 
-* fix(query): reserve one row per group for final aggregate results
+A cast that only changes nullability keeps the non-NULL values and their
+representation, so the input histogram still describes the output.
 
-`merge_flushed_states` reserved four times the rows of a batch for each aggregate
-result column: the capacity of `ColumnBuilder::with_capacity` is in rows.
+* fix(query): number lambda parameters past every query symbol
 
-* refactor(query): output the first block of a spilled final aggregate task at once
+A lambda body is compiled against a schema keyed by symbol, shared by
+its parameters and the columns it captures. Parameters were numbered
+after the columns of the current context only, so they could collide
+with other symbols in the body, e.g. an outer column referenced from
 
-Finishing a task of spilled states returned right after `finish`, so when its
-groups fitted in memory the first block waited for another `
-
-**File**: `src/query/expression/src/aggregate/payload.rs` (modified, +2/-1)
+**File**: `src/query/expression/src/stat_evaluator.rs` (modified, +64/-6)
 ```diff
-@@ -751,7 +751,8 @@ pub(super) fn merge_flushed_states(
-     if let Some(states_layout) = row_layout.states_layout.as_ref() {
-         for (aggr, loc) in aggrs.iter().zip(states_layout.states_loc.iter().cloned()) {
-             let return_type = aggr.signature().return_type.clone();
--            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count * 4);
-+            // The capacity is in rows: one result per row.
-+            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count);
-             for place in &flush_state.state_places.as_slice()[0..row_count] {
-                 aggr.merge_result(AggrState::new(*place, &loc), &mut builder)?;
-             }
+@@ -106,10 +106,10 @@ impl<'a> StatEvaluator<'a> {
+             return Ok(None);
+         }
+ 
+-        let Some(input) = self.eval(&cast.expr, input_stats)? else {
++        let Some(input_stat) = self.eval(&cast.expr, input_stats)? else {
+             return Ok(None);
+         };
+-        let input = input.as_ref();
++        let input = input_stat.as_ref();
+ 
+         // Reuse the cast domain implementation without making statistics
+         // evaluation depend on the physical value evaluator. The synthetic
+@@ -135,13 +135,22 @@ impl<'a> StatEvaluator<'a> {
+             return Ok(None);
+         };
+ 
++        let (ndv, null_count) = (input.ndv, input.null_count);
++        // Histograms are typed, so their boundaries cannot be reused across a
++        // value conversion. Changing only nullability keeps the non-NULL
++        // values and their representation, so the distribution still holds.
++        let distribution = if src_type.remove_nullable_ref() == cast.dest_type.remove_nullable_ref()
++        {
++            input_stat.into_owned().distribution
++        } else {
++            OwnedDistribution::Unknown
++        };
+         let stat = ReturnStat {
+             domain,
+             // A lossless injective cast preserves distinct values and NULLs.
+-            // Histograms are typed, so their boundaries cannot be reused.
+-            ndv: input.ndv,
+-            null_count: input.null_count,
+-            distribution: OwnedDistribution::Unknown,
++            ndv,
++            null_count,
++            distribution,
+         };
+         if let Err(msg) = stat.check_consistency_with_type(Some(&cast.dest_type)) {
+             if cfg!(debug_assertions) {
+@@ -343,6 +352,55 @@ mod tests {
+         assert!(matches!(stat.distribution, OwnedDistribution::Unknown));
+     }
+ 
++    #[test]
++    fn test_nullable_cast_preserves_histogram() {
++        use databend_common_statistics::BorrowedHistogram;
++        use databend_common_statistics::Histogram;
++        use databend_common_statistics::TypedHistogram;
++        use databend_common_statistics::TypedHistogramBucket;
++
++        let histogram = TypedHistogram::new(vec![TypedHistogramBucket::new(1u64, 3, 3.0, 3.0)]);
++        let src_type = DataType::Number(NumberDataType::UInt8);
++        let expr = Expr::Cast(Cast {
++            span: None,
++            is_try: false,
++            expr: Box::new(Expr::ColumnRef(ColumnRef {
++                span: None,
++                id: 0,
++                data_type: src_type.clone(),
++                display_name: "c0".to_string(),
++            })),
++            dest_type: src_type.wrap_nullable(),
++        });
++        let domain = crate::Domain::from_min_max(
++            Scalar::Number(NumberScalar::UInt8(1)),
++            Scalar::Number(NumberScalar::UInt8(3)),
++            &src_type,
++        );
++        let input_stats = HashMap::from([(0, ArgStat {
++            domain,
++            ndv: NdvEstimate::exact(3.0),
++            null_count: StatCount::exact(0),
++            distribution: BorrowedDistribution::Histogram(BorrowedHistogram::UInt(&histogram)),
++        })]);
++
++        let stat = StatEvaluator::run(
++            &expr,
++            &FunctionContext::default(),
++            &FunctionRegistry::empty(),
++            StatCardinality::exact(3),
++            &input_stats,
++        )
++        .unwrap()
++        .unwrap()
++        .into_owned();
++
++        assert!(matches!(
++            stat.distribution,
++            OwnedDistribution::Histogram(Histogram::UInt(ref h)) if *h == histogram
++        ));
++    }
++
+     #[test]
+     fn test_lossy_cast_is_not_derived() {
+         let expr = Expr::Cast(Cast {
 ```
 
-**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/transform_aggregate_final.rs` (modified, +137/-13)
+**File**: `src/query/expression/src/symbol.rs` (modified, +4/-0)
 ```diff
-@@ -25,10 +25,11 @@ use databend_common_base::base::WatchNotify;
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
- use databend_common_expression::AggregateHashTable;
-+use databend_common_expression::BlockConcatStream;
- use databend_common_expression::BlockMetaInfoDowncast;
--use databend_common_expression::BlockPartitionStream;
- use databend_common_expression::DataBlock;
- use databend_common_expression::HashTableConfig;
-+use databend_common_expression::Payload;
- use databend_common_expression::PayloadFlushState;
- use databend_common_expression::ProjectedBlock;
- use databend_common_expression::SortColumnDescription;
-@@ -76,12 +77,18 @@ pub struct FinalAggregateTask {
-     tx: Sender<FinalAggregateTask>,
+@@ -39,6 +39,10 @@ impl Symbol {
+ 
+     pub const DUMMY_COLUMN: Self = Self::new_dummy_column(DummyColumnType::Default);
+ 
++    /// The first symbol of lambda parameters, far past the symbols of a query,
++    /// which metadata allocates from zero, and below the dummy columns.
++    pub const MIN_LAMBDA_PARAMETER: Self = Self(usize::MAX / 2);
++
+     pub const fn new(index: usize) -> Self {
+         Self(index)
+     }
+```
+
+**File**: `src/query/service/src/physical_plans/physical_aggregate_expand.rs` (modified, +24/-43)
+```diff
+@@ -62,21 +62,18 @@ impl IPhysicalPlan for AggregateExpand {
+     fn output_schema(&self) -> Result<DataSchemaRef> {
+         let input_schema = self.input.output_schema()?;
+         let mut output_fields = input_schema.fields().clone();
+-        // Add virtual columns to group by.
+-        output_fields.reserve(self.group_bys.len() + 1);
+-
+-        for (group_by, (actual, ty)) in self
+-            .group_bys
+-            .iter()
+-            .zip(self.grouping_sets.dup_group_items.iter())
+-        {
+-            // All group by columns will wrap nullable.
++        output_fields.reserve(1);
++
++        // Rolled-up keys receive injected NULLs. The binder gives them nullable
++        // symbols already; wrapping keeps the schema valid for any key that is
++        // not nullable yet. Keys present in every set keep their type.
++        for group_by in self.group_bys() {
++            if !self.grouping_sets.is_rolled_up(*group_by) {
++                continue;
++            }
+             let i = input_schema.index_of(&group_by.to_string())?;
+             let f = &mut output_fields[i];
+-            debug_assert!(f.data_type() == ty || f.data_type().wrap_nullable() == *ty);
+             *f = DataField::new(f.name(), f.data_type().wrap_nullable());
+-            let new_field = DataField::new(&actual.to_string(), ty.clone());
+-            output_fields.push(new_field);
+         }
+ 
+         output_fields.push(DataField::new(
+@@ -131,44 +128,28 @@ impl IPhysicalPlan for AggregateExpand {
+ 
+         let input_schema = self.input.output_schema()?;
+         let group_bys = self
+-            .group_bys
+-            .iter()
+-            .take(self.group_bys.len() - 1) // The last group-by will be virtual column `_grouping_id`
++            .group_bys()
+             .map(|i| input_schema.index_of(&i.to_string()))
+             .collect::<Result<Vec<_>>>()?;
+-        let grouping_sets = self
++        let grouping_ids = self
+             .grouping_sets
+-            .sets
+-            .iter()
+-            .map(|sets| {
+-                sets.iter()
+-                    .map(|i| {
+-                        let i = input_schema.index_of(&i.to_string())?;
+-                        let offset = group_bys.iter().position(|j| *j == i).unwrap();
+-                        Ok(offset)
+-                    })
+-                    .collect::<Result<Vec<_>>>()
+-            })
+-            .collect::<Result<Vec<_>>>()?;
+-        let mut grouping_ids = Vec::with_capacity(grouping_sets.len());
+-        let mask = (1 << group_bys.len()) - 1;
+-        for set in grouping_sets {
+-            let mut id = 0;
+-            for i in set {
+-                id |= 1 << i;
+-            }
+-            // For element in `group_bys`,
+-            // if it is in current grouping set: set 0, else: set 1. (1 represents it will be NULL in grouping)
+-            // Example: GROUP BY GROUPING SETS ((a, b), (a), (b), ())
+-            // group_bys: [a, b]
+-            // grouping_sets: [[0, 1], [0], [1], []]
+-            // grouping_ids: 00, 01, 10, 11
+-            grouping_ids.push(!id & mask);
+-        }
++            .grouping_ids(self.group_bys().copied())
++            .into_iter()
++            .map(|id| id as usize)
++            .collect::<Vec<_>>();
+ 
+         builder.main_pipeline.add_accumulating_transformer(|| {
+             TransformExpandGroupingSets::new(group_bys.clone(), grouping_ids.clone())
+         });
+         Ok(())
+     }
+ }
++
++impl AggregateExpand {
++    /// Grouping keys, without the virtual `_grouping_id` column.
++    fn group_bys(&self) -> impl Iterator<Item = &Symbol> {
++        self.group_bys
++            .iter()
++            .filter(|index| **index != self.grouping_sets.grouping_id_index)
++    }
++}
+```
+
+**File**: `src/query/service/src/physical_plans/physical_aggregate_final.rs` (modified, +27/-41)
+```diff
+@@ -322,28 +322,14 @@ impl PhysicalPlanBuilder {
+                     .map(|item| Ok(item.scalar.as_expr()?.sql_display()))
+                     .collect::<Result<Vec<_>>>()?;
+ 
+-                let mut agg_funcs =
++                let agg_funcs =
+                     build_aggregate_function(&agg.aggregate_functions, &input.output_schema()?)?;
+ 
+                 let settings = self.ctx.get_settings();
+                 let mut group_by_shuffle_mode = settings.get_group_by_shuffle_mode()?;
+-                if agg.grouping_sets.is_some() {
++                if let Some(grouping_sets) = &agg.grouping_sets {
+                     group_by_shuffle_mode = "before_merge".to_string();
+-                }
+-
+-                if let Some(grouping_sets) = agg.grouping_sets.as_ref() {
+-                    // AggregateExpand makes grouping columns nullable and fills in dummy
+-                    // NULLs for rolled-up sets. Aggregate arguments and ORDER BY keys must
+-                    // use its preserved copies instead, or aggregation can panic or sort
+-                    // by the dummy NULLs rather than the original values.
+-                    for func in agg_funcs.iter_mut() {
+-                        for arg in func.arg_indices.iter_mut() {
+-                            if let Some(pos) = group_items.iter().position(|g| g == arg) {
+-                                *arg = grouping_sets.dup_group_items[pos].0;
+-                            }
+-                        }
+-                        remap_grouping_set_order_by(&mut func.sig, &group_items, grouping_sets);
+-                    }
++                    check_grouping_sets_inputs(&agg_funcs, &group_items, grouping_sets)?;
+                 }
+ 
+                 // Ranking the input rows needs the order to be by group keys only.
+@@ -437,23 +423,9 @@ impl PhysicalPlanBuilder {
+                 let group_by_display = partial.group_by_display.clone();
+                 let before_group_by_schema = partial.input.output_schema()?;
+ 
+-                let mut agg_funcs =
++                let agg_funcs =
+                     build_aggregate_function(&agg.aggregate_functions, &before_group_by_schema)?;
+ 
+-                if let Some(grouping_sets) = agg.grouping_sets.as_ref() {
+-                    // Recover aggregate arguments and ORDER BY keys to the original,
+-                    // unmasked columns and types from before `AggregateExpand`.
+-                    for func in agg_funcs.iter_mut() {
+-                        for (arg, ty) in func.arg_indices.iter_mut().zip(func.sig.args.iter_mut()) {
+-                            if let Some(pos) = group_items.iter().position(|g| g == arg) {
+-                                *arg = grouping_sets.dup_group_items[pos].0;
+-                                *ty = grouping_sets.dup_group_items[pos].1.clone();
+-                            }
+-                        }
+-                        remap_grouping_set_order_by(&mut func.sig, &group_items, grouping_sets);
+-                    }
+-                }
+-
+                 let top_n = rank_limit.filter(|_| agg.grouping_sets.is_none());
+                 PhysicalPlan::new(AggregateFinal {
+                     input,
+@@ -487,19 +459,33 @@ impl PhysicalPlanBuilder {
+     }
  }
  
-+struct PendingOutput {
-+    payloads: VecDeque<Payload>,
-+    stream: BlockConcatStream,
+-// Use the original grouping columns and types, not AggregateExpand's masked keys.
+-fn remap_grouping_set_order_by(
+-    signature: &mut AggregateFunctionSignature,
++/// `AggregateExpand` injects NULLs into rolled-up grouping keys, so aggregate
++/// arguments and ORDER BY keys must not read them. The binder gives every
++/// grouping-set key its own nullable symbol, separate from the input symbols
++/// that aggregates read; reject any plan that breaks that invariant instead of
++/// aggregating the injected NULLs.
++fn check_grouping_sets_inputs(
++    agg_funcs: &[AggregateFunctionDesc],
+     group_items: &[Symbol],
+     grouping_sets: &GroupingSets,
+-) {
+-    for item in &mut signature.order_by {
+-        if let Some(pos) = group_items.iter().position(|g| *g == item.index) {
+-            let (index, data_type) = &grouping_sets.dup_group_items[pos];
+-            item.index = *index;
+-            item.data_type = data_type.clone();
++) -> Result<()> {
++    for func in agg_funcs {
++        let inputs = func
++            .arg_indices
++            .iter()
++            .chain(func.sig.order_by.iter().map(|item| &item.index));
++        for index in inputs {
++            let is_injected = *index == grouping_sets.grouping_id_index
++                || (group_items.contains(index) && grouping_sets.is_rolled_up(*index));
++            if is_injected {
++                return Err(ErrorCode::Internal(format!(
++                    "aggregate function {} reads grouping-set key {index}, which contains injected NULLs",
++                    func.display
++                )));
++            }
+         }
+     }
++    Ok(())
+ }
+ 
+ fn build_aggregate_function(
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/transform_aggregate_expand.rs` (modified, +8/-14)
+```diff
+@@ -41,21 +41,15 @@ impl AccumulatingTransform for TransformExpandGroupingSets {
+     fn transform(&mut self, data: DataBlock) -> Result<Vec<DataBlock>> {
+         let num_rows = data.num_rows();
+         let mut output_blocks = Vec::with_capacity(self.grouping_ids.len());
+-        let dup_group_by_cols = self
+-            .group_bys
+-            .iter()
+-            .map(|i| data.get_by_offset(*i).clone())
+-            .collect::<Vec<_>>();
++        let mut entries = data.columns().to_vec();
+ 
+-        let mut entries = data
+-            .columns()
+-            .iter()
+-            .cloned()
+-            .chain(dup_group_by_cols.clone())
+-            .collect::<Vec<_>>();
+-
+-        // all group columns should be nullable
+-        for &offset in &self.group_bys {
++        // Keys that some grouping set nulls out must be nullable. Keys present
++        // in every set, such as correlated columns, keep their input type.
++        let nulled_keys = self.grouping_ids.iter().fold(0, |bits, id| bits | id);
++        for (i, &offset) in self.group_bys.iter().enumerate() {
++            if nulled_keys & (1 << i) == 0 {
++                continue;
++            }
+             match &mut entries[offset] {
+                 BlockEntry::Const(_, data_type, _) => {
+                     *data_type = data_type.wrap_nullable();
+```
+
+**File**: `src/query/service/tests/it/sql/exec/grouping_sets.rs` (modified, +4/-0)
+```diff
+@@ -27,6 +27,10 @@ use databend_query::physical_plans::PhysicalPlanBuilder;
+ use databend_query::sessions::TableContextSettings;
+ use databend_query::test_kits::TestFixture;
+ 
++/// Under every execution strategy, an EvalScalar of a grouping-sets plan
++/// replaces a key symbol instead of projecting it twice, and a CTE consumer
++/// has the schema of its producer. The results of grouping-sets queries are
++/// in the sqllogictests of `query/grouping_sets`.
+ #[tokio::test(flavor = "multi_thread", worker_threads = 1)]
+ async fn test_grouping_sets_project_redefined_keys_once() -> Result<()> {
+     let fixture = TestFixture::setup().await?;
+```
+
+**File**: `src/query/sql/src/planner/binder/aggregate.rs` (modified, +547/-346)
+```diff
+@@ -17,6 +17,7 @@ use std::collections::HashSet;
+ use std::collections::hash_map::Entry;
+ use std::sync::Arc;
+ 
++use databend_common_ast::Span;
+ use databend_common_ast::ast::Expr;
+ use databend_common_ast::ast::GroupBy;
+ use databend_common_ast::ast::Literal;
+@@ -39,23 +40,35 @@ use super::reject_grouping_functions;
+ use crate::BindContext;
+ use crate::MetadataRef;
+ use crate::Symbol;
++use crate::binder::AliasLookup;
+ use crate::binder::Binder;
+ use crate::binder::ColumnBinding;
+ use crate::binder::ColumnBindingBuilder;
++use crate::binder::GroupingKeyScope;
++use crate::binder::GroupingScopeState;
++use crate::binder::NameResolutionResult;
++use crate::binder::ScalarFoldingPolicy;
++use crate::binder::SelectClauseExprs;
++use crate::binder::SelectItems;
+ use crate::binder::Visibility;
+ use crate::binder::project_set::SetReturningAnalyzer;
+ use crate::binder::scalar::ScalarBinder;
+-use crate::binder::select::ClauseAliasBindings;
+ use crate::binder::select::SelectList;
+ use crate::optimizer::ir::SExpr;
++use crate::planner::semantic::CoreExprArena;
++use crate::planner::semantic::CoreExprId;
++use crate::planner::semantic::FullTypeCheckAdapter;
+ use crate::planner::semantic::TypeChecker;
++use crate::planner::semantic::normalize_identifier;
+ use crate::plans::Aggregate;
+ use crate::plans::AggregateFunction;
+ use crate::plans::AggregateFunctionScalarSortDesc;
+ use crate::plans::BoundColumnRef;
++use crate::plans::CastExpr;
+ use crate::plans::EvalScalar;
+ use crate::plans::FunctionCall;
+ use crate::plans::GroupingSets;
++use crate::plans::MAX_GROUPING_KEYS;
+ use crate::plans::ScalarExpr;
+ use crate::plans::ScalarItem;
+ use crate::plans::UDAFCall;
+@@ -115,46 +128,104 @@ use crate::plans::walk_expr_mut;
+ pub struct GroupingSetsInfo {
+     /// Index for virtual column `grouping_id`.
+     pub grouping_id_column: ColumnBinding,
+-    /// Each grouping set is a list of column indices in `group_items`.
+-    pub sets: Vec<Vec<Symbol>>,
+-    /// The indices generated to identify the duplicate group items in the execution of the `GROUPING SETS` plan (not including `_grouping_id`).
+-    ///
+-    /// If the aggregation function argument is an item in the grouping set, for example:
++    /// The keys of each grouping set, as the output symbols in `group_items`.
+     ///
+-    /// ```sql
+-    /// SELECT min(a) FROM t GROUP BY GROUPING SETS (a, ...);
+-    /// ```
+-    ///
+-    /// we should use the original column `a` data instead of the column data after filling dummy NULLs.
+-    pub dup_group_items: Vec<(Symbol, DataType)>,
++    /// Each key of a grouping-sets aggregate has a dedicated nullable output
++    /// symbol that receives the injected NULLs; its group item keeps the
++    /// pre-aggregate expression. Aggregate arguments and sort keys never read
++    /// the output symbols.
++    pub sets: Vec<Vec<Symbol>>,
+ }
+ 
++/// A GROUP BY item, lowered with the other clauses of its SELECT, see
++/// `select_clauses.rs`.
+ #[derive(Clone)]
+-struct GroupItem {
+-    expr: Expr,
+-    disable_select_alias_fallback: bool,
++pub(crate) enum GroupItem {
++    /// The SELECT item at a zero-based position, written as a one-based
++    /// position or standing for one in GROUP BY ALL.
++    Position(usize),
++    Expr {
++        root: CoreExprId,
++        /// The name of the key output: the expression as written.
++        name: String,
++    },
+ }
+ 
+ impl GroupItem {
+-    fn normal(expr: Expr) -> Self {
+-        Self {
+-            expr,
+-            disable_select_alias_fallback: false,
+-        }
++    /// Lower a GROUP BY item of a SELECT with `select_len` items. An integer
++    /// literal is a one-based position in the SELECT list.
++    fn lower<'a>(arena: &mut CoreExprArena<'a>, expr: &'a Expr, select_len: usize) -> Result<Self> {
++        Ok(match expr {
++            Expr::Literal {
++                span,
++                value: Literal::UInt64(position),
++            } => {
++                if *position < 1 {
++                    return Err(ErrorCode::SemanticError(format!(
++                        "GROUP BY position {position} is illegal"
++                    ))
++                    .set_span(*span));
++                }
++                if *position > select_len as u64 {
++                    return Err(ErrorCode::SemanticError(format!(
++                        "GROUP BY position {position} is not in select list"
++                    ))
++                    .set_span(*span));
++                }
++                Self::Position(*position as usize - 1)
++            }
++            expr => Self::Expr {
++                root: arena.lower_ast_expr(expr)?,
++                name: format!("{:#}", expr),
++            },
++        })
+     }
 +}
-+
- pub struct TransformFinalAggregate {
-     input: Arc<InputPort>,
-     output: Arc<OutputPort>,
-     input_data: Option<FinalInput>,
-     channel_data: Option<FinalAggregateTask>,
-     output_data: VecDeque<DataBlock>,
-+    pending_output: Option<PendingOutput>,
-     should_finish: bool,
-     /// Held while reading the input: the input finishes by taking it, see `finish`, after which
-     /// the processor reads the tasks of the channel.
-@@ -144,6 +151,7 @@ impl TransformFinalAggregate {
-             input_data: None,
-             channel_data: None,
-             output_data: VecDeque::new(),
-+            pending_output: None,
-             should_finish: false,
-             tx: Some(tx),
-             rx,
-@@ -324,8 +332,8 @@ impl TransformFinalAggregate {
-     }
  
-     /// Coalesces the output blocks of one hash table to the block size of the aggregate.
--    fn output_stream(&self) -> BlockPartitionStream {
--        BlockPartitionStream::create(self.params.max_block_rows, self.params.max_block_bytes, 1)
-+    fn output_stream(&self) -> BlockConcatStream {
-+        BlockConcatStream::create(self.params.max_block_rows, self.params.max_block_bytes)
-     }
- 
-     fn handle_input(&mut self, input: FinalInput, need_check_spill: bool) -> Result<()> {
-@@ -403,7 +411,7 @@ impl TransformFinalAggregate {
-             (0, 0, FinalAggregateFinishMode::Spilled)
-         } else {
-             let output_stream = self.output_stream();
--            let (output_rows, hash_index_resizes) = self.output_hashtable(Some(output_stream))?;
-+            let (output_rows, hash_index_resizes) = self.start_streaming_output(output_stream)?;
-             (
-                 output_rows,
-                 hash_index_resizes,
-@@ -425,7 +433,7 @@ impl TransformFinalAggregate {
- 
-     fn output_hashtable(
-         &mut self,
--        mut output_stream: Option<BlockPartitionStream>,
-+        mut output_stream: Option<BlockConcatStream>,
-     ) -> Result<(usize, usize)> {
-         // No hash table means nothing was aggregated, so there is nothing to output.
-         let Some(hashtable) = self.hashtable.take() else {
-@@ -453,10 +461,9 @@ impl TransformFinalAggregate {
-                         top_n_blocks = vec![sort_blocks(&top_n_blocks, order_by, *limit)?];
-                     }
-                 } else if let Some(output_stream) = output_stream.as_mut() {
--                    let num_rows = block.num_rows();
--                    let ready = output_stream.partition(vec![0; num_rows], block, true);
--                    self.output_data
--                        .extend(ready.into_iter().map(|(_, block)| block));
-+                    if let Some(block) = output_stream.push(block) {
-+                        self.output_data.push_back(block);
-+                    }
-                 } else {
-                     self.output_data.push_back(block);
-                 }
-@@ -468,12 +475,56 @@ impl TransformFinalAggregate {
-             self.output_data
-                 .push_back(sort_blocks(&top_n_blocks, order_by, *limit)?);
-         }
--        if let Some(block) = output_stream.and_then(|mut stream| stream.finalize_partition(0)) {
-+        if let Some(block) = output_stream.and_then(|mut stream| stream.finish()) {
-             self.output_data.push_back(block);
-         }
-         Ok((output_rows, hash_index_resizes))
-     }
- 
-+    fn start_streaming_output(&mut self, stream: BlockConcatStream) -> Result<(usize, usize)> {
-+        if self.params.top_n.is_some() {
-+            return self.output_hashtable(Some(stream));
-+        }
-+        // No hash table means nothing was aggregated, so there is nothing to output.
-+        let Some(hashtable) = self.hashtable.take() else {
-+            return Ok((0, 0));
-+        };
-+        let output_rows = hashtable.payload.len();
-+        let hash_index_resizes = hashtable.hash_index_resize_count();
-+        self.flush_state.clear();
-+        // Consuming the hash table drops its index before result materialization.
-+        self.pending_output = Some(PendingOutput {
-+            payloads: hashtable.into_payloads().into(),
-+            stream,
-+        });
-+        Ok((output_rows, hash_
+-    fn grouping_construct(expr: Expr) -> Self {
+-        Self {
+-            expr,
+-            disable_select_alias_fallback: true,
++/// A GROUP BY with ALL replaced by positions, and ROLLUP, CUBE and
++/// combinations of them expanded into grouping sets.
++#[derive(Clone)]
++pub(crate) enum ExpandedGroup {
++    Normal(Vec<
+```
+
+**File**: `src/query/sql/src/planner/binder/aggregate_prepass.rs` (removed, +0/-831)
+```diff
+@@ -1,831 +0,0 @@
+-// Copyright 2021 Datafuse Labs
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-use std::collections::BTreeSet;
+-use std::collections::HashSet;
+-
+-use databend_common_ast::ast::ColumnID;
+-use databend_common_ast::ast::ColumnRef;
+-use databend_common_ast::ast::Expr;
+-use databend_common_ast::ast::FunctionCall;
+-use databend_common_ast::ast::OrderByExpr;
+-use databend_common_ast::ast::Query;
+-use databend_common_ast::visit::VisitControl;
+-use databend_common_ast::visit::VisitResult;
+-use databend_common_ast::visit::Visitor;
+-use databend_common_ast::visit::Walk;
+-use databend_common_base::runtime::block_on;
+-use databend_common_exception::Result;
+-use databend_common_functions::aggregates::AGGR_REGISTRY;
+-use databend_common_functions::is_builtin_function;
+-use databend_common_meta_app::principal::UDFDefinition;
+-use databend_common_users::UserApiProvider;
+-
+-use super::ExprContext;
+-use crate::BindContext;
+-use crate::NameResolutionContext;
+-use crate::binder::Binder;
+-use crate::binder::select::SelectAliasCatalog;
+-use crate::binder::select::SelectList;
+-use crate::normalize_identifier;
+-use crate::plans::ScalarExpr;
+-
+-macro_rules! try_ast_walk {
+-    ($expr:expr) => {
+-        match $expr? {
+-            VisitControl::Continue | VisitControl::SkipChildren => {}
+-            VisitControl::Break(value) => return Ok(VisitControl::Break(value)),
+-        }
+-    };
+-}
+-
+-#[derive(Debug, Clone, PartialEq, Eq, enum_as_inner::EnumAsInner)]
+-pub(super) enum AggregatePrepassSource {
+-    DirectClause,
+-    AliasExpansion(String),
+-}
+-
+-fn is_aggregate_target(
+-    name_resolution_ctx: &NameResolutionContext,
+-    udaf_names: &HashSet<String>,
+-    func: &FunctionCall,
+-) -> bool {
+-    if func.window.is_some() {
+-        return false;
+-    }
+-
+-    let func_name = normalize_identifier(&func.name, name_resolution_ctx).name;
+-    AGGR_REGISTRY.contains(func_name.as_str())
+-        || func_name.eq_ignore_ascii_case("grouping")
+-        || udaf_names.contains(func_name.as_str())
+-}
+-
+-#[derive(Debug, Clone, PartialEq)]
+-pub(super) struct AggregatePrepassFact {
+-    pub expr_context: ExprContext,
+-    pub source: AggregatePrepassSource,
+-    pub expr: Expr,
+-    pub contains_window: bool,
+-}
+-
+-#[derive(Debug, Clone, Copy, Default)]
+-struct ExprFlags {
+-    contains_aggregate: bool,
+-    contains_window: bool,
+-    contains_subquery: bool,
+-}
+-
+-trait ExprInspection {
+-    fn observe_top_level_expr(&mut self, _expr: &Expr) {}
+-
+-    fn observe_top_level_column_ref(&mut self, _column: &ColumnRef) {}
+-
+-    fn mark_contains_subquery(&mut self) {}
+-
+-    fn walk_expr(&mut self, expr: &Expr)
+-    where Self: std::marker::Sized {
+-        expr.walk(&mut ExprWalker {
+-            inspection: self,
+-            in_subquery: false,
+-        })
+-        .unwrap();
+-    }
+-}
+-
+-impl<L: ExprInspection, R: ExprInspection> ExprInspection for (L, R) {
+-    fn observe_top_level_expr(&mut self, expr: &Expr) {
+-        self.0.observe_top_level_expr(expr);
+-        self.1.observe_top_level_expr(expr);
+-    }
+-
+-    fn observe_top_level_column_ref(&mut self, column: &ColumnRef) {
+-        self.0.observe_top_level_column_ref(column);
+-        self.1.observe_top_level_column_ref(column);
+-    }
+-
+-    fn mark_contains_subquery(&mut self) {
+-        self.0.mark_contains_subquery();
+-        self.1.mark_contains_subquery();
+-    }
+-}
+-
+-struct ExprWalker<'a, T> {
+-    inspection: &'a mut T,
+-    in_subquery: bool,
+-}
+-
+-impl<T> Visitor for ExprWalker<'_, T>
+-where T: ExprInspection
+-{
+-    fn visit_expr(&mut self, expr: &Expr) -> VisitResult {
+-        if !self.in_subquery {
+-            self.inspection.observe_top_level_expr(expr);
+-            if let Expr::ColumnRef { column, .. } = expr {
+-                self.inspection.observe_top_level_column_ref(column);
+-            }
+-        }
+-        Ok(VisitControl::Continue)
+-    }
+-
+-    fn visit_query(&mut self, _query: &Query) -> VisitResult {
+-        self.inspection.mark_contains_subquery();
+-        if self.in_subquery {
+-            return Ok(VisitControl::SkipChildren);
+-        }
+-        self.in_subquery = true;
+-        Ok(VisitControl::Continue)
+-    }
+-
+-    fn leave_query(&mut self, _query: &Query) -> std::result::Result<(), !> {
+-        self.in_subquery = false;
+-        Ok(())
+-    }
+-}
+-
+-struct ExprFlagsProbe<'a> {
+-    name_resolution_ctx: &'a NameResolutionContext,
+-    udaf_names: &'a HashSet<String>,
+-    result: ExprFlags,
+-}
+-
+-impl Expr
 ```
 
 ---
 
-### Incident Patch 2: `9276ae63` (2026-11-21)
-**Commit Message**: fix: task: watch the task messages again when the stream ends (#21157)
-
-* refactor: task: handle each message in `TaskService::handle_message`
+### Incident Patch 2: `8f5f966a` (2026-11-22)
+**Commit Message**: fix: task: keep a schedule running when one of its ticks fails (#21158)
 
 # Summary
 
-`TaskService::work` passes each message of the watch stream to the new
-`TaskService::handle_message`, which holds the former body of its loop.
+A schedule of `TaskService` that fails, on an error in one of its
+ticks, now starts again after 1 s instead of ending for good. It ends
+only when it is cancelled, or when its task was dropped or no longer
+matches it.
 
 # Details
 
-No behavior change: an error from `handle_message` still ends `work`,
-and each `continue` of the loop is now a `return Ok(())`. The fixes
-that follow need the handling of one message as a unit, to log its
-error and go on with the next message.
+Any error in a tick ended the schedule, and a meta-service error while
+the meta leader changes, e.g. on the tick lock, was enough. Since #21157
+a new watch keeps a schedule that still runs when its `ScheduleTask`
+message comes again. A schedule in a tick that was about to fail
+counted as running: it was kept, then ended, and the node ran no
+schedule for the task until its watch ended again. This race was found
+in the review of #21157.
 
-* refactor: task: record the message that started each schedule
+The new `keep_running` runs a failed schedule again after
+`SCHEDULE_RESTART_DELAY`, unless it is cancelled meanwhile. An interval
+schedule then runs its next tick one interval later, and a cron
+schedule at its next time.
 
-# Summary
+`TaskService::update_schedule` stops a schedule whose task was dropped,
+which `TaskMgr::update_task` reports as an error, instead of starting it
+again and again. A failure to store the next run, before the first
+interval tick
 
-Each schedule of `TaskService` now records the seq of the
-`ScheduleTask` message that started it and the handle of its task.
-When the same message comes again while that schedule still runs,
-`TaskService::handle_message` keeps the schedule instead of starting
-it again.
-
-# Details
-
-No node accepts a `ScheduleTask` message: it stays stored until its
-task is dropped, so every new watch of the task messages brings it
-again. Starting the schedule again would reset its timer, and an
-interval schedule waits a full interval before its next run. A
-schedule that has stoppe
-
-**File**: `src/query/service/src/task/mod.rs` (modified, +1/-0)
+**File**: `src/query/service/src/task/service.rs` (modified, +97/-14)
 ```diff
-@@ -15,5 +15,6 @@
- mod meta;
- pub mod service;
- mod session;
-+mod subscription;
- 
- pub use service::TaskService;
-```
-
-**File**: `src/query/service/src/task/service.rs` (modified, +431/-333)
-```diff
-@@ -18,7 +18,6 @@ databend_common_tracing::register_module_tag!("[PRIVATE-TASKS]");
- use std::collections::BTreeMap;
- use std::collections::HashMap;
- use std::fmt::Write;
--use std::ops::Deref;
- use std::str::FromStr;
- use std::sync::Arc;
- use std::sync::atomic::AtomicBool;
-@@ -41,6 +40,7 @@ use databend_common_config::InnerConfig;
+@@ -40,6 +40,7 @@ use databend_common_config::InnerConfig;
  use databend_common_exception::ErrorCode;
  use databend_common_exception::Result;
  use databend_common_expression::DataBlock;
-+use databend_common_management::task::TaskMgr;
++use databend_common_management::task::TaskError;
+ use databend_common_management::task::TaskMgr;
  use databend_common_meta_api::kv_pb_api::decode_seqv;
  use databend_common_meta_app::principal::ScheduleType;
- use databend_common_meta_app::principal::State;
-@@ -64,13 +64,15 @@ use databend_common_users::BUILTIN_ROLE_ACCOUNT_ADMIN;
- use databend_common_users::UserApiProvider;
- use databend_common_version::BUILD_INFO;
- use databend_meta_client::kvapi::StructKey;
-+use databend_meta_client::types::SeqV;
- use databend_meta_client::types::protobuf::WatchRequest;
- use databend_meta_client::types::protobuf::WatchResponse;
- use futures::Stream;
- use futures_util::TryStreamExt;
- use futures_util::stream::BoxStream;
- use itertools::Itertools;
- use log::error;
-+use tokio::task::JoinHandle;
- use tokio::time::sleep;
- use tokio_stream::StreamExt;
- use tokio_util::sync::CancellationToken;
-@@ -88,13 +90,36 @@ use crate::sessions::TableContextSettings;
- use crate::task::meta::TaskMetaHandle;
- use crate::task::session::create_session;
- use crate::task::session::get_task_user;
-+use crate::task::subscription::Subscription;
+@@ -102,6 +103,9 @@ const WHEN_CONDITION_FALSE: &str = "WHEN_CONDITION_FALSE";
+ const WATCH_AGAIN_MIN_DELAY: Duration = Duration::from_secs(1);
+ const WATCH_AGAIN_MAX_DELAY: Duration = Duration::from_secs(30);
  
--pub type TaskMessageStream = BoxStream<'static, Result<(String, TaskMessage)>>;
-+pub type TaskMessageStream = BoxStream<'static, Result<(String, SeqV<TaskMessage>)>>;
- 
- const OVERLAPPING_EXECUTION: &str = "OVERLAPPING_EXECUTION";
- const WHEN_CONDITION_EVALUATION_ERROR: &str = "WHEN_CONDITION_EVALUATION_ERROR";
- const WHEN_CONDITION_FALSE: &str = "WHEN_CONDITION_FALSE";
- 
-+/// The delays before watching the task messages again: from the min, doubled up to the max.
-+const WATCH_AGAIN_MIN_DELAY: Duration = Duration::from_secs(1);
-+const WATCH_AGAIN_MAX_DELAY: Duration = Duration::from_secs(30);
++/// The delay before a schedule that failed starts again.
++const SCHEDULE_RESTART_DELAY: Duration = Duration::from_secs(1);
 +
-+/// A schedule that this node runs for a task.
-+struct ScheduledTask {
-+    task_id: u64,
-+    /// The seq of the `ScheduleTask` message that started this schedule.
-+    message_seq: u64,
-+    /// Cancelled to stop this schedule.
-+    token: CancellationToken,
-+    handle: JoinHandle<()>,
-+}
-+
-+impl ScheduledTask {
-+    /// Whether the `ScheduleTask` message of `message_seq` started this schedule, and it still
-+    /// runs.
-+    fn runs_message(&self, message_seq: u64) -> bool {
-+        self.message_seq == message_seq && !self.handle.is_finished()
-+    }
-+}
-+
- /// Currently, query uses the watch in meta to imitate channel to obtain tasks. When task messages are sent to channels, they are stored in meta using TaskMessage::key.
- /// TaskMessage::key is divided into only 4 types of keys that will overwrite each other to avoid repeated storage and repeated processing.
- /// Whenever a new key is inserted for overwriting, each query will receive the corresponding key change and process it, thus realizing the channel
-@@ -201,367 +226,398 @@ impl TaskService {
-             if let Err(err) = task_service.prepare().await {
-                 error!("prepare failed due to {}", err);
-             }
--            if let Err(err) = task_service.work(&tenant, runtime).await {
--                error!("prepare failed due to {}", err);
--            }
-+            task_service.work(&tenant, runtime).await;
-         });
-         Ok(())
-     }
+ /// A schedule that this node runs for a task.
+ struct ScheduledTask {
+     task_id: u64,
+@@ -333,14 +337,22 @@ impl TaskService {
+                                 duration += Duration::from_millis(*ms);
+                             }
  
--    async fn work(&self, tenant: &Tenant, runtime: Arc<Runtime>) -> Result<()> {
--        let mut scheduled_tasks: HashMap<String, (u64, CancellationToken)> = HashMap::new();
-+    /// Handle the task messages as they come, for as long as the process runs.
-+    ///
-+    /// The watch of the task messages ends when the connection to the meta-service breaks, and
-+    /// when the meta-service leader changes: watch again, and keep the schedules this node runs.
-+    /// An error while handling one message is logged, and the next message is handled.
-+    async fn work(&self, tenant: &Tenant, runtime: Arc<Runtime>) {
-+        let mut scheduled_tasks: HashMap<String, ScheduledTask> = HashMap::new();
-         let task_mgr = UserApiProvider::instance().task_api(tenant);
++                            let name = format!("interval schedule of task {}", task_name);
++                            let cancel = child_token.clone();
+                             runtime
+                                 .spawn(async move {
+-                                    let mut fn_work = async move || {
++                                    let fn_work = async move || {
+                                         let committed_at = Utc::now();
+                                         task.next_scheduled_at = Some(committed_at + duration);
+                                         task.updated_at = committed_at;
+-                                        if !task_mgr.update_task(task.clone()).await?? {
+-                                            return Ok(());
++                                        match Self::update_schedule(&task_mgr, &task).await {
++                                            Ok(true) => {}
++                                            Ok(false) => return Ok(()),
++                                            // Stored again by the first tick.
++                                            Err(err) => error!(
++                                                "failed to store the next run of task {}: {}",
++                                                task.task_name, err
++                                            ),
+                                         }
+                                         loop {
+                                             tokio::select! {
+@@ -351,7 +363,7 @@ impl TaskService {
+                                                     let committed_at = Utc::now();
+                                                     task.next_scheduled_at = Some(committed_at + duration);
+                                                     task.updated_at = committed_at;
+-                                                    if !task_mgr.update_task(task.clone()).await?? {
++                                                    if !Self::update_schedule(&task_mgr, &task).await? {
+                                                         break;
+                                                     }
+                                                     if task_service.has_executing_task_run(&task.task_name).await? {
+@@ -370,9 +382,8 @@ impl TaskService {
+                                         }
+                                         Result::Ok(())
+                                     };
+-                                    if let Err(err) = fn_work().await {
+-                                        error!("interval schedule failed due to {}", err);
+-                                    }
++                                    keep_running(&name, SCHEDULE_RESTART_DELAY, cancel, fn_work)
++                                        .await;
+                                 })
+                         }
+                         ScheduleType::CronType => {
+@@ -393,9 +404,11 @@ impl TaskService {
+                                 .unwrap_or(Tz::UCT);
+                             let schedule = Schedule::from_str(cron_expr).unwrap();
  
--        let mut steam = self.subscribe().await?;
--
--        while let Some(result) = steam.next().await {
--            let (_, task_message) = result?;
--            let task_key = TaskMessageIdent::new(tenant, task_message.key());
-+        let mut messages = Subscription::new(
-+            || self.subscribe(),
-+            WATCH_AGAIN_MIN_DELAY,
-+            WATCH_AGAIN_MAX_DELAY,
-+        );
-+        loop {
-+            let (key, message) = messages.next().await;
-+            if let Err(err) = self
-+                .handle_message(tenant, &runtime, &task_mgr, &mut scheduled_tasks, message)
-+                .await
-+            {
-+   
++                            let name = format!("cron schedule of task {}", task_name);
++                            let cancel = child_token.clone();
+                             runtime
+                                 .spawn(async move {
+-                                    let mut fn_work = async move || {
++                                    let fn_work = async move || {
+                                         let mut upcoming = schedule.upcoming(tz).peekable();
+ 
+                                         while let Some(next_time) = upcoming.next() {
+@@ -406,8 +419,14 @@ impl TaskService {
+ 
+                                             task.next_scheduled_at = Some(next_time.with_timezone(&Utc));
+                                             task.updated_at = now;
+-                                            if !task_mgr.update_task(task.clone()).await?? {
+-                                                break
 ```
 
-**File**: `src/query/service/src/task/subscription.rs` (added, +143/-0)
+---
+
+### Incident Patch 3: `17bcab80` (2026-11-22)
+**Commit Message**: fix: planner: keep cached distributed and local plans apart (#21162)
+
+# Summary
+
+The plan cache keys a plan also on whether its statement is optimized
+for distributed execution, so a query gets only a plan made for where
+it runs: on a cluster, or on a single node.
+
+# Details
+
+`Planner::plan_stmt_with_materialized_view_rewrite` optimizes a query
+for distributed execution when its context has a cluster of more than
+one node, and neither the caller nor the `enforce_local` setting keeps
+it local. The cache key left that decision out, so while the tables it
+reads did not change, the same SELECT got the plan of whichever context
+planned it first.
+
+A distributed plan fails with `UnknownFragmentExchange` in a context
+that plans locally, and a local plan runs on one node of a cluster.
+The task service plans its own queries in a single-node context
+(`TaskService::create_context`). After `test_private_tasks` ran the
+query of `TaskService::has_executing_task_run` on the cluster, that
+check failed on the same node until `system_task.task_run` changed,
+and the task did not run: this failed the test in the CI of #21158.
+
+`Planner::enable_distributed_optimization` makes the decision for both
+the c
+
+**File**: `src/query/service/tests/it/sql/planner/mod.rs` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,143 @@
-+// Copyright 2021 Datafuse Labs
+@@ -14,5 +14,6 @@
+ 
+ mod builders;
+ mod optimizer;
++mod planner_cache;
+ mod semantic;
+ mod view_cte_resolution;
+```
+
+**File**: `src/query/service/tests/it/sql/planner/planner_cache.rs` (added, +68/-0)
+```diff
+@@ -0,0 +1,68 @@
++// Copyright 2026 Datafuse Labs.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -1579,134 +2115,175 @@ schedule that has stoppe
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+// Logs from this module will show up as "[PRIVATE-TASKS] ...".
-+databend_common_tracing::register_module_tag!("[PRIVATE-TASKS]");
-+
-+use std::future::Future;
-+use std::time::Duration;
-+
-+use backon::BackoffBuilder;
-+use backon::ExponentialBackoff;
-+use backon::ExponentialBuilder;
 +use databend_common_exception::Result;
-+use futures_util::StreamExt;
-+use futures_util::stream::BoxStream;
-+use log::warn;
-+use tokio::time::sleep;
++use databend_common_sql::Planner;
++use databend_common_sql::plans::Plan;
++use databend_query::test_kits::ClusterDescriptor;
++use databend_query::test_kits::TestFixture;
 +
-+/// A subscription that subscribes again, after a delay, whenever subscribing fails or the
-+/// subscribed stream errors or ends.
-+///
-+/// A meta-service watch ends when its connection breaks, and when the meta-service leader
-+/// changes, since only the leader serves watches.
-+pub(crate) struct Subscription<S, T> {
-+    subscribe: S,
-+    stream: Option<BoxStream<'static, Result<T>>>,
-+    backoff: ExponentialBuilder,
-+    /// The delays before the next subscriptions, built anew by `backoff` once one succeeds.
-+    delays: ExponentialBackoff,
++/// Plans `sql` on a cluster of `nodes`, the first of them local, and tells whether the plan is
++/// distributed.
++async fn plans_distributed(fixture: &TestFixture, nodes: &[&str], sql: &str) -> Result<bool> {
++    let mut cluster = ClusterDescriptor::new();
++    for (i, node) in nodes.iter().enumerate() {
++        cluster = cluster.with_node_info(
++            *node,
++            format!("127.0.0.1:{}", 9090 + i),
++            "cluster",
++            "warehouse",
++        );
++    }
++    let ctx = fixture
++        .new_query_ctx_with_cluster(cluster.with_local_id(nodes[0]))
++        .await?;
++    let (plan, _) = Planner::new(ctx).plan_sql(sql).await?;
++    let Plan::Query { s_expr, .. } = plan else {
++        panic!("expected a query plan for {sql}");
++    };
++    Ok(s_expr.planned()?.expr().has_merge_exchange())
 +}
 +
-+impl<S, F, T> Subscription<S, T>
-+where
-+    S: FnMut() -> F,
-+    F: Future<Output = Result<BoxStream<'static, Result<T>>>>,
-+{
-+    /// Each delay before subscribing again doubles, with jitter, from `min_delay` up to
-+    /// `max_delay`, and starts again from `min_delay` once a subscription succeeds.
-+    pub(crate) fn new(subscribe: S, min_delay: Duration, max_delay: Duration) -> Self {
-+        let backoff = ExponentialBuilder::new()
-+            .with_min_delay(min_delay)
-+            .with_max_delay(max_delay)
-+            .with_jitter()
-+            .without_max_times();
-+        Self {
-+            subscribe,
-+            stream: None,
-+            backoff,
-+            delays: backoff.build(),
-+        }
-+    }
++// A plan cached on a cluster is not served to a single node, where it would fail, and a plan
++// cached on a single node is not served to a cluster, which it would leave unused.
++#[tokio::test(flavor = "multi_thread", worker_threads = 1)]
++async fn test_planner_cache_keeps_distributed_and_local_plans_apart() -> Result<()> {
++    let fixture = TestFixture::setup().await?;
++    fixture.create_default_database().await?;
++    let db = fixture.default_db_name();
++    fixture
++        .execute_command(&format!("CREATE TABLE {db}.t (n INT)"))
++        .await?;
++    fixture
++        .execute_command(&format!("INSERT INTO {db}.t VALUES (1)"))
++        .await?;
 +
-+    /// Return the next item of the subscribed stream, subscribing again as often as it takes.
-+    pub(crate) async fn next(&mut self) -> T {
-+        loop {
-+            let mut stream = match self.stream.take() {
-+                Some(stream) => stream,
-+                None => match (self.subscribe)().await {
-+                    Ok(stream) => {
-+                        self.delays = self.backoff.build();
-+                        stream
-+                    }
-+                    Err(err) => {
-+                        let delay = self.next_delay();
-+                        warn!(
-+                            "failed to subscribe: {}; subscribe again in {:?}",
-+                            err, delay
-+                        );
-+                        sleep(delay).await;
-+                        continue;
-+                    }
-+                },
-+            };
++    let cluster = ["node-a", "node-b"];
++    let single_node = ["node-a"];
 +
-+            let lost = match stream.next().await {
-+                Some(Ok(item)) => {
-+                    self.stream = Some(stream);
-+                    return item;
-+                }
-+                Some(Err(err)) => err.to_string(),
-+                None => "the stream ended".to_string(),
-+            };
-+            let delay = self.next_delay();
-+            warn!(
-+                "subscription lost: {}; subscribe again in {:?}",
-+                lost, delay
-+            );
-+            sleep(delay).await;
-+        }
-+    }
++    let sql = format!("SELECT count(*) FROM {db}.t WHERE n > 0");
++    assert!(plans_distributed(&fixture, &cluster, &sql).await?);
++    assert!(!plans_distributed(&fixture, &single_node, &sql).await?);
 +
-+    fn next_delay(&mut self) -> Duration {
-+        // Built without a maximum of retries: there is always a next delay.
-+        self.delays.next().unwrap_or_default()
-+    }
++    let sql = format!("SELECT count(*) FROM {db}.t WHERE n > 1");
++    assert!(!plans_distributed(&fixture, &single_node, &sql).await?);
++    assert!(plans_distributed(&fixture, &cluster, &sql).await?);
++    Ok(())
 +}
+```
+
+**File**: `src/query/sql/src/planner/planner.rs` (modified, +15/-4)
+```diff
+@@ -341,7 +341,9 @@ impl Planner {
+         // SQL can bind differently in a stored definition and as an ordinary query.
+         let mut plan_cache_context =
+             if enable_materialized_view_rewrite && self.definition_scope.is_session() {
+-                self.build_plan_cache_context(name_resolution_ctx.clone(), stmt)
++                let distributed =
++                    self.enable_distributed_optimization(force_disable_distributed_optimization)?;
++                self.build_plan_cache_context(name_resolution_ctx.clone(), stmt, distributed)
+                     .await?
+             } else {
+                 None
+@@ -402,9 +404,7 @@ impl Planner {
+         let opt_ctx = OptimizerContext::new(self.ctx.clone(), metadata.clone(), func_ctx)
+             .with_settings(&settings)?
+             .set_enable_distributed_optimization(
+-                !force_disable_distributed_optimization
+-                    && !self.ctx.get_cluster().is_empty()
+-                    && !settings.get_enforce_local()?,
++                self.enable_distributed_optimization(force_disable_distributed_optimization)?,
+             )
+             .set_sample_executor(self.query_executor.clone())
+             .clone();
+@@ -422,6 +422,17 @@ impl Planner {
+         Ok(optimized_plan)
+     }
+ 
++    /// Whether to optimize a statement for distributed execution: it runs on a cluster of more
++    /// than one node, and neither the caller nor `enforce_local` keeps it on this node.
++    fn enable_distributed_optimization(
++        &self,
++        force_disable_distributed_optimization: bool,
++    ) -> Result<bool> {
++        Ok(!force_disable_distributed_optimization
++            && !self.ctx.get_cluster().is_empty()
++            && !self.ctx.get_settings().get_enforce_local()?)
++    }
 +
-+#[cfg(test)]
-+mod tests {
-+    use std::collections::VecDeque;
-+    use std::time::Duration;
-+
-+    use databend_common_exception::ErrorCode;
-+    use databend_common_exception::Result;
-+    use futures_util::StreamExt;
-+    use futures_util::stream;
-+    use futures_util::stream::BoxStream;
-+
-+    use super::Subscription;
-+
-+    /// The subscription subscribes again when subscribing fails, and when the stream errors or
-+    /// ends. After an error, it drops the rest of the stream.
-+    #[tokio::test]
-+    async fn test_subscribe_again() {
-+        let mut attempts: VecDeque<Result<BoxStream<'static, Result<u64>>>> = VecDeque::from([
-+            Ok(stream::iter([Ok(1), Ok(2)]).boxed()),
-+            Err(ErrorCode::MetaServiceError("refused")),
-+            Ok(stream::iter([Ok(3), Err(ErrorCode::MetaServiceError("closed")), Ok(10)]).boxed()),
-+            Ok(stream::iter([Ok(4)]).chain(stream::pending()).boxed()),
-+        ]);
-+        let subscribe = move || {
-+            let attempt = attempts.pop_front().expect("no subscr
+     fn add_max_rows_limit(&self, statement: &mut Statement) {
+         let max_rows = self.ctx.get_settings().get_max_result_rows().unwrap();
+         if max_rows == 0 {
+```
+
+**File**: `src/query/sql/src/planner/planner_cache.rs` (modified, +16/-5)
+```diff
+@@ -82,6 +82,7 @@ impl Planner {
+         &self,
+         name_resolution_ctx: NameResolutionContext,
+         stmt: &Statement,
++        distributed: bool,
+     ) -> Result<Option<PlanCacheContext>> {
+         if !matches!(stmt, Statement::Query(_))
+             || !self.ctx.get_settings().get_enable_planner_cache()?
+@@ -112,8 +113,12 @@ impl Planner {
+             .map(|source| mv_fingerprint(source.1, &mv_source_bindings[source]))
+             .collect::<Vec<_>>();
+ 
+-        let cache_key =
+-            self.planner_cache_key_for_stmt(stmt, visitor.has_security_policy, &mv_fingerprints)?;
++        let cache_key = self.planner_cache_key_for_stmt(
++            stmt,
++            visitor.has_security_policy,
++            &mv_fingerprints,
++            distributed,
++        )?;
+         Ok(Some(PlanCacheContext {
+             cache_key,
+             table_snapshots: visitor.table_snapshots,
+@@ -144,25 +149,31 @@ impl Planner {
+         Some(bindings)
+     }
+ 
++    /// `distributed` tells whether the statement is optimized for distributed execution. A
++    /// distributed plan fails where the same statement is planned locally, such as in the
++    /// single-node context of the task service, and a local plan leaves a cluster unused.
+     fn planner_cache_key_for_stmt(
+         &self,
+         stmt: &Statement,
+         has_security_policy: bool,
+         mv_fingerprints: &[String],
++        distributed: bool,
+     ) -> Result<String> {
+         let mv_fingerprint = mv_fingerprints.join("\0");
++        let distribution = if distributed { "distributed" } else { "local" };
+         if has_security_policy {
+             return Ok(Self::planner_cache_key(&format!(
+-                "{}\0{}\0{}",
++                "{}\0{}\0{}\0{}",
+                 self.security_policy_cache_key_prefix()?,
++                distribution,
+                 mv_fingerprint,
+                 stmt
+             )));
+         }
+ 
+         Ok(Self::planner_cache_key(&format!(
+-            "{}\0{}",
+-            mv_fingerprint, stmt
++            "{}\0{}\0{}",
++            distribution, mv_fingerprint, stmt
+         )))
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21162** (2026-11-22): fix: planner: keep cached distributed and local plans apart (@drmingdrmer)
+- **PR #21160** (2026-11-22): feat(cache): size the disk cache from its disk when max_bytes is unset (@bohutang)
+- **PR #21158** (2026-11-22): fix: task: keep a schedule running when one of its ticks fails (@drmingdrmer)
 - **PR #21157** (2026-11-21): fix: task: watch the task messages again when the stream ends (@drmingdrmer)
+- **PR #21151** (2026-11-22): feat(storage): cache inverted index searcher and term info for FTS (@bohutang)
 - **PR #21146** (2026-11-20): chore(meta): use server v260629.11.0 and client v260205.13.7 (@drmingdrmer)
-- **PR #21145** (2026-11-21): refactor(query): drop duplicate meta reads when planning a SELECT (@bohutang)
-- **PR #21144** (2026-11-22): refactor(query): output in-memory final aggregate results a block at a time (@KKould)
-- **PR #21141** (2026-11-20): fix(query): probe the partition built in each hash join spill round (@dqhl76)
-- **PR #21136** (2026-11-20): fix: meta: move the cache off a leader that refuses its watch (@drmingdrmer)
 
 ---
 
@@ -1726,32 +2303,61 @@ schedule that has stoppe
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): output in-memory final aggregate results a block at a time
+## X. query): bind grouped SELECTs after their keys are known
 
 **RULE**:
-When implementing operations in `src/query/expression/src/aggregate/payload.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/expression/src/stat_evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f469c616`: query): output in-memory final aggregate results a block at a time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8df80e8`: query): bind grouped SELECTs after their keys are known. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/aggregate/payload.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/stat_evaluator.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // The capacity is in rows: one result per row.
-            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count);
+        let Some(input_stat) = self.eval(&cast.expr, input_stats)? else {
+        let input = input_stat.as_ref();
+        let (ndv, null_count) = (input.ndv, input.null_count);
+        // Histograms are typed, so their boundaries cannot be reused across a
+        // value conversion. Changing only nullability keeps the non-NULL
+        // values and their representation, so the distribution still holds.
+        let distribution = if src_type.remove_nullable_ref() == cast.dest_type.remove_nullable_ref()
+        {
+            input_stat.into_owned().distribution
+        } else {
+            OwnedDistribution::Unknown
+        };
+            ndv,
+            null_count,
+            distribution,
+    #[test]
+    fn test_nullable_cast_preserves_histogram() {
+        use databend_common_statistics::BorrowedHistogram;
+        use databend_common_statistics::Histogram;
+        use databend_common_statistics::TypedHistogram;
+        use databend_common_statistics::TypedHistogramBucket;
+
+        let histogram = TypedHistogram::new(vec![TypedHistogramBucket::new(1u64, 3, 3.0, 3.0)]);
+        let src_type = DataType::Number(NumberDataType::UInt8);
+        let expr = Expr::Cast(Cast {
+         
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count * 4);
+        let Some(input) = self.eval(&cast.expr, input_stats)? else {
+        let input = input.as_ref();
+            // Histograms are typed, so their boundaries cannot be reused.
+            ndv: input.ndv,
+            null_count: input.null_count,
+            distribution: OwnedDistribution::Unknown,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f469c616` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8df80e8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

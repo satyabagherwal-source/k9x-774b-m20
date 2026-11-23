@@ -12251,3 +12251,6 @@
 | `CYCLE-20261123-GK2Q` | `2026-11-23T03:27:40.706Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`c5e2da68...`) |
 | `CYCLE-20261123-GPH0` | `2026-11-23T03:27:47.700Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10014` | Yes (`d1fd612d...`) |
 | `CYCLE-20261123-GUJ9` | `2026-11-23T03:27:54.261Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10002` | Yes (`95ad8933...`) |
+| `CYCLE-20261123-5GII` | `2026-11-23T03:47:02.490Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10015` | Yes (`8b5d6dfa...`) |
+| `CYCLE-20261123-5HIH` | `2026-11-23T03:47:03.785Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`6a6ed33e...`) |
+| `CYCLE-20261123-5HS9` | `2026-11-23T03:47:04.137Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10016` | Yes (`cbcf2a87...`) |

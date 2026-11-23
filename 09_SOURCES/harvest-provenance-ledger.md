@@ -12284,3 +12284,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T03:27:40.711Z |
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `db3ae5c9` | Multi-dimensional audit evidence | 2026-11-23T03:27:47.704Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `82e8fb92` | Multi-dimensional audit evidence | 2026-11-23T03:27:54.265Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `1adb9678` | Multi-dimensional audit evidence | 2026-11-23T03:47:02.495Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T03:47:03.790Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `17bcab80` | Multi-dimensional audit evidence | 2026-11-23T03:47:04.141Z |

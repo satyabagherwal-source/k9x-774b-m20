@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T03:27:58.377Z",
+  "updated_at": "2026-11-23T03:47:08.863Z",
   "stats": {
-    "total_discovered": 7739,
-    "approved_pending_harvest": 7323,
+    "total_discovered": 7741,
+    "approved_pending_harvest": 7325,
     "harvested_count": 0,
     "rejected_count": 416,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7310,
+      "COMMUNITY_AND_EXPERT": 7312,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -167369,6 +167369,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
         "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-6D3C40CFF3B6": {
+      "id": "SRC-6D3C40CFF3B6",
+      "url": "https://github.com/freenet/freenet-core/actions/runs/45073159748",
+      "title": "https://github.com/freenet/freenet-core/actions/runs/45073159748",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T03:47:08.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-5FD46C0F216E": {
+      "id": "SRC-5FD46C0F216E",
+      "url": "https://github.com/databendlabs/databend/pull/21158",
+      "title": "https://github.com/databendlabs/databend/pull/21158",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T03:47:08.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
+        "fileName": "databendlabs-databend-learnings.md"
       }
     }
   }

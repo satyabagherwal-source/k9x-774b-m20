@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T03:27:54.274Z",
+  "last_updated": "2026-11-23T03:47:04.150Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -965,14 +965,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-t5-t5-small",
-      "content_hash": "0cf0b8b7b5a82bc133ab563a1a70ae74b92392367b66b8bb49f1703feecf4c92",
-      "verified_at": "2026-11-18T17:51:06.074Z",
+      "content_hash": "6a6ed33e39d47a3826a849201443d33dd7771508397b9a0f1815d73bb4068754",
+      "verified_at": "2026-11-23T03:47:03.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:51:06.074Z"
+      "last_updated": "2026-11-23T03:47:03.798Z"
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "88b28e538b8c9e42e8e5a6931c7bea19a380cd127d421865b73ccf29181af6c7",
-      "verified_at": "2026-11-22T20:35:47.605Z",
+      "content_hash": "8b5d6dfa6be3feb5aad7068774016785eab1cd0d440e05a1cae6b8f6d00b4578",
+      "verified_at": "2026-11-23T03:47:02.503Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:35:47.605Z"
+      "last_updated": "2026-11-23T03:47:02.503Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
-      "verified_at": "2026-11-22T01:58:55.542Z",
+      "content_hash": "cbcf2a8727f31a858881659eafc8fed86c292a427bf69582a25f0ee0c6616419",
+      "verified_at": "2026-11-23T03:47:04.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T01:58:55.542Z"
+      "last_updated": "2026-11-23T03:47:04.149Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

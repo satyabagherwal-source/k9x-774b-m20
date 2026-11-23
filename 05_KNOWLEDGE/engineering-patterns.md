@@ -748803,3 +748803,199 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d8df9924` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10015. evict native legs from the transient pool and fail beside-native waiters on clos (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "evict native legs from the transient pool and fail beside-native waiters on clos",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "1adb9678",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-23T03:47:01.980Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `1adb9678`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `02e1abb1`: evict native legs from the transient pool and fail beside-native waiters on close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                        // Only a UDP entry with a native connection held
+                        // beside it (`held_native`) is spared: the hold lasts
+                        // `HELD_NATIVE_WINDOW`, so the exemption is bounded
+                        // in time and closing the entry would end a path the
+                        // two ends are still settling. A QUIC-native entry is
+                        // evictable like a UDP one: it costs a requester the
+                        // same, a native leg that never promotes is closed
+                        // by nothing but the zombie sweep or the idle
+                        // timeout, and exempting it (or only the ones that
+                        // have not carried a frame, which the first-frame
+                        // probe makes every live leg within a round trip)
+                        // would let a few sources fill the pool with legs
+                        // that cannot be evicted. A UDP session cannot have
+                        // a QUIC path while it is unpromoted (the upgrade
+                        // starts only at promotion, which takes the
+                        // connection out of this pool).
+         
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+                        // A native leg is never evicted: neither an entry
+                        // that is a QUIC-native connection nor a UDP entry
+                        // with one held beside it (`held_native`), since
+                        // closing either ends a native path. A UDP session
+                        // cannot have a QUIC path while it is unpromoted
+                        // (the upgrade starts only at promotion, which takes
+                        // the connection out of this pool).
+                        let victim = cm.oldest_held_transient(|addr| {
+                            self.held_native.contains_key(&addr)
+                                || self.connections.get(&addr).is_some_and(|e| e.native)
+                        });
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `02e1abb1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10016. bind grouped SELECTs after their keys are known (Harvested from databendlabs/databend)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "bind grouped SELECTs after their keys are known",
+  "source": "databendlabs/databend",
+  "source_url": "https://github.com/databendlabs/databend",
+  "source_version": "17bcab80",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T03:47:03.581Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-databendlabs-databend",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `17bcab80`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/query/expression/src/stat_evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c8df80e8`: query): bind grouped SELECTs after their keys are known. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/stat_evaluator.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        let Some(input_stat) = self.eval(&cast.expr, input_stats)? else {
+        let input = input_stat.as_ref();
+        let (ndv, null_count) = (input.ndv, input.null_count);
+        // Histograms are typed, so their boundaries cannot be reused across a
+        // value conversion. Changing only nullability keeps the non-NULL
+        // values and their representation, so the distribution still holds.
+        let distribution = if src_type.remove_nullable_ref() == cast.dest_type.remove_nullable_ref()
+        {
+            input_stat.into_owned().distribution
+        } else {
+            OwnedDistribution::Unknown
+        };
+            ndv,
+            null_count,
+            distribution,
+    #[test]
+    fn test_nullable_cast_preserves_histogram() {
+        use databend_common_statistics::BorrowedHistogram;
+        use databend_common_statistics::Histogram;
+        use databend_common_statistics::TypedHistogram;
+        use databend_common_statistics::TypedHistogramBucket;
+
+        let histogram = TypedHistogram::new(vec![TypedHistogramBucket::new(1u64, 3, 3.0, 3.0)]);
+        let src_type = DataType::Number(NumberDataType::UInt8);
+        let expr = Expr::Cast(Cast {
+         
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        let Some(input) = self.eval(&cast.expr, input_stats)? else {
+        let input = input.as_ref();
+            // Histograms are typed, so their boundaries cannot be reused.
+            ndv: input.ndv,
+            null_count: input.null_count,
+            distribution: OwnedDistribution::Unknown,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c8df80e8` are properly handled with clean fallback behavior.

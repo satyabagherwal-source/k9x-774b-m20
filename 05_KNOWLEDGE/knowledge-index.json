@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T03:27:59.921Z",
+  "last_updated": "2026-11-23T03:47:09.418Z",
   "total_verified_learnings": 9076,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23840,
+  "total_items": 23844,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "dbfadb1c",
-      "content_hash": "0cfc1cc9bff74a281c63d4744ef5cbdb59194efe5dbca7cb331e1c50b99adb5b",
+      "source_version": "1adb9678",
+      "content_hash": "c496b21b7e1c784fef22bc462de77758b03d6f32d64516fdf36eaf7ac0c109ef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T20:35:47.981Z"
+      "persisted_at": "2026-11-23T03:47:02.891Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "dbfadb1c",
-      "content_hash": "19ac35695bb34eeaa2c06bd7d2075f559abcbb66fb7d2af6db60cb29380648fe",
+      "source_version": "1adb9678",
+      "content_hash": "821b91ff85709e4a45282ac66aec84f13ac1f4233b6c1131794dcdfc34dd8ecf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:35:48.152Z"
+      "persisted_at": "2026-11-23T03:47:03.069Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "4caf3f7d4c920b82505a4dc41626db6638f6aa8dc133cd983a9137883e05bbed",
+      "content_hash": "9a63ca858ae2ccbeb404aa977a285ddb956309b41ad45c5a0280df49b1e2fdb9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T20:35:52.878Z"
+      "persisted_at": "2026-11-23T03:47:08.410Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0cf1ccd6987a208e0278197c1e314dee6a8e355a860ff7a5f6f407e9f73ca95",
+      "content_hash": "067fa3db8fe3ca6e6e31428044fe72b7ab2b97d3254e8b624b4a50950a4ff80e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:35:53.041Z"
+      "persisted_at": "2026-11-23T03:47:08.583Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -217648,10 +217648,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "repository": "databendlabs/databend",
-      "source_version": "f469c616",
-      "content_hash": "60cdcd90b03c9d4cbc54a354f8f7168516f509e5d8bb01ccc73832fbc374b275",
+      "source_version": "17bcab80",
+      "content_hash": "bd272ca18e748299df521974e8d0760e5df543bbf409357f452c36971af78890",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T01:58:55.953Z"
+      "persisted_at": "2026-11-23T03:47:04.551Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend",
@@ -217660,10 +217660,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "f469c616",
-      "content_hash": "060f606fa209513b22a78ea1793c71d4c203e042153df4bced3668befa85add0",
+      "source_version": "17bcab80",
+      "content_hash": "16611ddc28fb94f1cc7358550b74bc79d313b202a4babb507af79393eb469f71",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:58:56.130Z"
+      "persisted_at": "2026-11-23T03:47:04.723Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -217674,7 +217674,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "0cf0b8b7b5a82bc133ab563a1a70ae74b92392367b66b8bb49f1703feecf4c92",
+      "content_hash": "6a6ed33e39d47a3826a849201443d33dd7771508397b9a0f1815d73bb4068754",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -217694,7 +217694,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:51:05.811Z",
+      "verified_at": "2026-11-23T03:47:03.551Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217711,9 +217711,9 @@
       "title": "Research & Knowledge Intelligence: google-t5/t5-small Core Invariants",
       "repository": "google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "e2c8e034d9d336f94a6d59c03a715af09d0a1517c1b13a247dfea8f9b62c4294",
+      "content_hash": "7d48bbe35324132e18b4b06e5063ee1338559f18e47f90a222e4b57e809aab29",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T17:51:06.316Z"
+      "persisted_at": "2026-11-23T03:47:04.002Z"
     },
     "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants",
@@ -217747,9 +217747,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-t5-t5-small-learnings Core Invariants",
       "repository": "hf-google-t5-t5-small-learnings",
       "source_version": "HEAD",
-      "content_hash": "780c360743948ac95cee2a4c64f39aa2744185e165a8c16db55d6ef2ba03fb01",
+      "content_hash": "8ebe9cb89309a89f3544d74c6ea8f3d2205d949dac63d76387d128f817a06380",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T17:51:27.257Z"
+      "persisted_at": "2026-11-23T03:47:07.776Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants",
@@ -220456,8 +220456,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "dbfadb1c",
-      "content_hash": "88b28e538b8c9e42e8e5a6931c7bea19a380cd127d421865b73ccf29181af6c7",
+      "source_version": "1adb9678",
+      "content_hash": "8b5d6dfa6be3feb5aad7068774016785eab1cd0d440e05a1cae6b8f6d00b4578",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220565,6 +220565,11 @@
           "number": 9989,
           "title": "run the egress cap on VirtualTime for a simulated QUIC node",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10015,
+          "title": "evict native legs from the transient pool and fail beside-native waiters on clos",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220572,7 +220577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:35:47.397Z",
+      "verified_at": "2026-11-23T03:47:02.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247289,9 +247294,9 @@
       "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "30221df11c2835664a10eb0087e5b4e1b60bd3ca55908530215af89a3bacd6ff",
+      "content_hash": "4badc754d413955cba0887c5e00dd7c463d90cc26348fc0a563dd3d6b9b0c3c1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T01:58:59.958Z"
+      "persisted_at": "2026-11-23T03:47:09.240Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning",
@@ -247301,9 +247306,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "144f5011ce440fc3e6ffd57eeb7ded3e3a7bfc11c3090bdc4ff0988bc2edc869",
+      "content_hash": "0d1b8f79d0c1440cf5461e7837f25c9dc36b98c418f3425b5c8b1ae22ccddb10",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:59:00.137Z"
+      "persisted_at": "2026-11-23T03:47:09.418Z"
     },
     "learn-huggingface-abiray-minimax-h3-image-gguf": {
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -324632,6 +324637,56 @@
       "content_hash": "40409b71b3173702d96fcbff29a39126899c81b80222540adcc265ee91d9a89e",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T03:27:58.590Z"
+    },
+    "rule-10015": {
+      "learning_id": "rule-10015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10015,
+      "title": "evict native legs from the transient pool and fail beside-native waiters on clos",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "1adb9678",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T03:47:02.281Z"
+    },
+    "candidate_directive-evict-native-legs-from-the-transient-pool-and-fail-beside-native-waiters-on-clos": {
+      "item_id": "candidate_directive-evict-native-legs-from-the-transient-pool-and-fail-beside-native-waiters-on-clos",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5KY7-evict-native-legs-from-the-transient-pool-and-fail-beside-native-waiters-on-clos.md",
+      "title": "evict native legs from the transient pool and fail beside-native waiters on clos",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ffc159d883dbed6be22428d47cd46dec848ce354c2c78947f5d153687d9d8a48",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T03:47:08.243Z"
+    },
+    "candidate_directive-bind-grouped-selects-after-their-keys-are-known": {
+      "item_id": "candidate_directive-bind-grouped-selects-after-their-keys-are-known",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5HYU-bind-grouped-selects-after-their-keys-are-known.md",
+      "title": "bind grouped SELECTs after their keys are known",
+      "repository": "databendlabs/databend",
+      "source_version": "17bcab80",
+      "content_hash": "8b8e1f11798f53b1148c65d0b54d2e75464f571fe871dc74cf7883b5e70282bf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T03:47:04.377Z"
+    },
+    "candidate_directive-query-bind-grouped-selects-after-their-keys-are-known": {
+      "item_id": "candidate_directive-query-bind-grouped-selects-after-their-keys-are-known",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5LL8-query-bind-grouped-selects-after-their-keys-are-known.md",
+      "title": "query): bind grouped SELECTs after their keys are known",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61e988917c3bf3e893d8c73fda3ce823d1ad212c533849b444c8f61326ebad91",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T03:47:09.071Z"
     }
   },
   "ai-builder-brain": {

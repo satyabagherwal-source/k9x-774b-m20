@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T03:28:00.070Z",
+  "last_updated": "2026-11-23T03:47:09.563Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T00:39:39.892Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-22T20:35:52.506Z",
+      "processed_at": "2026-11-23T03:47:07.959Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2203,7 +2203,7 @@
       "staged_for_review": 1
     },
     "hf-google-t5-t5-small-learnings.md": {
-      "processed_at": "2026-11-18T17:51:27.003Z",
+      "processed_at": "2026-11-23T03:47:07.554Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2953,7 +2953,7 @@
       "staged_for_review": 0
     },
     "databendlabs-databend-learnings.md": {
-      "processed_at": "2026-11-22T01:58:59.468Z",
+      "processed_at": "2026-11-23T03:47:08.746Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3294,
+  "total_dossiers_evaluated": 3297,
   "total_canonical_promoted": 480,
-  "total_staged_for_review": 2488
+  "total_staged_for_review": 2490
 }
