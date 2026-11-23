@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T07:28:55.063Z",
+  "last_updated": "2026-11-23T07:37:05.729Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T04:50:32.955Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-23T07:18:40.675Z",
+      "processed_at": "2026-11-23T07:37:05.056Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -363,7 +363,7 @@
       "staged_for_review": 1
     },
     "matrixorigin-matrixone-learnings.md": {
-      "processed_at": "2026-11-22T05:28:21.905Z",
+      "processed_at": "2026-11-23T07:37:04.364Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2388,7 +2388,7 @@
       "staged_for_review": 0
     },
     "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md": {
-      "processed_at": "2026-11-18T22:14:42.462Z",
+      "processed_at": "2026-11-23T07:37:03.984Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3743,7 +3743,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3351,
+  "total_dossiers_evaluated": 3354,
   "total_canonical_promoted": 481,
-  "total_staged_for_review": 2525
+  "total_staged_for_review": 2527
 }

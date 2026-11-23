@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T05:28:22.128Z",
+  "timestamp": "2026-11-23T07:37:04.482Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-matrixorigin-matrixone-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [matrixorigin-matrixone-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T05:28:22.128Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T07:37:04.482Z`  
 > **Learning ID**: `LEARN-EVO-matrixorigin-matrixone-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `7431a275`  
+> **Source Version**: `f86cc46c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T05:28:16.712Z  
+> **Timestamp**: 2026-11-23T07:36:59.653Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T05:28:16.704Z  
+> **Harvest Timestamp**: 2026-11-23T07:36:59.646Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2374,13 +2374,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #33053** (2026-11-22): **fix(frontend): preserve cancellation errors during LOCAL uploads**
-  *Symptoms*: ## What type of PR is this?  - [x] BUG - [x] Test and CI  ## Which issue(s) this PR fixes:  Related to #31475 and #31703. The failing coverage test was observed on #32914.  ## What this PR does / why we need it:  When KILL QUERY interrupted a `LOAD DATA LOCAL` upload, closing the pipe reader caused the SQL consumer to see `io.ErrClosedPipe`. The client could receive MySQL error 1105 for the interrupted query.  Close the upload pipe writer with the cancellation error so the consumer receives it and the existing protocol mapping returns MySQL error 1317 / SQLSTATE 70100. The upload owner still drains a finite client stream before the session is reused. The regression captures the consumer error while the finite tail is pending and checks it after the upload owner has joined.  ## Validation  - The deterministic pipe regression returned `io.ErrClosedPipe` on clean main at `96d0d01872`. - The full frontend package passed with the race detector in short mode. All seven `TestKillLoadLocal` wire scenarios passed under race and 12 times each with coverage enabled. - The focused pipe regression and the partial-payload wire scenario also passed 100 race repetitions each on the identical fix. - Formatting, diff checks, err-check, vet, golangci-lint and molint passed for the affected scope. 
+- **Issue #33078** (2026-11-23): **fix(tae): bound catalog replay input memory**
+  *Symptoms*: ## What type of PR is this?  - [x] BUG - [x] Improvement  ## Which issue(s) this PR fixes:  Refs #33072 (the catalog-replay memory amplification)  ## What this PR does / why we need it:  TN recovery previously read every block of each catalog system table into a single off-heap batch, compacted and sorted it, then retained the table and column batches while replay jobs consumed them. A large catalog therefore required substantial temporary memory in addition to the recovered catalog.  Scan snapshot-visible system-table rows one block at a time, apply the existing persisted and workspace tombstones, and release each block after decoding it. Build owned schemas for live tables, associate their columns across blocks, and submit validated schemas in the existing database-sharded replay order. Propagate the open context through persisted appendable-tombstone commit-timestamp reads and drain already-submitted jobs on failure. Remove the old whole-table accumulation and sorting path. This adds no SQL or persistent state; the live catalog itself and the underlying cache still consume memory proportional to their contents.  Malformed or incomplete schema metadata is rejected before table replay, including missing parent databases and physical row IDs, inconsistent column sequence numbers, and corrupt types. Valid legacy default values are preserved where they can be recovered safely.  DB-owned vector pools now release idle buffers on failed open and normal close. A checked-out vector 
 
-- **Issue #33051** (2026-11-22): **[Subtask]: Vector clean up, remove sorted.   WONT DO.**
-  *Symptoms*: ### Parent Issue  #33004  ### Detail of Subtask  Sorted should be tracked by planner/optimizer/operator, not by vector.  ### Describe implementation you've considered  _No response_  ### Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Wont do -- this flag is written to disk and remove it does not really worth the effort and risk. 
+- **Issue #33075** (2026-11-23): **refactor(vector): remove the grouping bitmap (gsp) from Vector (#33020)**
+  *Symptoms*: ## What type of PR is this?  - [x] Code Refactoring - [x] BUG  ## Which issue(s) this PR fixes:  issue #33020 (part of #33004)  ## What this PR does / why we need it:  `Vector` no longer carries the ROLLUP/CUBE/GROUPING SETS "grouping" bitmap (`gsp`). A rolled-up key is now a plain SQL NULL constant, and `GROUPING()` is resolved by the planner instead of being read from vector metadata at execution time.  ### Why the bitmap is not needed  Every grouping set is planned as its own aggregate branch, and that aggregate's `GroupingFlag` already says which keys are rolled up. So `GROUPING(...)` is a constant for every row of a branch. The shared-input path already separates the sets by an explicit set-id key. Nothing downstream needs to tell a rolled-up NULL apart from a real NULL at run time.  ### Planner  - **Folding.** `foldGroupingFunctions` replaces every `GROUPING` call with its branch constant at the start of `createQuery`.   - Flags are recorded when each aggregate is built, because later rewrites can remove the aggregate. For example, `rewriteEffectlessAggToProject` removes the all-active branch on a primary-key table.   - Folding at bind time would be too early. DISTINCT/ORDER BY resolution above the grouping-set UNION needs `GROUPING` to keep its identity. - **Filters.** A constant filter (such as a folded `GROUPING` test) stays above a grouping-set aggregate that has rolled-up keys. An all-rolled-up set still emits a row on empty input. - **Normalization.** The sentinel
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2397,820 +2395,820 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `96d0d018` (2026-11-22)
-**Commit Message**: fix(ci): distinguish exited UT cases from live tests (#33050)
+### Incident Patch 1: `46b1fa89` (2026-11-23)
+**Commit Message**: test: reduce and balance race UT work (#33066)
 
 ## What type of PR is this?
 
-- [x] BUG
 - [x] Improvement
 - [x] Test and CI
 
 ## Which issue(s) this PR fixes:
 
-Refs #32745 (FLAKY-003). The underlying whole-suite deadline and other
-failure signatures stay tracked there.
+Related to #28933 (follow-up on CPU/non-GPU UT runtime and scheduling).
 
 ## What this PR does / why we need it:
 
-In [this Race
-job](https://github.com/matrixorigin/matrixone/actions/runs/44914914428/job/136878393798),
-LogService exited at 14:58 UTC but its unfinished test appeared in 90
-later heartbeats, including the last heavy wave at 16:42 UTC.
+The race UT job spends substantial time waiting for its longest SQL
+integration batch, while several issues tests repeat fixture DDL. Keep
+the existing runner and process limits, balance the four SQL integration
+batches using coarse historical race-cost hints, and remove fixture work
+that does not add a scenario. Hints only reorder roots discovered from
+the actual binary; unknown roots are retained and Go still runs each
+selected root in its normal binary order.
 
-- Retire unfinished tests from the live heartbeat when their package
-exits. Preserve test names, start times, and the package result in the
-failure summary. Merged streams with overlapping package invocations
-report ambiguous attribution explicitly.
-- Reuse the report publisher's ready-marker rule in the heartbeat. Keep
-torn records from consuming the next shard's first event. Preserve the
-raw report and give the pinned analyzer readable records when the raw
-input contains malformed lines.
-- Generate the slow and lifecycle summaries in one pass. A stopped
-writer’s final, valid JSON event can end at EOF. Live heartbeat reads
-and fa
+| Original behavior | Change | Coverage retained |
+| --- | --- | --- |
+| #31401 recreated a system peer for each mode | Reuse one peer within
+each live cluster generation; assert it is empty before reuse. For one
+successful generation this removes up to 15 each of DROP DATABASE,
+CREATE DATABASE and CREATE TABLE, adding up to 15 count queries. | All
+16 modes, account differences, conflicting truncate, waits, errors, and
+original cleanup/quarantine remain. A failed gen
 
-**File**: `optools/active_ut_incremental.py` (modified, +102/-37)
+**File**: `optools/run_ut.sh` (modified, +4/-0)
 ```diff
-@@ -14,42 +14,98 @@
- import tempfile
- 
- 
-+STATE_VERSION = 2
-+MAX_LIFECYCLE_LINE_BYTES = 1024 * 1024
-+TEST_START_ACTIONS = ("run", "pause", "cont")
-+TERMINAL_ACTIONS = ("pass", "fail", "skip")
-+
-+
- def fresh(identity):
-     return {"identity": identity, "offset": 0, "guard": "", "packages": {}, "cases": {}}
- 
- 
- def valid(state):
--    return (
-+    if not (
-         isinstance(state, dict)
-         and isinstance(state.get("offset"), int)
-         and state["offset"] >= 0
-         and isinstance(state.get("guard"), str)
-         and isinstance(state.get("packages"), dict)
--        and all(isinstance(k, str) and isinstance(v, str) for k, v in state["packages"].items())
-         and isinstance(state.get("cases"), dict)
--        and all(isinstance(v, list) and len(v) == 4 and all(isinstance(s, str) for s in v)
--                for v in state["cases"].values())
-+    ):
-+        return False
-+
-+    def package_entry(entry):
-+        return (
-+            isinstance(entry, list) and len(entry) == 2
-+            and isinstance(entry[0], str)
-+            and type(entry[1]) is int and entry[1] > 0
-+        )
-+
-+    def cases_entry(cases):
-+        return isinstance(cases, dict) and all(
-+            isinstance(entry, list) and len(entry) == 4
-+            and isinstance(entry[0], str) and isinstance(entry[1], str)
-+            and type(entry[2]) is int and entry[2] > 0
-+            and isinstance(entry[3], bool)
-+            for entry in cases.values()
-+        )
-+
-+    return all(map(package_entry, state["packages"].values())) and all(
-+        map(cases_entry, state["cases"].values())
-     )
- 
- 
--def apply_event(state, event):
-+def apply_event(state, event, unfinished=None):
-     action, package = event.get("Action", ""), event.get("Package", "")
-     test, when = event.get("Test", ""), event.get("Time", "")
-     if not all(isinstance(v, str) for v in (action, package, test, when)) or not package:
-         return
-+    packages, cases = state["packages"], state["cases"]
-+    invocation = packages.get(package)
-     if not test:
-         if action == "start":
--            state["packages"][package] = when
--        elif action in ("pass", "fail", "skip"):
--            state["packages"].pop(package, None)
--        # Keep unfinished cases on a package failure, as the AWK oracle does.
-+            if invocation is None:
-+                packages[package] = [when, 1]
-+            else:
-+                invocation[1] += 1
-+        elif action in TERMINAL_ACTIONS:
-+            if invocation is not None and invocation[1] > 1:
-+                # The merged stream cannot tell which invocation exited.
-+                invocation[0] = "unknown"
-+                invocation[1] -= 1
-+                for entry in cases.get(package, {}).values():
-+                    entry[3] = True
-+            else:
-+                packages.pop(package, None)
-+                outstanding = cases.pop(package, {})
-+                if unfinished is not None:
-+                    unfinished.extend(
-+                        (package, name, last_action, started, "unknown" if ambiguous else action)
-+                        for name, (last_action, started, _, ambiguous) in outstanding.items()
-+                    )
-         return
--    key = json.dumps([package, test])
--    if action in ("run", "pause", "cont"):
--        started = state["cases"].get(key, [package, test, action, when])[3]
--        state["cases"][key] = [package, test, action, started]
--    elif action in ("pass", "fail", "skip"):
--        state["cases"].pop(key, None)
-+    if action in TEST_START_ACTIONS:
-+        current = cases.setdefault(package, {})
-+        entry = current.get(test)
-+        if entry is None:
-+            current[test] = [action, when, 1, False]
-+        elif (action == "run" and invocation is not None
-+              and (invocation[1] > 1 or entry[3])):
-+            # An unmatched run can also belong to an invocation that already
-+            # exited. A test terminal accounts for only one observed run.
-+            current[test] = ["unknown", "unknown", entry[2] + 1, True]
-+        elif entry[0] != "unknown":
-+            entry[0] = action
-+    elif action in TERMINAL_ACTIONS and package in cases:
-+        current = cases[package]
-+        entry = current.get(test)
-+        if entry is not None and entry[2] > 1:
-+            entry[2] -= 1
-+        else:
-+            current.pop(test, None)
-+        if not current:
-+            del cases[package]
- 
- 
- def update(path, old):
-@@ -65,12 +121,12 @@ def update(path, old):
-             state = fresh(identity)
-         stream.seek(state["offset"])
-         while True:
--            line = stream.readline(1024 * 1024)
-+            line = stream.readline(MAX_LIFECYCLE_LINE_BYTES)
-             if not line:
-                 break
--            oversized = not line.endswith(b"\n") and len(line) == 1024 * 1024
-+            oversized = not line.endswith(b"\n") and len(line) == MAX_LIFECYCLE_LINE_BYTES
-             while oversized an
-```
-
-**File**: `optools/run_ut.sh` (modified, +51/-26)
-```diff
-@@ -644,10 +644,16 @@ function report_active_ut_cases(){
-         return 0
+@@ -2731,6 +2731,10 @@ function run_race_test_batches_impl(){
+     local partition_layout=contiguous
+     if (( status == 0 && 10#${parallel} > 1 )); then
+         partition_layout=roundrobin
++        if [[ "${package}" == github.com/matrixorigin/matrixone/pkg/tests/sqlintegration &&
++            "${batches}" == 4 && "${parallel}" == 4 ]]; then
++            partition_layout=cost-roundrobin
++        fi
      fi
- 
--    logger "ERR" "Active or incomplete UT cases from ${UT_REPORT}:"
--    awk -f "${BUILD_WKSP}/optools/active_ut_cases.awk" "${UT_REPORT}" |
--        LC_ALL=C sort |
--        sed 's/^/[active_ut_cases] /'
-+    local lifecycle_report="${UT_REPORT}.lifecycle"
-+    if [[ -s "${lifecycle_report}" ]]; then
-+        logger "ERR" "Active or incomplete UT cases from ${UT_REPORT}:"
-+        sed 's/^/[active_ut_cases] /' "${lifecycle_report}"
-+    else
-+        logger "ERR" "Unclassified UT cases from ${UT_REPORT}:"
-+        awk -f "${BUILD_WKSP}/optools/active_ut_cases.awk" "${UT_REPORT}" |
-+            LC_ALL=C sort |
-+            sed -e 's/^active UT /UT /' -e 's/^/[unclassified_ut_cases] /'
-+    fi
- }
- 
- function report_slow_ut_cases(){
-@@ -658,8 +664,15 @@ function report_slow_ut_cases(){
- 
-     local slow_report="${UT_DIAGNOSTIC_DIR}/top.txt"
-     local slow_output=""
--    if ! slow_output=$(python3 "${BUILD_WKSP}/optools/summarize_ut_slow_cases.py" "${UT_REPORT}" 2>&1); then
--        logger "ERR" "failed to summarize slow UT cases: ${slow_output}"
-+    local lifecycle_report="${UT_REPORT}.lifecycle"
-+    local -a lifecycle_args=(--active-out "${lifecycle_report}")
-+    if [[ -n "${CURRENT_UT_PID}" ]] || (( CURRENT_UT_DRAIN_FAILED != 0 )); then
-+        lifecycle_args+=(--require-lifecycle-lf)
-+    fi
-+    rm -f "${lifecycle_report}"
-+    if ! slow_output=$(python3 -B "${BUILD_WKSP}/optools/summarize_ut_slow_cases.py" \
-+        "${UT_REPORT}" "${lifecycle_args[@]}"); then
-+        logger "ERR" "failed to summarize slow UT cases from ${UT_REPORT}"
-         return 0
-     fi
- 
-@@ -789,7 +802,7 @@ function start_ut_heartbeat(){
-                 wait "${heartbeat_scan_pid}" 2>/dev/null || true
-                 heartbeat_scan_pid=""
-             fi
--            rm -f "${UT_HEARTBEAT_STATE}" "${UT_HEARTBEAT_STATE}.out"
-+            rm -f "${UT_HEARTBEAT_STATE}" "${UT_HEARTBEAT_STATE}.out" "${UT_HEARTBEAT_STATE}.tmp."*
-             exit 0
-         }
-         trap request_heartbeat_stop TERM INT
-@@ -816,8 +829,8 @@ function start_ut_heartbeat(){
-             fi
-             [[ "${UT_TERMINATING}" == 0 ]] || exit 0
- 
--            local latest stage label active_cases active_detail active_records process_count memory report
--            local -a heartbeat_reports
-+            local latest stage label active_cases active_detail active_records unresolved_cases process_count memory report
-+            local -a helper_reports
-             # A heartbeat can race a stage transition. Never read our own stale
-             # stage back as the source of truth on the next tick.
-             latest=$(awk '!/event=heartbeat / { latest=$0 } END { print latest }' "${UT_CHECKPOINT}" 2>/dev/null || true)
-@@ -828,33 +841,28 @@ function start_ut_heartbeat(){
-             # The heartbeat is forked before run_tests assigns the helper
-             # report variables. Discover reports from the immutable run
-             # workspace instead of relying on those later parent-shell values.
--            heartbeat_reports=(
--                "${UT_REPORT}"
-+            helper_reports=(
-                 "${G_WKSP}/${G_TS}-light-race-report.out"
-                 "${G_WKSP}/${G_TS}-engine-race-report.out"
--                "${G_WKSP}/${G_TS}-engine-race-report.out".*
-                 "${G_WKSP}/${G_TS}-plan-race-report.out"
--                "${G_WKSP}/${G_TS}-plan-race-report.out".*
-                 "${G_WKSP}/${G_TS}-issues-race-report.out"
--                "${G_WKSP}/${G_TS}-issues-race-report.out".*
-                 "${G_WKSP}/${G_TS}-embedded-race-report.out"
--                "${G_WKSP}/${G_TS}-embedded-race-report.out".*
-                 "${G_WKSP}/${G_TS}-embedded-batched-race-report.out"
--                "${G_WKSP}/${G_TS}-embedded-batched-race-report.out".*
-             )
-             # Own the finite scan as a group. A large first scan or fallback
-             # must not outlive heartbeat cancellation or keep its pipes open.
-             set -m
-             (
-                 trap - TERM INT
-+                local -a heartbeat_reports=("${UT_REPORT}") sources=()
-+                for report in "${helper_reports[@]}"; do
-+                    if collect_ut_report_sources "${report}" 2>/dev/null && (( ${#sources[@]} > 0 )); then
-+                        heartbeat_reports+=("${sources[@]}")
-+                    fi
-+                done
-                 if ! python3 "${BUILD_WKSP}/optools/active_ut_incremental.py" \
-                     --state "${UT_HEARTBEAT_STATE}" "${heartbeat_reports[@]}" 2>/dev/null; then
--                    # The original full-scan reader remains the recovery path.
--                    for report in "${heartbeat_reports[@]}"; do
--                        if [[ -s "${report}" ]]; then
--                            awk -f "${BUILD_WKSP}/optools/active_ut_cases.awk" "${report}" 2>/dev/null || true
--                        fi
--                    d
+     if (( status == 0 )); then
+         partition_race_test_inventory "${inventory}" "${batches}" "${partition_layout}" || status=$?
 ```
 
-**File**: `optools/summarize_ut_slow_cases.py` (modified, +37/-18)
+**File**: `optools/ut_inventory_test.go` (modified, +58/-3)
 ```diff
-@@ -17,15 +17,18 @@
+@@ -12,16 +12,26 @@ import (
+ 	"path/filepath"
+ 	"reflect"
+ 	"regexp"
++	"slices"
+ 	"strconv"
+ 	"strings"
+ 	"testing"
+ )
  
- from __future__ import annotations
- 
-+import argparse
- import json
- import sys
- from datetime import datetime
- from pathlib import Path
- from typing import Dict, List, Optional, Tuple
- 
- 
--TERMINAL_ACTIONS = {"pass", "fail", "skip"}
--TEST_START_ACTIONS = {"run", "pause", "cont"}
-+from active_ut_incremental import (
-+    MAX_LIFECYCLE_LINE_BYTES, TERMINAL_ACTIONS, TEST_START_ACTIONS,
-+    apply_event, atomic_write, fresh, render,
-+)
- 
- 
- def parse_time(value: object) -> Optional[datetime]:
-@@ -65,7 +68,8 @@ def format_duration(seconds: float) -> str:
- 
- 
- def summarize(
--    report_path: Path, limit: int = 20
-+    report_path: Path, limit: int = 20, active_out: Optional[Path] = None,
-+    *, require_lifecycle_lf: bool = False,
- ) -> Tuple[
-     List[Tuple[float, str, str, str, str]],
-     List[Tuple[float, str, str, str, str]],
-@@ -76,6 +80,8 @@ def summarize(
-     completed_tests: List[Tuple[float, str, str, str, str]] = []
-     completed_packages: List[Tuple[float, str, str, str, str]] = []
-     malformed = 0
-+    lifecycle = fresh(None) if active_out is not None else None
-+    unfinished = []
- 
-     with report_path.open("rb") as report:
-         for raw_line in report:
-@@ -98,6 +104,15 @@ def summarize(
-             package = event.get("Package")
-             if not isinstance(action, str) or not isinstance(package, str) or not package:
-                 continue
-+            if action not in TEST_START_ACTIONS and action not in TERMINAL_ACTIONS and action != "start":
-+                continue
-+            if lifecycle is not None:
-+                has_lf = raw_line.endswith(b"\n")
-+                # A stopped writer's decoded EOF record is equivalent to the
-+                # merged record, including the separator in the size budget.
-+                framed_size = len(raw_line) + (0 if has_lf else 1)
-+                if framed_size <= MAX_LIFECYCLE_LINE_BYTES and (has_lf or not require_lifecycle_lf):
-+                    apply_event(lifecycle, event, unfinished)
-             timestamp = parse_time(event.get("Time"))
-             test = event.get("Test")
-             if isinstance(test, str) and test:
-@@ -137,30 +152,34 @@ def summarize(
-                         )
-                     )
- 
-+    if active_out is not None:
-+        try:
-+            atomic_write(active_out, "\n".join(render({"report": lifecycle}, unfinished)) + "\n",
-+                         prefix=active_out.name + ".tmp.")
-+        except OSError as error:
-+            print(f"failed to publish UT lifecycle summary: {error}", file=sys.stderr)
-     completed_tests.sort(key=lambda item: item[0], reverse=True)
-     completed_packages.sort(key=lambda item: item[0], reverse=True)
-     return completed_tests[:limit], completed_packages[:limit], malformed
- 
- 
- def main(argv: List[str]) -> int:
--    if len(argv) not in (2, 3):
--        print(f"usage: {argv[0]} GO_TEST_JSON [LIMIT]", file=sys.stderr)
--        return 2
--    try:
--        limit = int(argv[2]) if len(argv) == 3 else 20
--    except ValueError:
--        print("LIMIT must be a positive integer", file=sys.stderr)
--        return 2
-+    parser = argparse.ArgumentParser(description=__doc__)
-+    parser.add_argument("report", type=Path)
-+    parser.add_argument("limit", nargs="?", type=int, default=20)
-+    parser.add_argument("--active-out", type=Path)
-+    parser.add_argument("--require-lifecycle-lf", action="store_true")
-+    args = parser.parse_args(argv[1:])
-+    limit = args.limit
-     if limit <= 0:
--        print("LIMIT must be a positive integer", file=sys.stderr)
--        return 2
--
--    report_path = Path(argv[1])
--    if not report_path.is_file():
--        print(f"slow UT case report missing: {report_path}", file=sys.stderr)
-+        parser.error("LIMIT must be a positive integer")
-+    if not args.report.is_file():
-+        print(f"slow UT case report missing: {args.report}", file=sys.stderr)
-         return 1
- 
--    tests, packages, malformed = summarize(report_path, limit)
-+    tests, packages, malformed = summarize(
-+        args.report, limit, args.active_out, require_lifecycle_lf=args.require_lifecycle_lf,
-+    )
-     print(f"[slow_ut_cases] completed test cases (top {limit}):")
-     if tests:
-         for elapsed, package, test, result, ended in tests:
-```
-
-**File**: `optools/testdata/active_ut_incremental_test.py` (modified, +131/-3)
-```diff
-@@ -17,6 +17,7 @@
- 
- sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
- import active_ut_incremental as reader
-+from summarize_ut_slow_cases import summarize
- 
- 
- class IncrementalReaderTest(unittest.TestCase):
-@@ -90,14 +91,141 @@ def test_corrupt_state_and_escaped_names(self):
-         self.assertEqual(1, len(self.read()[0].splitlines()))
- 
-     def test_multiple_reports_and_package_failure(self):
--        self.report.write_bytes(self.event("run") + self.event("fail", ""))
-+        self.report.write_bytes(self.event("start", "") + self.event("run"))
-+        self.assertIn("TestOne", self.read()[0])
-+        with self.report.open("ab") as stream:
-+            stream.write(self.event("fail", ""))
-+        self.assertEqual(["no active or incomplete UT package/test case found"], self.read())
-         second = self.report.with_suffix(".second")
-         second.write_bytes(self.event("run"))
--        self.assertEqual(self.read(), self.read(self.report, second, second))
--        self.oracle()  # unfinished case must survive the package failure
-+        self.assertEqual(self.read(second), self.read(self.report, second, second))
-         second.unlink()
-         self.assertEqual(self.read(), self.read(self.report, second))
- 
-+        with self.report.open("ab") as stream:
-+            stream.write(self.event("start", "") + self.event("run"))
-+        self.assertIn("TestOne", self.read()[0])
-+        active_out = self.report.with_suffix(".active")
-+        summarize(self.report, active_out=active_out)
-+        lines = active_out.read_text().splitlines()
-+        self.assertEqual(2, len(lines))
-+        self.assertTrue(lines[0].startswith("active UT case: "))
-+        self.assertTrue(lines[1].startswith("unfinished UT case at package exit: "))
-+        self.assertTrue(lines[1].endswith("package_result=fail"))
-+
-+    def test_overlapping_package_invocations(self):
-+        self.report.write_bytes(
-+            self.event("start", "") + self.event("run", "TestA")
-+            + self.event("start", "") + self.event("run", "TestB")
-+            + self.event("fail", "")
-+        )
-+        lines = self.read()
-+        self.assertEqual(2, len(lines))
-+        self.assertTrue(all(line.startswith("unresolved UT case") for line in lines))
-+        with self.report.open("ab") as stream:
-+            stream.write(self.event("pass", "TestB") + self.event("pass", ""))
-+        self.assertEqual(["no active or incomplete UT package/test case found"], self.read())
-+        active_out = self.report.with_suffix(".active")
-+        summarize(self.report, active_out=active_out)
-+        final = active_out.read_text().splitlines()
-+        self.assertEqual(1, len(final))
-+        self.assertIn("test=TestA", final[0])
-+        self.assertTrue(final[0].endswith("package_result=unknown"))
-+
-+    def test_same_name_overlap_preserves_unmatched_run(self):
-+        for events in (
-+            self.event("run") + self.event("fail", ""),
-+            self.event("fail", "") + self.event("run"),
-+        ):
-+            with self.subTest(events=events):
-+                self.report.write_bytes(
-+                    self.event("start", "") + self.event("run") + self.event("start", "")
-+                    + events + self.event("pass")
-+                )
-+                self.assertIn("unresolved UT case", self.read()[0])
-+                with self.report.open("ab") as stream:
-+                    stream.write(self.event("pass", ""))
-+                active_out = self.report.with_suffix(".active")
-+                summarize(self.report, active_out=active_out)
-+                self.assertEqual(1, len(active_out.read_text().splitlines()))
-+                self.assertIn("test=TestOne state=unknown started=unknown package_result=unknown",
-+                              active_out.read_text())
-+
-+    def test_final_package_exit_without_newline(self):
-+        self.report.write_bytes(
-+            self.event("start", "") + self.event("run") + self.event("fail", "")[:-1]
-+        )
-+        active_out = self.report.with_suffix(".active")
-+        _, packages, malformed = summarize(self.report, active_out=active_out)
-+        self.assertEqual(0, malformed)
-+        self.assertEqual("fail", packages[0][3])
-+        self.assertIn("unfinished UT case at package exit:", active_out.read_text())
-+        self.assertIn("test=TestOne", active_out.read_text())
-+        self.assertIn("package_result=fail", active_out.read_text())
-+
-+        summarize(self.report, active_out=active_out, require_lifecycle_lf=True)
-+        self.assertEqual(self.read(), active_out.read_text().splitlines())
-+        self.assertTrue(self.read()[0].startswith("active UT case: "))
-+        with self.report.open("ab") as stream:
-+            stream.write(b"\n")
-+        self.assertEqual(["no active or incomplete UT package/test case found"], self.read())
-+
-+    def test_final_lifecycle_size_matches_merged_size(self):
-+        terminal = self.event("fail", "")[:-1]
-+        prefix
-```
-
-**File**: `optools/ut_incremental_test.go` (modified, +16/-0)
-```diff
-@@ -20,6 +20,22 @@ func TestUTIncrementalActiveCases(t *testing.T) {
+ func TestRaceInventoryPartition(t *testing.T) {
+ 	t.Parallel()
+-	names := []string{"TestFirst", "Example_named", "FuzzSeeds", "Test字面", "TestLiteral.[a]+(b)?"}
+-	for _, layout := range []string{"roundrobin", "contiguous"} {
+-		for _, groups := range []int{1, 2, 8} {
++	names := []string{
++		"TestFirst", "Example_named", "FuzzSeeds", "Test字面", "TestLiteral.[a]+(b)?",
++		"TestLegacyPartitionColumnLimitCopy", "TestDatabaseDefaultsFailureAndRecovery",
++		"TestHiddenIndexUserAccess", "TestDecimalIntegerDivPublicContracts",
++	}
++	costOrder := []string{
++		"TestLegacyPartitionColumnLimitCopy", "TestDatabaseDefaultsFailureAndRecovery",
++		"TestHiddenIndexUserAccess", "TestDecimalIntegerDivPublicContracts",
++		"TestFirst", "Example_named", "FuzzSeeds", "Test字面", "TestLiteral.[a]+(b)?",
++	}
++	for _, layout := range []string{"roundrobin", "contiguous", "cost-roundrobin"} {
++		for _, groups := range []int{1, 2, 4, 8, 12} {
+ 			t.Run(fmt.Sprintf("%s/%d", layout, groups), func(t *testing.T) {
+ 				inventory := filepath.Join(t.TempDir(), "inventory")
+ 				// Include diagnostic output and a final root without a newline.
+@@ -56,6 +66,8 @@ for ((i=0;i<${#shard_patterns[@]};i++)); do printf '%s\t%s\n' "${shard_patterns[
+ 						expected := index % groups
+ 						if layout == "contiguous" {
+ 							expected = index / ((len(names) + groups - 1) / groups)
++						} else if layout == "cost-roundrobin" {
++							expected = slices.Index(costOrder, name) % groups
+ 						}
+ 						if group != expected || re.MatchString(name+"Suffix") || re.MatchString("Prefix"+name) {
+ 							t.Fatalf("root %q selected by incorrect group/pattern %d %q", name, group, fields[0])
+@@ -78,6 +90,49 @@ for ((i=0;i<${#shard_patterns[@]};i++)); do printf '%s\t%s\n' "${shard_patterns[
  	}
  }
  
-+func TestUTFailureReporterRequiresNewlineForUndrainedWriter(t *testing.T) {
-+	script := `source ./run_ut.sh UT
-+printf '%s\n' '{"Action":"start","Package":"p"}' '{"Action":"run","Package":"p","Test":"TestOne"}' > "$UT_REPORT"
-+printf '%s' '{"Action":"fail","Package":"p"}' >> "$UT_REPORT"
-+CURRENT_UT_DRAIN_FAILED=1
-+report_slow_ut_cases
-+grep -q '^active UT case: .*test=TestOne' "$UT_REPORT.lifecycle" || exit 90
-+CURRENT_UT_DRAIN_FAILED=0
-+report_slow_ut_cases
-+grep -q '^unfinished UT case at package exit: .*test=TestOne .*package_result=fail$' "$UT_REPORT.lifecycle" || exit 91
++func TestRaceInventoryCostLayoutScope(t *testing.T) {
++	t.Parallel()
++	const sqlPackage = "github.com/matrixorigin/matrixone/pkg/tests/sqlintegration"
++	for _, tc := range []struct {
++		name, pkg, batches, parallel, want string
++	}{
++		{"sql-four", sqlPackage, "4", "4", "cost-roundrobin"},
++		{"sql-two-workers", sqlPackage, "4", "2", "roundrobin"},
++		{"sql-serial", sqlPackage, "4", "1", "contiguous"},
++		{"sql-eight-batches", sqlPackage, "8", "4", "roundrobin"},
++		{"other-package", "example/other", "4", "4", "roundrobin"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			script := `source ./run_ut.sh UT
++function logger() { :; }
++function batched_race_cancel_requested() { return 1; }
++function run_race_inventory_with_deadline() { printf 'TestOne\n' > "$3"; }
++function partition_race_test_inventory() { printf '%s\n' "$3" > "$CASE_DIR/layout"; return 125; }
++PREBUILT_RACE_REPORT="$CASE_DIR/report"
++status=0
++run_race_test_batches_impl "$PACKAGE" "$CASE_DIR/binary" "$BATCHES" "$PARALLEL" 2 cleanup-only || status=$?
++[[ "$status" == 125 ]] || exit 90
++cat "$CASE_DIR/layout"
 +`
-+	if out, err := scheduleHarness(t, script); err != nil {
-+		t.Fatalf("final report EOF classification: %v\n%s", err, out)
++			mock := `#!/bin/bash
++case "$1" in
++ version|env|test) exit 0 ;;
++ list) printf '%s\t%s\n' "$CASE_DIR" "$PACKAGE" ;;
++ *) exit 7 ;;
++esac
++`
++			out, err := scheduleHarnessWithMock(t, script, mock,
++				"PACKAGE="+tc.pkg, "BATCHES="+tc.batches, "PARALLEL="+tc.parallel)
++			if err != nil {
++				t.Fatalf("layout selection failed: %v\n%s", err, out)
++			}
++			if got := strings.TrimSpace(string(out)); got != tc.want {
++				t.Fatalf("layout = %q, want %q", got, tc.want)
++			}
++		})
 +	}
 +}
 +
- func TestUTHeartbeatCancelsReader(t *testing.T) {
- 	script := `source ./run_ut.sh UT
- mkfifo "$CASE_DIR/reader-ready" "$CASE_DIR/reader-block"
-```
-
-**File**: `optools/ut_process.bash` (modified, +52/-30)
-```diff
-@@ -124,39 +124,17 @@ function remove_ut_report_file(){
-     return 0
- }
- 
--# append_ut_report copies a helper-owned report into the authoritative report
--# after the helper has stopped.  A helper may be interrupted while it is
--# merging shard files, so the completion marker is the ownership boundary:
--#
--#   marker exists  -> the complete base report is authoritative
--#   marker missing -> consume shard files (or an unmarked base as a last resort)
--#
--# Never concatenate both forms; doing so duplicates every event already copied
--# before cancellation and makes go-ut-analysis report false failures.  The
--# caller must serialize this operation with its TERM trap because appending to a
--# shared file is not intrinsically idempotent.  Build the complete destination
--# in a same-directory temporary file and publish it with rename.  A TERM/KILL
--# during any source copy therefore leaves both the old destination and the
--# source representation intact; a direct `cat >> destination` would leave an
--# indistinguishable prefix that a retry could duplicate.
--function append_ut_report(){
--    if (( $# != 2 )); then
--        echo "Usage: append_ut_report REPORT DESTINATION" >&2
--        return 2
--    fi
--
-+# Populate the caller's sources array with the authoritative representation of
-+# one helper report. Both the report appender and the heartbeat use this rule.
-+function collect_ut_report_sources(){
-     local report=$1
--    local destination=$2
-     local partial=""
--    local staging=""
--    local expected=""
--    local partial_found=0
-+    sources=()
- 
-     # Select one authoritative representation.  A ready marker is meaningful
-     # only when its complete base file is still present; silently treating a
-     # missing base as success would allow the caller to delete the marker and
-     # lose the only diagnostic source.
--    local -a sources=()
-     if [[ -f "${report}.ready" ]]; then
-         if [[ ! -f "${report}" ]]; then
-             echo "UT report marker exists without its base report: ${report}" >&2
-@@ -171,26 +149,70 @@ function append_ut_report(){
-             # is not a report shard and must never be consumed as one.
-             [[ "${partial}" == "${report}.tmp."* ]] && continue
-             sources+=("${partial}")
--            partial_found=1
-         done
--        if (( partial_found == 0 )) && [[ -f "${report}" ]]; then
-+        if (( ${#sources[@]} == 0 )) && [[ -f "${report}" ]]; then
-             # This covers a helper that failed before it could create the
-             # marker and left only a diagnostic base file.
-             sources=("${report}")
-         fi
-     fi
-+}
-+
-+# Seal a stopped writer's incomplete line before concatenating another report.
-+# Keep report bytes for diagnosis. A complete JSON record without its newline
-+# remains usable once the writer has stopped.
-+function copy_ut_report_chunk(){
-+    local source=$1
-+    local last_byte_lines
-+    cat "${source}" || return 1
-+    if [[ -s "${source}" ]]; then
-+        last_byte_lines=$(set -o pipefail; tail -c 1 "${source}" | wc -l) || return 1
-+        if (( last_byte_lines == 0 )); then
-+            printf '\n' || return 1
-+        fi
-+    fi
-+}
-+
-+# append_ut_report copies a helper-owned report into the authoritative report
-+# after the helper has stopped.  A helper may be interrupted while it is
-+# merging shard files, so the completion marker is the ownership boundary:
-+#
-+#   marker exists  -> the complete base report is authoritative
-+#   marker missing -> consume shard files (or an unmarked base as a last resort)
-+#
-+# Never concatenate both forms; doing so duplicates every event already copied
-+# before cancellation and makes go-ut-analysis report false failures.  The
-+# caller must serialize this operation with its TERM trap because appending to a
-+# shared file is not intrinsically idempotent.  Build the complete destination
-+# in a same-directory temporary file and publish it with rename.  A TERM/KILL
-+# during any source copy therefore leaves both the old destination and the
-+# source representation intact; a direct `cat >> destination` would leave an
-+# indistinguishable prefix that a retry could duplicate.
-+function append_ut_report(){
-+    if (( $# != 2 )); then
-+        echo "Usage: append_ut_report REPORT DESTINATION" >&2
-+        return 2
-+    fi
-+
-+    local report=$1
-+    local destination=$2
-+    local partial=""
-+    local staging=""
-+    local expected=""
-+    local -a sources=()
-+    collect_ut_report_sources "${report}" || return 1
- 
-     if (( ${#sources[@]} == 0 )); then
-         return 0
-     fi
- 
-     staging=$(mktemp "${destination}.tmp.XXXXXX") || return 1
--    if [[ -f "${destination}" ]] && ! cat "${destination}" > "${staging}"; then
-+    if [[ -f "${destination}" ]] && ! copy_ut_report_chunk "${destination}" > "${staging}"; then
-         rm -f "${staging}"
-         return 1
-     fi
-     for partial in "${sources[@]}"; do
--        if ! cat "${partial}" >> "${staging}"; then
-+        if ! copy_ut
-```
-
-**File**: `optools/ut_schedule_test.go` (modified, +109/-17)
-```diff
-@@ -1182,14 +1182,12 @@ cgroup_resource_breakdown "$CASE_DIR/missing"
- func TestUTHeartbeatStopsCleanly(t *testing.T) {
+ func TestRaceInventoryRejectsIncompleteDiscovery(t *testing.T) {
  	t.Parallel()
- 	script := `source ./run_ut.sh UT
--mkfifo "$CASE_DIR/heartbeat-ready"
--exec 9<> "$CASE_DIR/heartbeat-ready"
--trap 'stop_ut_heartbeat; exec 9>&-' EXIT
-+mkfifo "$CASE_DIR/heartbeat-tick" "$CASE_DIR/heartbeat-waiting" || exit 90
-+exec 8<> "$CASE_DIR/heartbeat-tick"
-+exec 9<> "$CASE_DIR/heartbeat-waiting"
-+trap 'stop_ut_heartbeat; exec 8>&- 9>&-' EXIT
- function logger() {
-     printf "%s\n" "$2" >> "$CASE_DIR/ut.log"
--    if [[ "$2" == *active_cases=3* && "$2" == *TestPrivate* && "$2" == *TestShard* && "$2" == *TestBatched* ]]; then
--        printf 'ready\n' >&9
--    fi
- }
- UT_HEARTBEAT_INTERVAL=60
- start_ut_heartbeat
-@@ -1201,12 +1199,30 @@ stop_ut_heartbeat
- ! kill -0 "$heartbeat_pid" 2>/dev/null || exit 90
- 
- UT_HEARTBEAT_INTERVAL=1
-+# Release one timer only after the reports are ready. Its next wait confirms
-+# the previous iteration wrote both the log and checkpoint.
-+function sleep() {
-+    if [[ "$*" == 1 ]]; then
-+        printf 'waiting\n' >&9
-+        read -r tick <&8
-+    else
-+        command sleep "$@"
-+    fi
-+}
-+function heartbeat_waiting() {
-+    local state
-+    read -r -t 10 state <&9 && [[ "$state" == waiting ]]
-+}
-+function heartbeat_tick() {
-+    printf 'tick\n' >&8 && heartbeat_waiting
-+}
- # Exercise the actual heartbeat formatting without exposing real process data.
- function ps() {
-     [[ "$*" == '-eo pid=,ppid=,rss=,comm=' ]] || return 93
-     printf '1 0 100 tiny\n2 1 200 small\n3 1 300 third\n4 1 400 fourth\n5 1 500 fifth\n6 1 600 sixth\n7 1 700 seventh\n8 1 800 eighth\n9 1 900 largest\n'
- }
- start_ut_heartbeat
-+heartbeat_waiting || exit 92
- LIGHT_RACE_REPORT="$G_WKSP/${G_TS}-light-race-report.out"
- cat > "$LIGHT_RACE_REPORT" <<'EOF'
- {"Time":"2026-09-10T01:00:01Z","Action":"run","Package":"example/light","Test":"TestPrivate"}
-@@ -1217,19 +1233,42 @@ EOF
- cat > "$G_WKSP/${G_TS}-embedded-batched-race-report.out.0" <<'EOF'
- {"Time":"2026-09-10T01:00:01Z","Action":"run","Package":"example/embedded","Test":"TestBatched"}
- EOF
--read -r -t 10 heartbeat_ready <&9 || exit 92
-+cat > "$G_WKSP/${G_TS}-engine-race-report.out.tmp.staging" <<'EOF'
-+{"Time":"2026-09-10T01:00:01Z","Action":"run","Package":"example/engine","Test":"TestStaged"}
-+EOF
-+cat > "$UT_REPORT" <<'EOF'
-+{"Time":"2026-09-10T00:00:00Z","Action":"start","Package":"example/retired"}
-+{"Time":"2026-09-10T00:00:01Z","Action":"run","Package":"example/retired","Test":"TestRetired"}
-+{"Time":"2026-09-10T00:00:02Z","Action":"fail","Package":"example/retired"}
-+EOF
-+heartbeat_tick || exit 92
- stop_ut_heartbeat
--exec 9>&-
- [[ -z "$UT_HEARTBEAT_PID" ]] || exit 91
--grep -q 'event=heartbeat' "$UT_CHECKPOINT"
--grep -q 'active_cases=3' "$CASE_DIR/ut.log"
--grep -q 'TestPrivate' "$CASE_DIR/ut.log"
--grep -q 'TestShard' "$CASE_DIR/ut.log"
--grep -q 'TestBatched' "$CASE_DIR/ut.log"
--grep -q 'processes=9' "$CASE_DIR/ut.log"
--grep -q 'processes.top_rss=pid=9,ppid=1,rss_kib=900,comm=largest;pid=8,ppid=1,rss_kib=800,comm=eighth;' "$CASE_DIR/ut.log"
--grep -q 'pid=2,ppid=1,rss_kib=200,comm=small;' "$CASE_DIR/ut.log"
--! grep -q 'pid=1,ppid=0,rss_kib=100,comm=tiny;' "$CASE_DIR/ut.log"
-+grep -q 'event=heartbeat ' "$UT_CHECKPOINT" || exit 93
-+grep -q 'active_cases=3 ' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'TestPrivate' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'TestShard' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'TestBatched' "$CASE_DIR/ut.log" || exit 93
-+! grep -qE 'active_cases=unknown|TestRetired|TestStaged' "$CASE_DIR/ut.log" || exit 94
-+grep -q 'processes=9' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'processes.top_rss=pid=9,ppid=1,rss_kib=900,comm=largest;pid=8,ppid=1,rss_kib=800,comm=eighth;' "$CASE_DIR/ut.log" || exit 93
-+grep -q 'pid=2,ppid=1,rss_kib=200,comm=small;' "$CASE_DIR/ut.log" || exit 93
-+! grep -q 'pid=1,ppid=0,rss_kib=100,comm=tiny;' "$CASE_DIR/ut.log" || exit 95
-+
-+function python3() { return 1; }
-+function awk() {
-+    if [[ "$*" == *active_ut_cases.awk* ]]; then
-+        touch "$CASE_DIR/rescanned"
-+        return 1
-+    fi
-+    command awk "$@"
-+}
-+: > "$CASE_DIR/ut.log"
-+start_ut_heartbeat
-+heartbeat_waiting && heartbeat_tick || exit 96
-+stop_ut_heartbeat
-+exec 8>&- 9>&-
-+grep -q 'active_cases=unknown active=unclassified report' "$CASE_DIR/ut.log" && [[ ! -e "$CASE_DIR/rescanned" ]]
- `
- 	mock := `#!/bin/bash
- if [[ "$1" == version ]]; then exit 0; fi
-@@ -1241,6 +1280,59 @@ exit 0
- 	}
- }
- 
-+func TestPlanRaceReportSeparatesTornShard(t *testing.T) {
-+	script := `source ./run_ut.sh UT
-+PLAN_RACE_SHARDS=2
-+PLAN_RACE_PARALLEL=2
-+PLAN_RACE_REPORT="$CASE_DIR/plan.out"
-+status=0
-+run_plan_race_shards example/plan || status=$?
-+[[ "$status" == 1 && -f "$PLAN_RACE_REPORT.ready" ]] || exit 90
-+append_ut_report "$PLAN_RACE_REPORT" "$CASE_DIR/ready.out" || exit 91
-+rm "$PLAN_RACE_REPORT.ready"
-+append_ut_report "$PLAN_RACE_REPORT" "$CASE_DIR/recovered.out" || exit 92
-+cmp "$CASE_DIR/ready.out" "$CASE_DIR/recovered.out" ||
+ 	for _, inventory := range []string{"diagnostics only\n", "TestOnce\nTestOnce\n", "TestValid\nTest invalid\n"} {
 ```
 
-**File**: `optools/validate_ut_report.py` (modified, +26/-8)
+**File**: `optools/ut_tools.bash` (modified, +25/-3)
 ```diff
-@@ -87,6 +87,23 @@ def _event_fields(event: object) -> Optional[Tuple[str, str, str]]:
-     return action, package, test
+@@ -123,14 +123,14 @@ function install_go_ut_analysis() {
+ # Bash dynamic scoping keeps this compatible with Bash 3.2.
+ function partition_race_test_inventory() {
+     local inventory=$1 groups=$2 layout=$3
+-    local name escaped meta index=0 group width duplicates
+-    local -a names=()
++    local name escaped meta index=0 group width duplicates priority hint
++    local -a names=() ranked_names=()
  
+     shard_patterns=()
+     shard_counts=()
+     test_count=0
+     if ! [[ "${groups}" =~ ^[1-9][0-9]*$ ]] || (( groups > 64 )) ||
+-        [[ "${layout}" != roundrobin && "${layout}" != contiguous ]] ||
++        [[ "${layout}" != roundrobin && "${layout}" != contiguous && "${layout}" != cost-roundrobin ]] ||
+         [[ ! -r "${inventory}" ]]; then
+         return 2
+     fi
+@@ -149,6 +149,28 @@ function partition_race_test_inventory() {
+         return 2
+     fi
  
-+def decode_event(raw_line: bytes) -> object:
-+    return json.loads(raw_line.decode("utf-8"))
++    if [[ "${layout}" == cost-roundrobin ]]; then
++        # Coarse race-UT timings balance the existing SQL-integration processes.
++        # Hints only place roots discovered from the binary; unknown roots remain.
++        # Go executes the selected roots in their original binary order.
++        for (( priority=9; priority>=1; priority-- )); do
++            for name in "${names[@]}"; do
++                case "${name}" in
++                    TestDatabaseDefaultsFailureAndRecovery|TestLegacyPartitionColumnLimitCopy) hint=9 ;;
++                    TestHiddenIndexUserAccess|TestIssue30949PublicationSnapshotLifecycleAdmission) hint=8 ;;
++                    TestDecimalIntegerDivPublicContracts|TestDatabaseCharsetInheritanceContract) hint=6 ;;
++                    TestCollationsMetadataUpgrade|TestIntegerArithmeticWidth|TestTemporaryTablePhysicalNameIsSessionScoped) hint=5 ;;
++                    TestCDCNoFullPublicTakeoverLifecycle|TestViewCheckOptionCanonicalization|TestTimestampDefaultDumpRoundtrip|TestDecimalHistoricalDumpRoundtrip|TestTemporalExplainIndexParity) hint=4 ;;
++                    TestTenantAdminIndexReadBoundary|TestConcurrentRoleGrantCannotCommitCycleTwoCN) hint=3 ;;
++                    *) hint=1 ;;
++                esac
++                if (( hint == priority )); then ranked_names+=("${name}"); fi
++            done
++        done
++        (( ${#ranked_names[@]} == ${#names[@]} )) || return 2
++        names=("${ranked_names[@]}")
++    fi
 +
-+
-+def emit_analyzer_input(report_path: Path) -> None:
-+    # Preserve complete records exactly. The pinned analyzer aborts on invalid
-+    # JSON, so keep malformed fragments only in the authoritative raw report.
-+    with report_path.open("rb") as report:
-+        for raw_line in report:
-+            try:
-+                event = decode_event(raw_line)
-+            except (UnicodeDecodeError, json.JSONDecodeError):
-+                continue
-+            if isinstance(event, dict):
-+                sys.stdout.buffer.write(raw_line)
-+
-+
- def validate(report_path: Path, require_complete: bool = False) -> Validation:
-     result = Validation()
-     active: Dict[Tuple[str, str], ActiveTest] = {}
-@@ -96,13 +113,8 @@ def validate(report_path: Path, require_complete: bool = False) -> Validation:
-     with report_path.open("rb") as report:
-         for line_number, raw_line in enumerate(report, 1):
-             try:
--                line = raw_line.decode("utf-8")
--            except UnicodeDecodeError:
--                result.malformed += 1
--                continue
--            try:
--                event = json.loads(line)
--            except json.JSONDecodeError:
-+                event = decode_event(raw_line)
-+            except (UnicodeDecodeError, json.JSONDecodeError):
-                 result.malformed += 1
-                 continue
- 
-@@ -239,13 +251,19 @@ def _print_result(result: Validation) -> None:
- 
- def main(argv: Optional[Iterable[str]] = None) -> int:
-     parser = argparse.ArgumentParser(description=__doc__)
--    parser.add_argument("--require-complete", action="store_true")
-+    mode = parser.add_mutually_exclusive_group()
-+    mode.add_argument("--require-complete", action="store_true")
-+    mode.add_argument("--emit-analyzer-input", action="store_true")
-     parser.add_argument("report", type=Path)
-     arguments = parser.parse_args(argv)
-     if not arguments.report.is_file():
-         print(f"UT report missing: {arguments.report}", file=sys.stderr)
-         return 1
- 
-+    if arguments.emit_analyzer_input:
-+        emit_analyzer_input(arguments.report)
-+        return 0
-+
-     result = validate(arguments.report, arguments.require_complete)
-     _print_result(result)
-     return 1 if result.errors else 0
+     width=$(( (${#names[@]} + groups - 1) / groups ))
+     for (( group=0; group<groups; group++ )); do
+         shard_patterns[group]='^('
+```
+
+**File**: `pkg/tests/issues/issue_26087_test.go` (modified, +6/-2)
+```diff
+@@ -227,6 +227,7 @@ func TestIssue26087ConcurrentDataBranchQuota(t *testing.T) {
+ 					snapshotCtx, cancelSnapshot := context.WithCancel(execCtx)
+ 					snapshotDone := make(chan error, 1)
+ 					joined := false
++					snapshotReleased := false
+ 					defer func() {
+ 						cancelSnapshot()
+ 						cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+@@ -239,8 +240,10 @@ func TestIssue26087ConcurrentDataBranchQuota(t *testing.T) {
+ 								t.Error("snapshot cleanup did not return")
+ 							}
+ 						}
+-						if _, err := sysDB.ExecContext(cleanupCtx, "drop snapshot if exists "+snapshotName); err != nil {
+-							t.Errorf("snapshot cleanup: %v", err)
++						if !snapshotReleased {
++							if _, err := sysDB.ExecContext(cleanupCtx, "drop snapshot if exists "+snapshotName); err != nil {
++								t.Errorf("snapshot cleanup: %v", err)
++							}
+ 						}
+ 					}()
+ 					go func() {
+@@ -276,6 +279,7 @@ func TestIssue26087ConcurrentDataBranchQuota(t *testing.T) {
+ 						require.Equal(t, 1, value)
+ 					}
+ 					execSQLRequire(t, ctx, sysDB, "drop snapshot "+snapshotName)
++					snapshotReleased = true
+ 					if terminalPath.wantRows != 0 {
+ 						require.NoError(t, execConn(conn1, "data branch delete table branch_quota_race."+tableName))
+ 					}
+```
+
+**File**: `pkg/tests/issues/issue_29400_test.go` (modified, +5/-3)
+```diff
+@@ -727,10 +727,8 @@ func TestIssue29400CopyAlterRetainedGatePromotionFastFails(t *testing.T) {
+ 				unrelated := database + "_other"
+ 				for _, query := range []string{
+ 					"create database " + database,
+-					"create database " + unrelated,
+ 					"create table " + database + ".t (id int primary key, v int)",
+ 					"create table " + database + ".u (i int)",
+-					"create table " + unrelated + ".u (i int)",
+ 					"insert into " + database + ".t values (1, 1)",
+ 				} {
+ 					execSQLRequire(t, ctx, db0, query)
+@@ -739,10 +737,14 @@ func TestIssue29400CopyAlterRetainedGatePromotionFastFails(t *testing.T) {
+ 					cleanupCtx, done := context.WithTimeout(context.Background(), 20*time.Second)
+ 					defer done()
+ 					_, _ = db0.ExecContext(cleanupCtx, "drop database if exists "+database)
+-					_, _ = db0.ExecContext(cleanupCtx, "drop database if exists "+unrelated)
++					if scenario.name == "shared_gate" {
++						_, _ = db0.ExecContext(cleanupCtx, "drop database if exists "+unrelated)
++					}
+ 				}()
+ 				var progressConn *sql.Conn
+ 				if scenario.name == "shared_gate" {
++					execSQLRequire(t, ctx, db0, "create database "+unrelated)
++					execSQLRequire(t, ctx, db0, "create table "+unrelated+".u (i int)")
+ 					conn, err := db0.Conn(ctx)
+ 					require.NoError(t, err)
+ 					defer conn.Close()
+```
+
+**File**: `pkg/tests/issues/issue_31401_scalar_test.go` (modified, +19/-7)
+```diff
+@@ -68,7 +68,11 @@ func TestIssue31401ScalarRefreshProgress(t *testing.T) {
+ 	for _, mode := range []string{"ordinary", "pk", "allocator", "prepared", "defaults", "other_account", "broad_index", "initial_snapshot", "late_snapshot", "initial_pitr", "late_pitr", "late_branch", "tenant_snapshot", "upgrade_conflict", "initial_fk", "late_fk"} {
+ 		t.Run(mode, func(t *testing.T) {
+ 			runAuthenticatedClusterTest(t, func(cluster embed.Cluster) {
+-				fixture = cluster
++				if fixture != cluster {
++					// A failed subtest can replace the shared cluster generation.
++					fixture = cluster
++					systemSourceOwned, peerOwned = false, false
++				}
+ 				cn, err := cluster.GetCNService(0)
+ 				require.NoError(t, err)
+ 				t.Logf("embedded owner pid=%d config=%s/cn-0.toml data=%s", os.Getpid(), cn.GetServiceConfig().DataDir, cn.GetServiceConfig().DataDir)
+@@ -117,15 +121,18 @@ func TestIssue31401ScalarRefreshProgress(t *testing.T) {
+ 					require.NoError(t, err)
+ 					defer db.Close()
+ 				}
+-				// Each case resets both databases. Keep system resources until
+-				// the next reset, then clean the final pair once. DROP ACCOUNT
+-				// owns removal of the tenant's source database.
++				// Reset the source per mode. Reuse the system peer after each
++				// successful TRUNCATE, then clean owned system databases once.
++				// DROP ACCOUNT owns removal of the tenant's source database.
+ 				resetIssue277xxDatabase(t, ctx, db, source)
+ 				if !tenant {
+ 					systemSourceOwned = true
+ 				}
+-				resetIssue277xxDatabase(t, ctx, sys, peer)
+-				peerOwned = true
++				initializePeer := !peerOwned
++				if initializePeer {
++					resetIssue277xxDatabase(t, ctx, sys, peer)
++					peerOwned = true
++				}
+ 				definition := "id int,v int"
+ 				if mode == "pk" || mode == "other_account" || strings.HasSuffix(mode, "fk") || mode == "late_branch" {
+ 					definition = "id int primary key,v int"
+@@ -172,7 +179,12 @@ func TestIssue31401ScalarRefreshProgress(t *testing.T) {
+ 				if strings.HasPrefix(mode, "initial_") && mode != "initial_fk" || mode == "tenant_snapshot" {
+ 					protect()
+ 				}
+-				execSQLRequire(t, ctx, sys, "create table "+peer+".t(id int)")
++				if initializePeer {
++					execSQLRequire(t, ctx, sys, "create table "+peer+".t(id int)")
++				} else {
++					// Each successful mode has joined its peer TRUNCATE.
++					require.Zero(t, queryIssue277xxInt(t, ctx, sys, "select count(*) from "+peer+".t"))
++				}
+ 				execSQLRequire(t, ctx, sys, "insert into "+peer+".t values(1)")
+ 				var registryID uint64
+ 				require.NoError(t, sys.QueryRowContext(ctx, "select rel_id from mo_catalog.mo_tables where reldatabase='mo_catalog' and relname='mo_feature_registry'").Scan(&registryID))
 ```
 
 ---
 
-### Incident Patch 2: `a9dda368` (2026-11-21)
-**Commit Message**: fix(data branch): use lineage mapping for diff output tables (#32971)
+### Incident Patch 2: `d9a43b31` (2026-11-22)
+**Commit Message**: Fix SQL compatibility regressions across aggregates, casts, and prepared DML (#32002)
+
+## What type of PR is this?
+
+- [x] BUG
+- [ ] API-change
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Closes #28562, #28485, #28230, #28119, #28024, #27340, #27332.
+
+## What this PR does / why we need it:
+
+- Return SQL NULL when a finite DOUBLE input makes `DEGREES` overflow,
+and mark the result nullable for CTAS even when its source column is NOT
+NULL. Preserve CHAR PAD SPACE provenance through `COALESCE` and `IFNULL`
+keys.
+- Widen `MEDIAN(DECIMAL(38,s))` to an exact `DECIMAL(39,s+1)` result and
+return `SUM(INT)` as `DECIMAL(32,0)`, including the single-group reuse
+path.
+- Preserve prepared ENUM/SET parameter markers until the execution
+binding selects the label or numeric converter.
+- Apply DML assignment bounds and SQL-mode behavior to integer, DECIMAL,
+BINARY/VARBINARY, and DATE paths. Strict mode rejects invalid writes;
+non-strict and IGNORE adjust values and emit warnings. Preserve DATE
+text in strict VALUES assignments and clip rounded DECIMAL-to-integer
+values with 1264 warnings when adjustment is allowed. K
+
+**File**: `clients/python/matrixone/analytics.py` (modified, +3/-3)
+```diff
+@@ -353,9 +353,9 @@ def _protocol_schema(cursor):
+                 dtype = factory()
+         elif code in (ft.DECIMAL, ft.NEWDECIMAL):
+             precision = f.length - (0 if f.flags & FLAG.UNSIGNED else 1) - (1 if f.scale else 0)
+-            if not 1 <= precision <= 38:
+-                raise TypeError("Decimal protocol precision is outside Arrow Decimal128")
+-            dtype = pa.decimal128(precision, f.scale)
++            if not 1 <= precision <= 76:
++                raise TypeError("Decimal protocol precision is outside Arrow decimal range")
++            dtype = (pa.decimal128 if precision <= 38 else pa.decimal256)(precision, f.scale)
+         elif code == ft.FLOAT:
+             dtype = pa.float32()
+         elif code == ft.DOUBLE:
+```
+
+**File**: `clients/python/tests/analytics/test_analytics.py` (modified, +24/-1)
+```diff
+@@ -15,7 +15,7 @@
+ import pytest
+ 
+ from matrixone import Client
+-from matrixone.analytics import AnalyticsManager, _identifier, _sql_type, _validate_schema, _wire_schema
++from matrixone.analytics import AnalyticsManager, _identifier, _protocol_schema, _rows_to_batch, _sql_type, _validate_schema, _wire_schema
+ 
+ pa = pytest.importorskip("pyarrow", minversion="18.0.0")
+ pq = pytest.importorskip("pyarrow.parquet")
+@@ -121,6 +121,29 @@ def test_schema_and_identifiers():
+     assert wire.types == [pa.decimal128(19, 2), pa.timestamp("us", "UTC")]
+ 
+ 
++def test_wide_median_decimal_protocol_to_arrow():
++    from pymysql.constants import FIELD_TYPE as ft
++
++    field = SimpleNamespace(type_code=ft.NEWDECIMAL, length=41, scale=1,
++                            flags=0, name="median", charsetnr=63)
++    cursor = SimpleNamespace(_result=SimpleNamespace(fields=[field]))
++    schema = _protocol_schema(cursor)
++    assert schema.field("median").type == pa.decimal256(39, 1)
++    batch = _rows_to_batch([(Decimal("1.5"),)], schema, schema)
++    assert batch.column(0).to_pylist() == [Decimal("1.5")]
++
++
++def test_wide_median_arrow_query(analytics):
++    with analytics.query(
++        "SELECT MEDIAN(v) AS m FROM ("
++        "SELECT CAST(1 AS DECIMAL(38,0)) AS v UNION ALL "
++        "SELECT CAST(2 AS DECIMAL(38,0)) AS v) values_to_median"
++    ) as result:
++        table = result.to_arrow()
++    assert table.schema.field("m").type == pa.decimal256(39, 1)
++    assert table.column("m").to_pylist() == [Decimal("1.5")]
++
++
+ def test_disconnected_and_invalid_inputs(tmp_path):
+     a = AnalyticsManager(SimpleNamespace(_engine=None))
+     with pytest.raises(RuntimeError):
+```
+
+**File**: `pkg/container/types/date.go` (modified, +35/-6)
+```diff
+@@ -104,10 +104,10 @@ func parseDateCastComponents(s string) (int32, uint8, uint8, bool, error) {
+ }
+ 
+ func parseDateCastComponentsWithContext(ctx context.Context, s string) (int32, uint8, uint8, bool, error) {
+-	return parseDateCastComponentsObserved(ctx, s, false)
++	return parseDateCastComponentsObserved(ctx, s, false, nil)
+ }
+ 
+-func parseDateCastComponentsObserved(ctx context.Context, s string, observe bool) (int32, uint8, uint8, bool, error) {
++func parseDateCastComponentsObserved(ctx context.Context, s string, observe bool, discardedClock *bool) (int32, uint8, uint8, bool, error) {
+ 	if isZeroDatetimeString(s) {
+ 		return 0, 0, 0, true, nil
+ 	}
+@@ -138,7 +138,7 @@ func parseDateCastComponentsObserved(ctx context.Context, s string, observe bool
+ 		var state = start
+ 		var yearLen, monthLen, dayLen, hourLen, minuteLen, secondLen int
+ 		var hour, minute, second uint8
+-		var hasTime bool
++		var hasTime, fractionNonzero bool
+ 		for i := 0; i < len(s); i++ {
+ 			switch state {
+ 			case start:
+@@ -259,6 +259,11 @@ func parseDateCastComponentsObserved(ctx context.Context, s string, observe bool
+ 				}
+ 			case msState:
+ 				if isAllDigit(s[i:]) {
++					if discardedClock != nil {
++						for j := i; j < len(s); j++ {
++							fractionNonzero = fractionNonzero || s[j] != '0'
++						}
++					}
+ 					state = end
+ 					i = len(s)
+ 				} else {
+@@ -273,6 +278,11 @@ func parseDateCastComponentsObserved(ctx context.Context, s string, observe bool
+ 		if hasTime && !ValidTimeInDay(hour, minute, second) {
+ 			return 0, 0, 0, false, temporalInvalidArg(ctx, "parsedate", s, observe)
+ 		}
++		if discardedClock != nil && hasTime {
++			// A fractional second can be smaller than one microsecond. DATE
++			// assignment must still report that it discards the clock.
++			*discardedClock = hour != 0 || minute != 0 || second != 0 || fractionNonzero
++		}
+ 	}
+ 	if year > MaxDateYear || month > MaxMonthInYear || day > 31 {
+ 		return 0, 0, 0, false, temporalInvalidArg(ctx, "parsedate", s, observe)
+@@ -334,10 +344,18 @@ func ParseDateCast(s string) (Date, error) {
+ 
+ // ParseDateCastWithContext parses with the caller's error reporting context.
+ func ParseDateCastWithContext(ctx context.Context, s string) (Date, error) {
+-	return parseDateCast(ctx, s, false)
++	return parseDateCast(ctx, s, false, nil)
++}
++
++// ParseDateCastForAssignment reports whether accepted text contains a nonzero
++// clock that a DATE destination would discard.
++func ParseDateCastForAssignment(s string) (Date, bool, error) {
++	var discardedClock bool
++	date, err := parseDateCast(defaultParseContext, s, false, &discardedClock)
++	return date, discardedClock, err
+ }
+ 
+-func parseDateCast(ctx context.Context, s string, observe bool) (Date, error) {
++func parseDateCast(ctx context.Context, s string, observe bool, discardedClock *bool) (Date, error) {
+ 	s = strings.TrimSpace(s)
+ 	if len(s) > 0 && s[0] == '0' && isZeroDatetimeString(s) {
+ 		return ZeroDate, nil
+@@ -367,10 +385,21 @@ func parseDateCast(ctx context.Context, s string, observe bool) (Date, error) {
+ 		}
+ 	}
+ 	if date, ok := parseFixedDateCast(s); ok {
++		if discardedClock != nil {
++			*discardedClock = s[11:13] != "00" || s[14:16] != "00" || s[17:19] != "00"
++			if !*discardedClock && len(s) > 19 {
++				for i := 20; i < len(s); i++ {
++					if s[i] != '0' {
++						*discardedClock = true
++						break
++					}
++				}
++			}
++		}
+ 		return date, nil
+ 	}
+ 
+-	year, month, day, isZero, err := parseDateCastComponentsObserved(ctx, s, observe)
++	year, month, day, isZero, err := parseDateCastComponentsObserved(ctx, s, observe, discardedClock)
+ 	if err != nil {
+ 		return -1, err
+ 	}
+```
+
+**File**: `pkg/container/types/date_test.go` (modified, +22/-0)
+```diff
+@@ -189,6 +189,28 @@ func TestParseDateCast(t *testing.T) {
+ 	}
+ }
+ 
++func TestParseDateCastForAssignmentReportsDiscardedClock(t *testing.T) {
++	for _, tc := range []struct {
++		value string
++		loss  bool
++	}{
++		{"2026-10-21", false},
++		{"2026-10-21 00:00:00.0000000", false},
++		{"2026.10.21 00:00:00", false},
++		{"2026-10-21 10:20:30", true},
++		{"2026-10-21 10-20-30", true},
++		{"2026-10-21 23:59:59.9999999", true},
++		{"2026-10-21 00:00:00.0000001", true},
++	} {
++		t.Run(tc.value, func(t *testing.T) {
++			date, loss, err := ParseDateCastForAssignment(tc.value)
++			require.NoError(t, err)
++			require.Equal(t, DateFromCalendar(2026, 10, 21), date)
++			require.Equal(t, tc.loss, loss)
++		})
++	}
++}
++
+ func TestParseDateCastComponents(t *testing.T) {
+ 	tests := []struct {
+ 		name    string
+```
+
+**File**: `pkg/container/types/datetime.go` (modified, +4/-4)
+```diff
+@@ -280,14 +280,14 @@ func parseDatetime(ctx context.Context, s string, scale int32, kind *TemporalStr
+ 		dtSepIdx = strings.IndexAny(s, " T")
+ 	}
+ 	if len(s) < 14 && dtSepIdx < 0 {
+-		if d, err := parseDateCast(ctx, s, observe); err == nil {
++		if d, err := parseDateCast(ctx, s, observe, nil); err == nil {
+ 			if kind != nil {
+ 				*kind = TemporalStringDate
+ 			}
+ 			return d.ToDatetime(), nil
+ 		}
+ 		if kind != nil {
+-			if y, m, d, _, err := parseDateCastComponentsObserved(ctx, strings.TrimSpace(s), observe); err == nil && observedCalendarFields(y, m, d) {
++			if y, m, d, _, err := parseDateCastComponentsObserved(ctx, strings.TrimSpace(s), observe, nil); err == nil && observedCalendarFields(y, m, d) {
+ 				*kind = TemporalStringDate
+ 			}
+ 		}
+@@ -354,13 +354,13 @@ func parseDatetime(ctx context.Context, s string, scale int32, kind *TemporalStr
+ 			if dtSepIdx == len(s)-1 {
+ 				return -1, temporalInvalidInput(ctx, s, observe)
+ 			}
+-			date, dateErr := parseDateCast(ctx, s[:dtSepIdx], observe)
++			date, dateErr := parseDateCast(ctx, s[:dtSepIdx], observe, nil)
+ 			if dateErr != nil || date == ZeroDate {
+ 				if kind != nil {
+ 					// The value parser exits before clock parsing for incomplete
+ 					// dates. Observe components and a valid surrogate clock only
+ 					// for classification; ordinary conversion keeps its error.
+-					y, m, d, _, componentErr := parseDateCastComponentsObserved(ctx, strings.TrimSpace(s[:dtSepIdx]), observe)
++					y, m, d, _, componentErr := parseDateCastComponentsObserved(ctx, strings.TrimSpace(s[:dtSepIdx]), observe, nil)
+ 					if componentErr == nil && observedCalendarFields(y, m, d) {
+ 						if _, clockErr := parseDatetime(ctx, "2000-01-01 "+s[dtSepIdx+1:], scale, nil, observe); clockErr == nil {
+ 							*kind = TemporalStringDatetime
+```
+
+**File**: `pkg/pb/plan/values_warning_row.go` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package plan
++
++import (
++	"strconv"
++	"strings"
++)
++
++const ValuesWarningOrdinalColumn = "_values_ordinal"
++const ValuesWarningOrdinalScan = "values-warning-ordinal-scan"
++const valuesWarningRowPrefix = "values-warning-row:"
++
++// ValuesWarningRowOption marks the singleton projection that owns a VALUES tuple.
++func ValuesWarningRowOption(row uint64) string {
++	return valuesWarningRowPrefix + strconv.FormatUint(row, 10)
++}
++
++// ValuesWarningRow is one-based. Zero denotes an ordinary projection.
++func (n *Node) ValuesWarningRow() uint64 {
++	if n == nil || n.NodeType != Node_PROJECT {
++		return 0
++	}
++	if value, ok := strings.CutPrefix(n.ExtraOptions, valuesWarningRowPrefix); ok {
++		row, err := strconv.ParseUint(value, 10, 32)
++		if err == nil {
++			return row
++		}
++	}
++	return 0
++}
+```
+
+**File**: `pkg/sql/colexec/aggexec/approx_percentile.go` (modified, +92/-32)
+```diff
+@@ -16,6 +16,7 @@ package aggexec
+ 
+ import (
+ 	"bytes"
++	"encoding/binary"
+ 	"io"
+ 	"math"
+ 	"math/big"
+@@ -42,6 +43,9 @@ func ApproxPercentileReturnType(args []types.Type) types.Type {
+ 	if !args[0].IsDecimal() {
+ 		return types.T_float64.ToType()
+ 	}
++	if args[0].Oid == types.T_decimal256 {
++		return args[0]
++	}
+ 	scale := args[0].Scale
+ 	if args[0].Width < approxPercentileDecimalWidth {
+ 		scale++
+@@ -50,7 +54,7 @@ func ApproxPercentileReturnType(args []types.Type) types.Type {
+ }
+ 
+ type quantileValue interface {
+-	numeric | types.Decimal64 | types.Decimal128
++	numeric | types.Decimal64 | types.Decimal128 | types.Decimal256
+ }
+ 
+ // quantileSketch is a bounded, mergeable KLL-style sketch. Each level stores
+@@ -604,7 +608,7 @@ func (s *quantileSketch[T]) decode(reader io.Reader) (_ *quantileSketch[T], retE
+ 	if err != nil || hasValue > 1 {
+ 		return nil, moerr.NewInvalidInputNoCtx("approx_percentile: invalid sketch extrema flag")
+ 	}
+-	var encodedStorage [types.Decimal128Size]byte
++	var encodedStorage [types.Decimal256Size]byte
+ 	if valueSize > len(encodedStorage) {
+ 		return nil, moerr.NewInternalErrorNoCtx(
+ 			"approx_percentile: unsupported encoded value size")
+@@ -762,13 +766,15 @@ func (fraction percentileFraction) sign() int {
+ // buffers needed by percentile rank and interpolation arithmetic. One scratch
+ // is reused for a complete executor Flush, so group cardinality cannot create
+ // a proportional Go-heap allocation stream. The buffers grow only to the
+-// immutable percentile precision plus the fixed 128-bit value/count domain.
++// immutable percentile precision plus the fixed-width value and count domains.
+ type percentileArithmeticScratch struct {
+ 	one       big.Int
+ 	two       big.Int
+ 	ten       big.Int
+ 	pow2_127  big.Int
+ 	pow2_128  big.Int
++	pow2_255  big.Int
++	pow2_256  big.Int
+ 	rank      big.Int
+ 	quotient  big.Int
+ 	remainder big.Int
+@@ -993,13 +999,63 @@ func (scratch *percentileArithmeticScratch) interpolateDecimal(
+ 	fraction percentileFraction,
+ 	scaleDelta int32,
+ ) (types.Decimal128, error) {
+-	if scaleDelta < 0 || scaleDelta > 1 {
+-		return types.Decimal128{}, moerr.NewInternalErrorNoCtx(
+-			"approx_percentile: invalid decimal result scale")
+-	}
+ 	scratch.constants()
+ 	scratch.decimal128ToInt(&scratch.left, lo)
+ 	scratch.decimal128ToInt(&scratch.right, hi)
++	if err := scratch.interpolateDecimalCoefficients(fraction, scaleDelta); err != nil {
++		return types.Decimal128{}, err
++	}
++	return scratch.decimal128FromInt(&scratch.result)
++}
++
++func (scratch *percentileArithmeticScratch) interpolateDecimal256(
++	lo, hi types.Decimal256, fraction percentileFraction, scaleDelta int32,
++) (types.Decimal256, error) {
++	scratch.constants()
++	if scratch.pow2_256.Sign() == 0 {
++		scratch.pow2_255.Lsh(&scratch.one, 255)
++		scratch.pow2_256.Lsh(&scratch.one, 256)
++	}
++	scratch.decimal256ToInt(&scratch.left, lo)
++	scratch.decimal256ToInt(&scratch.right, hi)
++	if err := scratch.interpolateDecimalCoefficients(fraction, scaleDelta); err != nil {
++		return types.Decimal256{}, err
++	}
++	value := &scratch.result
++	scratch.comparison.Neg(&scratch.pow2_255)
++	if value.Cmp(&scratch.comparison) < 0 || value.Cmp(&scratch.pow2_255) >= 0 {
++		return types.Decimal256{}, moerr.NewInvalidInputNoCtx("approx_percentile: decimal interpolation overflow")
++	}
++	if value.Sign() < 0 {
++		value.Add(value, &scratch.pow2_256)
++	}
++	var encoded [types.Decimal256Size]byte
++	value.FillBytes(encoded[:])
++	return types.Decimal256{
++		B192_255: binary.BigEndian.Uint64(encoded[0:8]),
++		B128_191: binary.BigEndian.Uint64(encoded[8:16]),
++		B64_127:  binary.BigEndian.Uint64(encoded[16:24]),
++		B0_63:    binary.BigEndian.Uint64(encoded[24:32]),
++	}, nil
++}
++
++func (scratch *percentileArithmeticScratch) decimal256ToInt(dst *big.Int, value types.Decimal256) {
++	var encoded [types.Decimal256Size]byte
++	binary.BigEndian.PutUint64(encoded[0:8], value.B192_255)
++	binary.BigEndian.PutUint64(encoded[8:16], value.B128_191)
++	binary.BigEndian.PutUint64(encoded[16:24], value.B64_127)
++	binary.BigEndian.PutUint64(encoded[24:32], value.B0_63)
++	dst.SetBytes(encoded[:])
++	if value.Sign() {
++		dst.Sub(dst, &scratch.pow2_256)
++	}
++}
++
++// interpolateDecimalCoefficients rounds once at the final result scale.
++func (scratch *percentileArithmeticScratch) interpolateDecimalCoefficients(fraction percentileFraction, scaleDelta int32) error {
++	if scaleDelta < 0 || scaleDelta > 1 {
++		return moerr.NewInternalErrorNoCtx("approx_percentile: invalid decimal result scale")
++	}
+ 	scratch.difference.Sub(&scratch.right, &scratch.left)
+ 	scratch.numerator.Mul(&scratch.left, fraction.denominator)
+ 	scratch.product.Mul(&scratch.difference, fraction.numerator)
+@@ -1018,7 +1074,7 @@ func (scratch *percentileArithmeticScratch) interpolateDecimal(
+ 			scratch.result.Add(&scratch.result, &scratch.one)
+ 		}
+ 	}
+-	return scratch.decimal128FromInt(&scratch.result)
++	return nil
+ }
+ 
+ func percentileRanks(count uint64, p *big.Rat) (lo, hi uint64, frac *big.Rat) {
+@@ 
+```
+
+**File**: `pkg/sql/colexec/aggexec/approx_percentile_test.go` (modified, +50/-0)
+```diff
+@@ -1925,3 +1925,53 @@ func TestQuantileSketchMergeEmptyParityLevelIntoEmptyDestination(t *testing.T) {
+ 	require.Equal(t, src.count, dst.count)
+ 	require.True(t, dst.hasValue)
+ }
++
++func TestApproxPercentileExec_Decimal256MergeRoundTrip(t *testing.T) {
++	mp := mpool.MustNewZero()
++	t.Cleanup(func() { mpool.DeleteMPool(mp) })
++	t.Cleanup(func() { require.Zero(t, mp.CurrNB()) })
++	typ := types.New(types.T_decimal256, 48, 1)
++	makeExec := func() AggFuncExec {
++		t.Helper()
++		exec, err := makeApproxPercentile(mp, AggIdOfApproxPercentile, false, typ)
++		require.NoError(t, err)
++		t.Cleanup(exec.Free)
++		return exec
++	}
++	fill := func(exec AggFuncExec, values ...string) {
++		t.Helper()
++		require.NoError(t, exec.GroupGrow(3))
++		require.NoError(t, exec.SetExtraInformation([]byte("0.5"), 0))
++		vec := vector.NewVec(typ)
++		defer vec.Free(mp)
++		for _, value := range values {
++			decimal, err := types.ParseDecimal256(value, typ.Width, typ.Scale)
++			require.NoError(t, err)
++			require.NoError(t, vector.AppendFixed(vec, decimal, false, mp))
++		}
++		require.NoError(t, vector.AppendFixed(vec, types.Decimal256{}, true, mp))
++		require.NoError(t, exec.BatchFill(0, []uint64{1, 2, 3}, []*vector.Vector{vec}))
++	}
++
++	left, right := makeExec(), makeExec()
++	fill(left, "1234567890123456789012345678901234567890.1", "-1234567890123456789012345678901234567890.1")
++	fill(right, "1234567890123456789012345678901234567890.2", "-1234567890123456789012345678901234567890.2")
++	var buf bytes.Buffer
++	require.NoError(t, right.SaveIntermediateResult(3, [][]uint8{{1, 1, 1}}, &buf))
++	restored := makeExec()
++	require.NoError(t, restored.UnmarshalFromReader(bytes.NewReader(buf.Bytes()), mp))
++	require.NoError(t, restored.SetExtraInformation([]byte("0.5"), 0))
++	require.NoError(t, left.BatchMerge(restored, 0, []uint64{1, 2, 3}))
++
++	result, err := left.Flush()
++	require.NoError(t, err)
++	for _, vec := range result {
++		t.Cleanup(func() { vec.Free(mp) })
++	}
++	require.Len(t, result, 1)
++	require.Equal(t, typ, *result[0].GetType())
++	values := vector.MustFixedColNoTypeCheck[types.Decimal256](result[0])
++	require.Equal(t, "1234567890123456789012345678901234567890.2", values[0].Format(typ.Scale))
++	require.Equal(t, "-1234567890123456789012345678901234567890.2", values[1].Format(typ.Scale))
++	require.True(t, result[0].IsNull(uint64(2)))
++}
+```
+
+---
+
+### Incident Patch 3: `42d1c888` (2026-11-23)
+**Commit Message**: Fix Iceberg append memory pressure handling (#32523)
 
 ## What type of PR is this?
 
@@ -3224,1464 +3222,481 @@ and fa
 
 ## Which issue(s) this PR fixes:
 
-issue #32969
+issue #32514
 
 ## What this PR does / why we need it:
 
-### Summary
-Fixes `DATA BRANCH DIFF ... OUTPUT AS` schema evolution / column lineage resolution bugs and fixes related column mapping, row ordering, `TIMESTAMP` formatting, `DECIMAL` attribute, and Unicode case-fold edge cases.
+Large Iceberg appends could exhaust the shared write memory budget even
+when the data could be written across multiple files. Rotate active
+partition writers under memory pressure while retaining hard budget
+admission, and preserve actionable memory-limit details across the DML
+error chain. Failed writes retain the existing cleanup and orphan
+ownership semantics.
 
-### Root Cause & Changes
-1. **Lineage-mapped `OUTPUT AS` DDL & base history projection (`pkg/frontend/data_branch.go`, `pkg/frontend/data_branch_hashdiff.go`, `pkg/frontend/data_branch_output.go`)**:
-   - Updated `reconcileDataBranchEndpointSchema` to index target data columns positionally (`tarDataIdx` skipping `catalog.Row_ID`), populate `lcaColNames`, `baseColNames`, and `baseColToTarIdx` accurately across altered/renamed/reordered schemas, and keep `dataBranchIndexedSpecialUpdateColIdxes` consistent via `commonutil.EqualFoldKey`.
-   - Added `excludeTargetOnly` in `dataBranchSourceColToTargetIdx` so base-side historical batches exclude target-only slo
+Validation:
+- Reviewed head `8074dfd0fbabe54b20958a3400bcf81fd9f0e7c1` against base
+`d9190ff6d01d15d60acdfcdc9acd96f807a7ab6a`. On this head, Iceberg writer
+and runtime package tests passed, including shared-budget, partition and
+factory cancellation cases; 32 focused Iceberg planner tests and five
+composite-index planner tests also passed.
+- On this head, two 4 MiB single-CN runs with MinIO/Nessie verified
+multi-file readback, a genuine budget rejection with unchanged snapshot
+and seed data, cleanup, and an indexed-source insert with 
 
-**File**: `pkg/frontend/data_branch.go` (modified, +60/-28)
+**File**: `pkg/iceberg/api/errors.go` (modified, +7/-0)
 ```diff
-@@ -32,6 +32,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/common/rscthrottler"
-+	commonutil "github.com/matrixorigin/matrixone/pkg/common/util"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
-@@ -1450,20 +1451,19 @@ func reconcileDataBranchEndpointSchema(
- 			return err
- 		}
- 		tables.def.lcaColNames = make([]string, len(tables.def.colNames))
-+		tarDataIdx := -1
- 		for _, tarCol := range tarDef.Cols {
- 			if tarCol.Name == catalog.Row_ID {
- 				continue
- 			}
-+			tarDataIdx++
- 			reachesLCA, lcaCol, redefined := dataBranchColumnReachesLCA(
- 				tarDefs, dagInfo.pathFromLCAToTarLineageOnly, tarCol,
- 			)
- 			if !reachesLCA || redefined || lcaCol == nil {
- 				continue
- 			}
--			idx := dataBranchColumnIndexByName(tables.def.colNames, tarCol.Name)
--			if idx >= 0 {
--				tables.def.lcaColNames[idx] = lcaCol.Name
--			}
-+			tables.def.lcaColNames[tarDataIdx] = lcaCol.Name
- 		}
- 		resolveBaseColumn = func(tarCol *plan.ColDef) *plan.ColDef {
- 			if baseCol := endpointColumns[strings.ToLower(tarCol.Name)]; baseCol != nil {
-@@ -1505,21 +1505,20 @@ func reconcileDataBranchEndpointSchema(
- 		tables.def.baseColToTarIdx[i] = -1
+@@ -115,6 +115,9 @@ func ErrorCategory(err error) string {
+ 	if err == nil {
+ 		return ""
  	}
- 	tables.def.baseColNames = make([]string, len(tables.def.colNames))
-+	tarDataIdx := -1
- 	for _, tarCol := range tarDef.Cols {
- 		if tarCol.Name == catalog.Row_ID {
- 			continue
- 		}
-+		tarDataIdx++
- 		baseCol := resolveBaseColumn(tarCol)
- 		if baseCol == nil {
- 			continue
- 		}
--		tarIdx := dataBranchColumnIndexByName(tables.def.colNames, tarCol.Name)
--		if tarIdx >= 0 {
--			tables.def.baseColNames[tarIdx] = baseCol.Name
--		}
-+		tables.def.baseColNames[tarDataIdx] = baseCol.Name
- 		for i, candidate := range baseDataCols {
--			if strings.EqualFold(candidate.Name, baseCol.Name) {
--				tables.def.baseColToTarIdx[i] = tarIdx
-+			if candidate == baseCol || strings.EqualFold(candidate.Name, baseCol.Name) {
-+				tables.def.baseColToTarIdx[i] = tarDataIdx
- 				break
- 			}
- 		}
-@@ -1731,6 +1730,7 @@ func checkDataBranchPrimaryKeyCompatibilityWithResolver(
- func dataBranchColumnTypeAttributesEqual(left, right plan.Type) bool {
- 	return left.Width == right.Width &&
- 		left.Scale == right.Scale &&
-+		left.NumericAttributes == right.NumericAttributes &&
- 		left.Enumvalues == right.Enumvalues &&
- 		left.AutoIncr == right.AutoIncr &&
- 		left.NotNullable == right.NotNullable
-@@ -1750,16 +1750,22 @@ func checkSchemaCompatibilityWithResolver(
- 
- 	baseVisibleColMap := make(map[string]*plan.ColDef, len(baseDef.Cols))
- 	for _, col := range baseDef.Cols {
--		if col.Name == catalog.Row_ID {
--			continue
--		}
--		name := strings.ToLower(col.Name)
- 		if isDataBranchUserVisibleColumn(col) {
--			baseVisibleColMap[name] = col
-+			nameKey := commonutil.EqualFoldKey(col.Name)
-+			if prev := baseVisibleColMap[nameKey]; prev != nil {
-+				err = moerr.NewInternalErrorNoCtxf(
-+					"schema compatibility check: base columns '%s' and '%s' have equivalent names",
-+					prev.Name, col.Name,
-+				)
-+				return
-+			}
-+			baseVisibleColMap[nameKey] = col
- 		}
- 	}
- 
- 	commonColNameSet := make(map[string]bool)
-+	matchedBaseCols := make(map[*plan.ColDef]string)
-+	tarVisibleColMap := make(map[string]*plan.ColDef, len(tarDef.Cols))
- 	dataIdx := 0
- 	for _, tarCol := range tarDef.Cols {
- 		if tarCol.Name == catalog.Row_ID {
-@@ -1771,8 +1777,28 @@ func checkSchemaCompatibilityWithResolver(
- 			continue
- 		}
- 
--		name := strings.ToLower(tarCol.Name)
- 		baseCol := resolveBaseColumn(tarCol)
-+		if baseCol != nil {
-+			if prevTarName, matched := matchedBaseCols[baseCol]; matched {
-+				err = moerr.NewInternalErrorNoCtxf(
-+					"schema compatibility check: base column '%s' matches multiple target columns ('%s' and '%s')",
-+					baseCol.Name, prevTarName, tarCol.Name,
-+				)
-+				return
-+			}
-+			matchedBaseCols[baseCol] = tarCol.Name
-+		}
-+		if isDataBranchUserVisibleColumn(tarCol) {
-+			tarNameKey := commonutil.EqualFoldKey(tarCol.Name)
-+			if prev := tarVisibleColMap[tarNameKey]; prev != nil {
-+				err = moerr.NewInternalErrorNoCtxf(
-+					"schema compatibility check: target columns '%s' and '%s' have equivalent names",
-+					prev.Name, tarCol.Name,
-+				)
-+				return
-+			}
-+			tarVisibleColMap[tarNameKey] = tarCol
-+		}
- 		if baseCol != nil {
- 			if !dataBranchGeneratedColumnsLogicallyEqual(
- 				tarCol, baseCol, tarDef, baseDef, resolveBaseColumn,
-@@ -1799,12 +1825,13 @@ func checkSchemaCompatibilityWithResolver(
- 					return
- 				}
- 				commonIdxes = append(commonIdxes, dataIdx)
--				commonColNameSet[name] = true
--				commonColNameSet[strings.ToLower(baseCol.Name)] = true
-+				baseNameKey := commonutil.EqualFoldKey(baseCol.Name)
-+				commonColNameSet[commonutil.EqualFoldKey(tarCol.Name)] = true
-+				commonColNameSet[baseNameKey] = true
- 				if isDataBranchUserVisibleColumn(tarCol) {
- 					commonVisibl
-```
-
-**File**: `pkg/frontend/data_branch_hashdiff.go` (modified, +8/-16)
-```diff
-@@ -925,21 +925,6 @@ func runLCAProbeWithReaderFallback(
- 				return executor.Result{}, err
- 			}
- 		}
--	} else if len(missedRows) == 0 {
--		for targetIdx, sourceIdx := range sourceIdxByTarget {
--			if sourceIdx < 0 {
--				nullConst := vector.NewConstNull(tblStuff.def.colTypes[targetIdx], rowCount, mp)
--				err = out.Vecs[targetIdx+1].UnionBatch(nullConst, 0, rowCount, nil, mp)
--				nullConst.Free(mp)
--				if err != nil {
--					return executor.Result{}, err
--				}
--				continue
--			}
--			if err = out.Vecs[targetIdx+1].UnionBatch(tmp.Vecs[sourceIdx], 0, rowCount, nil, mp); err != nil {
--				return executor.Result{}, err
--			}
--		}
- 	} else {
- 		for targetIdx, sourceIdx := range sourceIdxByTarget {
- 			if sourceIdx < 0 {
-@@ -951,6 +936,7 @@ func runLCAProbeWithReaderFallback(
- 				}
- 				continue
- 			}
-+			// Even an all-hit scan may return rows in a different order than orderedIdx.
- 			if err = out.Vecs[targetIdx+1].Union(tmp.Vecs[sourceIdx], sels, mp); err != nil {
- 				return executor.Result{}, err
- 			}
-@@ -3175,6 +3161,7 @@ func dataBranchSourceColToTargetIdx(
- 	sourceDef, targetDef *plan2.TableDef,
- 	targetColNames []string,
- 	targetOnlyIdxes []int,
-+	excludeTargetOnly bool,
- ) ([]int, error) {
- 	if sourceDef == nil || targetDef == nil {
- 		return nil, moerr.NewInternalErrorNoCtx("missing schema for historical data branch projection")
-@@ -3231,6 +3218,11 @@ func dataBranchSourceColToTargetIdx(
- 		if targetCol != nil {
- 			targetIdx = dataBranchColumnIndexByName(targetColNames, targetCol.Name)
- 		}
-+		_, isTargetOnly := targetOnly[targetIdx]
-+		if excludeTargetOnly && isTargetOnly {
-+			// A historical base value is absent from the current base schema.
-+			targetIdx = -1
-+		}
- 		mapping = append(mapping, targetIdx)
- 		if targetIdx < 0 {
- 			continue
-@@ -3240,7 +3232,7 @@ func dataBranchSourceColToTargetIdx(
- 		sameType := col.Typ.Id == targetCol.Typ.Id &&
- 			(dataBranchColumnTypeAttributesEqual(col.Typ, targetCol.Typ) || derivedCompositePK)
- 		if !sameType {
--			if _, isTargetOnly := targetOnly[targetIdx]; isTargetOnly {
-+			if isTargetOnly {
- 				// This column does not exist on the base endpoint and is excluded
- 				// from comparison and MERGE apply. Its old physical representation
- 				// cannot be moved into the endpoint-typed batch; project it as NULL
-```
-
-**File**: `pkg/frontend/data_branch_hashdiff_test.go` (modified, +122/-10)
-```diff
-@@ -43,6 +43,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine"
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine/readutil"
- 	"github.com/panjf2000/ants/v2"
-+	"github.com/prashantv/gostub"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -1074,6 +1075,57 @@ func TestRunLCAProbeWithReaderFallback_PrepareAndPropagateReaderError(t *testing
- 	ret.Close()
- }
- 
-+func TestRunLCAProbeWithReaderFallback_AllHitsPreserveInputOrder(t *testing.T) {
-+	ctx := context.Background()
-+	ses := newValidateSession(t)
-+	mp := ses.proc.Mp()
-+	ctrl := gomock.NewController(t)
-+	tblStuff := newTestBranchTableStuff(ctrl)
-+	lcaRel := mock_frontend.NewMockRelation(ctrl)
-+	lcaRel.EXPECT().GetTableDef(gomock.Any()).Return(newTestBranchTableDef("lca_tbl", "name"))
-+	lcaRel.EXPECT().GetTableID(gomock.Any()).Return(uint64(77)).AnyTimes()
-+	tblStuff.lcaRel = lcaRel
-+
-+	keys := batch.NewWithSize(1)
-+	defer keys.Clean(mp)
-+	keys.Vecs[0] = vector.NewVec(types.T_int64.ToType())
-+	require.NoError(t, vector.AppendFixedList(keys.Vecs[0], []int64{20, 10}, nil, mp))
-+	keys.SetRowCount(2)
-+
-+	stub := gostub.Stub(&scanSnapshotRelationByIDWithFallback, func(
-+		_ context.Context, _ string, _ *Session, _ uint64, _ types.TS, _ engine.Relation,
-+		attrs []string, typs []types.Type, _ *plan.Expr, _ int, onBatch func(*batch.Batch) error,
-+	) error {
-+		require.Equal(t, []string{"id", "name", "hidden"}, attrs)
-+		readBatch := batch.NewWithSize(len(attrs))
-+		defer readBatch.Clean(mp)
-+		for i, typ := range typs {
-+			readBatch.Vecs[i] = vector.NewVec(typ)
-+		}
-+		require.NoError(t, vector.AppendFixedList(readBatch.Vecs[0], []int64{10, 20}, nil, mp))
-+		require.NoError(t, vector.AppendBytes(readBatch.Vecs[1], []byte("ten"), false, mp))
-+		require.NoError(t, vector.AppendBytes(readBatch.Vecs[1], []byte("twenty"), false, mp))
-+		require.NoError(t, vector.AppendBytes(readBatch.Vecs[2], nil, true, mp))
-+		require.NoError(t, vector.AppendBytes(readBatch.Vecs[2], []byte("present"), false, mp))
-+		readBatch.SetRowCount(2)
-+		return onBatch(readBatch)
-+	})
-+	t.Cleanup(stub.Reset)
-+
-+	ret, err := runLCAProbeWithReaderFallback(ctx, ses, keys, tblStuff, types.BuildTS(10, 0))
-+	require.NoError(t, err)
-+	defer ret.Close()
-+	require.Len(t, ret.Batches, 1)
-+	out := ret.Batches[0]
-+	require.Equal(t, 2, out.RowCount())
-+	require.Equal(t, []int64{0, 1}, vector.MustFixedColNoTypeCheck[int64](out.Vecs[0]))
-+	require.Equal(t, []int64{20, 10}, vector.MustFixedColNoTypeCheck[int64](out.Vecs[tblStuff.def.pkColIdx+1]))
-+	require.Equal(t, "twenty", out.Vecs[2].GetStringAt(0))
-+	require.Equal(t, "ten", out.Vecs[2].GetStringAt(1))
-+	require.Equal(t, "present", out.Vecs[3].GetStringAt(0))
-+	require.True(t, out.Vecs[3].IsNull(1))
-+}
-+
- func TestHandleDelsOnLCA_EarlyPaths(t *testing.T) {
- 	ses := newValidateSession(t)
- 	ctrl := gomock.NewController(t)
-@@ -3635,7 +3687,7 @@ func TestDataBranchSourceColToTargetIdxRejectsHistoricalTypeDrift(t *testing.T)
- 	}
- 
- 	_, err := dataBranchSourceColToTargetIdx(
--		sourceDef, targetDef, []string{"a", "c"}, []int{1},
-+		sourceDef, targetDef, []string{"a", "c"}, []int{1}, false,
- 	)
- 	require.Error(t, err)
- 	require.Contains(t, err.Error(), "historical data branch column a has a different type")
-@@ -3658,7 +3710,7 @@ func TestDataBranchSourceColToTargetIdxSkipsTargetOnlyHistoricalTypeDrift(t *tes
- 	}
- 
- 	mapping, err := dataBranchSourceColToTargetIdx(
--		sourceDef, targetDef, []string{"a", "c"}, []int{1},
-+		sourceDef, targetDef, []string{"a", "c"}, []int{1}, false,
- 	)
- 	require.NoError(t, err)
- 	require.Equal(t, []int{0, -1}, mapping)
-@@ -3688,6 +3740,66 @@ func TestDataBranchSourceColToTargetIdxSkipsTargetOnlyHistoricalTypeDrift(t *tes
- 	require.Equal(t, baseline, mp.CurrNB())
- }
- 
-+func TestDataBranchSourceColToTargetIdxExcludesBaseHistoricalTargetOnlyColumns(t *testing.T) {
-+	// The historical base and the current target have the same schema, but
-+	// x and y no longer exist on the current base.
-+	def := &plan.TableDef{
-+		Cols: []*plan.ColDef{
-+			{Name: "id", ColId: 1, Seqnum: 0, Typ: plan.Type{Id: int32(types.T_int32)}},
-+			{Name: "x", ColId: 2, Seqnum: 1, Typ: plan.Type{Id: int32(types.T_int32)}},
-+			{Name: "y", ColId: 3, Seqnum: 2, Typ: plan.Type{Id: int32(types.T_int32)}},
-+			{Name: "amount", ColId: 4, Seqnum: 3, Typ: plan.Type{Id: int32(types.T_decimal64), Width: 9, Scale: 2}},
-+		},
-+		Pkey: &plan.PrimaryKeyDef{PkeyColName: "id", Names: []string{"id"}},
++	if IsMemoryLimit(err) {
++		return string(ErrPlanningLimitExceeded)
 +	}
-+	tblStuff := tableStuff{}
-+	tblStuff.def.colNames = []string{"id", "x", "y", "amount"}
-+	intType := types.T_int32.ToType()
-+	decimalType := types.New(types.T_decimal64, 9, 2)
-+	tblStuff.def.colTypes = []types.Type{intType, intType, intType, decimalType}
-+	targetOnly := []int{1, 2}
-+	targetMapping, err := dataBranchSourceColToTargetIdx(def, def, tblStuff.def.colNames, targetOnly, false)
-+	require.NoError(t, err)
-+	require.Equal(t, []int{0, 1, 2, 3}, targetMapping)
-+	require.False(t, dataBranchNeedsHistoricalProjection(targetMapping, len(tblStuff.def.colNames)))
-+	baseMapp
-```
-
-**File**: `pkg/frontend/data_branch_output.go` (modified, +121/-82)
-```diff
-@@ -37,6 +37,7 @@ import (
- 	"github.com/google/uuid"
- 	"github.com/matrixorigin/matrixone/pkg/catalog"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	commonutil "github.com/matrixorigin/matrixone/pkg/common/util"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
-@@ -470,7 +471,16 @@ func resolveProjectedIdxes(columns tree.IdentifierList, tblStuff tableStuff) ([]
- 
- 	nameToIdx := make(map[string]int, len(tblStuff.def.visibleIdxes))
- 	for _, idx := range tblStuff.def.visibleIdxes {
--		nameToIdx[strings.ToLower(tblStuff.def.colNames[idx])] = idx
-+		colName := tblStuff.def.colNames[idx]
-+		nameKey := commonutil.EqualFoldKey(colName)
-+		if prevIdx, exists := nameToIdx[nameKey]; exists && prevIdx != idx {
-+			return nil, moerr.NewInvalidInputNoCtxf(
-+				"column names %q and %q are equivalent",
-+				tblStuff.def.colNames[prevIdx],
-+				colName,
-+			)
-+		}
-+		nameToIdx[nameKey] = idx
- 	}
- 
- 	projected := make([]int, 0, len(columns)+len(tblStuff.def.pkColIdxes))
-@@ -486,7 +496,7 @@ func resolveProjectedIdxes(columns tree.IdentifierList, tblStuff tableStuff) ([]
- 	}
- 
- 	for _, col := range columns {
--		idx, ok := nameToIdx[strings.ToLower(string(col))]
-+		idx, ok := nameToIdx[commonutil.EqualFoldKey(string(col))]
- 		if !ok {
- 			if tblStuff.tarRel != nil && tblStuff.tarRel.GetTableName() != "" {
- 				return nil, moerr.NewInvalidInputNoCtxf(
-@@ -566,9 +576,19 @@ func newDiffOutputTable(
- 
- 	columnNames := make([]string, 0, len(projectedIdxes)+2)
- 	usedNames := make(map[string]struct{}, len(projectedIdxes)+2)
-+	usedColNames := make(map[string]string, len(projectedIdxes))
- 	for _, idx := range projectedIdxes {
- 		name := tblStuff.def.colNames[idx]
--		usedNames[strings.ToLower(name)] = struct{}{}
-+		nameKey := commonutil.EqualFoldKey(name)
-+		if prevName, exists := usedColNames[nameKey]; exists {
-+			return nil, moerr.NewInvalidInputNoCtxf(
-+				"column names %q and %q are equivalent",
-+				prevName,
-+				name,
-+			)
-+		}
-+		usedColNames[nameKey] = name
-+		usedNames[nameKey] = struct{}{}
- 	}
- 	columnNames = append(columnNames,
- 		nextAvailableDiffOutputColumnName(diffOutputSourceColumn, usedNames),
-@@ -592,11 +612,11 @@ func nextAvailableDiffOutputColumnName(base string, used map[string]struct{}) st
- 		if suffix > 0 {
- 			name = fmt.Sprintf("%s_%d", base, suffix)
- 		}
--		lowerName := strings.ToLower(name)
--		if _, exists := used[lowerName]; exists {
-+		nameKey := commonutil.EqualFoldKey(name)
-+		if _, exists := used[nameKey]; exists {
- 			continue
- 		}
--		used[lowerName] = struct{}{}
-+		used[nameKey] = struct{}{}
- 		return name
- 	}
- }
-@@ -615,32 +635,37 @@ func (output *diffOutputTable) createSQL(ctx context.Context, tblStuff tableStuf
- 		return "", moerr.NewInternalErrorNoCtx("DATA BRANCH DIFF OUTPUT AS target table definition is unavailable")
- 	}
- 
--	projectedNames := make([]string, len(output.projectedIdxes))
--	projectedTargetOnly := make([]bool, len(output.projectedIdxes))
--	targetOnlyIdxes := make(map[int]struct{}, len(tblStuff.def.tarOnlyIdxes))
--	for _, idx := range tblStuff.def.tarOnlyIdxes {
--		targetOnlyIdxes[idx] = struct{}{}
--	}
--	for i, idx := range output.projectedIdxes {
--		projectedNames[i] = tblStuff.def.colNames[idx]
--		_, projectedTargetOnly[i] = targetOnlyIdxes[idx]
--	}
--	outputColDefs, targetOnly, err := dataBranchOutputColumnDefs(
--		targetTableDef, baseTableDef, projectedNames, projectedTargetOnly,
--	)
--	if err != nil {
--		return "", err
--	}
--
- 	columnDefs := []string{
- 		fmt.Sprintf("%s varchar(255) default null", quoteIdentifierForSQL(output.columnNames[0])),
- 		fmt.Sprintf("%s varchar(16) default null", quoteIdentifierForSQL(output.columnNames[1])),
- 	}
--	for i, name := range projectedNames {
--		colDef := outputColDefs[i]
-+	for _, idx := range output.projectedIdxes {
-+		name := tblStuff.def.colNames[idx]
-+		targetOnly := slices.Contains(tblStuff.def.tarOnlyIdxes, idx)
-+		var colDef *plan2.ColDef
-+		if targetOnly {
-+			colDef = dataBranchColumnDefByName(targetTableDef, name)
-+			if colDef == nil {
-+				return "", moerr.NewInternalErrorNoCtxf(
-+					"DATA BRANCH source column %q is unavailable", name,
-+				)
-+			}
-+		} else {
-+			// The reconciled mapping identifies the same logical column across
-+			// physical table generations, including renamed columns.
-+			if idx < len(tblStuff.def.baseColNames) {
-+				colDef = dataBranchColumnDefByName(baseTableDef, tblStuff.def.baseColNames[idx])
-+			}
-+			if colDef == nil {
-+				return "", moerr.NewInternalErrorNoCtxf(
-+					"DATA BRANCH destination column for source column %q is unavailable", name,
-+				)
-+			}
-+		}
- 
- 		columnDef := fmt.Sprintf("%s %s", quoteIdentifierForSQL(name), plan2.FormatColType(colDef.Typ))
--		if colDef.Typ.NotNullable && !targetOnly[i] {
-+		// Base-side rows project missing target-only values as NULL.
-+		if colDef.Typ.NotNullable && !targetOnly {
- 			columnDef += " not null"
- 		} else {
- 			colu
-```
-
-**File**: `pkg/frontend/data_branch_output_test.go` (modified, +422/-0)
-```diff
-@@ -33,6 +33,7 @@ import (
- 
- 	"github.com/golang/mock/gomock"
- 	"github.com/google/uuid"
-+	"github.com/matrixorigin/matrixone/pkg/catalog"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
-@@ -48,6 +49,8 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/stage"
- 	"github.com/matrixorigin/matrixone/pkg/testutil"
- 	"github.com/matrixorigin/matrixone/pkg/util/executor"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
- 	"github.com/panjf2000/ants/v2"
- 	"github.com/stretchr/testify/require"
- )
-@@ -278,6 +281,7 @@ func TestDataBranchOutputTableSpec(t *testing.T) {
- 
- 	tblStuff := tableStuff{baseRel: baseRel, tarRel: tarRel}
- 	tblStuff.def.colNames = []string{"id", "name", "__mo_diff_source", "__mo_diff_flag"}
-+	tblStuff.def.baseColNames = tblStuff.def.colNames
- 	tblStuff.def.colTypes = []types.Type{
- 		types.T_int64.ToType(),
- 		types.T_varchar.ToType(),
-@@ -393,6 +397,271 @@ func TestDataBranchOutputTableSpec(t *testing.T) {
- 	})
- }
- 
-+func TestDataBranchOutputTableUsesLineageColumnMapping(t *testing.T) {
-+	ctx := context.Background()
-+	ctrl := gomock.NewController(t)
-+	baseRel := mock_frontend.NewMockRelation(ctrl)
-+	tarRel := mock_frontend.NewMockRelation(ctrl)
-+	baseRel.EXPECT().GetTableDef(ctx).Return(&plan.TableDef{Cols: []*plan.ColDef{
-+		{Name: "id", ColId: 1, Typ: plan.Type{Id: int32(types.T_int64), NotNullable: true}},
-+		{Name: "note", ColId: 2, Seqnum: 1, Typ: plan.Type{Id: int32(types.T_varchar), Width: 20, NotNullable: true}},
-+	}}).AnyTimes()
-+	tarRel.EXPECT().GetTableDef(ctx).Return(&plan.TableDef{Cols: []*plan.ColDef{
-+		{Name: "id", ColId: 1, Typ: plan.Type{Id: int32(types.T_int64), NotNullable: true}},
-+		{Name: "extra", ColId: 2, Seqnum: 1, Typ: plan.Type{Id: int32(types.T_int32), NotNullable: true}},
-+		{Name: "label", ColId: 3, Seqnum: 2, Typ: plan.Type{Id: int32(types.T_varchar), Width: 20, NotNullable: true}},
-+	}}).AnyTimes()
-+	tables := tableStuff{baseRel: baseRel, tarRel: tarRel}
-+	tables.def.colNames = []string{"id", "extra", "label"}
-+	tables.def.baseColNames = []string{"id", "", "note"}
-+	tables.def.tarOnlyIdxes = []int{1}
-+	output := diffOutputTable{
-+		databaseName: "db",
-+		tableName:    "result",
-+		columnNames:  []string{"__mo_diff_source", "__mo_diff_flag"},
-+	}
-+
-+	t.Run("renamed common column with a different physical identity", func(t *testing.T) {
-+		output.projectedIdxes = []int{0, 2}
-+		sql, err := output.createSQL(ctx, tables)
-+		require.NoError(t, err)
-+		require.Contains(t, sql, "`label` VARCHAR(20) not null")
-+	})
-+	t.Run("target-only column reuses a base column identity", func(t *testing.T) {
-+		output.projectedIdxes = []int{0, 1}
-+		sql, err := output.createSQL(ctx, tables)
-+		require.NoError(t, err)
-+		require.Contains(t, sql, "`extra` INT default null")
-+	})
-+	t.Run("missing common column mapping", func(t *testing.T) {
-+		missingMapping := tables
-+		missingMapping.def.baseColNames = []string{"", "", "note"}
-+		projected := output
-+		projected.projectedIdxes = []int{0, 2}
-+
-+		sql, err := projected.createSQL(ctx, missingMapping)
-+		require.ErrorContains(t, err, `destination column for source column "id"`)
-+		require.Empty(t, sql)
-+	})
-+	t.Run("missing target-only column definition", func(t *testing.T) {
-+		tarRel := mock_frontend.NewMockRelation(gomock.NewController(t))
-+		tarRel.EXPECT().GetTableDef(ctx).Return(&plan.TableDef{Cols: []*plan.ColDef{
-+			{Name: "id", ColId: 1, Typ: plan.Type{Id: int32(types.T_int64), NotNullable: true}},
-+		}})
-+		missingColumn := tables
-+		missingColumn.tarRel = tarRel
-+		projected := output
-+		projected.projectedIdxes = []int{0, 1}
-+
-+		sql, err := projected.createSQL(ctx, missingColumn)
-+		require.ErrorContains(t, err, `source column "extra" is unavailable`)
-+		require.Empty(t, sql)
-+	})
-+}
-+
-+func TestDataBranchOutputTableUnicodeFold(t *testing.T) {
-+	t.Run("lineage rejects fold equivalent target columns", func(t *testing.T) {
-+		baseDef := &plan.TableDef{Cols: []*plan.ColDef{{Name: "s"}}}
-+		tarDef := &plan.TableDef{Cols: []*plan.ColDef{{Name: "s"}, {Name: "ſ"}}}
-+		endpointColumns, err := dataBranchLineageEndpointColumns(
-+			[]*plan.TableDef{baseDef, tarDef}, []bool{false, false},
-+			[]*plan.TableDef{baseDef}, []bool{false},
-+		)
-+		require.ErrorContains(t, err, "target columns 's' and 'ſ' have equivalent names")
-+		require.Nil(t, endpointColumns)
-+	})
-+
-+	t.Run("lineage maps ordinary target columns", func(t *testing.T) {
-+		baseCol := &plan.ColDef{Name: "id"}
-+		baseDef := &plan.TableDef{Cols: []*plan.ColDef{baseCol}}
-+		tarDef := &plan.TableDef{Cols: []*plan.ColDef{{Name: "ID"}}}
-+		endpointColumns, err := dataBranchLineageEndpointColumns(
-+			[]*plan.TableDef{baseDef, tarDef}, []bool{false, false},
-+			[]*plan.TableDef{baseDef}, []bool{false},
-+		)
-+		require.NoError(t, err)
-+		require.Len(t, endpointColumns, 1)
-+		require.Same(t, baseCol, 
-```
-
-**File**: `test/distributed/cases/git4data/branch/diff/diff_output_as_altered_columns.result` (added, +318/-0)
-```diff
-@@ -0,0 +1,318 @@
-+drop database if exists test_diff_output_as_altered;
-+create database test_diff_output_as_altered;
-+use test_diff_output_as_altered;
-+create table added_base(id int primary key, note varchar(20) not null);
-+insert into added_base values (1,'one'),(2,'two');
-+data branch create table added_tar from added_base;
-+alter table added_tar add column extra int not null default 7;
-+update added_tar set note = 'target' where id = 1;
-+update added_base set note = 'base' where id = 2;
-+data branch diff added_tar against added_base columns (note,extra) output as added_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`added_diff`
-+show create table added_diff;
-+➤ Table[12,10,0]  ¦  Create Table[12,201,0]  𝄀
-+added_diff  ¦  CREATE TABLE `added_diff` (
-+  `__mo_diff_source` varchar(255) DEFAULT NULL,
-+  `__mo_diff_flag` varchar(16) DEFAULT NULL,
-+  `id` int NOT NULL,
-+  `note` varchar(20) NOT NULL,
-+  `extra` int DEFAULT NULL
-+)
-+select __mo_diff_source, __mo_diff_flag, id, note, extra from added_diff order by id;
-+➤ __mo_diff_source[12,255,0]  ¦  __mo_diff_flag[12,16,0]  ¦  id[4,32,0]  ¦  note[12,20,0]  ¦  extra[4,32,0]  𝄀
-+added_tar  ¦  UPDATE  ¦  1  ¦  target  ¦  7  𝄀
-+added_base  ¦  UPDATE  ¦  2  ¦  base  ¦  null
-+create table rename_base(id int primary key, note varchar(20) not null);
-+insert into rename_base values (1,'one'),(2,'two');
-+data branch create table rename_tar from rename_base;
-+alter table rename_tar algorithm=instant, rename column note to label;
-+update rename_tar set label = 'target' where id = 1;
-+update rename_base set note = 'base' where id = 2;
-+data branch diff rename_tar against rename_base columns (label) output as rename_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`rename_diff`
-+show create table rename_diff;
-+➤ Table[12,11,0]  ¦  Create Table[12,175,0]  𝄀
-+rename_diff  ¦  CREATE TABLE `rename_diff` (
-+  `__mo_diff_source` varchar(255) DEFAULT NULL,
-+  `__mo_diff_flag` varchar(16) DEFAULT NULL,
-+  `id` int NOT NULL,
-+  `label` varchar(20) NOT NULL
-+)
-+select __mo_diff_source, __mo_diff_flag, id, label from rename_diff order by id;
-+➤ __mo_diff_source[12,255,0]  ¦  __mo_diff_flag[12,16,0]  ¦  id[4,32,0]  ¦  label[12,20,0]  𝄀
-+rename_tar  ¦  UPDATE  ¦  1  ¦  target  𝄀
-+rename_base  ¦  UPDATE  ¦  2  ¦  base
-+create table copy_base(id int primary key, amount decimal(9,2) not null);
-+insert into copy_base values (1,10.50),(2,20.00);
-+data branch create table copy_tar from copy_base;
-+alter table copy_tar algorithm=copy, add column extra int not null default 9 first;
-+update copy_tar set amount = 11.75 where id = 1;
-+update copy_base set amount = 21.25 where id = 2;
-+data branch diff copy_tar against copy_base columns (amount,extra);
-+➤ diff copy_tar against copy_base[12,0,0]  ¦  flag[12,0,0]  ¦  id[4,32,0]  ¦  amount[3,9,2]  ¦  extra[4,32,0]  𝄀
-+copy_tar  ¦  UPDATE  ¦  1  ¦  11.75  ¦  9  𝄀
-+copy_base  ¦  UPDATE  ¦  2  ¦  21.25  ¦  null
-+data branch diff copy_tar against copy_base columns (amount,extra) output as copy_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`copy_diff`
-+show create table copy_diff;
-+➤ Table[12,9,0]  ¦  Create Table[12,203,0]  𝄀
-+copy_diff  ¦  CREATE TABLE `copy_diff` (
-+  `__mo_diff_source` varchar(255) DEFAULT NULL,
-+  `__mo_diff_flag` varchar(16) DEFAULT NULL,
-+  `id` int NOT NULL,
-+  `amount` decimal(9,2) NOT NULL,
-+  `extra` int DEFAULT NULL
-+)
-+select __mo_diff_source, __mo_diff_flag, id, amount, extra from copy_diff order by id;
-+➤ __mo_diff_source[12,255,0]  ¦  __mo_diff_flag[12,16,0]  ¦  id[4,32,0]  ¦  amount[3,9,2]  ¦  extra[4,32,0]  𝄀
-+copy_tar  ¦  UPDATE  ¦  1  ¦  11.75  ¦  9  𝄀
-+copy_base  ¦  UPDATE  ¦  2  ¦  21.25  ¦  null
-+data branch diff copy_tar against copy_base output as copy_full_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`copy_full_diff`
-+show create table copy_full_diff;
-+➤ Table[12,14,0]  ¦  Create Table[12,208,0]  𝄀
-+copy_full_diff  ¦  CREATE TABLE `copy_full_diff` (
-+  `__mo_diff_source` varchar(255) DEFAULT NULL,
-+  `__mo_diff_flag` varchar(16) DEFAULT NULL,
-+  `extra` int DEFAULT NULL,
-+  `id` int NOT NULL,
-+  `amount` decimal(9,2) NOT NULL
-+)
-+select * from copy_full_diff order by id;
-+➤ __mo_diff_source[12,255,0]  ¦  __mo_diff_flag[12,16,0]  ¦  extra[4,32,0]  ¦  id[4,32,0]  ¦  amount[3,9,2]  𝄀
-+copy_tar  ¦  UPDATE  ¦  9  ¦  1  ¦  11.75  𝄀
-+copy_base  ¦  UPDATE  ¦  null  ¦  2  ¦  21.25
-+create table base_copy_base(id int primary key, note varchar(20) not null, amount int not null);
-+insert into base_copy_base values (1,'one',10),(2,'two',20);
-+data branch create table base_copy_tar from base_copy_base;
-+alter table base_copy_base algorithm=copy, modify column note varchar(20) not null first;
-+data branch diff base_copy_tar against base_copy_base output as empty_reordered_diff;
-+➤ TABLE CREATED[12,0,0]  𝄀
-+`test_diff_output_as_altered`.`empty_reordered_diff`
-+show create table empty_reordered_diff;
-+➤ Table[12,20,0]  ¦  Create Table[12,
-```
-
-**File**: `test/distributed/cases/git4data/branch/diff/diff_output_as_altered_columns.sql` (added, +166/-0)
-```diff
-@@ -0,0 +1,166 @@
-+drop database if exists test_diff_output_as_altered;
-+create database test_diff_output_as_altered;
-+use test_diff_output_as_altered;
-+
-+-- Target-only columns retain their type and are nullable for base-side rows.
-+create table added_base(id int primary key, note varchar(20) not null);
-+insert into added_base values (1,'one'),(2,'two');
-+data branch create table added_tar from added_base;
-+alter table added_tar add column extra int not null default 7;
-+update added_tar set note = 'target' where id = 1;
-+update added_base set note = 'base' where id = 2;
-+data branch diff added_tar against added_base columns (note,extra) output as added_diff;
-+show create table added_diff;
-+select __mo_diff_source, __mo_diff_flag, id, note, extra from added_diff order by id;
-+
-+-- A renamed column materializes under the target name for both sides.
-+create table rename_base(id int primary key, note varchar(20) not null);
-+insert into rename_base values (1,'one'),(2,'two');
-+data branch create table rename_tar from rename_base;
-+alter table rename_tar algorithm=instant, rename column note to label;
-+update rename_tar set label = 'target' where id = 1;
-+update rename_base set note = 'base' where id = 2;
-+data branch diff rename_tar against rename_base columns (label) output as rename_diff;
-+show create table rename_diff;
-+select __mo_diff_source, __mo_diff_flag, id, label from rename_diff order by id;
-+
-+-- COPY ALTER with ADD FIRST reassigns physical column identities.
-+create table copy_base(id int primary key, amount decimal(9,2) not null);
-+insert into copy_base values (1,10.50),(2,20.00);
-+data branch create table copy_tar from copy_base;
-+alter table copy_tar algorithm=copy, add column extra int not null default 9 first;
-+update copy_tar set amount = 11.75 where id = 1;
-+update copy_base set amount = 21.25 where id = 2;
-+data branch diff copy_tar against copy_base columns (amount,extra);
-+data branch diff copy_tar against copy_base columns (amount,extra) output as copy_diff;
-+show create table copy_diff;
-+select __mo_diff_source, __mo_diff_flag, id, amount, extra from copy_diff order by id;
-+
-+-- The default projection follows the target's visible column order.
-+data branch diff copy_tar against copy_base output as copy_full_diff;
-+show create table copy_full_diff;
-+select * from copy_full_diff order by id;
-+
-+-- A base-side COPY ALTER reorders a common column.
-+create table base_copy_base(id int primary key, note varchar(20) not null, amount int not null);
-+insert into base_copy_base values (1,'one',10),(2,'two',20);
-+data branch create table base_copy_tar from base_copy_base;
-+alter table base_copy_base algorithm=copy, modify column note varchar(20) not null first;
-+data branch diff base_copy_tar against base_copy_base output as empty_reordered_diff;
-+show create table empty_reordered_diff;
-+select * from empty_reordered_diff;
-+update base_copy_tar set note = 'target', amount = 11 where id = 1;
-+update base_copy_base set note = 'base', amount = 21 where id = 2;
-+data branch diff base_copy_tar against base_copy_base output as base_copy_diff;
-+show create table base_copy_diff;
-+select * from base_copy_diff order by id;
-+
-+-- Base-side rows written before COPY ALTER must omit dropped columns.
-+create table drop_base(id int primary key, x int, y int, amount decimal(9,2) not null);
-+insert into drop_base values (10,11,22,10.00);
-+data branch create table drop_tar from drop_base;
-+insert into drop_base values (20,77,88,20.00);
-+update drop_base set amount = 15.25 where id = 10;
-+alter table drop_base algorithm=copy, drop column x, drop column y;
-+data branch diff drop_tar against drop_base output as drop_diff;
-+show create table drop_diff;
-+select * from drop_diff order by id;
-+
-+-- Identical COPY ALTER operations still materialize an empty result table.
-+create table empty_copy_base(id int primary key, amount int not null);
-+insert into empty_copy_base values (1,10);
-+data branch create table empty_copy_tar from empty_copy_base;
-+alter table empty_copy_base algorithm=copy, add column extra int not null default 9 first;
-+alter table empty_copy_tar algorithm=copy, add column extra int not null default 9 first;
-+data branch diff empty_copy_tar against empty_copy_base output as empty_copy_diff;
-+show create table empty_copy_diff;
-+select * from empty_copy_diff;
-+
-+-- COPY ALTER preserves the common columns' types and values in the output.
-+set @previous_time_zone = @@session.time_zone;
-+set time_zone = '+00:00';
-+create table typed_copy_base(id int primary key, wall_time datetime(6), payload json, code binary(4), event_time timestamp(6));
-+insert into typed_copy_base values
-+    (1,'2024-01-01 01:02:03.010203','{"id":1}',x'01020304','2024-01-01 04:05:06.040506'),
-+    (2,'2024-01-02 01:02:03.010203','{"id":2}',x'05060708','2024-01-02 04:05:06.040506');
-+data branch create table typed_copy_tar from typed_copy_base;
-+alter table typed_copy_tar algorithm=copy, add column extra int not null default 9 first;
-+update
-```
-
----
-
-### Incident Patch 3: `7431a275` (2026-11-22)
-**Commit Message**: fix: account for merge block capacity and avoid sparse S3 overreads (#32914)
-
-## What type of PR is this?
-
-- [x] BUG
-- [x] Improvement
-
-## Which issue(s) this PR fixes:
-
-Related to #32278 (C04 and C05; the umbrella issue remains open).
-
-## What this PR does / why we need it:
-
-- Include the table's configured block capacity in merge memory
-admission and the merge-start estimate. Existing input objects can
-contain default-sized blocks even when the current schema specifies
-fewer rows, so the estimate retains the 8,192-row floor; configurations
-above that floor increase the input-block estimate.
-- Read a small number of ordered, buffered sparse S3 misses individually
-when the existing range-amplification threshold is exceeded. Keep the
-envelope for dense, unordered, streaming, or more than four misses, and
-retain full-file cache-fill behavior. A later object-store 416 after a
-successful first range remains an unexpected EOF. Failed reads do not
-publish partially completed cache entries, and cache-update failures
-keep their existing non-fatal behavior.
-
-- Reuse the resolved bounds to bypass sparse-range classification on
-short ranges and single-entry reads. For other candidates, stop a
-
-**File**: `pkg/fileservice/io_vector.go` (modified, +43/-13)
-```diff
-@@ -106,26 +106,27 @@ func (i *IOVector) readRange() (min *int64, max *int64, readFull bool) {
- 	return
- }
- 
--func (i *IOVector) readMinimalRange() (min *int64, max *int64) {
--	min = ptrTo(int64(math.MaxInt))
--	max = ptrTo(int64(0))
--	for _, entry := range i.Entries {
-+func (i *IOVector) readMinimalRange() (*int64, *int64) {
-+	minOffset := int64(math.MaxInt)
-+	maxOffset := int64(0)
-+	readToEnd := false
-+	for pos := range i.Entries {
-+		entry := &i.Entries[pos]
- 		if entry.done {
- 			continue
- 		}
--		if entry.Offset < *min {
--			min = &entry.Offset
--		}
-+		minOffset = min(minOffset, entry.Offset)
- 		if entry.Size < 0 {
--			max = nil
-+			readToEnd = true
- 		}
--		if max != nil {
--			if end := entry.Offset + entry.Size; end > *max {
--				max = &end
--			}
-+		if !readToEnd {
-+			maxOffset = max(maxOffset, entry.Offset+entry.Size)
- 		}
- 	}
--	return
-+	if readToEnd {
-+		return &minOffset, nil
-+	}
-+	return &minOffset, &maxOffset
- }
- 
- // expensiveMinimalRangeRead reports whether collapsing the unfinished entries
-@@ -162,6 +163,35 @@ func (i *IOVector) expensiveMinimalRangeRead() (logicalBytes, spanBytes int64, e
- 		spanBytes > logicalBytes*maxMinimalRangeReadAmplification
- }
- 
-+// shouldSplitSparseRead uses the computed envelope to reject ordinary dense
-+// reads before inspecting the unfinished entries.
-+func (i *IOVector) shouldSplitSparseRead(min, max *int64) bool {
-+	if len(i.Entries) < 2 || max == nil || *min < 0 || *max <= *min ||
-+		*max-*min <= minExpensiveRangeReadSpan {
-+		return false
-+	}
-+
-+	var previousOffset int64
-+	misses := 0
-+	for pos := range i.Entries {
-+		entry := &i.Entries[pos]
-+		if entry.done {
-+			continue
-+		}
-+		if misses == 4 || entry.WriterForRead != nil || entry.ReadCloserForRead != nil ||
-+			(misses > 0 && entry.Offset < previousOffset) {
-+			return false
-+		}
-+		previousOffset = entry.Offset
-+		misses++
-+	}
-+	if misses < 2 {
-+		return false
-+	}
-+	_, _, expensive := i.expensiveMinimalRangeRead()
-+	return expensive
-+}
-+
- func (i *IOVector) size() *int64 {
- 	if len(i.Entries) == 0 {
+ 	var icebergErr *IcebergError
+ 	if stderrors.As(err, &icebergErr) && icebergErr.Code != "" {
+ 		return string(icebergErr.Code)
+@@ -126,6 +129,10 @@ func ToMOErr(ctx context.Context, err error) error {
+ 	if err == nil {
  		return nil
+ 	}
++	var memoryErr *MemoryLimitError
++	if stderrors.As(err, &memoryErr) && memoryErr != nil {
++		return moerr.NewInvalidState(ctx, memoryErr.Error())
++	}
+ 	var mo *moerr.Error
+ 	if stderrors.As(err, &mo) {
+ 		return err
 ```
 
-**File**: `pkg/fileservice/io_vector_test.go` (modified, +21/-0)
+**File**: `pkg/iceberg/api/errors_test.go` (modified, +70/-0)
 ```diff
-@@ -122,6 +122,27 @@ func TestIOVectorReadRangeDoesNotMutateReadToEndEntry(t *testing.T) {
- 	require.Equal(t, int64(-1), vector.Entries[0].Size)
- }
+@@ -17,6 +17,8 @@ package api
+ import (
+ 	"context"
+ 	"errors"
++	"math"
++	"strconv"
+ 	"strings"
+ 	"testing"
  
-+func TestIOVectorMinimalRangeBoundsAreIndependentOfEntries(t *testing.T) {
-+	vector := IOVector{Entries: []IOEntry{
-+		{Offset: 4, Size: -1, done: true},
-+		{Offset: 16, Size: 8},
-+		{Offset: 8, Size: 4},
-+	}}
-+	minOffset, maxOffset := vector.readMinimalRange()
-+	require.Equal(t, int64(8), *minOffset)
-+	require.Equal(t, int64(24), *maxOffset)
+@@ -138,3 +140,71 @@ func TestErrorCategory(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+	vector.Entries[2].Offset = 2
-+	*maxOffset = 3
-+	require.Equal(t, int64(8), *minOffset)
-+	require.Equal(t, int64(8), vector.Entries[1].Size)
-+
-+	vector.Entries[1].Size = -1
-+	minOffset, maxOffset = vector.readMinimalRange()
-+	require.Equal(t, int64(2), *minOffset)
-+	require.Nil(t, maxOffset)
++func TestMemoryLimitAcrossWrappers(t *testing.T) {
++	budget := NewDMLMemoryLimitError(12, 9, 20, MemoryReservation)
++	secret := moerr.NewInternalError(context.Background(), "secret-url-token")
++	wrapped := WrapError(ErrObjectIO, "secret-url-token", nil, errors.Join(categoryTestWrapper{budget}, secret, moerr.NewInternalError(context.Background(), "secret-url-token")))
++	for _, err := range []error{budget, wrapped, categoryTestWrapper{wrapped}} {
++		if got := ErrorCategory(err); got != string(ErrPlanningLimitExceeded) {
++			t.Fatalf("category %s", got)
++		}
++		converted := ToMOErr(context.Background(), err)
++		if !moerr.IsMoErrCode(converted, moerr.ErrInvalidState) {
++			t.Fatalf("expected concrete invalid state, got %T: %v", converted, converted)
++		}
++		for _, part := range []string{"used_bytes=12", "requested_bytes=9", "limit_bytes=20", "iceberg.write.dml_max_memory", "dml-max-memory"} {
++			if !strings.Contains(converted.Error(), part) {
++				t.Fatalf("missing %q: %v", part, converted)
++			}
++		}
++		if strings.Contains(converted.Error(), "secret-url-token") {
++			t.Fatalf("secret leaked: %v", converted)
++		}
++	}
++	ordinary := moerr.NewInternalError(context.Background(), "ordinary")
++	if ToMOErr(context.Background(), ordinary) != ordinary {
++		t.Fatal("ordinary moerr identity changed")
++	}
++	if IsMemoryLimit(moerr.NewInternalError(context.Background(), "iceberg.write.dml_max_memory limit")) {
++		t.Fatal("text must not be classified as budget error")
++	}
 +}
 +
- func TestIOVectorIOMergeKeyDoesNotMutateReadToEndEntry(t *testing.T) {
- 	vector := IOVector{
- 		FilePath: "foo",
-```
-
-**File**: `pkg/fileservice/s3_fs.go` (modified, +61/-38)
-```diff
-@@ -730,8 +730,8 @@ func (s *S3FS) Read(ctx context.Context, vector *IOVector) (err error) {
- 	}()
- 	defer finishFill()
- 	// A merge leader must not wake its waiters until caller-visible cache work
--	// has completed. Cache updates are deferred below, so register this defer
--	// first and let their later defers run before the merge is marked done.
-+	// has completed. Successful reads publish cache updates before returning,
-+	// so this defer marks the merge done only after those updates finish.
- 	// Async disk finalization is intentionally outside this generation: the
- 	// foreground read only admits that bounded work, and subsequent disk-cache
- 	// readers use their own bounded wait before falling back to object storage.
-@@ -769,30 +769,39 @@ func (s *S3FS) Read(ctx context.Context, vector *IOVector) (err error) {
- 		return err
- 	}
- 
-+	// Run queued IOVectorCache updates only after read work succeeds. Deferring
-+	// them in registration order runs them in reverse; if one panics or calls
-+	// runtime.Goexit, the remaining registered updates still run.
-+	var updatesBuf [4]func()
-+	cacheUpdates := updatesBuf[:0]
-+	finishCacheUpdates := func() error {
-+		for _, update := range cacheUpdates {
-+			defer update()
++func TestMemoryLimitEncoderContext(t *testing.T) {
++	ordinary := NewError(ErrObjectIO, "ordinary", nil)
++	dml := NewDMLMemoryLimitError(8, 3, 10, MemoryReservation)
++	for _, err := range []error{nil, ordinary, dml} {
++		if got := DMLMemoryEncoderError(err, 2, 3, 10); got != err {
++			t.Fatalf("non-encoder error identity changed: %v -> %v", err, got)
 +		}
-+		return nil
 +	}
-+
- 	for _, cache := range vector.Caches {
- 
- 		t0 := time.Now()
- 		LogEvent(ctx, str_read_vector_Caches_begin)
--		err := readCache(ctx, cache, vector)
-+		cacheReadErr := readCache(ctx, cache, vector)
- 		LogEvent(ctx, str_read_vector_Caches_end)
- 		metric.FSReadDurationReadVectorCache.Observe(time.Since(t0).Seconds())
--		if err != nil {
--			return err
-+		if cacheReadErr != nil {
-+			return cacheReadErr
- 		}
- 		if vector.allDone() {
--			return nil
-+			return finishCacheUpdates()
- 		}
- 
--		defer func() {
--			if err != nil {
--				return
--			}
-+		cacheUpdates = append(cacheUpdates, func() {
- 			t0 := time.Now()
- 			LogEvent(ctx, str_update_vector_Caches_begin)
--			err = cache.Update(ctx, vector, false)
-+			_ = cache.Update(ctx, vector, false)
- 			LogEvent(ctx, str_update_vector_Caches_end)
- 			metric.FSReadDurationUpdateVectorCache.Observe(time.Since(t0).Seconds())
--		}()
++	for _, tc := range []struct {
++		phase MemoryPhase
++		name  string
++	}{
++		{MemoryReservation, "reservation"}, {MemoryInitialAdmission, "initial-admission"},
++		{MemoryEncoderOutput, "encoder-output"}, {MemoryEncoderGrowth, "encoder-growth"},
++		{MemoryPhase(255), "reservation"},
++	} {
++		t.Run(tc.name+"_"+strconv.Itoa(int(tc.phase)), func(t *testing.T) {
++			encoder := NewEncoderMemoryLimitError(4, 5, 6, tc.phase)
++			if strings.Contains(encoder.Error(), "dml-max-memory") {
++				t.Fatal("local encoder error must not claim a DML configuration")
++			}
++			converted := DMLMemoryEncoderError(categoryTestWrapper{encoder}, 2, 3, 10)
++			for _, part := range []string{"used_bytes=9", "requested_bytes=5", "limit_bytes=10", "phase=" + tc.name, "encoder_used_bytes=4", "encoder_requested_bytes=5", "encoder_limit_bytes=6", "encoder_phase=" + tc.name, "dml-max-memory"} {
++				if !strings.Contains(converted.Error(), part) {
++					t.Fatalf("missing %q: %v", part, converted)
++				}
++			}
 +		})
- 	}
- 
- 	mayReadMemoryCache := vector.Policy&SkipMemoryCacheReads == 0
-@@ -804,26 +813,23 @@ read_memory_cache:
- 
- 		t0 := time.Now()
- 		LogEvent(ctx, str_read_memory_cache_Caches_begin)
--		err := readCache(ctx, s.memCache, vector)
-+		cacheReadErr := readCache(ctx, s.memCache, vector)
- 		LogEvent(ctx, str_read_memory_cache_Caches_end)
- 		metric.FSReadDurationReadMemoryCache.Observe(time.Since(t0).Seconds())
--		if err != nil {
--			return err
-+		if cacheReadErr != nil {
-+			return cacheReadErr
- 		}
- 		if vector.allDone() {
--			return nil
-+			return finishCacheUpdates()
- 		}
- 
--		defer func() {
--			if err != nil {
--				return
--			}
-+		cacheUpdates = append(cacheUpdates, func() {
- 			t0 := time.Now()
- 			LogEvent(ctx, str_update_memory_cache_begin)
--			err = s.memCache.Update(ctx, vector, s.asyncUpdate)
-+			_ = s.memCache.Update(ctx, vector, s.asyncUpdate)
- 			LogEvent(ctx, str_update_memory_cache_end)
- 			metric.FSReadDurationUpdateMemoryCache.Observe(time.Since(t0).Seconds())
--		}()
-+		})
- 	}
- 
- read_disk_cache:
-@@ -845,7 +851,7 @@ read_disk_cache:
- 				return err
- 			}
- 			if vector.allDone() {
--				return nil
-+				return finishCacheUpdates()
- 			}
- 			if fillTicket != nil && !fillTicket.leader {
- 				// This request did not receive an admitted disk-cache fill. Do
-@@ -863,12 +869,12 @@ read_disk_cache:
- 		for i, entry := range vector.Entries {
- 			undoneBefore[i] = !entry.done
- 		}
--		err := readCache(ctx, s.diskCache, vector)
-+		cacheReadErr := readCache(ctx, s.diskCache, vector)
- 		LogEvent(ctx, str_read_disk_cache_Caches_end)
- 		metric.FSReadDurationReadDiskCache.Observe(time.Since(t0).Seconds())
--		if err != nil {
-+		if cacheReadErr != nil {
- 			finishFill()
--			return err
-+			return cacheReadErr
- 		}
- 		// Count bytes actually read from disk cache (entries that became done and from disk cache)
- 		var actualDiskReadBytes int64
-@@ -884,21 +890,18 @@ read_disk_cache:
- 			})
- 		}
- 		if vector.allDone() {
--			return nil
-+			return finishCacheUpdates()
- 		}
- 
- 		// try to cache IOEntry if not caching the full file
- 		if vector.Policy.CacheIOEntry() {
--			defer func() {
--				if err != nil {
--					return
--				}
-+			cacheUpdates = append(cacheUpdates, func() {
- 				t0 := time.Now()
- 				LogEvent(ctx, str_update_disk_cache_Caches_begin)
--				err = s.diskCache.Update(ctx, vector, s.asyncUpdate)
-+				_ = s.diskCache.Update(ctx, vector, s.asyncUpdate)
- 				LogEvent(ctx, str_update_disk_cache_Caches_end)
- 				metric.FSReadDurationUpdateDiskCache.Observe(time.Since(t0).Seconds())
--			}()
-+			})
- 		}
- 		finishFill()
- 
-@@ -914,7 +917,7 @@ read_disk_cache:
- 			return err
- 		}
- 		if vector.allDone() {
--			return nil
-+			return finishCacheUpdates()
- 		}
- 	}
- 
-@@ -1053,7 +1056,7 @@ read_s3:
- 	if forcePerEntryRangeRead {
- 		err = s.readEntriesIndividually(ctx, vector)
- 	} else {
--		err = s.read(ctx, vector, forceMinimalRangeRead)
-+
++	}
++	for _, tc := range []struct{ a, b, want int64 }{
++		{2, 3, 5}, {math.MaxInt64, 1, math.MaxInt64}, {-1, 1, math.MaxInt64}, {1, -1, math.MaxInt64},
++	} {
++		if got := memoryAdd(tc.a, tc.b); got != tc.want {
++			t.Fatalf("memoryAdd(%d, %d) = %d, want %d", tc.a, tc.b, got, tc.want)
++		}
++	}
++}
 ```
 
-**File**: `pkg/fileservice/s3_fs_test.go` (modified, +919/-0)
+**File**: `pkg/iceberg/api/memory_error.go` (added, +88/-0)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 	"io"
- 	"os"
- 	"path"
-+	"runtime"
- 	"strings"
- 	"sync"
- 	"sync/atomic"
-@@ -3380,3 +3381,921 @@ func TestS3FSReadFullObjectToDiskCacheStreamingBackgroundEndsOnClose(t *testing.
- 		t.Fatal("the download outlived the disk cache")
+@@ -0,0 +1,88 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package api
++
++import (
++	"errors"
++	"fmt"
++	"math"
++)
++
++// MemoryPhase identifies a fixed accounting operation, never untrusted text.
++type MemoryPhase uint8
++
++const (
++	MemoryReservation MemoryPhase = iota
++	MemoryInitialAdmission
++	MemoryEncoderOutput
++	MemoryEncoderGrowth
++)
++
++func (p MemoryPhase) String() string {
++	switch p {
++	case MemoryInitialAdmission:
++		return "initial-admission"
++	case MemoryEncoderOutput:
++		return "encoder-output"
++	case MemoryEncoderGrowth:
++		return "encoder-growth"
++	default:
++		return "reservation"
++	}
++}
++
++// MemoryLimitError contains only accounting numbers and fixed identifiers.
++type MemoryLimitError struct {
++	Used, Requested, Limit int64
++	Phase                  MemoryPhase
++	DML                    bool
++	Encoder                *MemoryLimitError
++}
++
++func NewDMLMemoryLimitError(used, requested, limit int64, phase MemoryPhase) *MemoryLimitError {
++	return &MemoryLimitError{Used: used, Requested: requested, Limit: limit, Phase: phase, DML: true}
++}
++func NewEncoderMemoryLimitError(used, requested, limit int64, phase MemoryPhase) *MemoryLimitError {
++	return &MemoryLimitError{Used: used, Requested: requested, Limit: limit, Phase: phase}
++}
++func (e *MemoryLimitError) Error() string {
++	msg := fmt.Sprintf("%s: Iceberg memory limit exceeded [used_bytes=%d, requested_bytes=%d, limit_bytes=%d, phase=%s", ErrPlanningLimitExceeded, e.Used, e.Requested, e.Limit, e.Phase)
++	if e.DML {
++		msg += ", config=iceberg.write.dml_max_memory, toml=dml-max-memory"
++	}
++	if e.Encoder != nil {
++		msg += fmt.Sprintf(", encoder_used_bytes=%d, encoder_requested_bytes=%d, encoder_limit_bytes=%d, encoder_phase=%s", e.Encoder.Used, e.Encoder.Requested, e.Encoder.Limit, e.Encoder.Phase)
++	}
++	return msg + "]"
++}
++func IsMemoryLimit(err error) bool { var e *MemoryLimitError; return errors.As(err, &e) && e != nil }
++
++// DMLMemoryEncoderError relates local encoder accounting to the enclosing budget.
++func DMLMemoryEncoderError(err error, used, scratch, limit int64) error {
++	var encoder *MemoryLimitError
++	if !errors.As(err, &encoder) || encoder == nil || encoder.DML {
++		return err
++	}
++	e := NewDMLMemoryLimitError(memoryAdd(memoryAdd(used, scratch), encoder.Used), encoder.Requested, limit, encoder.Phase)
++	e.Encoder = encoder
++	return e
++}
++
++func memoryAdd(a, b int64) int64 {
++	if a < 0 || b < 0 || a > math.MaxInt64-b {
++		return math.MaxInt64
++	}
++	return a + b
++}
+```
+
+**File**: `pkg/iceberg/dml/materialize.go` (modified, +7/-7)
+```diff
+@@ -624,7 +624,7 @@ func (b *manifestMaterializeBudget) encodeManifest(entries []api.ManifestEntry,
  	}
+ 	payload, err := metadata.EncodeManifestBounded(entries, opts, remaining)
+ 	if err != nil {
+-		return nil, err
++		return nil, api.DMLMemoryEncoderError(err, b.used, scratch, b.limit)
+ 	}
+ 	if err := b.reserve(int64(cap(payload))); err != nil {
+ 		return nil, err
+@@ -643,7 +643,7 @@ func (b *manifestMaterializeBudget) encodeManifestList(manifests []api.ManifestF
+ 	}
+ 	payload, err := metadata.EncodeManifestListBounded(manifests, opts, remaining)
+ 	if err != nil {
+-		return nil, err
++		return nil, api.DMLMemoryEncoderError(err, b.used, scratch, b.limit)
+ 	}
+ 	if err := b.reserve(int64(cap(payload))); err != nil {
+ 		return nil, err
+@@ -697,11 +697,11 @@ func estimatePreservedDerivationMemory(req ManifestMaterializeRequest, dataEntri
+ }
+ 
+ func dmlMaterializeMemoryExceeded(used, requested, limit int64) error {
+-	return api.NewError(api.ErrPlanningLimitExceeded, "Iceberg DML manifest materialization memory limit exceeded", map[string]string{
+-		"used_bytes":      strconv.FormatInt(used, 10),
+-		"requested_bytes": strconv.FormatInt(requested, 10),
+-		"limit_bytes":     strconv.FormatInt(limit, 10),
+-	})
++	phase := api.MemoryReservation
++	if requested == 0 {
++		phase = api.MemoryInitialAdmission
++	}
++	return api.NewDMLMemoryLimitError(used, requested, limit, phase)
+ }
+ 
+ func saturatingMaterializeAdd(left, right int64) int64 {
+```
+
+**File**: `pkg/iceberg/dml/workflow_test.go` (modified, +54/-0)
+```diff
+@@ -24,6 +24,7 @@ import (
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/iceberg/api"
+ 	icebergio "github.com/matrixorigin/matrixone/pkg/iceberg/io"
++	"github.com/matrixorigin/matrixone/pkg/iceberg/metadata"
+ 	"github.com/matrixorigin/matrixone/pkg/iceberg/model"
+ 	icebergwrite "github.com/matrixorigin/matrixone/pkg/iceberg/write"
+ )
+@@ -518,3 +519,56 @@ func (r *fakeDMLMetricsReporter) ReportMetrics(ctx context.Context, req api.Metr
+ 	r.reports = append(r.reports, req)
+ 	return r.err
  }
 +
-+func TestS3FSOrdinarySparseRangeRead(t *testing.T) {
++func TestCommitWorkflowRecordsMaterializeBudgetFailure(t *testing.T) {
++	stream, err := (NativePlanner{}).PlanUpdate(context.Background(), UpdateRequest{
++		Base: testBase(), Mode: TableModeMergeOnRead,
++		Targets:          []UpdateTarget{{DeleteTarget: DeleteTarget{DataFile: dataFile("s3://warehouse/orders/data-1.parquet"), MatchedRows: 2, EqualityFieldIDs: []int{1}, PredicateStable: true, EqualityDeleteFile: deleteFile("s3://warehouse/orders/delete-1.parquet")}}},
++		AppendedDataFile: []api.DataFile{dataFile("s3://warehouse/orders/replacement-1.parquet")},
++	})
++	require.NoError(t, err)
++	audit := &fakeDMLAuditRecorder{}
++	committer := &fakeDMLCommitter{}
++	_, err = (CommitWorkflow{ManifestWriter: &fakeManifestObjectWriter{}, Committer: committer, AuditRecorder: audit}).CommitDML(context.Background(), withDMLTestWorkflowMetadata(CommitWorkflowRequest{
++		Catalog: api.CatalogRequest{Catalog: model.Catalog{AccountID: 7, CatalogID: 42}}, Stream: *stream,
++		SnapshotID: 99, SequenceNumber: 12, DataManifestPath: "s3://warehouse/orders/metadata/data.avro", DeleteManifestPath: "s3://warehouse/orders/metadata/delete.avro", ManifestListPath: "s3://warehouse/orders/metadata/list.avro", TableLocation: "s3://warehouse/orders", MaxMemoryBytes: 1,
++	}, 2))
++	require.Error(t, err)
++	require.True(t, api.IsMemoryLimit(err))
++	require.Empty(t, committer.requests)
++	require.Len(t, audit.audits, 1)
++	require.Equal(t, string(api.ErrPlanningLimitExceeded), audit.audits[0].ErrorCategory)
++}
++
++func TestManifestEncoderBudgetContext(t *testing.T) {
++	entries := []api.ManifestEntry{}
++	manifests := []api.ManifestFile{}
 +	for _, tc := range []struct {
 +		name    string
-+		offsets []int64
-+		reads   int
++		scratch int64
++		encode  func(*manifestMaterializeBudget) error
 +	}{
-+		{"sparse", []int64{0, 16 << 20}, 2},
-+		{"adjacent", []int64{0, 4096}, 1},
-+		{"exact span threshold", []int64{0, minExpensiveRangeReadSpan - 4096}, 1},
-+		{"above span threshold", []int64{0, minExpensiveRangeReadSpan - 4095}, 2},
-+		{"out of order", []int64{16 << 20, 0}, 1},
-+		{"four sparse", []int64{0, 16 << 20, 32 << 20, 48 << 20}, 4},
-+		{"five sparse", []int64{0, 16 << 20, 32 << 20, 48 << 20, 64 << 20}, 1},
++		{"manifest", metadata.ManifestEntriesMemoryWeight(0, entries), func(b *manifestMaterializeBudget) error {
++			_, err := b.encodeManifest(entries, metadata.ManifestWriteOptions{FormatVersion: 2, Schema: api.Schema{Fields: []api.SchemaField{{ID: 1, Name: "id", Type: api.IcebergType{Kind: api.TypeLong}}}}, Content: api.ManifestContentData})
++			return err
++		}},
++		{"list", metadata.ManifestListMemoryWeight(0, manifests), func(b *manifestMaterializeBudget) error {
++			_, err := b.encodeManifestList(manifests, metadata.ManifestListWriteOptions{FormatVersion: 2, SnapshotID: 1})
++			return err
++		}},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			ctx := t.Context()
-+			fs, err := NewS3FS(ctx, ObjectStorageArguments{Name: "sparse", Endpoint: "disk", Bucket: t.TempDir()}, CacheConfig{}, nil, true, false)
-+			require.NoError(t, err)
-+			t.Cleanup(func() { fs.Close(context.Background()) })
-+			storage := &generatedRangeObjectStorage{}
-+			fs.storage = storage
-+			vector := &IOVector{FilePath: "foo", Policy: SkipAllCache}
-+			for _, offset := range tc.offsets {
-+				vector.Entries = append(vector.Entries, IOEntry{Offset: offset, Size: 4096})
-+			}
-+			t.Cleanup(vector.Release)
-+			require.NoError(t, fs.Read(ctx, vector))
-+			reads := storage.readRanges()
-+			require.Len(t, reads, tc.reads)
-+			if tc.reads > 1 {
-+				for i, read := range reads {
-+					require.Equal(t, tc.offsets[i], *read.min)
-+					require.Equal(t, tc.offsets[i]+4096, *read.max)
-+				}
-+			}
-+			for _, entry := range vector.Entries {
-+				require.Equal(t, make([]byte, 4096), entry.Data)
-+			}
++			b := &manifestMaterializeBudget{used: 10, limit: 10 + tc.scratch + 1}
++			err := tc.encode(b)
++			var e *api.MemoryLimitError
++			require.ErrorAs(t, err, &e)
++			require.True(t, e.DML)
++			require.Equal(t, b.limit, e.Limit)
++			require.NotNil(t, e.Encoder)
++			require.EqualValues(t, 1, e.Encoder.Limit)
++			require.Equal(t, int64(10)+tc.scratch+e.Encoder.Used, e.Used)
++			require.Equal(t, e.Encoder.Requested, e.Requested)
++			require.Positive(t, e.Requested)
 +		})
 +	}
 +}
-+
-+var errTestHDFSSeek = errors.New("test HDFS seek beyond EOF")
-+
-+// hdfsSeekReader models the bounds check in colinmarc/hdfs FileReader.Seek.
-+type hdfsSeekReader struct {
-+	size, offset int64
-+}
-+
-+func (r *hdfsSeekReader) Seek(offset int64, whence int) (int64, error) {
-+	if whence != io.SeekStart || offset < 0 || offset > r.size {
-+		return r.offset, errTestHDFSSeek
-+	}
-+	r.offset = offset
-+	return offset, nil
-+}
-+
-+func (r *hdfsSeekReader) Read(p []byte) (int, error) {
-+	if r.offset == r.size {
-+		return 0, io.EOF
-+	}
-+	n := int(min(int64(len(p)), r.size-r.offset))
-+	clear(p[:n])
-+	r.offset += int64(n)
-+	return n, nil
-+}
-+
-+type hdfsSeekStorage struct {
-+	dummyObjectStorage
-+	size   int64
-+	ranges [][2]int64
-+	closes int
-+}
-+
-+func (s *hdfsSeekStorage) Read(_ context.Context, key string, min, max *int64) (io.ReadCloser, error) {
-+	s.ranges = append(s.ranges, [2]int64{*min, *max})
-+	reader, err := readObjectRange(&hdfsSeekReader{size: s.size}, key, min, max)
-+	if err != nil {
-+		s.closes++ // HDFS.Read closes its opened file on an error.
-+		return nil, err
-+	}
-+	return &readCloser{r: reader, closeFunc: func() error { s.closes++; return nil }}, nil
-+}
-+
-+func TestS3FSOrdinarySparseHDFSSeekBounds(t *testing.T) {
-+	const far = int64(16 << 20)
-+	for _, tc := range []struct {
-+		name       string
-+		hdfs       bool
-+		size       int64
-+		offsets    [2]int64
-+		wantRanges [][2]int64
-+		wantErr    error
-+		short      bool
-+	}{
-+		{"later beyond EOF", true, 8192, [2]int64{0, far}, [][2]int64{{0, far + 4096}}, nil, true},
-+		{"first beyond EOF", true, 8192, [2]int64{far, 2 * far}, [][2]int64{{far, 2*far + 4096}}, errTestHDFSSeek, false},
-+		{"first at EOF", true, 8192, [2]int64{8192, far}, [][2]int64{{8192, far + 4096}}, nil, true},
-+		{"success", true, far + 4096, [2]int64{0, far}, [][2]int64{{0, far + 4096}}, nil, false},
-+		{"non-HDFS control", false, 8192, [2]int64{0, far}, [][2]int64{{0, 4096}, {far, far + 4096}}, errTestHDFSSeek, false},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx := t.Context()
-+			fs, err := NewS3FS(ctx, ObjectStorageArguments{Name: "sparse", Endpoint: "disk", Bucket: t.TempDir()}, CacheConfig{}, nil, true, false)
-+			require.NoError(t, err)
-+			t.Cleanup(func() { fs.Close(context.Background()) })
-+			storage := &hdfsSeekStorage{size: tc.size}
-+			fs.storage = storage
-+			if tc.hdfs {
-+				fs.rawStorage = &HDFS{}
-+			} else {
-+				fs.rawStorage = storage
-+			}
-+			cache := &publicationVectorCache{}
-+			vector := &IOVector{FilePath: "foo", Policy: SkipAllCache, Caches: []IOVectorCache{cache}, Entries: []IOEntry{
-+				{Offset: tc.offsets[0], Size: 4096}, {Offset: tc.offsets[1], Size: 4096},
-+			}}
-+			t.Cleanup(vector.Release)
-+			err = fs.Read(ctx, vector)
-+			switch {
-+			case tc.short:
-+				require.True(t, moerr.IsMoErrCode(err, moerr.ErrUnexpectedEOF), "%v", err)
-+			case tc.wantErr != nil:
-+				require.ErrorIs(t, err, tc.wantErr)
-+			default:
-+				require.NoError(t, err)
-+				for _, entry := range vector.Entries {
-+					require.Equal(t, make([]byte, 4096), entry.Data)
-+				}
-+			}
-+			require.Equal(t, tc.wantRanges, storage.ranges)
-+			require.Equal(t, len(tc.wantRanges), storage.closes)
-+			if 
 ```
 
-**File**: `pkg/vm/engine/tae/catalog/tableForMerge.go` (modified, +10/-0)
+**File**: `pkg/iceberg/metadata/avro_writer.go` (modified, +13/-15)
 ```diff
-@@ -75,6 +75,7 @@ type MergeTable interface {
- 	IterDataItem() iter.Seq[MergeDataItem]
- 	IterTombstoneItem() iter.Seq[MergeTombstoneItem]
- 	GetNameDesc() string
-+	GetBlockMaxRows() uint32
- 	ID() uint64
- 	HasDropCommitted() bool
- 
-@@ -167,6 +168,15 @@ func (t TNMergeTable) ID() uint64 {
- 	return t.TableEntry.ID
- }
- 
-+// GetBlockMaxRows returns the configured data and tombstone block capacity.
-+func (t TNMergeTable) GetBlockMaxRows() uint32 {
-+	schema := t.GetLastestSchema(false)
-+	if schema == nil || schema.Extra == nil {
-+		return 0
-+	}
-+	return schema.Extra.BlockMaxRows
-+}
-+
- func (t TNMergeTable) IsSpecialBigTable() bool {
- 	name := t.GetLastestSchema(false).Name
- 	dbName := t.GetDB().GetName()
-```
-
-**File**: `pkg/vm/engine/tae/db/merge/reservation_accounting_probe_test.go` (modified, +9/-6)
-```diff
-@@ -166,7 +166,7 @@ func runMergeReservationAccountingProbe(t *testing.T, originSize uint32, checkGl
- 					}
- 					// Estimate uses metadata only; the size never allocates a
- 					// corresponding physical object or merge input payload.
--					estimate := int64(mergesort.EstimateMergeSize(IterStats(table.stats[:3])))
-+					estimate := int64(mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[:3]), table.GetBlockMaxRows()))
- 					require.Positive(t, estimate)
- 					if !checkGlobalGuard {
- 						require.Less(t, estimate, int64(1024))
-@@ -289,8 +289,8 @@ func TestMergeReservationContinuesAfterDenial(t *testing.T) {
- 			table.stats = append(table.stats, newTestObjectStats(t, lo, lo+1, size, 2, 1, nil, 0))
- 		}
+@@ -128,8 +128,8 @@ func EncodeManifestList(manifests []api.ManifestFile, opts ManifestListWriteOpti
+ func EncodeManifestListBounded(manifests []api.ManifestFile, opts ManifestListWriteOptions, maxBytes int64) ([]byte, error) {
+ 	buf := boundedAvroOutput{maxBytes: maxBytes}
+ 	err := WriteManifestList(&buf, manifests, opts)
+-	if buf.exceeded {
+-		return nil, avroOutputLimitExceeded(maxBytes)
++	if buf.failure != nil {
++		return nil, buf.failure
  	}
--	large := int64(mergesort.EstimateMergeSize(IterStats(table.stats[:3])))
--	small := int64(mergesort.EstimateMergeSize(IterStats(table.stats[6:])))
-+	large := int64(mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[:3]), table.GetBlockMaxRows()))
-+	small := int64(mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[6:]), table.GetBlockMaxRows()))
- 	require.Less(t, small, large/2)
- 	clock := newFakeClock()
- 	rc := &reservationProbeRSC{limit: large * 3 / 2}
-@@ -347,14 +347,17 @@ func (e *inlineCompletionExecutor) ExecuteFor(_ catalog.MergeTable, task mergeTa
+ 	if err != nil {
+ 		return nil, err
+@@ -178,8 +178,8 @@ func EncodeManifest(entries []api.ManifestEntry, opts ManifestWriteOptions) ([]b
+ func EncodeManifestBounded(entries []api.ManifestEntry, opts ManifestWriteOptions, maxBytes int64) ([]byte, error) {
+ 	buf := boundedAvroOutput{maxBytes: maxBytes}
+ 	err := WriteManifest(&buf, entries, opts)
+-	if buf.exceeded {
+-		return nil, avroOutputLimitExceeded(maxBytes)
++	if buf.failure != nil {
++		return nil, buf.failure
+ 	}
+ 	if err != nil {
+ 		return nil, err
+@@ -190,13 +190,15 @@ func EncodeManifestBounded(entries []api.ManifestEntry, opts ManifestWriteOption
+ type boundedAvroOutput struct {
+ 	data     []byte
+ 	maxBytes int64
+-	exceeded bool
++	failure  *api.MemoryLimitError
  }
  
- func TestMergeReservationInlineCompletion(t *testing.T) {
--	table := &reservationProbeTable{MergeTable: promotionTable(8903)}
-+	const blockRows = uint32(16384)
-+	table := &reservationProbeTable{MergeTable: mergeTableWithBlockRows(8903, blockRows)}
- 	for cluster := range 3 {
- 		for range 3 {
- 			lo := int32(cluster*100 + 1)
--			table.stats = append(table.stats, newTestObjectStats(t, lo, lo+1, 64*common.Const1MBytes, 2, 1, nil, 0))
-+			table.stats = append(table.stats, newTestObjectStats(t, lo, lo+1, 64*common.Const1MBytes, blockRows, 1, nil, 0))
- 		}
- 	}
--	size := int64(mergesort.EstimateMergeSize(IterStats(table.stats[:3])))
-+	size := int64(mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[:3]), table.GetBlockMaxRows()))
-+	defaultSize := mergesort.EstimateMergeSizeWithBlockRows(IterStats(table.stats[:3]), objectio.BlockMaxRows)
-+	require.Greater(t, size, int64(defaultSize))
- 	rc := &reservationProbeRSC{limit: size * 2}
- 	executor := &inlineCompletionExecutor{rc: rc}
- 	clock := newFakeClock()
-```
-
-**File**: `pkg/vm/engine/tae/db/merge/scheduler.go` (modified, +7/-6)
-```diff
-@@ -1410,7 +1410,7 @@ func (p *launchPad) gatherTombstoneTasks(ctx context.Context,
- 	rc rscthrottler.RSCThrottler,
- ) {
- 	tasks := GatherTombstoneTasks(ctx, IterStats(p.tombstoneStats), tombstoneOpts, p.lastMergeTime)
--	p.revisedResults = append(p.revisedResults, controlTaskMemInPlace(tasks, rc, 1)...)
-+	p.revisedResults = append(p.revisedResults, controlTaskMemInPlace(tasks, rc, 1, p.table.GetBlockMaxRows())...)
- }
- 
- func (p *launchPad) gatherLnTasks(ctx context.Context,
-@@ -1439,7 +1439,7 @@ func (p *launchPad) gatherLnTasks(ctx context.Context,
- 		)
- 		if err == nil {
- 			p.revisedResults = append(p.revisedResults,
--				controlTaskMemInPlace(overlapTasks, rc, 2)...)
-+				controlTaskMemInPlace(overlapTasks, rc, 2, p.table.GetBlockMaxRows())...)
- 		}
- 	}
- }
-@@ -1457,7 +1457,7 @@ func (p *launchPad) gatherL0Tasks(ctx context.Context,
- 		zap.Int("tasks", len(l0Tasks)),
- 	)
- 	p.revisedResults = append(p.revisedResults,
--		controlTaskMemInPlace(l0Tasks, rc, 2)...)
-+		controlTaskMemInPlace(l0Tasks, rc, 2, p.table.GetBlockMaxRows())...)
- }
- 
- func (p *launchPad) gatherByTrigger(ctx context.Context,
-@@ -1493,7 +1493,7 @@ func (p *launchPad) gatherByTrigger(ctx context.Context,
- 	}
- 	if len(trigger.assigns) > 0 {
- 		p.revisedResults = append(p.revisedResults,
--			controlTaskMemInPlace(trigger.assigns, rc, 1)...)
-+			controlTaskMemInPlace(trigger.assigns, rc, 1, p.table.GetBlockMaxRows())...)
- 	}
- 	return p.revisedResults
- }
-@@ -1510,6 +1510,7 @@ func controlTaskMemInPlace(
- 	tasks []mergeTask,
- 	rc rscthrottler.RSCThrottler,
- 	deleteLessThan int,
-+	blockRows uint32,
- ) []mergeTask {
- 
- 	if len(tasks) == 0 {
-@@ -1518,8 +1519,8 @@ func controlTaskMemInPlace(
- 	for i := range tasks {
- 		task := &tasks[i]
- 		original := len(task.objs)
--		estSize := mergesort.EstimateMergeSize(IterStats(task.objs))
--		for ; !resourceAvailable(int64(estSize), rc) && len(task.objs) > 1; estSize = mergesort.EstimateMergeSize(IterStats(task.objs)) {
-+		estSize := mergesort.EstimateMergeSizeWithBlockRows(IterStats(task.objs), blockRows)
-+		for ; !resourceAvailable(int64(estSize), rc) && len(task.objs) > 1; estSize = mergesort.EstimateMergeSizeWithBlockRows(IterStats(task.objs), blockRows) {
- 			task.objs = task.objs[:len(task.objs)/2]
- 		}
- 		if original-len(task.objs) > 0 {
-```
-
-**File**: `pkg/vm/engine/tae/db/merge/scheduler_test.go` (modified, +75/-0)
-```diff
-@@ -1033,3 +1033,78 @@ func TestXxx(t *testing.T) {
- 	now := time.Now().AddDate(0, 0, 3)
- 	t.Log(now.UnixNano(), " // ", now)
- }
-+
-+func mergeTableWithBlockRows(id uint64, rows uint32) catalog.MergeTable {
-+	table := promotionTable(id).(catalog.TNMergeTable)
-+	table.GetLastestSchema(false).Extra.BlockMaxRows = rows
-+	return table
-+}
-+
-+func TestLaunchPadUsesTableBlockMaxRows(t *testing.T) {
-+	objects := []*objectio.ObjectStats{
-+		newTestObjectStats(t, 1, 2, 16<<20, 16384, 1, nil, 0),
-+		newTestObjectStats(t, 3, 4, 16<<20, 16384, 1, nil, 0),
-+		newTestObjectStats(t, 5, 6, 16<<20, 16384, 1, nil, 0),
-+		newTestObjectStats(t, 7, 8, 16<<20, 16384, 1, nil, 0),
-+	}
-+	for _, tc := range []struct {
-+		name  string
-+		table catalog.MergeTable
-+		want  int
-+		size  int
-+	}{
-+		{"large", mergeTableWithBlockRows(9511, 16384), 2, 93257728},
-+		{"small", mergeTableWithBlockRows(9511, 1000), 4, 119406592},
-+		{"standard", mergeTableWithBlockRows(9511, 8192), 4, 119406592},
-+		{"default", mergeTableWithBlockRows(9511, 0), 4, 119406592},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			pad := newLaunchPad(newFakeClock())
-+			trigger := NewMMsgTaskTrigger(tc.table).WithAssignedTasks([]mergeTask{{objs: objects}})
-+			tasks := pad.gatherByTrigger(t.Context(), trigger, pad.clock.Now(), newTestRscController(192<<20))
-+			require.Len(t, tasks, 1)
-+			require.Len(t, tasks[0].objs, tc.want)
-+			require.Equal(t, tc.size, tasks[0].eSize)
-+		})
-+	}
-+}
-+
-+func TestLaunchPadCapacityAcrossGatherPaths(t *testing.T) {
-+	for _, tc := range []struct {
-+		name  string
-+		table catalog.MergeTable
-+		want  int
-+		size  int
-+	}{
-+		{"zero", mergeTableWithBlockRows(9511, 0), 4, 119406592},
-+		{"large", mergeTableWithBlockRows(9511, 16384), 2, 93257728},
-+	} {
-+		for _, path := range []string{"l0", "ln", "tombstone"} {
-+			t.Run(tc.name+"/"+path, func(t *testing.T) {
-+				objects := make([]*objectio.ObjectStats, 0, 4)
-+				for i := range 4 {
-+					objects = append(objects, newTestObjectStats(t, 1, 100, 16<<20, 16384, 0, nil, uint16(i)))
-+				}
-+				pad := newLaunchPad(newFakeClock())
-+				pad.table = tc.table
-+				pad.lastMergeTime = time.Hour
-+				rc := newTestRscController(192 << 20)
-+				switch path {
-+				case "l0":
-+					pad.leveledObjects[0] = objects
-+					opts := NewLayerZeroOpts().WithToleranceDegressionCurve(1, 1, time.Hour, [4]float64{})
-+					pad.gatherL0Tasks(t.Context(), opts, rc)
-+				case "ln":
-+					pad.leveledObjects[1] = objects
-+					pad.gatherLnTasks(t.Context(), NewOverlapOptions().WithMinPointDepthPerCluster(2), 1, 1, rc)
-+				case "tombstone":
-+					pad.tombstoneStats = objects
-+					pad.gatherTombstoneTasks(t.Context(), NewTombstoneOpts().WithOneShot(true), rc)
-+				}
-+				require.Len(t, pad.revisedResults, 1)
-+				require.Len(t, pad.revisedResults[0].objs, tc.want)
-+				require.Equal(t, tc.size, pad.revisedResults[0].eSize)
-+			})
+ func (b *boundedAvroOutput) Write(payload []byte) (int, error) {
+ 	if b.maxBytes <= 0 || int64(len(payload)) > b.maxBytes-int64(len(b.data)) {
+-		b.exceeded = true
+-		return 0, avroOutputLimitExceeded(b.maxBytes)
++		if b.failure == nil {
++			b.failure = api.NewEncoderMemoryLimitError(int64(len(b.data)), int64(len(payload)), b.maxBytes, api.MemoryEncoderOutput)
 +		}
++		return 0, b.failure
+ 	}
+ 	required := len(b.data) + len(payload)
+ 	if required > cap(b.data) {
+@@ -215,8 +217,10 @@ func (b *boundedAvroOutput) Write(payload []byte) (int, error) {
+ 			nextCapacity = maxCapacity
+ 		}
+ 		if cap(b.data) > maxCapacity-nextCapacity {
+-			b.exceeded = true
+-			return 0, avroOutputLimitExceeded(b.maxBytes)
++			if b.failure == nil {
++				b.failure = api.NewEncoderMemoryLimitError(int64(cap(b.data)), int64(nextCapacity), b.maxBytes, api.MemoryEncoderGrowth)
++			}
++			return 0, b.failure
+ 		}
+ 		next := make([]byte, len(b.data), nextCapacity)
+ 		copy(next, b.data)
+@@ -232,12 +236,6 @@ func (b *boundedAvroOutput) Bytes() []byte {
+ 	return b.data
+ }
+ 
+-func avroOutputLimitExceeded(limit int64) error {
+-	return api.NewError(api.ErrPlanningLimitExceeded, "Iceberg Avro output exceeds its memory limit", map[string]string{
+-		"limit_bytes": strconv.FormatInt(limit, 10),
+-	})
+-}
+-
+ func validateManifestWriteOptions(opts ManifestWriteOptions, entries []api.ManifestEntry) error {
+ 	if opts.FormatVersion != 2 {
+ 		return api.NewError(api.ErrUnsupportedFeature, "Iceberg manifest writer supports format version 2 only", map[string]string{
+```
+
+**File**: `pkg/iceberg/metadata/avro_writer_test.go` (modified, +36/-0)
+```diff
+@@ -16,6 +16,7 @@ package metadata
+ 
+ import (
+ 	"bytes"
++	"errors"
+ 	"math"
+ 	"math/big"
+ 	"strings"
+@@ -574,3 +575,38 @@ func TestManifestRecordEncodingHelpers(t *testing.T) {
+ 	require.Equal(t, int32(0), dataManifest["content"])
+ 	require.Equal(t, int32(1), deleteManifest["content"])
+ }
++
++func TestBoundedAvroOutputPreservesFirstRejection(t *testing.T) {
++	for _, tc := range []struct {
++		name            string
++		limit           int64
++		first, second   int
++		phase           api.MemoryPhase
++		used, requested int64
++	}{
++		{"output", 5, 6, 1, api.MemoryEncoderOutput, 0, 6},
++		{"growth", 700, 500, 100, api.MemoryEncoderGrowth, 512, 700},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			b := boundedAvroOutput{maxBytes: tc.limit}
++			if tc.name == "growth" {
++				if _, err := b.Write(make([]byte, tc.first)); err != nil {
++					t.Fatal(err)
++				}
++				tc.first = tc.second
++			}
++			_, err := b.Write(make([]byte, tc.first))
++			var failure *api.MemoryLimitError
++			if !errors.As(err, &failure) {
++				t.Fatalf("missing memory error: %v", err)
++			}
++			if failure.Phase != tc.phase || failure.Used != tc.used || failure.Requested != tc.requested || failure.Limit != tc.limit {
++				t.Fatalf("wrong accounting: %+v", failure)
++			}
++			_, _ = b.Write(make([]byte, 1000))
++			if b.failure != failure {
++				t.Fatal("first rejection replaced")
++			}
++		})
 +	}
 +}
+```
+
+**File**: `pkg/iceberg/write/commit.go` (modified, +3/-0)
+```diff
+@@ -453,6 +453,9 @@ func appendErrorCategory(err error) string {
+ 	if err == nil {
+ 		return ""
+ 	}
++	if api.IsMemoryLimit(err) {
++		return string(api.ErrPlanningLimitExceeded)
++	}
+ 	var icebergErr *api.IcebergError
+ 	if stderrors.As(err, &icebergErr) {
+ 		return string(icebergErr.Code)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #33053** (2026-11-22): fix(frontend): preserve cancellation errors during LOCAL uploads (@XuPeng-SH)
-- **PR #33050** (2026-11-22): fix(ci): distinguish exited UT cases from live tests (@XuPeng-SH)
-- **PR #33049** (2026-11-21): fix(disttae): scope flushed workspace tombstones by table (@XuPeng-SH)
-- **PR #33046** (2026-11-21): test(external): verify cleanup when filling a missing saved column fails (@XuPeng-SH)
-- **PR #33045** (2026-11-21): fix(external): preserve saved result scan projections (@XuPeng-SH)
-- **PR #33044** (2026-11-21): perf(plan): cost bounded DELETE lookups using index cardinality (@XuPeng-SH)
+- **PR #33078** (2026-11-23): fix(tae): bound catalog replay input memory (@XuPeng-SH)
+- **PR #33075** (2026-11-23): refactor(vector): remove the grouping bitmap (gsp) from Vector (#33020) (@fengttt)
+- **PR #33074** (closed): Revert #33011: typed prepared parameter refactor (Sysbench regression) (@LeftHandCold)
+- **PR #33069** (2026-11-23): Fix RequiredLSN apply term lookup race (@XuPeng-SH)
+- **PR #33066** (2026-11-23): test: reduce and balance race UT work (@XuPeng-SH)
+- **PR #33065** (2026-11-22): test: release disk cache read vectors (@XuPeng-SH)
 
 ---
 
@@ -4701,83 +3716,34 @@ short ranges and single-entry reads. For other candidates, stop a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): distinguish exited UT cases from live tests
+## X. test: reduce and balance race UT work
 
 **RULE**:
-When implementing operations in `optools/active_ut_incremental.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `optools/run_ut.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `96d0d018`: ci): distinguish exited UT cases from live tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46b1fa89`: test: reduce and balance race UT work. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `optools/active_ut_incremental.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `optools/run_ut.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-STATE_VERSION = 2
-MAX_LIFECYCLE_LINE_BYTES = 1024 * 1024
-TEST_START_ACTIONS = ("run", "pause", "cont")
-TERMINAL_ACTIONS = ("pass", "fail", "skip")
-
-
-    if not (
-    ):
-        return False
-
-    def package_entry(entry):
-        return (
-            isinstance(entry, list) and len(entry) == 2
-            and isinstance(entry[0], str)
-            and type(entry[1]) is int and entry[1] > 0
-        )
-
-    def cases_entry(cases):
-        return isinstance(cases, dict) and all(
-            isinstance(entry, list) and len(entry) == 4
-            and isinstance(entry[0], str) and isinstance(entry[1], str)
-            and type(entry[2]) is int and entry[2] > 0
-            and isinstance(entry[3], bool)
-            for entry in cases.values()
-        )
-
-    return all(map(package_entry, state["packages"].values())) and all(
-        map(cases_entry, state["cases"].values())
-def apply_event(state, event, unfinished=None):
-    packages, cases = state["packages"], state["cases"]
-    invocation = packages.get(package)
-            if invocation is None:
-                packages[package] = [when, 1]
-            else:
-                invocation[1] += 1
-        elif action in TERMINAL_ACTIONS:
-     
+        if [[ "${package}" == github.com/matrixorigin/matrixone/pkg/tests/sqlintegration &&
+            "${batches}" == 4 && "${parallel}" == 4 ]]; then
+            partition_layout=cost-roundrobin
+        fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    return (
-        and all(isinstance(k, str) and isinstance(v, str) for k, v in state["packages"].items())
-        and all(isinstance(v, list) and len(v) == 4 and all(isinstance(s, str) for s in v)
-                for v in state["cases"].values())
-def apply_event(state, event):
-            state["packages"][package] = when
-        elif action in ("pass", "fail", "skip"):
-            state["packages"].pop(package, None)
-        # Keep unfinished cases on a package failure, as the AWK oracle does.
-    key = json.dumps([package, test])
-    if action in ("run", "pause", "cont"):
-        started = state["cases"].get(key, [package, test, action, when])[3]
-        state["cases"][key] = [package, test, action, started]
-    elif action in ("pass", "fail", "skip"):
-        state["cases"].pop(key, None)
-            line = stream.readline(1024 * 1024)
-            oversized = not line.endswith(b"\n") and len(line) == 1024 * 1024
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `96d0d018` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46b1fa89` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

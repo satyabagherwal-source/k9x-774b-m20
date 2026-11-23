@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T07:28:54.888Z",
+  "last_updated": "2026-11-23T07:37:05.595Z",
   "total_verified_learnings": 9078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23914,
+  "total_items": 23918,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "32617515c43ed3ccb72ecca99a3b65dbd2213bfeaf2adfcf9e1f90a3487c56c9",
+      "content_hash": "84b4ba717f85b93992f378971945c1b98d91d6054020ea593d7e7445c6bce424",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T07:18:41.054Z"
+      "persisted_at": "2026-11-23T07:37:05.448Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f8fc8e2aab14ab277ec8d14734de66a134944da35f2d2f7186a1d59654163c2",
+      "content_hash": "d60ef16c011e8486c8459341e55a06ac51260c8f42bcd0e89736d14a2865f5c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T07:18:41.208Z"
+      "persisted_at": "2026-11-23T07:37:05.595Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -222949,8 +222949,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "7431a275",
-      "content_hash": "3b9dd89750f15c36550ff6b7eaa312a73314d434be95d21bd1bddd1ca92dca6d",
+      "source_version": "f86cc46c",
+      "content_hash": "341eb1c87c94d5a6e048d37e9d165cdfe64ae8eafd9334fcf11120b7ead9f640",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -222988,6 +222988,11 @@
           "number": 9898,
           "title": "distinguish exited UT cases from live tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10036,
+          "title": "reduce and balance race UT work",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222995,7 +223000,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T05:28:17.580Z",
+      "verified_at": "2026-11-23T07:37:00.455Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223037,10 +223042,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-matrixorigin-matrixone-technical-construction-intelligence-matrixorigin-matrixon.md",
       "title": "Technical Construction Intelligence: matrixorigin/matrixone Core Invariants",
       "repository": "matrixorigin/matrixone",
-      "source_version": "71390fb3",
-      "content_hash": "fc10a61230798626618922ab4d04f7ba0f3c50e1f64d52957aecb5ec4b366409",
+      "source_version": "f86cc46c",
+      "content_hash": "9a055fec32da2753c19570eee8c22e045542bbb6d046fb2c9e140f7050f7f6ea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:10:39.822Z"
+      "persisted_at": "2026-11-23T07:37:01.025Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-matrixorigin-matrixone": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-matrixorigin-matrixone",
@@ -223049,10 +223054,10 @@
       "relative_path": "08_VERIFICATION/matrixorigin-matrixone-verification-protocol-empirical-defect-shield-for-matrixo.md",
       "title": "Verification Protocol: Empirical Defect Shield for matrixorigin/matrixone",
       "repository": "matrixorigin/matrixone",
-      "source_version": "7431a275",
-      "content_hash": "17c52b837b1b59c54b340bc6128069c3d47371696812e62727114ab1f8e12243",
+      "source_version": "f86cc46c",
+      "content_hash": "8d08e7a6a5d293a088f0961d771d29444df71e289fe2933646420416c55518b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T05:28:18.567Z"
+      "persisted_at": "2026-11-23T07:37:01.180Z"
     },
     "learn-huggingface-openai-gpt-oss-20b": {
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
@@ -224312,7 +224317,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
       "source_version": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
-      "content_hash": "7f10036943f1f40fbc39bb7ed8d523a7ec4e48d8090bd4cf9e180b090345ac17",
+      "content_hash": "64e28e27a7ac4eac97af2e93fcbc0975ecb74836aadf17d58f638e49e47d5cb7",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "promoted_rules": [],
@@ -224321,7 +224326,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T22:14:28.394Z",
+      "verified_at": "2026-11-23T07:36:43.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224338,9 +224343,9 @@
       "title": "Research & Knowledge Intelligence: mistralai/Mixtral-8x7B-Instruct-v0.1 Core Invariants",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "source_version": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
-      "content_hash": "a6c6333aa620d94ea1b3d947d604f9690da07edba7b384e4235e05415649f547",
+      "content_hash": "d1094a49928b44f0d70a9096199f7f6cfb67a909ebbbebde3348679e3064d0e6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T22:14:28.773Z"
+      "persisted_at": "2026-11-23T07:36:44.099Z"
     },
     "learn-github-domcyrus-rustnet": {
       "learning_id": "learn-github-domcyrus-rustnet",
@@ -224565,9 +224570,9 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings Core Invariants",
       "repository": "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings",
       "source_version": "HEAD",
-      "content_hash": "04e9c1d781aa7250018f7044cc6c8c30993700c7a8272e131dea1254bf455eb2",
+      "content_hash": "126ac30387ab4c5e8e64d5e851e6659c90849966ca6f3de0275418515ed1021a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T22:14:42.639Z"
+      "persisted_at": "2026-11-23T07:37:04.192Z"
     },
     "candidate_directive-e2e-disable-pinpoint-backed-e2e-tests": {
       "item_id": "candidate_directive-e2e-disable-pinpoint-backed-e2e-tests",
@@ -249789,9 +249794,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for matrixorigin-matrixone-learnings",
       "repository": "matrixorigin-matrixone-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd508f873824b08f474a40507d8f49e41a3c0c1033c8050d663bfb714c85a7c2",
+      "content_hash": "30bbc7c8a8f0c71026b767125ef59d49350d87a739f805a4da36066804be8df8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T05:28:22.626Z"
+      "persisted_at": "2026-11-23T07:37:04.913Z"
     },
     "learn-huggingface-mistralai-mistral-large-4-1t-a52b": {
       "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
@@ -318887,13 +318892,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PMO8-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DATT-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc9313ff3d856eb12216ded18dc3d075f4935989086c26595cf3edaff9836cff",
+      "content_hash": "a70147531ef81b4f9cb753cb7755f7276f567305edf33f09a16d17234b32154a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T07:18:40.907Z"
+      "persisted_at": "2026-11-23T07:37:05.300Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -325698,6 +325703,56 @@
       "content_hash": "67350a930b9f8ec54c05d0e3e07d2a3edea37dd5ef0a01579554f2173391efe7",
       "domain_letter": "K",
       "persisted_at": "2026-11-23T07:28:53.356Z"
+    },
+    "rule-10036": {
+      "learning_id": "rule-10036",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10036,
+      "title": "reduce and balance race UT work",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "f86cc46c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T07:37:00.455Z"
+    },
+    "candidate_directive-reduce-and-balance-race-ut-work": {
+      "item_id": "candidate_directive-reduce-and-balance-race-ut-work",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D7ES-reduce-and-balance-race-ut-work.md",
+      "title": "reduce and balance race UT work",
+      "repository": "matrixorigin/matrixone",
+      "source_version": "f86cc46c",
+      "content_hash": "0d26c90512fdf1aa2edcbc7c2f826fbd70647d4b67e496bee4c0e1f4d0836b13",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T07:37:00.872Z"
+    },
+    "candidate_directive-test-reduce-and-balance-race-ut-work": {
+      "item_id": "candidate_directive-test-reduce-and-balance-race-ut-work",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DAAD-test-reduce-and-balance-race-ut-work.md",
+      "title": "test: reduce and balance race UT work",
+      "repository": "matrixorigin-matrixone-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50522e617d45152f7879c678fdaeeaf9907c5fcab13a4b14b94c55fbeec300f7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-23T07:37:04.600Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-learnings-core-invari": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-matrixorigin-matrixone-learnings-technical-construction-intelligence-matrixorigi.md",
+      "title": "Technical Construction Intelligence: matrixorigin-matrixone-learnings Core Invariants",
+      "repository": "matrixorigin-matrixone-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a09dea650cee7ba716c61e96683c8d2d3ee4def5a4a478117d5de46010cbdb1a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T07:37:04.754Z"
     }
   },
   "ai-builder-brain": {

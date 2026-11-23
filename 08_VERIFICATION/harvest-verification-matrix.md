@@ -12296,3 +12296,5 @@
 | `CYCLE-20261123-2F2H` | `2026-11-23T07:28:37.577Z` | `AhmadHassan-BTed/Jantt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10035` | Yes (`a3770f86...`) |
 | `CYCLE-20261123-2GYB` | `2026-11-23T07:28:40.019Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`e0735715...`) |
 | `CYCLE-20261123-2MJU` | `2026-11-23T07:28:47.274Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`545e9dab...`) |
+| `CYCLE-20261123-CUB8` | `2026-11-23T07:36:43.892Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`64e28e27...`) |
+| `CYCLE-20261123-D78I` | `2026-11-23T07:37:00.642Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10036` | Yes (`341eb1c8...`) |

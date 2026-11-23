@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-7B66",
-    "timestamp": "2026-11-21T08:25:04.590Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "bb3d98ff917dbe16425f7f2a05e77bd8406e01e6ac88c87182f99928950c910d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-6YZ3",
-    "timestamp": "2026-11-21T08:52:48.399Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "09bbcc92d5b90de5dc0d14851d36f98a7c1b7d58109d5ee6b433aeddce2777c7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-72MJ",
     "timestamp": "2026-11-21T08:52:53.131Z",
     "repository": "react/react-native",
@@ -7490,6 +7460,36 @@
     "repository": "SimonSchubert/Kai",
     "learningId": "learn-github-simonschubert-kai",
     "contentHash": "545e9dab3bafa3fa9e00d02188cf24e3c5d2dfbd3fff828b572cc1558bb0a593",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-CUB8",
+    "timestamp": "2026-11-23T07:36:43.892Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "64e28e27a7ac4eac97af2e93fcbc0975ecb74836aadf17d58f638e49e47d5cb7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-D78I",
+    "timestamp": "2026-11-23T07:37:00.642Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "341eb1c87c94d5a6e048d37e9d165cdfe64ae8eafd9334fcf11120b7ead9f640",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

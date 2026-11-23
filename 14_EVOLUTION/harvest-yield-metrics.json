@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T07:28:47.285Z",
-  "total_cycles_completed": 11693,
-  "total_learnings_persisted": 11693,
-  "total_rules_promoted": 10868,
+  "last_updated": "2026-11-23T07:37:00.650Z",
+  "total_cycles_completed": 11695,
+  "total_learnings_persisted": 11695,
+  "total_rules_promoted": 10869,
   "history": [
-    {
-      "timestamp": "2026-11-22T12:57:04.128Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T13:01:50.777Z",
-      "repository": "internlm/Sage-S2.1-Flash",
-      "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T13:20:26.074Z",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T07:28:47.285Z",
       "repository": "SimonSchubert/Kai",
       "learningId": "learn-github-simonschubert-kai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T07:36:43.902Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T07:37:00.650Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

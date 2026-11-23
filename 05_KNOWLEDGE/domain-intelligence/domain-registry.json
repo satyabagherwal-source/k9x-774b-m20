@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T07:28:54.656Z",
-  "total_records": 2400,
+  "last_updated": "2026-11-23T07:37:05.448Z",
+  "total_records": 2401,
   "domains": {
     "A": {
       "total": 20,
@@ -1522,7 +1522,7 @@
       ]
     },
     "H": {
-      "total": 574,
+      "total": 575,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2097,7 +2097,8 @@
         "DOM-H-7A8AC6A4",
         "DOM-H-BBA39C7F",
         "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari"
+        "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari",
+        "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-learnings-core-invari"
       ]
     },
     "I": {
@@ -9133,8 +9134,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "32617515c43ed3ccb72ecca99a3b65dbd2213bfeaf2adfcf9e1f90a3487c56c9",
-      "created_at": "2026-11-23T07:18:41.054Z"
+      "content_hash": "84b4ba717f85b93992f378971945c1b98d91d6054020ea593d7e7445c6bce424",
+      "created_at": "2026-11-23T07:37:05.448Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -13123,8 +13124,8 @@
       "title": "Technical Construction Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-matrixorigin-matrixone-technical-construction-intelligence-matrixorigin-matrixon.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "fc10a61230798626618922ab4d04f7ba0f3c50e1f64d52957aecb5ec4b366409",
-      "created_at": "2026-11-14T03:10:39.822Z"
+      "content_hash": "9a055fec32da2753c19570eee8c22e045542bbb6d046fb2c9e140f7050f7f6ea",
+      "created_at": "2026-11-23T07:37:01.025Z"
     },
     "domain_intelligence-technical-construction-intelligence-openai-gpt-oss-20b-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openai-gpt-oss-20b-core-invariants",
@@ -13512,8 +13513,8 @@
       "title": "Research & Knowledge Intelligence: mistralai/Mixtral-8x7B-Instruct-v0.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mixtral-8x7b-instruct-v0-1-research-knowledge-intelligence-mistrala.md",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "content_hash": "a6c6333aa620d94ea1b3d947d604f9690da07edba7b384e4235e05415649f547",
-      "created_at": "2026-11-18T22:14:28.773Z"
+      "content_hash": "d1094a49928b44f0d70a9096199f7f6cfb67a909ebbbebde3348679e3064d0e6",
+      "created_at": "2026-11-23T07:36:44.099Z"
     },
     "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants",
@@ -13590,8 +13591,8 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mixtral-8x7b-instruct-v0-1-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings",
-      "content_hash": "04e9c1d781aa7250018f7044cc6c8c30993700c7a8272e131dea1254bf455eb2",
-      "created_at": "2026-11-18T22:14:42.639Z"
+      "content_hash": "126ac30387ab4c5e8e64d5e851e6659c90849966ca6f3de0275418515ed1021a",
+      "created_at": "2026-11-23T07:37:04.192Z"
     },
     "DOM-K-F74DEC74": {
       "record_id": "DOM-K-F74DEC74",
@@ -40328,6 +40329,15 @@
       "repository": "ahmadhassan-bted-jantt-learnings",
       "content_hash": "de938b4a64b63be1f63d70cd37c93c435f935a9764e406eb9dbeb0d32e417a8e",
       "created_at": "2026-11-23T07:28:53.138Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-learnings-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-learnings-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: matrixorigin-matrixone-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-matrixorigin-matrixone-learnings-technical-construction-intelligence-matrixorigi.md",
+      "repository": "matrixorigin-matrixone-learnings",
+      "content_hash": "a09dea650cee7ba716c61e96683c8d2d3ee4def5a4a478117d5de46010cbdb1a",
+      "created_at": "2026-11-23T07:37:04.754Z"
     }
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T22:14:42.539Z",
+  "timestamp": "2026-11-23T07:37:04.093Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T22:14:42.539Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T07:37:04.093Z`  
 > **Learning ID**: `LEARN-EVO-hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-mistralai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T22:14:28.169Z  
+> **Timestamp**: 2026-11-23T07:36:43.430Z  
 > **Learning ID**: `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T22:14:28.018Z  
+> **Harvest Timestamp**: 2026-11-23T07:36:43.303Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 324638 downloads | 4781 likes
+- **Stars / Engagement**: 306575 downloads | 4782 likes
 
 ---
 
