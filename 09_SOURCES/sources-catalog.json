@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "5f59f4a1",
+    "sourceVersion": "79e960f9",
     "license": "Apache-2.0",
-    "contentHash": "6d8d652bace14afe6a3e1179038bf39c252e50bd7ce59ff312c9d6c242f1f149",
-    "lastHarvestedAt": "2026-11-22T14:40:47.893Z",
+    "contentHash": "2c86ea0f37d9e4d4a40002ef4e6482f0a995e5b10fe0ab08736d08830609be9c",
+    "lastHarvestedAt": "2026-11-23T17:54:15.203Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -12945,8 +12945,8 @@
     "sourceUrl": "https://huggingface.co/Reson8/Rumble-2-Flash",
     "sourceVersion": "hf-reson8-rumble-2-flash",
     "license": "Open-Source",
-    "contentHash": "1bda1950dbf9aa4623e16cb8be34bc542d0745db8826341c0d3e65bea3dbb4bc",
-    "lastHarvestedAt": "2026-11-19T06:52:24.184Z",
+    "contentHash": "3e2e542abfb7d8bd7afcaa13b14928ab688655d516a55aa1a8ed50fed8cdfa2a",
+    "lastHarvestedAt": "2026-11-23T17:53:59.350Z",
     "learningId": "learn-huggingface-reson8-rumble-2-flash"
   },
   "vcaesar-riot": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-M285",
-    "timestamp": "2026-11-21T18:52:24.389Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d70a9f374025905546054be8d90547486fb94e769e3d5cae95a865aefaa6979a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-M287",
-    "timestamp": "2026-11-21T18:52:24.391Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-5M7V",
     "timestamp": "2026-11-21T19:07:36.763Z",
     "repository": "invertase/react-native-firebase",
@@ -7490,6 +7460,36 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-EN1U",
+    "timestamp": "2026-11-23T17:53:59.346Z",
+    "repository": "Reson8/Rumble-2-Flash",
+    "learningId": "learn-huggingface-reson8-rumble-2-flash",
+    "contentHash": "3e2e542abfb7d8bd7afcaa13b14928ab688655d516a55aa1a8ed50fed8cdfa2a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-EZA7",
+    "timestamp": "2026-11-23T17:54:15.199Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "2c86ea0f37d9e4d4a40002ef4e6482f0a995e5b10fe0ab08736d08830609be9c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

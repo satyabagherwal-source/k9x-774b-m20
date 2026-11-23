@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T05:54:28.615Z",
+  "timestamp": "2026-11-23T17:54:19.274Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-trinodb-trino-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [trinodb-trino-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T05:54:28.615Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T17:54:19.274Z`  
 > **Learning ID**: `LEARN-EVO-trinodb-trino-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from trinodb-trino-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `b2252f9e`  
+> **Source Version**: `79e960f9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T05:51:42.356Z  
+> **Timestamp**: 2026-11-23T17:54:14.276Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T05:51:42.243Z  
+> **Harvest Timestamp**: 2026-11-23T17:54:14.271Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13528 stars
+- **Stars / Engagement**: 13540 stars
 
 ---
 
@@ -1882,533 +1882,267 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4bff3c02` (2026-11-18)
-**Commit Message**: Fix ORC bloom filter lookups for timestamps
+### Incident Patch 1: `f6443d0c` (2026-11-20)
+**Commit Message**: Fix Elasticsearch table listing when an index is dropped
 
-Bloom filters hold truncated epoch millis, so lookups must use millis
-and also cover values that reads round up to the next millisecond.
+With X-Pack security enabled, Elasticsearch fails the _cat/indices
+request with 404 index_not_found_exception when an index is deleted
+while the response is being built. Retry the request a few times on
+that error, so that SHOW TABLES and information_schema queries do not
+fail.
 
-**File**: `lib/trino-orc/src/main/java/io/trino/orc/TupleDomainOrcPredicate.java` (modified, +21/-7)
+**File**: `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java` (modified, +33/-0)
 ```diff
-@@ -68,6 +68,7 @@
- import static java.lang.Float.floatToRawIntBits;
- import static java.lang.Float.intBitsToFloat;
- import static java.lang.Math.floorDiv;
-+import static java.lang.Math.floorMod;
- import static java.util.Objects.requireNonNull;
+@@ -19,6 +19,8 @@
+ import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Sets;
+ import com.google.inject.Inject;
++import dev.failsafe.Failsafe;
++import dev.failsafe.RetryPolicy;
+ import io.airlift.json.JsonCodec;
+ import io.airlift.json.JsonMapperProvider;
+ import io.airlift.log.Logger;
+@@ -102,6 +104,7 @@
+ import static java.lang.StrictMath.toIntExact;
+ import static java.lang.String.format;
+ import static java.nio.charset.StandardCharsets.UTF_8;
++import static java.time.temporal.ChronoUnit.MILLIS;
+ import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+ import static java.util.concurrent.TimeUnit.MILLISECONDS;
+ import static java.util.stream.Collectors.joining;
+@@ -118,6 +121,13 @@ public class ElasticsearchClient
+     private static final Pattern ADDRESS_PATTERN = Pattern.compile("((?<cname>[^/]+)/)?(?<ip>.+):(?<port>\\d+)");
+     private static final Set<String> NODE_ROLES = ImmutableSet.of("data", "data_content", "data_hot", "data_warm", "data_cold", "data_frozen");
  
- public class TupleDomainOrcPredicate
-@@ -183,26 +184,39 @@ public static boolean checkInBloomFilter(BloomFilter bloomFilter, Object predica
-         }
- 
-         // Bloom filters for timestamps are truncated to millis
--        if (sqlType.equals(TIMESTAMP_MILLIS)) {
--            return bloomFilter.testLong(((Number) predicateValue).longValue());
--        }
--        if (sqlType.equals(TIMESTAMP_MICROS)) {
--            return bloomFilter.testLong(floorDiv(((Number) predicateValue).longValue(), MICROSECONDS_PER_MILLISECOND));
-+        if (sqlType.equals(TIMESTAMP_MILLIS) || sqlType.equals(TIMESTAMP_MICROS)) {
-+            long epochMicros = ((Number) predicateValue).longValue();
-+            long epochMillis = floorDiv(epochMicros, MICROSECONDS_PER_MILLISECOND);
-+            boolean onMillisecondBoundary = floorMod(epochMicros, MICROSECONDS_PER_MILLISECOND) == 0;
-+            return testMillisOrPreviousOnBoundary(bloomFilter, epochMillis, onMillisecondBoundary);
-         }
-         if (sqlType.equals(TIMESTAMP_NANOS)) {
-             return bloomFilter.testLong(floorDiv(((LongTimestamp) predicateValue).getEpochMicros(), MICROSECONDS_PER_MILLISECOND));
-         }
-         if (sqlType.equals(TIMESTAMP_TZ_MILLIS)) {
--            return bloomFilter.testLong(unpackMillisUtc(((Number) predicateValue).longValue()));
-+            return testMillisOrPreviousOnBoundary(bloomFilter, unpackMillisUtc(((Number) predicateValue).longValue()), true);
-         }
--        if (sqlType.equals(TIMESTAMP_TZ_MICROS) || sqlType.equals(TIMESTAMP_TZ_NANOS)) {
-+        if (sqlType.equals(TIMESTAMP_TZ_MICROS)) {
-+            LongTimestampWithTimeZone timestamp = (LongTimestampWithTimeZone) predicateValue;
-+            return testMillisOrPreviousOnBoundary(bloomFilter, timestamp.getEpochMillis(), timestamp.getPicosOfMilli() == 0);
-+        }
-+        if (sqlType.equals(TIMESTAMP_TZ_NANOS)) {
-             return bloomFilter.testLong(((LongTimestampWithTimeZone) predicateValue).getEpochMillis());
-         }
- 
-         // todo support DECIMAL, and CHAR
-         return true;
++    // _cat/indices fails when an index is deleted while the response is being built
++    private static final RetryPolicy<List<String>> INDEX_LISTING_RETRY_POLICY = RetryPolicy.<List<String>>builder()
++            .withMaxAttempts(3)
++            .withBackoff(10, 100, MILLIS)
++            .handleIf(ElasticsearchClient::isIndexNotFound)
++            .build();
++
+     private final BackpressureRestClient client;
+     private final int scrollSize;
+     private final Duration scrollTimeout;
+@@ -384,6 +394,11 @@ public boolean indexExists(String index)
      }
  
-+    // Reads below nanosecond precision round half up, so a value on a millisecond boundary may be stored under the previous millisecond
-+    private static boolean testMillisOrPreviousOnBoundary(BloomFilter bloomFilter, long epochMillis, boolean onMillisecondBoundary)
+     public List<String> getIndexes()
 +    {
-+        if (bloomFilter.testLong(epochMillis)) {
-+            return true;
-+        }
-+        return onMillisecondBoundary && bloomFilter.testLong(epochMillis - 1);
++        return Failsafe.with(INDEX_LISTING_RETRY_POLICY).get(this::listIndexes);
 +    }
 +
-     @VisibleForTesting
-     public static Domain getDomain(Type type, long rowCount, ColumnStatistics columnStatistics)
++    private List<String> listIndexes()
      {
-```
-
-**File**: `lib/trino-orc/src/test/java/io/trino/orc/TestOrcBloomFilters.java` (modified, +53/-1)
-```diff
-@@ -31,6 +31,8 @@
- import io.trino.spi.predicate.Domain;
- import io.trino.spi.predicate.Range;
- import io.trino.spi.predicate.ValueSet;
-+import io.trino.spi.type.LongTimestamp;
-+import io.trino.spi.type.LongTimestampWithTimeZone;
- import io.trino.spi.type.RealType;
- import io.trino.spi.type.Type;
- import org.apache.orc.OrcProto;
-@@ -50,12 +52,19 @@
- import static io.trino.orc.TupleDomainOrcPredicate.checkInBloomFilter;
- import static io.trino.orc.metadata.OrcColumnId.ROOT_COLUMN;
- import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.spi.type.DateTimeEncoding.packDateTimeWithZone;
- import static io.trino.spi.type.DateType.DATE;
- import static io.trino.spi.type.DoubleType.DOUBLE;
- import static io.trino.spi.type.IntegerType.INTEGER;
- import static io.trino.spi.type.RealType.REAL;
- import static io.trino.spi.type.SmallintType.SMALLINT;
-+import static io.trino.spi.type.TimeZoneKey.UTC_KEY;
-+import static io.trino.spi.type.TimestampType.TIMESTAMP_MICROS;
- import static io.trino.spi.type.TimestampType.TIMESTAMP_MILLIS;
-+import static io.trino.spi.type.TimestampType.TIMESTAMP_NANOS;
-+import static io.trino.spi.type.TimestampWithTimeZoneType.TIMESTAMP_TZ_MICROS;
-+import static io.trino.spi.type.TimestampWithTimeZoneType.TIMESTAMP_TZ_MILLIS;
-+import static io.trino.spi.type.TimestampWithTimeZoneType.TIMESTAMP_TZ_NANOS;
- import static io.trino.spi.type.TinyintType.TINYINT;
- import static io.trino.spi.type.VarbinaryType.VARBINARY;
- import static io.trino.spi.type.VarcharType.VARCHAR;
-@@ -79,7 +88,7 @@ public class TestOrcBloomFilters
-             .put(789, SMALLINT)
-             .put(77, TINYINT)
-             .put(901, DATE)
--            .put(987654L, TIMESTAMP_MILLIS)
-+            .put(987_654_000L, TIMESTAMP_MILLIS)
-             .put(234.567, DOUBLE)
-             .put((long) floatToIntBits(987.654f), REAL)
-             .buildOrThrow();
-@@ -175,6 +184,10 @@ public void testBloomFilterPredicateValuesExisting()
-                 if (testValue.getValue() instanceof RealType) {
-                     bloomFilter.addDouble(intBitsToFloat(longValue.intValue()));
-                 }
-+                else if (testValue.getValue() == TIMESTAMP_MILLIS) {
-+                    // the bloom filter holds epoch millis of the epoch micros test value
-+                    bloomFilter.addLong(987_654L);
-+                }
-                 else {
-                     bloomFilter.addLong(longValue);
-                 }
-@@ -223,6 +236,45 @@ public void testBloomFilterPredicateValuesNonExisting()
+         return doRequest("/_cat/indices?h=index,docs.count,docs.deleted&format=json&s=index:asc", body -> {
+             try {
+@@ -1121,6 +1136,24 @@ private <T> T doRequest(String path, ResponseHandler<T> handler)
          }
      }
  
-+    @Test
-+    public void testTimestampRoundedUpToNextMillisecond()
++    private static boolean isIndexNotFound(Throwable throwable)
 +    {
-+        // A file value of 987654.999 ms is stored as 987654 ms and read as 987655 ms
-+        BloomFilter bloomFilter = new BloomFilter(100, 0.01);
-+        bloomFilter.addLong(987_654L);
-+
-+        assertThat(checkInBloomFilter(bloomFilter, 987_655_000L, TIMESTAMP_MILLIS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, 987_656_000L, TIMESTAMP_MILLIS)).isFalse();
-+        assertThat(checkInBloomFilter(bloomFilter, 987_655_000L, TIMESTAMP_MICROS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, 987_655_001L, TIMESTAMP_MICROS)).isFalse();
-+        assertThat(checkInBloomFilter(bloomFilter, packDateTimeWithZone(987_655L, UTC_KEY), TIMESTAMP_TZ_MILLIS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, packDateTimeWithZone(987_656L, UTC_KEY), TIMESTAMP_TZ_MILLIS)).isFalse();
-+        assertThat(checkInBloomFilter(bloomFilter, LongTimestampWithTimeZone.fromEpochMillisAndFraction(987_655L, 0, UTC_KEY), TIMESTAMP_TZ_MICROS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, LongTimestampWithTimeZone.fromEpochMillisAndFraction(987_655L, 1_000_000, UTC_KEY), TIMESTAMP_TZ_MICROS)).isFalse();
-+        assertThat(checkInBloomFilter(bloomFilter, new LongTimestamp(987_654_999L, 999_000), TIMESTAMP_NANOS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, new LongTimestamp(987_655_000L, 0), TIMESTAMP_NANOS)).isFalse();
-+        assertThat(checkInBloomFilter(bloomFilter, LongTimestampWithTimeZone.fromEpochMillisAndFraction(987_654L, 999_999_000, UTC_KEY), TIMESTAMP_TZ_NANOS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, LongTimestampWithTimeZone.fromEpochMillisAndFraction(987_655L, 0, UTC_KEY), TIMESTAMP_TZ_NANOS)).isFalse();
++        if (!(throwable.getCause() instanceof ResponseException exception)) {
++            return false;
++        }
++        HttpEntity entity = exception.getResponse().getEntity();
++        if (exception.getResponse().getStatusLine().getStatusCode() != 404 || entity == null) {
++            return false;
++        }
++        try {
++            JsonNode type = JSON_MAPPER.readTree(EntityUtils.toByteArray(entity)).path("error").path("type");
++            return type.isString() && type.asString().equals("index_not_found_exception");
++        }
++        catch (IOException | JacksonException e) {
++            return false;
++        }
 +    }
 +
-+    @Test
-+    public void testPreEpochTimestamp()
-+    {
-+        // A file value of -1.5 ms is stored as -2 ms and read as -1 ms
-+        BloomFilter bloomFilter = new BloomFilter(100, 0.01);
-+        bloomFilter.addLong(-2L);
-+
-+        assertThat(checkInBloomFilter(bloomFilter, -1_000L, TIMESTAMP_MILLIS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, 0L, TIMESTAMP_MILLIS)).isFalse();
-+        assertThat(checkInBloomFilter(bloomFilter, -1_000L, TIMESTAMP_MICROS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, -1_001L, TIMESTAMP_MICROS)).isTrue();
-+        assertThat(checkInBloomFilter(bloomFilter, -999L,
-```
-
-**File**: `lib/trino-orc/src/test/java/io/trino/orc/TestReadBloomFilter.java` (modified, +2/-2)
-```diff
-@@ -65,8 +65,8 @@ public void test()
-         testType(DATE, ImmutableList.of(new SqlDate(1), new SqlDate(5_000), new SqlDate(10_000)), 5_000L, 7_777L);
-         testType(TIMESTAMP_MILLIS,
-                 ImmutableList.of(SqlTimestamp.fromMillis(3, 1), SqlTimestamp.fromMillis(3, 500_000L), SqlTimestamp.fromMillis(3, 1_000_000L)),
--                500_000L,
--                777_777L);
-+                500_000_000L,
-+                777_777_000L);
- 
-         testType(REAL, ImmutableList.of(1.11f, 500_000.56f, 1_000_000.99f), (long) floatToIntBits(500_000.56f), (long) floatToIntBits(777_777.77f));
-         testType(DOUBLE, ImmutableList.of(1.11, 500_000.55, 1_000_000.99), 500_000.55, 777_777.77);
+     private static TrinoException propagate(ResponseException exception)
+     {
+         HttpEntity entity = exception.getResponse().getEntity();
 ```
 
 ---
 
-### Incident Patch 2: `8135bf9d` (2026-11-16)
-**Commit Message**: Fix Azure listing of blobs with a leading slash
+### Incident Patch 2: `2546efcb` (2026-11-23)
+**Commit Message**: Fix race in TestExternalAuthenticator interrupt test
 
-Blob names that start with a slash, as for tables located at
-abfs://[REDACTED_EMAIL]//path, made
-Location.appendPath fail with "newPathElement starts with a slash"
-when listing files or directories. Build the location from the full
-blob name instead.
+The test of an interrupted authentication with a memory-cached token
+used Thread.sleep(100) to order its threads: the interruptable request
+had to take the token's write lock before the other two requests
+started, and those had to be blocked on the lock before the
+interruptable one was interrupted. On a slow runner, one of the other
+requests could take the lock instead and sleep for a minute in the
+redirect handler, with nothing interrupting it. The test timed out, and
+because the token cache is a JVM-wide singleton, the lock stayed held
+and the other memory-cached tests in the class timed out as well.
 
-**File**: `lib/trino-filesystem-azure/src/main/java/io/trino/filesystem/azure/AzureBlobFileIterator.java` (modified, +1/-4)
+Wait for the redirect to start before submitting the other requests,
+and for those to be parked before interrupting.
+
+**File**: `client/trino-client/src/test/java/io/trino/client/auth/external/TestExternalAuthenticator.java` (modified, +27/-5)
 ```diff
-@@ -16,7 +16,6 @@
- import com.azure.storage.blob.models.BlobItem;
- import io.trino.filesystem.FileEntry;
- import io.trino.filesystem.FileIterator;
--import io.trino.filesystem.Location;
+@@ -37,9 +37,12 @@
+ import java.util.Optional;
+ import java.util.concurrent.Callable;
+ import java.util.concurrent.CancellationException;
++import java.util.concurrent.CopyOnWriteArrayList;
++import java.util.concurrent.CountDownLatch;
+ import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Future;
++import java.util.concurrent.locks.LockSupport;
+ import java.util.stream.Stream;
  
- import java.io.IOException;
- import java.util.Iterator;
-@@ -30,13 +29,11 @@ final class AzureBlobFileIterator
- {
-     private final AzureLocation location;
-     private final Iterator<BlobItem> iterator;
--    private final Location baseLocation;
+ import static com.google.common.base.Preconditions.checkState;
+@@ -51,6 +54,7 @@
+ import static io.trino.client.auth.external.ExternalAuthenticator.toAuthentication;
+ import static io.trino.client.auth.external.MockTokenPoller.onPoll;
+ import static io.trino.client.auth.external.TokenPollResult.successful;
++import static java.lang.Thread.State.WAITING;
+ import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+ import static java.net.URI.create;
+ import static java.util.concurrent.Executors.newCachedThreadPool;
+@@ -293,18 +297,31 @@ public void testAuthenticationFromMultipleThreadsWithCachedTokenAfterAuthenticat
+         MockRedirectHandler redirectHandler = new MockRedirectHandler()
+                 .sleepOnRedirect(Duration.ofMinutes(1));
  
-     AzureBlobFileIterator(AzureLocation location, Iterator<BlobItem> iterator)
-     {
-         this.location = requireNonNull(location, "location is null");
-         this.iterator = requireNonNull(iterator, "iterator is null");
--        this.baseLocation = location.baseLocation();
-     }
- 
-     @Override
-@@ -58,7 +55,7 @@ public FileEntry next()
-         try {
-             BlobItem blobItem = iterator.next();
-             return new FileEntry(
--                    baseLocation.appendPath(blobItem.getName()),
-+                    location.blobLocation(blobItem.getName()),
-                     blobItem.getProperties().getContentLength(),
-                     blobItem.getProperties().getLastModified().toInstant(),
-                     Optional.empty());
-```
-
-**File**: `lib/trino-filesystem-azure/src/main/java/io/trino/filesystem/azure/AzureFileSystem.java` (modified, +2/-3)
-```diff
-@@ -652,11 +652,10 @@ private Set<Location> listGen2Directories(AzureLocation location)
- 
-     private Set<Location> listBlobDirectories(AzureLocation location)
-     {
--        Location baseLocation = location.baseLocation();
-         return createBlobContainerClient(location, Optional.empty())
-                 .listBlobsByHierarchy(location.directoryPath()).stream()
-                 .filter(BlobItem::isPrefix)
--                .map(item -> baseLocation.appendPath(item.getName()))
-+                .map(item -> location.blobLocation(item.getName()))
-                 .collect(toImmutableSet());
-     }
- 
-@@ -667,7 +666,7 @@ private boolean isHierarchicalNamespaceEnabled(AzureLocation location)
-             // Normalize consecutive slashes: the Azure DataLake getAccessControl API returns HTTP 400
-             // for paths containing "//", while other APIs like listPaths silently canonicalize them
-             String canonicalPath = CharMatcher.is('/').collapseFrom(
--                    CharMatcher.is('/').trimTrailingFrom(location.path()), '/');
-+                    CharMatcher.is('/').trimFrom(location.path()), '/');
-             DataLakeFileSystemClient fileSystemClient = createFileSystemClient(location, Optional.empty());
-             fileSystemClient.getDirectoryClient(canonicalPath).getAccessControl();
-             return true;
-```
-
-**File**: `lib/trino-filesystem-azure/src/main/java/io/trino/filesystem/azure/AzureLocation.java` (modified, +5/-0)
-```diff
-@@ -145,6 +145,11 @@ public String toString()
-         return location.toString();
-     }
- 
-+    public Location blobLocation(String blobName)
-+    {
-+        return Location.of(baseLocation() + blobName);
-+    }
+-        ExternalAuthenticator authenticator = new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1));
++        CountDownLatch redirectStarted = new CountDownLatch(1);
++        RedirectHandler signalingRedirectHandler = uri -> {
++            redirectStarted.countDown();
++            redirectHandler.redirectTo(uri);
++        };
 +
-     public Location baseLocation()
-     {
-         return Location.of("%s://%s%s.dfs.%s/".formatted(
-```
-
-**File**: `lib/trino-filesystem-azure/src/test/java/io/trino/filesystem/azure/AbstractTestAzureFileSystem.java` (modified, +34/-0)
-```diff
-@@ -13,6 +13,7 @@
-  */
- package io.trino.filesystem.azure;
- 
-+import com.azure.core.util.BinaryData;
- import com.azure.identity.ClientSecretCredentialBuilder;
- import com.azure.storage.blob.BlobContainerClient;
- import com.azure.storage.blob.models.BlobItem;
-@@ -413,4 +414,37 @@ void testListFilesStartingFromConsecutiveSlashesInLocation()
-             assertThat(builder.build()).containsExactlyInAnyOrder(file1, file2);
-         }
-     }
++        ExternalAuthenticator authenticator = new ExternalAuthenticator(signalingRedirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1));
+         Future<Request> interruptedAuthentication = interruptableThreadPool.submit(
+                 () -> authenticator.authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\"")));
+-        Thread.sleep(100); // It's here to make sure that authentication will start before the other threads.
++        redirectStarted.await();
 +
-+    @Test
-+    void testListBlobsWithLeadingSlash()
-+            throws IOException
-+    {
-+        if (isHierarchical()) {
-+            abort("ADLS Gen2 hierarchical canonicalizes runs of slashes, so blob names cannot start with a slash");
++        List<Thread> requestThreads = new CopyOnWriteArrayList<>();
+         List<Future<Request>> requests = times(
+                 2,
+-                () -> new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1))
+-                        .authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\"")))
++                () -> {
++                    requestThreads.add(Thread.currentThread());
++                    return new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1))
++                            .authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\""));
++                })
+                 .map(executor::submit)
+                 .collect(toImmutableList());
+ 
+-        Thread.sleep(100);
++        while (requestThreads.size() < 2 || !requestThreads.stream().allMatch(TestExternalAuthenticator::isParked)) {
++            Thread.sleep(10);
 +        }
-+        try (Closer closer = Closer.create()) {
-+            for (String name : ImmutableList.of("/leading-slash/file", "/leading-slash/nested/file")) {
-+                createBlobWithName(closer, name);
-+            }
-+            Location directory = getRootLocation().appendSuffix("/leading-slash/");
-+
-+            ImmutableList.Builder<Location> files = ImmutableList.builder();
-+            FileIterator iterator = getFileSystem().listFiles(directory);
-+            while (iterator.hasNext()) {
-+                files.add(iterator.next().location());
-+            }
-+            assertThat(files.build()).containsExactlyInAnyOrder(
-+                    directory.appendSuffix("file"),
-+                    directory.appendSuffix("nested/file"));
-+
-+            assertThat(getFileSystem().listDirectories(directory))
-+                    .containsExactly(directory.appendSuffix("nested/"));
-+        }
-+    }
-+
-+    private void createBlobWithName(Closer closer, String name)
+         interruptableThreadPool.shutdownNow();
+ 
+         ConcurrentRequestAssertion assertion = new ConcurrentRequestAssertion(ImmutableList.<Future<Request>>builder()
+@@ -317,6 +334,11 @@ public void testAuthenticationFromMultipleThreadsWithCachedTokenAfterAuthenticat
+         assertThat(redirectHandler.getRedirectionCount()).isEqualTo(1);
+     }
+ 
++    private static boolean isParked(Thread thread)
 +    {
-+        blobContainerClient.getBlobClient(name).upload(BinaryData.fromString("abc"));
-+        closer.register(() -> blobContainerClient.getBlobClient(name).deleteIfExists());
++        return thread.getState() == WAITING && LockSupport.getBlocker(thread) != null;
 +    }
- }
++
+     private static Stream<Callable<Request>> times(int times, Callable<Request> request)
+     {
+         return Stream.generate(() -> request)
 ```
 
 ---
 
-### Incident Patch 3: `e526da50` (2026-10-24)
-**Commit Message**: Report Hudi reader memory through MemoryContext
+### Incident Patch 3: `010fed1f` (2026-11-22)
+**Commit Message**: Use shorter timeouts for faster test jobs
 
-Connect Hudi's Parquet reader and data source to the engine memory
-context so allocations are reported during reads instead of afterward.
-
-Cover memory limits, reader lifecycle, and memory accounting
-through both scan operators.
-
-**File**: `plugin/trino-hudi/src/main/java/io/trino/plugin/hudi/HudiPageSourceProvider.java` (modified, +11/-8)
+**File**: `.github/schedule-config.yml` (modified, +19/-19)
 ```diff
-@@ -47,6 +47,7 @@
- import io.trino.spi.connector.ConnectorTableHandle;
- import io.trino.spi.connector.ConnectorTransactionHandle;
- import io.trino.spi.connector.DynamicFilter;
-+import io.trino.spi.connector.MemoryContext;
- import io.trino.spi.predicate.TupleDomain;
- import io.trino.spi.type.Decimals;
- import io.trino.spi.type.Type;
-@@ -70,7 +71,7 @@
- 
- import static com.google.common.base.Preconditions.checkArgument;
- import static io.airlift.slice.Slices.utf8Slice;
--import static io.trino.memory.context.AggregatedMemoryContext.newSimpleAggregatedMemoryContext;
-+import static io.trino.memory.context.AggregatedMemoryContext.newAggregatedMemoryContext;
- import static io.trino.metastore.Partitions.makePartName;
- import static io.trino.parquet.ParquetTypeUtils.getColumnIO;
- import static io.trino.parquet.ParquetTypeUtils.getDescriptors;
-@@ -146,15 +147,15 @@ public HudiPageSourceProvider(
-     }
- 
-     @Override
--    @SuppressWarnings("deprecation") // TODO (https://github.com/trinodb/trino/issues/29959) migrate to non-deprecated createPageSource overload
-     public ConnectorPageSource createPageSource(
-             ConnectorTransactionHandle transaction,
-             ConnectorSession session,
-             ConnectorSplit connectorSplit,
-             ConnectorTableHandle connectorTable,
-             Optional<ConnectorTableCredentials> tableCredentials,
-             List<ColumnHandle> columns,
--            DynamicFilter dynamicFilter)
-+            DynamicFilter dynamicFilter,
-+            MemoryContext memoryContext)
-     {
-         HudiSplit split = (HudiSplit) connectorSplit;
-         String path = split.location();
-@@ -184,7 +185,8 @@ public ConnectorPageSource createPageSource(
-                         .withVectorizedDecodingEnabled(isParquetVectorizedDecodingEnabled(session))
-                         .withMaxReadBlockRowCount(getParquetMaxReadBlockRowCount(session))
-                         .build(),
--                timeZone);
-+                timeZone,
-+                memoryContext);
- 
-         Map<String, Block> partitionBlocks = convertPartitionValues(hiveColumns, split.partitionKeys());
- 
-@@ -223,16 +225,17 @@ private static ConnectorPageSource createPageSource(
-             TrinoInputFile inputFile,
-             FileFormatDataSourceStats dataSourceStats,
-             ParquetReaderOptions options,
--            DateTimeZone timeZone)
-+            DateTimeZone timeZone,
-+            MemoryContext memoryContext)
-     {
-         ParquetDataSource dataSource = null;
-         boolean useColumnNames = shouldUseParquetColumnNames(session);
-         String path = hudiSplit.location();
-         long start = hudiSplit.start();
-         long length = hudiSplit.length();
-         try {
--            AggregatedMemoryContext memoryContext = newSimpleAggregatedMemoryContext();
--            dataSource = createDataSource(inputFile, OptionalLong.of(hudiSplit.fileSize()), options, memoryContext, dataSourceStats);
-+            AggregatedMemoryContext aggregatedMemoryContext = newAggregatedMemoryContext(memoryContext);
-+            dataSource = createDataSource(inputFile, OptionalLong.of(hudiSplit.fileSize()), options, aggregatedMemoryContext, dataSourceStats);
-             ParquetMetadata parquetMetadata = MetadataReader.readFooter(dataSource, options, Optional.empty(), Optional.empty());
-             FileMetadata fileMetaData = parquetMetadata.getFileMetaData();
-             MessageType fileSchema = fileMetaData.getSchema();
-@@ -270,7 +273,7 @@ private static ConnectorPageSource createPageSource(
-                     rowGroups,
-                     finalDataSource,
-                     timeZone,
--                    memoryContext,
-+                    aggregatedMemoryContext,
-                     options,
-                     exception -> handleException(dataSourceId, exception),
-                     Optional.of(parquetPredicate),
-```
-
-**File**: `plugin/trino-hudi/src/test/java/io/trino/plugin/hudi/TestHudiPageSourceProvider.java` (added, +323/-0)
-```diff
-@@ -0,0 +1,323 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.plugin.hudi;
-+
-+import com.google.common.collect.ImmutableList;
-+import io.airlift.units.DataSize;
-+import io.trino.filesystem.Location;
-+import io.trino.filesystem.memory.MemoryFileSystemFactory;
-+import io.trino.memory.MemoryPool;
-+import io.trino.metadata.Split;
-+import io.trino.operator.DriverContext;
-+import io.trino.operator.ScanFilterAndProjectOperator.ScanFilterAndProjectOperatorFactory;
-+import io.trino.operator.SourceOperator;
-+import io.trino.operator.SourceOperatorFactory;
-+import io.trino.operator.TableScanOperator.TableScanOperatorFactory;
-+import io.trino.operator.TaskContext;
-+import io.trino.operator.project.InputPageProjection;
-+import io.trino.operator.project.PageProcessor;
-+import io.trino.plugin.base.metrics.FileFormatDataSourceStats;
-+import io.trino.plugin.hive.parquet.ParquetReaderConfig;
-+import io.trino.spi.Page;
-+import io.trino.spi.SplitWeight;
-+import io.trino.spi.TrinoException;
-+import io.trino.spi.connector.ColumnHandle;
-+import io.trino.spi.connector.ConnectorPageSource;
-+import io.trino.spi.connector.ConnectorSession;
-+import io.trino.spi.connector.MemoryContext;
-+import io.trino.spi.connector.SourcePage;
-+import io.trino.spi.predicate.TupleDomain;
-+import io.trino.split.PageSourceProvider;
-+import io.trino.sql.planner.plan.PlanNodeId;
-+import io.trino.testing.TestingConnectorSession;
-+import io.trino.testing.TestingSplit;
-+import org.junit.jupiter.api.Test;
-+
-+import java.io.IOException;
-+import java.io.UncheckedIOException;
-+import java.util.List;
-+import java.util.Optional;
-+import java.util.concurrent.ExecutorService;
-+import java.util.concurrent.ScheduledExecutorService;
-+import java.util.concurrent.atomic.AtomicLong;
-+
-+import static com.google.common.io.Resources.getResource;
-+import static com.google.common.io.Resources.toByteArray;
-+import static io.airlift.concurrent.Threads.daemonThreadsNamed;
-+import static io.airlift.units.DataSize.Unit.BYTE;
-+import static io.trino.SessionTestUtils.TEST_SESSION;
-+import static io.trino.memory.context.AggregatedMemoryContext.newSimpleAggregatedMemoryContext;
-+import static io.trino.metastore.HiveType.HIVE_STRING;
-+import static io.trino.plugin.hive.HiveColumnHandle.ColumnType.REGULAR;
-+import static io.trino.plugin.hive.HiveColumnHandle.createBaseColumn;
-+import static io.trino.spi.StandardErrorCode.EXCEEDED_LOCAL_MEMORY_LIMIT;
-+import static io.trino.spi.connector.DynamicFilter.EMPTY;
-+import static io.trino.spi.type.VarcharType.VARCHAR;
-+import static io.trino.testing.TestingHandles.TEST_CATALOG_HANDLE;
-+import static io.trino.testing.TestingHandles.TEST_TABLE_HANDLE;
-+import static io.trino.testing.TestingTaskContext.createTaskContext;
-+import static java.util.concurrent.Executors.newCachedThreadPool;
-+import static java.util.concurrent.Executors.newScheduledThreadPool;
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+
-+final class TestHudiPageSourceProvider
-+{
-+    private static final List<ColumnHandle> COLUMNS = ImmutableList.of(createBaseColumn("_hoodie_record_key", 2, HIVE_STRING, VARCHAR, REGULAR, Optional.empty()));
-+
-+    @Test
-+    void testCachedMemoryUsage()
-+            throws IOException
-+    {
-+        testMemoryUsage(true);
-+    }
-+
-+    @Test
-+    void testStreamingMemoryUsage()
-+            throws IOException
-+    {
-+        testMemoryUsage(false);
-+    }
-+
-+    private static void testMemoryUsage(boolean cacheFile)
-+            throws IOException
-+    {
-+        AtomicLong memoryUsage = new AtomicLong();
-+        try (ConnectorPageSource pageSource = createPageSource(cacheFile, memoryUsage::set)) {
-+            if (cacheFile) {
-+                assertThat(memoryUsage.get()).isPositive();
-+            }
-+            else {
-+                assertThat(memoryUsage.get()).isZero();
-+            }
-+
-+            SourcePage page = pageSource.getNextSourcePage();
-+            assertThat(page).isNotNull();
-+            assertThat(page.getPositionCount()).isPositive();
-+            assertThat(VARCHAR.getSlice(page.getBlock(0), 0).length()).isPositive();
-+            assertThat(memoryUsage.get()).isPositive();
-+        }
-+        assertThat(memoryUsage.get()).isZero();
-+    }
-+
-+    @Test
-+    void testMemoryLimitDuringCreation()
-+    {
-+        TrinoException memoryLimitExceeded = new TrinoException(EXCEEDED_LOCAL_MEMORY_LIMIT, "Test memor
+@@ -27,31 +27,31 @@
+     - plugin/trino-blob-cache-alluxio
+     - plugin/trino-blob-cache-memory
+ - { modules: core/trino-main, timeout-minutes: 45 }
+-- { modules: lib/trino-filesystem-azure, profile: cloud-tests, timeout-minutes: 45 }
+-- { modules: lib/trino-filesystem-gcs, profile: cloud-tests, timeout-minutes: 45 }
+-- { modules: lib/trino-filesystem-s3, profile: cloud-tests, timeout-minutes: 45 }
+-- { modules: plugin/trino-bigquery, timeout-minutes: 60 }
++- { modules: lib/trino-filesystem-azure, profile: cloud-tests }
++- { modules: lib/trino-filesystem-gcs, profile: cloud-tests }
++- { modules: lib/trino-filesystem-s3, profile: cloud-tests }
++- { modules: plugin/trino-bigquery }
+ # `when.impacted: false` means this profile isn't run just because trino-bigquery changed, so it only runs on its default triggers (nightly schedule, or manual dispatch), not the merge queue.
+ # C07ABNN828M is the #core-dev Slack channel.
+-- { modules: plugin/trino-bigquery, profile: cloud-tests-2, when: { impacted: false, scheduled: nightly }, notify-channels: [C07ABNN828M], timeout-minutes: 60 }
++- { modules: plugin/trino-bigquery, profile: cloud-tests-2, when: { impacted: false, scheduled: nightly }, notify-channels: [C07ABNN828M] }
+ - { modules: plugin/trino-cassandra }
+ - { modules: plugin/trino-clickhouse }
+-- { modules: plugin/trino-delta-lake, timeout-minutes: 45 }
+-- { modules: plugin/trino-delta-lake, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-delta-lake }
++- { modules: plugin/trino-delta-lake, profile: cloud-tests }
+ - { modules: plugin/trino-delta-lake, profile: fte-tests }
+-- { modules: plugin/trino-druid, timeout-minutes: 45 }
++- { modules: plugin/trino-druid }
+ - { modules: plugin/trino-duckdb }
+ - { modules: plugin/trino-elasticsearch }
+-- { modules: plugin/trino-exchange-filesystem, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-exchange-filesystem, profile: cloud-tests }
+ - { modules: plugin/trino-exasol }
+ - { modules: plugin/trino-google-sheets }
+-- { modules: plugin/trino-google-sheets, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-google-sheets, profile: cloud-tests }
+ - { modules: plugin/trino-hive, timeout-minutes: 45 }
+ - { modules: plugin/trino-hive, profile: fte-tests }
+-- { modules: plugin/trino-hive, profile: test-parquet, timeout-minutes: 60 }
++- { modules: plugin/trino-hive, profile: test-parquet, timeout-minutes: 45 }
+ - { modules: plugin/trino-hudi }
+-- { modules: plugin/trino-iceberg, timeout-minutes: 60 }
+-- { modules: plugin/trino-iceberg, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-iceberg, timeout-minutes: 45 }
++- { modules: plugin/trino-iceberg, profile: cloud-tests }
+ - { modules: plugin/trino-iceberg, profile: fte-tests }
+ - { modules: plugin/trino-iceberg, profile: floci-and-avro, timeout-minutes: 60 }
+ - { modules: plugin/trino-ignite }
+@@ -61,13 +61,13 @@
+ - { modules: plugin/trino-mongodb }
+ - { modules: plugin/trino-mysql }
+ - { modules: plugin/trino-opensearch }
+-- { modules: plugin/trino-oracle, timeout-minutes: 45 }
++- { modules: plugin/trino-oracle }
+ - { modules: plugin/trino-pinot }
+ - { modules: plugin/trino-postgresql }
+ - { modules: plugin/trino-redis }
+-- { modules: plugin/trino-redshift, timeout-minutes: 60 }
+-- { modules: plugin/trino-redshift, profile: cloud-tests, timeout-minutes: 60 }
+-- { modules: plugin/trino-redshift, profile: fte-tests, timeout-minutes: 60 }
++- { modules: plugin/trino-redshift }
++- { modules: plugin/trino-redshift, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-redshift, profile: fte-tests }
+ - { modules: plugin/trino-resource-group-managers }
+ - { modules: plugin/trino-singlestore }
+ - { modules: plugin/trino-snowflake }
+@@ -76,6 +76,6 @@
+ - { modules: plugin/trino-sqlserver }
+ - { modules: testing/trino-faulttolerant-tests, profile: default }
+ - { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-delta }
+-- { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-hive, timeout-minutes: 60 }
++- { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-hive }
+ - { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-iceberg }
+-- { modules: testing/trino-tests, timeout-minutes: 60 }
++- { modules: testing/trino-tests, timeout-minutes: 45 }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32244** (2026-11-20): Update dependencies (@wendigo)
-- **PR #32238** (closed): Fix PostgreSQL LIKE pushdown with backslash (@chenjian2664)
-- **PR #32233** (2026-11-19): Bump io.airlift:aircompressor-v3 from 3.14 to 3.16 (@dependabot[bot])
-- **PR #32232** (2026-11-19): Bump the maven-model group with 2 updates (@dependabot[bot])
-- **PR #32229** (2026-11-19): Compare MATCH fields as the comparison type (@martint)
-- **PR #32227** (closed): Run Databricks product tests in parallel (@electrum)
+- **PR #32333** (2026-11-23): Properly manage dependencies instead of clobbering them with Enforcer (@ksobolew)
+- **PR #32327** (2026-11-23): Fix race in TestExternalAuthenticator interrupt test (@findepi)
+- **PR #32326** (2026-11-23): Stop downloading spark-avro in Spark containers (@findepi)
+- **PR #32324** (2026-11-23): Fix PlanOptimizers comment grammar (@findepi)
+- **PR #32320** (2026-11-23): Bump org.codehaus.plexus:plexus-xml from 4.2.0 to 4.2.1 (@dependabot[bot])
+- **PR #32319** (2026-11-23): Bump dep.clickhouse.version from 0.11.1 to 0.11.2 (@dependabot[bot])
 
 ---
 
@@ -2428,50 +2162,57 @@ through both scan operators.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ORC bloom filter lookups for timestamps
+## X. Elasticsearch table listing when an index is dropped
 
 **RULE**:
-When implementing operations in `lib/trino-orc/src/main/java/io/trino/orc/TupleDomainOrcPredicate.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4bff3c02`: ORC bloom filter lookups for timestamps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6443d0c`: Elasticsearch table listing when an index is dropped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/trino-orc/src/main/java/io/trino/orc/TupleDomainOrcPredicate.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import static java.lang.Math.floorMod;
-        if (sqlType.equals(TIMESTAMP_MILLIS) || sqlType.equals(TIMESTAMP_MICROS)) {
-            long epochMicros = ((Number) predicateValue).longValue();
-            long epochMillis = floorDiv(epochMicros, MICROSECONDS_PER_MILLISECOND);
-            boolean onMillisecondBoundary = floorMod(epochMicros, MICROSECONDS_PER_MILLISECOND) == 0;
-            return testMillisOrPreviousOnBoundary(bloomFilter, epochMillis, onMillisecondBoundary);
-            return testMillisOrPreviousOnBoundary(bloomFilter, unpackMillisUtc(((Number) predicateValue).longValue()), true);
-        if (sqlType.equals(TIMESTAMP_TZ_MICROS)) {
-            LongTimestampWithTimeZone timestamp = (LongTimestampWithTimeZone) predicateValue;
-            return testMillisOrPreviousOnBoundary(bloomFilter, timestamp.getEpochMillis(), timestamp.getPicosOfMilli() == 0);
+import dev.failsafe.Failsafe;
+import dev.failsafe.RetryPolicy;
+import static java.time.temporal.ChronoUnit.MILLIS;
+    // _cat/indices fails when an index is deleted while the response is being built
+    private static final RetryPolicy<List<String>> INDEX_LISTING_RETRY_POLICY = RetryPolicy.<List<String>>builder()
+            .withMaxAttempts(3)
+            .withBackoff(10, 100, MILLIS)
+            .handleIf(ElasticsearchClient::isIndexNotFound)
+            .build();
+
+    {
+        return Failsafe.with(INDEX_LISTING_RETRY_POLICY).get(this::listIndexes);
+    }
+
+    private List<String> listIndexes()
+    private static boolean isIndexNotFound(Throwable throwable)
+    {
+        if (!(throwable.getCause() instanceof ResponseException exception)) {
+            return false;
         }
-        if (sqlType.equals(TIMESTAMP_TZ_NANOS)) {
-    // Reads below nanosecond precision round half up, so a value on a millisecond boundary may be stored under the previous millisecond
-    private static boolean testMillisOrPreviousOnBoundary(BloomFilter bloomFilter, long epochMillis, boolean onMillisecondBound
+        HttpEntity entity = exception.getResponse().getEntity();
+        if (exception.getResponse().getStatusLine().getStatusCode() != 404 || entity == null) {
+            return false;
+        }
+        try {
+            JsonNode type = JSON_MAPPER.readTree(EntityUtils.toByteArray(entity)).path("error").path("type");
+            return type.isString() && type.asString().equals("index_not_found_exception")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        if (sqlType.equals(TIMESTAMP_MILLIS)) {
-            return bloomFilter.testLong(((Number) predicateValue).longValue());
-        }
-        if (sqlType.equals(TIMESTAMP_MICROS)) {
-            return bloomFilter.testLong(floorDiv(((Number) predicateValue).longValue(), MICROSECONDS_PER_MILLISECOND));
-            return bloomFilter.testLong(unpackMillisUtc(((Number) predicateValue).longValue()));
-        if (sqlType.equals(TIMESTAMP_TZ_MICROS) || sqlType.equals(TIMESTAMP_TZ_NANOS)) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4bff3c02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6443d0c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

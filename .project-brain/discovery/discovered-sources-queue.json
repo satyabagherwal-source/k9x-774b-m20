@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T17:46:32.470Z",
+  "updated_at": "2026-11-23T17:54:19.156Z",
   "stats": {
-    "total_discovered": 7953,
+    "total_discovered": 7955,
     "approved_pending_harvest": 7527,
     "harvested_count": 0,
-    "rejected_count": 426,
+    "rejected_count": 428,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7518,
+      "COMMUNITY_AND_EXPERT": 7520,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -172007,6 +172007,36 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
         "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-DD9B130CD1A0": {
+      "id": "SRC-DD9B130CD1A0",
+      "url": "http://token.uri/",
+      "title": "http://token.uri/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T17:54:19.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-CF57018E52CA": {
+      "id": "SRC-CF57018E52CA",
+      "url": "http://redirect.uri/",
+      "title": "http://redirect.uri/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T17:54:19.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
       }
     }
   }

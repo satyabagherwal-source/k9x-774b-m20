@@ -12407,3 +12407,5 @@
 | `CYCLE-20261123-4TIB` | `2026-11-23T17:46:21.155Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`fda432b0...`) |
 | `CYCLE-20261123-4WXU` | `2026-11-23T17:46:25.602Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10086` | Yes (`462dfe68...`) |
 | `CYCLE-20261123-4YCS` | `2026-11-23T17:46:27.436Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10087` | Yes (`a713a164...`) |
+| `CYCLE-20261123-EN1U` | `2026-11-23T17:53:59.346Z` | `Reson8/Rumble-2-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md` | Yes (`3e2e542a...`) |
+| `CYCLE-20261123-EZA7` | `2026-11-23T17:54:15.199Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10088` | Yes (`2c86ea0f...`) |

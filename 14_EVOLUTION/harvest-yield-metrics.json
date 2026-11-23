@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T17:46:27.446Z",
-  "total_cycles_completed": 11798,
-  "total_learnings_persisted": 11798,
-  "total_rules_promoted": 10927,
+  "last_updated": "2026-11-23T17:54:15.207Z",
+  "total_cycles_completed": 11800,
+  "total_learnings_persisted": 11800,
+  "total_rules_promoted": 10928,
   "history": [
-    {
-      "timestamp": "2026-11-22T21:31:58.551Z",
-      "repository": "ajeetdsouza/zoxide",
-      "learningId": "learn-github-ajeetdsouza-zoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T21:40:48.904Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T21:41:02.923Z",
       "repository": "milvus-io/milvus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T17:46:27.446Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:53:59.356Z",
+      "repository": "Reson8/Rumble-2-Flash",
+      "learningId": "learn-huggingface-reson8-rumble-2-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:54:15.207Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T17:46:32.882Z",
+  "last_updated": "2026-11-23T17:54:20.566Z",
   "total_records": 2437,
   "domains": {
     "A": {
@@ -8252,8 +8252,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "e0977c9c4ddb3549eaf854fd1329d7afdfd890354b19f1a78e8e2fbd7752baad",
-      "created_at": "2026-11-23T16:28:53.019Z"
+      "content_hash": "c30e2d803adc2460c6ace0cb33bf944a8ce511ea0c4cd88cbe23dc0d7530c883",
+      "created_at": "2026-11-23T17:54:20.566Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -16695,8 +16695,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "567e8e13d51818aaa5070420a88e2d2861021cba1f72023f9d8871deb26ac043",
-      "created_at": "2026-11-22T14:40:48.269Z"
+      "content_hash": "49328780532efa5f51b2c0779879b887a28bf4b260f759e6f430d69663cde145",
+      "created_at": "2026-11-23T17:54:15.580Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -23377,8 +23377,8 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
       "repository": "trinodb-trino-learnings",
-      "content_hash": "56687c6dca8249145b46690057a940ba6f769e932dc837732648b6a6c8d49f99",
-      "created_at": "2026-11-20T05:54:28.980Z"
+      "content_hash": "adca525b30290d9828ac8037f764fe48649a5661300aa42f6152f670e897239d",
+      "created_at": "2026-11-23T17:54:19.517Z"
     },
     "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
@@ -33232,8 +33232,8 @@
       "title": "Research & Knowledge Intelligence: Reson8/Rumble-2-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reson8-rumble-2-flash-research-knowledge-intelligence-reson8-rumble-2-flash-c.md",
       "repository": "Reson8/Rumble-2-Flash",
-      "content_hash": "2a10b77a8ceb3fec3d487fb0f8299c6f21408feff02204d8864674f3938e393c",
-      "created_at": "2026-11-19T06:52:24.366Z"
+      "content_hash": "bf390e18fd3708453a9dab6d46180dd453f4edcad79df7a09db74960c298341a",
+      "created_at": "2026-11-23T17:53:59.556Z"
     },
     "DOM-D-28CD838B": {
       "record_id": "DOM-D-28CD838B",
@@ -33283,8 +33283,8 @@
       "title": "Research & Knowledge Intelligence: hf-reson8-rumble-2-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reson8-rumble-2-flash-learnings-research-knowledge-intelligence-hf-reson8-rum.md",
       "repository": "hf-reson8-rumble-2-flash-learnings",
-      "content_hash": "14832458dab0d27d29f14a1a46c69acbb93809ba29d5843b2310379458977686",
-      "created_at": "2026-11-19T06:53:06.124Z"
+      "content_hash": "0a17f6b91a1f19305a06b480744133239ac87f77e3e0b7c38ab64d0a771c6378",
+      "created_at": "2026-11-23T17:54:18.748Z"
     },
     "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants",

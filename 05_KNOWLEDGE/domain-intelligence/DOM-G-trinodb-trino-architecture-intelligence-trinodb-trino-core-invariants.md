@@ -4,24 +4,24 @@
 {
   "source_repository": "trinodb/trino",
   "source_url": "https://github.com/trinodb/trino",
-  "source_version": "5f59f4a1",
+  "source_version": "79e960f9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T14:40:48.100Z",
+  "timestamp": "2026-11-23T17:54:15.406Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trinodb-trino",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `5f59f4a1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T14:40:48.100Z`  
+> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `79e960f9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:54:15.406Z`  
 > **Learning ID**: `learn-github-trinodb-trino`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from trinodb/trino:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:40:46.868Z  
+> **Harvest Timestamp**: 2026-11-23T17:54:14.271Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13538 stars
+- **Stars / Engagement**: 13540 stars
 
 ---
 
@@ -1868,253 +1868,267 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f59f4a1` (2026-11-22)
-**Commit Message**: Extract the JUnit product test suite runner
+### Incident Patch 1: `f6443d0c` (2026-11-20)
+**Commit Message**: Fix Elasticsearch table listing when an index is dropped
 
-**File**: `.github/bin/run-product-test-suites.sh` (added, +108/-0)
+With X-Pack security enabled, Elasticsearch fails the _cat/indices
+request with 404 index_not_found_exception when an index is deleted
+while the response is being built. Retry the request a few times on
+that error, so that SHOW TABLES and information_schema queries do not
+fail.
+
+**File**: `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java` (modified, +33/-0)
 ```diff
-@@ -0,0 +1,108 @@
-+#!/usr/bin/env bash
+@@ -19,6 +19,8 @@
+ import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Sets;
+ import com.google.inject.Inject;
++import dev.failsafe.Failsafe;
++import dev.failsafe.RetryPolicy;
+ import io.airlift.json.JsonCodec;
+ import io.airlift.json.JsonMapperProvider;
+ import io.airlift.log.Logger;
+@@ -102,6 +104,7 @@
+ import static java.lang.StrictMath.toIntExact;
+ import static java.lang.String.format;
+ import static java.nio.charset.StandardCharsets.UTF_8;
++import static java.time.temporal.ChronoUnit.MILLIS;
+ import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+ import static java.util.concurrent.TimeUnit.MILLISECONDS;
+ import static java.util.stream.Collectors.joining;
+@@ -118,6 +121,13 @@ public class ElasticsearchClient
+     private static final Pattern ADDRESS_PATTERN = Pattern.compile("((?<cname>[^/]+)/)?(?<ip>.+):(?<port>\\d+)");
+     private static final Set<String> NODE_ROLES = ImmutableSet.of("data", "data_content", "data_hot", "data_warm", "data_cold", "data_frozen");
+ 
++    // _cat/indices fails when an index is deleted while the response is being built
++    private static final RetryPolicy<List<String>> INDEX_LISTING_RETRY_POLICY = RetryPolicy.<List<String>>builder()
++            .withMaxAttempts(3)
++            .withBackoff(10, 100, MILLIS)
++            .handleIf(ElasticsearchClient::isIndexNotFound)
++            .build();
 +
-+set -eo pipefail
+     private final BackpressureRestClient client;
+     private final int scrollSize;
+     private final Duration scrollTimeout;
+@@ -384,6 +394,11 @@ public boolean indexExists(String index)
+     }
+ 
+     public List<String> getIndexes()
++    {
++        return Failsafe.with(INDEX_LISTING_RETRY_POLICY).get(this::listIndexes);
++    }
 +
-+mkdir -p logs
++    private List<String> listIndexes()
+     {
+         return doRequest("/_cat/indices?h=index,docs.count,docs.deleted&format=json&s=index:asc", body -> {
+             try {
+@@ -1121,6 +1136,24 @@ private <T> T doRequest(String path, ResponseHandler<T> handler)
+         }
+     }
+ 
++    private static boolean isIndexNotFound(Throwable throwable)
++    {
++        if (!(throwable.getCause() instanceof ResponseException exception)) {
++            return false;
++        }
++        HttpEntity entity = exception.getResponse().getEntity();
++        if (exception.getResponse().getStatusLine().getStatusCode() != 404 || entity == null) {
++            return false;
++        }
++        try {
++            JsonNode type = JSON_MAPPER.readTree(EntityUtils.toByteArray(entity)).path("error").path("type");
++            return type.isString() && type.asString().equals("index_not_found_exception");
++        }
++        catch (IOException | JacksonException e) {
++            return false;
++        }
++    }
 +
-+# Suites load checked-in configuration from paths relative to the repository root.
-+product_test_distribution=testing/trino-product-tests/target/product-test-distribution
-+test_jar=("${product_test_distribution}"/lib/trino-product-tests-*-tests.jar)
-+product_test_classpath=$(< "${product_test_distribution}/classpath.txt")
-+product_test_classpath="${product_test_distribution}/${product_test_classpath//:/:${product_test_distribution}/}"
-+
-+declare -a suite_results=()
-+declare -a suite_totals=()
-+echo "## pt ${MATRIX_SUITE}" >> "$GITHUB_STEP_SUMMARY"
-+echo "" >> "$GITHUB_STEP_SUMMARY"
-+
-+failed=0
-+failed_suites=()
-+
-+for suite in ${MATRIX_SUITE}; do
-+  log_file="logs/${suite}.log"
-+  echo "### ${suite}" >> "$GITHUB_STEP_SUMMARY"
-+  echo "" >> "$GITHUB_STEP_SUMMARY"
-+
-+  set +e
-+  java \
-+    -Xmx512M \
-+    -XX:+ExitOnOutOfMemoryError \
-+    -Dtrino.product-tests.image="${TRINO_PRODUCT_TESTS_IMAGE}" \
-+    -cp "${test_jar[0]}:${product_test_classpath}" \
-+    io.trino.tests.product.suite.${suite} \
-+    | tee "${log_file}"
-+  rc=${PIPESTATUS[0]}
-+  set -e
-+
-+  total_line=$(grep '^TOTAL' "${log_file}" | tail -1 || true)
-+  if [ -n "${total_line}" ]; then
-+    suite_totals+=("${suite}:${total_line}")
-+  else
-+    suite_totals+=("${suite}:TOTAL summary not found")
-+  fi
-+
-+  if [ "${rc}" -ne 0 ]; then
-+    failed=1
-+    failed_suites+=("${suite}")
-+    suite_results+=("${suite}:FAILED")
-+    echo "- Result: FAILED" >> "$GITHUB_STEP_SUMMARY"
-+  else
-+    suite_results+=("${suite}:PASSED")
-+    echo "- Result: PASSED" >> "$GITHUB_STEP_SUMMARY"
-+  fi
-+
-+  if grep -Eq '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"; then
-+    echo "- Failure details:" >> "$GITHUB_STEP_SUMMARY"
-+    grep -E '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}" >> "$GITHUB_STEP_SUMMARY"
-+  fi
-+  echo "" >> "$GITHUB_STEP_SUMMARY"
-+done
-+
-+echo ""
-+echo "========================================"
-+echo "         PT-JUNIT SUITE SUMMARY         "
-+echo "========================================"
-+echo "Suite: ${MATRIX_SUITE}"
-+echo ""
-+for entry in "${suite_results[@]}"; do
-+  suite_name=${entry%%:*}
-+  suite_result=${entry#*:}
-+  suite_total=""
-+  for total_entry in "${suite_totals[@]}"; do
-+    if [[ "${total_entry}" == "${suite_name}:"* ]]; then
-+      suite_total=${total_entry#*:}
-+      break
-+    fi
-+  done
-+  printf '%-32s | %-7s | %s\n' "${suite_name}" "${suite_result}" "${suite_total}"
-+done
-+echo "========================================"
-+echo ""
-+
-+if [ "${failed}" -ne 0 ]; then
-+  echo "FAILED SUITES:"
-+  for suite in "${failed_suites[@]}"; do
-+    echo "- ${suite}"
-+  done
-+  echo ""
-+  echo "FAILURE DETAILS:"
-+  echo "----------------"
-+  for suite in "${failed_suites[@]}"; do
-+    log_file="logs/${suite}.log"
-+    echo ""
-+    echo "${suite}:"
-+    if grep -q '^FAILURE DETAILS:' "${log_file}"; then
-+      sed -n '/^FAILURE DETAILS:/,$p' "${log_file}"
-+    elif grep -Eq '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"; then
-+      grep -E '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"
-+    else
-+      echo "No structured failure details found in ${log_file}"
-+    fi
-+  done
-+  echo ""
-+  echo "## Failed suites" >> "$GITHUB_STEP_SUMMARY"
-+  for suite in "${failed_suites[@]}"; do
-+    echo "- ${suite}" >> "$GITHUB_STEP_SUMMARY"
-+  done
-+  exit 1
-+fi
+     private static TrinoException propagate(ResponseException exception)
+     {
+         HttpEntity entity = exception.getResponse().getEntity();
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-106)
+---
+
+### Incident Patch 2: `2546efcb` (2026-11-23)
+**Commit Message**: Fix race in TestExternalAuthenticator interrupt test
+
+The test of an interrupted authentication with a memory-cached token
+used Thread.sleep(100) to order its threads: the interruptable request
+had to take the token's write lock before the other two requests
+started, and those had to be blocked on the lock before the
+interruptable one was interrupted. On a slow runner, one of the other
+requests could take the lock instead and sleep for a minute in the
+redirect handler, with nothing interrupting it. The test timed out, and
+because the token cache is a JVM-wide singleton, the lock stayed held
+and the other memory-cached tests in the class timed out as well.
+
+Wait for the redirect to start before submitting the other requests,
+and for those to be parked before interrupting.
+
+**File**: `client/trino-client/src/test/java/io/trino/client/auth/external/TestExternalAuthenticator.java` (modified, +27/-5)
 ```diff
-@@ -1044,7 +1044,6 @@ jobs:
-           docker tag "${image}" trino:for-product-tests
-       - name: Product Tests (JUnit suites)
-         id: tests
--        shell: bash
-         env:
-           TRINO_PRODUCT_TESTS_IMAGE: "trino:for-product-tests"
-           ABFS_CONTAINER: ${{ vars.AZURE_ABFS_HIERARCHICAL_CONTAINER }}
-@@ -1064,111 +1063,7 @@ jobs:
-           SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
-           SNOWFLAKE_ROLE: ${{ vars.SNOWFLAKE_ROLE }}
-           SNOWFLAKE_WAREHOUSE: ${{ vars.SNOWFLAKE_WAREHOUSE }}
--        run: |
--          mkdir -p logs
--
--          # Suites load checked-in configuration from paths relative to the repository root.
--          product_test_distribution=testing/trino-product-tests/target/product-test-distribution
--          test_jar=("${product_test_distribution}"/lib/trino-product-tests-*-tests.jar)
--          product_test_classpath=$(< "${product_test_distribution}/classpath.txt")
--          product_test_classpath="${product_test_distribution}/${product_test_classpath//:/:${product_test_distribution}/}"
--
--          declare -a suite_results=()
--          declare -a suite_totals=()
--          echo "## pt ${MATRIX_SUITE}" >> "$GITHUB_STEP_SUMMARY"
--          echo "" >> "$GITHUB_STEP_SUMMARY"
--
--          failed=0
--          failed_suites=()
--
--          for suite in ${MATRIX_SUITE}; do
--            log_file="logs/${suite}.log"
--            echo "### ${suite}" >> "$GITHUB_STEP_SUMMARY"
--            echo "" >> "$GITHUB_STEP_SUMMARY"
--
--            set +e
--            java \
--              -Xmx512M \
--              -XX:+ExitOnOutOfMemoryError \
--              -Dtrino.product-tests.image="${TRINO_PRODUCT_TESTS_IMAGE}" \
--              -cp "${test_jar[0]}:${product_test_classpath}" \
--              io.trino.tests.product.suite.${suite} \
--              | tee "${log_file}"
--            rc=${PIPESTATUS[0]}
--            set -e
--
--            total_line=$(grep '^TOTAL' "${log_file}" | tail -1 || true)
--            if [ -n "${total_line}" ]; then
--              suite_totals+=("${suite}:${total_line}")
--            else
--              suite_totals+=("${suite}:TOTAL summary not found")
--            fi
--
--            if [ "${rc}" -ne 0 ]; then
--              failed=1
--              failed_suites+=("${suite}")
--              suite_results+=("${suite}:FAILED")
--              echo "- Result: FAILED" >> "$GITHUB_STEP_SUMMARY"
--            else
--              suite_results+=("${suite}:PASSED")
--              echo "- Result: PASSED" >> "$GITHUB_STEP_SUMMARY"
--            fi
--
--            if grep -Eq '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"; then
--              echo "- Failure details:" >> "$GITHUB_STEP_SUMMARY"
--              grep -E '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}" >> "$GITHUB_STEP_SUMMARY"
--            fi
--            echo "" >> "$GITHUB_STEP_SUMMARY"
--          done
--
--          echo ""
--          echo "========================================"
--          echo "         PT-JUNIT SUITE SUMMARY         "
--          echo "========================================"
--          echo "Suite: ${MATRIX_SUITE}"
--          echo ""
--          for entry in "${suite_results[@]}"; do
--            suite_name=${entry%%:*}
--            suite_result=${entry#*:}
--            suite_total=""
--            for total_entry in "${suite_totals[@]}"; do
--              if [[ "${total_entry}" == "${suite_name}:"* ]]; then
--                suite_total=${total_entry#*:}
--                break
--              fi
--            done
--            printf '%-32s | %-7s | %s\n' "${suite_name}" "${suite_result}" "${suite_total}"
--          done
--          echo "========================================"
--          echo ""
--
--          if [ "${failed}" -ne 0 ]; then
--            echo "FAILED SUITES:"
--            for suite in "${failed_suites[@]}"; do
--              echo "- ${suite}"
--            done
--            echo ""
--            echo "FAILURE DETAILS:"
--            echo "----------------"
--            for suite in "${failed_suites[@]}"; do
--              log_file="logs/${suite}.log"
--              echo ""
--              echo "${suite}:"
--              if grep -q '^FAILURE DETAILS:' "${log_file}"; then
--                sed -n '/^FAILURE DETAILS:/,$p' "${log_file}"
--              elif grep -Eq '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"; then
--                grep -E '^\[FAILURE\]|^\[ERROR\]|^    at io\.trino\.tests\.product\.' "${log_file}"
--              else
--                echo "No structured failure details found in ${log_file}"
--              fi
--            done
--            echo ""
--            echo "## Failed suites" >> "$GITHUB_STEP_SUMMARY"
--            for suite in "${failed_suites[@]}"; do
--              echo "- ${suite}" >> "$GITHUB_STEP_SUMMARY"
--            done
--            exit 1
--          fi
-+        run: .github/bin/run-product-test-suites.sh
-       - name: Upload JUnit suite logs
-         i
+@@ -37,9 +37,12 @@
+ import java.util.Optional;
+ import java.util.concurrent.Callable;
+ import java.util.concurrent.CancellationException;
++import java.util.concurrent.CopyOnWriteArrayList;
++import java.util.concurrent.CountDownLatch;
+ import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Future;
++import java.util.concurrent.locks.LockSupport;
+ import java.util.stream.Stream;
+ 
+ import static com.google.common.base.Preconditions.checkState;
+@@ -51,6 +54,7 @@
+ import static io.trino.client.auth.external.ExternalAuthenticator.toAuthentication;
+ import static io.trino.client.auth.external.MockTokenPoller.onPoll;
+ import static io.trino.client.auth.external.TokenPollResult.successful;
++import static java.lang.Thread.State.WAITING;
+ import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+ import static java.net.URI.create;
+ import static java.util.concurrent.Executors.newCachedThreadPool;
+@@ -293,18 +297,31 @@ public void testAuthenticationFromMultipleThreadsWithCachedTokenAfterAuthenticat
+         MockRedirectHandler redirectHandler = new MockRedirectHandler()
+                 .sleepOnRedirect(Duration.ofMinutes(1));
+ 
+-        ExternalAuthenticator authenticator = new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1));
++        CountDownLatch redirectStarted = new CountDownLatch(1);
++        RedirectHandler signalingRedirectHandler = uri -> {
++            redirectStarted.countDown();
++            redirectHandler.redirectTo(uri);
++        };
++
++        ExternalAuthenticator authenticator = new ExternalAuthenticator(signalingRedirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1));
+         Future<Request> interruptedAuthentication = interruptableThreadPool.submit(
+                 () -> authenticator.authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\"")));
+-        Thread.sleep(100); // It's here to make sure that authentication will start before the other threads.
++        redirectStarted.await();
++
++        List<Thread> requestThreads = new CopyOnWriteArrayList<>();
+         List<Future<Request>> requests = times(
+                 2,
+-                () -> new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1))
+-                        .authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\"")))
++                () -> {
++                    requestThreads.add(Thread.currentThread());
++                    return new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1))
++                            .authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\""));
++                })
+                 .map(executor::submit)
+                 .collect(toImmutableList());
+ 
+-        Thread.sleep(100);
++        while (requestThreads.size() < 2 || !requestThreads.stream().allMatch(TestExternalAuthenticator::isParked)) {
++            Thread.sleep(10);
++        }
+         interruptableThreadPool.shutdownNow();
+ 
+         ConcurrentRequestAssertion assertion = new ConcurrentRequestAssertion(ImmutableList.<Future<Request>>builder()
+@@ -317,6 +334,11 @@ public void testAuthenticationFromMultipleThreadsWithCachedTokenAfterAuthenticat
+         assertThat(redirectHandler.getRedirectionCount()).isEqualTo(1);
+     }
+ 
++    private static boolean isParked(Thread thread)
++    {
++        return thread.getState() == WAITING && LockSupport.getBlocker(thread) != null;
++    }
++
+     private static Stream<Callable<Request>> times(int times, Callable<Request> request)
+     {
+         return Stream.generate(() -> request)
+```
+
+---
+
+### Incident Patch 3: `010fed1f` (2026-11-22)
+**Commit Message**: Use shorter timeouts for faster test jobs
+
+**File**: `.github/schedule-config.yml` (modified, +19/-19)
+```diff
+@@ -27,31 +27,31 @@
+     - plugin/trino-blob-cache-alluxio
+     - plugin/trino-blob-cache-memory
+ - { modules: core/trino-main, timeout-minutes: 45 }
+-- { modules: lib/trino-filesystem-azure, profile: cloud-tests, timeout-minutes: 45 }
+-- { modules: lib/trino-filesystem-gcs, profile: cloud-tests, timeout-minutes: 45 }
+-- { modules: lib/trino-filesystem-s3, profile: cloud-tests, timeout-minutes: 45 }
+-- { modules: plugin/trino-bigquery, timeout-minutes: 60 }
++- { modules: lib/trino-filesystem-azure, profile: cloud-tests }
++- { modules: lib/trino-filesystem-gcs, profile: cloud-tests }
++- { modules: lib/trino-filesystem-s3, profile: cloud-tests }
++- { modules: plugin/trino-bigquery }
+ # `when.impacted: false` means this profile isn't run just because trino-bigquery changed, so it only runs on its default triggers (nightly schedule, or manual dispatch), not the merge queue.
+ # C07ABNN828M is the #core-dev Slack channel.
+-- { modules: plugin/trino-bigquery, profile: cloud-tests-2, when: { impacted: false, scheduled: nightly }, notify-channels: [C07ABNN828M], timeout-minutes: 60 }
++- { modules: plugin/trino-bigquery, profile: cloud-tests-2, when: { impacted: false, scheduled: nightly }, notify-channels: [C07ABNN828M] }
+ - { modules: plugin/trino-cassandra }
+ - { modules: plugin/trino-clickhouse }
+-- { modules: plugin/trino-delta-lake, timeout-minutes: 45 }
+-- { modules: plugin/trino-delta-lake, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-delta-lake }
++- { modules: plugin/trino-delta-lake, profile: cloud-tests }
+ - { modules: plugin/trino-delta-lake, profile: fte-tests }
+-- { modules: plugin/trino-druid, timeout-minutes: 45 }
++- { modules: plugin/trino-druid }
+ - { modules: plugin/trino-duckdb }
+ - { modules: plugin/trino-elasticsearch }
+-- { modules: plugin/trino-exchange-filesystem, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-exchange-filesystem, profile: cloud-tests }
+ - { modules: plugin/trino-exasol }
+ - { modules: plugin/trino-google-sheets }
+-- { modules: plugin/trino-google-sheets, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-google-sheets, profile: cloud-tests }
+ - { modules: plugin/trino-hive, timeout-minutes: 45 }
+ - { modules: plugin/trino-hive, profile: fte-tests }
+-- { modules: plugin/trino-hive, profile: test-parquet, timeout-minutes: 60 }
++- { modules: plugin/trino-hive, profile: test-parquet, timeout-minutes: 45 }
+ - { modules: plugin/trino-hudi }
+-- { modules: plugin/trino-iceberg, timeout-minutes: 60 }
+-- { modules: plugin/trino-iceberg, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-iceberg, timeout-minutes: 45 }
++- { modules: plugin/trino-iceberg, profile: cloud-tests }
+ - { modules: plugin/trino-iceberg, profile: fte-tests }
+ - { modules: plugin/trino-iceberg, profile: floci-and-avro, timeout-minutes: 60 }
+ - { modules: plugin/trino-ignite }
+@@ -61,13 +61,13 @@
+ - { modules: plugin/trino-mongodb }
+ - { modules: plugin/trino-mysql }
+ - { modules: plugin/trino-opensearch }
+-- { modules: plugin/trino-oracle, timeout-minutes: 45 }
++- { modules: plugin/trino-oracle }
+ - { modules: plugin/trino-pinot }
+ - { modules: plugin/trino-postgresql }
+ - { modules: plugin/trino-redis }
+-- { modules: plugin/trino-redshift, timeout-minutes: 60 }
+-- { modules: plugin/trino-redshift, profile: cloud-tests, timeout-minutes: 60 }
+-- { modules: plugin/trino-redshift, profile: fte-tests, timeout-minutes: 60 }
++- { modules: plugin/trino-redshift }
++- { modules: plugin/trino-redshift, profile: cloud-tests, timeout-minutes: 45 }
++- { modules: plugin/trino-redshift, profile: fte-tests }
+ - { modules: plugin/trino-resource-group-managers }
+ - { modules: plugin/trino-singlestore }
+ - { modules: plugin/trino-snowflake }
+@@ -76,6 +76,6 @@
+ - { modules: plugin/trino-sqlserver }
+ - { modules: testing/trino-faulttolerant-tests, profile: default }
+ - { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-delta }
+-- { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-hive, timeout-minutes: 60 }
++- { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-hive }
+ - { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-iceberg }
+-- { modules: testing/trino-tests, timeout-minutes: 60 }
++- { modules: testing/trino-tests, timeout-minutes: 45 }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32307** (closed): Add support for SET NOT NULL in engine and PostgreSQL (@chenjian2664)
-- **PR #32297** (2026-11-22): Extract the JUnit product test suite runner (@electrum)
-- **PR #32280** (2026-11-20): Fix wrong sign for sub-hour time zone offsets (@findepi)
-- **PR #32279** (2026-11-21): Fix operators stalling after a memory wait (@raunaqmorarka)
-- **PR #32278** (2026-11-20): Fix flaky random data assertions in TestFakerQueries (@nineinchnick)
-- **PR #32277** (2026-11-20): Retry Databricks tests on Glue client NullPointerException (@findepi)
+- **PR #32333** (2026-11-23): Properly manage dependencies instead of clobbering them with Enforcer (@ksobolew)
+- **PR #32327** (2026-11-23): Fix race in TestExternalAuthenticator interrupt test (@findepi)
+- **PR #32326** (2026-11-23): Stop downloading spark-avro in Spark containers (@findepi)
+- **PR #32324** (2026-11-23): Fix PlanOptimizers comment grammar (@findepi)
+- **PR #32320** (2026-11-23): Bump org.codehaus.plexus:plexus-xml from 4.2.0 to 4.2.1 (@dependabot[bot])
+- **PR #32319** (2026-11-23): Bump dep.clickhouse.version from 0.11.1 to 0.11.2 (@dependabot[bot])
 
 ---
 
@@ -2134,59 +2148,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Extract the JUnit product test suite runner
+## X. Elasticsearch table listing when an index is dropped
 
 **RULE**:
-When implementing operations in `.github/bin/run-product-test-suites.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f59f4a1`: Extract the JUnit product test suite runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6443d0c`: Elasticsearch table listing when an index is dropped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/bin/run-product-test-suites.sh`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-#!/usr/bin/env bash
+import dev.failsafe.Failsafe;
+import dev.failsafe.RetryPolicy;
+import static java.time.temporal.ChronoUnit.MILLIS;
+    // _cat/indices fails when an index is deleted while the response is being built
+    private static final RetryPolicy<List<String>> INDEX_LISTING_RETRY_POLICY = RetryPolicy.<List<String>>builder()
+            .withMaxAttempts(3)
+            .withBackoff(10, 100, MILLIS)
+            .handleIf(ElasticsearchClient::isIndexNotFound)
+            .build();
 
-set -eo pipefail
+    {
+        return Failsafe.with(INDEX_LISTING_RETRY_POLICY).get(this::listIndexes);
+    }
 
-mkdir -p logs
-
-# Suites load checked-in configuration from paths relative to the repository root.
-product_test_distribution=testing/trino-product-tests/target/product-test-distribution
-test_jar=("${product_test_distribution}"/lib/trino-product-tests-*-tests.jar)
-product_test_classpath=$(< "${product_test_distribution}/classpath.txt")
-product_test_classpath="${product_test_distribution}/${product_test_classpath//:/:${product_test_distribution}/}"
-
-declare -a suite_results=()
-declare -a suite_totals=()
-echo "## pt ${MATRIX_SUITE}" >> "$GITHUB_STEP_SUMMARY"
-echo "" >> "$GITHUB_STEP_SUMMARY"
-
-failed=0
-failed_suites=()
-
-for suite in ${MATRIX_SUITE}; do
-  log_file="logs/${suite}.log"
-  echo "### ${suite}" >> "$GITHUB_STEP_SUMMARY"
-  echo "" >> "$GITHUB_STEP_SUMMARY"
-
-  set +e
-  java \
-    -Xmx512M \
-    -XX:+ExitOnOutOfMemoryError \
-    -Dtrino.product-tests.image="${TRINO_PRODUCT_TESTS_IMAGE}" \
-    -cp "${test_jar[0]}:${product_test_classpath}" \
-    io.trino.tests.product.suite.${suite} \
-    | tee "${log_file}"
-  rc=${PIPESTATUS[0]}
-  set -e
-
-  total_line=$(grep '^TOTAL' "${log_file}" | tail -1 || true)
-  if [ -n "${total_line}" ]; then
-    suit
+    private List<String> listIndexes()
+    private static boolean isIndexNotFound(Throwable throwable)
+    {
+        if (!(throwable.getCause() instanceof ResponseException exception)) {
+            return false;
+        }
+        HttpEntity entity = exception.getResponse().getEntity();
+        if (exception.getResponse().getStatusLine().getStatusCode() != 404 || entity == null) {
+            return false;
+        }
+        try {
+            JsonNode type = JSON_MAPPER.readTree(EntityUtils.toByteArray(entity)).path("error").path("type");
+            return type.isString() && type.asString().equals("index_not_found_exception")
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2196,7 +2198,7 @@ for suite in ${MATRIX_SUITE}; do
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f59f4a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6443d0c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

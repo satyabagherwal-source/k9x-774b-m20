@@ -12440,3 +12440,5 @@ Every entry in this ledger must capture:
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `1ba7ecf8` | Multi-dimensional audit evidence | 2026-11-23T17:46:21.159Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `5d881b7e` | Multi-dimensional audit evidence | 2026-11-23T17:46:25.606Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `0da7627b` | Multi-dimensional audit evidence | 2026-11-23T17:46:27.441Z |
+| `learn-huggingface-reson8-rumble-2-flash` | `https://huggingface.co/Reson8/Rumble-2-Flash` | `hf-reson8-` | Multi-dimensional audit evidence | 2026-11-23T17:53:59.350Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `79e960f9` | Multi-dimensional audit evidence | 2026-11-23T17:54:15.203Z |

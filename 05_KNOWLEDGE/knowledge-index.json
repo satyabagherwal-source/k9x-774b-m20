@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T17:46:33.063Z",
+  "last_updated": "2026-11-23T17:54:20.566Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24093,
+  "total_items": 24095,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e0977c9c4ddb3549eaf854fd1329d7afdfd890354b19f1a78e8e2fbd7752baad",
+      "content_hash": "c30e2d803adc2460c6ace0cb33bf944a8ce511ea0c4cd88cbe23dc0d7530c883",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:28:53.019Z"
+      "persisted_at": "2026-11-23T17:54:20.566Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -233486,8 +233486,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "5f59f4a1",
-      "content_hash": "6d8d652bace14afe6a3e1179038bf39c252e50bd7ce59ff312c9d6c242f1f149",
+      "source_version": "79e960f9",
+      "content_hash": "2c86ea0f37d9e4d4a40002ef4e6482f0a995e5b10fe0ab08736d08830609be9c",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -233540,6 +233540,11 @@
           "number": 9937,
           "title": "Extract the JUnit product test suite runner",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10088,
+          "title": "Elasticsearch table listing when an index is dropped",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233547,7 +233552,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T14:40:47.692Z",
+      "verified_at": "2026-11-23T17:54:14.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233589,10 +233594,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "repository": "trinodb/trino",
-      "source_version": "5f59f4a1",
-      "content_hash": "567e8e13d51818aaa5070420a88e2d2861021cba1f72023f9d8871deb26ac043",
+      "source_version": "79e960f9",
+      "content_hash": "49328780532efa5f51b2c0779879b887a28bf4b260f759e6f430d69663cde145",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T14:40:48.269Z"
+      "persisted_at": "2026-11-23T17:54:15.580Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino",
@@ -233601,10 +233606,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "5f59f4a1",
-      "content_hash": "f94927436494d4a04a1ac646929d599d501ba2ca70f8c5c03e8ec6a046213f39",
+      "source_version": "79e960f9",
+      "content_hash": "594f15a881a78f481798478d706997fa3038c7d7ae3aeb5a1ab102e02f4a1b63",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T14:40:48.436Z"
+      "persisted_at": "2026-11-23T17:54:15.759Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -254349,9 +254354,9 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "56687c6dca8249145b46690057a940ba6f769e932dc837732648b6a6c8d49f99",
+      "content_hash": "adca525b30290d9828ac8037f764fe48649a5661300aa42f6152f670e897239d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T05:54:28.980Z"
+      "persisted_at": "2026-11-23T17:54:19.517Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings",
@@ -254361,9 +254366,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trinodb-trino-learnings",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "e06734a60ad42e7199bc75fe96ddcfd9bd56b1008923a26def98edc482d6b764",
+      "content_hash": "71ebdbc256d7d7a9c5cd836640dec9756263c0e50dcc017911dfc84ef7c88ab3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:54:29.190Z"
+      "persisted_at": "2026-11-23T17:54:19.688Z"
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -296260,7 +296265,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Reson8/Rumble-2-Flash",
       "source_version": "hf-reson8-rumble-2-flash",
-      "content_hash": "1bda1950dbf9aa4623e16cb8be34bc542d0745db8826341c0d3e65bea3dbb4bc",
+      "content_hash": "3e2e542abfb7d8bd7afcaa13b14928ab688655d516a55aa1a8ed50fed8cdfa2a",
       "dossier_path": "07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md",
       "promoted_rules": [],
@@ -296269,7 +296274,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T06:52:23.980Z",
+      "verified_at": "2026-11-23T17:53:59.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -296286,9 +296291,9 @@
       "title": "Research & Knowledge Intelligence: Reson8/Rumble-2-Flash Core Invariants",
       "repository": "Reson8/Rumble-2-Flash",
       "source_version": "hf-reson8-rumble-2-flash",
-      "content_hash": "2a10b77a8ceb3fec3d487fb0f8299c6f21408feff02204d8864674f3938e393c",
+      "content_hash": "bf390e18fd3708453a9dab6d46180dd453f4edcad79df7a09db74960c298341a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T06:52:24.366Z"
+      "persisted_at": "2026-11-23T17:53:59.556Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-reson8-rumble-2-flash-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-reson8-rumble-2-flash-learnings-core-invarian",
@@ -296298,9 +296303,9 @@
       "title": "Research & Knowledge Intelligence: hf-reson8-rumble-2-flash-learnings Core Invariants",
       "repository": "hf-reson8-rumble-2-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "14832458dab0d27d29f14a1a46c69acbb93809ba29d5843b2310379458977686",
+      "content_hash": "0a17f6b91a1f19305a06b480744133239ac87f77e3e0b7c38ab64d0a771c6378",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T06:53:06.124Z"
+      "persisted_at": "2026-11-23T17:54:18.748Z"
     },
     "rule-9346": {
       "learning_id": "rule-9346",
@@ -328325,6 +328330,32 @@
       "content_hash": "e998f48392ab4360d2d8d82f439fc04fcfc8bed9ff0ed7e19e7b8aeae53d5dc4",
       "domain_letter": "D",
       "persisted_at": "2026-11-23T17:46:31.207Z"
+    },
+    "rule-10088": {
+      "learning_id": "rule-10088",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10088,
+      "title": "Elasticsearch table listing when an index is dropped",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "79e960f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:54:14.988Z"
+    },
+    "candidate_directive-elasticsearch-table-listing-when-an-index-is-dropped": {
+      "item_id": "candidate_directive-elasticsearch-table-listing-when-an-index-is-dropped",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F2HW-elasticsearch-table-listing-when-an-index-is-dropped.md",
+      "title": "Elasticsearch table listing when an index is dropped",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b8a02e937adfb01514541b90e0d0e616221cb08fc3199e51995098d014fa01b2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T17:54:19.369Z"
     }
   },
   "ai-builder-brain": {
