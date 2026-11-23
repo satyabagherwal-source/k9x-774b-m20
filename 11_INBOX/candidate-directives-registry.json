@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T00:39:39.886Z",
+  "last_updated": "2026-11-23T00:48:37.814Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-HXZ7",
+      "id": "CD-S0QB",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HXZ7-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-S0QB-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -48078,14 +48078,14 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-Y0B4",
+      "id": "CD-RX0J",
       "directive_title": "update url to 2.5.9 for RUSTSEC-2026-0592",
-      "source_repo": "1jehuang/jcode",
-      "source_commit": "9991542c",
-      "staged_file": "11_INBOX/candidate-directives/CD-Y0B4-update-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "source_repo": "lancedb/lancedb",
+      "source_commit": "f38d42e9",
+      "staged_file": "11_INBOX/candidate-directives/CD-RX0J-update-url-to-2-5-9-for-rustsec-2026-0592.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-22",
+      "date_staged": "2026-11-23",
       "domain_letter": "G"
     },
     {
@@ -48111,14 +48111,14 @@
       "domain_letter": "A"
     },
     {
-      "id": "CD-Y935",
+      "id": "CD-RZYK",
       "directive_title": "deps): update url to 2.5.9 for RUSTSEC-2026-0592",
-      "source_repo": "1jehuang-jcode-learnings",
+      "source_repo": "lancedb-lancedb-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-Y935-deps-update-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-RZYK-deps-update-url-to-2-5-9-for-rustsec-2026-0592.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-22",
+      "date_staged": "2026-11-23",
       "domain_letter": "G"
     },
     {
@@ -48213,6 +48213,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E0579D-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-E2EEE0",
+      "directive_title": "deps): update url to 2.5.9 for RUSTSEC-2026-0592",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lancedb-lancedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E2EEE0-deps-update-url-to-2-5-9-for-rustsec-202.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-E16964",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E16964-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-23"
     }
   ]

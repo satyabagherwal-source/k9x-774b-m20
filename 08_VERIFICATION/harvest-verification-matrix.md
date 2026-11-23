@@ -12243,3 +12243,5 @@
 | `CYCLE-20261123-5PM6` | `2026-11-23T00:31:16.974Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10010` | Yes (`2cc6f925...`) |
 | `CYCLE-20261123-60ZU` | `2026-11-23T00:31:31.722Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10011` | Yes (`f234e552...`) |
 | `CYCLE-20261123-G7SU` | `2026-11-23T00:39:27.102Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`569ffdd6...`) |
+| `CYCLE-20261123-RMQT` | `2026-11-23T00:48:19.685Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`c037330e...`) |
+| `CYCLE-20261123-RWU5` | `2026-11-23T00:48:32.765Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10007` | Yes (`71b2c75d...`) |

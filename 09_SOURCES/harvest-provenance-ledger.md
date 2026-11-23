@@ -12276,3 +12276,5 @@ Every entry in this ledger must capture:
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `d3f1771a` | Multi-dimensional audit evidence | 2026-11-23T00:31:16.979Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `abc138d4` | Multi-dimensional audit evidence | 2026-11-23T00:31:31.726Z |
 | `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T00:39:27.106Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-23T00:48:19.690Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `f38d42e9` | Multi-dimensional audit evidence | 2026-11-23T00:48:32.770Z |

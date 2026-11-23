@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T00:39:27.110Z",
-  "total_cycles_completed": 11641,
-  "total_learnings_persisted": 11641,
-  "total_rules_promoted": 10837,
+  "last_updated": "2026-11-23T00:48:32.775Z",
+  "total_cycles_completed": 11643,
+  "total_learnings_persisted": 11643,
+  "total_rules_promoted": 10838,
   "history": [
-    {
-      "timestamp": "2026-11-22T06:49:35.339Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T06:57:51.702Z",
-      "repository": "Zyphra/ZONOS3-Mini",
-      "learningId": "learn-huggingface-zyphra-zonos3-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T06:58:06.158Z",
       "repository": "pixeltable/pixeltable",
@@ -1403,6 +1389,20 @@
       "repository": "google/electra-base-discriminator",
       "learningId": "learn-huggingface-google-electra-base-discriminator",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T00:48:19.695Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T00:48:32.775Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

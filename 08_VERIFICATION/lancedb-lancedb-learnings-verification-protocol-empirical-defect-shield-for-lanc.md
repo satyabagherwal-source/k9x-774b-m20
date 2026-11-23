@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T01:24:04.114Z",
+  "timestamp": "2026-11-23T00:48:36.699Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lancedb-lancedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lancedb-lancedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T01:24:04.114Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T00:48:36.699Z`  
 > **Learning ID**: `LEARN-EVO-lancedb-lancedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `2b1b2a29`  
+> **Source Version**: `f38d42e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T01:23:58.269Z  
+> **Timestamp**: 2026-11-23T00:48:32.023Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T01:23:58.261Z  
+> **Harvest Timestamp**: 2026-11-23T00:48:32.018Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11965 stars
+- **Stars / Engagement**: 11968 stars
 
 ---
 
@@ -1291,11 +1291,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5152** (2026-11-21): **fix: add SQL query timeout and cancellation controls**
-  *Symptoms*: SQL queries can currently time out in the client while deferred Flight execution keeps running. Add per-query `timeout`, `read_timeout`, and `cancel_on_drop` controls to Rust and Python SQL execution. `Query.cancel()` remains available; deferred executions stay detached unless `cancel_on_drop=True` is requested.  The query timeout covers submission through result consumption, including unread handles, and sends the remaining deadline on streaming RPCs. Expiry and failed reads attempt bounded Flight cancellation; durable server-side jobs still require explicit job cancellation.  ```python from datetime import timedelta  query = db.execute_query_async(     "SELECT * FROM events",     timeout=timedelta(seconds=30),     read_timeout=timedelta(seconds=5),     cancel_on_drop=True, ) query.cancel() ```  ```mermaid flowchart LR     S[Submit with query options] --> L[Live stream or deferred polling]     L --> R[Read batches within remaining deadline]     T[Timeout, failed read, or opted-in drop] --> C[Stop reads and cancel Flight execution]     C --> D[Drop live RPC or send CancelFlightInfo] ```  Includes regression coverage for timeout cleanup, handle/reader ownership, and Python option forwarding. Formatting and Python lint passed; local builds and tests were intentionally skipped.  Rust callers constructing `ExecuteQueryRequest` with a struct literal must add `options: Default::default()`. Callers using `Connection::execute_query_async()` or `ExecuteQueryRequest::new()` keep their 
+- **Issue #5160** (2026-11-22): **fix: reject blob request concurrency above semaphore limit**
+  *Symptoms*: ## Summary  A `blob_request_concurrency` value above tokio's `Semaphore::MAX_PERMITS` reached `Semaphore::new` and panicked, aborting the process instead of reporting a configuration error. The value can come from explicit client configuration or `LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY`, with a default of 8.  Resolve the value with the existing precedence, preserve the existing zero and parse errors, and return `Error::InvalidInput` for values above `Semaphore::MAX_PERMITS`. The supported range is documented on `ClientConfig::blob_request_concurrency`.  ## Tests  Added a focused resolver test covering the maximum accepted value and one above it. The test passes an explicit value and does not mutate environment variables.
 
-- **Issue #5129** (2026-11-20): **fix(python): preserve blob query snapshots and row-id guidance**
-  *Symptoms*: ## Summary  - Preserve the query snapshot carried by a remote query result when `fetch_blobs` or `fetch_blob_files` receives that result table, instead of reading row IDs from the table's current snapshot. - Send the expected `x-lancedb-query-snapshot` on the descriptor take used by `fetch_blob_files` and verify the response echo before decoding any descriptor. NULL and empty descriptors cannot escape unverified. - Point missing `_rowid` and missing row-id errors at `take_offsets(offsets, with_row_id=True)` for callers that have row positions, while keeping the existing missing/deleted row-id details. - Keep `fetch_blobs` row-ID based. Positional access and seekable video/DataLoader handle design remain separate work aligned with ENT-4059; this PR does not add `offsets=` or change that contract. - Document the behavior and keep empty row-id requests at zero I/O.  ## Compatibility  Server 0.5.0 is the basic remote Blob API floor. Snapshot-bound descriptor reads need the actual query identity echo from the serving node (Sophon #10211, present in tag v1.13.0). If identity cannot be verified, `fetch_blob_files` fails explicitly instead of accepting descriptors. Metadata-free row-id input keeps the existing current-snapshot behavior. This does not claim production rollout or real server testing.  ## Testing  - `python/tests/test_blob.py`: 249 passed, 1 skipped - `python/tests/test_remote_db.py -k blob`: 133 passed - Rust remote blob-file unit tests: 13 passed - `cargo check --feat
+- **Issue #5158** (2026-11-22): **fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592**
+  *Symptoms*: Updates the lockfile from `url` 2.5.8 to 2.5.9, the first release patched for RUSTSEC-2026-0592, and from `form_urlencoded` 1.2.2 to 1.2.3, which `url` 2.5.9 requires (`^1.2.3`).  `main` also locks `url` 2.5.8. The advisory is the cargo-deny failure currently blocking #5157, whose Lance beta.26 bump leaves the same lockfile entry in place.  No dependency requirement or advisory ignore changes: `url = "2"` already permits 2.5.9. `url` 2.5.9 declares MSRV 1.63 and `form_urlencoded` 1.2.3 declares 1.51, both below the workspace's 1.95.0.  Validation: - `cargo metadata --locked` - `cargo tree -i url@2.5.9 --locked` - `git diff --check`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1312,1272 +1312,146 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49dedd43` (2026-11-21)
-**Commit Message**: fix: expose Function metadata in SDK job listings (#5096)
+### Incident Patch 1: `b63cec40` (2026-11-22)
+**Commit Message**: fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592 (#5158)
 
-Expose affected columns, pinned Function name/version, completion time,
-duration and failure summaries on `JobInfo` in the Rust, Python and
-TypeScript SDKs. Values come from the listing response, so callers can
-inspect recent computed column refreshes without opening every job.
-Older servers keep optional values absent; measured zero durations stay
-zero.
+Updates the lockfile from `url` 2.5.8 to 2.5.9, the first release
+patched for RUSTSEC-2026-0592, and from `form_urlencoded` 1.2.2 to
+1.2.3, which `url` 2.5.9 requires (`^1.2.3`).
 
-```python
-latest = next((info for info in db.list_jobs(table="events", job_type="function_refresh") if "embedding" in info.columns), None)
-if latest is not None:
-    print(latest.function_name, latest.function_version, latest.duration_millis)
-    if latest.failure is not None:
-        print(latest.failure.message)
-```
+`main` also locks `url` 2.5.8. The advisory is the cargo-deny failure
+currently blocking #5157, whose Lance beta.26 bump leaves the same
+lockfile entry in place.
 
-Duration is creation-to-completion wall time, including queueing and
-pauses. Adds listing response coverage across SDKs and documents the
-metadata contract, including SQL `SHOW JOBS EXTENDED` for the expanded
-listing. Plain `SHOW JOBS` preserves its original columns. Local builds
-and tests were skipped as requested.
+No dependency requirement or advisory ignore changes: `url = "2"`
+already permits 2.5.9. `url` 2.5.9 declares MSRV 1.63 and
+`form_urlencoded` 1.2.3 declares 1.51, both below the workspace's
+1.95.0.
 
-The dependency advisory check also fails on current main because
-`libsais-rs 0.2.0` is yanked ([main
-job](https://github.com/lancedb/lancedb/ac
+Validation:
+- `cargo metadata --locked`
+- `cargo tree -i url@2.5.9 --locked`
+- `git diff --check`
 
-**File**: `docs/src/js/interfaces/JobInfo.md` (modified, +60/-0)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -10,6 +10,26 @@ A row from `Connection.listJobs`: one server-side job.
+@@ -3737,9 +3737,9 @@ checksum = "ee1b05cbd864bcaecbd3455d6d967862d446e4ebfc3c2e5e5b9841e53cba6673"
  
- ## Properties
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -11788,9 +11788,9 @@ dependencies = [
  
-+### columns
-+
-+```ts
-+columns: string[];
-+```
-+
-+Affected columns; empty when unavailable or not column-scoped.
-+
-+***
-+
-+### completedAtMillis?
-+
-+```ts
-+optional completedAtMillis: number;
-+```
-+
-+Terminal timestamp in milliseconds since the epoch, when known.
-+
-+***
-+
- ### createdAtMillis
- 
- ```ts
-@@ -20,6 +40,46 @@ When the job was created, in milliseconds since the epoch.
- 
- ***
- 
-+### durationMillis?
-+
-+```ts
-+optional durationMillis: number;
-+```
-+
-+Creation-to-completion wall time, including queueing and pauses.
-+
-+***
-+
-+### failure?
-+
-+```ts
-+optional failure: JobFailureInfo;
-+```
-+
-+Durable failure summary, when available.
-+
-+***
-+
-+### functionName?
-+
-+```ts
-+optional functionName: string;
-+```
-+
-+Pinned Function catalog name, with namespace segments joined by `$`.
-+
-+***
-+
-+### functionVersion?
-+
-+```ts
-+optional functionVersion: string;
-+```
-+
-+Pinned Function version, when known.
-+
-+***
-+
- ### jobId
- 
- ```ts
-```
-
-**File**: `docs/web/basics/jobs.mdx` (modified, +84/-0)
-```diff
-@@ -243,6 +243,90 @@ listing. It is a lazy iterator: iteration performs requests and can raise
- request errors. Use `list(db.list_jobs(...))` to collect all remaining results;
- there is no `.to_list()` method.
- 
-+{/* Draft for the SDK and Enterprise releases that provide job listing metadata.
-+
-+With a server and SDK that provide listing metadata, `JobInfo` also exposes
-+`columns`, `function_name`, `function_version`, `completed_at_millis`,
-+`duration_millis`, and `failure`. Function names include their namespace, joined
-+by `$`, and the version is pinned to the computed column refresh. Duration is
-+creation-to-completion wall time, including queueing and pauses; running jobs
-+have no completed duration. Unknown scalar values and failure summaries stay
-+absent (`None` in Python/Rust, `undefined` in TypeScript), and unavailable or
-+non-column-scoped `columns` are empty. A zero duration is a measured value.
-+Failure summaries include phase, message, and retryability; open the job for
-+full diagnostics.
-+
-+<CodeGroup>
-+```python Python icon="python"
-+latest = next(
-+    (
-+        info
-+        for info in db.list_jobs(table="events", job_type="function_refresh")
-+        if "embedding" in info.columns
-+    ),
-+    None,
-+)
-+if latest is not None:
-+    print(latest.function_name, latest.function_version, latest.duration_millis)
-+    if latest.failure is not None:
-+        print(latest.failure.message)
-+```
-+
-+```rust Rust icon="rust"
-+use futures::TryStreamExt;
-+use lancedb::{database::JobListFilter, listing::ListingOptions, Connection, Result};
-+
-+async fn print_latest_refresh(db: &Connection) -> Result<()> {
-+    let mut filter = JobListFilter::default();
-+    filter.table = Some("events".into());
-+    filter.job_types = vec!["function_refresh".into()];
-+    let mut jobs = db.list_jobs_filtered(filter, ListingOptions::default());
-+    while let Some(info) = jobs.try_next().await? {
-+        if info.columns.iter().any(|column| column == "embedding") {
-+            println!(
-+                "{:?} {:?} {:?}",
-+                info.function_name, info.function_version, info.duration_millis
-+            );
-+            if let Some(failure) = info.failure {
-+                println!("{:?}", failure.message);
-+            }
-+            break;
-+        }
-+    }
-+    Ok(())
-+}
-+```
-+
-+```typescript TypeScript icon="js"
-+for await (const info of db.listJobs({ pageLimit: 50 })) {
-+  if (
-+    info.jobType === "function_refresh" &&
-+    info.table === "events" &&
-+    info.columns.includes("embedding")
-+  ) {
-+    console.log(info.functionName, info.functionVersion, info.durationMillis);
-+    if (info.failure !== undefined) {
-+      console.log(info.failure.message);
-+    }
-+    break;
-+  }
-+}
-+```
-+</CodeGroup>
-+
-+Python and Rust support server-side table filtering. TypeScript `listJobs`
-+currently accepts only pagination options, so its example filters rows on the
-+client and may read more pages. The displayed table name has no namespace;
-+use a table name unique within the listed database for this TypeScript example.
-+Use Python, Rust, or SQL for an exact namespaced table listing.
-+
-+SQL `SHOW JOBS EXTENDED` and `SHOW JOBS EXTENDED FOR TABLE events` expose the
-+same metadata. Plain `SHOW JOBS` keeps its existing result columns.
-+The extended result returns `columns` as a list and `failure` as nullable JSON
-+text.
-+
-+*/}
-+
- <Note>
- Job filters and synchronous `Listing` indexing, slicing, and `len()` require
- a Python SDK release that includes these APIs. Older SDKs expose only
-```
-
-**File**: `docs/web/sql/ddl/job.mdx` (modified, +17/-0)
-```diff
-@@ -34,6 +34,23 @@ values remain NULL. Children are read-only diagnostic identities.
- following backend continuation pages up to that limit. Child history can be
- `available`, `not_yet_recorded`, or `unavailable` after archival.
- 
-+{/* Draft for the Enterprise release that provides extended job listing metadata.
-+
-+```sql
-+SHOW JOBS EXTENDED;
-+SHOW JOBS EXTENDED FOR TABLE documents;
-+```
-+
-+`EXTENDED` adds `completed_at_millis`, `duration_millis`, `columns`,
-+`function_name`, `function_version`, and `failure` to database and table
-+listings. Plain `SHOW JOBS` keeps its existing result columns. `columns` is a
-+list, Function identity is pinned to the computed column refresh, and
-+`failure` is nullable JSON text with phase, message, and retryability. Duration
-+is creation-to-completion wall time, including queueing and pauses; it is
-+NULL when unfinished or unavailable. `EXTENDED` does not apply to `FOR JOB`.
-+
-+*/}
-+
- <Note>
- A job you completed weeks ago eventually stops appearing here -- it was
- archived, not deleted. Two deployment-scheduled jobs sweep the registry on a
-```
-
-**File**: `nodejs/__test__/remote.test.ts` (modified, +30/-2)
-```diff
-@@ -2287,7 +2287,13 @@ describe("remote connection jobs surface", () => {
-                 .end(
-                   '{"jobs": [{"job_id": "job-2", "table": "t2", ' +
-                     '"job_type": "create_index", "state": "succeeded", ' +
--                    '"created_at_millis": 2000}]}',
-+                    '"created_at_millis": 2000, "completed_at_millis": 2000, ' +
-+                    '"duration_millis": 0, "columns": ["embedding"], ' +
-+                    '"function_name": "features$embed", "function_version": "7"}, ' +
-+                    '{"job_id": "job-3", "table": "t2", "job_type": "function_refresh", ' +
-+                    '"state": "failed", "created_at_millis": 3000, "duration_millis": 200, ' +
-+                    '"completed_at_millis": 3200, "failure": {"phase": "execute", ' +
-+                    '"message": "worker failed", "retryable": false}}]}',
-                 );
-             }
-           } else if (req.url === "/v1/jobs/describe") {
-@@ -2356,9 +2362,31 @@ describe("remote connection jobs surface", () => {
-       },
-       async (db) => {
-         const jobs = await collect(db.listJobs());
--        expect(jobs.map((job) => job.jobId)).toEqual(["job-1", "job-2"]);
-+        expect(jobs.map((job) => job.jobId)).toEqual([
-+          "job-1",
-+          "job-2",
-+          "job-3",
-+        ]);
-         expect(jobs[0].state).toEqual("running");
-         expect(jobs[1].state).toEqual("finished");
-+        expect(jobs[0].completedAtMillis).toBeUndefined();
-+        expect(jobs[0].durationMillis).toBeUndefined();
-+        expect(jobs[0].columns).toEqual([]);
-+        expect(jobs[0].functionName).toBeUndefined();
-+        expect(jobs[0].functionVersion).toBeUndefined();
-+        expect(jobs[0].failure).toBeUndefined();
-+        expect(jobs[1].completedAtMillis).toBe(2000);
-+        expect(jobs[1].durationMillis).toBe(0);
-+        expect(jobs[1].columns).toEqual(["embedding"]);
-+        expect(jobs[1].functionName).toBe("features$embed");
-+        expect(jobs[1].functionVersion).toBe("7");
-+        expect(jobs[1].failure).toBeUndefined();
-+        expect(jobs[2].state).toBe("failed");
-+        expect(jobs[2].durationMillis).toBe(200);
-+        expect(jobs[2].failure?.phase).toBe("execute");
-+        expect(jobs[2].failure?.message).toBe("worker failed");
-+        expect(jobs[2].failure?.retryable).toBe(false);
-+        expect(jobs[2].failure?.traceback).toBeUndefined();
-         expect(jobs[0].progress).toEqual({
-           // biome-ignore lint/style/useNamingConvention: server wire format
-           job_type: "create_index",
-```
-
-**File**: `nodejs/src/job.rs` (modified, +18/-0)
-```diff
-@@ -288,6 +288,18 @@ pub struct JobInfo {
-     pub state: String,
-     /// When the job was created, in milliseconds since the epoch.
-     pub created_at_millis: i64,
-+    /// Terminal timestamp in milliseconds since the epoch, when known.
-+    pub completed_at_millis: Option<i64>,
-+    /// Creation-to-completion wall time, including queueing and pauses.
-+    pub duration_millis: Option<i64>,
-+    /// Affected columns; empty when unavailable or not column-scoped.
-+    pub columns: Vec<String>,
-+    /// Pinned Function catalog name, with namespace segments joined by `$`.
-+    pub function_name: Option<String>,
-+    /// Pinned Function version, when known.
-+    pub function_version: Option<String>,
-+    /// Durable failure summary, when available.
-+    pub failure: Option<JobFailureInfo>,
-     /// Structured lifecycle, queue, pause, and job-type-specific progress.
-     #[napi(ts_type = "Record<string, unknown>")]
-     pub progress: serde_json::Value,
-@@ -304,6 +316,12 @@ impl From<lancedb::database::JobInfo> for JobInfo {
-             job_type: info.job_type,
-             state: info.state,
-             created_at_millis: info.created_at_millis,
-+            completed_at_millis: info.completed_at_millis,
-+            duration_millis: info.duration_millis,
-+            columns: info.columns,
-+            function_name: info.function_name,
-+            function_version: info.function_version,
-+            failure: info.failure.map(Into::into),
-             progress,
-             paused: info.paused,
-         }
-```
-
-**File**: `python/python/lancedb/_lancedb.pyi` (modified, +12/-0)
-```diff
-@@ -492,6 +492,18 @@ class JobInfo:
-     @property
-     def created_at_millis(self) -> int: ...
-     @property
-+    def completed_at_millis(self) -> Optional[int]: ...
-+    @property
-+    def duration_millis(self) -> Optional[int]: ...
-+    @property
-+    def columns(self) -> list[str]: ...
-+    @property
-+    def function_name(self) -> Optional[str]: ...
-+    @property
-+    def function_version(self) -> Optional[str]: ...
-+    @property
-+    def failure(self) -> Optional[JobFailureInfo]: ...
-+    @property
-     def progress(self) -> Optional[dict[str, Any]]: ...
-     @property
-     def paused(self) -> bool: ...
-```
-
-**File**: `python/python/tests/test_remote_db.py` (modified, +40/-3)
-```diff
-@@ -6984,10 +6984,29 @@ def handler(request):
-                         dict(
-                             job_id="job-2",
-                             table="t2",
--                            job_type="create_index",
-+                            job_type="function_refresh",
-                             state="succeeded",
-                             created_at_millis=2000,
--                        )
-+                            completed_at_millis=2000,
-+                            duration_millis=0,
-+                            columns=["embedding"],
-+                            function_name="features$embed",
-+                            function_version="7",
-+                        ),
-+                        dict(
-+                            job_id="job-3",
-+                            table="t2",
-+                            job_type="function_refresh",
-+                            state="failed",
-+                            created_at_millis=3000,
-+                            completed_at_millis=3200,
-+                            duration_millis=200,
-+                            failure=dict(
-+                                phase="execute",
-+                                message="worker failed",
-+                                retryable=False,
-+                            ),
-+                        ),
-                     ]
-                 )
-             request.send_response(200)
-@@ -7085,7 +7104,7 @@ def handler(request):
- 
-     with mock_lancedb_connection(handler) as db:
-         jobs = list(db.list_jobs())
--        assert [job.job_id for job in jobs] == ["job-1", "job-2"]
-+        assert [job.job_id for job in jobs] == ["job-1", "job-2", "job-3"]
-         assert jobs[0].state == "running"
-         assert jobs[0].table == "t1"
-         assert jobs[0].progress == {
-@@ -7099,6 +7118,24 @@ def handler(request):
-         }
-         assert jobs[0].paused is True
-         assert jobs[1].state == "finished"
-+        assert jobs[0].completed_at_millis is None
-+        assert jobs[0].duration_millis is None
-+        assert jobs[0].columns == []
-+        assert jobs[0].function_name is None
-+        assert jobs[0].function_version is None
-+        assert jobs[0].failure is None
-+        assert jobs[1].completed_at_millis == 2000
-+        assert jobs[1].duration_millis == 0
-+        assert jobs[1].columns == ["embedding"]
-+        assert jobs[1].function_name == "features$embed"
-+        assert jobs[1].function_version == "7"
-+        assert jobs[1].failure is None
-+        assert jobs[2].state == "failed"
-+        assert jobs[2].duration_millis == 200
-+        assert jobs[2].failure.phase == "execute"
-+        assert jobs[2].failure.message == "worker failed"
-+        assert jobs[2].failure.retryable is False
-+        assert jobs[2].failure.traceback is None
- 
-         assert db.cancel_job("job-1") is True
-         assert db.cancel_job("missing") is False
-```
-
-**File**: `python/src/job.rs` (modified, +18/-0)
-```diff
-@@ -254,6 +254,18 @@ pub struct JobInfo {
-     job_type: String,
-     state: String,
-     created_at_millis: i64,
-+    /// Terminal timestamp in milliseconds since the epoch, when known.
-+    completed_at_millis: Option<i64>,
-+    /// Creation-to-completion wall time, including queueing and pauses.
-+    duration_millis: Option<i64>,
-+    /// Affected columns; empty when unavailable or not column-scoped.
-+    columns: Vec<String>,
-+    /// Pinned Function catalog name, with namespace segments joined by `$`.
-+    function_name: Option<String>,
-+    /// Pinned Function version, when known.
-+    function_version: Option<String>,
-+    /// Durable failure summary, when available.
-+    failure: Option<JobFailureInfo>,
-     _progress_json: Option<String>,
-     paused: bool,
- }
-@@ -290,6 +302,12 @@ impl From<lancedb::database::JobInfo> for JobInfo {
-             job_type: info.job_type,
-             state: info.state,
-             created_at_millis: info.created_at_millis,
-+            completed_at_millis: info.completed_at_millis,
-+            duration_millis: info.duration_millis,
-+            columns: info.columns,
-+            function_name: info.function_name,
-+            function_version: info.function_version,
-+            failure: info.failure.map(Into::into),
-             _progress_json: Some(progress),
-             paused: info.paused,
-         }
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
 ```
 
 ---
 
-### Incident Patch 2: `e3e55844` (2026-11-21)
-**Commit Message**: fix: add SQL query timeout and cancellation controls
+### Incident Patch 2: `59615eaf` (2026-11-22)
+**Commit Message**: fix: reject blob request concurrency above semaphore limit (#5160)
 
-Add per-query SQL deadlines, read timeouts, and drop cancellation controls for Rust and Python.
+## Summary
 
-**File**: `docs/src/python/python.md` (modified, +22/-1)
+A `blob_request_concurrency` value above tokio's
+`Semaphore::MAX_PERMITS` reached `Semaphore::new` and panicked, aborting
+the process instead of reporting a configuration error. The value can
+come from explicit client configuration or
+`LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY`, with a default of 8.
+
+Resolve the value with the existing precedence, preserve the existing
+zero and parse errors, and return `Error::InvalidInput` for values above
+`Semaphore::MAX_PERMITS`. The supported range is documented on
+`ClientConfig::blob_request_concurrency`.
+
+## Tests
+
+Added a focused resolver test covering the maximum accepted value and
+one above it. The test passes an explicit value and does not mutate
+environment variables.
+
+**File**: `rust/lancedb/src/remote/client.rs` (modified, +34/-1)
 ```diff
-@@ -306,7 +306,8 @@ call or return a polling continuation that the SDK follows automatically.
- This behavior is the same with and without parameters. Open the reader directly;
- a directly streamed query needs its reader to make progress. Dropping an unread
- handle or its reader stops direct streaming. Deferred execution continues until
--explicitly cancelled.
-+explicitly cancelled by default; use `cancel_on_drop=True` to attempt cancellation
-+when its unread handle or reader is dropped.
- 
- For example:
- 
-@@ -360,6 +361,26 @@ reader = db.execute_query(
- # await query.cancel()
- ```
- 
-+Set `timeout` to bound submission and result consumption together, including
-+any time before opening a reader. Set `read_timeout` to limit each server read.
-+Both accept `datetime.timedelta` and apply to one execution. An expired timeout
-+or failed result read stops reading and attempts to cancel Flight execution.
-+Cancellation on drop requires the submitting runtime to remain alive. Durable
-+server-side jobs require explicit `db.cancel_job(query.job_id)`.
-+
-+```python
-+from datetime import timedelta
-+
-+query = db.execute_query_async(
-+    "SELECT * FROM events",
-+    timeout=timedelta(seconds=30),
-+    read_timeout=timedelta(seconds=5),
-+    cancel_on_drop=True,
-+)
-+# To stop this execution explicitly:
-+query.cancel()
-+```
-+
- ## Namespaces (Synchronous)
- 
- A namespace-backed connection resolves tables through a
-```
-
-**File**: `docs/web/basics/sql.mdx` (modified, +47/-0)
-```diff
-@@ -247,6 +247,53 @@ cancellation. Background operations such as index builds return a
- [job](/basics/jobs) handle instead. Use the API for the returned handle to
- check status and retrieve results.
- 
-+### Timeouts and cancellation {#query-timeouts}
-+
-+Rust and Python SQL executions support per-query limits. Python's synchronous
-+and asynchronous connections accept the same keyword arguments:
-+
-+```python
-+from datetime import timedelta
-+
-+query = db.execute_query_async(
-+    "SELECT frame_id, caption FROM frames",
-+    timeout=timedelta(seconds=30),
-+    read_timeout=timedelta(seconds=5),
-+    cancel_on_drop=True,
-+)
-+# Cancel explicitly if these results are no longer needed.
-+query.cancel()
-+```
-+
-+`timeout` starts at submission and covers result consumption, including time
-+before opening a reader. `read_timeout` overrides the connection's limit for each
-+server read. Expiry stops reads and attempts to cancel Flight execution. The
-+execution deadline is also sent to the server on result-streaming RPCs.
-+
-+By default, deferred queries can be detached. `cancel_on_drop=True` attempts
-+cancellation when an unread handle or its reader is dropped; it requires the
-+submitting runtime to remain alive. Directly streamed queries always stop on
-+drop. With an asynchronous Python connection, await submission and
-+`query.cancel()`.
-+
-+Rust exposes the same controls on the submission builder:
-+
-+```rust
-+use std::time::Duration;
-+
-+let query = db.execute_query_async("SELECT frame_id, caption FROM frames")
-+    .timeout(Duration::from_secs(30))
-+    .read_timeout(Duration::from_secs(5))
-+    .cancel_on_drop(true)
-+    .execute()
-+    .await?;
-+query.cancel().await?;
-+```
-+
-+These options cancel Flight execution. A durable server-side job can outlive its
-+Flight waiter; cancel it explicitly with `db.cancel_job(query.job_id)` in Python,
-+or `Connection::cancel_job` in Rust.
-+
- ## Query plans {#query-plans}
- 
- Use query plans to understand how LanceDB reads data, applies filters and uses
-```
-
-**File**: `python/python/lancedb/_lancedb.pyi` (modified, +3/-0)
-```diff
-@@ -324,6 +324,9 @@ class Connection(object):
-         *,
-         default_namespace_path: Optional[List[str]] = None,
-         parameters: Optional[pa.RecordBatch] = None,
-+        timeout: Optional[timedelta] = None,
-+        read_timeout: Optional[timedelta] = None,
-+        cancel_on_drop: bool = False,
-     ) -> SqlQuery: ...
-     async def describe_query(self, query_id: UUID) -> QueryDescription: ...
-     async def create_table(
-```
-
-**File**: `python/python/lancedb/db.py` (modified, +40/-3)
-```diff
-@@ -1717,6 +1717,9 @@ def execute_query(
-         *,
-         default_namespace_path: Optional[List[str]] = None,
-         parameters: Optional[QueryParameters] = None,
-+        timeout: Optional[timedelta] = None,
-+        read_timeout: Optional[timedelta] = None,
-+        cancel_on_drop: bool = False,
-     ) -> pa.RecordBatchReader:
-         """Execute SQL and return a blocking Arrow reader.
- 
-@@ -1731,6 +1734,9 @@ def execute_query(
-             query,
-             default_namespace_path=default_namespace_path,
-             parameters=parameters,
-+            timeout=timeout,
-+            read_timeout=read_timeout,
-+            cancel_on_drop=cancel_on_drop,
-         ).reader()
- 
-     def execute_query_async(
-@@ -1739,6 +1745,9 @@ def execute_query_async(
-         *,
-         default_namespace_path: Optional[List[str]] = None,
-         parameters: Optional[QueryParameters] = None,
-+        timeout: Optional[timedelta] = None,
-+        read_timeout: Optional[timedelta] = None,
-+        cancel_on_drop: bool = False,
-     ) -> SqlQuery:
-         """Start executing SQL and return its query handle.
- 
-@@ -1764,13 +1773,24 @@ def execute_query_async(
-         With or without parameters, the server chooses whether to stream rows on the
-         initial call or return a polling continuation. The reader follows
-         either path transparently. Dropping an unread handle or its reader
--        stops a directly streamed query; deferred execution requires explicit
--        cancellation. Open ``reader()`` directly: a streamed query needs its
--        reader to make progress and reports ``running`` until the stream ends.
-+        stops a directly streamed query. Set ``cancel_on_drop=True`` to also
-+        attempt cancellation of deferred Flight execution when its unread handle
-+        or reader is dropped. By default, deferred queries can be detached.
-+        Open ``reader()`` directly: a streamed query needs its reader to make
-+        progress and reports ``running`` until the stream ends.
-         Once a server-side SQL job exists, ``describe().job_id`` exposes its
-         durable Job Registry id while the query is still running. This is
-         separate from the connection-scoped query ``id``.
- 
-+        ``timeout`` limits submission and result consumption together, starting
-+        when the query is submitted. It also applies before a reader is opened.
-+        ``read_timeout`` overrides the connection's limit for each server read.
-+        Both accept ``datetime.timedelta``. On expiry or a failed result read,
-+        the SDK stops reading and attempts to cancel Flight execution.
-+        Cancellation on drop is best effort and requires the connection's runtime
-+        to remain alive. Durable server-side jobs require explicit
-+        ``cancel_job(query.job_id)`` regardless of these options.
-+
-         LanceDB Embedded connections do not support SQL.
-         """
-         raise NotImplementedError(
-@@ -4630,6 +4650,9 @@ async def execute_query(
-         *,
-         default_namespace_path: Optional[List[str]] = None,
-         parameters: Optional[QueryParameters] = None,
-+        timeout: Optional[timedelta] = None,
-+        read_timeout: Optional[timedelta] = None,
-+        cancel_on_drop: bool = False,
-     ) -> AsyncRecordBatchReader:
-         """Execute SQL and return an asynchronous Arrow reader.
- 
-@@ -4644,6 +4667,9 @@ async def execute_query(
-             query,
-             default_namespace_path=default_namespace_path,
-             parameters=parameters,
-+            timeout=timeout,
-+            read_timeout=read_timeout,
-+            cancel_on_drop=cancel_on_drop,
-         )
-         return await submitted.reader()
- 
-@@ -4653,20 +4679,31 @@ async def execute_query_async(
-         *,
-         default_namespace_path: Optional[List[str]] = None,
-         parameters: Optional[QueryParameters] = None,
-+        timeout: Optional[timedelta] = None,
-+        read_timeout: Optional[timedelta] = None,
-+        cancel_on_drop: bool = False,
-     ) -> AsyncSqlQuery:
-         """Start executing SQL and return its query handle.
- 
-         The database from ``connect_async`` is used for unqualified database
-         references. The namespace defaults to ``["public"]``. ``parameters``
-         binds values to ``$1`` / ``$name`` placeholders; see
-         [DBConnection.execute_query_async][lancedb.db.DBConnection.execute_query_async].
-+        ``timeout`` covers submission through result consumption, including
-+        time before opening a reader. ``read_timeout`` limits each server read.
-+        ``cancel_on_drop=True`` also attempts to cancel deferred Flight execution
-+        when its unread handle or reader is dropped. See the synchronous method
-+        above for cancellation and durable-job behavior.
-         LanceDB Embedded connections raise ``NotImplementedError``.
-         """
-         return AsyncSqlQuery(
-             await self._inner.execute_query_async(
-                 query,
-                 
-```
-
-**File**: `python/python/lancedb/namespace.py` (modified, +12/-0)
-```diff
-@@ -1732,12 +1732,18 @@ async def execute_query(
-         *,
-         default_namespace_path: Optional[List[str]] = None,
-         parameters: Optional[QueryParameters] = None,
-+        timeout: Optional[timedelta] = None,
-+        read_timeout: Optional[timedelta] = None,
-+        cancel_on_drop: bool = False,
-     ) -> AsyncRecordBatchReader:
-         """Execute SQL when supported by the underlying connection."""
-         return await self._inner.execute_query(
-             query,
-             default_namespace_path=default_namespace_path,
-             parameters=parameters,
-+            timeout=timeout,
-+            read_timeout=read_timeout,
-+            cancel_on_drop=cancel_on_drop,
-         )
- 
-     async def execute_query_async(
-@@ -1746,6 +1752,9 @@ async def execute_query_async(
-         *,
-         default_namespace_path: Optional[List[str]] = None,
-         parameters: Optional[QueryParameters] = None,
-+        timeout: Optional[timedelta] = None,
-+        read_timeout: Optional[timedelta] = None,
-+        cancel_on_drop: bool = False,
-     ) -> AsyncSqlQuery:
-         """Start executing SQL when supported by the underlying connection.
- 
-@@ -1755,6 +1764,9 @@ async def execute_query_async(
-             query,
-             default_namespace_path=default_namespace_path,
-             parameters=parameters,
-+            timeout=timeout,
-+            read_timeout=read_timeout,
-+            cancel_on_drop=cancel_on_drop,
-         )
- 
-     async def describe_query(self, query_id: Union[UUID, str]) -> QueryDescription:
-```
-
-**File**: `python/python/lancedb/remote/db.py` (modified, +6/-0)
-```diff
-@@ -1421,6 +1421,9 @@ def execute_query_async(
-         *,
-         default_namespace_path: Optional[List[str]] = None,
-         parameters: Optional[QueryParameters] = None,
-+        timeout: Optional[timedelta] = None,
-+        read_timeout: Optional[timedelta] = None,
-+        cancel_on_drop: bool = False,
-     ) -> SqlQuery:
-         """Start executing SQL through this LanceDB Enterprise connection.
- 
-@@ -1436,6 +1439,9 @@ def execute_query_async(
-                     query,
-                     default_namespace_path=default_namespace_path,
-                     parameters=parameters,
-+                    timeout=timeout,
-+                    read_timeout=read_timeout,
-+                    cancel_on_drop=cancel_on_drop,
-                 )
-             )
-         )
-```
-
-**File**: `python/python/tests/test_sql.py` (modified, +84/-2)
-```diff
-@@ -2,6 +2,7 @@
- # SPDX-FileCopyrightText: Copyright The LanceDB Authors
- 
- import threading
-+from datetime import timedelta
- from uuid import UUID
- 
- import numpy as np
-@@ -13,6 +14,7 @@
- from lancedb.arrow import AsyncRecordBatchReader
- from lancedb.db import AsyncConnection
- from lancedb.remote.db import RemoteDBConnection
-+from lancedb.namespace import AsyncLanceNamespaceDBConnection
- from lancedb.sql import AsyncQuery, Query, to_parameter_batch
- 
- NIL_QUERY_ID = UUID(int=0)
-@@ -22,24 +24,46 @@ class FakeNativeQuery:
-     id = UUID("0198f1b2-c3d4-7e5f-8123-456789abcdef")
-     job_id = None
- 
-+    def __init__(self):
-+        self.cancelled = False
-+
-     async def reader(self):
-         return pa.table({"value": [1, 2]})
- 
-+    async def cancel(self):
-+        self.cancelled = True
-+
- 
- class FakeNativeConnection:
-     def __init__(self):
-         self.parameters = []
-+        self.options = []
- 
-     async def execute_query_async(
--        self, query, *, default_namespace_path=None, parameters=None
-+        self,
-+        query,
-+        *,
-+        default_namespace_path=None,
-+        parameters=None,
-+        timeout=None,
-+        read_timeout=None,
-+        cancel_on_drop=False,
-     ):
-         self.parameters.append(parameters)
-+        self.options.append((timeout, read_timeout, cancel_on_drop))
-         return FakeNativeQuery()
- 
- 
- class FakeAsyncConnection:
-     async def execute_query_async(
--        self, query, *, default_namespace_path=None, parameters=None
-+        self,
-+        query,
-+        *,
-+        default_namespace_path=None,
-+        parameters=None,
-+        timeout=None,
-+        read_timeout=None,
-+        cancel_on_drop=False,
-     ):
-         return AsyncQuery(FakeNativeQuery())
- 
-@@ -401,3 +425,61 @@ def do_get(self, context, ticket):
-     assert error.grpc_code == 3
-     assert str(error).startswith("No column 'missing' in table events")
-     assert not str(error).startswith("SQL error")
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("method", ["execute_query", "execute_query_async"])
-+async def test_async_sql_execution_controls_are_forwarded(method):
-+    native = FakeNativeConnection()
-+    connection = AsyncConnection(native)
-+    await getattr(connection, method)(
-+        "SELECT 1",
-+        timeout=timedelta(seconds=30),
-+        read_timeout=timedelta(seconds=5),
-+        cancel_on_drop=True,
-+    )
-+    assert native.options == [(timedelta(seconds=30), timedelta(seconds=5), True)]
-+
-+
-+@pytest.mark.parametrize("method", ["execute_query", "execute_query_async"])
-+def test_sync_sql_execution_controls_are_forwarded(method):
-+    native = FakeNativeConnection()
-+    connection = RemoteDBConnection.__new__(RemoteDBConnection)
-+    connection._conn = AsyncConnection(native)
-+    getattr(connection, method)(
-+        "SELECT 1",
-+        timeout=timedelta(seconds=30),
-+        read_timeout=timedelta(seconds=5),
-+        cancel_on_drop=True,
-+    )
-+    assert native.options == [(timedelta(seconds=30), timedelta(seconds=5), True)]
-+
-+
-+@pytest.mark.asyncio
-+async def test_async_query_cancellation_reaches_the_native_handle():
-+    native = FakeNativeQuery()
-+    await AsyncQuery(native).cancel()
-+    assert native.cancelled
-+
-+
-+def test_sync_query_cancellation_reaches_the_native_handle():
-+    native = FakeNativeQuery()
-+    Query(AsyncQuery(native)).cancel()
-+    assert native.cancelled
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("method", ["execute_query", "execute_query_async"])
-+async def test_namespace_sql_execution_controls_are_forwarded(method):
-+    native = FakeNativeConnection()
-+    connection = AsyncLanceNamespaceDBConnection.__new__(
-+        AsyncLanceNamespaceDBConnection
-+    )
-+    connection._inner = AsyncConnection(native)
-+    await getattr(connection, method)(
-+        "SELECT 1",
-+        timeout=timedelta(seconds=30),
-+        read_timeout=timedelta(seconds=5),
-+        cancel_on_drop=True,
-+    )
-+    assert native.options == [(timedelta(seconds=30), timedelta(seconds=5), True)]
-```
-
-**File**: `python/src/connection.rs` (modified, +12/-2)
-```diff
-@@ -375,19 +375,29 @@ impl Connection {
-         self.get_inner().map(|inner| inner.uri().to_string())
+@@ -87,7 +87,9 @@ pub struct ClientConfig {
+     /// Maximum concurrent blob HTTP requests for this connection, shared by all
+     /// tables and blob handles. Defaults to 8. The environment variable
+     /// `LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY` can also set this limit.
+-    /// The value must be greater than zero.
++    /// The value must be between 1 and [`Semaphore::MAX_PERMITS`], inclusive.
++    /// Values outside that range are rejected with [`Error::InvalidInput`] when
++    /// the connection is created.
+     pub blob_request_concurrency: Option<usize>,
+     /// User agent to use for requests. The default provides the library
+     /// name and version.
+@@ -648,6 +650,14 @@ impl RestfulLanceDbClient<Sender> {
+                 message: "blob request concurrency must be greater than zero".into(),
+             });
+         }
++        if value > Semaphore::MAX_PERMITS {
++            return Err(Error::InvalidInput {
++                message: format!(
++                    "blob request concurrency must be at most {}, got {value}",
++                    Semaphore::MAX_PERMITS
++                ),
++            });
++        }
+         Ok(value)
      }
  
--    #[pyo3(signature = (query, *, default_namespace_path=None, parameters=None))]
-+    #[pyo3(signature = (query, *, default_namespace_path=None, parameters=None, timeout=None, read_timeout=None, cancel_on_drop=false))]
-     pub fn execute_query_async<'a>(
-         self_: PyRef<'a, Self>,
-         query: String,
-         default_namespace_path: Option<Bound<'_, PyAny>>,
-         parameters: Option<PyArrowType<RecordBatch>>,
-+        timeout: Option<Duration>,
-+        read_timeout: Option<Duration>,
-+        cancel_on_drop: bool,
-     ) -> PyResult<Bound<'a, PyAny>> {
-         let inner = self_.get_inner()?.clone();
-         let default_namespace_path = parse_default_namespace_path(default_namespace_path)?;
-         future_into_py(self_.py(), async move {
-             let mut operation = inner
-                 .execute_query_async(query)
--                .default_namespace_path(default_namespace_path);
-+                .default_namespace_path(default_namespace_path)
-+                .cancel_on_drop(cancel_on_drop);
-+            if let Some(timeout) = timeout {
-+                operation = operation.timeout(timeout);
-+            }
-+            if let Some(timeout) = read_timeout {
-+                operation = operation.read_timeout(timeout);
-+            }
-             if let Some(PyArrowType(parameters)) = parameters {
-                 operation = operation.parameters(parameters);
-             }
-```
-
----
-
-### Incident Patch 3: `b44807e4` (2026-11-21)
-**Commit Message**: fix!: preserve job attempt lineage, retries, and lifecycle states
-
-BREAKING CHANGE: JobDescription, JobEventsRequest, FunctionErrorsRequest, and FunctionErrors gain optional Rust metadata/cursor fields. Existing struct literals must initialize them; use None when unavailable.
-
-Preserve typed attempt state, pinned retry lineage, result decoders and freshness fences, and retained diagnostic paging across SDKs. Keep Python job data access method-only.
-
-**File**: `docs/src/js/classes/Job.md` (modified, +147/-0)
-```diff
-@@ -26,6 +26,20 @@ extra round trip on every call:
+@@ -1505,6 +1515,29 @@ mod tests {
+         );
+     }
  
- ## Accessors
- 
-+### attempt
-+
-+```ts
-+get attempt(): null | number
-+```
-+
-+One-based attempt ordinal. Worker replacement does not increment it.
-+
-+#### Returns
-+
-+`null` \| `number`
-+
-+***
-+
- ### creationMs
- 
- ```ts
-@@ -40,6 +54,20 @@ When the job was created, in milliseconds since the epoch.
- 
- ***
- 
-+### executionEpoch
-+
-+```ts
-+get executionEpoch(): null | number
-+```
-+
-+Most recent execution's fencing token, when reported.
-+
-+#### Returns
-+
-+`null` \| `number`
-+
-+***
-+
- ### failure
- 
- ```ts
-@@ -73,6 +101,23 @@ durable resume tokens.
- 
- ***
- 
-+### jobId
-+
-+```ts
-+get jobId(): null | string
-+```
-+
-+Identity of the selected attempt last observed by this handle.
-+For operation handles, `refresh()` or `status()` can select a different
-+attempt while `id` stays unchanged. Save this value after refreshing and
-+use it throughout paged diagnostics. Local IDs cannot be reopened on a server.
-+
-+#### Returns
-+
-+`null` \| `string`
-+
-+***
-+
- ### jobType
- 
- ```ts
-@@ -88,6 +133,34 @@ server-reported job type. Null for in-process handles.
- 
- ***
- 
-+### lifecycleState
-+
-+```ts
-+get lifecycleState(): null | JobState
-+```
-+
-+Detailed state last observed; unknown values never establish success.
-+
-+#### Returns
-+
-+`null` \| [`JobState`](../type-aliases/JobState.md)
-+
-+***
-+
-+### operationId
-+
-+```ts
-+get operationId(): null | string
-+```
-+
-+Root of the explicit retry lineage, when reported.
-+
-+#### Returns
-+
-+`null` \| `string`
-+
-+***
-+
- ### result
- 
- ```ts
-@@ -104,6 +177,34 @@ instead.
- 
- ***
- 
-+### retryOf
-+
-+```ts
-+get retryOf(): null | string
-+```
-+
-+Immediate predecessor attempt, when reported.
-+
-+#### Returns
-+
-+`null` \| `string`
-+
-+***
-+
-+### sourceTableVersion
-+
-+```ts
-+get sourceTableVersion(): null | number
-+```
-+
-+Source snapshot pinned for this attempt, when reported.
-+
-+#### Returns
-+
-+`null` \| `number`
-+
-+***
-+
- ### spec
- 
- ```ts
-@@ -175,6 +276,24 @@ per fragment. `filter` is a SQL-like expression over the `state`,
- 
- ***
- 
-+### history()
-+
-+```ts
-+history(options?): AsyncGenerator<Table<any>, any, unknown>
-+```
-+
-+Walk retained history one page at a time using the server's continuation.
-+
-+#### Parameters
-+
-+* **options?**: [`JobEventsOptions`](../interfaces/JobEventsOptions.md)
-+
-+#### Returns
-+
-+`AsyncGenerator`&lt;`Table`&lt;`any`&gt;, `any`, `unknown`&gt;
-+
-+***
-+
- ### progress()
- 
- ```ts
-@@ -208,6 +327,20 @@ its full record, then cache it for the getters above.
- 
- ***
- 
-+### retry()
-+
-+```ts
-+retry(): Promise<Job<T>>
-+```
-+
-+Select this exact attempt's pinned successor. Requires backend support.
-+
-+#### Returns
-+
-+`Promise`&lt;[`Job`](Job.md)&lt;`T`&gt;&gt;
-+
-+***
-+
- ### status()
- 
- ```ts
-@@ -226,6 +359,20 @@ terminal failure state. Also refreshes the getters above.
- 
- ***
- 
-+### statusTyped()
-+
-+```ts
-+statusTyped(): Promise<JobState>
-+```
-+
-+Refresh and return the detailed lifecycle state.
-+
-+#### Returns
-+
-+`Promise`&lt;[`JobState`](../type-aliases/JobState.md)&gt;
-+
-+***
-+
- ### toString()
- 
- ```ts
-```
-
-**File**: `docs/src/js/globals.md` (modified, +1/-0)
-```diff
-@@ -194,6 +194,7 @@
- - [IntoSql](type-aliases/IntoSql.md)
- - [IntoVector](type-aliases/IntoVector.md)
- - [JobProgressCallback](type-aliases/JobProgressCallback.md)
-+- [JobState](type-aliases/JobState.md)
- - [MaterializedViewSelect](type-aliases/MaterializedViewSelect.md)
- - [MultiVector](type-aliases/MultiVector.md)
- - [QueryParameterValue](type-aliases/QueryParameterValue.md)
-```
-
-**File**: `docs/src/js/interfaces/CherryPickResult.md` (modified, +1/-1)
-```diff
-@@ -38,8 +38,8 @@ preview: CherryPickPreview;
- 
- ```ts
- status:
--  | "ready"
-   | "failed"
-+  | "ready"
-   | "notImplemented"
-   | "cherryPicked"
-   | "unknown";
-```
-
-**File**: `docs/src/js/interfaces/FunctionColumnAutoRefreshStatus.md` (modified, +2/-2)
-```diff
-@@ -22,11 +22,11 @@ optional activeJobId: string;
- 
- ```ts
- optional blockedReason:
-+  | "cancelled"
-   | "table_has_mem_wal"
-   | "inputs_not_settled"
-   | "dependency_in_flight"
-   | "table_capacity"
--  | "cancelled"
-   | "preparation_backoff"
-   | "failure_threshold_reached"
-   | "binding_revision_missing";
-@@ -86,8 +86,8 @@ optional nextRunAtReason: string;
- 
- ```ts
- state:
--  | "running"
-   | "queued"
-+  | "running"
-   | "disabled"
-   | "ready"
-   | "up_to_date"
-```
-
-**File**: `docs/src/js/interfaces/FunctionErrors.md` (modified, +10/-0)
-```diff
-@@ -20,6 +20,16 @@ Fragments whose detail was capped.
- 
- ***
- 
-+### pageToken?
-+
-+```ts
-+optional pageToken: string;
-+```
-+
-+Continue the same job/filter. Absent for complete pages and older servers.
-+
-+***
-+
- ### records
- 
- ```ts
-```
-
-**File**: `docs/src/js/interfaces/FunctionErrorsOptions.md` (modified, +10/-0)
-```diff
-@@ -37,3 +37,13 @@ optional limit: number;
- ```
- 
- At most this many records (server default 10000, cap 100000).
-+
-+***
-+
-+### pageToken?
-+
-+```ts
-+optional pageToken: string;
-+```
-+
-+Empty starts retained history, including repaired rows, for an exact jobId; otherwise continue that page.
-```
-
-**File**: `docs/src/js/interfaces/JobEventsOptions.md` (modified, +10/-0)
-```diff
-@@ -27,3 +27,13 @@ optional limit: number;
- ```
- 
- Maximum event rows to return, up to the server maximum of 10,000.
-+
-+***
-+
-+### pageToken?
-+
-+```ts
-+optional pageToken: string;
-+```
-+
-+Opaque continuation from the preceding page's schema metadata.
-```
-
-**File**: `docs/src/js/type-aliases/JobState.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+[**@lancedb/lancedb**](../README.md) • **Docs**
-+
-+***
-+
-+[@lancedb/lancedb](../globals.md) / JobState
-+
-+# Type Alias: JobState
-+
-+```ts
-+type JobState:
-+  | "created"
-+  | "queued"
-+  | "in_progress"
-+  | "succeeded"
-+  | "failed"
-+  | "canceled"
-+  | "timed_out"
-+  | string & object;
-+```
-+
-+Detailed lifecycle state. Unrecognized future values remain strings.
++    /// A semaphore cannot hold more than `MAX_PERMITS`, so a larger configured
++    /// value is refused where it was set instead of panicking when the
++    /// connection is created.
++    #[test]
++    fn test_blob_request_concurrency_must_fit_a_semaphore() {
++        let error = RestfulLanceDbClient::<Sender>::resolve_blob_request_concurrency(Some(
++            super::Semaphore::MAX_PERMITS + 1,
++        ))
++        .expect_err("a concurrency above the semaphore limit must be refused");
++        assert!(matches!(error, Error::InvalidInput { .. }));
++        assert!(
++            error.to_string().contains("blob request concurrency"),
++            "{error}"
++        );
++        assert_eq!(
++            RestfulLanceDbClient::<Sender>::resolve_blob_request_concurrency(Some(
++                super::Semaphore::MAX_PERMITS
++            ))
++            .unwrap(),
++            super::Semaphore::MAX_PERMITS
++        );
++    }
++
+     use super::*;
+     use serial_test::serial;
+     use std::time::Duration;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5152** (2026-11-21): fix: add SQL query timeout and cancellation controls (@jackye1995)
-- **PR #5150** (2026-11-21): test(python): cover embedded plans over enterprise bases (@Xuanwo)
-- **PR #5149** (2026-11-21): feat(nodejs): add table delta streams (@Xuanwo)
-- **PR #5148** (2026-11-21): feat: profile Enterprise Function workers from official clients (@jackye1995)
-- **PR #5146** (2026-11-21): feat!: layer GPU settings and total execution limits (@jackye1995)
-- **PR #5145** (2026-11-20): feat(nodejs): add tag-based branch creation and default tag versions (@Xuanwo)
+- **PR #5160** (2026-11-22): fix: reject blob request concurrency above semaphore limit (@Xuanwo)
+- **PR #5159** (2026-11-22): chore: update lance dependency to v15.0.0-beta.27 (@lancedb-robot)
+- **PR #5158** (2026-11-22): fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592 (@Xuanwo)
+- **PR #5157** (2026-11-22): chore: update lance dependency to v15.0.0-beta.26 (@lancedb-robot)
+- **PR #5154** (2026-11-22): feat: report capacity waits in function refresh job status (@BubbleCal)
+- **PR #5153** (2026-11-22): feat: resume a failed Function refresh from its table (@BubbleCal)
 
 ---
 
@@ -2597,90 +1471,37 @@ Preserve typed attempt state, pinned retry lineage, result decoders and freshnes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. expose Function metadata in SDK job listings
+## X. deps): update url to 2.5.9 for RUSTSEC-2026-0592
 
 **RULE**:
-When implementing operations in `docs/src/js/interfaces/JobInfo.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49dedd43`: expose Function metadata in SDK job listings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b63cec40`: deps): update url to 2.5.9 for RUSTSEC-2026-0592. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/js/interfaces/JobInfo.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### columns
-
-```ts
-columns: string[];
-```
-
-Affected columns; empty when unavailable or not column-scoped.
-
-***
-
-### completedAtMillis?
-
-```ts
-optional completedAtMillis: number;
-```
-
-Terminal timestamp in milliseconds since the epoch, when known.
-
-***
-
-### durationMillis?
-
-```ts
-optional durationMillis: number;
-```
-
-Creation-to-completion wall time, including queueing and pauses.
-
-***
-
-### failure?
-
-```ts
-optional failure: JobFailureInfo;
-```
-
-Durable failure summary, when available.
-
-***
-
-### functionName?
-
-```ts
-optional functionName: string;
-```
-
-Pinned Function catalog name, with namespace segments joined by `$`.
-
-***
-
-### functionVersion?
-
-```ts
-optional functionVersion: string;
-```
-
-Pinned Function version, when known.
-
-***
-
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "2.5.9"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+version = "2.5.8"
+checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49dedd43` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b63cec40` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

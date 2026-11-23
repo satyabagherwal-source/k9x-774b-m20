@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T00:39:40.760Z",
+  "last_updated": "2026-11-23T00:48:38.440Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T00:39:39.892Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-23T00:12:47.676Z",
+      "processed_at": "2026-11-23T00:48:37.334Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1268,7 +1268,7 @@
       "staged_for_review": 0
     },
     "lancedb-lancedb-learnings.md": {
-      "processed_at": "2026-11-22T01:24:03.885Z",
+      "processed_at": "2026-11-23T00:48:36.546Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2168,7 +2168,7 @@
       "staged_for_review": 0
     },
     "hf-google-bert-bert-base-uncased-learnings.md": {
-      "processed_at": "2026-11-18T17:18:40.226Z",
+      "processed_at": "2026-11-23T00:48:36.144Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3285,
+  "total_dossiers_evaluated": 3288,
   "total_canonical_promoted": 480,
-  "total_staged_for_review": 2482
+  "total_staged_for_review": 2484
 }

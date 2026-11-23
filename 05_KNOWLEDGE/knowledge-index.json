@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T00:39:40.599Z",
+  "last_updated": "2026-11-23T00:48:38.302Z",
   "total_verified_learnings": 9076,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "55aac32e0e80a76404b7d922bc45610cb5783f75c7a8b76e1c3db39d2d43f09e",
+      "content_hash": "859db16f271ab5a017e6f2398d6fa84757742e52261f0de6bc10dfa7335767e1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T00:12:48.203Z"
+      "persisted_at": "2026-11-23T00:48:37.985Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2b3ffebd66f37efdd82109c2a3f8e7a6be4ee198d7014b36e80a12de8b856243",
+      "content_hash": "74fbd43733124149ef0db0ef58d51c049c6d95549f59ef054bb96266d4d033dc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T00:12:48.336Z"
+      "persisted_at": "2026-11-23T00:48:38.160Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9930d8fb443575c3095f4df1a12ebf20e545bcb2e329367f2447bcb6aa8b7e95",
+      "content_hash": "73d1608cb9667907bbddaabcdaa202cf0c1a592c8d6b3efc5307ab0be4f9fec4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:12:48.449Z"
+      "persisted_at": "2026-11-23T00:48:38.302Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -216212,7 +216212,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "f27f70b191ceb1060cf36f3428745a5719f4a8092fe278db5030d84f07eb0438",
+      "content_hash": "c037330e62652cca14fc8cedb56d5b2840f166c8973dc8e34e2f2a225b4e9947",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [],
@@ -216221,7 +216221,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:18:22.680Z",
+      "verified_at": "2026-11-23T00:48:19.440Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216238,9 +216238,9 @@
       "title": "Research & Knowledge Intelligence: google-bert/bert-base-uncased Core Invariants",
       "repository": "google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "ec857581b199d348435df3a7cc74f889e2d1eb75e0c944f4685bb89f855577e1",
+      "content_hash": "9bcec13db5c2ab840a4cc6f44636a6be4eed09fd3da8c6bf83b9ce16eec56751",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T17:18:23.058Z"
+      "persisted_at": "2026-11-23T00:48:19.911Z"
     },
     "learn-github-pubkey-rxdb": {
       "learning_id": "learn-github-pubkey-rxdb",
@@ -216453,9 +216453,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-bert-bert-base-uncased-learnings Core Invariants",
       "repository": "hf-google-bert-bert-base-uncased-learnings",
       "source_version": "HEAD",
-      "content_hash": "eeafb955910faee6594795bdff2b3929aa86a50df12f11908a83bd14b81911c5",
+      "content_hash": "8521be575d77915e61224a7c713a309f5fdf0c17ee97c5162da0a33e55cc6e2d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T17:18:40.413Z"
+      "persisted_at": "2026-11-23T00:48:36.347Z"
     },
     "candidate_directive-ci-make-the-tauri-example-e2e-test-robust-against-a-lost-webdriver-session": {
       "item_id": "candidate_directive-ci-make-the-tauri-example-e2e-test-robust-against-a-lost-webdriver-session",
@@ -216901,8 +216901,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "2b1b2a29",
-      "content_hash": "0f2d5d00b3a9924eccd8520ed954e8c6e1ee3697c54fcb44596c5192d9f6bec9",
+      "source_version": "f38d42e9",
+      "content_hash": "71b2c75dc49f8d2ee3127df51067ab07b73023981994308986accc8986a0c2b7",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -216945,6 +216945,11 @@
           "number": 9640,
           "title": "test(python): isolate the background-loop fork scenario",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10007,
+          "title": "update url to 2.5.9 for RUSTSEC-2026-0592",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216952,7 +216957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:23:58.611Z",
+      "verified_at": "2026-11-23T00:48:32.555Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217006,10 +217011,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "2b1b2a29",
-      "content_hash": "52aaaa3c9f0c18f52060a2fbadcac6d54f3834ba6633517dde4f6fbc366496d2",
+      "source_version": "f38d42e9",
+      "content_hash": "f8f1c67f8b993727fd262b132e4a5efc69a89adb3c93f293866b7eeff6808239",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:23:59.611Z"
+      "persisted_at": "2026-11-23T00:48:33.338Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -246784,9 +246789,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lancedb-lancedb-learnings",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "099266f6fa9b282fb50a93ab8e1eeb47163026a1370c94f83bb363471eb75517",
+      "content_hash": "0f172cd6504fc02f9b07857f2ebc64a088bdb99b96170a2512d249af57fa887e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:24:04.663Z"
+      "persisted_at": "2026-11-23T00:48:37.172Z"
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -309028,10 +309033,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-architecture-intelligence-lancedb-lancedb-core-invariants.md",
       "title": "Architecture Intelligence: lancedb/lancedb Core Invariants",
       "repository": "lancedb/lancedb",
-      "source_version": "2b1b2a29",
-      "content_hash": "1fc2f56606e33a1ffe6783f0aa0d99b7563217d99e99253a98e2653296f0668e",
+      "source_version": "f38d42e9",
+      "content_hash": "2ae79031f7f7ea3a3a11e27897c0614cca081106377631c9fc38a7ace7fcb82e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:23:59.405Z"
+      "persisted_at": "2026-11-23T00:48:33.167Z"
     },
     "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
@@ -309041,9 +309046,9 @@
       "title": "Architecture Intelligence: lancedb-lancedb-learnings Core Invariants",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "63263faf1543d8e320b51336e8abef03850d289e6218f27a41a4e8d11309596c",
+      "content_hash": "4bea07d9fbc6bc17b1084264cd766a158732f55588ce0a3057a6b2a84a24e804",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:24:04.440Z"
+      "persisted_at": "2026-11-23T00:48:36.988Z"
     },
     "rule-9641": {
       "learning_id": "rule-9641",
@@ -309994,13 +309999,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HXZ7-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-S0QB-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6cdd02e9096d0a8b0c04002b2e87e788e71d90ac5b04a294689a3e0635e10dcc",
+      "content_hash": "21b150235934861b8ae4307207cd163e602cbba0266f9a114d1e883fbe3f9577",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T00:12:48.071Z"
+      "persisted_at": "2026-11-23T00:48:37.814Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -324281,26 +324286,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10007,
       "title": "update url to 2.5.9 for RUSTSEC-2026-0592",
-      "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "9991542c",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "f38d42e9",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-22T23:57:17.501Z"
+      "verified_at": "2026-11-23T00:48:32.555Z"
     },
     "candidate_directive-update-url-to-2-5-9-for-rustsec-2026-0592": {
       "item_id": "candidate_directive-update-url-to-2-5-9-for-rustsec-2026-0592",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y0B4-update-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RX0J-update-url-to-2-5-9-for-rustsec-2026-0592.md",
       "title": "update url to 2.5.9 for RUSTSEC-2026-0592",
-      "repository": "1jehuang/jcode",
-      "source_version": "9991542c",
-      "content_hash": "2ca3025834db12538f2741911fa038b50e4b324d9eb883917a5f436c9aae77c9",
+      "repository": "lancedb/lancedb",
+      "source_version": "f38d42e9",
+      "content_hash": "2222f509f792753c2cc8e7835a4fda3cbade01743de62376d702e9c5b9ac3d89",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:57:17.974Z"
+      "persisted_at": "2026-11-23T00:48:32.996Z"
     },
     "learn-github-buresdv-cork": {
       "learning_id": "learn-github-buresdv-cork",
@@ -324427,13 +324432,13 @@
       "item_id": "candidate_directive-deps-update-url-to-2-5-9-for-rustsec-2026-0592",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y935-deps-update-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RZYK-deps-update-url-to-2-5-9-for-rustsec-2026-0592.md",
       "title": "deps): update url to 2.5.9 for RUSTSEC-2026-0592",
-      "repository": "1jehuang-jcode-learnings",
+      "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e569ba00404db81286f1d50347b4a54b5755d6b3aac55d6b220b359ab9128d8d",
+      "content_hash": "9a6dd97268c3aff8491943a329cb2a44f50212d79eb60f669e8b118a6fdc1b5c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:57:29.351Z"
+      "persisted_at": "2026-11-23T00:48:36.812Z"
     },
     "domain_intelligence-architecture-intelligence-buresdv-cork-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-buresdv-cork-learnings-core-invariants",
