@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T21:48:17.975Z",
-  "total_cycles_completed": 11871,
-  "total_learnings_persisted": 11871,
-  "total_rules_promoted": 10973,
+  "last_updated": "2026-11-23T21:57:00.508Z",
+  "total_cycles_completed": 11873,
+  "total_learnings_persisted": 11873,
+  "total_rules_promoted": 10974,
   "history": [
-    {
-      "timestamp": "2026-11-23T05:51:40.223Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T05:51:40.329Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T05:51:48.062Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T21:48:17.975Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:56:58.506Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T21:57:00.508Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

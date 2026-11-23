@@ -12517,3 +12517,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-23T21:48:04.375Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d0b2003d` | Multi-dimensional audit evidence | 2026-11-23T21:48:17.970Z |
 | `learn-dom-d-7e47fe9b` | `project://hf-inclusionai-ling-3.2-air` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md` | 2026-11-23T21:48:46.597Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T21:56:58.501Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `b33999ea` | Multi-dimensional audit evidence | 2026-11-23T21:57:00.502Z |

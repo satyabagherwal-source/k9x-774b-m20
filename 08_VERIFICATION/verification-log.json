@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-IR5B",
-    "timestamp": "2026-11-22T00:53:45.071Z",
-    "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-    "contentHash": "5b69bbbd645391a6565eb9ae03c5c3258354f634f0768757dd817a0192859758",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-J3ZU",
-    "timestamp": "2026-11-22T00:54:01.722Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "c5eb54ed89b105037b0f540a5a3895075d68d9a1eb159c317cfb15f1360cef40",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-0FBB",
     "timestamp": "2026-11-22T01:07:29.543Z",
     "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "4f126908dab557f25caa07cbf4de91baa4f7d3de55354f86bd8e61b92bcf6541",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-34E8",
+    "timestamp": "2026-11-23T21:56:58.496Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+    "contentHash": "445f0d9b055eca73c6aa3937ab6c1ec0b5ac6ccf7d05aeed05e7b5bb8630c1ac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-35XU",
+    "timestamp": "2026-11-23T21:57:00.498Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "39ff4df6afe7fc21fa3a767bd57fa02c15389142972090e9a1d3607a3fe7bfe6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

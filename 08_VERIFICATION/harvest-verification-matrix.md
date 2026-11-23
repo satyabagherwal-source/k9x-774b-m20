@@ -12484,3 +12484,5 @@
 | `CYCLE-20261123-RO9F` | `2026-11-23T21:48:04.371Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`917c50f9...`) |
 | `CYCLE-20261123-RYR3` | `2026-11-23T21:48:17.967Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10130` | Yes (`4f126908...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T21:48:46.597Z` | `hf-inclusionai-ling-3.2-air` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7E47FE9B` [Domain D] | Yes (`5d1dd606...`) |
+| `CYCLE-20261123-34E8` | `2026-11-23T21:56:58.496Z` | `autotrust/AutoTrust-Decider-Pro-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`445f0d9b...`) |
+| `CYCLE-20261123-35XU` | `2026-11-23T21:57:00.498Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10131` | Yes (`39ff4df6...`) |

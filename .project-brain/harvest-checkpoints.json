@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T21:48:17.979Z",
+  "last_updated": "2026-11-23T21:57:00.511Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "29a5a62a679671f98a4da488312165eb70a1d81e8f5fb812bd481b4c821492a7",
-      "verified_at": "2026-11-22T12:19:20.075Z",
+      "content_hash": "39ff4df6afe7fc21fa3a767bd57fa02c15389142972090e9a1d3607a3fe7bfe6",
+      "verified_at": "2026-11-23T21:57:00.510Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T12:19:20.075Z"
+      "last_updated": "2026-11-23T21:57:00.510Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -18996,14 +18996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "content_hash": "546faaffafd8d8e6537b97b503114926d47ec7912728250ced241f8308a2da7e",
-      "verified_at": "2026-11-19T15:42:31.441Z",
+      "content_hash": "445f0d9b055eca73c6aa3937ab6c1ec0b5ac6ccf7d05aeed05e7b5bb8630c1ac",
+      "verified_at": "2026-11-23T21:56:58.509Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:42:31.441Z"
+      "last_updated": "2026-11-23T21:56:58.509Z"
     },
     "Abiray/MiniMax-H3-Image-GGUF": {
       "repository": "Abiray/MiniMax-H3-Image-GGUF",

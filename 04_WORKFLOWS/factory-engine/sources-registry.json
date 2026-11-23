@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T21:48:21.314Z",
-    "lastVerified": "2026-11-23T21:48:21.314Z",
+    "lastChecked": "2026-11-23T21:57:09.366Z",
+    "lastVerified": "2026-11-23T21:57:09.366Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T21:23:14.374Z",
+    "lastChecked": "2026-11-23T21:57:09.357Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T21:23:14.374Z"
+    "lastVerified": "2026-11-23T21:57:09.357Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1347,9 +1347,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-23T17:54:05.721Z",
+    "lastChecked": "2026-11-23T21:57:04.280Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-23T17:54:05.721Z"
+    "lastVerified": "2026-11-23T21:57:04.280Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2352,8 +2352,8 @@
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T21:09:19.558Z",
-    "lastVerified": "2026-11-22T21:09:19.558Z",
+    "lastChecked": "2026-11-23T21:57:01.967Z",
+    "lastVerified": "2026-11-23T21:57:01.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
@@ -7539,9 +7539,9 @@
   "pathwaycom-serviette": {
     "name": "serviette",
     "officialUrl": "https://github.com/pathwaycom/serviette",
-    "lastChecked": "2026-11-22T20:09:06.469Z",
+    "lastChecked": "2026-11-23T21:57:06.734Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-22T20:09:06.469Z"
+    "lastVerified": "2026-11-23T21:57:06.734Z"
   },
   "jhspetersson-fselect": {
     "name": "jhspetersson/fselect",
@@ -8141,14 +8141,14 @@
     "officialUrl": "https://github.com/agent-of-empires/agent-of-empires",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T12:19:19.056Z",
-    "lastVerified": "2026-11-22T12:19:19.056Z",
+    "lastChecked": "2026-11-23T21:56:59.424Z",
+    "lastVerified": "2026-11-23T21:56:59.424Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "29a5a62a679671f98a4da488312165eb70a1d81e8f5fb812bd481b4c821492a7",
+    "contentHash": "39ff4df6afe7fc21fa3a767bd57fa02c15389142972090e9a1d3607a3fe7bfe6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8333,12 +8333,12 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T15:42:20.539Z",
-    "lastVerified": "2026-11-19T15:42:20.539Z",
+    "lastChecked": "2026-11-23T21:56:57.835Z",
+    "lastVerified": "2026-11-23T21:56:57.835Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "546faaffafd8d8e6537b97b503114926d47ec7912728250ced241f8308a2da7e",
+    "contentHash": "445f0d9b055eca73c6aa3937ab6c1ec0b5ac6ccf7d05aeed05e7b5bb8630c1ac",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11482,9 +11482,9 @@
   "heckj-swiftui-notes": {
     "name": "swiftui-notes",
     "officialUrl": "https://github.com/heckj/swiftui-notes",
-    "lastChecked": "2026-11-20T23:13:25.506Z",
+    "lastChecked": "2026-11-23T21:56:59.457Z",
     "revisionIdentifier": "e7884cce",
-    "lastVerified": "2026-11-20T23:13:25.506Z"
+    "lastVerified": "2026-11-23T21:56:59.457Z"
   },
   "solidjs-solid": {
     "name": "solidjs/solid",
