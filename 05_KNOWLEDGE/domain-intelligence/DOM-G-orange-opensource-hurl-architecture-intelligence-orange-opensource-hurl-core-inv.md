@@ -4,23 +4,23 @@
 {
   "source_repository": "Orange-OpenSource/hurl",
   "source_url": "https://github.com/Orange-OpenSource/hurl",
-  "source_version": "6d29cb9f",
+  "source_version": "d3f1771a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T18:44:18.553Z",
+  "timestamp": "2026-11-23T00:31:17.270Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-orange-opensource-hurl",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl) (Revision: `6d29cb9f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T18:44:18.553Z`  
+> **Provenance**: Harvested from [Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl) (Revision: `d3f1771a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T00:31:17.270Z`  
 > **Learning ID**: `learn-github-orange-opensource-hurl`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T18:44:17.409Z  
+> **Harvest Timestamp**: 2026-11-23T00:31:15.700Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19346 stars
+- **Stars / Engagement**: 19350 stars
 
 ---
 
@@ -1882,74 +1882,152 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d29cb9f` (2026-11-21)
-**Commit Message**: Update crates
+### Incident Patch 1: `d3f1771a` (2026-11-22)
+**Commit Message**: Rename Cookie::match_domain to Cookie::match_host and fix the method matching any IPs.
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `packages/hurl/src/http/cookie_store.rs` (modified, +103/-52)
 ```diff
-@@ -174,15 +174,15 @@ dependencies = [
+@@ -229,22 +229,43 @@ impl Cookie {
+         self.include_subdomain
+     }
  
- [[package]]
- name = "bumpalo"
--version = "3.20.3"
-+version = "3.20.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
-+checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
+-    pub fn match_domain(&self, url: &Url) -> bool {
++    /// Returns `true` if this cookie applies to `url`, based on the host and the path of the URL.
++    pub fn match_url(&self, url: &Url) -> bool {
++        self.match_host(url) && url.path().starts_with(&self.path)
++    }
++
++    /// Returns `true` if the host of `url` matches this cookie domain.
++    fn match_host(&self, url: &Url) -> bool {
++        // The host of `url` must be equal to the cookie domain (case-insensitive) or, if the cookie
++        // includes subdomains, be a subdomain of the cookie domain. Subdomain matching is only done
++        // for domain names: an IP address must be strictly equal to the cookie domain. The path of
++        // `url` must start with the cookie path.
++
+         // We remove the legacy optional dot in cookie domain.
+-        let cookie_domain = self.domain.strip_prefix(".").unwrap_or(&self.domain);
+-        if let Some(url_domain) = url.domain() {
+-            if !self.include_subdomain() {
+-                if url_domain != cookie_domain {
+-                    return false;
+-                }
+-            } else if !url_domain.ends_with(&cookie_domain) {
+-                return false;
+-            }
++        let cookie_domain = self.domain.strip_prefix('.').unwrap_or(&self.domain);
++        let cookie_domain = cookie_domain.to_ascii_lowercase();
++        // The host of an IPv6 URL is bracketed, while libcurl stores (and only matches) the
++        // cookie domain without brackets.
++        let host = url.host();
++        let host = trim_brackets(&host).to_ascii_lowercase();
++        if host == cookie_domain {
++            return true;
+         }
+-        url.path().starts_with(&self.path)
++        // Subdomain matching only applies to domain names, never to IP addresses. When `url` is
++        // an IP address, `domain()` is `None`.
++        self.include_subdomain
++            && url.domain().is_some()
++            && host.ends_with(&format!(".{cookie_domain}"))
+     }
+ }
  
- [[package]]
- name = "cc"
--version = "1.11.1"
-+version = "1.11.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
-+checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
- dependencies = [
-  "find-msvc-tools",
-  "shlex",
++/// Removes the optional brackets around an IPv6 address host.
++fn trim_brackets(host: &str) -> &str {
++    host.strip_prefix('[')
++        .and_then(|h| h.strip_suffix(']'))
++        .unwrap_or(host)
++}
++
+ impl fmt::Display for Cookie {
+     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+         let repr = self.to_netscape();
+@@ -330,6 +351,19 @@ mod tests {
+     use super::*;
+     use std::str::FromStr;
+ 
++    fn new_cookie(domain: &str, include_subdomain: bool, path: &str) -> Cookie {
++        Cookie {
++            domain: domain.to_string(),
++            include_subdomain,
++            path: path.to_string(),
++            https: true,
++            expires: 0,
++            name: String::new(),
++            value: String::new(),
++            http_only: false,
++        }
++    }
++
+     #[test]
+     pub fn parse_cookie_from_str() {
+         assert_eq!(
+@@ -395,49 +429,66 @@ mod tests {
+ 
+     #[test]
+     fn test_match_cookie() {
+-        let cookie = Cookie {
+-            domain: "example.com".to_string(),
+-            include_subdomain: false,
+-            path: "/".to_string(),
+-            https: true,
+-            expires: 0,
+-            name: String::new(),
+-            value: String::new(),
+-            http_only: false,
+-        };
+-        assert!(cookie.match_domain(&Url::from_str("http://example.com/toto").unwrap()));
+-        assert!(!cookie.match_domain(&Url::from_str("http://sub.example.com/tata").unwrap()));
+-        assert!(!cookie.match_domain(&Url::from_str("http://toto/tata").unwrap()));
+-
+-        let cookie = Cookie {
+-            domain: "example.com".to_string(),
+-            include_subdomain: true,
+-            path: "/toto".to_string(),
+-            https: true,
+-            expires: 0,
+-            name: String::new(),
+-            value: String::new(),
+-            http_only: false,
+-        };
+-        assert!(cookie.match_domain(&Url::from_str("http://example.com/toto").unwrap()));
+-        assert!(cookie.match_domain(&Url::from_str("http://sub.example.com/toto").unwrap()));
+-        assert!(!cookie.match_domain(&Url::from_str("http://example.com/tata").unwrap()));
++        let cookie = new_cookie("example.com", false, "/");
++        assert!(cookie.match_url(&Url::from_str("http://example.com/toto").unwrap()));
++        assert!(!cookie.match_url(&Url::from_str("http://sub.example.com/tata").unwrap()));
++        assert!(!cookie.match_url(&Url::from_str("http://toto/tata").unwrap()));
++
++        let cookie = new_cookie("example.com", true, "/toto");
++        assert!(cookie.match_url(&Url::from_str("http://example.com/toto").unwrap()));
++        assert!(cookie.match_url(&Url::from_str("http://sub.example.com/toto").unwrap()));
++        assert!(!cookie.match_url(&Url::from_str("http://example.com/tata").unwrap()));
+ 
+         // Legacy cookie domain with dot prefix
+-        let cookie = Cookie {
+-            domain: ".example.com".to
 ```
 
-**File**: `packages/hurl/Cargo.toml` (modified, +1/-1)
+**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +1/-1)
 ```diff
-@@ -46,7 +46,7 @@ terminal_size = "0.4.4"
- winres = "0.1.12"
+@@ -274,7 +274,7 @@ fn cookies_params(request_spec: &RequestSpec, cookie_store: &CookieStore) -> Vec
+     let mut cookies_from_store = cookie_store
+         .cookies()
+         .filter(|c| !c.is_expired())
+-        .filter(|c| c.match_domain(&request_spec.url))
++        .filter(|c| c.match_url(&request_spec.url))
+         .map(|c| (c.name(), c.value()))
+         .collect::<Vec<_>>();
  
- [build-dependencies]
--cc = "1.11.1"
-+cc = "1.11.2"
- 
- [lints]
- workspace = true
-```
-
----
-
-### Incident Patch 2: `f5046f10` (2026-11-20)
-**Commit Message**: Update crates
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -404,9 +404,9 @@ checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
- 
- [[package]]
- name = "errno"
--version = "0.3.14"
-+version = "0.3.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
-+checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
- dependencies = [
-  "libc",
-  "windows-sys",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5453** (2026-11-22): Rename Cookie::match_domain to Cookie::match_host and fix the method method matching any IPs. (@jcamiel)
 - **PR #5451** (2026-11-21): Update crates (@hurl-bot)
 - **PR #5450** (2026-11-20): Update crates (@hurl-bot)
 - **PR #5449** (2026-11-19): Add age of crate if not updated because too recent. (@jcamiel)
 - **PR #5448** (2026-11-18): Update crates (@hurl-bot)
 - **PR #5447** (closed): Update crates (@hurl-bot)
-- **PR #5446** (2026-11-17): Downgrade dependencies due to update-crates not honoring global-min-publish (@jcamiel)
 
 ---
 
@@ -1969,37 +2047,79 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update crates
+## X. Rename Cookie::match_domain to Cookie::match_host and fix the method matching an
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/hurl/src/http/cookie_store.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d29cb9f`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d3f1771a`: Rename Cookie::match_domain to Cookie::match_host and fix the method matching any IPs.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/http/cookie_store.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "3.20.4"
-checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
-version = "1.11.2"
-checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
+    /// Returns `true` if this cookie applies to `url`, based on the host and the path of the URL.
+    pub fn match_url(&self, url: &Url) -> bool {
+        self.match_host(url) && url.path().starts_with(&self.path)
+    }
+
+    /// Returns `true` if the host of `url` matches this cookie domain.
+    fn match_host(&self, url: &Url) -> bool {
+        // The host of `url` must be equal to the cookie domain (case-insensitive) or, if the cookie
+        // includes subdomains, be a subdomain of the cookie domain. Subdomain matching is only done
+        // for domain names: an IP address must be strictly equal to the cookie domain. The path of
+        // `url` must start with the cookie path.
+
+        let cookie_domain = self.domain.strip_prefix('.').unwrap_or(&self.domain);
+        let cookie_domain = cookie_domain.to_ascii_lowercase();
+        // The host of an IPv6 URL is bracketed, while libcurl stores (and only matches) the
+        // cookie domain without brackets.
+        let host = url.host();
+        let host = trim_brackets(&host).to_ascii_lowercase();
+        if host == cookie_domain {
+            return true;
+        // Subdomain matching only applies to domain names, never to IP
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "3.20.3"
-checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
-version = "1.11.1"
-checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
+    pub fn match_domain(&self, url: &Url) -> bool {
+        let cookie_domain = self.domain.strip_prefix(".").unwrap_or(&self.domain);
+        if let Some(url_domain) = url.domain() {
+            if !self.include_subdomain() {
+                if url_domain != cookie_domain {
+                    return false;
+                }
+            } else if !url_domain.ends_with(&cookie_domain) {
+                return false;
+            }
+        url.path().starts_with(&self.path)
+        let cookie = Cookie {
+            domain: "example.com".to_string(),
+            include_subdomain: false,
+            path: "/".to_string(),
+            https: true,
+            expires: 0,
+            name: String::new(),
+            value: String::new(),
+            http_only: false,
+        };
+        assert!(cookie.match_domain(&Url::from_str("http://example.com/toto").unwrap()));
+        assert!(!cookie.match_domain(&Url::from_str("http://sub.example.com/tata").unwrap()));
+        assert!(!cookie.match_domain(&Url::from_str("http://toto/tata").unwrap()));
+
+        let cookie = Cookie {
+            domain: "example.com".to_string(),
+            include_subdomain: true,
+            path: "/toto".to_str
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d29cb9f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d3f1771a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

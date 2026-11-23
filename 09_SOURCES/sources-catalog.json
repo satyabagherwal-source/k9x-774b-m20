@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "450d54a6e9dcb68943d9916cf3464c2049b863477e6f00be396bcc184cc9e3f4",
-    "lastHarvestedAt": "2026-11-18T17:01:40.131Z",
+    "contentHash": "dc8a41ad37e718e8ea6902ff15108883478f7d283a47b5c3ded29ed3ec34eb28",
+    "lastHarvestedAt": "2026-11-23T00:31:15.193Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "ee76a797",
+    "sourceVersion": "abc138d4",
     "license": "Apache-2.0",
-    "contentHash": "c025b312199987b5c80ff3bb5c3ff9693d9e0719152c96e1db16982461c2005b",
-    "lastHarvestedAt": "2026-11-22T22:28:16.264Z",
+    "contentHash": "f234e552972488bc5c1ce4bdd46aa31c08df3e3698d60978f6ebe186b5af874a",
+    "lastHarvestedAt": "2026-11-23T00:31:31.726Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "6d29cb9f",
+    "sourceVersion": "d3f1771a",
     "license": "Apache-2.0",
-    "contentHash": "7174f376cf202eac6c4c7de804a96fb65f691c031a1b4d0d147462ac7f19e8a1",
-    "lastHarvestedAt": "2026-11-21T18:44:18.293Z",
+    "contentHash": "2cc6f92508a527a99c054e179235693738dc3be39d8bedd6f20347ed34280770",
+    "lastHarvestedAt": "2026-11-23T00:31:16.979Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {

@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T23:49:26.496Z",
+  "updated_at": "2026-11-23T00:31:38.114Z",
   "stats": {
-    "total_discovered": 7721,
-    "approved_pending_harvest": 7313,
+    "total_discovered": 7728,
+    "approved_pending_harvest": 7315,
     "harvested_count": 0,
-    "rejected_count": 408,
+    "rejected_count": 413,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7295,
-      "OFFICIAL_DOCUMENTATION": 246,
+      "COMMUNITY_AND_EXPERT": 7301,
+      "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 43,
@@ -167029,6 +167029,125 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
         "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-A921ECBAB394": {
+      "id": "SRC-A921ECBAB394",
+      "url": "http://example.com/toto",
+      "title": "http://example.com/toto",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T00:31:35.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-F1E79B1EEAEA": {
+      "id": "SRC-F1E79B1EEAEA",
+      "url": "http://sub.example.com/tata",
+      "title": "http://sub.example.com/tata",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T00:31:35.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-425863B03862": {
+      "id": "SRC-425863B03862",
+      "url": "http://toto/tata",
+      "title": "http://toto/tata",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T00:31:36.068Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-C22C3515A4B1": {
+      "id": "SRC-C22C3515A4B1",
+      "url": "http://sub.example.com/toto",
+      "title": "http://sub.example.com/toto",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T00:31:36.138Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-A2FB9CA5B186": {
+      "id": "SRC-A2FB9CA5B186",
+      "url": "http://example.com/tata",
+      "title": "http://example.com/tata",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T00:31:36.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-CCFB7324C2E8": {
+      "id": "SRC-CCFB7324C2E8",
+      "url": "https://docs.python.org/3/library/math.html",
+      "title": "https://docs.python.org/3/library/math.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T00:31:38.049Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-D2F4F2C4224D": {
+      "id": "SRC-D2F4F2C4224D",
+      "url": "https://en.cppreference.com/w/c/numeric/math/fabs",
+      "title": "https://en.cppreference.com/w/c/numeric/math/fabs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T00:31:38.114Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
       }
     }
   }

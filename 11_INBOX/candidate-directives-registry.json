@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T00:12:48.956Z",
+  "last_updated": "2026-11-23T00:31:38.393Z",
   "directives": [
     {
       "id": "CD-001",
@@ -48146,6 +48146,55 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-45FF3E-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-64OG",
+      "directive_title": "Rename Cookie::match_domain to Cookie::match_host and fix the method matching an",
+      "source_repo": "orange-opensource-hurl-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-64OG-rename-cookie-match_domain-to-cookie-match_host-and-fix-the-method-matching-an.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6650",
+      "directive_title": "Draft NUC 138 Reactive Secant",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6650-draft-nuc-138-reactive-secant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-792719",
+      "directive_title": "Rename Cookie::match_domain to Cookie::match_host and fix the method matching an",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "orange-opensource-hurl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-792719-rename-cookie-match-domain-to-cookie-mat.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-41158D",
+      "directive_title": "Forensic Learning Record (Deep Inspection): sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-41158D-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-A5A153",
+      "directive_title": "Draft NUC 138 Reactive Secant",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A5A153-draft-nuc-138-reactive-secant.md",
       "staged_date": "2026-11-23"
     }
   ]

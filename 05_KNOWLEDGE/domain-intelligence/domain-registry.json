@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T00:12:49.093Z",
+  "last_updated": "2026-11-23T00:31:38.617Z",
   "total_records": 2389,
   "domains": {
     "A": {
@@ -10769,8 +10769,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-research-knowledg.md",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "content_hash": "b1314bac431ae634e225c220d5445eccba1b80f9d4e2772f4255ef894180cda4",
-      "created_at": "2026-11-18T17:01:40.403Z"
+      "content_hash": "9825f7dd3174c529ef22124d1347478c2b0e1f1f5ee3a5ad37ad7625f0aeed1b",
+      "created_at": "2026-11-23T00:31:15.466Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants",
@@ -10793,11 +10793,11 @@
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
       "domain_letter": "D",
-      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings-researc.md",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings",
-      "content_hash": "cedbfb790e854072a5ce45c340f4841cdc4dceb77da192dd1aeff375c935c420",
-      "created_at": "2026-11-19T04:13:33.422Z"
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
+      "content_hash": "bc5e3e30511634bf3235025eae645581536037318c9036d3f2050d20b9be0d23",
+      "created_at": "2026-11-23T00:31:37.422Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -15468,8 +15468,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "5c0f284a39ec539a2cdb4b9fec344b1f8a0060d0b99944657728215a5d509ae6",
-      "created_at": "2026-11-22T22:28:16.661Z"
+      "content_hash": "7f403671750f427212080a136d63e4548a67831ceacf837cf3405c088b3e34bc",
+      "created_at": "2026-11-23T00:31:32.248Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15918,8 +15918,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "19f88b9e79181a1c52fabd28f5708ba4a850b9a0dbca0d4e6505d9d9d33b7b4e",
-      "created_at": "2026-11-22T22:28:21.583Z"
+      "content_hash": "f08a0f00038912eee1af17b4db257233c869fafee2ae1b454864b21c42b99154",
+      "created_at": "2026-11-23T00:31:38.617Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -30348,8 +30348,8 @@
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "repository": "Orange-OpenSource/hurl",
-      "content_hash": "a763a74748a6eff38461a98b9687ee917ded0abe0d6e9d2a15bea5911f246af9",
-      "created_at": "2026-11-21T18:44:18.765Z"
+      "content_hash": "65ae6f79b6bf6dbe52979ad0e6452a1f4da08e37a1592056d568f03a48246d5e",
+      "created_at": "2026-11-23T00:31:17.490Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
@@ -30366,8 +30366,8 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-learnings-architecture-intelligence-orange-opensource-hur.md",
       "repository": "orange-opensource-hurl-learnings",
-      "content_hash": "89c9a9614cfd02e18a0e24c418d28995a0282d59ecf6497693617896d45d6243",
-      "created_at": "2026-11-21T18:44:30.134Z"
+      "content_hash": "b0a9b86b8090198ad810fe339364a993d9f92d1e133bdc36072c7398d99d3267",
+      "created_at": "2026-11-23T00:31:36.718Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",

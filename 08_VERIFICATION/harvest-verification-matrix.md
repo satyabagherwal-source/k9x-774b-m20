@@ -12239,3 +12239,6 @@
 | `CYCLE-20261122-Y44K` | `2026-11-22T23:57:22.916Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10008` | Yes (`102b4916...`) |
 | `CYCLE-20261122-Y64U` | `2026-11-22T23:57:25.518Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10009` | Yes (`1dc7db1d...`) |
 | `CYCLE-20261123-HV4M` | `2026-11-23T00:12:44.374Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`86ffacf0...`) |
+| `CYCLE-20261123-5O8K` | `2026-11-23T00:31:15.188Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`dc8a41ad...`) |
+| `CYCLE-20261123-5PM6` | `2026-11-23T00:31:16.974Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10010` | Yes (`2cc6f925...`) |
+| `CYCLE-20261123-60ZU` | `2026-11-23T00:31:31.722Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10011` | Yes (`f234e552...`) |

@@ -12272,3 +12272,6 @@ Every entry in this ledger must capture:
 | `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `aee5584a` | Multi-dimensional audit evidence | 2026-11-22T23:57:22.920Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `50316b9e` | Multi-dimensional audit evidence | 2026-11-22T23:57:25.522Z |
 | `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-23T00:12:44.377Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-23T00:31:15.193Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `d3f1771a` | Multi-dimensional audit evidence | 2026-11-23T00:31:16.979Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `abc138d4` | Multi-dimensional audit evidence | 2026-11-23T00:31:31.726Z |

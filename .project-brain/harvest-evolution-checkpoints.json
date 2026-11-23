@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T00:12:49.340Z",
+  "last_updated": "2026-11-23T00:31:39.015Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T23:41:28.283Z",
@@ -568,7 +568,7 @@
       "staged_for_review": 1
     },
     "orange-opensource-hurl-learnings.md": {
-      "processed_at": "2026-11-21T18:44:29.203Z",
+      "processed_at": "2026-11-23T00:31:35.391Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-22T22:28:20.970Z",
+      "processed_at": "2026-11-23T00:31:37.665Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2148,7 +2148,7 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md": {
-      "processed_at": "2026-11-18T17:01:59.251Z",
+      "processed_at": "2026-11-23T00:31:37.158Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3279,
+  "total_dossiers_evaluated": 3282,
   "total_canonical_promoted": 480,
-  "total_staged_for_review": 2477
+  "total_staged_for_review": 2480
 }
