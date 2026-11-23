@@ -4,24 +4,24 @@
 {
   "source_repository": "restatedev/restate",
   "source_url": "https://github.com/restatedev/restate",
-  "source_version": "2aaabe8c",
+  "source_version": "ac734972",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T08:09:24.668Z",
+  "timestamp": "2026-11-23T19:51:15.654Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-restatedev-restate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [restatedev/restate](https://github.com/restatedev/restate) (Revision: `2aaabe8c`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T08:09:24.668Z`  
+> **Provenance**: Harvested from [restatedev/restate](https://github.com/restatedev/restate) (Revision: `ac734972`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T19:51:15.654Z`  
 > **Learning ID**: `learn-github-restatedev-restate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: B (Product Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: B (Product Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from restatedev/restate:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T08:09:15.867Z  
+> **Harvest Timestamp**: 2026-11-23T19:51:14.478Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4730 stars
+- **Stars / Engagement**: 4738 stars
 
 ---
 
@@ -1652,489 +1652,165 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2aaabe8c` (2026-11-21)
-**Commit Message**: [QueryEngine] Treat `unknown` as a sentinel, never as a value
+### Incident Patch 1: `37ce486f` (2026-11-22)
+**Commit Message**: [DataFusion] Give query tasks their own lane and memory pool, and never shed their requests
 
-`Stage`, `Status` and `EntryKind` keep an `Unknown` variant so that decoding
-never fails: a stored number this binary doesn't know decodes as `Unknown`.
-Nothing writes it, and keys refuse it (the stage tables can't hold an unknown
-stage). Yet queries treated it as a value: `stage = 'unknown'` selected such
-entries in V1, and in V2 read the stage tables, which can never hold them, so
-the engines disagreed. The effective status had grown its own `unknown`
-value too.
+The query task service shared the default fabric memory pool and shed a
+request whenever that pool was full. A shed Next failed its query, and a
+shed Close left its task running on the worker until the idle reaper found
+it: a coordinator tries a Close at most twice.
 
-Now `unknown` is a sentinel everywhere, shown but never accepted:
+The service now has its own pool, `query-engine`, and pushes back instead:
+a request waits for room rather than being rejected. The pool holds a
+request only until the server loop takes it off the queue, and the loop
+waits for nothing but an installation, which decodes a plan without IO, so
+the pool stays nearly empty. It is sized like the fabric pool, which is
+never smaller than the largest message.
 
-```sql
-SELECT stage, status FROM sys_vqueue_entry_status;
--- an entry in a stage this version doesn't know:  NULL, NULL
-SELECT * FROM sys_vqueue_entry_status WHERE stage = 'unknown';
--- nothing: 'unknown' names no stage, like 'queued'
-```
+Pushing back makes a connection's reactor wait when the pool is full, and
+with it everything else the connection carries. So query tasks move from
+the `DATAFUSION` lane, which V1's remote scans keep, to a new
+`QUERY_ENGINE` lane that carries only these tasks' requests and replies. A
+node that doesn't know the lane treats it as the general one, and doesn't
+speak protocol V7 either, so a task to it fails as before.
 
-- Input: the values a query can name leave out the sentinel (`Stage::VALUES`,
-  `Status::VALUES`, `EntryKind::VALUES`, `EffectiveStatus::VALUES`). So
-  `'unknown'` is like any other name a column doesn't have: `=` selects
-  nothing, `IN` ignores it, `!=` keeps every value.
-- Output: rows show the sentinel as NULL, in both engines and the stats tables,
-  so n
+A Close still ca
 
-**File**: `cli/src/clients/datafusion_helpers/v2.rs` (modified, +4/-3)
+**File**: `crates/core/protobuf/restate/network.proto` (modified, +2/-0)
 ```diff
-@@ -368,16 +368,17 @@ pub async fn invocation_status_filter(
- #[derive(Deserialize)]
- struct VqueueEntryStatusRow {
-     entry_id: String,
--    stage: String,
--    status: String,
-+    // NULL from Restate 1.8.2 where the server doesn't recognize the value.
-+    stage: Option<String>,
-+    status: Option<String>,
-     next_at: Option<DateTime<Local>>,
-     latest_attempt_at: Option<DateTime<Local>>,
-     retry_count_since_last_stored_command: Option<u64>,
+@@ -29,6 +29,8 @@ enum Swimlane {
+   BIFROST_READS = 4;
+   /// Data pipe for performing remote datafusion scans
+   DATAFUSION = 5;
++  /// Data pipe for the tasks of distributed queries (query engine V2)
++  QUERY_ENGINE = 6;
  }
  
- impl VqueueEntryStatusRow {
-     fn is_backing_off(&self) -> bool {
--        self.stage == "inbox" && self.status == "backing-off"
-+        self.stage.as_deref() == Some("inbox") && self.status.as_deref() == Some("backing-off")
-     }
- }
- 
+ //
 ```
 
-**File**: `cli/src/commands/sql_tables.rs` (modified, +6/-6)
+**File**: `crates/distributed-datafusion/src/distributed/tests.rs` (modified, +6/-6)
 ```diff
-@@ -134,12 +134,12 @@ pub static SQL_TABLES: &[SqlTableDoc] = &[
-         SqlColumnDoc { name: "partition_key", ty: "UInt64", description: "Internal column that is used for partitioning. Can be ignored." },
-         SqlColumnDoc { name: "entry_id", ty: "Utf8", description: "Resource identifier of the entry: an invocation ID or a state mutation ID, without its sequence number. Use `canonical_id` to distinguish incarnations of the same resource. Due to quirks in DataFusion, this should remain `LargeUtf8` to match `id` in `sys_invocation_status` for dynamic filter pushdown." },
-         SqlColumnDoc { name: "vqueue_id", ty: "Utf8", description: "The VQueue Identifier (vq_...)." },
--        SqlColumnDoc { name: "stage", ty: "Utf8", description: "The stage this entry currently belongs to. Choices are 'inbox', 'running', 'paused', 'suspended', and 'finished'." },
--        SqlColumnDoc { name: "status", ty: "Utf8", description: "What the entry is doing now, its effective status, which also tells its stage. In the inbox: `new`, `scheduled`, `backing-off`, `ready` or `yielded`; then `running`, `suspended` or `paused`; once finished, its outcome: `succeeded`, `failed`, `killed` or `cancelled`; `unknown` if the stored stage and status are ones this version doesn't know. Until v1.8.2, this showed the stored status, which can be `started` and doesn't tell the stage." },
-+        SqlColumnDoc { name: "stage", ty: "Utf8", description: "The stage this entry currently belongs to. Choices are 'inbox', 'running', 'paused', 'suspended', and 'finished'; NULL for a stage this version doesn't know." },
-+        SqlColumnDoc { name: "status", ty: "Utf8", description: "What the entry is doing now, its effective status, which also tells its stage. In the inbox: `new`, `scheduled`, `backing-off`, `ready` or `yielded`; then `running`, `suspended` or `paused`; once finished, its outcome: `succeeded`, `failed`, `killed` or `cancelled`. NULL if this version can't tell from the stored stage and status what the entry is doing; no status name selects such an entry. Until v1.8.2, this showed the stored status, which can be `started` and doesn't tell the stage." },
-         SqlColumnDoc { name: "has_lock", ty: "Boolean", description: "Whether this entry currently holds a lock." },
-         SqlColumnDoc { name: "next_at", ty: "TimestampMillisecond", description: "The next timestamp at which this entry is scheduled for the next transition." },
-         SqlColumnDoc { name: "sequence_number", ty: "UInt64", description: "Sequence number encoded in the entry ordering key." },
--        SqlColumnDoc { name: "entry_kind", ty: "Utf8", description: "Entry kind (`invocation` or `state-mutation`)." },
-+        SqlColumnDoc { name: "entry_kind", ty: "Utf8", description: "Entry kind (`invocation` or `state-mutation`); NULL for a kind this version doesn't know." },
-         SqlColumnDoc { name: "created_at", ty: "TimestampMillisecond", description: "Creation timestamp of the entry." },
-         SqlColumnDoc { name: "transitioned_at", ty: "TimestampMillisecond", description: "Timestamp of the latest stage transition." },
-         SqlColumnDoc { name: "num_attempts", ty: "UInt32", description: "Number of times this entry has been moved to the run queue." },
-@@ -202,13 +202,13 @@ pub static SQL_TABLES: &[SqlTableDoc] = &[
-     SqlTableDoc { name: "sys_vqueues", description: "Entries of each vqueue, by stage. One row per entry in a vqueue stage (inbox, running, paused, suspended or finished).", columns: &[
-         SqlColumnDoc { name: "partition_key", ty: "UInt64", description: "Internal column that is used for partitioning. Can be ignored." },
-         SqlColumnDoc { name: "id", ty: "Utf8", description: "The VQueue Identifier (vq_...)." },
--        SqlColumnDoc { name: "stage", ty: "Utf8", description: "The stage this entry currently belongs to. Choices are 'inbox', 'running', 'paused', 'suspended', and 'finished'." },
--        SqlColumnDoc { name: "status", ty: "Utf8", description: "What the entry is doing now, its effective status, which also tells its stage. In the inbox: `new`, `scheduled`, `backing-off`, `ready` or `yielded`; then `running`, `suspended` or `paused`; once finished, its outcome: `succeeded`, `failed`, `killed` or `cancelled`; `unknown` if the stored stage and status are ones this version doesn't know. Until v1.8.2, this showed the stored status, which can be `started` and doesn't tell the stage." },
-+        SqlColumnDoc { name: "stage", ty: "Utf8", description: "The stage this entry currently belongs to. Choices are 'inbox', 'running', 'paused', 'suspended', and 'finished'; NULL for a stage this version doesn't know." },
-+        SqlColumnDoc { name: "status", ty: "Utf8", description: "What the entry is doing now, its effective status, which also tells its stage. In the inbox: `new`, `scheduled`, `backing-off`, `ready` or `yielded`; then `running`, `suspended` or `paused`; once finished, its outcome: `succeeded`, `failed`, `killed` or `ca
-```
-
-**File**: `cli/src/commands/vqueues/describe.rs` (modified, +11/-7)
-```diff
-@@ -55,9 +55,10 @@ pub struct Describe {
- #[derive(Debug, Deserialize)]
- struct VQueueEntryRow {
-     entry_id: String,
--    entry_kind: String,
--    stage: String,
--    status: String,
-+    // NULL from Restate 1.8.2 where the server doesn't recognize the value.
-+    entry_kind: Option<String>,
-+    stage: Option<String>,
-+    status: Option<String>,
-     has_lock: bool,
-     created_at: DateTime<Local>,
-     num_attempts: u32,
-@@ -125,9 +126,9 @@ async fn describe(env: &CliEnv, opts: &Describe) -> Result<()> {
-     let rows = entries.iter().map(|entry| {
-         [
-             Field::new(entry.entry_id.as_str()),
--            Field::new(entry.entry_kind.as_str()),
--            Field::new(entry.stage.as_str()),
--            Field::new(entry.status.as_str()),
-+            optional_str(entry.entry_kind.as_deref()),
-+            optional_str(entry.stage.as_deref()),
-+            optional_str(entry.status.as_deref()),
-             Field::new(entry.has_lock),
-             Field::new(entry.num_attempts),
-             time(entry.created_at),
-@@ -149,7 +150,10 @@ async fn describe(env: &CliEnv, opts: &Describe) -> Result<()> {
-         rows,
-         IfEmpty::Say("No entries found."),
+@@ -553,7 +553,7 @@ async fn ipc_preserves_interleaved_lanes_and_ends_on_connection_loss_without_rep
      );
--    if let Some(entry) = entries.iter().find(|e| e.entry_kind == "invocation") {
-+    if let Some(entry) = entries
-+        .iter()
-+        .find(|e| e.entry_kind.as_deref() == Some("invocation"))
-+    {
-         f.next_step(
-             &format!("restate invocations describe {}", entry.entry_id),
-             "inspect the invocation's status, progress, and journal",
+     let connection = fixture
+         .network
+-        .get_connection(OWNER, Swimlane::Datafusion)
++        .get_connection(OWNER, Swimlane::QueryEngine)
+         .in_tc_as_task(
+             &TaskCenter::current(),
+             TaskKind::InPlace,
+@@ -664,7 +664,7 @@ async fn ipc_delivers_zero_body_batches_before_failure_and_discards_failed_lanes
+     let id = fixture.observations.lock().last().unwrap().id.clone();
+     let connection = fixture
+         .network
+-        .get_connection(OWNER, Swimlane::Datafusion)
++        .get_connection(OWNER, Swimlane::QueryEngine)
+         .in_tc_as_task(
+             &TaskCenter::current(),
+             TaskKind::InPlace,
+@@ -998,7 +998,7 @@ async fn older_fabric_rejects_query_tasks_and_keeps_ordinary_rpc_working() {
+ 
+     let connection = fixture
+         .network
+-        .get_connection(OWNER, Swimlane::Datafusion)
++        .get_connection(OWNER, Swimlane::QueryEngine)
+         .in_tc_as_task(
+             &TaskCenter::current(),
+             TaskKind::InPlace,
+@@ -1055,7 +1055,7 @@ async fn invalid_task_and_required_storage_fail_closed() {
+     let fixture = setup(false).await;
+     let connection = fixture
+         .network
+-        .get_connection(OWNER, Swimlane::Datafusion)
++        .get_connection(OWNER, Swimlane::QueryEngine)
+         .in_tc_as_task(
+             &TaskCenter::current(),
+             TaskKind::InPlace,
+@@ -1605,7 +1605,7 @@ async fn a_close_ends_a_blocked_execute_or_next_once() {
+     next_event("next-polling", &task, &mut seen, &mut taken).await;
+     let connection = fixture
+         .network
+-        .get_connection(OWNER, Swimlane::Datafusion)
++        .get_connection(OWNER, Swimlane::QueryEngine)
+         .in_tc_as_task(
+             &TaskCenter::current(),
+             TaskKind::InPlace,
+@@ -1838,7 +1838,7 @@ async fn a_close_cancels_a_waiting_task_and_finalizes_it_once() {
+         };
+     let connection = fixture
+         .network
+-        .get_connection(OWNER, Swimlane::Datafusion)
++        .get_connection(OWNER, Swimlane::QueryEngine)
+         .in_tc_as_task(
+             &TaskCenter::current(),
+             TaskKind::InPlace,
 ```
 
-**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/read.rs` (modified, +1/-2)
+**File**: `crates/distributed-datafusion/src/distributed/transport.rs` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,6 @@ use datafusion::physical_expr::utils::{collect_columns, split_conjunction};
- use datafusion::physical_plan::PhysicalExpr;
- use datafusion::physical_plan::metrics::Count;
- use datafusion::physical_plan::stream::RecordBatchReceiverStream;
--use strum::VariantArray;
- 
- use restate_partition_store::ReadSnapshot;
- use restate_partition_store::index::RegisteredIndex;
-@@ -265,7 +264,7 @@ impl CompleteIndex for StageIndex {
-         matches!(
-             restriction.stage.to_predicate(),
-             Some(ValuePredicate::In(stages))
--                if !stages.is_empty() && stages.len() < Stage::VARIANTS.len()
-+                if !stages.is_empty() && stages.len() < Stage::VALUES.len()
-         )
-     }
- }
+@@ -77,7 +77,7 @@ impl<N: NetworkSender> ChannelResolver for RestateChannelResolver<N> {
+             .map_err(|err| exec_datafusion_err!("invalid query owner: {err}"))?;
+         let connection = self
+             .network
+-            .get_connection(node, Swimlane::Datafusion)
++            .get_connection(node, Swimlane::QueryEngine)
+             .in_tc_as_task(
+                 &self.task_center,
+                 TaskKind::InPlace,
 ```
 
-**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/row.rs` (modified, +24/-12)
+**File**: `crates/distributed-datafusion/src/distributed/worker.rs` (modified, +14/-2)
 ```diff
-@@ -110,14 +110,20 @@ pub(crate) fn append_status_key_row(builder: &mut SysVqueueEntryStatusBuilder, k
-     if row.is_sequence_number_defined() {
-         row.sequence_number(key.id.seq().as_u64());
-     }
--    if row.is_entry_kind_defined() {
--        row.fmt_entry_kind(id.kind());
-+    if row.is_entry_kind_defined()
-+        && let Some(name) = id.kind().name()
-+    {
-+        row.entry_kind(name);
-     }
--    if row.is_stage_defined() {
--        row.stage(key.stage.as_str());
-+    if row.is_stage_defined()
-+        && let Some(name) = key.stage.name()
-+    {
-+        row.stage(name);
-     }
--    if row.is_status_defined() {
--        row.status(EffectiveStatus::new(key.stage, key.status).as_str());
-+    if row.is_status_defined()
-+        && let Some(name) = EffectiveStatus::new(key.stage, key.status).name()
-+    {
-+        row.status(name);
-     }
-     if row.is_created_at_defined()
-         && let Some(at) = key.created_at
-@@ -179,8 +185,10 @@ pub(crate) fn append_entry_row(
-     if row.is_vqueue_id_defined() {
-         row.fmt_vqueue_id(place.qid);
-     }
--    if row.is_stage_defined() {
--        row.stage(place.stage.as_str());
-+    if row.is_stage_defined()
-+        && let Some(name) = place.stage.name()
-+    {
-+        row.stage(name);
-     }
-     if row.is_has_lock_defined() {
-         row.has_lock(place.has_lock);
-@@ -192,8 +200,10 @@ pub(crate) fn append_entry_row(
-         row.sequence_number(place.seq.as_u64());
-     }
+@@ -31,14 +31,15 @@ use tokio_util::sync::CancellationToken;
+ use uuid::Uuid;
  
--    if row.is_entry_kind_defined() {
--        row.fmt_entry_kind(id.kind());
-+    if row.is_entry_kind_defined()
-+        && let Some(name) = id.kind().name()
-+    {
-+        row.entry_kind(name);
-     }
- 
-     let Some(EntryState {
-@@ -205,8 +215,10 @@ pub(crate) fn append_entry_row(
-         return;
-     };
- 
--    if row.is_status_defined() {
--        row.status(EffectiveStatus::new(place.stage, *status).as_str());
-+    if row.is_status_defined()
-+        && let Some(name) = EffectiveStatus::new(place.stage, *status).name()
-+    {
-+        row.status(name);
-     }
- 
-     if row.is_created_at_defined() {
-```
-
-**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/tests.rs` (modified, +22/-15)
-```diff
-@@ -498,17 +498,18 @@ async fn vqueues_view_matches_v1_stage_reads() {
-         );
-         // Each row shows its effective status, in both engines: the stage's own
-         // for running, suspended and paused entries whatever they stored, and
--        // `unknown` for a Finished entry without an outcome; a status condition
--        // selects by it.
-+        // NULL for a Finished entry without an outcome, the `unknown` sentinel,
-+        // which no status name selects; a status condition selects by the rest.
-         for session in [&old, &new] {
-             assert_eq!(
-                 rows(
-                     session.as_ref(),
--                    "SELECT DISTINCT stage, status FROM sys_vqueues ORDER BY stage"
-+                    "SELECT DISTINCT stage, COALESCE(status, 'NULL') FROM sys_vqueues \
-+                     ORDER BY stage"
-                 )
-                 .await,
-                 [
--                    ["finished", "unknown"],
-+                    ["finished", "NULL"],
-                     ["inbox", "new"],
-                     ["paused", "paused"],
-                     ["running", "running"],
-@@ -523,7 +524,7 @@ async fn vqueues_view_matches_v1_stage_reads() {
-                      WHERE status IN ('paused', 'yielded', 'unknown')"
-                 )
-                 .await,
--                [["4"]],
-+                [["2"]],
-                 "status_conditions_select_effective_statuses"
-             );
-         }
-@@ -812,10 +813,6 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
-             "{select} WHERE stage = 'finished' AND status IN ('failed', 'killed') \
-              ORDER BY transitioned_at DESC NULLS LAST LIMIT 5 OFFSET 2"
-         ),
--        format!(
--            "{select} WHERE stage = 'finished' AND status = 'unknown' \
--             ORDER BY transitioned_at DESC NULLS LAST LIMIT 3"
--        ),
-         format!(
-             "{select} WHERE stage = 'finished' AND transitioned_at < to_timestamp_millis({}) \
-              ORDER BY transitioned_at DESC NULLS LAST LIMIT 4",
-@@ -835,21 +832,28 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
-             "{select} WHERE stage = 'finished' AND num_attempts + 1 = 1 \
-              ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
-         ),
-+        // A status alone: the entries the index doesn't hold, those in a stage
-+        // this binary doesn't know, show no status and match none.
-+        format!(
-+            "{select} WHERE status = 'failed' ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
-+        ),
-         // Two stages: both stages' lanes, merged.
-         format!(
-             "{select} WHERE stage IN ('finished', 'running') \
-              ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
-         ),
-     ];
-     let scans = [
--        // Status alone doesn't prove the stage.
--        format!(
--            "{select} WHERE status = 'failed' ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
--        ),
-+        // Alternatives that together restrict neither column.
-         format!(
-             "{select} WHERE stage = 'finished' OR status = 'new' \
-              ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
-         ),
-+        // `unknown` names no status: the query selects nothing before any read.
-+        format!(
-+            "{select} WHERE stage = 'finished' AND status = 'unknown' \
-+             ORDER BY transitioned_at DESC NULLS LAST LIMIT 3"
-+        ),
-         // Another order reads the creation index instead.
-         format!("{select} WHERE stage = 'finished' ORDER BY created_at DESC NULLS LAST LIMIT 5"),
-         // An outer join can add NULLs: nothing is asked of the source.
-@@ -1298,11 +1302,14 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
-         // A stage and a status that rule each other out leave no lane: the
-         // read returns nothing, as the scan does.
-         format!("{select} WHERE stage = 'inbox' AND status = 'paused' {newest} LIMIT 5"),
-+        // A status alone: the only entries the index doesn't hold, those in a
-+        // stage this binary doesn't know, show no status and match none.
-+        format!("{select} WHERE status = 'new' {newest} LIMIT 5"),
-     ];
-     let scans = [
--        // Status alone doesn't prove the stage.
--        format!("{select} WHERE status = 'new' {newest} LIMIT 5"),
-+        // Alternatives that together restrict neither column.
-         format!("{select} WHERE stage = 'inbox' OR status = 'new' {newest} LIMIT 5"),
-+        // `unknown` names no stage: the query selects nothing before any read.
-         format!("{select} WHERE stage = 'unknown' {newest} LIMIT 5"),
-         // The transition index's order.
-         format!("{select} WHERE stage = 'inbox' ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"),
-```
-
-**File**: `crates/partition-store/src/stats/aggregated/logical_scan_tests.rs` (modified, +4/-2)
-```diff
-@@ -219,7 +219,8 @@ async fn deployment_and_object_schemas_expand_buckets_before_sql_residuals() {
-         ("ORDER BY num_entries",                                              4),
-         ("WHERE deployment_id = 'dp_a' AND num_entries > 2 ORDER BY num_entries",1),
-         ("WHERE deployment_id LIKE 'dp_%' AND stage = 'running'",              1),
--        ("WHERE stage = 'unknown' AND status = 'unknown'",                     1),
-+        // The `Unknown` sentinels show as NULL and are no value to select by.
-+        ("WHERE stage = 'unknown' AND status = 'unknown'",                     0),
-         ("WHERE deployment_id IS NULL",                                       0),
-         ("WHERE stage = 'invalid' OR status = 'invalid'",                      0),
-         ("WHERE stage <> 'inbox' ORDER BY num_entries DESC LIMIT 1",           1),
-@@ -239,7 +240,8 @@ async fn deployment_and_object_schemas_expand_buckets_before_sql_residuals() {
-         ("WHERE scope LIKE '%' ORDER BY num_entries",                          3),
-         ("WHERE partition_key = 22 AND stage = 'finished'",                    1),
-         ("WHERE kind = 'state-mutation'",                                      1),
--        ("WHERE stage = 'unknown' AND status = 'unknown'",                     1),
-+        // The `Unknown` sentinels show as NULL and are no value to select by.
-+        ("WHERE stage = 'unknown' AND status = 'unknown'",                     0),
-         ("WHERE scope IS NULL OR (partition_key = 22 AND status = 'running') ORDER BY num_entries",2),
-         ("WHERE kind = 'unknown'",                                             0),
-         ("WHERE handler IS NOT NULL AND num_entries > 2 ORDER BY num_entries LIMIT 1",1),
-```
-
-**File**: `crates/partition-store/src/vqueue_table/entry_index.rs` (modified, +9/-0)
-```diff
-@@ -701,11 +701,20 @@ impl Keyed {
-         stage: impl Fn(&T::Clause) -> Option<&ValuePredicate<Stage>>,
-         status: impl Fn(&T::Clause) -> Option<&ValuePredicate<EffectiveStatus>>,
-     ) -> impl Iterator<Item = (Stage, Status)> {
-+        // A condition every value satisfies restricts nothing, as a column
-+        // without one comes: it keeps the lanes of entries showing the
-+        // `unknown` sentinel, which is no value, and leaves them to the
-+        // caller's predicate.
-         let conditions: Vec<_> = match selection {
-             Selection::Predicates(predicates) => predicates
-                 .iter()
-                 .flat_map(|(_, clauses)| clauses.iter())
-                 .filter_map(&status)
-+                .filter(|condition| {
-+                    !EffectiveStatus::VALUES
-+                        .iter()
-+                        .all(|value| condition.matches(value))
-+                })
-                 .cloned()
-                 .collect(),
-             Selection::All | Selection::Empty => Vec::new(),
-```
-
----
-
-### Incident Patch 2: `4272d581` (2026-11-21)
-**Commit Message**: [PartitionStore] Skip probe keys of pairs no status-index lane reads
-
-A status-index read opens one lane per (stage, stored status) pair the query
-can match, and finds which lanes have keys with one probe. The probe pins the
-lanes' stages and statuses as two sets, so it covers every combination of
-them. Until #6000 the lanes were exactly that product. Since the status
-column shows the effective status, a status condition keeps only the pairs
-whose effective status it accepts, and the probe can cover pairs that aren't
-lanes:
-
-```sql
-SELECT entry_id FROM sys_vqueue_entry_status
-WHERE stage IN ('inbox', 'paused') AND status IN ('new', 'paused')
-ORDER BY created_at DESC LIMIT 5
--- lanes: (inbox, new) and every (paused, *)
--- probe: (inbox | paused) x (new | every status), so (inbox, backing-off) too
-```
-
-Finding a key of such a pair failed the read with a data-integrity error. If
-there were more such pairs than lanes, the read fell back to a scan instead.
-
-- The read skips the keys of pairs no lane reads.
-- Discovery is bounded by the pairs the probe covers instead of the lanes.
-
-Tests: the active-entries test reads the query above through the index and
-matches the scan; it failed with
-
-**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/tests.rs` (modified, +10/-0)
-```diff
-@@ -1288,6 +1288,16 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
-         ),
-         // The index holds Finished entries too.
-         format!("{select} WHERE stage IN ('inbox', 'finished') {newest} LIMIT 5"),
-+        // Lanes that aren't every combination of their stages and statuses:
-+        // (inbox, new) and every paused pair. The probe also finds keys of
-+        // (inbox, backing-off), which no lane reads.
-+        format!(
-+            "{select} WHERE stage IN ('inbox', 'paused') AND status IN ('new', 'paused') \
-+             {newest} LIMIT 5"
-+        ),
-+        // A stage and a status that rule each other out leave no lane: the
-+        // read returns nothing, as the scan does.
-+        format!("{select} WHERE stage = 'inbox' AND status = 'paused' {newest} LIMIT 5"),
-     ];
-     let scans = [
-         // Status alone doesn't prove the stage.
-```
-
-**File**: `crates/partition-store/src/status_lanes.rs` (modified, +19/-6)
-```diff
-@@ -54,9 +54,15 @@ const LANE_RUN_FIELDS: usize = 4;
- const LANE_BUCKET_FIELDS: usize = 3;
- 
- /// The selections of a status index read: each candidate lane's, in key order,
--/// and a probe of all of them at once.
-+/// and a probe of every combination of their stages and statuses at once.
-+///
-+/// The probe can cover pairs that aren't lanes: the lanes (inbox, new) and
-+/// (paused, started) make it cover (inbox, started) and (paused, new) too. The
-+/// read skips the keys of those.
- pub(crate) struct StatusLanes<K> {
-     probe: Arc<KeySelection<K>>,
-+    /// How many pairs the probe covers: at most one prefix each.
-+    probe_pairs: usize,
-     lanes: Vec<(Stage, Status, Arc<KeySelection<K>>)>,
- }
- 
-@@ -82,7 +88,11 @@ impl<K> StatusLanes<K> {
-             .into_iter()
-             .map(|(stage, status)| Ok((stage, status, Arc::new(prepare(&[stage], &[status])?))))
-             .collect::<Result<_>>()?;
--        Ok(Self { probe, lanes })
-+        Ok(Self {
-+            probe,
-+            probe_pairs: stages.len() * statuses.len(),
-+            lanes,
-+        })
-     }
- 
-     /// The bytes it holds: the shared probe and lane selections, each with its
-@@ -138,11 +148,11 @@ where
-         (memory, held): (&SharedMemory, &mut Held),
-         discovered: &mut u64,
-     ) -> Result<Option<Self>> {
--        // The lanes with keys, in key order, charged while the read holds them.
-+        // The pairs with keys, in key order, charged while the read holds them.
-         let Some((prefixes, charged)) = snapshot.distinct_prefixes::<T>(
-             Arc::clone(&prepared.probe),
-             2,
--            (prepared.lanes.len(), limits.max_discovery_keys),
-+            (prepared.probe_pairs, limits.max_discovery_keys),
-             Box::new(memory.clone()),
-             discovered,
-         )?
-@@ -166,11 +176,14 @@ where
-                 .ok_or(StorageError::DataIntegrityError)?;
-             let stage = StageRankCodec::decode_encoded(StageRankCodec::take_encoded(&mut fields)?)?;
-             let status = StatusCodec::decode_encoded(StatusCodec::take_encoded(&mut fields)?)?;
--            let (.., selection) = prepared
-+            // A pair the probe covers but no lane reads.
-+            let Some((.., selection)) = prepared
-                 .lanes
-                 .iter()
-                 .find(|(s, t, _)| (*s, *t) == (stage, status))
--                .ok_or(StorageError::DataIntegrityError)?;
-+            else {
-+                continue;
-+            };
-             let opening = Opening {
-                 runs: available,
-                 examined: discovered,
+ use restate_clock::UniqueTimestamp;
+-use restate_core::cancellation_watcher;
+ use restate_core::network::{
+     BackPressureMode, MessageRouterBuilder, ServiceMessage, ServiceReceiver, Verdict,
+ };
++use restate_core::{TaskCenter, cancellation_watcher};
+ use restate_platform::sync::Mutex;
+ use restate_storage_api::StorageError;
+ use restate_storage_query_api::QueryMetadata;
+ use restate_types::GenerationalNodeId;
++use restate_types::config::Configuration;
+ use restate_types::net::distributed_query::{
+     DistributedQueryService, PartitionReadError, QueryFailureKind, QueryTaskAnalyze,
+     QueryTaskClosed, QueryTaskError, QueryTaskExecute, QueryTaskId, QueryTaskInstall,
+@@ -183,10 +184,21 @@ impl DistributedQueryServer {
+         scanners: SourceRegistry,
+         router: &mut MessageRouterBuilder,
+     ) -> Self {
++        // The pool holds a request only until `run` takes it off the queue, and
++        // `run` waits for nothing but an installation, which doesn't wait for
++        // IO. So the pool stays nearly empty, and a request is never shed: a
++        // coordinator's Close reaches its task as long as their connection
++        // lives. Should the pool fill up, the connection waits; it is on the
++        // query engine's own lane, which carries nothing else.
++        let pool = TaskCenter::with_current(|tc| {
++            tc.memory_controller().create_pool("query-engine", || {
++                Configuration::pinned().networking.fabric_memory_limit()
++            })
++        });
+         Self {
+             env,
+             scanners,
+-            receiver: router.register_service(BackPressureMode::Lossy),
++            receiver: router.register_service_with_pool(pool, BackPressureMode::PushBack),
+             #[cfg(test)]
+             observations: Default::default(),
+             #[cfg(test)]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6008** (2026-11-21): [QueryEngine] Treat `unknown` as a sentinel, never as a value (@AhmedSoliman)
-- **PR #6005** (2026-11-21): [PartitionStore] Skip probe keys of pairs no status-index lane reads (@AhmedSoliman)
-- **PR #6004** (2026-11-21): [QueryEngine] Show canonical_id in sys_invocation (@AhmedSoliman)
-- **PR #6003** (2026-11-21): [QueryEngine] Show the stats tables' effective status (@AhmedSoliman)
-- **PR #6002** (2026-11-20): [Metadata] Add restate.schema.size.bytes gauge (@tillrohrmann)
-- **PR #6001** (2026-11-20): [CI] Tag images built from non-release git tags with the tag name (@tillrohrmann)
+- **PR #6024** (2026-11-23): [partition-store] Remove unused Scan*Table traits and background iterator (@MohamedBassem)
+- **PR #6021** (2026-11-23): [cleaner] Change the cleaner to use the new cooperative iterator (@MohamedBassem)
+- **PR #6019** (2026-11-23): [QueryEngineV2] Merge ID joins on key fields the reads emit (@AhmedSoliman)
+- **PR #6018** (2026-11-23): [QueryEngineV2] Merge shard-local ID joins on their native order (@AhmedSoliman)
+- **PR #6017** (2026-11-23): [QueryEngineV2] Wait for failed task cleanup before test teardown (@AhmedSoliman)
+- **PR #6015** (2026-11-23): [QueryEngineV2] Join shard-locally over a union of a table's layouts (@AhmedSoliman)
 
 ---
 
@@ -2154,36 +1830,32 @@ matches the scan; it failed with
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [QueryEngine] Treat `unknown` as a sentinel, never as a value
+## X. [DataFusion] Give query tasks their own lane and memory pool, and never shed the
 
 **RULE**:
-When implementing operations in `cli/src/clients/datafusion_helpers/v2.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/protobuf/restate/network.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2aaabe8c`: [QueryEngine] Treat `unknown` as a sentinel, never as a value. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `37ce486f`: [DataFusion] Give query tasks their own lane and memory pool, and never shed their requests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/src/clients/datafusion_helpers/v2.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/protobuf/restate/network.proto`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // NULL from Restate 1.8.2 where the server doesn't recognize the value.
-    stage: Option<String>,
-    status: Option<String>,
-        self.stage.as_deref() == Some("inbox") && self.status.as_deref() == Some("backing-off")
+  /// Data pipe for the tasks of distributed queries (query engine V2)
+  QUERY_ENGINE = 6;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    stage: String,
-    status: String,
-        self.stage == "inbox" && self.status == "backing-off"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2aaabe8c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `37ce486f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

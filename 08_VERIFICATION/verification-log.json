@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-M7CX",
-    "timestamp": "2026-11-21T21:40:28.737Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "197886a287ce2801e107fa34dee9769adb901de224b29faaf3f0c91c834f057f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-X1NR",
-    "timestamp": "2026-11-21T21:48:54.567Z",
-    "repository": "LiquidAI/LFM3-Audio-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
-    "contentHash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-XC6Q",
-    "timestamp": "2026-11-21T21:49:08.210Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-8JLB",
     "timestamp": "2026-11-21T21:57:51.023Z",
     "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
@@ -7490,6 +7445,51 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "f72e9068f01b4c55c5d9f2b0c75d8bf6f77cf440da878d45225b22817e755a45",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-LDUH",
+    "timestamp": "2026-11-23T19:51:12.473Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "eb381602559a03f13a9888bce9ed675d3cf4ec9d5c251fbcc83abfcb246475c5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-LG4X",
+    "timestamp": "2026-11-23T19:51:15.441Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "095e7c96bc3de889e0c1d0a252db0860e2e79428fe30f66ac8ce430eae0f71ca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-LM2H",
+    "timestamp": "2026-11-23T19:51:23.129Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "26b3b62a16d66fd5da9c9b5195586ad1590186d25f1ec358dc26cdfdabf043b8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

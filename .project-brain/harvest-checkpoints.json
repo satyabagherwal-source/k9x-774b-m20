@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T19:43:03.420Z",
+  "last_updated": "2026-11-23T19:51:23.139Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1805,14 +1805,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "content_hash": "6cbe2852ccecfc9418d9766e0c9fd4bd1054323408254aaac61761ccbe53d782",
-      "verified_at": "2026-11-19T11:12:59.804Z",
+      "content_hash": "eb381602559a03f13a9888bce9ed675d3cf4ec9d5c251fbcc83abfcb246475c5",
+      "verified_at": "2026-11-23T19:51:12.484Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T11:12:59.804Z"
+      "last_updated": "2026-11-23T19:51:12.484Z"
     },
     "Qwen/Qwen-Image-2.1-Turbo": {
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "e513d5e0ea43ded0d5cc0f6438ecd9e5689bca3aee86c7fec17dd7ec48439be8",
-      "verified_at": "2026-11-22T08:09:24.376Z",
+      "content_hash": "095e7c96bc3de889e0c1d0a252db0860e2e79428fe30f66ac8ce430eae0f71ca",
+      "verified_at": "2026-11-23T19:51:15.451Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T08:09:24.376Z"
+      "last_updated": "2026-11-23T19:51:15.451Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -10611,14 +10611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flux-iac-tofu-controller",
-      "content_hash": "9dd96374a82c8e249a114980960ad6050a09fb7e9aa927ede852e7e25cdfcea8",
-      "verified_at": "2026-11-19T12:40:35.401Z",
+      "content_hash": "26b3b62a16d66fd5da9c9b5195586ad1590186d25f1ec358dc26cdfdabf043b8",
+      "verified_at": "2026-11-23T19:51:23.139Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T12:40:35.401Z"
+      "last_updated": "2026-11-23T19:51:23.139Z"
     },
     "clockworklabs/SpacetimeDB": {
       "repository": "clockworklabs/SpacetimeDB",

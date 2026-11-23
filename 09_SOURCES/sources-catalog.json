@@ -1175,8 +1175,8 @@
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
     "license": "Open-Source",
-    "contentHash": "6cbe2852ccecfc9418d9766e0c9fd4bd1054323408254aaac61761ccbe53d782",
-    "lastHarvestedAt": "2026-11-19T11:12:59.793Z",
+    "contentHash": "eb381602559a03f13a9888bce9ed675d3cf4ec9d5c251fbcc83abfcb246475c5",
+    "lastHarvestedAt": "2026-11-23T19:51:12.477Z",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0"
   },
   "hf-google-gemma-4-26b-a4b-it": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "2aaabe8c",
+    "sourceVersion": "ac734972",
     "license": "NOASSERTION",
-    "contentHash": "e513d5e0ea43ded0d5cc0f6438ecd9e5689bca3aee86c7fec17dd7ec48439be8",
-    "lastHarvestedAt": "2026-11-22T08:09:24.363Z",
+    "contentHash": "095e7c96bc3de889e0c1d0a252db0860e2e79428fe30f66ac8ce430eae0f71ca",
+    "lastHarvestedAt": "2026-11-23T19:51:15.444Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "877521d6",
+    "sourceVersion": "23cefad9",
     "license": "Apache-2.0",
-    "contentHash": "9dd96374a82c8e249a114980960ad6050a09fb7e9aa927ede852e7e25cdfcea8",
-    "lastHarvestedAt": "2026-11-19T12:40:35.391Z",
+    "contentHash": "26b3b62a16d66fd5da9c9b5195586ad1590186d25f1ec358dc26cdfdabf043b8",
+    "lastHarvestedAt": "2026-11-23T19:51:23.132Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {

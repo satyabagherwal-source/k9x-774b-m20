@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T19:43:08.823Z",
+  "last_updated": "2026-11-23T19:51:28.740Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T18:32:33.917Z",
@@ -388,7 +388,7 @@
       "staged_for_review": 1
     },
     "flux-iac-tofu-controller-learnings.md": {
-      "processed_at": "2026-11-19T12:40:38.932Z",
+      "processed_at": "2026-11-23T19:51:27.588Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1273,7 +1273,7 @@
       "staged_for_review": 1
     },
     "restatedev-restate-learnings.md": {
-      "processed_at": "2026-11-22T08:09:32.972Z",
+      "processed_at": "2026-11-23T19:51:26.434Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2733,7 +2733,7 @@
       "staged_for_review": 0
     },
     "hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md": {
-      "processed_at": "2026-11-19T11:13:02.928Z",
+      "processed_at": "2026-11-23T19:51:27.227Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3778,7 +3778,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3498,
+  "total_dossiers_evaluated": 3501,
   "total_canonical_promoted": 489,
-  "total_staged_for_review": 2623
+  "total_staged_for_review": 2625
 }

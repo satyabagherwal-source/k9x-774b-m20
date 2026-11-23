@@ -12475,3 +12475,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T19:42:50.415Z |
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `0038ce76` | Multi-dimensional audit evidence | 2026-11-23T19:42:53.089Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `b0a4509e` | Multi-dimensional audit evidence | 2026-11-23T19:43:03.411Z |
+| `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-23T19:51:12.477Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `ac734972` | Multi-dimensional audit evidence | 2026-11-23T19:51:15.444Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `23cefad9` | Multi-dimensional audit evidence | 2026-11-23T19:51:23.132Z |

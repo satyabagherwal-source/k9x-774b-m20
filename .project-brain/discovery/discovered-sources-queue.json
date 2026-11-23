@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T19:34:48.786Z",
+  "updated_at": "2026-11-23T19:51:28.107Z",
   "stats": {
-    "total_discovered": 7989,
-    "approved_pending_harvest": 7560,
+    "total_discovered": 7999,
+    "approved_pending_harvest": 7570,
     "harvested_count": 0,
     "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7554,
+      "COMMUNITY_AND_EXPERT": 7564,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -172778,6 +172778,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
         "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-7C03CC436C55": {
+      "id": "SRC-7C03CC436C55",
+      "url": "https://github.com/aws/aws-sdk-go-v2",
+      "title": "https://github.com/aws/aws-sdk-go-v2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:27.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-0FCD20523FEC": {
+      "id": "SRC-0FCD20523FEC",
+      "url": "https://github.com/aws/smithy-go",
+      "title": "https://github.com/aws/smithy-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:27.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-91054A7033E1": {
+      "id": "SRC-91054A7033E1",
+      "url": "https://github.com/fluxcd/pkg",
+      "title": "https://github.com/fluxcd/pkg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:27.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-E42E2B6497C1": {
+      "id": "SRC-E42E2B6497C1",
+      "url": "https://github.com/zclconf/go-cty",
+      "title": "https://github.com/zclconf/go-cty",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:27.804Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-DB71750C06F6": {
+      "id": "SRC-DB71750C06F6",
+      "url": "https://github.com/aws/aws-sdk-go-v2/commit/914e76e97ffb90ba9c14b4f9770ed2b108120a67",
+      "title": "https://github.com/aws/aws-sdk-go-v2/commit/914e76e97ffb90ba9c14b4f9770ed2b108120a67",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:27.854Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-B780CA3625DC": {
+      "id": "SRC-B780CA3625DC",
+      "url": "https://github.com/elgohr/go-localstack",
+      "title": "https://github.com/elgohr/go-localstack",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:27.914Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-0CB6806BBDBC": {
+      "id": "SRC-0CB6806BBDBC",
+      "url": "https://github.com/jenkins-x/go-scm",
+      "title": "https://github.com/jenkins-x/go-scm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:27.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-203A590CFCFD": {
+      "id": "SRC-203A590CFCFD",
+      "url": "https://github.com/kubernetes-sigs/controller-runtime",
+      "title": "https://github.com/kubernetes-sigs/controller-runtime",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:28.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-AF7A80182387": {
+      "id": "SRC-AF7A80182387",
+      "url": "https://github.com/kubernetes-sigs/kustomize",
+      "title": "https://github.com/kubernetes-sigs/kustomize",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:28.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-51CCBF84A253": {
+      "id": "SRC-51CCBF84A253",
+      "url": "https://github.com/aws/aws-sdk-go-v2/commit/b260587e158655c930bbe98087f7386e3c3f4331",
+      "title": "https://github.com/aws/aws-sdk-go-v2/commit/b260587e158655c930bbe98087f7386e3c3f4331",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:51:28.107Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
       }
     }
   }

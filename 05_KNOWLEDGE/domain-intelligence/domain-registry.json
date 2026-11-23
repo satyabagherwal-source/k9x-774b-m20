@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T19:43:08.503Z",
+  "last_updated": "2026-11-23T19:51:28.466Z",
   "total_records": 2444,
   "domains": {
     "A": {
@@ -13902,8 +13902,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "43d039c580e4233c6839c81f05c5a3e2ce5cb4c5bb9ca907ba87696d24b00992",
-      "created_at": "2026-11-22T08:09:24.887Z"
+      "content_hash": "c25c862023001f7ecb52d8299b9fa45b091563e4aa0a185adca34d479619167d",
+      "created_at": "2026-11-23T19:51:15.808Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -13979,8 +13979,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "0a51e4561a5481dee6cd9632598e5d1bd0350d40160230d19d2b57a781cc0e11",
-      "created_at": "2026-11-22T08:09:33.619Z"
+      "content_hash": "b5b1eded5ddc80e24e4f3321a88a22f7ececa4e2d3fb9f0bd83e18e4b3a4806f",
+      "created_at": "2026-11-23T19:51:26.919Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",
@@ -18034,8 +18034,8 @@
       "title": "Research & Knowledge Intelligence: ConwayResearch/Underdog-Saluki-27B-1.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-saluki-27b-1-0-research-knowledge-intelligence-conway.md",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "content_hash": "350da32edeeb3480a03d29f1d4be9f7f70c7a4ec3ffc43c227fcac456cb2f8f8",
-      "created_at": "2026-11-19T11:13:00.038Z"
+      "content_hash": "dfbff450bb450663a2468f451721c02321e7b9b9927a40d824ab67de4f26c74e",
+      "created_at": "2026-11-23T19:51:12.682Z"
     },
     "DOM-D-E0561FD8": {
       "record_id": "DOM-D-E0561FD8",
@@ -18085,8 +18085,8 @@
       "title": "Research & Knowledge Intelligence: hf-conwayresearch-underdog-saluki-27b-1.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-saluki-27b-1-0-learnings-research-knowledge-intellige.md",
       "repository": "hf-conwayresearch-underdog-saluki-27b-1.0-learnings",
-      "content_hash": "bd246659599b9a7b8f01d4ab00b634587219ece921c999bdd2cb60608413d4f6",
-      "created_at": "2026-11-19T11:13:03.183Z"
+      "content_hash": "1b28ab519d8d50e49c67c93f70a6b311a330678ad9785e67a0610051fb4f94e4",
+      "created_at": "2026-11-23T19:51:27.411Z"
     },
     "domain_intelligence-technical-construction-intelligence-zleap-ai-sag-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zleap-ai-sag-learnings-core-invariants",
@@ -28808,8 +28808,8 @@
       "title": "Technical Construction Intelligence: flux-iac/tofu-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-technical-construction-intelligence-flux-iac-tofu-contr.md",
       "repository": "flux-iac/tofu-controller",
-      "content_hash": "8cb0eacae506705f09739cdd8e432b5e2bf639153ed912e5d804533b83629343",
-      "created_at": "2026-11-19T12:40:35.728Z"
+      "content_hash": "0d8e49a34bb0e07e9c9aa330708630326673351167bdcd2161dba4cdedbf9244",
+      "created_at": "2026-11-23T19:51:23.499Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
@@ -28835,8 +28835,8 @@
       "title": "Technical Construction Intelligence: flux-iac-tofu-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-learnings-technical-construction-intelligence-flux-iac-.md",
       "repository": "flux-iac-tofu-controller-learnings",
-      "content_hash": "03b7436f8f7821428fc8b9bd032e7238e58087cccc6ce224883264ba2219bdef",
-      "created_at": "2026-11-19T12:40:39.365Z"
+      "content_hash": "40e521634747de9c4e7cbaf6c47c880c5ff613d848f1dc253ab1f7595147126f",
+      "created_at": "2026-11-23T19:51:28.466Z"
     },
     "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants",

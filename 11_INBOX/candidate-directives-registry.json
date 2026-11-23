@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T19:43:08.333Z",
+  "last_updated": "2026-11-23T19:51:28.319Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50697,6 +50697,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5F8066-empirical-invariant-guard-in-cargo-lock.md",
       "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-LOVA",
+      "directive_title": "[DataFusion] Give query tasks their own lane and memory pool, and never shed the",
+      "source_repo": "restatedev-restate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LOVA-datafusion-give-query-tasks-their-own-lane-and-memory-pool-and-never-shed-the.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-LM8L",
+      "directive_title": "bump the go-minor group across 2 directories with 10 updates",
+      "source_repo": "flux-iac/tofu-controller",
+      "source_commit": "23cefad9",
+      "staged_file": "11_INBOX/candidate-directives/CD-LM8L-bump-the-go-minor-group-across-2-directories-with-10-updates.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-4ED290",
+      "directive_title": "[DataFusion] Give query tasks their own lane and memory pool, and never shed the",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "restatedev-restate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4ED290--datafusion-give-query-tasks-their-own-l.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-LQ2N",
+      "directive_title": "deps): bump the go-minor group across 2 directories with 10 updates",
+      "source_repo": "flux-iac-tofu-controller-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LQ2N-deps-bump-the-go-minor-group-across-2-directories-with-10-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
     }
   ]
 }

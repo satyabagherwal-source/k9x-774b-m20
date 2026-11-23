@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
   "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T11:13:00.037Z",
+  "timestamp": "2026-11-23T19:51:12.681Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T11:13:00.037Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T19:51:12.681Z`  
 > **Learning ID**: `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T11:07:55.444Z  
+> **Harvest Timestamp**: 2026-11-23T19:51:11.887Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 471518 downloads | 721 likes
+- **Stars / Engagement**: 433290 downloads | 727 likes
 
 ---
 

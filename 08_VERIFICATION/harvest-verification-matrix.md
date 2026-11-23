@@ -12442,3 +12442,6 @@
 | `CYCLE-20261123-AMGA` | `2026-11-23T19:42:50.410Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`de37a6d2...`) |
 | `CYCLE-20261123-AOIL` | `2026-11-23T19:42:53.085Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10106` | Yes (`a9545a86...`) |
 | `CYCLE-20261123-AWHA` | `2026-11-23T19:43:03.406Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`f72e9068...`) |
+| `CYCLE-20261123-LDUH` | `2026-11-23T19:51:12.473Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`eb381602...`) |
+| `CYCLE-20261123-LG4X` | `2026-11-23T19:51:15.441Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10107` | Yes (`095e7c96...`) |
+| `CYCLE-20261123-LM2H` | `2026-11-23T19:51:23.129Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10108` | Yes (`26b3b62a...`) |
