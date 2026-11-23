@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T17:03:52.924Z",
+  "last_updated": "2026-11-23T17:12:00.928Z",
   "total_records": 2433,
   "domains": {
     "A": {
@@ -16568,8 +16568,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-large-en-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-large-en-v1-5-research-knowledge-intelligence-baai-bge-large-en-v1-5.md",
       "repository": "BAAI/bge-large-en-v1.5",
-      "content_hash": "ceeef73a88ea6e4df0a92786f7de3deb50101bb8d6df6c40d2f6e236b4982184",
-      "created_at": "2026-11-19T05:06:04.850Z"
+      "content_hash": "b1548e3390fb2de72c72f9e5e584f4f00bec41b48df45beb1ce3cdbd53250fcd",
+      "created_at": "2026-11-23T17:11:45.266Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-core-invariants",
@@ -16646,8 +16646,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-large-en-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-large-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-.md",
       "repository": "hf-baai-bge-large-en-v1.5-learnings",
-      "content_hash": "b6b4244172b5b345ab791cd697ef2f2ac5831b09a988354cb7270270b8fc64d2",
-      "created_at": "2026-11-19T05:06:22.876Z"
+      "content_hash": "db186d03ce87b1b43776570f45bf3912da651ad9ee83359e3b3d079bed663ed8",
+      "created_at": "2026-11-23T17:11:59.351Z"
     },
     "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-learnings-core-invariants",
@@ -20262,8 +20262,8 @@
       "title": "Architecture Intelligence: temporalio/temporal Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-architecture-intelligence-temporalio-temporal-core-invariant.md",
       "repository": "temporalio/temporal",
-      "content_hash": "d7fb6dafa3cd28e11772acdaed8542011b6538814a4b38ce3d35d6b6fb2f30e9",
-      "created_at": "2026-11-20T09:34:49.061Z"
+      "content_hash": "51b1272d13fbd1521a5c1ef06689d06fb5666eafc83dff01e8341479b1c0fa58",
+      "created_at": "2026-11-23T17:11:56.133Z"
     },
     "DOM-D-3FA9CA89": {
       "record_id": "DOM-D-3FA9CA89",
@@ -20322,8 +20322,8 @@
       "title": "Architecture Intelligence: temporalio-temporal-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-learnings-architecture-intelligence-temporalio-temporal-lear.md",
       "repository": "temporalio-temporal-learnings",
-      "content_hash": "4054d8fba16d532841b039e46d77f664817f1a5d21d5e4f193729db620895090",
-      "created_at": "2026-11-20T09:34:54.108Z"
+      "content_hash": "643f9f3da2053a3ec8e2d7465ad0483f4807a3f3f2fcb4171343f90defcb9858",
+      "created_at": "2026-11-23T17:12:00.034Z"
     },
     "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
@@ -22864,8 +22864,8 @@
       "title": "Architecture Intelligence: Dicklesworthstone/destructive_command_guard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-architecture-intelligence-dickleswor.md",
       "repository": "Dicklesworthstone/destructive_command_guard",
-      "content_hash": "18552298a48dbc70f42fd53424970378982c9f4fa36332b002a1d1da2366cc65",
-      "created_at": "2026-11-22T05:04:29.792Z"
+      "content_hash": "ac9032157be23bc0844bff794a8e18bc493b671feab46eec7343d844250fc8f0",
+      "created_at": "2026-11-23T17:11:49.278Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants",
@@ -22882,8 +22882,8 @@
       "title": "Architecture Intelligence: dicklesworthstone-destructive_command_guard-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-learnings-architecture-intelligence-.md",
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
-      "content_hash": "e36b46b2d7b61dd481daba3dadfe8bec53f9ed4c52d9251f41b1f2933b14d31a",
-      "created_at": "2026-11-22T05:04:41.174Z"
+      "content_hash": "184c9cf646b78080fbc48d387ccc01403dba8143c97bbb6bb589ce73f8ad3994",
+      "created_at": "2026-11-23T17:12:00.928Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants",

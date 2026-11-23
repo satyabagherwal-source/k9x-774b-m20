@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "b134ea78e3082b02d9c0db864f173bbfe5f9f50ea313c4736baa1c752926bdaa",
-    "lastHarvestedAt": "2026-11-19T05:06:04.692Z",
+    "contentHash": "f914c43fb761e2339add29c51d3627f5969d3c18f8a7d1d14ebc9ae579dbe0a8",
+    "lastHarvestedAt": "2026-11-23T17:11:45.047Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "2f372957",
+    "sourceVersion": "b4f82a73",
     "license": "NOASSERTION",
-    "contentHash": "0004a3e985cf0471201f294b4865d778ca6f0cd0714f2aa26932869f320365de",
-    "lastHarvestedAt": "2026-11-22T05:04:29.163Z",
+    "contentHash": "86b9dfb823a7b881a1ea56eaae673b3d624e6bd568e8a96c342ed1c526d3aed5",
+    "lastHarvestedAt": "2026-11-23T17:11:48.856Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "32ef011f",
+    "sourceVersion": "5208234b",
     "license": "MIT",
-    "contentHash": "b9faaf523c862198f4cc48e63ad34a5292f6485d150570145fe94d77dcb7ec6d",
-    "lastHarvestedAt": "2026-11-21T13:53:39.584Z",
+    "contentHash": "59b7ef61df3677fad35c590dcb61859efab9c257197e0fcda18cb0d326b34938",
+    "lastHarvestedAt": "2026-11-23T17:11:55.720Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

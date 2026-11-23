@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-5L59",
-    "timestamp": "2026-11-21T17:15:36.909Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-LMVF",
-    "timestamp": "2026-11-21T17:28:05.643Z",
-    "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
-    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
-    "contentHash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-LOVI",
-    "timestamp": "2026-11-21T17:28:08.238Z",
-    "repository": "XHToken/Spark-X2.6-4B-GGUF",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-    "contentHash": "db6489295b3291e3dac8dfce6005e65fff55a6666d1b96cf184e609baea1e45c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-LVIS",
     "timestamp": "2026-11-21T17:28:16.852Z",
     "repository": "open-policy-agent/gatekeeper",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "9143a8ce17ab4c299e8809594c9f361e15bafaae768d1db75458dd1c3f6609c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-WBKI",
+    "timestamp": "2026-11-23T17:11:45.042Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "f914c43fb761e2339add29c51d3627f5969d3c18f8a7d1d14ebc9ae579dbe0a8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-WEIC",
+    "timestamp": "2026-11-23T17:11:48.852Z",
+    "repository": "Dicklesworthstone/destructive_command_guard",
+    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+    "contentHash": "86b9dfb823a7b881a1ea56eaae673b3d624e6bd568e8a96c342ed1c526d3aed5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-WJT0",
+    "timestamp": "2026-11-23T17:11:55.716Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "59b7ef61df3677fad35c590dcb61859efab9c257197e0fcda18cb0d326b34938",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

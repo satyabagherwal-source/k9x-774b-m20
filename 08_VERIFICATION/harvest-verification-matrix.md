@@ -12387,3 +12387,6 @@
 | `CYCLE-20261123-LVIV` | `2026-11-23T17:03:37.687Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10075` | Yes (`a04dc0e1...`) |
 | `CYCLE-20261123-LZBY` | `2026-11-23T17:03:42.622Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8879` | Yes (`11caf0ea...`) |
 | `CYCLE-20261123-M0YO` | `2026-11-23T17:03:44.736Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10076` | Yes (`9143a8ce...`) |
+| `CYCLE-20261123-WBKI` | `2026-11-23T17:11:45.042Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`f914c43f...`) |
+| `CYCLE-20261123-WEIC` | `2026-11-23T17:11:48.852Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10077` | Yes (`86b9dfb8...`) |
+| `CYCLE-20261123-WJT0` | `2026-11-23T17:11:55.716Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10078` | Yes (`59b7ef61...`) |

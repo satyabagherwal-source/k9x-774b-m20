@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T17:03:44.747Z",
-  "total_cycles_completed": 11778,
-  "total_learnings_persisted": 11778,
-  "total_rules_promoted": 10914,
+  "last_updated": "2026-11-23T17:11:55.726Z",
+  "total_cycles_completed": 11781,
+  "total_learnings_persisted": 11781,
+  "total_rules_promoted": 10916,
   "history": [
-    {
-      "timestamp": "2026-11-22T20:08:57.392Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T20:08:59.950Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T20:16:52.973Z",
-      "repository": "HemmingwayAI/Hemmingway-1",
-      "learningId": "learn-huggingface-altworld-hemmingway-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T20:16:54.392Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T17:03:44.747Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:11:45.053Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:11:48.861Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T17:11:55.726Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

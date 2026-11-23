@@ -12420,3 +12420,6 @@ Every entry in this ledger must capture:
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `bfd092bc` | Multi-dimensional audit evidence | 2026-11-23T17:03:37.692Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `a99e9208` | Multi-dimensional audit evidence | 2026-11-23T17:03:42.627Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c4528161` | Multi-dimensional audit evidence | 2026-11-23T17:03:44.741Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-23T17:11:45.047Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `b4f82a73` | Multi-dimensional audit evidence | 2026-11-23T17:11:48.856Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `5208234b` | Multi-dimensional audit evidence | 2026-11-23T17:11:55.720Z |

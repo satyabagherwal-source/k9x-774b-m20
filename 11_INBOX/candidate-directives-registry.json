@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T17:03:52.692Z",
+  "last_updated": "2026-11-23T17:12:00.761Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49997,6 +49997,46 @@
       "source_repo": "etcd-io-etcd",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0EC393-empirical-invariant-guard-in-go-mod.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-WNP1",
+      "directive_title": "bind lookaround exemptions to their segments [skip ci]",
+      "source_repo": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WNP1-bind-lookaround-exemptions-to-their-segments-skip-ci.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-WN05",
+      "directive_title": "WHN impl 2: store worker control queue when workflow task starts",
+      "source_repo": "temporalio-temporal-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WN05-whn-impl-2-store-worker-control-queue-when-workflow-task-starts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-7145B1",
+      "directive_title": "WHN impl 2: store worker control queue when workflow task starts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "temporalio-temporal",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7145B1-whn-impl-2-store-worker-control-queue-wh.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-3608D1",
+      "directive_title": "bind lookaround exemptions to their segments [skip ci]",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dicklesworthstone-destructive_command_guard",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3608D1-bind-lookaround-exemptions-to-their-segm.md",
       "staged_date": "2026-11-23"
     }
   ]
