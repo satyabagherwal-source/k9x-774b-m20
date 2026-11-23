@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T19:01:44.718Z",
+  "last_updated": "2026-11-23T19:09:26.779Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24118,
+  "total_items": 24123,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -236759,7 +236759,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "1128bbfe641bf302f697399e1246d2941fc951506785325b50da2f0d43ac2622",
+      "content_hash": "82253d742d9e858bdb0fb116a0e3b58fc4da9bcc1e900cd174922caded2889e8",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -236768,7 +236768,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T09:17:00.919Z",
+      "verified_at": "2026-11-23T19:09:13.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236785,9 +236785,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF Core Invariants",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "6703c1132ce2cf71b2e2edabc0e1a6d1ffdc7f7118cd784757b2d06193dc900d",
+      "content_hash": "a3bb927a7a24c44253f96f3e6e64dda414cfdf18193c740890cad8304f333451",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T09:17:01.446Z"
+      "persisted_at": "2026-11-23T19:09:13.801Z"
     },
     "learn-github-tw93-pake": {
       "learning_id": "learn-github-tw93-pake",
@@ -237080,9 +237080,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "d38a235bc70bb15787b94a3de329c62cdbc8ffca51c91ec675b93aa98f9e1932",
+      "content_hash": "3889effa65cdc187b232c05074ad753d4ebdb58650c447d70ab79764a21614fa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T09:17:04.617Z"
+      "persisted_at": "2026-11-23T19:09:25.553Z"
     },
     "candidate_directive-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name": {
       "item_id": "candidate_directive-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name",
@@ -289490,14 +289490,19 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "5344f432",
-      "content_hash": "d458c7169346da25b9a83ca0aefda8c6f99e2aedd5bfac4d6fdc2725db57963f",
+      "source_version": "1f2f7af9",
+      "content_hash": "8eadb334fa4950804a2bfa568e352a91b9469610417b2363b333c1d5fb79823d",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
         {
           "number": 9201,
           "title": "build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10099,
+          "title": "build(deps): bump golang.org/x/net from 0.62.0 to 0.63.0",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -289506,7 +289511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:45:12.303Z",
+      "verified_at": "2026-11-23T19:09:21.095Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -289548,10 +289553,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-projectcontour-contour-content-information-intelligence-projectcontour-contour-c.md",
       "title": "Content & Information Intelligence: projectcontour/contour Core Invariants",
       "repository": "projectcontour/contour",
-      "source_version": "5344f432",
-      "content_hash": "9eafd953b08fdb6c0470c90a25ce30699b7230fc96a7fb3ce643d487671247b5",
+      "source_version": "1f2f7af9",
+      "content_hash": "0bd53b9872399bde07126e13963afddf5e0732baad9f53499587a7e0e58b90e4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T10:45:12.852Z"
+      "persisted_at": "2026-11-23T19:09:21.633Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour",
@@ -289560,10 +289565,10 @@
       "relative_path": "08_VERIFICATION/projectcontour-contour-verification-protocol-empirical-defect-shield-for-project.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectcontour/contour",
       "repository": "projectcontour/contour",
-      "source_version": "5344f432",
-      "content_hash": "0af56c6cb30d232ad9428f87aaea2685edb9f2bafc45c14ac8beb09b017b1f67",
+      "source_version": "1f2f7af9",
+      "content_hash": "57170c37ec9d91863bf13661db7dc3ae7f172e5c69310326941b119881fb906c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:45:13.008Z"
+      "persisted_at": "2026-11-23T19:09:21.792Z"
     },
     "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant": {
       "item_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant",
@@ -289573,9 +289578,9 @@
       "title": "Content & Information Intelligence: projectcontour-contour-learnings Core Invariants",
       "repository": "projectcontour-contour-learnings",
       "source_version": "HEAD",
-      "content_hash": "f18250cc9fdbb70025769c28b845270c0ccc5e416ad15ace1770f2536dca6730",
+      "content_hash": "27f2877e7e549cf989463def35a7cc876bfda7da95e111d0ecb95b2920ded0d8",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T10:45:17.774Z"
+      "persisted_at": "2026-11-23T19:09:26.614Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour-learnin",
@@ -289585,9 +289590,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectcontour-contour-learnings",
       "repository": "projectcontour-contour-learnings",
       "source_version": "HEAD",
-      "content_hash": "3022c9cce1bbeda06f9bd3e879b5e698ac4db216810c4d3399d349c0b7afb40d",
+      "content_hash": "d42c112a74bae99be4163a865ab40496ebb6d0c2cdcdea1ffdc7e9ef47f2e39c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:45:17.920Z"
+      "persisted_at": "2026-11-23T19:09:26.779Z"
     },
     "rule-9202": {
       "learning_id": "rule-9202",
@@ -320390,14 +320395,19 @@
       "slug": "apache-maka",
       "platform": "github",
       "source_url": "https://github.com/apache/maka",
-      "source_version": "ac52d482",
-      "content_hash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
+      "source_version": "26639d64",
+      "content_hash": "4a23b73423cca3ebdade764f8a46cad08fb19fdafa1dd3b5ad61a3e96fd06b6f",
       "dossier_path": "07_PROJECT_LEARNING/apache-maka-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-maka-learnings.md",
       "promoted_rules": [
         {
           "number": 9903,
           "title": "test(ci): fix desktop draft race and remaining rust-preview CI failures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10098,
+          "title": "fix Windows V8 MAX_PATH and Linux zigbuild system library linking",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -320406,7 +320416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T07:06:00.291Z",
+      "verified_at": "2026-11-23T19:09:14.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -320448,10 +320458,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-technical-construction-intelligence-apache-maka-core-invariants.md",
       "title": "Technical Construction Intelligence: apache/maka Core Invariants",
       "repository": "apache/maka",
-      "source_version": "ac52d482",
-      "content_hash": "1450cf7f2313009f05e4c2e533b2991b2f91b63e0311f313b7efbb5630c9f1b8",
+      "source_version": "26639d64",
+      "content_hash": "9bd9aebc70151c4aed3e9d4a12e92a0cf827a48215079c69ae3766a10ee230e3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T07:06:00.794Z"
+      "persisted_at": "2026-11-23T19:09:15.054Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka",
@@ -320460,10 +320470,10 @@
       "relative_path": "08_VERIFICATION/apache-maka-verification-protocol-empirical-defect-shield-for-apache-maka.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/maka",
       "repository": "apache/maka",
-      "source_version": "ac52d482",
-      "content_hash": "4a8c03b033690be605a71a900439f5c0aad2eca787a7b37c00840fbea1cc99d5",
+      "source_version": "26639d64",
+      "content_hash": "193af1232a594870a2499bd24720e5f34c8042af05870fde8f1e910ed2c0014a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:06:00.937Z"
+      "persisted_at": "2026-11-23T19:09:15.210Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
@@ -320473,9 +320483,9 @@
       "title": "Technical Construction Intelligence: apache-maka-learnings Core Invariants",
       "repository": "apache-maka-learnings",
       "source_version": "HEAD",
-      "content_hash": "a00a2e12b4440dab672bd1a5ef1fed038508733f3f9415dced4ceb4ee78cf12e",
+      "content_hash": "b667acf8ff053627545a38881215242d80518a3143547fbe3b84d190abb4f4d6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T07:06:10.120Z"
+      "persisted_at": "2026-11-23T19:09:25.050Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka-learnings",
@@ -320485,9 +320495,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-maka-learnings",
       "repository": "apache-maka-learnings",
       "source_version": "HEAD",
-      "content_hash": "2775f13a1b049fb0f559457e6d60cb9f229293263a485ece7bb05003981c173c",
+      "content_hash": "63ac94779c4566f09b76157672d5cdc19a83402cc9376748d51d499ed94a3836",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:06:10.256Z"
+      "persisted_at": "2026-11-23T19:09:25.212Z"
     },
     "rule-9904": {
       "learning_id": "rule-9904",
@@ -328695,6 +328705,70 @@
       "content_hash": "6fdc975f69dc8e9b2530a57b5ea99ac2b4924340ced8989e4d4ebfcff31b60f4",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T19:01:44.468Z"
+    },
+    "rule-10098": {
+      "learning_id": "rule-10098",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10098,
+      "title": "fix Windows V8 MAX_PATH and Linux zigbuild system library linking",
+      "source_url": "https://github.com/apache/maka",
+      "source_version": "26639d64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:09:14.464Z"
+    },
+    "candidate_directive-fix-windows-v8-max_path-and-linux-zigbuild-system-library-linking": {
+      "item_id": "candidate_directive-fix-windows-v8-max_path-and-linux-zigbuild-system-library-linking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3F8U-fix-windows-v8-max_path-and-linux-zigbuild-system-library-linking.md",
+      "title": "fix Windows V8 MAX_PATH and Linux zigbuild system library linking",
+      "repository": "apache/maka",
+      "source_version": "26639d64",
+      "content_hash": "486769905035cc5780b840fc8139744d072de7c945f4e575237ee51ad03b7cbc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T19:09:14.868Z"
+    },
+    "rule-10099": {
+      "learning_id": "rule-10099",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10099,
+      "title": "build(deps): bump golang.org/x/net from 0.62.0 to 0.63.0",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "1f2f7af9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:09:21.095Z"
+    },
+    "candidate_directive-build-deps-bump-golang-org-x-net-from-0-62-0-to-0-63-0": {
+      "item_id": "candidate_directive-build-deps-bump-golang-org-x-net-from-0-62-0-to-0-63-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3O6V-build-deps-bump-golang-org-x-net-from-0-62-0-to-0-63-0.md",
+      "title": "build(deps): bump golang.org/x/net from 0.62.0 to 0.63.0",
+      "repository": "projectcontour-contour-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8291644a7a888cc40970d25ae846dd705200f5ef7d359bdb5d3f14f0c086ca09",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-23T19:09:26.460Z"
+    },
+    "candidate_directive-nightly-fix-windows-v8-max_path-and-linux-zigbuild-system-library-linking": {
+      "item_id": "candidate_directive-nightly-fix-windows-v8-max_path-and-linux-zigbuild-system-library-linking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3MZB-nightly-fix-windows-v8-max_path-and-linux-zigbuild-system-library-linking.md",
+      "title": "nightly): fix Windows V8 MAX_PATH and Linux zigbuild system library linking",
+      "repository": "apache-maka-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4fd4ea6b3f83e83b594c73a4c6386dac46b6a9b4f276c5e09f76d09b38b1daaa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T19:09:24.892Z"
     }
   },
   "ai-builder-brain": {

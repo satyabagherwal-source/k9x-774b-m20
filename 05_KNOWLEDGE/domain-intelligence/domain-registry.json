@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T19:01:44.468Z",
+  "last_updated": "2026-11-23T19:09:26.614Z",
   "total_records": 2442,
   "domains": {
     "A": {
@@ -17786,8 +17786,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-research-knowledge-intelligence.md",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "content_hash": "6703c1132ce2cf71b2e2edabc0e1a6d1ffdc7f7118cd784757b2d06193dc900d",
-      "created_at": "2026-11-19T09:17:01.446Z"
+      "content_hash": "a3bb927a7a24c44253f96f3e6e64dda414cfdf18193c740890cad8304f333451",
+      "created_at": "2026-11-23T19:09:13.801Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants",
@@ -17822,8 +17822,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-learnings-research-knowledge-in.md",
       "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings",
-      "content_hash": "d38a235bc70bb15787b94a3de329c62cdbc8ffca51c91ec675b93aa98f9e1932",
-      "created_at": "2026-11-19T09:17:04.617Z"
+      "content_hash": "3889effa65cdc187b232c05074ad753d4ebdb58650c447d70ab79764a21614fa",
+      "created_at": "2026-11-23T19:09:25.553Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants",
@@ -31289,8 +31289,8 @@
       "title": "Content & Information Intelligence: projectcontour/contour Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-projectcontour-contour-content-information-intelligence-projectcontour-contour-c.md",
       "repository": "projectcontour/contour",
-      "content_hash": "9eafd953b08fdb6c0470c90a25ce30699b7230fc96a7fb3ce643d487671247b5",
-      "created_at": "2026-11-18T10:45:12.852Z"
+      "content_hash": "0bd53b9872399bde07126e13963afddf5e0732baad9f53499587a7e0e58b90e4",
+      "created_at": "2026-11-23T19:09:21.633Z"
     },
     "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant": {
       "record_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant",
@@ -31298,8 +31298,8 @@
       "title": "Content & Information Intelligence: projectcontour-contour-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-projectcontour-contour-learnings-content-information-intelligence-projectcontour.md",
       "repository": "projectcontour-contour-learnings",
-      "content_hash": "f18250cc9fdbb70025769c28b845270c0ccc5e416ad15ace1770f2536dca6730",
-      "created_at": "2026-11-18T10:45:17.774Z"
+      "content_hash": "27f2877e7e549cf989463def35a7cc876bfda7da95e111d0ecb95b2920ded0d8",
+      "created_at": "2026-11-23T19:09:26.614Z"
     },
     "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants",
@@ -39483,8 +39483,8 @@
       "title": "Technical Construction Intelligence: apache/maka Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-technical-construction-intelligence-apache-maka-core-invariants.md",
       "repository": "apache/maka",
-      "content_hash": "1450cf7f2313009f05e4c2e533b2991b2f91b63e0311f313b7efbb5630c9f1b8",
-      "created_at": "2026-11-22T07:06:00.794Z"
+      "content_hash": "9bd9aebc70151c4aed3e9d4a12e92a0cf827a48215079c69ae3766a10ee230e3",
+      "created_at": "2026-11-23T19:09:15.054Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
@@ -39492,8 +39492,8 @@
       "title": "Technical Construction Intelligence: apache-maka-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-learnings-technical-construction-intelligence-apache-maka-learnings-.md",
       "repository": "apache-maka-learnings",
-      "content_hash": "a00a2e12b4440dab672bd1a5ef1fed038508733f3f9415dced4ceb4ee78cf12e",
-      "created_at": "2026-11-22T07:06:10.120Z"
+      "content_hash": "b667acf8ff053627545a38881215242d80518a3143547fbe3b84d190abb4f4d6",
+      "created_at": "2026-11-23T19:09:25.050Z"
     },
     "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants",

@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T19:01:05.726Z",
-    "lastVerified": "2026-11-23T19:01:05.727Z",
+    "lastChecked": "2026-11-23T19:09:24.497Z",
+    "lastVerified": "2026-11-23T19:09:24.497Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -376,12 +376,12 @@
     "lastVerified": "2026-11-22T21:32:06.745Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T18:32:28.033Z",
-    "lastVerified": "2026-11-23T18:32:28.033Z",
+    "lastChecked": "2026-11-23T19:09:23.419Z",
+    "lastVerified": "2026-11-23T19:09:23.419Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -390,7 +390,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6c8cbc67"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -706,22 +707,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectcontour-contour": {
-    "name": "contour",
+    "name": "projectcontour/contour",
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-11-22T18:00:21.605Z",
-    "lastVerified": "2026-11-22T18:00:21.605Z",
+    "lastChecked": "2026-11-23T19:09:20.396Z",
+    "lastVerified": "2026-11-23T19:09:20.396Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "d458c7169346da25b9a83ca0aefda8c6f99e2aedd5bfac4d6fdc2725db57963f",
+    "contentHash": "8eadb334fa4950804a2bfa568e352a91b9469610417b2363b333c1d5fb79823d",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5344f432"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "defguard-defguard": {
     "name": "DefGuard/defguard",
@@ -2007,12 +2007,12 @@
     "revisionIdentifier": "dd75b495"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T15:12:45.384Z",
-    "lastVerified": "2026-11-23T15:12:45.384Z",
+    "lastChecked": "2026-11-23T19:09:18.301Z",
+    "lastVerified": "2026-11-23T19:09:18.301Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2021,7 +2021,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3fa285c4"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -6311,9 +6312,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-22T16:57:31.686Z",
+    "lastChecked": "2026-11-23T19:09:20.813Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-22T16:57:31.686Z"
+    "lastVerified": "2026-11-23T19:09:20.814Z"
   },
   "golutra-golutra": {
     "name": "golutra",
@@ -7647,12 +7648,12 @@
     "officialUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T09:07:03.753Z",
-    "lastVerified": "2026-11-19T09:07:03.753Z",
+    "lastChecked": "2026-11-23T19:09:10.855Z",
+    "lastVerified": "2026-11-23T19:09:10.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "1128bbfe641bf302f697399e1246d2941fc951506785325b50da2f0d43ac2622",
+    "contentHash": "82253d742d9e858bdb0fb116a0e3b58fc4da9bcc1e900cd174922caded2889e8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11058,9 +11059,9 @@
   "superhighfives-pika": {
     "name": "pika",
     "officialUrl": "https://github.com/superhighfives/pika",
-    "lastChecked": "2026-11-20T19:44:31.964Z",
+    "lastChecked": "2026-11-23T19:09:13.329Z",
     "revisionIdentifier": "07698fa2",
-    "lastVerified": "2026-11-20T19:44:31.964Z"
+    "lastVerified": "2026-11-23T19:09:13.329Z"
   },
   "axios-axios": {
     "name": "axios/axios",
@@ -14052,14 +14053,14 @@
     "officialUrl": "https://github.com/apache/maka",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T07:05:59.635Z",
-    "lastVerified": "2026-11-22T07:05:59.635Z",
+    "lastChecked": "2026-11-23T19:09:13.561Z",
+    "lastVerified": "2026-11-23T19:09:13.561Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-maka",
-    "contentHash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
+    "contentHash": "4a23b73423cca3ebdade764f8a46cad08fb19fdafa1dd3b5ad61a3e96fd06b6f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 18,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

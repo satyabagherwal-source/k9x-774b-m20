@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/maka",
   "source_url": "https://github.com/apache/maka",
-  "source_version": "ac52d482",
+  "source_version": "26639d64",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T07:06:00.652Z",
+  "timestamp": "2026-11-23T19:09:14.863Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-maka",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/maka](https://github.com/apache/maka) (Revision: `ac52d482`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T07:06:00.652Z`  
+> **Provenance**: Harvested from [apache/maka](https://github.com/apache/maka) (Revision: `26639d64`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T19:09:14.863Z`  
 > **Learning ID**: `learn-github-apache-maka`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/maka:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-maka-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/maka](https://github.com/apache/maka))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:05:59.635Z  
+> **Harvest Timestamp**: 2026-11-23T19:09:13.561Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache Maka (Incubating) is a high-performance agent workspace that keeps a complete record of everything it did.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5996 stars
+- **Stars / Engagement**: 6000 stars
 
 ---
 
@@ -2912,523 +2912,252 @@ impl Lifecycle {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50489ddf` (2026-11-22)
-**Commit Message**: test(ci): fix desktop draft race and remaining rust-preview CI failures (#7151)
+### Incident Patch 1: `79e7f725` (2026-11-22)
+**Commit Message**: fix(nightly): fix Windows V8 MAX_PATH and Linux zigbuild system library linking (#7169)
 
-* fix(desktop): await pasted drafts before pane switches and submission
+* fix(nightly): build V8 from a short drive-root directory on Windows
 
-Restore desktop.type_text(...) at four call sites in desktop_new_session.rs
-that immediately press an already-visible submit/close button or switch pane
-focus after pasting, eliminating the Windows CI paste/focus race.
+Cargo 1.100+ adds a build/ directory level under target/<triple>/release,
+pushing V8's relative MSVC include paths from C:\Users\runneradmin\AppData\Local\Temp
+over Win32 MAX_PATH (260 chars) during GetFullPathNameA.
 
-Closes #7067
+Use a short drive-root temp directory (e.g. C:\v8-xxxxxx) inside buildV8 on
+Windows (falling back if the drive root is not writable) without changing
+compile-v8.mjs, preserving existing V8 cache keys across platforms.
 
 Generated-by: Maka (Gemini)
 
-* test(ci): fix witness JSON fixture, SessionRead suppression expectation, and retire lock race
+* fix(nightly): expose native Linux system lib paths to cargo-zigbuild
 
-Fix the three remaining CI failures on rust-preview:
+Zig 0.16+ treats glibc-versioned targets (*.2.28) as cross-compilation and excludes host system library directories, causing maka-desktop-shell linking to fail on GTK4/GLib/Cairo/X11/Vulkan.
 
-- `maka-agent-engine` (`driver::witness::tests::*`): supply valid JSON
-  `{"services": []}` for `RunSpec.tool_selection` instead of empty non-JSON
-  bytes so the `agent_memory_read_alias_insert` trigger added in #7147 does
-  not fail with SQLite `malformed JSON`.
-- `maka-agent-native` (`ax_session_tools::universal_read_and_human_symmetric_session_tools_coordinate_rooms_and_workers`):
-  align Step 7 with #7147's history-reader suppression guard—assert that the
-  parent's history-resource `Read("maka://...")` omits `resultPath`/`status`
-  for Agent callers, and assert via Agent `SessionRead({ sessionId: child_id })`
-  that an 
+Pass existing native Linux system library directories via CARGO_TARGET_<TRIPLE>_RUSTFLAGS when compiling Linux release binaries on the matching host architecture while keeping Zig glibc 2.28 stubs intact.
 
-**File**: `plugins/agent/engine/src/driver/witness.rs` (modified, +3/-1)
+Generated-by: Maka (Gemini)
+
+* fix(nightly): defer Windows V8 short-dir cleanup until after cache admiss
+
+**File**: `scripts/rust/build-cli.mjs` (modified, +27/-2)
 ```diff
-@@ -822,11 +822,13 @@ mod tests {
-         let store = Store::new(data.clone(), DriverDomain::new(data)?)?;
-         let mut policy = policy_view(None);
-         let empty = ContentBlob::new(vec![]);
-+        let tool_selection = ContentBlob::json(&serde_json::json!({ "services": [] }))?;
-         let input = ContentBlob::json(&RunInput::Message {
-             content: "original provider recovery fixture".to_string().into(),
-             request_fingerprint: None,
-             source_messages: vec![],
-         })?;
-+        policy.spec.tool_selection = tool_selection.reference().clone();
-         policy.spec.input = input.reference().clone();
-         let spec = ContentBlob::json(&policy.spec)?;
-         apply_policy_fact(
-@@ -843,7 +845,7 @@ mod tests {
-             Outcome::Success,
-             false,
-         );
--        let admission = Admission::new(policy.spec, at(), vec![empty, input]);
-+        let admission = Admission::new(policy.spec, at(), vec![empty, tool_selection, input]);
-         let run = admission.run();
-         store.admit(admission).await?;
-         let claim = store.claim(run).await?;
-```
-
-**File**: `plugins/agent/native/src/owner/driver/tests/model_recovery/preset_acceptance/ax_session_tools.rs` (modified, +29/-2)
-```diff
-@@ -335,11 +335,38 @@ async fn universal_read_and_human_symmetric_session_tools_coordinate_rooms_and_w
-                 .any(|item| item["role"] == "user" && item["text"] == "Execute Read"),
-             "{self_read_output}"
-         );
-+        let history_read_entry = self_items
-+            .iter()
-+            .find(|item| item["toolName"] == "Read")
-+            .ok_or_else(|| format!("missing Read entry in self transcript: {self_read_output}"))?;
-         assert!(
--            self_items
-+            history_read_entry["resultPath"].is_null() && history_read_entry["status"].is_null(),
-+            "stale history-resource Read results must omit resultPath/status for Agent callers: {history_read_entry}"
-+        );
+@@ -18,7 +18,7 @@
+  */
+ 
+ import { execFileSync } from 'node:child_process';
+-import { constants } from 'node:fs';
++import { constants, existsSync } from 'node:fs';
+ import { release as osRelease } from 'node:os';
+ import { parseArgs } from 'node:util';
+ import { fileURLToPath, pathToFileURL } from 'node:url';
+@@ -57,6 +57,29 @@ function developmentFeatures(env, platform, release) {
+   return bridge ? ['--no-default-features'] : [];
+ }
+ 
++const linuxMultiarchDirs = {
++  'x86_64-unknown-linux-gnu': '/usr/lib/x86_64-linux-gnu',
++  'aarch64-unknown-linux-gnu': '/usr/lib/aarch64-linux-gnu',
++};
 +
-+        let child_agent_read = tool_round(
-+            &rig,
-+            &mut provider,
-+            parent_id,
-+            false,
-+            "SessionRead",
-+            json!({"sessionId": child_id}),
-+        )
-+        .await?;
-+        let child_agent_msgs: Vec<Value> = serde_json::from_str(&child_agent_read)?;
-+        let child_agent_output: Value = serde_json::from_str(
-+            child_agent_msgs[0]["content"]
-+                .as_str()
-+                .ok_or("missing child SessionRead tool content")?,
-+        )?;
-+        let child_agent_items = child_agent_output["transcript"]["items"]
-+            .as_array()
-+            .ok_or("missing child Agent transcript")?;
-+        assert!(
-+            child_agent_items
-                 .iter()
-                 .any(|item| item["toolName"] == "Read" && item["resultPath"].is_string()),
--            "{self_read_output}"
-+            "workspace file Read should retain resultPath for Agent callers: {child_agent_output}"
-         );
- 
-         let updated = tool_round(
-```
-
-**File**: `products/maka/cli/tests/integration/initialize.rs` (modified, +29/-5)
-```diff
-@@ -162,11 +162,35 @@ async fn public_init_persists_settings_from_stdin_and_rejects_reconfiguration()
-     }
-     drop(acp_stdin);
-     let _ = acp.wait();
--    let mut retire = Command::new(crate::maka_executable());
--    retire.args(["host", "retire", "--root"]).arg(&root);
--    #[cfg(unix)]
--    retire.env("TMPDIR", socket_temp.path());
--    let _ = retire.output();
-+    // `maka host retire` returns once retirement is prepared, before the host
-+    // finishes releasing the RootOwner lock; wait until the lock is free so
-+    // reconfiguration and subsequent store reads do not race with shutdown.
-+    let retire_deadline = Instant::now() + Duration::from_secs(15);
-+    let mut attempt = 0u32;
-+    loop {
-+        if attempt % 8 == 0 {
-+            let mut retire = Command::new(crate::maka_executable());
-+            retire.args(["host", "retire", "--root"]).arg(&root);
-+            #[cfg(unix)]
-+            retire.env("TMPDIR", socket_temp.path());
-+            let _ = retire.output();
-+        }
-+        match RootOwner::open_existing(&root, &namespaces) {
-+            Ok(owner) => {
-+                drop(owner);
-+                break;
-+            }
-+            Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
-+                assert!(
-+                    Instant::now() < retire_deadline,
-+                    "retired host did not release RootOwner lock in time"
-+                );
-+                attempt += 1;
-+                tokio::time::sleep(Duration::from_millis(25)).await;
-+            }
-+            Err(err) => panic!("failed to acquire RootOwner after retire: {err}"),
-+        }
-+    }
- 
-     let session_response = session_response.expect("session/new response from maka acp");
-     assert!(
-```
-
-**File**: `products/maka/terminal-shell/tests/real_host/desktop_new_session.rs` (modified, +4/-4)
-```diff
-@@ -1410,7 +1410,7 @@ async fn desktop_creates_only_on_first_submission_and_preserves_the_confirmed_sn
-     desktop.new_draft().await;
-     desktop.attach(&path).await;
-     std::fs::write(&path, b"changed after selection").unwrap();
--    desktop.replace_text("FIRST_DESKTOP_MESSAGE").await;
-+    desktop.type_text("FIRST_DESKTOP_MESSAGE").await;
-     assert_eq!(desktop.sessions().await.len(), 1);
-     gate.arm();
-     desktop.press("Send message").await;
-@@ -2149,7 +2149,7 @@ async fn desktop_edits_a_message_in_place_and_forks_only_when_sent() {
-     desktop.expect_text("ORIGINAL_EDIT_MESSAGE").await;
-     desktop.artifact("message-editor");
-     assert_eq!(desktop.sessions().await.len(), 2);
--    desktop.replace_text("EDITED_IN_PLACE_MESSAGE").await;
-+    desktop.type_text("EDITED_IN_PLACE_MESSAGE").await;
-     assert_eq!(desktop.sessions().await.len(), 2);
-     desktop.press("Send edited message in a fork").await;
-     let edited = desktop.request(&mut fixture).await;
-@@ -2681,7 +2681,7 @@ async fn desktop_side_pane_keeps_its_draft_separate_when_closed_and_reopened() {
-         nsh_core::platform::Appearance::Dark,
-     )
-     .await;
--    desktop.replace_text("MAIN_DRAFT").await;
-+    desktop.type_text("MAIN_DRAFT").await;
-     let roots = desktop
-         .client
-         .query("agent", "directories", json!({"kind":"roots"}))
-@@ -2708,7 +2708,7 @@ async fn desktop_side_pane_keeps_its_draft_separate_when_closed_and_reopened() {
-     desktop.press("Actions for Side conversation").await;
-     desktop.press("Open to the side").await;
-     desktop.target_after(original).await;
--    desktop.replace_text("SIDE_DRAFT").await;
-+    desktop.type_text("SIDE_DRAFT").await;
-     desktop.press("Close side pane").await;
-     desktop.press("Focus message composer").await;
-     desktop.expect_text("MAIN_DRAFT").await;
-```
-
----
-
-### Incident Patch 2: `22d7979b` (2026-11-22)
-**Commit Message**: fix(compat): reconcile migration 52 from #7127 with #7152 (#7154)
-
-#7127 merged onto rust-preview right before #7152, adding
-plugins/agent/state/migrations/0052_room_overhaul.sql without the new
-Migration::data field or migrations.lock.json entry introduced in #7152.
-
-- Initialize data: None on migration 52 in plugins/agent/state/src/lib.rs.
-- Seal 0052_room_overhaul.sql into scripts/rust/migrations.lock.json.
-
-Generated-by: Maka (Gemini)
-
-**File**: `plugins/agent/state/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -374,6 +374,7 @@ pub const MIGRATIONS: &[maka_event_log::migration::Migration] = &[
-         description: "room members, topic, reactions, pins, edits, and full-text search",
-         sql: include_str!("../migrations/0052_room_overhaul.sql"),
-         configure: None,
-+        data: None,
-     },
- ];
- 
-```
-
-**File**: `scripts/rust/migrations.lock.json` (modified, +4/-0)
-```diff
-@@ -201,6 +201,10 @@
-       "plugins/agent/state/migrations/0051_memory_recall.sql": {
-         "version": 51,
-         "sha384": "d26a002a58e4bf85dd7da2058117641014f77df905464d8cc220e130ffd62538769d7b7fdee0b44494d1f05ab96d2030"
-+      },
-+      "plugins/agent/state/migrations/0052_room_overhaul.sql": {
-+        "version": 52,
-+        "sha384": "28e5b10d41c45d63c3cb2e2a05e0e40e2ca3907cc973d024e607dd5d42ea3e9bff75dbd3f077d3f1e7e348cc9ebb7847"
++// Zig treats glibc-versioned targets as cross-compilation and excludes host system
++// library directories; pass native dirs so GTK/X11/Vulkan link while Zig keeps its
++// bundled glibc 2.28 stubs for libc.
++export function linuxSystemLibraryRustflags(triple, env = {}, exists = existsSync) {
++  const multiarch = linuxMultiarchDirs[triple];
++  const candidates =
++    multiarch && exists(multiarch) ? [multiarch, '/usr/lib'] : ['/usr/lib64', '/usr/lib'];
++  const dirs = candidates.filter((dir) => exists(dir));
++  if (!dirs.length) return {};
++  const key = `CARGO_TARGET_${triple.toUpperCase().replace(/-/g, '_')}_RUSTFLAGS`;
++  const existing = env[key]?.trim() ?? '';
++  const hasFlag = (flag) =>
++    new RegExp(`(?:^|\\s)${flag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:\\s|$)`).test(existing);
++  const added = dirs.map((dir) => `-L native=${dir}`).filter((flag) => !hasFlag(flag));
++  if (!added.length) return {};
++  return { [key]: existing ? `${existing} ${added.join(' ')}` : added.join(' ') };
++}
++
+ export async function compileCli({
+   release = false,
+   target,
+@@ -65,9 +88,10 @@ export async function compileCli({
+   repositoryRoot = root,
+   env = process.env,
+   platform = process.platform,
++  arch = process.arch,
+   osRelease: releaseName = osRelease(),
+ } = {}) {
+-  const host = rustTarget(platform);
++  const host = rustTarget(platform, arch);
+   const triple = target ?? host;
+   const linuxRelease = release && target !== undefined && triple.includes('-linux-');
+   if (linuxRelease && !/^(x86_64|aarch64)-unknown-linux-gnu$/u.test(triple)) {
+@@ -96,6 +120,7 @@ export async function compileCli({
+         ...env,
+         RUSTC_WRAPPER: env.RUSTC_WRAPPER ?? '',
+         RUSTC_WORKSPACE_WRAPPER: env.RUSTC_WORKSPACE_WRAPPER ?? '',
++        ...(triple === host ? linuxSystemLibraryRustflags(triple, env) : {}),
        }
-     },
-     "checkpoint-repository": {
+     : env;
+   const result = await cargoBuild(args, { cwd: repositoryRoot, env: buildEnv });
 ```
 
----
-
-### Incident Patch 3: `1b7c0efb` (2026-11-21)
-**Commit Message**: feat(release): add nightly build workflow, installers, npm alias and self-updater (#7123)
-
-Add a clean, manually dispatched nightly build & delivery pipeline targeting
-darwin-arm64, linux-x64-gnu, linux-arm64-gnu, and win32-x64, and integrate
-channel-isolated self-updates built on nsh-updater with durable Host restart
-recovery.
-
-- Add .github/workflows/nightly.yml (manual workflow_dispatch on ubuntu-latest,
-  ubuntu-26.04-arm, macos-latest, and windows-latest; pre-build Ed25519 keypair
-  validation; x64 cross-compiled Linux ARM64 V8 prebuilt stage when unpinned;
-  rolling nightly + nightly-previous pre-releases with non-ASF developer
-  warnings, DISCLAIMER, and per-platform notices; optional @nightly npm publish).
-- Make Maka.app self-contained on macOS (bundling maka and maka-python-worker
-  inside Contents/MacOS with Developer ID inside-out signing, allow-jit
-  entitlement, post-sign V8 smoke test, DMG packaging, and notarization/stapling).
-- Add per-user Windows Inno Setup packaging (UninstallFilesDir outside {app},
-  no elevation, user PATH management), Linux archives with install.sh, and
-  packages/maka-agent as a thin alias for @maka-agent/cli.
-- Add products/maka/updater and
-
-**File**: `.github/workflows/nightly.yml` (added, +557/-0)
+**File**: `scripts/rust/build-cli.test.mjs` (modified, +45/-1)
 ```diff
-@@ -0,0 +1,557 @@
-+# Licensed to the Apache Software Foundation (ASF) under one
-+# or more contributor license agreements.  See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership.  The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License.  You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing,
-+# software distributed under the License is distributed on an
-+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+# KIND, either express or implied.  See the License for the
-+# specific language governing permissions and limitations
-+# under the License.
-+
-+name: Nightly Build
-+run-name: Nightly build (${{ github.ref_name }})
-+
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      publish_npm:
-+        description: "Also publish @maka-agent/cli and maka-agent under the npm @nightly tag"
-+        type: boolean
-+        default: false
-+      notes:
-+        description: "Optional short note appended to the pre-release description"
-+        type: string
-+        required: false
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: nightly-build
-+  cancel-in-progress: false
-+
-+defaults:
-+  run:
-+    shell: bash
-+
-+jobs:
-+  prepare:
-+    runs-on: ubuntu-latest
-+    environment: nightly
-+    timeout-minutes: 10
-+    outputs:
-+      version: ${{ steps.meta.outputs.version }}
-+      build_date: ${{ steps.meta.outputs.build_date }}
-+      commit: ${{ github.sha }}
-+      v8_linux_arm64_key: ${{ steps.v8.outputs.key }}
-+      v8_linux_arm64_pinned: ${{ steps.v8.outputs.pinned }}
-+    steps:
-+      - uses: actions/checkout@v7
-+        with:
-+          persist-credentials: false
-+
-+      - uses: actions/setup-node@v7
-+        with:
-+          node-version: "26"
-+
-+      - name: Update Rust
-+        run: rustup update stable --no-self-update
-+
-+      - name: Verify updater signing keypair before building or publishing
-+        env:
-+          MAKA_UPDATE_SIGNING_KEY: ${{ secrets.MAKA_UPDATE_SIGNING_KEY }}
-+          MAKA_UPDATE_PUBLIC_KEY: ${{ vars.MAKA_UPDATE_PUBLIC_KEY }}
-+        run: |
-+          node --input-type=module -e '
-+            import { derivePublicKey } from "./scripts/rust/nightly-manifest.mjs";
-+            const secret = (process.env.MAKA_UPDATE_SIGNING_KEY ?? "").trim();
-+            const pub = (process.env.MAKA_UPDATE_PUBLIC_KEY ?? "").trim();
-+            if (!secret || !pub) {
-+              throw new Error("Both MAKA_UPDATE_SIGNING_KEY secret and MAKA_UPDATE_PUBLIC_KEY variable must be configured in the nightly environment");
-+            }
-+            if (derivePublicKey(secret) !== pub) {
-+              throw new Error("MAKA_UPDATE_SIGNING_KEY does not match MAKA_UPDATE_PUBLIC_KEY");
-+            }
-+          '
-+
-+      - id: meta
-+        run: |
-+          base=$(node -p "JSON.parse(require('fs').readFileSync('package.json','utf8')).version")
-+          day=$(date -u +%Y%m%d)
-+          build_date=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-+          echo "version=${base}-nightly.${day}.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
-+          echo "build_date=${build_date}" >> "$GITHUB_OUTPUT"
-+
-+      - id: v8
-+        name: Check Linux ARM64 V8 prebuilt pin
-+        run: |
-+          key=$(node scripts/rust/build-v8.mjs --cache-key --target aarch64-unknown-linux-gnu)
-+          pinned=$(node scripts/rust/build-v8.mjs --pinned --target aarch64-unknown-linux-gnu)
-+          echo "key=${key}" >> "$GITHUB_OUTPUT"
-+          echo "pinned=${pinned}" >> "$GITHUB_OUTPUT"
-+
-+  v8-linux-arm64:
-+    needs: prepare
-+    if: ${{ !cancelled() && needs.prepare.result == 'success' && needs.prepare.outputs.v8_linux_arm64_pinned != 'true' }}
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 180
-+    env:
-+      CARGO_TARGET_DIR: ${{ github.workspace }}/target
-+    steps:
-+      - uses: actions/checkout@v7
-+        with:
-+          persist-credentials: false
-+
-+      - uses: actions/setup-node@v7
-+        with:
-+          node-version: "26"
-+
-+      - name: Update Rust and add Linux ARM64 target
-+        run: |
-+          rustup update stable --no-self-update
-+          rustup target add aarch64-unknown-linux-gnu
-+
-+      - uses: actions/setup-python@v7
-+        with:
-+          python-version: "3.x"
-+
-+      - name: Install V8 bindgen dependencies
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y pkg-config clang libclang-dev llvm-dev
-+          echo "LIBCLANG_PATH=$(/usr/bin/llvm-config --libdir)" >> "$GITHUB_ENV"
-+
-+      - name: Restore Linux ARM64 V8 cache
-+        id: v8-cache
-+        uses: actions/cache/restore@v6
-+        with:
-+          path: target/v8/${{ needs.prepare.outputs.v8_linux_arm64_key }}
-+          key: maka-v8-linux-arm64-gnu-${{ needs.prepare.outputs.v8_linux_arm64_key }}
-+
-+      - name: Cross-compile V8 for aarc
-```
-
-**File**: `Cargo.lock` (modified, +24/-0)
-```diff
-@@ -8504,6 +8504,7 @@ dependencies = [
-  "maka-tools",
-  "maka-transport",
-  "maka-ui-build",
-+ "maka-updater",
-  "maka-workbench",
-  "maka-wsl-bridge",
-  "nsh-core",
-@@ -8701,6 +8702,7 @@ dependencies = [
-  "maka-app-client",
-  "maka-event-log",
-  "maka-host-runtime",
-+ "maka-updater",
-  "maka-workbench",
-  "maka-wsl-bridge",
-  "nsh-engine",
-@@ -9642,6 +9644,28 @@ dependencies = [
-  "thiserror 2.0.21",
- ]
+@@ -26,7 +26,12 @@ import { lstat, mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs
+ import { tmpdir } from 'node:os';
+ import { PassThrough } from 'node:stream';
+ import test from 'node:test';
+-import { buildCli, rustTarget, stageDesktopBundle } from './build-cli.mjs';
++import {
++  buildCli,
++  linuxSystemLibraryRustflags,
++  rustTarget,
++  stageDesktopBundle,
++} from './build-cli.mjs';
  
-+[[package]]
-+name = "maka-updater"
-+version = "0.2.0"
-+dependencies = [
-+ "flate2",
-+ "futures-util",
-+ "libc",
-+ "maka-event-log",
-+ "maka-host-runtime",
-+ "nsh-updater",
-+ "reqwest",
-+ "semver",
-+ "serde",
-+ "serde_json",
-+ "sha2 0.11.1",
-+ "tar",
-+ "tempfile",
-+ "thiserror 2.0.21",
-+ "tokio",
-+ "uuid",
-+]
+ const manifest = [
+   '[workspace]',
+@@ -384,3 +389,42 @@ test('the Host app has a valid stable bundle signature', {
+     'an unrelated product version must not change the Host privacy identity',
+   );
+ });
 +
- [[package]]
- name = "maka-web"
- version = "0.2.0"
++test('linuxSystemLibraryRustflags exposes host system library dirs for zigbuild', () => {
++  const ubuntuX64 = (dir) => dir === '/usr/lib/x86_64-linux-gnu' || dir === '/usr/lib';
++  assert.deepEqual(linuxSystemLibraryRustflags('x86_64-unknown-linux-gnu', {}, ubuntuX64), {
++    CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS:
++      '-L native=/usr/lib/x86_64-linux-gnu -L native=/usr/lib',
++  });
++  assert.deepEqual(
++    linuxSystemLibraryRustflags(
++      'x86_64-unknown-linux-gnu',
++      { CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: '-C link-arg=-s -L native=/usr/lib' },
++      ubuntuX64,
++    ),
++    {
++      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS:
++        '-C link-arg=-s -L native=/usr/lib -L native=/usr/lib/x86_64-linux-gnu',
++    },
++  );
++  assert.deepEqual(
++    linuxSystemLibraryRustflags(
++      'x86_64-unknown-linux-gnu',
++      { CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: '-L native=/usr/lib/x86_64-linux-gnu' },
++      ubuntuX64,
++    ),
++    {
++      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS:
++        '-L native=/usr/lib/x86_64-linux-gnu -L native=/usr/lib',
++    },
++  );
++  const ubuntuArm64 = (dir) => dir === '/usr/lib/aarch64-linux-gnu' || dir === '/usr/lib';
++  assert.deepEqual(linuxSystemLibraryRustflags('aarch64-unknown-linux-gnu', {}, ubuntuArm64), {
++    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS:
++      '-L native=/usr/lib/aarch64-linux-gnu -L native=/usr/lib',
++  });
++  const fedora = (dir) => dir === '/usr/lib64' || dir === '/usr/lib';
++  assert.deepEqual(linuxSystemLibraryRustflags('x86_64-unknown-linux-gnu', {}, fedora), {
++    CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: '-L native=/usr/lib64 -L native=/usr/lib',
++  });
++});
 ```
 
-**File**: `Cargo.toml` (modified, +4/-0)
+**File**: `scripts/rust/build-v8.mjs` (modified, +56/-12)
 ```diff
-@@ -46,6 +46,7 @@ members = [
-     "products/maka/host-shell",
-     "products/maka/client",
-     "products/maka/terminal-shell",
-+    "products/maka/updater",
-     "products/maka/workbench",
-     "products/maka/wsl-bridge",
-     "platform/computer-use",
-@@ -101,6 +102,7 @@ maka-mcp = { path = "plugins/agent/mcp" }
- hex = "0.4.3"
- maka-app-client = { path = "products/maka/client" }
- nsh-terminal = { path = "third-party/nsh/crates/nsh-terminal" }
-+nsh-updater = { path = "third-party/nsh/crates/nsh-updater" }
- nsh-platform-linux = { path = "third-party/nsh/crates/nsh-platform-linux", default-features = false, features = ["js", "svg", "updater", "websocket", "zlib", "crypto", "editor", "emoji-picker", "highlight", "math", "plot", "rich-editor", "term"] }
- nsh-core = { path = "third-party/nsh/crates/nsh-core" }
- nsh-engine = { path = "third-party/nsh/crates/nsh-engine" }
-@@ -185,6 +187,7 @@ maka-skills = { path = "plugins/skills/core" }
- maka-tool-catalog = { path = "plugins/agent/tool-catalog" }
- maka-tools = { path = "plugins/agent/tools" }
- maka-terminal-shell = { path = "products/maka/terminal-shell" }
-+maka-updater = { path = "products/maka/updater" }
- maka-ui-support = { path = "platform/ui-support" }
- maka-web = { path = "plugins/workspace/workspace-web/native" }
- maka-workbench = { path = "products/maka/workbench" }
-@@ -194,6 +197,7 @@ regex = "1"
- reqwest = { version = "0.13.5", default-features = false, features = ["rustls", "gzip", "brotli", "deflate", "socks"] }
- rusqlite = { version = "0.41.0", features = ["bundled"] }
- schemars = "1.2.3"
-+semver = "1.0.28"
- serde = { version = "1.0.229", features = ["derive", "rc"] }
- serde_json = { version = "1.0.154", features = ["raw_value", "float_roundtrip"] }
- sha2 = "0.11.1"
+@@ -20,33 +20,77 @@
+ import { execFileSync } from 'node:child_process';
+ import { mkdtemp, readFile, rm } from 'node:fs/promises';
+ import { tmpdir } from 'node:os';
+-import { join, resolve } from 'node:path';
++import { join, parse, resolve } from 'node:path';
+ import { pathToFileURL } from 'node:url';
+ import { parseArgs } from 'node:util';
+ import { rustTarget } from './build-cli.mjs';
+ import { cachedV8, v8CacheKey } from './v8-cache.mjs';
+ import { compileV8 } from './compile-v8.mjs';
+ import { downloadV8, packV8 } from './v8-prebuilt.mjs';
+ 
++/**
++ * Keep Windows V8 source checkouts near the drive root so Cargo 1.100+'s
++ * `build/gn_out` relative include paths stay well under Win32 MAX_PATH (260).
++ */
++export async function prepareV8SourceDir(
++  directory,
++  { platform = process.platform, mkdtempFn = mkdtemp, rmFn = rm } = {},
++) {
++  if (platform !== 'win32') {
++    return { directory, cleanup: async () => {} };
++  }
++  const root = parse(resolve(directory)).root;
++  try {
++    const shortDir = await mkdtempFn(join(root, 'v8-'));
++    return {
++      directory: shortDir,
++      cleanup: () =>
++        rmFn(shortDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }),
++    };
++  } catch (error) {
++    if (error && (error.code === 'EACCES' || error.code === 'EPERM' || error.code === 'EROFS')) {
++      return { directory, cleanup: async () => {} };
++    }
++    throw error;
++  }
++}
++
+ /** Build the locked V8 without its optional LGPL glibc implementation. */
+-export async function buildV8({ root, directory, cache, target, env, metadata }) {
++export async function buildV8({
++  root,
++  directory,
++  cache,
++  target,
++  env,
++  metadata,
++  compile = compileV8,
++  prepareSourceDir = prepareV8SourceDir,
++}) {
+   const configuration = await v8Configuration(root, target, metadata);
+   const manifest = JSON.parse(await readFile(join(root, 'scripts/rust/v8-prebuilts.json'), 'utf8'));
+   const pin = manifest[configuration.key];
+-  return cachedV8({
+-    directory: cache,
+-    key: configuration.key,
+-    target,
+-    build: () =>
+-      Object.hasOwn(manifest, configuration.key)
+-        ? downloadV8({
++  let sourceDir = null;
++  try {
++    return await cachedV8({
++      directory: cache,
++      key: configuration.key,
++      target,
++      build: async () => {
++        if (Object.hasOwn(manifest, configuration.key)) {
++          return downloadV8({
+             pin,
+             directory: join(directory, 'prebuilt'),
+             key: configuration.key,
+             target,
+-          })
+-        : compileV8({ ...configuration, directory, target, env }),
+-  });
++          });
++        }
++        sourceDir = await prepareSourceDir(directory);
++        return compile({ ...configuration, directory: sourceDir.directory, target, env });
++      },
++    });
++  } finally {
++    await sourceDir?.cleanup();
++  }
+ }
+ 
+ async function v8Configuration(root, target, metadata) {
 ```
 
-**File**: `packages/maka-agent/README.md` (added, +32/-0)
+**File**: `scripts/rust/build-v8.test.mjs` (added, +144/-0)
 ```diff
-@@ -0,0 +1,32 @@
-+<!--
-+  Licensed to the Apache Software Foundation (ASF) under one
-+  or more contributor license agreements.  See the NOTICE file
-+  distributed with this work for additional information
-+  regarding copyright ownership.  The ASF licenses this file
-+  to you under the Apache License, Version 2.0 (the
-+  "License"); you may not use this file except in compliance
-+  with the License.  You may obtain a copy of the License at
-+
-+      http://www.apache.org/licenses/LICENSE-2.0
-+
-+  Unless required by applicable law or agreed to in writing,
-+  software distributed under the License is distributed on an
-+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+  KIND, either express or implied.  See the License for the
-+  specific language governing permissions and limitations
-+  under the License.
-+-->
-+
-+# `maka-agent`
-+
-+> **Unofficial Developer Nightly Build — Not an Apache Software Foundation Release.**
-+>
-+> Nightly pre-built binaries are provided strictly for developer testing. They have not been approved by an ASF release vote and are not intended for general production use.
-+
-+`maka-agent` is a convenience alias for [`@maka-agent/cli`](https://www.npmjs.com/package/@maka-agent/cli). Installing either package provides the `maka` command backed by the matching native platform binary (`darwin-arm64`, `linux-x64-gnu`, `linux-arm64-gnu`, or `win32-x64`).
-+
-+```sh
-+npm install --global maka-agent@nightly
-+# equivalent to:
-+npm install --global @maka-agent/cli@nightly
-+```
-```
-
-**File**: `packages/maka-agent/bin/maka.mjs` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+#!/usr/bin/env node
+@@ -0,0 +1,144 @@
 +/*
 + * Licensed to the Apache Software Foundation (ASF) under one
 + * or more contributor license agreements.  See the NOTICE file
@@ -3448,104 +3177,1098 @@ recovery.
 + * under the License.
 + */
 +
-+import { createRequire } from 'node:module';
-+import { pathToFileURL } from 'node:url';
++import assert from 'node:assert/strict';
++import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
++import { tmpdir } from 'node:os';
++import { join, resolve } from 'node:path';
++import test from 'node:test';
++import { buildV8, prepareV8SourceDir } from './build-v8.mjs';
 +
-+const require = createRequire(import.meta.url);
-+const entry = require.resolve('@maka-agent/cli/bin/maka.mjs');
-+await import(pathToFileURL(entry).href);
++test('prepareV8SourceDir keeps caller directory on non-Windows', async () => {
++  const result = await prepareV8SourceDir('/tmp/maka-nightly-build-abc/v8', {
++    platform: 'linux',
++    mkdtempFn: () => assert.fail('must not allocate drive-root dir on non-Windows'),
++  });
++  assert.equal(result.directory, '/tmp/maka-nightly-build-abc/v8');
++  await result.cleanup();
++});
++
++test('prepareV8SourceDir allocates and cleans up a drive-root temp dir on Windows', async () => {
++  let createdPrefix = null;
++  let removed = null;
++  const result = await prepareV8SourceDir('/tmp/maka-nightly-build-abc/v8', {
++    platform: 'win32',
++    mkdtempFn: async (prefix) => {
++      createdPrefix = prefix;
++      return prefix + 'xyz';
++    },
++    rmFn: async (dir) => {
++      removed = dir;
++    },
++  });
++  assert.ok(createdPrefix.endsWith('v8-'), 'unexpected prefix: ' + createdPrefix);
++  assert.equal(result.directory, createdPrefix + 'xyz');
++  await result.cleanup();
++  assert.equal(removed, createdPrefix + 'xyz');
++});
++
++test('prepareV8SourceDir falls back to caller directory when drive root is not writable', async () => {
++  const result = await prepareV8SourceDir('/tmp/maka-nightly-build-abc/v8', {
++    platform: 'win32',
++    mkdtempFn: async () => {
++      const err = new Error('permission denied');
++      err.code = 'EPERM';
++      throw err;
++    },
++  });
++  assert.equal(result.directory, '/tmp/maka-nightly-build-abc/v8');
++  await result.cleanup();
++});
++
++test('buildV8 keeps short temp outputs alive until cache admission completes, then cleans up', async () => {
++  const repoRoot = resolve(import.meta.dirname, '../..');
++  const source = JSON.parse(await readFile(join(repoRoot, 'scripts/rust/v8-source.json'), 'utf8'));
++  const metadata = {
++    packages: [{ id: 'v8-pkg', name: 'v8', version: source.version }],
++    resolve: { nodes: [{ id: 'v8-pkg', features: ['default', 'test-unpinned-feature'] }] },
++  };
++  const scratch = await mkdtemp(join(tmpdir(), 'maka-build-v8-test-'));
++  let allocatedDir = null;
++  try {
++    const cacheDir = join(scratch, 'cache');
++    const result = await buildV8({
++      root: repoRoot,
++      directory: join(scratch, 'long-work-dir', 'v8'),
++      cache: cacheDir,
++      target: 'x86_64-pc-windows-msvc',
++      env: {},
++      metadata,
++      prepareSourceDir: (dir) =>
++        prepareV8SourceDir(dir, {
++          platform: 'win32',
++          mkdtempFn: async () => {
++            allocatedDir = await mkdtemp(join(scratch, 'v8-'));
++            return allocatedDir;
++          },
++        }),
++      compile: async ({ directory }) => {
++        const archive = join(directory, 'rusty_v8.lib');
++        const binding = join(directory, 'src_binding.rs');
++        await writeFile(archive, 'fake-win-v8-archive');
++        await writeFile(binding, 'pub const BINDING: usize = 1;');
++        return {
++          environment: { RUSTY_V8_ARCHIVE: archive, RUSTY_V8_SRC_BINDING_PATH: binding },
++          notices: 'Apache-2.0 test notices\n',
++        };
++      },
++    });
++    assert.ok(allocatedDir);
++    assert.equal(
++      await readFile(result.environment.RUSTY_V8_ARCHIVE, 'utf8'),
++      'fake-win-v8-archive',
++    );
++    assert.equal(
++      await readFile(result.environment.RUSTY_V8_SRC_BINDING_PATH, 'utf8'),
++      'pub const BINDING: usize = 1;',
++    );
++    await assert.rejects(stat(allocatedDir), { code: 'ENOENT' });
++
++    let failedAllocatedDir = null;
++    await assert.rejects(
++      buildV8({
++        root: repoRoot,
++        directory: join(scratch, 'long-work-dir', 'v8'),
++        cache: join(scratch, 'cache-fail'),
++        target: 'x86_64-pc-windows-msvc',
++        env: {},
++        metadata,
++        prepareSourceDir: (dir) =>
++          prepareV8SourceDir(dir, {
++            platform: 'win32',
++            mkdtempFn: async () => {
++          
 ```
 
-**File**: `packages/maka-agent/package.json` (added, +25/-0)
+---
+
+### Incident Patch 2: `73f23335` (2026-11-23)
+**Commit Message**: fix(agent): retry failed background summaries and track consecutive retry streaks (#7207)
+
+* fix(agent): retry failed background summaries and scope retry budgets to a Step
+
+A background summary that failed (for example on a stream idle timeout)
+kept counting as present for its checkpoint, so no later Step prepared
+another one. Once the context reached the compaction threshold the Run
+fell back to a blocking foreground Summary. A failed or rejected summary
+now leaves the compaction level unset, and the next Step prepares a new
+one. Preparation is still decided only when a Step has no attempt yet,
+so at most one background summary starts per Step.
+
+Model retries were counted across the whole Run: every recovered failure
+grew the backoff exponent (up to 64s) and consumed the 9-retry budget,
+eventually forcing fallback or failing long Runs whose individual
+failures had all recovered. The budget and backoff now count retries of
+the current Step only. The fallback selection check uses the Run-wide
+retry count, which an exhausted Step budget implies and which recorded
+Runs still satisfy during rebuild.
+
+Generated-by: Maka (Claude Opus 5.5)
+
+* fix(agent): track consecutive retry streak in
+
+**File**: `plugins/agent/engine/src/driver.rs` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,25 @@
-+{
-+  "name": "maka-agent",
-+  "version": "0.2.0",
-+  "description": "Alias package for @maka-agent/cli (unofficial developer preview; not an ASF release)",
-+  "license": "Apache-2.0",
-+  "private": true,
-+  "type": "module",
-+  "engines": {
-+    "node": ">=24.0.0"
-+  },
-+  "bin": {
-+    "maka": "bin/maka.mjs"
-+  },
-+  "files": [
-+    "bin",
-+    "DISCLAIMER",
-+    "LICENSE",
-+    "NOTICE",
-+    "README.md"
-+  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "https://github.com/apache/maka.git"
-+  }
+@@ -1079,7 +1079,8 @@ impl Engine {
+                         .await?;
+                     }
+                     Action::ChargeRetry(attempt, phase) => {
+-                        let delay = 250_i64.saturating_mul(1_i64 << view.retries_for(phase).min(8));
++                        let delay = 250_i64
++                            .saturating_mul(1_i64 << view.retry_streak.backoff_exponent().min(8));
+                         let provider_due = match &view.attempts[&attempt].recovery {
+                             Some(
+                                 AttemptRecovery::FrozenRetrySafe { not_before }
+```
+
+**File**: `plugins/agent/engine/src/driver/compaction.rs` (modified, +5/-6)
+```diff
+@@ -160,7 +160,6 @@ impl Engine {
+                 } else {
+                     compaction_timing(provenance)
+                 };
+-                let mut has_proactive_summary = false;
+                 let mut can_prepare = true;
+                 let mut proactive_baseline = baseline
+                     .as_ref()
+@@ -178,8 +177,6 @@ impl Engine {
+                         "request-provenance-schema",
+                     )
+                     .await?;
+-                    has_proactive_summary =
+-                        provenance.accepts_background_summary(&summary_provenance, &options);
+                     can_prepare = (original.closed.is_some() || original.interrupted.is_some())
+                         && (original.admission.is_none()
+                             || original.cleanup
+@@ -188,7 +185,9 @@ impl Engine {
+                         baseline.checkpoint.summary_step_id == original.step
+                     });
+                     proactive_baseline |= already_adopted;
+-                    if has_proactive_summary {
++                    // A failed or rejected summary leaves the level unset, so a later
++                    // Step may prepare another one instead of forcing foreground compaction.
++                    if provenance.accepts_background_summary(&summary_provenance, &options) {
+                         if original.closed.is_none() && original.interrupted.is_none() {
+                             compaction = CompactionLevel::Pending {
+                                 attempt: summary,
+@@ -212,7 +211,7 @@ impl Engine {
+                         }
+                     }
+                 }
+-                if compaction == CompactionLevel::None && !has_proactive_summary {
++                if compaction == CompactionLevel::None {
+                     let adopted_origin = baseline
+                         .as_ref()
+                         .and_then(|baseline| baseline.summary_origin);
+@@ -294,7 +293,7 @@ impl Engine {
+                             .is_some())
+                 {
+                     compaction = CompactionLevel::Fresh {
+-                        prepare: prepare && can_prepare && !has_proactive_summary,
++                        prepare: prepare && can_prepare,
+                         adopt,
+                     };
+                 }
+```
+
+**File**: `plugins/agent/engine/src/reconcile.rs` (modified, +1/-3)
+```diff
+@@ -1662,9 +1662,7 @@ fn next_action(
+                 } else {
+                     view.retry_phase
+                 };
+-                let limit = u64::from(view.spec.budget.retries)
+-                    + u64::from(phase == maka_agent_facts::model::retry_transport::RetryTransportPhase::Fallback);
+-                return if u64::from(view.retries_for(phase)) < limit {
++                return if view.can_charge_retry(id) {
+                     Action::ChargeRetry(id, phase)
+                 } else if !resume && phase == maka_agent_facts::model::retry_transport::RetryTransportPhase::Primary
+                     && model.is_some_and(|model| {
+```
+
+**File**: `plugins/agent/engine/src/reconcile/tests.rs` (modified, +421/-0)
+```diff
+@@ -1271,3 +1271,424 @@ fn a_tool_call_from_an_overflowed_attempt_is_rejected_without_execution() {
+         Action::Reject(rejected, ToolRejection::PreparationFailed { .. }) if rejected == key
+     ));
+ }
++
++fn admitted_retry_view(retries: u32) -> (RunView, ContentRef) {
++    let mut view = policy_view(None);
++    view.spec.budget.retries = retries;
++    let spec = ContentBlob::json(&view.spec).unwrap();
++    apply_policy_fact(
++        &mut view,
++        Fact::RunAdmitted {
++            spec: spec.reference().clone(),
++        },
++    );
++    let request = ContentBlob::json(&serde_json::json!({})).unwrap();
++    (view, request.reference().clone())
 +}
-```
-
-**File**: `platform/host-runtime/src/application/host.rs` (modified, +4/-1)
-```diff
-@@ -491,9 +491,12 @@ impl Host {
-             Request::Retire {
-                 interrupt,
-                 allow_idle_connections,
-+                refuse_active_sessions,
-             } => {
-                 authority.local()?;
--                let result = self.retire(interrupt, allow_idle_connections).await;
-+                let result = self
-+                    .retire(interrupt, allow_idle_connections, refuse_active_sessions)
-+                    .await;
-                 wire::write(&mut output, &Response::Retired(result)).await
-             }
-             Request::Quit {
-```
-
-**File**: `platform/host-runtime/src/application/host/client.rs` (modified, +24/-0)
-```diff
-@@ -655,6 +655,30 @@ impl Client {
-             Request::Retire {
-                 interrupt,
-                 allow_idle_connections,
-+                refuse_active_sessions: false,
++
++fn fail_attempt(
++    view: &mut RunView,
++    step: StepId,
++    request: &ContentRef,
++    prepare_step: bool,
++    recovery: AttemptRecovery,
++) -> ModelAttemptId {
++    use maka_plugin_core::operation::OperationCleanup;
++
++    let attempt = ModelAttemptId::new();
++    if prepare_step {
++        apply_policy_fact(
++            view,
++            Fact::StepPrepared {
++                step,
++                request: request.clone(),
++                adjudications: vec![],
 +            },
++        );
++    }
++    for fact in [
++        Fact::ModelAttemptPrepared { attempt, step },
++        Fact::ModelAttemptAdmitted {
++            attempt,
++            upstream: serde_json::Value::Null,
++        },
++        Fact::ModelInterrupted {
++            attempt,
++            diagnostic: "provider failed (TimedOut): stream interrupted".into(),
++        },
++        Fact::AttemptRecoveryRecorded { attempt, recovery },
++        Fact::ModelCleanupObserved {
++            attempt,
++            cleanup: OperationCleanup::Confirmed,
++        },
++    ] {
++        apply_policy_fact(view, fact);
++    }
++    attempt
++}
++
++fn closure_protocol(
++    finish_reason: maka_agent_facts::model::ModelFinishReason,
++) -> serde_json::Value {
++    serde_json::to_value(ModelClosureProtocol {
++        model_time_ms: None,
++        finish_reason,
++        provider_options: None,
++        cache_read_reported: None,
++        response_id: None,
++        model: None,
++        timestamp: None,
++        compaction: None,
++        summary: None,
++    })
++    .unwrap()
++}
++
++fn succeed_attempt(view: &mut RunView, step: StepId) -> ModelAttemptId {
++    use maka_agent_facts::{accounting::Outcome, model::ModelFinishReason};
++    use maka_plugin_core::operation::OperationCleanup;
++
++    let attempt = ModelAttemptId::new();
++    for fact in [
++        Fact::ModelAttemptPrepared { attempt, step },
++        Fact::ModelAttemptAdmitted {
++            attempt,
++            upstream: serde_json::Value::Null,
++        },
++        Fact::ModelClosed {
++            attempt,
++            outcome: Outcome::Success,
++            diagnostic: None,
++            usage: Default::default(),
++            protocol: closure_protocol(ModelFinishReason::Length),
++        },
++        Fact::ModelCleanupObserved {
++            attempt,
++            cleanup: OperationCleanup::Confirmed,
++        },
++    ] {
++        apply_policy_fact(view, fact);
++    }
++    attempt
++}
++
++fn fallback_model_level(step: StepId, request: &ContentRef) -> ModelLevel {
++    use maka_agent_facts::{
++        accounting::ModelEvidence,
++        composition::RequestComposition,
++        context::{ModelFailureProtocol, ModelPurpose},
++        input::RunInput,
++        model::error::{ModelError, ProviderFailure, ProviderFailureReason},
++    };
++
++    ModelLevel {
++        handoff: None,
++        input: RunInput::HistorySource {
++            source: request.clone(),
++        },
++        request: Some(RequestSpec {
++            schema_version: SCHEMA_VERSION,
++            step,
++            composition: RequestComposition {
++                surface: request.clone(),
++                dynamic_context: vec![],
++                tool_catalog_digest: request.digest.clone(),
++                provider_options: None,
++                max_output_tokens: None,
++            },
++            summary_repair_of: None,
++            compaction_recovery: None,
++            source_capture: request.clone(),
++            source_digest: request.digest.clone(),
++            effective_source_digest: request.digest.clone(),
++            provenance: request.clone(),
++            projection: None,
++            adjudications: vec![],
++            steering: vec![],
++            request: request.clone(),
++            protocol: "openai-responses".into(),
++            protocol_version: 1,
++            recovery_contract: request.clone(),
++            request_contents: vec![],
++            accounting: ModelEvidence {
++                binding: ModelBinding {
++                    connection_id: "policy".into(),
++                    connection_slug: "policy".into(),
++                    model: "policy".into(),
++                },
++                model_id: "policy".into(),
++                purpose: ModelPurpose::Main,
++                quote: None,
++            },
++        }),
++        baseline: None
+```
+
+**File**: `plugins/agent/native/src/owner/driver/tests.rs` (modified, +329/-0)
+```diff
+@@ -7055,6 +7055,335 @@ async fn compaction_cancels_background_request_when_main_finishes() {
+     }
+ }
+ 
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn failed_background_summary_is_prepared_again_on_the_next_step() {
++    use axum::{body::Body, http::StatusCode, response::IntoResponse};
++    use maka_agent_engine::{DriverExit, Engine, ports::Preparation};
++    use maka_agent_facts::accounting::Outcome;
++    use std::sync::atomic::AtomicUsize;
++
++    const SUMMARY: &str = "Recovered background summary.";
++    let mut rig = Rig::new().unwrap();
++    rig.model_overrides = json!({"llama3.2":{"compactionThreshold":1_900}});
++    let stop = CancellationToken::new();
++    let main_ready = Arc::new(tokio::sync::Notify::new());
++    let summaries = Arc::new(AtomicUsize::new(0));
++    let (finals, mut final_request) = tokio::sync::mpsc::unbounded_channel();
++    let listener =
++        tokio::net::TcpListener::from_std(rig.model_listener.try_clone().unwrap()).unwrap();
++    let (release, summary_posts, mains) = (
++        main_ready.clone(),
++        summaries.clone(),
++        Arc::new(AtomicUsize::new(0)),
++    );
++    let app = axum::Router::new().route("/v1/chat/completions", axum::routing::post(
++        move |request: axum::extract::Request| {
++            let (release, summaries, mains, finals) =
++                (release.clone(), summary_posts.clone(), mains.clone(), finals.clone());
++            async move {
++                let bytes = axum::body::to_bytes(request.into_body(), 4 * 1024 * 1024).await.unwrap();
++                let request: Value = serde_json::from_slice(&bytes).unwrap();
++                let reply = |content: &str, finish: &str| {
++                    let chunk = |delta: Value, finish: Value| format!("data: {}\n\n", json!({
++                        "id":"background-retry","object":"chat.completion.chunk","created":1,"model":"llama3.2",
++                        "choices":[{"index":0,"delta":delta,"finish_reason":finish}]
++                    }));
++                    let body = chunk(json!({"role":"assistant","content":content}), Value::Null)
++                        + chunk(json!({}), json!(finish)).as_str() + "data: [DONE]\n\n";
++                    ([("content-type", "text/event-stream")], Body::from(body)).into_response()
++                };
++                if request["tools"].as_array().is_none_or(Vec::is_empty) {
++                    return if summaries.fetch_add(1, Ordering::SeqCst) == 0 {
++                        (StatusCode::SERVICE_UNAVAILABLE, "upstream unavailable").into_response()
++                    } else {
++                        reply(SUMMARY, "stop")
++                    };
++                }
++                match mains.fetch_add(1, Ordering::SeqCst) {
++                    0 => {
++                        release.notified().await;
++                        reply("Partial.", "length")
++                    }
++                    1 => {
++                        release.notified().await;
++                        // Pushes the next Step past the threshold, so it must adopt a summary.
++                        reply(&"Long output. ".repeat(600), "length")
++                    }
++                    _ => {
++                        finals.send(bytes.to_vec()).unwrap();
++                        reply("Done.", "stop")
++                    }
++                }
++            }
++        }
++    ));
++    let shutdown = stop.clone();
++    let server = tokio::spawn(async move {
++        axum::serve(listener, app)
++            .with_graceful_shutdown(shutdown.cancelled_owned())
++            .await
++    });
++    let result = AssertUnwindSafe(tokio::time::timeout(Duration::from_secs(30), async {
++        let session = rig.start().await?;
++        rig.assemble_model(
++            &session,
++            Budget {
++                tokens: None,
++                retries: 0,
++                deadline: None,
++            },
++            false,
 +        )
-+        .await?
-+        {
-+            Response::Retired(result) => result,
-+            _ => Err("Host retirement response mismatch".into()),
++        .await?;
++        let driver = rig.driver.as_ref().unwrap();
++        let run = driver.access.execution().run_id;
++        rig.record_model_reply(Preparation::Initial, None).await?;
++        let view = driver.state.frontier(run).await?;
++        let mut main = driver
++            .model()?
++            .prepare_step(&view, Preparation::Initial, driver)
++            .await?;
++        let body = ContentBlob::json(&main.request)?;
++        main.contents.push(body.clone());
++        rig.append(
++            vec![Fact::StepPrepared {
++                step: main.request.step,
++                request: body.reference().clone(),
++                adjudications: vec![],
++            }],
++            main.contents,
++        )
++        .await?;
++
++        // Each main reply waits until the current background summary has settled,
++        // so the next Step observes the failure and then the recovered summary.
++        let release_main = async {
++            let mut changes = driver.state.subscribe()?;
++            let mut failed 
+```
+
+**File**: `plugins/agent/state/migrations/0053_retry_streak.sql` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++-- Licensed to the Apache Software Foundation (ASF) under one
++-- or more contributor license agreements. See the NOTICE file
++-- distributed with this work for additional information
++-- regarding copyright ownership. The ASF licenses this file
++-- to you under the Apache License, Version 2.0 (the
++-- "License"); you may not use this file except in compliance
++-- with the License. You may obtain a copy of the License at
++--
++--     http://www.apache.org/licenses/LICENSE-2.0
++--
++-- Unless required by applicable law or agreed to in writing,
++-- software distributed under the License is distributed on an
++-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++-- KIND, either express or implied. See the License for the
++-- specific language governing permissions and limitations
++-- under the License.
++
++ALTER TABLE agent_runs
++ADD COLUMN retry_streak TEXT NOT NULL DEFAULT '{"kind":"regular","charged":0}';
+```
+
+**File**: `plugins/agent/state/src/fold.rs` (modified, +76/-16)
+```diff
+@@ -56,6 +56,7 @@ pub struct RunView {
+     pub terminal: Option<Terminal>,
+     pub tokens: u64,
+     pub retries: u32,
++    pub retry_streak: RetryStreak,
+     pub output_limit_continuations: u32,
+     pub retry_phase: RetryTransportPhase,
+     pub(crate) finish_requested: bool,
+@@ -72,6 +73,63 @@ pub struct RunView {
+     pub approvals: BTreeMap<ApprovalId, Approval>,
+ }
+ 
++/// Consecutive retry budget state since the last successful foreground model
++/// closure (or Run start), including the one-time Primary-to-Fallback transition.
++#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
++#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
++pub enum RetryStreak {
++    Regular { charged: u32 },
++    FallbackTransitionPending { attempt: ModelAttemptId },
++    AfterFallbackTransition { charged: u32 },
++}
++
++impl Default for RetryStreak {
++    fn default() -> Self {
++        Self::Regular { charged: 0 }
++    }
++}
++
++impl RetryStreak {
++    pub fn can_charge(self, attempt: ModelAttemptId, budget: u32) -> bool {
++        match self {
++            Self::Regular { charged } | Self::AfterFallbackTransition { charged } => {
++                charged < budget
++            }
++            Self::FallbackTransitionPending { attempt: selected } => {
++                attempt == selected || budget > 0
++            }
 +        }
 +    }
-+    /// Atomically retires the Host only when zero interactive sessions are
-+    /// attached. With `interrupt = true`, active background runs are still
-+    /// interrupted once the Host verifies no sessions are connected.
-+    pub async fn retire_if_no_sessions(
-+        address: &Path,
-+        epoch: Uuid,
-+        interrupt: bool,
-+    ) -> Result<bool> {
-+        match control(
-+            address,
-+            Some(epoch),
-+            Request::Retire {
-+                interrupt,
-+                allow_idle_connections: false,
-+                refuse_active_sessions: interrupt,
-             },
-         )
-         .await?
++
++    pub fn backoff_exponent(self) -> u32 {
++        match self {
++            Self::Regular { charged } => charged,
++            Self::FallbackTransitionPending { .. } => 0,
++            Self::AfterFallbackTransition { charged } => charged.saturating_add(1),
++        }
++    }
++
++    pub(crate) fn on_retry_charged(self, attempt: ModelAttemptId) -> Result<Self, StoreError> {
++        let next = |charged: u32| {
++            charged
++                .checked_add(1)
++                .ok_or_else(|| StoreError::InvalidTransition("retry counter overflow".into()))
++        };
++        Ok(match self {
++            Self::Regular { charged } => Self::Regular {
++                charged: next(charged)?,
++            },
++            Self::FallbackTransitionPending { attempt: selected } if attempt == selected => {
++                Self::AfterFallbackTransition { charged: 0 }
++            }
++            Self::FallbackTransitionPending { .. } => Self::Regular { charged: 1 },
++            Self::AfterFallbackTransition { charged } => Self::AfterFallbackTransition {
++                charged: next(charged)?,
++            },
++        })
++    }
++}
++
+ #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+ #[serde(rename_all = "camelCase", deny_unknown_fields)]
+ pub struct Attempt {
+@@ -304,6 +362,7 @@ impl RunView {
+             terminal: None,
+             tokens: 0,
+             retries: 0,
++            retry_streak: RetryStreak::default(),
+             output_limit_continuations: 0,
+             retry_phase: RetryTransportPhase::Primary,
+             finish_requested: false,
+@@ -321,16 +380,9 @@ impl RunView {
+         })
+     }
+ 
+-    pub fn retries_for(&self, phase: RetryTransportPhase) -> u32 {
+-        self.attempts
+-            .values()
+-            .filter(|attempt| {
+-                attempt
+-                    .retry
+-                    .as_ref()
+-                    .is_some_and(|retry| retry.phase == phase)
+-            })
+-            .count() as u32
++    pub fn can_charge_retry(&self, attempt: ModelAttemptId) -> bool {
++        self.retry_streak
++            .can_charge(attempt, self.spec.budget.retries)
+     }
+     pub fn finish_requested(&self) -> bool {
+         self.finish_requested
+@@ -1176,10 +1228,11 @@ impl RunView {
+                         }) || current.source_failure.is_some()),
+                     "transport fallback lacks original safe failed Main evidence",
+                 )?;
++                // Retries before the one-way fallback are all Primary, so an exhausted
++                // streak implies this Run-wide count, which historical Runs also meet.
+                 require(
+                     self.retry_pending == Some(*attempt)
+-                        && self.retries_for(RetryTransportPhase::Primary)
+-                            >= self.spec.budget.retries,
++                        && self.retries >= self.spec.budget.retries,
+                     "transport fallback requires exhausted original Primary retry budget",
+                 )?;
+                 require(
+@@ -1193,6 +1246,7 @@ impl RunView {
+                 self.effects_accounted()?;
+                 self.retry_safe()?;
+                 self.retry_phase = *phase;
++                self.retry_streak = RetryStreak::FallbackTransitionPending { attempt: *attempt };
+             }
+             Fact::ModelSourceFailureCaptured { attempt, failure } => {
+                 failure
+@@ -1516,6 +1570,12 @@ impl RunView {
+                         self.output_limit_continuations =
+                             self.output_limit_continuations.saturating_add(1);
+                     }
++           
+```
+
+**File**: `plugins/agent/state/src/lib.rs` (modified, +8/-1)
+```diff
+@@ -376,6 +376,13 @@ pub const MIGRATIONS: &[maka_event_log::migration::Migration] = &[
+         configure: None,
+         data: None,
+     },
++    maka_event_log::migration::Migration {
++        version: 53,
++        description: "persist consecutive retry streak state on runs",
++        sql: include_str!("../migrations/0053_retry_streak.sql"),
++        configure: None,
++        data: Some(sql::migrate_retry_streak),
++    },
+ ];
+ 
+ #[cfg(test)]
+@@ -387,7 +394,7 @@ mod migration_tests {
+             .chain(super::MIGRATIONS)
+             .copied()
+             .collect();
+-        for through in [0, 41].into_iter().chain(46..=51) {
++        for through in [0, 41].into_iter().chain(46..=52) {
+             let directory = tempfile::tempdir().unwrap();
+             let path = directory.path().join("root.sqlite");
+             let db = rusqlite::Connection::open(&path).unwrap();
+```
+
+---
+
+### Incident Patch 3: `5b2fa922` (2026-11-23)
+**Commit Message**: fix(nsh,test): eliminate Windows audio decode and desktop history anchor CI flakes (#7187)
+
+* fix(nsh-windows): use 32-bit float WAV in audio decoding test
+
+In nsh-platform-windows audio::tests::a_sound_decodes_on_the_decoding_thread,
+the synthetic 16-bit integer PCM WAV did not match decode()'s requested
+MFAudioFormat_Float output subtype. That mismatch forced Media Foundation's
+IMFSourceReader::SetCurrentMediaType to invoke MFTEnumEx -> CompPkgSup.DLL
+-> AppXDeploymentClient.dll -> Windows.StateRepositoryClient.dll for
+out-of-process Store/AppX codec enumeration before loading resampledmo.dll.
+
+On freshly provisioned Windows Server 2025 CI VMs, that out-of-process RPC
+normally adds ~280ms and intermittently stalls past the test's 10s timeout
+(observed at 2.78s, 9.21s, and >10.0s while adjacent tests ran in ~80ms).
+
+Generate a 32-bit IEEE float WAV (WAVE_FORMAT_IEEE_FLOAT) so the test still
+exercises the full decode_off_main worker thread, COM MTA initialization,
+MFStartup, SHCreateMemStream, MFCreateSourceReaderFromByteStream,
+SetCurrentMediaType, and ReadSample path directly in-process (~6ms) without
+depending on StateRepository/AppXSvc.
+
+Generated-by: Maka (Gemini)
+
+* fix(nsh,t
+
+**File**: `products/maka/terminal-shell/tests/real_host/desktop_new_session.rs` (modified, +1/-0)
+```diff
+@@ -1289,6 +1289,7 @@ async fn desktop_history_anchors_keep_the_reader_off_live_output_until_latest()
+             )
+             .await;
+     }
++    desktop.control("Jump to turn: History prompt 6").await;
+     desktop.press("Jump to turn: History prompt 2").await;
+     desktop.control("Return to latest").await;
+     let copy = desktop.control("Copy user message").await;
+```
+
+**File**: `third-party/nsh/crates/nsh-core/src/core/list.rs` (modified, +13/-0)
+```diff
+@@ -1106,6 +1106,19 @@ impl ListState {
+         self.pin = None;
+     }
+ 
++    /// Whether a non-animated explicit scroll pin is active and eligible to
++    /// release once the viewport and its nested parent-viewport lists settle.
++    pub(super) fn can_settle_pin(&self) -> bool {
++        matches!(
++            self.pin,
++            Some(Pin::Following {
++                animating: false,
++                automatic: false,
++                ..
++            })
++        )
++    }
++
+     /// The content offset for `target` with the sizes known now.
+     pub(super) fn target_offset(&self, target: PinTarget) -> f32 {
+         match target {
+```
+
+**File**: `third-party/nsh/crates/nsh-core/src/core/mod.rs` (modified, +65/-27)
+```diff
+@@ -10421,6 +10421,7 @@ impl<M: TextEngine> Core<M> {
+         let mut awaiting = std::mem::take(&mut self.awaiting_renders);
+         self.cells_awaiting_renders(&mut awaiting);
+         self.awaiting_renders = awaiting;
++        let mut settle_pins = Vec::new();
+         for i in 0..self.lists.len() {
+             let key = self.lists[i];
+             let id = self.nodes[key as usize].id;
+@@ -10464,7 +10465,9 @@ impl<M: TextEngine> Core<M> {
+             {
+                 continue;
+             }
+-            self.update_list(key, relayout, None);
++            if self.update_list(key, relayout, None) {
++                settle_pins.push(key);
++            }
+         }
+         if !self.parent_lists.is_empty() {
+             for i in 0..self.parent_lists.len() {
+@@ -10476,7 +10479,26 @@ impl<M: TextEngine> Core<M> {
+                 let Some(outer) = self.outer_input(key) else {
+                     continue;
+                 };
+-                self.update_list(key, relayout, Some(outer));
++                if self.update_list(key, relayout, Some(outer)) {
++                    settle_pins.push(key);
++                }
++                if self.nodes[outer.view as usize]
++                    .list
++                    .as_ref()
++                    .is_some_and(|l| l.can_settle_pin())
++                    && !settle_pins.contains(&outer.view)
++                {
++                    settle_pins.push(outer.view);
++                }
++            }
++        }
++        for key in settle_pins {
++            if !self.needs_layout
++                && !self.extent_changed
++                && self.list_viewport_settled(key)
++                && let Some(list) = self.nodes[key as usize].list.as_mut()
++            {
++                list.unpin();
+             }
+         }
+         if !self.sticky_nodes.is_empty()
+@@ -10577,7 +10599,7 @@ impl<M: TextEngine> Core<M> {
+         key: Key,
+         relayout: bool,
+         outer: Option<parent_viewport::OuterInput>,
+-    ) {
++    ) -> bool {
+         let moved = match &outer {
+             Some(o) => self.nodes[key as usize]
+                 .list
+@@ -10588,11 +10610,11 @@ impl<M: TextEngine> Core<M> {
+         };
+         let node = &self.nodes[key as usize];
+         if !node.created {
+-            return;
++            return false;
+         }
+         let list = node.list.as_ref().expect("list");
+         if !(relayout || moved || list.dirty || self.commands.iter().any(|c| c.0 == node.id)) {
+-            return;
++            return false;
+         }
+         let list_hidden = self.displays_none(key);
+         let (id, events) = (node.id, node.events);
+@@ -10738,7 +10760,12 @@ impl<M: TextEngine> Core<M> {
+         // The last scroll command's target moves as its cells are
+         // measured: the list follows it.
+         let mut retarget = None;
+-        match self.follow_list_pin(key, anchor) {
++        let (follow, mut check_settle) = self.nodes[key as usize]
++            .list
++            .as_mut()
++            .expect("list")
++            .follow_pin_step(anchor);
++        match follow {
+             Follow::Stay => {}
+             Follow::By(delta) => anchor += delta,
+             Follow::To { offset, animated } => retarget = Some((offset, animated)),
+@@ -10791,11 +10818,13 @@ impl<M: TextEngine> Core<M> {
+             };
+             if automatic && !list.idle() {
+                 list.wait_for_idle(pin.expect("automatic index target"), animated);
++                check_settle = false;
+                 retarget = None;
+                 continue;
+             }
+             // An offset of the app's own ends the pin.
+             list.pin(pin, offset, animated, automatic);
++            check_settle = false;
+             // A new command replaces the pin's retargeting.
+             retarget = None;
+             if !animated {
+@@ -11155,7 +11184,7 @@ impl<M: TextEngine> Core<M> {
+                 self.ask_outer(o.view, outer_to, 0.0);
+             }
+             self.sync_spacer(key, false);
+-            return;
++            return check_settle;
+         }
+         let content = if horizontal {
+             size_pt(content_len, cross)
+@@ -11230,22 +11259,7 @@ impl<M: TextEngine> Core<M> {
+         if motion {
+             self.move_list_cells(key, id, horizontal, anchor, placed);
+         }
+-    }
+-
+-    fn follow_list_pin(&mut self, key: Key, anchored: f32) -> Follow {
+-        let (follow, check_settle) = self.nodes[key as usize]
+-            .list
+-            .as_mut()
+-            .expect("list")
+-            .follow_pin_step(anchored);
+-        if check_settle && self.list_viewport_settled(key) {
+-            self.nodes[key as usize]
+-                .list
+-                .as_mut()
+-                .expect("list")
+-                .unpin();
+-        }
+-        follow
++        check_settle
+     }
+ 
+     fn list_cells_settled(&self, list: &ListState) -> bool {
+@@ -11283,11 +11297,32 @@ impl<M: TextEngine> Core<M> {
+         None
+     }
+ 
++    fn list_assigned_ce
+```
+
+**File**: `third-party/nsh/crates/nsh-core/src/core/tests.rs` (modified, +220/-0)
+```diff
+@@ -45021,6 +45021,226 @@ fn scroll_to_index_keeps_pin_until_nested_parent_list_and_provisional_projection
+     );
+ }
+ 
++#[test]
++fn scroll_to_index_keeps_pin_when_straddling_cell_parent_list_splices_above_viewport() {
++    let mut c = core();
++    add(
++        &mut c,
++        2,
++        Tag::List,
++        ROOT_ID,
++        &[("height", StyleValue::Number(400.0))],
++    );
++    apply(
++        &mut c,
++        vec![
++            Op::SetProp {
++                id: 2,
++                prop: Prop::Count(5),
++            },
++            Op::SetProp {
++                id: 2,
++                prop: Prop::EstimatedItemSize(px(100.0)),
++            },
++        ],
++    );
++    c.commit();
++
++    // Cell 1 wraps a nested parent-viewport list plus a 40px footer below it
++    // (as a message row does). When the outer list jumps to item 2 with a 12px
++    // leading viewOffset, cell 1 straddles the top of the viewport via its
++    // footer while the nested list itself lies wholly above the scroll offset
++    // (dep.viewport_items() == None) and still binds/measures overscan cells.
++    for (slot, (cell_id, body_id, height)) in [
++        (100, 200, Some(100.0)),
++        (101, 201, None),
++        (102, 202, Some(100.0)),
++        (103, 203, Some(200.0)),
++        (104, 204, Some(200.0)),
++    ]
++    .into_iter()
++    .enumerate()
++    {
++        add(&mut c, cell_id, Tag::Cell, 2, &[]);
++        apply(
++            &mut c,
++            vec![
++                Op::SetProp {
++                    id: cell_id,
++                    prop: Prop::Slot(CellSlot::Item(slot as u32)),
++                },
++                Op::SetProp {
++                    id: cell_id,
++                    prop: Prop::CellIndex(slot as u32),
++                },
++            ],
++        );
++        if let Some(h) = height {
++            add(
++                &mut c,
++                body_id,
++                Tag::View,
++                cell_id,
++                &[("height", StyleValue::Number(h))],
++            );
++        } else {
++            add(&mut c, body_id, Tag::List, cell_id, &[]);
++            add(
++                &mut c,
++                211,
++                Tag::View,
++                cell_id,
++                &[("height", StyleValue::Number(40.0))],
++            );
++            apply(
++                &mut c,
++                vec![
++                    Op::SetProp {
++                        id: body_id,
++                        prop: Prop::ListViewport(crate::ListViewport::Parent),
++                    },
++                    Op::SetProp {
++                        id: body_id,
++                        prop: Prop::Count(1),
++                    },
++                    Op::SetProp {
++                        id: body_id,
++                        prop: Prop::EstimatedItemSize(px(58.0)),
++                    },
++                    Op::SetProp {
++                        id: body_id,
++                        prop: Prop::ListSourceRows(Some(Arc::new(crate::ListSourceRows {
++                            id: "reply-footer".into(),
++                            source_len: 400,
++                            projection_len: 400,
++                            provisional: true,
++                            rows: vec![vec![0..400]].into(),
++                        }))),
++                    },
++                ],
++            );
++        }
++    }
++    c.commit();
++
++    c.apply(Op::Command {
++        id: 2,
++        command: Command::ScrollToIndex {
++            index: 2,
++            animated: false,
++            automatic: false,
++            view_position: crate::geometry::Percentage(0.0),
++            view_offset: px(12.0),
++        },
++    })
++    .unwrap();
++    c.commit();
++
++    // Provisional 1-row fallback renders at 264px -> cell 1 is 304px (footer 40px).
++    add(&mut c, 300, Tag::Cell, 201, &[]);
++    add(
++        &mut c,
++        301,
++        Tag::View,
++        300,
++        &[("height", StyleValue::Number(264.0))],
++    );
++    apply(
++        &mut c,
++        vec![
++            Op::SetProp {
++                id: 300,
++                prop: Prop::Slot(CellSlot::Item(0)),
++            },
++            Op::SetProp {
++                id: 300,
++                prop: Prop::CellIndex(0),
++            },
++        ],
++    );
++    c.commit();
++    c.commit();
++
++    fn outer<M: TextEngine>(c: &Core<M>) -> &ListState {
++        let key = c.key(2).unwrap();
++        c.nodes[key as usize].list.as_ref().unwrap()
++    }
++    assert_eq!(outer(&c).offset, 100.0 + 304.0 - 12.0);
++    assert!(outer(&c).pinned());
++
++    // Async parse replaces the 1-row literal with 2 parsed rows (ListSplice)
++    // and clears provisional in the same commit. The nested list sits above
++    // the outer scroll offset (viewport_items == None), so the outer list
++    // must keep its pin across the splice temporary shrink (304 -> 156) and
++    // overscan measurement (156 -> 296) instead of unpinning before dep updates.
++    apply(
++        &mut c,
++        vec![
++ 
+```
+
+**File**: `third-party/nsh/crates/nsh-platform-windows/src/audio.rs` (modified, +12/-8)
+```diff
+@@ -1116,28 +1116,32 @@ mod tests {
+ 
+     use super::{AudioEvent, decode, decode_off_main, extension};
+ 
+-    /// A WAV file of `millis` of a 440 Hz tone: 16-bit mono at 8 kHz.
++    /// A WAV file of `millis` of a 440 Hz tone: 32-bit IEEE float mono at 8 kHz.
++    ///
++    /// Matching `MFAudioFormat_Float` lets Media Foundation's source reader bind
++    /// directly without invoking `MFTEnumEx` / `StateRepository` out-of-process
++    /// Store codec enumeration (which stalls intermittently on cold CI VMs).
+     fn wav(millis: u32) -> Vec<u8> {
+         let rate = 8_000u32;
+         let frames = rate * millis / 1000;
+-        let data = frames * 2;
++        let data = frames * 4;
+         let mut out = Vec::new();
+         out.extend_from_slice(b"RIFF");
+         out.extend_from_slice(&(36 + data).to_le_bytes());
+         out.extend_from_slice(b"WAVEfmt ");
+         out.extend_from_slice(&16u32.to_le_bytes());
+-        out.extend_from_slice(&1u16.to_le_bytes()); // PCM
++        out.extend_from_slice(&3u16.to_le_bytes()); // WAVE_FORMAT_IEEE_FLOAT
+         out.extend_from_slice(&1u16.to_le_bytes()); // mono
+         out.extend_from_slice(&rate.to_le_bytes());
+-        out.extend_from_slice(&(rate * 2).to_le_bytes());
+-        out.extend_from_slice(&2u16.to_le_bytes());
+-        out.extend_from_slice(&16u16.to_le_bytes());
++        out.extend_from_slice(&(rate * 4).to_le_bytes());
++        out.extend_from_slice(&4u16.to_le_bytes());
++        out.extend_from_slice(&32u16.to_le_bytes());
+         out.extend_from_slice(b"data");
+         out.extend_from_slice(&data.to_le_bytes());
+         for i in 0..frames {
+             let t = i as f32 / rate as f32;
+-            let v = (t * 440.0 * std::f32::consts::TAU).sin() * 8_000.0;
+-            out.extend_from_slice(&(v as i16).to_le_bytes());
++            let v = (t * 440.0 * std::f32::consts::TAU).sin() * 0.25;
++            out.extend_from_slice(&v.to_le_bytes());
+         }
+         out
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7157** (2026-11-22): chore(release): promote rust-preview to main (0.3.0) (@M4n5ter)
-- **PR #7156** (2026-11-22): chore(release): bump product version to 0.3.0 ahead of main switch (@M4n5ter)
-- **PR #7155** (2026-11-22): fix(workbench): show partial totals for turn usage (@M4n5ter)
-- **PR #7154** (2026-11-22): fix(compat): reconcile migration 52 from #7127 with #7152 (@M4n5ter)
-- **PR #7152** (2026-11-22): feat(compat): add forward-upgrade shield, time-capsule harness, and doc updates (@M4n5ter)
-- **PR #7151** (2026-11-22): test(ci): fix desktop draft race and remaining rust-preview CI failures (@M4n5ter)
+- **PR #7209** (2026-11-23): perf(build): compile libsqlite3-sys at O3 and drop no-op dist wrapper overrides (@M4n5ter)
+- **PR #7207** (2026-11-23): fix(agent): retry failed background summaries and track consecutive retry streaks (@M4n5ter)
+- **PR #7205** (2026-11-23): fix(agent): preserve interrupt handoffs when reordering queued messages (@me2seeks)
+- **PR #7204** (2026-11-23): fix(build): use Zig-compatible ELF linker script for Linux N-API exports (@M4n5ter)
+- **PR #7201** (2026-11-23): fix(test): drain stale clipboard writes before desktop copy assertions (@M4n5ter)
+- **PR #7197** (2026-11-23): refactor(mock-ai,test): overhaul mock-ai and migrate hand-rolled AI test fixtures (@M4n5ter)
 
 ---
 
@@ -3565,33 +4288,56 @@ recovery.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(ci): fix desktop draft race and remaining rust-preview CI failures
+## X. nightly): fix Windows V8 MAX_PATH and Linux zigbuild system library linking
 
 **RULE**:
-When implementing operations in `plugins/agent/engine/src/driver/witness.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/maka. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/rust/build-cli.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/maka. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50489ddf`: test(ci): fix desktop draft race and remaining rust-preview CI failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79e7f725`: nightly): fix Windows V8 MAX_PATH and Linux zigbuild system library linking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/agent/engine/src/driver/witness.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/rust/build-cli.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let tool_selection = ContentBlob::json(&serde_json::json!({ "services": [] }))?;
-        policy.spec.tool_selection = tool_selection.reference().clone();
-        let admission = Admission::new(policy.spec, at(), vec![empty, tool_selection, input]);
+import { constants, existsSync } from 'node:fs';
+const linuxMultiarchDirs = {
+  'x86_64-unknown-linux-gnu': '/usr/lib/x86_64-linux-gnu',
+  'aarch64-unknown-linux-gnu': '/usr/lib/aarch64-linux-gnu',
+};
+
+// Zig treats glibc-versioned targets as cross-compilation and excludes host system
+// library directories; pass native dirs so GTK/X11/Vulkan link while Zig keeps its
+// bundled glibc 2.28 stubs for libc.
+export function linuxSystemLibraryRustflags(triple, env = {}, exists = existsSync) {
+  const multiarch = linuxMultiarchDirs[triple];
+  const candidates =
+    multiarch && exists(multiarch) ? [multiarch, '/usr/lib'] : ['/usr/lib64', '/usr/lib'];
+  const dirs = candidates.filter((dir) => exists(dir));
+  if (!dirs.length) return {};
+  const key = `CARGO_TARGET_${triple.toUpperCase().replace(/-/g, '_')}_RUSTFLAGS`;
+  const existing = env[key]?.trim() ?? '';
+  const hasFlag = (flag) =>
+    new RegExp(`(?:^|\\s)${flag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:\\s|$)`).test(existing);
+  const added = dirs.map((dir) => `-L native=${dir}`).filter((flag) => !hasFlag(flag));
+  if (!added.length) return {};
+  return { [key]: existing ? `${existing} ${added.join(' ')}` : added.join(' ') };
+}
+
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let admission = Admission::new(policy.spec, at(), vec![empty, input]);
+import { constants } from 'node:fs';
+  const host = rustTarget(platform);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50489ddf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79e7f725` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

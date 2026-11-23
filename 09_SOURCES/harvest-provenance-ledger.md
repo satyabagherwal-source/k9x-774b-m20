@@ -12460,3 +12460,6 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `1e538a99` | Multi-dimensional audit evidence | 2026-11-23T19:00:59.589Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `4f5b8781` | Multi-dimensional audit evidence | 2026-11-23T19:01:02.242Z |
 | `learn-dom-i-b48272d1` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-23T19:01:42.819Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-23T19:09:13.593Z |
+| `learn-github-apache-maka` | `https://github.com/apache/maka` | `26639d64` | Multi-dimensional audit evidence | 2026-11-23T19:09:14.644Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `1f2f7af9` | Multi-dimensional audit evidence | 2026-11-23T19:09:21.270Z |

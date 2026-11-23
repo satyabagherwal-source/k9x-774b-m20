@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "1128bbfe641bf302f697399e1246d2941fc951506785325b50da2f0d43ac2622",
-    "lastHarvestedAt": "2026-11-19T09:17:01.181Z",
+    "contentHash": "82253d742d9e858bdb0fb116a0e3b58fc4da9bcc1e900cd174922caded2889e8",
+    "lastHarvestedAt": "2026-11-23T19:09:13.593Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "5344f432",
+    "sourceVersion": "1f2f7af9",
     "license": "Apache-2.0",
-    "contentHash": "d458c7169346da25b9a83ca0aefda8c6f99e2aedd5bfac4d6fdc2725db57963f",
-    "lastHarvestedAt": "2026-11-18T10:45:12.502Z",
+    "contentHash": "8eadb334fa4950804a2bfa568e352a91b9469610417b2363b333c1d5fb79823d",
+    "lastHarvestedAt": "2026-11-23T19:09:21.270Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
@@ -13163,10 +13163,10 @@
     "repository": "apache/maka",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/maka",
-    "sourceVersion": "ac52d482",
+    "sourceVersion": "26639d64",
     "license": "Apache-2.0",
-    "contentHash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
-    "lastHarvestedAt": "2026-11-22T07:06:00.460Z",
+    "contentHash": "4a23b73423cca3ebdade764f8a46cad08fb19fdafa1dd3b5ad61a3e96fd06b6f",
+    "lastHarvestedAt": "2026-11-23T19:09:14.644Z",
     "learningId": "learn-github-apache-maka"
   },
   "hf-lakonik-pi-h3": {

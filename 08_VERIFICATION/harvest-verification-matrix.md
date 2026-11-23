@@ -12427,3 +12427,6 @@
 | `CYCLE-20261123-ST34` | `2026-11-23T19:00:59.584Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10096` | Yes (`093f93d7...`) |
 | `CYCLE-20261123-SV4T` | `2026-11-23T19:01:02.237Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10097` | Yes (`ea29664a...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T19:01:42.819Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-B48272D1` [Domain I] | Yes (`6c51491f...`) |
+| `CYCLE-20261123-3E9H` | `2026-11-23T19:09:13.589Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`82253d74...`) |
+| `CYCLE-20261123-3F2P` | `2026-11-23T19:09:14.641Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10098` | Yes (`4a23b734...`) |
+| `CYCLE-20261123-3K6Q` | `2026-11-23T19:09:21.266Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10099` | Yes (`8eadb334...`) |

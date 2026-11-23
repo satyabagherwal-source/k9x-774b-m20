@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T19:01:02.253Z",
+  "last_updated": "2026-11-23T19:09:21.278Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -245,14 +245,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "1128bbfe641bf302f697399e1246d2941fc951506785325b50da2f0d43ac2622",
-      "verified_at": "2026-11-19T09:17:01.191Z",
+      "content_hash": "82253d742d9e858bdb0fb116a0e3b58fc4da9bcc1e900cd174922caded2889e8",
+      "verified_at": "2026-11-23T19:09:13.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:17:01.191Z"
+      "last_updated": "2026-11-23T19:09:13.602Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "d458c7169346da25b9a83ca0aefda8c6f99e2aedd5bfac4d6fdc2725db57963f",
-      "verified_at": "2026-11-18T10:45:12.512Z",
+      "content_hash": "8eadb334fa4950804a2bfa568e352a91b9469610417b2363b333c1d5fb79823d",
+      "verified_at": "2026-11-23T19:09:21.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:45:12.512Z"
+      "last_updated": "2026-11-23T19:09:21.278Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",
@@ -19866,14 +19866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-maka",
-      "content_hash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
-      "verified_at": "2026-11-22T07:06:00.467Z",
+      "content_hash": "4a23b73423cca3ebdade764f8a46cad08fb19fdafa1dd3b5ad61a3e96fd06b6f",
+      "verified_at": "2026-11-23T19:09:14.651Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:06:00.467Z"
+      "last_updated": "2026-11-23T19:09:14.651Z"
     },
     "Lakonik/pi-H3": {
       "repository": "Lakonik/pi-H3",
