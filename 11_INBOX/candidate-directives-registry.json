@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T22:43:07.469Z",
+  "last_updated": "2026-11-23T22:56:26.711Z",
   "directives": [
     {
       "id": "CD-001",
@@ -51474,6 +51474,46 @@
       "source_repo": "rafsoh-dimeapp",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9122AF-empirical-invariant-guard-in-localizable.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-7KFW",
+      "directive_title": "format/html/svelte): keep `{#if}`, `{#each}` and other Svelte blocks touching th",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7KFW-format-html-svelte-keep-if-each-and-other-svelte-blocks-touching-th.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-7LNA",
+      "directive_title": "Update package to 11.3.2",
+      "source_repo": "keyboardkit-keyboardkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7LNA-update-package-to-11-3-2.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-BC0E25",
+      "directive_title": "format/html/svelte): keep `{#if}`, `{#each}` and other Svelte blocks touching th",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "biomejs-biome",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BC0E25-format-html-svelte-keep-if-each-and-othe.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-0C572B",
+      "directive_title": "Update package to 11.3.2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "keyboardkit-keyboardkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0C572B-update-package-to-11-3-2.md",
       "staged_date": "2026-11-23"
     }
   ]

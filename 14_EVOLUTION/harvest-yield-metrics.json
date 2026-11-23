@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T22:43:01.409Z",
-  "total_cycles_completed": 11885,
-  "total_learnings_persisted": 11885,
-  "total_rules_promoted": 10981,
+  "last_updated": "2026-11-23T22:56:21.071Z",
+  "total_cycles_completed": 11888,
+  "total_learnings_persisted": 11888,
+  "total_rules_promoted": 10983,
   "history": [
-    {
-      "timestamp": "2026-11-23T06:45:54.226Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T06:53:51.794Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-openai-gpt-oss-20b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T07:05:28.006Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T07:18:26.505Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T22:43:01.409Z",
       "repository": "meilisearch/meilisearch",
       "learningId": "learn-github-meilisearch-meilisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:56:12.360Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:56:18.911Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:56:21.071Z",
+      "repository": "KeyboardKit/KeyboardKit",
+      "learningId": "learn-github-keyboardkit-keyboardkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

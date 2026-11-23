@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T22:43:08.144Z",
+  "last_updated": "2026-11-23T22:56:27.250Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-23T22:33:11.973Z",
@@ -1423,7 +1423,7 @@
       "staged_for_review": 0
     },
     "biomejs-biome-learnings.md": {
-      "processed_at": "2026-11-22T14:45:37.964Z",
+      "processed_at": "2026-11-23T22:56:24.563Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1793,7 +1793,7 @@
       "staged_for_review": 0
     },
     "keyboardkit-keyboardkit-learnings.md": {
-      "processed_at": "2026-11-17T02:02:52.988Z",
+      "processed_at": "2026-11-23T22:56:26.200Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2853,7 +2853,7 @@
       "staged_for_review": 0
     },
     "hf-black-forest-labs-flux-3-image-klein-learnings.md": {
-      "processed_at": "2026-11-19T16:33:33.813Z",
+      "processed_at": "2026-11-23T22:56:25.761Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3788,7 +3788,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3558,
+  "total_dossiers_evaluated": 3561,
   "total_canonical_promoted": 491,
-  "total_staged_for_review": 2666
+  "total_staged_for_review": 2668
 }

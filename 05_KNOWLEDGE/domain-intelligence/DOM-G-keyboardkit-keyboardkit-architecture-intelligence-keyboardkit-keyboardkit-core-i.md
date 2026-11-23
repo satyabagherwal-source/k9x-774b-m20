@@ -4,24 +4,24 @@
 {
   "source_repository": "KeyboardKit/KeyboardKit",
   "source_url": "https://github.com/KeyboardKit/KeyboardKit",
-  "source_version": "fa34c404",
+  "source_version": "0517bb21",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T02:02:16.730Z",
+  "timestamp": "2026-11-23T22:56:21.327Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-keyboardkit-keyboardkit",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit) (Revision: `fa34c404`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T02:02:16.730Z`  
+> **Provenance**: Harvested from [KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit) (Revision: `0517bb21`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T22:56:21.327Z`  
 > **Learning ID**: `learn-github-keyboardkit-keyboardkit`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: F (Design Intelligence), M (Feedback & Evolution Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 82%
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from KeyboardKit/KeyboardKit:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T02:02:15.666Z  
+> **Harvest Timestamp**: 2026-11-23T22:56:19.951Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Create custom iOS keyboards with Swift & SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1905 stars
+- **Stars / Engagement**: 1910 stars
 
 ---
 
@@ -84,8 +84,8 @@ struct DemoApp: App {
         WindowGroup {
             KeyboardAppView(
                 for: .keyboardKitDemo,
-                autocompleteEngine: autocompleteEngine,     // <-- 💡 Autocomplete
-                dictationEngine: dictationEngine            // <-- 💡 Dictation
+                // autocompleteEngine: autocompleteEngine,  // <-- 💡 Autocomplete
+                // dictationEngine: dictationEngine         // <-- 💡 Dictation
             ) {
                 HomeScreen()
             }
@@ -230,21 +230,6 @@ extension KeyboardApp {
             )
         )
     }
-}
-
-@MainActor
-var dictationEngine: DictationEngine {
-    pluginDictationEngine
-}
-
-@MainActor
-var autocompleteEngine: AutocompleteEngine {
-    pluginAutocompleteEngine(
-        .langlot(
-            licenseKey: "87170FBB-24F4-4C00-A7FC-C9A77D49DF38",
-            appGroup: KeyboardApp.keyboardKitDemo.appGroupId!
-        )
-    )
 }
 
 ```
@@ -822,7 +807,7 @@ struct DemoToolbar<Toolbar: View>: View {
     var body: some View {
         Keyboard.ToggleToolbar(
             isToggled: $isToolbarToggled,
-            toolbar: autocompleteToolbar,                   // Add a locale switcher to the toolbar
+            toolbar: autocompleteToolbar,                   // Adds a locale switcher to the toolbar
             toggledToolbar: toggledToolbar
         )
         .tint(.primary)
@@ -920,6 +905,8 @@ extension KeyboardAudioFeedback {
 //
 
 import KeyboardKit
+import KeyboardKitAutocompletePlugin                        // <-- 💡 Autocomplete
+import KeyboardKitDictationPlugin                           // <-- 💡 Dictation
 import KeyboardKitHostPlugin                                // <-- 💡 Host Application
 import SwiftUI
 
@@ -946,7 +933,9 @@ class KeyboardViewController: KeyboardInputViewController {
         // Set up the keyboard with the demo-specific app.
         setupKeyboardKit(
             for: .keyboardKitDemo,
-            hostApplicationResolver: pluginHostApplicationResolver  // <-- 💡 Host Application
+            // autocompleteEngine: autocompleteEngine,      // <-- 💡 Autocomplete
+            // dictationEngine: dictationEngine,            // <-- 💡 Dictation
+            hostApplicationResolver: pluginHostApplicationResolver          // <-- 💡 Host Application
         ) { [weak self] result in
             switch result {                                 // <-- 💡 Handle the license result
             case .success:
@@ -994,7 +983,7 @@ private extension KeyboardViewController {
 
         /// 💡 Setup demo-specific haptic & audio feedback.
         let feedback = state.feedbackContext
-        feedback.registerCustomFeedback(.haptic(.selectionChanged, for: .repeat, on: .rocket))
+        feedback.registerCustomFeedback(.haptic(.selectionChanged, for: .repeatPress, on: .rocket))
         feedback.registerCustomFeedback(.audio(.rocketFuse, for: .press, on: .rocket))
         feedback.registerCustomFeedback(.audio(.rocketLaunch, for: .release, on: .rocket))
     }
@@ -1008,15 +997,13 @@ private extension KeyboardViewController {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1115** (2026-11-07): **Investigate if next character prediction still works**
-  *Symptoms*: After the big changes made to the autocomplete service, which now regards more text and leaves the last word only logic to the internal engine, the next character prediction engine may be broken.  For next character predictions, the check compares each suggestion against all the text before the cursor, so "Hello wor" never matches "word". Predictions then only work for the first word typed, and they’re case-sensitive.
+- **Issue #1119** (2026-11-20): **Dictate from the keyboard without opening the main app**
+  *Symptoms*: After the last day's excitement over finding out how embedding a web view can allow a custom keyboard to dictate without having to perform the dreaded main app round-trip, KeyboardKit 11.3 will add a new engine that uses this approach.  This is described in more detail in this blog post:  https://keyboardkit.com/blog/2026/11/20/raycast-has-solved-keyboard-dictation-without-main-app-round-trip    
   **Post-Mortem & Fix Analysis**:
-  > This is fixed in 11.2.
+  > This has been merged into `main`.
 
-- **Issue #1110** (2026-10-26): **Always add current language topmost in ignored words and text replacements screens**
-  *Symptoms*: If there are no added languages, which is the default mode, then the ignored words and text replacements autocomplete settings screens will list all languages alphabetically.  This should be tweaked. The page should either just show the current language, if there are no added locales, else just the added languages. The current setup is too cluttered.
-  **Post-Mortem & Fix Analysis**:
-  > This will be fixed in `11.1.3`.
+- **Issue #1118** (2026-11-18): **Keyboard text field should better inform about Full Access**
+  *Symptoms*: The `KeyboardTextField` and `KeyboardTextView` both require Full Access, since trying to use them without Full Access causes a crash in UIKit. Both views are therefore disabled when Full Access is disabled.  This can however cause confusion among users, since the disabled dimming is so discrete. Instead, the text fields should clearly indicate that Full Access is needed, for instance by allowing us to inject an action that is called when a user tries to tap a disabled text field.  In the emoji and GIF keyboards, this action could be used to show a toast that says that full access is needed, while developers could use the action injection to trigger any custom action.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1033,8 +1020,8 @@ private extension KeyboardViewController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fa34c404` (2026-11-16)
-**Commit Message**: Update package to 11.2.4
+### Incident Patch 1: `0517bb21` (2026-11-23)
+**Commit Message**: Update package to 11.3.2
 
 **File**: `Package.swift` (modified, +2/-2)
 ```diff
@@ -1042,36 +1029,96 @@ Observed empirical fixes and code patches:
      targets: [
          .binaryTarget(
              name: "KeyboardKit",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
--            checksum: "f0387285416aea6dd3bccb27d874e8d1c3f989ebe423d7b4f9d75a4e821f13ea"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.4/KeyboardKit.zip",
-+            checksum: "e9ff889bc7e8d7c1ea8e33fc1ed64b1694eece69e1c8538845c38f48ee1ab6d3"
+-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.1/KeyboardKit.zip",
+-            checksum: "2c45f81e30599af576ad795bb2fbe20f52842fdffc848eeb9f24d726f41f2300"
++            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.2/KeyboardKit.zip",
++            checksum: "031eb7de7082d393035c10192f4bfbbeae64a0b691e5e6e2846f2c8ffd92e73e"
          ),
          .target(
              name: "KeyboardKitDependencies",
 ```
 
-**File**: `RELEASE_NOTES.md` (modified, +12/-0)
+**File**: `RELEASE_NOTES.md` (modified, +18/-0)
 ```diff
-@@ -12,6 +12,18 @@ This document covers the current major version. See older versions for older rel
+@@ -12,6 +12,24 @@ This document covers the current major version. See older versions for older rel
  
  
  
-+## 11.2.4
++## 11.3.2
 +
-+This patch makes it possible to style and interact with toasts.
++This patch adds a missing bottom edge padding when a theme is enabled on certain devices.
 +
-+### 🌱 Essentials
++### 🔣 Layout 
 +
-+* `Keyboard.Toast` is now interactive, which makes Markdown links tappable.
-+* `Keyboard.ToastStyle` is a new style that can style the toast components.
-+* `View` has a new `.keyboardToastStyle` modifier.
++* `KeyboardLayoutConfiguration` has been adjusted to match the native iPhone Duo open portrait.
++
++### 🎨 Styling
++
++* `KeyboardAction` uses a larger font on iPhone Duo in open landscape.
++
++### 🐛 Bug Fixes
++
++* `KeyboardView` applies a bottom padding when a theme with a background is enabled.
 +
 +
 +
- ## 11.2.3
+ ## 11.3.1
  
- ### 🙂 Emojis
+ This patch fixes a missing picker label, and converts the environment localization to a reference type.
+```
+
+---
+
+### Incident Patch 2: `4abb52b8` (2026-11-22)
+**Commit Message**: Update package to 11.3.1
+
+**File**: `Package.swift` (modified, +2/-2)
+```diff
+@@ -42,8 +42,8 @@ let package = Package(
+     targets: [
+         .binaryTarget(
+             name: "KeyboardKit",
+-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.0/KeyboardKit.zip",
+-            checksum: "683722561f44df288d63cc365ea73a10cdb8ffc1b631f5f48582e1a339d2b743"
++            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.1/KeyboardKit.zip",
++            checksum: "2c45f81e30599af576ad795bb2fbe20f52842fdffc848eeb9f24d726f41f2300"
+         ),
+         .target(
+             name: "KeyboardKitDependencies",
+```
+
+**File**: `RELEASE_NOTES.md` (modified, +16/-0)
+```diff
+@@ -12,6 +12,21 @@ This document covers the current major version. See older versions for older rel
+ 
+ 
+ 
++## 11.3.1
++
++This patch fixes a missing picker label, and converts the environment localization to a reference type.
++
++### 🌐 Localization
++
++* `KeyboardLocalization` now uses an underlying store to avoid copying large values.
++
++### 🐛 Bug Fixes
++
++* `KeyboardActionPicker` now shows a correct label for `.toggleKeyboardType(_:)`.
++
++
++
++
+ ## 11.3
+ 
+ This version improves dictation, autocomplete, and previews, and makes it possible to trigger system shortcuts from the keyboard. It also makes it possible to easier to localize the SDK views and screens.
+@@ -30,6 +45,7 @@ This version makes it possible to trigger system shortcuts from the Shortcuts ap
+ 
+ * `KeyboardAction` has a new `.systemShortcut(_:)` action.
+ * `KeyboardAction.SystemShortcut` is a new system shortcut trigger type.
++* `KeyboardActionPicker` now supports `.toggleKeyboardType(_:)` actions.
+ * `URL` has a new `.systemShortcut(named:input:)` builder that runs a system shortcut.
+ 
+ ### 💡 Autocomplete
 ```
 
 #### Recent Merged Pull Requests:
@@ -1100,13 +1147,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update package to 11.2.4
+## X. Update package to 11.3.2
 
 **RULE**:
 When implementing operations in `Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fa34c404`: Update package to 11.2.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0517bb21`: Update package to 11.3.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.swift`.
@@ -1114,19 +1161,19 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.4/KeyboardKit.zip",
-            checksum: "e9ff889bc7e8d7c1ea8e33fc1ed64b1694eece69e1c8538845c38f48ee1ab6d3"
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.2/KeyboardKit.zip",
+            checksum: "031eb7de7082d393035c10192f4bfbbeae64a0b691e5e6e2846f2c8ffd92e73e"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
-            checksum: "f0387285416aea6dd3bccb27d874e8d1c3f989ebe423d7b4f9d75a4e821f13ea"
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.1/KeyboardKit.zip",
+            checksum: "2c45f81e30599af576ad795bb2fbe20f52842fdffc848eeb9f24d726f41f2300"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fa34c404` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0517bb21` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

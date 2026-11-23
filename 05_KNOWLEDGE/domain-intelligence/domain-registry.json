@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T22:43:07.696Z",
-  "total_records": 2461,
+  "last_updated": "2026-11-23T22:56:26.898Z",
+  "total_records": 2463,
   "domains": {
     "A": {
       "total": 20,
@@ -2154,7 +2154,7 @@
       ]
     },
     "I": {
-      "total": 137,
+      "total": 139,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2292,7 +2292,9 @@
         "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-core-invariants",
         "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-learnings-core-invariants",
         "DOM-I-981FC0DE",
-        "DOM-I-B48272D1"
+        "DOM-I-B48272D1",
+        "domain_intelligence-content-information-intelligence-biomejs-biome-core-invariants",
+        "domain_intelligence-content-information-intelligence-biomejs-biome-learnings-core-invariants"
       ]
     },
     "J": {
@@ -19633,8 +19635,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-research-knowledge-intelligence-black-fo.md",
       "repository": "black-forest-labs/flux-3-image-klein",
-      "content_hash": "517254315604100a02afdc2b4064f572996ec2ac8e90fdff92210210e6115004",
-      "created_at": "2026-11-19T16:33:14.354Z"
+      "content_hash": "388b8b5d3b5152b38c61da27eadd49ac8249993cf20112b5b5a001f92aa77bdc",
+      "created_at": "2026-11-23T22:56:12.590Z"
     },
     "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants",
@@ -19702,8 +19704,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-black-forest-labs-flux-3-image-klein-learnings",
-      "content_hash": "651574f6b67c5684b19987e93191cad2227b43ed5171c5ca78dcb1c627fc95a2",
-      "created_at": "2026-11-19T16:33:33.987Z"
+      "content_hash": "41aeb771f1a2f66f7bb0aea299227ea2dcc8323dacdee10d0c44a5b15b747a06",
+      "created_at": "2026-11-23T22:56:25.994Z"
     },
     "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants",
@@ -25613,8 +25615,8 @@
       "title": "Architecture Intelligence: KeyboardKit/KeyboardKit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keyboardkit-keyboardkit-architecture-intelligence-keyboardkit-keyboardkit-core-i.md",
       "repository": "KeyboardKit/KeyboardKit",
-      "content_hash": "ed46aad44bcdc4f602f757838eebacd34813bf681cdf790f76ff3a12f30a3693",
-      "created_at": "2026-11-17T02:02:16.843Z"
+      "content_hash": "203bcf1ee7388ac9e6bb9fb37129812007ca9b7b02bfe2cb37f021495f972122",
+      "created_at": "2026-11-23T22:56:21.518Z"
     },
     "domain_intelligence-architecture-intelligence-openkruise-kruise-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openkruise-kruise-core-invariants",
@@ -25682,8 +25684,8 @@
       "title": "Architecture Intelligence: keyboardkit-keyboardkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keyboardkit-keyboardkit-learnings-architecture-intelligence-keyboardkit-keyboard.md",
       "repository": "keyboardkit-keyboardkit-learnings",
-      "content_hash": "e68f178841afca9ae96903596b90a316a30764f2ef61d68e11719ac2bd99486a",
-      "created_at": "2026-11-17T02:02:53.375Z"
+      "content_hash": "b5c4602438c9bb7f2e5c28d9b79fc9ec7ee6fd0de3683e5b89776ee512c7b6f4",
+      "created_at": "2026-11-23T22:56:26.898Z"
     },
     "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants",
@@ -41252,6 +41254,24 @@
       "repository": "rafsoh-dimeapp-learnings",
       "content_hash": "d32ce9f8af5d779366b74bd73bf7f64d18e3f48a51dbed1bd5e96006c7d1c5f7",
       "created_at": "2026-11-23T22:43:07.696Z"
+    },
+    "domain_intelligence-content-information-intelligence-biomejs-biome-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-biomejs-biome-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: biomejs/biome Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-biomejs-biome-content-information-intelligence-biomejs-biome-core-invariants.md",
+      "repository": "biomejs/biome",
+      "content_hash": "2aa085b9ecc8a9a0895682c9a0ef35da306c22b30cca02f6b2014496c9bc1d09",
+      "created_at": "2026-11-23T22:56:19.369Z"
+    },
+    "domain_intelligence-content-information-intelligence-biomejs-biome-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-biomejs-biome-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: biomejs-biome-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-biomejs-biome-learnings-content-information-intelligence-biomejs-biome-learnings.md",
+      "repository": "biomejs-biome-learnings",
+      "content_hash": "70c54758a6e3cabd2e1858b05f231c0dec47ecaf7078abd425bb988b078bd374",
+      "created_at": "2026-11-23T22:56:25.337Z"
     }
   }
 }

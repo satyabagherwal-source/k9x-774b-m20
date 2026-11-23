@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T22:43:07.189Z",
+  "updated_at": "2026-11-23T22:56:26.484Z",
   "stats": {
-    "total_discovered": 8066,
-    "approved_pending_harvest": 7634,
+    "total_discovered": 8073,
+    "approved_pending_harvest": 7641,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7630,
+      "COMMUNITY_AND_EXPERT": 7637,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -174451,6 +174451,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
         "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-9E03A4628398": {
+      "id": "SRC-9E03A4628398",
+      "url": "https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13388?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13388?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:56:24.691Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-DA6C870815E5": {
+      "id": "SRC-DA6C870815E5",
+      "url": "https://app.codspeed.io/biomejs/biome/branches/dyc3%2Fupdate-unsupported-rules-2-rules-thr_uzdpz27rqg?q=has%3Asignificant_sys_time",
+      "title": "https://app.codspeed.io/biomejs/biome/branches/dyc3%2Fupdate-unsupported-rules-2-rules-thr_uzdpz27rqg?q=has%3Asignificant_sys_time",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:56:24.830Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-F84A11F75241": {
+      "id": "SRC-F84A11F75241",
+      "url": "https://github.com/biomejs/biome/issues/13334",
+      "title": "https://github.com/biomejs/biome/issues/13334",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:56:24.890Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-662EFF328735": {
+      "id": "SRC-662EFF328735",
+      "url": "https://keyboardkit.com/blog/2026/11/20/raycast-has-solved-keyboard-dictation-without-main-app-round-trip",
+      "title": "https://keyboardkit.com/blog/2026/11/20/raycast-has-solved-keyboard-dictation-without-main-app-round-trip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:56:26.317Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-5B131A585AEA": {
+      "id": "SRC-5B131A585AEA",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.1/KeyboardKit.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.1/KeyboardKit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:56:26.373Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-D99ED8743C3F": {
+      "id": "SRC-D99ED8743C3F",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.2/KeyboardKit.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.2/KeyboardKit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:56:26.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-4CAA30A1F208": {
+      "id": "SRC-4CAA30A1F208",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.0/KeyboardKit.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.3.0/KeyboardKit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:56:26.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
       }
     }
   }

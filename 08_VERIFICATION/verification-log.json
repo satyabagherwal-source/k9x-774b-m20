@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-7PWJ",
-    "timestamp": "2026-11-22T02:09:09.091Z",
-    "repository": "ZSeven-W/openpencil",
-    "learningId": "learn-github-zseven-w-openpencil",
-    "contentHash": "6c8f5d65be97114fd685e57d24d27ae03695590c6ab70835fecd338c85850ea4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-7VP4",
-    "timestamp": "2026-11-22T02:09:16.600Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "ea7bef097757f303d61d7fe42df1fa2321a8f3bec6676a41df2917e669ddd502",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-J3RH",
-    "timestamp": "2026-11-22T02:18:00.269Z",
-    "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-    "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-    "contentHash": "30227d296abd04c6d7e7d32799cd1686ff2c74860b6278fa60e95a3e83c1ccb2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-J98K",
     "timestamp": "2026-11-22T02:18:07.364Z",
     "repository": "czy0729/Bangumi",
@@ -7490,6 +7445,51 @@
     "repository": "meilisearch/meilisearch",
     "learningId": "learn-github-meilisearch-meilisearch",
     "contentHash": "8f1cd620620b8e7144c5b3aaf9f9185e610394eb5e1771a2e6ef4d96dea3b1a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-7AKE",
+    "timestamp": "2026-11-23T22:56:12.350Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "0c7e505cf85cc1a27f37bc3d303d55f7a7f8cc74387cc8125a740053eb999f3e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-7FMD",
+    "timestamp": "2026-11-23T22:56:18.901Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "1f57f3b1563daccd564f29196bf6492b8f9902990251958719a852113bc78b3f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-7HAB",
+    "timestamp": "2026-11-23T22:56:21.059Z",
+    "repository": "KeyboardKit/KeyboardKit",
+    "learningId": "learn-github-keyboardkit-keyboardkit",
+    "contentHash": "52f037a8af0022ba0ce7aff23ee34f8ed26dc4f864b3a720d498fc62ea05fb90",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

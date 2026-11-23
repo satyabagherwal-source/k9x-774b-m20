@@ -12531,3 +12531,6 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `48669ad1` | Multi-dimensional audit evidence | 2026-11-23T22:42:49.893Z |
 | `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `2e7cc39c` | Multi-dimensional audit evidence | 2026-11-23T22:42:54.305Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `36dabf36` | Multi-dimensional audit evidence | 2026-11-23T22:43:01.402Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-23T22:56:12.354Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `d965df8d` | Multi-dimensional audit evidence | 2026-11-23T22:56:18.905Z |
+| `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `0517bb21` | Multi-dimensional audit evidence | 2026-11-23T22:56:21.064Z |
