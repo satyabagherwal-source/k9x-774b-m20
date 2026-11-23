@@ -22045,5 +22045,17 @@
     "qualityScore": 5101,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-23T14:17:21.391Z"
+  },
+  {
+    "name": "TenStrip/10Eros-Max",
+    "fullName": "TenStrip/10Eros-Max",
+    "url": "https://huggingface.co/TenStrip/10Eros-Max",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: TenStrip/10Eros-Max (1110 likes, 0 downloads)",
+    "likes": 1110,
+    "downloads": 0,
+    "qualityScore": 11100,
+    "discoveredAt": "2026-11-23T15:10:16.996Z"
   }
 ]

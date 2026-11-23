@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T15:04:42.476Z",
-  "total_records": 2421,
+  "last_updated": "2026-11-23T15:13:18.015Z",
+  "total_records": 2424,
   "domains": {
     "A": {
       "total": 20,
@@ -65,7 +65,7 @@
       ]
     },
     "D": {
-      "total": 932,
+      "total": 935,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -998,7 +998,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-instruct-2507-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-inclusionai-lingsante-3-1-flash-core-invariants",
         "DOM-D-ED1762B4",
-        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor"
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor",
+        "domain_intelligence-research-knowledge-intelligence-tenstrip-10eros-max-core-invariants",
+        "DOM-D-864519D2",
+        "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants"
       ]
     },
     "E": {
@@ -15464,8 +15467,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-VL-8B-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-vl-8b-instruct-research-knowledge-intelligence-qwen-qwen3-vl-8b-in.md",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "content_hash": "6d3e0c763e71ad0a221a718cb0717574ee945ba5acee7541e5320f12a0b5b6cf",
-      "created_at": "2026-11-19T01:32:34.825Z"
+      "content_hash": "8abed93a4264eb119b56ed974ebaae77f20856c3b67e65b0c433c477ef01625c",
+      "created_at": "2026-11-23T15:12:34.141Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants",
@@ -15560,8 +15563,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-vl-8b-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-vl-8b-instruct-learnings-research-knowledge-intelligence-hf-qwen-q.md",
       "repository": "hf-qwen-qwen3-vl-8b-instruct-learnings",
-      "content_hash": "2f72e4a9722e8a0b98f735bfe8070401f5582e5b7ca140f4e7f18b68d2c2339f",
-      "created_at": "2026-11-19T01:32:57.062Z"
+      "content_hash": "cb6f19ed26b794bd90c7eead6fa93985c1792c5b6609c8b4a6c885cb35fcedca",
+      "created_at": "2026-11-23T15:13:16.830Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
@@ -15770,8 +15773,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "6e5124bc60099a1ef85b6913f2ad859b37895e0e62544e43a48b29d1bb8fb9b1",
-      "created_at": "2026-11-21T22:56:56.911Z"
+      "content_hash": "dbce473b982d7dff86fc8bf5b7bab1b7ba2f676a6df55770b584912221a0ac78",
+      "created_at": "2026-11-23T15:12:46.766Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -20319,8 +20322,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "79ae4a12803ecef6f628ea670df66af1793fc5003becf7b6d2df95fc5e04db74",
-      "created_at": "2026-11-21T00:32:50.199Z"
+      "content_hash": "3141349f362b7da4fa5a219ab4b1b0a0645e68e60e5dd2a22eef124c53887850",
+      "created_at": "2026-11-23T15:13:18.015Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -40637,6 +40640,66 @@
       "repository": "fei-craft-ds-bot-learnings",
       "content_hash": "11070f5fcc2414f636edea96ecb5498e54e13d5849321a8ac33ec7b36c1c4664",
       "created_at": "2026-11-23T14:21:14.811Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-tenstrip-10eros-max-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-tenstrip-10eros-max-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: TenStrip/10Eros-Max Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tenstrip-10eros-max-research-knowledge-intelligence-tenstrip-10eros-max-core-.md",
+      "repository": "TenStrip/10Eros-Max",
+      "content_hash": "493041fa76f89e3b77e088d2c645b1e7ce663ee9e0b7e194029e4350bb2ed909",
+      "created_at": "2026-11-23T15:12:31.635Z"
+    },
+    "DOM-D-864519D2": {
+      "record_id": "DOM-D-864519D2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): TenStrip/10Eros-Max",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/TenStrip/10Eros-Max](https://huggingface.co/TenStrip/10Eros-Max))  \n> **Source Version**: `hf-tenstrip-`  \n> **License**: Open-Source  \n> **Synthesized By",
+      "content_hash": "e984ae6b37adac55931162ee03bf54694c7a316955fce050ad676397e6c55399",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-tenstrip-10eros-max/hf-tenstrip-10eros-max-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T15:12:49.707Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tenstrip-10eros-max)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-tenstrip-10eros-max"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T15:13:16.095Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-tenstrip-10eros-max-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tenstrip-10eros-max-learnings-research-knowledge-intelligence-hf-tenstrip-10e.md",
+      "repository": "hf-tenstrip-10eros-max-learnings",
+      "content_hash": "50da9cf658c2028e2e76df409478a1ef48a86ef28f9d0e93cdecf6fa02ff37cc",
+      "created_at": "2026-11-23T15:13:16.399Z"
     }
   }
 }

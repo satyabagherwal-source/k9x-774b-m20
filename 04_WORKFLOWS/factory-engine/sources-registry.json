@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T14:38:13.217Z",
-    "lastVerified": "2026-11-23T14:38:13.217Z",
+    "lastChecked": "2026-11-23T15:12:45.648Z",
+    "lastVerified": "2026-11-23T15:12:45.648Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T15:04:39.415Z",
-    "lastVerified": "2026-11-23T15:04:39.415Z",
+    "lastChecked": "2026-11-23T15:12:49.592Z",
+    "lastVerified": "2026-11-23T15:12:49.592Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1999,22 +1999,21 @@
     "revisionIdentifier": "dd75b495"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T05:51:38.824Z",
-    "lastVerified": "2026-11-23T05:51:38.824Z",
+    "lastChecked": "2026-11-23T15:12:45.384Z",
+    "lastVerified": "2026-11-23T15:12:45.384Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
+    "contentHash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 18,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e169d3bb"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -4561,8 +4560,8 @@
     "officialUrl": "https://github.com/typedb/typedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T08:22:44.099Z",
-    "lastVerified": "2026-11-22T08:22:44.099Z",
+    "lastChecked": "2026-11-23T15:12:43.150Z",
+    "lastVerified": "2026-11-23T15:12:43.150Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-typedb-typedb",
@@ -6072,9 +6071,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-22T10:03:45.910Z",
+    "lastChecked": "2026-11-23T15:12:38.137Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-22T10:03:45.910Z"
+    "lastVerified": "2026-11-23T15:12:38.137Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -6116,12 +6115,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T01:32:33.842Z",
-    "lastVerified": "2026-11-19T01:32:33.842Z",
+    "lastChecked": "2026-11-23T15:12:33.471Z",
+    "lastVerified": "2026-11-23T15:12:33.471Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "2a71d00f27d90d4c3945a2a3ca5928fcc6785d3aa5d1ca3530e2067b913d14ce",
+    "contentHash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10408,9 +10407,9 @@
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",
     "officialUrl": "https://github.com/DamascenoRafael/reminders-menubar",
-    "lastChecked": "2026-11-20T12:15:15.354Z",
+    "lastChecked": "2026-11-23T15:12:35.681Z",
     "revisionIdentifier": "f5330cb5",
-    "lastVerified": "2026-11-20T12:15:15.354Z"
+    "lastVerified": "2026-11-23T15:12:35.681Z"
   },
   "scrapy-scrapy": {
     "name": "scrapy/scrapy",
@@ -14683,6 +14682,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 12,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-tenstrip-10eros-max": {
+    "name": "TenStrip/10Eros-Max",
+    "officialUrl": "https://huggingface.co/TenStrip/10Eros-Max",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-23T15:12:30.772Z",
+    "lastVerified": "2026-11-23T15:12:30.772Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-tenstrip-10eros-max",
+    "contentHash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

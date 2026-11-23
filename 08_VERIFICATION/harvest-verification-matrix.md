@@ -12344,3 +12344,7 @@
 | `CYCLE-20261123-0VH7` | `2026-11-23T14:55:19.387Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`1243dd58...`) |
 | `CYCLE-20261123-CHJS` | `2026-11-23T15:04:21.208Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`303ad1fd...`) |
 | `CYCLE-20261123-CSSJ` | `2026-11-23T15:04:35.779Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10057` | Yes (`0d306241...`) |
+| `CYCLE-20261123-MZT5` | `2026-11-23T15:12:31.433Z` | `TenStrip/10Eros-Max` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md` | Yes (`310126bf...`) |
+| `CYCLE-20261123-N1QN` | `2026-11-23T15:12:33.935Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`084f3f60...`) |
+| `CYCLE-20261123-NBCJ` | `2026-11-23T15:12:46.387Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10058` | Yes (`dc9e1791...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T15:13:16.123Z` | `hf-tenstrip-10eros-max` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-864519D2` [Domain D] | Yes (`e984ae6b...`) |

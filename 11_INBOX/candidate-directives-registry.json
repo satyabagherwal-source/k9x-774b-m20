@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T15:04:42.237Z",
+  "last_updated": "2026-11-23T15:13:17.829Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49499,6 +49499,28 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6DB4F9-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-NBIQ",
+      "directive_title": "bump the modules group with 9 updates",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "3fa285c4",
+      "staged_file": "11_INBOX/candidate-directives/CD-NBIQ-bump-the-modules-group-with-9-updates.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-NZLM",
+      "directive_title": "deps): bump the modules group with 9 updates",
+      "source_repo": "projectdiscovery-nuclei-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NZLM-deps-bump-the-modules-group-with-9-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
     }
   ]
 }

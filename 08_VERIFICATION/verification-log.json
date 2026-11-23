@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-4D5P",
-    "timestamp": "2026-11-21T13:30:42.973Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "020a5955b584c0c4ca504f06f7ca4cc1e9352ef386619fc2519a222bb28ea94a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-4D6R",
-    "timestamp": "2026-11-21T13:30:43.011Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "39b266b2f16abcb3d890b12113fb12ea4601637d8580adece257176551229597",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-XO6E",
-    "timestamp": "2026-11-21T13:53:30.278Z",
-    "repository": "Qwen/Qwen3-14B",
-    "learningId": "learn-huggingface-qwen-qwen3-14b",
-    "contentHash": "3ca3ef8dcebaafe22449a1f5c2a6ca3a7025dd889fbcbcdd818eefeabf6dfe28",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-XP48",
     "timestamp": "2026-11-21T13:53:31.496Z",
     "repository": "watchexec/watchexec",
@@ -7490,6 +7445,51 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "0d3062413af9d5de2c81b5df2b272965b1bbb6ac1a96052f8eee16cb893facdf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-MZT5",
+    "timestamp": "2026-11-23T15:12:31.433Z",
+    "repository": "TenStrip/10Eros-Max",
+    "learningId": "learn-huggingface-tenstrip-10eros-max",
+    "contentHash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-N1QN",
+    "timestamp": "2026-11-23T15:12:33.935Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-NBCJ",
+    "timestamp": "2026-11-23T15:12:46.387Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

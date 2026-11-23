@@ -5336,3 +5336,7 @@ https://github.com/daveebbelaar/bama
 # --- Automatically Discovered by AI Scout Engine [2026-11-23T14:20:53.409Z] ---
 # [AI-AGENTS] Fei-Craft/DS-Bot (5101 score) - A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messa
 https://github.com/Fei-Craft/DS-Bot
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-23T15:12:24.950Z] ---
+# [HUGGINGFACE-AI-MODELS] TenStrip/10Eros-Max (11100 score) - Verified Hugging Face Model: TenStrip/10Eros-Max (1110 likes, 0 downloads)
+https://huggingface.co/TenStrip/10Eros-Max

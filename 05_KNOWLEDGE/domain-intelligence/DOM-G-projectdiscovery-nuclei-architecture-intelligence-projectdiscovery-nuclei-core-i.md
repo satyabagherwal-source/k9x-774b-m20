@@ -4,24 +4,24 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "e169d3bb",
+  "source_version": "3fa285c4",
   "license": "MIT",
-  "timestamp": "2026-11-21T22:56:56.755Z",
+  "timestamp": "2026-11-23T15:12:46.610Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `e169d3bb`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T22:56:56.755Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `3fa285c4`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T15:12:46.610Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 80%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 85%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from projectdiscovery/nuclei:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:56:55.425Z  
+> **Harvest Timestamp**: 2026-11-23T15:12:45.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33179 stars
+- **Stars / Engagement**: 33224 stars
 
 ---
 
@@ -1672,835 +1672,154 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93d9fd57` (2026-11-21)
-**Commit Message**: fix: run one task at a time for -c, -headc and -bs below 1
+### Incident Patch 1: `3fa285c4` (2026-11-23)
+**Commit Message**: chore(deps): bump the modules group with 9 updates (#8308)
 
-NewWorkPool, executeWorkflow and executeHostSpray built their pools
-with syncutil.New and dropped its error. syncutil.New rejects a size
-below 1 and returns a nil pool, so -c or -headc below 1 left a nil
-default or headless pool that Refresh and Wait dereferenced, a workflow
-with a subtemplate dereferenced its nil pool on AddWithContext, and
-host-spray with -bs plus -hbs below 1 dereferenced its nil host pool.
-Nuclei exited with a nil pointer panic and sent no request. InputPool
-dropped the error too, but its caller fell back to one worker, so -bs
-and -hbs below 1 already ran with the default strategy.
+Bumps the modules group with 9 updates:
 
-Build every pool in pkg/core through newPool, which clamps the size to
-at least 1. A value below 1 now runs one task at a time instead of
-crashing. Refresh compares against the same bound, so it does not try
-to resize a one-slot pool to 0 and warn for every template. The
-workflow pool clamps before its existing bump from 1 to 2, so the guard
-against the #8074 deadlock still holds. newPool panics on an error from
-syncutil.New, which cannot happen for a size of 1 or more, instead of
-passing on a nil pool. InputPool never retu
+| Package | From | To |
+| --- | --- | --- |
+| [github.com/projectdiscovery/gologger](https://github.com/projectdiscovery/gologger) | `1.1.75` | `1.1.76` |
+| [github.com/projectdiscovery/hmap](https://github.com/projectdiscovery/hmap) | `0.0.104` | `0.0.105` |
+| [github.com/projectdiscovery/networkpolicy](https://github.com/projectdiscovery/networkpolicy) | `0.1.58` | `0.1.59` |
+| [github.com/projectdiscovery/retryabledns](https://github.com/projectdiscovery/retryabledns) | `1.0.118` | `1.0.119` |
+| [github.com/projectdiscovery/retryablehttp-go](https://github.com/projectdiscovery/retryablehttp-go) | `1.3.34` | `1.3.35` |
+| [github.com/projectdiscovery/tlsx](https://github.com/projectdiscovery/tlsx) | `1.4.3-0.20261020052910-acb80c2c7c75` | `1.5.0` |
+| [github.com/projectdiscovery/utils](https://github.com/projectdiscovery/utils) | `0.11.13` | `0.11.15` |
+| [github.com/projectdiscovery/wappalyzergo](https://github.com/projectdiscovery/wappalyzergo) | `0.3.8` | `0.3.10` |
+| [github.com/projectdiscovery/blackrock](https://github.com/projectdiscovery/blackrock) | `0.0.2` | `0.0.4` |
 
-**File**: `internal/runner/inputs.go` (modified, +4/-1)
+
+U
+
+**File**: `go.mod` (modified, +11/-11)
 ```diff
-@@ -74,7 +74,10 @@ func (r *Runner) initializeTemplatesHTTPInput(templateCount int64) (*hybrid.Hybr
- 	}
- 
- 	// Probe the non-standard URLs and store them in cache
--	swg, err := syncutil.New(syncutil.WithSize(r.options.BulkSize))
-+	// syncutil.New rejects a size below 1, so a -bs below 1 probes one at a time.
-+	bulkSize := max(r.options.BulkSize, 1)
-+
-+	swg, err := syncutil.New(syncutil.WithSize(bulkSize))
- 	if err != nil {
- 		return nil, errors.Wrap(err, "could not create adaptive group")
- 	}
+@@ -87,26 +87,26 @@ require (
+ 	github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb
+ 	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
+ 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
+-	github.com/projectdiscovery/gologger v1.1.75
++	github.com/projectdiscovery/gologger v1.1.76
+ 	github.com/projectdiscovery/gostruct v0.0.2
+ 	github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2
+ 	github.com/projectdiscovery/gozero v0.1.1
+-	github.com/projectdiscovery/hmap v0.0.104
++	github.com/projectdiscovery/hmap v0.0.105
+ 	github.com/projectdiscovery/httpx v1.12.0
+ 	github.com/projectdiscovery/interactsh v1.4.1
+ 	github.com/projectdiscovery/mapcidr v1.1.97
+ 	github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5
+-	github.com/projectdiscovery/networkpolicy v0.1.58
++	github.com/projectdiscovery/networkpolicy v0.1.59
+ 	github.com/projectdiscovery/ratelimit v0.0.95
+ 	github.com/projectdiscovery/rawhttp v0.3.1
+-	github.com/projectdiscovery/retryabledns v1.0.118
+-	github.com/projectdiscovery/retryablehttp-go v1.3.34
++	github.com/projectdiscovery/retryabledns v1.0.119
++	github.com/projectdiscovery/retryablehttp-go v1.3.35
+ 	github.com/projectdiscovery/sarif v0.1.0
+-	github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75
++	github.com/projectdiscovery/tlsx v1.5.0
+ 	github.com/projectdiscovery/uncover v1.2.1
+ 	github.com/projectdiscovery/useragent v0.0.110
+-	github.com/projectdiscovery/utils v0.11.13
+-	github.com/projectdiscovery/wappalyzergo v0.3.8
++	github.com/projectdiscovery/utils v0.11.15
++	github.com/projectdiscovery/wappalyzergo v0.3.10
+ 	github.com/projectdiscovery/yamldoc-go v1.0.9
+ 	github.com/redis/go-redis/v9 v9.19.0
+ 	github.com/remeh/sizedwaitgroup v1.0.0
+@@ -220,7 +220,7 @@ require (
+ 	github.com/charmbracelet/x/term v0.2.1 // indirect
+ 	github.com/cheggaaa/pb/v3 v3.1.7 // indirect
+ 	github.com/chzyer/readline v1.5.1 // indirect
+-	github.com/cloudflare/cfssl v1.6.5 // indirect
++	github.com/cloudflare/cfssl v1.7.1 // indirect
+ 	github.com/cloudflare/circl v1.6.3 // indirect
+ 	github.com/cloudwego/base64x v0.1.6 // indirect
+ 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
+@@ -281,7 +281,7 @@ require (
+ 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
+ 	github.com/golang/protobuf v1.5.4 // indirect
+ 	github.com/golang/snappy v1.0.0 // indirect
+-	github.com/google/certificate-transparency-go v1.3.3 // indirect
++	github.com/google/certificate-transparency-go v1.4.0 // indirect
+ 	github.com/google/go-cmp v0.7.0 // indirect
+ 	github.com/google/go-querystring v1.2.0 // indirect
+ 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
+@@ -370,7 +370,7 @@ require (
+ 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
+ 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
+ 	github.com/projectdiscovery/asnmap v1.2.0 // indirect
+-	github.com/projectdiscovery/blackrock v0.0.2 // indirect
++	github.com/projectdiscovery/blackrock v0.0.4 // indirect
+ 	github.com/projectdiscovery/cdncheck v1.4.0 // indirect
+ 	github.com/projectdiscovery/freeport v0.0.8 // indirect
+ 	github.com/projectdiscovery/jarm-go v0.0.0-20260910160638-430e2bae86f6 // indirect
 ```
 
-**File**: `pkg/core/execute_options.go` (modified, +1/-1)
+**File**: `go.sum` (modified, +22/-22)
 ```diff
-@@ -153,7 +153,7 @@ func (e *Engine) executeTemplateSpray(ctx context.Context, templatesList []*temp
- // executeHostSpray executes scan using host spray strategy where templates are iterated over each target
- func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*templates.Template, target provider.InputProvider) *atomic.Bool {
- 	results := &atomic.Bool{}
--	wp, _ := syncutil.New(syncutil.WithSize(e.options.BulkSize + e.options.HeadlessBulkSize))
-+	wp := newPool(e.options.BulkSize + e.options.HeadlessBulkSize) //nolint:varnamelen // wp names the pool throughout
- 
- 	// Targets are the positions here, and each target runs every template. A
- 	// resumed scan skips the targets before the lowest one in flight at the
-```
-
-**File**: `pkg/core/executors.go` (modified, +1/-5)
-```diff
-@@ -76,11 +76,7 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
- 		e.workPool = e.GetWorkPool()
- 	}
- 	// Bounded worker pool using input concurrency
--	pool := e.workPool.InputPool(template.Type())
--	workerCount := 1
--	if pool != nil && pool.Size > 0 {
--		workerCount = pool.Size
--	}
-+	workerCount := e.workPool.InputPool(template.Type()).Size
- 
- 	var (
- 		index uint32
-```
-
-**File**: `pkg/core/workflow_execute.go` (modified, +3/-2)
-```diff
-@@ -28,11 +28,12 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
- 
- 	// we can know the nesting level only at runtime, so the best we can do here is increase template threads by one unit in case it's equal to 1 to allow
- 	// at least one subtemplate to go through, which it's idempotent to one in-flight template as the parent one is in an idle state
--	templateThreads := w.Options.Options.TemplateThreads
-+	templateThreads := max(w.Options.Options.TemplateThreads, 1)
- 	if templateThreads == 1 {
- 		templateThreads++
- 	}
--	swg, _ := syncutil.New(syncutil.WithSize(templateThreads))
-+
-+	swg := newPool(templateThreads)
- 	// pending tracks every started step until it returns. swg only limits
- 	// concurrency and its slots can be released early, so completion is
- 	// tracked here instead.
-```
-
-**File**: `pkg/core/workpool.go` (modified, +32/-11)
-```diff
-@@ -2,6 +2,7 @@ package core
- 
- import (
- 	"context"
-+	"fmt"
- 
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
-@@ -33,16 +34,29 @@ type WorkPoolConfig struct {
- 
- // NewWorkPool returns a new WorkPool instance
- func NewWorkPool(config WorkPoolConfig) *WorkPool {
--	headlessWg, _ := syncutil.New(syncutil.WithSize(config.HeadlessTypeConcurrency))
--	defaultWg, _ := syncutil.New(syncutil.WithSize(config.TypeConcurrency))
--
- 	return &WorkPool{
- 		config:   config,
--		Headless: headlessWg,
--		Default:  defaultWg,
-+		Headless: newPool(config.HeadlessTypeConcurrency),
-+		Default:  newPool(config.TypeConcurrency),
- 	}
- }
- 
-+// newPool returns a pool of size, or of one when size is below 1.
-+// syncutil.New returns a nil pool for a size below 1, which the scan would
-+// dereference.
-+func newPool(size int) *syncutil.AdaptiveWaitGroup {
-+	size = max(size, 1)
-+
-+	pool, err := syncutil.New(syncutil.WithSize(size))
-+	if err != nil {
-+		// The size is at least 1, so this cannot happen. Stopping here beats
-+		// handing the scan a nil pool.
-+		panic(fmt.Sprintf("could not create work pool of size %d: %s", size, err))
-+	}
-+
-+	return pool
-+}
-+
- // Wait waits for all the work pool wait groups to finish
- func (w *WorkPool) Wait() {
- 	w.Default.Wait()
-@@ -57,8 +71,8 @@ func (w *WorkPool) InputPool(templateType types.ProtocolType) *syncutil.Adaptive
- 	} else {
- 		count = w.config.InputConcurrency
- 	}
--	swg, _ := syncutil.New(syncutil.WithSize(count))
--	return swg
-+
-+	return newPool(count)
- }
- 
- func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
-@@ -82,13 +96,20 @@ func (w *WorkPool) RefreshWithConfigContext(ctx context.Context, config WorkPool
- }
- 
- func (w *WorkPool) Refresh(ctx context.Context) {
--	if w.Default.Size != w.config.TypeConcurrency {
--		if err := w.Default.Resize(ctx, w.config.TypeConcurrency); err != nil {
-+	// newPool sized the pools to at least 1, so compare against the same bound.
-+	typeConcurrency := max(w.config.TypeConcurrency, 1)
-+	headlessTypeConcurrency := max(w.config.HeadlessTypeConcurrency, 1)
-+
-+	if w.Default.Size != typeConcurrency {
-+		err := w.Default.Resize(ctx, typeConcurrency)
-+		if err != nil {
- 			gologger.Warning().Msgf("Could not resize workpool: %s\n", err)
- 		}
- 	}
--	if w.Headless.Size != w.config.HeadlessTypeConcurrency {
--		if err := w.Headless.Resize(ctx, w.config.HeadlessTypeConcurrency); err != nil {
-+
-+	if w.Headless.Size != headlessTypeConcurrency {
-+		err := w.Headless.Resize(ctx, headlessTypeConcurrency)
-+		if err != nil {
- 			gologger.Warning().Msgf("Could not resize workpool: %s\n", err)
- 		}
- 	}
-```
-
-**File**: `pkg/core/workpool_test.go` (added, +174/-0)
-```diff
-@@ -0,0 +1,174 @@
-+package core //nolint:testpackage // it builds engines through the unexported newTaskEngine
-+
-+//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
-+import (
-+	"context"
-+	"fmt"
-+	"strconv"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/progress"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
-+	tmpltypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types/scanstrategy"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
-+)
-+
-+// A concurrency below 1 must run with one worker, not leave a nil pool for
-+// the scan to dereference.
-+//
-+//nolint:paralleltest,exhaustruct,exhaustruct_v5 // engines share the default logger; fixtures keep zero values
-+func TestScanRunsWithConcurrencyBelowOne(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		workflow bool
-+		values   func(value int) (bulk, headlessBulk, threads, headlessThreads int)
-+	}{
-+		{"-c", false, func(v int) (int, int, int, int) { return 2, 1, v, 1 }},
-+		{"-c with a workflow", true, func(v int) (int, int, int, int) { return 2, 1, v, 1 }},
-+		{"-headc", false, func(v int) (int, int, int, int) { return 2, 1, 2, v }},
-+		{"-bs and -hbs", false, func(v int) (int, int, int, int) { return v, v, 2, 1 }},
-+		// -bs plus the default -hbs of 10 is below 1 while -bs is not.
-+		{"-bs with -hbs 10", false, func(v int) (int, int, int, int) { return v - 10, 10, 2, 1 }},
-+	}
-+
-+	for _, strategy := range []scanstrategy.ScanStrategy{scanstrategy.TemplateSpray, scanstrategy.HostSpray} {
-+		for _, test := range tests {
-+			for _, value := range []int{0, -1} {
-+				t.Run(fmt.Sprintf("%s/%s=%d", strategy, test.name, value), func(t *testing.T) {
-+					engine, _ := newTaskEngine(strategy, nil, nil, nil)
-+					bulk, headlessBulk, threads, headlessThreads := test.values(value)
-+					engine.options.BulkSize = bulk
-+					engine.options.HeadlessBulkSize = headlessBulk
-+					engine.options.TemplateThreads = threads
-+					engine.options.HeadlessTemplateThreads = headlessThreads
-+					engine.workPool = engine.GetWorkPool()
-+
-+					var (
-+						runsMu sync.Mutex
-+						runs   []string
-+					)
-+
-+					templatesList := scanTemplates(test.workflow, engine.options, &runsMu, &runs)
-+
-+					// A workflow clones its input, which needs the input's mutex.
-+					targets := &fakeTargetProvider{}
-+
-+					for _, input := range []string{"a", "b"} {
-+						target := contextargs.NewMetaInput()
-+						target.Input = input
-+						targets.values = append(targets.values, target)
-+					}
-+
-+					ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
-+					defer cancel()
-+
-+					require.NotPanics(t, func() {
-+						engine.ExecuteScanWithOpts(ctx, templatesList, targets, true)
-+					})
-+					require.Len(t, runs, 4, "every template, or the workflow and its subtemplate, runs on every target")
-+				})
-+			}
-+		}
-+	}
-+}
-+
-+// NewWorkPool builds every pool even when the configured size is below 1, and
-+// refreshing it with the same size leaves the pools usable.
-+//
-+//nolint:paralleltest // keeps the file's tests together
-+func TestNewWorkPoolClampsSizeToOne(t *testing.T) {
-+	for _, size := range []int{0, -1} {
-+		t.Run(strconv.Itoa(size), func(t *testing.T) {
-+			config := WorkPoolConfig{
-+				InputConcurrency:         size,
-+				TypeConcurrency:          size,
-+				HeadlessInputConcurrency: size,
-+				HeadlessTypeConcurrency:  size,
-+			}
-+			pool := NewWorkPool(config)
-+			require.NotNil(t, pool.Default)
-+			require.NotNil(t, pool.Headless)
-+			require.Equal(t, 1, pool.Default.Size)
-+			require.Equal(t, 1, pool.Headless.Size)
-+			require.Equal(t, 1, pool.InputPool(tmpltypes.HTTPProtocol).Size)
-+			require.Equal(t, 1, pool.InputPool(tmpltypes.HeadlessProtocol).Size)
-+
-+			pool.RefreshWithConfig(config)
-+			require.Equal(t, 1, pool.Default.Size)
-+			require.Equal(t, 1, pool.Headless.Size)
-+			pool.Wait()
-+		})
-+	}
-+}
-+
-+// workflowTemplate returns a workflow of one step and one subtemplate. The
-+// step matches, so the subtemplate runs.
-+//
-+//nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
-+func workflowTemplate(options *types.Options, runsMu *sync.Mutex, runs *[]string) *templates.Template {
-+	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
-+	step := func(name string, outputs ...*output.InternalWrappedEvent) *workflows.WorkflowTemplate {
-+		return &workflows.WorkflowTemplate{Executers: []*workflows.ProtocolExecuterPair{{
-+			Executer: &mockExecuter{
-+				result: true,
-+				executeHook: func(input *contextargs.MetaInput) {
-+					runsMu.Lock()
-+					d
-```
-
-**File**: `pkg/protocols/common/automaticscan/automaticscan.go` (modified, +13/-2)
-```diff
-@@ -130,7 +130,10 @@ func (s *Service) Execute(ctx context.Context) error {
- 		s.opts.Progress.AddToTotal(int64(getRequestCount(s.techTemplates)) * s.target.Count())
- 	}
- 	// setup host concurrency
--	sg, err := syncutil.New(syncutil.WithSize(s.opts.Options.BulkSize))
-+	// syncutil.New rejects a size below 1, so a -bs below 1 scans one host at a time.
-+	bulkSize := max(s.opts.Options.BulkSize, 1)
-+
-+	sg, err := syncutil.New(syncutil.WithSize(bulkSize)) //nolint:varnamelen // sg names the group throughout
- 	if err != nil {
- 		return err
- 	}
-@@ -269,7 +272,15 @@ func (s *Service) getTagsUsingDetectionTemplates(ctx context.Context, input *con
- 	// execute tech detection templates on target
- 	tags := map[string]struct{}{}
- 	m := &sync.Mutex{}
--	sg, _ := syncutil.New(syncutil.WithSize(s.opts.Options.TemplateThreads))
-+	// syncutil.New rejects a size below 1, so a -c below 1 runs one template at a time.
-+	templateThreads := max(s.opts.Options.TemplateThreads, 1)
-+
-+	sg, err := syncutil.New(syncutil.WithSize(templateThreads)) //nolint:varnamelen // sg names the group throughout
-+	if err != nil {
-+		gologger.Error().Msgf("Could not create detection template group for %v: %s\n", input.Input, err)
-+
-+		return nil, 0
-+	}
- 	counter := atomic.Uint32{}
- 
- 	for _, t := range s.techTemplates {
-```
-
-**File**: `pkg/protocols/common/automaticscan/automaticscan_test.go` (modified, +60/-0)
-```diff
-@@ -1,9 +1,20 @@
- package automaticscan
- 
-+//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
- import (
-+	"strconv"
-+	"sync/atomic"
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/scan"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- )
- 
- func TestNormalizeAppName(t *testing.T) {
-@@ -13,3 +24,52 @@ func TestNormalizeAppName(t *testing.T) {
- 	appName = normalizeAppName("JBoss:2.3.5")
- 	require.Equal(t, "jboss", appName, "could not get normalized name")
- }
-+
-+// countingExecuter counts the runs of a detection template.
-+type countingExecuter struct {
-+	runs atomic.Int32
-+}
-+
-+func (c *countingExecuter) Compile() error { return nil }
-+func (c *countingExecuter) Requests() int  { return 1 }
-+func (c *countingExecuter) Execute(*scan.ScanContext) (bool, error) {
-+	c.runs.Add(1)
-+
-+	return false, nil
-+}
-+func (c *countingExecuter) ExecuteWithResults(*scan.ScanContext) ([]*output.ResultEvent, error) {
-+	c.runs.Add(1)
-+
-+	return nil, nil
-+}
-+
-+// A -c or -bs below 1 must not make the service fail or dereference a nil
-+// pool; it runs one task at a time.
-+//
-+//nolint:exhaustruct,exhaustruct_v5,paralleltest // fixtures keep zero-value defaults
-+func TestServiceRunsWithConcurrencyBelowOne(t *testing.T) {
-+	for _, value := range []int{0, -1} {
-+		t.Run("-c="+strconv.Itoa(value), func(t *testing.T) {
-+			executer := &countingExecuter{}
-+			service := &Service{
-+				opts:          &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: value}},
-+				techTemplates: []*templates.Template{{ID: "tech-detect", Executer: executer}},
-+			}
-+
-+			input := contextargs.NewMetaInput()
-+			input.Input = "http://127.0.0.1"
-+
-+			require.NotPanics(t, func() { service.getTagsUsingDetectionTemplates(t.Context(), input) })
-+			require.EqualValues(t, 1, executer.runs.Load(), "the detection template runs once")
-+		})
-+
-+		t.Run("-bs="+strconv.Itoa(value), func(t *testing.T) {
-+			service := &Service{
-+				opts:   &protocols.ExecutorOptions{Options: &types.Options{BulkSize: value}},
-+				target: provider.NewSimpleInputProvider(),
-+			}
-+
-+			require.NoError(t, service.Execute(t.Context()))
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `a3514df6` (2026-11-21)
-**Commit Message**: Merge pull request #8293 from projectdiscovery/dwisiswant0/fix/templates/keep-race-blocks-out-of-clustering
-
-fix(templates): keep race blocks out of clustering
-
-**File**: `pkg/protocols/http/cluster.go` (modified, +7/-1)
-```diff
-@@ -16,7 +16,13 @@ func (request *Request) TmplClusterKey() uint64 {
- }
- 
- // IsClusterable returns true if the request is eligible to be clustered.
-+// A cluster sends its first member's request for every member, so a block that
-+// sends race_count copies would force its count on the others, or lose it to a
-+// plain first member (#8280). Without race_count, race sends what a plain block
-+// sends. A pipelined block is never clustered: the pipeline client writes its
-+// request differently from a plain block's, so a cluster would send one kind
-+// for the other.
- func (request *Request) IsClusterable() bool {
- 	//nolint
--	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "" || request.readsRawResponse)
-+	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.Pipeline || request.NeedsRequestCondition() || request.Name != "" || request.readsRawResponse || request.sendsRaceCopies())
- }
-```
-
-**File**: `pkg/protocols/http/cluster_test.go` (modified, +38/-0)
-```diff
-@@ -94,6 +94,44 @@ func TestIsClusterable(t *testing.T) {
- 	})
- }
- 
-+// A cluster sends its first member's request for every member, so a race block
-+// would force its race_count on the others, or lose it to a plain one (#8280).
-+//
-+//nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
-+func TestIsClusterableRace(t *testing.T) {
-+	t.Parallel()
-+
-+	tests := []struct {
-+		name        string
-+		race        bool
-+		count       int
-+		pipeline    bool
-+		clusterable bool
-+	}{
-+		{name: "race with race_count is not clusterable", race: true, count: 5},
-+		// without race_count, race runs as any other block
-+		{name: "race without race_count is clusterable", race: true, clusterable: true},
-+		// a pipelined block sends its request differently from a plain one
-+		{name: "race with race_count in a pipeline is not clusterable", race: true, count: 5, pipeline: true},
-+		{name: "pipeline is not clusterable", pipeline: true},
-+		{name: "race_count without race is clusterable", count: 5, clusterable: true},
-+	}
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			req := &Request{
-+				Path:               []string{"{{BaseURL}}"},
-+				Method:             HTTPMethodTypeHolder{MethodType: HTTPGet},
-+				Race:               test.race,
-+				RaceNumberRequests: test.count,
-+				Pipeline:           test.pipeline,
-+			}
-+			require.Equal(t, test.clusterable, req.IsClusterable())
-+		})
-+	}
-+}
-+
- func TestTmplClusterKeyIdempotent(t *testing.T) {
- 	req := &Request{
- 		Path:         []string{"{{BaseURL}}/admin"},
-```
-
-**File**: `pkg/templates/cluster.go` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ import (
- //
- // Cases where clustering is not performed (request is considered different)
- //   - If request contains payloads,raw,body,unsafe,req-condition,name attributes
-+//   - If an HTTP request sends race copies (race with a race_count above 0, outside a pipeline)
- //   - If request methods,max-redirects,disable-cookie,redirects are not equal
- //   - If request paths aren't identical.
- //   - If request headers aren't identical
-```
-
-**File**: `pkg/templates/cluster_test.go` (modified, +47/-0)
-```diff
-@@ -78,3 +78,50 @@ func TestClusterTemplates(t *testing.T) {
- 		require.ElementsMatch(t, got, expected)
- 	})
- }
-+
-+// A cluster sends its first member's request for every member, so a race block
-+// would force its race_count on the others, or lose it to a plain one (#8280).
-+//
-+//nolint:exhaustruct,exhaustruct_v5,paralleltest // fixtures keep zero-value defaults; testutils state is shared
-+func TestClusterTemplatesRaceBlocksRunOnTheirOwn(t *testing.T) {
-+	execOptions := testutils.NewMockExecuterOptions(testutils.DefaultOptions, &testutils.TemplateInfo{
-+		ID:   "templateID",
-+		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
-+	})
-+	member := func(path string, race bool, count int) *Template {
-+		tmpl := &Template{Path: path, RequestsHTTP: []*http.Request{{
-+			Path:               []string{"{{BaseURL}}/same"},
-+			Race:               race,
-+			RaceNumberRequests: count,
-+		}}}
-+		tmpl.Options = execOptions
-+
-+		return tmpl
-+	}
-+	plain, otherPlain := member("a-plain.yaml", false, 0), member("b-plain.yaml", false, 0)
-+	race, otherRace := member("c-race.yaml", true, 5), member("d-race.yaml", true, 3)
-+	// without race_count the block runs as any other
-+	raceOnly := member("e-race-only.yaml", true, 0)
-+	// clusters lists each cluster's template paths, so a failure prints names
-+	// and not whole templates
-+	clusters := func(members ...*Template) [][]string {
-+		clustered := Cluster(members)
-+		got := make([][]string, 0, len(clustered))
-+
-+		for _, cluster := range clustered {
-+			paths := make([]string, 0, len(cluster))
-+			for _, tmpl := range cluster {
-+				paths = append(paths, tmpl.Path)
-+			}
-+
-+			got = append(got, paths)
-+		}
-+
-+		return got
-+	}
-+
-+	require.ElementsMatch(t, [][]string{{race.Path}, {plain.Path}}, clusters(race, plain), "race with plain")
-+	require.ElementsMatch(t, [][]string{{race.Path}, {otherRace.Path}}, clusters(race, otherRace), "two race")
-+	require.ElementsMatch(t, [][]string{{plain.Path, otherPlain.Path}}, clusters(plain, otherPlain), "two plain")
-+	require.ElementsMatch(t, [][]string{{plain.Path, raceOnly.Path}}, clusters(plain, raceOnly), "no race_count")
-+}
-```
-
-**File**: `pkg/templates/cluster_total_test.go` (modified, +2/-8)
-```diff
-@@ -16,7 +16,8 @@ import (
- const clusterTotalName = "cluster"
- 
- // A cluster runs the request of its first template, so its total is that
--// request's: a race request sends race_count copies (#8257).
-+// request's, not one per member: a request with several paths sends each.
-+// A block that sends race copies doesn't cluster (#8280), so none is here.
- //
- //nolint:exhaustruct,exhaustruct_v5,paralleltest // fixtures keep zero-value defaults; testutils.Init state is shared
- func TestClusterTotalIsTheRequestsTotal(t *testing.T) {
-@@ -25,13 +26,6 @@ func TestClusterTotalIsTheRequestsTotal(t *testing.T) {
- 		request func() *httpprotocol.Request
- 		total   int
- 	}{
--		{
--			name: "race",
--			request: func() *httpprotocol.Request {
--				return &httpprotocol.Request{Path: []string{"{{BaseURL}}/race"}, Race: true, RaceNumberRequests: 5}
--			},
--			total: 5,
--		},
- 		{
- 			name: "one path",
- 			request: func() *httpprotocol.Request {
-```
-
----
-
-### Incident Patch 3: `c13d2589` (2026-11-21)
-**Commit Message**: Merge pull request #8284 from projectdiscovery/dwisiswant0/fix/http/end-a-pipelined-block-at-its-first-match-during-a
-
-fix(http): end a pipelined block at its first match during a budget wait
-
-**File**: `pkg/protocols/http/request.go` (modified, +14/-1)
-```diff
-@@ -688,9 +688,22 @@ func (request *Request) executeTurboHTTP(input *contextargs.Context, dynamicValu
- 			break
- 		}
- 
--		ctx := input.Context()
-+		// The handler's context ends the wait for budget at the first match, and
-+		// with the input's cancel, as executeParallelHTTP's workerCtx does.
-+		ctx := spmHandler.Context()
- 		generatedHttpRequest, reservation, err := request.makeReserved(ctx, generator, input, inputData, payloads, dynamicValues)
- 		if err != nil {
-+			// A first match, or an unresponsive address, cancels the handler and
-+			// ends the wait. The block then ends as at the check above, noting
-+			// the skip when the address is down. The handler's context derives
-+			// from the input's, so an input cancel has to be told apart first:
-+			// it stays an error.
-+			if input.Context().Err() == nil && spmHandler.Cancelled() {
-+				request.skipUnresponsive(input, &skipped)
-+
-+				break
-+			}
-+
- 			// The requests already started deliver their results first, as in executeParallelHTTP.
- 			spmHandler.Wait()
- 
-```
-
-**File**: `pkg/protocols/http/request_pipeline_test.go` (modified, +212/-0)
-```diff
-@@ -4,8 +4,10 @@ package http_test
- import (
- 	"bufio"
- 	"context"
-+	"io"
- 	"net"
- 	"net/http"
-+	"net/http/httptest"
- 	"sync"
- 	"sync/atomic"
- 	"testing"
-@@ -15,6 +17,9 @@ import (
- 
- 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/hosterrorscache"
-+	httpprotocol "github.com/projectdiscovery/nuclei/v3/pkg/protocols/http"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/utils/httpbody"
- )
- 
- // holdingServer reads pipelined requests and answers each one only after
-@@ -108,3 +113,210 @@ func TestPipelineCancelWaitsForSentRequests(t *testing.T) {
- 	// The loop took the second request but did not send it.
- 	require.EqualValues(t, 1, events.Load(), "results reported before the block returns")
- }
-+
-+// serverReadingBodies serves skipOK after it reads the request body, and counts
-+// the requests it gets.
-+func serverReadingBodies(t *testing.T) (*httptest.Server, *atomic.Int32) {
-+	t.Helper()
-+
-+	var received atomic.Int32
-+
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		_, _ = io.Copy(io.Discard, r.Body)
-+
-+		received.Add(1)
-+
-+		_, _ = io.WriteString(w, skipOK)
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	return server, &received
-+}
-+
-+// pipelinedBudgetBlock returns a pipelined block that stops at its first
-+// match and sends 3 requests with a body that waits for the body budget.
-+//
-+//nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
-+func pipelinedBudgetBlock(id string) *httpprotocol.Request {
-+	return &httpprotocol.Request{
-+		ID: id, Pipeline: true, StopAtFirstMatch: true, Operators: matchStatusOK(),
-+		Payloads: map[string]any{"p": numberedPayloads(3)},
-+		Raw: []string{"POST /?p={{p}} HTTP/1.1\nHost: {{Hostname}}\nConnection: keep-alive\n" +
-+			"Content-Length: 1048576\n\n{{repeat(\"A\", 1048576)}}"},
-+	}
-+}
-+
-+// A pipelined block that finds its first match ends there, although another
-+// block's request holds the body budget that the block's next request waits
-+// for (#8256).
-+//
-+//nolint:paralleltest // testutils.Init state is shared
-+func TestPipelineEndsAtFirstMatchWhileWaitingForBudget(t *testing.T) {
-+	const size = httpbody.MinBudgetedBody
-+
-+	server, received := serverReadingBodies(t)
-+	request := pipelinedBudgetBlock("pipe-budget")
-+	budget := httpbody.NewBudget(size)
-+	compileWithBudget(t, request, newDownHostErrorsCache(false), budget)
-+
-+	// Another block holds the whole budget, and queues its next request
-+	// ahead of the pipelined block's second one.
-+	releaseHeld, err := budget.Acquire(t.Context(), size)
-+	require.NoError(t, err)
-+
-+	matched := make(chan struct{}, 8)
-+	done := make(chan error, 1)
-+
-+	go func() {
-+		done <- request.ExecuteWithResults(contextargs.NewWithInput(t.Context(), server.URL),
-+			make(output.InternalEvent), make(output.InternalEvent),
-+			func(event *output.InternalWrappedEvent) {
-+				if event.HasOperatorResult() {
-+					matched <- struct{}{}
-+				}
-+			})
-+	}()
-+
-+	// The first request is built and waits for the budget.
-+	time.Sleep(300 * time.Millisecond)
-+
-+	next := make(chan func(), 1)
-+
-+	go func() {
-+		release, err := budget.Acquire(t.Context(), size)
-+		if err == nil {
-+			next <- release
-+		}
-+	}()
-+
-+	time.Sleep(300 * time.Millisecond)
-+	// The first request gets the budget, is sent and matches, and then the
-+	// other block's next request gets it.
-+	releaseHeld()
-+
-+	var releaseNext func()
-+
-+	select {
-+	case <-matched:
-+		releaseNext = sync.OnceFunc(<-next)
-+	case <-time.After(10 * time.Second):
-+		t.Fatal("the first request did not match")
-+	}
-+
-+	// The block's second request now waits for budget that stays held.
-+	defer releaseNext()
-+
-+	select {
-+	case err := <-done:
-+		require.NoError(t, err)
-+	case <-time.After(5 * time.Second):
-+		releaseNext()
-+
-+		err := <-done
-+		t.Fatalf("the block waited for the budget after its first match, until it returned %v", err)
-+	}
-+
-+	require.EqualValues(t, 1, received.Load(), "requests sent")
-+}
-+
-+// A pipelined block that waits for body budget still returns the input's
-+// cancel as an error, though a stop-at-first-match handler that derives from
-+// the input also reports that cancel as a first match (#8256).
-+//
-+//nolint:paralleltest // testutils.Init state is shared
-+func TestPipelineCancelWhileWaitingForBudget(t *testing.T) {
-+	const size = httpbody.MinBudgetedBody
-+
-+	server, received := serverCountingHits(t)
-+	request := pipelinedBudgetBlock("pipe-budget-cancel")
-+	budget := httpbody.NewBudget(size)
-+	compileWithBudget(t, request, newDownHostErrorsCache(false), budget)
-+
-+	// Another block holds the whole budget, so the first request waits for it.
-+	releaseHeld, err := budget.Acquire(t.Context(), size)
-+	require.NoError(t, err)
-+
-+	t.Cleanup(releaseHeld)
-+
-+	ctx, cancel := context.WithCancel(t.Context())
-+	defer cancel()
-+
-+	input := contextargs.NewWithInput(ctx, server.URL)
-+	done := make(chan error, 1)
-+
-```
-
-**File**: `pkg/protocols/http/request_unresponsive_test.go` (modified, +17/-1)
-```diff
-@@ -24,6 +24,7 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/hosterrorscache"
- 	httpprotocol "github.com/projectdiscovery/nuclei/v3/pkg/protocols/http"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/utils/httpbody"
- 	"github.com/projectdiscovery/ratelimit"
- )
- 
-@@ -141,9 +142,19 @@ func (c *downHostErrorsCache) IsPermanentErr(*contextargs.Context, error) bool {
- 
- // compileWithCache compiles request with cache as its host errors cache and a
- // progress that counts.
-+func compileWithCache(t *testing.T, request *httpprotocol.Request, cache *downHostErrorsCache) *skipProgress {
-+	t.Helper()
-+
-+	return compileWithBudget(t, request, cache, nil)
-+}
-+
-+// compileWithBudget is compileWithCache with budget as the request-body
-+// budget, unless it is nil.
- //
- //nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
--func compileWithCache(t *testing.T, request *httpprotocol.Request, cache *downHostErrorsCache) *skipProgress {
-+func compileWithBudget(
-+	t *testing.T, request *httpprotocol.Request, cache *downHostErrorsCache, budget *httpbody.Budget,
-+) *skipProgress {
- 	t.Helper()
- 
- 	options := testutils.DefaultOptions.Copy()
-@@ -160,6 +171,11 @@ func compileWithCache(t *testing.T, request *httpprotocol.Request, cache *downHo
- 	progress := &skipProgress{}
- 	executerOpts.Progress = progress
- 	executerOpts.HostErrorsCache = cache
-+
-+	if budget != nil {
-+		executerOpts.RequestBodyBudget = budget
-+	}
-+
- 	require.NoError(t, request.Compile(executerOpts))
- 
- 	return progress
+@@ -316,8 +316,8 @@ github.com/chzyer/test v1.0.0/go.mod h1:2JlltgoNkt4TW/z9V/IzDdFaMTM2JPIi26O1pF38
+ github.com/clbanning/mxj/v2 v2.7.0 h1:WA/La7UGCanFe5NpHF0Q3DNtnCsVoxbPKuyBNHWRyME=
+ github.com/clbanning/mxj/v2 v2.7.0/go.mod h1:hNiWqW14h+kc+MdF9C6/YoRfjEJoR3ou6tn/Qo+ve2s=
+ github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
+-github.com/cloudflare/cfssl v1.6.5 h1:46zpNkm6dlNkMZH/wMW22ejih6gIaJbzL2du6vD7ZeI=
+-github.com/cloudflare/cfssl v1.6.5/go.mod h1:Bk1si7sq8h2+yVEDrFJiz3d7Aw+pfjjJSZVaD+Taky4=
++github.com/cloudflare/cfssl v1.7.1 h1:nMC84ouypIM/AXrrY24ql70cEtkelfxq4NZ67Ur8pG8=
++github.com/cloudflare/cfssl v1.7.1/go.mod h1:WLpD4XaYgn44qgQ4W+tvGJEr59/snfQn6LwUrXloxx0=
+ github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
+ github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
+ github.com/cloudwego/base64x v0.1.6 h1:t11wG9AECkCDk5fMSoxmufanudBtJ+/HemLstXDLI2M=
+@@ -565,8 +565,8 @@ github.com/golang/snappy v1.0.0 h1:Oy607GVXHs7RtbggtPBnr2RmDArIsAefDwvrdWvRhGs=
+ github.com/golang/snappy v1.0.0/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
+ github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
+ github.com/google/btree v1.0.0/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
+-github.com/google/certificate-transparency-go v1.3.3 h1:hq/rSxztSkXN2tx/3jQqF6Xc0O565UQPdHrOWvZwybo=
+-github.com/google/certificate-transparency-go v1.3.3/go.mod h1:iR17ZgSaXRzSa5qvjFl8TnVD5h8ky2JMVio+dzoKMgA=
++github.com/google/certificate-transparency-go v1.4.0 h1:78uNaR2knzCoKKXXDSAGVkz9XPkDg5xXJRP9tP6+rr0=
++github.com/google/certificate-transparency-go v1.4.0/go.mod h1:iR17ZgSaXRzSa5qvjFl8TnVD5h8ky2JMVio+dzoKMgA=
+ github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
+ github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
+ github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
+@@ -923,8 +923,8 @@ github.com/praetorian-inc/fingerprintx v1.1.15 h1:CVIxrIQARbmdk5h8E9tIJZbvFoY2sG
+ github.com/praetorian-inc/fingerprintx v1.1.15/go.mod h1:hqRroITBwKpP8BOGF+n/A+qv9wSF7OSVinmu5NCyOUI=
+ github.com/projectdiscovery/asnmap v1.2.0 h1:xxZxVYJYPyBNbwF7jL/rtpThKBMdjomQBmlAZRqhq7E=
+ github.com/projectdiscovery/asnmap v1.2.0/go.mod h1:0tNdUGHUE7TFWDaHZtuXcVpQfRTZZ1BKmFfl8gtQbiU=
+-github.com/projectdiscovery/blackrock v0.0.2 h1:mxXdu0uM8P2L2Qi210COlU8QiICPFW/Rxk5QUhlPO2k=
+-github.com/projectdiscovery/blackrock v0.0.2/go.mod h1:ANUtjDfaVrqB453bzToU+YB4cUbvBRpLvEwoWIwlTss=
++github.com/projectdiscovery/blackrock v0.0.4 h1:xFqk3gqbLDfJuqfpTer+rtwz3q7JLnz/a/A2hbFB8rI=
++github.com/projectdiscovery/blackrock v0.0.4/go.mod h1:ANUtjDfaVrqB453bzToU+YB4cUbvBRpLvEwoWIwlTss=
+ github.com/projectdiscovery/cdncheck v1.4.0 h1:FP+ALhMtm+HyE8WgeWp3lUvNp3WaE7LCsC7LpB9QsWw=
+ github.com/projectdiscovery/cdncheck v1.4.0/go.mod h1:27FjISwBKtdQXsC31q16xspX5xAu0gbYfF0rs3yGNxs=
+ github.com/projectdiscovery/clistats v0.1.10 h1:G+Ml7L1RoYPhkspkGPwSse7r2Nhnee2Z5wsr7YE0HTs=
+@@ -947,16 +947,16 @@ github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c h1:4H/CfVNlu
+ github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
+ github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d h1:fqqH9LHpN2WDz9QuxFrhKNxXSRtzk+Sa6jAhbB7tXcQ=
+ github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d/go.mod h1:Ezmbgdaw4EunGGBU4MQViLoGMJc37LA3ip55YV3KeRI=
+-github.com/projectdiscovery/gologger v1.1.75 h1:w+8DgCOCFpUegE2Ww8LQBUWPACkJUOvJ4Q1C0f2N9qI=
+-github.com/projectdiscovery/gologger v1.1.75/go.mod h1:LDeWHizV+0QVuvDP4uJHM/M+eQlp0XLWlQ1z8PgOE1k=
++github.com/projectdiscovery/gologger v1.1.76 h1:QeIZ2VT9ZdRNx+XBuE7XkH3S33plPYtKA4l/TgsSsks=
++github.com/projectdiscovery/gologger v1.1.76/go.mod h1:jaR2D5zhFl+ReRNof6M+Zgn7i4OmorazLXheeqgDh7k=
+ github.com/projectdiscovery/gostruct v0.0.2 h1:s8gP8ApugGM4go1pA+sVlPDXaWqNP5BBDDSv7VEdG1M=
+ github.com/projectdiscovery/gostruct v0.0.2/go.mod h1:H86peL4HKwMXcQQtEa6lmC8FuD9XFt6gkNR0B/Mu5PE=
+ github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2 h1:aSLbDvrJQPlp4HvojU+bTU5XV8xdAVCjoc5gX1Wfbw4=
+ github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2/go.mod h1:Z3VjpUJV1pnXDwvAddA8aZ4e839SoeftB7CSdZntAVI=
+ github.com/projectdiscovery/gozero v0.1.1 h1:wLiJH11YTMzgrV9AWB24S08wYfGF4/ggm4xdlduQmLk=
+ github.com/projectdiscovery/gozero v0.1.1/go.mod h1:RFHYWR70/YBV74h/0P2l0Crht6lHq8zhJfAluVg97OI=
+-github.com/projectdiscovery/hmap v0.0.104 h1:38j4A2gttI48tI5MrdRV2ZTH3SWEysoSYeDxqYqW3rA=
+-github.com/projectdiscovery/hmap v0.0.104/go.mod h1:koGp3dcpH+BNj/9JuoZnXhbRfAiZrgIiCzsiBCtSIFs=
++github.com/projectdiscovery/hmap v0.0.105 h1:m2jNLk0HEJTh5h/QaCtzmbEWGP/JzshlmmzCU/yMsN8=
++github.com/projectdiscovery/hmap v0.0.105/go.mod h1:qI2qGiJxO7X6t4+eajcl62SHHc2tBfLh6Zp+/jk
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8308** (2026-11-23): chore(deps): bump the modules group with 9 updates (@dependabot[bot])
 - **PR #8300** (2026-11-21): fix(resume): keep the loaded progress of templates not yet reached (@dwisiswant0)
 - **PR #8299** (2026-11-21): fix(input): let a template port replace a reserved port in a URL target (@dwisiswant0)
 - **PR #8297** (2026-11-21): fix(http): dump a pipelined request as the pipeline client writes it (@dwisiswant0)
 - **PR #8296** (2026-11-21): fix(network): dial a tls:// entry that repeats a plain address (@dwisiswant0)
 - **PR #8295** (2026-11-21): fix(network): write no trace entry when the final read ends (@dwisiswant0)
-- **PR #8294** (2026-11-21): fix: run one task at a time for -c, -headc and -bs below 1 (@dwisiswant0)
 
 ---
 
@@ -2520,34 +1839,51 @@ fix(http): end a pipelined block at its first match during a budget wait
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. run one task at a time for -c, -headc and -bs below 1
+## X. deps): bump the modules group with 9 updates
 
 **RULE**:
-When implementing operations in `internal/runner/inputs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93d9fd57`: run one task at a time for -c, -headc and -bs below 1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3fa285c4`: deps): bump the modules group with 9 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/runner/inputs.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// syncutil.New rejects a size below 1, so a -bs below 1 probes one at a time.
-	bulkSize := max(r.options.BulkSize, 1)
-
-	swg, err := syncutil.New(syncutil.WithSize(bulkSize))
+	github.com/projectdiscovery/gologger v1.1.76
+	github.com/projectdiscovery/hmap v0.0.105
+	github.com/projectdiscovery/networkpolicy v0.1.59
+	github.com/projectdiscovery/retryabledns v1.0.119
+	github.com/projectdiscovery/retryablehttp-go v1.3.35
+	github.com/projectdiscovery/tlsx v1.5.0
+	github.com/projectdiscovery/utils v0.11.15
+	github.com/projectdiscovery/wappalyzergo v0.3.10
+	github.com/cloudflare/cfssl v1.7.1 // indirect
+	github.com/google/certificate-transparency-go v1.4.0 // indirect
+	github.com/projectdiscovery/blackrock v0.0.4 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	swg, err := syncutil.New(syncutil.WithSize(r.options.BulkSize))
+	github.com/projectdiscovery/gologger v1.1.75
+	github.com/projectdiscovery/hmap v0.0.104
+	github.com/projectdiscovery/networkpolicy v0.1.58
+	github.com/projectdiscovery/retryabledns v1.0.118
+	github.com/projectdiscovery/retryablehttp-go v1.3.34
+	github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75
+	github.com/projectdiscovery/utils v0.11.13
+	github.com/projectdiscovery/wappalyzergo v0.3.8
+	github.com/cloudflare/cfssl v1.6.5 // indirect
+	github.com/google/certificate-transparency-go v1.3.3 // indirect
+	github.com/projectdiscovery/blackrock v0.0.2 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93d9fd57` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3fa285c4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

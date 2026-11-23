@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T15:04:35.797Z",
+  "last_updated": "2026-11-23T15:12:46.399Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1535,14 +1535,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "2a71d00f27d90d4c3945a2a3ca5928fcc6785d3aa5d1ca3530e2067b913d14ce",
-      "verified_at": "2026-11-19T01:32:34.591Z",
+      "content_hash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
+      "verified_at": "2026-11-23T15:12:33.947Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:32:34.591Z"
+      "last_updated": "2026-11-23T15:12:33.947Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
-      "verified_at": "2026-11-21T22:56:56.529Z",
+      "content_hash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
+      "verified_at": "2026-11-23T15:12:46.398Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:56:56.529Z"
+      "last_updated": "2026-11-23T15:12:46.398Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -20024,6 +20024,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-23T14:21:00.296Z"
+    },
+    "TenStrip/10Eros-Max": {
+      "repository": "TenStrip/10Eros-Max",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-tenstrip-10eros-max",
+      "content_hash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
+      "verified_at": "2026-11-23T15:12:31.446Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-23T15:12:31.446Z"
     }
   },
   "repos": {

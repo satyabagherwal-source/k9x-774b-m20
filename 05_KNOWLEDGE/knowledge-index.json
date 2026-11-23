@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T15:04:42.937Z",
-  "total_verified_learnings": 9082,
+  "last_updated": "2026-11-23T15:13:18.204Z",
+  "total_verified_learnings": 9083,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24003,
+  "total_items": 24009,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -229493,7 +229493,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "2a71d00f27d90d4c3945a2a3ca5928fcc6785d3aa5d1ca3530e2067b913d14ce",
+      "content_hash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [],
@@ -229502,7 +229502,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:32:34.339Z",
+      "verified_at": "2026-11-23T15:12:33.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229519,9 +229519,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-VL-8B-Instruct Core Invariants",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "6d3e0c763e71ad0a221a718cb0717574ee945ba5acee7541e5320f12a0b5b6cf",
+      "content_hash": "8abed93a4264eb119b56ed974ebaae77f20856c3b67e65b0c433c477ef01625c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T01:32:34.825Z"
+      "persisted_at": "2026-11-23T15:12:34.141Z"
     },
     "learn-github-zenbu-labs-terminal-browser": {
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
@@ -230202,9 +230202,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-vl-8b-instruct-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-vl-8b-instruct-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f72e4a9722e8a0b98f735bfe8070401f5582e5b7ca140f4e7f18b68d2c2339f",
+      "content_hash": "cb6f19ed26b794bd90c7eead6fa93985c1792c5b6609c8b4a6c885cb35fcedca",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T01:32:57.062Z"
+      "persisted_at": "2026-11-23T15:13:16.830Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
@@ -230959,8 +230959,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "e169d3bb",
-      "content_hash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
+      "source_version": "3fa285c4",
+      "content_hash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -231028,6 +231028,11 @@
           "number": 9859,
           "title": "run one task at a time for -c, -headc and -bs below 1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10058,
+          "title": "bump the modules group with 9 updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231035,7 +231040,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:56:56.312Z",
+      "verified_at": "2026-11-23T15:12:46.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231077,10 +231082,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "e169d3bb",
-      "content_hash": "6e5124bc60099a1ef85b6913f2ad859b37895e0e62544e43a48b29d1bb8fb9b1",
+      "source_version": "3fa285c4",
+      "content_hash": "dbce473b982d7dff86fc8bf5b7bab1b7ba2f676a6df55770b584912221a0ac78",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T22:56:56.911Z"
+      "persisted_at": "2026-11-23T15:12:46.766Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -231089,10 +231094,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "e169d3bb",
-      "content_hash": "b6d75098464f75d2b04ee4a86b9f8c72b6dfaf9df05db59db7128fe9fff73ff1",
+      "source_version": "3fa285c4",
+      "content_hash": "bb55f0d3747f46c53e86263091928bb6e0beca4a12a058a8c73c9ac764cc721b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T22:56:57.069Z"
+      "persisted_at": "2026-11-23T15:12:46.927Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -244868,9 +244873,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "79ae4a12803ecef6f628ea670df66af1793fc5003becf7b6d2df95fc5e04db74",
+      "content_hash": "3141349f362b7da4fa5a219ab4b1b0a0645e68e60e5dd2a22eef124c53887850",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:32:50.199Z"
+      "persisted_at": "2026-11-23T15:13:18.015Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -244880,9 +244885,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f19d5b9f1ec2e1aff322cdd8f3ed21a486f62a4749437fc417732fc9c6a4103",
+      "content_hash": "276cbe0243f1c7bd791713cabeea3f600cb68d32a90e220ea3bbe45a433141fd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:32:50.342Z"
+      "persisted_at": "2026-11-23T15:13:18.204Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -326993,6 +326998,95 @@
       "content_hash": "fed613870df228c62c8760b84b914e52850043026b1947ec3e11586a8e65edc2",
       "domain_letter": "B",
       "persisted_at": "2026-11-23T15:04:40.694Z"
+    },
+    "learn-huggingface-tenstrip-10eros-max": {
+      "learning_id": "learn-huggingface-tenstrip-10eros-max",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "TenStrip/10Eros-Max",
+      "repository": "TenStrip/10Eros-Max",
+      "slug": "hf-tenstrip-10eros-max",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/TenStrip/10Eros-Max",
+      "source_version": "hf-tenstrip-10eros-max",
+      "content_hash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-23T15:12:31.211Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-tenstrip-10eros-max-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-tenstrip-10eros-max-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tenstrip-10eros-max-research-knowledge-intelligence-tenstrip-10eros-max-core-.md",
+      "title": "Research & Knowledge Intelligence: TenStrip/10Eros-Max Core Invariants",
+      "repository": "TenStrip/10Eros-Max",
+      "source_version": "hf-tenstrip-10eros-max",
+      "content_hash": "493041fa76f89e3b77e088d2c645b1e7ce663ee9e0b7e194029e4350bb2ed909",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T15:12:31.635Z"
+    },
+    "rule-10058": {
+      "learning_id": "rule-10058",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10058,
+      "title": "bump the modules group with 9 updates",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "3fa285c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T15:12:46.193Z"
+    },
+    "candidate_directive-bump-the-modules-group-with-9-updates": {
+      "item_id": "candidate_directive-bump-the-modules-group-with-9-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NBIQ-bump-the-modules-group-with-9-updates.md",
+      "title": "bump the modules group with 9 updates",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "3fa285c4",
+      "content_hash": "e72391021719077b130d4de2a883555c720cd8d94191c55a33b2c07c70ddaa28",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T15:12:46.613Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-tenstrip-10eros-max-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tenstrip-10eros-max-learnings-research-knowledge-intelligence-hf-tenstrip-10e.md",
+      "title": "Research & Knowledge Intelligence: hf-tenstrip-10eros-max-learnings Core Invariants",
+      "repository": "hf-tenstrip-10eros-max-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50da9cf658c2028e2e76df409478a1ef48a86ef28f9d0e93cdecf6fa02ff37cc",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-23T15:13:16.399Z"
+    },
+    "candidate_directive-deps-bump-the-modules-group-with-9-updates": {
+      "item_id": "candidate_directive-deps-bump-the-modules-group-with-9-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NZLM-deps-bump-the-modules-group-with-9-updates.md",
+      "title": "deps): bump the modules group with 9 updates",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "source_version": "HEAD",
+      "content_hash": "26fa07668a880349b96c49d2f7baab0044f7de36f562d5639aa9ca92309a1e0f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T15:13:17.829Z"
     }
   },
   "ai-builder-brain": {

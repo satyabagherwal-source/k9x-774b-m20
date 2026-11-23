@@ -12377,3 +12377,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-23T14:55:19.393Z |
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-23T15:04:21.213Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ed48557d` | Multi-dimensional audit evidence | 2026-11-23T15:04:35.784Z |
+| `learn-huggingface-tenstrip-10eros-max` | `https://huggingface.co/TenStrip/10Eros-Max` | `hf-tenstri` | Multi-dimensional audit evidence | 2026-11-23T15:12:31.438Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T15:12:33.939Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `3fa285c4` | Multi-dimensional audit evidence | 2026-11-23T15:12:46.391Z |
+| `learn-dom-d-864519d2` | `project://hf-tenstrip-10eros-max` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md` | 2026-11-23T15:13:16.123Z |

@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "2a71d00f27d90d4c3945a2a3ca5928fcc6785d3aa5d1ca3530e2067b913d14ce",
-    "lastHarvestedAt": "2026-11-19T01:32:34.581Z",
+    "contentHash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
+    "lastHarvestedAt": "2026-11-23T15:12:33.939Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "e169d3bb",
+    "sourceVersion": "3fa285c4",
     "license": "MIT",
-    "contentHash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
-    "lastHarvestedAt": "2026-11-21T22:56:56.521Z",
+    "contentHash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
+    "lastHarvestedAt": "2026-11-23T15:12:46.391Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -13268,5 +13268,15 @@
     "contentHash": "20e6f6a0edf22924c204657cc1c8a62ffc8e74255c21c42294b3aca8fb0b0c77",
     "lastHarvestedAt": "2026-11-23T14:21:00.287Z",
     "learningId": "learn-github-fei-craft-ds-bot"
+  },
+  "hf-tenstrip-10eros-max": {
+    "repository": "TenStrip/10Eros-Max",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/TenStrip/10Eros-Max",
+    "sourceVersion": "hf-tenstrip-10eros-max",
+    "license": "Open-Source",
+    "contentHash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
+    "lastHarvestedAt": "2026-11-23T15:12:31.438Z",
+    "learningId": "learn-huggingface-tenstrip-10eros-max"
   }
 }

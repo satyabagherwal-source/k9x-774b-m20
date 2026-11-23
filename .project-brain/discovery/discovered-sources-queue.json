@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T14:38:24.661Z",
+  "updated_at": "2026-11-23T15:13:17.573Z",
   "stats": {
-    "total_discovered": 7854,
-    "approved_pending_harvest": 7430,
+    "total_discovered": 7864,
+    "approved_pending_harvest": 7440,
     "harvested_count": 0,
     "rejected_count": 424,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7421,
+      "COMMUNITY_AND_EXPERT": 7431,
       "OFFICIAL_DOCUMENTATION": 249,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -169843,6 +169843,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
         "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-C178F1C3ECAC": {
+      "id": "SRC-C178F1C3ECAC",
+      "url": "https://huggingface.co/TenStrip/10Eros-Max",
+      "title": "https://huggingface.co/TenStrip/10Eros-Max",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:16.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md",
+        "fileName": "hf-tenstrip-10eros-max-learnings.md"
+      }
+    },
+    "SRC-8AA5F1E324E0": {
+      "id": "SRC-8AA5F1E324E0",
+      "url": "https://github.com/projectdiscovery/gologger",
+      "title": "https://github.com/projectdiscovery/gologger",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-CAAEC6663B08": {
+      "id": "SRC-CAAEC6663B08",
+      "url": "https://github.com/projectdiscovery/hmap",
+      "title": "https://github.com/projectdiscovery/hmap",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.192Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-1EDB705E3019": {
+      "id": "SRC-1EDB705E3019",
+      "url": "https://github.com/projectdiscovery/networkpolicy",
+      "title": "https://github.com/projectdiscovery/networkpolicy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-BF7CB78F6D98": {
+      "id": "SRC-BF7CB78F6D98",
+      "url": "https://github.com/projectdiscovery/retryabledns",
+      "title": "https://github.com/projectdiscovery/retryabledns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-558D9B6CDFCD": {
+      "id": "SRC-558D9B6CDFCD",
+      "url": "https://github.com/projectdiscovery/retryablehttp-go",
+      "title": "https://github.com/projectdiscovery/retryablehttp-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-AC0A130A7699": {
+      "id": "SRC-AC0A130A7699",
+      "url": "https://github.com/projectdiscovery/tlsx",
+      "title": "https://github.com/projectdiscovery/tlsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.411Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-C5354F4F0C51": {
+      "id": "SRC-C5354F4F0C51",
+      "url": "https://github.com/projectdiscovery/utils",
+      "title": "https://github.com/projectdiscovery/utils",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-BAACAB6E7D37": {
+      "id": "SRC-BAACAB6E7D37",
+      "url": "https://github.com/projectdiscovery/wappalyzergo",
+      "title": "https://github.com/projectdiscovery/wappalyzergo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.524Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-3C544402B7CE": {
+      "id": "SRC-3C544402B7CE",
+      "url": "https://github.com/projectdiscovery/blackrock",
+      "title": "https://github.com/projectdiscovery/blackrock",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T15:13:17.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
       }
     }
   }

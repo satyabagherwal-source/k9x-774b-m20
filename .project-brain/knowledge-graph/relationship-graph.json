@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-23T13:25:05.020Z",
+  "updated_at": "2026-11-23T15:13:16.120Z",
   "statistics": {
-    "total_nodes": 482,
-    "total_edges": 202,
+    "total_nodes": 483,
+    "total_edges": 203,
     "domain_distribution": {
-      "D": 294,
+      "D": 295,
       "M": 1,
       "H": 86,
       "J": 22,
@@ -20,7 +20,7 @@
       "I": 9
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 199,
+      "CONSTRAINED_BY_ARCHITECTURE": 200,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
@@ -10768,6 +10768,29 @@
       ],
       "created_at": "2026-11-23T13:25:05.020Z",
       "updated_at": "2026-11-23T13:25:05.020Z"
+    },
+    "DOM-D-864519D2": {
+      "id": "DOM-D-864519D2",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): TenStrip/10Eros-Max",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-tenstrip-10eros-max/hf-tenstrip-10eros-max-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-23T15:12:49.707Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tenstrip-10eros-max)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-23T15:13:16.120Z",
+      "updated_at": "2026-11-23T15:13:16.120Z"
     }
   },
   "edges": [
@@ -12790,6 +12813,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-1DB76912 [D] with Domain M",
       "created_at": "2026-11-22T07:29:02.964Z"
+    },
+    {
+      "id": "EDGE-8BF7A2298053",
+      "sourceId": "DOM-D-864519D2",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-864519D2 [D] with Domain M",
+      "created_at": "2026-11-23T15:13:16.120Z"
     }
   ]
 }

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
   "source_version": "hf-qwen-qwen3-vl-8b-instruct",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T01:32:34.824Z",
+  "timestamp": "2026-11-23T15:12:34.140Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Qwen/Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) (Revision: `hf-qwen-qw`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T01:32:34.824Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T15:12:34.140Z`  
 > **Learning ID**: `learn-huggingface-qwen-qwen3-vl-8b-instruct`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:32:33.842Z  
+> **Harvest Timestamp**: 2026-11-23T15:12:33.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6361206 downloads | 1267 likes
+- **Stars / Engagement**: 5432237 downloads | 1274 likes
 
 ---
 
