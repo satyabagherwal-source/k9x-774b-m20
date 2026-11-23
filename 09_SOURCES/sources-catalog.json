@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "c24de977eb8d4c67db9c660691b73612f45c961b4f6486c8db8c0092567b91e1",
-    "lastHarvestedAt": "2026-11-19T01:18:41.211Z",
+    "contentHash": "303ad1fd0256c8e4f78c1e8942e30b4e53e71a5b38cce77ad2eadfdeb7627570",
+    "lastHarvestedAt": "2026-11-23T15:04:21.213Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "82707de5",
+    "sourceVersion": "ed48557d",
     "license": "Apache-2.0",
-    "contentHash": "028d93bac339be44c2a30f4402485180f3c2a6f35f6b65e3107fa7eb3173aa7b",
-    "lastHarvestedAt": "2026-11-23T05:35:35.021Z",
+    "contentHash": "0d3062413af9d5de2c81b5df2b272965b1bbb6ac1a96052f8eee16cb893facdf",
+    "lastHarvestedAt": "2026-11-23T15:04:35.784Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

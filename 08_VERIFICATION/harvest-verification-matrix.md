@@ -12342,3 +12342,5 @@
 | `CYCLE-20261123-PR44` | `2026-11-23T14:46:40.516Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10055` | Yes (`d097f1a1...`) |
 | `CYCLE-20261123-PSFC` | `2026-11-23T14:46:42.216Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10056` | Yes (`793b3f5c...`) |
 | `CYCLE-20261123-0VH7` | `2026-11-23T14:55:19.387Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`1243dd58...`) |
+| `CYCLE-20261123-CHJS` | `2026-11-23T15:04:21.208Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`303ad1fd...`) |
+| `CYCLE-20261123-CSSJ` | `2026-11-23T15:04:35.779Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10057` | Yes (`0d306241...`) |

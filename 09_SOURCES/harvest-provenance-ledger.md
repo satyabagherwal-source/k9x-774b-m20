@@ -12375,3 +12375,5 @@ Every entry in this ledger must capture:
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `8947fa71` | Multi-dimensional audit evidence | 2026-11-23T14:46:40.520Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ecf1cb0e` | Multi-dimensional audit evidence | 2026-11-23T14:46:42.220Z |
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-23T14:55:19.393Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-23T15:04:21.213Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ed48557d` | Multi-dimensional audit evidence | 2026-11-23T15:04:35.784Z |

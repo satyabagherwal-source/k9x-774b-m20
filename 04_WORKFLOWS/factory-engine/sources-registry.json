@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T14:55:30.808Z",
-    "lastVerified": "2026-11-23T14:55:30.808Z",
+    "lastChecked": "2026-11-23T15:04:39.415Z",
+    "lastVerified": "2026-11-23T15:04:39.415Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,8 +369,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T14:29:26.142Z",
-    "lastVerified": "2026-11-23T14:29:26.142Z",
+    "lastChecked": "2026-11-23T15:04:32.916Z",
+    "lastVerified": "2026-11-23T15:04:32.916Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1920,14 +1920,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T05:35:34.503Z",
-    "lastVerified": "2026-11-23T05:35:34.503Z",
+    "lastChecked": "2026-11-23T15:04:34.026Z",
+    "lastVerified": "2026-11-23T15:04:34.026Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "028d93bac339be44c2a30f4402485180f3c2a6f35f6b65e3107fa7eb3173aa7b",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "0d3062413af9d5de2c81b5df2b272965b1bbb6ac1a96052f8eee16cb893facdf",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4494,8 +4494,8 @@
     "officialUrl": "https://github.com/malisper/pgrust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T08:09:22.271Z",
-    "lastVerified": "2026-11-22T08:09:22.271Z",
+    "lastChecked": "2026-11-23T15:04:30.395Z",
+    "lastVerified": "2026-11-23T15:04:30.395Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-malisper-pgrust",
@@ -5261,9 +5261,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-11-22T02:17:57.138Z",
+    "lastChecked": "2026-11-23T15:04:17.865Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-11-22T02:17:57.138Z"
+    "lastVerified": "2026-11-23T15:04:17.865Z"
   },
   "hf-baidu-unlimited-ocr": {
     "name": "baidu/Unlimited-OCR",
@@ -6016,9 +6016,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-22T09:47:31.319Z",
+    "lastChecked": "2026-11-23T15:04:25.383Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-22T09:47:31.319Z"
+    "lastVerified": "2026-11-23T15:04:25.383Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -6050,12 +6050,12 @@
     "officialUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T01:18:40.612Z",
-    "lastVerified": "2026-11-19T01:18:40.612Z",
+    "lastChecked": "2026-11-23T15:04:20.419Z",
+    "lastVerified": "2026-11-23T15:04:20.419Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "c24de977eb8d4c67db9c660691b73612f45c961b4f6486c8db8c0092567b91e1",
+    "contentHash": "303ad1fd0256c8e4f78c1e8942e30b4e53e71a5b38cce77ad2eadfdeb7627570",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10394,9 +10394,9 @@
   "aakira-napier": {
     "name": "Napier",
     "officialUrl": "https://github.com/AAkira/Napier",
-    "lastChecked": "2026-11-20T12:07:12.986Z",
+    "lastChecked": "2026-11-23T15:04:22.961Z",
     "revisionIdentifier": "50835e2e",
-    "lastVerified": "2026-11-20T12:07:12.986Z"
+    "lastVerified": "2026-11-23T15:04:22.961Z"
   },
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",

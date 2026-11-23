@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T14:55:19.404Z",
+  "last_updated": "2026-11-23T15:04:35.797Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "c24de977eb8d4c67db9c660691b73612f45c961b4f6486c8db8c0092567b91e1",
-      "verified_at": "2026-11-19T01:18:41.220Z",
+      "content_hash": "303ad1fd0256c8e4f78c1e8942e30b4e53e71a5b38cce77ad2eadfdeb7627570",
+      "verified_at": "2026-11-23T15:04:21.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:18:41.220Z"
+      "last_updated": "2026-11-23T15:04:21.225Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "028d93bac339be44c2a30f4402485180f3c2a6f35f6b65e3107fa7eb3173aa7b",
-      "verified_at": "2026-11-23T05:35:35.030Z",
+      "content_hash": "0d3062413af9d5de2c81b5df2b272965b1bbb6ac1a96052f8eee16cb893facdf",
+      "verified_at": "2026-11-23T15:04:35.796Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T05:35:35.030Z"
+      "last_updated": "2026-11-23T15:04:35.796Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

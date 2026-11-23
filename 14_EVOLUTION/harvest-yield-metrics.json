@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T14:55:19.399Z",
-  "total_cycles_completed": 11736,
-  "total_learnings_persisted": 11736,
-  "total_rules_promoted": 10892,
+  "last_updated": "2026-11-23T15:04:35.792Z",
+  "total_cycles_completed": 11738,
+  "total_learnings_persisted": 11738,
+  "total_rules_promoted": 10893,
   "history": [
-    {
-      "timestamp": "2026-11-22T17:35:23.380Z",
-      "repository": "thaw-app/Thaw",
-      "learningId": "learn-github-thaw-app-thaw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T17:35:28.662Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T17:35:34.290Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1403,6 +1389,20 @@
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:04:21.221Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T15:04:35.792Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
