@@ -12318,3 +12318,5 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f7d2828f` | Multi-dimensional audit evidence | 2026-11-23T06:14:24.624Z |
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-23T06:22:16.106Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `98e7681c` | Multi-dimensional audit evidence | 2026-11-23T06:22:30.491Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-23T06:37:31.503Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `8caa8775` | Multi-dimensional audit evidence | 2026-11-23T06:37:42.902Z |

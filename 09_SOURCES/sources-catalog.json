@@ -905,8 +905,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "3f163f2f188846f106fc86d8b1653ea2b20120f6031a2f6749553ffaff44a6f4",
-    "lastHarvestedAt": "2026-11-18T21:01:57.223Z",
+    "contentHash": "91ec00fbff7364c506967b5b7db8f6824e8474985d1103d95c7d25437dfccdf6",
+    "lastHarvestedAt": "2026-11-23T06:37:31.503Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct"
   },
   "hf-openai-gpt-oss-120b": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "82e8fb92",
+    "sourceVersion": "8caa8775",
     "license": "Apache-2.0",
-    "contentHash": "52c55fe59399325c9cd734b2e3294203b32970978c01a524a850d7dba44d490a",
-    "lastHarvestedAt": "2026-11-22T22:58:16.489Z",
+    "contentHash": "4c6db895658d70a194b2176c3fb1b5fbc4a574ad8abb56ae33d755887283fc74",
+    "lastHarvestedAt": "2026-11-23T06:37:42.902Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T06:22:30.499Z",
+  "last_updated": "2026-11-23T06:37:42.915Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1175,14 +1175,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "3f163f2f188846f106fc86d8b1653ea2b20120f6031a2f6749553ffaff44a6f4",
-      "verified_at": "2026-11-18T21:01:57.231Z",
+      "content_hash": "91ec00fbff7364c506967b5b7db8f6824e8474985d1103d95c7d25437dfccdf6",
+      "verified_at": "2026-11-23T06:37:31.514Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T21:01:57.231Z"
+      "last_updated": "2026-11-23T06:37:31.514Z"
     },
     "openai/gpt-oss-120b": {
       "repository": "openai/gpt-oss-120b",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "95ad893396affc32565765622c7c770a0ad121be8b69dca5952dfb58a90cb4dc",
-      "verified_at": "2026-11-23T03:27:54.273Z",
+      "content_hash": "4c6db895658d70a194b2176c3fb1b5fbc4a574ad8abb56ae33d755887283fc74",
+      "verified_at": "2026-11-23T06:37:42.914Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T03:27:54.273Z"
+      "last_updated": "2026-11-23T06:37:42.914Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",

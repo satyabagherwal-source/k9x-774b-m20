@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T06:22:35.859Z",
+  "last_updated": "2026-11-23T06:37:48.917Z",
   "total_records": 2398,
   "domains": {
     "A": {
@@ -8502,10 +8502,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "927a52ae296f250d51962e38104a2cc9c42da16571941fc8c66d9f63f583da79",
-      "created_at": "2026-11-23T03:27:54.665Z"
+      "content_hash": "d5d4611890bc0d1a943088421f8bb51841a717094bc515e3b9c758688b6943ec",
+      "created_at": "2026-11-23T06:37:43.432Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9131,8 +9131,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0f6589ea20a81f647d2679aeccc73e505bab31ed7f076598bd0b1ef3648d2f2c",
-      "created_at": "2026-11-23T05:59:57.082Z"
+      "content_hash": "00e122a03603516306d98e126302e7bcbb7ec49d45ceee9a2dbdae06e0baff46",
+      "created_at": "2026-11-23T06:37:48.917Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12932,8 +12932,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-instruct-research-knowledge-intelligence-meta-llam.md",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "content_hash": "e59da01ded4c1bc7403b3c70ef0b60b715e1dde2f767e8abc56214d1e4a93437",
-      "created_at": "2026-11-18T21:01:57.401Z"
+      "content_hash": "4460a69afd5c00a6c8f5af85722d78adc91f025a1b1932590079f91c38a8f30a",
+      "created_at": "2026-11-23T06:37:31.783Z"
     },
     "DOM-J-B241A1ED": {
       "record_id": "DOM-J-B241A1ED",
@@ -12989,8 +12989,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-instruct-learnings-research-knowledge-intelligence.md",
       "repository": "hf-meta-llama-meta-llama-3-8b-instruct-learnings",
-      "content_hash": "562f5dfffa6ae0b7afe82ed17b1ba89a6196200b586e1d8c9c431d9f085e3c01",
-      "created_at": "2026-11-18T21:02:09.167Z"
+      "content_hash": "c0766b8048742b03d1de8d6dd989713072f49a8606de070dc3ba3fd0cfe0aa8b",
+      "created_at": "2026-11-23T06:37:46.861Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants",
@@ -23920,8 +23920,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "542b016185919f5f69e763c868efaf950a50385771605e48c0cfe194548fde57",
-      "created_at": "2026-11-22T22:58:21.625Z"
+      "content_hash": "229939edf92aeb449bc7fe01c35c834cb3db12ccec4e9f884b907a7b89985a15",
+      "created_at": "2026-11-23T06:37:47.856Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

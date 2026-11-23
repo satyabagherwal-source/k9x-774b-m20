@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
   "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T21:01:57.401Z",
+  "timestamp": "2026-11-23T06:37:31.782Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) (Revision: `hf-meta-ll`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T21:01:57.401Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T06:37:31.782Z`  
 > **Learning ID**: `learn-huggingface-meta-llama-meta-llama-3-8b-instruct`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T21:01:56.628Z  
+> **Harvest Timestamp**: 2026-11-23T06:37:30.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 426853 downloads | 6224 likes
+- **Stars / Engagement**: 428267 downloads | 6555 likes
 
 ---
 
