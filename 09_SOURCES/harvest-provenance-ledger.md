@@ -12454,3 +12454,5 @@ Every entry in this ledger must capture:
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `fad2fe84` | Multi-dimensional audit evidence | 2026-11-23T18:40:53.968Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `80c1ffc3` | Multi-dimensional audit evidence | 2026-11-23T18:41:03.068Z |
 | `learn-dom-i-981fc0de` | `project://nginx-kubernetes-ingress` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md` | 2026-11-23T18:41:37.261Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-23T18:50:29.469Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `b26b87f9` | Multi-dimensional audit evidence | 2026-11-23T18:50:49.771Z |

@@ -12421,3 +12421,5 @@
 | `CYCLE-20261123-2YTN` | `2026-11-23T18:40:53.963Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10093` | Yes (`74ba0eff...`) |
 | `CYCLE-20261123-35UG` | `2026-11-23T18:41:03.064Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10094` | Yes (`a4ac71f4...`) |
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T18:41:37.261Z` | `nginx-kubernetes-ingress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-981FC0DE` [Domain I] | Yes (`db407240...`) |
+| `CYCLE-20261123-FAVS` | `2026-11-23T18:50:29.464Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`ec981d46...`) |
+| `CYCLE-20261123-FQJQ` | `2026-11-23T18:50:49.766Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10095` | Yes (`b978da91...`) |

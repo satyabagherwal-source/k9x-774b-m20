@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-WX95",
-    "timestamp": "2026-11-21T20:24:50.009Z",
-    "repository": "LiquidAI/LFM3-Omni-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-    "contentHash": "90465e2d835c37476f3cf604655d4d1d22860054d3e94df3546c311816e5ae71",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-WZLK",
-    "timestamp": "2026-11-21T20:24:53.048Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "3cd313beea2458a11915cc25e0a8c3c525e7bf3c1cf448739a0ee60b94bc6fb0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-X3FX",
     "timestamp": "2026-11-21T20:24:58.029Z",
     "repository": "software-mansion/react-native-reanimated",
@@ -7490,6 +7460,36 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "a4ac71f41a3576909e2a38b33dc2cdf1f505b4f5ac5b5f8b4396ea2d7c82a167",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-FAVS",
+    "timestamp": "2026-11-23T18:50:29.464Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "ec981d46fc25e1a3cb5ce12158b9d87489871fff359e827cc05e1f31f5f1d74b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-FQJQ",
+    "timestamp": "2026-11-23T18:50:49.766Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "b978da9143d6ba27455aeff0c8b12efeadec3dab17af48bd082dc759f02cf402",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

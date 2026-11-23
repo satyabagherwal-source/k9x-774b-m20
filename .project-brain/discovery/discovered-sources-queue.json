@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T18:41:39.039Z",
+  "updated_at": "2026-11-23T18:50:54.607Z",
   "stats": {
-    "total_discovered": 7966,
-    "approved_pending_harvest": 7537,
+    "total_discovered": 7972,
+    "approved_pending_harvest": 7543,
     "harvested_count": 0,
     "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7531,
+      "COMMUNITY_AND_EXPERT": 7537,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -172272,6 +172272,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
         "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-790C972D87D8": {
+      "id": "SRC-790C972D87D8",
+      "url": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10235",
+      "title": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10235",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:50:54.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-39B118A2E8A9": {
+      "id": "SRC-39B118A2E8A9",
+      "url": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10516",
+      "title": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10516",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:50:54.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-FC4BD7CF8C05": {
+      "id": "SRC-FC4BD7CF8C05",
+      "url": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10528",
+      "title": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10528",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:50:54.381Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-969BC7E11BC8": {
+      "id": "SRC-969BC7E11BC8",
+      "url": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10556",
+      "title": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10556",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:50:54.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-BD43AB5FDDFA": {
+      "id": "SRC-BD43AB5FDDFA",
+      "url": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10561",
+      "title": "https://redirect.github.com/GreptimeTeam/greptimedb/pull/10561",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:50:54.521Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-CCD790388B6E": {
+      "id": "SRC-CCD790388B6E",
+      "url": "https://githu/",
+      "title": "https://githu/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:50:54.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
       }
     }
   }

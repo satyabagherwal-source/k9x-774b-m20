@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `87875513`  
+> **Source Version**: `b26b87f9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T13:30:41.967Z  
+> **Timestamp**: 2026-11-23T18:50:48.411Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T13:30:41.962Z  
+> **Harvest Timestamp**: 2026-11-23T18:50:48.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6824 stars
+- **Stars / Engagement**: 6825 stars
 
 ---
 
@@ -1742,11 +1742,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10551** (2026-11-21): **feat: update dashboard to v0.14.7**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  AS TITLE  https://github.com/GreptimeTeam/dashboard/releases/tag/v0.14.7  ## Checklist  - [ ]  I have written the necessary rustdoc comments. - [ ]  I have added the necessary unit tests and integration tests. - [x]  This PR does not require documentation updates.
+- **Issue #10582** (2026-11-23): **mito2: persisted primary key bounds are located by parquet leaf name, and are now consumed as a correctness premise**
+  *Symptoms*: ### Summary  `FileMeta.primary_key_min/max` is produced by `extract_primary_key_range`, which finds the primary key column by **parquet leaf column name**:  ```rust // src/mito2/src/sst/parquet/metadata.rs:124-137 let pk_column_idx = parquet_meta     .file_metadata()     .schema_descr()     .columns()     .iter()     .position(|column| column.name() == PRIMARY_KEY_COLUMN_NAME)?; ```  `SchemaDescr::columns()` returns the flattened leaves, and user columns come *before* the internal ones, which `internal_fields()` appends last (`src/mito2/src/sst.rs:300-336`). A JSON2 field can be concretized into an Arrow `Struct` (`src/datatypes/src/types/json_type.rs:139-145`), so if a JSON layout contains a child key literally named `__primary_key`, that leaf is found first and the recorded bounds describe the JSON strings rather than the primary key.  Until now that was a statistics problem. #10564 and #10561 are the first consumers to treat the bounds as a **correctness premise**: #10564 prunes a whole file by them, #10561 splits a sequential scan into ranges that are deduplicated independently. A wrong bound therefore drops rows or splits the versions of one key.  Neither consumer re-checks the bounds against the file's footer; `FileHandle::primary_key_range` returns whatever the manifest recorded (`src/mito2/src/sst/file.rs:856-863`).  ### Suggested fix  1. Locate the column by field id (`PRIMARY_KEY_PARQUET_FIELD_ID`, already attached in `internal_fields()`) or by the top-level field r
 
-- **Issue #10550** (2026-11-20): **refactor(meta): make coordinated invalidation the default for metadata caches**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follows #10527 and #10542.  ## What's changed and what's your intention?  All in-tree production metadata caches already coordinate loads and invalidations through Moka’s per-key compute lock. This PR removes the remaining unchecked implementation and makes `CacheContainer::new` the default constructor.  Key-based caches now supply a function that extracts a key from an invalidation event. A shared handler removes matching entries in event order. The table-flownode cache uses the same interface to apply incremental flow updates. Removing the unchecked path also removes its generation checks and single-key retry from `get_many`.  A full clear still advances the cache epoch. A new regression test pauses a batch load, clears the cache, and then lets the load finish. The original caller receives its result, and a subsequent lookup cannot see the stale entry.  This changes the public `common-meta` Rust API. Downstream callers of `new_coordinated` should use `new`. Callers of the old unchecked `new` must migrate to the new signature. The `Invalidator` and `TokenFilter` type aliases have been removed.  Validation completed:  - `cargo nextest run -p common-meta` passed all 701 tests. - `cargo check --tests -p catalog -p partition -p operator` passed. - `cargo fmt --all -- --check` and `git diff --check` passed.  ## PR Check
+- **Issue #10564** (2026-11-23): **perf(mito2): prune files by their primary key range before reading footers**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  Manifest-level file pruning runs before any footer read, but `FileLevelPruningStats` only exposes the time index range. Every file whose time range overlaps the query has its footer fetched, and files that hold none of the requested keys are dropped only later, by row group statistics of the first tag.  `FileLevelPruningStats` now also exposes min and max of the first primary key column, decoded from `FileMeta.primary_key_min/max` with `decode_leftmost`, the same way row group pruning decodes `first_tag_values`. With the dense encoding this is the first tag; with the sparse encoding of the metric engine it is `__table_id`, so a logical table scan skips files that hold no rows of that table. Files without a recorded key range keep the old behavior.  The key range is decoded only when pruning asks for the first primary key column, so predicates on the time index or fields pay nothing extra. Pruning 20,000 files with such predicates costs 3.0–3.3 µs per file on both main and this PR; decoding eagerly would add about 0.5 µs per file.  `files_time_range_pruned` now also counts files pruned by key range.  Benchmark: k8s metrics (metric engine, 29.3M samples) with compaction outputs split at 8 MB, 11 files per window; base `8787551393`, Apple M4 Max, MinIO behind a proxy that a
+  **Post-Mortem & Fix Analysis**:
+  > <!-- pr-open-limit --> > [!WARNING] > @killme2008 has **6** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 10235: perf\(mito2\)\: box file range streams to reduce state copies](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10235) - [PR 10516: docs\: add RFC for time\-slice aggregate cache](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10516) - [PR 10528: perf\(mito2\)\: bound row group bytes and skip statistics for large field values](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10528) - [PR 10556: fix\(sql\)\: keep column options in ALTER TABLE ADD COLUMN](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10556) - [PR 10561: perf\(mito2\)\: split seq scan ranges of files with disjoint primary keys](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10561)  [View your open pull requests](https://githu
+  > On #10582: the leaf-name lookup is real. `extract_primary_key_range` and `ParquetReader::build_primary_key` both match `__primary_key` by leaf name, so a nested child with that name is found first. I am fixing both in #10561 to match the top-level column only, since that PR also relies on the bounds.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1763,560 +1766,1468 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5952a49e` (2026-11-20)
-**Commit Message**: fix(mito2): wait for a Leader lease before committing after a catchup (#10544)
+### Incident Patch 1: `946e599d` (2026-11-23)
+**Commit Message**: fix: catch up a writable region that still awaits its Leader lease (#10559)
 
-* fix(mito2): wait for a Leader lease before committing after a catchup
+* feat(store-api): ask an engine whether a region is a confirmed leader
 
-On a datanode whose writes need a lease, a catchup makes a migration
-target writable before the route points to it. Until a Leader or
-StagingLeader lease of a heartbeat sent after the catchup applies, such
-a region commits to its manifest only replayed WAL tails and what it
-commits while downgrading; any other commit fails with the retryable
-RegionLeaseNotReceived in ManifestContext::update_locked. No flush or
-compaction trigger starts work for it, a write over its own write buffer
-is rejected as for a staging region, and a close that must flush
-downgrades it first.
+Add RegionEngine::is_confirmed_leader. It answers None for a region the
+engine does not find, Some(false) for a follower or, on a node that
+requires leases to confirm its leaders, for a leader that a catchup
+promoted and that no Leader or StagingLeader lease has confirmed since,
+and Some(true) otherwise. The default answers from the role alone, with
+the mapping RegionServer::is_region_leader uses.
 
-The lease that ends the wait tells the region's worker once. The worker
-schedules the engine-full and region-full flushes and, if the region is
-then a writable leader, starts a compaction, builds missing indexes in
-async index mode and persists the metadata the opener backfilled.
+Document that set_region_role_with_lease also returns false while a
+catchup runs on the region or it waits for a reload, and that a catchup
+also applies to a leader that is not confirmed.
 
 Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
 
-* test(mito2): refuse a discard of pending tails while awaiting the Leader lease
+* fix(mito2): catch a writable region awaiting its Leader lease up again
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+A migration that rolls back after its catchup can leave the target
+region writable but waiting for a Leader lease that never comes, while
+the source keeps acknowledging writes. A later upgrade must catch it up
+again instead of treating it as ready.
 
-* fix(mito2): keep ex
+- MitoEngine::is_confirmed_leader reads the role and the lease wait of
+  one instance toget
 
-**File**: `src/mito2/AGENTS.md` (modified, +16/-5)
+**File**: `src/datanode/src/heartbeat/handler/upgrade_region.rs` (modified, +40/-3)
 ```diff
-@@ -89,7 +89,8 @@ pending. DDL cancellation retains its existing scheduling fence and priority.
- - **SST/Parquet layout** (`sst/`): readers must stay compatible with existing files.
- - **Index extensions**: shared contracts and provider validation live in `sst/index/registry.rs`;
-   typed sketch options are enterprise-gated. Lifecycle and failure tests live in
--  `engine/index_build_test.rs` and `compaction/`.
-+  `engine/index_build_test.rs` and `compaction/`. A background rebuild must not replace a file
-+  that carries extension indexes (`worker/handle_rebuild_index.rs::needs_background_indexes`).
- - **Series-index disk limit**: tasks estimate usage from entry sizes in open-region snapshots
-   and defer new builds when the shared estimate is full. Cleanup still prunes obsolete
-   range entries and expires series indexes to reclaim published usage. Concurrent builds may
-@@ -202,17 +203,27 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
- - Staging regions, ending staging included, never flush: a flush would stage its SST and
-   release the rows' WAL, losing them if staging does not end successfully. Every flush
-   trigger in `worker/handle_flush.rs` must skip them: background triggers test `is_writable()`
--  and `is_staging()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
-+  and `defers_background_flush()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
-   `is_flushable()` are false while ending staging). `handle_close` leaves staging first.
-   Tail replays never run for them: entering staging fails while tails are pending.
- - Direct SST imports without a staging binding cannot publish into staging.
-   `worker/handle_manifest.rs` seals edit admission while EnterStaging drains accepted
-   edits. Scheduler-owned DDLs resume through execution, bypassing initial admission.
-+- On a node whose writes need a lease, a region that a catchup made writable waits for a
-+  Leader or StagingLeader lease sent after the catchup (`awaits_leader_lease`). Until then
-+  `ManifestContext::update_locked` refuses its commits unless they are staged or the region is
-+  downgrading (a close that must flush downgrades first); only a replay of tails
-+  (`TailsEditor::Replay`) skips the check, a discard does not, and ending staging checks it
-+  before `commit_staged_locked`. No flush or compaction trigger starts work for a waiting region except
-+  a downgrade's flush. The lease that ends the wait wakes the worker
-+  (`handle_leader_lease_wait_ended`) to schedule the flushes the wait deferred and, only if the
-+  region is then a writable leader, start a compaction, build missing indexes, re-issue the
-+  index build retries the wait refused and persist backfilled metadata.
+@@ -101,7 +101,9 @@ impl UpgradeRegionsHandler {
+         let mut timeout = None;
+ 
+         for upgrade_region in upgrade_regions {
+-            let Some(writable) = ctx.region_server.is_region_leader(upgrade_region.region_id)
++            let Some(confirmed) = ctx
++                .region_server
++                .is_confirmed_leader(upgrade_region.region_id)
+             else {
+                 // Region is not found.
+                 debug!("Region {} is not found", upgrade_region.region_id);
+@@ -114,8 +116,10 @@ impl UpgradeRegionsHandler {
+                 continue;
+             };
+ 
+-            // Ignores the catchup requests for writable regions.
+-            if writable {
++            // Ignores the catchup requests for writable regions, except those a catchup made
++            // writable with no Leader lease since: they may lack what the leader has written
++            // since, and the engine catches them up again.
++            if confirmed {
+                 warn!(
+                     "Region {} is writable, ignores the catchup request",
+                     upgrade_region.region_id
+@@ -226,6 +230,7 @@ mod tests {
+     use common_meta::kv_backend::memory::MemoryKvBackend;
+     use mito2::engine::MITO_ENGINE_NAME;
+     use store_api::region_engine::RegionRole;
++    use store_api::region_request::RegionRequest;
+     use store_api::storage::RegionId;
+ 
+     use crate::error;
+@@ -361,6 +366,38 @@ mod tests {
+         }
+     }
+ 
++    #[tokio::test]
++    async fn test_writable_region_awaiting_leader_lease_catches_up() {
++        let mock_region_server = mock_region_server();
++        let region_id = RegionId::new(1024, 1);
++
++        let (mock_engine, mut requests) =
++            MockRegionEngine::with_custom_apply_fn(MITO_ENGINE_NAME, |region_engine| {
++                region_engine.mock_role = Some(Some(RegionRole::Leader));
++                region_engine.mock_confirmed_leader = Some(false);
++            });
++        mock_region_server.register_test_region(region_id, mock_engine);
++        let kv_backend = Arc::new(MemoryKvBackend::new());
++        let handler_context = HandlerContext::new_for_test(mock_region_server, kv_backend);
++        let reply = UpgradeRegionsHandler::new_test()
++            .handle(
++                &handler_context,
++                vec![UpgradeRegion {
++                    region_id,
++                    replay_timeout: Duration::from_secs(1),
++                    ..Default::default()
++                }],
++            )
++            .await;
++
++        let reply = &reply.unwrap().expect_upgrade_regions_reply()[0];
++        assert!(reply.ready);
++        assert!(reply.error.is_none());
++        let (caught_up, request) = requests.try_recv().unwrap();
++        assert_eq!(caught_up, region_id);
++        assert!(matches!(request, RegionRequest::Catchup(_)));
++    }
++
+     #[tokio::test]
+     async fn test_region_not_ready() {
+         let mock_region_server = mock_region_server();
+```
+
+**File**: `src/datanode/src/region_server.rs` (modified, +10/-1)
+```diff
+@@ -478,6 +478,14 @@ impl RegionServer {
+         })
+     }
+ 
++    /// See [`RegionEngine::is_confirmed_leader`](store_api::region_engine::RegionEngine::is_confirmed_leader).
++    pub fn is_confirmed_leader(&self, region_id: RegionId) -> Option<bool> {
++        self.inner
++            .region_map
++            .get(&region_id)
++            .and_then(|engine| engine.is_confirmed_leader(region_id))
++    }
++
+     pub fn set_region_role(&self, region_id: RegionId, role: RegionRole) -> Result<()> {
+         let engine = self
+             .inner
+@@ -491,7 +499,8 @@ impl RegionServer {
+ 
+     /// Sets the role of a region from a lease the metasrv grants until `deadline`, in reply to a
+     /// heartbeat sent at `sent_at`. Returns false if the engine ignores a Leader lease because the
+-    /// region was downgraded or (re)opened after `sent_at`.
++    /// region was downgraded or (re)opened after `sent_at`, a catchup runs on it, or it waits for a
++    /// reload.
+     pub fn set_region_role_with_lease(
+         &self,
+         region_id: RegionId,
+```
+
+**File**: `src/datanode/src/tests.rs` (modified, +12/-0)
+```diff
+@@ -135,6 +135,7 @@ pub struct MockRegionEngine {
+     pub(crate) handle_sync_region_mock_fn: Option<MockSyncRegionHandler>,
+     pub(crate) handle_stop_mock_fn: Option<MockStopHandler>,
+     pub(crate) mock_role: Option<Option<RegionRole>>,
++    pub(crate) mock_confirmed_leader: Option<bool>,
+     /// The candidate lease ids of the leases the engine received.
+     pub(crate) candidate_lease_ids: Mutex<Vec<Option<u64>>>,
+     engine: String,
+@@ -154,6 +155,7 @@ impl MockRegionEngine {
+                 handle_sync_region_mock_fn: None,
+                 handle_stop_mock_fn: None,
+                 mock_role: None,
++                mock_confirmed_leader: None,
+                 candidate_lease_ids: Mutex::default(),
+                 engine: engine.to_string(),
+             }),
+@@ -177,6 +179,7 @@ impl MockRegionEngine {
+                 handle_sync_region_mock_fn: None,
+                 handle_stop_mock_fn: None,
+                 mock_role: None,
++                mock_confirmed_leader: None,
+                 candidate_lease_ids: Mutex::default(),
+                 engine: engine.to_string(),
+             }),
+@@ -200,6 +203,7 @@ impl MockRegionEngine {
+                 handle_sync_region_mock_fn: None,
+                 handle_stop_mock_fn: None,
+                 mock_role: None,
++                mock_confirmed_leader: None,
+                 candidate_lease_ids: Mutex::default(),
+                 engine: engine.to_string(),
+             }),
+@@ -224,6 +228,7 @@ impl MockRegionEngine {
+             handle_sync_region_mock_fn: None,
+             handle_stop_mock_fn: None,
+             mock_role: None,
++            mock_confirmed_leader: None,
+             candidate_lease_ids: Mutex::default(),
+             engine: engine.to_string(),
+         };
+@@ -330,6 +335,13 @@ impl RegionEngine for MockRegionEngine {
+         Some(RegionRole::Leader)
+     }
+ 
++    fn is_confirmed_leader(&self, region_id: RegionId) -> Option<bool> {
++        self.role(region_id).map(|role| {
++            self.mock_confirmed_leader
++                .unwrap_or(role != RegionRole::Follower)
++        })
++    }
++
+     async fn sync_region(
+         &self,
+         region_id: RegionId,
+```
+
+**File**: `src/metric-engine/src/engine.rs` (modified, +146/-7)
+```diff
+@@ -421,14 +421,12 @@ impl RegionEngine for MetricEngine {
+                 Ok(true) => {}
+                 Ok(false) => {
+                     // If the metadata region ignored the grant, the data region is not handed it, so
+-                    // record it for the data region. If the data region ignored it, the data region
+-                    // has already recorded it.
++                    // record it and extend the deadline for the data region, as an ignored Leader
++                    // lease does. If the data region ignored it, the data region has done both.
+                     if x == metadata_region_id {
+-                        self.inner.mito.record_granted_lease(
+-                            data_region_id,
+-                            sent_at,
+-                            candidate_lease_id,
+-                        );
++                        let mito = &self.inner.mito;
++                        mito.record_granted_lease(data_region_id, sent_at, candidate_lease_id);
++                        mito.extend_leader_deadline(data_region_id, deadline);
+                     }
+                     return Ok(false);
+                 }
+@@ -539,6 +537,18 @@ impl RegionEngine for MetricEngine {
+         }
+     }
+ 
++    /// A physical region is a confirmed leader only if both regions of the pair are, since one
++    /// may have been promoted without the other.
++    fn is_confirmed_leader(&self, region_id: RegionId) -> Option<bool> {
++        if !self.inner.is_physical_region(region_id) {
++            return None;
++        }
++        let mito = &self.inner.mito;
++        let metadata = mito.is_confirmed_leader(utils::to_metadata_region_id(region_id))?;
++        let data = mito.is_confirmed_leader(utils::to_data_region_id(region_id))?;
++        Some(metadata && data)
++    }
++
+     fn as_any(&self) -> &dyn Any {
+         self
+     }
+@@ -1126,6 +1136,135 @@ mod test {
+         assert_eq!(engine.role(physical_region_id), Some(RegionRole::Leader));
+     }
+ 
++    #[tokio::test]
++    async fn test_physical_region_is_confirmed_leader_only_with_both_regions() {
++        let env = TestEnv::new().await;
++        env.init_metric_region().await;
++        let (engine, mito) = (env.metric(), env.mito());
++        mito.require_write_lease();
++        mito.renew_node_lease(Instant::now() + LEASE);
++        let physical_region_id = env.default_physical_region_id();
++        let metadata_region_id = utils::to_metadata_region_id(physical_region_id);
++        // A logical region has no role of its own.
++        assert_eq!(
++            engine.is_confirmed_leader(env.default_logical_region_id()),
++            None
++        );
++        for region_id in [
++            metadata_region_id,
++            utils::to_data_region_id(physical_region_id),
++        ] {
++            mito.set_region_role_state_gracefully(region_id, SettableRegionRoleState::Follower)
++                .await
++                .unwrap();
++        }
++        let catchup = RegionCatchupRequest {
++            set_writable: true,
++            ..Default::default()
++        };
++        engine
++            .handle_batch_catchup_requests(1, vec![(physical_region_id, catchup)])
++            .await
++            .unwrap()
++            .into_iter()
++            .for_each(|(_, result)| {
++                result.unwrap();
++            });
++        assert_eq!(engine.role(physical_region_id), Some(RegionRole::Leader));
++        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
++
++        // The data region still waits after the metadata region received its lease.
++        let sent_at = Instant::now();
++        mito.set_region_role_with_lease(
++            metadata_region_id,
++            RegionRole::Leader,
++            sent_at,
++            sent_at + LEASE,
++            None,
++        )
++        .unwrap();
++        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
++
++        engine
++            .set_region_role_with_lease(
++                physical_region_id,
++                RegionRole::Leader,
++                sent_at,
++                sent_at + LEASE,
++                None,
++            )
++            .unwrap();
++        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(true));
++
++        // A confirmed data region alone does not make the physical region confirmed.
++        mito.set_region_role(metadata_region_id, RegionRole::Follower)
++            .unwrap();
++        assert_eq!(engine.is_confirmed_leader(physical_region_id), Some(false));
++    }
++
++    /// A physical Leader lease that the metadata region ignores is still recorded for the data
++    /// region and extends its deadline.
++    #[tokio::test]
++    async fn test_lease_ignored_by_metadata_region_extends_data_deadline() {
++        let env = TestEnv::new().await;
++        env.init_metric_region().await;
++        let (engine, mito) = (env.metric(), env.mito());
++        let physical_region_id = env.default_physical_region_id();
++        let metadata_region_i
+```
+
+**File**: `src/mito2/AGENTS.md` (modified, +8/-1)
+```diff
+@@ -218,7 +218,14 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
+   a downgrade's flush. The lease that ends the wait wakes the worker
+   (`handle_leader_lease_wait_ended`) to schedule the flushes the wait deferred and, only if the
+   region is then a writable leader, start a compaction, build missing indexes, re-issue the
+-  index build retries the wait refused and persist backfilled metadata.
++  index build retries the wait refused and persist backfilled metadata. A catchup of a waiting
++  region catches it up again into an unregistered replacement while the region stays registered,
++  demoted unless it is in a transient leader state. The replacement replaces it only if the replay
++  succeeds and the region took no write and made no commit meanwhile; otherwise the region keeps
++  its memtable for the next Leader lease (`catch_up_again`, `handle_caught_up_again`); the datanode
++  upgrade handler sends that catchup unless `RegionEngine::is_confirmed_leader` is true, so an
++  engine wrapping mito must implement that method from mito's answers (the metric engine requires
++  both regions of the pair).
  - The latest lease each region received (`GrantedLeases` in `lease.rs`) lives outside the
    region instance, so a reopen during catchup keeps it. Every path that removes a region from
--  a worker's region map must also remove its record: `RegionWorkerLoop::remove_region`
--  (`worker/handle_close.rs`, also used after a close-time flush), `drop_region`
--  (`worker/handle_drop.rs`) and `RegionWorkerLoop::clean` (`worker.rs`).
-+  a worker's region map must also remove its record and its kept index build retries:
-+  `RegionWorkerLoop::remove_region` (`worker/handle_close.rs`, also used after a close-time
-+  flush), `drop_region` (`worker/handle_drop.rs`) and `RegionWorkerLoop::clean` (`worker.rs`).
- 
- ## Maintenance contract
- 
+   a worker's region map must also remove its record and its kept index build retries:
 ```
 
-**File**: `src/mito2/src/compaction/scheduler.rs` (modified, +20/-2)
+**File**: `src/mito2/src/engine.rs` (modified, +19/-4)
 ```diff
-@@ -594,6 +594,14 @@ impl CompactionScheduler {
-             waiter.send(Ok(0));
-             return Ok(false);
-         }
-+        if manifest_ctx.awaits_leader_lease() {
-+            info!(
-+                "Skipping compaction for region {} that awaits its Leader lease, options: {:?}",
-+                region_id, compact_options
-+            );
-+            waiter.send(Ok(0));
-+            return Ok(false);
-+        }
-         if status.has_pending_tails() {
-             info!(
-                 "Skipping compaction for region {} with pending WAL tails, options: {:?}",
-@@ -669,7 +677,13 @@ impl CompactionScheduler {
-         let Some(pending_request) = std::mem::take(&mut status.pending_request) else {
-             return false;
-         };
--        if status.has_pending_tails() {
-+        let awaits_leader_lease = manifest_ctx.awaits_leader_lease();
-+        if awaits_leader_lease {
-+            info!(
-+                "Region {region_id} awaits its Leader lease, answering its queued compaction without compacting"
-+            );
-+        }
-+        if status.has_pending_tails() || awaits_leader_lease {
-             status.pending_task_state = None;
-             status.publish_state();
-             pending_request.waiter.send(Ok(0));
-@@ -768,7 +782,11 @@ impl CompactionScheduler {
-         let Some(status) = self.region_status.get_mut(&region_id) else {
-             return false;
-         };
--        if status.has_pending_tails() {
-+        let awaits_leader_lease = manifest_ctx.awaits_leader_lease();
-+        if awaits_leader_lease {
-+            info!("Region {region_id} awaits its Leader lease, starting no follow-up compaction");
-+        }
-+        if status.has_pending_tails() || awaits_leader_lease {
-             return false;
-         }
-         // An external automatic trigger requires one unrestricted follow-up pick.
-```
-
-**File**: `src/mito2/src/compaction/scheduler_test.rs` (modified, +17/-6)
-```diff
-@@ -3671,8 +3671,15 @@ async fn test_compaction_tasks_linear_local_publication(#[case] reject_after_fir
-     assert!(!scheduler.is_compacting(region_id));
- }
- 
-+/// A queued manual compaction or an automatic follow-up starts nothing while the region has
-+/// pending tails or awaits its Leader lease.
-+#[rstest::rstest]
-+#[case::pending_tails(false)]
-+#[case::awaiting_leader_lease(true)]
- #[tokio::test]
--async fn test_finishing_compaction_with_pending_tails_starts_nothing() {
-+async fn test_finishing_compaction_of_blocked_region_starts_nothing(
-+    #[case] awaiting_leader_lease: bool,
-+) {
-     let env = SchedulerEnv::new().await;
-     let (tx, _rx) = mpsc::channel(4);
-     let mut scheduler = env.mock_compaction_scheduler(tx);
-@@ -3697,11 +3704,15 @@ async fn test_finishing_compaction_with_pending_tails_starts_nothing() {
-     let pending_id = scheduler.inspect_tasks(&MetadataFilter::default(), None)[0]
-         .task_id
-         .clone();
--    version_control.apply_edit(
--        Some(pending_tails_edit(vec![tail(1, 0, 1)])),
--        &[],
--        builder.file_purger(),
--    );
-+    if awaiting_leader_lease {
-+        manifest_ctx.start_leader_lease_wait_for_test(region_id);
-+    } else {
-+        version_control.apply_edit(
-+            Some(pending_tails_edit(vec![tail(1, 0, 1)])),
-+            &[],
-+            builder.file_purger(),
-+        );
-+    }
- 
-     scheduler
-         .on_compaction_finished(region_id, &manifest_ctx, schema_metadata_manager, true)
-```
-
-**File**: `src/mito2/src/engine.rs` (modified, +29/-3)
-```diff
-@@ -108,7 +108,7 @@ mod puffin_index;
- use std::any::Any;
- use std::collections::{HashMap, HashSet};
- use std::sync::{Arc, RwLock};
--use std::time::Instant;
-+use std::time::{Duration, Instant};
- 
- use api::region::RegionResponse;
- use async_trait::async_trait;
-@@ -1408,6 +1408,23 @@ impl EngineInner {
-         }
+@@ -375,6 +375,15 @@ impl MitoEngine {
+             });
      }
  
-+    /// Logs the end of the wait of `region` for its Leader lease, which lasted `waited`, and
-+    /// tells its worker to start what the wait deferred. Does nothing if the lease ended no wait
-+    /// or the region waits again, so a wait ends with one notification.
-+    fn notify_if_leader_lease_wait_ended(&self, region: &MitoRegionRef, waited: Option<Duration>) {
-+        let Some(waited) = waited else {
-+            return;
-+        };
-+        if region.manifest_ctx.awaits_leader_lease() {
-+            return;
++    /// Extends the Leader deadline of a region as a Leader or StagingLeader lease that the region
++    /// ignores does. Like [Self::record_granted_lease], it serves a region of a group that received
++    /// the lease as a whole. Does nothing if the region is not open.
++    pub fn extend_leader_deadline(&self, region_id: RegionId, deadline: Instant) {
++        if let Ok(region) = self.inner.find_region(region_id) {
++            region.manifest_ctx.leader_deadline.extend(deadline);
 +        }
-+        info!(
-+            "Region {} received its Leader lease {:?} after a catchup made it writable",
-+            region.region_id, waited
-+        );
-+        self.workers.notify_leader_lease_wait_ended(region);
 +    }
 +
-     /// Asks the worker to replay the pending tails of `region` if a role change made it
-     /// writable. The worker may already have started an ALTER or an edit of the region.
-     fn notify_if_became_writable(&self, region: &MitoRegionRef, was_writable: bool) {
-@@ -1765,11 +1782,20 @@ impl RegionEngine for MitoEngine {
-         }
-         if role == RegionRole::Leader {
-             let was_writable = region.is_writable();
--            let promoted = region
-+            let promotion = region
-                 .manifest_ctx
-                 .promote_unless_downgrade_started_after(sent_at, region_id);
-             self.inner.notify_if_became_writable(&region, was_writable);
--            return Ok(promoted);
-+            self.inner
-+                .notify_if_leader_lease_wait_ended(&region, promotion.ended_wait);
-+            return Ok(promotion.promoted);
-+        }
-+        // The metasrv grants it to the leader of a region whose route is in staging, and it ends
-+        // the wait for a Leader lease too.
-+        if role == RegionRole::StagingLeader && region.manifest_ctx.awaits_leader_lease() {
-+            let ended_wait = region.manifest_ctx.record_leader_lease(sent_at);
-+            self.inner
-+                .notify_if_leader_lease_wait_ended(&region, ended_wait);
-         }
-         let previous = region.set_role(role);
-         self.inner.notify_if_can_no_longer_replay(&region, previous);
-```
-
-**File**: `src/mito2/src/engine/lease_test.rs` (modified, +663/-11)
-```diff
-@@ -13,38 +13,60 @@
- // limitations under the License.
- 
- //! Tests that a region acknowledges only writes whose WAL append completed within its leader
--//! lease, and that Leader grants for heartbeats sent before a downgrade do not make it writable
--//! again.
-+//! lease, that Leader grants for heartbeats sent before a downgrade do not make it writable
-+//! again, and what a region a catchup made writable may commit before a later lease confirms it.
- 
- use std::collections::HashMap;
- use std::sync::Arc;
-+use std::sync::atomic::{AtomicUsize, Ordering};
- use std::time::{Duration, Instant};
- 
- use api::region::RegionResponse;
-+use api::v1::region::{StrictWindow, compact_request};
- use api::v1::{ColumnSchema, Rows};
-+use common_base::readable_size::ReadableSize;
- use common_error::ext::{BoxedError, ErrorExt};
-+use common_error::status_code::StatusCode;
- use common_recordbatch::RecordBatches;
- use rstest::rstest;
- use rstest_reuse::apply;
--use store_api::region_engine::{RegionEngine, RegionRole, SettableRegionRoleState};
-+use store_api::region_engine::{
-+    RegionEngine, RegionRole, SetRegionRoleStateResponse, SettableRegionRoleState,
-+};
- use store_api::region_request::{
--    EnterStagingRequest, RegionCatchupRequest, RegionCloseRequest, RegionDropRequest,
--    RegionPutRequest, RegionRequest, StagingPartitionDirective,
-+    EnterStagingRequest, RegionAlterRequest, RegionBuildIndexRequest, RegionCatchupRequest,
-+    RegionCloseRequest, RegionCompactRequest, RegionDropRequest, RegionFlushRequest,
-+    RegionPutRequest, RegionRequest, RegionTruncateRequest, StagingPartitionDirective,
- };
- use store_api::storage::{RegionId, ScanRequest};
- use tokio::task::JoinHandle;
- 
- use crate::config::MitoConfig;
- use crate::engine::MitoEngine;
- use crate::engine::basic_test::build_bulk_insert_request;
--use crate::engine::listener::WriteWalListener;
-+use crate::engine::index_build_test::async_build_mode_config;
-+use crate::engine::listener::{
-+    CountingStallListener, EventListener, EventListenerRef, WriteWalListener,
-+};
-+use crate::engine::object_store_wal_test::wait_until;
-+use crate::engine::open_test::open_region_with_backfilled_partition_expr;
-+use crate::engine::pending_tail_test::add_field;
-+use crate::engine::staging_test::{
-+    enter_staging, first_file, float_range_expr, submit_staging_edit,
-+};
- use crate::error::Error;
-+use crate::flush::FlushReason;
- use crate::lease::GrantedLease;
-+use crate::manifest::action::RegionEdit;
-+use crate::metrics::{FLUSH_FAILURE_TOTAL, FLUSH_REQUESTS_TOTAL};
- use crate::region::{RegionLeaderState, RegionRoleState};
-+use crate::request::{BackgroundNotify, BuildIndexRequest, WorkerRequest};
-+use crate::sst::file::IndexType;
-+use crate::sst::index::IndexBuildType;
- use crate::test_util::{
--    CreateRequestBuilder, LogStoreFactory, TestEnv, build_rows, kafka_log_store_factory,
--    multiple_log_store_factories, prepare_test_for_kafka_log_store, raft_engine_log_store_factory,
--    reopen_region, rows_schema,
-+    CreateRequestBuilder, LogStoreFactory, TestEnv, build_rows, flush_region,
-+    kafka_log_store_factory, multiple_log_store_factories, prepare_test_for_kafka_log_store,
-+    put_rows, raft_engine_log_store_factory, reopen_region, rows_schema,
- };
- 
- const LEASE: Duration = Duration::from_secs(10);
-@@ -57,8 +79,20 @@ async fn create_region(
-     topic: Option<String>,
- ) -> (Arc<WriteWalListener>, MitoEngine, Vec<ColumnSchema>) {
-     let listener = Arc::new(WriteWalListener::default());
-+    let (engine, schema) =
-+        create_region_with_config(env, topic, MitoConfig::default(), listener.clone()).await;
-+    (listener, engine, schema)
-+}
-+
-+/// As [create_region], on an engine of `config` with `listener`.
-+async fn create_region_with_config(
-+    env: &mut TestEnv,
-+    topic: Option<String>,
-+    config: MitoConfig,
-+    listener: EventListenerRef,
-+) -> (MitoEngine, Vec<ColumnSchema>) {
-     let engine = env
--        .create_engine_with(MitoConfig::default(), None, Some(listener.clone()), None)
-+        .create_engine_with(config, None, Some(listener), None)
-         .await;
-     engine.require_write_lease();
-     engine.freeze_lease_clock(Instant::now());
-@@ -68,7 +102,7 @@ async fn create_region(
-         .handle_request(REGION_ID, RegionRequest::Create(request))
-         .await
-         .unwrap();
--    (listener, engine, schema)
-+    (engine, schema)
- }
- 
- fn grant(engine: &MitoEngine, role: RegionRole, deadline: Instant) {
-@@ -496,3 +530,621 @@ async fn test_granted_lease_removed_on_engine_stop() {
- 
-     assert_eq!(granted_lease(&engine), None);
- }
-+
-+/// Demotes `region_id` on an engine whose writes need a lease and makes it writable again by a
-+/// catchup, after which it awaits its Leader lease.
-+pub(crate) async fn promote_to_await_leader_lease(engine: &MitoEngine, region_id: RegionId) {
-+    engine
-+        .set_region_role_state_gracefully(region_id, SettableRegionRoleState::Follower)
-+        .await
-+        .unwrap();
-+    // The lease the catchup seeds ne
-```
-
-**File**: `src/mito2/src/engine/listener.rs` (modified, +8/-0)
-```diff
-@@ -38,6 +38,14 @@ pub trait EventListener: Send + Sync {
-     /// Notifies the listener before a catchup reopens the region.
-     async fn on_catchup_reopen_begin(&self, _region_id: RegionId) {}
- 
-+    /// Notifies the listener after the worker handled the end of the region's wait for its
-+    /// Leader lease.
-+    fn on_leader_lease_wait_ended(&self, _region_id: RegionId) {}
-+
-+    /// Notifies the listener when the worker spawns the persisting of the region's backfilled
-+    /// metadata.
-+    fn on_persist_backfilled_metadata_begin(&self, _region_id: RegionId) {}
-+
-     /// Notifies the listener before a tail replay commits its result.
-     async fn on_tail_commit_begin(&self, _region_id: RegionId) {}
- 
-```
-
-**File**: `src/mito2/src/engine/object_store_wal_recovery_test.rs` (modified, +31/-5)
-```diff
-@@ -2306,12 +2306,17 @@ async fn wait_for_pressure_admission(
- 
- /// Exercises the production threshold, worker timers, flush and WAL release.
- /// Both regions pin the oldest object and belong to different workers.
-+/// With `awaiting_leader_lease`, region A is a writable leader that awaits its Leader lease.
- #[rstest]
--#[case::writable(RegionRoleState::Leader(RegionLeaderState::Writable))]
--#[case::follower(RegionRoleState::Follower)]
--#[case::staging(RegionRoleState::Leader(RegionLeaderState::Staging))]
-+#[case::writable(RegionRoleState::Leader(RegionLeaderState::Writable), false)]
-+#[case::follower(RegionRoleState::Follower, false)]
-+#[case::staging(RegionRoleState::Leader(RegionLeaderState::Staging), false)]
-+#[case::awaiting_leader_lease(RegionRoleState::Leader(RegionLeaderState::Writable), true)]
- #[tokio::test]
--async fn test_wal_pressure_flushes_blockers_across_workers(#[case] state: RegionRoleState) {
-+async fn test_wal_pressure_flushes_blockers_across_workers(
-+    #[case] state: RegionRoleState,
-+    #[case] awaiting_leader_lease: bool,
-+) {
-     use crate::time_provider::mock::MockTimeProvider;
- 
-     let mut env = TestEnv::new().await;
-@@ -2423,8 +2428,18 @@ async fn test_wal_pressure_flushes_blockers_across_workers(#[case] state: Region
-         RegionRoleState::Leader(RegionLeaderState::Writable) => {}
-         _ => unreachable!(),
+     /// Freezes the clock of the lease checks at `at`.
+     #[cfg(any(test, feature = "test"))]
+     pub fn freeze_lease_clock(&self, at: Instant) {
+@@ -1398,7 +1407,8 @@ impl EngineInner {
      }
-+    let lease_deadline = std::time::Instant::now() + Duration::from_secs(600);
-+    if awaiting_leader_lease {
-+        region(&engine, REGION_B)
-+            .manifest_ctx
-+            .leader_deadline
-+            .extend(lease_deadline);
-+        region_a
-+            .manifest_ctx
-+            .start_leader_lease_wait_for_test(REGION_A);
+ 
+     /// Converts the [`RegionRole`]. Unlike lease and catchup promotions, a conversion to Leader
+-    /// does not check whether the region waits for a reload.
++    /// does not check whether the region waits for a reload, and unlike a lease it is not held
++    /// back while a catchup runs on the region.
+     fn set_region_role(&self, region_id: RegionId, role: RegionRole) -> Result<()> {
+         let region = self.find_region(region_id)?;
+         let was_leader = region.region_role() == RegionRole::Leader;
+@@ -1809,10 +1819,10 @@ impl RegionEngine for MitoEngine {
+                 .notify_if_leader_lease_wait_ended(&region, promotion.ended_wait);
+             return Ok(promotion.promoted);
+         }
+-        // The metasrv grants it to the leader of a region whose route is in staging, and it ends
+-        // the wait for a Leader lease too.
++        // The metasrv grants it to the leader of a region whose route is in staging, and unless a
++        // catchup runs on the region it ends the wait for a Leader lease too.
+         if role == RegionRole::StagingLeader && region.manifest_ctx.awaits_leader_lease() {
+-            let ended_wait = region.manifest_ctx.record_leader_lease(sent_at);
++            let ended_wait = region.manifest_ctx.record_staging_leader_lease(sent_at);
+             self.inner
+                 .notify_if_leader_lease_wait_ended(&region, ended_wait);
+         }
+@@ -1870,6 +1880,11 @@ impl RegionEngine for MitoEngine {
+         self.inner.role(region_id)
+     }
+ 
++    fn is_confirmed_leader(&self, region_id: RegionId) -> Option<bool> {
++        self.find_region(region_id)
++            .map(|region| region.is_confirmed_leader())
 +    }
-     clock.set_now(now + 240_000);
--    if state != RegionRoleState::Leader(RegionLeaderState::Writable) {
-+    if state != RegionRoleState::Leader(RegionLeaderState::Writable) || awaiting_leader_lease {
-         // Observe admission itself: a failed manifest commit would also leave
-         // the watermark unchanged, but must not make this assertion pass.
-         assert!(!wait_for_pressure_admission(&mut observations, REGION_A).await);
-@@ -2445,6 +2460,17 @@ async fn test_wal_pressure_flushes_blockers_across_workers(#[case] state: Region
-         assert_eq!(vec![REGION_A], store.flush_candidates());
-         if region_a.is_staging() {
-             region_a.exit_staging().unwrap();
-+        } else if awaiting_leader_lease {
-+            let sent_at = std::time::Instant::now();
-+            engine
-+                .set_region_role_with_lease(
-+                    REGION_A,
-+                    RegionRole::Leader,
-+                    sent_at,
-+                    lease_deadline,
-+                    None,
-+                )
-+                .unwrap();
-         } else {
-             engine
-                 .set_region_role(REGION_A, RegionRole::Leader)
++
+     fn as_any(&self) -> &dyn Any {
+         self
+     }
 ```
 
-**File**: `src/mito2/src/engine/object_store_wal_test.rs` (modified, +107/-4)
+**File**: `src/mito2/src/engine/catchup_test.rs` (modified, +20/-4)
 ```diff
-@@ -55,7 +55,9 @@ use tokio::sync::{Notify, oneshot};
+@@ -32,6 +32,7 @@ use store_api::storage::{RegionId, ScanRequest};
  
  use crate::config::MitoConfig;
  use crate::engine::MitoEngine;
 +use crate::engine::lease_test::promote_to_await_leader_lease;
- use crate::engine::listener::{EventListener, FlushCancellationListener};
-+use crate::engine::open_test::new_dummy_fetcher;
- use crate::engine::region_hook::{RegionHook, RegionHookRef};
- use crate::manifest::action::{RegionEdit, RegionMetaAction, RegionMetaActionList};
- use crate::manifest::storage::{delta_file, gen_path, manifest_dir};
-@@ -536,20 +538,36 @@ pub(crate) async fn count_ssts(store: &ObjectStore, region_dir: &str) -> usize {
-         .count()
+ use crate::error::Error;
+ use crate::manifest::action::RegionEdit;
+ use crate::test_util::{
+@@ -962,8 +963,13 @@ async fn test_catchup_not_exist_with_format(flat_format: bool) {
+     assert_matches!(err.status_code(), StatusCode::RegionNotFound);
  }
  
-+/// A commit is stale because the Leader deadline of its writer passes while it is written, or,
-+/// with `awaiting_leader_lease`, because a catchup made its writer writable and no Leader lease
-+/// confirmed it; the cases cover the commits such a writer still makes: the flushes of its
-+/// downgrade and of its close.
- #[rstest]
--#[case::flush(RegionRequest::Flush(RegionFlushRequest::default()), 1)]
-+#[case::flush(RegionRequest::Flush(RegionFlushRequest::default()), 1, false)]
- #[case::compaction(
-     RegionRequest::Compact(RegionCompactRequest {
-         options: compact_request::Options::StrictWindow(StrictWindow { window_seconds: 3600 }),
-         ..Default::default()
-     }),
--    1
-+    1,
-+    false
-+)]
-+#[case::truncate(RegionRequest::Truncate(RegionTruncateRequest::All), 0, false)]
-+#[case::downgrade_flush_awaiting_leader_lease(
-+    RegionRequest::Flush(RegionFlushRequest::default()),
-+    1,
-+    true
-+)]
-+#[case::close_flush_awaiting_leader_lease(
-+    RegionRequest::Close(RegionCloseRequest { flush_on_close: true }),
-+    1,
-+    true
- )]
--#[case::truncate(RegionRequest::Truncate(RegionTruncateRequest::All), 0)]
++/// With `awaiting_leader_lease`, a catchup made the region writable and it awaits its Leader
++/// lease: a catchup refused as busy leaves it as it is, so the catchup in progress keeps it.
++#[rstest]
++#[case::follower(false)]
++#[case::awaiting_leader_lease(true)]
  #[tokio::test]
- async fn test_stale_commit_on_deleted_delta_name_conflicts(
-     #[case] commit: RegionRequest,
-     #[case] new_ssts: usize,
-+    #[case] awaiting_leader_lease: bool,
- ) {
+-async fn test_catchup_region_busy() {
++async fn test_catchup_region_busy(#[case] awaiting_leader_lease: bool) {
      common_telemetry::init_default_ut_logging();
-     // The creation is version 0 and the flushes below are versions 1 and 2.
-@@ -569,7 +587,17 @@ async fn test_stale_commit_on_deleted_delta_name_conflicts(
-         put_rows(&old_leader, region_id, rows(start)).await;
-         flush_region(&old_leader, region_id, None).await;
-     }
+     let mut env = TestEnv::new().await;
+     let engine = env.create_engine(MitoConfig::default()).await;
+@@ -973,9 +979,14 @@ async fn test_catchup_region_busy() {
+         .handle_request(region_id, RegionRequest::Create(request))
+         .await
+         .unwrap();
+-    engine
+-        .set_region_role(region_id, RegionRole::Follower)
+-        .unwrap();
 +    if awaiting_leader_lease {
-+        promote_to_await_leader_lease(&old_leader, region_id).await;
-+    }
-     put_rows(&old_leader, region_id, rows(6)).await;
-+    // A close turns the region downgrading itself.
-+    if awaiting_leader_lease && !matches!(commit, RegionRequest::Close(_)) {
-+        old_leader
-+            .set_region_role_state_gracefully(region_id, SettableRegionRoleState::DowngradingLeader)
-+            .await
-+            .unwrap();
-+    }
- 
-     let region = old_leader.get_region(region_id).unwrap();
-     let (manifest, checkpoint) = {
-@@ -614,7 +642,22 @@ async fn test_stale_commit_on_deleted_delta_name_conflicts(
-         }
-     }
- 
--    old_leader.freeze_lease_clock(deadline);
-+    if awaiting_leader_lease {
-+        assert!(region.manifest_ctx.awaits_leader_lease());
-+        // A lease that ends the wait during the write does not lift the check.
-+        old_leader
-+            .set_region_role_with_lease(
-+                region_id,
-+                RegionRole::StagingLeader,
-+                Instant::now(),
-+                deadline,
-+                None,
-+            )
-+            .unwrap();
-+        assert!(!region.manifest_ctx.awaits_leader_lease());
++        engine.require_write_lease();
++        promote_to_await_leader_lease(&engine, region_id).await;
 +    } else {
-+        old_leader.freeze_lease_clock(deadline);
++        engine
++            .set_region_role(region_id, RegionRole::Follower)
++            .unwrap();
 +    }
-     blocker.release();
-     let error = commit.await.unwrap().unwrap_err();
-     assert!(error.retry_hint().is_retryable(), "{error:?}");
-@@ -1177,6 +1220,66 @@ async fn test_conflict_reloads_region() {
-     assert!(!engine.is_region_catching_up(region_id));
+     let worker = engine.inner.workers.worker(region_id);
+     let catchup_regions = worker.catchup_regions();
+     catchup_regions.insert_region(region_id);
+@@ -990,4 +1001,9 @@ async fn test_catchup_region_busy() {
+         .await
+         .unwrap_err();
+     assert_matches!(err.status_code(), StatusCode::RegionBusy);
++    if awaiting_leader_lease {
++        let region = engine.get_region(region_id).unwrap();
++        assert!(region.is_writable());
++        assert!(region.manifest_ctx.awaits_leader_lease());
++    }
+ }
+```
+
+**File**: `src/mito2/src/engine/lease_test.rs` (modified, +55/-1)
+```diff
+@@ -46,7 +46,8 @@ use crate::engine::MitoEngine;
+ use crate::engine::basic_test::build_bulk_insert_request;
+ use crate::engine::index_build_test::async_build_mode_config;
+ use crate::engine::listener::{
+-    CountingStallListener, EventListener, EventListenerRef, WriteWalListener,
++    CountingStallListener, EventListener, EventListenerRef, FlushCancellationListener,
++    WriteWalListener,
+ };
+ use crate::engine::object_store_wal_test::wait_until;
+ use crate::engine::open_test::open_region_with_backfilled_partition_expr;
+@@ -840,6 +841,59 @@ async fn test_downgrade_flushes_region_awaiting_leader_lease() {
+     assert_eq!(manifest_files(&engine).await, vec![3]);
  }
  
-+/// The persisting of backfilled metadata that the end of a wait for the Leader lease spawns
-+/// outside the worker asks the worker to reload the region it fenced on a newer manifest.
++/// A catchup again keeps a region whose flush is in flight, as the flush of a downgrade of a
++/// region that awaits its Leader lease can be, and answers busy.
 +#[tokio::test]
-+async fn test_conflicting_backfill_asks_for_reload() {
-+    let region_id = RegionId::new(1, 1);
-+    let expr = r#"{"Expr":{"lhs":{"Column":"a"},"op":"GtEq","rhs":{"Value":{"UInt32":10}}}}"#;
-+    let mut env = TestEnv::with_prefix("backfill-conflict-reload")
-+        .await
-+        .with_partition_expr_fetcher(new_dummy_fetcher(region_id, expr.to_string()));
-+    let (engine, _log_store) = new_engine(&mut env).await;
-+    engine.require_write_lease();
-+    engine.freeze_lease_clock(Instant::now());
-+    let request = CreateRequestBuilder::new()
-+        .insert_option(WAL_OPTIONS_KEY, &wal_options()[WAL_OPTIONS_KEY])
-+        .partition_expr_json(None)
-+        .build();
-+    let table_dir = request.table_dir.clone();
++async fn test_catchup_again_keeps_region_with_flush_in_flight() {
++    common_telemetry::init_default_ut_logging();
++    let mut env = TestEnv::with_prefix("catchup-again-flush-in-flight").await;
++    let listener = Arc::new(FlushCancellationListener::default());
++    let (engine, schema) =
++        create_region_with_config(&mut env, None, MitoConfig::default(), listener.clone()).await;
++    promote_to_await_leader_lease(&engine, REGION_ID).await;
 +    engine
-+        .handle_request(region_id, RegionRequest::Create(request))
++        .handle_request(REGION_ID, put_request(&schema, 0))
 +        .await
 +        .unwrap();
-+    close_region(&engine, region_id).await;
-+    let open = RegionRequest::Open(open_requ
++    engine
++        .set_region_role_state_gracefully(REGION_ID, SettableRegionRoleState::DowngradingLeader)
++        .await
++        .unwrap();
++    let region = engine.get_region(REGION_ID).unwrap();
++    let flush = {
++        let engine = engine.clone();
++        tokio::spawn(async move { flush(&engine).await })
++    };
++    listener.wait_flush_started().await;
++
++    let error = catchup(&engine).await.unwrap_err();
++    assert_eq!(StatusCode::RegionBusy, error.status_code(), "{error:?}");
++    assert!(Arc::ptr_eq(&region, &engine.get_region(REGION_ID).unwrap()));
++    listener.resume_flush();
++    flush.await.unwrap().unwrap();
++    assert_eq!(count_rows(&engine).await, 3);
++}
++
++/// Under a local WAL, which replays nothing, a successful catchup again drops the region's
++/// unflushed rows.
++#[tokio::test]
++async fn test_catchup_again_drops_unflushed_rows_under_local_wal() {
++    common_telemetry::init_default_ut_logging();
++    let mut env = TestEnv::with_prefix("catchup-again-local-wal").await;
++    let (_listener, engine, schema) = create_region(&mut env, None).await;
++    promote_to_await_leader_lease(&engine, REGION_ID).await;
++    put(&engine, REGION_ID, &schema, 0).await.unwrap().unwrap();
++    let region = engine.get_region(REGION_ID).unwrap();
++    assert_eq!(count_rows(&engine).await, 3);
++
++    catchup(&engine).await.unwrap();
++    assert!(!Arc::ptr_eq(
++        &region,
++        &engine.get_region(REGION_ID).unwrap()
++    ));
++    assert_eq!(count_rows(&engine).await, 0);
++}
++
+ /// Opens a region whose opener filled in the partition expression its manifest lacks and makes
+ /// it writable by a catchup, after which it awaits its Leader lease. Returns the engine and the
+ /// expression.
+```
+
+---
+
+### Incident Patch 2: `517a1376` (2026-11-23)
+**Commit Message**: fix(otlp): reject malformed cumulative histogram points (#10552)
+
+* fix(otlp): reject malformed cumulative histogram points
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+* refactor(otlp): check bucket sum overflow once
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+**File**: `src/servers/src/otlp/metrics.rs` (modified, +82/-77)
+```diff
+@@ -578,13 +578,11 @@ fn encode_exponential_histogram(
+         .context(error::InternalSnafu {
+             err_msg: "missing native histogram schema",
+         })?;
+-    for (index, data_point) in histogram.data_points.iter().enumerate() {
++    for data_point in &histogram.data_points {
+         let (value, timestamp_nanos) = match exponential_histogram_value(data_point, temporality) {
+             Ok(value) => value,
+             Err(reason) => {
+-                reject_data_points(outcome, 1, || {
+-                    format!("metric `{name}` data point {index}: {reason}")
+-                })?;
++                reject_data_points(outcome, 1, || format!("metric `{name}`: {reason}"))?;
+                 OTLP_EXPONENTIAL_HISTOGRAM_REJECTED_DATA_POINTS
+                     .with_label_values(&["invalid_data_point"])
+                     .inc();
+@@ -1175,11 +1173,9 @@ fn encode_histogram(
+         Ok(AggregationTemporality::Delta)
+     );
+     let stale_value = f64::from_bits(PROMETHEUS_STALE_NAN_BITS);
+-    for (index, data_point) in hist.data_points.iter().enumerate() {
+-        if let Some(reason) = histogram_data_point_rejection(data_point, is_delta) {
+-            reject_data_points(outcome, 1, || {
+-                format!("metric `{name}` data point {index}: {reason}")
+-            })?;
++    for data_point in &hist.data_points {
++        if let Some(reason) = histogram_data_point_rejection(data_point) {
++            reject_data_points(outcome, 1, || format!("metric `{name}`: {reason}"))?;
+             continue;
+         }
+ 
+@@ -1206,22 +1202,15 @@ fn encode_histogram(
+         } else {
+             let mut accumulated_count = 0u64;
+             let mut values = Vec::with_capacity(data_point.bucket_counts.len());
+-            for (idx, count) in data_point.bucket_counts.iter().enumerate() {
+-                accumulated_count = accumulated_count.checked_add(*count).ok_or_else(|| {
+-                    error::InvalidParameterSnafu {
+-                        reason: format!(
+-                            "metric `{name}` data point {index}: bucket prefix overflows u64"
+-                        ),
+-                    }
+-                    .build()
+-                })?;
+-                let bound =
+-                    data_point.explicit_bounds.get(idx).copied().or_else(|| {
+-                        (idx == data_point.explicit_bounds.len()).then_some(f64::INFINITY)
+-                    });
+-                if let Some(bound) = bound {
+-                    values.push((bound, accumulated_count as f64));
+-                }
++            for (bound, count) in data_point
++                .explicit_bounds
++                .iter()
++                .copied()
++                .chain(std::iter::once(f64::INFINITY))
++                .zip(&data_point.bucket_counts)
++            {
++                accumulated_count += *count;
++                values.push((bound, accumulated_count as f64));
+             }
+             values
+         };
+@@ -1331,39 +1320,36 @@ fn encode_histogram(
+     Ok(())
+ }
+ 
+-pub(crate) fn histogram_data_point_rejection(
+-    data_point: &HistogramDataPoint,
+-    is_delta: bool,
+-) -> Option<String> {
++pub(crate) fn histogram_data_point_rejection(data_point: &HistogramDataPoint) -> Option<String> {
+     if has_no_recorded_value(data_point.flags) {
+         return None;
+     }
+ 
+-    if is_delta {
+-        let valid_empty_layout =
+-            data_point.bucket_counts.is_empty() && data_point.explicit_bounds.is_empty();
+-        let expected_buckets = data_point.explicit_bounds.len().checked_add(1);
+-        if !valid_empty_layout && expected_buckets != Some(data_point.bucket_counts.len()) {
+-            return Some(format!(
+-                "bucket_counts length {} must equal explicit_bounds length {} plus one",
+-                data_point.bucket_counts.len(),
+-                data_point.explicit_bounds.len()
+-            ));
+-        }
+-        if data_point
++    let valid_empty_layout =
++        data_point.bucket_counts.is_empty() && data_point.explicit_bounds.is_empty();
++    let expected_buckets = data_point.explicit_bounds.len().checked_add(1);
++    if !valid_empty_layout && expected_buckets != Some(data_point.bucket_counts.len()) {
++        return Some(format!(
++            "bucket_counts length {} must equal explicit_bounds length {} plus one",
++            data_point.bucket_counts.len(),
++            data_point.explicit_bounds.len()
++        ));
++    }
++    // OTLP requires strictly increasing explicit_bounds; GreptimeDB also requires finite
++    // bounds so an explicit +Inf cannot duplicate the le="inf" bucket appended above.
++    if data_point
++        .explicit_bounds
++        .iter()
++        .any(|bound| !bound.is_finite())
++        || data_point
+             .explicit_bounds
+-            .iter()
+-            .any(|bound| !bound.is_finite())
+-            || data_point
+-                .explicit_bounds
+-                .windows(2)
+-                .any(|bounds| bounds[0] >= bounds[1])
+```
+
+**File**: `src/servers/src/otlp/metrics/tests/delta.rs` (modified, +187/-0)
+```diff
+@@ -1031,3 +1031,190 @@ fn test_shared_physical_conflicts_and_independent_backings() {
+         }
+     }
+ }
++
++#[test]
++fn test_cumulative_and_unspecified_histogram_validation() {
++    for temporality in [
++        AggregationTemporality::Cumulative,
++        AggregationTemporality::Unspecified,
++    ] {
++        let convert = |data_points| {
++            let metric = Metric {
++                name: "latency".to_string(),
++                data: Some(metric::Data::Histogram(Histogram {
++                    data_points,
++                    aggregation_temporality: temporality as i32,
++                })),
++                ..Default::default()
++            };
++            to_grpc_insert_requests(metrics_request(vec![metric]), &mut OtlpMetricCtx::default())
++                .unwrap()
++        };
++
++        // 1. Reported layout mismatch (missing +Inf bucket).
++        // 2. Extra buckets beyond explicit_bounds.len() + 1.
++        // 3. Isolated bucket count total mismatch with valid layout length.
++        for (point, expected_err) in [
++            (
++                HistogramDataPoint {
++                    explicit_bounds: vec![0.0, 1.0],
++                    bucket_counts: vec![1, 2],
++                    count: 8,
++                    sum: Some(10.0),
++                    ..Default::default()
++                },
++                "bucket_counts length",
++            ),
++            (
++                HistogramDataPoint {
++                    explicit_bounds: vec![0.0],
++                    bucket_counts: vec![1, 2, 3],
++                    count: 6,
++                    ..Default::default()
++                },
++                "bucket_counts length",
++            ),
++            (
++                HistogramDataPoint {
++                    explicit_bounds: vec![0.0, 1.0],
++                    bucket_counts: vec![1, 2, 4],
++                    count: 8,
++                    sum: Some(10.0),
++                    ..Default::default()
++                },
++                "buckets contain 7 observations, declared count is 8",
++            ),
++        ] {
++            let conversion = convert(vec![point]);
++            assert_eq!(
++                0, conversion.outcome.accepted_data_points,
++                "{temporality:?}"
++            );
++            assert_eq!(
++                1, conversion.outcome.rejected_data_points,
++                "{temporality:?}"
++            );
++            assert!(
++                conversion
++                    .outcome
++                    .error_message
++                    .as_deref()
++                    .unwrap()
++                    .contains(expected_err),
++                "{temporality:?}: {:?}",
++                conversion.outcome.error_message
++            );
++            assert!(conversion.requests.inserts.is_empty());
++        }
++
++        // 4. Bounds checks: non-finite or non-strictly-increasing explicit_bounds.
++        for bounds in [
++            vec![0.0, f64::INFINITY],
++            vec![f64::NEG_INFINITY, 1.0],
++            vec![f64::NAN],
++            vec![1.0, 1.0],
++            vec![2.0, 1.0],
++        ] {
++            let bucket_len = bounds.len() + 1;
++            let point = HistogramDataPoint {
++                explicit_bounds: bounds,
++                bucket_counts: vec![1; bucket_len],
++                count: bucket_len as u64,
++                ..Default::default()
++            };
++            let conversion = convert(vec![point]);
++            assert_eq!(
++                0, conversion.outcome.accepted_data_points,
++                "{temporality:?}"
++            );
++            assert_eq!(
++                1, conversion.outcome.rejected_data_points,
++                "{temporality:?}"
++            );
++            assert!(
++                conversion
++                    .outcome
++                    .error_message
++                    .as_deref()
++                    .unwrap()
++                    .contains("explicit_bounds must be finite and strictly increasing"),
++                "{temporality:?}: {:?}",
++                conversion.outcome.error_message
++            );
++        }
++
++        // 5. Zero-count sum check.
++        for bad_sum in [Some(1.0), Some(f64::NAN)] {
++            let conversion = convert(vec![HistogramDataPoint {
++                count: 0,
++                sum: bad_sum,
++                ..Default::default()
++            }]);
++            assert_eq!(
++                0, conversion.outcome.accepted_data_points,
++                "{temporality:?}"
++            );
++            assert_eq!(
++                1, conversion.outcome.rejected_data_points,
++                "{temporality:?}"
++            );
++            assert!(
++                conversion
++                    .outcome
++                    .error_message
++                    .as_deref()
++                    .unwrap()
++                    .contains("sum must be absent or zero when count is zero"),
++                "{temporality:?}: {:?}",
++                conversion.outcome.er
+```
+
+**File**: `tests-integration/tests/http.rs` (modified, +210/-1)
+```diff
+@@ -12954,9 +12954,215 @@ pub async fn test_otlp_metrics_new(store_type: StorageType) {
+     )
+     .await;
+ 
++    test_otlp_cumulative_histogram_validation(&client).await;
++
+     guard.remove_all().await;
+ }
+ 
++async fn test_otlp_cumulative_histogram_validation(client: &TestClient) {
++    use opentelemetry_proto::tonic::common::v1::{AnyValue, KeyValue, any_value};
++    use opentelemetry_proto::tonic::metrics::v1::{
++        self as otel_metrics, AggregationTemporality, Exemplar, HistogramDataPoint, Metric,
++        ResourceMetrics, ScopeMetrics, exemplar, metric,
++    };
++
++    const TS_NANOS: u64 = 1_753_780_559_000_000_000;
++    const TS_SECS: i64 = 1_753_780_559;
++
++    let series_attr = |value: &str| KeyValue {
++        key: "series".to_string(),
++        value: Some(AnyValue {
++            value: Some(any_value::Value::StringValue(value.to_string())),
++        }),
++        ..Default::default()
++    };
++    let exemplar_point = |val: f64| Exemplar {
++        time_unix_nano: TS_NANOS,
++        value: Some(exemplar::Value::AsDouble(val)),
++        ..Default::default()
++    };
++    let cumulative_request =
++        |name: &str, data_points: Vec<HistogramDataPoint>| ExportMetricsServiceRequest {
++            resource_metrics: vec![ResourceMetrics {
++                scope_metrics: vec![ScopeMetrics {
++                    metrics: vec![Metric {
++                        name: name.to_string(),
++                        data: Some(metric::Data::Histogram(otel_metrics::Histogram {
++                            data_points,
++                            aggregation_temporality: AggregationTemporality::Cumulative as i32,
++                        })),
++                        ..Default::default()
++                    }],
++                    ..Default::default()
++                }],
++                ..Default::default()
++            }],
++        };
++    let send_otlp_metrics = |req: ExportMetricsServiceRequest| {
++        send_req(
++            client,
++            vec![(
++                HeaderName::from_static("content-type"),
++                HeaderValue::from_static("application/x-protobuf"),
++            )],
++            "/v1/otlp/v1/metrics",
++            req.encode_to_vec(),
++            false,
++        )
++    };
++
++    // All-rejected cases: reported layout mismatch and isolated count-total mismatch.
++    for (name, bad_counts, expected_err) in [
++        ("malformed_cum_len_hist", vec![1, 2], "bucket_counts length"),
++        (
++            "malformed_cum_count_hist",
++            vec![1, 2, 4],
++            "buckets contain 7 observations, declared count is 8",
++        ),
++    ] {
++        let req = cumulative_request(
++            name,
++            vec![HistogramDataPoint {
++                time_unix_nano: TS_NANOS,
++                count: 8,
++                sum: Some(10.0),
++                explicit_bounds: vec![0.0, 1.0],
++                bucket_counts: bad_counts,
++                exemplars: vec![exemplar_point(0.75)],
++                ..Default::default()
++            }],
++        );
++        let res = send_otlp_metrics(req).await;
++        assert_eq!(StatusCode::BAD_REQUEST, res.status(), "{name}");
++        let status = GoogleRpcStatus::decode(res.bytes().await.as_ref()).unwrap();
++        assert_eq!(tonic::Code::InvalidArgument as i32, status.code, "{name}");
++        assert!(
++            status.message.contains(expected_err),
++            "{name}: {}",
++            status.message
++        );
++        validate_data(
++            name,
++            client,
++            &format!(
++                "select count(*) from information_schema.tables where table_name in \
++                 ('{name}_bucket', '{name}_sum', '{name}_count', 'greptime_metrics_exemplars');"
++            ),
++            "[[0]]",
++        )
++        .await;
++    }
++
++    // Mixed valid control + malformed sibling: only the valid sibling writes rows/exemplars.
++    for (name, bad_counts, expected_err) in [
++        (
++            "mixed_cum_len_hist",
++            vec![1, 2],
++            "bucket_counts length 2 must equal explicit_bounds length 2 plus one",
++        ),
++        (
++            "mixed_cum_count_hist",
++            vec![1, 2, 4],
++            "buckets contain 7 observations, declared count is 8",
++        ),
++    ] {
++        let valid = HistogramDataPoint {
++            attributes: vec![series_attr("valid")],
++            time_unix_nano: TS_NANOS,
++            count: 4,
++            sum: Some(2.0),
++            explicit_bounds: vec![0.0, 1.0],
++            bucket_counts: vec![1, 2, 1],
++            exemplars: vec![exemplar_point(0.25)],
++            ..Default::default()
++        };
++        let malformed = HistogramDataPoint {
++            attributes: vec![series_attr("malformed")],
++            time_unix_nano: TS_NANOS,
++            count: 8,
++            sum: Some(10.0),
++            explicit_bounds: vec![0.0, 1.0],
++            bucket_counts: bad_counts,
++            exemplars: vec![exemplar_point(0.75)],
++    
+```
+
+---
+
+### Incident Patch 3: `b948fb78` (2026-11-23)
+**Commit Message**: fix(promql): plan absent_over_time over a nameless multi-metric selector (#10512)
+
+`absent_over_time({job="x"}[20m])` was declined by the native route, and the plan it fell back to
+answers with an error, so the shape produced no answer at all: the existing planner needs one
+`__name__` equality matcher to read a table from (`Expect a metric matcher, but not found`).
+
+The guard that declined it assumed that a nameless selector's tree declares `__name__` while binding
+no metric name, and that the fused node refuses such a tree. That is not the shape: a discovered
+selector's prepared input is the `Union` of one `RawSeriesSource` per metric, so the node is handed
+explicit-label frames, and only its bare-region-scan arm reads the binding's name - an arm a nameless
+selector never reaches, because a successful scan always binds one metric. A statement such as
+`sum by (__name__) ({tag_0="x"})` over discovered metrics already builds and runs exactly this
+combination.
+
+The guard now declines only a nameless input that is not already sourced, which keeps the bare-scan
+arm closed if that invariant ever regresses. The presence fold keeps the metric name, so two metrics
+sharing ordinary labels st
+
+**File**: `src/promql/src/extension_plan/fused_series.rs` (modified, +6/-3)
+```diff
+@@ -150,9 +150,12 @@ pub struct FusedSeriesBinding {
+     pub grid: Arc<EvalGrid>,
+     /// The metric name every input series is bound to, when the input reads one named metric.
+     ///
+-    /// The logical node requires it when [`tags`](Self::tags) declares [`METRIC_NAME`]: a reader of
+-    /// the output has to be able to tell that a range function dropped the name, which needs a name
+-    /// to drop. The physical node takes the names from the frames, which carry each series' own.
++    /// The requirement that a binding naming [`METRIC_NAME`] among [`tags`](Self::tags) also declares
++    /// this name belongs to the bare-scan arm of `plan_fused_series`, not to this node: a child that
++    /// is a region scan is asked for the series of this one metric, while a child that already
++    /// produces raw frames - a discovered selector's `RawSeriesSource`, or the union of them - names
++    /// each series in its own labels and is accepted with `None` here. A reader of the output still
++    /// sees which range functions dropped the name, which needs no binding.
+     pub metric_name: Option<Arc<str>>,
+     /// The output column holding the grid timestamps.
+     pub time_index: String,
+```
+
+**File**: `src/promql/src/extension_plan/planner.rs` (modified, +186/-1)
+```diff
+@@ -327,18 +327,36 @@ fn explicit_label_frame_ordering(schema: &Schema) -> Option<SeriesOrdering> {
+ 
+ #[cfg(test)]
+ mod tests {
++    use std::fmt::{self, Formatter};
+     use std::sync::Arc;
+ 
++    use common_error::ext::BoxedError;
+     use common_query::series_frame::{
+         raw_series_frame_schema_with_ordering, series_frame_ordering,
+     };
++    use common_recordbatch::{EmptyRecordBatchStream, SendableRecordBatchStream};
++    use datafusion::common::DFSchema;
++    use datafusion::logical_expr::{EmptyRelation, LogicalPlan};
+     use datafusion::physical_plan::ExecutionPlan;
+     use datafusion::physical_plan::empty::EmptyExec;
++    use datafusion::physical_plan::metrics::ExecutionPlanMetricsSet;
+     use datafusion::physical_plan::union::UnionExec;
++    use datafusion::physical_plan::{DisplayAs, DisplayFormatType};
++    use datatypes::prelude::ConcreteDataType;
++    use datatypes::schema::{ColumnSchema, SchemaRef as DatatypesSchemaRef};
+     use datatypes::series::SeriesOrdering;
+     use datatypes::series::samples::{FieldSpec, SeriesSchema};
++    use datatypes::series::time::{EvalGrid, GridSpec};
++    use store_api::metadata::{ColumnMetadata, RegionMetadataBuilder, RegionMetadataRef};
++    use store_api::region_engine::{
++        PrepareRequest, QueryScanContext, RegionScanner, ScannerProperties,
++    };
++    use store_api::storage::{RegionId, ScanRequest};
++    use table::table::scan::RegionScanExec;
+ 
+-    use super::normalize_raw_union;
++    use super::{METRIC_NAME, normalize_raw_union, plan_fused_series};
++    use crate::extension_plan::{FusedSeries, FusedSeriesBinding};
++    use crate::native::plan::{BoundInput, NativeExpr, NativeNode, NativeTree, NativeType};
+ 
+     fn raw_frame(ordering: SeriesOrdering) -> Arc<datafusion::arrow::datatypes::Schema> {
+         let series = SeriesSchema {
+@@ -399,4 +417,171 @@ mod tests {
+             "nothing is lowered when every member is complete"
+         );
+     }
++
++    /// A region whose only column is the time index: the scan below publishes an ordinary region
++    /// schema, not a series frame.
++    fn region_metadata() -> RegionMetadataRef {
++        let mut builder = RegionMetadataBuilder::new(RegionId::new(1024, 1));
++        builder
++            .push_column_metadata(ColumnMetadata {
++                column_schema: ColumnSchema::new(
++                    "ts",
++                    ConcreteDataType::timestamp_millisecond_datatype(),
++                    false,
++                )
++                .with_time_index(true),
++                semantic_type: api::v1::SemanticType::Timestamp,
++                column_id: 1,
++            })
++            .primary_key(vec![]);
++        Arc::new(builder.build().expect("the fixture metadata is valid"))
++    }
++
++    /// The scanner of [`bare_region_scan`], which never answers a chunk here.
++    #[derive(Debug)]
++    struct BareScanner {
++        metadata: RegionMetadataRef,
++        properties: ScannerProperties,
++    }
++
++    impl DisplayAs for BareScanner {
++        fn fmt_as(&self, _format: DisplayFormatType, f: &mut Formatter<'_>) -> fmt::Result {
++            write!(f, "BareScanner")
++        }
++    }
++
++    impl RegionScanner for BareScanner {
++        fn name(&self) -> &str {
++            "BareScanner"
++        }
++
++        fn properties(&self) -> &ScannerProperties {
++            &self.properties
++        }
++
++        fn schema(&self) -> DatatypesSchemaRef {
++            Arc::clone(&self.metadata.schema)
++        }
++
++        fn metadata(&self) -> RegionMetadataRef {
++            Arc::clone(&self.metadata)
++        }
++
++        fn prepare(&mut self, request: PrepareRequest) -> Result<(), BoxedError> {
++            self.properties.prepare(request);
++            Ok(())
++        }
++
++        fn scan_partition(
++            &self,
++            _ctx: &QueryScanContext,
++            _metrics: &ExecutionPlanMetricsSet,
++            _partition: usize,
++        ) -> Result<SendableRecordBatchStream, BoxedError> {
++            Ok(Box::pin(EmptyRecordBatchStream::new(Arc::clone(
++                &self.metadata.schema,
++            ))))
++        }
++
++        fn set_logical_region(&mut self, logical_region: bool) {
++            self.properties.set_logical_region(logical_region);
++        }
++
++        fn set_query_load_region_id(&mut self, region_id: RegionId) {
++            self.properties.set_query_load_region_id(region_id);
++        }
++
++        fn has_predicate_without_region(&self) -> bool {
++            true
++        }
++
++        fn add_dyn_filter_to_predicate(
++            &mut self,
++            filter_exprs: Vec<Arc<dyn datafusion::physical_expr::PhysicalExpr>>,
++        ) -> Vec<bool> {
++            vec![false; filter_exprs.len()]
++        }
++    }
++
++    /// A bare region scan: the input of a node that runs inside the region it reads.
++    fn bare_region_scan() -> Arc<dyn ExecutionPlan> {
++        let scanner = BareScanner {
++            metadata: region_metadata(),
++            properties: ScannerPropertie
+```
+
+**File**: `src/promql/src/native/segment.rs` (modified, +23/-5)
+```diff
+@@ -730,6 +730,19 @@ fn is_raw_series_source(plan: &LogicalPlan) -> bool {
+     }
+ }
+ 
++/// Whether `plan` already answers raw series frames of its own.
++///
++/// A selector naming no metric is prepared as one [`RawSeriesSource`] per discovered metric, or as
++/// the `Union` of them when it discovered several, and each source names the metric it reads. So
++/// such a plan is a frame producer in its own right: a segment hands it to the node it builds
++/// instead of binding it again. Binding it again nests a source in a source, and the physical
++/// planner reads a source's child as the region scan that source binds - a union is no such child
++/// either - so the nested input is refused after the statement has already been committed to this
++/// route.
++fn is_sourced_plan(plan: &LogicalPlan) -> bool {
++    matches!(plan, LogicalPlan::Union(_)) || is_raw_series_source(plan)
++}
++
+ fn find_input_node(node: &NativeNode, source_index: usize) -> Option<&BoundInput> {
+     node.inputs()
+         .into_iter()
+@@ -918,11 +931,16 @@ fn build_inner_segment(
+         let source_fields = tree_source_fields(&tree).ok()?;
+         let mut children = Vec::with_capacity(sources.len());
+         for (local_index, &source_index) in sources.iter().enumerate() {
+-            let (Some((Some(metric), _, source_tags)), Some(fields), Some(scan)) = (
+-                per_source.get(source_index),
+-                source_fields.get(local_index),
+-                scans.get(local_index),
+-            ) else {
++            let scan = scans.get(local_index)?;
++            // A scan that is already a source - one metric of a discovery, or the union of several -
++            // is the frame producer this segment reads, so it stays as it is; see [`is_sourced_plan`].
++            if is_sourced_plan(scan) {
++                children.push(scan.clone());
++                continue;
++            }
++            let (Some((Some(metric), _, source_tags)), Some(fields)) =
++                (per_source.get(source_index), source_fields.get(local_index))
++            else {
+                 return None;
+             };
+             children.push(LogicalPlan::Extension(Extension {
+```
+
+**File**: `src/query/src/promql/planner/native.rs` (modified, +30/-20)
+```diff
+@@ -1070,17 +1070,20 @@ impl PromPlanner {
+         let Some((mut prepared, logical_ids_differ, statement_kind)) = preparation? else {
+             return Ok(None);
+         };
+-        // `absent_over_time` reads its window through a fold that keeps the metric name, so the segment that
+-        // runs it reports names across a boundary. A nameless selector that discovery expands into more
+-        // than one metric binds no single name for that boundary, and the fused node refuses a tree
+-        // declaring `__name__` without one. A fold that dropped the name would plan, but it would read two
+-        // metrics sharing their ordinary labels as one series, so the route declines.
++        // `absent_over_time` reads its window through a fold that keeps the metric name, which the fused
++        // node hands over in a frame's labels. Only the bare-scan arm of that node needs the binding's own
++        // name: it asks a region scan for the series of one metric, and that is exactly the shape with a
++        // name to ask for. A nameless selector that discovery expands into several metric tables never
++        // reaches that arm, because its prepared input is the `Union` of one `RawSeriesSource` per
++        // discovered metric, and each source names its own metric, so the node is handed explicit-label
++        // frames instead. So the case declined here is a nameless input that is *not* sourced, which is the
++        // one shape where a tree keeping `__name__` would meet a scan that has no name to bind.
+         //
+-        // A selector that matched no table is not that shape: its typed empty input holds no series.
++        // A selector that matched no table is not that shape either: its typed empty input holds no series.
+         if reads_presence(prom_expr)
+-            && prepared
+-                .iter()
+-                .any(|(scan, _, metric, ..)| !is_empty_discovered_input(scan) && metric.is_none())
++            && prepared.iter().any(|(scan, _, metric, ..)| {
++                !is_empty_discovered_input(scan) && metric.is_none() && !is_sourced_plan(scan)
++            })
+         {
+             return Ok(None);
+         }
+@@ -1386,15 +1389,6 @@ impl PromPlanner {
+         let children = prepared
+             .into_iter()
+             .map(|(scan, schema, metric, _, tags, _, split_series)| {
+-                // A discovered selector already carries its own sources: a single metric is one
+-                // `RawSeriesSource`, several are a `Union` of them, and each names the metric it
+-                // reads. Wrapping either again would nest a source in a source.
+-                let already_sourced = matches!(&scan, LogicalPlan::Union(_))
+-                    || matches!(
+-                        &scan,
+-                        LogicalPlan::Extension(extension)
+-                            if extension.node.as_any().is::<RawSeriesSource>()
+-                    );
+                 // The typed empty frame of a selector that matched no table is already the input: it reads
+                 // no region and has no metric to bind, so it stays itself on both routes.
+                 if is_empty_discovered_input(&scan) {
+@@ -1404,8 +1398,9 @@ impl PromPlanner {
+                 // reads every input through a raw source: the source names each region's half and
+                 // reconciles the fragments of a series several regions hold. A partition that splits one
+                 // series across regions has to be read through a raw source even where no split is
+-                // planned, since a bare scan would hand a region only its own fragment.
+-                if (!per_source_inputs && !split_series) || already_sourced {
++                // planned, since a bare scan would hand a region only its own fragment. A selector that
++                // already carries its own sources stays as it is; see [`is_sourced_plan`].
++                if (!per_source_inputs && !split_series) || is_sourced_plan(&scan) {
+                     return Ok(scan);
+                 }
+                 let Some(metric) = metric else {
+@@ -1862,6 +1857,21 @@ fn reads_presence(expr: &PromExpr) -> bool {
+     presence.0
+ }
+ 
++/// Whether a prepared selector already carries its own raw sources, and so hands the fused node
++/// explicit-label frames rather than a bare region scan.
++///
++/// A discovered selector is that shape: a single metric is one [`RawSeriesSource`], several are a
++/// `Union` of them, and each names the metric it reads. Wrapping either again would nest a source in
++/// a source.
++fn is_sourced_plan(plan: &LogicalPlan) -> bool {
++    matches!(plan, LogicalPlan::Union(_))
++        || matches!(
++            plan,
++            LogicalPlan::Extension(extension)
++                if extension.node.as_any().is::<RawSeriesSource>()
++        )
++}
++
+ /// The moment `millis` milliseconds from the Unix epoch, on whichever side of it that lands.
+ ///
+ /// A pre-epoch statement reaches the planner as a negative millis
+```
+
+**File**: `src/query/src/promql/planner/test.rs` (modified, +66/-13)
+```diff
+@@ -2582,7 +2582,7 @@ async fn native_zero_match_takes_the_layout_of_its_set_operand() {
+ async fn native_absent_over_time_plans_over_discovered_metrics() {
+     // Only one of the two metrics carries `no_such_label`, so the matcher that wants a value of it
+     // narrows the discovery to that one metric and the route plans. A selector that narrowed to
+-    // both would decline: its presence read keeps the names, and one segment could not bind them.
++    // both - checked below - plans as well, since each discovered metric answers for itself.
+     let specs = ["alpha_total", "beta_total"]
+         .into_iter()
+         .map(|name| ((DEFAULT_SCHEMA_NAME.to_string(), name.to_string()), 2, 1))
+@@ -2656,9 +2656,9 @@ async fn native_absent_over_time_plans_over_discovered_metrics() {
+         "a selector that matched no table still answers its matchers: {tree}"
+     );
+ 
+-    // The same selector over metrics that all carry the label narrows to several: the presence
+-    // read keeps their names and one segment cannot bind them, so the route declines rather than
+-    // planning a tree that cannot be built or one that would read two metrics as one series.
++    // The same selector over metrics that all carry the label narrows to several, and it plans: each
++    // discovered metric is read through its own raw source, so the presence read keeps every name
++    // and the fused node is handed the union of those sources rather than a scan to bind.
+     let specs = ["alpha_total", "beta_total"]
+         .into_iter()
+         .map(|name| ((DEFAULT_SCHEMA_NAME.to_string(), name.to_string()), 2, 1))
+@@ -2668,19 +2668,72 @@ async fn native_absent_over_time_plans_over_discovered_metrics() {
+         vec!["tag_0".to_string(), "no_such_label".to_string()],
+     ];
+     let provider = build_test_table_provider_with_tsid_tag_names(&specs, &tags, None).await;
+-    let error = PromPlanner::stmt_to_plan_with_annotations(
+-        provider,
+-        &build_eval_stmt(r#"absent_over_time({no_such_label="x", tag_0="api"}[5m])"#),
+-        &build_query_engine_state(),
+-        None,
++    let plan = build_native_fused_plan_with_provider(
++        r#"absent_over_time({no_such_label="x", tag_0="api"}[5m])"#,
+         true,
++        provider,
+     )
+-    .await
+-    .expect_err("a nameless selector over several metrics must decline");
++    .await;
++    let display = plan.display_indent().to_string();
++    assert!(display.contains("FusedSeries"), "{display}");
++    assert!(
++        !display.contains("prom_absent_over_time"),
++        "the answer must not be the existing per-series UDF: {display}"
++    );
++    let fused = find_fused_series(&plan).expect("fused plan");
++    // One input holds the whole discovery: the two metrics are the union's sources, not two inputs.
++    assert_eq!(1, fused.inputs().len(), "{plan:?}");
++    // Each discovered metric is read through its own source, and that source names the metric it
++    // reads: this is why the binding below needs no name of its own.
++    fn source_metrics(plan: &LogicalPlan, out: &mut Vec<String>) {
++        if let LogicalPlan::Extension(extension) = plan
++            && let Some(source) = extension.node.as_any().downcast_ref::<RawSeriesSource>()
++        {
++            out.push(source.metric_name().to_string());
++        }
++        for input in plan.inputs() {
++            source_metrics(input, out);
++        }
++    }
++    let mut sources = Vec::new();
++    for input in fused.inputs() {
++        source_metrics(input, &mut sources);
++    }
++    sources.sort();
++    assert_eq!(vec!["alpha_total", "beta_total"], sources, "{plan:?}");
++    // The tree reads presence through a fold that keeps the name, which is what tells two metrics
++    // apart at runtime; a fold that dropped it would read them as one series.
++    let trees = fused_trees(&plan).join("\n");
++    assert!(
++        trees.contains(r#"Vector: absent {no_such_label="x", tag_0="api"}"#),
++        "the labels are the selector's matchers: {trees}"
++    );
++    assert!(
++        trees.contains("Window: last_over_time [300000ms]"),
++        "the presence read folds the window: {trees}"
++    );
+     assert!(
+-        error.to_string().contains("metric matcher"),
+-        "the decline keeps the existing plan's answer: {error}"
++        !trees.contains("present_over_time"),
++        "the fold keeps the name rather than dropping it: {trees}"
++    );
++    // The layout still declares the per-row name column, and an `absent` answer names no row: the
++    // column is the nullable one every row leaves empty.
++    let names = plan.schema().fields();
++    let last = names.last().expect("the plan publishes a name column");
++    assert_eq!(METRIC_NAME, last.name().as_str(), "{names:?}");
++    assert_eq!(&ArrowDataType::Utf8, last.data_type(), "{names:?}");
++    assert!(last.is_nullable(), "{names:?}");
++    assert_eq!(
++        1,
++        names
++            .iter()
++            .filter(|field| field.name() == METRIC_NAME)
++            
+```
+
+**File**: `tests-integration/src/tests/promql_test.rs` (modified, +122/-23)
+```diff
+@@ -6635,10 +6635,11 @@ async fn promql_output(
+ /// `absent_over_time` answers with the labels its selector's matchers fix at every point no series
+ /// of the selector has a sample at, and with nothing at the points one does. Three metric tables
+ /// make the shapes reachable: `absent_probe` carries `probe_label`, which no row's value matches, so
+-/// a nameless selector narrows to it; `absent_a` and `absent_b` carry the same ordinary labels, so a
+-/// nameless selector over them is one discovery expands into several metrics; and no table carries
+-/// `no_such_label`, which is the reported query - the one whose selector matches no metric table and
+-/// whose labels therefore have to come from the matchers alone.
++/// a nameless selector narrows to it; `absent_a` and `absent_b` carry the same ordinary labels, so
++/// a nameless selector covers both and is one discovery expanding into several metrics, each
++/// answering through its own raw source; and no table carries `no_such_label`, which is the reported
++/// query - the one whose selector matches no metric table and whose labels therefore have to come
++/// from the matchers alone.
+ ///
+ /// The existing plan answers the call per series with a UDF, which needs a metric name to read a
+ /// table from: such a selector writes none, and the labels still have to reach the answer at every
+@@ -6748,33 +6749,131 @@ async fn native_promql_absent_over_time_answers_like_prometheus() {
+         );
+     }
+ 
+-    // A nameless selector that discovery expands into more than one metric declines. The presence
+-    // read keeps the metric name, and no single name is bound for the segment that hands it over; a
+-    // fold that dropped the name would plan, and would read two metrics sharing their ordinary
+-    // labels as one series. Neither tree is planned, so the query keeps the existing plan's answer
+-    // for a selector that names no metric - an error - rather than answering wrongly.
++    // A nameless selector that discovery expands into more than one metric answers. `absent_a`,
++    // `absent_b` and `absent_probe` all carry `job`, and the first two carry the same ordinary
++    // labels, so `{job="api"}` is one discovery expanding into several metrics whose series would
++    // collapse into one if the presence read dropped the metric name. It does not, so the node
++    // reads a frame per metric - its child is the union of their raw sources - rather than one scan
++    // bound to one name.
++    //
++    // Both metrics holding samples in the window answer nothing: neither may be read as the other.
+     observer.clear();
+-    let declined = servers::prometheus_handler::PrometheusHandler::do_query(
+-        instance.as_ref(),
+-        &PromQuery {
+-            query: r#"absent_over_time({job="api"}[5m])"#.to_string(),
+-            start: "120".to_string(),
+-            end: "120".to_string(),
+-            step: "1s".to_string(),
+-            ..PromQuery::default()
+-        },
+-        native_query_context(true, 4),
++    let (columns, rows) = native_labelled_rows(
++        promql_output(
++            &instance,
++            r#"absent_over_time({job="api"}[5m])"#,
++            "120",
++            "120",
++            "1s",
++        )
++        .await,
+     )
+     .await;
+     assert!(
+-        declined.is_err(),
+-        "a nameless selector over several metrics must not be answered natively yet"
++        observed_physical_nodes(&observer)
++            .iter()
++            .any(|node| node.name() == "FusedSeriesExec"),
++        "a nameless selector over several metrics must run a fused node: {columns:?}"
++    );
++    assert!(
++        rows.is_empty(),
++        "two metrics with equal labels holding samples in the window: {columns:?} {rows:?}"
++    );
++
++    // The same selector where the window holds no sample of any of them answers once, with the
++    // selector's equality labels alone: the name the presence read kept is not a label of the
++    // answer, and neither is `probe_label`, which no matcher fixes.
++    let (columns, rows) = native_labelled_rows(
++        promql_output(
++            &instance,
++            r#"absent_over_time({job="api"}[5m])"#,
++            "400",
++            "400",
++            "1s",
++        )
++        .await,
++    )
++    .await;
++    assert_eq!(
++        vec![(400000, labels(&[("job", "api")]), 1.0)],
++        rows,
++        "{columns:?}"
++    );
++
++    // A range answers every step whose window holds nothing.
++    let (columns, rows) = native_labelled_rows(
++        promql_output(
++            &instance,
++            r#"absent_over_time({job="api"}[5m])"#,
++            "400",
++            "470",
++            "70s",
++        )
++        .await,
++    )
++    .await;
++    assert_eq!(
++        vec![
++            (400000, labels(&[("job", "api")]), 1.0),
++            (470000, labels(&[("job", "api")]), 1.0),
++        ],
++        rows,
++        "{columns:?}"
+     );
++
++    // A statement that compares a discovery over several metrics with o
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10551** (2026-11-21): feat: update dashboard to v0.14.7 (@sunchanglong)
-- **PR #10550** (2026-11-20): refactor(meta): make coordinated invalidation the default for metadata caches (@WenyXu)
-- **PR #10545** (2026-11-20): test(query): skip the far-future overflow test when SystemTime cannot represent it (@discord9)
-- **PR #10544** (2026-11-20): fix(mito2): wait for a Leader lease before committing after a catchup (@fengjiachun)
-- **PR #10543** (2026-11-20): fix(mito-codec): align sparse metric rows with physical region fields (@WenyXu)
-- **PR #10542** (2026-11-20): perf(catalog): batch cached metadata reads for information schema scans (@WenyXu)
+- **PR #10564** (2026-11-23): perf(mito2): prune files by their primary key range before reading footers (@killme2008)
+- **PR #10561** (2026-11-23): perf(mito2): split seq scan ranges of files with disjoint primary keys (@killme2008)
+- **PR #10559** (2026-11-23): fix: catch up a writable region that still awaits its Leader lease (@fengjiachun)
+- **PR #10558** (closed): feat(frontend): add background-refreshed PromQL range cache (@discord9)
+- **PR #10556** (2026-11-23): fix(sql): keep column options in ALTER TABLE ADD COLUMN (@killme2008)
+- **PR #10552** (2026-11-23): fix(otlp): reject malformed cumulative histogram points (@shuiyisong)
 
 ---
 
@@ -2336,45 +3247,51 @@ Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): wait for a Leader lease before committing after a catchup
+## X. catch up a writable region that still awaits its Leader lease
 
 **RULE**:
-When implementing operations in `src/mito2/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/datanode/src/heartbeat/handler/upgrade_region.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5952a49e`: mito2): wait for a Leader lease before committing after a catchup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `946e599d`: catch up a writable region that still awaits its Leader lease. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/datanode/src/heartbeat/handler/upgrade_region.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  `engine/index_build_test.rs` and `compaction/`. A background rebuild must not replace a file
-  that carries extension indexes (`worker/handle_rebuild_index.rs::needs_background_indexes`).
-  and `defers_background_flush()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
-- On a node whose writes need a lease, a region that a catchup made writable waits for a
-  Leader or StagingLeader lease sent after the catchup (`awaits_leader_lease`). Until then
-  `ManifestContext::update_locked` refuses its commits unless they are staged or the region is
-  downgrading (a close that must flush downgrades first); only a replay of tails
-  (`TailsEditor::Replay`) skips the check, a discard does not, and ending staging checks it
-  before `commit_staged_locked`. No flush or compaction trigger starts work for a waiting region except
-  a downgrade's flush. The lease that ends the wait wakes the worker
-  (`handle_leader_lease_wait_ended`) to schedule the flushes the wait deferred and, only if the
-  region is then a writable leader, start a compaction, build missing indexes, re-issue the
-  index build retries the wait refused and persist backfilled metadata.
-  a worker's region m
+            let Some(confirmed) = ctx
+                .region_server
+                .is_confirmed_leader(upgrade_region.region_id)
+            // Ignores the catchup requests for writable regions, except those a catchup made
+            // writable with no Leader lease since: they may lack what the leader has written
+            // since, and the engine catches them up again.
+            if confirmed {
+    use store_api::region_request::RegionRequest;
+    #[tokio::test]
+    async fn test_writable_region_awaiting_leader_lease_catches_up() {
+        let mock_region_server = mock_region_server();
+        let region_id = RegionId::new(1024, 1);
+
+        let (mock_engine, mut requests) =
+            MockRegionEngine::with_custom_apply_fn(MITO_ENGINE_NAME, |region_engine| {
+                region_engine.mock_role = Some(Some(RegionRole::Leader));
+                region_engine.mock_confirmed_leader = Some(false);
+            });
+        mock_region_server.register_test_region(region_id, mock_engine);
+        let kv_backend = Arc::new(MemoryKvBackend::new());
+        let handler_context = HandlerContext::new_for_test(mock_region_server, kv_backend);
+        let reply = UpgradeRegionsHandl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  `engine/index_build_test.rs` and `compaction/`.
-  and `is_staging()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
-  a worker's region map must also remove its record: `RegionWorkerLoop::remove_region`
-  (`worker/handle_close.rs`, also used after a close-time flush), `drop_region`
-  (`worker/handle_drop.rs`) and `RegionWorkerLoop::clean` (`worker.rs`).
+            let Some(writable) = ctx.region_server.is_region_leader(upgrade_region.region_id)
+            // Ignores the catchup requests for writable regions.
+            if writable {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5952a49e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `946e599d` are properly handled with clean fallback behavior.

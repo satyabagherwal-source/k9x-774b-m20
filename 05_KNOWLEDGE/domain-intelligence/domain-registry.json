@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T18:41:39.540Z",
+  "last_updated": "2026-11-23T18:50:56.207Z",
   "total_records": 2439,
   "domains": {
     "A": {
@@ -9172,8 +9172,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "639ae6a65189ac4f20e7175d5cf16d6b379d2bcfb81a86b3627d6cde0f02a1e0",
-      "created_at": "2026-11-23T18:24:09.249Z"
+      "content_hash": "dcb9361e37e82fed259d43c95ef75b57ef95a696a5f9a6fa282df130382c368c",
+      "created_at": "2026-11-23T18:50:56.207Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17426,8 +17426,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "aad56e842a0da12439eebd5609666ba4a7f8e407f3a484afe436a84cf327ae00",
-      "created_at": "2026-11-21T13:30:43.370Z"
+      "content_hash": "ebd440399784499341c2e1f44f43937301a1badb51718ff376763ad6d670bbcf",
+      "created_at": "2026-11-23T18:50:50.288Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -17495,8 +17495,8 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-learnings-architecture-intelligence-greptimeteam-greptim.md",
       "repository": "greptimeteam-greptimedb-learnings",
-      "content_hash": "0fbd6affd79ad93d702bc08bc7c4c5644ef84be1d4fcd6ba98284d69de44b5ee",
-      "created_at": "2026-11-20T07:06:22.320Z"
+      "content_hash": "2bb9eb9c9bd802bfe93b0f52df15a66802f66539a46d370de08d3aea06f951d6",
+      "created_at": "2026-11-23T18:50:55.127Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
@@ -17609,8 +17609,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/d1-3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-3b-research-knowledge-intelligence-liquidai-d1-3b-core-invariants.md",
       "repository": "LiquidAI/d1-3B",
-      "content_hash": "150ff4e8832613b33f8408ac91ab39d7707432c6cb43ca5a5354616179b8b97f",
-      "created_at": "2026-11-19T08:03:00.568Z"
+      "content_hash": "d0d9adb7b20e4f717b4d877af7f2a36ec8fc9035b6235644cd4d1b0be55c33cb",
+      "created_at": "2026-11-23T18:50:29.733Z"
     },
     "domain_intelligence-technical-construction-intelligence-google-tcmalloc-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-google-tcmalloc-core-invariants",
@@ -17687,8 +17687,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-d1-3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-3b-learnings-research-knowledge-intelligence-hf-liquidai-d1-3b-le.md",
       "repository": "hf-liquidai-d1-3b-learnings",
-      "content_hash": "ec1618b932c904b396240521c4eb5e83520f687fa70d8555b9b70fb1759dc5e9",
-      "created_at": "2026-11-19T08:08:49.482Z"
+      "content_hash": "7cc329db8db165c90f259ffc77d5d843f652b16cd140a5c3b899e37aa0c5a690",
+      "created_at": "2026-11-23T18:50:53.775Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants",

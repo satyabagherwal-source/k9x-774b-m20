@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T18:41:03.076Z",
+  "last_updated": "2026-11-23T18:50:49.782Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -170,14 +170,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-3b",
-      "content_hash": "79ea85b7271e5445b29b3ab8a04a1c8cdd51c7a764279754557d7f9a750807db",
-      "verified_at": "2026-11-19T08:03:00.387Z",
+      "content_hash": "ec981d46fc25e1a3cb5ce12158b9d87489871fff359e827cc05e1f31f5f1d74b",
+      "verified_at": "2026-11-23T18:50:29.482Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T08:03:00.387Z"
+      "last_updated": "2026-11-23T18:50:29.482Z"
     },
     "Cactus-Compute/whistle": {
       "repository": "Cactus-Compute/whistle",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "020a5955b584c0c4ca504f06f7ca4cc1e9352ef386619fc2519a222bb28ea94a",
-      "verified_at": "2026-11-21T13:30:42.985Z",
+      "content_hash": "b978da9143d6ba27455aeff0c8b12efeadec3dab17af48bd082dc759f02cf402",
+      "verified_at": "2026-11-23T18:50:49.781Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T13:30:42.985Z"
+      "last_updated": "2026-11-23T18:50:49.781Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T18:41:39.344Z",
+  "last_updated": "2026-11-23T18:50:55.965Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-HFG6",
+      "id": "CD-FVBU",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HFG6-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-FVBU-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -50412,6 +50412,35 @@
       "source_repo": "yugabyte-yugabyte-db",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1B5BA7--plat-24048-yba-retry-setflaginmemory-wh.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-FUHX",
+      "directive_title": "catch up a writable region that still awaits its Leader lease",
+      "source_repo": "greptimeteam-greptimedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FUHX-catch-up-a-writable-region-that-still-awaits-its-leader-lease.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-47B545",
+      "directive_title": "catch up a writable region that still awaits its Leader lease",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "greptimeteam-greptimedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-47B545-catch-up-a-writable-region-that-still-aw.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-C1B1CA",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C1B1CA-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-23"
     }
   ]

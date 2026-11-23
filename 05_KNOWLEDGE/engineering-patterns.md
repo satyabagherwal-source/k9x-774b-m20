@@ -755656,3 +755656,96 @@ import java.time.Duration;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8c5ff0f2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10095. catch up a writable region that still awaits its Leader lease (Harvested from GreptimeTeam/greptimedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "catch up a writable region that still awaits its Leader lease",
+  "source": "GreptimeTeam/greptimedb",
+  "source_url": "https://github.com/GreptimeTeam/greptimedb",
+  "source_version": "b26b87f9",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T18:50:49.073Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-greptimeteam-greptimedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `b26b87f9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/datanode/src/heartbeat/handler/upgrade_region.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `946e599d`: catch up a writable region that still awaits its Leader lease. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/datanode/src/heartbeat/handler/upgrade_region.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            let Some(confirmed) = ctx
+                .region_server
+                .is_confirmed_leader(upgrade_region.region_id)
+            // Ignores the catchup requests for writable regions, except those a catchup made
+            // writable with no Leader lease since: they may lack what the leader has written
+            // since, and the engine catches them up again.
+            if confirmed {
+    use store_api::region_request::RegionRequest;
+    #[tokio::test]
+    async fn test_writable_region_awaiting_leader_lease_catches_up() {
+        let mock_region_server = mock_region_server();
+        let region_id = RegionId::new(1024, 1);
+
+        let (mock_engine, mut requests) =
+            MockRegionEngine::with_custom_apply_fn(MITO_ENGINE_NAME, |region_engine| {
+                region_engine.mock_role = Some(Some(RegionRole::Leader));
+                region_engine.mock_confirmed_leader = Some(false);
+            });
+        mock_region_server.register_test_region(region_id, mock_engine);
+        let kv_backend = Arc::new(MemoryKvBackend::new());
+        let handler_context = HandlerContext::new_for_test(mock_region_server, kv_backend);
+        let reply = UpgradeRegionsHandl
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+            let Some(writable) = ctx.region_server.is_region_leader(upgrade_region.region_id)
+            // Ignores the catchup requests for writable regions.
+            if writable {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `946e599d` are properly handled with clean fallback behavior.
