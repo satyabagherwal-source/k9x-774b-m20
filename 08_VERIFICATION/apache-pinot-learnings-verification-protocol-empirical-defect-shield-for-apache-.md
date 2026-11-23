@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T15:15:28.345Z",
+  "timestamp": "2026-11-23T22:15:06.958Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-pinot-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-pinot-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T15:15:28.345Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T22:15:06.958Z`  
 > **Learning ID**: `LEARN-EVO-apache-pinot-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `01004140`  
+> **Source Version**: `87886387`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T15:15:22.085Z  
+> **Timestamp**: 2026-11-23T22:15:00.001Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T15:15:22.080Z  
+> **Harvest Timestamp**: 2026-11-23T22:14:59.869Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2018,116 +2018,702 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25be8417` (2026-11-19)
-**Commit Message**: Add prefixed minion dataDir config key (#20312)
+### Incident Patch 1: `2f3fca63` (2026-11-23)
+**Commit Message**: Add an auto spool mode guarded against deadlocks and make it the default (#19944)
 
-**File**: `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java` (modified, +2/-1)
+**File**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java` (modified, +6/-3)
 ```diff
-@@ -338,7 +338,8 @@ protected PinotConfiguration getMinionConf() {
-       _minionBaseApiUrl = "http://localhost:" + minionPort;
-     }
-     _nextMinionPort = minionPort + 1;
--    minionConf.setProperty(Helix.Instance.DATA_DIR_KEY, TEMP_MINION_DIR + File.separator + "dataDir");
-+    minionConf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR,
-+        TEMP_MINION_DIR + File.separator + "dataDir");
-     minionConf.setProperty(CommonConstants.CONFIG_OF_TIMEZONE, "UTC");
-     overrideMinionConf(minionConf);
-     return minionConf;
-```
-
-**File**: `pinot-minion/src/main/java/org/apache/pinot/minion/BaseMinionStarter.java` (modified, +1/-2)
-```diff
-@@ -220,8 +220,7 @@ public void start()
+@@ -86,6 +86,7 @@
+ import org.apache.pinot.query.QueryEnvironment;
+ import org.apache.pinot.query.mailbox.MailboxService;
+ import org.apache.pinot.query.planner.explain.AskingServerStageExplainer;
++import org.apache.pinot.query.planner.logical.SpoolMode;
+ import org.apache.pinot.query.planner.physical.DispatchablePlanFragment;
+ import org.apache.pinot.query.planner.physical.DispatchableSubPlan;
+ import org.apache.pinot.query.planner.plannode.PlanNode;
+@@ -159,6 +160,8 @@ public class MultiStageBrokerRequestHandler extends BaseBrokerRequestHandler {
+   protected final String _defaultStreamingGroupByFlushThreshold;
+   @Nullable
+   protected final String _defaultStreamingDistinctFlushThreshold;
++  /// Parsed once so that an invalid [CommonConstants.Broker#CONFIG_OF_SPOOLS] fails the broker start, not every query.
++  private final SpoolMode _defaultSpoolMode;
  
-     // Initialize data directory
-     LOGGER.info("Initializing data directory");
--    File dataDir = new File(_config.getProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY,
--        CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR));
-+    File dataDir = new File(_config.getDataDir());
-     if (dataDir.exists()) {
-       FileUtils.cleanDirectory(dataDir);
-     } else {
-```
-
-**File**: `pinot-minion/src/main/java/org/apache/pinot/minion/MinionConf.java` (modified, +8/-0)
-```diff
-@@ -70,6 +70,14 @@ public String getInstanceId() {
-     return instanceId != null ? instanceId : getProperty(CommonConstants.Helix.Instance.INSTANCE_ID_KEY);
+   protected final PinotMeter _stagesStartedMeter = BrokerMeter.MSE_STAGES_STARTED.getGlobalMeter();
+   protected final PinotMeter _stagesFinishedMeter = BrokerMeter.MSE_STAGES_COMPLETED.getGlobalMeter();
+@@ -255,6 +258,8 @@ public MultiStageBrokerRequestHandler(PinotConfiguration config, String brokerId
+         CommonConstants.Broker.DEFAULT_MSE_STREAMING_DISTINCT_FLUSH_THRESHOLD);
+     _defaultStreamingDistinctFlushThreshold =
+         streamingDistinctFlushThreshold > 0 ? Integer.toString(streamingDistinctFlushThreshold) : null;
++    _defaultSpoolMode = SpoolMode.fromString(_config.getProperty(CommonConstants.Broker.CONFIG_OF_SPOOLS,
++        CommonConstants.Broker.DEFAULT_SPOOLS_MODE));
    }
  
-+  @SuppressWarnings("deprecation") // Falls back to the legacy un-prefixed key for backward compatibility
-+  public String getDataDir() {
-+    String dataDir = getProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR);
-+    return dataDir != null
-+        ? dataDir
-+        : getProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY, CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR);
+   /// Returns the planner rules disabled by default: the comma-separated list in
+@@ -556,8 +561,6 @@ private ImmutableQueryEnvironment.Config getQueryEnvConf(HttpHeaders httpHeaders
+     String database = DatabaseUtils.extractDatabaseFromQueryRequest(queryOptions, httpHeaders);
+     boolean inferPartitionHint = _config.getProperty(CommonConstants.Broker.CONFIG_OF_INFER_PARTITION_HINT,
+         CommonConstants.Broker.DEFAULT_INFER_PARTITION_HINT);
+-    boolean defaultUseSpool = _config.getProperty(CommonConstants.Broker.CONFIG_OF_SPOOLS,
+-        CommonConstants.Broker.DEFAULT_OF_SPOOLS);
+     boolean defaultUseLeafServerForIntermediateStage = _config.getProperty(
+         CommonConstants.Broker.CONFIG_OF_USE_LEAF_SERVER_FOR_INTERMEDIATE_STAGE,
+         CommonConstants.Broker.DEFAULT_USE_LEAF_SERVER_FOR_INTERMEDIATE_STAGE);
+@@ -625,7 +628,7 @@ private ImmutableQueryEnvironment.Config getQueryEnvConf(HttpHeaders httpHeaders
+         .isCaseSensitive(caseSensitive)
+         .isNullHandlingEnabled(QueryOptionsUtils.isNullHandlingEnabled(queryOptions))
+         .defaultInferPartitionHint(inferPartitionHint)
+-        .defaultUseSpools(defaultUseSpool)
++        .defaultSpoolMode(_defaultSpoolMode)
+         .defaultUnnestColumnPruning(defaultUnnestColumnPruning)
+         .defaultUseLeafServerForIntermediateStage(defaultUseLeafServerForIntermediateStage)
+         .defaultEnableGroupTrim(defaultEnableGroupTrim)
+```
+
+**File**: `pinot-common/src/main/java/org/apache/pinot/common/metrics/BrokerMeter.java` (modified, +4/-0)
+```diff
+@@ -266,6 +266,10 @@ public class BrokerMeter implements AbstractMetrics.Meter {
+   ///
+   /// For each query with at least one join, this meter is increased as many times as joins in the query.
+   public static final BrokerMeter JOIN_COUNT = create("JOIN_COUNT", "queries", true);
++  /// How many times the multi-stage planner made a stage feed one more consumer stage (a spool).
++  public static final BrokerMeter SPOOLS_APPLIED = create("SPOOLS_APPLIED", "spools", true);
++  /// How many spools the multi-stage planner refused because the shared stage could block the query.
++  public static final BrokerMeter SPOOLS_REJECTED_BY_GUARD = create("SPOOLS_REJECTED_BY_GUARD", "spools", true);
+   /// How many queries with window functions have been executed.
+   ///
+   /// For each query with at least one window function, this meter is increased exactly once.
+```
+
+**File**: `pinot-common/src/main/java/org/apache/pinot/common/utils/config/QueryOptionsUtils.java` (modified, +8/-0)
+```diff
+@@ -1117,6 +1117,14 @@ public static Boolean getVectorUseBoundedQueue(Map<String, String> queryOptions)
+         queryOptions.get(QueryOptionKey.VECTOR_USE_BOUNDED_QUEUE));
+   }
+ 
++  /// Returns whether the response must describe the spool decisions of the multi-stage planner. Defaults to `false`.
++  ///
++  /// @throws IllegalArgumentException if the option is set to a value other than `true` or `false`
++  public static boolean isSpoolsFeedback(Map<String, String> queryOptions) {
++    return Boolean.TRUE.equals(checkedParseBooleanNullable(QueryOptionKey.SPOOLS_FEEDBACK,
++        queryOptions.get(QueryOptionKey.SPOOLS_FEEDBACK)));
 +  }
 +
-   public int getEndReplaceSegmentsTimeoutMs() {
-     return getProperty(END_REPLACE_SEGMENTS_TIMEOUT_MS_KEY, DEFAULT_END_REPLACE_SEGMENTS_SOCKET_TIMEOUT_MS);
-   }
+   @Nullable
+   private static Boolean checkedParseBooleanNullable(String optionName, @Nullable String optionValue) {
+     if (optionValue == null) {
 ```
 
-**File**: `pinot-minion/src/test/java/org/apache/pinot/minion/MinionConfTest.java` (modified, +15/-0)
+**File**: `pinot-common/src/test/java/org/apache/pinot/common/utils/config/QueryOptionsUtilsTest.java` (modified, +12/-0)
 ```diff
-@@ -26,6 +26,8 @@
- import org.testng.Assert;
- import org.testng.annotations.Test;
- 
-+import static org.testng.Assert.assertEquals;
-+
- 
- public class MinionConfTest {
- 
-@@ -73,6 +75,19 @@ public void testDeprecatedConfigs()
-         "org.apache.pinot.core.crypt.NoOpPinotCrypter");
+@@ -330,6 +330,18 @@ public void testVectorNprobeValid() {
+     assertEquals(QueryOptionsUtils.getVectorNprobe(Map.of(VECTOR_NPROBE, "128")), Integer.valueOf(128));
    }
  
 +  @Test
-+  @SuppressWarnings("deprecation") // Tests the legacy un-prefixed key fallback
-+  public void testDataDirPrecedence() {
-+    MinionConf conf = new MinionConf();
-+    assertEquals(conf.getDataDir(), CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR);
-+
-+    conf.setProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY, "/legacy/data");
-+    assertEquals(conf.getDataDir(), "/legacy/data");
-+
-+    conf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR, "/minion/data");
-+    assertEquals(conf.getDataDir(), "/minion/data");
++  public void testSpoolsFeedback() {
++    assertFalse(QueryOptionsUtils.isSpoolsFeedback(Map.of()));
++    assertTrue(QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, "true")));
++    assertTrue(QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, " TRUE ")));
++    assertFalse(QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, "false")));
++    expectThrows(IllegalArgumentException.class,
++        () -> QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, "1")));
++    expectThrows(IllegalArgumentException.class,
++        () -> QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, "yes")));
 +  }
 +
    @Test
-   public void testReplaceSegmentsTimeoutDefaultsAndOverrides() {
-     MinionConf conf = new MinionConf();
+   public void testVectorNprobeNull() {
+     assertNull(QueryOptionsUtils.getVectorNprobe(Map.of()));
 ```
 
-**File**: `pinot-spi/src/main/java/org/apache/pinot/spi/utils/CommonConstants.java` (modified, +2/-0)
+**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/SpoolIntegrationTest.java` (modified, +74/-0)
 ```diff
-@@ -205,6 +205,7 @@ public enum SegmentAssignmentStrategyType {
-     public static class Instance {
-       @Deprecated
-       public static final String INSTANCE_ID_KEY = "instanceId";
-+      @Deprecated
-       public static final String DATA_DIR_KEY = "dataDir";
-       public static final String ADMIN_PORT_KEY = "adminPort";
-       public static final String ADMIN_HTTPS_PORT_KEY = "adminHttpsPort";
-@@ -2190,6 +2191,7 @@ public static class Controller {
-   public static class Minion {
-     public static final String CONFIG_OF_METRICS_PREFIX = "pinot.minion.";
-     public static final String CONFIG_OF_MINION_ID = "pinot.minion.instance.id";
-+    public static final String CONFIG_OF_MINION_DATA_DIR = "pinot.minion.instance.dataDir";
-     public static final String METADATA_EVENT_OBSERVER_PREFIX = "metadata.event.notifier";
+@@ -127,6 +127,80 @@ public void intermediateSpool()
+     checkSpoolSame(parsed, 4, 3, 7);
+   }
  
-     // Config keys
++  /// The query of [#intermediateSpool()] spools stage 4 into the probe input of the join and, through an aggregate,
++  /// into its build input. The join reads the probe input only after the build input finishes, so with a full probe
++  /// mailbox the shared stage stops and the build input never finishes. `auto` must refuse that spool.
++  @Test
++  public void autoRejectsSpoolThatCanBlock()
++      throws Exception {
++    JsonNode jsonNode = postQuery("SET useSpools = 'auto';\n"
++        + "SET spoolsFeedback = true;\n"
++        + "WITH group_and_sum AS (\n"
++        + "  SELECT ArrTimeBlk, Dest, SUM(ArrTime) AS ArrTime\n"
++        + "  FROM mytable\n"
++        + "  GROUP BY ArrTimeBlk, Dest\n"
++        + "  limit 1000\n"
++        + "),\n"
++        + "aggregated_data AS (\n"
++        + "  SELECT Dest, SUM(ArrTime) AS ArrTime\n"
++        + "  FROM group_and_sum\n"
++        + "  GROUP BY Dest\n"
++        + ")\n"
++        + "SELECT s.Dest, s.ArrTime, o.ArrTime AS ArrTime2\n"
++        + "FROM group_and_sum s\n"
++        + "JOIN aggregated_data o\n"
++        + "ON s.Dest = o.Dest\n"
++        + "LIMIT 1");
++    assertNoError(jsonNode);
++    JsonNode spools = jsonNode.get("responseMetadata").get("spools");
++    Assert.assertEquals(spools.get("mode").asText(), "auto", spools.toString());
++    // The shared intermediate stage is refused. The leaf stage below it can still be shared, because both of its
++    // consumers aggregate it, so this test does not assert that no spool is applied.
++    Assert.assertTrue(hasOutcome(spools, "REJECTED_BY_GUARD"), spools.toString());
++  }
++
++  /// Both consumers of the shared stage aggregate it, so each consumer reads the whole shared stage before the join
++  /// waits for any input. `auto` must apply that spool, and the result must not change.
++  @Test
++  public void autoAppliesSpoolWhenConsumersAggregate()
++      throws Exception {
++    // The ORDER BY makes g deterministic. Without it, each copy of g can keep a different set of 1000 groups when
++    // spools are off, so the results differ for a reason that has nothing to do with spools.
++    String query = "WITH g AS (\n"
++        + "  SELECT ArrTimeBlk, Dest, SUM(ArrTime) AS ArrTime\n"
++        + "  FROM mytable\n"
++        + "  GROUP BY ArrTimeBlk, Dest\n"
++        + "  ORDER BY ArrTimeBlk, Dest\n"
++        + "  LIMIT 1000\n"
++        + ")\n"
++        + "SELECT a.Dest, a.s, b.m\n"
++        // Both consumers read the same columns of g. Otherwise the planner prunes each copy of g to different columns,
++        // and the two copies are not equivalent.
++        + "FROM (SELECT Dest, SUM(ArrTime) AS s FROM g GROUP BY Dest) a\n"
++        + "JOIN (SELECT Dest, MAX(ArrTime) AS m FROM g GROUP BY Dest) b\n"
++        + "ON a.Dest = b.Dest\n"
++        + "ORDER BY a.Dest\n"
++        + "LIMIT 10000";
++    JsonNode withSpools = postQuery("SET useSpools = 'auto';\nSET spoolsFeedback = true;\n" + query);
++    assertNoError(withSpools);
++    JsonNode spools = withSpools.get("responseMetadata").get("spools");
++    Assert.assertTrue(hasOutcome(spools, "APPLIED"), spools.toString());
++    Assert.assertFalse(hasOutcome(spools, "REJECTED_BY_GUARD"), spools.toString());
++
++    JsonNode withoutSpools = postQuery("SET useSpools = 'off';\n" + query);
++    assertNoError(withoutSpools);
++    Assert.assertEquals(withSpools.get("resultTable").get("rows"), withoutSpools.get("resultTable").get("rows"));
++  }
++
++  private static boolean hasOutcome(JsonNode spools, String outcome) {
++    for (JsonNode substitution : spools.get("substitutions")) {
++      if (substitution.get("outcome").asText().equals(outcome)) {
++        return true;
++      }
++    }
++    return false;
++  }
++
+   /// Test a complex with nested spools.
+   ///
+   /// Don't try to understand the query, just check that the spools are correct.
+```
+
+**File**: `pinot-query-planner/src/main/java/org/apache/pinot/query/QueryEnvironment.java` (modified, +30/-8)
+```diff
+@@ -84,6 +84,7 @@
+ import org.apache.pinot.query.planner.explain.PhysicalExplainPlanVisitor;
+ import org.apache.pinot.query.planner.logical.PinotLogicalQueryPlanner;
+ import org.apache.pinot.query.planner.logical.RelToPlanNodeConverter;
++import org.apache.pinot.query.planner.logical.SpoolMode;
+ import org.apache.pinot.query.planner.logical.TransformationTracker;
+ import org.apache.pinot.query.planner.physical.DispatchableSubPlan;
+ import org.apache.pinot.query.planner.physical.PinotDispatchPlanner;
+@@ -578,8 +579,9 @@ private DispatchableSubPlan toDispatchableSubPlan(RelRoot relRoot, PlannerContex
+           _envConfig.getWorkerManager(), requestId, _envConfig.getTableCache());
+       return pinotDispatchPlanner.createDispatchableSubPlanV2(plan.getLeft(), plan.getRight());
+     }
+-    SubPlan plan = PinotLogicalQueryPlanner.makePlan(relRoot, tracker, useSpools(plannerContext.getOptions()),
+-        _envConfig.defaultHashFunction(), pruneUnnestColumns(plannerContext.getOptions()));
++    Map<String, String> options = plannerContext.getOptions();
++    SubPlan plan = PinotLogicalQueryPlanner.makePlan(relRoot, tracker, getSpoolMode(options),
++        isSpoolsFeedback(options), _envConfig.defaultHashFunction(), pruneUnnestColumns(options));
+     PinotDispatchPlanner pinotDispatchPlanner =
+         new PinotDispatchPlanner(plannerContext, _envConfig.getWorkerManager(), _envConfig.getRequestId(),
+             _envConfig.getTableCache());
+@@ -756,12 +758,32 @@ public static ImmutableQueryEnvironment.Config.Builder configBuilder() {
+     return ImmutableQueryEnvironment.Config.builder();
+   }
+ 
+-  public boolean useSpools(Map<String, String> options) {
++  /// Returns the spool mode of the query: the [CommonConstants.Broker.Request.QueryOptionKey#USE_SPOOLS] query option
++  /// when it is set, or [Config#defaultSpoolMode()] otherwise.
++  ///
++  /// @throws QueryException with [QueryErrorCode#QUERY_VALIDATION] if the query option is not a valid [SpoolMode].
++  public SpoolMode getSpoolMode(Map<String, String> options) {
+     String optionValue = options.get(CommonConstants.Broker.Request.QueryOptionKey.USE_SPOOLS);
+     if (optionValue == null) {
+-      return _envConfig.defaultUseSpools();
++      return _envConfig.defaultSpoolMode();
++    }
++    try {
++      return SpoolMode.fromString(optionValue);
++    } catch (IllegalArgumentException e) {
++      throw QueryErrorCode.QUERY_VALIDATION.asException(e.getMessage(), e);
++    }
++  }
++
++  /// Whether the response must describe the spool decisions of the planner. See
++  /// [CommonConstants.Broker.Request.QueryOptionKey#SPOOLS_FEEDBACK].
++  ///
++  /// @throws QueryException with [QueryErrorCode#QUERY_VALIDATION] if the query option is not `true` or `false`.
++  public static boolean isSpoolsFeedback(Map<String, String> options) {
++    try {
++      return QueryOptionsUtils.isSpoolsFeedback(options);
++    } catch (IllegalArgumentException e) {
++      throw QueryErrorCode.QUERY_VALIDATION.asException(e.getMessage(), e);
+     }
+-    return Boolean.parseBoolean(optionValue);
+   }
+ 
+   /// Whether to prune unused input (passthrough) columns from the UNNEST output. Defaults to the broker config
+@@ -821,15 +843,15 @@ default boolean defaultInferPartitionHint() {
+       return CommonConstants.Broker.DEFAULT_INFER_PARTITION_HINT;
+     }
+ 
+-    /// Whether to use spools or not.
++    /// The spool mode.
+     ///
+     /// This is treated as the default value for the broker and it is expected to be obtained from a Pinot
+     /// configuration.
+     /// This default value can be always overridden at query level by the query option
+     /// [CommonConstants.Broker.Request.QueryOptionKey#USE_SPOOLS].
+     @Value.Default
+-    default boolean defaultUseSpools() {
+-      return CommonConstants.Broker.DEFAULT_OF_SPOOLS;
++    default SpoolMode defaultSpoolMode() {
++      return SpoolMode.fromString(CommonConstants.Broker.DEFAULT_SPOOLS_MODE);
+     }
+ 
+     /// Whether to prune unused input (passthrough) columns from the UNNEST output by default.
+```
+
+**File**: `pinot-query-planner/src/main/java/org/apache/pinot/query/planner/logical/EquivalentStagesFinder.java` (modified, +7/-0)
+```diff
+@@ -78,6 +78,13 @@ public Void visitMailboxSend(MailboxSendNode node, Void context) {
+       // from O(n^3) to O(n^2).
+       visitChildren(node, context);
+ 
++      // A stage that calls a volatile function must draw its own values, so it is never equivalent to another stage.
++      // The stages above it are not equivalent either, because their receives read from different groups.
++      if (VolatileFunctions.callsVolatileFunction(node)) {
++        _equivalentStages.addNewGroup(node);
++        return null;
++      }
++
+       // first try to find if the current node/stage is equivalent to an already equivalent stages.
+       for (MailboxSendNode uniqueStage : _equivalentStages.getLeaders()) {
+         if (_nodeEquivalence.areEquivalent(node, uniqueStage)) {
+```
+
+**File**: `pinot-query-planner/src/main/java/org/apache/pinot/query/planner/logical/EquivalentStagesReplacer.java` (modified, +64/-17)
+```diff
+@@ -18,6 +18,11 @@
+  */
+ package org.apache.pinot.query.planner.logical;
+ 
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.IdentityHashMap;
++import java.util.List;
++import java.util.Set;
+ import org.apache.pinot.query.planner.plannode.MailboxReceiveNode;
+ import org.apache.pinot.query.planner.plannode.MailboxSendNode;
+ import org.apache.pinot.query.planner.plannode.PlanNode;
+@@ -32,6 +37,9 @@
+ /// For each [MailboxReceiveNode] in the plan, if the sender is not the leader of the group,
+ /// replaces the sender with the leader.
+ /// The leader is also updated to include the receiver in its list of receivers.
++///
++/// When the replacement is guarded, each substitution is kept only if [SpoolDeadlockGuard] finds no risk in the
++/// resulting plan. Otherwise the substitution is undone and the original sender stays.
+ public class EquivalentStagesReplacer {
+   private EquivalentStagesReplacer() {
+   }
+@@ -40,12 +48,26 @@ public static void replaceEquivalentStages(PlanNode root, GroupedStages equivale
+     replaceEquivalentStages(root, equivalentStages, OnSubstitution.NO_OP);
+   }
+ 
+-  /// Replaces the equivalent stages in the query plan.
++  /// Replaces the equivalent stages in the query plan, without [SpoolDeadlockGuard].
+   ///
+   /// @param root Root plan node
+   /// @param equivalentStages Equivalent stages
+   public static void replaceEquivalentStages(PlanNode root, GroupedStages equivalentStages, OnSubstitution listener) {
+-    root.visit(new Replacer(listener), equivalentStages);
++    replaceEquivalentStages(root, equivalentStages, listener, false);
++  }
++
++  /// Replaces the equivalent stages in the query plan.
++  ///
++  /// @param root Root plan node
++  /// @param equivalentStages Equivalent stages
++  /// @param listener Called once for each applied substitution
++  /// @param guarded Whether each substitution must pass [SpoolDeadlockGuard]
++  /// @return One entry for each receive whose sender is not the leader of its group, in the order of the decisions
++  public static List<SpoolSubstitution> replaceEquivalentStages(PlanNode root, GroupedStages equivalentStages,
++      OnSubstitution listener, boolean guarded) {
++    Replacer replacer = new Replacer(root, listener, guarded);
++    root.visit(replacer, equivalentStages);
++    return replacer._substitutions;
+   }
+ 
+   public interface OnSubstitution {
+@@ -55,33 +77,58 @@ public interface OnSubstitution {
+   }
+ 
+   private static class Replacer extends PlanNodeVisitor.DepthFirstVisitor<Void, GroupedStages> {
++    private final PlanNode _root;
+     private final OnSubstitution _listener;
++    private final boolean _guarded;
++    private final List<SpoolSubstitution> _substitutions = new ArrayList<>();
++    /// A stage can be visited more than once (for example the leader of a group), so a receive is decided only once.
++    private final Set<MailboxReceiveNode> _visitedReceives = Collections.newSetFromMap(new IdentityHashMap<>());
+ 
+-    public Replacer(OnSubstitution listener) {
++    public Replacer(PlanNode root, OnSubstitution listener, boolean guarded) {
++      _root = root;
+       _listener = listener;
++      _guarded = guarded;
+     }
+ 
+     @Override
+     public Void visitMailboxReceive(MailboxReceiveNode node, GroupedStages equivalenceGroups) {
++      if (!_visitedReceives.add(node)) {
++        return null;
++      }
+       MailboxSendNode sender = node.getSender();
+       MailboxSendNode leader = equivalenceGroups.getGroup(sender).first();
+-      if (canSubstitute(sender, leader)) {
+-        // we don't want to visit the children of the node given it is going to be pruned
+-        node.setSender(leader);
+-        leader.addReceiver(node);
+-        _listener.onSubstitution(node.getStageId(), sender.getStageId(), leader.getStageId());
+-      } else {
++      if (sender == leader) {
+         visitMailboxSend(leader, equivalenceGroups);
++        return null;
++      }
++      if (leader.sharesReceiverStages(sender)) {
++        // The leader is already sending to this stage. Given we don't have the ability to send to multiple
++        // receivers in the same stage, we cannot optimize this case right now.
++        _substitutions.add(new SpoolSubstitution(node.getStageId(), sender.getStageId(), leader.getStageId(),
++            SpoolSubstitution.Outcome.REJECTED_SAME_RECEIVER_STAGE, null));
++        // The original sender stays in the plan, so the stages below it can still be shared.
++        visitMailboxSend(sender, equivalenceGroups);
++        return null;
+       }
++      node.setSender(leader);
++      leader.addReceiver(node);
++      if (_guarded) {
++        SpoolDeadlockGuard.DeadlockRisk risk = SpoolDeadlockGuard.findRisk(_root);
++        if (risk != null) {
++          leader.removeReceiver(node);
++          node.setSender(sender);
++          _substitutions.add(new SpoolSubstitution(node.getStageId(), sender.getStageId(), leader.getStageId(),
++              SpoolSubstitution.Outcome.REJECTED_BY_GUARD, risk.toString()));
++    
+```
+
+---
+
+### Incident Patch 2: `078c814f` (2026-11-23)
+**Commit Message**: Rebalance PR CI workers without changing test fixtures (#20085)
+
+**File**: `.github/workflows/pinot_unit_tests.yml` (modified, +68/-5)
+```diff
+@@ -83,17 +83,28 @@ jobs:
+         timeout-minutes: 120
+         run: |
+           .github/workflows/scripts/.pinot_linter.sh
+-  unit-test:
++  unit-test-shards:
+     if: github.repository == 'apache/pinot'
+     runs-on: ubuntu-latest
+     strategy:
+       # Changed to false in order to improve coverage using unsafe buffers
+       fail-fast: false
+       matrix:
+-        testset: [ 1, 2 ]
++        testset: [ 1, 2, 3 ]
+         java: [ 25 ]
+         distribution: [ "temurin" ]
+-    name: Pinot Unit Test Set ${{ matrix.testset }} (${{matrix.distribution}}-${{matrix.java}})
++        include:
++          - testset: 1
++            legacy_testset: 1
++          - testset: 2
++            legacy_testset: 2
++          - testset: 3
++            legacy_testset: 1
++    name: Pinot Unit Shard ${{ matrix.testset }} (${{matrix.distribution}}-${{matrix.java}})
++    outputs:
++      testset_1: ${{ steps.completed.outputs.testset_1 }}
++      testset_2: ${{ steps.completed.outputs.testset_2 }}
++      testset_3: ${{ steps.completed.outputs.testset_3 }}
+     steps:
+       - uses: actions/checkout@v7.0.1
+       - name: Set up JDK ${{ matrix.java }}-${{ matrix.distribution }}
+@@ -138,6 +149,7 @@ jobs:
+         run: |
+           .github/workflows/scripts/pr-tests/.pinot_tests_build.sh
+       - name: Unit Test
++        id: run-tests
+         env:
+           RUN_INTEGRATION_TESTS: false
+           RUN_TEST_SET: ${{ matrix.testset }}
+@@ -163,13 +175,20 @@ jobs:
+         timeout-minutes: 120
+         run: |
+           .github/workflows/scripts/pr-tests/.pinot_tests_unit.sh
++      - name: Record shard completion
++        id: completed
++        if: ${{ success() && steps.run-tests.outcome == 'success' }}
++        env:
++          TEST_SET: ${{ matrix.testset }}
++        run: |
++          echo "testset_${TEST_SET}=${GITHUB_SHA}:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}:${TEST_SET}" >> "$GITHUB_OUTPUT"
+       - name: Upload coverage to Codecov
+         uses: codecov/codecov-action@v7
+         continue-on-error: true
+         timeout-minutes: 5
+         with:
+-          flags: unittests,unittests${{ matrix.testset }},${{matrix.distribution}},java-${{matrix.java}}
+-          name: codecov-unit-tests
++          flags: unittests,unittests${{ matrix.legacy_testset }},${{matrix.distribution}},java-${{matrix.java}}
++          name: codecov-unit-tests-${{ matrix.testset }}
+           token: ${{ secrets.CODECOV_TOKEN }}
+           fail_ci_if_error: false
+           verbose: true
+@@ -188,3 +207,47 @@ jobs:
+             **/target/surefire-reports/
+             **/target/site/surefire-report.html
+           retention-days: 30
++
++  unit-test:
++    # Retain both legacy required check names; each requires every actual unit worker.
++    if: ${{ always() && github.repository == 'apache/pinot' }}
++    needs: unit-test-shards
++    runs-on: ubuntu-latest
++    strategy:
++      fail-fast: false
++      matrix:
++        testset: [ 1, 2 ]
++        java: [ 25 ]
++        distribution: [ "temurin" ]
++    name: Pinot Unit Test Set ${{ matrix.testset }} (${{matrix.distribution}}-${{matrix.java}})
++    steps:
++      - name: Require all unit workers
++        env:
++          SHARD_RESULT: ${{ needs.unit-test-shards.result }}
++          SET_1: ${{ needs.unit-test-shards.outputs.testset_1 }}
++          SET_2: ${{ needs.unit-test-shards.outputs.testset_2 }}
++          SET_3: ${{ needs.unit-test-shards.outputs.testset_3 }}
++        run: |
++          if [ "$SHARD_RESULT" != success ]; then
++            echo "Required unit worker result: $SHARD_RESULT"
++            exit 1
++          fi
++          for shard in 1 2 3; do
++            output="SET_${shard}"
++            IFS=: read -r sha run attempt recorded_shard extra <<< "${!output}"
++            if [ "$sha" != "$GITHUB_SHA" ] || [ "$run" != "$GITHUB_RUN_ID" ] \
++                || [ "$recorded_shard" != "$shard" ] || [ -n "$extra" ] \
++                || [ "${!output}" != "${sha}:${run}:${attempt}:${recorded_shard}" ]; then
++              echo "Unit worker $shard did not record successful completion for this run"
++              exit 1
++            fi
++            case "$attempt" in
++              ''|0*|*[!0-9]*) echo "Invalid completion attempt for unit worker $shard"; exit 1 ;;
++            esac
++            # A failed-jobs rerun retains successful workers from earlier attempts of this same run.
++            if [ "${#attempt}" -gt "${#GITHUB_RUN_ATTEMPT}" ] \
++                || [ "$attempt" -gt "$GITHUB_RUN_ATTEMPT" ]; then
++              echo "Invalid completion attempt for unit worker $shard"
++              exit 1
++            fi
++          done
+```
+
+**File**: `.github/workflows/scripts/pr-tests/.pinot_tests_build.sh` (modified, +16/-2)
+```diff
+@@ -18,6 +18,13 @@
+ # under the License.
+ #
+ 
++if [ "${RUN_INTEGRATION_TESTS:-}" == false ]; then
++  case "${RUN_TEST_SET:-}" in
++    1|2|3) ;;
++    *) echo "Unsupported RUN_TEST_SET value: ${RUN_TEST_SET:-unset}" >&2; exit 1 ;;
++  esac
++fi
++
+ # Java version
+ java -version
+ 
+@@ -36,8 +43,8 @@ if [ "$RUN_INTEGRATION_TESTS" != false ]; then
+     -pl 'pinot-bom,pinot-integration-tests' || exit 1
+ else
+   # Unit Tests
+-  #   - TEST_SET#1 runs install and test together so the module list must ensure no additional modules were tested
+-  #     due to the -am flag (include dependency modules)
++  # Every worker installs its required dependencies with tests skipped. The subsequent test
++  # command selects only its assigned modules without -am, so dependency tests are not repeated.
+   if [ "$RUN_TEST_SET" == "1" ]; then
+     mvn clean install \
+       -DskipTests -Dcheckstyle.skip -Dspotless.skip -Denforcer.skip -Dlicense.skip -Dmaven.plugin.appassembler.skip=true \
+@@ -61,4 +68,11 @@ else
+       -pl '!pinot-perf' \
+       -pl '!pinot-distribution' || exit 1
+   fi
++  if [ "$RUN_TEST_SET" == "3" ]; then
++    mvn clean install \
++      -DskipTests -Dcheckstyle.skip -Dspotless.skip -Denforcer.skip -Dlicense.skip -Dmaven.plugin.appassembler.skip=true \
++      -am -B -T 16 -ntp \
++      -P github-actions \
++      -pl 'pinot-bom,pinot-core' || exit 1
++  fi
+ fi
+```
+
+**File**: `.github/workflows/scripts/pr-tests/.pinot_tests_unit.sh` (modified, +22/-7)
+```diff
+@@ -18,6 +18,11 @@
+ # under the License.
+ #
+ 
++case "${RUN_TEST_SET:-}" in
++  1|2|3) ;;
++  *) echo "Unsupported RUN_TEST_SET value: ${RUN_TEST_SET:-unset}" >&2; exit 1 ;;
++esac
++
+ # Java version
+ java -version
+ 
+@@ -26,8 +31,14 @@ ifconfig
+ netstat -i
+ 
+ # Unit Tests
+-#   - Both test sets run plain `mvn test` (no install, no -am): the modules were already built
+-#     and installed by .pinot_tests_build.sh, so only the modules listed here are tested.
++#   - All three workers run `mvn test` (no install, no -am), so only the listed modules are tested.
++#     .pinot_tests_build.sh has already built and installed their required reactor dependencies.
++#   - The preceding clean install built the same sources with the same JDK/compiler settings.
++#     Use Maven's source/class timestamp check on this second invocation: the default incremental
++#     mode otherwise recompiles whole modules when reactor class directories become installed jars
++#     on the classpath. Missing classes or newer sources still compile, including modules omitted
++#     from the build step. Keep the test lifecycle so named Surefire suites, ScalaTest, resources,
++#     and JaCoCo still run. Do not use this setting for ordinary builds after source/API changes.
+ #
+ # Parallelism / memory:
+ #   - UNIT_TEST_FORK_COUNT (default 3) sets surefire forkCount so test *classes* run in
+@@ -64,21 +75,19 @@ else
+   COVERAGE_PROFILE=""
+ fi
+ if [ "$RUN_TEST_SET" == "1" ]; then
+-  # pinot-segment-local's tests run in set #2 to balance pinot-core's longer test time in this
+-  # shard against set #2's longer build. It remains built in set #1 as a pinot-core dependency.
++  # Core tests run in worker #3. Its artifacts are still needed here by the query modules.
+   # No -am on this command, so only the listed modules test.
+-  mvn test ${FORK_OPTS} \
++  mvn test ${FORK_OPTS} -Dmaven.compiler.useIncrementalCompilation=false \
+       -pl 'pinot-spi' \
+       -pl 'pinot-segment-spi' \
+       -pl 'pinot-common' \
+       -pl ':pinot-yammer' \
+-      -pl 'pinot-core' \
+       -pl 'pinot-query-planner' \
+       -pl 'pinot-query-runtime' \
+       -P github-actions,no-integration-tests${COVERAGE_PROFILE} || exit 1
+ fi
+ if [ "$RUN_TEST_SET" == "2" ]; then
+-  mvn test ${FORK_OPTS} \
++  mvn test ${FORK_OPTS} -Dmaven.compiler.useIncrementalCompilation=false \
+     -pl '!pinot-spi' \
+     -pl '!pinot-segment-spi' \
+     -pl '!pinot-common' \
+@@ -89,6 +98,12 @@ if [ "$RUN_TEST_SET" == "2" ]; then
+     -P github-actions,no-integration-tests${COVERAGE_PROFILE} || exit 1
+ fi
+ 
++if [ "$RUN_TEST_SET" == "3" ]; then
++  mvn test ${FORK_OPTS} -Dmaven.compiler.useIncrementalCompilation=false \
++    -pl 'pinot-core' \
++    -P github-actions,no-integration-tests${COVERAGE_PROFILE} || exit 1
++fi
++
+ # Aggregate coverage across all per-fork exec files (jacoco-*.exec) written under forkCount>1,
+ # while still matching the single-fork jacoco.exec produced by non-parallel runs. Skipped when
+ # coverage is disabled.
+```
+
+**File**: `pinot-integration-tests/pom.xml` (modified, +2/-5)
+```diff
+@@ -223,6 +223,8 @@
+                 <include>org/apache/pinot/integration/tests/N*Test.java</include>
+                 <include>org/apache/pinot/integration/tests/GrpcBrokerClusterIntegrationTest.java</include>
+                 <include>org/apache/pinot/integration/tests/legacy/*Test.java</include>
++                <!-- This class starts its own cluster and is excluded from LogicalTableSuite. -->
++                <include>org/apache/pinot/integration/tests/logicaltable/KafkaPartitionSubsetChaosIntegrationTest.java</include>
+               </includes>
+               <excludes>
+                 <exclude>org/apache/pinot/integration/tests/IngestionConfigHybridIntegrationTest.java</exclude>
+@@ -291,11 +293,6 @@
+                 <include>org/apache/pinot/integration/tests/P*Test.java</include>
+                 <include>org/apache/pinot/integration/tests/Q*Test.java</include>
+                 <include>org/apache/pinot/integration/tests/R*Test.java</include>
+-                <!--
+-                  In the logicaltable package but not a BaseLogicalTableIntegrationTest subclass: it runs its own
+-                  cluster, so LogicalTableSuite below excludes it and it runs here instead.
+-                -->
+-                <include>org/apache/pinot/integration/tests/logicaltable/KafkaPartitionSubsetChaosIntegrationTest.java</include>
+               </includes>
+               <excludes>
+                 <exclude>org/apache/pinot/integration/tests/OfflineClusterIntegrationTest.java</exclude>
+```
+
+---
+
+### Incident Patch 3: `d6b909c6` (2026-11-23)
+**Commit Message**: Bump org.webjars:swagger-ui from 5.35.0 to 5.35.1 (#20346)
+
+Bumps [org.webjars:swagger-ui](https://github.com/swagger-api/swagger-ui) from 5.35.0 to 5.35.1.
+- [Release notes](https://github.com/swagger-api/swagger-ui/releases)
+- [Commits](https://github.com/swagger-api/swagger-ui/compare/v5.35.0...v5.35.1)
+
+---
+updated-dependencies:
+- dependency-name: org.webjars:swagger-ui
+  dependency-version: 5.35.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `pom.xml` (modified, +1/-1)
+```diff
+@@ -198,7 +198,7 @@
+     <jersey.version>2.48</jersey.version>
+     <hk2.version>2.6.1</hk2.version>
+     <swagger.version>1.6.16</swagger.version>
+-    <swagger-ui.version>5.35.0</swagger-ui.version>
++    <swagger-ui.version>5.35.1</swagger-ui.version>
+     <hadoop.version>3.4.3</hadoop.version>
+     <jsonpath.version>2.10.0</jsonpath.version>
+     <jsonsmart.version>2.6.1</jsonsmart.version>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20325** (2026-11-20): Bump io.github.hakky54:ayza-bom from 10.1.1 to 10.1.2 (@dependabot[bot])
-- **PR #20324** (2026-11-20): Bump at.yawk.lz4:lz4-java from 1.14.0 to 1.14.1 (@dependabot[bot])
-- **PR #20323** (2026-11-20): Bump software.amazon.awssdk:bom from 2.59.1 to 2.59.2 (@dependabot[bot])
-- **PR #20315** (2026-11-19): Bump org.apache.httpcomponents.core5:httpcore5 from 5.4.4 to 5.5 (@dependabot[bot])
-- **PR #20312** (2026-11-19): Add pinot.minion.instance.dataDir config and deprecate un-prefixed dataDir (@ilamhs)
-- **PR #20309** (2026-11-19): Bump org.codehaus.plexus:plexus-utils from 4.1.0 to 4.2.0 (@dependabot[bot])
+- **PR #20358** (2026-11-23): Bump io.swagger:swagger-jersey2-jaxrs from 1.6.16 to 1.6.17 (@dependabot[bot])
+- **PR #20357** (2026-11-23): Bump io.projectreactor:reactor-core from 3.8.8 to 3.9.0 (@dependabot[bot])
+- **PR #20356** (2026-11-23): Bump org.apache.maven:maven-core from 3.10.1 to 3.10.2 (@dependabot[bot])
+- **PR #20354** (2026-11-23): Bump org.apache.maven:apache-maven from 3.10.1 to 3.10.2 (@dependabot[bot])
+- **PR #20353** (2026-11-23): Bump com.google.cloud:libraries-bom from 26.93.0 to 26.94.0 (@dependabot[bot])
+- **PR #20352** (2026-11-23): Bump software.amazon.awssdk:bom from 2.59.2 to 2.59.5 (@dependabot[bot])
 
 ---
 
@@ -2147,32 +2733,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add prefixed minion dataDir config key
+## X. Add an auto spool mode guarded against deadlocks and make it the default
 
 **RULE**:
-When implementing operations in `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25be8417`: Add prefixed minion dataDir config key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f3fca63`: Add an auto spool mode guarded against deadlocks and make it the default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    minionConf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR,
-        TEMP_MINION_DIR + File.separator + "dataDir");
+import org.apache.pinot.query.planner.logical.SpoolMode;
+  /// Parsed once so that an invalid [CommonConstants.Broker#CONFIG_OF_SPOOLS] fails the broker start, not every query.
+  private final SpoolMode _defaultSpoolMode;
+    _defaultSpoolMode = SpoolMode.fromString(_config.getProperty(CommonConstants.Broker.CONFIG_OF_SPOOLS,
+        CommonConstants.Broker.DEFAULT_SPOOLS_MODE));
+        .defaultSpoolMode(_defaultSpoolMode)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    minionConf.setProperty(Helix.Instance.DATA_DIR_KEY, TEMP_MINION_DIR + File.separator + "dataDir");
+    boolean defaultUseSpool = _config.getProperty(CommonConstants.Broker.CONFIG_OF_SPOOLS,
+        CommonConstants.Broker.DEFAULT_OF_SPOOLS);
+        .defaultUseSpools(defaultUseSpool)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25be8417` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f3fca63` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

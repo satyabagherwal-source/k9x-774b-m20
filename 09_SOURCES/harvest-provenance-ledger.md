@@ -12521,3 +12521,6 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `b33999ea` | Multi-dimensional audit evidence | 2026-11-23T21:57:00.502Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-23T22:05:07.373Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `300ab8eb` | Multi-dimensional audit evidence | 2026-11-23T22:05:23.586Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-23T22:14:46.178Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `2ffaa9ae` | Multi-dimensional audit evidence | 2026-11-23T22:14:58.242Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `87886387` | Multi-dimensional audit evidence | 2026-11-23T22:15:01.086Z |

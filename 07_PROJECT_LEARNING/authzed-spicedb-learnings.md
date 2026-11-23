@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `c77bad6d`  
+> **Source Version**: `2ffaa9ae`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T22:40:12.927Z  
+> **Timestamp**: 2026-11-23T22:14:57.149Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:40:12.921Z  
+> **Harvest Timestamp**: 2026-11-23T22:14:55.707Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1086,11 +1086,11 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3517** (2026-11-20): **feat: batched streaming responses for LookupResources**
-  *Symptoms*: ## What  Adds `optional_response_batch_size` to `LookupResources`: pack multiple resources into a single `LookupResourcesResponse.batched` message (a `LookupResourcesBatch` — repeated results plus one `after_cursor` for the whole batch), instead of one message, and one resume cursor, per resource.  `batch_size == 0` preserves the current one-resource-per-message behavior (backward compatible). The effective batch size is clamped to a new server flag `MaxLookupResourcesResponseBatchSize` (default 1000) rather than a fixed proto cap.  Also defaults `--experimental-lookup-resources-version` to `lr3`.  ## Why  For high-cardinality `LookupResources`, one gRPC message and one cursor token per resource dominates the cost (per-message framing + repeated cursor payload). Batching cuts both — most impactful for large reverse-reachability lookups and the Materialize/accelerated path.  ## Dependency chain  - `authzed/api#176` — proto: `LookupResourcesResponse.batched` + `LookupResourcesRequest.optional_response_batch_size` (merged) - `authzed/authzed-go#436` — regenerated client (merged); pinned here at `380614b`  ## Testing  - Unit tests in `internal/services/v1/permissions_test.go` covering batched streaming. - `go build ./...` passes against the pinned client.  ## Build / toolchain cascade  The pinned `authzed-go@380614b` declares `go 1.27.4`, which raises this module's `go` directive to `1.27.4`. To keep the whole build consistent (CI runs with `GOTOOLCHAIN=local`):  - `Dockerfile` b
+- **Issue #3522** (2026-11-23): **fix(lookupsubjects): stop combining found subjects into a shared slice**
+  *Symptoms*: ## Description  Fixes and issue where `LookupSubjects` can omit subjects that would otherwise be granted by `CheckPermission`, causing results for the same data to vary between requests.  When a lookup reaches a group through multiple parent groups in the same batch, that group is resolved once and its `FoundSubjects` slice is shared across all of those parents. `combineFoundSubjects` appended each parent's additional subjects directly to the shared slice. When the underlying array had spare capacity, concurrent or subsequent appends from different parents could write to the same slot, overwriting earlier subjects. `combineFoundSubjects` now clips the shared slice when it is first stored for a parent, so the next append allocates a new backing array instead of writing into the shared one.  Because this depends on map iteration order and slice capacity, the failure is intermittent. On a 24-relationship nested-group dataset where one group is reached through two parents, roughly 8% of lookups returned 4 of the 5 subjects granted by `CheckPermission`. The `query-plan-lookups` engine is unaffected. 
 
-- **Issue #3513** (2026-11-20): **fix(watch): emit schema Watch events from the unified stored schema in read-new modes**
-  *Symptoms*: ## Summary  Writing a schema in `--experimental-schema-mode=read-new-write-new` produced no Watch event, so anything watching for schema changes stopped getting them. In `read-new-write-both`, events arrived, but were built from the legacy tables rather than from the storage that mode reads.  Every datastore built schema Watch events from the legacy namespace and caveat tables, whatever the schema mode. This PR makes the shared datastore tests catch that, and fixes it.  ## Fix  - **Datastores** accept a new `WatchStoredSchema` watch content. For it, they report only that the unified stored schema was written at a revision (`RevisionChanges.StoredSchemaChanged`), not what changed. - **`DataLayer.Watch`** asks for `WatchStoredSchema` in place of `WatchSchema` when the schema mode reads from the unified stored schema. It then compares the stored schema at each reported revision with the one before it, and fills in `ChangedDefinitions`, `DeletedNamespaces` and `DeletedCaveats`. Callers see the same events as before. Legacy read modes pass straight through to the datastore, unchanged.  Per datastore:  | Datastore | How a stored schema write is detected | |---|---| | memdb | changes to the schema table are recorded in the changelog | | Postgres | rows of `schema_revision` created in the watched transaction range | | CockroachDB | `schema_revision` is added to the changefeed | | Spanner | `schema_revision` is added to the change stream (new migration) | | MySQL | not supported, as w
+- **Issue #3519** (2026-11-23): **chore(deps): bump the go-mod group across 2 directories with 38 updates**
+  *Symptoms*: Bumps the go-mod group with 37 updates in the / directory:  | Package | From | To | | --- | --- | --- | | buf.build/gen/go/prometheus/prometheus/protocolbuffers/go | `1.36.12-20260707164124-2360da55afce.2` | `1.36.12-20261001224011-d7f6cfecf2b8.2` | | [buf.build/go/protovalidate](https://github.com/bufbuild/protovalidate-go) | `1.4.0` | `1.4.1` | | [cloud.google.com/go/spanner](https://github.com/googleapis/google-cloud-go) | `1.95.1` | `1.96.1` | | [github.com/authzed/consistent](https://github.com/authzed/consistent) | `0.3.0` | `0.4.0` | | [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.0` | `1.48.0` | | [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.5` | `1.33.19` | | [github.com/aws/aws-sdk-go-v2/feature/rds/auth](https://github.com/aws/aws-sdk-go-v2) | `1.7.3` | `1.7.12` | | [github.com/exaring/otelpgx](https://github.com/exaring/otelpgx) | `0.12.0` | `0.13.0` | | [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql) | `1.10.1` | `1.10.2` | | [github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus](https://github.com/grpc-ecosystem/go-grpc-middleware) | `1.1.0` | `1.1.1` | | [github.com/grpc-ecosystem/grpc-gateway/v2](https://github.com/grpc-ecosystem/grpc-gateway) | `2.30.0` | `2.34.0` | | [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) | `5.11.0` | `5.13.0` | | [github.com/jeroenrinzema/psql-wire](https://github.com/jeroenrinzema/psql-wire) | `0.19.0` | `0.20.0` | |
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1107,307 +1107,139 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c77bad6d` (2026-11-20)
-**Commit Message**: fix: single schema store reads wrong schemahash at revision boundaries (#3510)
+### Incident Patch 1: `33d78a2b` (2026-11-23)
+**Commit Message**: fix(lookupsubjects): stop combining found subjects into a shared slice (#3522)
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- - Dispatch: when a LookupResources continuation locked to a secondary dispatcher fails, the secondary's error is now returned with its gRPC status, instead of a generic "no dispatcher returned results" error with code Unknown. (https://github.com/authzed/spicedb/pull/3468)
+@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - LookupResources v3: fixed an issue with concurrent map writes in the caveat runner by giving each producer its own caveat runner. (https://github.com/authzed/spicedb/pull/3509)
  - Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
-+- Single Schema Store: If a schema was written and reverted within a quantization window, CRDB and Spanner-backed SpiceDB instances could select the wrong pairing of datastore revision and schema revision. (https://github.com/authzed/spicedb/pull/3510)
+ - Single Schema Store: If a schema was written and reverted within a quantization window, CRDB and Spanner-backed SpiceDB instances could select the wrong pairing of datastore revision and schema revision. (https://github.com/authzed/spicedb/pull/3510)
++- LookupSubjects: no longer intermittently omits subjects when a group is reached through multiple parent groups. Subjects granted by CheckPermission could previously be missing from some LookupSubjects responses while present in others for the same data. (https://github.com/authzed/spicedb/pull/3522)
  
  ## [1.57.1] - 2026-11-10
  ### Fixed
 ```
 
-**File**: `internal/datastore/crdb/crdb.go` (modified, +38/-5)
+**File**: `internal/dispatch/graph/lookupsubjects_test.go` (modified, +68/-0)
 ```diff
-@@ -285,7 +285,7 @@ func (cds *crdbDatastore) OptimizedRevision(ctx context.Context) (datastore.Revi
- 	ctx, span := tracer.Start(ctx, "OptimizedRevision")
- 	defer span.End()
- 
--	nowRev, schemaHash, err := cds.headRevisionInternal(ctx)
-+	nowRev, err := cds.headRevisionInternalNoHash(ctx)
- 	if err != nil {
- 		return datastore.RevisionWithSchemaHashAndValidity{}, err
+@@ -277,7 +277,58 @@ func TestLookupSubjectsDispatchCount(t *testing.T) {
  	}
-@@ -300,9 +300,46 @@ func (cds *crdbDatastore) OptimizedRevision(ctx context.Context) (datastore.Revi
- 	}
- 
- 	rev, validFor := revisions.Quantize(nowTS, cds.followerReadDelay, cds.revisionQuantization)
-+
-+	// Read the hash at the quantized revision, not at now. A schema written between the two
-+	// would otherwise pair this revision with a schema that was not in effect at it.
-+	schemaHash, err := cds.schemaHashAtRevision(ctx, rev)
-+	if err != nil {
-+		return datastore.RevisionWithSchemaHashAndValidity{}, err
-+	}
- 	return datastore.RevisionWithSchemaHashAndValidity{Revision: rev, ValidFor: validFor, SchemaHash: schemaHash}, nil
  }
  
-+// schemaHashAtRevision returns the stored schema hash as of rev. It returns an empty hash if
-+// no schema was stored at rev, including when rev precedes the creation of the database or
-+// of the schema_revision table (shortly after a fresh migration). A database that does not
-+// exist at all fails when connecting, before this query runs.
-+func (cds *crdbDatastore) schemaHashAtRevision(ctx context.Context, rev datastore.Revision) (string, error) {
-+	ctx, span := tracer.Start(ctx, "schemaHashAtRevision")
-+	defer span.End()
++// sharedNestedGroupRelationships builds a graph where document:doc#viewer@group:top#member
++// fans out to `instances` shared groups, each reached via `parents` parent groups.
++// Each parent also has its own nested group at the same depth, so the shared group's
++// FoundSubjects are combined with each parent's own subjects during dispatch.
++// It returns the relationships and the expected FoundSubjects for document:doc#view.
++//
++//	document:doc#viewer
++//	  └── group:top
++//	        ├── group:shared{i}-parent{p}  (for each i in instances, p in parents)
++//	        │     ├── group:shared{i}      (shared across all parents of instance i)
++//	        │     │     ├── group:shared{i}-left   ──▶ 3 users
++//	        │     │     └── group:shared{i}-right  ──▶ 2 users
++//	        │     └── group:shared{i}-parent{p}-own
++//	        │           └── group:shared{i}-parent{p}-own-inner ──▶ 1 user
++func sharedNestedGroupRelationships(instances, parents int) ([]tuple.Relationship, []*v1.FoundSubject) {
++	rels := []tuple.Relationship{tuple.MustParse("document:doc#viewer@group:top#member")}
++	var expected []*v1.FoundSubject
++	addMember := func(group, member string) {
++		rels = append(rels, tuple.MustParse("group:"+group+"#member@"+member))
++	}
++	addUser := func(group, user string) {
++		addMember(group, "user:"+user)
++		expected = append(expected, &v1.FoundSubject{SubjectId: user})
++	}
 +
-+	query := "SELECT hash FROM schema_revision AS OF SYSTEM TIME " + rev.String() + " WHERE name = 'current' LIMIT 1"
-+
-+	var schemaHash []byte
-+	err := cds.readPool.QueryRowFunc(ctx, func(ctx context.Context, row pgx.Row) error {
-+		return row.Scan(&schemaHash)
-+	}, query)
-+	if err != nil {
-+		if pgErr, ok := errors.AsType[*pgconn.PgError](err); errors.Is(err, pgx.ErrNoRows) || (ok && (pgErr.Code == pgerrcodeUndefinedTable || pgErr.Code == pgerrcodeInvalidCatalogName)) {
-+			return "", nil
++	for i := range instances {
++		shared := fmt.Sprintf("shared%d", i)
++		addMember(shared, "group:"+shared+"-left#member")
++		addMember(shared, "group:"+shared+"-right#member")
++		for u := range 3 {
++			addUser(shared+"-left", fmt.Sprintf("%s-left-user%d", shared, u))
 +		}
-+		return "", fmt.Errorf(errRevision, err)
-+	}
-+	return string(schemaHash), nil
-+}
-+
-+const (
-+	// pgerrcodeUndefinedTable is the SQLSTATE for a table that does not exist.
-+	pgerrcodeUndefinedTable = "42P01"
-+	// pgerrcodeInvalidCatalogName is the SQLSTATE for a database that does not exist.
-+	pgerrcodeInvalidCatalogName = "3D000"
-+)
-+
- // CheckRevision verifies the given revision is within the software GC window. It
- // lives on the datastore (not the caching layer) because it is not a caching
- // concern. It uses the hash-free head revision query since the schema hash is
-@@ -588,10 +625,6 @@ func (cds *crdbDatastore) HeadRevision(ctx context.Context) (datastore.RevisionW
- 	return datastore.RevisionWithSchemaHash{Revision: rev, SchemaHash: schemaHash}, nil
- }
- 
--func (cds *crdbDatastore) headRevisionInternal(ctx context.Context) (datastore.Revision, string, error) {
--	return cds.headRevisionWithSchemaHash(ctx)
--}
--
- func (cds *crdbDatastore) headRevisionInternalNoHash(ctx context.Context) (datastore.Revision, error) {
- 	ctx, span := tracer.Start(ctx, "headRevisionInternalNoHash")
- 	defer span.End()
-```
-
-**File**: `internal/datastore/spanner/revisions.go` (modified, +11/-22)
-```diff
-@@ -17,6 +17,7 @@ var (
- 	ParseRevisionString   = revisions.RevisionParser(revisions.Timestamp)
- 	nowWithSchemaHashStmt = spanner.NewStatement("SELECT CURRENT_TIMESTAMP(), COALESCE((SELECT schema_hash FROM schema_revision WHERE name = 'current' ORDER BY timestamp DESC LIMIT 1), b'')")
- 	nowStmt               = spanner.NewStatement("SELECT CURRENT_TIMESTAMP()")
-+	schemaHashStmt        = spanner.NewStatement("SELECT COALESCE((SELECT schema_hash FROM schema_revision WHERE name = 'current' ORDER BY timestamp DESC LIMIT 1), b'')")
- )
- 
- func (sd *spannerDatastore) HeadRevision(ctx context.Context) (datastore.RevisionWithSchemaHash, error) {
-@@ -52,34 +53,22 @@ func (sd *spannerDatastore) nowOnly(ctx context.Context) (datastore.Revision, er
- 	return revisions.NewForTime(timestamp), nil
- }
- 
--func (sd *spannerDatastore) staleHeadRevision(ctx context.Context) (datastore.Revision, string, error) {
--	var timestamp time.Time
-+// schemaHashAtRevision returns the stored schema hash as of rev. It returns an empty hash if
-+// no schema was stored at rev, including when rev precedes the creation of the
-+// schema_revision table (commonly hit immediately after a fresh migration).
-+func (sd *spannerDatastore) schemaHashAtRevision(ctx context.Context, rev revisions.WithTimestampRevision) (string, error) {
- 	var schemaHash []byte
- 	err := sd.client.Single().
--		WithTimestampBound(spanner.ExactStaleness(sd.config.followerReadDelay)).
--		Query(ctx, nowWithSchemaHashStmt).
-+		WithTimestampBound(spanner.ReadTimestamp(time.Unix(0, rev.TimestampNanoSec()))).
-+		Query(ctx, schemaHashStmt).
- 		Do(func(r *spanner.Row) error {
--			return r.Columns(&timestamp, &schemaHash)
-+			return r.Columns(&schemaHash)
- 		})
- 	if err == nil {
--		return revisions.NewForTime(timestamp), string(schemaHash), nil
-+		return string(schemaHash), nil
- 	}
--
--	// The stale read timestamp can precede the creation of the schema_revision
--	// table when the followerReadDelay is larger than the time elapsed since
--	// migrations ran (commonly hit immediately after a fresh migration). At
--	// that past time, no schema existed, so returning an empty hash is
--	// semantically correct; fall back to a stale read of just the timestamp.
- 	if spanner.ErrCode(err) == codes.InvalidArgument && strings.Contains(err.Error(), "Table not found: schema_revision") {
--		if err := sd.client.Single().
--			WithTimestampBound(spanner.ExactStaleness(sd.config.followerReadDelay)).
--			Query(ctx, nowStmt).
--			Do(func(r *spanner.Row) error {
--				return r.Columns(&timestamp)
--			}); err != nil {
--			return datastore.NoRevision, "", fmt.Errorf(errRevision, err)
--		}
--		return revisions.NewForTime(timestamp), "", nil
-+		return "", nil
- 	}
--	return datastore.NoRevision, "", fmt.Errorf(errRevision, err)
-+	return "", fmt.Errorf(errRevision, err)
- }
-```
-
-**File**: `internal/datastore/spanner/spanner.go` (modified, +8/-1)
-```diff
-@@ -244,7 +244,7 @@ func (sd *spannerDatastore) OptimizedRevision(ctx context.Context) (datastore.Re
- 	ctx, span := tracer.Start(ctx, "OptimizedRevision")
- 	defer span.End()
- 
--	nowRev, schemaHash, err := sd.staleHeadRevision(ctx)
-+	nowRev, err := sd.nowOnly(ctx)
- 	if err != nil {
- 		return datastore.RevisionWithSchemaHashAndValidity{}, err
- 	}
-@@ -259,6 +259,13 @@ func (sd *spannerDatastore) OptimizedRevision(ctx context.Context) (datastore.Re
- 	}
- 
- 	rev, validFor := revisions.Quantize(nowTS, sd.followerReadDelay, sd.revisionQuantization)
-+
-+	// Read the hash at the quantized revision, not at now. A schema written between the two
-+	// would otherwise pair this revision with a schema that was not in effect at it.
-+	schemaHash, err := sd.schemaHashAtRevision(ctx, rev)
-+	if err != nil {
-+		return datastore.RevisionWithSchemaHashAndValidity{}, err
-+	}
- 	return datastore.RevisionWithSchemaHashAndValidity{Revision: rev, ValidFor: validFor, SchemaHash: schemaHash}, nil
- }
- 
-```
-
-**File**: `pkg/datastore/test/datastore.go` (modified, +1/-0)
-```diff
-@@ -424,6 +424,7 @@ func AllWithExceptions(t *testing.T, tester DatastoreTester, except Categories,
- 	}
- 	t.Run("TestHeadRevisionSchemaHash", runner(tester, HeadRevisionSchemaHashTest))
- 	t.Run("TestOptimizedRevisionSchemaHash", runner(tester, OptimizedRevisionSchemaHashTest))
-+	t.Run("TestOptimizedRevisionSchemaHashAfterRevert", runner(tester, OptimizedRevisionSchemaHashAfterRevertTest))
- 
- 	if !except.Migration() {
- 		t.Run("TestMigration", runner(tester, MigrationTest))
-```
-
-**File**: `pkg/datastore/test/storedschema.go` (modified, +152/-0)
-```diff
-@@ -782,6 +782,158 @@ func OptimizedRevisionSchemaHashTest(t *testing.T, tester DatastoreTester) {
- 		"OptimizedRevision schema hashes should differ after writing a different schema")
- }
- 
-+// OptimizedRevisionSchemaHashAfterRevertTest returns a test that checks that OptimizedRevision
-+// returns the schema hash at the revision it returns, when a schema is written and then
-+// reverted across a quantization boundary.
-+//
-+// Each attempt writes schema A, then schema B, and waits for the next quantization boundary on
-+// the database's clock. In the new window it writes a relationship (a marker), reverts to
-+// schema A, and calls OptimizedRevision. Datastores with timestamp revisions (CRDB, Spanner,
-+// memdb) return the boundary. Datastores with transaction-ID revisions (Postgres, MySQL) return
-+// the first transaction at or after the boundary, which is the marker. Either way, the
-+// optimized revision is after the write of B and before the revert, and the schema at it is B.
-+// A datastore that reads the schema hash at "now" and then quantizes the revision down returns
-+// hashA with that revision.
-+//
-+// If the database's clock crosses into the next window before OptimizedRevision returns, or
-+// the optimized revision is not between the two writes, the attempt cannot show anything and
-+// the test retries. The last attempt fails on those conditions instead of retrying.
-+//
-+// The tester must create datastores with no follower read delay.
-+func OptimizedRevisionSchemaHashAfterRevertTest(t *testing.T, tester DatastoreTester) {
-+	const (
-+		quantization = 2 * time.Second
-+		maxAttempts  = 4
-+	)
-+
-+	ds, err := tester.New(t, DefaultRevisionParameters().WithQuantization(quantization), 1)
-+	require.NoError(t, err)
-+
-+	dbNow := databaseClock(t, ds)
-+	for attempt := 1; attempt <= maxAttempts; attempt++ {
-+		if optimizedRevisionSchemaHashAfterRevertAttempt(t, ds, quantization, dbNow, attempt == maxAttempts) {
-+			return
++		for u := range 2 {
++			addUser(shared+"-right", fmt.Sprintf("%s-right-user%d", shared, u))
 +		}
-+		t.Logf("attempt %d: the timing did not put the optimized revision between the schema writes; retrying", attempt)
-+	}
-+}
 +
-+// databaseClock returns a function that reads the database's clock. The quantization windows
-+// are on that clock, not the test's. memdb runs in this process, so it uses the local clock.
-+// Postgres and MySQL read it with their garbage collector. CRDB and Spanner read it from
-+// HeadRevision, which is the server's current time. (memdb's HeadRevision is its last write,
-+// so it cannot be used as a clock.)
-+func databaseClock(t *testing.T, ds datastore.Datastore) func(context.Context) time.Time {
-+	t.Helper()
-+
-+	if eids := datastore.UnwrapAs[datastore.EngineIdentifiable](ds); eids != nil && eids.EngineName() == "memory" {
-+		return func(context.Context) time.Time { return time.Now() }
-+	}
-+
-+	if gcds := datastore.UnwrapAs[datastore.GarbageCollectableDatastore](ds); gcds != nil {
-+		return func(ctx context.Context) time.Time {
-+			// A garbage collector holds a pool connection until it is closed, so build one
-+			// for each read. Holding one can starve the writes in a small test pool.
-+			gc, err := gcds.BuildGarbageCollector(ctx)
-+			require.NoError(t, err)
-+			defer gc.Close()
-+			now, err := gc.Now(ctx)
-+			require.NoError(t, err)
-+			return now
++		for p := range parents {
++			parent := fmt.Sprintf("%s-parent%d", shared, p)
++			own := parent + "-own"
++			addMember("top", "group:"+parent+"#member")
++			addMember(parent, "group:"+shared+"#member")
++			addMember(parent, "group:"+own+"#member")
++			addMember(own, "group:"+own+"-inner#member")
++			addUser(own+"-inner", own+"-user")
 +		}
 +	}
-+
-+	return func(ctx context.Context) time.Time {
-+		head, err := ds.HeadRevision(ctx)
-+		require.NoError(t, err)
-+		tsRev, ok := head.Revision.(interface{ TimestampNanoSec() int64 })
-+		require.True(t, ok, "revision %T has no timestamp and the datastore has no garbage collector clock", head.Revision)
-+		return time.Unix(0, tsRev.TimestampNanoSec())
-+	}
++	return rels, expected
 +}
 +
-+// optimizedRevisionSchemaHashAfterRevertAttempt runs one attempt of
-+// OptimizedRevisionSchemaHashAfterRevertTest. It returns false if the timing did not put the
-+// optimized revision between the schema writes. If mustAssert is set, it fails instead.
-+func optimizedRevisionSchemaHashAfterRevertAttempt(t *testing.T, ds datastore.Datastore, quantization time.Duration, dbNow func(context.Context) time.Time, mustAssert bool) bool {
-+	t.Helper()
-+	require := require.New(t)
-+	ctx := t.Context()
+ func TestLookupSubjectsOverSchema(t *testing.T) {
++	sharedGroupRels, sharedGroupExpected := sharedNestedGroupRelationships(6, 8)
 +
-+	defsA := []compiler.SchemaDefinition{
-+		ns.Namespace("user"),
-+		ns.Namespace("document",
-+			ns.MustRelation("viewer", nil, ns.AllowedRelation("user", "...")),
-+		),
-+	}
-+	defsB := []compiler.SchemaDefinition{
-+		ns.Namespace("user"),
-+		ns.Namespace("document",
-+			ns.MustRelation("viewer", nil, ns.AllowedRelation("user", "...")),
-+			ns.MustRelation("editor", nil, ns.AllowedRelation("user", "...")),
-+		),
-+	}
-+	textA, _, err := generator.GenerateSchema(ctx, defsA)
-+	require.NoError(err)
-+	textB, _, err := generator.GenerateSchema(ctx, defsB)
-+	require.NoError(err)
-+	hashA, err := generator.ComputeSchemaHash(defsA)
-+	require.NoError(err)
-+	hashB, err := generator.ComputeSchemaHash(defsB)
-+	require.NoError(err)
+ 	testCases := []struct {
+ 		name          string
+ 		schema        string
+@@ -989,6 +1040,23 @@ func TestLookupSubjectsOverSchema(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		{
++			"nested group shared by several parents",
++			`definition user {}
 +
-+	writeSchema(ctx, t, ds, defsA, textA)
-+	revB := writeSchema(ctx, t, ds, defsB, textB)
++			definition group {
++				relation member: user | group#member
++			}
 +
-+	// Wait for the next quantization boundary on the database
++			definition document {
++				relation viewer: group#member
++				permission view = viewer
++			}`,
++			sharedGroupRels,
++			ONR("document", "doc", "view"),
++			RR("user", "..."),
++			sharedGroupExpected,
++		},
+ 	}
+ 
+ 	for _, tc := range testCases {
+```
+
+**File**: `internal/graph/lookupsubjects.go` (modified, +5/-1)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"slices"
+ 	"sync"
+ 
+ 	"golang.org/x/sync/errgroup"
+@@ -718,7 +719,10 @@ func (cl *ConcurrentLookupSubjects) dispatchTo(
+ 
+ func combineFoundSubjects(existing *v1.FoundSubjects, toAdd *v1.FoundSubjects) (*v1.FoundSubjects, error) {
+ 	if existing == nil {
+-		return toAdd, nil
++		// toAdd.FoundSubjects may share a backing array with other resources.
++		// We need to prevent appends overwriting each other when the backing array is shared, therefore we clip the slice to remove the extra capacity.
++		// By doing so, we ensure that the next append operation will allocate a new backing array.
++		return &v1.FoundSubjects{FoundSubjects: slices.Clip(toAdd.FoundSubjects)}, nil
+ 	}
+ 
+ 	if toAdd == nil {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3522** (2026-11-23): fix(lookupsubjects): stop combining found subjects into a shared slice (@mazdakb)
+- **PR #3519** (closed): chore(deps): bump the go-mod group across 2 directories with 38 updates (@dependabot[bot])
 - **PR #3517** (2026-11-20): feat: batched streaming responses for LookupResources (@ostafen)
+- **PR #3515** (2026-11-23): test: add schema variant generator for property-based tests (@josephschorr)
 - **PR #3513** (2026-11-20): fix(watch): emit schema Watch events from the unified stored schema in read-new modes (@vroldanbet)
 - **PR #3510** (2026-11-20): fix: single schema store reads wrong schemahash at revision boundaries (@tstirrat15)
-- **PR #3509** (2026-11-18): fix(graph): give each LookupResources3 producer its own caveat runner (@ostafen)
-- **PR #3508** (2026-11-18): refactor(dispatch): stop recovering panics from external strategies (@ostafen)
-- **PR #3507** (2026-11-18): fix(docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054 (@ostafen)
 
 ---
 
@@ -1427,13 +1259,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. single schema store reads wrong schemahash at revision boundaries
+## X. lookupsubjects): stop combining found subjects into a shared slice
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c77bad6d`: single schema store reads wrong schemahash at revision boundaries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33d78a2b`: lookupsubjects): stop combining found subjects into a shared slice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1441,7 +1273,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Single Schema Store: If a schema was written and reverted within a quantization window, CRDB and Spanner-backed SpiceDB instances could select the wrong pairing of datastore revision and schema revision. (https://github.com/authzed/spicedb/pull/3510)
+- LookupSubjects: no longer intermittently omits subjects when a group is reached through multiple parent groups. Subjects granted by CheckPermission could previously be missing from some LookupSubjects responses while present in others for the same data. (https://github.com/authzed/spicedb/pull/3522)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1451,4 +1283,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c77bad6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33d78a2b` are properly handled with clean fallback behavior.

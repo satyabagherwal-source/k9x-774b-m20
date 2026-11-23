@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T22:05:23.590Z",
-  "total_cycles_completed": 11875,
-  "total_learnings_persisted": 11875,
-  "total_rules_promoted": 10975,
+  "last_updated": "2026-11-23T22:15:01.092Z",
+  "total_cycles_completed": 11878,
+  "total_learnings_persisted": 11878,
+  "total_rules_promoted": 10977,
   "history": [
-    {
-      "timestamp": "2026-11-23T05:59:45.557Z",
-      "repository": "fujiapple852/trippy",
-      "learningId": "learn-github-fujiapple852-trippy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T06:14:12.923Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T06:14:14.260Z",
-      "repository": "erkamyaman/rust-anything",
-      "learningId": "learn-github-erkamyaman-rust-anything",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T06:14:23.021Z",
       "repository": "zarf-dev/zarf",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T22:05:23.590Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:14:46.184Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:14:58.248Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T22:15:01.092Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

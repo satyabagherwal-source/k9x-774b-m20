@@ -1455,8 +1455,8 @@
     "sourceUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceVersion": "hf-fishaudio-drama-3",
     "license": "Open-Source",
-    "contentHash": "14a6db04ea8eaa363783add77f3901a240f6b53c735ce964258e3002354d12d3",
-    "lastHarvestedAt": "2026-11-19T15:58:43.724Z",
+    "contentHash": "8934624ed886fd0d7fcb4ee67472e11fce92850c6c78428d64c77999db412b97",
+    "lastHarvestedAt": "2026-11-23T22:14:46.178Z",
     "learningId": "learn-huggingface-fishaudio-drama-3"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "c77bad6d",
+    "sourceVersion": "2ffaa9ae",
     "license": "Apache-2.0",
-    "contentHash": "df5bd163d5382c84ae4f406c20af4227ddc5de1399c15aa16b2969f0199c8d37",
-    "lastHarvestedAt": "2026-11-21T22:40:14.182Z",
+    "contentHash": "c031c4a5ca10194c44db16dccb939bd63a36dffc3bf49185c333cca8ea45954e",
+    "lastHarvestedAt": "2026-11-23T22:14:58.242Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "1b1094b3",
+    "sourceVersion": "87886387",
     "license": "Apache-2.0",
-    "contentHash": "708cb774249b8f0704502791e4905cf86fd6079281f54df2a7c26ac3a4b12e55",
-    "lastHarvestedAt": "2026-11-22T20:27:44.978Z",
+    "contentHash": "8d243876bcb32108e25b59986adf09893f820ff8edfd4ebafd3551c8a45867ac",
+    "lastHarvestedAt": "2026-11-23T22:15:01.086Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

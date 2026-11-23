@@ -12488,3 +12488,6 @@
 | `CYCLE-20261123-35XU` | `2026-11-23T21:57:00.498Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10131` | Yes (`39ff4df6...`) |
 | `CYCLE-20261123-DLM1` | `2026-11-23T22:05:07.369Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`e7956b2e...`) |
 | `CYCLE-20261123-DY4E` | `2026-11-23T22:05:23.582Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10132` | Yes (`31ee597a...`) |
+| `CYCLE-20261123-Q07Y` | `2026-11-23T22:14:46.174Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`8934624e...`) |
+| `CYCLE-20261123-Q9J2` | `2026-11-23T22:14:58.238Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10133` | Yes (`c031c4a5...`) |
+| `CYCLE-20261123-QBQ2` | `2026-11-23T22:15:01.082Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10134` | Yes (`8d243876...`) |

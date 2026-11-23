@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T22:05:27.528Z",
+  "updated_at": "2026-11-23T22:15:06.827Z",
   "stats": {
-    "total_discovered": 8051,
-    "approved_pending_harvest": 7619,
+    "total_discovered": 8062,
+    "approved_pending_harvest": 7630,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7615,
+      "COMMUNITY_AND_EXPERT": 7626,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -174121,6 +174121,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
         "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-9C85AECE5501": {
+      "id": "SRC-9C85AECE5501",
+      "url": "https://github.com/bufbuild/protovalidate-go",
+      "title": "https://github.com/bufbuild/protovalidate-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-0EFCF41AB958": {
+      "id": "SRC-0EFCF41AB958",
+      "url": "https://github.com/googleapis/google-cloud-go",
+      "title": "https://github.com/googleapis/google-cloud-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-33575694DD48": {
+      "id": "SRC-33575694DD48",
+      "url": "https://github.com/authzed/consistent",
+      "title": "https://github.com/authzed/consistent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.279Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-8B6E9EC5216D": {
+      "id": "SRC-8B6E9EC5216D",
+      "url": "https://github.com/exaring/otelpgx",
+      "title": "https://github.com/exaring/otelpgx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-285AEC2DE1CE": {
+      "id": "SRC-285AEC2DE1CE",
+      "url": "https://github.com/go-sql-driver/mysql",
+      "title": "https://github.com/go-sql-driver/mysql",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-057A889F5248": {
+      "id": "SRC-057A889F5248",
+      "url": "https://github.com/grpc-ecosystem/go-grpc-middleware",
+      "title": "https://github.com/grpc-ecosystem/go-grpc-middleware",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-4D6E9162F0E4": {
+      "id": "SRC-4D6E9162F0E4",
+      "url": "https://github.com/grpc-ecosystem/grpc-gateway",
+      "title": "https://github.com/grpc-ecosystem/grpc-gateway",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.524Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-388C388F15D7": {
+      "id": "SRC-388C388F15D7",
+      "url": "https://github.com/jackc/pgx",
+      "title": "https://github.com/jackc/pgx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-1A38E561A9DD": {
+      "id": "SRC-1A38E561A9DD",
+      "url": "https://github.com/jeroenrinzema/psql-wire",
+      "title": "https://github.com/jeroenrinzema/psql-wire",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-6D57BC3288E1": {
+      "id": "SRC-6D57BC3288E1",
+      "url": "https://github.com/authzed/spicedb/pull/3522",
+      "title": "https://github.com/authzed/spicedb/pull/3522",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:05.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-F0320E480CCE": {
+      "id": "SRC-F0320E480CCE",
+      "url": "https://github.com/swagger-api/swagger-ui/compare/v5.35.0...v5.35.1",
+      "title": "https://github.com/swagger-api/swagger-ui/compare/v5.35.0...v5.35.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T22:15:06.827Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
       }
     }
   }

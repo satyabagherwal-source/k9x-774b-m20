@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T21:39:59.397Z",
-    "lastVerified": "2026-11-23T21:39:59.397Z",
+    "lastChecked": "2026-11-23T22:14:56.736Z",
+    "lastVerified": "2026-11-23T22:14:56.736Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T22:05:26.777Z",
-    "lastVerified": "2026-11-23T22:05:26.777Z",
+    "lastChecked": "2026-11-23T22:15:04.444Z",
+    "lastVerified": "2026-11-23T22:15:04.444Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1525,9 +1525,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-23T18:15:59.657Z",
+    "lastChecked": "2026-11-23T22:14:51.798Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-23T18:15:59.657Z"
+    "lastVerified": "2026-11-23T22:14:51.798Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2497,22 +2497,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "authzed-spicedb": {
-    "name": "spicedb",
+    "name": "authzed/spicedb",
     "officialUrl": "https://github.com/authzed/spicedb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T21:40:53.309Z",
-    "lastVerified": "2026-11-22T21:40:53.309Z",
+    "lastChecked": "2026-11-23T22:14:55.707Z",
+    "lastVerified": "2026-11-23T22:14:55.707Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "df5bd163d5382c84ae4f406c20af4227ddc5de1399c15aa16b2969f0199c8d37",
+    "contentHash": "c031c4a5ca10194c44db16dccb939bd63a36dffc3bf49185c333cca8ea45954e",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c77bad6d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "infiniflow-infinity": {
     "name": "infiniflow/infinity",
@@ -7637,14 +7636,14 @@
     "officialUrl": "https://github.com/apache/pinot",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-22T20:27:43.681Z",
-    "lastVerified": "2026-11-22T20:27:43.681Z",
+    "lastChecked": "2026-11-23T22:14:59.869Z",
+    "lastVerified": "2026-11-23T22:14:59.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-pinot",
-    "contentHash": "708cb774249b8f0704502791e4905cf86fd6079281f54df2a7c26ac3a4b12e55",
+    "contentHash": "8d243876bcb32108e25b59986adf09893f820ff8edfd4ebafd3551c8a45867ac",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8211,9 +8210,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-22T12:56:44.836Z",
+    "lastChecked": "2026-11-23T22:14:41.666Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-22T12:56:44.836Z"
+    "lastVerified": "2026-11-23T22:14:41.666Z"
   },
   "hf-autotrust-jev-35b": {
     "name": "autotrust/AutoTrust-Decider-Pro-35B",
@@ -8425,12 +8424,12 @@
     "officialUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T15:58:43.150Z",
-    "lastVerified": "2026-11-19T15:58:43.150Z",
+    "lastChecked": "2026-11-23T22:14:44.300Z",
+    "lastVerified": "2026-11-23T22:14:44.300Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "14a6db04ea8eaa363783add77f3901a240f6b53c735ce964258e3002354d12d3",
+    "contentHash": "8934624ed886fd0d7fcb4ee67472e11fce92850c6c78428d64c77999db412b97",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11530,9 +11529,9 @@
   "shpigford-chops": {
     "name": "chops",
     "officialUrl": "https://github.com/Shpigford/chops",
-    "lastChecked": "2026-11-20T23:29:49.873Z",
+    "lastChecked": "2026-11-23T22:14:46.794Z",
     "revisionIdentifier": "9d379d58",
-    "lastVerified": "2026-11-20T23:29:49.873Z"
+    "lastVerified": "2026-11-23T22:14:46.794Z"
   },
   "webpack-webpack": {
     "name": "webpack/webpack",
