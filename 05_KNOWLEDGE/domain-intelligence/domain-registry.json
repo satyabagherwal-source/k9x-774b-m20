@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T19:26:22.107Z",
+  "last_updated": "2026-11-23T19:34:49.274Z",
   "total_records": 2444,
   "domains": {
     "A": {
@@ -17938,8 +17938,8 @@
       "title": "Research & Knowledge Intelligence: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-research-knowledge-intellig.md",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "content_hash": "6f87a9df34bd016f1947d2afd1bb87ad7a2b48215b2acd23ac875162aa5b3879",
-      "created_at": "2026-11-19T10:15:37.335Z"
+      "content_hash": "129241f9861ea1845edb7010ef939f762fc87ce760e6f6b74d29945715176c0c",
+      "created_at": "2026-11-23T19:34:24.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-",
@@ -17947,8 +17947,8 @@
       "title": "Research & Knowledge Intelligence: hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-learnings-research-knowledg.md",
       "repository": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings",
-      "content_hash": "2400f1790bbbea330de121a1fb7bae9ea4ffc782f6cbe6a88033f744fca50444",
-      "created_at": "2026-11-19T10:16:28.676Z"
+      "content_hash": "b47019b869b0c9d44d07cbcb4ce1a7c6792c00d19bc2d8ce3560b5bdb69784dc",
+      "created_at": "2026-11-23T19:34:48.364Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants",
@@ -23411,8 +23411,8 @@
       "title": "Architecture Intelligence: topgrade-rs/topgrade Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-architecture-intelligence-topgrade-rs-topgrade-core-invaria.md",
       "repository": "topgrade-rs/topgrade",
-      "content_hash": "0cf4d528293988ab9f2e1f6330de654df504ab77bd435221275f5d42fd699c01",
-      "created_at": "2026-11-17T16:21:51.740Z"
+      "content_hash": "384c2a21669a5bd51378a94336d52a7947f9d3b5240905e05c8d6d94984954eb",
+      "created_at": "2026-11-23T19:34:27.635Z"
     },
     "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants",
@@ -23420,8 +23420,8 @@
       "title": "Architecture Intelligence: topgrade-rs-topgrade-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-learnings-architecture-intelligence-topgrade-rs-topgrade-le.md",
       "repository": "topgrade-rs-topgrade-learnings",
-      "content_hash": "81f968e9c573928540db5d719eb2ac4460a8ce3b3a71a23175deb301f0d97a32",
-      "created_at": "2026-11-17T16:22:03.423Z"
+      "content_hash": "94a1287932316305882c58085c4510400a47c653070b37de8465e36f96b6ef38",
+      "created_at": "2026-11-23T19:34:47.750Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants",
@@ -23703,8 +23703,8 @@
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "73c67b96bd11480ef9cd4bc29d3f9fd61d386a061a8692e08279e589377aaccb",
-      "created_at": "2026-11-22T17:35:34.727Z"
+      "content_hash": "e187bd1b35c9840cb958376bc73722d37423e1f4b00972ecc1749ccaab46d04f",
+      "created_at": "2026-11-23T19:34:43.462Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -23721,8 +23721,8 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-learnings-technical-construction-intelligence-ytsaurus-ytsauru.md",
       "repository": "ytsaurus-ytsaurus-learnings",
-      "content_hash": "15c41cfa387246f12651c86d9c9338590657344dc52daa98699e3dc71ae2c13b",
-      "created_at": "2026-11-20T08:38:49.185Z"
+      "content_hash": "28f383639b676ed74020c4f23dd9b0f56b596e5c7aa4748fed06f4e9f137d5c6",
+      "created_at": "2026-11-23T19:34:49.274Z"
     },
     "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",

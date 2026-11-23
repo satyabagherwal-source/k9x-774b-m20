@@ -12469,3 +12469,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-radixark-daisyrose-27b` | `https://huggingface.co/RadixArk/DaisyRose-27B` | `hf-radixar` | Multi-dimensional audit evidence | 2026-11-23T19:26:07.939Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `31c91dd2` | Multi-dimensional audit evidence | 2026-11-23T19:26:14.976Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `01f673c4` | Multi-dimensional audit evidence | 2026-11-23T19:26:16.528Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-23T19:34:24.709Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `22af9e12` | Multi-dimensional audit evidence | 2026-11-23T19:34:27.138Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `787c7d04` | Multi-dimensional audit evidence | 2026-11-23T19:34:43.006Z |

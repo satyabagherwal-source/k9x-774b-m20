@@ -12436,3 +12436,6 @@
 | `CYCLE-20261123-P4XQ` | `2026-11-23T19:26:07.934Z` | `RadixArk/DaisyRose-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md` | Yes (`ba74cb33...`) |
 | `CYCLE-20261123-PAD8` | `2026-11-23T19:26:14.972Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10102` | Yes (`ac500407...`) |
 | `CYCLE-20261123-PBKC` | `2026-11-23T19:26:16.524Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10103` | Yes (`e5ee3e13...`) |
+| `CYCLE-20261123-ZS8X` | `2026-11-23T19:34:24.705Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`e4370c08...`) |
+| `CYCLE-20261123-ZU4D` | `2026-11-23T19:34:27.133Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10104` | Yes (`1fb22bcf...`) |
+| `CYCLE-20261123-06D6` | `2026-11-23T19:34:43.002Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10105` | Yes (`b841c0dc...`) |

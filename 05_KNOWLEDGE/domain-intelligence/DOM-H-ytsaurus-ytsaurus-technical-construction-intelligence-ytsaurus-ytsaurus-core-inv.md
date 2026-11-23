@@ -4,24 +4,24 @@
 {
   "source_repository": "ytsaurus/ytsaurus",
   "source_url": "https://github.com/ytsaurus/ytsaurus",
-  "source_version": "0a2b3145",
+  "source_version": "787c7d04",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T17:35:34.536Z",
+  "timestamp": "2026-11-23T19:34:43.266Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ytsaurus-ytsaurus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `0a2b3145`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T17:35:34.536Z`  
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `787c7d04`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T19:34:43.266Z`  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ytsaurus/ytsaurus:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T17:35:33.193Z  
+> **Harvest Timestamp**: 2026-11-23T19:34:41.880Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1209,425 +1209,517 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a2b3145` (2026-11-22)
-**Commit Message**: YT-28925: Add reason tags to global update tablet stores throttler
-commit_hash:a1a16b6af0d898486206cd29506a82a690418dcb
+### Incident Patch 1: `e0bcd7c6` (2026-11-23)
+**Commit Message**: YT-30579: Embed key-visitor fixtures in describe tests
 
-**File**: `yt/yt/server/node/tablet_node/global_stores_update_throttler.cpp` (modified, +8/-4)
+CMake runs the test binary directly with an empty source root. The fixture lookup introduced in [rXXXXXX](https://nda.ya.ru/t/R4paDW1c7xAm7a consequently fails with ENOENT at `/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson`.
+commit_hash:c0c36ce9040b72815155e28a9dae695430264c46
+
+**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.darwin-arm64.txt` (modified, +22/-0)
 ```diff
-@@ -153,7 +153,7 @@ std::vector<bool> TGlobalStoresUpdateThrottler::Throttle(
-         acceptedRequestCount = std::clamp<i64>(acceptedRequestCount, 0, requestCount);
+@@ -12,6 +12,13 @@
+ # Please refer to the build instructions in the repository for more information about manual
+ # changes in this file.
  
-         if (acceptedRequestCount < requestCount) {
--            GetOrCreateThrottledCounter(cellTag).Increment();
-+            GetOrCreateThrottledCounter(cellTag, updateReason).Increment();
-         }
++get_built_tool_path(
++  TOOL_rescompiler_bin
++  TOOL_rescompiler_dependency
++  tools/rescompiler/bin
++  rescompiler
++)
++
+ add_executable(yt-flow-library-cpp-controller-describe-unittests)
  
-         for (i64 subrequestIndex = 0; subrequestIndex < acceptedRequestCount; ++subrequestIndex) {
-@@ -164,20 +164,24 @@ std::vector<bool> TGlobalStoresUpdateThrottler::Throttle(
-     return responses;
- }
  
--TCounter& TGlobalStoresUpdateThrottler::GetOrCreateThrottledCounter(TCellTag cellTag)
-+TCounter& TGlobalStoresUpdateThrottler::GetOrCreateThrottledCounter(
-+    TCellTag cellTag,
-+    ETabletStoresUpdateReason updateReason)
+@@ -35,6 +42,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
+   build-cow-on
+   cpp-testing-gtest
+   cpp-testing-gtest_main
++  library-cpp-resource
+   cpp-testing-common
+   common-unittests-mock
+   controller-unittests-mock
+@@ -61,6 +69,7 @@ target_link_options(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+ 
+ target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
+ )
+ 
+ 
+@@ -86,6 +95,19 @@ set_property(
+   ENVIRONMENT
+ )
+ 
++resources(yt-flow-library-cpp-controller-describe-unittests
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
++  INPUTS
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
++  KEYS
++  key_visitor/cpp/pipeline/pipeline.yson
++  key_visitor/cpp/pipeline_external/pipeline.yson
++  key_visitor/joiner/pipeline/pipeline.yson
++  OPTS
++)
++
+ vcs_info(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ set_property(
+```
+
+**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.darwin-x86_64.txt` (modified, +22/-0)
+```diff
+@@ -12,6 +12,13 @@
+ # Please refer to the build instructions in the repository for more information about manual
+ # changes in this file.
+ 
++get_built_tool_path(
++  TOOL_rescompiler_bin
++  TOOL_rescompiler_dependency
++  tools/rescompiler/bin
++  rescompiler
++)
++
+ add_executable(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ 
+@@ -36,6 +43,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
+   library-cpp-cpuid_check
+   cpp-testing-gtest
+   cpp-testing-gtest_main
++  library-cpp-resource
+   cpp-testing-common
+   common-unittests-mock
+   controller-unittests-mock
+@@ -62,6 +70,7 @@ target_link_options(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+ 
+ target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
+ )
+ 
+ 
+@@ -87,6 +96,19 @@ set_property(
+   ENVIRONMENT
+ )
+ 
++resources(yt-flow-library-cpp-controller-describe-unittests
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
++  INPUTS
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
++  KEYS
++  key_visitor/cpp/pipeline/pipeline.yson
++  key_visitor/cpp/pipeline_external/pipeline.yson
++  key_visitor/joiner/pipeline/pipeline.yson
++  OPTS
++)
++
+ vcs_info(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ set_property(
+```
+
+**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.linux-aarch64.txt` (modified, +22/-0)
+```diff
+@@ -14,6 +14,13 @@
+ 
+ find_package(linux-headers-generic REQUIRED)
+ 
++get_built_tool_path(
++  TOOL_rescompiler_bin
++  TOOL_rescompiler_dependency
++  tools/rescompiler/bin
++  rescompiler
++)
++
+ add_executable(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ 
+@@ -38,6 +45,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
+   build-cow-on
+   cpp-testing-gtest
+   cpp-testing-gtest_main
++  library-cpp-resource
+   cpp-testing-common
+   common-unittests-mock
+   controller-unittests-mock
+@@ -67,6 +75,7 @@ target_link_options(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+ 
+ target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
+ )
+ 
+ 
+@@ -92,6 +101,19 @@ set_property(
+   ENVIRONMENT
+ )
+ 
++resources(yt-flow-library-cpp-controller-describe-unittests
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
++  INPUTS
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
++  KEYS
++  key_visitor/cpp/pipeline/pipeline.yson
++  key_visitor/cpp/pipeline_external/pipeline.yson
++  key_visitor/joiner/pipeline/pipeline.yson
++  OPTS
++)
++
+ vcs_info(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ set_property(
+```
+
+**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.linux-x86_64.txt` (modified, +22/-0)
+```diff
+@@ -14,6 +14,13 @@
+ 
+ find_package(linux-headers-generic REQUIRED)
+ 
++get_built_tool_path(
++  TOOL_rescompiler_bin
++  TOOL_rescompiler_dependency
++  tools/rescompiler/bin
++  rescompiler
++)
++
+ add_executable(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ 
+@@ -39,6 +46,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
+   library-cpp-cpuid_check
+   cpp-testing-gtest
+   cpp-testing-gtest_main
++  library-cpp-resource
+   cpp-testing-common
+   common-unittests-mock
+   controller-unittests-mock
+@@ -69,6 +77,7 @@ target_link_options(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+ 
+ target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
+ )
+ 
+ 
+@@ -94,6 +103,19 @@ set_property(
+   ENVIRONMENT
+ )
+ 
++resources(yt-flow-library-cpp-controller-describe-unittests
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
++  INPUTS
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
++  KEYS
++  key_visitor/cpp/pipeline/pipeline.yson
++  key_visitor/cpp/pipeline_external/pipeline.yson
++  key_visitor/joiner/pipeline/pipeline.yson
++  OPTS
++)
++
+ vcs_info(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ set_property(
+```
+
+**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.windows-x86_64.txt` (modified, +22/-0)
+```diff
+@@ -12,6 +12,13 @@
+ # Please refer to the build instructions in the repository for more information about manual
+ # changes in this file.
+ 
++get_built_tool_path(
++  TOOL_rescompiler_bin
++  TOOL_rescompiler_dependency
++  tools/rescompiler/bin
++  rescompiler
++)
++
+ add_executable(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ 
+@@ -26,6 +33,7 @@ target_link_libraries(yt-flow-library-cpp-controller-describe-unittests PUBLIC
+   library-cpp-cpuid_check
+   cpp-testing-gtest
+   cpp-testing-gtest_main
++  library-cpp-resource
+   cpp-testing-common
+   common-unittests-mock
+   controller-unittests-mock
+@@ -44,6 +52,7 @@ target_allocator(yt-flow-library-cpp-controller-describe-unittests
+ 
+ target_sources(yt-flow-library-cpp-controller-describe-unittests PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
+ )
+ 
+ 
+@@ -69,6 +78,19 @@ set_property(
+   ENVIRONMENT
+ )
+ 
++resources(yt-flow-library-cpp-controller-describe-unittests
++  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
++  INPUTS
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
++  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
++  KEYS
++  key_visitor/cpp/pipeline/pipeline.yson
++  key_visitor/cpp/pipeline_external/pipeline.yson
++  key_visitor/joiner/pipeline/pipeline.yson
++  OPTS
++)
++
+ vcs_info(yt-flow-library-cpp-controller-describe-unittests)
+ 
+ set_property(
+```
+
+**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/describe_ut.cpp` (modified, +4/-5)
+```diff
+@@ -41,12 +41,11 @@
+ #include <yt/yt/core/test_framework/framework.h>
+ 
+ #include <library/cpp/json/json_writer.h>
+-#include <library/cpp/testing/common/env.h>
+-#include <library/cpp/testing/gtest/matchers.h>
+ 
+-#include <util/folder/path.h>
++#include <library/cpp/resource/resource.h>
+ 
+-#include <util/stream/file.h>
++#include <library/cpp/testing/common/env.h>
++#include <library/cpp/testing/gtest/matchers.h>
+ 
+ #include <util/string/split.h>
+ 
+@@ -1127,7 +1126,7 @@ TEST_W(TDescribeTest, DescribePipelineExposesKeyVisitorStreams)
+ //! letting |patch| adjust the spec node first.
+ TPipelineDescription DescribeKeyVisitorTestPipeline(TStringBuf path, const std::function<void(const IMapNodePtr&)>& patch = {})
  {
-     auto guard = Guard(CounterLock_);
+-    auto config = ConvertToNode(TYsonString(TFileInput(JoinFsPaths(ArcadiaSourceRoot(), "yt/yt/flow/tests", path)).ReadAll()));
++    auto config = ConvertToNode(TYsonString(NResource::Find(path)));
+     auto specNode = config->AsMap()->GetChildOrThrow("spec")->AsMap();
+     if (patch) {
+         patch(specNode);
+```
+
+**File**: `yt/yt/flow/library/cpp/controller/describe/unittests/ya.make` (modified, +4/-4)
+```diff
+@@ -8,10 +8,10 @@ SRCS(
+     describe_ut.cpp
+ )
  
--    if (auto it = ThrottledRequestCounters_.find(cellTag); it != ThrottledRequestCounters_.end()) {
-+    auto key = std::pair(cellTag, updateReason);
-+    if (auto it = ThrottledRequestCounters_.find(key); it != ThrottledRequestCounters_.end()) {
-         return it->second;
+-DATA(
+-    arcadia/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
+-    arcadia/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
+-    arcadia/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
++RESOURCE(
++    ${ARCADIA_ROOT}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson key_visitor/cpp/pipeline/pipeline.yson
++    ${ARCADIA_ROOT}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson key_visitor/cpp/pipeline_external/pipeline.yson
++    ${ARCADIA_ROOT}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson key_visitor/joiner/pipeline/pipeline.yson
+ )
+ 
+ PEERDIR(
+```
+
+---
+
+### Incident Patch 2: `25cbc9e7` (2026-11-23)
+**Commit Message**: Fix typo
+commit_hash:2ea1fc34d283c6824d8be0a01943f2cb38cd30a4
+
+**File**: `yt/yt/server/node/tablet_node/tablet_cell_write_manager.cpp` (modified, +2/-2)
+```diff
+@@ -1050,8 +1050,8 @@ class TTabletCellWriteManager
+         YT_ASSERT_THREAD_AFFINITY(AutomatonThread);
+         YT_VERIFY(HasMutationContext());
+ 
+-        auto coarseSerializingTabletIds = transaction->PerRowSerializingTabletIds();
+-        for (auto tabletId : coarseSerializingTabletIds) {
++        auto perRowSerializingTabletIds = transaction->PerRowSerializingTabletIds();
++        for (auto tabletId : perRowSerializingTabletIds) {
+             auto* tablet = Host_->FindTablet(tabletId);
+             if (!tablet) {
+                 EraseOrCrash(transaction->PerRowSerializingTabletIds(), tabletId);
+```
+
+---
+
+### Incident Patch 3: `76a883b2` (2026-11-23)
+**Commit Message**: Automatic release build for os_test_tool, ya_bin, os_ya, test_tool
+
+Update tools: os_test_tool, ya_bin, os_ya, test_tool
+commit_hash:e35fe6eba57ba618e83051c2667341d351e583ea
+
+**File**: `build/mapping.conf.json` (modified, +8/-0)
+```diff
+@@ -610,6 +610,7 @@
+         "14273187565": "{registry_endpoint}/14273187565",
+         "14282041991": "{registry_endpoint}/14282041991",
+         "14302583543": "{registry_endpoint}/14302583543",
++        "14328599345": "{registry_endpoint}/14328599345",
+         "13945857237": "{registry_endpoint}/13945857237",
+         "14100700440": "{registry_endpoint}/14100700440",
+         "14140236624": "{registry_endpoint}/14140236624",
+@@ -622,6 +623,7 @@
+         "14273187155": "{registry_endpoint}/14273187155",
+         "14282037424": "{registry_endpoint}/14282037424",
+         "14302581226": "{registry_endpoint}/14302581226",
++        "14328598108": "{registry_endpoint}/14328598108",
+         "10074623276": "{registry_endpoint}/10074623276",
+         "10105424729": "{registry_endpoint}/10105424729",
+         "10116586272": "{registry_endpoint}/10116586272",
+@@ -732,6 +734,7 @@
+         "14273188458": "{registry_endpoint}/14273188458",
+         "14282048128": "{registry_endpoint}/14282048128",
+         "14302587653": "{registry_endpoint}/14302587653",
++        "14328601032": "{registry_endpoint}/14328601032",
+         "5486713852": "{registry_endpoint}/5486713852",
+         "5514352253": "{registry_endpoint}/5514352253",
+         "5523579199": "{registry_endpoint}/5523579199",
+@@ -944,6 +947,7 @@
+         "14273186815": "{registry_endpoint}/14273186815",
+         "14282034536": "{registry_endpoint}/14282034536",
+         "14302578897": "{registry_endpoint}/14302578897",
++        "14328597140": "{registry_endpoint}/14328597140",
+         "5486731632": "{registry_endpoint}/5486731632",
+         "5514350352": "{registry_endpoint}/5514350352",
+         "5514360398": "{registry_endpoint}/5514360398",
+@@ -3480,6 +3484,7 @@
+         "14273187565": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin",
+         "14282041991": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin",
+         "14302583543": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin",
++        "14328599345": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin",
+         "13945857237": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
+         "14100700440": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
+         "14140236624": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
+@@ -3492,6 +3497,7 @@
+         "14273187155": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
+         "14282037424": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
+         "14302581226": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
++        "14328598108": "devtools/ya/test/programs/test_tool/bin/test_tool for darwin-arm64",
+         "10074623276": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+         "10105424729": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+         "10116586272": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+@@ -3602,6 +3608,7 @@
+         "14273188458": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+         "14282048128": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+         "14302587653": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
++        "14328601032": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+         "5486713852": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+         "5514352253": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+         "5523579199": "devtools/ya/test/programs/test_tool/bin/test_tool for linux",
+@@ -3814,6 +3821,7 @@
+         "14273186815": "devtools/ya/test/programs/test_tool/bin/test_tool for linux-aarch64",
+         "14282034536": "devtools/ya/test/programs/test_tool/bin/test_tool for linux-aarch64",
+         "14302578897": "devtools/ya/test/programs/test_tool/bin/test_tool for linux-aarch64",
++        "14328597140": "devtools/ya/test/programs/test_tool/bin/test_tool for linux-aarch64",
+         "5486731632": "devtools/ya/test/programs/test_tool/bin3/test_tool3 for linux",
+         "5514350352": "devtools/ya/test/programs/test_tool/bin3/test_tool3 for linux",
+         "5514360398": "devtools/ya/test/programs/test_tool/bin3/test_tool3 for linux",
+```
+
+**File**: `build/platform/test_tool/host.ya.make.inc` (modified, +5/-5)
+```diff
+@@ -1,12 +1,12 @@
+ IF (HOST_OS_DARWIN AND HOST_ARCH_X86_64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302566265)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328604671)
+ ELSEIF (HOST_OS_DARWIN AND HOST_ARCH_ARM64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302563191)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328603282)
+ ELSEIF (HOST_OS_LINUX AND HOST_ARCH_X86_64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302571076)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328606754)
+ ELSEIF (HOST_OS_LINUX AND HOST_ARCH_AARCH64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302561730)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328602456)
+ ELSEIF (HOST_OS_WINDOWS AND HOST_ARCH_X86_64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302568603)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328605567)
+ 
+ ENDIF()
+```
+
+**File**: `build/platform/test_tool/host_os.ya.make.inc` (modified, +5/-5)
+```diff
+@@ -1,12 +1,12 @@
+ IF (HOST_OS_DARWIN AND HOST_ARCH_X86_64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302583543)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328599345)
+ ELSEIF (HOST_OS_DARWIN AND HOST_ARCH_ARM64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302581226)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328598108)
+ ELSEIF (HOST_OS_LINUX AND HOST_ARCH_X86_64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302587653)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328601032)
+ ELSEIF (HOST_OS_LINUX AND HOST_ARCH_AARCH64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302578897)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328597140)
+ ELSEIF (HOST_OS_WINDOWS AND HOST_ARCH_X86_64)
+-    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14302585523)
++    DECLARE_EXTERNAL_RESOURCE(TEST_TOOL_HOST sbr:14328600299)
+ 
+ ENDIF()
+```
+
+**File**: `ya` (modified, +10/-10)
+```diff
+@@ -46,33 +46,33 @@ REGISTRY_ENDPOINT = os.environ.get("YA_REGISTRY_ENDPOINT", "https://devtools-reg
+ PLATFORM_MAP = {
+     "data": {
+         "win32": {
+-            "md5": "236ac61849a473c182ec71525b238a39",
++            "md5": "8eb415494e358e646daf81aed7ee57b3",
+             "urls": [
+-                f"{REGISTRY_ENDPOINT}/14302631203"
++                f"{REGISTRY_ENDPOINT}/14328615029"
+             ]
+         },
+         "darwin": {
+-            "md5": "8cbd53c8ed973ee9c8492b61f90c81c0",
++            "md5": "31c463b25b2de9a202de8a3c20b064c3",
+             "urls": [
+-                f"{REGISTRY_ENDPOINT}/14302628757"
++                f"{REGISTRY_ENDPOINT}/14328614064"
+             ]
+         },
+         "darwin-arm64": {
+-            "md5": "763d9857907bb7ee496818eeafa5c272",
++            "md5": "94af6e6a97c54bd9ba2bcd8eb42841b7",
+             "urls": [
+-                f"{REGISTRY_ENDPOINT}/14302626606"
++                f"{REGISTRY_ENDPOINT}/14328612437"
+             ]
+         },
+         "linux-aarch64": {
+-            "md5": "705965b5be2078a8d686765d55836c08",
++            "md5": "77e7d477d336027826b490c1dac89ed0",
+             "urls": [
+-                f"{REGISTRY_ENDPOINT}/14302624818"
++                f"{REGISTRY_ENDPOINT}/14328611440"
+             ]
+         },
+         "linux": {
+-            "md5": "e1a2db0bf549f71b2f6bd8925811ef25",
++            "md5": "3ae225245b8dbb9905f1631a4f6886a5",
+             "urls": [
+-                f"{REGISTRY_ENDPOINT}/14302633409"
++                f"{REGISTRY_ENDPOINT}/14328615919"
+             ]
+         }
      }
- 
-     return EmplaceOrCrash(
-         ThrottledRequestCounters_,
--        cellTag,
-+        key,
-         Profiler_
-             .WithSparse()
-             .WithTag("cell_tag", ToString(cellTag))
-+            .WithTag("reason", FormatEnum(updateReason))
-             .Counter("/throttled_update_tablet_stores"))->second;
- }
- 
-```
-
-**File**: `yt/yt/server/node/tablet_node/global_stores_update_throttler.h` (modified, +7/-2)
-```diff
-@@ -42,7 +42,10 @@ class TGlobalStoresUpdateThrottler final
-     const NProfiling::TCounter FailedThrottleRequestCounter_;
- 
-     YT_DECLARE_SPIN_LOCK(TSpinLock, CounterLock_);
--    THashMap<NObjectClient::TCellTag, NProfiling::TCounter> ThrottledRequestCounters_;
-+    THashMap<
-+        std::pair<NObjectClient::TCellTag, NTabletClient::ETabletStoresUpdateReason>,
-+        NProfiling::TCounter
-+    > ThrottledRequestCounters_;
- 
-     //! NB: Refers to a master cell, not to a tablet cell.
-     struct TCellStatus
-@@ -61,7 +64,9 @@ class TGlobalStoresUpdateThrottler final
-         NObjectClient::TCellTag cellTag,
-         NTabletClient::ETabletStoresUpdateReason updateReason);
- 
--    NProfiling::TCounter& GetOrCreateThrottledCounter(NObjectClient::TCellTag cellTag);
-+    NProfiling::TCounter& GetOrCreateThrottledCounter(
-+        NObjectClient::TCellTag cellTag,
-+        NTabletClient::ETabletStoresUpdateReason updateReason);
- };
- 
- DEFINE_REFCOUNTED_TYPE(TGlobalStoresUpdateThrottler)
-```
-
----
-
-### Incident Patch 2: `13c06ea3` (2026-11-22)
-**Commit Message**: TypeScript builder и recipes в общем bundle nots
-
-Этот PR переключает сборки TypeScript в Аркадии на общий bundle nots. Публичный CLI, builder и рецепты yatest берутся из одного ресурса и запускаются на Node.js 26.(https://nda.ya.ru/t/K0zcsZTo7x6QsJ
-
-Из исходной ревизии `89e7f55d` собран nots `v0.421.1`. Коммит `6d60bbd6` одновременно обновляет общий [ресурс nots 14327707707](https://nda.ya.ru/t/xqxSDbTg7x6QsM и четыре резервных Python-бинарника. SHA-256 общего архива `6e7f8ea059e10afe4884ab8fed858052eacf93f33a2ff28b0ef3c323594a8435` совпал на Linux, macOS и при скачивании из Sandbox. Для Python закреплены darwin `sbr:14327705374`, darwin-arm64 `sbr:14327705382`, linux `sbr:14327704946`, linux-aarch64 `sbr:14327705372`.
-
-- По умолчанию используется prebuilt. При `-DTS_USE_PREBUILT_NOTS_TOOL=no` предыдущая закреплённая версия собирает текущие исходники, после чего граф использует результат для целей и рецептов. При использовании prebuilt обычные TS-цели не зависят от манифестов исходного CLI. CLI и его workspace-зависимости перечислены в `_NOTS_BOOTSTRAP_MODULES` в `build/conf/ts/ts.conf`. При сборке из исходников проверка CI сверяет инструмент у каждого узла сборки и подготовки в г
-
-**File**: `build/conf/ts/node_modules.conf` (modified, +1/-0)
-```diff
-@@ -77,6 +77,7 @@ module _PREPARE_DEPS_BASE: _BARE_UNIT {
- 
-     SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$T0_SETTINGS_PATH ${ARCADIA_ROOT}/$NODEJS_CATALOG_PATH)
- 
-+    _NOTS_TOOL_CONFIGURE()
-     _PEERDIR_TS_RESOURCE(nodejs $PM_TYPE)
-     _PREPARE_DEPS_CONFIGURE()
- }
-```
-
-**File**: `build/conf/ts/nots_runner.conf` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+# Both modes share the same JS bundle. The runtime is a separate pinned host resource.
-+_NOTS_RUNNER_INPUT=
-+_NOTS_RUNNER_LIBATOMIC_PEER=
-+_NOTS_RUNNER_LIBATOMIC_ARGS=
-+_NOTS_RUNNER_LIBATOMIC_ENV=
-+when ($HOST_OS_LINUX) {
-+    _NOTS_RUNNER_LIBATOMIC_PEER=build/platform/nodejs/libatomic
-+    _NOTS_RUNNER_LIBATOMIC_ARGS=--libatomic ${LIBATOMIC_1_2_0_RESOURCE_GLOBAL}/libatomic.so.1 --runtime-libatomic ${output:"libatomic.so.1"}
-+    _NOTS_RUNNER_LIBATOMIC_ENV=${env:"LD_LIBRARY_PATH=$LIBATOMIC_1_2_0_RESOURCE_GLOBAL"}
-+}
-+_NOTS_RUNNER_CMD=${NODEJS_26_RESOURCE_GLOBAL}/node -- \
-+    ${input:"devtools/frontend_build_platform/nots/builder/stage-runner.mjs"} \
-+    --node ${NODEJS_26_RESOURCE_GLOBAL}/node $_NOTS_RUNNER_INPUT $_NOTS_RUNNER_LIBATOMIC_ARGS \
-+    --bsdtar ${BSDTAR_RESOURCE_GLOBAL}/bsdtar \
-+    --archiver ${output:"nots-bsdtar"} \
-+    --rsync ${NOTS_RSYNC_RESOURCE_GLOBAL}/bin/rsync \
-+    --synchronizer ${output:"nots-rsync"} \
-+    --builder ${TARGET} \
-+    --recipe ${output:"nots-recipe"} \
-+    --runtime ${output:"nots-node"} \
-+    --module ${output:"nots.mjs"} \
-+    $_NOTS_RUNNER_LIBATOMIC_ENV ${hide:PEERS} ${hide;kv:"p NOTS"}
-+
-+module NOTS_BUNDLE_RUNNER: PREBUILT_PROGRAM {
-+    .CMD=$_NOTS_RUNNER_CMD
-+    .NODE_TYPE=Bundle
-+    .PEERDIR_POLICY=as_build_from
-+    .USE_PEERS_LATE_OUTS=yes
-+    SET(PEERDIR_TAGS TS RESOURCE_LIB)
-+    PEERDIR(build/platform/nodejs/v26 build/external_resources/rsync devtools/frontend_build_platform/nots/bsdtar $_NOTS_RUNNER_LIBATOMIC_PEER)
-+    # Released trace collectors recognize the builder executable by basename.
-+    SET(REALPRJNAME builder)
-+}
-```
-
-**File**: `build/conf/ts/ts.conf` (modified, +21/-1)
-```diff
-@@ -1,5 +1,9 @@
- TS_USE_PREBUILT_NOTS_TOOL=yes
--# Compute the defaults separately so explicit -D and per-target overrides take precedence.
-+TS_NOTS_BUILDER_IMPL=typescript
-+_NOTS_BOOTSTRAP_TYPESCRIPT=yes
-+_NOTS_RECIPE=devtools/frontend_build_platform/nots/builder/builder
-+_NOTS_RECIPE_DEPENDS=devtools/frontend_build_platform/nots/builder
-+# Compute defaults separately so explicit and per-target overrides take precedence.
- _TS_HERMETIC_NODE_MODULES_DEFAULT=no
- _TS_LOCAL_CLI_DEFAULT=yes
- when ($AUTOCHECK == "yes") {
-@@ -12,6 +16,19 @@ TS_LOCAL_CLI=$_TS_LOCAL_CLI_DEFAULT
- TS_FAKEID=${FAKEID}.2026-08-08.01
- NOTS_TOOL=${tool:"devtools/frontend_build_platform/nots/builder"} ${hide:TS_FAKEID} ${hide;input:T0_SETTINGS_PATH}
- 
-+# The pinned builder builds the CLI and these workspace dependencies in source mode.
-+_NOTS_BOOTSTRAP_MODULES= \
-+    devtools/frontend_build_platform/libraries/subprocess \
-+    devtools/frontend_build_platform/libraries/ts-yamake-utils \
-+    devtools/frontend_build_platform/nots/cli \
-+    devtools/frontend_build_platform/nots/tier0-settings \
-+    devtools/frontend_build_platform/nots/trace-collector \
-+    library/typescript/ci-reporter \
-+    library/typescript/test-reporters/knip \
-+    library/typescript/test-reporters/node-test \
-+    library/typescript/test-reporters/tsc \
-+    library/typescript/test-reporters/vitest
-+
- WITH_NODEJS_ROOT=
- NODEJS_ROOT=
- NODEJS_BIN=$NODEJS_ROOT/node
-@@ -163,6 +180,7 @@ module _TS_BASE_UNIT: _BARE_UNIT {
-     SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$T0_SETTINGS_PATH)
- 
-     # Select Node.js from engines.node and use default package manager resources
-+    _NOTS_TOOL_CONFIGURE()
-     _PEERDIR_TS_RESOURCE(nodejs $PM_TYPE)
- }
- 
-@@ -241,3 +259,5 @@ macro TS_USE_BUN() {
- 
- @import "${CONF_ROOT}/conf/ts/ts_library.conf"
- @import "${CONF_ROOT}/conf/ts/ts_check.conf"
-+
-+@import "${CONF_ROOT}/conf/ts/nots_runner.conf"
-```
-
-**File**: `build/conf/ts/ts_check.conf` (modified, +12/-8)
-```diff
-@@ -27,7 +27,7 @@ multimodule TS_TEST_FOR {
-         ENABLE(_SUPPORTS_HERMETIC_NODE_MODULES)
- 
-         # for multimodule peers we should choose TS
--        SET(PEERDIR_TAGS TS TS_PROTO TS_PROTO_FROM_SCHEMA)
-+        SET(PEERDIR_TAGS TS TS_PROTO TS_PROTO_FROM_SCHEMA RESOURCE_LIB)
-         # We read tool resources and Tier 0 settings during configuration; track them in the cache key.
-         SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$ERM_PACKAGES_PATH ${ARCADIA_ROOT}/$NODEJS_CATALOG_PATH)
-         SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$T0_SETTINGS_PATH)
-@@ -60,7 +60,7 @@ multimodule TS_TEST_FOR {
-         SET(MODULE_LANG TS)
-         ENABLE(_SUPPORTS_HERMETIC_NODE_MODULES)
-         # what modules it can PEERDIR to
--        SET(PEERDIR_TAGS TS_PREPARE_DEPS)
-+        SET(PEERDIR_TAGS TS_PREPARE_DEPS RESOURCE_LIB)
-         # do not include it into "results" of graph
-         DISABLE(START_TARGET)
-         # parse module args
-@@ -100,19 +100,23 @@ macro _TS_TEST_FOR_ARGS(FOR_MOD, RELATIVE?"${CURDIR}":"${ARCADIA_ROOT}") {
- }
- 
- macro _SETUP_EXTRACT_NODE_MODULES_LAYER_RECIPE(FOR_PATH) {
--    USE_RECIPE(devtools/frontend_build_platform/nots/builder/builder extract-node-modules $FOR_PATH node_modules.layer $_SQUASHFS_TOOLS_RECIPE_ARG)
--    DEPENDS(devtools/frontend_build_platform/nots/builder)
-+    _NOTS_TOOL_CONFIGURE()
-+    USE_RECIPE($_NOTS_RECIPE extract-node-modules $FOR_PATH node_modules.layer $_SQUASHFS_TOOLS_RECIPE_ARG)
-+    DEPENDS($_NOTS_RECIPE_DEPENDS)
- }
- 
- macro _SETUP_EXTRACT_OUTPUT_TARS_RECIPE(FOR_PATH) {
--    USE_RECIPE(devtools/frontend_build_platform/nots/builder/builder extract-output-tars $FOR_PATH)
--    DEPENDS(devtools/frontend_build_platform/nots/builder)
-+    _NOTS_TOOL_CONFIGURE()
-+    USE_RECIPE($_NOTS_RECIPE extract-output-tars $FOR_PATH)
-+    DEPENDS($_NOTS_RECIPE_DEPENDS)
- }
- 
- macro _SETUP_INSTALL_NODE_MODULES_RECIPE(FOR_PATH) {
-     DATA(arcadia/$T0_SETTINGS_PATH)
--    USE_RECIPE(devtools/frontend_build_platform/nots/builder/builder install-node-modules $NOTS_TOOL_BASE_ARGS --nm-bundle no --for-path $FOR_PATH)
--    DEPENDS(devtools/frontend_build_platform/nots/builder)
-+    DATA(arcadia/devtools/frontend_build_platform/nots/tier0-settings/src/settings.schema.json)
-+    _NOTS_TOOL_CONFIGURE()
-+    USE_RECIPE($_NOTS_RECIPE install-node-modules $NOTS_TOOL_BASE_ARGS --nm-bundle no --for-path $FOR_PATH)
-+    DEPENDS($_NOTS_RECIPE_DEPENDS)
- }
- 
- _TS_TEST_DEPENDS_ON_BUILD=
-```
-
-**File**: `build/conf/ts/ts_library.conf` (modified, +2/-1)
-```diff
-@@ -88,14 +88,15 @@ module TS_LIBRARY_FOR: _BARE_UNIT {
-     SET(MODULE_TYPE LIBRARY)
-     SET(MODULE_TAG TS)
-     SET(MODULE_LANG TS)
--    SET(PEERDIR_TAGS TS_PREPARE_DEPS)
-+    SET(PEERDIR_TAGS TS_PREPARE_DEPS RESOURCE_LIB)
-     SET(REALPRJNAME output.tar)
-     SET(_TS_MOD_NAME TS_LIBRARY_FOR)
-     DISABLE(TS_CONFIG_DEDUCE_OUT)
-     ENABLE(_SUPPORTS_HERMETIC_NODE_MODULES)
-     _TS_LIBRARY_FOR_INIT($MODULE_ARGS_RAW)
-     SET(_NOTS_MODDIR_ARGS $_TS_LIBRARY_FOR_BASE_ARGS)
-     SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$ERM_PACKAGES_PATH ${ARCADIA_ROOT}/$T0_SETTINGS_PATH ${ARCADIA_ROOT}/$NODEJS_CATALOG_PATH)
-+    _NOTS_TOOL_CONFIGURE()
-     _PEERDIR_TS_RESOURCE(nodejs $PM_TYPE)
- }
- 
-```
-
-**File**: `build/external_resources/nots/nots.sbr.json` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+{
-+  "by_platform": {
-+    "any": {
-+      "uri": "sbr:14327707707"
-+    }
-+  }
-+}
-```
-
-**File**: `build/external_resources/rsync/resources.json` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+{
-+    "by_platform": {
-+        "linux-x86_64": {
-+            "uri": "sbr:149347273"
-+        },
-+        "linux-aarch64": {
-+            "uri": "sbr:14098603722"
-+        },
-+        "darwin-x86_64": {
-+            "uri": "sbr:149347258"
-+        },
-+        "darwin-arm64": {
-+            "uri": "sbr:14098603754"
-+        },
-+        "win32-x86_64": {
-+            "uri": "sbr:14098603610"
-+        }
-+    }
-+}
-```
-
-**File**: `build/external_resources/rsync/ya.make` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+RESOURCES_LIBRARY()
-+
-+DECLARE_EXTERNAL_HOST_RESOURCES_BUNDLE_BY_JSON(NOTS_RSYNC resources.json)
-+
-+END()
-```
-
----
-
-### Incident Patch 3: `2a4e1372` (2026-11-21)
-**Commit Message**: Revert zstd debug section compression for Linux release builds
-
-Reverts https://nda.ya.ru/t/z0_YjmzG7x57Kq (rXXXXXX) and restores the release exclusions for the compiler and linker flags.
-
-During stack trace symbolization, libbacktrace decompresses DWARF sections into anonymous memory and retains them for subsequent lookups. On the same userver benchmark ELF, zstd-compressed sections raised anonymous memory after the first lookup from 30.3 MiB to 114.1 MiB.
-
-Tests: CI tested
-commit_hash:b88dd831dddc1d9a84622eb7f19b350fbd490cac
-
-**File**: `build/ymake_conf.py` (modified, +4/-2)
-```diff
-@@ -1560,7 +1560,8 @@ def __init__(self, tc, build):
-             '-g',
-         ]
- 
--        if self.target.is_linux:
-+        if not self.build.is_release and self.target.is_linux:
-+            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
-             self.debug_info_flags.append('-gz=zstd')
-         if self.tc.is_clang and self.tc.version_at_least(14):
-             # DTCC-1231: Clang 14 has switched to DWARFv5 by default
-@@ -1933,7 +1934,8 @@ def __init__(self, tc, build):
-             self.ld_flags.append('--ld-path={}/esp-clang/bin/ld.lld'.format(self.tc.name_marker))
-             if is_positive('NO_CXX_RTTI'):
-                 self.ld_flags.append('-fno-rtti')
--        if target.is_linux:
-+        if not self.build.is_release and target.is_linux:
-+            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
-             self.ld_flags.extend(['-Wl,--compress-debug-sections=zstd'])
- 
-         if self.musl.value:
-```
-
-**File**: `contrib/libs/flatbuffers/flatc/CMakeLists.linux-aarch64.txt` (modified, +0/-1)
-```diff
-@@ -38,7 +38,6 @@ target_allocator(flatc
- )
- 
- target_link_options(flatc PRIVATE
--  -Wl,--compress-debug-sections=zstd
-   -ldl
-   -lrt
-   -Wl,--no-as-needed
-```
-
-**File**: `contrib/libs/flatbuffers/flatc/CMakeLists.linux-x86_64.txt` (modified, +0/-1)
-```diff
-@@ -39,7 +39,6 @@ target_allocator(flatc
- )
- 
- target_link_options(flatc PRIVATE
--  -Wl,--compress-debug-sections=zstd
-   -ldl
-   -lrt
-   -Wl,--no-as-needed
-```
-
-**File**: `contrib/libs/llvm18/utils/TableGen/CMakeLists.linux-aarch64.txt` (modified, +0/-1)
-```diff
-@@ -44,7 +44,6 @@ target_allocator(llvm-tblgen
- )
- 
- target_link_options(llvm-tblgen PRIVATE
--  -Wl,--compress-debug-sections=zstd
-   -ldl
-   -lrt
-   -Wl,--no-as-needed
-```
-
-**File**: `contrib/libs/llvm18/utils/TableGen/CMakeLists.linux-x86_64.txt` (modified, +0/-1)
-```diff
-@@ -45,7 +45,6 @@ target_allocator(llvm-tblgen
- )
- 
- target_link_options(llvm-tblgen PRIVATE
--  -Wl,--compress-debug-sections=zstd
-   -ldl
-   -lrt
-   -Wl,--no-as-needed
-```
-
-**File**: `contrib/tools/protoc/bin/CMakeLists.linux-aarch64.txt` (modified, +0/-1)
-```diff
-@@ -34,7 +34,6 @@ target_allocator(protoc
- )
- 
- target_link_options(protoc PRIVATE
--  -Wl,--compress-debug-sections=zstd
-   -ldl
-   -lrt
-   -Wl,--no-as-needed
-```
-
-**File**: `contrib/tools/protoc/bin/CMakeLists.linux-x86_64.txt` (modified, +0/-1)
-```diff
-@@ -36,7 +36,6 @@ target_allocator(protoc
- )
- 
- target_link_options(protoc PRIVATE
--  -Wl,--compress-debug-sections=zstd
-   -ldl
-   -lrt
-   -Wl,--no-as-needed
-```
-
-**File**: `contrib/tools/protoc/plugins/cpp_styleguide/CMakeLists.linux-aarch64.txt` (modified, +0/-1)
-```diff
-@@ -34,7 +34,6 @@ target_allocator(cpp_styleguide
- )
- 
- target_link_options(cpp_styleguide PRIVATE
--  -Wl,--compress-debug-sections=zstd
-   -ldl
-   -lrt
-   -Wl,--no-as-needed
 ```
 
 #### Recent Merged Pull Requests:
@@ -1656,41 +1748,52 @@ commit_hash:b88dd831dddc1d9a84622eb7f19b350fbd490cac
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-28925: Add reason tags to global update tablet stores throttler
+## X. YT-30579: Embed key-visitor fixtures in describe tests
 
 **RULE**:
-When implementing operations in `yt/yt/server/node/tablet_node/global_stores_update_throttler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.darwin-arm64.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a2b3145`: YT-28925: Add reason tags to global update tablet stores throttler. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0bcd7c6`: YT-30579: Embed key-visitor fixtures in describe tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/node/tablet_node/global_stores_update_throttler.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/flow/library/cpp/controller/describe/unittests/CMakeLists.darwin-arm64.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            GetOrCreateThrottledCounter(cellTag, updateReason).Increment();
-TCounter& TGlobalStoresUpdateThrottler::GetOrCreateThrottledCounter(
-    TCellTag cellTag,
-    ETabletStoresUpdateReason updateReason)
-    auto key = std::pair(cellTag, updateReason);
-    if (auto it = ThrottledRequestCounters_.find(key); it != ThrottledRequestCounters_.end()) {
-        key,
-            .WithTag("reason", FormatEnum(updateReason))
+get_built_tool_path(
+  TOOL_rescompiler_bin
+  TOOL_rescompiler_dependency
+  tools/rescompiler/bin
+  rescompiler
+)
+
+  library-cpp-resource
+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
+resources(yt-flow-library-cpp-controller-describe-unittests
+  ${PROJECT_BINARY_DIR}/yt/yt/flow/library/cpp/controller/describe/unittests/ec46de8a07e4cb3a07fa90faf78e4b58.cpp
+  INPUTS
+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline/pipeline.yson
+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/cpp/pipeline_external/pipeline.yson
+  ${PROJECT_SOURCE_DIR}/yt/yt/flow/tests/key_visitor/joiner/pipeline/pipeline.yson
+  KEYS
+  key_visitor/cpp/pipeline/pipeline.yson
+  key_visitor/cpp/pipeline_external/pipeline.yson
+  key_visitor/joiner/pipeline/pipeline.yson
+  OPTS
+)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-            GetOrCreateThrottledCounter(cellTag).Increment();
-TCounter& TGlobalStoresUpdateThrottler::GetOrCreateThrottledCounter(TCellTag cellTag)
-    if (auto it = ThrottledRequestCounters_.find(cellTag); it != ThrottledRequestCounters_.end()) {
-        cellTag,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a2b3145` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0bcd7c6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

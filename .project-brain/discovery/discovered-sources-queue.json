@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T19:26:21.733Z",
+  "updated_at": "2026-11-23T19:34:48.786Z",
   "stats": {
-    "total_discovered": 7979,
-    "approved_pending_harvest": 7550,
+    "total_discovered": 7989,
+    "approved_pending_harvest": 7560,
     "harvested_count": 0,
     "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7544,
+      "COMMUNITY_AND_EXPERT": 7554,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -172558,6 +172558,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
         "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-2DA52C6D491F": {
+      "id": "SRC-2DA52C6D491F",
+      "url": "https://developer.mend.io/github/topgrade-rs/topgrade",
+      "title": "https://developer.mend.io/github/topgrade-rs/topgrade",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:46.748Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-5DD6572893FC": {
+      "id": "SRC-5DD6572893FC",
+      "url": "https://redirect.github.com/dawidd6/action-homebrew-bump-formula",
+      "title": "https://redirect.github.com/dawidd6/action-homebrew-bump-formula",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:46.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-4D62BEC5E91A": {
+      "id": "SRC-4D62BEC5E91A",
+      "url": "https://redirect.github.com/dawidd6/action-homebrew-bump-formula/releases/tag/v11",
+      "title": "https://redirect.github.com/dawidd6/action-homebrew-bump-formula/releases/tag/v11",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:46.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-15FFCF2495C9": {
+      "id": "SRC-15FFCF2495C9",
+      "url": "https://redirect.github.com/dawidd6/action-homebrew-bump-formula/compare/v10...v11",
+      "title": "https://redirect.github.com/dawidd6/action-homebrew-bump-formula/compare/v10...v11",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:46.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-24E331D95940": {
+      "id": "SRC-24E331D95940",
+      "url": "https://redirect.github.com/dawidd6",
+      "title": "https://redirect.github.com/dawidd6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:47.009Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-CD01D323C394": {
+      "id": "SRC-CD01D323C394",
+      "url": "https://redirect.github.com/dawidd6/action-homebrew-bump-formula/pull/179",
+      "title": "https://redirect.github.com/dawidd6/action-homebrew-bump-formula/pull/179",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:47.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-7F9039FBA0E1": {
+      "id": "SRC-7F9039FBA0E1",
+      "url": "https://github.com/dawidd6/action-homebrew-bump-formula/compare/v10...v11",
+      "title": "https://github.com/dawidd6/action-homebrew-bump-formula/compare/v10...v11",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:47.133Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-EBBECBC86484": {
+      "id": "SRC-EBBECBC86484",
+      "url": "https://developer.mend/",
+      "title": "https://developer.mend/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:47.193Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-C9E0F98AE361": {
+      "id": "SRC-C9E0F98AE361",
+      "url": "https://nda.ya.ru/t/R4paDW1c7xAm7a",
+      "title": "https://nda.ya.ru/t/R4paDW1c7xAm7a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:48.726Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-EDF22E9733A1": {
+      "id": "SRC-EDF22E9733A1",
+      "url": "https://devtools-reg/",
+      "title": "https://devtools-reg/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T19:34:48.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
       }
     }
   }

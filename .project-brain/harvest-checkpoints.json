@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T19:26:16.538Z",
+  "last_updated": "2026-11-23T19:34:43.017Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -275,14 +275,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "bd1bc6dc367e4b5d5454ac1f9ab428abccb561cb4c67a8f760b42d6a6163b618",
-      "verified_at": "2026-11-19T10:15:37.157Z",
+      "content_hash": "e4370c088aa1cb57a622047cdb77daa7fcc3c3893cac88727b1ddfa9daf59b39",
+      "verified_at": "2026-11-23T19:34:24.720Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T10:15:37.157Z"
+      "last_updated": "2026-11-23T19:34:24.720Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "bd6fdaedc0c3c11fe18250d9fc8cefb0588b369becd5a11d33c855b77bfb80f1",
-      "verified_at": "2026-11-22T17:35:34.293Z",
+      "content_hash": "b841c0dcf89195e707cf4ec97b1ac0725121fd324a1a9c17bebaac90c71f71d5",
+      "verified_at": "2026-11-23T19:34:43.016Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T17:35:34.293Z"
+      "last_updated": "2026-11-23T19:34:43.016Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "639b87b8936e8ae8b4786e451bef1f8ee2eae15bc33ddff891eb582c53b89d5b",
-      "verified_at": "2026-11-17T16:21:51.453Z",
+      "content_hash": "1fb22bcf9a4f0e0b505000663212e653825da4f26c95cfe487ee63ee02e87948",
+      "verified_at": "2026-11-23T19:34:27.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:21:51.453Z"
+      "last_updated": "2026-11-23T19:34:27.148Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",

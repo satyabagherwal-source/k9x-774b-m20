@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T19:26:22.279Z",
+  "last_updated": "2026-11-23T19:34:49.475Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24135,
+  "total_items": 24140,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -237290,8 +237290,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "0a2b3145",
-      "content_hash": "bd6fdaedc0c3c11fe18250d9fc8cefb0588b369becd5a11d33c855b77bfb80f1",
+      "source_version": "787c7d04",
+      "content_hash": "b841c0dcf89195e707cf4ec97b1ac0725121fd324a1a9c17bebaac90c71f71d5",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -237329,6 +237329,11 @@
           "number": 9964,
           "title": "Add reason tags to global update tablet stores throttler",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10105,
+          "title": "Embed key-visitor fixtures in describe tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237336,7 +237341,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T17:35:34.033Z",
+      "verified_at": "2026-11-23T19:34:42.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237390,10 +237395,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "0a2b3145",
-      "content_hash": "7b8c0feb9da2ba17b7ae1e112a427f9f9986084924c60457be217610b6f9d25a",
+      "source_version": "787c7d04",
+      "content_hash": "bc4299e04efd305af095c408caf9690af1218bbd27938da88877c906e9d61d45",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T17:35:34.913Z"
+      "persisted_at": "2026-11-23T19:34:43.656Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -237451,9 +237456,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus-ytsaurus-learnings",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "19211bf0407457b91c97d479be7a221a06d90b91c4ec5e60350d3d933fe5c935",
+      "content_hash": "cec3d2f69136e823e6318e1aee9b8a8b78107f86602dae311588c207a1f4af9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T08:38:49.352Z"
+      "persisted_at": "2026-11-23T19:34:49.475Z"
     },
     "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf": {
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
@@ -237464,7 +237469,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "bd1bc6dc367e4b5d5454ac1f9ab428abccb561cb4c67a8f760b42d6a6163b618",
+      "content_hash": "e4370c088aa1cb57a622047cdb77daa7fcc3c3893cac88727b1ddfa9daf59b39",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [],
@@ -237473,7 +237478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T10:15:36.948Z",
+      "verified_at": "2026-11-23T19:34:24.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237490,9 +237495,9 @@
       "title": "Research & Knowledge Intelligence: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF Core Invariants",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "6f87a9df34bd016f1947d2afd1bb87ad7a2b48215b2acd23ac875162aa5b3879",
+      "content_hash": "129241f9861ea1845edb7010ef939f762fc87ce760e6f6b74d29945715176c0c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T10:15:37.335Z"
+      "persisted_at": "2026-11-23T19:34:24.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-",
@@ -237502,9 +237507,9 @@
       "title": "Research & Knowledge Intelligence: hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings Core Invariants",
       "repository": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "2400f1790bbbea330de121a1fb7bae9ea4ffc782f6cbe6a88033f744fca50444",
+      "content_hash": "b47019b869b0c9d44d07cbcb4ce1a7c6792c00d19bc2d8ce3560b5bdb69784dc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T10:16:28.676Z"
+      "persisted_at": "2026-11-23T19:34:48.364Z"
     },
     "learn-github-aws-aws-cdk": {
       "learning_id": "learn-github-aws-aws-cdk",
@@ -254523,8 +254528,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "e8fbc3b9",
-      "content_hash": "639b87b8936e8ae8b4786e451bef1f8ee2eae15bc33ddff891eb582c53b89d5b",
+      "source_version": "22af9e12",
+      "content_hash": "1fb22bcf9a4f0e0b505000663212e653825da4f26c95cfe487ee63ee02e87948",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -254537,6 +254542,11 @@
           "number": 8998,
           "title": "skip plugins installed in projects that no longer exists",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10104,
+          "title": "support OSC 7501 Program Status Protocol",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254544,7 +254554,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:21:51.284Z",
+      "verified_at": "2026-11-23T19:34:26.865Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254586,10 +254596,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-architecture-intelligence-topgrade-rs-topgrade-core-invaria.md",
       "title": "Architecture Intelligence: topgrade-rs/topgrade Core Invariants",
       "repository": "topgrade-rs/topgrade",
-      "source_version": "e8fbc3b9",
-      "content_hash": "0cf4d528293988ab9f2e1f6330de654df504ab77bd435221275f5d42fd699c01",
+      "source_version": "22af9e12",
+      "content_hash": "384c2a21669a5bd51378a94336d52a7947f9d3b5240905e05c8d6d94984954eb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T16:21:51.740Z"
+      "persisted_at": "2026-11-23T19:34:27.635Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade",
@@ -254598,10 +254608,10 @@
       "relative_path": "08_VERIFICATION/topgrade-rs-topgrade-verification-protocol-empirical-defect-shield-for-topgrade-.md",
       "title": "Verification Protocol: Empirical Defect Shield for topgrade-rs/topgrade",
       "repository": "topgrade-rs/topgrade",
-      "source_version": "e8fbc3b9",
-      "content_hash": "1bf0ba9ae6e51ecb2382859c96b041206e904039ad5d29126220127c25246cd1",
+      "source_version": "22af9e12",
+      "content_hash": "1061582dbf61bca63e36aae7bfa1edc982b69c39e4b6dc7668edd4314e6ebde7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:21:51.865Z"
+      "persisted_at": "2026-11-23T19:34:27.846Z"
     },
     "rule-8682": {
       "learning_id": "rule-8682",
@@ -254637,9 +254647,9 @@
       "title": "Architecture Intelligence: topgrade-rs-topgrade-learnings Core Invariants",
       "repository": "topgrade-rs-topgrade-learnings",
       "source_version": "HEAD",
-      "content_hash": "81f968e9c573928540db5d719eb2ac4460a8ce3b3a71a23175deb301f0d97a32",
+      "content_hash": "94a1287932316305882c58085c4510400a47c653070b37de8465e36f96b6ef38",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T16:22:03.423Z"
+      "persisted_at": "2026-11-23T19:34:47.750Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade-learnings",
@@ -254649,9 +254659,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for topgrade-rs-topgrade-learnings",
       "repository": "topgrade-rs-topgrade-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc5347b1c8e2cbcb0b93874df75de00c47ca38a28e6fdc77929acd8c598977ae",
+      "content_hash": "6d50ba232399cf71f09d4be0d3df8002f4ccbff118230d21a33729578884947b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:22:03.557Z"
+      "persisted_at": "2026-11-23T19:34:47.945Z"
     },
     "learn-huggingface-comfy-org-relayvsr": {
       "learning_id": "learn-huggingface-comfy-org-relayvsr",
@@ -256020,10 +256030,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "0a2b3145",
-      "content_hash": "73c67b96bd11480ef9cd4bc29d3f9fd61d386a061a8692e08279e589377aaccb",
+      "source_version": "787c7d04",
+      "content_hash": "e187bd1b35c9840cb958376bc73722d37423e1f4b00972ecc1749ccaab46d04f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T17:35:34.727Z"
+      "persisted_at": "2026-11-23T19:34:43.462Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -256045,9 +256055,9 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "15c41cfa387246f12651c86d9c9338590657344dc52daa98699e3dc71ae2c13b",
+      "content_hash": "28f383639b676ed74020c4f23dd9b0f56b596e5c7aa4748fed06f4e9f137d5c6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T08:38:49.185Z"
+      "persisted_at": "2026-11-23T19:34:49.274Z"
     },
     "rule-8701": {
       "learning_id": "rule-8701",
@@ -328941,6 +328951,70 @@
       "content_hash": "57295a1f1fd579b38cc5e96e2fd2a67b50827b45ae09c2d806c722f4d938c7dc",
       "domain_letter": "B",
       "persisted_at": "2026-11-23T19:26:20.642Z"
+    },
+    "rule-10104": {
+      "learning_id": "rule-10104",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10104,
+      "title": "support OSC 7501 Program Status Protocol",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "22af9e12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:34:26.865Z"
+    },
+    "candidate_directive-support-osc-7501-program-status-protocol": {
+      "item_id": "candidate_directive-support-osc-7501-program-status-protocol",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-09TT-support-osc-7501-program-status-protocol.md",
+      "title": "support OSC 7501 Program Status Protocol",
+      "repository": "topgrade-rs-topgrade-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9662514dbdc9a6016aa7f0d8642e51eede397e7d52926d815eab93d4d806ce87",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T19:34:47.495Z"
+    },
+    "rule-10105": {
+      "learning_id": "rule-10105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10105,
+      "title": "Embed key-visitor fixtures in describe tests",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "787c7d04",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T19:34:42.776Z"
+    },
+    "candidate_directive-embed-key-visitor-fixtures-in-describe-tests": {
+      "item_id": "candidate_directive-embed-key-visitor-fixtures-in-describe-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-06KI-embed-key-visitor-fixtures-in-describe-tests.md",
+      "title": "Embed key-visitor fixtures in describe tests",
+      "repository": "ytsaurus/ytsaurus",
+      "source_version": "787c7d04",
+      "content_hash": "6bef8213c92ec4878b8f8295099670c7663f5b3f630dd6ce9cf29f419ed7a798",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T19:34:43.267Z"
+    },
+    "candidate_directive-yt-30579-embed-key-visitor-fixtures-in-describe-tests": {
+      "item_id": "candidate_directive-yt-30579-embed-key-visitor-fixtures-in-describe-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0B20-yt-30579-embed-key-visitor-fixtures-in-describe-tests.md",
+      "title": "YT-30579: Embed key-visitor fixtures in describe tests",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "697e6df030ced62344458e25e0efc4d1e83836abd82c02ae1d24908a5fb6e161",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T19:34:49.080Z"
     }
   },
   "ai-builder-brain": {

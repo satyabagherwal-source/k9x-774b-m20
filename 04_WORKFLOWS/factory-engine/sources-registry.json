@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T19:26:19.778Z",
-    "lastVerified": "2026-11-23T19:26:19.778Z",
+    "lastChecked": "2026-11-23T19:34:46.386Z",
+    "lastVerified": "2026-11-23T19:34:46.386Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-23T19:00:55.480Z",
+    "lastChecked": "2026-11-23T19:34:36.430Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-23T19:00:55.480Z"
+    "lastVerified": "2026-11-23T19:34:36.430Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -967,9 +967,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-22T18:35:21.451Z",
+    "lastChecked": "2026-11-23T19:34:29.056Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-22T18:35:21.451Z"
+    "lastVerified": "2026-11-23T19:34:29.056Z"
   },
   "rustls-rustls": {
     "name": "rustls/rustls",
@@ -2265,12 +2265,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy/mitmproxy",
+    "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-23T15:37:30.555Z",
-    "lastVerified": "2026-11-23T15:37:30.555Z",
+    "lastChecked": "2026-11-23T19:34:31.420Z",
+    "lastVerified": "2026-11-23T19:34:31.420Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2279,7 +2279,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "04661852"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -6478,14 +6479,14 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-22T17:35:33.193Z",
-    "lastVerified": "2026-11-22T17:35:33.193Z",
+    "lastChecked": "2026-11-23T19:34:41.880Z",
+    "lastVerified": "2026-11-23T19:34:41.880Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "bd6fdaedc0c3c11fe18250d9fc8cefb0588b369becd5a11d33c855b77bfb80f1",
+    "contentHash": "b841c0dcf89195e707cf4ec97b1ac0725121fd324a1a9c17bebaac90c71f71d5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7352,11 +7353,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "topgrade-rs-topgrade": {
-    "name": "topgrade",
+    "name": "topgrade-rs/topgrade",
     "officialUrl": "https://github.com/topgrade-rs/topgrade",
-    "lastChecked": "2026-11-22T07:45:10.947Z",
-    "revisionIdentifier": "e8fbc3b9",
-    "lastVerified": "2026-11-22T07:45:10.947Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-23T19:34:25.789Z",
+    "lastVerified": "2026-11-23T19:34:25.789Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "1fb22bcf9a4f0e0b505000663212e653825da4f26c95cfe487ee63ee02e87948",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -7723,12 +7734,12 @@
     "officialUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T10:15:36.580Z",
-    "lastVerified": "2026-11-19T10:15:36.580Z",
+    "lastChecked": "2026-11-23T19:34:23.977Z",
+    "lastVerified": "2026-11-23T19:34:23.977Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "bd1bc6dc367e4b5d5454ac1f9ab428abccb561cb4c67a8f760b42d6a6163b618",
+    "contentHash": "e4370c088aa1cb57a622047cdb77daa7fcc3c3893cac88727b1ddfa9daf59b39",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11109,9 +11120,9 @@
   "jordansinger-swiftui-kit": {
     "name": "SwiftUI-Kit",
     "officialUrl": "https://github.com/jordansinger/SwiftUI-Kit",
-    "lastChecked": "2026-11-20T20:28:11.444Z",
+    "lastChecked": "2026-11-23T19:34:26.625Z",
     "revisionIdentifier": "1211aa6b",
-    "lastVerified": "2026-11-20T20:28:11.444Z"
+    "lastVerified": "2026-11-23T19:34:26.625Z"
   },
   "encode-httpx": {
     "name": "httpx",
