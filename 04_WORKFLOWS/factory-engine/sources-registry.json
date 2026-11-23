@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T23:57:28.831Z",
-    "lastVerified": "2026-11-22T23:57:28.831Z",
+    "lastChecked": "2026-11-23T00:12:47.233Z",
+    "lastVerified": "2026-11-23T00:12:47.233Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T23:33:22.862Z",
+    "lastChecked": "2026-11-23T00:07:55.844Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T23:33:22.862Z"
+    "lastVerified": "2026-11-23T00:07:55.844Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -721,8 +721,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T19:43:16.200Z",
-    "lastVerified": "2026-11-22T19:43:16.200Z",
+    "lastChecked": "2026-11-23T00:07:50.985Z",
+    "lastVerified": "2026-11-23T00:07:50.985Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -1749,8 +1749,8 @@
     "officialUrl": "https://github.com/alibaba/zvec",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-22T00:32:45.532Z",
-    "lastVerified": "2026-11-22T00:32:45.532Z",
+    "lastChecked": "2026-11-23T00:07:53.429Z",
+    "lastVerified": "2026-11-23T00:07:53.429Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alibaba-zvec",
@@ -2909,9 +2909,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-21T18:22:44.925Z",
+    "lastChecked": "2026-11-23T00:07:40.959Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-21T18:22:44.925Z"
+    "lastVerified": "2026-11-23T00:07:40.959Z"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -3500,8 +3500,8 @@
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T01:58:45.932Z",
-    "lastVerified": "2026-11-22T01:58:45.932Z",
+    "lastChecked": "2026-11-23T00:07:48.531Z",
+    "lastVerified": "2026-11-23T00:07:48.531Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
@@ -3542,12 +3542,12 @@
     "officialUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T16:49:27.523Z",
-    "lastVerified": "2026-11-18T16:49:27.523Z",
+    "lastChecked": "2026-11-23T00:07:43.504Z",
+    "lastVerified": "2026-11-23T00:07:43.504Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "c92520a4b0134e64f4d79bd3b1cf7938ed3842a08e3c1e17b5b77cb221b55f0e",
+    "contentHash": "86ffacf0652dee778e9723bd6e490e4434e04f5fed89da943a2a0d8c9617058b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9553,9 +9553,9 @@
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
     "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
-    "lastChecked": "2026-11-20T01:42:04.179Z",
+    "lastChecked": "2026-11-23T00:07:45.829Z",
     "revisionIdentifier": "6157c77e",
-    "lastVerified": "2026-11-20T01:42:04.179Z"
+    "lastVerified": "2026-11-23T00:07:45.829Z"
   },
   "codetot-web-schema-test": {
     "name": "schema-test",

@@ -12271,3 +12271,4 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `9991542c` | Multi-dimensional audit evidence | 2026-11-22T23:57:17.723Z |
 | `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `aee5584a` | Multi-dimensional audit evidence | 2026-11-22T23:57:22.920Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `50316b9e` | Multi-dimensional audit evidence | 2026-11-22T23:57:25.522Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-23T00:12:44.377Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T23:57:31.103Z",
+  "last_updated": "2026-11-23T00:12:49.227Z",
   "total_verified_learnings": 9076,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8cce9ce0aeb89cfc843f0aa708787e428b932cf692175ce66749651ed537d418",
+      "content_hash": "55aac32e0e80a76404b7d922bc45610cb5783f75c7a8b76e1c3db39d2d43f09e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:49:28.235Z"
+      "persisted_at": "2026-11-23T00:12:48.203Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5034039230d1f5c402f57be268f7731521fe377b1d4a0f8db9a55cdbf50af26",
+      "content_hash": "2b3ffebd66f37efdd82109c2a3f8e7a6be4ee198d7014b36e80a12de8b856243",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:49:28.400Z"
+      "persisted_at": "2026-11-23T00:12:48.336Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0876232fdc8e486fa3c64bc1a7f980e7280f3a479483dd7166d5dc94c91a939e",
+      "content_hash": "9930d8fb443575c3095f4df1a12ebf20e545bcb2e329367f2447bcb6aa8b7e95",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:49:28.540Z"
+      "persisted_at": "2026-11-23T00:12:48.449Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -214969,7 +214969,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "c92520a4b0134e64f4d79bd3b1cf7938ed3842a08e3c1e17b5b77cb221b55f0e",
+      "content_hash": "86ffacf0652dee778e9723bd6e490e4434e04f5fed89da943a2a0d8c9617058b",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [],
@@ -214978,7 +214978,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:49:27.923Z",
+      "verified_at": "2026-11-23T00:12:44.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214995,9 +214995,9 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef-flash Core Invariants",
       "repository": "Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "164bcace2166b8512cd46373b0c560dbc0c3dbec265f45fe73b7c51980c14627",
+      "content_hash": "6e8f0d0be4d2507e6f7cdb65fe4796d3047f9e11b6be211b21521daf7bd3c93c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:49:28.407Z"
+      "persisted_at": "2026-11-23T00:12:44.547Z"
     },
     "learn-github-salvo-rs-salvo": {
       "learning_id": "learn-github-salvo-rs-salvo",
@@ -215315,9 +215315,9 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-flash-learnings Core Invariants",
       "repository": "hf-cloudflare-clef-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "901a05b5a80e218cc236f9f50dccc106c5e40bec0686aad67d2b5f65252325ad",
+      "content_hash": "b87eda86d2829dc0eca84c4f5d73ece8cd32dc155ae74a7d29c86f738509ff72",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:49:40.335Z"
+      "persisted_at": "2026-11-23T00:12:47.536Z"
     },
     "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs": {
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
@@ -228800,9 +228800,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "b3248646bba795e49d273b154ce1215be116bd29c399cc5e16d20fefa5b1ac43",
+      "content_hash": "610aadc238e7762c9e6dd2102a381af619345dcaca23a4b855cc7a750e35300d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T20:09:11.607Z"
+      "persisted_at": "2026-11-23T00:12:49.093Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -228812,9 +228812,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "d150ad4ad6e0a1f91c530a9f93bba0353550b84838b9cadbab53db3eb673330c",
+      "content_hash": "c1ee0966d7acb3fb99c12ee55d07e291eba4f619665bc039c15a6e5d5ed59703",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:09:11.826Z"
+      "persisted_at": "2026-11-23T00:12:49.227Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -303048,13 +303048,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SNOE-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HYNW-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "359f7ad22c49ef94cc2175663bedd3e4f137dd877b49a3e9305fb5477ce5dd37",
+      "content_hash": "762cbc2dae7704e91a4d81359dc7063b4f464b1bdadd23e7526583028b8d270f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-22T20:09:11.391Z"
+      "persisted_at": "2026-11-23T00:12:48.956Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -309984,13 +309984,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NXQ3-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HXZ7-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "af530bb38edece2ce37bab7a37d103dcf3bf12c542004d62cc5944d3fff23811",
+      "content_hash": "6cdd02e9096d0a8b0c04002b2e87e788e71d90ac5b04a294689a3e0635e10dcc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:49:28.062Z"
+      "persisted_at": "2026-11-23T00:12:48.071Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

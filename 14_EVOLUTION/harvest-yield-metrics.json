@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T23:57:25.528Z",
-  "total_cycles_completed": 11636,
-  "total_learnings_persisted": 11636,
+  "last_updated": "2026-11-23T00:12:44.381Z",
+  "total_cycles_completed": 11637,
+  "total_learnings_persisted": 11637,
   "total_rules_promoted": 10835,
   "history": [
-    {
-      "timestamp": "2026-11-22T06:27:27.640Z",
-      "repository": "ConwayResearch/Underdog-Woof",
-      "learningId": "learn-huggingface-conwayresearch-underdog-woof",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T06:27:34.556Z",
       "repository": "pulumi/pulumi",
@@ -1403,6 +1396,13 @@
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T00:12:44.381Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

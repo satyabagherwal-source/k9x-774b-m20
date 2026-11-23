@@ -12238,3 +12238,4 @@
 | `CYCLE-20261122-Y046` | `2026-11-22T23:57:17.718Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10007` | Yes (`58fabdff...`) |
 | `CYCLE-20261122-Y44K` | `2026-11-22T23:57:22.916Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10008` | Yes (`102b4916...`) |
 | `CYCLE-20261122-Y64U` | `2026-11-22T23:57:25.518Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10009` | Yes (`1dc7db1d...`) |
+| `CYCLE-20261123-HV4M` | `2026-11-23T00:12:44.374Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`86ffacf0...`) |
