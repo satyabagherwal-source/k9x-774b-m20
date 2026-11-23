@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:40:24.424Z",
+  "timestamp": "2026-11-23T19:18:01.894Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-kube-rs-kube-learnings",
+  "learning_id": "LEARN-EVO-kube-rs-kube-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kube-rs-kube-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:40:24.424Z`  
-> **Learning ID**: `LEARN-REEXTRACT-kube-rs-kube-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-23T19:18:01.894Z`  
+> **Learning ID**: `LEARN-EVO-kube-rs-kube-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `b970938d`  
+> **Source Version**: `6a339634`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:39:05.720Z  
+> **Timestamp**: 2026-11-23T19:17:56.667Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:38:36.898Z  
+> **Harvest Timestamp**: 2026-11-23T19:17:56.662Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3861 stars
+- **Stars / Engagement**: 3869 stars
 
 ---
 
@@ -1732,162 +1732,500 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `224f8434` (2026-11-11)
-**Commit Message**: Bound watch startup with the watcher idle timeout (#2149)
+### Incident Patch 1: `6a339634` (2026-11-23)
+**Commit Message**: attach id for ReflectHandle to eliminate drop clash chance (#2162)
 
-Fixes #2148
+* attach id for ReflectHandle to eliminate drop clash chance
 
-Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
-Co-authored-by: Eirik A <[REDACTED_EMAIL]>
+Signed-off-by: Danil-Grigorev <[REDACTED_EMAIL]>
 
-**File**: `kube-runtime/Cargo.toml` (modified, +3/-0)
+* move subscriber id logic to separate package
+
+Signed-off-by: Danil Grigorev <[REDACTED_EMAIL]>
+
+* clippy fixes
+
+Signed-off-by: Danil Grigorev <[REDACTED_EMAIL]>
+
+* fmt fixes
+
+Signed-off-by: Danil-Grigorev <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Danil-Grigorev <[REDACTED_EMAIL]>
+Signed-off-by: Danil Grigorev <[REDACTED_EMAIL]>
+
+**File**: `kube-runtime/src/reflector/dispatcher.rs` (modified, +17/-12)
 ```diff
-@@ -47,6 +47,9 @@ async-stream.workspace = true
- hostname.workspace = true
+@@ -10,6 +10,8 @@ use pin_project::pin_project;
+ #[cfg(feature = "unstable-runtime-subscribe")] use pin_project::pinned_drop;
+ use std::task::ready;
  
- [dev-dependencies]
-+http.workspace = true
-+http-body-util.workspace = true
-+tower.workspace = true
- kube = { path = "../kube", features = ["derive", "client", "runtime"] }
- serde_json.workspace = true
- serde-saphyr.workspace = true
-```
-
-**File**: `kube-runtime/src/watcher.rs` (modified, +188/-20)
-```diff
-@@ -530,17 +530,25 @@ async fn next_with_idle_timeout<S, T>(stream: &mut S, timeout: Option<u32>) -> O
- where
-     S: Stream<Item = T> + Unpin,
++#[cfg(feature = "unstable-runtime-subscribe")]
++use crate::reflector::subscriber::SubscriberId;
+ use crate::reflector::{ObjectRef, Store};
+ use async_broadcast::{InactiveReceiver, Receiver, Sender};
+ 
+@@ -72,12 +74,6 @@ where
+     pub(crate) fn subscribe(&self, reader: Store<K>) -> ReflectHandle<K> {
+         ReflectHandle::new(reader, self.dispatch_tx.new_receiver())
+     }
+-
+-    // Return a number of active subscribers to this shared sender.
+-    #[cfg(feature = "unstable-runtime-subscribe")]
+-    pub(crate) fn subscribers(&self) -> Option<usize> {
+-        Some(self.dispatch_tx.receiver_count()).filter(|c| *c > 0)
+-    }
+ }
+ 
+ /// A handle to a shared stream reader
+@@ -100,9 +96,11 @@ where
+ 
+ ## Warning
+ 
+-Dynamically adding or removing subscribers while the root stream is running
+-is experimental and may cause issues. Create all subscribers before polling 
+-the root stream and keep them alive until it terminates.
++Subscribers can be added or removed while the root stream is running, but
++the semantics are not fully replay-safe: a subscriber added mid-stream receives no
++replay of already-deleted or pending entries, and a dropped subscriber never receives
++pending delete events. Prefer creating all subscribers before polling the root stream
++and keeping them alive until it terminates.
+ 
+ Even with a fixed set of subscribers, an empty relist can discard a pending
+ deleted object before all subscribers read it. Similarly, deleting and recreating
+@@ -121,6 +119,8 @@ where
+     #[pin]
+     rx: Receiver<ObjectRef<K>>,
+     reader: Store<K>,
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    id: SubscriberId,
+ }
+ 
+ impl<K> Clone for ReflectHandle<K>
+@@ -139,6 +139,11 @@ where
+     K::DynamicType: Eq + std::hash::Hash + Clone,
  {
-+    with_idle_timeout(stream.next(), timeout).await.flatten()
-+}
-+
-+/// Await `fut` with the same idle timeout, returning `None` on expiry.
-+///
-+/// Also wraps the watch call, which can stall before a stream exists,
-+/// e.g. on an error response whose body never completes.
-+async fn with_idle_timeout<F: Future>(fut: F, timeout: Option<u32>) -> Option<F::Output> {
-     if timeout == Some(0) {
--        return stream.next().await;
-+        return Some(fut.await);
+     pub(super) fn new(reader: Store<K>, rx: Receiver<ObjectRef<K>>) -> ReflectHandle<K> {
++        #[cfg(feature = "unstable-runtime-subscribe")]
++        let id = reader.add_subscriber();
++        #[cfg(feature = "unstable-runtime-subscribe")]
++        return Self { rx, reader, id };
++        #[cfg(not(feature = "unstable-runtime-subscribe"))]
+         Self { rx, reader }
      }
  
-     let idle_timeout = Duration::from_secs(u64::from(timeout.unwrap_or(290))) + WATCH_IDLE_TIMEOUT_MARGIN;
--    match tokio::time::timeout(idle_timeout, stream.next()).await {
--        Ok(item) => item,
-+    match tokio::time::timeout(idle_timeout, fut).await {
-+        Ok(output) => Some(output),
-         Err(_elapsed) => {
-             debug!(
-                 timeout_secs = idle_timeout.as_secs(),
--                "watch stream idle timeout, reconnecting"
-+                "watch idle timeout, reconnecting"
-             );
-             None
-         }
-@@ -569,16 +577,22 @@ where
-                 last_bookmark: None,
-             }),
-             InitialListStrategy::StreamingList => {
--                match api.watch(&wc.to_watch_params(WatchPhase::Initial), "0").await {
--                    Ok(stream) => (Some(Ok(Event::Init)), State::InitialWatch { stream }),
--                    Err(err) => {
-+                match with_idle_timeout(
-+                    api.watch(&wc.to_watch_params(WatchPhase::Initial), "0"),
-+                    wc.timeout,
-+                )
-+                .await
-+                {
-+                    Some(Ok(stream)) => (Some(Ok(Event::Init)), State::InitialWatch { stream }),
-+                    Some(Err(err)) => {
-                         if std::matches!(err, ClientErr::Api(ref status) if status.is_forbidden()) {
-                             warn!("watch initlist error with 403: {err:?}");
-                         } else {
-                             debug!("watch initlist error: {err:?}");
-                         }
-                         (Some(Err(Error::WatchStartFailed(err))), State::default())
-                     }
-+                    None => (None, State::default()),
-                 }
-             }
-         },
-@@ -676,15 +690,17 @@ where
-             }
-         }
-         State::InitListed { resource_version } => {
--            match api
--                .watch(&wc.to_watch_params(WatchPhase::Resumed), &resource_version)
--                .await
-+            match with_idle_timeout(
-+                api.watch(&wc.to_watch_params(WatchPhase::Resumed), &resource_version),
-+                wc.timeout,
-+            )
-+            .await
-             {
--                Ok(stream) => (None, State::Watching {
-+                Some(Ok(stream)) => (None, State::Watching {
-                     resource_version,
-                     stream,
-                 }),
--                Err(err) => {
-+                Some(Err(err)) => {
-                     if std::matches!(err, ClientErr::Api(ref status) if status.is_forbidden()) {
-                         warn!("watch initlist error with 403: {err:?}");
+@@ -162,8 +167,8 @@ where
+             match ready!(this.rx.as_mut().poll_next(cx)) {
+                 Some(obj_ref) => {
+                     #[cfg(feature = "unstable-runtime-subscribe")]
+-                    let obj = if obj_ref.extra.remaining_lookups.is_some() {
+-                        this.reader.remove(&obj_ref)
++                    let obj = if obj_ref.extra.pending_lookups.is_some() {
++                        this.reader.remove(&obj_ref, *this.id)
                      } else {
-@@ -694,6 +710,7 @@ where
-                         resource_version,
-                     })
-                 }
-+                None => (None, State::InitListed { resource_version }),
-             }
+                         this.reader.get(&obj_ref)
+                     };
+@@ -188,7 +193,7 @@ where
+     K::DynamicType: Eq + std::hash::Hash + Clone,
+ {
+     fn drop(self: Pin<&mut Self>) {
+-        self.reader().drop_subscriber();
++        self.reader().drop_subscriber(self.id);
+     }
+ }
+ 
+```
+
+**File**: `kube-runtime/src/reflector/mod.rs` (modified, +1/-0)
+```diff
+@@ -3,6 +3,7 @@
+ mod dispatcher;
+ mod object_ref;
+ pub mod store;
++#[cfg(feature = "unstable-runtime-subscribe")] mod subscriber;
+ 
+ pub use self::{
+     dispatcher::ReflectHandle,
+```
+
+**File**: `kube-runtime/src/reflector/object_ref.rs` (modified, +8/-5)
+```diff
+@@ -1,10 +1,13 @@
++#[cfg(feature = "unstable-runtime-subscribe")]
++use super::subscriber::SubscriberId;
+ use educe::Educe;
+ use k8s_openapi::{api::core::v1::ObjectReference, apimachinery::pkg::apis::meta::v1::OwnerReference};
+ #[cfg(doc)] use kube_client::core::ObjectMeta;
+ use kube_client::{
+     api::{DynamicObject, Resource},
+     core::api_version_from_group_version,
+ };
++#[cfg(feature = "unstable-runtime-subscribe")] use std::collections::BTreeSet;
+ use std::{
+     borrow::Cow,
+     fmt::{Debug, Display},
+@@ -58,7 +61,7 @@ pub trait Lookup {
+                 resource_version: self.resource_version().map(Cow::into_owned),
+                 uid: self.uid().map(Cow::into_owned),
+                 #[cfg(feature = "unstable-runtime-subscribe")]
+-                remaining_lookups: None,
++                pending_lookups: None,
+             },
          }
-         State::Watching {
-@@ -1052,22 +1069,30 @@ impl Backoff for DefaultBackoff {
- mod tests {
-     use std::{collections::BTreeMap, time::Duration};
+     }
+@@ -159,9 +162,9 @@ pub struct Extra {
+     pub resource_version: Option<String>,
+     /// The uid of the object
+     pub uid: Option<String>,
+-    /// Number of remaining cache lookups on this reference
++    /// Subscriber IDs pending a lookup on this reference
+     #[cfg(feature = "unstable-runtime-subscribe")]
+-    pub remaining_lookups: Option<usize>,
++    pub pending_lookups: Option<BTreeSet<SubscriberId>>,
+ }
  
--    use futures::StreamExt;
-+    use futures::{StreamExt, TryStreamExt, stream::BoxStream};
-+    use http::{Request, Response, StatusCode, header::CONTENT_LENGTH};
-+    use http_body_util::{BodyExt, StreamBody};
-     use k8s_openapi::{api::core::v1::ConfigMap, apimachinery::pkg::apis::meta::v1::ObjectMeta};
-     use kube_client::{
--        api::{TypeMeta, WatchEvent, WatchParams},
-+        Api, Client,
-+        api::{ListParams, TypeMeta, WatchEvent, WatchParams},
-+        client::Body,
-         core::{
--            Status,
-+            ObjectList, Status,
-             watch::{Bookmark, BookmarkMeta},
-         },
+ impl<K: Lookup> ObjectRef<K>
+@@ -238,7 +241,7 @@ impl<K: Lookup> ObjectRef<K> {
+                     resource_version: None,
+                     uid: Some(owner.uid.clone()),
+                     #[cfg(feature = "unstable-runtime-subscribe")]
+-                    remaining_lookups: None,
++                    pending_lookups: None,
+                 },
+             })
+         } else {
+@@ -369,7 +372,7 @@ mod tests {
+                 resource_version: Some("123".to_string()),
+                 uid: Some("638ffacd-f666-4402-ba10-7848c66ef576".to_string()),
+                 #[cfg(feature = "unstable-runtime-subscribe")]
+-                remaining_lookups: None,
++                pending_lookups: None,
+             },
+             ..minimal.clone()
+         };
+```
+
+**File**: `kube-runtime/src/reflector/store.rs` (modified, +59/-32)
+```diff
+@@ -1,4 +1,6 @@
+ //! A reader/writer split store for reflectors
++#[cfg(feature = "unstable-runtime-subscribe")]
++use super::subscriber::{SubscriberId, fresh_subscriber_id};
+ use super::{Lookup, ObjectRef, dispatcher::Dispatcher};
+ #[cfg(feature = "unstable-runtime-subscribe")]
+ use crate::reflector::ReflectHandle;
+@@ -12,7 +14,9 @@ use kube_client::{
+     ResourceExt,
+     core::{Selector, SelectorExt},
+ };
++#[cfg(feature = "unstable-runtime-subscribe")] use parking_lot::Mutex;
+ use parking_lot::RwLock;
++#[cfg(feature = "unstable-runtime-subscribe")] use std::collections::BTreeSet;
+ use std::{fmt::Debug, hash::Hash, sync::Arc};
+ use thiserror::Error;
+ 
+@@ -33,6 +37,8 @@ where
+     ready_tx: Option<delayed_init::Initializer<()>>,
+     ready_rx: Arc<DelayedInit<()>>,
+     dispatcher: Option<Dispatcher<K>>,
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    subscribers: Arc<Mutex<BTreeSet<SubscriberId>>>,
+ }
+ 
+ impl<K: 'static + Lookup + Clone> Writer<K>
+@@ -52,6 +58,8 @@ where
+             ready_tx: Some(ready_tx),
+             ready_rx: Arc::new(ready_rx),
+             dispatcher: None,
++            #[cfg(feature = "unstable-runtime-subscribe")]
++            subscribers: Default::default(),
+         }
+     }
+ 
+@@ -74,6 +82,7 @@ where
+             ready_tx: Some(ready_tx),
+             ready_rx: Arc::new(ready_rx),
+             dispatcher: Some(Dispatcher::new(buf_size)),
++            subscribers: Default::default(),
+         }
+     }
+ 
+@@ -86,6 +95,8 @@ where
+         Store {
+             store: self.store.clone(),
+             ready_rx: self.ready_rx.clone(),
++            #[cfg(feature = "unstable-runtime-subscribe")]
++            subscribers: self.subscribers.clone(),
+         }
+     }
+ 
+@@ -103,6 +114,13 @@ where
+             .map(|dispatcher| dispatcher.subscribe(self.as_reader()))
+     }
+ 
++    /// Return the current subscriber IDs, or `None` if there are no subscribers
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    pub(crate) fn subscriber_ids(&self) -> Option<BTreeSet<SubscriberId>> {
++        let set = self.subscribers.lock().clone();
++        (!set.is_empty()).then_some(set)
++    }
++
+     /// Applies a single watcher event to the store
+     pub fn apply_watcher_event(&mut self, event: &watcher::Event<K>) {
+         match event {
+@@ -113,7 +131,7 @@ where
+                 #[cfg(feature = "unstable-runtime-subscribe")]
+                 if self.dispatcher.is_some()
+                     && let Some((stored, _)) = store.get_key_value(&key)
+-                    && stored.extra.remaining_lookups.is_some()
++                    && stored.extra.pending_lookups.is_some()
+                 {
+                     store.remove(&key);
+                 }
+@@ -127,13 +145,12 @@ where
+ 
+                 #[cfg(feature = "unstable-runtime-subscribe")]
+                 if let Some((original_key, existing)) = store.remove_entry(&key)
+-                    && let Some(dispatcher) = &self.dispatcher
+-                    && let Some(subscribers) = dispatcher.subscribers()
++                    && let Some(ids) = self.subscriber_ids()
+                 {
+                     if existing.uid().as_deref() == key.extra.uid.as_deref() {
+                         // Re-insert the entry with updated key, as insert on its own doesnt modify the key
+                         let mut key = key;
+-                        key.extra.remaining_lookups = Some(subscribers);
++                        key.extra.pending_lookups = Some(ids);
+                         store.insert(key, existing);
+                     } else {
+                         store.insert(original_key, existing);
+@@ -230,8 +247,11 @@ pub struct Store<K: 'static + Lookup>
+ where
+     K::DynamicType: Hash + Eq,
+ {
++    #[allow(clippy::struct_field_names)]
+     store: Cache<K>,
+     ready_rx: Arc<DelayedInit<()>>,
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    subscribers: Arc<Mutex<BTreeSet<SubscriberId>>>,
+ }
+ 
+ /// The error returned by `Store::wait_until_ready`
+@@ -254,6 +274,14 @@ where
+         self.ready_rx.get().await.map_err(WriterDropped)
+     }
+ 
++    /// Register a new subscriber and return its ID
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    pub(crate) fn add_subscriber(&self) -> SubscriberId {
++        let id = fresh_subscriber_id();
++        self.subscribers.lock().insert(id);
++        id
++    }
++
+     /// Retrieve a `clone()` of the entry referred to by `key`, if it is in the cache.
+     ///
+     /// `key.namespace` is ignored for cluster-scoped resources.
+@@ -280,56 +308,55 @@ where
+             .cloned()
+     }
+ 
+-    /// Return the cached object for `key`, removing it after its last pending lookup.
+-    ///
+-    /// Earlier lookups decrement the pending lookup count and leave the object in the cache.
++    /// Return the cached object for `key`, removing it once the given subscriber
++    /// acknowledges its pending lookup.
+     #[cfg(feature = "unstable-runtime-subscribe")]
+     #[must_use]
+-    pub(crate) fn remove(&self, key: 
+```
+
+**File**: `kube-runtime/src/reflector/subscriber.rs` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++//! Per-subscriber identity for the reflector's shared stream
++
++use std::sync::atomic::{AtomicU64, Ordering};
++
++/// Identifier for a subscriber of a reflector.
++pub(crate) type SubscriberId = u64;
++
++static NEXT_SUBSCRIBER_ID: AtomicU64 = AtomicU64::new(1);
++
++/// Generate a fresh subscriber id, unique for the duration of the process.
++pub(crate) fn fresh_subscriber_id() -> SubscriberId {
++    NEXT_SUBSCRIBER_ID.fetch_add(1, Ordering::Relaxed)
++}
+```
+
+---
+
+### Incident Patch 2: `d8fa058e` (2026-11-23)
+**Commit Message**: Skip removed objects in ReflectHandle instead of stalling (#2151)
+
+* Skip removed objects in ReflectHandle instead of stalling
+
+When a received ObjectRef no longer resolved in the store, poll_next
+returned Pending without a registered waker, so the handle stopped
+reading. Its unread refs then filled the shared buffer and blocked the
+root reflector. Skip such refs and poll the receiver again.
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+* Correct the Dispatcher comment on events without active receivers
+
+With await_active(false), async-broadcast returns an error when only the
+inactive receiver exists, and broadcast ignores it, so the event is
+dropped rather than buffered.
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+**File**: `kube-runtime/src/reflector/dispatcher.rs` (modified, +150/-17)
+```diff
+@@ -50,8 +50,7 @@ where
+         // Create a broadcast (tx, rx) pair
+         let (mut dispatch_tx, dispatch_rx) = async_broadcast::broadcast(buf_size);
+         // The tx half will not wait for any receivers to be active before
+-        // broadcasting events. If no receivers are active, events will be
+-        // buffered.
++        // broadcasting events. If no receivers are active, events are dropped.
+         dispatch_tx.set_await_active(false);
+         Self {
+             dispatch_tx,
+@@ -159,19 +158,24 @@ where
+ 
+     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+         let mut this = self.project();
+-        match ready!(this.rx.as_mut().poll_next(cx)) {
+-            Some(obj_ref) => {
+-                #[cfg(feature = "unstable-runtime-subscribe")]
+-                let obj = if obj_ref.extra.remaining_lookups.is_some() {
+-                    this.reader.remove(&obj_ref)
+-                } else {
+-                    this.reader.get(&obj_ref)
+-                };
+-                #[cfg(not(feature = "unstable-runtime-subscribe"))]
+-                let obj = this.reader.get(&obj_ref);
+-                obj.map_or(Poll::Pending, |obj| Poll::Ready(Some(obj)))
++        loop {
++            match ready!(this.rx.as_mut().poll_next(cx)) {
++                Some(obj_ref) => {
++                    #[cfg(feature = "unstable-runtime-subscribe")]
++                    let obj = if obj_ref.extra.remaining_lookups.is_some() {
++                        this.reader.remove(&obj_ref)
++                    } else {
++                        this.reader.get(&obj_ref)
++                    };
++                    #[cfg(not(feature = "unstable-runtime-subscribe"))]
++                    let obj = this.reader.get(&obj_ref);
++                    // Skip refs whose object has since been removed from the store
++                    if let Some(obj) = obj {
++                        return Poll::Ready(Some(obj));
++                    }
++                }
++                None => return Poll::Ready(None),
+             }
+-            None => Poll::Ready(None),
+         }
+     }
+ }
+@@ -196,10 +200,18 @@ pub(crate) mod test {
+         reflector::ObjectRef,
+         watcher::{Error, Event},
      };
+-    use std::{pin::pin, sync::Arc, task::Poll};
++    use std::{
++        pin::pin,
++        sync::{
++            Arc,
++            atomic::{AtomicUsize, Ordering},
++        },
++        task::{Context, Poll, Wake, Waker},
++        time::Duration,
++    };
  
--    use crate::watcher::{
--        ApiMode, Config, ExponentialBackoff, State, WatchPhase, next_with_idle_timeout, step,
--        stub_watcher::{
--            Recording, Sequence, SequenceStep, TestMode, error_indicates_graceful_watch_seq_exhaustion,
-+    use crate::{
-+        WatchStreamExt,
-+        watcher::{
-+            ApiMode, Config, Error, ExponentialBackoff, State, WatchPhase, next_with_idle_timeout, step,
-+            step_trampolined,
-+            stub_watcher::{
-+                Recording, Sequence, SequenceStep, TestMode, error_indicates_graceful_watch_seq_exhaustion,
-+            },
-+            watcher, watcher_inner,
-         },
--        watch
+-    use crate::reflector;
+-    use futures::{StreamExt, poll, stream};
++    use crate::reflector::{self, store::Writer};
++    use futures::{Stream, StreamExt, poll, stream};
+     use k8s_openapi::api::core::v1::Pod;
+ 
+     fn testpod(name: &str) -> Pod {
+@@ -208,6 +220,30 @@ pub(crate) mod test {
+         pod
+     }
+ 
++    async fn apply_and_dispatch(writer: &mut Writer<Pod>, event: Event<Pod>) {
++        writer.apply_watcher_event(&event);
++        writer.dispatch_event(&event).await;
++    }
++
++    // Replaces the store contents without dispatching, as a relist does for
++    // objects that went away while the watch was down.
++    fn relist(writer: &mut Writer<Pod>, pods: impl IntoIterator<Item = Pod>) {
++        writer.apply_watcher_event(&Event::Init);
++        for pod in pods {
++            writer.apply_watcher_event(&Event::InitApply(pod));
++        }
++        writer.apply_watcher_event(&Event::InitDone);
++    }
++
++    #[derive(Default)]
++    struct WakeCounter(AtomicUsize);
++
++    impl Wake for WakeCounter {
++        fn wake(self: Arc<Self>) {
++            self.0.fetch_add(1, Ordering::SeqCst);
++        }
++    }
++
+     #[tokio::test]
+     async fn events_are_passed_through() {
+         let foo = testpod("foo");
+@@ -508,6 +544,103 @@ pub(crate) mod test {
+         assert_eq!(poll!(subscriber_slow.next()), Poll::Ready(None));
+     }
+ 
++    #[tokio::test]
++    async fn readers_wake_after_removed_object() {
++        // A reader that receives the ref of an object no longer in the store
++        // must still be woken by the next event.
++        let mut writer = Writer::<Pod>::new_shared(10, ());
++        let mut subscriber = pin!(writer.subscribe().unwrap());
++        let counter = Arc::new(WakeCounter::default());
++        let waker = Waker::from(counter.clone());
++        let mut cx = Context::from_waker(&waker);
++
++        apply_and_dispatch(&mut writer, Event::Apply(testpod("foo"))).await;
++        relist(&mut writer, []);
++        assert_eq!(subscriber.as_mut().poll_next(&mut cx), Poll::Pending);
++
++        apply_and_dispatch(&mut writer, Event::Apply(testpod("bar"))).await;
++        assert_ne!(counter.0.load(Ordering::SeqCst), 0);
++        assert_eq!(
++            subscriber.as_mut().poll_next(&mut cx),
++            Poll::Ready(Some(Arc::new(testpod("bar"))))
++        );
++    }
++
++    #[tokio::test]
++    async fn readers_skip_removed_objects() {
++        let mut writer = Writer::<Pod>::new_shared(10, ());
++        let mut subscriber = pin!(writer.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2149** (2026-11-11): Bound watch startup with the watcher idle timeout (@doxxx93)
-- **PR #2146** (2026-11-06): Fix nightly clippy and rustdoc warnings (@doxxx93)
-- **PR #2145** (2026-11-06): Make kube-client modules visible to rustfmt (@doxxx93)
-- **PR #2144** (2026-11-06): Match NO_PROXY against the apiserver instead of the proxy (@doxxx93)
-- **PR #2143** (2026-11-05): fix parse error messages for LabelSelectorRequirement into Expression (@orangecms)
-- **PR #2141** (2026-11-05): Show missing feature requirements on kube-client items in docs (@doxxx93)
+- **PR #2163** (2026-11-23): scope hyper-rustls's native-tokio feature to oauth and oidc (@verokarhu)
+- **PR #2162** (2026-11-23): attach id for ReflectHandle to eliminate drop clash chance (@Danil-Grigorev)
+- **PR #2161** (2026-11-21): move tokio's signal feature to kube-runtime (@verokarhu)
+- **PR #2160** (closed): remove unused dependency feature (@verokarhu)
+- **PR #2159** (closed): Fix typos in comments (@Adham-Kiwan)
+- **PR #2157** (closed): Support cleanup actions deferring finalizer removal (@Alphadelta14)
 
 ---
 
@@ -1907,33 +2245,58 @@ Co-authored-by: Eirik A <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bound watch startup with the watcher idle timeout (#2149)
+## X. attach id for ReflectHandle to eliminate drop clash chance
 
 **RULE**:
-When implementing operations in `kube-runtime/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kube-runtime/src/reflector/dispatcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `224f8434`: Bound watch startup with the watcher idle timeout (#2149). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a339634`: attach id for ReflectHandle to eliminate drop clash chance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-runtime/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-runtime/src/reflector/dispatcher.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-http.workspace = true
-http-body-util.workspace = true
-tower.workspace = true
+#[cfg(feature = "unstable-runtime-subscribe")]
+use crate::reflector::subscriber::SubscriberId;
+Subscribers can be added or removed while the root stream is running, but
+the semantics are not fully replay-safe: a subscriber added mid-stream receives no
+replay of already-deleted or pending entries, and a dropped subscriber never receives
+pending delete events. Prefer creating all subscribers before polling the root stream
+and keeping them alive until it terminates.
+    #[cfg(feature = "unstable-runtime-subscribe")]
+    id: SubscriberId,
+        #[cfg(feature = "unstable-runtime-subscribe")]
+        let id = reader.add_subscriber();
+        #[cfg(feature = "unstable-runtime-subscribe")]
+        return Self { rx, reader, id };
+        #[cfg(not(feature = "unstable-runtime-subscribe"))]
+                    let obj = if obj_ref.extra.pending_lookups.is_some() {
+                        this.reader.remove(&obj_ref, *this.id)
+        self.reader().drop_subscriber(self.id);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+
+    // Return a number of active subscribers to this shared sender.
+    #[cfg(feature = "unstable-runtime-subscribe")]
+    pub(crate) fn subscribers(&self) -> Option<usize> {
+        Some(self.dispatch_tx.receiver_count()).filter(|c| *c > 0)
+    }
+Dynamically adding or removing subscribers while the root stream is running
+is experimental and may cause issues. Create all subscribers before polling 
+the root stream and keep them alive until it terminates.
+                    let obj = if obj_ref.extra.remaining_lookups.is_some() {
+                        this.reader.remove(&obj_ref)
+        self.reader().drop_subscriber();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `224f8434` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a339634` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

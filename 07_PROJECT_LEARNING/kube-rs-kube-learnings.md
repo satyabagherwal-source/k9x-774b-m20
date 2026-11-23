@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `6f9fddb2`  
+> **Source Version**: `6a339634`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T17:49:57.303Z  
+> **Timestamp**: 2026-11-23T19:17:56.667Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:49:57.295Z  
+> **Harvest Timestamp**: 2026-11-23T19:17:56.662Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3868 stars
+- **Stars / Engagement**: 3869 stars
 
 ---
 
@@ -1707,52 +1707,352 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `050ef4e7` (2026-11-21)
-**Commit Message**: Chore(deps): Update axum-server requirement from 0.8.0 to 0.9.2 (#2155)
+### Incident Patch 1: `6a339634` (2026-11-23)
+**Commit Message**: attach id for ReflectHandle to eliminate drop clash chance (#2162)
 
-Updates the requirements on [axum-server](https://github.com/programatik29/axum-server) to permit the latest version.
-- [Release notes](https://github.com/programatik29/axum-server/releases)
-- [Changelog](https://github.com/programatik29/axum-server/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/programatik29/axum-server/compare/v0.8.0...v0.9.2)
+* attach id for ReflectHandle to eliminate drop clash chance
 
----
-updated-dependencies:
-- dependency-name: axum-server
-  dependency-version: 0.9.2
-  dependency-type: direct:production
-...
+Signed-off-by: Danil-Grigorev <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Eirik A <[REDACTED_EMAIL]>
+* move subscriber id logic to separate package
 
-**File**: `examples/Cargo.toml` (modified, +1/-1)
+Signed-off-by: Danil Grigorev <[REDACTED_EMAIL]>
+
+* clippy fixes
+
+Signed-off-by: Danil Grigorev <[REDACTED_EMAIL]>
+
+* fmt fixes
+
+Signed-off-by: Danil-Grigorev <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Danil-Grigorev <[REDACTED_EMAIL]>
+Signed-off-by: Danil Grigorev <[REDACTED_EMAIL]>
+
+**File**: `kube-runtime/src/reflector/dispatcher.rs` (modified, +17/-12)
 ```diff
-@@ -63,7 +63,7 @@ tar = "0.4.37"
- tracing.workspace = true
- tracing-subscriber.workspace = true
- axum = "0.8.7"
--axum-server = { version = "0.8.0", features = ["tls-rustls-no-provider"] }
-+axum-server = { version = "0.9.2", features = ["tls-rustls-no-provider"] }
- bytes.workspace = true
- http.workspace = true
- http-body-util.workspace = true
+@@ -10,6 +10,8 @@ use pin_project::pin_project;
+ #[cfg(feature = "unstable-runtime-subscribe")] use pin_project::pinned_drop;
+ use std::task::ready;
+ 
++#[cfg(feature = "unstable-runtime-subscribe")]
++use crate::reflector::subscriber::SubscriberId;
+ use crate::reflector::{ObjectRef, Store};
+ use async_broadcast::{InactiveReceiver, Receiver, Sender};
+ 
+@@ -72,12 +74,6 @@ where
+     pub(crate) fn subscribe(&self, reader: Store<K>) -> ReflectHandle<K> {
+         ReflectHandle::new(reader, self.dispatch_tx.new_receiver())
+     }
+-
+-    // Return a number of active subscribers to this shared sender.
+-    #[cfg(feature = "unstable-runtime-subscribe")]
+-    pub(crate) fn subscribers(&self) -> Option<usize> {
+-        Some(self.dispatch_tx.receiver_count()).filter(|c| *c > 0)
+-    }
+ }
+ 
+ /// A handle to a shared stream reader
+@@ -100,9 +96,11 @@ where
+ 
+ ## Warning
+ 
+-Dynamically adding or removing subscribers while the root stream is running
+-is experimental and may cause issues. Create all subscribers before polling 
+-the root stream and keep them alive until it terminates.
++Subscribers can be added or removed while the root stream is running, but
++the semantics are not fully replay-safe: a subscriber added mid-stream receives no
++replay of already-deleted or pending entries, and a dropped subscriber never receives
++pending delete events. Prefer creating all subscribers before polling the root stream
++and keeping them alive until it terminates.
+ 
+ Even with a fixed set of subscribers, an empty relist can discard a pending
+ deleted object before all subscribers read it. Similarly, deleting and recreating
+@@ -121,6 +119,8 @@ where
+     #[pin]
+     rx: Receiver<ObjectRef<K>>,
+     reader: Store<K>,
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    id: SubscriberId,
+ }
+ 
+ impl<K> Clone for ReflectHandle<K>
+@@ -139,6 +139,11 @@ where
+     K::DynamicType: Eq + std::hash::Hash + Clone,
+ {
+     pub(super) fn new(reader: Store<K>, rx: Receiver<ObjectRef<K>>) -> ReflectHandle<K> {
++        #[cfg(feature = "unstable-runtime-subscribe")]
++        let id = reader.add_subscriber();
++        #[cfg(feature = "unstable-runtime-subscribe")]
++        return Self { rx, reader, id };
++        #[cfg(not(feature = "unstable-runtime-subscribe"))]
+         Self { rx, reader }
+     }
+ 
+@@ -162,8 +167,8 @@ where
+             match ready!(this.rx.as_mut().poll_next(cx)) {
+                 Some(obj_ref) => {
+                     #[cfg(feature = "unstable-runtime-subscribe")]
+-                    let obj = if obj_ref.extra.remaining_lookups.is_some() {
+-                        this.reader.remove(&obj_ref)
++                    let obj = if obj_ref.extra.pending_lookups.is_some() {
++                        this.reader.remove(&obj_ref, *this.id)
+                     } else {
+                         this.reader.get(&obj_ref)
+                     };
+@@ -188,7 +193,7 @@ where
+     K::DynamicType: Eq + std::hash::Hash + Clone,
+ {
+     fn drop(self: Pin<&mut Self>) {
+-        self.reader().drop_subscriber();
++        self.reader().drop_subscriber(self.id);
+     }
+ }
+ 
+```
+
+**File**: `kube-runtime/src/reflector/mod.rs` (modified, +1/-0)
+```diff
+@@ -3,6 +3,7 @@
+ mod dispatcher;
+ mod object_ref;
+ pub mod store;
++#[cfg(feature = "unstable-runtime-subscribe")] mod subscriber;
+ 
+ pub use self::{
+     dispatcher::ReflectHandle,
+```
+
+**File**: `kube-runtime/src/reflector/object_ref.rs` (modified, +8/-5)
+```diff
+@@ -1,10 +1,13 @@
++#[cfg(feature = "unstable-runtime-subscribe")]
++use super::subscriber::SubscriberId;
+ use educe::Educe;
+ use k8s_openapi::{api::core::v1::ObjectReference, apimachinery::pkg::apis::meta::v1::OwnerReference};
+ #[cfg(doc)] use kube_client::core::ObjectMeta;
+ use kube_client::{
+     api::{DynamicObject, Resource},
+     core::api_version_from_group_version,
+ };
++#[cfg(feature = "unstable-runtime-subscribe")] use std::collections::BTreeSet;
+ use std::{
+     borrow::Cow,
+     fmt::{Debug, Display},
+@@ -58,7 +61,7 @@ pub trait Lookup {
+                 resource_version: self.resource_version().map(Cow::into_owned),
+                 uid: self.uid().map(Cow::into_owned),
+                 #[cfg(feature = "unstable-runtime-subscribe")]
+-                remaining_lookups: None,
++                pending_lookups: None,
+             },
+         }
+     }
+@@ -159,9 +162,9 @@ pub struct Extra {
+     pub resource_version: Option<String>,
+     /// The uid of the object
+     pub uid: Option<String>,
+-    /// Number of remaining cache lookups on this reference
++    /// Subscriber IDs pending a lookup on this reference
+     #[cfg(feature = "unstable-runtime-subscribe")]
+-    pub remaining_lookups: Option<usize>,
++    pub pending_lookups: Option<BTreeSet<SubscriberId>>,
+ }
+ 
+ impl<K: Lookup> ObjectRef<K>
+@@ -238,7 +241,7 @@ impl<K: Lookup> ObjectRef<K> {
+                     resource_version: None,
+                     uid: Some(owner.uid.clone()),
+                     #[cfg(feature = "unstable-runtime-subscribe")]
+-                    remaining_lookups: None,
++                    pending_lookups: None,
+                 },
+             })
+         } else {
+@@ -369,7 +372,7 @@ mod tests {
+                 resource_version: Some("123".to_string()),
+                 uid: Some("638ffacd-f666-4402-ba10-7848c66ef576".to_string()),
+                 #[cfg(feature = "unstable-runtime-subscribe")]
+-                remaining_lookups: None,
++                pending_lookups: None,
+             },
+             ..minimal.clone()
+         };
+```
+
+**File**: `kube-runtime/src/reflector/store.rs` (modified, +59/-32)
+```diff
+@@ -1,4 +1,6 @@
+ //! A reader/writer split store for reflectors
++#[cfg(feature = "unstable-runtime-subscribe")]
++use super::subscriber::{SubscriberId, fresh_subscriber_id};
+ use super::{Lookup, ObjectRef, dispatcher::Dispatcher};
+ #[cfg(feature = "unstable-runtime-subscribe")]
+ use crate::reflector::ReflectHandle;
+@@ -12,7 +14,9 @@ use kube_client::{
+     ResourceExt,
+     core::{Selector, SelectorExt},
+ };
++#[cfg(feature = "unstable-runtime-subscribe")] use parking_lot::Mutex;
+ use parking_lot::RwLock;
++#[cfg(feature = "unstable-runtime-subscribe")] use std::collections::BTreeSet;
+ use std::{fmt::Debug, hash::Hash, sync::Arc};
+ use thiserror::Error;
+ 
+@@ -33,6 +37,8 @@ where
+     ready_tx: Option<delayed_init::Initializer<()>>,
+     ready_rx: Arc<DelayedInit<()>>,
+     dispatcher: Option<Dispatcher<K>>,
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    subscribers: Arc<Mutex<BTreeSet<SubscriberId>>>,
+ }
+ 
+ impl<K: 'static + Lookup + Clone> Writer<K>
+@@ -52,6 +58,8 @@ where
+             ready_tx: Some(ready_tx),
+             ready_rx: Arc::new(ready_rx),
+             dispatcher: None,
++            #[cfg(feature = "unstable-runtime-subscribe")]
++            subscribers: Default::default(),
+         }
+     }
+ 
+@@ -74,6 +82,7 @@ where
+             ready_tx: Some(ready_tx),
+             ready_rx: Arc::new(ready_rx),
+             dispatcher: Some(Dispatcher::new(buf_size)),
++            subscribers: Default::default(),
+         }
+     }
+ 
+@@ -86,6 +95,8 @@ where
+         Store {
+             store: self.store.clone(),
+             ready_rx: self.ready_rx.clone(),
++            #[cfg(feature = "unstable-runtime-subscribe")]
++            subscribers: self.subscribers.clone(),
+         }
+     }
+ 
+@@ -103,6 +114,13 @@ where
+             .map(|dispatcher| dispatcher.subscribe(self.as_reader()))
+     }
+ 
++    /// Return the current subscriber IDs, or `None` if there are no subscribers
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    pub(crate) fn subscriber_ids(&self) -> Option<BTreeSet<SubscriberId>> {
++        let set = self.subscribers.lock().clone();
++        (!set.is_empty()).then_some(set)
++    }
++
+     /// Applies a single watcher event to the store
+     pub fn apply_watcher_event(&mut self, event: &watcher::Event<K>) {
+         match event {
+@@ -113,7 +131,7 @@ where
+                 #[cfg(feature = "unstable-runtime-subscribe")]
+                 if self.dispatcher.is_some()
+                     && let Some((stored, _)) = store.get_key_value(&key)
+-                    && stored.extra.remaining_lookups.is_some()
++                    && stored.extra.pending_lookups.is_some()
+                 {
+                     store.remove(&key);
+                 }
+@@ -127,13 +145,12 @@ where
+ 
+                 #[cfg(feature = "unstable-runtime-subscribe")]
+                 if let Some((original_key, existing)) = store.remove_entry(&key)
+-                    && let Some(dispatcher) = &self.dispatcher
+-                    && let Some(subscribers) = dispatcher.subscribers()
++                    && let Some(ids) = self.subscriber_ids()
+                 {
+                     if existing.uid().as_deref() == key.extra.uid.as_deref() {
+                         // Re-insert the entry with updated key, as insert on its own doesnt modify the key
+                         let mut key = key;
+-                        key.extra.remaining_lookups = Some(subscribers);
++                        key.extra.pending_lookups = Some(ids);
+                         store.insert(key, existing);
+                     } else {
+                         store.insert(original_key, existing);
+@@ -230,8 +247,11 @@ pub struct Store<K: 'static + Lookup>
+ where
+     K::DynamicType: Hash + Eq,
+ {
++    #[allow(clippy::struct_field_names)]
+     store: Cache<K>,
+     ready_rx: Arc<DelayedInit<()>>,
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    subscribers: Arc<Mutex<BTreeSet<SubscriberId>>>,
+ }
+ 
+ /// The error returned by `Store::wait_until_ready`
+@@ -254,6 +274,14 @@ where
+         self.ready_rx.get().await.map_err(WriterDropped)
+     }
+ 
++    /// Register a new subscriber and return its ID
++    #[cfg(feature = "unstable-runtime-subscribe")]
++    pub(crate) fn add_subscriber(&self) -> SubscriberId {
++        let id = fresh_subscriber_id();
++        self.subscribers.lock().insert(id);
++        id
++    }
++
+     /// Retrieve a `clone()` of the entry referred to by `key`, if it is in the cache.
+     ///
+     /// `key.namespace` is ignored for cluster-scoped resources.
+@@ -280,56 +308,55 @@ where
+             .cloned()
+     }
+ 
+-    /// Return the cached object for `key`, removing it after its last pending lookup.
+-    ///
+-    /// Earlier lookups decrement the pending lookup count and leave the object in the cache.
++    /// Return the cached object for `key`, removing it once the given subscriber
++    /// acknowledges its pending lookup.
+     #[cfg(feature = "unstable-runtime-subscribe")]
+     #[must_use]
+-    pub(crate) fn remove(&self, key: 
+```
+
+**File**: `kube-runtime/src/reflector/subscriber.rs` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++//! Per-subscriber identity for the reflector's shared stream
++
++use std::sync::atomic::{AtomicU64, Ordering};
++
++/// Identifier for a subscriber of a reflector.
++pub(crate) type SubscriberId = u64;
++
++static NEXT_SUBSCRIBER_ID: AtomicU64 = AtomicU64::new(1);
++
++/// Generate a fresh subscriber id, unique for the duration of the process.
++pub(crate) fn fresh_subscriber_id() -> SubscriberId {
++    NEXT_SUBSCRIBER_ID.fetch_add(1, Ordering::Relaxed)
++}
 ```
 
 ---
 
-### Incident Patch 2: `35136d31` (2026-11-21)
-**Commit Message**: Fix kube-derive UI test on Rust 1.100 (#2154)
+### Incident Patch 2: `d8fa058e` (2026-11-23)
+**Commit Message**: Skip removed objects in ReflectHandle instead of stalling (#2151)
 
-* Fix kube-derive UI test on Rust 1.100
+* Skip removed objects in ReflectHandle instead of stalling
+
+When a received ObjectRef no longer resolved in the store, poll_next
+returned Pending without a registered waker, so the handle stopped
+reading. Its unread refs then filled the shared buffer and blocked the
+root reflector. Skip such refs and poll the receiver again.
 
 Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
-* Clarify why the cel UI test derives JsonSchema
+* Correct the Dispatcher comment on events without active receivers
 
-Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
-
-* Reject cel with a manual schema before generating code
+With await_active(false), async-broadcast returns an error when only the
+inactive receiver exists, and broadcast ignores it, so the event is
+dropped rather than buffered.
 
 Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
@@ -1760,120 +2060,147 @@ Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
 Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
-**File**: `kube-derive/src/custom_resource/mod.rs` (modified, +25/-24)
+**File**: `kube-runtime/src/reflector/dispatcher.rs` (modified, +150/-17)
 ```diff
-@@ -224,6 +224,16 @@ pub(crate) fn derive(input: proc_macro2::TokenStream) -> proc_macro2::TokenStrea
+@@ -50,8 +50,7 @@ where
+         // Create a broadcast (tx, rx) pair
+         let (mut dispatch_tx, dispatch_rx) = async_broadcast::broadcast(buf_size);
+         // The tx half will not wait for any receivers to be active before
+-        // broadcasting events. If no receivers are active, events will be
+-        // buffered.
++        // broadcasting events. If no receivers are active, events are dropped.
+         dispatch_tx.set_await_active(false);
+         Self {
+             dispatch_tx,
+@@ -159,19 +158,24 @@ where
  
-     // Enable schema generation by default as in v1 it is mandatory.
-     let schema_mode = schema_mode.unwrap_or(SchemaMode::Derived);
-+    // `#[kube(cel)]` needs a derived schema: a manual schema is not forced through `KubeSchema`,
-+    // so it would carry no `x-kubernetes-validations` and the generated methods would silently
-+    // validate nothing. Reject it before generating anything, like the other attribute errors.
-+    if cel && !schema_mode.derive() {
-+        return syn::Error::new(
-+            Span::call_site(),
-+            r#"#[kube(cel)] requires a derived schema; it cannot be combined with `schema = "manual"`"#,
-+        )
-+        .to_compile_error();
-+    }
-     // We exclude fields `apiVersion`, `kind`, and `metadata` from our schema because
-     // these are validated by the API server implicitly. Also, we can't generate the
-     // schema for `metadata` (`ObjectMeta`) because it doesn't implement `JsonSchema`.
-@@ -564,34 +574,25 @@ pub(crate) fn derive(input: proc_macro2::TokenStream) -> proc_macro2::TokenStrea
-     // Requires the downstream crate to enable `kube/cel` (the generated code references
-     // `#kube_core::cel`). The bodies just delegate to `kube_core::cel::validate_cel{,_update}`, which
-     // own the schema extraction + validation so they are compiled once in kube-core rather than
--    // re-expanded at every derive site. Gated on a derived schema: a manual schema is not forced
--    // through `KubeSchema`, so it would carry no `x-kubernetes-validations` and the methods would
--    // silently validate nothing — reject that combination at compile time instead.
-+    // re-expanded at every derive site. `cel` with `schema = "manual"` was already rejected above,
-+    // so the schema is derived here.
-     let impl_validate_cel = if cel {
--        if schema_mode.derive() {
--            quote! {
--                impl #rootident {
--                    /// Validate this resource against its CEL creation rules (`x-kubernetes-validations`)
--                    /// client-side, without an apiserver. `Ok(())` if all rules pass, otherwise the
--                    /// aggregated failures.
--                    pub fn validate_cel(&self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
--                        #kube_core::cel::validate_cel(self)
--                    }
-+        quote! {
-+            impl #rootident {
-+                /// Validate this resource against its CEL creation rules (`x-kubernetes-validations`)
-+                /// client-side, without an apiserver. `Ok(())` if all rules pass, otherwise the
-+                /// aggregated failures.
-+                pub fn validate_cel(&self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
-+                    #kube_core::cel::validate_cel(self)
+     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+         let mut this = self.project();
+-        match ready!(this.rx.as_mut().poll_next(cx)) {
+-            Some(obj_ref) => {
+-                #[cfg(feature = "unstable-runtime-subscribe")]
+-                let obj = if obj_ref.extra.remaining_lookups.is_some() {
+-                    this.reader.remove(&obj_ref)
+-                } else {
+-                    this.reader.get(&obj_ref)
+-                };
+-                #[cfg(not(feature = "unstable-runtime-subscribe"))]
+-                let obj = this.reader.get(&obj_ref);
+-                obj.map_or(Poll::Pending, |obj| Poll::Ready(Some(obj)))
++        loop {
++            match ready!(this.rx.as_mut().poll_next(cx)) {
++                Some(obj_ref) => {
++                    #[cfg(feature = "unstable-runtime-subscribe")]
++                    let obj = if obj_ref.extra.remaining_lookups.is_some() {
++                        this.reader.remove(&obj_ref)
++                    } else {
++                        this.reader.get(&obj_ref)
++                    };
++                    #[cfg(not(feature = "unstable-runtime-subscribe"))]
++                    let obj = this.reader.get(&obj_ref);
++                    // Skip refs whose object has since been removed from the store
++                    if let Some(obj) = obj {
++                        return Poll::Ready(Some(obj));
++                    }
 +                }
- 
--                    /// Validate this resource against its CEL transition rules (rules using `oldSelf`)
--                    /// client-side, comparing against the `old` state. `Ok(())` if all rules pass,
--                    /// otherwise the aggregated failures.
--                    pub fn validate_cel_update(&self, old: &Self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
--                        #kube_core::cel::validate_cel_update(self, old)
--                    }
-+                /// Validate this resource against its CEL transition rules (rules using `oldSelf`)
-+                /// client-side, comparing against the `old` state. `Ok(())` if all rules pass,
-+                /// otherwise the aggregated failures.
-+                pub fn validate_cel_update(&self, old: &Self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
-+                    #kube_core::cel::validate_cel_update(self, old)
-                 }
++                None => return Poll::Ready(None),
              }
--        } else {
--            quote! {
--                ::core::compile_error!(
--                    "#[kube(cel)] requires a derived schema; it cannot be combined with `schema = \"manual\"`"
--                );
--            }
+-            None => Poll::Ready(None),
          }
-     } else {
-         quote! {}
-```
-
-**File**: `kube-derive/tests/ui/cel_requires_derived_schema.stderr` (modified, +0/-28)
-```diff
-@@ -5,31 +5,3 @@ error: #[kube(cel)] requires a derived schema; it cannot be combined with `schem
-   |          ^^^^^^^^^^^^^^
-   |
-   = note: this error originates in the derive macro `CustomResource` (in Nightly builds, run with -Z macro-backtrace for more info)
--
--error[E0277]: the trait bound `Foo: JsonSchema` is not satisfied
-- --> tests/ui/cel_requires_derived_schema.rs:9:10
--  |
--9 | #[derive(CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
--  |          ^^^^^^^^^^^^^^ unsatisfied trait bound
--  |
--help: the trait `JsonSchema` is not implemented for `Foo`
-- --> tests/ui/cel_requires_derived_schema.rs:9:10
--  |
--9 | #[derive(CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
--  |          ^^^^^^^^^^^^^^
--  = help: the following other types implement trait `JsonSchema`:
--            &'a T
--            &'a mut T
--            ()
--            (T0, T1)
--            (T0, T1, T2)
--            (T0, T1, T2, T3)
--            (T0, T1, T2, T3, T4)
--            (T0, T1, T2, T3, T4, T5)
--          and $N others
--note: required by a bound in `SchemaGenerator::into_root_schema_for`
-- --> $CARGO/schemars-$VERSION/src/generate.rs
--  |
--  |     pub fn into_root_schema_for<T: ?Sized + JsonSchema>(mut self) -> Schema {
--  |                                             ^^^^^^^^^^ required by this bound in `SchemaGenerator::into_root_schema_for`
--  = note: this error originates in the derive macro `CustomResource` (in Nightly builds, run with -Z macro-backtrace for more info)
+     }
+ }
+@@ -196,10 +200,18 @@ pub(crate) mod test {
+         reflector::ObjectRef,
+         watcher::{Error, Event},
+     };
+-    use std::{pin::pin, sync::Arc, task::Poll};
++    use std::{
++        pin::pin,
++        sync::{
++            Arc,
++            atomic::{AtomicUsize, Ordering},
++        },
++        task::{Context, Poll, Wake, Waker},
++        time::Duration,
++    };
+ 
+-    use crate::reflector;
+-    use futures::{StreamExt, poll, stream};
++    use crate::reflector::{self, store::Writer};
++    use futures::{Stream, StreamExt, poll, stream};
+     use k8s_openapi::api::core::v1::Pod;
+ 
+     fn testpod(name: &str) -> Pod {
+@@ -208,6 +220,30 @@ pub(crate) mod test {
+         pod
+     }
+ 
++    async fn apply_and_dispatch(writer: &mut Writer<Pod>, event: Event<Pod>) {
++        writer.apply_watcher_event(&event);
++        writer.dispatch_event(&event).await;
++    }
++
++    // Replaces the store contents without dispatching, as a relist does for
++    // objects that went away while the watch was down.
++    fn relist(writer: &mut Writer<Pod>, pods: impl IntoIterator<Item = Pod>) {
++        writer.apply_watcher_event(&Event::Init);
++        for pod in pods {
++            writer.apply_watcher_event(&Event::InitApply(pod));
++        }
++        writer.apply_watcher_event(&Event::InitDone);
++    }
++
++    #[derive(Default)]
++    struct WakeCounter(AtomicUsize);
++
++    impl Wake for WakeCounter {
++        fn wake(self: Arc<Self>) {
++            self.0.fetch_add(1, Ordering::SeqCst);
++        }
++    }
++
+     #[tokio::test]
+     async fn events_are_passed_through() {
+         let foo = testpod("foo");
+@@ -508,6 +544,103 @@ pub(crate) mod test {
+         assert_eq!(poll!(subscriber_slow.next()), Poll::Ready(None));
+     }
+ 
++    #[tokio::test]
++    async fn readers_wake_after_removed_object() {
++        // A reader that receives the ref of an object no longer in the store
++        // must still be woken by the next event.
++        let mut writer = Writer::<Pod>::new_shared(10, ());
++        let mut subscriber = pin!(writer.subscribe().unwrap());
++        let counter = Arc::new(WakeCounter::default());
++        let waker = Waker::from(counter.clone());
++        let mut cx = Context::from_waker(&waker);
++
++        apply_and_dispatch(&mut writer, Event::Apply(testpod("foo"))).await;
++        relist(&mut writer, []);
++        assert_eq!(subscriber.as_mut().poll_next(&mut cx), Poll::Pending);
++
++        apply_and_dispatch(&mut writer, Event::Apply(testpod("bar"))).await;
++        assert_ne!(counter.0.load(Ordering::SeqCst), 0);
++        assert_eq!(
++            subscriber.as_mut().poll_next(&mut cx),
++            Poll::Ready(Some(Arc::new(testpod("bar"))))
++        );
++    }
++
++    #[tokio::test]
++    async fn readers_skip_removed_objects() {
++        let mut writer = Writer::<Pod>::new_shared(10, ());
++        let mut subscriber = pin!(writer.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2163** (2026-11-23): scope hyper-rustls's native-tokio feature to oauth and oidc (@verokarhu)
+- **PR #2162** (2026-11-23): attach id for ReflectHandle to eliminate drop clash chance (@Danil-Grigorev)
 - **PR #2161** (2026-11-21): move tokio's signal feature to kube-runtime (@verokarhu)
 - **PR #2160** (closed): remove unused dependency feature (@verokarhu)
+- **PR #2159** (closed): Fix typos in comments (@Adham-Kiwan)
 - **PR #2157** (closed): Support cleanup actions deferring finalizer removal (@Alphadelta14)
-- **PR #2155** (2026-11-21): Chore(deps): Update axum-server requirement from 0.8.0 to 0.9.2 (@dependabot[bot])
-- **PR #2154** (2026-11-21): Fix kube-derive UI test on Rust 1.100 (@doxxx93)
-- **PR #2153** (2026-11-21): Accept socks5h proxy URLs (@doxxx93)
 
 ---
 
@@ -1893,28 +2220,55 @@ Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Update axum-server requirement from 0.8.0 to 0.9.2
+## X. attach id for ReflectHandle to eliminate drop clash chance
 
 **RULE**:
-When implementing operations in `examples/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kube-runtime/src/reflector/dispatcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `050ef4e7`: deps): Update axum-server requirement from 0.8.0 to 0.9.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a339634`: attach id for ReflectHandle to eliminate drop clash chance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-runtime/src/reflector/dispatcher.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-axum-server = { version = "0.9.2", features = ["tls-rustls-no-provider"] }
+#[cfg(feature = "unstable-runtime-subscribe")]
+use crate::reflector::subscriber::SubscriberId;
+Subscribers can be added or removed while the root stream is running, but
+the semantics are not fully replay-safe: a subscriber added mid-stream receives no
+replay of already-deleted or pending entries, and a dropped subscriber never receives
+pending delete events. Prefer creating all subscribers before polling the root stream
+and keeping them alive until it terminates.
+    #[cfg(feature = "unstable-runtime-subscribe")]
+    id: SubscriberId,
+        #[cfg(feature = "unstable-runtime-subscribe")]
+        let id = reader.add_subscriber();
+        #[cfg(feature = "unstable-runtime-subscribe")]
+        return Self { rx, reader, id };
+        #[cfg(not(feature = "unstable-runtime-subscribe"))]
+                    let obj = if obj_ref.extra.pending_lookups.is_some() {
+                        this.reader.remove(&obj_ref, *this.id)
+        self.reader().drop_subscriber(self.id);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-axum-server = { version = "0.8.0", features = ["tls-rustls-no-provider"] }
+
+    // Return a number of active subscribers to this shared sender.
+    #[cfg(feature = "unstable-runtime-subscribe")]
+    pub(crate) fn subscribers(&self) -> Option<usize> {
+        Some(self.dispatch_tx.receiver_count()).filter(|c| *c > 0)
+    }
+Dynamically adding or removing subscribers while the root stream is running
+is experimental and may cause issues. Create all subscribers before polling 
+the root stream and keep them alive until it terminates.
+                    let obj = if obj_ref.extra.remaining_lookups.is_some() {
+                        this.reader.remove(&obj_ref)
+        self.reader().drop_subscriber();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `050ef4e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a339634` are properly handled with clean fallback behavior.

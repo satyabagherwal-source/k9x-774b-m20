@@ -12463,3 +12463,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-23T19:09:13.593Z |
 | `learn-github-apache-maka` | `https://github.com/apache/maka` | `26639d64` | Multi-dimensional audit evidence | 2026-11-23T19:09:14.644Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `1f2f7af9` | Multi-dimensional audit evidence | 2026-11-23T19:09:21.270Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T19:17:47.096Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `6a339634` | Multi-dimensional audit evidence | 2026-11-23T19:17:57.733Z |

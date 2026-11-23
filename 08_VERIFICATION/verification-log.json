@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-SVKI",
-    "timestamp": "2026-11-21T20:49:40.818Z",
-    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-    "contentHash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-V3IY",
-    "timestamp": "2026-11-21T20:51:24.442Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-BXNP",
     "timestamp": "2026-11-21T21:04:29.989Z",
     "repository": "mistralai/Mistral-Large-4-1T-A52B",
@@ -7490,6 +7460,36 @@
     "repository": "projectcontour/contour",
     "learningId": "learn-github-projectcontour-contour",
     "contentHash": "8eadb334fa4950804a2bfa568e352a91b9469610417b2363b333c1d5fb79823d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-EEHF",
+    "timestamp": "2026-11-23T19:17:47.091Z",
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+    "contentHash": "4e319837218a37d4b36c5cf9db10d054576ecbfafdcdff975c8b88198ab68890",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-EMOX",
+    "timestamp": "2026-11-23T19:17:57.729Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "340cdec43fa6b19b6ad9c26d6b29af6d8476f95e85b58a6ee7cb8699e00b4c9b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

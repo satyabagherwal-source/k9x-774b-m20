@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T19:09:21.275Z",
-  "total_cycles_completed": 11819,
-  "total_learnings_persisted": 11819,
-  "total_rules_promoted": 10939,
+  "last_updated": "2026-11-23T19:17:57.739Z",
+  "total_cycles_completed": 11821,
+  "total_learnings_persisted": 11821,
+  "total_rules_promoted": 10940,
   "history": [
-    {
-      "timestamp": "2026-11-22T23:06:17.034Z",
-      "repository": "modelcontextprotocol/kotlin-sdk",
-      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T23:06:21.277Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T23:06:25.107Z",
       "repository": "clockworklabs/SpacetimeDB",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T19:09:21.275Z",
       "repository": "projectcontour/contour",
       "learningId": "learn-github-projectcontour-contour",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T19:17:47.101Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T19:17:57.739Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

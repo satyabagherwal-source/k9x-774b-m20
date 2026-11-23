@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T19:09:21.278Z",
+  "last_updated": "2026-11-23T19:17:57.742Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -260,14 +260,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "c27197bd18f82d24ae9827b1731a8ea029da04ad30f33cbfd74e9d341653a701",
-      "verified_at": "2026-11-19T09:43:38.551Z",
+      "content_hash": "4e319837218a37d4b36c5cf9db10d054576ecbfafdcdff975c8b88198ab68890",
+      "verified_at": "2026-11-23T19:17:47.104Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:43:38.551Z"
+      "last_updated": "2026-11-23T19:17:47.104Z"
     },
     "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "55c73f6a61c28307863d62968ebb3411dca660e7936cc8ac37e124ab5eaf544c",
-      "verified_at": "2026-11-21T17:49:58.393Z",
+      "content_hash": "340cdec43fa6b19b6ad9c26d6b29af6d8476f95e85b58a6ee7cb8699e00b4c9b",
+      "verified_at": "2026-11-23T19:17:57.741Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:49:58.393Z"
+      "last_updated": "2026-11-23T19:17:57.741Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",

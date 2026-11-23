@@ -12430,3 +12430,5 @@
 | `CYCLE-20261123-3E9H` | `2026-11-23T19:09:13.589Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`82253d74...`) |
 | `CYCLE-20261123-3F2P` | `2026-11-23T19:09:14.641Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10098` | Yes (`4a23b734...`) |
 | `CYCLE-20261123-3K6Q` | `2026-11-23T19:09:21.266Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10099` | Yes (`8eadb334...`) |
+| `CYCLE-20261123-EEHF` | `2026-11-23T19:17:47.091Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`4e319837...`) |
+| `CYCLE-20261123-EMOX` | `2026-11-23T19:17:57.729Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10100` | Yes (`340cdec4...`) |

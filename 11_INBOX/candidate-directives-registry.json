@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T19:09:26.460Z",
+  "last_updated": "2026-11-23T19:18:02.815Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-8XSR",
+      "id": "CD-EQM7",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-8XSR-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-EQM7-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -50534,6 +50534,35 @@
       "source_repo": "projectcontour-contour",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3BF030-build-deps-bump-golang-org-x-net-from-0-.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-EPZY",
+      "directive_title": "attach id for ReflectHandle to eliminate drop clash chance",
+      "source_repo": "kube-rs-kube-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EPZY-attach-id-for-reflecthandle-to-eliminate-drop-clash-chance.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-5450DB",
+      "directive_title": "attach id for ReflectHandle to eliminate drop clash chance",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kube-rs-kube",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5450DB-attach-id-for-reflecthandle-to-eliminate.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-71AECB",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-71AECB-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-23"
     }
   ]

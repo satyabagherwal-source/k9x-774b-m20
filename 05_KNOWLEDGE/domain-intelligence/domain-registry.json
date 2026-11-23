@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T19:09:26.614Z",
-  "total_records": 2442,
+  "last_updated": "2026-11-23T19:18:02.988Z",
+  "total_records": 2444,
   "domains": {
     "A": {
       "total": 20,
@@ -30,7 +30,7 @@
       ]
     },
     "B": {
-      "total": 22,
+      "total": 24,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -53,7 +53,9 @@
         "DOM-B-2C8CFAB3",
         "DOM-B-1A9A8A88",
         "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-core-invariants",
-        "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants"
+        "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants",
+        "domain_intelligence-product-intelligence-kube-rs-kube-core-invariants",
+        "domain_intelligence-product-intelligence-kube-rs-kube-learnings-core-invariants"
       ]
     },
     "C": {
@@ -11833,8 +11835,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "c33c7fe3abae259b1db0e8a45f2e570a061bf5325847e20b289b203b0b583188",
-      "created_at": "2026-11-23T07:05:42.392Z"
+      "content_hash": "202f60c35cfe9444c7eb32d15352f2104a26b76ed1835bc8333ceabcddab02c0",
+      "created_at": "2026-11-23T19:18:02.988Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -17840,8 +17842,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-nvfp4-research-knowledge-intelligence-autotrust-gev-.md",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "content_hash": "ebd5a33b2f87d27a665c7fd529ec42000fb510668208c00885798fdefb5467fc",
-      "created_at": "2026-11-19T09:43:38.716Z"
+      "content_hash": "78429f36beb617780afa11ce905a489f2d35b46d4b23ac79a430074ebd89d54f",
+      "created_at": "2026-11-23T19:17:47.311Z"
     },
     "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants",
@@ -17909,8 +17911,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-nvfp4-learnings-research-knowledge-intelligence-hf-a.md",
       "repository": "hf-autotrust-gev-26b-decide-nvfp4-learnings",
-      "content_hash": "512428ada1a1db8355de6794da0cf85084519d113caafa442ae99f829b52d244",
-      "created_at": "2026-11-19T09:44:01.118Z"
+      "content_hash": "12be404deaaba60d2e6d7f1f46682b76dbfaf32277afb9b6f2c0c53f18d1a11b",
+      "created_at": "2026-11-23T19:18:01.353Z"
     },
     "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants",
@@ -40996,6 +40998,24 @@
       "repository": "ydb-platform-ydb-learnings",
       "content_hash": "6fdc975f69dc8e9b2530a57b5ea99ac2b4924340ced8989e4d4ebfcff31b60f4",
       "created_at": "2026-11-23T19:01:44.468Z"
+    },
+    "domain_intelligence-product-intelligence-kube-rs-kube-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-kube-rs-kube-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: kube-rs/kube Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kube-rs-kube-product-intelligence-kube-rs-kube-core-invariants.md",
+      "repository": "kube-rs/kube",
+      "content_hash": "88c7b7863f0f90bb3b167b9b5159df5395f14809e1febe251211a96eeac2e5b2",
+      "created_at": "2026-11-23T19:17:58.149Z"
+    },
+    "domain_intelligence-product-intelligence-kube-rs-kube-learnings-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-kube-rs-kube-learnings-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: kube-rs-kube-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kube-rs-kube-learnings-product-intelligence-kube-rs-kube-learnings-core-invarian.md",
+      "repository": "kube-rs-kube-learnings",
+      "content_hash": "7888bb6e704c743355d6c194fe42341dda75b85e1eca0dad460f0dba0d0114e5",
+      "created_at": "2026-11-23T19:18:02.192Z"
     }
   }
 }
