@@ -12524,3 +12524,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-23T22:14:46.178Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `2ffaa9ae` | Multi-dimensional audit evidence | 2026-11-23T22:14:58.242Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `87886387` | Multi-dimensional audit evidence | 2026-11-23T22:15:01.086Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-23T22:23:48.854Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `92175f43` | Multi-dimensional audit evidence | 2026-11-23T22:24:03.294Z |

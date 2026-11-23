@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
   "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T16:07:11.173Z",
+  "timestamp": "2026-11-23T22:23:49.147Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8](https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8) (Revision: `hf-dealign`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T16:07:11.173Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T22:23:49.147Z`  
 > **Learning ID**: `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8](https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:07:10.317Z  
+> **Harvest Timestamp**: 2026-11-23T22:23:48.057Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 17590 downloads | 861 likes
+- **Stars / Engagement**: 17367 downloads | 872 likes
 
 ---
 

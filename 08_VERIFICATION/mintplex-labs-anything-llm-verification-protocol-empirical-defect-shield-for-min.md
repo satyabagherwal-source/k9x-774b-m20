@@ -4,22 +4,22 @@
 {
   "source_repository": "Mintplex-Labs/anything-llm",
   "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-  "source_version": "472b1e3f",
+  "source_version": "92175f43",
   "license": "MIT",
-  "timestamp": "2026-11-21T20:36:41.977Z",
+  "timestamp": "2026-11-23T22:24:03.591Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mintplex-labs-anything-llm",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `472b1e3f`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T20:36:41.977Z`  
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `92175f43`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T22:24:03.591Z`  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Mintplex-Labs/anything-llm` (Commit: `472b1e3f`)
+- **Target Repository**: `Mintplex-Labs/anything-llm` (Commit: `92175f43`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T20:36:40.377Z  
+> **Harvest Timestamp**: 2026-11-23T22:24:02.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68484 stars
+- **Stars / Engagement**: 68562 stars
 
 ---
 
@@ -1336,85 +1336,111 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `90df028c` (2026-11-20)
-**Commit Message**: fix: read Bedrock Anthropic replies from text blocks, not the first block (#7302)
+### Incident Patch 1: `92175f43` (2026-11-23)
+**Commit Message**: fix: use HTML file input for document uploads (#7309)
 
-* fix: read Bedrock Anthropic replies from text blocks, not the first block
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/index.jsx` (modified, +1/-0)
+```diff
+@@ -82,6 +82,7 @@ export default function UploadFile({
+     onDrop: enqueueDrop,
+     disabled: !ready,
+     getFilesFromEvent: getFilesFromUploadEvent,
++    useFsAccessApi: false,
+   });
+ 
+   if (variant === "mobile")
+```
 
-* remove comment
+---
+
+### Incident Patch 2: `c5d53913` (2026-11-23)
+**Commit Message**: fix: import Paperless-ngx documents that have no original file name (#7311)
+
+* fix: import Paperless-ngx documents that have no original file name
+
+Paperless-ngx sends original_file_name as null for some documents. The null title reached slugify, which threw and aborted the import partway. Fall back to the document title, then to the document id.
+
+* chore: drop Paperless-ngx loader tests
+
+* refactor: extract Paperless-ngx document title fallback
+
+---------
+
+Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `collector/utils/extensions/PaperlessNgx/PaperlessNgxLoader/index.js` (modified, +7/-1)
+```diff
+@@ -1,6 +1,12 @@
+ const { htmlToText } = require("html-to-text");
+ const pdf = require("pdf-parse");
+ 
++function documentTitle(doc) {
++  return (
++    doc.original_file_name || doc.title || `Paperless-ngx document ${doc.id}`
++  );
++}
++
+ class PaperlessNgxLoader {
+   maxConcurrentDownloads = 5;
+   downloadTimeoutMs = 120_000;
+@@ -221,7 +227,7 @@ class PaperlessNgxLoader {
+       pageContent: doc.content || "",
+       metadata: {
+         id: doc.id,
+-        title: doc.original_file_name,
++        title: documentTitle(doc),
+         created: doc.created,
+         modified: doc.modified,
+         added: doc.added,
+```
+
+---
+
+### Incident Patch 3: `3e0d8a7c` (2026-11-23)
+**Commit Message**: fix: accept postgres:// connection strings for PGVector (#7313)
+
+* fix: accept postgres:// connection strings for PGVector
+
+The PGVector settings check only allowed the postgresql:// scheme, so a
+valid postgres:// connection string was rejected before the connection
+was ever tried. node-postgres accepts both schemes, and the SQL agent
+connector in this repo builds postgres:// strings itself.
+
+* chore: drop narrow updateENV PGVector test
 
 ---------
 
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `server/utils/AiProviders/bedrock/index.js` (modified, +4/-1)
+**File**: `server/utils/helpers/updateENV.js` (modified, +8/-2)
 ```diff
-@@ -365,7 +365,10 @@ class AWSBedrockLLM {
-     const completionTokens = response.usage?.output_tokens ?? 0;
- 
-     return {
--      textResponse: response.content[0]?.text ?? null,
-+      textResponse: response.content
-+        .filter((block) => block.type === "text")
-+        .map((block) => block.text)
-+        .join(""),
-       metrics: this.#buildMetrics(
-         {
-           prompt_tokens: promptTokens,
-```
-
----
-
-### Incident Patch 2: `472b1e3f` (2026-11-21)
-**Commit Message**: fix: replace every underscore in imported GitLab issue metadata labels (#7308)
-
-Only the first underscore of each metadata key was replaced, so issues
-imported from GitLab listed "total time_spent" and "merge request_count"
-next to "time estimate" and "web url".
-
-**File**: `collector/__tests__/utils/extensions/RepoLoader/GitlabRepo.test.js` (modified, +8/-1)
-```diff
-@@ -1419,10 +1419,17 @@ describe("issueToMarkdown", () => {
- 
-     expect(markdown).toContain("- milestone: v1.0 (3)");
-     expect(markdown).toContain("- time estimate: 1h");
--    expect(markdown).toContain("- total time_spent: 30m");
-+    expect(markdown).toContain("- total time spent: 30m");
-     expect(markdown).not.toContain("3600");
-   });
- 
-+  test("every underscore in a metadata key becomes a space", () => {
-+    const markdown = issueToMarkdown({ ...base, merge_request_count: 2 });
-+
-+    expect(markdown).toContain("- merge request count: 2");
-+    expect(markdown).not.toContain("request_count");
-+  });
-+
-   test("discussions are rendered under an Activity heading", () => {
-     const markdown = issueToMarkdown({
-       ...base,
-```
-
-**File**: `collector/utils/extensions/RepoLoader/GitlabRepo/index.js` (modified, +1/-1)
-```diff
-@@ -292,7 +292,7 @@ function issueToMarkdown(issue) {
-       if (!value || value?.length < 1) {
-         return null;
-       }
--      let result = `- ${name.replace("_", " ")}:`;
-+      let result = `- ${name.replace(/_/g, " ")}:`;
- 
-       if (!Array.isArray(value)) {
-         result += ` ${value}`;
+@@ -1468,8 +1468,14 @@ async function downloadEmbeddingModelIfRequired(key, prevValue, nextValue) {
+  * @returns {string} - An error message if the connection string is invalid, otherwise null.
+  */
+ async function looksLikePostgresConnectionString(connectionString = null) {
+-  if (!connectionString || !connectionString.startsWith("postgresql://"))
+-    return "Invalid Postgres connection string. Must start with postgresql://";
++  // node-postgres accepts both URI schemes that libpq documents.
++  if (
++    !connectionString ||
++    !["postgresql://", "postgres://"].some((scheme) =>
++      connectionString.startsWith(scheme)
++    )
++  )
++    return "Invalid Postgres connection string. Must start with postgresql:// or postgres://";
+   if (connectionString.includes(" "))
+     return "Invalid Postgres connection string. Must not contain spaces.";
+   return null;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7308** (2026-11-21): fix: replace every underscore in imported GitLab issue metadata labels (@MohammadHijjawi97)
-- **PR #7302** (2026-11-20): fix: read Bedrock Anthropic replies from text blocks, not the first block (@arjankapteijn)
-- **PR #7300** (closed): docs: fix dead link to microsoft/Foundry-Local in provider list (@leom1919)
-- **PR #7297** (2026-11-19): fix: keep the chat in sync with the route when switching workspaces (@timothycarambat)
-- **PR #7295** (2026-11-19): fix(ollama): keep native tool requests inside num_ctx (@timothycarambat)
-- **PR #7294** (2026-11-19): fix(agents): refuse to overwrite an existing destination in filesystem-move-file (@nurlanmnn)
+- **PR #7329** (2026-11-23): chore: update Gemini fallback model to gemini-3.1-flash-lite (@timothycarambat)
+- **PR #7328** (2026-11-23): fix: Ensure LanceDB rerank fetches at least topN candidates before re… (@Bensonbenyi)
+- **PR #7327** (2026-11-23): fix(i18n): replace unrelated Japanese chat toolbar strings (@AyhamJo7)
+- **PR #7321** (2026-11-23): fix: expand multi-stage plugins in ephemeral agent toolOverrides (@Max-Reisinger)
+- **PR #7319** (2026-11-23): fix: Pin encoding_format to float in Generic OpenAI embedder (@Bensonbenyi)
+- **PR #7316** (closed): fix: fall back to a Gemini model that is still served (@AyhamJo7)
 
 ---
 
@@ -1434,34 +1460,31 @@ next to "time estimate" and "web url".
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. read Bedrock Anthropic replies from text blocks, not the first block
+## X. use HTML file input for document uploads
 
 **RULE**:
-When implementing operations in `server/utils/AiProviders/bedrock/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `90df028c`: read Bedrock Anthropic replies from text blocks, not the first block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `92175f43`: use HTML file input for document uploads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/AiProviders/bedrock/index.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/index.jsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      textResponse: response.content
-        .filter((block) => block.type === "text")
-        .map((block) => block.text)
-        .join(""),
+    useFsAccessApi: false,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-      textResponse: response.content[0]?.text ?? null,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `90df028c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `92175f43` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

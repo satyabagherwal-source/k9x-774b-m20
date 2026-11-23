@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "a7cf24d3b03422846b5fd9f7eea2a8dd7b066ee15cb6c7364dfcc03c6d1b8531",
-    "lastHarvestedAt": "2026-11-19T16:07:10.973Z",
+    "contentHash": "a1b5adcd7a8b9f189a03686b0073a589e0d9e6af9e1dae1680307dfc553b07bb",
+    "lastHarvestedAt": "2026-11-23T22:23:48.854Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "472b1e3f",
+    "sourceVersion": "92175f43",
     "license": "MIT",
-    "contentHash": "e9f1c49be1aa76eb71946c4dd898ed3723ec8d26ff0fa0fe72840670f2e53667",
-    "lastHarvestedAt": "2026-11-21T20:36:41.712Z",
+    "contentHash": "fafcaa23b9143033c2dc0ad9aa378c9cafc08074542cc45b9caac7d2c2ea56bb",
+    "lastHarvestedAt": "2026-11-23T22:24:03.294Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {

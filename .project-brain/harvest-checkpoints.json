@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T22:15:01.096Z",
+  "last_updated": "2026-11-23T22:24:03.306Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "a7cf24d3b03422846b5fd9f7eea2a8dd7b066ee15cb6c7364dfcc03c6d1b8531",
-      "verified_at": "2026-11-19T16:07:10.984Z",
+      "content_hash": "a1b5adcd7a8b9f189a03686b0073a589e0d9e6af9e1dae1680307dfc553b07bb",
+      "verified_at": "2026-11-23T22:23:48.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:07:10.984Z"
+      "last_updated": "2026-11-23T22:23:48.865Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "e9f1c49be1aa76eb71946c4dd898ed3723ec8d26ff0fa0fe72840670f2e53667",
-      "verified_at": "2026-11-21T20:36:41.721Z",
+      "content_hash": "fafcaa23b9143033c2dc0ad9aa378c9cafc08074542cc45b9caac7d2c2ea56bb",
+      "verified_at": "2026-11-23T22:24:03.305Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T20:36:41.721Z"
+      "last_updated": "2026-11-23T22:24:03.305Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",
