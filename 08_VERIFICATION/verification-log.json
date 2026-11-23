@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-5A9X",
-    "timestamp": "2026-11-21T09:47:28.965Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "bb2c133901ee77e8fa3c70655029ce73cc163aa3c0ecd5ad5c0b9f52258ffe03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-5BL8",
-    "timestamp": "2026-11-21T09:47:30.668Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "3c190e213a34da31c6225a0f6ceb8917e3d51f2ca31c55e1a1e5feb35609bdd0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-BKKE",
-    "timestamp": "2026-11-21T09:52:22.238Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "4fd31e215d34575cb1740f0e822c48cd1ef6d177a00718b28dc7c19bdc345312",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-C2LJ",
     "timestamp": "2026-11-21T09:52:45.607Z",
     "repository": "mistralai/Timestral-209M",
@@ -7492,6 +7447,51 @@
     "contentHash": "d5194cd7c3eec226b2596295338394e1cacbafc313edf283980ec56630a49ae2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-GRFP",
+    "timestamp": "2026-11-23T08:07:46.405Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "8e3b44322defd5bdfdf9d7d2bc7779450a858bb96a2897538fd40286bf56d640",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-LWDD",
+    "timestamp": "2026-11-23T08:11:46.081Z",
+    "repository": "DefGuard/defguard",
+    "learningId": "learn-github-defguard-defguard",
+    "contentHash": "764035fdcd12d7994646abbda81486689a439eba6cacce72f969ee64a961aca4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-M591",
+    "timestamp": "2026-11-23T08:11:57.589Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "d7ecfd23d115b7bb6b979d4bf16980f0fdbdbbd85c6ecc132bb116d4ff2f2956",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T07:45:08.815Z",
+  "last_updated": "2026-11-23T08:11:57.603Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1310,14 +1310,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "content_hash": "fff8ed049b5caa47684e8aee77906096e97aab9134fe0bf1cde491aa805c3cae",
-      "verified_at": "2026-11-18T22:30:28.882Z",
+      "content_hash": "d7ecfd23d115b7bb6b979d4bf16980f0fdbdbbd85c6ecc132bb116d4ff2f2956",
+      "verified_at": "2026-11-23T08:11:57.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T22:30:28.882Z"
+      "last_updated": "2026-11-23T08:11:57.602Z"
     },
     "baidu/Unlimited-OCR": {
       "repository": "baidu/Unlimited-OCR",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "3b9f44d927270ffaf775fd33ed08b13ef245e44669194b9f86fa84dbc74dacee",
-      "verified_at": "2026-11-20T16:13:04.446Z",
+      "content_hash": "764035fdcd12d7994646abbda81486689a439eba6cacce72f969ee64a961aca4",
+      "verified_at": "2026-11-23T08:11:46.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T16:13:04.446Z"
+      "last_updated": "2026-11-23T08:11:46.095Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "720f80e64f9037edd2c02c102fbc2366019117f86ade462b9584629e7bddcc4b",
-      "verified_at": "2026-11-22T05:50:27.179Z",
+      "content_hash": "8e3b44322defd5bdfdf9d7d2bc7779450a858bb96a2897538fd40286bf56d640",
+      "verified_at": "2026-11-23T08:07:46.418Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T05:50:27.179Z"
+      "last_updated": "2026-11-23T08:07:46.418Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",

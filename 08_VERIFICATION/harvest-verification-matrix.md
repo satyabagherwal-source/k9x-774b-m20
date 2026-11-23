@@ -12301,3 +12301,7 @@
 | `CYCLE-20261123-NGBX` | `2026-11-23T07:44:58.989Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`92cd7973...`) |
 | `CYCLE-20261123-NM7A` | `2026-11-23T07:45:06.598Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10037` | Yes (`6f10eace...`) |
 | `CYCLE-20261123-NNWI` | `2026-11-23T07:45:08.802Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10038` | Yes (`d5194cd7...`) |
+| `CYCLE-20261123-GRFP` | `2026-11-23T08:07:46.405Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10039` | Yes (`8e3b4432...`) |
+| `CYCLE-20261123-LWDD` | `2026-11-23T08:11:46.081Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`764035fd...`) |
+| `CYCLE-20261123-M591` | `2026-11-23T08:11:57.589Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`d7ecfd23...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T08:12:33.719Z` | `doobidoo-mcp-memory-service` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-9811BE70` [Domain H] | Yes (`1337d3dc...`) |

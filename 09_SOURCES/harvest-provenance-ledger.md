@@ -12334,3 +12334,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-23T07:44:58.993Z |
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `2d8d2804` | Multi-dimensional audit evidence | 2026-11-23T07:45:06.602Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `d025cc57` | Multi-dimensional audit evidence | 2026-11-23T07:45:08.807Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `e4501cbf` | Multi-dimensional audit evidence | 2026-11-23T08:07:46.409Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `0c437895` | Multi-dimensional audit evidence | 2026-11-23T08:11:46.085Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-23T08:11:57.593Z |
+| `learn-dom-h-9811be70` | `project://doobidoo-mcp-memory-service` | `e4501cbf` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md` | 2026-11-23T08:12:33.719Z |

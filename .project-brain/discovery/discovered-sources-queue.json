@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T07:45:12.908Z",
+  "updated_at": "2026-11-23T08:12:34.076Z",
   "stats": {
-    "total_discovered": 7814,
-    "approved_pending_harvest": 7392,
+    "total_discovered": 7818,
+    "approved_pending_harvest": 7395,
     "harvested_count": 0,
-    "rejected_count": 422,
+    "rejected_count": 423,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7383,
+      "COMMUNITY_AND_EXPERT": 7387,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -168977,6 +168977,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
         "fileName": "prof18-feed-flow-learnings.md"
+      }
+    },
+    "SRC-ABEE93300074": {
+      "id": "SRC-ABEE93300074",
+      "url": "https://github.com/serde-rs/serde/issues/1042",
+      "title": "https://github.com/serde-rs/serde/issues/1042",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T08:12:01.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-D60B6DC8E52F": {
+      "id": "SRC-D60B6DC8E52F",
+      "url": "https://github.com/user-attachments/assets/9cb2dd70-3f2b-4b9d-a88b-270fb293514a",
+      "title": "https://github.com/user-attachments/assets/9cb2dd70-3f2b-4b9d-a88b-270fb293514a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T08:12:01.387Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-D3BE24010D87": {
+      "id": "SRC-D3BE24010D87",
+      "url": "http://127.0.0.1:8123/",
+      "title": "http://127.0.0.1:8123/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-23T08:12:33.970Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-D74F0D2D5D93": {
+      "id": "SRC-D74F0D2D5D93",
+      "url": "https://memory.example.com/",
+      "title": "https://memory.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T08:12:34.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
       }
     }
   }

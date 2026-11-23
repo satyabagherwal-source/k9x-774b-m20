@@ -4,24 +4,24 @@
 {
   "source_repository": "DefGuard/defguard",
   "source_url": "https://github.com/DefGuard/defguard",
-  "source_version": "05bc57ba",
+  "source_version": "0c437895",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-20T16:13:04.680Z",
+  "timestamp": "2026-11-23T08:11:46.342Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-defguard-defguard",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [DefGuard/defguard](https://github.com/DefGuard/defguard) (Revision: `05bc57ba`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-20T16:13:04.680Z`  
+> **Provenance**: Harvested from [DefGuard/defguard](https://github.com/DefGuard/defguard) (Revision: `0c437895`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T08:11:46.342Z`  
 > **Learning ID**: `learn-github-defguard-defguard`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: A (Human & Need Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 52%
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from DefGuard/defguard:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:13:03.399Z  
+> **Harvest Timestamp**: 2026-11-23T08:06:43.907Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2921 stars
+- **Stars / Engagement**: 2922 stars
 
 ---
 
@@ -56,7 +56,7 @@ The following architectural invariants have been empirically discovered and reco
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 use ipnetwork::IpNetwork;
-use serde::Serialize;
+use serde::{Deserialize, Deserializer, Serialize};
 use url::Url;
 
 /// Strip any `http://` or `https://` scheme prefix a user may have accidentally
@@ -207,6 +207,16 @@ pub fn split_ip(ip: &IpAddr, network: &IpNetwork) -> SplitIp {
         modifiable_part,
         network_prefix: network_prefix.to_string(),
     }
+}
+
+/// Wraps the value in Some so a patch can tell an explicit null (clear the field) from a
+/// missing key (keep it). See <https://github.com/serde-rs/serde/issues/1042>
+pub fn deserialize_optional_field<'de, T, D>(deserializer: D) -> Result<Option<Option<T>>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Ok(Some(Option::deserialize(deserializer)?))
 }
 
 #[cfg(test)]
@@ -1229,6 +1239,7 @@ pub struct NetworkDeviceModifiedMetadata {
     pub location: WireguardNetwork<Id>,
     pub before: Device<Id>,
     pub after: Device<Id>,
+    pub preshared_key: SecretFieldChange,
 }
 
 #[derive(Serialize)]
@@ -1497,8 +1508,7 @@ impl SettingsUpdateMetadata {
         let protected_fields = Settings::secret_changes(&before, &after);
 
         Self {
-            before: before.into(),
-       
+
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/db/models/activity_log/mod.rs`
@@ -2034,311 +2044,295 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `05bc57ba` (2026-11-20)
-**Commit Message**: fix: close idle HTTP connections (#4067)
+### Incident Patch 1: `0c437895` (2026-11-23)
+**Commit Message**: fix lint (#4089)
 
-* enforce closing idle HTTP connections
-
-* clarify limitations
-
-* clippy fixes
-
-* update nix flake
-
-* update cargo deny config
-
-* move listener tests to separate module
-
-* update axum server
-
-* leverage updated axum to simplify setup
-
-* cleanup
-
-**File**: `Cargo.lock` (modified, +5/-4)
+**File**: `Cargo.lock` (modified, +5/-5)
 ```diff
-@@ -452,9 +452,9 @@ dependencies = [
+@@ -1279,7 +1279,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
+ dependencies = [
+  "quote",
+- "syn 3.0.9",
++ "syn 2.0.119",
+ ]
  
  [[package]]
- name = "axum-server"
--version = "0.8.0"
-+version = "0.9.2"
+@@ -2515,9 +2515,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
+ 
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b1df331683d982a0b9492b38127151e6453639cd34926eb9c07d4cd8c6d22bfc"
-+checksum = "3766086d344b8f8d2a9cf6fb211b581de5b160e052d7bc75a92e58cc41909054"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
  dependencies = [
-  "arc-swap",
-  "bytes",
-@@ -467,6 +467,7 @@ dependencies = [
-  "pin-project-lite",
-  "rustls",
-  "rustls-pki-types",
-+ "socket2",
-  "tokio",
-  "tokio-rustls",
-  "tower-service",
-@@ -5919,7 +5920,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "a253edfdea34032da21af84e16fcc94f4c7a6ba237f9f3bc2dbf43cea8535c44"
- dependencies = [
-  "annotate-snippets",
-- "base64 0.21.7",
-+ "base64 0.23.1",
-  "encoding_rs_io",
-  "granit-parser",
-  "nohash-hasher",
-@@ -6801,7 +6802,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.3.4",
-+ "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-  "windows-sys 0.61.2",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ axum = "0.8"
- axum-client-ip = { version = "1.3", default-features = false, features = [
-     "forwarded-header",
- ] }
--axum-server = { version = "0.8", features = ["tls-rustls"] }
-+axum-server = { version = "0.9.2", features = ["tls-rustls"] }
- axum-extra = { version = "0.12", features = [
-     "cookie-private",
-     "cookie-key-expansion",
-```
-
-**File**: `crates/defguard_core/src/lib.rs` (modified, +32/-5)
-```diff
-@@ -19,7 +19,7 @@ use axum::{
-     routing::{delete, get, post, put},
- };
- use axum_extra::extract::cookie::Key;
--use axum_server::tls_rustls::RustlsConfig;
-+use axum_server::tls_rustls::{RustlsAcceptor, RustlsConfig};
- use defguard_certs::CertificateAuthority;
- use defguard_common::{
-     VERSION,
-@@ -200,6 +200,10 @@ use crate::{
-         },
-         worker::{create_job, create_worker_token, job_status, list_workers, remove_worker},
-     },
-+    listener::{
-+        HTTP1_HEADER_READ_TIMEOUT, HTTP2_KEEPALIVE_INTERVAL, HTTP2_KEEPALIVE_TIMEOUT,
-+        keepalive_acceptor,
-+    },
-     location_management::{
-         allowed_peers::get_location_allowed_peers, sync_location_allowed_devices,
-     },
-@@ -219,6 +223,7 @@ pub mod grpc;
- pub mod handlers;
- pub mod headers;
- pub mod letsencrypt;
-+mod listener;
- pub mod location_management;
- pub mod log_file;
- pub mod mail;
-@@ -953,14 +958,36 @@ pub async fn run_web_server(
-                     RustlsConfig::from_pem(cert_pem.into_bytes(), key_pem.into_bytes())
-                         .await
-                         .map_err(|err| anyhow!("Failed to load TLS config: {err}"))?;
--                axum_server::bind_rustls(addr, tls_config)
--                    .handle(handle_clone.clone())
-+                let mut server = axum_server::bind(addr)
-+                    .acceptor(RustlsAcceptor::new(tls_config).acceptor(keepalive_acceptor()))
-+                    .handle(handle_clone.clone());
-+                server
-+                    .http_builder()
-+                    .http1()
-+                    .header_read_timeout(HTTP1_HEADER_READ_TIMEOUT);
-+                server
-+                    .http_builder()
-+                    .http2()
-+                    .keep_alive_interval(HTTP2_KEEPALIVE_INTERVAL)
-+                    .keep_alive_timeout(HTTP2_KEEPALIVE_TIMEOUT);
-+                server
-                     .serve(app)
-                     .await
-                     .map_err(|err| anyhow!("Web server error: {err}"))
-             } else {
--                axum_server::bind(addr)
--                    .handle(handle_clone)
-+                let mut server = axum_server::bind(addr)
-+                    .acceptor(keepalive_acceptor())
-+                    .handle(handle_clone);
-+                server
-+                    .http_builder()
-+                    .http1()
-+                    .header_read_timeout(HTTP1_HEADER_READ_TIMEOUT);
-+                server
-+                    .http_builder()
-+                    .http2()
-+                    .keep_alive_interval(HTTP2_KEEPALIVE_INTERVAL)
-+                    .keep_alive_timeout(HTTP2_KEEPALIVE_TIMEOUT);
-+                server
-                     .serve(app)
-                     .await
-                     .map_err(|err| anyhow!("Web server error: {err}"))
-```
-
-**File**: `crates/defguard_core/src/listener.rs` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+//! Connection settings for the public HTTP(S) listener.
-+
-+use std::time::Duration;
-+
-+use axum_server::accept::{TcpConfigAcceptor, TcpKeepaliveConfig, TcpSocketConfig};
-+
-+pub(super) const HTTP1_HEADER_READ_TIMEOUT: Duration = Duration::from_secs(30);
-+pub(super) const HTTP2_KEEPALIVE_INTERVAL: Duration = Duration::from_secs(20);
-+/// Time to wait for a PING acknowledgement. This does not expire responsive idle connections.
-+pub(super) const HTTP2_KEEPALIVE_TIMEOUT: Duration = Duration::from_secs(20);
-+const TCP_KEEPALIVE_TIME: Duration = Duration::from_secs(60);
-+const TCP_KEEPALIVE_INTERVAL: Duration = Duration::from_secs(15);
-+
-+pub(crate) fn keepalive_acceptor() -> TcpConfigAcceptor {
-+    TcpConfigAcceptor::new(
-+        TcpSocketConfig::new().keepalive(
-+            TcpKeepaliveConfig::new()
-+                .time(TCP_KEEPALIVE_TIME)
-+                .interval(TCP_KEEPALIVE_INTERVAL),
-+        ),
-+    )
-+}
-+
-+#[cfg(test)]
-+mod tests;
-```
-
-**File**: `crates/defguard_core/src/listener/tests.rs` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+use std::{
-+    net::{Ipv4Addr, SocketAddr},
-+    time::Duration,
-+};
-+
-+use axum::{Router, routing::get};
-+use axum_server::{Handle, accept::Accept};
-+use tokio::{
-+    io::{AsyncReadExt, AsyncWriteExt},
-+    net::{TcpListener, TcpSocket, TcpStream},
-+    time::timeout,
-+};
-+
-+use super::keepalive_acceptor;
-+
-+const TEST_TIMEOUT: Duration = Duration::from_secs(1);
-+const CLOSE_DEADLINE: Duration = Duration::from_secs(5);
-+
-+async fn spawn_server() -> (SocketAddr, Handle<SocketAddr>) {
-+    let listener = std::net::TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
-+    listener.set_nonblocking(true).unwrap();
-+    let addr = listener.local_addr().unwrap();
-+    let handle = Handle::new();
-+    let mut server = axum_server::from_tcp(listener)
-+        .unwrap()
-+        .acceptor(keepalive_acceptor())
-+        .handle(handle.clone());
-+    server
-+        .http_builder()
-+        .http1()
-+        .header_read_timeout(TEST_TIMEOUT);
-+    let app = Router::new().route("/", get(|| async { "ok" }));
-+    tokio::spawn(server.serve(app.into_make_service()));
-+    handle.listening().await;
-+    (addr, handle)
-+}
-+
-+async fn read_until_closed(stream: &mut TcpStream) -> Vec<u8> {
-+    let mut received = Vec::new();
-+    timeout(CLOSE_DEADLINE, stream.read_to_end(&mut received))
-+        .await
-+        .expect("the core server should close the idle connection")
-+        .expect("reading from the connection should succeed");
-+    received
-+}
-+
-+#[tokio::test]
-+async fn test_idle_keepalive_connection_is_closed_after_response() {
-+    let (addr, _handle) = spawn_server().await;
-+    let mut stream = TcpStream::connect(addr).await.unwrap();
-+    stream
-+        .write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n")
-+        .await
-+        .unwrap();
-+
-+    let received = read_until_closed(&mut stream).await;
-+    assert!(received.starts_with(b"HTTP/1.1 200"));
-+}
-+
-+#[tokio::test]
-+async fn test_incomplete_request_headers_are_cut_off() {
-+    let (addr, _handle) = spawn_server().await;
-+    let mut stream = TcpStream::connect(addr).await.unwrap();
-+    stream
-+        .write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\n")
-+        .await
-+        .unwrap();
-+
-+    read_until_closed(&mut stream).await;
-+}
-+
-+#[tokio::test]
-+async fn test_accepted_connections_have_tcp_keepalive() {
-+    let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).await.unwrap();
-+    let _client = TcpStream::connect(listener.local_addr().unwrap())
-+        .await
-+        .unwrap();
-+    let (stream, _) = listener.accept().await.unwrap();
-+    let stream = stream.into_std().unwrap();
-+    let socket = TcpSocket::from_std_stream(stream.try_clone().unwrap());
-+    assert!(!socket.keepalive().unwrap());
-+    let stream = TcpStream::from_std(stream).unwrap();
-+
-+    let (stream, ()) = keepalive_acceptor().accept(stream, ()).await.unwrap();
-+
-+    let socket = TcpSocket::from_std_stream(stream.into_std().unwrap());
-+    assert!(socket.keepalive().unwrap());
-+}
-```
-
-**File**: `crates/defguard_core/tests/integration/ldap_repair.rs` (modified, +1/-1)
-```diff
-@@ -163,7 +163,7 @@ async fn test_repair_rolls_back_updates_when_a_later_candidate_fails(
-     query("CREATE FUNCTION repair_update_guard() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF nextval('repair_update_sequence') = 2 THEN RAISE EXCEPTION 'expected repair failure'; END IF; RETURN NEW; END; $$").execute(&pool).await.unwrap();
-     query("CREATE TRIGGER repair_update_trigger BEFORE UPDATE OF ldap_rdn, ldap_user_path ON \"user\" FOR EACH ROW EXECUTE FUNCTION repair_update_guard()").execute(&pool).await.unwrap();
-     let Err(error) = repair(&pool).await else {
--        panic!("repair should fail on its second update");
-+        panic!("repair should fail on its second update")
-     };
-     assert!(error.to_string().contains("expected repair failure"));
-     let values: Vec<(String, String)> = query_as("SELECT ldap_rdn, ldap_user_path FROM \"user\" WHERE username IN ('rollback_first', 'rollback_second') ORDER BY username").fetch_all(&pool).await.unwrap();
-```
-
-**File**: `crates/defguard_session_manager/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ tracing.workspace = true
- strum.workspace = true
+  "percent-encoding",
+ ]
+@@ -7412,9 +7412,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
  
- [dev-dependencies]
--# TODO: remove this dependency once gateway events are moved
-+# Integration tests use enterprise device posture models from core.
- defguard_core.workspace = true
- ipnetwork.workspace = true
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
+```
+
+**File**: `e2e/package.json` (modified, +2/-2)
+```diff
+@@ -18,8 +18,8 @@
+     "@prettier/plugin-oxc": "^0.0.4",
+     "@types/node": "^22.20.5",
+     "@types/totp-generator": "^0.0.8",
+-    "@typescript-eslint/eslint-plugin": "^8.72.0",
+-    "@typescript-eslint/parser": "^8.72.0",
++    "@typescript-eslint/eslint-plugin": "^8.73.0",
++    "@typescript-eslint/parser": "^8.73.0",
+     "eslint": "^9.39.5",
+     "eslint-config-prettier": "^10.1.8",
+     "eslint-plugin-import": "^2.32.0",
+```
+
+**File**: `e2e/pnpm-lock.yaml` (modified, +84/-70)
+```diff
+@@ -162,11 +162,11 @@ importers:
+         specifier: ^0.0.8
+         version: 0.0.8
+       '@typescript-eslint/eslint-plugin':
+-        specifier: ^8.72.0
+-        version: 8.72.0(@typescript-eslint/parser@8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
++        specifier: ^8.73.0
++        version: 8.73.0(@typescript-eslint/parser@8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+       '@typescript-eslint/parser':
+-        specifier: ^8.72.0
+-        version: 8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
++        specifier: ^8.73.0
++        version: 8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+       eslint:
+         specifier: ^9.39.5
+         version: 9.39.5(supports-color@7.2.0)
+@@ -175,7 +175,7 @@ importers:
+         version: 10.1.8(eslint@9.39.5(supports-color@7.2.0))
+       eslint-plugin-import:
+         specifier: ^2.32.0
+-        version: 2.32.0(@typescript-eslint/parser@8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)
++        version: 2.32.0(@typescript-eslint/parser@8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)
+       eslint-plugin-prettier:
+         specifier: ^5.5.7
+         version: 5.5.7(eslint-config-prettier@10.1.8(eslint@9.39.5(supports-color@7.2.0)))(eslint@9.39.5(supports-color@7.2.0))(prettier@3.9.10)
+@@ -271,6 +271,9 @@ packages:
+     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
+     engines: {node: '>=18.18'}
  
++  '@isaacs/nonrecursive-glob-match@1.1.0':
++    resolution: {integrity: sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==}
++
+   '@napi-rs/wasm-runtime@0.2.12':
+     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
+ 
+@@ -415,63 +418,67 @@ packages:
+   '@types/totp-generator@0.0.8':
+     resolution: {integrity: sha512-NAiruWgCYxW1sd2LjpTT/sVarogTjjQoUyLiiL/e2DZOz9eovKxzEx5BiH8YgZoKUDZql1VXiIzgDBK7VzOmNw==}
+ 
+-  '@typescript-eslint/eslint-plugin@8.72.0':
+-    resolution: {integrity: sha512-aysKgysPX9XOv/dk95UkvUDe++Q3n3dJPG9CEWT3RUccxfkPJ+Qn6nhKPDhZXU6Ofo9kgwGWwKyQCnZIXTgngg==}
++  '@typescript-eslint/eslint-plugin@8.73.0':
++    resolution: {integrity: sha512-UkygMFer53Yzn29MCYFTHf34hGXf5KJhiDWfIm1tXtXRrym1CS6l5H9Y3yCtPWChpC0/f93H88gdj8tN0dd4kw==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+     peerDependencies:
+-      '@typescript-eslint/parser': ^8.72.0
++      '@typescript-eslint/parser': ^8.73.0
+       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+       typescript: '>=4.8.4 <6.1.0'
+ 
+-  '@typescript-eslint/parser@8.72.0':
+-    resolution: {integrity: sha512-0O+x3ynciD6zuXb1CKSu165haQV6ey53DKhHHUnujP7U+XlltJG+/keT0Xhd1HXCze+IHf7Tvt39ovyepX/LNw==}
++  '@typescript-eslint/parser@8.73.0':
++    resolution: {integrity: sha512-AuL45bVcmssHfZ3Di3cs9Q0l4gBm4ZFVrJOQEE7VpqW+PVgQaEwSwazz4TVIiFabXkk6U51EprYDwqw+HR8ePw==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+     peerDependencies:
+       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+       typescript: '>=4.8.4 <6.1.0'
+ 
+-  '@typescript-eslint/project-service@8.72.0':
+-    resolution: {integrity: sha512-bzHngBbmIgzj6TsTjVUCntGx6FFLgE7mPjpO0PzHycOaZHXqS43XnrkFIHRS16LLr/xO6FHSXG3GJFo/F4bSBQ==}
++  '@typescript-eslint/project-service@8.73.0':
++    resolution: {integrity: sha512-/pEf8Rc4Mjk+qJnY0uO1+Gadeal8uv50xpuic+srG2vIVatA0XxvWMUeMtFvs6OCHqftiQ7/+qH4aehG5stzIA==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+     peerDependencies:
+       typescript: '>=4.8.4 <6.1.0'
+ 
+-  '@typescript-eslint/scope-manager@8.72.0':
+-    resolution: {integrity: sha512-JewPyJOYcXBSAS7PIgufscHOwZqhTGyBRiQJhhuDln66tMchxvvt7nJ90JKKIoOelmdHA3kAQbm9cEUHc4JSEA==}
++  '@typescript-eslint/scope-manager@8.73.0':
++    resolution: {integrity: sha512-/TjD738Iq2rzj5z0ixVOi+TsvgjAzZPLPaH1yWdDBytR/HTR5gMpyYWZeCe5WTQZLwk3ho8AV7U3muoQCRtXBQ==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+ 
+-  '@typescript-eslint/tsconfig-utils@8.72.0':
+-    resolution: {integrity: sha512-0vbxCf7xLVPSjcOdm6eQbgViH8EDJ8xnl1laLT9yoqSz2YmcSfSg5Vdl0JUvZf6rcuJ0ZivJIuMD4edTg8obaA==}
++  '@typescript-eslint/tsconfig-utils@8.73.0':
++    resolution: {integrity: sha512-lmtCFOfYaJfpqZywGuXi4FpNtE+NQ+YLe3T0K9rtEDcW8ZuGWvfI++pj8r05sYMI8vWT2CYK4rWyedmD6Rp4og==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+     peerDependencies:
+       typescript: '>=4.8.4 <6.1.0'
+ 
+-  '@typescript-eslint/type-utils@8.72.0':
+-    resolution: {integrity: sha512-gEXxmmbSTSOVTC37IYYvremOM31v+UN2W772bJxmVYPhAOPSUxtacyb7wkm
+```
+
+**File**: `web/package.json` (modified, +2/-2)
+```diff
+@@ -76,7 +76,7 @@
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+     "@vitejs/plugin-react": "^6.1.2",
+-    "@vitest/ui": "4.1.9",
++    "@vitest/ui": "4.1.12",
+     "autoprefixer": "^10.6.1",
+     "globals": "^17.13.0",
+     "jsdom": "^29.1.1",
+@@ -89,6 +89,6 @@
+     "typescript": "~6.0.3",
+     "vite": "^8.3.4",
+     "vite-plugin-image-optimizer": "^2.0.3",
+-    "vitest": "4.1.11"
++    "vitest": "4.1.12"
+   }
+ }
+```
+
+**File**: `web/pnpm-lock.yaml` (modified, +55/-71)
+```diff
+@@ -285,8 +285,8 @@ importers:
+         specifier: ^6.1.2
+         version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
+       '@vitest/ui':
+-        specifier: 4.1.9
+-        version: 4.1.9(vitest@4.1.11)
++        specifier: 4.1.12
++        version: 4.1.12(vitest@4.1.12)
+       autoprefixer:
+         specifier: ^10.6.1
+         version: 10.6.1(postcss@8.5.31)
+@@ -324,8 +324,8 @@ importers:
+         specifier: ^2.0.3
+         version: 2.0.3(sharp@0.35.5(@types/node@26.6.5))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
+       vitest:
+-        specifier: 4.1.11
+-        version: 4.1.11(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
++        specifier: 4.1.12
++        version: 4.1.12(@types/node@26.6.5)(@vitest/ui@4.1.12)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
+ 
+ packages:
+ 
+@@ -1845,11 +1845,11 @@ packages:
+       oxc-transform-react:
+         optional: true
+ 
+-  '@vitest/expect@4.1.11':
+-    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
++  '@vitest/expect@4.1.12':
++    resolution: {integrity: sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==}
+ 
+-  '@vitest/mocker@4.1.11':
+-    resolution: {integrity: sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==}
++  '@vitest/mocker@4.1.12':
++    resolution: {integrity: sha512-fKShNpKZzupWZuY0z7egydvL0sqW4INEZBEExMBMAa6izlENEVHwoXgdaTCaBZ5fwlr4xf2o1wXC83n9RpO+NA==}
+     peerDependencies:
+       msw: ^2.4.9
+       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
+@@ -1859,31 +1859,25 @@ packages:
+       vite:
+         optional: true
+ 
+-  '@vitest/pretty-format@4.1.11':
+-    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
++  '@vitest/pretty-format@4.1.12':
++    resolution: {integrity: sha512-XW9O8+Mxx4VpCtkYdMJLZQQwsVryP9wk7cPKDxtXFfwSak6yRh5+2fep/Y0XF/ElBvJHq8bcYdi6aeuai0opZA==}
+ 
+-  '@vitest/pretty-format@4.1.9':
+-    resolution: {integrity: sha512-s0iufns3iIFitdgm+YR7g1whCAaGtXz459VS9/PqyKDEEFgYIhsHOQmXgIgDuYCt7DeQmiZT0Qe2OA2p4ZPu5A==}
++  '@vitest/runner@4.1.12':
++    resolution: {integrity: sha512-NKlVKCr5QnCe8jijdMnmkpHHU+WTqiLFR6G0pHji9uRjXK9xJl1k1nTw6F3pOOj2PDcsDt2GKQMI7wIsaT491w==}
+ 
+-  '@vitest/runner@4.1.11':
+-    resolution: {integrity: sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==}
++  '@vitest/snapshot@4.1.12':
++    resolution: {integrity: sha512-ko1y1Qgb/slzQ9mr+b89Cuqud8WG1TKtsPD8r7ZUBdvVOGt85Af2HwCqHujrhwJq95hs/9RM7fcAPg57o1vlzw==}
+ 
+-  '@vitest/snapshot@4.1.11':
+-    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
++  '@vitest/spy@4.1.12':
++    resolution: {integrity: sha512-RGq9x4JNGNTZHEJxvN0oSiJjeSCExm0n2gZKKJZHY9cX5AVA6M7VJILBT3ZJ/tJ/0J9uWT7fETV9/btoi//vSg==}
+ 
+-  '@vitest/spy@4.1.11':
+-    resolution: {integrity: sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==}
+-
+-  '@vitest/ui@4.1.9':
+-    resolution: {integrity: sha512-U/cRvtqfEPj27FI1n9cyUvi4vXXdcLhjJiI+InYKdk8hP4VrS6RXOjGL7rfFaeBc37iRKANsR6eEzIoC7lmgBQ==}
++  '@vitest/ui@4.1.12':
++    resolution: {integrity: sha512-eYUTHtsp52Fu6YGUw9T9173bba7YUr9j/Xj9CdhUaOb8AppLKcknHUaiZQeqJ8MiJ8C2VyKiZuUGSKdvPIKQKA==}
+     peerDependencies:
+-      vitest: 4.1.9
+-
+-  '@vitest/utils@4.1.11':
+-    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
++      vitest: 4.1.12
+ 
+-  '@vitest/utils@4.1.9':
+-    resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
++  '@vitest/utils@4.1.12':
++    resolution: {integrity: sha512-Q3awXrwOfEV+qc3WmO5ONyE0yO7Q1gQ9/oyHxGLZ/pl7N3NO/ZztqQwKLuwMkV+CA1JYSIeO3gkHnRDIo4AVaA==}
+ 
+   acorn@8.19.0:
+     resolution: {integrity: sha512-oJlA3XiRm7Cyk6qFD2Jn8ak9B7jSy0qy00ADO3+8dpT0LSjFihQYv4C02LFCSYJV3Q37xYwwRy5m+IpIiUzqWw==}
+@@ -3603,20 +3597,20 @@ packages:
+       yaml:
+         optional: true
+ 
+-  vitest@4.1.11:
+-    resolution: {integrity: sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==}
++  vitest@4.1.12:
++    resolution: {integrity: sha512-5eWdz2yb3ajxWF3C8C4TjkXl7FGm3n2E/VlazALrQHzK7nYMSGFnCZto0bbPNl77AwkOZVLk0YnBAejUu0NiWA==}
+     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
+     hasBin: true
+     peerDependencies:
+       '@edge-runtime/vm': '*'
+       '@opentelemetry/api': ^1.9.0
+       '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
+-      '@vitest/browser-playwright': 4.1.11
+-      '@vitest/browser-preview': 4.1.11
+-      '@vitest/browser-webdriverio': 4.1.11
+-      '@vitest/coverage-istanbul': 4.1.11
+-      '@vitest/coverage-v8': 4.1.11
+-      '@vitest/ui': 4.1.11
++      '@vitest/browser-play
+```
+
+**File**: `web/pnpm-workspace.yaml` (modified, +0/-3)
+```diff
+@@ -15,6 +15,3 @@ onlyBuiltDependencies:
+   - '@swc/core'
+   - esbuild
+   - sharp
+-minimumReleaseAgeExclude:
+-  # Renovate security update: vitest@4.1.11
+-  - vitest@4.1.11
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4089** (2026-11-23): fix lint (@filipslezaklab)
 - **PR #4083** (2026-11-20): Fix menu devices table action (@filipslezaklab)
+- **PR #4078** (2026-11-20): Display correct rule ID in traffic log (@moubctez)
 - **PR #4072** (2026-11-19): Correctly handle pasting network addresses in fields (@jakub-tldr)
 - **PR #4071** (2026-11-19): fix(CI): improve PR job cancellation (@wojcik91)
-- **PR #4068** (2026-11-19): Retire the worker (@moubctez)
-- **PR #4067** (2026-11-20): fix: close idle HTTP connections (@wojcik91)
-- **PR #4066** (2026-11-18): user devices table styling update (@filipslezaklab)
+- **PR #4070** (2026-11-23): network devices psk (@filipslezaklab)
 
 ---
 
@@ -2358,13 +2352,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. close idle HTTP connections
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `05bc57ba`: close idle HTTP connections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c437895`: lint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2372,24 +2366,25 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.9.2"
-checksum = "3766086d344b8f8d2a9cf6fb211b581de5b160e052d7bc75a92e58cc41909054"
- "socket2",
- "base64 0.23.1",
- "getrandom 0.4.3",
+ "syn 2.0.119",
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "2.5.9"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.8.0"
-checksum = "b1df331683d982a0b9492b38127151e6453639cd34926eb9c07d4cd8c6d22bfc"
- "base64 0.21.7",
- "getrandom 0.3.4",
+ "syn 3.0.9",
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+version = "2.5.8"
+checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `05bc57ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c437895` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

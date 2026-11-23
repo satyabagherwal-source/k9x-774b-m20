@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T07:45:08.812Z",
-  "total_cycles_completed": 11698,
-  "total_learnings_persisted": 11698,
-  "total_rules_promoted": 10871,
+  "last_updated": "2026-11-23T08:11:57.599Z",
+  "total_cycles_completed": 11701,
+  "total_learnings_persisted": 11701,
+  "total_rules_promoted": 10873,
   "history": [
-    {
-      "timestamp": "2026-11-22T13:59:15.186Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T14:17:17.257Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T14:17:27.529Z",
-      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
-      "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T14:40:37.005Z",
       "repository": "biomejs/biome",
@@ -1403,6 +1382,27 @@
       "repository": "saltstack/salt",
       "learningId": "learn-github-saltstack-salt",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T08:07:46.415Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T08:11:46.091Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T08:11:57.599Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

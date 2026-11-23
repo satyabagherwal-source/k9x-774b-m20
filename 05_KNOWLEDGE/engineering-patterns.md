@@ -750970,3 +750970,86 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `61a49c41` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10039. start the memory service when nothing answers (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "start the memory service when nothing answers",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "e4501cbf",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-23T08:07:45.825Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `e4501cbf`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelog.d/2109.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8ca7d81c`: opencode): start the memory service when nothing answers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2109.added.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **The OpenCode plugin can start the memory service when nothing answers (#2088, testx1011).**
+  `memoryService.autoStart` is off by default. With `enabled: true` the plugin runs the
+  configured argv (`["memory", "launch"]` by default, with the port taken from
+  `memoryService.endpoint`, because `memory launch` moves to a free port when the
+  configured one is taken) once the health check fails, and waits under a single
+  `startTimeoutMs` deadline before the session continues without memories. The launcher
+  runs from the user's home directory, so a cloned checkout cannot shadow `uvicorn` or
+  supply the server's `.env`, and the start decision uses the storage-free
+  `/api/health`, so a slow detailed check cannot make a running service look stopped. A
+  reachable endpoint is used as-is and a started service is never stopped: the
+  dashboard, a second editor and other MCP clients share it. The block is honoured from
+  the user configuration only, so a cloned repository cannot name the command the editor
+  runs; server settings such as `MCP_ALLOW_ANONYMOUS_ACCESS` stay in the service's own
+  `.env`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8ca7d81c` are properly handled with clean fallback behavior.

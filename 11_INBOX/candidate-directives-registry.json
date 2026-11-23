@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T07:45:13.923Z",
+  "last_updated": "2026-11-23T08:12:34.369Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1687,14 +1687,14 @@
       "learning_id": "learn-github-svenstaro-miniserve"
     },
     {
-      "id": "CD-3FDG",
+      "id": "CD-M8E4",
       "directive_title": "Empirical Invariant Guard in Cargo.lock",
-      "source_repo": "zeronsh-zeron-learnings",
+      "source_repo": "defguard-defguard-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-3FDG-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-M8E4-empirical-invariant-guard-in-cargo-lock.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-22",
+      "date_staged": "2026-11-23",
       "domain_letter": "D"
     },
     {
@@ -48965,6 +48965,37 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F1F340-restrict-dependabot-to-security-only-upd.md",
       "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-GRMS",
+      "directive_title": "start the memory service when nothing answers",
+      "source_repo": "doobidoo/mcp-memory-service",
+      "source_commit": "e4501cbf",
+      "staged_file": "11_INBOX/candidate-directives/CD-GRMS-start-the-memory-service-when-nothing-answers.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-E62120",
+      "directive_title": "Empirical Invariant Guard in Cargo.lock",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "defguard-defguard",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E62120-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-MXMC",
+      "directive_title": "opencode): start the memory service when nothing answers",
+      "source_repo": "doobidoo-mcp-memory-service-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MXMC-opencode-start-the-memory-service-when-nothing-answers.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "H"
     }
   ]
 }

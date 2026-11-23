@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T07:45:14.099Z",
-  "total_records": 2403,
+  "last_updated": "2026-11-23T08:12:34.580Z",
+  "total_records": 2405,
   "domains": {
     "A": {
       "total": 20,
@@ -1524,7 +1524,7 @@
       ]
     },
     "H": {
-      "total": 575,
+      "total": 577,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2100,7 +2100,9 @@
         "DOM-H-BBA39C7F",
         "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ahmadhassan-bted-jantt-learnings-core-invari",
-        "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-learnings-core-invari"
+        "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-learnings-core-invari",
+        "domain_intelligence-technical-construction-intelligence-defguard-defguard-learnings-core-invariants",
+        "DOM-H-9811BE70"
       ]
     },
     "I": {
@@ -13353,8 +13355,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "92b7fca4e48ac01ee2b428220e948202a2b3a779ae3c8cc3dbe11a1f87a995b6",
-      "created_at": "2026-11-22T05:50:27.590Z"
+      "content_hash": "b4b3500ab9a36f9fe49b721341db13387f5f55c2deacd04c3b92b6aeb233e68a",
+      "created_at": "2026-11-23T08:07:46.889Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -13765,8 +13767,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-research-knowledge-intelligence-deepseek-ai-deepseek-.md",
       "repository": "deepseek-ai/DeepSeek-V3",
-      "content_hash": "ba865055eea42f14625a14650cfe5a4edfcc971b13012c6ced8dae0fa58eeabd",
-      "created_at": "2026-11-18T22:30:29.058Z"
+      "content_hash": "67f96e1f98bc41d8dc01c9d8efb3d0aa41c19bdc2d41322fe9c6eccb70cf578f",
+      "created_at": "2026-11-23T08:11:57.816Z"
     },
     "domain_intelligence-architecture-intelligence-keybase-client-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-keybase-client-core-invariants",
@@ -13825,8 +13827,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-learnings-research-knowledge-intelligence-hf-deepseek.md",
       "repository": "hf-deepseek-ai-deepseek-v3-learnings",
-      "content_hash": "ccd91c83783a066e0b45a38ddc8a85bd2c43457d0865098fb2785cba82e33672",
-      "created_at": "2026-11-18T22:30:40.736Z"
+      "content_hash": "5c3812b8bcea1daa915d0ef403b24b47d8cc10fa2f74c23bb3b97fafb4370284",
+      "created_at": "2026-11-23T08:12:00.939Z"
     },
     "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants",
@@ -22069,8 +22071,8 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
       "repository": "doobidoo-mcp-memory-service-learnings",
-      "content_hash": "61c532b11e0e4f6b5386d1111b9dbe67d5761c8b3566213cbeb6c449d3d20848",
-      "created_at": "2026-11-22T05:51:00.779Z"
+      "content_hash": "26f5fc2aa3ab5919f3f093d61f8ab35e59fe9fb4cc3aff6f7c5a75492d568713",
+      "created_at": "2026-11-23T08:12:34.580Z"
     },
     "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",
@@ -36334,8 +36336,8 @@
       "title": "Technical Construction Intelligence: DefGuard/defguard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-defguard-defguard-technical-construction-intelligence-defguard-defguard-core-inv.md",
       "repository": "DefGuard/defguard",
-      "content_hash": "3586fb6ddde45bb0266b9bddf412b34fcd41dcbbd1a7bd08ed330a7dcfb80172",
-      "created_at": "2026-11-20T16:13:04.844Z"
+      "content_hash": "a6f5c8e9bda3c41ee79344975b1e64f51f6cd2cbc8e63443c530c4bce94af9b5",
+      "created_at": "2026-11-23T08:11:46.536Z"
     },
     "domain_intelligence-research-knowledge-intelligence-angelslim-hy4-flash-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-angelslim-hy4-flash-gguf-core-invariants",
@@ -40358,6 +40360,57 @@
       "repository": "prof18-feed-flow-learnings",
       "content_hash": "fd17bb5a7532d74f73b735df33fc2456aa78843a55451e48b626c3f48f090477",
       "created_at": "2026-11-23T07:45:13.291Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-defguard-defguard-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-defguard-defguard-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: defguard-defguard-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-defguard-defguard-learnings-technical-construction-intelligence-defguard-defguar.md",
+      "repository": "defguard-defguard-learnings",
+      "content_hash": "2c0d986b95a8a79f6c81cd86974a5068b754b6e7d1fca641df1739bdac664944",
+      "created_at": "2026-11-23T08:12:01.842Z"
+    },
+    "DOM-H-9811BE70": {
+      "record_id": "DOM-H-9811BE70",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "opencode): start the memory service when nothing answers",
+      "content": "When implementing operations in `changelog.d/2109.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "1337d3dc29fb0ed337d6e28d075260f557bc0e5e8bd95f10e785f6212ab0f44d",
+      "summary": "Prevents defects observed in production commit `8ca7d81c`: opencode): start the memory service when nothing answers. Unvalidated execution p -> When implementing operations in `changelog.d/2109.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, an",
+      "provenance": {
+        "source_uri": "project://doobidoo-mcp-memory-service/doobidoo-mcp-memory-service-learnings.md",
+        "source_version": "e4501cbf",
+        "observed_at": "2026-11-23T08:07:45.197Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (doobidoo-mcp-memory-service)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of doobidoo-mcp-memory-service"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T08:12:33.680Z"
     }
   }
 }

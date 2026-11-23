@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T05:51:00.415Z",
+  "timestamp": "2026-11-23T08:12:34.236Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-doobidoo-mcp-memory-service-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [doobidoo-mcp-memory-service-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T05:51:00.415Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T08:12:34.236Z`  
 > **Learning ID**: `LEARN-EVO-doobidoo-mcp-memory-service-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 84%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `a10d8f79`  
+> **Source Version**: `e4501cbf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T05:50:25.965Z  
+> **Timestamp**: 2026-11-23T08:07:45.197Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T05:50:25.958Z  
+> **Harvest Timestamp**: 2026-11-23T08:06:47.478Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2138 stars
+- **Stars / Engagement**: 2145 stars
 
 ---
 
@@ -2942,8 +2942,8 @@ Commands:
 - **Issue #2100** (2026-11-20): **POST /api/server/update ignores MCP_UPDATE_GIT_REMOTE/BRANCH and takes no backup**
   *Symptoms*: ## What is wrong  `POST /api/server/update` (the "Update" button in the dashboard) does two things an operator would not expect. Both are in `src/mcp_memory_service/web/api/server.py`, line numbers on `main` today.  1. **It ignores the configured remote and branch.** `check_for_updates()` reads `MCP_UPDATE_GIT_REMOTE` and `MCP_UPDATE_GIT_BRANCH` (lines 318-319, documented in `.env.example`), so "update available" is computed against, say, `upstream/stable`. `update_server()` then runs a hardcoded `git pull origin main` (line 481). An install that set those variables is told about one branch and updated from another. 2. **It changes the checkout without a backup.** The update pulls, reinstalls and restarts. A new release can migrate the database on that restart, and nothing was saved before it. The backup service that `POST /api/backup/now` uses is right there.  Found while writing #2098, which left this endpoint alone on purpose.  ## Scope (settled)  1. Resolve remote and branch in one place and use it in both `check_for_updates()` and `update_server()`. Same variables, same defaults (`origin`, `main`). The pull becomes `git pull <remote> <branch>`. 2. Before the `git pull`, call `get_backup_service().create_backup(description=...)` (from `mcp_memory_service.backup.scheduler`, the way `web/api/backup.py` does).    - Backup succeeded: go on. Put the backup's filename into the response message or a new optional field on `UpdateResponse`.    - `BackupService.db_path` is `None` (
 
-- **Issue #2090** (2026-11-19): **fix(chunker): sentence-aware chunking strips ending punctuation and breaks overlap boundaries**
-  *Symptoms*: ### Bug Description  When using TextChunker with respect_sentence_boundaries=True (or using loaders that rely on sentence-aware chunking), all sentence-ending punctuation ('.', '!', '?') is stripped from     intermediate sentences. This produces run-on chunks where sentences have lost their punctuation.      Furthermore, _get_overlap_text() attempts to locate sentence boundaries inside the chunk overlap using self.sentence_endings.split(overlap). Because the preceding chunk text has had     all its sentence punctuation stripped, the splitter fails to find any sentence boundary, falling back to a raw character slice that chops words in half (e.g. "tence here Third     sentence here").  ### Steps to Reproduce  1. Run Python with the ingestion chunker:     ```python     from mcp_memory_service.ingestion.chunker import ChunkingStrategy, TextChunker      strategy = ChunkingStrategy(         chunk_size=80,         chunk_overlap=0,         respect_paragraph_boundaries=False,         respect_sentence_boundaries=True,         min_chunk_size=10,     )     chunker = TextChunker(strategy)     text = "First sentence here. Second sentence here! Third sentence here? Fourth sentence here."     chunks = [chunk for chunk, _ in chunker.chunk_text(text)]     print(chunks)  2. Observe the first chunk in the output.  ### Expected Behavior  The emitted text chunks should preserve all sentence-ending punctuation marks ('.', '!', '?') and maintain grammatically complete sentences:  ['First sentence h
+- **Issue #2093** (2026-11-22): **[Bug]: CSVLoader delimiter auto-detection fails on files with trailing newlines**
+  *Symptoms*: ### Bug Description   ### Bug Description  In `CSVLoader._detect_delimiter()` (`src/mcp_memory_service/ingestion/csv_loader.py`), delimiter auto-detection samples lines using `content.split('\n')[:5]`. A trailing newline creates an empty sampled line with zero delimiter occurrences. This breaks the consistency check `len(set(counts)) == 1`, causing the detector to fall back to comma.  Consequently, semicolon-, tab-, pipe-, and colon-delimited CSV files with trailing newlines or blank lines can be parsed as single-column records, losing their headers and table structure.  ### Pre-submission Checklist  - [x] I've searched existing issues and this is not a duplicate. - [x] I've specified the relevant version. - [x] I've included available environment information. - [x] I've redacted sensitive information.   ### Steps to Reproduce  ```python from mcp_memory_service.ingestion.csv_loader import CSVLoader  loader = CSVLoader() content = "name;age;city\nJohn;25;New York\nJane;30;San Francisco\n" detected = loader._detect_delimiter(content) print(repr(detected))  # Currently returns ',' ```   ### Expected Behavior  The detector should return `';'` despite trailing newlines or blank lines.   ### Actual Behavior  Returns `','`, resulting in single-column extraction and fallback headers `['col_1']`.   ### Storage Backend  sqlite-vec (local)  ### Operating System  Linux  ### Python Version  Python 3.11+  ### MCP Memory Service Version  v8.17.0 (or current main)  ### Installation Method  S
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2960,336 +2960,1004 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a10d8f79` (2026-11-21)
-**Commit Message**: fix(web): restart under the Windows wrapper by exit code, not sys.exit (#2105)
+### Incident Patch 1: `8ca7d81c` (2026-11-22)
+**Commit Message**: feat(opencode): start the memory service when nothing answers (#2109)
 
-sys.exit() inside the restart BackgroundTask only raises SystemExit, which
-the ASGI server logs while the process keeps serving, so an acknowledged
-restart never replaced the process on Windows. The restart now ends the
-process with os._exit(), and the error path does the same.
+* feat(opencode): start the memory service when nothing answers
 
-run_http_server_background.ps1 sets MCP_WRAPPER_SUPERVISED=1 for the server
-it launches. In that case the server spawns nothing and exits with 75
-(SUPERVISED_RESTART_EXIT_CODE); the wrapper relaunches at once, without
-counting a crash attempt or waiting RestartDelaySeconds, so the port is free
-before the next start. Unsupervised Windows runs still start a replacement
-and then exit 0.
+The start half of #2088. The stop half stays out: the service is shared with
+the dashboard, a second editor and other MCP clients, and the plugin cannot
+know who else is connected, so stopping it on exit was a guess that could take
+their backend down mid-session.
 
-The wrapper also reads Process.Handle right after Start-Process: Windows
-PowerShell 5.1 otherwise leaves ExitCode $null, so even a graceful exit 0
-was logged as an error and relaunched.
+autoStart is opt-in and off by default. When the health check fails, the plugin
+spawns the configured argv (default `memory launch`, with the port from
+`endpoint`: launch moves to a free port when the one it was given is taken) and
+polls until one startTimeoutMs deadline runs out. A reachable endpoint is used
+as-is and a started service is never stopped.
 
-Fixes #1943
+The block is read from the user configuration only. A project checkout that
+carries `.opencode/memory-plugin.json` must not be able to name the command the
+editor runs, so that block is dropped with a warning.
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Adopts #2089 by testx1011.
 
-**File**: `changelog.d/1943.fixed.md` (added, +2/-0)
+* fix(opencode): start the launcher outside the project and probe basic health
+
+Greptile P1 on #2109: an editor opened in a cloned repository spawned the launcher with the checkout as cwd. Python puts t
+
+**File**: `changelog.d/2109.added.md` (added, +14/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+- **Windows dashboard restart left the old server running, and the scheduled-task wrapper misread exit codes (#1943, munjikesh).**
-+  The restart background task called `sys.exit()`, which only raises `SystemExit` inside the ASGI app, so the process kept serving. It now ends with `os._exit()`: under `run_http_server_background.ps1` (marked by `MCP_WRAPPER_SUPERVISED`) with exit code 75, which the wrapper relaunches at once without using up a crash attempt or the restart delay, and unsupervised after starting a replacement. The wrapper also reads `.Handle` after `Start-Process`, because Windows PowerShell 5.1 otherwise returns `$null` for the exit code and logged even a graceful stop as an error.
+@@ -0,0 +1,14 @@
++- **The OpenCode plugin can start the memory service when nothing answers (#2088, testx1011).**
++  `memoryService.autoStart` is off by default. With `enabled: true` the plugin runs the
++  configured argv (`["memory", "launch"]` by default, with the port taken from
++  `memoryService.endpoint`, because `memory launch` moves to a free port when the
++  configured one is taken) once the health check fails, and waits under a single
++  `startTimeoutMs` deadline before the session continues without memories. The launcher
++  runs from the user's home directory, so a cloned checkout cannot shadow `uvicorn` or
++  supply the server's `.env`, and the start decision uses the storage-free
++  `/api/health`, so a slow detailed check cannot make a running service look stopped. A
++  reachable endpoint is used as-is and a started service is never stopped: the
++  dashboard, a second editor and other MCP clients share it. The block is honoured from
++  the user configuration only, so a cloned repository cannot name the command the editor
++  runs; server settings such as `MCP_ALLOW_ANONYMOUS_ACCESS` stay in the service's own
++  `.env`.
 ```
 
-**File**: `scripts/service/windows/run_http_server_background.ps1` (modified, +34/-8)
+**File**: `opencode/README.md` (modified, +30/-0)
 ```diff
-@@ -36,6 +36,9 @@ $PythonLogFile = Join-Path $LogDir "http-server-python.log"
- $PidFile = Join-Path $env:LOCALAPPDATA "mcp-memory\http-server.pid"
- $MaxRestarts = 3
- $RestartDelaySeconds = 60
-+# Exit code the server uses to ask for an immediate relaunch (dashboard restart/update).
-+# Keep in sync with SUPERVISED_RESTART_EXIT_CODE in src/mcp_memory_service/web/api/server.py.
-+$RestartExitCode = 75
+@@ -129,6 +129,7 @@ Then it applies environment overrides:
+ - `OPENCODE_MEMORY_INBOX_OVERLAP_MINUTES` — minutes re-queried before the last check to catch late sync (default: `30`)
+ - `OPENCODE_MEMORY_INBOX_AGENT_ID` — excludes messages tagged `agent:<id>` for this agent
+ - `OPENCODE_MEMORY_INBOX_STATE_FILE` — overrides the persisted last-check marker path
++- `OPENCODE_MEMORY_AUTOSTART` — set to `true` or `1` to start the memory service when nothing answers (see [Auto-starting the service](#auto-starting-the-service))
  
- # Ensure log directory exists
- if (-not (Test-Path $LogDir)) {
-@@ -222,13 +225,29 @@ while ($RestartCount -lt $MaxRestarts) {
-         # file. It avoids the .NET event handler runspace bug where
-         # `$script:LogFile` was not captured, which silently dropped every
-         # line of server output in the previous implementation.
--        $Process = Start-Process -FilePath $ExePath `
--            -ArgumentList $ExeArgs `
--            -WorkingDirectory $ProjectRoot `
--            -NoNewWindow `
--            -PassThru `
--            -RedirectStandardOutput $PythonLogFile `
--            -RedirectStandardError $PythonErrFile
-+        #
-+        # MCP_WRAPPER_SUPERVISED tells the server it runs under this wrapper, so a
-+        # dashboard restart exits with $RestartExitCode and the loop below
-+        # relaunches it instead of a replacement nobody supervises. It is set only
-+        # around Start-Process (the child copies its environment at creation) and
-+        # removed again, so it cannot outlive this script in a console that ran
-+        # it in-process and then starts a server by hand.
-+        $env:MCP_WRAPPER_SUPERVISED = "1"
-+        try {
-+            $Process = Start-Process -FilePath $ExePath `
-+                -ArgumentList $ExeArgs `
-+                -WorkingDirectory $ProjectRoot `
-+                -NoNewWindow `
-+                -PassThru `
-+                -RedirectStandardOutput $PythonLogFile `
-+                -RedirectStandardError $PythonErrFile
-+        } finally {
-+            Remove-Item Env:\MCP_WRAPPER_SUPERVISED -ErrorAction SilentlyContinue
-+        }
+ The files are not layered: an existing global file takes precedence over a
+ project-local file. To select a project's configuration explicitly, launch
+@@ -239,6 +240,35 @@ One JSON object per line, with `&`, `<` and `>` escaped as `&`, `<` and `>`, so
+ 
+ The successful-check marker, the seen set, and the lower bound of the query window are stored in `~/.local/state/opencode/.memory-inbox-state.json`; the first run looks back 24 hours. The last successful check time is stored alongside them so a client clock rollback can be detected, including for state files that only hold a marker. The window bound only moves forward, so paging through a backlog cannot reach back into rows that were already delivered and pruned, and seen entries older than the bound are pruned so the set stays bounded. A client clock that jumps backwards past the window, or leaves a persisted marker after the current time, resets the window and may replay the jumped-over interval once. A state file written before this change carries no seen set, so the first check after upgrading may re-inject messages from the overlap window once. Markers are isolated by Memory Service endpoint, tag set, and agent ID. Each check re-reads the state file, so a second OpenCode instance normally sees what the first one delivered; only two overlapping checks can both deliver the same message. Updates use a cross-process lock and an atomic file replacement so simultaneous OpenCode instances cannot overwrite one another's markers; locks abandoned for 30 seconds are atomically moved to a unique quarantine path before removal, so competing recovery attempts cannot delete a fresh lock. Failed queries do not advance the marker. A sync lag or clock offset larger than the configured overlap can still skip a message, so set `overlapMinutes` above the deployment's worst case; raising it takes effect as the marker advances. See [Tags as inter-agent signals](../docs/agents/README.md#tags-as-inter-agent-signals) for the shared message-bus convention and a storage example.
+ 
++## Auto-starting the service
 +
-+        # Windows PowerShell 5.1 leaves ExitCode $null for a -PassThru process
-+        # unless its Handle was read while it was running. Touch it right away.
-+        $null = $Process.Handle
- 
-         # Save PID
-         Set-Content -Path $PidFile -Value $Process.Id
-@@ -247,7 +266,7 @@ while ($RestartCount -lt $MaxRestarts) {
-             Remove-Item $PythonErrFile -Force -ErrorAction SilentlyContinue
-         }
- 
--        Write-Log "Server exited with code $ExitCode" $(if ($ExitCode -eq 0) { "INFO" } else { "ERROR" })
-+        Write-Log "Server exited with code $ExitCode" $(if (($ExitCode -eq 0) -or ($ExitCode -eq $RestartExitCode)) { "INFO" } else { "ERROR" })
- 
-         # Clean up PID file
-         if (Test-Path $PidFile) {
-@@ -260,6 +279,13 @@ while ($RestartCount -lt $MaxRestarts) {
-             break
-         }
- 
-+        # Restart requested by the server: relaunch now. This is not a crash, so
-+        # it neither uses up a restart attempt nor waits $RestartDelaySeconds.
-+        if ($ExitCode -eq $RestartExitCode) {
-+            Write-Log "Server requested a restart (exit code $RestartExitCode). Restarting immediately."
-+            continue
-+        }
++By default the plugin is a client: it expects the memory service to already be running, started by a systemd unit, a launchd agent, a Startup entry or `memory launch`. `memoryService.autoStart` lets the plugin start it when nothing answers. It is off by default.
 +
++```json
++{
++  "memoryService": {
++    "autoStart": {
++      "enabled": true,
++      "command": ["memory", "launch"],
++      "startTimeoutMs": 5000
++    }
++  }
++}
++```
++
++- A reachable endpoint is used as-is. A service already started by the OS or by another editor is never duplicated.
++- The start decision uses `/api/health`, which answers without touching storage. A slow `/api/health/detailed` cannot make a running service look stopped and start a second launcher over it.
++- `command` is an argv array, not a shell string. The default `["memory", "launch"]` gets `--port <port of memoryService.endpoint>` appended, because `memory launch` moves to a free port when the configured one is taken, and a server that moved would never be found by the health poll. A custom command is spawned exactly as configured, so it has to bind the port from `endpoint` itself.
++- The launcher runs from the user's home directory, not from the project. Python puts the working directory on `sys.path`, so a checkout could otherwise shadow `uvicorn`, and the server's `.env` lookup reads the current directory first. A cloned repository must not be able to influence either.
++- `startTimeoutMs` is one deadline for the first health check and every poll after it. If the service does not answer in time, the session continues without memories instead of failing; an endpoint that accepts the connection and never answers cannot hold up OpenCode's start either.
++- `OPENCODE_MEMORY_AUTOSTART=1` enables auto-start without a configuration file; command and timeout still come from the configuration.
++
++`autoStart` is only read from the user-level configuration (`OPENCODE_MEMORY_PLUGIN_CONFIG`, `~/.config/opencode/`). A `.opencode/memory-plugin.json` inside a project is ignored for this block, and the plugin logs a warning. Otherwise cloning a repository and opening it in OpenCode would run a command chosen by that repository.
++
++The plugin never stops the service. It is shared by a second OpenCode window, the dashboard, Claude Code and other MCP clients, and the plugin cannot know who else is connected. A service started this way there
+```
+
+**File**: `opencode/memory-plugin.config.example.json` (modified, +6/-1)
+```diff
+@@ -12,7 +12,12 @@
+       "{project} architecture decisions",
+       "{project} recent work",
+       "{project} open issues"
+-    ]
++    ],
++    "autoStart": {
++      "enabled": false,
++      "command": ["memory", "launch"],
++      "startTimeoutMs": 5000
++    }
+   },
+   "output": {
+     "verbose": true,
+```
+
+**File**: `opencode/memory-plugin.js` (modified, +171/-2)
+```diff
+@@ -1,3 +1,4 @@
++import { spawn } from "node:child_process"
+ import { mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises"
+ import { homedir } from "node:os"
+ import http from "node:http"
+@@ -74,6 +75,16 @@ const DEFAULT_CONFIG = {
+       "{project} recent work",
+       "{project} open issues",
+     ],
++    // Start the service from the plugin when nothing answers. Off by default,
++    // and only ever read from the user configuration, never from a project
++    // checkout: the value decides which command the editor runs.
++    autoStart: {
++      enabled: false,
++      // `memory launch` already does the background start, PID tracking, log
++      // redirection and health polling; the plugin only waits for the endpoint.
++      command: ["memory", "launch"],
++      startTimeoutMs: 5000,
++    },
+   },
+   output: {
+     verbose: true,
+@@ -187,6 +198,11 @@ function environmentOverrides() {
+     overrides.inbox.agentId = inboxAgentId
+   }
+ 
++  const autoStartEnabled = parseBoolean(process.env.OPENCODE_MEMORY_AUTOSTART)
++  if (autoStartEnabled !== undefined) {
++    overrides.memoryService.autoStart = { enabled: autoStartEnabled }
++  }
++
+   return overrides
+ }
+ 
+@@ -197,6 +213,10 @@ function mergeConfig(base, overrides = {}) {
+     memoryService: {
+       ...base.memoryService,
+       ...(overrides.memoryService || {}),
++      autoStart: {
++        ...base.memoryService.autoStart,
++        ...(overrides.memoryService?.autoStart || {}),
++      },
+     },
+     output: {
+       ...base.output,
+@@ -240,13 +260,28 @@ function pluginConfigPaths(directory, options = {}) {
+   return paths.filter(Boolean)
+ }
+ 
+-async function loadConfig(directory) {
++function projectConfigPaths(directory) {
++  if (!directory) return []
++  return [
++    path.join(directory, ".opencode", "memory-plugin.json"),
++    path.join(directory, ".opencode", "memory-awareness.json"),
++  ]
++}
++
++async function loadConfig(directory, { warn } = {}) {
+   let config = DEFAULT_CONFIG
++  const projectPaths = new Set(projectConfigPaths(directory))
+ 
+   for (const configPath of pluginConfigPaths(directory)) {
+     try {
+       const raw = await readFile(configPath, "utf8")
+       const parsed = JSON.parse(raw)
++      // A cloned repository must not be able to name the command the editor
++      // runs, so autoStart is only honoured from the user configuration.
++      if (projectPaths.has(configPath) && parsed?.memoryService?.autoStart) {
++        delete parsed.memoryService.autoStart
++        await warn?.(`Ignoring memoryService.autoStart from ${configPath}; it is only read from the user configuration`)
++      }
+       config = mergeConfig(config, parsed)
+       break
      } catch {
-         Write-Log "Error starting server: $_" "ERROR"
-     }
+@@ -1054,6 +1089,129 @@ async function getHealth(config) {
+   }
+ }
+ 
++// The service is normally a daemon of its own (systemd unit, launchd agent,
++// Startup entry). autoStart lets the plugin start it when nothing answers. It is
++// opt-in, it never starts a second instance, and it never stops one: the service
++// is shared with the dashboard and other MCP clients.
++const AUTO_START_POLL_MS = 250
++
++// Race one health probe against the remaining budget and clear the timer, so a
++// service that accepts the connection and never answers cannot outlive it.
++function withTimeout(promise, ms) {
++  let timer
++  const timeout = new Promise((resolve) => {
++    timer = setTimeout(() => resolve(false), Math.max(0, ms))
++  })
++  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer))
++}
++
++async function probe(health, config, deadline) {
++  return withTimeout(
++    Promise.resolve().then(() => health(config)).then(() => true).catch(() => false),
++    deadline - Date.now(),
++  )
++}
++
++async function answersBefore(health, config, deadline, pause) {
++  while (true) {
++    if (await probe(health, config, deadline)) return true
++    if (Date.now() >= deadline) return false
++    await pause(Math.min(AUTO_START_POLL_MS, Math.max(0, deadline - Date.now())))
++  }
++}
++
++function endpointPort(endpoint) {
++  try {
++    const { port, protocol } = new URL(endpoint)
++    if (port) return Number(port)
++    // URL drops the protocol's standard port, so an endpoint written without
++    // one still has a port: the launcher must not fall back to 8000 while the
++    // plugin polls 80 or 443.
++    if (protocol === "https:") return 443
++    if (protocol === "http:") return 80
++    return null
++  } catch {
++    return null
++  }
++}
++
++// `memory launch` moves to a free port when the configured one is taken, so the
++// plugin hands it the port of its own endpoint: a server on another port would
++// never be found by the poll below. Only the default launcher takes the flag; a
++// custom command is spawned exactly as configured.
++function startCommand(autoStart, endpoint) {
++  const command = [...(autoStart.command || [])]
++  const isDefaultLauncher = command.length === 2 && command[0] === "memory" && command[1] === "launch"
++  const port = endpointPort(endpoint)
++  if (isDefaultL
 ```
 
-**File**: `src/mcp_memory_service/web/api/server.py` (modified, +35/-9)
+**File**: `opencode/tests/autostart.test.js` (added, +298/-0)
 ```diff
-@@ -18,6 +18,7 @@
- Provides server status, version checking, updates, and restart capabilities.
- """
- 
-+import contextlib
- import os
- import sys
- import time
-@@ -48,6 +49,11 @@
- 
- # Constants
- RESTART_DELAY_SECONDS = 3
-+# Exit code that tells the Windows wrapper (run_http_server_background.ps1) "relaunch me now";
-+# keep in sync with $RestartExitCode there. 75 is sysexits' EX_TEMPFAIL, not used by Python or uv.
-+SUPERVISED_RESTART_EXIT_CODE = 75
-+# Set to "1" by the wrapper for the server it launches, so a restart can exit and let it relaunch.
-+SUPERVISED_ENV_VAR = "MCP_WRAPPER_SUPERVISED"
- GIT_TIMEOUT_SECONDS = 30
- PIP_TIMEOUT_SECONDS = 300
- 
-@@ -285,6 +291,24 @@ def _get_restart_args() -> List[str]:
-     return [sys.executable] + list(sys.argv)
- 
- 
-+def _is_supervised() -> bool:
-+    """True when the Windows wrapper launched this process and will relaunch it on exit."""
-+    return os.environ.get(SUPERVISED_ENV_VAR) == "1"
+@@ -0,0 +1,298 @@
++/**
++ * Tests for the optional memory-service auto-start in memory-plugin.js.
++ *
++ * Run: node opencode/tests/autostart.test.js
++ *
++ * autoStart spawns a process from inside the editor, so its decisions (start or
++ * not, which command, from which config file, how long to wait) are pinned here
++ * with injected dependencies instead of a live service. The failures that matter
++ * in production: a second instance started next to a healthy one, a command
++ * named by a cloned repository, and a start that hangs the editor.
++ */
 +
++import { test } from "node:test"
++import assert from "node:assert"
++import http from "node:http"
++import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises"
++import { homedir, tmpdir } from "node:os"
++import path from "node:path"
 +
-+def _exit_process(code: int) -> None:
-+    """End the process now.
++import { _internal } from "../memory-plugin.js"
 +
-+    sys.exit() inside a BackgroundTask only raises SystemExit, which Starlette
-+    logs as an ASGI exception while the server keeps serving, so exit with
-+    os._exit() after flushing what a buffered stdout would otherwise lose.
-+    """
-+    for stream in (sys.stdout, sys.stderr):
-+        with contextlib.suppress(OSError, ValueError):
-+            stream.flush()
-+    os._exit(code)
++const { DEFAULT_CONFIG, endpointPort, ensureMemoryService, loadConfig } = _internal
 +
++function configWith(autoStart) {
++  return {
++    memoryService: {
++      ...DEFAULT_CONFIG.memoryService,
++      autoStart: { ...DEFAULT_CONFIG.memoryService.autoStart, ...autoStart },
++    },
++  }
++}
 +
- async def _restart_server_delayed():
-     """Restart the server after a delay to allow HTTP response to complete."""
-     await asyncio.sleep(RESTART_DELAY_SECONDS)
-@@ -294,25 +318,27 @@ async def _restart_server_delayed():
-     args = _get_restart_args()
++function fakeChild(pid = 4242) {
++  return {
++    pid,
++    unref() {},
++    on() {},
++  }
++}
++
++// Polling sleeps are stubbed out; the deadline itself is real, so the timeout
++// cases use a small startTimeoutMs instead of a fake clock.
++const noSleep = async () => {}
++
++test("autoStart is off unless the configuration enables it", async () => {
++  let spawnCalls = 0
++  let healthCalls = 0
++  const started = await ensureMemoryService(configWith({ enabled: false }), {
++    health: async () => { healthCalls += 1; return { status: "healthy" } },
++    spawn: () => { spawnCalls += 1 },
++  })
++  assert.strictEqual(started, null)
++  assert.strictEqual(spawnCalls, 0)
++  assert.strictEqual(healthCalls, 0)
++})
++
++test("a reachable service is reused instead of starting a second instance", async () => {
++  let spawnCalls = 0
++  const started = await ensureMemoryService(configWith({ enabled: true }), {
++    health: async () => ({ status: "healthy" }),
++    spawn: () => { spawnCalls += 1 },
++  })
++  assert.strictEqual(started, null)
++  assert.strictEqual(spawnCalls, 0)
++})
++
++test("endpointPort keeps standard ports and rejects garbage", () => {
++  assert.strictEqual(endpointPort("http://127.0.0.1:8123"), 8123)
++  // URL drops :80 and :443, and the launcher must not fall back to 8000 while
++  // the plugin polls the standard port.
++  assert.strictEqual(endpointPort("http://127.0.0.1"), 80)
++  assert.strictEqual(endpointPort("https://memory.example.com"), 443)
++  assert.strictEqual(endpointPort("not a url"), null)
++})
++
++test("the default launcher is given the port of the configured endpoint", async () => {
++  const child = fakeChild()
++  const spawnCalls = []
++  let healthCalls = 0
++  const config = configWith({ enabled: true, startTimeoutMs: 5000 })
++  config.memoryService.endpoint = "http://127.0.0.1:8123"
++
++  const started = await ensureMemoryService(config, {
++    health: async () => {
++      healthCalls += 1
++      if (healthCalls === 1) throw new Error("down")
++      return { status: "healthy" }
++    },
++    sleep: noSleep,
++    platform: "linux",
++    spawn: (command, args, options) => {
++      spawnCalls.push({ command, args, options })
++      return child
++    },
++  })
++
++  assert.strictEqual(started, child)
++  // `memory launch` moves to a free port when 8123 is taken, so the plugin has
++  // to name the port its own endpoint uses.
++  assert.deepStrictEqual(spawnCalls, [{
++    command: "memory",
++    args: ["launch", "--port", "8123"],
++    options: {
++      stdio: "ignore",
++      windowsHide: true,
++      cwd: homedir(),
++      detached: true,
++    },
++  }])
++})
++
++test("a custom command is spawned exactly as configured", async () => {
++  const child = fakeChild()
++  const spawnCalls = []
++  let healthCalls = 0
++
++  const started = await ensureMemoryService(configWith({
++    enabled: true,
++    command: ["/opt/memory/start-service", "--background"],
++    startTimeoutMs: 5000,
++  }), {
++    health: async () => {
++      healthCalls += 1
++      if (healthCalls === 1) throw new Error("down")
++      return { status: "healthy" }
++    },
++    sleep: noSleep,
++    platform: "linux",
++    spawn: (command, args, options) => {
++      spawnCalls.push({ command, args, options })
++      return child
++    },
++  })
++
++  assert.strictEqual(started, child)
++  assert.strictEqual(spawnCalls.length, 1)
++  assert.strictEqual(spawnCalls[0].command, "/opt/memory/start-service")
++  assert.deepStrictEqual(spawnCalls[0].args, ["--background"])
++})
++
++test("Windows does not detach the child", async () => {
++  let detached
++  await ensureMemoryService(configWith({ enabled: true, startTimeoutMs: 50 }), {
++    health: async () => { throw new Error("down") },
++    sleep: noSleep,
++    platform: "win32",
++    spawn: (_command, _args, options) => { detached = options.detached; return fakeChild() },
++  })
++  assert.strictEqual(de
+```
+
+---
+
+### Incident Patch 2: `1bac43e2` (2026-11-22)
+**Commit Message**: feat(consolidation): record every run as a memory (#2097) (#2106)
+
+* feat(consolidation): record every run as a memory (#2097)
+
+Each run of consolidate() now stores one consolidation-run memory from
+its finally block: scheduled, manual, failed and cancelled runs, tagged
+horizon:<h> and node:<id>, with the report counters, errors, run id and
+trigger in its metadata. Each node keeps its newest
+MCP_CONSOLIDATION_RUN_LOG_KEEP runs (default 50).
+
+Consolidation, forgetting, compression and insight cards skip these
+memories. GET /api/consolidation/runs lists them by node and horizon.
+
+Part of #2097
+
+* fix(consolidation): bound the run log write so a timed-out run returns promptly
+
+The MCP tool cancels an incremental run after 10 s and waits for its finally block. On Cloudflare the log write and pruning could retry for minutes there. They now get RUN_LOG_TIMEOUT_SECONDS (5 s); past that the log is dropped with a warning and the completion is still sent.
+
+---------
+
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/2097.added.md` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++- **Every consolidation run is recorded as a memory, so its history survives restarts and reaches other nodes (#2097, seung-waedet).**
++  A run used to leave nothing behind but an SSE event and, for scheduled runs, an
++  in-memory list the next restart cleared, so a failed overnight run or a run on
++  another node could not be seen. `consolidate()` now stores one `consolidation-run`
++  memory per run, scheduled, manual or failed, tagged `horizon:<h>` and `node:<id>`
++  (`MCP_AGENT_ID`, else the hostname), with the report counters, the errors, the run
++  id and a new `trigger` (`scheduled` or `manual`) in its metadata. The normal sync
++  carries it to other nodes, and a failing write never fails the run. Incremental runs
++  that found nothing are not recorded. Each node keeps its newest 50 runs
++  (`MCP_CONSOLIDATION_RUN_LOG_KEEP`); set `MCP_AGENT_ID` where the hostname changes, as
++  in containers, or every new hostname starts a history of its own. Consolidation,
++  forgetting, compression and insight cards skip these memories.
++  `GET /api/consolidation/runs` (read scope) lists them newest first, filtered by
++  `node` and `horizon`.
+```
+
+**File**: `src/mcp_memory_service/config/consolidation.py` (modified, +4/-1)
+```diff
+@@ -80,7 +80,10 @@
  
-     try:
--        if sys.platform == 'win32':
--            # Windows: Start a new process, then exit
-+        if sys.platform != 'win32':
-+            # Linux/Mac: Replace process with execv
-+            os.execv(sys.executable, args)
-+        elif _is_supervised():
-+            # Under the Windows wrapper: exit with the restart code; the wrapper
-+            # relaunches once the port is free, so no unmanaged replacement.
-+            _exit_process(SUPERVISED_RESTART_EXIT_CODE)
-+        else:
-+            # Windows, unsupervised: start a new process, then exit
-             subprocess.Popen(
-                 args,
-                 creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+     # Incremental consolidation settings
+     'batch_size': int(os.getenv('MCP_CONSOLIDATION_BATCH_SIZE', '500')),
+-    'incremental_mode': os.getenv('MCP_CONSOLIDATION_INCREMENTAL', 'true').lower() == 'true'
++    'incremental_mode': os.getenv('MCP_CONSOLIDATION_INCREMENTAL', 'true').lower() == 'true',
++
++    # Run log settings
++    'run_log_keep': safe_get_int_env('MCP_CONSOLIDATION_RUN_LOG_KEEP', 50, min_value=1),
+ }
+ 
+ # Consolidation scheduling settings (for APScheduler integration)
+```
+
+**File**: `src/mcp_memory_service/consolidation/base.py` (modified, +3/-0)
+```diff
+@@ -100,6 +100,9 @@ class ConsolidationConfig:
+     batch_size: int = 500  # Memories to process per consolidation run
+     incremental_mode: bool = True  # Enable oldest-first batch processing
+ 
++    # Run log settings
++    run_log_keep: int = 50  # Run log memories each node keeps (#2097)
++
+ @dataclass
+ class ConsolidationReport:
+     """Report of consolidation operations performed."""
+```
+
+**File**: `src/mcp_memory_service/consolidation/compression.py` (modified, +6/-3)
+```diff
+@@ -27,9 +27,12 @@
+ from ..models.memory import Memory
+ 
+ # Tags on memories the service or its hooks write without the user: discovered
+-# associations and auto-captured session summaries (Claude Code and opencode
+-# hooks). Earlier compression output is matched by COMPRESSION_OUTPUT_TAGS.
+-SELF_GENERATED_TAGS = frozenset({'association', 'session-consolidation', 'session-summary'})
++# associations, consolidation run logs and auto-captured session summaries
++# (Claude Code and opencode hooks). Earlier compression output is matched by
++# COMPRESSION_OUTPUT_TAGS.
++SELF_GENERATED_TAGS = frozenset({
++    'association', 'consolidation-run', 'session-consolidation', 'session-summary',
++})
+ 
+ # _aggregate_tags puts both on every pattern this engine writes. 'compressed'
+ # alone is not enough: forgetting uses it for shortened user memories too.
+```
+
+**File**: `src/mcp_memory_service/consolidation/consolidator.py` (modified, +64/-17)
+```diff
+@@ -45,6 +45,7 @@
+     RelationshipInferenceEngine,
+     apply_review_band,
+ )
++from .run_log import RUN_LOG_TYPE, build_run_log, store_run_log
+ from .run_tracker import RunTracker
+ from ..compat import _sanitize_log_value
+ from ..utils.time_parser import memory_statement_time
+@@ -61,6 +62,11 @@
+ # Receives (event_type, data). The consolidator awaits it and swallows its errors.
+ ConsolidationNotifier = Callable[[str, Dict[str, Any]], Awaitable[None]]
+ 
++# Deadline for storing a run log and pruning old ones (#2097). It also runs
++# when a timeout cancels the run, where a remote backend's retries would
++# otherwise hold the caller for minutes.
++RUN_LOG_TIMEOUT_SECONDS = 5.0
++
+ 
+ def _said_at(memory: Memory) -> float:
+     """When a memory was said (see memory_statement_time), 0.0 if unknown (#1858)."""
+@@ -81,7 +87,11 @@ def _supersede_pair(source: Memory, target: Memory) -> Tuple[str, str]:
+ # Protocol for storage backend interface
+ class StorageProtocol(Protocol):
+     async def get_all_memories(
+-        self, memory_type: Optional[str] = None
++        self,
++        limit: Optional[int] = None,
++        offset: int = 0,
++        memory_type: Optional[str] = None,
++        tags: Optional[List[str]] = None,
+     ) -> List[Memory]: pass
+     async def get_memories_by_time_range(
+         self, start_time: float, end_time: float, include_embeddings: bool = False
+@@ -410,12 +420,15 @@ def _resolve_tracker_db_path(self) -> Optional[Path]:
+             self.logger.debug("BASE_DIR unavailable for consolidation run tracker")
+         return None
+ 
+-    async def consolidate(self, time_horizon: str, **kwargs) -> ConsolidationReport:
++    async def consolidate(
++        self, time_horizon: str, trigger: str = "manual", **kwargs
++    ) -> ConsolidationReport:
+         """
+         Run full consolidation pipeline for given time horizon.
+ 
+         Args:
+             time_horizon: 'daily', 'weekly', 'monthly', 'quarterly', 'yearly'
++            trigger: 'scheduled' or 'manual', recorded in the run log
+             **kwargs: Additional parameters for consolidation
+ 
+         Returns:
+@@ -472,24 +485,55 @@ async def consolidate(self, time_horizon: str, **kwargs) -> ConsolidationReport:
+             self.health_monitor.record_error(
+                 "consolidator", e, {"time_horizon": time_horizon}
              )
--        else:
--            # Linux/Mac: Replace process with execv
--            os.execv(sys.executable, args)
--
--        # Exit current process (Windows only reaches here)
--        sys.exit(0)
-+            _exit_process(0)
-     except PermissionError:
-         logger.error("Failed to restart server: insufficient permissions")
-     except FileNotFoundError:
-         logger.error("Failed to restart server: executable not found: %s", _sanitize_log_value(sys.executable))
-     except Exception as e:
-         logger.error("Failed to restart server: %s - %s", _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
--        sys.exit(1)
-+        _exit_process(1)
++            report.errors.append(str(e))
+             raise
+         except Exception as e:
+             self.logger.error("Error during %s consolidation: %s", _sanitize_log_value(time_horizon), _sanitize_log_value(e))
+             self.health_monitor.record_error(
+                 "consolidator", e, {"time_horizon": time_horizon}
+             )
+-            report.errors.append(str(e))
+             return self._finalize_report(report, [str(e)])
++        except asyncio.CancelledError:
++            report.errors.append("Cancelled")
++            raise
+         finally:
+             if is_incremental and self.run_tracker:
+                 self.run_tracker.release("incremental")
+             if run_id is not None:
+                 # Also reached on cancellation (a timeout around this call),
+                 # where succeeded is still False.
+-                await self._notify(
+-                    CONSOLIDATION_COMPLETED,
+-                    {"run_id": run_id, "time_horizon": time_horizon, "success": succeeded},
+-                )
++                try:
++                    await self._log_run(report, run_id, trigger, succeeded)
++                finally:
++                    await self._notify(
++                        CONSOLIDATION_COMPLETED,
++                        {
++                            "run_id": run_id,
++                            "time_horizon": time_horizon,
++                            "success": succeeded,
++                        },
++                    )
++
++    async def _log_run(
++        self, report: ConsolidationReport, run_id: str, trigger: str, succeeded: bool
++    ) -> None:
++        """Store the run as a run log memory; its failure never fails the run (#2097).
++
++        Incremental runs that found nothing to do are not logged.
++        """
++        nothing_done = succeeded and not report.memories_processed
++        if report.time_horizon == "incremental" and nothing_done:
++            return
++        try:
++            run_log = build_run_log(report, run_id, trigger, succeeded)
++            await asyncio.wait_for(
++                store_run_log(self.storage, run_log, self.config.run_log_keep),
++                timeout=RUN_LOG_TIMEOUT_SECONDS,
++            )
++        except Exception as exc:
++            self.logger.warning(
++                "Failed to store consolidation run log: %s", _sanitize_log_value(exc)
++            )
  
- 
- # Endpoints
+     async def _notify(self, event_type: str, data: Dict[str, Any]) -> None:
+         """Hand one lifecycle event to the notifier; its failure never fails the run."""
+@@ -761,21 +805,26 @@ async def _get_memories_for_horizon(
+             # Bootstrap: use the configu
 ```
 
-**File**: `tests/web/api/test_server_management.py` (modified, +118/-0)
+**File**: `src/mcp_memory_service/consolidation/insights.py` (modified, +2/-0)
 ```diff
-@@ -32,6 +32,7 @@
- import importlib.util
- import os
- import shutil
-+import subprocess
- import sys
- from types import SimpleNamespace
+@@ -17,6 +17,7 @@
  
-@@ -477,3 +478,120 @@ def test_refused_update_leaves_no_backup(test_app, fake_backup):
+ from ..compat import _sanitize_log_value
+ from ..models.memory import Memory
++from .run_log import RUN_LOG_TYPE
  
-     assert response.status_code == 409
-     assert fake_backup.events == []
+ 
+ @dataclass
+@@ -67,6 +68,7 @@ def generate_insights(
+         Returns:
+             List of InsightCard objects.
+         """
++        memories = [m for m in memories if m.get("memory_type") != RUN_LOG_TYPE]
+         insights: List[InsightCard] = []
+         insights.extend(self._detect_patterns(memories))
+         insights.extend(self._detect_trends(memories))
+```
+
+**File**: `src/mcp_memory_service/consolidation/run_log.py` (added, +81/-0)
+```diff
+@@ -0,0 +1,81 @@
++"""One memory per consolidation run, so the history syncs like any memory (#2097)."""
++
++import os
++import socket
++from datetime import datetime
++
++from ..models.memory import Memory
++from ..storage.base import MemoryStorage
++from ..utils.hashing import generate_content_hash
++from .base import ConsolidationReport
++
++RUN_LOG_TYPE = "consolidation-run"
++
++_MAX_ERRORS = 10
++_MAX_ERROR_CHARS = 500
 +
 +
-+# Restart under the Windows wrapper (#1943)
-+#
-+# A BackgroundTask that calls sys.exit() only raises SystemExit, which Starlette
-+# logs as an ASGI exception while the server keeps serving. The restart has to
-+# end the process with os._exit(): with the wrapper's marker set it exits with
-+# the restart code and spawns nothing, otherwise it spawns a replacement first.
-+
-+@pytest.fixture
-+def windows_restart(monkeypatch):
-+    """Run _restart_server_delayed as on Windows, recording os._exit and Popen."""
-+    calls = SimpleNamespace(exits=[], popen=[])
-+    monkeypatch.setattr(sys, 'platform', 'win32')
-+    monkeypatch.setattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 512, raising=False)
-+    monkeypatch.setattr(server_module, 'RESTART_DELAY_SECONDS', 0)
-+    monkeypatch.setattr(server_module.os, '_exit', lambda code: calls.exits.append(code))
-+
-+    def fake_popen(*args, **kwargs):
-+        calls.popen.append(args)
-+
-+    monkeypatch.setattr(server_module.subprocess, 'Popen', fake_popen)
-+    return calls
-+
-+
-+async def test_supervised_restart_exits_with_the_restart_code_and_spawns_nothing(windows_restart, monkeypatch):
-+    monkeypatch.setenv('MCP_WRAPPER_SUPERVISED', '1')
-+
-+    await server_module._restart_server_delayed()
-+
-+    assert windows_restart.exits == [75]
-+    assert windows_restart.popen == []
-+
-+
-+async def test_unsupervised_windows_restart_spawns_then_exits_zero(windows_restart, monkeypatch):
-+    monkeypatch.delenv('MCP_WRAPPER_SUPERVISED', raising=False)
-+
-+    await server_module._restart_server_delayed()
-+
-+    assert len(windows_restart.popen) == 1
-+    assert windows_restart.exits == [0]
-+
-+
-+async def test_restart_error_path_exits_with_os_exit(windows_restart, monkeypatch):
-+    monkeypatch.delenv('MCP_WRAPPER_SUPERVISED', raising=False)
-+
-+    def broken_popen(*args, **kwargs):
-+        raise OSError('boom')
-+
-+    monkeypatch.setattr(server_module.subprocess, 'Popen', broken_popen)
-+
-+    await server_module._restart_server_delayed()
-+
-+    assert windows_restart.exits == [1]
-+
-+
-+def test_restart_exit_code_avoids_the_codes_python_and_uv_already_use():
-+    assert server_module.SUPERVISED_RESTART_EXIT_CODE not in {0, 1, 2, 3, 130, 143, 0xC000013A}
-+
-+
-+# Runs the restart in a real interpreter, the way the ASGI server does: uvicorn
-+# catches BaseException from a background task and goes on serving, so anything
-+# that raises SystemExit instead of ending the process shows up as STILL RUNNING.
-+# Popen is stubbed so that a regression cannot spawn a real replacement.
-+_RESTART_PROBE = '''
-+import asyncio, subprocess
-+from mcp_memory_service.web.api import server
-+server.RESTART_DELAY_SECONDS = 0
-+
-+def popen(*args, **kwargs):
-+    print('POPEN CALLED')
-+    if {fail}:
-+        raise OSError('boom')
-+
-+subprocess.Popen = popen
-+try:
-+    asyncio.run(server._restart_server_delayed())
-+except BaseException as exc:
-+    print('SWALLOWED', type(exc).__name__)
-+print('STILL RUNNING')
-+'''
-+
-+
-+def _run_restart_probe(env_extra, fail_popen=False):
-+    env = {k: v for k, v in os.environ.items() if k != 'MCP_WRAPPER_SUPERVISED'}
-+    env.update(env_extra)
-+    return subprocess.run(
-+        [sys.executable, '-c', _RESTART_PROBE.format(fail=fail_popen)],
-+        check=False, capture_output=True, text=True, env=env, timeout=60,
++def build_run_log(
++    report: ConsolidationReport, run_id: str, trigger: str, success: bool
++) -> Memory:
++    """The log memory for one run, filed under ``MCP_AGENT_ID`` or else the hostname."""
++    agent_id = os.environ.get("MCP_AGENT_ID")
++    hostname = socket.gethostname()
++    node = agent_id or hostname
++    ended_at = datetime.now()
++    duration = (ended_at - report.start_time).total_seconds()
++    status = "" if success else ", failed"
++    content = (
++        f"Consolidation {report.time_horizon} on {node}: "
++        f"{report.memories_processed} processed, "
++        f"{report.associations_discovered} associations, "
++        f"{report.clusters_created} clusters, "
++        f"{report.memories_compressed} compressed, "
++        f"{report.memories_archived} archived, "
++        f"{duration:.0f} s{status} (run {run_id})"
++    )
++    return Memory(
++        content=content,
++        content_hash=generate_content_hash(content),
++        tags=[RUN_LOG_TYPE, f"horizon:{report.time_horizon}", f"node:{node}"],
++        memory_type=RUN_LOG_TYPE,
++        metadata={
++            "run_id": run_id,
++            "node": node,
++            "horizon": report.time_horizon,
++            "trigger": trigger,
++            "agent_id": agent_id,
++            "hostname": hostname,
++            "started_at": report.start_time.timestamp(),
++            "ended_at": ended_at.timestamp(),
++            "duration_seconds": duration,
++            "success": success,
++            "memories_processed": report.memories_processed,
++            "associations_discovered": report.associations_discovered,
++            "clusters_created": report.clusters_created,
++            "memories_compressed": report.memories_compressed,
++            "memories_archived": report.memories_archived,
++            "errors": [
++                error[:_MAX_ERROR_CHARS] for error in report.errors[:_MAX_ERRORS]
++            ],
++        },
 +    )
 +
 +
-+@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
-+def test_supervised_restart_really_ends_the_process_with_the_restart_code():
-+    proc = _run_restart_probe({'MCP_WRAPPER_SUPERVISED': '1'})
++async def store_run_log(storage: MemoryStorage, run_log: Memory, keep: int) -> None:
++    """Store *run_log*, then delete this node's runs beyond the newest *keep*."""
++    stored, message = await storage.store(run_log, skip_semantic_dedup=True)
++    if not stored:
++        raise RuntimeError(message)
++    node_tags = [f"node:{run_log.metadata['node']}"]
++    overflow = (
++        await storage.count_all_memories(memory_type=RUN_LOG_TYPE, tags=node_tags)
++        - keep
++    )
++    if overflow <= 0:
++        return
++    stale = await storage.get_all_memories(
++        limit=overflow, offset=keep, memory_type=RUN_LOG_TYPE, tags=node_tags
++    )
++    for run in stale:
++        await storage.delete(run.content_hash)
+```
+
+**File**: `src/mcp_memory_service/consolidation/scheduler.py` (modified, +3/-1)
+```diff
+@@ -890,7 +890,9 @@ async def _run_consolidation_job(self, time_horizon: str):
+         
+         try:
+             # Run the consolidation
+-            report = await self.consolidator.consolidate(time_horizon)
++            report = await self.consolidator.consolidate(
++                time_horizon, trigger="scheduled"
++            )
+             
+             # Run belief derivation (opt-in via MCP_BELIEFS_ENABLED)
+             belief_stats = {}
+```
+
+---
+
+### Incident Patch 3: `8e251a70` (2026-11-22)
+**Commit Message**: fix(dashboard): report removals and bulk deletes to the status island instead of covering the page (#2107)
+
+* fix(dashboard): report removals and bulk deletes to the status island instead of covering the page
+
+* fix(dashboard): guard document removal per upload id
+
+A language switch re-renders the recent memories list and wires a fresh, enabled Remove button while the DELETE is still in flight, so a second click started a second removal for the same upload id and both wrote to the same island source. Track pending removals on the dashboard object, return early for an id that is already running and keep re-rendered buttons disabled until the request settles.
+
+* fix(dashboard): re-enable the removal button a re-render replaced
+
+A language switch re-renders the recent memories list (and the upload history)
+while a DELETE is in flight. The fresh button was disabled for the pending
+upload, but finally re-enabled only the node removeDocument() had been handed,
+so a failed removal left the visible Remove button dead until the next render.
+Track the button on screen per pending upload and re-enable that one.
+
+The repeat-click guard now runs before the confirm dialog and before
+_clearOperat
+
+**File**: `changelog.d/2107.fixed.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- **Document removal and the bulk operations no longer cover the dashboard with the
++  loading overlay (#2009).** `removeDocument()` and the four Manage bulk operations now
++  report busy to the status island on their existing sources, clear the entry on success
++  and keep their failure there, disable the triggering button while the request runs and
++  rely on it instead of `setLoading(true)`. A removal in flight is tracked per upload id,
++  so a re-render cannot start a second delete for the same document. The overlay stays on
++  the view loads, search, the document viewer and ontology writes, which the island does
++  not report.
+```
+
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +97/-13)
+```diff
+@@ -98,6 +98,13 @@ class MemoryDashboard {
+         this.isLoading = false;
+         this.liveSearchEnabled = true;
+         this.debounceTimer = null;
++        // Upload ids with a removal in flight. A re-render replaces the button with an
++        // enabled one, so the guard has to live on the dashboard, not on the DOM node.
++        this._pendingRemovals = new Set();
++        // The button currently on screen per pending upload. A re-render replaces the
++        // node removeDocument() was handed, and the finally block has to re-enable the
++        // visible one or a failed removal cannot be retried.
++        this._pendingRemovalButtons = new Map();
+ 
+         // Authentication state
+         this.authState = {
+@@ -1612,6 +1619,11 @@ class MemoryDashboard {
+         }).join('');
+ 
+         historyContainer.innerHTML = historyHtml;
++        // A re-render during a removal rebuilds these buttons; keep the ones that
++        // are on screen now disabled and reachable from the finally block.
++        historyContainer.querySelectorAll('.upload-item').forEach((item) => {
++            this._trackRemovalButton(item.dataset.uploadId, item.querySelector('.btn-remove'));
++        });
+     }
+ 
+     /**
+@@ -1782,7 +1794,7 @@ class MemoryDashboard {
+                 if (button.classList.contains('btn-view-memory')) {
+                     this.viewDocumentMemory(uploadId);
+                 } else if (button.classList.contains('btn-remove')) {
+-                    this.removeDocument(uploadId, filename);
++                    this.removeDocument(uploadId, filename, button);
+                 }
+             });
+         }
+@@ -4073,9 +4085,11 @@ class MemoryDashboard {
+                 // Remove button
+                 const removeBtn = groupEl.querySelector('.btn-remove');
+                 if (removeBtn) {
++                    // A re-render during a removal must not hand out a fresh, enabled button.
++                    this._trackRemovalButton(group.upload_id, removeBtn);
+                     removeBtn.addEventListener('click', async (e) => {
+                         e.stopPropagation();
+-                        await this.removeDocument(group.upload_id, group.source_file);
++                        await this.removeDocument(group.upload_id, group.source_file, removeBtn);
+                         // removeDocument() already handles view refresh
+                     });
+                 }
+@@ -5236,17 +5250,34 @@ class MemoryDashboard {
+     /**
+      * Remove document and its memories
+      */
+-    async removeDocument(uploadId, filename) {
++    async removeDocument(uploadId, filename, button = null) {
+         console.log('removeDocument called with:', { uploadId, filename, currentView: this.currentView });
+ 
++        // One removal per upload: a second click after a re-render (Dashboard or
++        // Documents) must not start another DELETE, and it must not clear the island
++        // row that the running removal owns.
++        if (this._pendingRemovals.has(uploadId)) {
++            console.log('Removal already in flight for:', uploadId);
++            return;
++        }
 +
-+    assert proc.returncode == 75, (proc.stdout, proc.stderr)
-+    assert 'STILL RUNNING' not in proc.stdout
-+    assert 'POPEN CALLED' not in proc.stdout
-+
-+
-+@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
-+def test_unsupervised_restart_really_ends_the_process_after_spawning():
-+    proc = _run_restart_probe({})
-+
-+    assert proc.returncode == 0, (proc.stdout, proc.stderr)
-+    assert 'POPEN CALLED' in proc.stdout
-+    assert 'STILL RUNNING' not in proc.stdout
-+
-+
-+@pytest.mark.skipif(sys.platform != 'win32', reason='the restart branches under test are the Windows ones')
-+def test_failed_restart_really_ends_the_process_instead_of_raising_system_exit():
-+    proc = _run_restart_probe({}, fail_popen=True)
-+
-+    assert proc.returncode == 1, (proc.stdout, proc.stderr)
-+    assert 'STILL RUNNING' not in proc.stdout
-+    assert 'SWALLOWED' not in proc.stdout
+         if (!confirm(this.t('documents.removeConfirm', 'Remove "{filename}" and all its memory chunks?\n\nThis action cannot be undone.', { filename }))) {
+             console.log('User cancelled removal');
+             return;
+         }
+ 
+         this._clearOperationError(`document-remove-${uploadId}`);
++        this._pendingRemovals.add(uploadId);
++        this._pendingRemovalButtons.set(uploadId, button);
++        // No page overlay: the island shows the removal, the button shows it is running.
++        if (button) button.disabled = true;
++        this._reportOperation(`document-remove-${uploadId}`, {
++            state: 'busy',
++            progress: 'unknown',
++            label: { fallback: filename },
++            text: { key: 'island.document.removing', fallback: 'Removing document' },
++        });
+         try {
+-            this.setLoading(true);
+             console.log('Making DELETE request to:', `/documents/remove/${uploadId}`);
+ 
+             const response = await this.apiCall(`/documents/remove/${uploadId}`, 'DELETE');
+@@ -5261,6 +5292,7 @@ class MemoryDashboard {
+                     }),
+                     'success'
+                 );
++                this.statusIsland?.clear(`document-remove-${uploadId}`);
+                 // Refresh the current view (Dashboard or Documents tab)
+                 console.log('Refreshing view:', this.currentView);
+                 if (this.currentView === 'dashboard') {
+@@ -5285,10 +5317,26 @@ class MemoryDashboard {
+                 { fallback: filename }
+             );
+         } finally {
+-            this.setLoading(false);
++            // A re-render while the request ran replaced the button we were handed;
++            // re-enable the one that is on screen now so a failed removal can be
++            // retried without waiting for the next render.
++            const current = this._p
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +2/-0)
+```diff
+@@ -296,6 +296,7 @@
+   "manage.bulk.deleteUntagged.title": "Ohne Tags löschen",
+   "manage.bulk.deleteUntagged.desc": "Erinnerungen ohne Tags entfernen ({count} gefunden)",
+   "manage.bulk.deleteUntagged.confirm": "{count} Erinnerungen ohne Tags löschen?",
++  "manage.bulk.deleting": "Erinnerungen werden gelöscht",
+   "manage.bulk.deleteDate.title": "Nach Datum löschen",
+   "manage.bulk.deleteTag.desc": "Alle Erinnerungen mit spezifischem Tag entfernen",
+   "manage.bulk.deleteTag.placeholder": "Tag auswählen...",
+@@ -625,6 +626,7 @@
+   "island.upload.completed": "Importiert",
+   "island.upload.failed": "Import fehlgeschlagen",
+   "island.upload.partial": "Mit Fehlern importiert: {error}",
++  "island.document.removing": "Dokument wird entfernt",
+   "island.source.consolidation": "Konsolidierung",
+   "island.consolidation.completed": "Abgeschlossen ({horizon})",
+   "island.consolidation.failed": "Fehlgeschlagen ({horizon})",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +2/-0)
+```diff
+@@ -438,6 +438,7 @@
+   "manage.bulk.deleteUntagged.title": "Delete Untagged",
+   "manage.bulk.deleteUntagged.desc": "Remove memories without any tags ({count} found)",
+   "manage.bulk.deleteUntagged.confirm": "Delete {count} memories without tags?",
++  "manage.bulk.deleting": "Deleting memories",
+   "manage.tags.title": "Tag Management",
+   "manage.tags.loading": "Loading tag statistics...",
+   "manage.tags.loadFailed": "Failed to load tag statistics",
+@@ -646,6 +647,7 @@
+   "island.upload.completed": "Imported",
+   "island.upload.failed": "Import failed",
+   "island.upload.partial": "Imported with errors: {error}",
++  "island.document.removing": "Removing document",
+   "island.source.consolidation": "Consolidation",
+   "island.consolidation.completed": "Finished ({horizon})",
+   "island.consolidation.failed": "Failed ({horizon})",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +2/-0)
+```diff
+@@ -296,6 +296,7 @@
+   "manage.bulk.deleteUntagged.title": "Eliminar sin etiquetas",
+   "manage.bulk.deleteUntagged.desc": "Eliminar memorias sin etiquetas ({count} encontradas)",
+   "manage.bulk.deleteUntagged.confirm": "¿Eliminar {count} memorias sin etiquetas?",
++  "manage.bulk.deleting": "Eliminando memorias",
+   "manage.bulk.deleteDate.title": "Eliminar por Fecha",
+   "manage.bulk.deleteTag.desc": "Eliminar todas las memorias con una etiqueta específica",
+   "manage.bulk.deleteTag.placeholder": "Seleccionar etiqueta...",
+@@ -625,6 +626,7 @@
+   "island.upload.completed": "Importado",
+   "island.upload.failed": "Error al importar",
+   "island.upload.partial": "Importado con errores: {error}",
++  "island.document.removing": "Eliminando el documento",
+   "island.source.consolidation": "Consolidación",
+   "island.consolidation.completed": "Completada ({horizon})",
+   "island.consolidation.failed": "Fallida ({horizon})",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +2/-0)
+```diff
+@@ -296,6 +296,7 @@
+   "manage.bulk.deleteUntagged.title": "Supprimer sans tags",
+   "manage.bulk.deleteUntagged.desc": "Supprimer les mémoires sans tags ({count} trouvées)",
+   "manage.bulk.deleteUntagged.confirm": "Supprimer {count} mémoires sans tags ?",
++  "manage.bulk.deleting": "Suppression des mémoires",
+   "manage.bulk.deleteDate.title": "Supprimer par Date",
+   "manage.bulk.deleteTag.desc": "Supprimer toutes les mémoires avec un tag spécifique",
+   "manage.bulk.deleteTag.placeholder": "Sélectionner un tag...",
+@@ -625,6 +626,7 @@
+   "island.upload.completed": "Importé",
+   "island.upload.failed": "Échec de l'importation",
+   "island.upload.partial": "Importé avec des erreurs : {error}",
++  "island.document.removing": "Suppression du document",
+   "island.source.consolidation": "Consolidation",
+   "island.consolidation.completed": "Terminée ({horizon})",
+   "island.consolidation.failed": "Échec ({horizon})",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +2/-0)
+```diff
+@@ -438,6 +438,7 @@
+   "manage.bulk.deleteUntagged.title": "बिना टैग वाले हटाएँ",
+   "manage.bulk.deleteUntagged.desc": "बिना किसी टैग की मेमोरी हटाएँ ({count} मिलीं)",
+   "manage.bulk.deleteUntagged.confirm": "बिना टैग की {count} मेमोरी हटाएँ?",
++  "manage.bulk.deleting": "मेमोरी हटाई जा रही हैं",
+   "manage.tags.title": "टैग प्रबंधन",
+   "manage.tags.loading": "टैग आँकड़े लोड हो रहे हैं...",
+   "manage.tags.loadFailed": "टैग आँकड़े लोड नहीं हो सके",
+@@ -646,6 +647,7 @@
+   "island.upload.completed": "आयात हुआ",
+   "island.upload.failed": "आयात विफल",
+   "island.upload.partial": "त्रुटियों के साथ आयात हुआ: {error}",
++  "island.document.removing": "दस्तावेज़ हटाया जा रहा है",
+   "island.source.consolidation": "समेकन",
+   "island.consolidation.completed": "पूरा हुआ ({horizon})",
+   "island.consolidation.failed": "विफल ({horizon})",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/id.json` (modified, +2/-0)
+```diff
+@@ -438,6 +438,7 @@
+   "manage.bulk.deleteUntagged.title": "Hapus yang tanpa tag",
+   "manage.bulk.deleteUntagged.desc": "Hapus memori tanpa tag ({count} ditemukan)",
+   "manage.bulk.deleteUntagged.confirm": "Hapus {count} memori tanpa tag?",
++  "manage.bulk.deleting": "Menghapus memori",
+   "manage.tags.title": "Manajemen Tag",
+   "manage.tags.loading": "Memuat statistik tag...",
+   "manage.tags.loadFailed": "Gagal memuat statistik tag",
+@@ -646,6 +647,7 @@
+   "island.upload.completed": "Diimpor",
+   "island.upload.failed": "Impor gagal",
+   "island.upload.partial": "Diimpor dengan kesalahan: {error}",
++  "island.document.removing": "Menghapus dokumen",
+   "island.source.consolidation": "Konsolidasi",
+   "island.consolidation.completed": "Selesai ({horizon})",
+   "island.consolidation.failed": "Gagal ({horizon})",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2105** (2026-11-21): fix(web): restart under the Windows wrapper by exit code, not sys.exit (@munjikesh)
-- **PR #2103** (2026-11-20): chore(release): v13.0.0 (@doobidoo)
-- **PR #2101** (2026-11-20): fix(api): pull the configured ref and back up before a server update (#2100) (@PloneMraz)
-- **PR #2099** (2026-11-20): feat(service): let a server follow release tags on its own (@doobidoo)
-- **PR #2095** (2026-11-20): docs(contributing): name PEP 20 as the tie-breaker where the style guide is silent (@doobidoo)
-- **PR #2092** (2026-11-19): fix(cli): accept comma-separated extensions in directory ingestion (@alksv1)
+- **PR #2116** (2026-11-22): test(dsh): add a live functional test for the bundle (@doobidoo)
+- **PR #2115** (2026-11-22): feat(dsh): capture turn outcomes and skip non-project directories (@doobidoo)
+- **PR #2114** (2026-11-22): feat(dsh): inject project memories into new DeepSeek Harness agents (@doobidoo)
+- **PR #2113** (2026-11-22): docs(changelog): record the DeepSeek Harness integration from #2112 (@doobidoo)
+- **PR #2112** (2026-11-22): docs(dsh): connect the service to DeepSeek Harness over MCP (@doobidoo)
+- **PR #2110** (2026-11-22): refactor(dashboard): remove the dead full-page loading overlay (#2096) (@doobidoo)
 
 ---
 
@@ -3309,22 +3977,34 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): restart under the Windows wrapper by exit code, not sys.exit
+## X. opencode): start the memory service when nothing answers
 
 **RULE**:
-When implementing operations in `changelog.d/1943.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/2109.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a10d8f79`: web): restart under the Windows wrapper by exit code, not sys.exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ca7d81c`: opencode): start the memory service when nothing answers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1943.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2109.added.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Windows dashboard restart left the old server running, and the scheduled-task wrapper misread exit codes (#1943, munjikesh).**
-  The restart background task called `sys.exit()`, which only raises `SystemExit` inside the ASGI app, so the process kept serving. It now ends with `os._exit()`: under `run_http_server_background.ps1` (marked by `MCP_WRAPPER_SUPERVISED`) with exit code 75, which the wrapper relaunches at once without using up a crash attempt or the restart delay, and unsupervised after starting a replacement. The wrapper also reads `.Handle` after `Start-Process`, because Windows PowerShell 5.1 otherwise returns `$null` for the exit code and logged even a graceful stop as an error.
+- **The OpenCode plugin can start the memory service when nothing answers (#2088, testx1011).**
+  `memoryService.autoStart` is off by default. With `enabled: true` the plugin runs the
+  configured argv (`["memory", "launch"]` by default, with the port taken from
+  `memoryService.endpoint`, because `memory launch` moves to a free port when the
+  configured one is taken) once the health check fails, and waits under a single
+  `startTimeoutMs` deadline before the session continues without memories. The launcher
+  runs from the user's home directory, so a cloned checkout cannot shadow `uvicorn` or
+  supply the server's `.env`, and the start decision uses the storage-free
+  `/api/health`, so a slow detailed check cannot make a running service look stopped. A
+  reachable endpoint is used as-is and a started service is never stopped: the
+  dashboard, a second editor and other MCP clients share it. The block is honoured from
+  the user configuration only, so a cloned repository cannot name the command the editor
+  runs; server settings such as `MCP_ALLOW_ANONYMOUS_ACCESS` stay in the service's own
+  `.env`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3334,7 +4014,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a10d8f79` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ca7d81c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
