@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T06:53:51.794Z",
-  "total_cycles_completed": 11687,
-  "total_learnings_persisted": 11687,
+  "last_updated": "2026-11-23T07:05:28.006Z",
+  "total_cycles_completed": 11688,
+  "total_learnings_persisted": 11688,
   "total_rules_promoted": 10865,
   "history": [
-    {
-      "timestamp": "2026-11-22T11:47:58.396Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T12:19:18.972Z",
       "repository": "maxwell-model/Maxwell-V1-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-23T06:53:51.794Z",
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T07:05:28.006Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-bigscience-bloom",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

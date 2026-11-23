@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T06:54:05.330Z",
+  "last_updated": "2026-11-23T07:05:42.392Z",
   "total_records": 2398,
   "domains": {
     "A": {
@@ -8168,8 +8168,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "71511afe5ba17f68588832fde6d58a5aacc67ffec13310398f894321d50c3d8b",
-      "created_at": "2026-11-23T06:54:04.476Z"
+      "content_hash": "b7c5e7a49dd12b75759cc81388209bb66d87b71155afd6fdc396ef79bd4a339f",
+      "created_at": "2026-11-23T07:05:41.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -11789,8 +11789,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "833df3fe5e24d761b7d06b3bfadcbe955599ca39ae3292364c9ca1bf1e64fb21",
-      "created_at": "2026-11-23T06:54:05.330Z"
+      "content_hash": "c33c7fe3abae259b1db0e8a45f2e570a061bf5325847e20b289b203b0b583188",
+      "created_at": "2026-11-23T07:05:42.392Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -13234,8 +13234,8 @@
       "title": "Research & Knowledge Intelligence: bigscience/bloom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-research-knowledge-intelligence-bigscience-bloom-core-invari.md",
       "repository": "bigscience/bloom",
-      "content_hash": "dbb85a8873960838f8689f9f60499a12863ff671ede198d7320974165650f567",
-      "created_at": "2026-11-18T21:42:09.090Z"
+      "content_hash": "24a330c1bea6a4cb9a71b10d86077ad4fe3c377760d6813f4ffea475a8c52f53",
+      "created_at": "2026-11-23T07:05:28.290Z"
     },
     "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants",
@@ -13294,8 +13294,8 @@
       "title": "Research & Knowledge Intelligence: hf-bigscience-bloom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-learnings-research-knowledge-intelligence-hf-bigscience-bloo.md",
       "repository": "hf-bigscience-bloom-learnings",
-      "content_hash": "19531d82b551d4beee5ffb006a34332f5dc217c28a495a2ad344c3130b6065e9",
-      "created_at": "2026-11-18T21:42:30.407Z"
+      "content_hash": "c9cae36a94e75507189dac5aae03cf137d7fe41621d5e35ed8079d640eff59d9",
+      "created_at": "2026-11-23T07:05:40.003Z"
     },
     "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants",

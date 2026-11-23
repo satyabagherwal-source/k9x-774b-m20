@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T06:54:05.497Z",
+  "last_updated": "2026-11-23T07:05:42.614Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "71511afe5ba17f68588832fde6d58a5aacc67ffec13310398f894321d50c3d8b",
+      "content_hash": "b7c5e7a49dd12b75759cc81388209bb66d87b71155afd6fdc396ef79bd4a339f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:54:04.476Z"
+      "persisted_at": "2026-11-23T07:05:41.202Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4d088879f23f307dc5026cc577fd4e2cec139b53815c5937f3b54a0063e4070",
+      "content_hash": "f2f25dfcdbf5390fc8b0a08da2d1ded51d8ddb38514c28c8645c89fe3f41ada1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:54:04.638Z"
+      "persisted_at": "2026-11-23T07:05:41.435Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "737d2df862838acb026161c29adff876a1a573244318c2631cc4d71d07a2d58a",
+      "content_hash": "afcc9a0633cb83dbf1adad53b0e9a833b809b6abde2f9eb5945cab3b1058b61f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:54:04.768Z"
+      "persisted_at": "2026-11-23T07:05:41.621Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -218996,13 +218996,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TZZE-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-8XSR-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "b514534e9fe72e99d2a5d3ae8b3a298a69c24da8c1c754a2db7953e401dc5510",
+      "content_hash": "e1aba3abe81e57ce4a5343bdc3a35d38227bc28563f7aba38f51a7885bb23777",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:54:05.163Z"
+      "persisted_at": "2026-11-23T07:05:42.172Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219012,9 +219012,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "833df3fe5e24d761b7d06b3bfadcbe955599ca39ae3292364c9ca1bf1e64fb21",
+      "content_hash": "c33c7fe3abae259b1db0e8a45f2e570a061bf5325847e20b289b203b0b583188",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:54:05.330Z"
+      "persisted_at": "2026-11-23T07:05:42.392Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219024,9 +219024,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "add20c662e1d42b11cf2cba644ba1d317747c955c3fdb1934a15fdbcb97ab1ad",
+      "content_hash": "edf590ab7f096ea21fac0d0f6ee7dc83700f236760c746b1c0257acfb7993255",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:54:05.497Z"
+      "persisted_at": "2026-11-23T07:05:42.614Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -223304,7 +223304,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "c6de7bc1a6848bf5a07acb7062a9d2aa21d77b0636521b6fb790aad555b10b45",
+      "content_hash": "eaf7ed6e08a33912548e196163590afe9c82d27376fb95d205ffa899e91a30b6",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [],
@@ -223313,7 +223313,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T21:42:08.709Z",
+      "verified_at": "2026-11-23T07:05:27.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223330,9 +223330,9 @@
       "title": "Research & Knowledge Intelligence: bigscience/bloom Core Invariants",
       "repository": "bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "dbb85a8873960838f8689f9f60499a12863ff671ede198d7320974165650f567",
+      "content_hash": "24a330c1bea6a4cb9a71b10d86077ad4fe3c377760d6813f4ffea475a8c52f53",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:42:09.090Z"
+      "persisted_at": "2026-11-23T07:05:28.290Z"
     },
     "learn-github-moby-buildkit": {
       "learning_id": "learn-github-moby-buildkit",
@@ -223624,9 +223624,9 @@
       "title": "Research & Knowledge Intelligence: hf-bigscience-bloom-learnings Core Invariants",
       "repository": "hf-bigscience-bloom-learnings",
       "source_version": "HEAD",
-      "content_hash": "19531d82b551d4beee5ffb006a34332f5dc217c28a495a2ad344c3130b6065e9",
+      "content_hash": "c9cae36a94e75507189dac5aae03cf137d7fe41621d5e35ed8079d640eff59d9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T21:42:30.407Z"
+      "persisted_at": "2026-11-23T07:05:40.003Z"
     },
     "candidate_directive-session-allow-large-filesync-pattern-lists": {
       "item_id": "candidate_directive-session-allow-large-filesync-pattern-lists",
@@ -310095,13 +310095,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TZBP-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-8WVF-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cc32622abe7926b4c7f49357936f75b070442f5fb6c658711a26fb7521fc2c1",
+      "content_hash": "7e325f7d706b91f2279bac62e85c2e6745fd03d9a3c84a92a1f126953b82d7be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:54:04.312Z"
+      "persisted_at": "2026-11-23T07:05:40.977Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

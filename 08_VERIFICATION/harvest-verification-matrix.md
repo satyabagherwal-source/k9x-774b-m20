@@ -12290,3 +12290,4 @@
 | `CYCLE-20261123-J62L` | `2026-11-23T06:45:39.837Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`476f4fd5...`) |
 | `CYCLE-20261123-JH5Z` | `2026-11-23T06:45:54.215Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8822` | Yes (`e8e73113...`) |
 | `CYCLE-20261123-TPNT` | `2026-11-23T06:53:51.785Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`66e6128f...`) |
+| `CYCLE-20261123-8MUX` | `2026-11-23T07:05:27.993Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`eaf7ed6e...`) |

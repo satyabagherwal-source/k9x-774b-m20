@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-9IHT",
-    "timestamp": "2026-11-21T07:58:47.777Z",
-    "repository": "MetrolistGroup/Metrolist",
-    "learningId": "learn-github-metrolistgroup-metrolist",
-    "contentHash": "90d0aeffeef1fde17680d2a1af6831b4e0a6930d1c8ff4947e8868983e101b88",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-9O5V",
     "timestamp": "2026-11-21T07:58:55.123Z",
     "repository": "sfu-db/connector-x",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-20b",
     "learningId": "learn-huggingface-openai-gpt-oss-20b",
     "contentHash": "66e6128f465c3ac56cc324736996c446f7fc8066be4988d1192373a72a1b5e7e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-8MUX",
+    "timestamp": "2026-11-23T07:05:27.993Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-bigscience-bloom",
+    "contentHash": "eaf7ed6e08a33912548e196163590afe9c82d27376fb95d205ffa899e91a30b6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
