@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-0FBB",
-    "timestamp": "2026-11-22T01:07:29.543Z",
-    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
-    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-    "contentHash": "765acd7442815b977e810f84150fa7213aba3b7f55f0703e4472455423b770df",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-LCGC",
-    "timestamp": "2026-11-22T01:23:45.612Z",
-    "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
-    "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-    "contentHash": "34e99b3ab676a5f451299e21e7b295db17ef032b029007fa76f5a2a671fb5098",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-LDJS",
     "timestamp": "2026-11-22T01:23:47.032Z",
     "repository": "grpc/grpc-rust",
@@ -7490,6 +7460,36 @@
     "repository": "agent-of-empires/agent-of-empires",
     "learningId": "learn-github-agent-of-empires-agent-of-empires",
     "contentHash": "39ff4df6afe7fc21fa3a767bd57fa02c15389142972090e9a1d3607a3fe7bfe6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-DLM1",
+    "timestamp": "2026-11-23T22:05:07.369Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "e7956b2e95598b4efd23193e606c4ddd22f643aeeadc6ddc75015e214fd603c6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-DY4E",
+    "timestamp": "2026-11-23T22:05:23.582Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "31ee597a4bb5f4cd5fb452d44c305b9a2846920a7e4586d47b67b9631b00aa81",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `e6dc9714`  
+> **Source Version**: `300ab8eb`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T20:17:05.934Z  
+> **Timestamp**: 2026-11-23T22:05:22.600Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:17:05.929Z  
+> **Harvest Timestamp**: 2026-11-23T22:05:22.595Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42608 stars
+- **Stars / Engagement**: 42661 stars
 
 ---
 
@@ -1495,1045 +1495,453 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e6dc9714` (2026-11-22)
-**Commit Message**: perf(ui): load deep-link previews alongside the tree (#8185)
+### Incident Patch 1: `c58b41d1` (2026-11-23)
+**Commit Message**: fix(plugins): keep a tool result's text when it comes as content blocks (#8263)
 
-* perf(ui): load deep-link previews alongside the tree
+* fix(plugins): keep a tool result's text when it comes as content blocks
 
-* fix(react): keep known file reads independent of stat
+pi and dsh tool results, and Codex dynamic tool calls, carry their output
+as a list of content blocks. The shared capture code passed that list to
+JSON.stringify, so the stored tool_output was one line of JSON with every
+line break as a literal "\n": a search for text spanning lines missed it,
+and a read by offset could not align to a line start.
 
-**File**: `frontend/.changeset/fast-file-preview-deep-links.md` (added, +11/-0)
+Join the text blocks with a newline instead, and stand an image in with
+"[image]". A list holding any other block type is still stored as JSON.
+
+* chore(plugins): bump every plugin for the shared capture fix
+
+**File**: `examples/agent-hook-plugin/hosts/codebuddy/plugin.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Start a controlled file or directory preview while the root tree is still loading, so direct links no longer serialize independent tree and preview requests.
-+
-+## zh-CN
-+
-+受控文件或目录预览不再等待根目录树加载完成，直达链接会并行请求目录树与预览内容。
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "description": "Long-term semantic memory for the CodeBuddy Code CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
+   "author": {
+     "name": "OpenViking",
 ```
 
-**File**: `frontend/packages/react/src/modules/file-browser/use-file-browser.ts` (modified, +14/-12)
+**File**: `examples/agent-hook-plugin/hosts/cursor/openviking.integration.json` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@ import { dashboardKey, mergeDashboardTab } from './dashboard-model.js';
- import { useBrowserDashboards } from './use-browser-dashboards.js';
- import { useFsTree } from './use-fs-tree.js';
- import { useFileBrowserTreeActions } from './use-file-browser-tree-actions.js';
-+import { useStableCallback } from './use-stable-callback.js';
- import { findSelectedRowId } from './fs-uri.js';
- import type {
-   FileBrowserActions,
-@@ -116,22 +117,19 @@ export function useFileBrowser({
-   // a host passing an inline arrow function changes it every render, which would
-   // change this callback, and the preview's loading effect depends on it — so every
-   // commit would re-run the effect and cancel the previous request, turning one
--  // selection into an endless reload. A ref carries the latest notification and
--  // only the tree operations remain as dependencies.
-+  // selection into an endless reload. Refs carry the latest notification and tree
-+  // operations while the callback identity stays fixed.
-   const { open: openTree, toggleExpand, cancelReveal } = tree;
-   const notifyUriChange = useRef(onUriChange);
-   notifyUriChange.current = onUriChange;
-   const notifySelect = useRef(onSelect);
-   notifySelect.current = onSelect;
--  const openParent = useMemo(
--    () => async (uri: string) => {
--      cancelReveal();
--      setPendingUri(uri);
--      notifyUriChange.current(uri);
--      await openTree(uri);
--    },
--    [cancelReveal, openTree],
--  );
-+  const openParent = useStableCallback(async (uri: string) => {
-+    cancelReveal();
-+    setPendingUri(uri);
-+    notifyUriChange.current(uri);
-+    await openTree(uri);
-+  });
- 
-   const { rows, openPath, reveal } = tree;
-   const openResource = useMemo(
-@@ -168,7 +166,11 @@ export function useFileBrowser({
-   });
- 
-   const { setActiveKey, ...preview } = useFsPreview({
--    client: tree.isReady ? client : null,
-+    // A controlled deep link already identifies the preview target. Let the preview
-+    // resolve its type and body while the root tree loads instead of serializing the
-+    // two independent requests. The preview lookup owns cancellation and stale-result
-+    // isolation; the tree can still replace the unknown type once its listing lands.
-+    client,
-     // 非受控模式下 currentUri 是 null，真正选中的是 pendingUri；预览要跟着
-     // 实际选中的资源走，否则内部维护的选中永远不会加载预览。
-     //
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "clients": [
+     "cursor"
+   ],
 ```
 
-**File**: `frontend/packages/react/src/modules/file-browser/use-fs-preview.ts` (modified, +4/-7)
+**File**: `examples/agent-hook-plugin/hosts/kimicode/kimi.plugin.json` (modified, +1/-1)
 ```diff
-@@ -90,7 +90,7 @@ export function useFsPreview({
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "description": "Long-term semantic memory for Kimi Code CLI, powered by OpenViking.",
+   "author": {
+     "name": "OpenViking",
+```
+
+**File**: `examples/agent-hook-plugin/hosts/kimicode/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "clients": [
+     "kimicode"
+   ],
+```
+
+**File**: `examples/agent-hook-plugin/hosts/qoder/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "description": "Long-term semantic memory for the Qoder CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
+   "author": {
+     "name": "OpenViking",
+```
+
+**File**: `examples/agent-hook-plugin/hosts/trae/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "clients": [
+     "trae",
+     "trae-cn"
+```
+
+**File**: `examples/agent-hook-plugin/hosts/zcode/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "clients": [
+     "zcode"
+   ],
+```
+
+**File**: `examples/agent-hook-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "agent-hook-plugin",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "description": "Long-term semantic memory for Cursor, TRAE, TRAE CN, ZCode, Kimi Code, CodeBuddy Code, Qoder CLI and Antigravity — powered by OpenViking. Auto-recall relevant memories and capture the conversation as it happens.",
+   "author": {
+     "name": "OpenViking",
+```
+
+---
+
+### Incident Patch 2: `4a5aed8b` (2026-11-23)
+**Commit Message**: fix(parse): preserve trailing blank lines in AnyDoc code blocks (#8211)
+
+**File**: `openviking/parse/parsers/anydoc_renderer.py` (modified, +1/-1)
+```diff
+@@ -134,7 +134,7 @@ def _render_block(self, block: Any) -> str:
+                 return f"### Speaker Notes\n\n{inner}"
+             return "\n".join(">" if not line else f"> {line}" for line in inner.splitlines())
+         if kind == "code_block":
+-            body = (block.text or "").rstrip("\n")
++            body = (block.text or "").removesuffix("\n")
+             fence = self._backtick_fence(body, 3)
+             return f"{fence}{block.lang or ''}\n{body}\n{fence}"
+         if kind == "rule":
+```
+
+---
+
+### Incident Patch 3: `905ffc14` (2026-11-23)
+**Commit Message**: perf(fs): skip memory reference scanning during rm (#8274)
+
+* perf(fs): skip memory reference scanning during rm
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* docs(fs): remove memory reference deletion note
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* fix(fs): 移除删除响应的记忆清理字段 (#8278)
+
+* docs(fs): 纠正资源删除后的记忆保留说明
+
+同步中英文资源与文件系统 API，明确资源删除后已有记忆和引用会保留，并说明 memory_cleanup 响应字段已移除。
+
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+* fix(fs): 移除删除响应的记忆清理字段
+
+去掉删除路由中 memory_cleanup 的转发和 FSService 已不用的依赖。更新原有用例检查字段省略，并保留删除计数和父目录刷新覆盖。
+
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+Co-authored-by: bot-of-qin-ctx <[REDACTED_EMAIL]>
+Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+**File**: `docs/en/api/02-resources.md` (modified, +5/-2)
+```diff
+@@ -225,7 +225,7 @@ This endpoint is the core entry point for resource management. It supports vario
+ - Native HTTPS Git credentials in `args.auth_config` remain request-local when `watch_interval <= 0`. When `watch_interval > 0`, OpenViking stores the repository-bound username/token in private watch state and restores it only for later Git fetches. The credentials are excluded from ordinary queue payloads and watch API/MCP/CLI responses. Git PATs have no generic refresh flow; rotate an expired or revoked token by recreating the watch. Legacy URL-embedded credentials such as `https://user:token@host/repo.git` remain accepted and are passed through unchanged; because that URL is also the source identifier, it may be recorded in process arguments, logs, queues, resource metadata, and watch state. Prefer `args.auth_config` for new integrations. Plaintext HTTP authentication and authenticated redirects for `args.auth_config` remain rejected.
+ - The token travels in the HTTPS request body. Keep diagnostic request-body dumping disabled in production because explicitly enabling it can record secrets.
+ - Memory generated from `reason` is extracted through the same pipeline as `session.commit`. It uses `reason`, the resource URI, available source name, and available directory abstract; it does not inspect or expand the full resource content. OpenViking writes to existing memory types such as `entities`, `events`, or `preferences`, not a dedicated resource memory directory.
+-- When deleting a resource, OpenViking scans the self or peer memories targeted by the current context before deletion, removes the matching resource URI and content introduced by that `reason`, and refreshes the semantic index for the affected memories.
++- Deleting a resource leaves existing memory content and its resource references in place.
+ - Other sources with `wait=false` finish source parsing, target resolution, and AGFS writes before returning. Only semantic and embedding queues continue asynchronously.
+ - `processing_mode=vectors_only` does not call the VLM semantic-understanding stage and does not generate or refresh `.abstract.md` / `.overview.md`. For existing targets, it preserves existing semantic artifacts and existing semantic vectors. It still updates the resource tree, vectorizes current non-hidden files when `build_index=true`, and removes detail vectors for files deleted during refresh.
+ - `processing_mode` belongs to `add_resource`. The admin `reindex` API/CLI continues to use `mode` (`vectors_only`, `semantic_and_vectors`) for maintenance operations on already-ingested data.
+@@ -871,6 +871,9 @@ Delete a child of `viking://resources/`. This operation requires MANAGE access,
+ removes associated vector records, refreshes parent semantic metadata, and
+ synchronizes affected watches.
  
-   // useEffect 必要性：按 URI、资源类型与请求配置同步远端正文和目录摘要。
-   // URI 也会由宿主属性改变，点击事件无法覆盖这些变化，渲染本身不能发请求。
--  // 依赖变化与卸载中止请求并忽略过期结果；摘要层级与文案仅影响展示。
-+  // 依赖变化与卸载中止请求并忽略过期结果。
-   useEffect(() => {
-     const { client, uri, wikiSave } = lookup;
-     if (resourceType !== 'unknown') setStatType(undefined);
-@@ -136,17 +136,14 @@ export function useFsPreview({
-     // 集合只覆盖已加载的层，宿主直接传一个尚未展开过的目录 URI 时它就是空的，
-     // 于是目录会被读成正文、丢掉 L0/L1 摘要。缺失的是元数据，不是「它是文件」的
-     // 证据，因此先查再决定。
--    //
-     // An unknown type is resolved with one `fs/stat` call first. Treating "not in the
-     // known directory set" as a file is wrong: the set only covers loaded levels, so a
-     // directory URI the host passes directly, before it was ever expanded, is simply
-     // absent — and the directory would be read as content and lose its L0/L1 summary.
-     // What is missing is metadata, not evidence that it is a file.
-     const read = (async () => {
--      const isDir =
--        resourceType === 'unknown'
--          ? (await metadata)?.isDirectory
--          : resourceType === 'directory';
-+      const stat = resourceType === 'unknown' ? await metadata : undefined;
-+      const isDir = stat?.isDirectory ?? resourceType === 'directory';
-       if (signal.aborted) throw abortError();
-       if (resourceType === 'unknown' && isDir !== undefined) {
-         const type = isDir ? 'directory' : 'file';
-@@ -167,7 +164,7 @@ export function useFsPreview({
-         },
-         onStatus,
-         readDashboardHint,
--        bodyCache,
-+        bodyCache ?? lookup.bodyCacheFor(uri, stat?.updatedAt),
-       );
-     })();
++Existing memories retain their content and `resource_refs`, including memories
++generated from `reason` during import.
++
+ **HTTP**
+ 
+ ```http
+@@ -881,7 +884,7 @@ DELETE /api/v1/resources?uri={uri}
+ |-----------------|------|----------|---------|-------------|
+ | `uri` | string | Yes | - | Shared resource URI to delete; the shared root is not allowed |
+ | `recursive` | boolean | No | `false` | Delete a directory recursively |
+-| `wait` | boolean | No | `true` | Wait for semantic cleanup and refresh |
++| `wait` | boolean | No | `true` | Wait for parent semantic refresh |
+ 
+ ```bash
+ curl -X DELETE "http://localhost:1933/api/v1/resources" \
+```
+
+**File**: `docs/en/api/03-filesystem.md` (modified, +1/-1)
+```diff
+@@ -757,7 +757,7 @@ ov rm viking://resources/old.md [--recursive]
+ 
+ The `estimated_deleted_count` field reports the number of vector records submitted for deletion. A file or directory may have multiple records, and unindexed content contributes zero. The count does not guarantee immediate vector-index visibility. The CLI displays this count in its output.
+ 
+-When deleting `viking://resources/...`, the response may include `memory_cleanup`, indicating that user memories referencing that resource URI were cleaned up before deletion.
++Deleting a resource leaves existing memory content and `resource_refs` in place. The HTTP response no longer includes `memory_cleanup`.
+ 
+ On case-insensitive `localfs`, case-only aliases may affect the delete target. For example, if the real file is `viking://resources/bob-private/private.md`, `ov rm viking://resources/BOB-PRIVATE/private.md` may delete the same file; on case-sensitive systems, deleting the missing alias path still succeeds because `rm` is idempotent, but it does not delete the real file.
  
 ```
 
-**File**: `frontend/packages/react/src/modules/file-browser/use-preview-lookup.ts` (modified, +18/-16)
+**File**: `docs/zh/api/02-resources.md` (modified, +4/-2)
 ```diff
-@@ -48,11 +48,18 @@ export function usePreviewLookup({
-     listed.current = listedUpdatedAt;
-   }, [listedUpdatedAt]);
+@@ -225,7 +225,7 @@ Connector 要求精确的 `to` 目标，不支持 `wait=true`。`tos://` 来源
+ - 原生 HTTPS Git 的 `args.auth_config` 在 `watch_interval <= 0` 时只用于本次请求；当 `watch_interval > 0` 时，OpenViking 会把与仓库 URL 绑定的 username/token 保存到 Watch 私有鉴权状态，并只在后续 Git 拉取时恢复使用。凭据不会进入普通持久队列，也不会出现在 Watch API/MCP/CLI 返回中。Git PAT 没有通用刷新流程，过期或撤销后需要重建 Watch 来更换 token。为兼容已有用法，系统仍接受 `https://user:token@host/repo.git` 形式的 URL 内嵌凭据并原样传递；由于该 URL 同时也是资源来源标识，它可能被记录到进程参数、日志、队列、资源元数据和 Watch 状态中。新接入建议使用 `args.auth_config`。`args.auth_config` 的明文 HTTP 鉴权和带鉴权重定向仍会被拒绝。
+ - token 会放在 HTTPS 请求体中传输。生产环境应保持诊断请求体 dump 关闭；显式启用该功能可能记录秘密。
+ - `reason` 触发的记忆生成复用 `session.commit` 的抽取链路，只使用 `reason`、资源 URI、可用的资源名称和目录摘要，不会读取或展开完整资源正文；系统会写入 `entities`、`events`、`preferences` 等已有记忆类型，不创建独立的资源记忆目录。
+-- 删除资源时，系统会在删除前扫描本次上下文对应的 self 或 peer 记忆中的 `resource_refs`，清理对应资源 URI 和由该 `reason` 引入的内容，并重新刷新相关记忆的语义索引。
++- 删除资源后，已生成的记忆内容及其资源引用会保留。
+ - 其他来源在 `wait=false` 时会在响应前完成来源解析、目标解析和 AGFS 写入，仅 semantic 与 embedding 队列继续异步处理。
+ - `processing_mode=vectors_only` 不调用 VLM 语义理解阶段，也不会生成或刷新 `.abstract.md` / `.overview.md`。对已存在目标，它会保留旧的语义产物和旧的语义向量；仍会更新资源树，在 `build_index=true` 时向量化当前非隐藏文件，并清理由本次刷新删除的文件 detail 向量。
+ - `processing_mode` 只属于 `add_resource`。管理员维护已有数据时，`reindex` API/CLI 仍使用 `mode`（`vectors_only`、`semantic_and_vectors`）。
+@@ -859,6 +859,8 @@ curl -X POST http://localhost:1933/api/v1/resources/mv \
+ 删除 `viking://resources/` 下的资源。此操作要求 MANAGE 权限，
+ 会删除关联向量记录、刷新父目录语义元数据，并同步受影响的 Watch。
  
--  return useMemo(
--    () => ({
-+  return useMemo(() => {
-+    const canCacheBody = (target: string) =>
-+      isMemoryUri(target) && /\.md$/i.test(target) && cacheableIdentity;
-+    const bodyCacheFor = (target: string, updatedAt?: string) =>
-+      canCacheBody(target) && updatedAt !== undefined
-+        ? cache.body.forFile(target, updatedAt)
-+        : undefined;
-+    return {
-       client,
-       uri,
-       wikiSave,
-+      bodyCacheFor,
-       prepareFileRead(
-         api: OvClient,
-         target: string,
-@@ -66,21 +73,16 @@ export function usePreviewLookup({
-           previous.scope === cache.scope &&
-           (previous.generation !== cache.generation ||
-             previous.saveGeneration !== cache.saveGeneration);
-+        const metadata =
-+          unknownType || reload || !updatedAt
-+            ? readPreviewStat(api, target, options)
-+            : undefined;
-+        const bodyCache = bodyCacheFor(target, updatedAt);
++已有记忆会保留原有内容和 `resource_refs`，包括导入时由 `reason` 生成的记忆。
++
+ **HTTP**
+ 
+ ```http
+@@ -869,7 +871,7 @@ DELETE /api/v1/resources?uri={uri}
+ |----------|------|------|--------|------|
+ | `uri` | string | 是 | - | 要删除的共享资源 URI；不允许删除共享资源根 |
+ | `recursive` | boolean | 否 | `false` | 递归删除目录 |
+-| `wait` | boolean | 否 | `true` | 等待语义清理和刷新完成 |
++| `wait` | boolean | 否 | `true` | 等待父目录语义刷新完成 |
+ 
+ ```bash
+ curl -X DELETE "http://localhost:1933/api/v1/resources" \
+```
+
+**File**: `docs/zh/api/03-filesystem.md` (modified, +1/-1)
+```diff
+@@ -783,7 +783,7 @@ ov rm viking://resources/old.md [--recursive]
+ 
+ `estimated_deleted_count` 表示已提交删除的向量记录数量。一个文件或目录可以对应多条记录，未索引内容不计入数量；该数量不保证向量索引立即可见。CLI 会在输出中显示此数量。
+ 
+-删除 `viking://resources/...` 时，响应可能包含 `memory_cleanup`，表示删除前已清理引用该资源 URI 的用户记忆。
++删除资源后，已有记忆会保留原有内容和 `resource_refs`，HTTP 响应不再包含 `memory_cleanup`。
+ 
+ 在大小写不敏感的 `localfs` 上，大小写别名可能影响删除目标。例如真实文件是 `viking://resources/bob-private/private.md`，执行 `ov rm viking://resources/BOB-PRIVATE/private.md` 可能删除同一个文件；大小写敏感系统上，别名目标不存在时该幂等删除仍会成功，但不会删除真实文件。
+ 
+```
+
+**File**: `openviking/server/routers/filesystem.py` (modified, +0/-2)
+```diff
+@@ -301,8 +301,6 @@ async def rm(
+     response_result = {"uri": uri}
+     if isinstance(result, dict) and "estimated_deleted_count" in result:
+         response_result["estimated_deleted_count"] = result["estimated_deleted_count"]
+-    if isinstance(result, dict) and "memory_cleanup" in result:
+-        response_result["memory_cleanup"] = result["memory_cleanup"]
+     if isinstance(result, dict) and "semantic_root_uri" in result:
+         response_result["semantic_root_uri"] = result["semantic_root_uri"]
+     if isinstance(result, dict) and "semantic_status" in result:
+```
+
+**File**: `openviking/service/core.py` (modified, +0/-1)
+```diff
+@@ -677,7 +677,6 @@ async def initialize(
+             vikingdb=self._vikingdb_manager,
+             privacy_config_service=self._privacy_config_service,
+             privacy_sanitizer=self._privacy_sanitizer,
+-            resource_memory_link_service=self._resource_memory_link_service,
+             watch_manager=self._watch_manager,
+         )
+         self._pack_service.set_dependencies(
+```
+
+**File**: `openviking/service/fs_service.py` (modified, +0/-46)
+```diff
+@@ -135,7 +135,6 @@ def _visible_grep_content(content: str, uri: str) -> str:
+ 
+ if TYPE_CHECKING:
+     from openviking.resource.watch_manager import WatchManager
+-    from openviking.service.resource_memory_link_service import ResourceMemoryLinkService
+     from openviking.storage import VikingDBManager
+ 
+ 
+@@ -147,7 +146,6 @@ def __init__(
+         viking_fs: Optional[VikingFS] = None,
+         vikingdb: Optional["VikingDBManager"] = None,
+         privacy_config_service: Optional[UserPrivacyConfigService] = None,
+-        resource_memory_link_service: Optional["ResourceMemoryLinkService"] = None,
+         privacy_sanitizer: Optional[PrivacySanitizer] = None,
+         watch_manager: Optional["WatchManager"] = None,
+     ):
+@@ -157,15 +155,13 @@ def __init__(
+         self._privacy_sanitizer = privacy_sanitizer or (
+             PrivacySanitizer(privacy_config_service) if privacy_config_service is not None else None
+         )
+-        self._resource_memory_link_service = resource_memory_link_service
+         self._watch_manager = watch_manager
+ 
+     def set_dependencies(
+         self,
+         viking_fs: VikingFS,
+         vikingdb: Optional["VikingDBManager"] = None,
+         privacy_config_service: Optional[UserPrivacyConfigService] = None,
+-        resource_memory_link_service: Optional["ResourceMemoryLinkService"] = None,
+         privacy_sanitizer: Optional[PrivacySanitizer] = None,
+         watch_manager: Optional["WatchManager"] = None,
+     ) -> None:
+@@ -176,7 +172,6 @@ def set_dependencies(
+         self._privacy_sanitizer = privacy_sanitizer or (
+             PrivacySanitizer(privacy_config_service) if privacy_config_service is not None else None
+         )
+-        self._resource_memory_link_service = resource_memory_link_service
+         self._watch_manager = watch_manager
+ 
+     def _ensure_initialized(self) -> VikingFS:
+@@ -731,7 +726,6 @@ async def _rm(
+                 result["vector_status"] = "skipped"
+             return result
+ 
+-        cleanup_result: Optional[Dict[str, Any]] = None
+         context_type = context_type_for_uri(uri)
+         refresh_parent_uri = self._semantic_refresh_parent_uri(uri, context_type)
+         memory_overview_uri = self._memory_overview_parent_uri(uri, context_type)
+@@ -767,26 +761,12 @@ async def _rm(
+                     ctx=ctx,
+                     force_refresh=wait,
+                 )
+-            if self._resource_memory_link_service and context_type == "resource":
+-                cleanup_result = await self._resource_memory_link_service.before_resource_delete(
+-                    ctx=ctx,
+-                    resource_uri=uri,
+-                    recursive=recursive,
+-                )
+             if memory_overview_uri:
+                 await MemoryUpdater.refresh_schema_overview(
+                     viking_fs=viking_fs,
+                     directory_uri=memory_overview_uri,
+                     ctx=ctx,
+                 )
+-            for cleanup_overview_uri in self._memory_overview_parent_uris_from_cleanup(
+-                cleanup_result
+-            ):
+-                await MemoryUpdater.refresh_schema_overview(
+-                    viking_fs=viking_fs,
+-                    directory_uri=cleanup_overview_uri,
+-                    ctx=ctx,
+-                )
+             if (
+                 refresh_parent_uri
+                 and wait
+@@ -795,8 +775,6 @@ async def _rm(
+                 queue_status = await self._wait_for_refresh()
+         finally:
+             pass
+-        if cleanup_result is not None and isinstance(result, dict):
+-            result["memory_cleanup"] = cleanup_result
+         if refresh_parent_uri and isinstance(result, dict):
+             result["semantic_root_uri"] = refresh_parent_uri
+             if refresh_action is FreshnessAction.NOOP:
+@@ -867,30 +845,6 @@ def _memory_overview_parent_uri(uri: str, context_type: str) -> Optional[str]:
+             return None
+         return parent.uri
+ 
+-    @classmethod
+-    def _memory_overview_parent_uris_from_cleanup(
+-        cls,
+-        cleanup_result: Optional[Dict[str, Any]],
+-    ) -> List[str]:
+-        if not isinstance(cleanup_result, dict):
+-            return []
+-
+-        overview_uris: List[str] = []
+-        for field in ("memory_uris", "deleted_memory_uris"):
+-            values = cleanup_result.get(field)
+-            if not isinstance(values, list):
+-                continue
+-            for memory_uri in values:
+-                if not isinstance(memory_uri, str):
+-                    continue
+-                overview_uri = cls._memory_overview_parent_uri(
+-                    memory_uri,
+-                    context_type_for_uri(memory_uri),
+-                )
+-                if overview_uri:
+-                    overview_uris.append(overview_uri)
+-        return list(dict.fromkeys(overview_uris))
+-
+     async def _enqueue_delete_refresh(
+         self,
+         *,
+```
+
+**File**: `tests/server/test_filesystem_router.py` (modified, +6/-7)
+```diff
+@@ -25,13 +25,11 @@
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_rm_preserves_memory_cleanup(monkeypatch):
+-    cleanup = {"status": "success", "memory_uris": ["viking://user/alice/memories/entities/a.md"]}
+-
++async def test_rm_omits_legacy_memory_cleanup(monkeypatch):
+     async def fake_rm(uri, ctx=None, recursive=False, wait=False):
          return {
--          metadata:
--            unknownType || reload || !updatedAt
--              ? readPreviewStat(api, target, options)
--              : undefined,
--          bodyCache:
--            isMemoryUri(target) &&
--            /\.md$/i.test(target) &&
--            updatedAt !== undefined &&
--            cacheableIdentity
--              ? cache.body.forFile(target, updatedAt)
--              : undefined,
-+          metadata,
-+          bodyCache,
-         };
-       },
--    }),
--    [client, uri, wikiSave, cache, cacheableIdentity],
--  );
-+    };
-+  }, [client, uri, wikiSave, cache, cacheableIdentity]);
- }
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/use-stable-callback.ts` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+import { useCallback, useRef } from 'react';
-+
-+export function useStableCallback<Args extends unknown[], Result>(
-+  callback: (...args: Args) => Result,
-+) {
-+  const current = useRef(callback);
-+  current.current = callback;
-+  return useCallback((...args: Args) => current.current(...args), []);
-+}
-```
-
-**File**: `frontend/packages/react/test/file-browser-preview-priority.test.mjs` (modified, +70/-2)
-```diff
-@@ -50,7 +50,7 @@ test('listed memory Markdown reads once, reuses the body and invalidates on refr
-   try {
-     assert.equal(tab().source.content, 'Original profile');
-     assert.equal(browser.previewUpdatedAt, modTime);
--    assert.equal(fetch.countOf('/api/v1/fs/stat'), 0);
-+    assert.equal(fetch.countOf('/api/v1/fs/stat'), 1);
-     assert.equal(fetch.countOf('/api/v1/fs/attrs'), 0);
-     assert.equal(reads(), 1);
+             "estimated_deleted_count": 1,
+-            "memory_cleanup": cleanup,
++            "memory_cleanup": {"status": "success"},
+         }
  
-@@ -84,6 +84,72 @@ test('listed memory Markdown reads once, reuses the body and invalidates on refr
+     monkeypatch.setattr(
+@@ -46,9 +44,10 @@ async def fake_rm(uri, ctx=None, recursive=False, wait=False):
+         _ctx=RequestContext(user=UserIdentifier("acct", "alice"), role=Role.USER),
+     )
  
- const fileTime = '2026-11-11T22:10:00.123Z';
- 
-+test('a controlled deep link reads its preview while the root tree is pending', async () => {
-+  const root = 'viking://resources';
-+  const uri = `${root}/chapter.md`;
-+  const listing = deferred();
-+  const fetch = recordingFetch(({ path }) => {
-+    if (path.endsWith('/fs/ls')) return listing.promise;
-+    if (path.endsWith('/fs/stat')) return ok({ isDir: false });
-+    if (path.endsWith('/content/read')) return ok('Chapter text');
-+    return ok({});
-+  });
-+  let browser;
-+  function Probe() {
-+    browser = useFileBrowser({
-+      rootUri: root,
-+      controlled: true,
-+      currentUri: uri,
-+    });
-+    return null;
-+  }
-+  const view = await mount(h(OpenVikingProvider, { fetch }, h(Probe)));
-+  try {
-+    assert.equal(fetch.countOf('/api/v1/fs/ls'), 1);
-+    assert.equal(fetch.countOf('/api/v1/fs/stat'), 1);
-+    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
-+    assert.equal(browser.previewTabs?.[0]?.source?.content, 'Chapter text');
-+
-+    await act(async () =>
-+      listing.resolve(await ok([{ uri, isDir: false, modTime: fileTime }])),
-+    );
-+    await settle();
-+    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
-+  } finally {
-+    await view.unmount();
-+  }
-+});
-+
-+test('a listed file reads its body while optional stat metadata is pending', async () => {
-+  const root = 'viking://resources';
-+  const uri = `${root}/chapter.md`;
-+  const stat = deferred();
-+  const fetch = recordingFetch(({ path }) => {
-+    if (path.endsWith('/fs/ls')) return ok([{ uri, isDir: false }]);
-+    if (path.endsWith('/fs/stat')) return stat.promise;
-+    if (path.endsWith('/content/read')) return ok('Chapter text');
-+    return ok({});
-+  });
-+  let browser;
-+  function Probe() {
-+    browser = useFileBrowser({
-+      rootUri: root,
-+      controlled: true,
-+      currentUri: uri,
-+    });
-+    return null;
-+  }
-+  const view = await mount(h(OpenVikingProvider, { fetch }, h(Probe)));
-+  try {
-+    assert.equal(fetch.countOf('/api/v1/fs/stat') > 0, true);
-+    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
-+    assert.equal(browser.previewTabs?.[0]?.source?.content, 'Chapter text');
-+    await act(async () => stat.resolve(await ok({ isDir: false })));
-+  } finally {
-+    await view.unmount();
-+  }
-+});
-+
- test('a listed Markdown file reads its body while Wiki attrs are pending', async () => {
-   const root = 'viking://resources';
-   const uri = `${root}/chapter.md`;
-@@ -93,6 +159,8 @@ test('a listed Markdown file reads its body while Wiki attrs are pending', async
-       return ok([{ uri, isDir: false, modTime: fileTime }]);
-     if (path.endsWith('/fs/attrs')) return attrs.promise;
-     if (path.endsWith('/content/read')) return ok('Chapter text');
-+    if (path.endsWith('/fs/stat'))
-+      return ok({ isDir: false, modTime: fileTime });
-     return ok({});
-   });
-   let browser;
-@@ -110,7 +178,7 @@ test('a listed Markdown file reads its body while Wiki attrs are pending', async
-     assert.equal(fetch.countOf('/api/v1/fs/attrs'), 1);
-     assert.equal(body(), 'Chapter text');
-     assert.equal(browser.previewUpdatedAt, fileTime);
--    assert.equal(fetch.countOf('/api/v1/fs/stat'), 0);
-+    assert.equal(fetch.countOf('/api/v1/fs/stat'), 1);
-     await act(async () =>
-       attrs.resolve(
-         await ok({ uri, attrs: { tags: ['compile_target=true'] } }),
-```
-
----
-
-### Incident Patch 2: `6a0fd463` (2026-11-22)
-**Commit Message**: fix(react): 优化 JSON 预览与 VikingBot 记忆文案 (#8176)
-
-* fix(react): clarify VikingBot memory extraction states
-
-* fix(react): correct JSON preview lines and folds
-
-* fix(react): bound JSON preview formatting
-
-* fix(react): disable folds for source fallback
-
-* fix(react): align JSON preview conventions
-
-**File**: `frontend/.changeset/json-preview-lines-and-folds.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Show formatted line numbers in ordinary JSON previews and keep nested fold state when a parent is collapsed and reopened.
-+
-+## zh-CN
-+
-+普通 JSON 预览按格式化后的内容显示连续行号，并在父节点折叠后重新展开时保留各子节点自身的折叠状态。
-```
-
-**File**: `frontend/.changeset/vikingbot-memory-extraction-copy.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Describe the VikingBot session action as extracting long-term memory in every state.
-+
-+## zh-CN
-+
-+将 VikingBot 会话动作统一表述为抽取长期记忆，并明确完成状态。
-```
-
-**File**: `frontend/packages/react/src/components/file-preview/file-preview-labels.ts` (modified, +6/-0)
-```diff
-@@ -1,6 +1,8 @@
- import { useLocale } from '../../shared/locale-context.js';
- import { renderErrors as renderEn } from './locales/en-US.js';
- import { renderErrors as renderZh } from './locales/zh-CN.js';
-+import { jsonPreviewLabels as jsonPreviewEn } from './locales/en-US.js';
-+import { jsonPreviewLabels as jsonPreviewZh } from './locales/zh-CN.js';
- import type { FilePreviewLabels } from './types.js';
- import { resolveLocale, type Locale } from '../../shared/locale.js';
- import enUS from './locales/en-US.js';
-@@ -21,3 +23,7 @@ export function resolveFilePreviewLabels(
- export function useRenderErrors(locale?: Parameters<typeof useLocale>[0]) {
-   return useLocale(locale) === 'zh-CN' ? renderZh : renderEn;
- }
-+
-+export function resolveJsonPreviewLabels(locale?: Locale) {
-+  return locale === 'zh-CN' ? jsonPreviewZh : jsonPreviewEn;
-+}
-```
-
-**File**: `frontend/packages/react/src/components/file-preview/json-preview-model.ts` (added, +165/-0)
-```diff
-@@ -0,0 +1,165 @@
-+export interface JsonPreviewLine {
-+  closeLine?: number;
-+  collapsedText?: string;
-+  depth: number;
-+  lineNumber: number;
-+  parentOpen?: number;
-+  text: string;
-+}
-+
-+export interface JsonPreviewModel {
-+  defaultCollapsed: ReadonlySet<number>;
-+  identity: string;
-+  lines: readonly JsonPreviewLine[];
-+  text: string;
-+}
-+
-+export const MAX_FORMATTED_JSON_PREVIEW_LENGTH = 1_000_000;
-+
-+function jsonPreviewIdentity(content: string) {
-+  let hash = 2_166_136_261;
-+  for (let index = 0; index < content.length; index += 1) {
-+    hash ^= content.charCodeAt(index);
-+    hash = Math.imul(hash, 16_777_619);
-+  }
-+  return `${content.length}:${hash >>> 0}`;
-+}
-+
-+interface JsonPreviewFormatResult {
-+  foldable: boolean;
-+  text: string;
-+}
-+
-+/** Format JSON without parsing numbers back through JavaScript and losing source tokens. */
-+function formatJsonPreview(
-+  content: string,
-+): JsonPreviewFormatResult | undefined {
-+  if (!content.trim()) return { foldable: true, text: '' };
-+  try {
-+    JSON.parse(content);
-+  } catch {
-+    return undefined;
-+  }
-+
-+  let formatted = '';
-+  let depth = 0;
-+  let inString = false;
-+  let escaped = false;
-+  const indent = () => '  '.repeat(depth);
-+  const append = (value: string) => {
-+    if (formatted.length + value.length > MAX_FORMATTED_JSON_PREVIEW_LENGTH)
-+      return false;
-+    formatted += value;
-+    return true;
-+  };
-+
-+  for (let index = 0; index < content.length; index += 1) {
-+    const character = content[index]!;
-+    if (inString) {
-+      if (!append(character)) return { foldable: false, text: content };
-+      if (escaped) escaped = false;
-+      else if (character === '\\') escaped = true;
-+      else if (character === '"') inString = false;
-+      continue;
+-    assert response.result["uri"] == "viking://resources/id_card.pdf"
+-    assert response.result["estimated_deleted_count"] == 1
+-    assert response.result["memory_cleanup"] == cleanup
++    assert response.result == {
++        "uri": "viking://resources/id_card.pdf",
++        "estimated_deleted_count": 1,
 +    }
-+    if (character === '"') {
-+      inString = true;
-+      if (!append(character)) return { foldable: false, text: content };
-+      continue;
-+    }
-+    if (/\s/.test(character)) continue;
-+    if (character === '{' || character === '[') {
-+      let next = index + 1;
-+      while (next < content.length && /\s/.test(content[next]!)) next += 1;
-+      const closing = character === '{' ? '}' : ']';
-+      if (content[next] === closing) {
-+        if (!append(`${character}${closing}`))
-+          return { foldable: false, text: content };
-+        index = next;
-+      } else {
-+        depth += 1;
-+        if (!append(`${character}\n${indent()}`))
-+          return { foldable: false, text: content };
-+      }
-+      continue;
-+    }
-+    if (character === '}' || character === ']') {
-+      depth -= 1;
-+      if (!append(`\n${indent()}${character}`))
-+        return { foldable: false, text: content };
-+      continue;
-+    }
-+    if (character === ',') {
-+      if (!append(`,\n${indent()}`)) return { foldable: false, text: content };
-+      continue;
-+    }
-+    if (!append(character === ':' ? ': ' : character))
-+      return { foldable: false, text: content };
-+  }
-+  return { foldable: true, text: formatted };
-+}
-+
-+export function formatJsonPreviewContent(content: string) {
-+  const result = formatJsonPreview(content);
-+  return result?.text;
-+}
-+
-+export function createJsonPreviewModel(
-+  content: string,
-+  defaultExpandDepth = 4,
-+): JsonPreviewModel | undefined {
-+  const formatted = formatJsonPreview(content);
-+  if (formatted === undefined) return undefined;
-+  const { foldable, text } = formatted;
-+  const lines: JsonPreviewLine[] = [];
-+  const openLines: number[] = [];
-+  const defaultCollapsed = new Set<number>();
-+
-+  for (const [index, value] of text.split('\n').entries()) {
-+    const trimmed = value.trim();
-+    const closes = /^[}\]](?:,)?$/.test(trimmed);
-+    const parentOpen = openLines.at(-1);
-+    const line: JsonPreviewLine = {
-+      depth: Math.floor((value.length - value.trimStart().length) / 2),
-+      lineNumber: index + 1,
-+      parentOpen,
-+      text: value,
-+    };
-+    lines.push(line);
-+
-+    if (foldable && closes) {
-+      const opening = openLines.pop();
-+      if (opening !== undefined) {
-+        const openLine = lines[opening]!;
-+        openLine.closeLine = index;
-+        openLine.collapsedText = `${openLine.text} … ${trimmed}`;
-+      }
-+      continue;
-+    }
-+    if (foldable && /[{[]$/.test(trimmed)) {
-+      if (line.depth >= defaultExpandDepth) defaultCollapsed.add(index);
-+      openLines.push(index);
-+    }
-+  }
-+
-+  return {
-+    defaultCollapsed,
-+    identity: jsonPreviewIdentity(content),
-+    lines,
-+    text,
-+  };
-+}
-+
-+export function visibleJsonPreviewLines(
-+  model: JsonPreviewModel,
-+  collapsed: ReadonlySet<number>,
-+) {
-+  return model.lines.filter((line) => {
-+    let ancestor = line.parentOpen;
-+    while (ancestor !== undefined) {
-+      if (collapsed.has(ancestor)) return false;
-+      ancestor = model.lines[ancestor]?.parentOpen;
-+    }
-+    return true;
-+  });
-+}
-```
-
-**File**: `frontend/packages/react/src/components/file-preview/json-preview.css` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+.ov-file-preview__json {
-+  box-sizing: border-box;
-+  block-size: 100%;
-+  min-block-size: 0;
-+  overflow: auto;
-+  padding-block: 12px;
-+  background: var(--ov-ui-color-bg-1, var(--ov-ui-bg-1-default));
-+  color: var(--ov-ui-color-text-1, var(--ov-ui-text-1-default));
-+  font-family:
-+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-+    monospace;
-+  font-size: 13px;
-+  line-height: 22px;
-+}
-+
-+.ov-file-preview__json-line {
-+  display: flex;
-+  min-inline-size: max-content;
-+  padding-inline-end: 20px;
-+  white-space: pre;
-+}
-+
-+.ov-file-preview__json-gutter {
-+  box-sizing: border-box;
-+  inline-size: 48px;
-+  flex: 0 0 48px;
-+  padding-inline-end: 10px;
-+  color: var(--ov-ui-color-text-3, var(--ov-ui-text-3-default));
-+  text-align: end;
-+  user-select: none;
-+}
-+
-+.ov-file-preview__json-toggle,
-+.ov-file-preview__json-toggle-spacer {
-+  box-sizing: border-box;
-+  inline-size: 20px;
-+  block-size: 22px;
-+  flex: 0 0 20px;
-+}
-+
-+.ov-file-preview__json-toggle {
-+  border: 0;
-+  padding: 0;
-+  background: transparent;
-+  color: var(--ov-ui-color-text-2, var(--ov-ui-text-2-default));
-+  cursor: pointer;
-+}
-+
-+.ov-file-preview__json-toggle > span {
-+  display: inline-block;
-+  transform: rotate(90deg);
-+  transition: transform 120ms ease;
-+}
-+
-+.ov-file-preview__json-toggle[aria-expanded='false'] > span {
-+  transform: rotate(0deg);
-+}
-+
-+.ov-file-preview__json-toggle:focus-visible {
-+  border-radius: 3px;
-+  outline: 2px solid var(--ov-ui-color-primary, var(--ov-ui-primary-default));
-+  outline-offset: -2px;
-+}
-+
-+.ov-file-preview__json-code {
-+  font: inherit;
-+}
-```
-
-**File**: `frontend/packages/react/src/components/file-preview/json-preview.tsx` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+import { useEffect, useMemo, useState } from 'react';
-+import type { ContentRendererProps } from '@ark-design/ui/file-viewer/core';
-+import { resolveJsonPreviewLabels } from './file-preview-labels.js';
-+import {
-+  visibleJsonPreviewLines,
-+  type JsonPreviewModel,
-+} from './json-preview-model.js';
-+
-+export function JsonPreview({
-+  fileName,
-+  locale,
-+  model,
-+  onLoadingChange,
-+  onViewerStateChange,
-+  registerHandle,
-+}: Pick<
-+  ContentRendererProps,
-+  | 'fileName'
-+  | 'locale'
-+  | 'onLoadingChange'
-+  | 'onViewerStateChange'
-+  | 'registerHandle'
-+> & {
-+  model: JsonPreviewModel;
-+}) {
-+  const [collapsed, setCollapsed] = useState(
-+    () => new Set(model.defaultCollapsed),
-+  );
-+  // useEffect 必要性：自定义渲染器需在 DOM 提交后把就绪状态和空句柄同步给 Ark FileViewer；
-+  // 渲染阶段调用会更新父组件，且没有可替代的声明式接口。回调不建立订阅或资源，依赖变化时
-+  // 重新上报即可，卸载时无需清理。
-+  useEffect(() => {
-+    onLoadingChange?.(null);
-+    onViewerStateChange({ viewMode: 'preview' });
-+    registerHandle(null);
-+  }, [onLoadingChange, onViewerStateChange, registerHandle]);
-+  const lines = useMemo(
-+    () => visibleJsonPreviewLines(model, collapsed),
-+    [collapsed, model],
-+  );
-+  const labels = resolveJsonPreviewLabels(locale);
-+  const action = (expanded: boolean, lineNumber: number) =>
-+    expanded ? labels.collapseLine(lineNumber) : labels.expandLine(lineNumber);
-+
-+  return (
-+    <div
-+      aria-label={fileName}
-+      className="ov-file-preview__json"
-+      data-file-preview-json="true"
-+      role="region"
-+    >
-+      {lines.map((line) => {
-+        const index = line.lineNumber - 1;
-+        const foldable = line.closeLine !== undefined;
-+        const isCollapsed = collapsed.has(index);
-+        return (
-+          <div
-+            className="ov-file-preview__json-line"
-+            data-line={line.lineNumber}
-+            key={line.lineNumber}
-+          >
-+            <span aria-hidden="true" className="ov-file-preview__json-gutter">
-+              {line.lineNumber}
-+            </span>
-+            {foldable ? (
-+              <button
-+                aria-label={action(!isCollapsed, line.lineNumber)}
-+                aria-expanded={!isCollapsed}
-+                className="ov-file-preview__json-toggle"
-+                onClick={() =>
-+                  setCollapsed((current) => {
-+                    const next = new Set(current);
-+                    if (next.has(index)) next.delete(index);
-+                    else next.add(index);
-+                    return next;
-+                  })
-+                }
-+                type="button"
-+              >
-+                <span aria-hidden="true">›</span>
-+              </button>
-+            ) : (
-+              <span className="ov-file-preview__json-toggle-spacer" />
-+            )}
-+            <code className="ov-file-preview__json-code">
-+              {isCollapsed ? line.collapsedText : line.text || ' '}
-+            </code>
-+          </div>
-+        );
-+      })}
-+    </div>
-+  );
-+}
-```
-
-**File**: `frontend/packages/react/src/components/file-preview/locales/en-US.ts` (modified, +5/-0)
-```diff
-@@ -49,3 +49,8 @@ export const renderErrors = {
-   content: 'Tab content could not be displayed.',
-   editor: 'File editor could not be displayed.',
- };
-+
-+export const jsonPreviewLabels = {
-+  collapseLine: (lineNumber: number) => `Collapse line ${lineNumber}`,
-+  expandLine: (lineNumber: number) => `Expand line ${lineNumber}`,
-+};
-```
-
-**File**: `frontend/packages/react/src/components/file-preview/locales/zh-CN.ts` (modified, +9/-0)
-```diff
-@@ -1,4 +1,5 @@
- import type { renderErrors as EnglishRenderErrors } from './en-US.js';
-+import type { jsonPreviewLabels as EnglishJsonPreviewLabels } from './en-US.js';
- import type { FilePreviewLabels } from '../types.js';
  
- const messages = {
-@@ -49,3 +50,11 @@ export const renderErrors = {
-   content: '页签内容显示失败',
-   editor: '文件编辑器显示失败',
- } satisfies Record<keyof typeof EnglishRenderErrors, string>;
-+
-+export const jsonPreviewLabels = {
-+  collapseLine: (lineNumber: number) => `折叠第 ${lineNumber} 行`,
-+  expandLine: (lineNumber: number) => `展开第 ${lineNumber} 行`,
-+} satisfies Record<
-+  keyof typeof EnglishJsonPreviewLabels,
-+  (lineNumber: number) => string
-+>;
-```
-
----
-
-### Incident Patch 3: `e1233b3b` (2026-11-22)
-**Commit Message**: fix(react): keep restored file previews stable (#8173)
-
-* fix(react): keep restored file previews stable
-
-A directory listing can confirm the same resource type after its preview has already resolved fs/stat. Keep that preview request and avoid rereading the same body when the type agrees.
-
-* refactor(react): keep preview options with module types
-
-* fix(react): prioritize file preview content
-
-Read Markdown while Wiki attributes resolve and reuse timestamps from loaded tree entries.
-Cache short memory previews within their request scope and invalidate on save or refresh.
-
-* test(react): verify preview request order at the data boundary
-
-* fix(react): isolate preview cache by stable identity
-
-**File**: `frontend/.changeset/steady-file-preview.md` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Keep file previews visible when a restored directory tree confirms the resource type already returned by the server.
-+
-+Read Markdown before optional Wiki attributes resolve. Reuse directory timestamps and briefly cache ordinary memory previews within the current request scope.
-+
-+## zh-CN
-+
-+恢复目录树时，如果目录列表确认了服务端已返回的资源类型，保留已显示的文件预览，避免重复读取。
-+
-+Markdown 正文优先读取，Wiki 属性在后台加载。复用目录列表的更新时间，并在当前请求作用域内短时缓存普通记忆正文。
-```
-
-**File**: `frontend/packages/react/src/client/managed-client.ts` (modified, +15/-0)
-```diff
-@@ -30,6 +30,21 @@ interface Configuration {
- }
- const configurations = new WeakMap<OvClient, Configuration>();
  
-+const identityFields = ['apiKey', 'accountId', 'userId', 'resourceId'] as const;
-+
-+/** Whether an effective identity is re-evaluated for every request. */
-+export function hasDynamicIdentity(
-+  client: OvClient,
-+  local: OvRequestOptions | undefined,
-+): boolean {
-+  const defaults = configurations.get(client)?.options;
-+  return identityFields.some((field) => {
-+    const override = local?.[field];
-+    const value = override === undefined ? defaults?.[field] : override;
-+    return typeof value === 'function';
-+  });
-+}
-+
- /** Transport decorators retain the same identity, scheduler and cache scope. */
- export function inheritClientConfiguration(
-   client: OvClient,
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/fs-directories.ts` (modified, +17/-1)
-```diff
-@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
- 
- import { toEntryRow } from '../../shared/directory-tree/rows.js';
- import type { DirState } from '../../shared/directory-tree/types.js';
-+import { isoTimestamp } from './fs-stat.js';
- /**
-  * 树已知的目录 URI 集合：根目录，加上每一层已加载条目里标记为目录的那些。
-  *
-@@ -109,10 +110,25 @@ export function useTreeMetadata(
-     },
-     [metadataRows, identifyUri],
-   );
-+  const listedUpdatedAtOf = (uri: string | null) => {
-+    if (!uri) return;
-+    const name = identifyUri(uri);
-+    for (const dir of Object.values(dirs)) {
-+      const entry = dir.entries.find((item) => identifyUri(item.uri) === name);
-+      if (entry) return isoTimestamp(entry.modTime);
-+    }
-+  };
-   const resourceTypeOf = (uri: string | null) => {
-     if (uri === null) return 'file';
-     if (directoryUris.has(identifyUri(uri))) return 'directory';
-     return isKnownFile(uri) ? 'file' : 'unknown';
-   };
--  return { directoryUris, metadataRows, accessOf, identifyUri, resourceTypeOf };
-+  return {
-+    directoryUris,
-+    metadataRows,
-+    accessOf,
-+    identifyUri,
-+    resourceTypeOf,
-+    listedUpdatedAtOf,
-+  };
- }
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/fs-file-editing.ts` (modified, +12/-1)
-```diff
-@@ -6,6 +6,7 @@ import { isSystemUri } from '../../shared/resource-uri.js';
- import { isSummaryUri } from './preview-policy.js';
- import { readFileContent } from './fs-read-content.js';
- import { parseWikiFileConflicts } from './wiki-conflicts.js';
-+import type { ReadDashboardHint } from './dashboard-resource.js';
- 
- const EDITABLE_TEXT = /\.(?:md|json|jsonl|txt|yaml|yml)$/i;
- 
-@@ -20,6 +21,7 @@ export function createFileEditing(
-   onSave?: () => void,
-   isWiki = false,
-   onWikiSaveStatus?: (status?: WikiSaveStatus) => void,
-+  readHint?: ReadDashboardHint,
- ): FilePreviewEditing | undefined {
-   if (
-     !EDITABLE_TEXT.test(name) ||
-@@ -30,7 +32,16 @@ export function createFileEditing(
-     return undefined;
-   let wiki = isWiki;
-   const read = async () => {
--    const result = await readFileContent(client, uri, options, -1, wiki);
-+    const hint = !wiki ? await readHint?.()?.catch(() => undefined) : undefined;
-+    const tagged = hint?.tags.includes('compile_target=true') ?? false;
-+    const result = await readFileContent(
-+      client,
-+      uri,
-+      options,
-+      -1,
-+      wiki || tagged,
-+      hint ? () => Promise.resolve(hint) : undefined,
-+    );
-     wiki = result.wiki;
-     return result;
-   };
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/fs-read-content.ts` (modified, +16/-3)
-```diff
-@@ -6,6 +6,7 @@ import { splitWikiMetadata } from './wiki-metadata.js';
- import { isCompileOwnedFile } from './dashboard-data.js';
- import type { ReadDashboardHint } from './dashboard-resource.js';
- import { isOvClientError } from '../../client/errors.js';
-+import type { CachedPreviewBody } from './preview-body-cache.js';
- 
- /** Read and project text once for preview, editing and Wiki business data. */
- export async function readFileContent(
-@@ -16,6 +17,7 @@ export async function readFileContent(
-   isWiki = false,
-   readHint?: ReadDashboardHint,
-   deferWiki = false,
-+  cache?: CachedPreviewBody,
- ) {
-   const read = async (lineLimit: number) => {
-     const value = await client.request<string>({
-@@ -29,8 +31,11 @@ export async function readFileContent(
-   };
-   const memory = isMemoryUri(uri);
-   const markdown = /\.md$/i.test(uri);
--  const first = await read(limit);
-+  const cached = cache?.read();
-+  const first = cached ?? (await read(limit));
-   const reachedCap = limit >= 0 && splitLines(first).length >= limit;
-+  if (cached === undefined && !reachedCap && !options.signal?.aborted)
-+    cache?.write(first);
-   const candidate =
-     !memory && markdown && splitWikiMetadata(first).payloads.length > 0;
-   const format = markdown
-@@ -71,13 +76,21 @@ export async function readFileContent(
-     return { ...(await readWiki()), resolveWiki: undefined };
-   const resolveWiki = async () => {
-     try {
-+      let knownWiki = isWiki;
-+      const readOwnershipHint =
-+        readHint &&
-+        (async () => {
-+          const hint = await readHint();
-+          knownWiki ||= hint?.tags.includes('compile_target=true') ?? false;
-+          return hint;
-+        });
-       if (
-         isWiki ||
--        (await isCompileOwnedFile(client, uri, options, readHint))
-+        (await isCompileOwnedFile(client, uri, options, readOwnershipHint))
-       ) {
-         const result = await readWiki();
-         // Directory ownership alone does not turn a manual file into a Wiki draft.
--        if (!deferWiki || isWiki || result.hasWikiTrailer) return result;
-+        if (!deferWiki || knownWiki || result.hasWikiTrailer) return result;
-         return;
-       }
-     } catch (error) {
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/fs-read-file.ts` (modified, +5/-2)
-```diff
-@@ -9,6 +9,7 @@ import { createFileEditing, type WikiSaveStatus } from './fs-file-editing.js';
- import { nameFromUri } from '../../shared/directory-tree/rows.js';
- import { toFileTab } from './fs-model.js';
- import type { ReadDashboardHint } from './dashboard-resource.js';
-+import type { CachedPreviewBody } from './preview-body-cache.js';
- 
- /** 读取正文的行数上限；读满即按截断处理。The line cap; a full read counts as truncated. */
- export const MAX_LINES = 2000;
-@@ -28,9 +29,9 @@ export async function readFile(
-   options: OvRequestOptions,
-   openParent?: (uri: string) => Promise<void>,
-   onSave?: () => void,
--  isWiki = false,
-   onWikiSaveStatus?: (status?: WikiSaveStatus) => void,
-   readHint?: ReadDashboardHint,
-+  cache?: CachedPreviewBody,
- ): Promise<{
-   tab: FilePreviewFileTab & { compileOutput?: boolean };
-   resolveWikiTab?: () => Promise<
-@@ -60,9 +61,10 @@ export async function readFile(
-     uri,
-     options,
-     MAX_LINES,
--    isWiki,
-+    false,
-     readHint,
-     true,
-+    cache,
-   );
-   const resolveImage = createPreviewImageResolver(client, uri, false, options);
-   const toTab = ({
-@@ -82,6 +84,7 @@ export async function readFile(
-       onSave,
-       wiki,
-       onWikiSaveStatus,
-+      readHint,
-     ),
-   });
-   const resolveWiki = result.resolveWiki;
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/fs-stat.ts` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ interface StatResult {
-   updateTime?: string | number;
- }
- 
--function isoTimestamp(value: string | number | undefined) {
-+export function isoTimestamp(value: string | number | undefined) {
-   if (value == null || (typeof value === 'string' && !value.trim())) return;
-   const numeric = Number(value);
-   if (numeric === 0) return;
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/preview-body-cache.ts` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+const MAX_AGE_MS = 30_000;
-+const MAX_ENTRIES = 12;
-+const MAX_BODY_LENGTH = 128 * 1024;
-+
-+export function createPreviewBodyCache() {
-+  const entries = new Map<string, { body: string; storedAt: number }>();
-+  return {
-+    forFile(uri: string, updatedAt: string | undefined) {
-+      const key = JSON.stringify([uri, updatedAt]);
-+      return {
-+        read() {
-+          const entry = entries.get(key);
-+          if (entry && Date.now() - entry.storedAt < MAX_AGE_MS)
-+            return entry.body;
-+          entries.delete(key);
-+        },
-+        write(body: string) {
-+          if (body.length > MAX_BODY_LENGTH) return;
-+          entries.delete(key);
-+          if (entries.size >= MAX_ENTRIES) {
-+            const oldest = entries.keys().next().value;
-+            if (oldest !== undefined) entries.delete(oldest);
-+          }
-+          entries.set(key, { body, storedAt: Date.now() });
-+        },
-+      };
-+    },
-+  };
-+}
-+
-+export type CachedPreviewBody = ReturnType<
-+  ReturnType<typeof createPreviewBodyCache>['forFile']
-+>;
+ @pytest.mark.asyncio
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8185** (2026-11-22): perf(ui): load deep-link previews alongside the tree (@yufeng201)
-- **PR #8176** (2026-11-22): fix(react): 优化 JSON 预览与 VikingBot 记忆文案 (@yufeng201)
-- **PR #8173** (2026-11-22): fix(react): keep restored file previews stable (@yufeng201)
-- **PR #8166** (2026-11-21): fix(compile): persist cancellation of queued runs (@FuJiaJie123)
-- **PR #8156** (2026-11-21): fix(react): refresh preview permissions with file tree (@leowld)
-- **PR #8152** (2026-11-21): fix(react): distinguish compile and experience dashboard colors (@leowld)
+- **PR #8306** (2026-11-23): fix(grep): backport Rust matching to v0.5.5 hotfix (#8289) (@ZaynJarvis)
+- **PR #8297** (2026-11-23): fix(react): align file browser history scope and root breadcrumb (@LaamGinghong)
+- **PR #8291** (2026-11-23): fix(react): align VikingBot activation copy (@LaamGinghong)
+- **PR #8289** (2026-11-23): fix(grep): 将 Python 正则匹配迁移到 Rust (@qin-ctx)
+- **PR #8288** (2026-11-23): fix(react): support prelaunch endpoints in AgentConnect (@leowld)
+- **PR #8284** (2026-11-23): fix(react): keep draft references removable during replies (@LaamGinghong)
 
 ---
 
@@ -2553,38 +1961,28 @@ Cache short memory previews within their request scope and invalidate on save or
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): load deep-link previews alongside the tree
+## X. plugins): keep a tool result's text when it comes as content blocks
 
 **RULE**:
-When implementing operations in `frontend/.changeset/fast-file-preview-deep-links.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/agent-hook-plugin/hosts/codebuddy/plugin.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e6dc9714`: ui): load deep-link previews alongside the tree. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c58b41d1`: plugins): keep a tool result's text when it comes as content blocks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/.changeset/fast-file-preview-deep-links.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/agent-hook-plugin/hosts/codebuddy/plugin.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
----
-'@openviking/react': patch
----
-
-## en-US
-
-Start a controlled file or directory preview while the root tree is still loading, so direct links no longer serialize independent tree and preview requests.
-
-## zh-CN
-
-受控文件或目录预览不再等待根目录树加载完成，直达链接会并行请求目录树与预览内容。
+  "version": "0.5.36",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  "version": "0.5.35",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e6dc9714` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c58b41d1` are properly handled with clean fallback behavior.

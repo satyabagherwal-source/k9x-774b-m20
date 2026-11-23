@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "1d1721cf6a37eb47aaa43bf4872fbf641ae2eef259cf8a75ab830d902734478d",
-    "lastHarvestedAt": "2026-11-19T15:50:46.181Z",
+    "contentHash": "e7956b2e95598b4efd23193e606c4ddd22f643aeeadc6ddc75015e214fd603c6",
+    "lastHarvestedAt": "2026-11-23T22:05:07.373Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "e6dc9714",
+    "sourceVersion": "300ab8eb",
     "license": "AGPL-3.0",
-    "contentHash": "daa3c3843550a679dc6d2432d40e14a332ea6c772bf4d277eb64e333c9636db8",
-    "lastHarvestedAt": "2026-11-22T20:17:06.396Z",
+    "contentHash": "31ee597a4bb5f4cd5fb452d44c305b9a2846920a7e4586d47b67b9631b00aa81",
+    "lastHarvestedAt": "2026-11-23T22:05:23.586Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {

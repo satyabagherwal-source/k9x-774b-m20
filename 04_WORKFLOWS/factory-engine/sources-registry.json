@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T21:57:09.366Z",
-    "lastVerified": "2026-11-23T21:57:09.366Z",
+    "lastChecked": "2026-11-23T22:05:26.777Z",
+    "lastVerified": "2026-11-23T22:05:26.777Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -380,8 +380,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T21:31:29.622Z",
-    "lastVerified": "2026-11-23T21:31:29.622Z",
+    "lastChecked": "2026-11-23T22:05:18.967Z",
+    "lastVerified": "2026-11-23T22:05:18.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1423,8 +1423,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T18:03:14.953Z",
-    "lastVerified": "2026-11-23T18:03:14.953Z",
+    "lastChecked": "2026-11-23T22:05:13.875Z",
+    "lastVerified": "2026-11-23T22:05:13.875Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -2433,9 +2433,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-22T21:32:01.850Z",
+    "lastChecked": "2026-11-23T22:05:11.430Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-22T21:32:01.850Z"
+    "lastVerified": "2026-11-23T22:05:11.430Z"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -7589,14 +7589,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-22T20:17:05.929Z",
-    "lastVerified": "2026-11-22T20:17:05.929Z",
+    "lastChecked": "2026-11-23T22:05:22.595Z",
+    "lastVerified": "2026-11-23T22:05:22.595Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "daa3c3843550a679dc6d2432d40e14a332ea6c772bf4d277eb64e333c9636db8",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "31ee597a4bb5f4cd5fb452d44c305b9a2846920a7e4586d47b67b9631b00aa81",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8180,9 +8180,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-11-22T12:37:15.310Z",
+    "lastChecked": "2026-11-23T22:05:04.056Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-11-22T12:37:15.310Z"
+    "lastVerified": "2026-11-23T22:05:04.056Z"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
     "name": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -8384,12 +8384,12 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T15:50:45.341Z",
-    "lastVerified": "2026-11-19T15:50:45.341Z",
+    "lastChecked": "2026-11-23T22:05:06.760Z",
+    "lastVerified": "2026-11-23T22:05:06.760Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "1d1721cf6a37eb47aaa43bf4872fbf641ae2eef259cf8a75ab830d902734478d",
+    "contentHash": "e7956b2e95598b4efd23193e606c4ddd22f643aeeadc6ddc75015e214fd603c6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11506,9 +11506,9 @@
   "pointfreeco-sqlite-data": {
     "name": "sqlite-data",
     "officialUrl": "https://github.com/pointfreeco/sqlite-data",
-    "lastChecked": "2026-11-20T23:21:18.883Z",
+    "lastChecked": "2026-11-23T22:05:08.974Z",
     "revisionIdentifier": "e72164ce",
-    "lastVerified": "2026-11-20T23:21:18.883Z"
+    "lastVerified": "2026-11-23T22:05:08.974Z"
   },
   "vitejs-vite": {
     "name": "vitejs/vite",

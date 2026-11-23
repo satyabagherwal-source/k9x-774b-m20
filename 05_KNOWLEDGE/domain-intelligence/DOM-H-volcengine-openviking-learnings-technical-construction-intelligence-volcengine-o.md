@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T20:11:01.562Z",
+  "timestamp": "2026-11-23T22:05:27.629Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-volcengine-openviking-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [volcengine-openviking-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T20:11:01.562Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T22:05:27.629Z`  
 > **Learning ID**: `LEARN-EVO-volcengine-openviking-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 70%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from volcengine-openviking-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `1efb03a3`  
+> **Source Version**: `300ab8eb`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T20:10:54.935Z  
+> **Timestamp**: 2026-11-23T22:05:22.600Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T20:10:54.927Z  
+> **Harvest Timestamp**: 2026-11-23T22:05:22.595Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42564 stars
+- **Stars / Engagement**: 42661 stars
 
 ---
 
@@ -1523,447 +1523,453 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0c00a4f` (2026-11-21)
-**Commit Message**: fix(crypto): reject malformed local root key files (#8126)
+### Incident Patch 1: `c58b41d1` (2026-11-23)
+**Commit Message**: fix(plugins): keep a tool result's text when it comes as content blocks (#8263)
 
-LocalFileProvider read the root key file and accepted any valid hex
-string. A truncated or hand-edited file (for example 16 bytes instead of
-32) silently became the root key: HKDF then derived account keys from it,
-so newly encrypted files were sealed under a key the real 32-byte root
-key can never open, while existing ciphertext fails to decrypt. The
-inline root_key configuration already enforces 32 bytes; apply the same
-rule to the file path.
+* fix(plugins): keep a tool result's text when it comes as content blocks
 
-Co-authored-by: Kiko0301 <[REDACTED_EMAIL]>
+pi and dsh tool results, and Codex dynamic tool calls, carry their output
+as a list of content blocks. The shared capture code passed that list to
+JSON.stringify, so the stored tool_output was one line of JSON with every
+line break as a literal "\n": a search for text spanning lines missed it,
+and a read by offset could not align to a line start.
 
-**File**: `openviking/crypto/providers.py` (modified, +9/-1)
+Join the text blocks with a newline instead, and stand an image in with
+"[image]". A list holding any other block type is still stored as JSON.
+
+* chore(plugins): bump every plugin for the shared capture fix
+
+**File**: `examples/agent-hook-plugin/hosts/codebuddy/plugin.json` (modified, +1/-1)
 ```diff
-@@ -247,9 +247,17 @@ async def _load_or_create_root_key(self) -> bytes:
-             with open(self.key_file, "r") as f:
-                 hex_key = f.read().strip()
-             try:
--                return bytes.fromhex(hex_key)
-+                root_key = bytes.fromhex(hex_key)
-             except ValueError:
-                 raise ConfigError(f"Invalid root key format in {self.key_file}")
-+            # A truncated or hand-edited key file must not silently become a
-+            # shorter root key: the account keys derived from it would encrypt
-+            # new files under a key the real 32-byte root key cannot open.
-+            if len(root_key) != 32:
-+                raise ConfigError(
-+                    f"Invalid root key in {self.key_file}: expected 32 bytes, got {len(root_key)}"
-+                )
-+            return root_key
-         else:
-             # Create new key
-             root_key = secrets.token_bytes(32)
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "description": "Long-term semantic memory for the CodeBuddy Code CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
+   "author": {
+     "name": "OpenViking",
 ```
 
-**File**: `tests/unit/crypto/test_local_provider_root_key_validation.py` (added, +41/-0)
+**File**: `examples/agent-hook-plugin/hosts/cursor/openviking.integration.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,41 @@
-+# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
-+# SPDX-License-Identifier: AGPL-3.0
-+"""The local root-key file must hold exactly one 32-byte root key."""
-+
-+import secrets
-+
-+import pytest
-+
-+from openviking.crypto.exceptions import ConfigError
-+from openviking.crypto.providers import LocalFileProvider
-+
-+
-+async def test_short_root_key_file_is_rejected(tmp_path):
-+    key_file = tmp_path / "master.key"
-+    # 16 valid hex bytes: parseable, but not a 256-bit root key.
-+    key_file.write_text("ab" * 16)
-+
-+    provider = LocalFileProvider(key_file=str(key_file))
-+
-+    with pytest.raises(ConfigError):
-+        await provider.get_root_key()
-+
-+
-+async def test_long_root_key_file_is_rejected(tmp_path):
-+    key_file = tmp_path / "master.key"
-+    key_file.write_text("cd" * 64)
-+
-+    provider = LocalFileProvider(key_file=str(key_file))
-+
-+    with pytest.raises(ConfigError):
-+        await provider.get_root_key()
-+
-+
-+async def test_valid_root_key_file_still_loads(tmp_path):
-+    root_key = secrets.token_bytes(32)
-+    key_file = tmp_path / "master.key"
-+    key_file.write_text(root_key.hex())
-+
-+    provider = LocalFileProvider(key_file=str(key_file))
-+
-+    assert await provider.get_root_key() == root_key
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "clients": [
+     "cursor"
+   ],
+```
+
+**File**: `examples/agent-hook-plugin/hosts/kimicode/kimi.plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "description": "Long-term semantic memory for Kimi Code CLI, powered by OpenViking.",
+   "author": {
+     "name": "OpenViking",
+```
+
+**File**: `examples/agent-hook-plugin/hosts/kimicode/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "clients": [
+     "kimicode"
+   ],
+```
+
+**File**: `examples/agent-hook-plugin/hosts/qoder/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "description": "Long-term semantic memory for the Qoder CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
+   "author": {
+     "name": "OpenViking",
+```
+
+**File**: `examples/agent-hook-plugin/hosts/trae/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "clients": [
+     "trae",
+     "trae-cn"
+```
+
+**File**: `examples/agent-hook-plugin/hosts/zcode/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "clients": [
+     "zcode"
+   ],
+```
+
+**File**: `examples/agent-hook-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "agent-hook-plugin",
+-  "version": "0.5.35",
++  "version": "0.5.36",
+   "description": "Long-term semantic memory for Cursor, TRAE, TRAE CN, ZCode, Kimi Code, CodeBuddy Code, Qoder CLI and Antigravity — powered by OpenViking. Auto-recall relevant memories and capture the conversation as it happens.",
+   "author": {
+     "name": "OpenViking",
 ```
 
 ---
 
-### Incident Patch 2: `1efb03a3` (2026-11-21)
-**Commit Message**: fix(compile): persist cancellation of queued runs (#8166)
+### Incident Patch 2: `4a5aed8b` (2026-11-23)
+**Commit Message**: fix(parse): preserve trailing blank lines in AnyDoc code blocks (#8211)
 
-Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
-
-**File**: `openviking/server/routers/tasks.py` (modified, +10/-1)
+**File**: `openviking/parse/parsers/anydoc_renderer.py` (modified, +1/-1)
 ```diff
-@@ -12,9 +12,10 @@
- from fastapi import APIRouter, Depends, Query
+@@ -134,7 +134,7 @@ def _render_block(self, block: Any) -> str:
+                 return f"### Speaker Notes\n\n{inner}"
+             return "\n".join(">" if not line else f"> {line}" for line in inner.splitlines())
+         if kind == "code_block":
+-            body = (block.text or "").rstrip("\n")
++            body = (block.text or "").removesuffix("\n")
+             fence = self._backtick_fence(body, 3)
+             return f"{fence}{block.lang or ''}\n{body}\n{fence}"
+         if kind == "rule":
+```
+
+---
+
+### Incident Patch 3: `905ffc14` (2026-11-23)
+**Commit Message**: perf(fs): skip memory reference scanning during rm (#8274)
+
+* perf(fs): skip memory reference scanning during rm
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* docs(fs): remove memory reference deletion note
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* fix(fs): 移除删除响应的记忆清理字段 (#8278)
+
+* docs(fs): 纠正资源删除后的记忆保留说明
+
+同步中英文资源与文件系统 API，明确资源删除后已有记忆和引用会保留，并说明 memory_cleanup 响应字段已移除。
+
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+* fix(fs): 移除删除响应的记忆清理字段
+
+去掉删除路由中 memory_cleanup 的转发和 FSService 已不用的依赖。更新原有用例检查字段省略，并保留删除计数和父目录刷新覆盖。
+
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+Co-authored-by: bot-of-qin-ctx <[REDACTED_EMAIL]>
+Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+
+**File**: `docs/en/api/02-resources.md` (modified, +5/-2)
+```diff
+@@ -225,7 +225,7 @@ This endpoint is the core entry point for resource management. It supports vario
+ - Native HTTPS Git credentials in `args.auth_config` remain request-local when `watch_interval <= 0`. When `watch_interval > 0`, OpenViking stores the repository-bound username/token in private watch state and restores it only for later Git fetches. The credentials are excluded from ordinary queue payloads and watch API/MCP/CLI responses. Git PATs have no generic refresh flow; rotate an expired or revoked token by recreating the watch. Legacy URL-embedded credentials such as `https://user:token@host/repo.git` remain accepted and are passed through unchanged; because that URL is also the source identifier, it may be recorded in process arguments, logs, queues, resource metadata, and watch state. Prefer `args.auth_config` for new integrations. Plaintext HTTP authentication and authenticated redirects for `args.auth_config` remain rejected.
+ - The token travels in the HTTPS request body. Keep diagnostic request-body dumping disabled in production because explicitly enabling it can record secrets.
+ - Memory generated from `reason` is extracted through the same pipeline as `session.commit`. It uses `reason`, the resource URI, available source name, and available directory abstract; it does not inspect or expand the full resource content. OpenViking writes to existing memory types such as `entities`, `events`, or `preferences`, not a dedicated resource memory directory.
+-- When deleting a resource, OpenViking scans the self or peer memories targeted by the current context before deletion, removes the matching resource URI and content introduced by that `reason`, and refreshes the semantic index for the affected memories.
++- Deleting a resource leaves existing memory content and its resource references in place.
+ - Other sources with `wait=false` finish source parsing, target resolution, and AGFS writes before returning. Only semantic and embedding queues continue asynchronously.
+ - `processing_mode=vectors_only` does not call the VLM semantic-understanding stage and does not generate or refresh `.abstract.md` / `.overview.md`. For existing targets, it preserves existing semantic artifacts and existing semantic vectors. It still updates the resource tree, vectorizes current non-hidden files when `build_index=true`, and removes detail vectors for files deleted during refresh.
+ - `processing_mode` belongs to `add_resource`. The admin `reindex` API/CLI continues to use `mode` (`vectors_only`, `semantic_and_vectors`) for maintenance operations on already-ingested data.
+@@ -871,6 +871,9 @@ Delete a child of `viking://resources/`. This operation requires MANAGE access,
+ removes associated vector records, refreshes parent semantic metadata, and
+ synchronizes affected watches.
  
- from openviking.server.auth import get_request_context
-+from openviking.server.dependencies import get_service
- from openviking.server.identity import RequestContext, Role
- from openviking.server.models import Response
--from openviking.service.task_domain import TaskRecord
-+from openviking.service.task_domain import TaskRecord, TaskStatus
- from openviking.service.task_store import SYSTEM_TASK_ACCOUNT_ID, SYSTEM_TASK_USER_ID
- from openviking.service.task_tracker import get_task_tracker
- from openviking_cli.exceptions import (
-@@ -93,6 +94,14 @@ async def cancel_task(
-             code="NOT_FOUND",
-             details={"resource": task_id, "type": "task"},
++Existing memories retain their content and `resource_refs`, including memories
++generated from `reason` during import.
++
+ **HTTP**
+ 
+ ```http
+@@ -881,7 +884,7 @@ DELETE /api/v1/resources?uri={uri}
+ |-----------------|------|----------|---------|-------------|
+ | `uri` | string | Yes | - | Shared resource URI to delete; the shared root is not allowed |
+ | `recursive` | boolean | No | `false` | Delete a directory recursively |
+-| `wait` | boolean | No | `true` | Wait for semantic cleanup and refresh |
++| `wait` | boolean | No | `true` | Wait for parent semantic refresh |
+ 
+ ```bash
+ curl -X DELETE "http://localhost:1933/api/v1/resources" \
+```
+
+**File**: `docs/en/api/03-filesystem.md` (modified, +1/-1)
+```diff
+@@ -757,7 +757,7 @@ ov rm viking://resources/old.md [--recursive]
+ 
+ The `estimated_deleted_count` field reports the number of vector records submitted for deletion. A file or directory may have multiple records, and unindexed content contributes zero. The count does not guarantee immediate vector-index visibility. The CLI displays this count in its output.
+ 
+-When deleting `viking://resources/...`, the response may include `memory_cleanup`, indicating that user memories referencing that resource URI were cleaned up before deletion.
++Deleting a resource leaves existing memory content and `resource_refs` in place. The HTTP response no longer includes `memory_cleanup`.
+ 
+ On case-insensitive `localfs`, case-only aliases may affect the delete target. For example, if the real file is `viking://resources/bob-private/private.md`, `ov rm viking://resources/BOB-PRIVATE/private.md` may delete the same file; on case-sensitive systems, deleting the missing alias path still succeeds because `rm` is idempotent, but it does not delete the real file.
+ 
+```
+
+**File**: `docs/zh/api/02-resources.md` (modified, +4/-2)
+```diff
+@@ -225,7 +225,7 @@ Connector 要求精确的 `to` 目标，不支持 `wait=true`。`tos://` 来源
+ - 原生 HTTPS Git 的 `args.auth_config` 在 `watch_interval <= 0` 时只用于本次请求；当 `watch_interval > 0` 时，OpenViking 会把与仓库 URL 绑定的 username/token 保存到 Watch 私有鉴权状态，并只在后续 Git 拉取时恢复使用。凭据不会进入普通持久队列，也不会出现在 Watch API/MCP/CLI 返回中。Git PAT 没有通用刷新流程，过期或撤销后需要重建 Watch 来更换 token。为兼容已有用法，系统仍接受 `https://user:token@host/repo.git` 形式的 URL 内嵌凭据并原样传递；由于该 URL 同时也是资源来源标识，它可能被记录到进程参数、日志、队列、资源元数据和 Watch 状态中。新接入建议使用 `args.auth_config`。`args.auth_config` 的明文 HTTP 鉴权和带鉴权重定向仍会被拒绝。
+ - token 会放在 HTTPS 请求体中传输。生产环境应保持诊断请求体 dump 关闭；显式启用该功能可能记录秘密。
+ - `reason` 触发的记忆生成复用 `session.commit` 的抽取链路，只使用 `reason`、资源 URI、可用的资源名称和目录摘要，不会读取或展开完整资源正文；系统会写入 `entities`、`events`、`preferences` 等已有记忆类型，不创建独立的资源记忆目录。
+-- 删除资源时，系统会在删除前扫描本次上下文对应的 self 或 peer 记忆中的 `resource_refs`，清理对应资源 URI 和由该 `reason` 引入的内容，并重新刷新相关记忆的语义索引。
++- 删除资源后，已生成的记忆内容及其资源引用会保留。
+ - 其他来源在 `wait=false` 时会在响应前完成来源解析、目标解析和 AGFS 写入，仅 semantic 与 embedding 队列继续异步处理。
+ - `processing_mode=vectors_only` 不调用 VLM 语义理解阶段，也不会生成或刷新 `.abstract.md` / `.overview.md`。对已存在目标，它会保留旧的语义产物和旧的语义向量；仍会更新资源树，在 `build_index=true` 时向量化当前非隐藏文件，并清理由本次刷新删除的文件 detail 向量。
+ - `processing_mode` 只属于 `add_resource`。管理员维护已有数据时，`reindex` API/CLI 仍使用 `mode`（`vectors_only`、`semantic_and_vectors`）。
+@@ -859,6 +859,8 @@ curl -X POST http://localhost:1933/api/v1/resources/mv \
+ 删除 `viking://resources/` 下的资源。此操作要求 MANAGE 权限，
+ 会删除关联向量记录、刷新父目录语义元数据，并同步受影响的 Watch。
+ 
++已有记忆会保留原有内容和 `resource_refs`，包括导入时由 `reason` 生成的记忆。
++
+ **HTTP**
+ 
+ ```http
+@@ -869,7 +871,7 @@ DELETE /api/v1/resources?uri={uri}
+ |----------|------|------|--------|------|
+ | `uri` | string | 是 | - | 要删除的共享资源 URI；不允许删除共享资源根 |
+ | `recursive` | boolean | 否 | `false` | 递归删除目录 |
+-| `wait` | boolean | 否 | `true` | 等待语义清理和刷新完成 |
++| `wait` | boolean | 否 | `true` | 等待父目录语义刷新完成 |
+ 
+ ```bash
+ curl -X DELETE "http://localhost:1933/api/v1/resources" \
+```
+
+**File**: `docs/zh/api/03-filesystem.md` (modified, +1/-1)
+```diff
+@@ -783,7 +783,7 @@ ov rm viking://resources/old.md [--recursive]
+ 
+ `estimated_deleted_count` 表示已提交删除的向量记录数量。一个文件或目录可以对应多条记录，未索引内容不计入数量；该数量不保证向量索引立即可见。CLI 会在输出中显示此数量。
+ 
+-删除 `viking://resources/...` 时，响应可能包含 `memory_cleanup`，表示删除前已清理引用该资源 URI 的用户记忆。
++删除资源后，已有记忆会保留原有内容和 `resource_refs`，HTTP 响应不再包含 `memory_cleanup`。
+ 
+ 在大小写不敏感的 `localfs` 上，大小写别名可能影响删除目标。例如真实文件是 `viking://resources/bob-private/private.md`，执行 `ov rm viking://resources/BOB-PRIVATE/private.md` 可能删除同一个文件；大小写敏感系统上，别名目标不存在时该幂等删除仍会成功，但不会删除真实文件。
+ 
+```
+
+**File**: `openviking/server/routers/filesystem.py` (modified, +0/-2)
+```diff
+@@ -301,8 +301,6 @@ async def rm(
+     response_result = {"uri": uri}
+     if isinstance(result, dict) and "estimated_deleted_count" in result:
+         response_result["estimated_deleted_count"] = result["estimated_deleted_count"]
+-    if isinstance(result, dict) and "memory_cleanup" in result:
+-        response_result["memory_cleanup"] = result["memory_cleanup"]
+     if isinstance(result, dict) and "semantic_root_uri" in result:
+         response_result["semantic_root_uri"] = result["semantic_root_uri"]
+     if isinstance(result, dict) and "semantic_status" in result:
+```
+
+**File**: `openviking/service/core.py` (modified, +0/-1)
+```diff
+@@ -677,7 +677,6 @@ async def initialize(
+             vikingdb=self._vikingdb_manager,
+             privacy_config_service=self._privacy_config_service,
+             privacy_sanitizer=self._privacy_sanitizer,
+-            resource_memory_link_service=self._resource_memory_link_service,
+             watch_manager=self._watch_manager,
          )
-+    if (
-+        task.task_type == "compile"
-+        and task.status == TaskStatus.CANCELLED
-+        and task.stage == "queued"
-+    ):
-+        lifecycle = get_service().compile.lifecycle
-+        if lifecycle is not None:
-+            await lifecycle.store.cancel_queued_run(task)
-     return Response(status="ok", result=task.to_dict())
- 
- 
+         self._pack_service.set_dependencies(
 ```
 
-**File**: `openviking/service/compile_targets.py` (modified, +16/-1)
+**File**: `openviking/service/fs_service.py` (modified, +0/-46)
 ```diff
-@@ -52,7 +52,7 @@
- )
- from openviking.server.identity import RequestContext, Role
- from openviking.service.external_task_service import SUBMIT_EXHAUSTED, ExternalTaskSnapshot
--from openviking.service.task_domain import TaskPatch, TaskStatus, sanitize_error
-+from openviking.service.task_domain import TaskPatch, TaskRecord, TaskStatus, sanitize_error
- from openviking.service.task_tracker_concurrency import run_to_completion
- from openviking.storage.errors import LockAcquisitionError, ResourceBusyError
- from openviking.storage.pathlock_recovery import (
-@@ -242,6 +242,7 @@ async def list_runs(
-     async def put_run(
-         self, account_id: str, owner_user_id: str, compile_name: str, run: dict
-     ) -> None: ...
-+    async def cancel_queued_run(self, task: TaskRecord) -> None: ...
-     def lock_run(
-         self, account_id: str, owner_user_id: str, compile_name: str, task_id: str
-     ) -> Any: ...
-@@ -488,6 +489,20 @@ async def put_run(
-         async with self.locked(path) as lease:
-             await self.write_json(path, run, lease)
+@@ -135,7 +135,6 @@ def _visible_grep_content(content: str, uri: str) -> str:
  
-+    async def cancel_queued_run(self, task: TaskRecord) -> None:
-+        """Finalize an unstarted Run using the Task's persisted cancellation time."""
-+        compile_meta = (task.meta.get("request") or {}).get("compile") or {}
-+        owner = compile_meta.get("owner_user_id")
-+        name = compile_meta.get("compile_name")
-+        if task.account_id is None or not owner or not name:
-+            return
-+        path = self._run_path(task.account_id, owner, name, task.task_id)
-+        async with self.locked(path) as lease:
-+            run = await self.read_json(path)
-+            if run is not None and run["status"] == "queued" and run["started_at"] is None:
-+                run.update(status="cancelled", finished_at=task.updated_at)
-+                await self.write_json(path, run, lease)
-+
-     async def list_runs(
+ if TYPE_CHECKING:
+     from openviking.resource.watch_manager import WatchManager
+-    from openviking.service.resource_memory_link_service import ResourceMemoryLinkService
+     from openviking.storage import VikingDBManager
+ 
+ 
+@@ -147,7 +146,6 @@ def __init__(
+         viking_fs: Optional[VikingFS] = None,
+         vikingdb: Optional["VikingDBManager"] = None,
+         privacy_config_service: Optional[UserPrivacyConfigService] = None,
+-        resource_memory_link_service: Optional["ResourceMemoryLinkService"] = None,
+         privacy_sanitizer: Optional[PrivacySanitizer] = None,
+         watch_manager: Optional["WatchManager"] = None,
+     ):
+@@ -157,15 +155,13 @@ def __init__(
+         self._privacy_sanitizer = privacy_sanitizer or (
+             PrivacySanitizer(privacy_config_service) if privacy_config_service is not None else None
+         )
+-        self._resource_memory_link_service = resource_memory_link_service
+         self._watch_manager = watch_manager
+ 
+     def set_dependencies(
          self,
-         account_id: str,
-```
-
-**File**: `tests/server/test_compile_configurations.py` (modified, +10/-0)
-```diff
-@@ -339,6 +339,16 @@ async def test_same_name_configuration_and_runs_are_user_scoped(service, app, cl
-         ]["runs"]
-         assert [r["task_id"] for r in runs] == [task_ids[-1]]
-         assert runs[0]["params"]["instruction"] == actor.user.user_id
-+        assert runs[0]["status"] == "queued"
-+        cancel_path = f"/api/v1/tasks/{task_ids[-1]}/cancel"
-+        cancelled = await client.post(cancel_path)
-+        assert cancelled.status_code == 200, cancelled.text
-+        task = cancelled.json()["result"]
-+        run = await service.compile.get_run(name, task_ids[-1], actor)
-+        assert task["status"] == run["status"] == "cancelled"
-+        assert run["finished_at"] == task["updated_at"]
-+        assert (await client.post(cancel_path)).status_code == 200
-+        assert await service.compile.get_run(name, task_ids[-1], actor) == run
-     assert task_ids[0] != task_ids[1]
-     foreign_run = await client.get(
-         f"/api/v1/compile/runs/{task_ids[0]}", params={"compile_name": name}
-```
-
----
-
-### Incident Patch 3: `000f0765` (2026-11-21)
-**Commit Message**: fix(react): refresh preview permissions with file tree (#8156)
-
-**File**: `frontend/.changeset/file-browser-refresh-permissions.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Refresh the active resource's permission label and edit action when the file tree is refreshed, including grants changed elsewhere. Outdated permission responses from earlier refreshes cannot overwrite the latest result.
-+
-+## zh-CN
-+
-+刷新目录树时同步重新查询当前资源权限，使外部授权变更可更新权限标签和编辑入口。旧刷新请求的响应不会覆盖最新权限。
-```
-
-**File**: `frontend/docs/docs/_demos/file-browser-acl.tsx` (modified, +2/-5)
-```diff
-@@ -12,14 +12,13 @@ export default function FileBrowserAclDemo() {
-   const locale = useLang() === 'zh' ? 'zh-CN' : 'en-US';
-   const zh = locale === 'zh-CN';
-   const [demo] = useState(createAclDemo);
--  const [revision, setRevision] = useState(0);
-   const [hideDeniedEntries, setHideDeniedEntries] = useState(false);
-   return (
-     <div lang={locale}>
-       <p>
-         {zh
--          ? '离线模拟数据 · 不修改真实授权。'
--          : 'Offline simulation · no real grants are changed.'}
-+          ? '离线模拟数据 · 切换当前权限后点击刷新，不修改真实授权。'
-+          : 'Offline simulation · change the permission, then click Refresh. No real grants are changed.'}
-       </p>
-       <div
-         style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 16 }}
-@@ -49,7 +48,6 @@ export default function FileBrowserAclDemo() {
-             onChange={([value]) => {
-               if (value === undefined) return;
-               demo.setLevel(value);
--              setRevision((value) => value + 1);
-             }}
-           >
-             <SelectOption value="manage">
-@@ -67,7 +65,6 @@ export default function FileBrowserAclDemo() {
-       <div style={{ height: 580 }}>
-         <OpenVikingProvider fetch={demo.fetch} accountId="demo" userId="alice">
-           <FileBrowser
--            key={revision}
-             acl
-             hideDeniedEntries={hideDeniedEntries}
-             locale={locale}
-```
-
-**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +1/-1)
-```diff
-@@ -517,7 +517,7 @@ All fields are optional, and omitted fields follow `locale`.
- - The dashboard tab is hidden while editing a file and returns after saving or cancelling.
- - Saving a Wiki file shows a progress notice in the upper right, followed by a success notice if the write succeeds. Wiki saves send `use_snapshot: true` to preserve version history and `resolve_conflicts: true` so the server preserves and updates conflict records. Ordinary text saves leave snapshots disabled by default.
- - All YAML frontmatter, ordinary HTML comments and fenced Markdown examples survive. In a Markdown file with confirmed scope, an unclosed reserved trailer starting on its own line is hidden through the end of the file; markers quoted in YAML frontmatter, code fences or inline examples survive.
--- The refresh button reloads the expanded directories and the current preview.
-+- The refresh button reloads the expanded directories, the current preview and its effective permissions.
+         viking_fs: VikingFS,
+         vikingdb: Optional["VikingDBManager"] = None,
+         privacy_config_service: Optional[UserPrivacyConfigService] = None,
+-        resource_memory_link_service: Optional["ResourceMemoryLinkService"] = None,
+         privacy_sanitizer: Optional[PrivacySanitizer] = None,
+         watch_manager: Optional["WatchManager"] = None,
+     ) -> None:
+@@ -176,7 +172,6 @@ def set_dependencies(
+         self._privacy_sanitizer = privacy_sanitizer or (
+             PrivacySanitizer(privacy_config_service) if privacy_config_service is not None else None
+         )
+-        self._resource_memory_link_service = resource_memory_link_service
+         self._watch_manager = watch_manager
  
- ### Open and reveal a resource
+     def _ensure_initialized(self) -> VikingFS:
+@@ -731,7 +726,6 @@ async def _rm(
+                 result["vector_status"] = "skipped"
+             return result
  
+-        cleanup_result: Optional[Dict[str, Any]] = None
+         context_type = context_type_for_uri(uri)
+         refresh_parent_uri = self._semantic_refresh_parent_uri(uri, context_type)
+         memory_overview_uri = self._memory_overview_parent_uri(uri, context_type)
+@@ -767,26 +761,12 @@ async def _rm(
+                     ctx=ctx,
+                     force_refresh=wait,
+                 )
+-            if self._resource_memory_link_service and context_type == "resource":
+-                cleanup_result = await self._resource_memory_link_service.before_resource_delete(
+-                    ctx=ctx,
+-                    resource_uri=uri,
+-                    recursive=recursive,
+-                )
+             if memory_overview_uri:
+                 await MemoryUpdater.refresh_schema_overview(
+                     viking_fs=viking_fs,
+                     directory_uri=memory_overview_uri,
+                     ctx=ctx,
+                 )
+-            for cleanup_overview_uri in self._memory_overview_parent_uris_from_cleanup(
+-                cleanup_result
+-            ):
+-                await MemoryUpdater.refresh_schema_overview(
+-                    viking_fs=viking_fs,
+-                    directory_uri=cleanup_overview_uri,
+-                    ctx=ctx,
+-                )
+             if (
+                 refresh_parent_uri
+                 and wait
+@@ -795,8 +775,6 @@ async def _rm(
+                 queue_status = await self._wait_for_refresh()
+         finally:
+             pass
+-        if cleanup_result is not None and isinstance(result, dict):
+-            result["memory_cleanup"] = cleanup_result
+         if refresh_parent_uri and isinstance(result, dict):
+             result["semantic_root_uri"] = refresh_parent_uri
+             if refresh_action is FreshnessAction.NOOP:
+@@ -867,30 +845,6 @@ def _memory_overview_parent_uri(uri: str, context_type: str) -> Optional[str]:
+             return None
+         return parent.uri
+ 
+-    @classmethod
+-    def _memory_overview_parent_uris_from_cleanup(
+-        cls,
+-        cleanup_result: Optional[Dict[str, Any]],
+-    ) -> List[str]:
+-        if not isinstance(cleanup_result, dict):
+-            return []
+-
+-        overview_uris: List[str] = []
+-        for field in ("memory_uris", "deleted_memory_uris"):
+-            values = cleanup_result.get(field)
+-            if not isinstance(values, list):
+-                continue
+-            for memory_uri in values:
+-                if not isinstance(memory_uri, str):
+-                    continue
+-                overview_uri = cls._memory_overview_parent_uri(
+-                    memory_uri,
+-                    context_type_for_uri(memory_uri),
+-                )
+-                if overview_uri:
+-                    overview_uris.append(overview_uri)
+-        return list(dict.fromkeys(overview_uris))
+-
+     async def _enqueue_delete_refresh(
+         self,
+         *,
 ```
 
-**File**: `frontend/docs/docs/zh/modules/file-browser.mdx` (modified, +1/-1)
+**File**: `tests/server/test_filesystem_router.py` (modified, +6/-7)
 ```diff
-@@ -517,7 +517,7 @@ import '@openviking/react/modules/file-browser/style.css';
- - 编辑文件时隐藏看板页签，保存或取消后恢复显示。
- - 保存 Wiki 文件时，右上角显示保存进度，写入成功后显示「保存成功」。请求携带 `use_snapshot: true` 创建历史快照，并通过 `resolve_conflicts: true` 交由服务端保留、更新冲突记录；普通文本保存默认不创建快照。
- - 所有 YAML 头、普通 HTML 注释和 Markdown 代码围栏中的示例保留；已确认作用域的 Markdown 文件中，独占一行的未闭合保留尾注隐藏至文件末尾；YAML 头、代码围栏和行内示例中的标记保留。
--- 刷新按钮重新加载已展开的目录和当前预览。
-+- 刷新按钮重新加载已展开的目录、当前预览及其有效权限。
+@@ -25,13 +25,11 @@
  
- ### 打开并定位资源
  
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/acl/use-acl-manager.ts` (modified, +5/-3)
-```diff
-@@ -4,12 +4,14 @@ import type { FileBrowserAclLevel } from '../acl-types.js';
- /** Revalidate the active resource before opening its permission manager. */
- export function useAclManager({
-   key,
-+  revision,
-   uri,
-   loadPermission,
-   onLevel,
-   onError,
- }: {
-   key: string;
-+  revision: number;
-   uri: string | null;
-   loadPermission: (
-     uri: string,
-@@ -19,14 +21,14 @@ export function useAclManager({
-   onError: () => void;
- }) {
-   const pending = useRef<AbortController | null>(null);
--  // The probe outlives its click. Abort on resource/request scope changes or
--  // unmount so an old account cannot open a manager in the new scope.
-+  // The probe outlives its click. Abort on a new server-permission revision,
-+  // resource/request scope change or unmount so stale access cannot reopen it.
-   useEffect(
-     () => () => {
-       pending.current?.abort();
-       pending.current = null;
-     },
--    [key, loadPermission],
-+    [key, revision, loadPermission],
-   );
-   return async () => {
-     if (!uri || pending.current) return;
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/file-browser-content.tsx` (modified, +3/-3)
-```diff
-@@ -91,7 +91,6 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
-   // rather than discarded, so the tree returns to where it was dragged once the
-   // container widens again.
-   const treeMaxWidth = resolveTreeMaxWidth(width);
--  const treeWidth = Math.min(preferredTreeWidth, treeMaxWidth);
- 
-   // Keep preview and summary copy stable until locale or host overrides change.
-   const { summaryLabels, previewLabels } = useMemo(
-@@ -128,6 +127,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
-     locale,
-     labels: labels?.acl,
-     requestOptions,
-+    refreshGeneration: browser.refreshGeneration,
-     refresh: browser.actions.refresh,
-   });
-   const pack = usePackImportPicker(layoutRef, text, locale, permissions);
-@@ -158,7 +158,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
-             // 分隔条是独立一列，树宽只作用在自己身上，两者相加才是左栏占用。
-             // The divider is its own column: the tree width applies to the tree alone
-             // and the two together are what the left side occupies.
--            '--ov-file-browser-tree-width': `${treeWidth}px`,
-+            '--ov-file-browser-tree-width': `${Math.min(preferredTreeWidth, treeMaxWidth)}px`,
-           } as CSSProperties
+ @pytest.mark.asyncio
+-async def test_rm_preserves_memory_cleanup(monkeypatch):
+-    cleanup = {"status": "success", "memory_uris": ["viking://user/alice/memories/entities/a.md"]}
+-
++async def test_rm_omits_legacy_memory_cleanup(monkeypatch):
+     async def fake_rm(uri, ctx=None, recursive=False, wait=False):
+         return {
+             "estimated_deleted_count": 1,
+-            "memory_cleanup": cleanup,
++            "memory_cleanup": {"status": "success"},
          }
-       >
-@@ -194,7 +194,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
-             label={text.resizeTree}
-             min={TREE_MIN_WIDTH}
-             max={treeMaxWidth}
--            value={treeWidth}
-+            value={Math.min(preferredTreeWidth, treeMaxWidth)}
-             onResize={setPreferredTreeWidth}
-             className="ov-file-browser__resizer"
-           />
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/file-browser-state-types.ts` (modified, +2/-0)
-```diff
-@@ -36,6 +36,8 @@ export interface FileBrowserApi {
-   currentUri: string | null;
-   /** 刷新是否进行中。Whether a refresh is running. */
-   refreshing: boolean;
-+  /** 树和当前预览共用的刷新次数。Refresh revision shared by the tree and active preview. */
-+  refreshGeneration: number;
-   /** 预览字符数文案。Localized preview character count. */
-   previewFooter?: string;
-   /** 当前资源的更新时间（ISO 8601）。Update time of the current resource (ISO 8601). */
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/use-file-browser-acl.tsx` (modified, +11/-9)
-```diff
-@@ -28,6 +28,7 @@ export function useFileBrowserAcl({
-   locale,
-   labels,
-   requestOptions,
-+  refreshGeneration: revision,
-   refresh,
- }: {
-   uri: string | null;
-@@ -36,6 +37,7 @@ export function useFileBrowserAcl({
-   locale: Locale;
-   labels?: FileBrowserAclLabels;
-   requestOptions?: OvRequestOptions;
-+  refreshGeneration: number;
-   refresh: () => Promise<void>;
- }) {
-   const client = useOvClient();
-@@ -45,7 +47,7 @@ export function useFileBrowserAcl({
-   const signal = requestOptions?.signal ?? inheritedSignal;
-   const options = typeof acl === 'object' ? acl : undefined;
-   const key = scopeKeyOf(client, requestOptions, uri ?? undefined);
--  const [permission, setPermission] = useState<{
-+  const [access, setPermission] = useState<{
-     key: string;
-     level?: FileBrowserAclLevel;
-     error?: boolean;
-@@ -112,9 +114,10 @@ export function useFileBrowserAcl({
-     },
-     [aclEnabled, loadPermission, readOnly],
-   );
--  // Sync the active resource with the permission service, including navigation
--  // and account changes that do not originate in a click. Abort on scope change
--  // or unmount; aborted responses never publish a permission for the next scope.
-+  // Sync the active resource with the permission service on navigation, account
-+  // changes and explicit refresh, even when the selected URI stays the same.
-+  // The server owns grants, so rendering cannot derive them. Abort on refresh,
-+  // scope change or unmount so an older response cannot publish stale access.
-   useEffect(() => {
-     if (!enabled || !uri) return;
-     const controller = new AbortController();
-@@ -129,15 +132,15 @@ export function useFileBrowserAcl({
-       },
-     );
-     return () => controller.abort();
--  }, [enabled, key, uri, signal, generation, loadPermission]);
--  const level =
--    enabled && permission?.key === key ? permission.level : undefined;
-+  }, [enabled, key, uri, signal, generation, revision, loadPermission]);
-+  const level = enabled && access?.key === key ? access.level : undefined;
-   const text = aclLabels(locale, labels);
-   // Pending saves may finish after the host changes its locale or labels.
-   const currentText = useRef(text);
-   currentText.current = text;
-   const openManager = useAclManager({
-     key,
-+    revision,
-     uri,
-     loadPermission,
-     onLevel: (current) => {
-@@ -158,7 +161,7 @@ export function useFileBrowserAcl({
-     canDelete: !enabled || level === 'manage',
-     canEdit: !enabled || level === 'write' || level === 'manage',
-     titleExtra:
--      enabled && permission?.key === key && permission.error ? (
-+      enabled && access?.key === key && access.error ? (
-         <AclPermissionError
-           text={text}
-           onRetry={() => setGeneration((value) => value + 1)}
-@@ -198,7 +201,6 @@ export function useFileBrowserAcl({
-                 options?.onChange?.(report);
-               } catch {
-                 // A host notification cannot undo a successful server mutation.
--                return;
-               }
-             }}
-           />
+ 
+     monkeypatch.setattr(
+@@ -46,9 +44,10 @@ async def fake_rm(uri, ctx=None, recursive=False, wait=False):
+         _ctx=RequestContext(user=UserIdentifier("acct", "alice"), role=Role.USER),
+     )
+ 
+-    assert response.result["uri"] == "viking://resources/id_card.pdf"
+-    assert response.result["estimated_deleted_count"] == 1
+-    assert response.result["memory_cleanup"] == cleanup
++    assert response.result == {
++        "uri": "viking://resources/id_card.pdf",
++        "estimated_deleted_count": 1,
++    }
+ 
+ 
+ @pytest.mark.asyncio
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8166** (2026-11-21): fix(compile): persist cancellation of queued runs (@FuJiaJie123)
-- **PR #8156** (2026-11-21): fix(react): refresh preview permissions with file tree (@leowld)
-- **PR #8152** (2026-11-21): fix(react): distinguish compile and experience dashboard colors (@leowld)
-- **PR #8146** (2026-11-21): fix(storage): backport effective file access metadata to v0.5.5 (@leowld)
-- **PR #8141** (2026-11-21): fix(react): only offer ovpack export for directories (@leowld)
-- **PR #8140** (2026-11-21): fix(react): keep ACL search placeholder stable (@leowld)
+- **PR #8306** (2026-11-23): fix(grep): backport Rust matching to v0.5.5 hotfix (#8289) (@ZaynJarvis)
+- **PR #8297** (2026-11-23): fix(react): align file browser history scope and root breadcrumb (@LaamGinghong)
+- **PR #8291** (2026-11-23): fix(react): align VikingBot activation copy (@LaamGinghong)
+- **PR #8289** (2026-11-23): fix(grep): 将 Python 正则匹配迁移到 Rust (@qin-ctx)
+- **PR #8288** (2026-11-23): fix(react): support prelaunch endpoints in AgentConnect (@leowld)
+- **PR #8284** (2026-11-23): fix(react): keep draft references removable during replies (@LaamGinghong)
 
 ---
 
@@ -1983,39 +1989,31 @@ Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crypto): reject malformed local root key files
+## X. plugins): keep a tool result's text when it comes as content blocks
 
 **RULE**:
-When implementing operations in `openviking/crypto/providers.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/agent-hook-plugin/hosts/codebuddy/plugin.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0c00a4f`: crypto): reject malformed local root key files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c58b41d1`: plugins): keep a tool result's text when it comes as content blocks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `openviking/crypto/providers.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/agent-hook-plugin/hosts/codebuddy/plugin.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                root_key = bytes.fromhex(hex_key)
-            # A truncated or hand-edited key file must not silently become a
-            # shorter root key: the account keys derived from it would encrypt
-            # new files under a key the real 32-byte root key cannot open.
-            if len(root_key) != 32:
-                raise ConfigError(
-                    f"Invalid root key in {self.key_file}: expected 32 bytes, got {len(root_key)}"
-                )
-            return root_key
+  "version": "0.5.36",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                return bytes.fromhex(hex_key)
+  "version": "0.5.35",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0c00a4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c58b41d1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

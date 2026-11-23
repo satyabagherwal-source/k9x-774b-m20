@@ -12486,3 +12486,5 @@
 | `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T21:48:46.597Z` | `hf-inclusionai-ling-3.2-air` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7E47FE9B` [Domain D] | Yes (`5d1dd606...`) |
 | `CYCLE-20261123-34E8` | `2026-11-23T21:56:58.496Z` | `autotrust/AutoTrust-Decider-Pro-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`445f0d9b...`) |
 | `CYCLE-20261123-35XU` | `2026-11-23T21:57:00.498Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10131` | Yes (`39ff4df6...`) |
+| `CYCLE-20261123-DLM1` | `2026-11-23T22:05:07.369Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`e7956b2e...`) |
+| `CYCLE-20261123-DY4E` | `2026-11-23T22:05:23.582Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10132` | Yes (`31ee597a...`) |

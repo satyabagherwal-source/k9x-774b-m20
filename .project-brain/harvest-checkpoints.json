@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T21:57:00.511Z",
+  "last_updated": "2026-11-23T22:05:23.594Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2242,14 +2242,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "content_hash": "1d1721cf6a37eb47aaa43bf4872fbf641ae2eef259cf8a75ab830d902734478d",
-      "verified_at": "2026-11-19T15:50:46.190Z",
+      "content_hash": "e7956b2e95598b4efd23193e606c4ddd22f643aeeadc6ddc75015e214fd603c6",
+      "verified_at": "2026-11-23T22:05:07.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:50:46.190Z"
+      "last_updated": "2026-11-23T22:05:07.381Z"
     },
     "fishaudio/drama-3": {
       "repository": "fishaudio/drama-3",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "daa3c3843550a679dc6d2432d40e14a332ea6c772bf4d277eb64e333c9636db8",
-      "verified_at": "2026-11-22T20:17:06.434Z",
+      "content_hash": "31ee597a4bb5f4cd5fb452d44c305b9a2846920a7e4586d47b67b9631b00aa81",
+      "verified_at": "2026-11-23T22:05:23.593Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:17:06.434Z"
+      "last_updated": "2026-11-23T22:05:23.593Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",

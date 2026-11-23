@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T21:57:10.894Z",
+  "last_updated": "2026-11-23T22:05:28.602Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50870,11 +50870,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-0AQH",
+      "id": "CD-E1ZR",
       "directive_title": "rust): resolve python calls through annotated parameters and self members",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0AQH-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-E1ZR-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-23",
@@ -51312,6 +51312,37 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C00B28-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-DYAG",
+      "directive_title": "keep a tool result's text when it comes as content blocks",
+      "source_repo": "volcengine/OpenViking",
+      "source_commit": "300ab8eb",
+      "staged_file": "11_INBOX/candidate-directives/CD-DYAG-keep-a-tool-result-s-text-when-it-comes-as-content-blocks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-E1BQ",
+      "directive_title": "plugins): keep a tool result's text when it comes as content blocks",
+      "source_repo": "volcengine-openviking-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E1BQ-plugins-keep-a-tool-result-s-text-when-it-comes-as-content-blocks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-47D8D6",
+      "directive_title": "rust): resolve python calls through annotated parameters and self members",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-47D8D6-rust-resolve-python-calls-through-annota.md",
       "staged_date": "2026-11-23"
     }
   ]

@@ -12519,3 +12519,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-7e47fe9b` | `project://hf-inclusionai-ling-3.2-air` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md` | 2026-11-23T21:48:46.597Z |
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T21:56:58.501Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `b33999ea` | Multi-dimensional audit evidence | 2026-11-23T21:57:00.502Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-23T22:05:07.373Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `300ab8eb` | Multi-dimensional audit evidence | 2026-11-23T22:05:23.586Z |
