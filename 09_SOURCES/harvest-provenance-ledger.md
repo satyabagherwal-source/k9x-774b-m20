@@ -12472,3 +12472,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-23T19:34:24.709Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `22af9e12` | Multi-dimensional audit evidence | 2026-11-23T19:34:27.138Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `787c7d04` | Multi-dimensional audit evidence | 2026-11-23T19:34:43.006Z |
+| `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-23T19:42:50.415Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `0038ce76` | Multi-dimensional audit evidence | 2026-11-23T19:42:53.089Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `b0a4509e` | Multi-dimensional audit evidence | 2026-11-23T19:43:03.411Z |

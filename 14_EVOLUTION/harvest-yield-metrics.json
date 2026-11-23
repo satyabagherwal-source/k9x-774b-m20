@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T19:34:43.012Z",
-  "total_cycles_completed": 11828,
-  "total_learnings_persisted": 11828,
-  "total_rules_promoted": 10945,
+  "last_updated": "2026-11-23T19:43:03.416Z",
+  "total_cycles_completed": 11831,
+  "total_learnings_persisted": 11831,
+  "total_rules_promoted": 10947,
   "history": [
-    {
-      "timestamp": "2026-11-22T23:33:26.862Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T23:41:15.211Z",
-      "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
-      "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T23:49:14.461Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T23:49:17.188Z",
       "repository": "ratatui/ratatui",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-23T19:34:43.012Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T19:42:50.421Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T19:42:53.095Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T19:43:03.416Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

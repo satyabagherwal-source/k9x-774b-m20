@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `cca1cceb`  
+> **Source Version**: `0038ce76`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T07:56:34.038Z  
+> **Timestamp**: 2026-11-23T19:42:51.983Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:56:34.032Z  
+> **Harvest Timestamp**: 2026-11-23T19:42:51.978Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4558 stars
+- **Stars / Engagement**: 4559 stars
 
 ---
 
@@ -1968,611 +1968,168 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cca1cceb` (2026-11-21)
-**Commit Message**: Refactoring Index::for_each_record in join command
+### Incident Patch 1: `0038ce76` (2026-11-23)
+**Commit Message**: Adding notes wrt SIMD
 
-**File**: `src/cmd/join.rs` (modified, +23/-28)
+**File**: `docs/blog/notes/simd.md` (added, +29/-0)
 ```diff
-@@ -167,17 +167,19 @@ impl Index {
-         sel: &Selection,
-         record: &ByteRecord,
-         mut callback: F,
--    ) -> Result<(), E>
-+    ) -> Result<bool, E>
-     where
-         F: FnMut(&mut IndexNode) -> Result<(), E>,
-     {
-+        let mut is_match = false;
-         let key = get_row_key(sel, record, self.case_insensitive);
- 
-         if !self.nulls && key.iter().all(|c| c.is_empty()) {
--            return Ok(());
-+            return Ok(is_match);
-         }
- 
-         if let Some((i, _)) = self.map.get(&key) {
-+            is_match = true;
-             let mut current_node = &mut self.nodes[i - 1];
- 
-             callback(current_node)?;
-@@ -188,15 +190,15 @@ impl Index {
-             }
-         }
- 
--        Ok(())
-+        Ok(is_match)
-     }
- 
-     fn for_each_record<F, E>(
-         &mut self,
-         sel: &Selection,
-         record: &ByteRecord,
-         mut callback: F,
--    ) -> Result<(), E>
-+    ) -> Result<bool, E>
-     where
-         F: FnMut(&ByteRecord) -> Result<(), E>,
-     {
-@@ -690,10 +692,7 @@ impl Args {
- 
-         while right_reader.read_byte_record(&mut right_record)? {
-             if self.flag_strict {
--                let mut is_match = false;
--
--                index.for_each_node_mut(&right_sel, &right_record, |left_node| {
--                    is_match = true;
-+                let is_match = index.for_each_node_mut(&right_sel, &right_record, |left_node| {
-                     left_node.written = true;
- 
-                     writer.write_record(
-@@ -805,16 +804,14 @@ impl Args {
-         let mut left_record = simd_csv::ByteRecord::new();
- 
-         while left_reader.read_byte_record(&mut left_record)? {
--            let mut something_was_written: bool = false;
--
--            index.for_each_record(&left_sel, &left_record, |right_record| {
--                something_was_written = true;
--                writer.write_record(
--                    inverted_left_sel
--                        .select(&left_record)
--                        .chain(inverted_right_sel.select(right_record)),
--                )
--            })?;
-+            let something_was_written =
-+                index.for_each_record(&left_sel, &left_record, |right_record| {
-+                    writer.write_record(
-+                        inverted_left_sel
-+                            .select(&left_record)
-+                            .chain(inverted_right_sel.select(right_record)),
-+                    )
-+                })?;
- 
-             if !something_was_written {
-                 writer.write_record(
-@@ -852,16 +849,14 @@ impl Args {
-         let mut right_record = simd_csv::ByteRecord::new();
- 
-         while right_reader.read_byte_record(&mut right_record)? {
--            let mut something_was_written: bool = false;
--
--            index.for_each_record(&right_sel, &right_record, |left_record| {
--                something_was_written = true;
--                writer.write_record(
--                    inverted_left_sel
--                        .select(left_record)
--                        .chain(inverted_right_sel.select(&right_record)),
--                )
--            })?;
-+            let something_was_written =
-+                index.for_each_record(&right_sel, &right_record, |left_record| {
-+                    writer.write_record(
-+                        inverted_left_sel
-+                            .select(left_record)
-+                            .chain(inverted_right_sel.select(&right_record)),
-+                    )
-+                })?;
- 
-             if !something_was_written {
-                 writer.write_record(
+@@ -0,0 +1,29 @@
++# SIMD design article notes
++
++*Designing the fastest general-purpose SIMD CSV parser*
++
++- Historical outline wrt simd-json etc.
++- Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
++- Shuffling, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
++- You cannot expect x16 or x32, that is just not realistic.
++- Branching is data-dependent and cannot be avoided.
++- Complete branchlessness requires too much SIMD work with is not amortized vs. scalar in the case of CSV (the same cannot be said of JSON). JSON is way more expensive to parse.
++- Zero copy is not very convenient and takes a performance hit as soon as we must unescape more than a single cell. Else we need too much bookkeeping and we could as well do copy parsing.
++- Typical `memchr` SIMD string searches. The necessity to amortize the mask for dense sections. But also the structure of CSV makes it useful to have a "two-speed" approach wrt quoting.
++- The desing needs to remain practical for a wide range of CSV data and not favor one specific case (it is easy to have a SIMD parser out-perform on files having very large records & cells).
++- Discussing the three-bytes Searcher vs. two-bytes/more branching on delimiter version.
++- Show the bench table for reference.
++- Keeping a field start state is complex and can kill performance by introducing too much branching
++
++Things tried:
++
++- Pooling the SIMD operations (Sep's approach) and running the state machine over collected structural characters. This means you can have aligned/cache buffers for the SIMD calls etc. and they are not throttled by the scalar side. It does not seem to out-perform the interleaved/inline operation.
++- Doing all the parse inside the amortized mask section under-peforms vs. the two-speed switch. Which means branching the state machine once per structural char.
++- Alternative method with one quote+newline movemask and one delimiter movemask to deal with delimiters branchlessly. This under-performs because of the additional movemask, and branchlessness over little chunks of data still pays the cost of the loop.
++- AVX2 underperforms (in the unquote sections), vzeroupper makes code generation tricky (I tried complex non-inlined version to avoid this). Unrolled SSE2 is on par for cases where AVX2 shines and is better for other cases, and is better for compatibility.
++- Two-bytes searching (delimiter + newline) only, with a state for field start: more robust, less performant and result in a splitter that does not agree with the others.
++
++Regarding CSV Writer:
++
++- SIMD to find if a cell must be quoted is generally bad, because of the distribution of cell lengths and first byte to quote. The unrolled table test from burntsushi is the best.
++- SIMD is useful to perform the quoting again because of the same intuition behind two-speed.
 ```
 
 ---
 
-### Incident Patch 2: `281abd93` (2026-11-21)
-**Commit Message**: Adding xan parallel map --inplace, --replace, --atomicity
-Fix #1243
+### Incident Patch 2: `6884dbb3` (2026-11-23)
+**Commit Message**: Adding xan p map --tmp-dir
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -46,6 +46,7 @@ The **laminated** update.
+@@ -46,7 +46,7 @@ The **laminated** update.
  * Adding `xan explode -C/--combinations <k> & -I/--drop-incomplete`.
  * Adding `xan matrix --normalize`.
  * Adding `xan join --strict`.
-+* Adding `xan parallel map --inplace & --replace & --atomicity`.
+-* Adding `xan parallel map --inplace & --replace & --atomicity`.
++* Adding `xan parallel map --inplace, --replace, --atomicity & --tmp-dir`.
  
  *Fixes*
  
 ```
 
-**File**: `docs/cmd/join.md` (modified, +27/-25)
+**File**: `docs/cmd/parallel.md` (modified, +2/-0)
 ```diff
-@@ -117,31 +117,33 @@ Usage:
-     xan join --help
- 
- join mode options:
--    --inner  Do an "inner" join. This only returns rows where
--             a match can be found between both data sets. This
--             is the command's default, so this flag can be omitted,
--             or used for clarity.
--    --left   Do an "outer left" join. This returns all rows in
--             first CSV data set, including rows with no
--             corresponding row in the second data set. When no
--             corresponding row exists, it is padded out with
--             empty fields. This is the reverse of --right.
--             Can be used in fuzzy joins.
--    --right  Do an "outer right" join. This returns all rows in
--             second CSV data set, including rows with no
--             corresponding row in the first data set. When no
--             corresponding row exists, it is padded out with
--             empty fields. This is the reverse of --left.
--    --full   Do a "full outer" join. This returns all rows in
--             both data sets with matching records joined. If
--             there is no match, the missing side will be padded
--             out with empty fields.
--    --semi   Only keep rows of left file matching a row in right file.
--    --anti   Only keep rows of left file not matching a row in right file.
--    --cross  This returns the cartesian product of the given CSV
--             files. The number of rows emitted will be equal to N * M,
--             where N and M correspond to the number of rows in the given
--             data sets, respectively.
-+    --inner   Do an "inner" join. This only returns rows where
-+              a match can be found between both data sets. This
-+              is the command's default, so this flag can be omitted,
-+              or used for clarity.
-+    --strict  Do a "strict" inner join. This is equivalent to an inner join
-+              but will error if some rows don't match at all.
-+    --left    Do an "outer left" join. This returns all rows in
-+              first CSV data set, including rows with no
-+              corresponding row in the second data set. When no
-+              corresponding row exists, it is padded out with
-+              empty fields. This is the reverse of --right.
-+              Can be used in fuzzy joins.
-+    --right   Do an "outer right" join. This returns all rows in
-+              second CSV data set, including rows with no
-+              corresponding row in the first data set. When no
-+              corresponding row exists, it is padded out with
-+              empty fields. This is the reverse of --left.
-+    --full    Do a "full outer" join. This returns all rows in
-+              both data sets with matching records joined. If
-+              there is no match, the missing side will be padded
-+              out with empty fields.
-+    --semi    Only keep rows of left file matching a row in right file.
-+    --anti    Only keep rows of left file not matching a row in right file.
-+    --cross   This returns the cartesian product of the given CSV
-+              files. The number of rows emitted will be equal to N * M,
-+              where N and M correspond to the number of rows in the given
-+              data sets, respectively.
- 
- fuzzy join mode options:
-     -c, --contains    Join by matching substrings.
+@@ -176,6 +176,8 @@ parallel map options:
+     --inplace              Replace target files, without changing their names, instead
+                            of adding new ones beside them.
+     --replace              Replace target files instead of adding new ones beside them.
++    --tmp-dir <dir>        Where to write temporary files.
++                           Will default to "/tmp" or equivalent.
+     --atomicity <mode>     When using --inplace, use to select when finished files are
+                            replaced. Must be one of the following:
+                                 - "all":  the command will wait for every file to be
 ```
 
-**File**: `docs/cmd/parallel.md` (modified, +16/-0)
+**File**: `src/cmd/parallel.rs` (modified, +10/-1)
 ```diff
-@@ -83,6 +83,7 @@ Usage:
-     xan parallel agg [options] <expr> [<inputs>...]
-     xan parallel groupby [options] <group> <expr> [<inputs>...]
-     xan parallel top [options] <column> [<inputs>...]
-+    xan parallel map --inplace [options] [<inputs>...]
-     xan parallel map [options] <template> [<inputs>...]
-     xan parallel --help
-     xan p count [options] [<inputs>...]
-@@ -92,6 +93,7 @@ Usage:
-     xan p agg [options] <expr> [<inputs>...]
-     xan p groupby [options] <group> <expr> [<inputs>...]
-     xan p top [options] <column> [<inputs>...]
-+    xan p map --inplace [options] [<inputs>...]
-     xan p map [options] <template> [<inputs>...]
-     xan p --help
- 
-@@ -171,6 +173,20 @@ parallel top options:
-                           consume O(k + t) memory, t being the number of ties.
- 
- parallel map options:
-+    --inplace              Replace target files, without changing their names, instead
-+                           of adding new ones beside them.
-+    --replace              Replace target files instead of adding new ones beside them.
-+    --atomicity <mode>     When using --inplace, use to select when finished files are
-+                           replaced. Must be one of the following:
-+                                - "all":  the command will wait for every file to be
-+                                            fully processed before replacing original ones.
-+                                            The overall process remains safe in case of an
-+                                            error but requires more temporary disk resources.
-+                                - "file": the command will replace a file as soon as it is
-+                                            fully processed. This requires less temporary disk
-+                                            resources but is riskier in case of an error because
-+                                            only some files will have been replaced.
-+                           [default: all]
-     -z, --compress <kind>  Compress created files using either "gz|gzip" or "zst|zstd"
-                            compression.
- 
-```
-
-**File**: `src/cmd/parallel.rs` (modified, +127/-13)
-```diff
-@@ -17,6 +17,7 @@ use colored::{ColoredString, Colorize};
- use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
- use rayon::{ThreadPoolBuilder, prelude::*};
- use simd_csv::ByteRecord;
-+use tempfile::{NamedTempFile, TempDir};
- 
- use crate::cmd::progress::get_progress_style;
- use crate::cmd::top::Value as TopValue;
-@@ -492,6 +493,20 @@ impl InputReader {
-     }
- }
- 
-+#[derive(Deserialize, Clone, Copy, Default)]
-+enum Atomicity {
-+    #[default]
-+    All,
-+    File,
-+}
-+
-+impl Atomicity {
-+    #[inline]
-+    fn is_all(&self) -> bool {
-+        matches!(self, Self::All)
-+    }
-+}
-+
- static USAGE: &str = "
- Parallel processing of CSV data.
- 
-@@ -574,6 +589,7 @@ Usage:
-     xan parallel agg [options] <expr> [<inputs>...]
-     xan parallel groupby [options] <group> <expr> [<inputs>...]
-     xan parallel top [options] <column> [<inputs>...]
-+    xan parallel map --inplace [options] [<inputs>...]
-     xan parallel map [options] <template> [<inputs>...]
-     xan parallel --help
-     xan p count [options] [<inputs>...]
-@@ -583,6 +599,7 @@ Usage:
-     xan p agg [options] <expr> [<inputs>...]
-     xan p groupby [options] <group> <expr> [<inputs>...]
-     xan p top [options] <column> [<inputs>...]
-+    xan p map --inplace [options] [<inputs>...]
-     xan p map [options] <template> [<inputs>...]
-     xan p --help
- 
-@@ -662,6 +679,20 @@ parallel top options:
-                           consume O(k + t) memory, t being the number of ties.
- 
- parallel map options:
-+    --inplace              Replace target files, without changing their names, instead
-+                           of adding new ones beside them.
-+    --replace              Replace target files instead of adding new ones beside them.
-+    --atomicity <mode>     When using --inplace, use to select when finished files are
-+                           replaced. Must be one of the following:
-+                                - \"all\":  the command will wait for every file to be
-+                                            fully processed before replacing original ones.
-+                                            The overall process remains safe in case of an
-+                                            error but requires more temporary disk resources.
-+                                - \"file\": the command will replace a file as soon as it is
-+                                            fully processed. This requires less temporary disk
-+                                            resources but is riskier in case of an error because
-+                                            only some files will have been replaced.
-+                           [default: all]
-     -z, --compress <kind>  Compress created files using either \"gz|gzip\" or \"zst|zstd\"
-                            compression.
- 
-@@ -718,6 +749,9 @@ pub struct Args {
-     pub flag_lexicographic: bool,
-     pub flag_rank: Option<String>,
+@@ -682,6 +682,8 @@ parallel map options:
+     --inplace              Replace target files, without changing their names, instead
+                            of adding new ones beside them.
+     --replace              Replace target files instead of adding new ones beside them.
++    --tmp-dir <dir>        Where to write temporary files.
++                           Will default to \"/tmp\" or equivalent.
+     --atomicity <mode>     When using --inplace, use to select when finished files are
+                            replaced. Must be one of the following:
+                                 - \"all\":  the command will wait for every file to be
+@@ -751,6 +753,7 @@ pub struct Args {
      pub flag_ties: bool,
-+    flag_inplace: bool,
-+    flag_replace: bool,
-+    flag_atomicity: Atomicity,
+     flag_inplace: bool,
+     flag_replace: bool,
++    flag_tmp_dir: Option<String>,
+     flag_atomicity: Atomicity,
  }
  
- type BoxedReader = simd_csv::Reader<Box<dyn io::Read + Send>>;
-@@ -738,6 +772,11 @@ impl Args {
-             self.flag_preprocess = Some(fs::read_to_string(path)?);
+@@ -1684,7 +1687,13 @@ impl Args {
          }
  
-+        // We cannot --inplace or --replace when chunking
-+        if self.flag_inplace || self.flag_replace {
-+            self.flag_dont_chunk = true;
-+        }
-+
-         Ok(())
-     }
- 
-@@ -1620,8 +1659,39 @@ impl Args {
-         //     self.flag_preprocess = Some("slice".to_string());
-         // }
- 
-+        enum PersistMode {
-+            Inplace(PathBuf),
-+            Replace {
-+                new_path: PathBuf,
-+                old_path: PathBuf,
-+            },
-+        }
-+
-+        impl PersistMode {
-+            fn persist(&self, named_tmp_file: NamedTempFile) -> CliResult<()> {
-+                match self {
-+                    Self::Inplace(new_path) => {
-+                        named_tmp_file.persist(new_path).map_err(|err| err.error)?;
-+                    }
-+                    Self::Replace { new_path, old_path } => {
-+                        named_tmp_file.persist(new_path).map_err(|err| err.error)?;
-+                        fs::remove_file(old_path)?;
-+                    }
+         let tmp_dir_opt = (self.flag_inplace || self.flag_replace)
+-            .then(TempDir::new)
++            .then(|| {
++                if let Some(dir) = &self.flag_tmp_dir {
++                    TempDir::new_in(dir)
++                } else {
++                    TempDir::new()
 +                }
-+
-+                Ok(())
-+            }
-+        }
-+
-+        let tmp_dir_opt = (self.flag_inplace || self.flag_replace)
-+            .then(TempDir::new)
-+            .transpose()?;
-+
-+        let tmp_files_mutex_opt: Option<Mutex<Vec<(PersistMode, NamedTempFile)>>> =
-+            (tmp_dir_opt.is_some() && self.flag_atomicity.is_all())
-+                .then(|| Mutex::new(Vec::with_capacity(inputs.len())));
-+
-         let process_manager = self.process_manager(inputs.len());
--        let template = self.arg_template.clone().unwrap();
++            })
+             .transpose()?;
  
-         inputs.par_iter().try_for_each(|input| -> CliResult<()> {
-             let mut input_reader = self.io_reader(input)?;
-@@ -1642,31 +1712,75 @@ impl Args {
-                 Input::FileChunk(file_chunk) => Cow::Owned(format!("{:
+         let tmp_files_mutex_opt: Option<Mutex<Vec<(PersistMode, NamedTempFile)>>> =
 ```
 
-**File**: `src/config.rs` (modified, +1/-4)
+**File**: `tests/test_parallel.rs` (modified, +4/-0)
 ```diff
-@@ -129,10 +129,7 @@ impl Compression {
+@@ -394,6 +394,7 @@ fn parallel_map_inplace() {
+     let mut cmd = wrk.command("parallel");
+     cmd.arg("map")
+         .arg("--inplace")
++        .args(["--tmp-dir", wrk.dir_as_str()])
+         .args(["-P", "slice -l 1"])
+         .arg("data1.csv")
+         .arg("data2.csv");
+@@ -431,6 +432,7 @@ fn parallel_map_replace() {
+     let mut cmd = wrk.command("parallel");
+     cmd.arg("map")
+         .arg("--replace")
++        .args(["--tmp-dir", wrk.dir_as_str()])
+         .arg("{}_slice.csv")
+         .args(["-P", "slice -l 1"])
+         .arg("data1.csv")
+@@ -469,6 +471,7 @@ fn parallel_map_inplace_file_atomicity() {
+     let mut cmd = wrk.command("parallel");
+     cmd.arg("map")
+         .arg("--inplace")
++        .args(["--tmp-dir", wrk.dir_as_str()])
+         .args(["--atomicity", "file"])
+         .args(["-P", "slice -l 1"])
+         .arg("data1.csv")
+@@ -507,6 +510,7 @@ fn parallel_map_replace_file_atomicity() {
+     let mut cmd = wrk.command("parallel");
+     cmd.arg("map")
+         .arg("--replace")
++        .args(["--tmp-dir", wrk.dir_as_str()])
+         .args(["--atomicity", "file"])
+         .arg("{}_slice.csv")
+         .args(["-P", "slice -l 1"])
+```
+
+**File**: `tests/workdir.rs` (modified, +4/-0)
+```diff
+@@ -48,6 +48,10 @@ impl Workdir {
          }
      }
  
--    pub fn wrap_writer<W: Write + 'static>(
--        &self,
--        writer: W,
--    ) -> io::Result<Box<dyn Write + 'static>> {
-+    pub fn wrap_writer<'s, W: Write + 's>(&self, writer: W) -> io::Result<Box<dyn Write + 's>> {
-         match self {
-             Self::Gzip => Ok(Box::new(flate2::write::GzEncoder::new(
-                 writer,
-```
-
-**File**: `tests/test_parallel.rs` (modified, +197/-0)
-```diff
-@@ -333,3 +333,200 @@ fn parallel_top_single_file() {
- 
-     assert_eq!(got, expected);
- }
-+
-+#[test]
-+fn parallel_map() {
-+    let wrk = Workdir::new("parallel_map");
-+    wrk.create(
-+        "data1.csv",
-+        vec![svec!["color"], svec!["blue"], svec!["yellow"]],
-+    );
-+    wrk.create(
-+        "data2.csv",
-+        vec![svec!["color"], svec!["red"], svec!["ochre"]],
-+    );
-+
-+    let mut cmd = wrk.command("parallel");
-+    cmd.arg("map")
-+        .arg("{}_slice.csv")
-+        .args(["-P", "slice -l 1"])
-+        .arg("data1.csv")
-+        .arg("data2.csv");
-+
-+    wrk.assert_success(&mut cmd);
-+
-+    assert_eq!(
-+        wrk.ls(),
-+        &[
-+            "data1.csv",
-+            "data1_slice.csv",
-+            "data2.csv",
-+            "data2_slice.csv"
-+        ]
-+    );
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg("rows").arg("data1_slice.csv");
-+
-+    let got1: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg("rows").arg("data2_slice.csv");
-+
-+    let got2: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+
-+    assert_eq!(got1, &[["color"], ["blue"]]);
-+    assert_eq!(got2, &[["color"], ["red"]]);
-+}
-+
-+#[test]
-+fn parallel_map_inplace() {
-+    let wrk = Workdir::new("parallel_map_inplace");
-+    wrk.create(
-+        "data1.csv",
-+        vec![svec!["color"], svec!["blue"], svec!["yellow"]],
-+    );
-+    wrk.create(
-+        "data2.csv",
-+        vec![svec!["color"], svec!["red"], svec!["ochre"]],
-+    );
-+
-+    let mut cmd = wrk.command("parallel");
-+    cmd.arg("map")
-+        .arg("--inplace")
-+        .args(["-P", "slice -l 1"])
-+        .arg("data1.csv")
-+        .arg("data2.csv");
-+
-+    wrk.assert_success(&mut cmd);
-+
-+    assert_eq!(wrk.ls(), &["data1.csv", "data2.csv",]);
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg("rows").arg("data1.csv");
-+
-+    let got1: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg("rows").arg("data2.csv");
-+
-+    let got2: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+
-+    assert_eq!(got1, &[["color"], ["blue"]]);
-+    assert_eq!(got2, &[["color"], ["red"]]);
-+}
-+
-+#[test]
-+fn parallel_map_replace() {
-+    let wrk = Workdir::new("parallel_map_replace");
-+    wrk.create(
-+        "data1.csv",
-+        vec![svec!["color"], svec!["blue"], svec!["yellow"]],
-+    );
-+    wrk.create(
-+        "data2.csv",
-+        vec![svec!["color"], svec!["red"], svec!["ochre"]],
-+    );
-+
-+    let mut cmd = wrk.command("parallel");
-+    cmd.arg("map")
-+        .arg("--replace")
-+        .arg("{}_slice.csv")
-+        .args(["-P", "slice -l 1"])
-+        .arg("data1.csv")
-+        .arg("data2.csv");
-+
-+    wrk.assert_success(&mut cmd);
-+
-+    assert_eq!(wrk.ls(), &["data1_slice.csv", "data2_slice.csv",]);
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg("rows").arg("data1_slice.csv");
-+
-+    let got1: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg("rows").arg("data2_slice.csv");
-+
-+    let got2: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+
-+    assert_eq!(got1, &[["color"], ["blue"]]);
-+    assert_eq!(got2, &[["color"], ["red"]]);
-+}
-+
-+#[test]
-+fn parallel_map_inplace_file_atomicity() {
-+    let wrk = Workdir::new("parallel_map_inplace_file_atomicity");
-+    wrk.create(
-+        "data1.csv",
-+        vec![svec!["color"], svec!["blue"], svec!["yellow"]],
-+    );
-+    wrk.create(
-+        "data2.csv",
-+        vec![svec!["color"], svec!["red"], svec!["ochre"]],
-+    );
-+
-+    let mut cmd = wrk.command("parallel");
-+    cmd.arg("map")
-+        .arg("--inplace")
-+        .args(["--atomicity", "file"])
-+        .args(["-P", "slice -l 1"])
-+        .arg("data1.csv")
-+        .arg("data2.csv");
-+
-+    wrk.assert_success(&mut cmd);
-+
-+    assert_eq!(wrk.ls(), &["data1.csv", "data2.csv",]);
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg("rows").arg("data1.csv");
-+
-+    let got1: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg("rows").arg("data2.csv");
-+
-+    let got2: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+
-+    assert_eq!(got1, &[["color"], ["blue"]]);
-+    assert_eq!(got2, &[["color"], ["red"]]);
-+}
-+
-+#[test]
-+fn parallel_map_replace_file_atomicity() {
-+    let wrk = Workdir::new("parallel_map_replace_file_atomicity");
-+    wrk.create(
-+        "data1.csv",
-+        vec![svec!["color"], svec!["blue"], svec!["yellow"]],
-+    );
-+    wrk.create(
-+        "data2.csv",
-+        vec![svec!["color"], svec!["red"], svec!["ochre"]],
-+    );
-+
-+    let mut cmd = wrk.command("parallel");
-+    cmd.arg("map")
-+        .arg("--replace")
-+        .args(["--atomicity", "file"])
-+        .arg("{}_slice.csv")
-+        .args(["-P", "slice -l 1"])
-+        .arg("data1.csv")
-+        .arg("data2.csv");
-+
-+    wrk.assert_success(&mut cmd);
-+
-+    assert_eq!(wrk.ls(), &["data1_slice.csv", "data2_slice.csv",]);
-+
-+    let mut cmd = wrk.command("cat");
-+    cmd.arg
-```
-
-**File**: `tests/workdir.rs` (modified, +11/-0)
-```diff
-@@ -48,6 +48,17 @@ impl Workdir {
-         }
-     }
- 
-+    pub fn ls(&self) -> Vec<String> {
-+        let mut paths: Vec<_> = fs::read_dir(&self.dir)
-+            .unwrap()
-+            .map(|result| result.unwrap().file_name().into_string().unwrap())
-+            .collect();
-+
-+        paths.sort();
-+
-+        paths
++    pub fn dir_as_str(&self) -> &str {
++        self.dir.to_str().unwrap()
 +    }
 +
-     pub fn flexible(mut self, yes: bool) -> Workdir {
-         self.flexible = yes;
-         self
+     pub fn ls(&self) -> Vec<String> {
+         let mut paths: Vec<_> = fs::read_dir(&self.dir)
+             .unwrap()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1247** (closed): Document bivariate heatmaps and regex highlighting (@rayw-lab)
 - **PR #1246** (closed): Add xan view --plain aligned output (@mvanhorn)
 - **PR #1239** (2026-11-16): Added --combinations flag to xan explode (@clothilde-ml)
 - **PR #1224** (closed): Add a plain aligned table preset to xan view (@mvanhorn)
 - **PR #1223** (2026-11-04): Xml highlight (Issue #1215) (@clothilde-ml)
 - **PR #1222** (closed): Add a plain theme to xan view (@mvanhorn)
-- **PR #1221** (2026-11-03): Fix fractional_days panic on identical points in time (@solesby)
 
 ---
 
@@ -2592,77 +2149,40 @@ Fix #1243
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Refactoring Index::for_each_record in join command
+## X. Adding notes wrt SIMD
 
 **RULE**:
-When implementing operations in `src/cmd/join.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/blog/notes/simd.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cca1cceb`: Refactoring Index::for_each_record in join command. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0038ce76`: Adding notes wrt SIMD. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/join.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/blog/notes/simd.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    ) -> Result<bool, E>
-        let mut is_match = false;
-            return Ok(is_match);
-            is_match = true;
-        Ok(is_match)
-    ) -> Result<bool, E>
-                let is_match = index.for_each_node_mut(&right_sel, &right_record, |left_node| {
-            let something_was_written =
-                index.for_each_record(&left_sel, &left_record, |right_record| {
-                    writer.write_record(
-                        inverted_left_sel
-                            .select(&left_record)
-                            .chain(inverted_right_sel.select(right_record)),
-                    )
-                })?;
-            let something_was_written =
-                index.for_each_record(&right_sel, &right_record, |left_record| {
-                    writer.write_record(
-                        inverted_left_sel
-                            .select(left_record)
-                            .chain(inverted_right_sel.select(&right_record)),
-                    )
-                })?;
+# SIMD design article notes
+
+*Designing the fastest general-purpose SIMD CSV parser*
+
+- Historical outline wrt simd-json etc.
+- Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
+- Shuffling, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
+- You cannot expect x16 or x32, that is just not realistic.
+- Branching is data-dependent and cannot be avoided.
+- Complete branchlessness requires too much SIMD work with is not amortized vs. scalar in the case of CSV (the same cannot be said of JSON). JSON is way more expensive to parse.
+- Zero copy is not very convenient and takes a performance hit as soon as we must unescape more than a single cell. Else we need too much bookkeeping and we could as well do copy parsing.
+- Typical `memchr` SIMD string searches. The necessity to amortize the mask for dense sections. But also the structure of CSV makes it useful to have a "two-speed" approach wrt quoting.
+- The desing needs to remain practical for a wide range of CSV data and not favor one specific case (it is easy to have a SIMD parser out-perform on 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    ) -> Result<(), E>
-            return Ok(());
-        Ok(())
-    ) -> Result<(), E>
-                let mut is_match = false;
-
-                index.for_each_node_mut(&right_sel, &right_record, |left_node| {
-                    is_match = true;
-            let mut something_was_written: bool = false;
-
-            index.for_each_record(&left_sel, &left_record, |right_record| {
-                something_was_written = true;
-                writer.write_record(
-                    inverted_left_sel
-                        .select(&left_record)
-                        .chain(inverted_right_sel.select(right_record)),
-                )
-            })?;
-            let mut something_was_written: bool = false;
-
-            index.for_each_record(&right_sel, &right_record, |left_record| {
-                something_was_written = true;
-                writer.write_record(
-                    inverted_left_sel
-                        .select(left_record)
-                        .chain(inverted_right_sel.select(&right_record)),
-                )
-            })?;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cca1cceb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0038ce76` are properly handled with clean fallback behavior.

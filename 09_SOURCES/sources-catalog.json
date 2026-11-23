@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "37fd7aebb20505dbff2f39f6482630845d8a24d0d88c122348b5627312bcab67",
-    "lastHarvestedAt": "2026-11-19T10:47:09.508Z",
+    "contentHash": "de37a6d26f75ad2f79c02b334bb38604abb3f579783dfba877ddbd577ae48c71",
+    "lastHarvestedAt": "2026-11-23T19:42:50.415Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "ffead11c",
+    "sourceVersion": "b0a4509e",
     "license": "Apache-2.0",
-    "contentHash": "285b095087ab8a38b61e34d56c0ac7678815a6f140b3832044b7e13e1aa79159",
-    "lastHarvestedAt": "2026-11-23T15:45:54.934Z",
+    "contentHash": "f72e9068f01b4c55c5d9f2b0c75d8bf6f77cf440da878d45225b22817e755a45",
+    "lastHarvestedAt": "2026-11-23T19:43:03.411Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "cca1cceb",
+    "sourceVersion": "0038ce76",
     "license": "Unlicense",
-    "contentHash": "6e4f879ed8a0413f6e9395f2b74eb9e64f6d3e6ac99b745bc25346b189d68b86",
-    "lastHarvestedAt": "2026-11-22T07:56:35.041Z",
+    "contentHash": "a9545a86d4563b7084576ae7c46cd9570163e5d4334d3ffe3bd4c70574bcd4be",
+    "lastHarvestedAt": "2026-11-23T19:42:53.089Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {

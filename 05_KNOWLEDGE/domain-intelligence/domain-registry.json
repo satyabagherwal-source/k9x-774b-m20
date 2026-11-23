@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T19:34:49.274Z",
+  "last_updated": "2026-11-23T19:43:08.503Z",
   "total_records": 2444,
   "domains": {
     "A": {
@@ -8548,10 +8548,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "efee34d053c72380a4c57925d4425edb8f8536079db3a18a9cd630f759e990b6",
-      "created_at": "2026-11-23T17:38:00.622Z"
+      "content_hash": "4f78e092f074a78294217045d829206ee7e0078e0a67a9d53697a9d196c5d4da",
+      "created_at": "2026-11-23T19:43:03.819Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -17965,8 +17965,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-4B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants.md",
       "repository": "Qwen/Qwen3-4B",
-      "content_hash": "094b4476e7857e09de19c65215d17d32bea824f2b225a3ebc2c3ccc88563efea",
-      "created_at": "2026-11-19T10:47:09.691Z"
+      "content_hash": "0fe034579bc7e9bf01d3c9b8bba483c0e7d7ed77028245af89e993119b662574",
+      "created_at": "2026-11-23T19:42:50.630Z"
     },
     "DOM-D-B7601B75": {
       "record_id": "DOM-D-B7601B75",
@@ -18016,8 +18016,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-4b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-4b-lear.md",
       "repository": "hf-qwen-qwen3-4b-learnings",
-      "content_hash": "7d5c26210c4bf2a32da7eb1603729a22f7a3f9179fd729cf58b3ac6cb8651215",
-      "created_at": "2026-11-19T10:47:26.023Z"
+      "content_hash": "f8747455397361a8efc0ea956baed48ce17ba84a2b43ff85befd22e9d3548764",
+      "created_at": "2026-11-23T19:43:07.801Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants",
@@ -23438,8 +23438,8 @@
       "title": "Technical Construction Intelligence: medialab/xan Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-technical-construction-intelligence-medialab-xan-core-invariants.md",
       "repository": "medialab/xan",
-      "content_hash": "bcd9226c7469425c45eef2c1eef0a15579c84df6505ebde106f9ca21ac3ce3d9",
-      "created_at": "2026-11-19T07:41:45.720Z"
+      "content_hash": "d387fbf5b48e7ea437e300f6a7193dce87d223c47c282726fcf5ac8332776fae",
+      "created_at": "2026-11-23T19:42:53.492Z"
     },
     "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants",
@@ -23456,8 +23456,8 @@
       "title": "Technical Construction Intelligence: medialab-xan-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-learnings-technical-construction-intelligence-medialab-xan-learning.md",
       "repository": "medialab-xan-learnings",
-      "content_hash": "40eae91106ae98f54bb979a1ed83994abf447a21ac83bf268b1a9a0c59db7ce5",
-      "created_at": "2026-11-19T07:43:16.838Z"
+      "content_hash": "7e9d81bc8138ead371665a099ba1a05f08e2f74031b6d34318dc13aa4d43ce1b",
+      "created_at": "2026-11-23T19:43:07.261Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
@@ -23966,8 +23966,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "c9824503ee4a4e5824adb8d071466bf4249fb1cbfb59dadbadf1cd40050fe619",
-      "created_at": "2026-11-23T15:45:59.064Z"
+      "content_hash": "c7298bd38e540b9f71091742c4ff1956e346e8d7ffde8ca01c18f25a8f75ac44",
+      "created_at": "2026-11-23T19:43:08.503Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

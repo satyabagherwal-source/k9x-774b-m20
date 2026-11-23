@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T19:34:43.017Z",
+  "last_updated": "2026-11-23T19:43:03.420Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1355,14 +1355,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
-      "content_hash": "37fd7aebb20505dbff2f39f6482630845d8a24d0d88c122348b5627312bcab67",
-      "verified_at": "2026-11-19T10:47:09.516Z",
+      "content_hash": "de37a6d26f75ad2f79c02b334bb38604abb3f579783dfba877ddbd577ae48c71",
+      "verified_at": "2026-11-23T19:42:50.424Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T10:47:09.516Z"
+      "last_updated": "2026-11-23T19:42:50.424Z"
     },
     "FermionResearch/Phonon-2": {
       "repository": "FermionResearch/Phonon-2",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "c61f317cd54780d63a787c7772270b3c8936017cf1a8ce45668a3998d1a45c61",
-      "verified_at": "2026-11-23T17:38:00.223Z",
+      "content_hash": "f72e9068f01b4c55c5d9f2b0c75d8bf6f77cf440da878d45225b22817e755a45",
+      "verified_at": "2026-11-23T19:43:03.419Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:38:00.223Z"
+      "last_updated": "2026-11-23T19:43:03.419Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "6e4f879ed8a0413f6e9395f2b74eb9e64f6d3e6ac99b745bc25346b189d68b86",
-      "verified_at": "2026-11-22T07:56:35.049Z",
+      "content_hash": "a9545a86d4563b7084576ae7c46cd9570163e5d4334d3ffe3bd4c70574bcd4be",
+      "verified_at": "2026-11-23T19:42:53.097Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:56:35.049Z"
+      "last_updated": "2026-11-23T19:42:53.097Z"
     },
     "onejs/one": {
       "repository": "onejs/one",

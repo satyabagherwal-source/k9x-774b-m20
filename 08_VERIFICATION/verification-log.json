@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-LUUJ",
-    "timestamp": "2026-11-21T21:40:12.523Z",
-    "repository": "Pika-Labs/Pika-H3-Flex",
-    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
-    "contentHash": "271ff6d88115eb8a15cc688051af7bd9ac9c33f02631b70692dd07a4e644f972",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-M04Q",
-    "timestamp": "2026-11-21T21:40:19.370Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "2ffdf3dc3d3aededb078845d7f38bd0b2922a437d00cdd76d7139c29dc348673",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-M2MI",
-    "timestamp": "2026-11-21T21:40:22.602Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "c38360b7bd945d400f2086a63f165baa343ca4a2cd7e17d43eec5d3035ac220a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-M7CX",
     "timestamp": "2026-11-21T21:40:28.737Z",
     "repository": "milvus-io/milvus",
@@ -7490,6 +7445,51 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "b841c0dcf89195e707cf4ec97b1ac0725121fd324a1a9c17bebaac90c71f71d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-AMGA",
+    "timestamp": "2026-11-23T19:42:50.410Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "de37a6d26f75ad2f79c02b334bb38604abb3f579783dfba877ddbd577ae48c71",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-AOIL",
+    "timestamp": "2026-11-23T19:42:53.085Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "a9545a86d4563b7084576ae7c46cd9570163e5d4334d3ffe3bd4c70574bcd4be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-AWHA",
+    "timestamp": "2026-11-23T19:43:03.406Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "f72e9068f01b4c55c5d9f2b0c75d8bf6f77cf440da878d45225b22817e755a45",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

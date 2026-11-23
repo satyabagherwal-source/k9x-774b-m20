@@ -12439,3 +12439,6 @@
 | `CYCLE-20261123-ZS8X` | `2026-11-23T19:34:24.705Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`e4370c08...`) |
 | `CYCLE-20261123-ZU4D` | `2026-11-23T19:34:27.133Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10104` | Yes (`1fb22bcf...`) |
 | `CYCLE-20261123-06D6` | `2026-11-23T19:34:43.002Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10105` | Yes (`b841c0dc...`) |
+| `CYCLE-20261123-AMGA` | `2026-11-23T19:42:50.410Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`de37a6d2...`) |
+| `CYCLE-20261123-AOIL` | `2026-11-23T19:42:53.085Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10106` | Yes (`a9545a86...`) |
+| `CYCLE-20261123-AWHA` | `2026-11-23T19:43:03.406Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`f72e9068...`) |
