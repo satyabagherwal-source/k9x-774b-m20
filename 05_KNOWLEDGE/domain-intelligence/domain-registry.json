@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T17:54:20.566Z",
+  "last_updated": "2026-11-23T18:03:30.048Z",
   "total_records": 2437,
   "domains": {
     "A": {
@@ -9170,8 +9170,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "65a194e7ff3a93e914817f09ae079101e5b3da2eee10c818bcbc3314d85570d9",
-      "created_at": "2026-11-23T16:45:22.966Z"
+      "content_hash": "f32287c4e1c13793fefb07bbd2a1d307290118bf265d75ed3e8f3e9eda76459f",
+      "created_at": "2026-11-23T18:03:30.048Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17094,8 +17094,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-research-knowledge-intelligence-autotrust-gev-26b-de.md",
       "repository": "autotrust/GEV-26B-Decide",
-      "content_hash": "abe61bf9cf9dea181aa1a7325682030b460638b82305bf86331b6db561e5eed7",
-      "created_at": "2026-11-19T06:52:26.659Z"
+      "content_hash": "5759b99ed01cb28b58fad80b6f953c1e0bdd9ec5de8607b9b193f7da45c10380",
+      "created_at": "2026-11-23T18:03:08.840Z"
     },
     "DOM-D-23D3BE33": {
       "record_id": "DOM-D-23D3BE33",
@@ -17196,8 +17196,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-learnings-research-knowledge-intelligence-hf-autotru.md",
       "repository": "hf-autotrust-gev-26b-decide-learnings",
-      "content_hash": "02d632fdaae4129052ca76ed5f7282fd0ba03d4e3295c4eec738ffed998d9a9e",
-      "created_at": "2026-11-19T06:53:06.513Z"
+      "content_hash": "7bd6b5e3f2e2c7c685d9761d8df805c6d56ad220d15c20d4ab0af6b9e2898838",
+      "created_at": "2026-11-23T18:03:27.939Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-embeddinggemma-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-embeddinggemma-2-core-invariants",
@@ -27249,8 +27249,8 @@
       "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
       "repository": "apache/zookeeper",
-      "content_hash": "104129239e70bccd9ea5539ff8716be356e6faa2380145429598aae13d34666d",
-      "created_at": "2026-11-19T00:41:12.211Z"
+      "content_hash": "39b8f3316fa78e145db7e1a35e3732590e1c462dc5428eb53125219d12a0b5d5",
+      "created_at": "2026-11-23T18:03:24.490Z"
     },
     "DOM-D-C917D98C": {
       "record_id": "DOM-D-C917D98C",
@@ -32766,8 +32766,8 @@
       "title": "Technical Construction Intelligence: apache-zookeeper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-learnings-technical-construction-intelligence-apache-zookeeper-.md",
       "repository": "apache-zookeeper-learnings",
-      "content_hash": "e2388fb88d20bf61ac86c1336bae55f35de1f429b30e3d5d9c95065f10b64721",
-      "created_at": "2026-11-19T00:41:47.881Z"
+      "content_hash": "8fbcdfc66aedcf2c81321053d9cb53a5b5267113314c80aa78ecc71c4ea3f17c",
+      "created_at": "2026-11-23T18:03:29.043Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants",

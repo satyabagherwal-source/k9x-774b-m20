@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "1f03d9851d119e3680b2a1893c9dcd0cbb1fbd814993a5f2e99e8655e62eb0b4",
-    "lastHarvestedAt": "2026-11-19T06:52:26.475Z",
+    "contentHash": "bdc04db740557364283ed2bc5da9e0835f1955a49d021e90ee88acfcb5c0b59e",
+    "lastHarvestedAt": "2026-11-23T18:03:08.558Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "7f4ebb35",
+    "sourceVersion": "9438aa66",
     "license": "Apache-2.0",
-    "contentHash": "1a63ac3c0daaef2223b0d3041fd098ee79ec984ff9016e230c490ff50e0488e3",
-    "lastHarvestedAt": "2026-11-19T00:41:11.878Z",
+    "contentHash": "aa7d00401c442008d5232e7f01c9bc38695936298d021b8c96e9623ec28ff88a",
+    "lastHarvestedAt": "2026-11-23T18:03:23.975Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {

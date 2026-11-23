@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T17:54:20.566Z",
+  "last_updated": "2026-11-23T18:03:30.271Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24095,
+  "total_items": 24098,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "65a194e7ff3a93e914817f09ae079101e5b3da2eee10c818bcbc3314d85570d9",
+      "content_hash": "f32287c4e1c13793fefb07bbd2a1d307290118bf265d75ed3e8f3e9eda76459f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T16:45:22.966Z"
+      "persisted_at": "2026-11-23T18:03:30.048Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb9247afa3f41aeb974ce842d220bf16318fcb913c5b1a3bb31c041d0dfd74bb",
+      "content_hash": "1cbbecc33712b5c3c80d1a05f026cafff3c2fa1eec647f671daff53a445de26d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:45:23.137Z"
+      "persisted_at": "2026-11-23T18:03:30.271Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -234619,7 +234619,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "1f03d9851d119e3680b2a1893c9dcd0cbb1fbd814993a5f2e99e8655e62eb0b4",
+      "content_hash": "bdc04db740557364283ed2bc5da9e0835f1955a49d021e90ee88acfcb5c0b59e",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [],
@@ -234628,7 +234628,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T06:52:26.270Z",
+      "verified_at": "2026-11-23T18:03:08.275Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234645,9 +234645,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide Core Invariants",
       "repository": "autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "abe61bf9cf9dea181aa1a7325682030b460638b82305bf86331b6db561e5eed7",
+      "content_hash": "5759b99ed01cb28b58fad80b6f953c1e0bdd9ec5de8607b9b193f7da45c10380",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T06:52:26.659Z"
+      "persisted_at": "2026-11-23T18:03:08.840Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants",
@@ -234681,9 +234681,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-learnings Core Invariants",
       "repository": "hf-autotrust-gev-26b-decide-learnings",
       "source_version": "HEAD",
-      "content_hash": "02d632fdaae4129052ca76ed5f7282fd0ba03d4e3295c4eec738ffed998d9a9e",
+      "content_hash": "7bd6b5e3f2e2c7c685d9761d8df805c6d56ad220d15c20d4ab0af6b9e2898838",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T06:53:06.513Z"
+      "persisted_at": "2026-11-23T18:03:27.939Z"
     },
     "learn-huggingface-google-embeddinggemma-2": {
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
@@ -273352,8 +273352,8 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "7f4ebb35",
-      "content_hash": "1a63ac3c0daaef2223b0d3041fd098ee79ec984ff9016e230c490ff50e0488e3",
+      "source_version": "9438aa66",
+      "content_hash": "aa7d00401c442008d5232e7f01c9bc38695936298d021b8c96e9623ec28ff88a",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
@@ -273371,6 +273371,11 @@
           "number": 9308,
           "title": "Fix ACL cache recovery from fuzzy snapshots",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10089,
+          "title": "Fix zkpython testversionstringexists for 3.10.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -273378,7 +273383,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:41:11.693Z",
+      "verified_at": "2026-11-23T18:03:23.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273420,10 +273425,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
       "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
       "repository": "apache/zookeeper",
-      "source_version": "7f4ebb35",
-      "content_hash": "104129239e70bccd9ea5539ff8716be356e6faa2380145429598aae13d34666d",
+      "source_version": "9438aa66",
+      "content_hash": "39b8f3316fa78e145db7e1a35e3732590e1c462dc5428eb53125219d12a0b5d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:41:12.211Z"
+      "persisted_at": "2026-11-23T18:03:24.490Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper",
@@ -273432,10 +273437,10 @@
       "relative_path": "08_VERIFICATION/apache-zookeeper-verification-protocol-empirical-defect-shield-for-apache-zookee.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/zookeeper",
       "repository": "apache/zookeeper",
-      "source_version": "7f4ebb35",
-      "content_hash": "012d7178b1fc33505b2d12ac10e6254f6238594f7c3d6beafb35472457f26942",
+      "source_version": "9438aa66",
+      "content_hash": "2d3db4ff68f3f21801b1facd9b2d7fee12a3fa6ee0dd261b6b143f5e6f209c6c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:41:12.352Z"
+      "persisted_at": "2026-11-23T18:03:24.730Z"
     },
     "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants",
@@ -294543,9 +294548,9 @@
       "title": "Technical Construction Intelligence: apache-zookeeper-learnings Core Invariants",
       "repository": "apache-zookeeper-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2388fb88d20bf61ac86c1336bae55f35de1f429b30e3d5d9c95065f10b64721",
+      "content_hash": "8fbcdfc66aedcf2c81321053d9cb53a5b5267113314c80aa78ecc71c4ea3f17c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:41:47.881Z"
+      "persisted_at": "2026-11-23T18:03:29.043Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper-learnings",
@@ -294555,9 +294560,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-zookeeper-learnings",
       "repository": "apache-zookeeper-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a80893e6e8374c74a01e1f41633067a42984ca13dae49e066ae70113aac70c1",
+      "content_hash": "3368e65a31d06d08e070e561dd331dad16b93a37dd72d88ef8f1ddcfe1c92137",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:41:48.036Z"
+      "persisted_at": "2026-11-23T18:03:29.272Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants",
@@ -319153,13 +319158,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YEP4-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QV8E-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1fd34e12ba14c76f714ba9343472b80d43533bc7bde76a5b6e4817e46988d0f",
+      "content_hash": "2cb6586b9315f7ff095d57af57e1bce03e00bbd6f4f645f5ff9f8bc674a1fdb8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:45:22.805Z"
+      "persisted_at": "2026-11-23T18:03:29.828Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -328356,6 +328361,44 @@
       "content_hash": "b8a02e937adfb01514541b90e0d0e616221cb08fc3199e51995098d014fa01b2",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T17:54:19.369Z"
+    },
+    "rule-10089": {
+      "learning_id": "rule-10089",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10089,
+      "title": "Fix zkpython testversionstringexists for 3.10.0",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "9438aa66",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T18:03:23.716Z"
+    },
+    "candidate_directive-fix-zkpython-testversionstringexists-for-3-10-0": {
+      "item_id": "candidate_directive-fix-zkpython-testversionstringexists-for-3-10-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QQXW-fix-zkpython-testversionstringexists-for-3-10-0.md",
+      "title": "Fix zkpython testversionstringexists for 3.10.0",
+      "repository": "apache/zookeeper",
+      "source_version": "9438aa66",
+      "content_hash": "237a35203c8caafdc608ca22148df3492e82757ac4d0c03c2f4a7171b454c2eb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T18:03:24.267Z"
+    },
+    "candidate_directive-zookeeper-5138-fix-zkpython-testversionstringexists-for-3-10-0": {
+      "item_id": "candidate_directive-zookeeper-5138-fix-zkpython-testversionstringexists-for-3-10-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QUGF-zookeeper-5138-fix-zkpython-testversionstringexists-for-3-10-0.md",
+      "title": "ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0",
+      "repository": "apache-zookeeper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0912ebf11b80508e5e96cc9f80709cde91bf43788c7c53f46828b465ba2d351",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T18:03:28.821Z"
     }
   },
   "ai-builder-brain": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T17:54:15.207Z",
-  "total_cycles_completed": 11800,
-  "total_learnings_persisted": 11800,
-  "total_rules_promoted": 10928,
+  "last_updated": "2026-11-23T18:03:23.982Z",
+  "total_cycles_completed": 11802,
+  "total_learnings_persisted": 11802,
+  "total_rules_promoted": 10929,
   "history": [
-    {
-      "timestamp": "2026-11-22T21:41:02.923Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T21:48:53.406Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T21:48:59.834Z",
       "repository": "vanniktech/gradle-maven-publish-plugin",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T17:54:15.207Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T18:03:08.566Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T18:03:23.982Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

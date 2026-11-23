@@ -12409,3 +12409,5 @@
 | `CYCLE-20261123-4YCS` | `2026-11-23T17:46:27.436Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10087` | Yes (`a713a164...`) |
 | `CYCLE-20261123-EN1U` | `2026-11-23T17:53:59.346Z` | `Reson8/Rumble-2-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md` | Yes (`3e2e542a...`) |
 | `CYCLE-20261123-EZA7` | `2026-11-23T17:54:15.199Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10088` | Yes (`2c86ea0f...`) |
+| `CYCLE-20261123-QETL` | `2026-11-23T18:03:08.553Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`bdc04db7...`) |
+| `CYCLE-20261123-QQPU` | `2026-11-23T18:03:23.970Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10089` | Yes (`aa7d0040...`) |

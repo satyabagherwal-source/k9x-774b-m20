@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source**: github ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
-> **Source Version**: `7f4ebb35`  
+> **Source Version**: `9438aa66`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:41:10.906Z  
+> **Timestamp**: 2026-11-23T18:03:22.688Z  
 > **Learning ID**: `learn-github-apache-zookeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:41:10.901Z  
+> **Harvest Timestamp**: 2026-11-23T18:03:22.681Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1800,14 +1800,11 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2503** (2026-11-16): **ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector**
-  *Symptoms*: To fix CVE-2026-102554.
-  **Post-Mortem & Fix Analysis**:
-  > Verified this locally by building `zookeeper-contrib-zooinspector` and running tests with `mvn clean verify -Pfull-build -Dsurefire-forkcount=4 -DskipCppUnit -pl zookeeper-contrib/zookeeper-contrib-zooinspector`. It is successful.
-  > Many thanks @anmolnar for the review! :+1: 
+- **Issue #2513** (2026-11-23): **ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0**
+  *Symptoms*: The `testversionstringexists` test in `zookeeper-contrib-zkpython/src/test/connection_test.py` only matches single-digit versions and fails on 3.10.0 (and produces SyntaxWarning on Python).  Update it to `re.match(r"^\d+\.\d+\.\d+$", ...)` so multi-digit minor/patch versions match correctly. 
 
-- **Issue #2497** (2026-11-17): **ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap**
-  *Symptoms*: The C client allocated xids from one process global counter seeded with time(0). That left only about 350 million xids before the counter wrapped into negative values. Wrapped xids can collide with the reserved xids of control frames (-8 SetWatches, -4 auth, -2 ping), so replies could go to internal handlers instead of application completions, causing state errors, and desynchronizing the request queue.  In the single threaded library, the increment past INT32_MAX is also undefined behavior.  Allocate xids as ClientCnxn.getXid does in the Java client. Introduce a  per-handle counters rather than sharing one unsynchronized counter.  Also fix the xid mismatch log line in zookeeper_process, which printed the received xid as the expected one and vice versa.
+- **Issue #2511** (2026-11-20): **ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap (branch-3.9)**
+  *Symptoms*: Backport of #2497 to `branch-3.9`.   The C client allocated xids from one process global counter seeded with time(0). That left only about 350 million xids before the counter wrapped to INT32_MIN. The server ignores requests with xid <= 0 when it counts outstanding requests (`ServerCnxn.incrOutstandingAndCheckThrottle` and `decrOutstandingAndCheckThrottle`). So, from the wrap on, requests from a C client bypass request throttling, and the server stops updating `lastCxid` for the connection. After roughly another 2 billion requests, the counter reaches the reserved xids of watch events and control frames (-8 SetWatches, -4 auth, -2 ping, -1 watch event). Replies could then go to internal handlers instead of application completions and desynchronize the request queue.  In the single threaded library, the increment past INT32_MAX is also undefined behavior.  This change allocates xids as `ClientCnxn.getXid` does in the Java client, with a counter per handle instead of one shared unsynchronized counter. It also fixes the xid mismatch log line in `zookeeper_process`, which swapped the expected and received xids.  Backport notes: the only conflict was in `zoo_amulti()`. On `master`, that function declares a local `buffer_list_t *b` that `branch-3.9` does not have. Otherwise the change is the same as the `master` commit, including the new `TestXid` suite.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1824,389 +1821,33 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f4ebb35` (2026-11-18)
-**Commit Message**: ZOOKEEPER-4689: Fix ACL cache recovery from fuzzy snapshots
+### Incident Patch 1: `9438aa66` (2026-11-23)
+**Commit Message**: ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0 (#2513)
 
-Reviewers: kezhuw, anmolnar
-Author: adamyi
-Closes #2425 from adamyi/ZOOKEEPER-4689-rework
+The testversionstringexists test in zookeeper-contrib-zkpython only matches single-digit versions and fails on 3.10.0 (and produces SyntaxWarning on Python).
 
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/DataTree.java` (modified, +46/-18)
+Update it so multi-digit minor/patch versions match correctly.
+
+**File**: `zookeeper-contrib/zookeeper-contrib-zkpython/src/test/connection_test.py` (modified, +1/-1)
 ```diff
-@@ -98,6 +98,11 @@ public class DataTree {
+@@ -153,7 +153,7 @@ def connection_watcher(handle, type, state, path):
  
-     private static final Logger LOG = LoggerFactory.getLogger(DataTree.class);
+     def testversionstringexists(self):
+         self.assertTrue(hasattr(zookeeper, '__version__'))
+-        self.assertTrue(re.match("\d.\d.\d", zookeeper.__version__))
++        self.assertTrue(re.match(r"^\d+\.\d+\.\d+$", zookeeper.__version__))
  
-+    // Deny watch delivery to ordinary sessions when a node's ACL is unknown.
-+    // checkACL treats null and empty ACLs as unrestricted. Public for tests.
-+    public static final List<ACL> NO_PERMISSIONS_ACL =
-+        Collections.singletonList(new ACL(0, ZooDefs.Ids.ANYONE_ID_UNSAFE));
-+
-     private final RateLogger RATE_LOGGER = new RateLogger(LOG, 15 * 60 * 1000);
  
-     /**
-@@ -443,24 +448,26 @@ public void createNode(final String path, byte[] data, List<ACL> acl, long ephem
-         }
-         List<ACL> parentAcl;
-         synchronized (parent) {
--            parentAcl = getACL(parent);
-+            parentAcl = getACLForWatchTrigger(parent, parentName);
- 
--            // Add the ACL to ACL cache first, to avoid the ACL not being
--            // created race condition during fuzzy snapshot sync.
--            //
--            // This is the simplest fix, which may add ACL reference count
--            // again if it's already counted in the ACL map of fuzzy
--            // snapshot, which might also happen for deleteNode txn, but
--            // at least it won't cause the ACL not exist issue.
--            //
--            // Later we can audit and delete all non-referenced ACLs from
--            // ACL map when loading the snapshot/txns from disk, like what
--            // we did for the global sessions.
--            Long acls = aclCache.convertAcls(acl);
-+            // Intern the ACL before checking whether the node exists: a fuzzy
-+            // snapshot can contain the node but omit its ACL (ZOOKEEPER-3306).
-+            Long aclId = aclCache.convertAcls(acl);
- 
-             DataNode existingChild = nodes.get(path);
-             if (existingChild != null) {
--                existingChild.acl = acls;
-+                // Use the ACL value from the txn; snapshot ids are server-local
-+                // and may not resolve. Release the node's old reference to balance
-+                // convertAcls, including when both ids are equal.
-+                synchronized (existingChild) {
-+                    Long previousAcl = existingChild.acl;
-+                    existingChild.acl = aclId;
-+                    aclCache.removeUsage(previousAcl);
-+                    if (!aclId.equals(previousAcl)) {
-+                        LOG.info("ACL reference of existing node {} changed from {} to {} while applying a create txn",
-+                            path, previousAcl, aclId);
-+                    }
-+                }
-                 throw new NodeExistsException();
-             }
- 
-@@ -478,7 +485,7 @@ public void createNode(final String path, byte[] data, List<ACL> acl, long ephem
-                 parent.stat.setCversion(parentCVersion);
-                 parent.stat.setPzxid(zxid);
-             }
--            DataNode child = new DataNode(data, acls, stat);
-+            DataNode child = new DataNode(data, aclId, stat);
-             parent.addChild(childName);
-             nodes.postChange(parentName, parent);
-             nodeDataSize.addAndGet(getNodeSize(path, child.data));
-@@ -575,7 +582,7 @@ public void deleteNode(String path, long zxid) throws NoNodeException {
-         List<ACL> acl;
-         nodes.remove(path);
-         synchronized (node) {
--            acl = getACL(node);
-+            acl = getACLForWatchTrigger(node, path);
-             aclCache.removeUsage(node.acl);
-             nodeDataSize.addAndGet(-getNodeSize(path, node.data));
-         }
-@@ -585,7 +592,7 @@ public void deleteNode(String path, long zxid) throws NoNodeException {
-         // separate patch.
-         List<ACL> parentAcl;
-         synchronized (parent) {
--            parentAcl = getACL(parent);
-+            parentAcl = getACLForWatchTrigger(parent, parentName);
-             long owner = node.stat.getEphemeralOwner();
-             EphemeralType ephemeralType = EphemeralType.get(owner);
-             if (ephemeralType == EphemeralType.CONTAINER) {
-@@ -657,7 +664,7 @@ public Stat setData(String path, byte[] data, int version, long zxid, long time)
-         List<ACL> acl;
-         byte[] lastData;
-         synchronized (n) {
--            acl = getACL(n);
-+            acl = getACLForWatchTrigger(n, path);
-             lastData = n.data;
-             nodes.preChange(path, n);
-             n.data = data;
-@@ -814,6 +821,27 @@ public List<ACL> getACL(DataNode node) {
-         }
-     }
- 
-+    /**
-+     * Returns the ACL for filtering a node's watch events. A node loaded from a
-+     * fuzzy snapshot can reference an ACL id that is missing from the cache
-+     * until replay repairs it. In that case this returns
-+     * {@link #NO_PERMISSIONS_ACL} instead of throwing, so replay can continue.
-+     */
-+    private List<ACL> getACLForWatchTrigger(DataNode node, String path) {
-+        Long aclId;
-+        List<ACL> acls;
-+        synchronized (node) {
-+            aclId = node.acl;
-+            acls = aclCache.conve
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/ReferenceCountedACLCache.java` (modified, +27/-0)
-```diff
-@@ -95,6 +95,24 @@ public synchronized List<ACL> convertLong(Long longVal) {
-         return acls;
-     }
- 
-+    /**
-+     * Converts a long to a list of ACLs without throwing if it is absent from
-+     * the cache. A node in a fuzzy snapshot can temporarily reference such an
-+     * absent id until transaction replay repairs it (ZOOKEEPER-4689).
-+     *
-+     * @param longVal ACL id
-+     * @return the corresponding ACLs, or null if the id is not cached
-+     */
-+    synchronized List<ACL> convertLongIfCached(Long longVal) {
-+        if (longVal == null) {
-+            return null;
-+        }
-+        if (longVal == OPEN_UNSAFE_ACL_ID) {
-+            return ZooDefs.Ids.OPEN_ACL_UNSAFE;
-+        }
-+        return longKeyMap.get(longVal);
-+    }
-+
-     private long incrementIndex() {
-         return ++aclIndex;
-     }
-@@ -170,6 +188,15 @@ public synchronized void addUsage(Long acl) {
-             return;
-         }
- 
-+        if (acl > aclIndex) {
-+            // The ACL cache is serialized before the nodes in a fuzzy snapshot.
-+            // A node can therefore reference an id absent from the serialized
-+            // cache. Reserve every id mentioned by the loaded tree so replay
-+            // cannot assign it to a different ACL before repairing the node.
-+            LOG.info("Advancing aclIndex from {} to {} based on a node reference in the snapshot", aclIndex, acl);
-+            aclIndex = acl;
-+        }
-+
-         if (!longKeyMap.containsKey(acl)) {
-             LOG.info("Ignoring acl {} as it does not exist in the cache", acl);
-             return;
-```
-
-**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/server/DataTreeTest.java` (modified, +48/-0)
-```diff
-@@ -33,6 +33,8 @@
- import java.io.PrintWriter;
- import java.io.StringWriter;
- import java.lang.reflect.Field;
-+import java.util.Collections;
-+import java.util.List;
- import java.util.Map;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Semaphore;
-@@ -42,16 +44,19 @@
- import org.apache.jute.BinaryOutputArchive;
- import org.apache.jute.InputArchive;
- import org.apache.jute.Record;
-+import org.apache.zookeeper.KeeperException.NoAuthException;
- import org.apache.zookeeper.KeeperException.NoNodeException;
- import org.apache.zookeeper.KeeperException.NodeExistsException;
- import org.apache.zookeeper.Quotas;
- import org.apache.zookeeper.StatsTrack;
- import org.apache.zookeeper.ZKTestCase;
- import org.apache.zookeeper.ZooDefs;
- import org.apache.zookeeper.common.PathTrie;
-+import org.apache.zookeeper.data.Id;
- import org.apache.zookeeper.data.Stat;
- import org.apache.zookeeper.metrics.MetricsUtils;
- import org.apache.zookeeper.txn.CreateTxn;
-+import org.apache.zookeeper.txn.DeleteTxn;
- import org.apache.zookeeper.txn.TxnHeader;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.Timeout;
-@@ -689,6 +694,49 @@ public void testCreateNodeFixMissingACL() throws Exception {
-         dt.createNode("/the_parent/the_child", new byte[0], ZooDefs.Ids.CREATOR_ALL_ACL, -1, 2, 2, 2);
-     }
- 
-+    /**
-+     * Applying a create txn to an existing node (routine when replay overlaps
-+     * a fuzzy snapshot, e.g. after a restart or SNAP sync) must keep the ACL
-+     * reference counts exact, so that unused ACLs are garbage collected and
-+     * the cache does not grow until the next reload.
-+     *
-+     * See ZOOKEEPER-4689.
-+     */
-+    @Test
-+    public void testCreateTxnReplayOnExistingNodeKeepsAclRefCountExact() throws Exception {
-+        DataTree dt = new DataTree();
-+        int baseline = dt.aclCacheSize();
-+
-+        TxnHeader hdr = new TxnHeader(1, 2, 2, 2, ZooDefs.OpCode.create);
-+        Record txn = new CreateTxn("/x", new byte[0], ZooDefs.Ids.CREATOR_ALL_ACL, false, -1);
-+        dt.processTxn(hdr, txn);
-+        // Duplicate apply of the same create txn hits the node-exists branch.
-+        dt.processTxn(hdr, txn);
-+        assertEquals(baseline + 1, dt.aclCacheSize());
-+
-+        TxnHeader deleteHdr = new TxnHeader(1, 2, 3, 2, ZooDefs.OpCode.delete);
-+        Record deleteTxn = new DeleteTxn("/x");
-+        dt.processTxn(deleteHdr, deleteTxn);
-+        // The ACL is no longer referenced by any node, so it must have been
-+        // garbage collected.
-+        assertEquals(baseline, dt.aclCacheSize());
-+    }
-+
-+    /**
-+     * The ACL used to filter watch events of a node whose ACL is unknown must
-+     * deny READ to ordinary sessions. Null or an empty ACL would not, because
-+     * checkACL treats both as unrestricted.
-+     *
-+     * See ZOOKEEPER-4689.
-+     */
-+    @Test
-+    public void testNoPermissionsAclDeniesRead() {
-+        ZooKeeperServer zks = new ZooKeeperServer();
-+        List<Id> authInfo = Collections.singletonList(new Id("ip", "127.0.0.1"));
-+        assertThrows(NoAuthException.class, () ->
-+            zks.checkACL(null, DataTree.NO_PERMISSIONS_ACL, ZooDefs.Perms.READ, authInfo, "/x", null));
-+    }
-+
-     private DataTree buildDataTreeForTest() {
-         final DataTree dt = new DataTree();
-         assertEquals(dt.lastProcessedZxid, 0);
-```
-
-**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/server/persistence/FileTxnSnapLogTest.java` (modified, +385/-29)
-```diff
-@@ -36,21 +36,28 @@
- import java.io.FileInputStream;
- import java.io.FileOutputStream;
- import java.io.IOException;
-+import java.util.ArrayList;
-+import java.util.List;
- import java.util.Map;
- import java.util.concurrent.ConcurrentHashMap;
- import org.apache.jute.BinaryInputArchive;
- import org.apache.jute.BinaryOutputArchive;
- import org.apache.jute.InputArchive;
- import org.apache.jute.OutputArchive;
- import org.apache.jute.Record;
-+import org.apache.zookeeper.AddWatchMode;
-+import org.apache.zookeeper.WatchedEvent;
- import org.apache.zookeeper.ZooDefs;
-+import org.apache.zookeeper.data.ACL;
- import org.apache.zookeeper.server.DataNode;
- import org.apache.zookeeper.server.DataTree;
- import org.apache.zookeeper.server.Request;
-+import org.apache.zookeeper.server.ServerWatcher;
- import org.apache.zookeeper.server.ZooKeeperServer;
- import org.apache.zookeeper.test.ClientBase;
- import org.apache.zookeeper.test.TestUtils;
- import org.apache.zookeeper.txn.CreateTxn;
-+import org.apache.zookeeper.txn.DeleteTxn;
- import org.apache.zookeeper.txn.SetDataTxn;
- import org.apache.zookeeper.txn.TxnDigest;
- import org.apache.zookeeper.txn.TxnHeader;
-@@ -335,6 +342,94 @@ public void testDirCheckWithLogFilesInSnapDir() throws IOException {
-         });
-     }
- 
-+    private static final byte[] TEST_DATA = "foo".getBytes();
-+
-+    private static final class ReplayTxn {
-+
-+        private final TxnHeader header;
-+        private final Record record;
-+
-+        ReplayTxn(long zxid, int type, Record record) {
-+            this.header = new TxnHeader(1, 2, zxid, 2, type);
-+            this.record = record;
-+        }
-+
-+        void applyTo(DataTree dataTree) {
-+            dataTree.processTxn(header, record);
-+        }
-+    }
-+
-+    private static ReplayTxn createTxn(long zxid, String path, List<ACL> acl) {
-+        return new ReplayTxn(zxid, ZooDefs.OpCode.create, new CreateTxn(path, TEST_DATA, acl, false, -1));
-+    }
-+
-+    private static ReplayTxn deleteTxn(long zxid, String path) {
-+        return new ReplayTxn(zxid, ZooDefs.OpCode.delete, new DeleteTxn(path));
-+    }
-+
-+    private static ReplayTxn setDataTxn(long zxid, String path) {
-+        return new ReplayTxn(zxid, ZooDefs.OpCode.setData, new SetDataTxn(path, TEST_DATA, 1));
-+    }
-+
-+    /**
-+     * Simulates a fuzzy snapshot. {@link #start} serializes the ACL cache, and
-+     * {@link #finishAndRestore} serializes the nodes and loads them into a new
-+     * tree. Transactions passed to {@link #apply} in between are in the fuzzy
-+     * range, so serialized nodes can reference ACL ids that are missing from
-+     * the serialized cache.
-+     */
-+    private static final class FuzzySnapshot {
-+
-+        private final DataTree dataTree;
-+        private final File file;
-+        private final FileOutputStream outputStream;
-+        private final OutputArchive outputArchive;
-+
-+        private FuzzySnapshot(DataTree dataTree, File file) throws IOException {
-+            this.dataTree = dataTree;
-+            this.file = file;
-+            this.outputStream = new FileOutputStream(file);
-+            this.outputArchive = BinaryOutputArchive.getArchive(outputStream);
-+        }
-+
-+        /** Serializes the ACL cache to a snapshot file under {@code dir}. */
-+        static FuzzySnapshot start(DataTree dataTree, File dir) throws IOException {
-+            FuzzySnapshot snapshot = new FuzzySnapshot(dataTree, File.createTempFile("snapshot", ".zk", dir));
-+            dataTree.serializeAcls(snapshot.outputArchive);
-+            return snapshot;
-+        }
-+
-+        /** Applies a transaction to the source tree during the fuzzy range. */
-+        void apply(ReplayTxn txn) {
-+            txn.applyTo(dataTree);
-+        }
-+
-+        /** Serializes the nodes and loads the snapshot into a new tree without replaying transactions. */
-+        DataTree finishAndRestore() throws IOException {
-+            dataTree.serializeNodes(outputArchive);
-+            outputStream.close();
-+
-+            DataTree restored = new DataTree();
-+            try (FileInputStream inputStream = new FileInputStream(file)) {
-+                InputArchive inputArchive = BinaryInputArchive.getArchive(inputStream);
-+                restored.deserialize(inputArchive, "tree");
-+            }
-+            return restored;
-+        }
-+    }
-+
-+    private static List<ACL> concatAcl(List<ACL> first, List<ACL> second) {
-+        List<ACL> result = new ArrayList<>(first);
-+        result.addAll(second);
-+        return result;
-+    }
-+
-+    private static void assertAcl(DataTree dataTree, String path, List<ACL> expected) {
-+        DataNode node = dataTree.getNode(path);
-+        assertNotNull(node);
-+        assertEquals(expected, dataTree.getACL(node));
-+    }
-+
-     /**
-      * Make sure the ACL is exist in the ACL map after SNAP syncing.
-      *
-@@ -363,35 +458,296 @@ public void testDirCheckWithLogFilesInSnapDir() throws IOException {
-      */
-     @Test
-     public void testACLCreatedDuringFuzzySnapshotSync
+     def tearDown(self):
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2513** (2026-11-23): ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0 (@symat)
+- **PR #2511** (2026-11-20): ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap (branch-3.9) (@apurtell)
 - **PR #2503** (2026-11-16): ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector (@PDavid)
 - **PR #2497** (2026-11-17): ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap (@apurtell)
 - **PR #2493** (2026-11-06): ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js (@PDavid)
 - **PR #2492** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
-- **PR #2491** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
-- **PR #2490** (2026-11-09): Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigException` (@kezhuw)
 
 ---
 
@@ -2226,63 +1867,28 @@ Closes #2425 from adamyi/ZOOKEEPER-4689-rework
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ZOOKEEPER-4689: Fix ACL cache recovery from fuzzy snapshots
+## X. ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0
 
 **RULE**:
-When implementing operations in `zookeeper-server/src/main/java/org/apache/zookeeper/server/DataTree.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-contrib/zookeeper-contrib-zkpython/src/test/connection_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f4ebb35`: ZOOKEEPER-4689: Fix ACL cache recovery from fuzzy snapshots. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9438aa66`: ZOOKEEPER-5138: Fix zkpython testversionstringexists for 3.10.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-server/src/main/java/org/apache/zookeeper/server/DataTree.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-contrib/zookeeper-contrib-zkpython/src/test/connection_test.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    // Deny watch delivery to ordinary sessions when a node's ACL is unknown.
-    // checkACL treats null and empty ACLs as unrestricted. Public for tests.
-    public static final List<ACL> NO_PERMISSIONS_ACL =
-        Collections.singletonList(new ACL(0, ZooDefs.Ids.ANYONE_ID_UNSAFE));
-
-            parentAcl = getACLForWatchTrigger(parent, parentName);
-            // Intern the ACL before checking whether the node exists: a fuzzy
-            // snapshot can contain the node but omit its ACL (ZOOKEEPER-3306).
-            Long aclId = aclCache.convertAcls(acl);
-                // Use the ACL value from the txn; snapshot ids are server-local
-                // and may not resolve. Release the node's old reference to balance
-                // convertAcls, including when both ids are equal.
-                synchronized (existingChild) {
-                    Long previousAcl = existingChild.acl;
-                    existingChild.acl = aclId;
-                    aclCache.removeUsage(previousAcl);
-                    if (!aclId.equals(previousAcl)) {
-                        LOG.info("ACL reference of existing node {} changed from {} to {} while applying a create txn",
-                    
+        self.assertTrue(re.match(r"^\d+\.\d+\.\d+$", zookeeper.__version__))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-            parentAcl = getACL(parent);
-            // Add the ACL to ACL cache first, to avoid the ACL not being
-            // created race condition during fuzzy snapshot sync.
-            //
-            // This is the simplest fix, which may add ACL reference count
-            // again if it's already counted in the ACL map of fuzzy
-            // snapshot, which might also happen for deleteNode txn, but
-            // at least it won't cause the ACL not exist issue.
-            //
-            // Later we can audit and delete all non-referenced ACLs from
-            // ACL map when loading the snapshot/txns from disk, like what
-            // we did for the global sessions.
-            Long acls = aclCache.convertAcls(acl);
-                existingChild.acl = acls;
-            DataNode child = new DataNode(data, acls, stat);
-            acl = getACL(node);
-            parentAcl = getACL(parent);
-            acl = getACL(n);
+        self.assertTrue(re.match("\d.\d.\d", zookeeper.__version__))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f4ebb35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9438aa66` are properly handled with clean fallback behavior.

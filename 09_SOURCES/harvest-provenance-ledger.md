@@ -12442,3 +12442,5 @@ Every entry in this ledger must capture:
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `0da7627b` | Multi-dimensional audit evidence | 2026-11-23T17:46:27.441Z |
 | `learn-huggingface-reson8-rumble-2-flash` | `https://huggingface.co/Reson8/Rumble-2-Flash` | `hf-reson8-` | Multi-dimensional audit evidence | 2026-11-23T17:53:59.350Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `79e960f9` | Multi-dimensional audit evidence | 2026-11-23T17:54:15.203Z |
+| `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T18:03:08.558Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `9438aa66` | Multi-dimensional audit evidence | 2026-11-23T18:03:23.975Z |
