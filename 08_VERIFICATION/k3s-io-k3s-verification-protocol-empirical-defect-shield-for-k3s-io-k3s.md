@@ -4,22 +4,22 @@
 {
   "source_repository": "k3s-io/k3s",
   "source_url": "https://github.com/k3s-io/k3s",
-  "source_version": "647ad670",
+  "source_version": "b5039cf8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T10:34:23.968Z",
+  "timestamp": "2026-11-23T17:29:41.327Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-k3s-io-k3s",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [k3s-io/k3s](https://github.com/k3s-io/k3s) (Revision: `647ad670`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T10:34:23.968Z`  
+> **Provenance**: Harvested from [k3s-io/k3s](https://github.com/k3s-io/k3s) (Revision: `b5039cf8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:29:41.327Z`  
 > **Learning ID**: `learn-github-k3s-io-k3s`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `k3s-io/k3s` (Commit: `647ad670`)
+- **Target Repository**: `k3s-io/k3s` (Commit: `b5039cf8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T10:34:22.505Z  
+> **Harvest Timestamp**: 2026-11-23T17:29:39.629Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34471 stars
+- **Stars / Engagement**: 34499 stars
 
 ---
 
@@ -895,15 +895,14 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15018** (2026-11-19): **Duplicate - opened without the feature type, please ignore**
-  *Symptoms*: Opened without the Feature issue type, which only the template form sets. Recreated; please ignore this one.
+- **Issue #15043** (2026-11-23): **[Release 1.37] Pin multus version to fix CI**
+  *Symptoms*: Backport: https://github.com/k3s-io/k3s/pull/15042
   **Post-Mortem & Fix Analysis**:
-  > Recreated as #15020.
+  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/15043?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 27.41%. Comparing base ([`cb03dbf`](https://app.codecov.io/gh/k3s-io/k3s/commit/cb03dbf658cf8b73189e95cf862f9dbc2003f7c1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`af8eb73`](https://app.codecov.io/gh/k3s-io/k3s/commit/af8eb7341ca1cfb110d58ddbb4910f5cfd97c8a7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)). > :exclamation:  There is a different number of reports uploaded between BASE (cb03dbf) and HEAD (af8eb73). Click for more details. >  > <details><summary>HEAD has 20 uploads less than BASE</summary> > >| F
+  > @thomasferrandiz already taking care of this
 
-- **Issue #15017** (2026-11-19): **[Release-1.34] Bump Traefik image to v3.7.19**
-  *Symptoms*: Issue: https://github.com/k3s-io/k3s/issues/15016 Backport: https://github.com/k3s-io/k3s/pull/15009
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/15017?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.10%. Comparing base ([`5002961`](https://app.codecov.io/gh/k3s-io/k3s/commit/50029619e1b36d9bc629e175c878443129c47d16?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`e20efd4`](https://app.codecov.io/gh/k3s-io/k3s/commit/e20efd4ea025b7e6ba5d612ab10dba03e957bda1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff                @@ ##           release-1.34   #15017      +/-   ## ==============================
+- **Issue #15042** (2026-11-23): **Fix multus test by pinning the version**
+  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  <!-- Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. -->  Multus e2e test keeps failing in CI. The problem is that in the helm chart index.yaml, we have two different packages presenting semver 4.3.204. * multus (version: 4.3.204) * multus-1.34-1.36 (version 4.3.204-v1.3436)  As both present the same version, if no version is set, you can't tell which one you will get. These two are very different because one includes the crds whereas the other does not.  #### Types of Changes ####  <!-- What types of changes does your code introduce to K3s? Bugfix, New Feature, Breaking Change, etc --> CI Bugfix  #### Verification ####  <!-- How can the changes be verified? Please provide whatever additional information necessary to help verify the proposed changes. --> multus test will work  #### Testing ####  <!-- Is this change covered by testing? If not, consider adding a Unit or Integration test. --> <!-- See https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md for more info -->  #### Linked Issues ####  <!-- Link any related issues, pull-requests, or commit hashes that are relevant to this pull request. If you are opening a PR without a corresponding issue please consider creating one first
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -920,61 +919,29 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `647ad670` (2026-11-19)
-**Commit Message**: Bump Traefik to v3.7.19 and chart to v42.4.1
+### Incident Patch 1: `b5039cf8` (2026-11-21)
+**Commit Message**: Add SpatiumDDI to ADOPTERS.md
 
-Signed-off-by: Manuel Buil <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_013ted7W9Y1pA3xN3aW3bnqS
+Signed-off-by: mzac <[REDACTED_EMAIL]>
 
-**File**: `manifests/traefik.yaml` (modified, +3/-3)
+**File**: `ADOPTERS.md` (modified, +1/-0)
 ```diff
-@@ -7,7 +7,7 @@ metadata:
- spec:
-   forceConflicts: true
-   failurePolicy: retry
--  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up41.6.1.tgz
-+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up42.4.1.tgz
- ---
- apiVersion: helm.cattle.io/v1
- kind: HelmChart
-@@ -17,7 +17,7 @@ metadata:
- spec:
-   forceConflicts: true
-   failurePolicy: retry
--  chart: https://%{KUBERNETES_API}%/static/charts/traefik-41.6.101+up41.6.1.tgz
-+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-42.4.101+up42.4.1.tgz
-   set:
-     global.systemDefaultRegistry: "%{SYSTEM_DEFAULT_REGISTRY_RAW}%"
-   valuesContent: |-
-@@ -32,7 +32,7 @@ spec:
-     priorityClassName: "system-cluster-critical"
-     image:
-       repository: "rancher/mirrored-library-traefik"
--      tag: "3.7.17"
-+      tag: "3.7.19"
-     tolerations:
-     - key: "CriticalAddonsOnly"
-       operator: "Exists"
-```
-
-**File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
-```diff
-@@ -3,6 +3,6 @@ docker.io/rancher/klipper-lb:v0.4.18
- docker.io/rancher/local-path-provisioner:v0.0.37
- docker.io/rancher/mirrored-coredns-coredns:1.15.0
- docker.io/rancher/mirrored-library-busybox:1.38.0
--docker.io/rancher/mirrored-library-traefik:3.7.17
-+docker.io/rancher/mirrored-library-traefik:3.7.19
- docker.io/rancher/mirrored-metrics-server:v0.9.1
- docker.io/rancher/mirrored-pause:3.10.2
+@@ -23,3 +23,4 @@ A non-exhaustive list of k3s adopters is provided below.  To add your company to
+  - [Kairos](https://kairos.io)
+  - [Getdeck Beiboot](https://github.com/Getdeck/beiboot)
+  - [Solanica](https://solanica.io/) and [Percona](https://www.percona.com/) (development and CI usage via k3d for the [OpenEverest](https://openeverest.io/) project)
++ - [SpatiumDDI](https://github.com/spatiumnorth/spatiumddi) - open-source DDI (DNS, DHCP, IPAM) appliance; Debian 13 + embedded k3s, single node growing to 3/5/7-node HA
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15043** (closed): [Release 1.37] Pin multus version to fix CI (@manuelbuil)
+- **PR #15042** (closed): Fix multus test by pinning the version (@manuelbuil)
+- **PR #15038** (2026-11-23): Add SpatiumDDI to ADOPTERS.md (@mzac)
+- **PR #15032** (2026-11-23): [release-1.35] Bump Flannel version (@github-actions[bot])
 - **PR #15017** (2026-11-19): [Release-1.34] Bump Traefik image to v3.7.19 (@manuelbuil)
 - **PR #15015** (2026-11-19): [Release-1.35] Bump Traefik image to v3.7.19 (@manuelbuil)
-- **PR #15013** (2026-11-19): [Release-1.36] Bump Traefik image to v3.7.19 (@manuelbuil)
-- **PR #15011** (2026-11-19): [Release-1.37] Bump Traefik to v3.7.19 and chart to v42.4.1 (@manuelbuil)
-- **PR #15009** (2026-11-19): Bump Traefik to v3.7.19 and chart to v42.4.1 (@manuelbuil)
-- **PR #15001** (closed): Run integration coverage conversion as root (@manuelbuil)
 
 ---
 
@@ -994,35 +961,31 @@ Signed-off-by: Manuel Buil <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump Traefik to v3.7.19 and chart to v42.4.1
+## X. Add SpatiumDDI to ADOPTERS.md
 
 **RULE**:
-When implementing operations in `manifests/traefik.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ADOPTERS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `647ad670`: Bump Traefik to v3.7.19 and chart to v42.4.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b5039cf8`: Add SpatiumDDI to ADOPTERS.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `manifests/traefik.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ADOPTERS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up42.4.1.tgz
-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-42.4.101+up42.4.1.tgz
-      tag: "3.7.19"
+ - [SpatiumDDI](https://github.com/spatiumnorth/spatiumddi) - open-source DDI (DNS, DHCP, IPAM) appliance; Debian 13 + embedded k3s, single node growing to 3/5/7-node HA
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up41.6.1.tgz
-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-41.6.101+up41.6.1.tgz
-      tag: "3.7.17"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `647ad670` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b5039cf8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

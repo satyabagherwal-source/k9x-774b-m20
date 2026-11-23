@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T14:33:43.147Z",
+  "timestamp": "2026-11-23T17:29:44.974Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-yvgude-lean-ctx-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [yvgude-lean-ctx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T14:33:43.147Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T17:29:44.974Z`  
 > **Learning ID**: `LEARN-EVO-yvgude-lean-ctx-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `9701b374`  
+> **Source Version**: `8ff3aef4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T14:33:22.652Z  
+> **Timestamp**: 2026-11-23T17:29:32.447Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:33:20.202Z  
+> **Harvest Timestamp**: 2026-11-23T17:29:32.438Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3956 stars
+- **Stars / Engagement**: 3959 stars
 
 ---
 
@@ -61,6 +61,253 @@ PROVENANCE_END -->
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `integrations/claude-code-mod-jobs/hooks/register.ts`
+```
+// SPDX-License-Identifier: Apache-2.0
+// lean-ctx-jobs: the lean-ctx mod's tool-call layer, kept apart from the core
+// mod (cockpit, metering, compaction) because Claude Code turns Code Mode off
+// for any enabled plugin that hooks `tool.call`. `lean-ctx claude-mod
+// code-mode` starts a session with this plugin disabled and the core mod on.
+import type {
+  EngineInterface,
+  McpToolResult,
+  Register,
+  Timer,
+  ToolCallResult,
+} from "claude-code";
+
+const LEAN_CTX_TOOL_PATTERN = /^mcp__lean[-_]ctx__[A-Za-z0-9_-]+$/;
+const LEAN_CTX_TOOL_NAME = /^mcp__(lean[-_]ctx)__([A-Za-z0-9_-]+)$/;
+const SHELL_TOOLS = new Set(["ctx_shell", "shell"]);
+const WATCH_CONTEXT =
+  "This background job is being watched; you will be woken automatically on completion, so do not poll or sleep.";
+const WATCH_INTERVAL_MS = 2_000;
+// A submitted wake normally starts its turn within seconds; after this many
+// watcher ticks' worth it is treated as gone, so held jobs never stay stuck.
+const WAKE_IN_FLIGHT_MAX_MS = 60_000;
+// Consecutive unreadable status checks before a job is handed back to the
+// model's own polling; one transient MCP hiccup must not drop the watch.
+const MAX_STATUS_MISSES = 5;
+const MAX_TAIL_LINES = 20;
+const MAX_TAIL_LINE_CHARS = 300;
+// Native Bash stdout below this is kept byte-for-byte: the shaping gain cannot
+// pay for the extra hop, and short output is usually exactly what was asked.
+const SHAPE_MIN_CHARS = 2_000;
+// Commands that explicitly ask for exact bytes are never shaped.
+const RAW_INTENT = /\bLEAN_CTX_(?:RAW|DISABLED)=1\b|\blean-ctx\s+raw\b/;
+const COMMAND = "leanctx-jobs";
+
+type JsonRecord = Record<string, unknown>;
+type WatchJob = { server: string; id: string; contextSent: boolean; misses: number };
+type JobStatus = { state: "running" | "terminal" | "unknown"; exitCode?: number; archiveId?: string; summary?: string };
+type FinishedJob = { job: WatchJob; status: JobStatus; response: McpToolResult };
+type JobCheck = {
+  key: string;
+  job: WatchJob;
+  status?: JobStatus;
+  response?: McpToolResult;
+};
+type Metrics = {
+  sleepsAnswered: number;
+  wakesDelivered: number;
+  shapedCalls: number;
+  shapedCharsSaved: number;
+};
+
+const watchedJobs = new Map<string, WatchJob>();
+const metrics: Metrics = { sleepsAnswered: 0, wakesDelivered: 0, shapedCalls: 0, shapedCharsSaved: 0 };
+let watcher: Timer | undefined;
+let watcherTickInProgress = false;
+// True between a main-loop `turn.start` and its `turn.complete`. A wake
+// submitted then is only delivered after the turn, by which time the model
+// may have read the job itself — so finished jobs wait in `pendingWakes`.
+let mainTurnActive = false;
+const pendingWakes = new Map<string, FinishedJob>();
+// Watcher ticks since the last wake was submitted, until its turn starts. Jobs
+// that finish meanwhile are held too: every wake is a visible prompt row and a
+// turn, and in that turn the model often reads the other jobs itself, which
+// drops them.
+let wakeInFlightTicks: number | undefined;
+// The lean-ctx MCP server name as this session spells it (`lean-ctx`/`lean_ctx`).
+let leanServer: string | undefined;
+let commandAttempted = false;
+let commandRegistered = false;
+
+function isWakeInFlight(): boolean {
+  return wakeInFlightTicks !== undefined && wakeInFlightTicks * WATCH_INTERVAL_MS < WAKE_IN_FLIGHT_MAX_MS;
+}
+
+export const register: Register = (on, options) => {
+  const shapeNative = asRecord(options).shape_native_output !== false;
+  // Off: background jobs are not watched and the model checks them itself.
+  const wakeOnFinish = asRecord(options).wake_on_job_finish !== false;
+
+  // The server name is learned from the lean-ctx tool surface.
+  on("tool.describe", { tool: LEAN_CTX_TOOL_PATTERN }, async ($, event, next) => {
+    const match = getLeanCtxTool(event.tool);
+    if (match) {
+      leanServer = match.server;
+      await ensureCommand($);
+    }
+    return next(event);
+  });
+
+  // The core mod prefixes the lean-ctx skill with the session's tool surface;
+  // this adds what is true about background jobs and Bash output. Byte-stable
+  // for a given configuration, so it never churns the prompt cache.
+  on("skill.prompt", { skill: "lean-ctx" }, async ($, event, next) => {
+    const base = await next(event);
+    return { text: `${liveJobsHeader(shapeNative, wakeOnFinish)}\n\n${base.text}` };
+  });
+
+  on("session.start", async ($, event, next) => {
+    resetSessionState();
+    if (!leanServer) {
+      try {
+        const match = (await $.tool.list())
+          .map((tool) => getLeanCtxTool(tool.name))
+          .find((found) => found !== undefined);
+        if (match) leanServer = match.server;
+      } catch {
+        // Listing is best-effort; the tool hooks still detect lean-ctx.
+      }
+    }
+    if (leanServer) await ensureCommand($);
+    return next(event);
+  });
+
+  // Held wakes go out on the next watcher tick after the turn (≤ 2 s); the
+  // watcher keeps running while any are held.
+  on("turn.start", async ($, event, next) => {
+    if (!event.agentId) {
+      mainTurnActive = true;
+      wakeInFlightTicks = undefined;
+    }
+    return next(event);
+  });
+
+  on("turn.complete", async ($, event, next) => {
+    if (!event.agentId) mainTurnActive = false;
+    return next(event);
+  });
+
+  on("tool.call", async ($, event, next) => {
+    const fields = event as unknown as JsonRecord;
+    const tool = typeof fields.tool === "string" ? fields.tool : "";
+    const leanCtxTool = getLeanCtxTool(tool);
+
+    if (!leanCtxTool) {
+      if (tool === "Bash" && watchedJobs.size > 0 && isSleepWait(readString(fields, "command"))) {
+        metrics.sleepsAnswered += 1;
+        return { result: sleepAnswer() };
+      }
+      if (tool === "Bash" && shapeNative) {
+        return shapeBash($, readString(fields, "command"), await next(event));
+      }
+      return next(event);
+    }
+
+    leanServer = leanCtxTool.server;
+    await ensureCommand($);
+    if (!SHELL_TOOLS.has(leanCtxTool.tool)) return next(event);
+
+    if (watchedJobs.size > 0 && isSleepWait(readString(fields, "command"))) {
+      metrics.sleepsAnswered += 1;
+      return { result: sleepAnswer() };
+    }
+
+    if (fields.run_in_background && wakeOnFinish) {
+      const result = await next(event);
+      const jobId = extractJobId(result);
+      if (!jobId) return result;
+
+      const key = watchKey(leanCtxTool.server, jobId);
+      const job = watchedJobs.get(key) ?? { server: leanCtxTool.server, id: jobId, contextSent: false, misses: 0 };
+      watchedJobs.set(key, job);
+      if (!startWatcher($)) {
+        watchedJobs.delete(key);
+        stopWatcherWhenIdle();
+        return result;
+      }
+      return addWatchContext(result, job);
+    }
+
+    const backgroundAction = readString(fields, "background_action");
+    if (backgroundAction === "status" || backgroundAction === "cancel") {
+      const jobId = readString(fields, "job_id");
+      const key = jobId ? watchKey(leanCtxTool.server, jobId) : undefined;
+      const job = key ? watchedJobs.get(key) : undefined;
+      const result = await next(event);
+      if (!key || !jobId || (!job && !pendingWakes.has(key))) return result;
+      // The model has now seen this job's terminal state itself: stop
+      // watching it and drop a wake the watcher already held for it, or the
+      // same result arrives again and costs a whole extra turn.
+      if (toolCallJobStatus(result, jobId).state === "terminal") {
+        if (job && watchedJobs.get(key) === job) watchedJobs.delete(key);
+        pendingWakes.delete(key);
+        stopWatcherWhenIdle();
+        return result;
+      }
+      return job ? addWatchContext(result, job) : result;
+    }
+
+    return next(event);
+  });
+
+  // The compaction summary must keep the ids of jobs that will still wake the
+  // model. Subagent compactions pass through untouched.
+  on("session.compact", async ($, event, next) => {
+    const line = compactionInstruction();
+    if (event.agentId || !line) return next(event);
+    const instructions = [event.instructions, line].filter(Boolean).join("\n\n");
+    return next({ ...event, instructions });
+  });
+
+  on("command.run", { command: COMMAND }, async ($, event, next) => {
+    return commandRegistered ? { text: formatMetrics() } : next(event);
+  });
+};
+
+// Shape, don't redirect (concept K2): the native Bash call already ran; its
+// stdout goes through lean-ctx's command-aware compressor (`ctx_shape`, which
+// also applies lean-ctx's secret redaction and output filters) instead of
+// denying the call and forcing a round trip to ctx_shell. Lossy results end
+// with a recovery handle. stderr is kept verbatim. Fail-open everywhere: any
+// refusal on the way (workflow, role, budget) comes back as an error.
+// ctx_shape is not listed, and `$.mcp.call` only reaches listed tools (Claude
+// Code 2.1.296+), so the call goes through the listed `ctx_call` (#2089).
+async function shapeBash(
+  $: EngineInterface,
+  command: string | undefined,
+  result: ToolCallResult,
+): Promise<ToolCallResult> {
+  if (!leanServer || !command || RAW_INTENT.test(command)) return result;
+  if ("deny" in result || result.isError) return result;
+  const record = asRecord(result.result);
+  const stdout = typeof record.stdout === "string" ? record.stdout : "";
+  if (
+    stdout.length < SHAPE_MIN_CHARS ||
+    record.isImage ||
+    record.backgroundTaskId ||
+    record.persistedOutputPath
+  ) {
+    return result;
+  }
+  try {
+    // A non-error result without a special-exit interpretation exited 0, so the
+    // engine takes its success path (folds build/test noise); otherwise it gets
+    // no exit code and keeps the unknown-outcome guard.
+    const exitCode = record.returnCodeInterpretation ? {} : { exit_code: 0 };
+    const shaped = await $.mcp.call(leanServer, "ctx_call", {
+      name: "ctx_shape",
+      arguments: { tool: "Bash", command, output: stdout, ...exitCode },
+    });
+    if (shaped.isError) return result;
+    const text = mcpText(shaped);
+    if (!text || text.length >= stdout.length) return result;
+    metrics.shapedCalls += 
+```
 
 ### Core Architecture Module: `integrations/claude-code-mod/hooks/cockpit.tsx`
 ```
@@ -313,12 +560,14 @@ import type {
   EngineInterface,
   McpToolResult,
   Register,
-  Timer,
-  ToolCallResult,
   TurnStepResult,
 } from "claude-code";
 
 import { registerCockpit } from "./cockpit";
+
+// This plugin registers no tool-call hook: Claude Code turns Code Mode off for any
+// enabled plugin that does. Background-job wakes, sleep answers and native
+// Bash shaping live in the separate `lean-ctx-jobs` plugin.
 import { registerResultRendering } from "./render";
 
 // Every tool the injected rules route an intent to must stay in front: a
@@ -340,23 +589,6 @@ const DEFAULT_FRONT_LOADED_TOOLS = [
 // ctx_shell would otherwise stay front-loaded under `alwaysLoad`.
 const LEAN_CTX_TOOL_PATTERN = /^mcp__lean[-_]ctx__[A-Za-z0-9_-]+$/;
 const LEAN_CTX_TOOL_NAME = /^mcp__(lean[-_]ctx)__([A-Za-z0-9_-]+)$/;
-const SHELL_TOOLS = new Set(["ctx_shell", "shell"]);
-const WATCH_CONTEXT =
-  "This background job is being watched; you will be woken automatically on completion, so do not poll or sleep.";
-const WATCH_INTERVAL_MS = 2_000;
-// A submitted wake normally starts its turn within seconds; after this many
-// watcher ticks' worth it is treated as gone, so held jobs never stay stuck.
-const WAKE_IN_FLIGHT_MAX_MS = 60_000;
-// Consecutive unreadable status checks before a job is handed back to the
-// model's own polling; one transient MCP hiccup must not drop the watch.
-const MAX_STATUS_MISSES = 5;
-const MAX_TAIL_LINES = 20;
-const MAX_TAIL_LINE_CHARS = 300;
-// Native Bash stdout below this is kept byte-for-byte: the shaping gain cannot
-// pay for the extra hop, and short output is usually exactly what was asked.
-const SHAPE_MIN_CHARS = 2_000;
-// Commands that explicitly ask for exact bytes are never shaped.
-const RAW_INTENT = /\bLEAN_CTX_(?:RAW|DISABLED)=1\b|\blean-ctx\s+raw\b/;
 // Upper bound for the session state injected after a compaction (~500 tokens).
 const MAX_RESUME_CHARS = 2_000;
 type LeanCtxHookTextEnd = { end: string; continues?: readonly string[] };
@@ -502,15 +734,6 @@ const LEAN_CTX_HOOK_TEXT_SIGNATURES: readonly LeanCtxHookTextSignature[] = [
 const HOOK_CONTEXT_FRAME = /(?:^|\n)([A-Za-z]+ hook additional context: )$/;
 
 type JsonRecord = Record<string, unknown>;
-type WatchJob = { server: string; id: string; contextSent: boolean; misses: number };
-type JobStatus = { state: "running" | "terminal" | "unknown"; exitCode?: number; archiveId?: string; summary?: string };
-type FinishedJob = { job: WatchJob; status: JobStatus; response: McpToolResult };
-type JobCheck = {
-  key: string;
-  job: WatchJob;
-  status?: JobStatus;
-  response?: McpToolResult;
-};
 type Metrics = {
   requests: number;
   input: number;
@@ -519,16 +742,11 @@ type Metrics = {
   cacheCreation: number;
   toolSearchOnly: number;
   leanCtxCalls: number;
-  sleepsAnswered: number;
-  wakesDelivered: number;
-  shapedCalls: number;
-  shapedCharsSaved: number;
   droppedHookAttachments: number;
   droppedHookChars: number;
   compactions: number;
 };
 
-const watchedJobs = new Map<string, WatchJob>();
 const metrics: Metrics = {
   requests: 0,
   input: 0,
@@ -537,36 +755,66 @@ const metrics: Metrics = {
   cacheCreation: 0,
   toolSearchOnly: 0,
   leanCtxCalls: 0,
-  sleepsAnswered: 0,
-  wakesDelivered: 0,
-  shapedCalls: 0,
-  shapedCharsSaved: 0,
   droppedHookAttachments: 0,
   droppedHookChars: 0,
   compactions: 0,
 };
-let watcher: Timer | undefined;
-let watcherTickInProgress = false;
-// True between a main-loop `turn.start` and its `turn.complete`. A wake
-// submitted then is only delivered after the turn, by which time the model
-// may have read the job itself — so finished jobs wait in `pendingWakes`.
-let mainTurnActive = false;
-const pendingWakes = new Map<string, FinishedJob>();
-// Watcher ticks since the last wake was submitted, until its turn starts. Jobs
-// that finish meanwhile are held too: every wake is a visible prompt row and a
-// turn, and in that turn the model often reads the other jobs itself, which
-// drops them.
-let wakeInFlightTicks: number | undefined;
-
-function isWakeInFlight(): boolean {
-  return wakeInFlightTicks !== undefined && wakeInFlightTicks * WATCH_INTERVAL_MS < WAKE_IN_FLIGHT_MAX_MS;
-}
 let leanCtxSeen = false;
 // The lean-ctx MCP server name as this session spells it (`lean-ctx`/`lean_ctx`).
 let leanServer: string | undefined;
 let commandAttempted = false;
 let commandRegistered = false;
-// Set by a main-loop compaction; the next promp
+// Set by a main-loop compaction; the next prompt carries the lean-ctx session state once.
+let resumePending = false;
+
+export const register: Register = (on, options) => {
+  // The cockpit: sidebar, pulse line, turn and milestone overlays (cockpit.tsx).
+  registerCockpit(
+    on,
+    {},
+    {
+      panel: asRecord(options).cockpit_panel !== false,
+      pulse: asRecord(options).cockpit_pulse_line !== false,
+      cards: asRecord(options).cockpit_turn_cards !== false,
+    },
+  );
+  // ctx_patch / ctx_read / ctx_search results drawn as diffs and code
+  // (render.tsx). Display only: the model receives every result unchanged.
+  if (asRecord(options).color_output !== false) registerResultRendering(on);
+  const frontLoaded = getFrontLoadedTools(options);
+  const keepHookContext = asRecord(options).keep_hook_context === true;
+
+  on("tool.describe", { tool: LEAN_CTX_TOOL_PATTERN }, async ($, event) => {
+    const match = getLeanCtxTool(event.tool);
+    if (!match) return { description: event.description, isDeferred: event.isDeferred };
+
+    leanCtxSeen = true;
+    leanServer = match.server;
+    await ensureMeterCommand($);
+    return {
+      description: event.description,
+      isDeferred: !frontLoaded.has(match.tool),
+    };
+  });
+
+  // Live skill (concept K5): the shipped SKILL.md is static; this prefixes it
+  // with what is true in *this* session, so the guidance never contradicts the
+  // mod or the configured tool surface. Byte-stable for a given
+  // configuration, so it never churns the prompt cache. The lean-ctx-jobs
+  // plugin adds its own section for job wakes and Bash shaping.
+  on("skill.prompt", { skill: "lean-ctx" }, async ($, event, next) => {
+    const base = await next(event);
+    return { text: `${liveSkillHeader(frontLoaded)}\n\n${base.text}` };
+  });
+
+  // Code Mode: Claude calls tools from REPL code, and the lean-ctx names carry
+  // a hyphen, so `tools.ctx_read` and `tools.mcp__lean_ctx__…` both throw.
+  // Measured: two failed calls per session before the model found the form.
+  // One session-side section, only while REPL is offered and lean-ctx is
+  // connected; byte-stable for a given server name.
+  on("prompt.compose", async ($, event, next) => {
+    const result = await next(event);
+    if (!leanServer || !even
 ```
 
 ### Core Architecture Module: `integrations/claude-code-mod/hooks/render.tsx`
@@ -1204,1312 +1452,996 @@ class LeanCtxEngine(ContextEngine):
         # Durable cross-session persiste
 ```
 
-### Core Architecture Module: `rust/crates/lean-ctx-doc/src/state.rs`
+### Core Architecture Module: `rust/crates/lean-ctx-apps/src/core/dashboard_pro/bridge.rs`
 ```
 // SPDX-License-Identifier: Apache-2.0
+//! One cockpit analysis in two engine phases around the cockpit's own
+//! computation: `prepare` checks the request and collects its inputs,
+//! `finish` checks the cockpit's answer and returns the body, a file, or the
+//! executed plans.
 
-//! The derived doc state of a page (C0 2.2 `doc-states`), never stored:
-//! fresh, noted (every derived anchor that moved is covered by an open note
-//! that accounted for exactly what is observed now) or stale.
+use lean_ctx_time::UtcDateTime;
+use serde_json::{Value, json};
 
-use serde::{Deserialize, Serialize};
+use super::collect::{self, RouteSource};
+use super::effects::{self, Ctx, Notifier, Outcome};
+use super::request::{self, BridgeRequest, Op};
+use super::wire::{self, GuardEvent};
+use super::{ProError, ProResult, ProjectScope, watch};
 
-/// A page's state as a reader shows it.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum DocState {
-    Fresh,
-    Noted,
-    Stale,
+/// One analysis frame: requests and answers are at most 1 MiB.
+pub(crate) const MAX_FRAME_BYTES: usize = 1 << 20;
+
+pub struct Env<'a> {
+    pub scope: &'a ProjectScope,
+    pub routes: &'a dyn RouteSource,
+    pub notifier: &'a dyn Notifier,
+    pub now: UtcDateTime,
 }
 
-/// Why a page is not fresh.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum StateReason {
-    AnchorChanged,
-    AnchorGone,
+/// An HTTP answer for the cockpit.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Reply {
+    pub status: u16,
+    pub body: Value,
 }
 
-/// One moved anchor: its ref and the digest observed now (`None`: gone).
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Drift {
-    #[serde(rename = "ref")]
-    pub reference: String,
-    /// `observed` in a drift entry, `digest` in a note's cover.
-    #[serde(alias = "digest")]
-    pub observed: Option<String>,
-}
-
-/// What a note accounted for: a ref at a digest (`None`: as gone).
-pub type Cover = Drift;
-
-/// One note about the page or one of its sections.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct NoteCovers {
-    pub open: bool,
-    pub covers: Vec<Cover>,
-}
-
-/// The verdict with its reason and the derived refs no open note covers.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Verdict {
-    pub state: DocState,
-    pub reason: Option<StateReason>,
-    pub uncovered: Vec<String>,
-}
-
-/// The doc state of a page from its `anchor_state` (`fresh`, `to_verify`,
-/// `gone` or absent), the refs of its derived anchors, its `drift` and the
-/// notes about it.
-pub fn of(
-    anchor_state: Option<&str>,
-    derived: &[&str],
-    drift: &[Drift],
-    notes: &[NoteCovers],
-) -> Verdict {
-    let fresh = Verdict {
-        state: DocState::Fresh,
-        reason: None,
-        uncovered: Vec::new(),
-    };
-    if matches!(anchor_state, None | Some("fresh")) {
-        return fresh;
-    }
-    let moved: Vec<&Drift> = drift
-        .iter()
-        .filter(|d| derived.contains(&d.reference.as_str()))
-        .collect();
-    if moved.is_empty() && !drift.is_empty() {
-        // Only cited anchors moved: they never drive the state.
-        return fresh;
-    }
-    let gone = anchor_state == Some("gone") || moved.iter().any(|d| d.observed.is_none());
-    let reason = Some(if gone {
-        StateReason::AnchorGone
-    } else {
-        StateReason::AnchorChanged
-    });
-    let mut uncovered: Vec<String> = moved
-        .iter()
-        .filter(|d| {
-            !notes.iter().filter(|n| n.open).any(|n| {
-                n.covers
-                    .iter()
-                    .any(|c| c.reference == d.reference && c.observed == d.observed)
-            })
-        })
-        .map(|d| d.reference.clone())
-        .collect();
-    uncovered.sort();
-    // A writer that sent no drift detail leaves nothing to cover: stale.
-    let state = if moved.is_empty() || !uncovered.is_empty() {
-        DocState::Stale
-    } else {
-        DocState::Noted
-    };
-    Verdict {
-        state,
-        reason,
-        uncovered,
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    const D7: &str = "7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c";
-    const D5: &str = "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e";
-    const DERIVED: &[&str] = &["file:a.rs"];
-
-    fn drift(r: &str, d: Option<&str>) -> Drift {
-        Drift {
-            reference: r.into(),
-            observed: d.map(Into::into),
-        }
-    }
-    fn note(open: bool, d: Option<&str>) -> NoteCovers {
-        NoteCovers {
-            open,
-            covers: vec![drift("file:a.rs", d)],
-        }
-    }
-    fn check(
-        name: &str,
-        st: Option<&str>,
-        dr: &[Drift],
-        notes: &[NoteCovers],
-        want: (DocState, Option<StateReason>, &[&str]),
-    ) {
-        let v = of(st, DERIVED, dr, notes);
-        assert_eq!((v.state, v.reason), (want.0, want.1), "{name}");
-        assert_eq!(v.uncovered, want.2, "{name}");
+impl Reply {
+    fn ok(body: Value) -> Self {
+        Self { status: 200, body }
     }
 
-    // C0 2.2 vectors (hive-v2 vectors/doc_state).
-    #[test]
-    fn doc_state_vectors() {
-        use DocState::{Fresh, Noted, Stale};
-        use StateReason::{AnchorChanged as Changed, AnchorGone as Gone};
-        let moved = [drift("file:a.rs", Some(D7))];
-        check("no_state", None, &[], &[], (Fresh, None, &[]));
-        check("fresh", Some("fresh"), &[], &[], (Fresh, None, &[]));
-        check(
-            "changed_uncovered",
-            Some("to_verify"),
-            &moved,
-            &[],
-            (Stale, Some(Changed), &["file:a.rs"]),
-        );
-        check(
-            "changed_covered",
-            Some("to_verify"),
-            &moved,
-            &[note(true, Some(D7))],
-            (Noted, Some(Changed), &[]),
-        );
-        check(
-            "covered_an_older_move",
-            Some("to_verify"),
-            &moved,
-            &[note(true, Some(D5))],
-            (Stale, Some(Changed), &["file:a.rs"]),
-        );
-        check(
-            "resolved_note_does_not_cover",
-            Some("to_verify"),
-            &moved,
-            &[note(false, Some(D7))],
-            (Stale, Some(Changed), &["file:a.rs"]),
-        );
-        check(
-            "migrated_null_cover_does_not_cover",
-            Some("to_verify"),
-            &moved,
-            &[note(true, None)],
-            (Stale, Some(Changed), &["file:a.rs"]),
-        );
-        check(
-            "gone_covered",
-            Some("gone"),
-            &[drift("file:a.rs", None)],
-            &[note(true, None)],
-            (Noted, Some(Gone), &[]),
-        );
-        check(
-            "cites_drift_only",
-            Some("to_verify"),
-            &[drift("file:docs/b.md", Some(D7))],
-            &[],
-            (Fresh, None, &[]),
-        );
-        check(
-            "state_without_drift",
-            Some("to_verify"),
-            &[],
-            &[],
-            (Stale, Some(Changed), &[]),
-        );
-    }
-}
-
-```
-
-### Core Architecture Module: `rust/crates/lean-ctx-embed/src/engine.rs`
-```
-//! The embedding [`Engine`] — a safe, ergonomic handle over the lean-ctx
-//! context engine, built via [`EngineBuilder`].
-//!
-//! ## What it is
-//!
-//! `Engine` owns a **shared** [`SessionCache`] and dispatches the *real*
-//! registered tools (`ctx_read`, `ctx_search`, …) the same way the MCP server
-//! does. Because the cache is shared across calls, a read followed by a re-read
-//! of the same file collapses to a delta in-process — the property Lean-md
-//! needs and the headline acceptance test for this SDK.
-//!
-//! ```no_run
-//! let engine = lean_ctx_embed::Engine::builder(".").build().unwrap();
-//! let first = engine.read("src/main.rs", lean_ctx_embed::ReadMode::Full).unwrap();
-//! let again = engine.read("src/main.rs", lean_ctx_embed::ReadMode::Full).unwrap();
-//! assert!(again.saved_tokens >= first.saved_tokens); // re-read is cheaper
-//! ```
-//!
-//! ## Safe by default
-//!
-//! [`EngineBuilder::build`] is read-mostly and scoped:
-//! - **`PathJail` on** — every path argument is resolved against the project root;
-//!   escapes and secret paths are rejected.
-//! - **Scoped data dir** — unless you call [`EngineBuilder::data_dir`], engine
-//!   state goes to a dedicated temp dir, never your real `~/.lean-ctx`.
-//! - **Auto-update off** for the embedded process.
-//! - **Write/exec gated** — `ctx_edit` needs [`EngineBuilder::allow_write`];
-//!   `ctx_shell`/`ctx_execute` need [`EngineBuilder::allow_exec`].
-//!
-//! Path validation is not an OS sandbox: it does not prevent a concurrent
-//! filesystem writer from swapping a checked path before a handler opens it,
-//! and cannot distinguish hard links. Explicitly enabled shell execution is
-//! not confined by a path-argument check. Dangling symlinks fail closed.
-//!
-//! ## Runtime constraint
-//!
-//! Engine methods are synchronous and drive their own multi-threaded Tokio
-//! runtime, so they must **not** be called from inside another Tokio runtime
-//! worker. From async code, wrap calls in `tokio::task::spawn_blocking`.
-
-use std::path::{Path, PathBuf};
-use std::sync::Arc;
-
-use serde_json::{Map, Value};
-use tokio::sync::RwLock;
-
-use lean_ctx::core::cache::SessionCache;
-use lean_ctx::core::session::SessionState;
-use lean_ctx_server::server::registry::{ToolRegistry, build_registry};
-use lean_ctx_server::server::tool_trait::{ToolContext, ToolOutput};
-use lean_ctx_server::tools::{CrpMode, SharedCache};
-
-use crate::error::Error;
-use crate::output::Output;
-use crate::read::ReadMode;
-
-/// File-mutating tools, gated behind [`EngineBuilder::allow_write`].
-const WRITE_TOOLS: &[&str] = &["ctx_edit"];
-/// Command-executing tools, gated behind [`EngineBuilder::allow_exec`].
-const EXEC_TOOLS: &[&str] = &["ctx_shell", "ctx_execute", "shell"];
-/// Explicitly admitted root-scoped read surfaces. Registering another MCP tool
-/// must not silently grant it embedded write, execution, or host-registry access.
-const READ_TOOLS: &[&str] = &[
-    "ctx_read",
-    "ctx_search",
-    "ctx_tree",
-    "ctx_outline",
-    "ctx_glob",
-];
-
-/// Builds an [`Engine`] with explicit, safe-by-default configuration.
-#[derive(Debug, Clone)]
-pub struct EngineBuilder {
-    project_root: PathBuf,
-    data_dir: Option<PathBuf>,
-    allow_write: bool,
-    allow_exec: bool,
-    worker_threads: usize,
-}
-
-impl EngineBuilder {
-    fn new(project_root: impl Into<PathBuf>) -> Self {
+    fn error(error: &ProError) -> Self {
         Self {
-            project_root: project_root.into(),
-            data_dir: None,
-            allow_write: false,
-            allow_exec: false,
-            worker_threads: 2,
+            status: error.status,
+            body: super::error_body(error),
         }
-    }
-
-    /// Scope engine state (sessions, caches, indexes) to `dir` instead of the
-    /// default throwaway temp dir. Pass your real lean-ctx data dir to share
-    /// session memory with the CLI/MCP server.
-    #[must_use]
-    pub fn data_dir(mut self, dir: impl Into<PathBuf>) -> Self {
-        self.data_dir = Some(dir.into());
-        self
-    }
-
-    /// Permit the file-mutating tool (`ctx_edit`) via [`Engine::call`].
-    #[must_use]
-    pub fn allow_write(mut self, yes: bool) -> Self {
-        self.allow_write = yes;
-        self
-    }
-
-    /// Permit command-executing tools (`ctx_shell`, `ctx_execute`) via
-    /// [`Engine::call`]. The OS sandbox still applies when distributed as an addon.
-    #[must_use]
-    pub fn allow_exec(mut self, yes: bool) -> Self {
-        self.allow_exec = yes;
-        self
-    }
-
-    /// Number of Tokio worker threads backing the engine (default 2, min 1).
-    #[must_use]
-    pub fn worker_threads(mut self, n: usize) -> Self {
-        self.worker_threads = n.max(1);
-        self
-    }
-
-    /// Finalize configuration and construct the [`Engine`].
-    ///
-    /// # Errors
-    /// Returns [`Error::Init`] if the project root does not exist / is not a
-    /// directory, or the runtime cannot be built.
-    pub fn build(self) -> Result<Engine, Error> {
-        let project_root = lean_ctx::core::pathutil::canonicalize_secure(&self.project_root)
-            .map_err(|e| {
-                Error::Init(format!("project root {}: {e}", self.project_root.display()))
-            })?;
-        if !project_root.is_dir() {
-            return Err(Error::Init(format!(
-                "project root {} is not a directory",
-                project_root.display()
-            )));
-        }
-        let project_root = project_root.to_string_lossy().into_owned();
-
-        configure_process_env(self.data_dir.as_deref());
-        // The Hive connector's hooks, as the CLI registers them at start-up
-        // (idempotent: the first registration wins).
-        lean_ctx_hive::register_hooks();
-
-        let rt = tokio::runtime::Builder::new_multi_thread()
-            .worker_threads(self.worker_threads)
-            .enable_all()
-            .thread_name("lean-ctx-embed")
-            .build()
-            .map_err(|e| Error::Init(format!("tokio runtime: {e}")))?;
-
-        let mut session = SessionState::new();
-        session.project_root = Some(project_root.clone());
-        Ok(Engine {
-            project_root,
-            cache: Arc::new(RwLock::new(SessionCache::new())),
-            session: Arc::new(RwLock::new(session)),
-            registry: build_registry(),
-            crp_mode: CrpMode::Off,
-            allow_write: self.allow_write,
-            allow_exec: self.allow_exec,
-            rt,
-        })
     }
 }
 
-/// An embedded lean-ctx engine. Construct via [`Engine::builder`].
-pub struct Engine {
-    project_root: String,
-    cache: SharedCache,
-    session: Arc<RwLock<SessionState>>,
-    registry: ToolRegistry,
-    crp_mode: CrpMode,
-    allow_write: bool,
-    allow_exec: bool,
-    rt: tokio::runtime::Runtime,
+/// `POST /api/dashboard-analysis/inputs` `{op, method, query, body}` →
+/// `{request}` for the cockpit's computation. `alerts.evaluate` answers
+/// `{skip: true}` when there is nothing to evaluate, else also
+/// `guard_cursor`, which the cockpit hands back to `apply`.
+pub fn handle_inputs(env: &Env<'_>, raw: &str) -> Reply {
+    let request = match request::parse(raw).and_then(|r| scoped(env, r)) {
+        Ok(request) => request,
+        Err(error) => return Reply::error(&error),
+    };
+    let (guard_new, guard_cursor) = if request.op == Op::AlertsEvaluate {
+        match watch::pending(env.scope) {
+            Ok(Some((events, cursor))) => (Some(events), Some(cursor)),
+            Ok(None) => return Reply::ok(json!({ "skip": true })),
+            Err(error) => return Reply::error(&error),
+        }
+    } else {
+        (None, None)
+    };
+    match prepare(env, &request, guard_new) {
+        Ok(prepared) => {
+            let mut body = json!({ "request": prepared });
+            if let Some(cursor) = guard_cursor {
+                body["guard_cursor"] = json!(cursor);
+            }
+            Reply::ok(body)
+        }
+        Err(error) => Reply::error(&error),
+    }
 }
 
-impl Engine {
-    /// Start configuring an engine rooted at `project_root` (the `PathJail` root).
-    #[must_use]
-    pub fn builder(project_root: impl Into<PathBuf>) -> EngineBuilder {
-        EngineBuilder::new(project_root)
+/// `POST /api/dashboard-analysis/apply` `{op, method, query, body, response,
+/// guard_cursor?}` → `{status, body | file | applied}`; a refusal keeps its
+/// status and answers `{error}`.
+pub fn handle_apply(env: &Env<'_>, raw: &str) -> Reply {
+    if raw.len() > MAX_FRAME_BYTES + request::MAX_REQUEST_BYTES {
+        return Reply::error(&ProError::new(413, "Request too large"));
     }
-
-    /// The resolved, absolute project root this engine is jailed to.
-    #[must_use]
-    pub fn project_root(&self) -> &str {
-        &self.project_root
+    let Ok(Value::Object(mut object)) = serde_json::from_str::<Value>(raw) else {
+        return Reply::error(&ProError::bad("Invalid JSON request"));
+    };
+    let response = object.remove("response");
+    let guard_cursor = object.remove("guard_cursor");
+    let request = match request::from_object(object).and_then(|r| scoped(env, r)) {
+        Ok(request) => request,
+        Err(error) => return Reply::error(&error),
+    };
+    let Some(Ok(response)) = response.map(serde_json::from_value::<wire::Response>) else {
+        return Reply::error(&ProError::bad(
+            "The analysis answer is missing or unreadable",
+        ));
+    };
+    let cursor = match (request.op, guard_cursor.as_ref().map(Value::as_u64)) {
+        (Op::AlertsEvaluate, Some(Some(cursor))) => Some(cursor),
+        (Op::AlertsEvaluate, _) => {
+            return Reply::error(&ProError::bad("alerts.evaluate needs its guard_cursor"));
+        }
+        (_, Some(_)) => return Reply::error(&ProError::bad("Unknown request field")),
+        (_, None) => None,
+    };
+    let mut body = match finish(env, &request, response) {
+        Ok(body) => body,
+        Err(error) => return Reply::error(&error),
+    };
+    // The cursor moves only once the evaluated events were answered.
+    if let Some(cursor) = cursor
+        && let Err(error) = watch::advance(env.scope, cursor)
+    {
+        return Reply::error(&error);
     }
+    body["status"] = json!(200);
+    Reply::ok(body)
+}
 
-    /// Read a file through the engine, with compression + cache-delta applied.
-    ///
-    /// `path` may be relative to the project root or absolute inside it; it is
-    /// `PathJail`-checked. A re-read of an unchanged file collapses to a delta.
-    ///
-    /// # Errors
-    /// [`Error::Path`] for jail violations, [`Error::Tool`] if the read fails.
-    pub fn read(&self, path: impl AsRef<str>, mode: ReadMode) -> Result<Output, Error> {
-        let resolved = self.resolve(path.as_ref())?;
-        let mut args = Map::new();
-        args.insert("path".into(), Value::String(resolved.clone()));
-        args.insert("mode".into(), Value::String(mode.to_string()));
-
-        let mut ctx = self.base_ctx();
-        ctx.resolved_paths.insert("path".into(), resolved);
-
-        self.dispatch("ctx_read", args, ctx).map(Output::from)
+/// The device scope reads every project's stores; it serves only ops that
+/// read device-wide stores, whichever route built it.
+fn scoped(env: &Env<'_>, request: BridgeRequest) -> ProResult<BridgeRequest> {
+    if env.scope.is_device() && !request.op.device_wide() {
+        return Err(ProError::bad(
+            "Choose a project: this view reads one project's data",
+        ));
     }
+    Ok(request)
+}
 
-    /// Regex/literal code search. `subdir` (optional) narrows the search to a
-    /// directory under the project root; `None` searches the whole root.
-    ///
-    /// # Errors
-    /// [`Error::Path`] for jail violations, [`Error::Tool`] on failure.
-    pub fn search(&self, pattern: &str, subdir: Option<&str>) -> Result<String, Error> {
-        let mut args = Map::new();
-        args.insert("pattern".into(), Value::String(pattern.to_string()));
-        let mut ctx = self.base_ctx();
-        let resolved = self.resolve(subdir.unwrap_or("."))?;
-        args.insert("path".into(), Value::String(resolved.clone()));
-        ctx.resolved_paths.insert("path".into(), resolved);
-        self.dispatch("ctx_search", args, ctx).map(|o| o.text)
+/// Collects the op's inputs into one bounded analysis request.
+pub(crate) fn prepare(
+    env: &Env<'_>,
+    request: &BridgeRequest,
+    guard_new: Option<Vec<GuardEvent>>,
+) -> ProResult<wire::Request> {
+    let collected = collect::inputs(request, env.scope, env.routes, env.now, guard_new)?;
+    let mut payload = wire::Request {
+        schema: wire::SCHEMA.to_string(),
+        op: request.op.name().to_string(),
+        now_utc: env.now.to_rfc3339(),
+        project: env.scope.project(),
+        query: request.query.clone(),
+        body: Value::Object(request.body.clone()),
+        inputs: collected.inputs,
+    };
+    let size = match request.op {
+        // Knowledge has no fact limit: a review reads the newest facts that
+        // fit; `facts_total` still counts them all.
+        Op::MemoryAnalyze | Op::MemorySnapshot => {
+            fit_newest(&mut payload, "facts", MAX_FRAME_BYTES)?
+        }
+        _ => encoded_len(&payload)?,
+    };
+    if size > MAX_FRAME_BYTES {
+        return Err(ProError::new(
+            413,
+            "This view needs more data than one analysis request can carry; narrow the period or filters, or consolidate memory first",
+        ));
     }
+    Ok(payload)
+}
 
-    /// Locate a symbol definition by exact name across the project.
-    ///
-    /// # Errors
-    /// [`Error::Tool`] on failure.
-    pub fn symbol(&self, name: &str) -> Result<String, Error> {
-        let mut args = Map::new();
-        args.insert("action".into(), Value::String("symbol".to_string()));
-        args.insert("name".into(), Value::String(name.to_string()));
-        self.dispatch("ctx_search", args, self.base_ctx())
-            .map(|o| o.text)
+fn encoded_len(payload: &wire::Request) -> ProResult<usize> {
+    serde_json::to_vec(payload)
+        .map(|bytes| bytes.len())
+        .map_err(|_| ProError::internal("The request could not be encoded"))
+}
+
+/// Drops the oldest tenth of the oldest-first list input `key` until the
+/// request fits `max` bytes. Returns the encoded size it ends with.
+pub(crate) fn fit_newest(payload: &mut wire::Request, key: &str, max: usize) -> ProResult<usize> {
+    let mut size = encoded_len(payload)?;
+    while size > max {
+        let Some(Value::Array(items)) = payload.inputs.get_mut(key) else {
+            break;
+        };
+        if items.is_empty() {
+            break;
+        }
+        let drop = items.len().div_ceil(10);
+        items.drain(..drop);
+        size = encoded_len(payload)?;
     }
+    Ok(size)
+}
 
-    /// Structural outline (symbols/headings) of a single file.
-    ///
-    /// # Errors
-    /// [`Error::Path`] for jail violations, [`Error::Tool`] on failure.
-    pub fn outline(&self, path: &str) -> Result<String, Error> {
-        let resolved = self.resolve(path)?;
-        let mut args = Map::new();
-        args.insert("path".into(), Value::String(resolved.clone()));
-        let mut ctx = self.base_ctx();
-        ctx.resolved_paths.insert("path".into(), resolved);
-        self.dispatch("ctx_outline", args, ctx).map(|o| o.text)
+/// Checks the cockpit's answer and executes its plans; returns `{body}`,
+/// `{file}` or `{applied, body}`.
+pub(crate) fn finish(
+    env: &Env<'_>,
+    request: &BridgeRequest,
+    response: wire::Response,
+) -> ProResult<Value> {
+    match response.status {
+        200 => {}
+        400 | 404 | 409 => {
+            let message = response
+                .error
+                .map(|e| e.message)
+                .filter(|m| super::plain_text(m, 500))
+                .unwrap_or_else(|| "The request was refused".into());
+            return Err(ProError::new(response.status, message));
+        }
+        _ => return Err(ProError::new(502, "The analysis answer is unreadable")),
     }
+    if let Some(plans) = response.plans.filter(|p| !p.is_empty()) {
+        let plans = effects::parse_plans(request.op, plans)?;
+        let ctx = Ctx {
+            scope: env.scope,
+            request,
+            now: env.now,
+            notifier: env.notifier,
+        };
+        let mut applied = Vec::new();
+        for outcome in effects::apply(&ctx, plans)? {
+            match outcome {
+                Outcome::Applied(readback) => applied.push(readback),
+                Outcome::File(file) => return Ok(json!({ "file": file })),
+            }
+        }
+        return Ok(json!({ "applied": applied, "body": response.body }));
+    }
+    if request.op.is_write() {
+        // A write answered without a plan only reports (e.g. a preview).
+        return Ok(json!({ "body": response.body }));
+    }
+    if let Some(file) = response.file {
+        if !super::plain_text(&file.name, 120)
+            || !super::plain_text(&file.mime, 100)
+            || file.name.contains(['/', '\\'])
+        {
+            return Err(ProError::new(502, "The analysis file is refused"));
+        }
+        return Ok(json!({ "file": file }));
+    }
+    Ok(json!({ "body": response.body }))
+}
 
-    /// Directory tree / repo map rooted at `subdir` (or the project root).
-    ///
-    /// # Errors
-    /// [`Error::Path`] for jail violations, [`Error::Tool`] on failure.
-    pub fn tree(&self, subdir: Option<&str>) -> Result<String, Error> {
-        let mut args = Map::new();
-        let mut ctx = self.base_ctx();
-        let resolved = self.resolve(subdir.unwrap_or("."))?;
-        args.inse
+/// The HTTP status line of a reply.
+pub fn status_line(status: u16) -> &'static str {
+    match status {
+        200 => "200 OK",
+        400 => "400 Bad Request",
+        404 => "404 Not Found",
+        405 => "405 Method Not Allowed",
+        409 => "409 Conflict",
+        413 => "413 Payload Too Large",
+        502 => "502 Bad Gateway",
+        _ => "500 Internal Server Error",
+    }
+}
+
 ```
 
-### Core Architecture Module: `rust/crates/lean-ctx-hive/src/capture/lifecycle.rs`
+### Core Architecture Module: `rust/crates/lean-ctx-apps/src/core/dashboard_pro/collect.rs`
 ```
 // SPDX-License-Identifier: Apache-2.0
-//! The lifecycle of captured knowledge after its `node.add`: what an agent
-//! does to a fact later reaches the vault, so other engines never keep
-//! receiving knowledge its author has withdrawn.
-//!
-//! Capture (step 6, [`super::emit`]) records for every node it adds which
-//! local fact it came from (`own_sources`: project, category, key, value
-//! digest). Each sync compares those own nodes with the project's knowledge
-//! store and queues, through the existing event builders:
-//!
-//! - **superseded**: the fact's value is no longer current and a current
-//!   fact of the same category and key has its own node → `edge.add
-//!   supersedes` from that node to the old one. The server derives the old
-//!   node `outdated (superseded)`; it is not retracted (one or the other).
-//! - **withdrawn**: no fact of the store carries the node's value any more
-//!   and no successor has a node → `retract` with the fixed reason
-//!   `withdrawn by author` (no content).
-//! - **re-pinned**: the vault marked the claim `to_verify`/`gone`, while the
-//!   local fact with the same value is current, not under review and its
-//!   anchors match the code here (an agent re-pinned it) → the claim is
-//!   re-anchored at `HEAD` and `anchor_state fresh`, the event `hive
-//!   maintain --confirm` writes.
-//!
-//! The comparison reads the raw store, not a policy view: a fact a view
-//! withholds still exists and is never retracted for that. A store that
-//! cannot be read, or holds no facts while own nodes exist, plans nothing.
-//! Only `fact` sources of this checkout count; another checkout of the same
-//! vault owns its nodes. The server's retraction limits apply unchanged: a
-//! held retraction stays pending, the engine sets no threshold of its own.
-//!
-//! Every action is idempotent: an edge or retraction already in the folded
-//! place or still pending is not queued again, so a sync that ran before
-//! changes nothing.
+//! Bounded, project-scoped inputs per op. Every collector reads the bound
+//! project's own stores and its own Pro partition; device-wide sources
+//! (audit trail, receipts, ledger, host session files) are reduced to counts
+//! and narrowed to the project where the source records it.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
+use std::path::Path;
 
-use serde_json::Value;
+use lean_ctx_time::UtcDateTime;
+use serde_json::{Map, Value, json};
 
-use super::refs::Checkout;
-use crate::HiveError;
-use crate::events::build;
-use crate::events::hlc::{self, Stamp};
-use crate::replica::Replica;
-use crate::replica::fold::Graph;
-use crate::review::{curate, maintain};
+use super::request::{BridgeRequest, Op};
+use super::state::ProState;
+use super::wire::{GuardEvent, HeatmapEntry};
+use super::{ProResult, ProjectScope, guard, host_usage, ledger, security_fields, snapshots};
 
-/// The reason of a lifecycle retraction: stable, and no fact content.
-pub const WITHDRAWN_REASON: &str = "withdrawn by author";
-
-/// An own node and the fact it was captured from.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct OwnNode {
-    pub node_id: String,
-    pub category: String,
-    pub key: String,
-    pub value_digest: String,
+/// The engine routes some inputs come from (`/api/knowledge-relations`,
+/// `/api/gotchas`, …), already bound to the dashboard's project.
+pub trait RouteSource {
+    fn get(&self, path: &str) -> Option<Value>;
 }
 
-/// A fact of the raw store, as far as the lifecycle needs it.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct StoreFact {
-    pub category: String,
-    pub key: String,
-    pub value_digest: String,
-    /// Not superseded and not expired (`valid_until` unset).
-    pub current: bool,
-    /// Current, not under review, and every anchor matches this checkout.
-    pub confirmed_here: bool,
+const MAX_HISTORY: usize = 100;
+/// Heatmap entries passed, most read first.
+const MAX_HEAT_ENTRIES: usize = 2_000;
+const MAX_AGENTS: usize = 500;
+const MAX_EXISTENCE_CHECKS: usize = 5_000;
+const HEATMAP_LIMIT: u64 = 64 << 20;
+
+/// Everything collected for one op.
+pub(crate) struct Collected {
+    pub(crate) inputs: Map<String, Value>,
 }
 
-/// What the vault shows of a node.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct NodeView {
-    pub live: bool,
-    /// `anchor_state` is `to_verify` or `gone`.
-    pub marked: bool,
-    pub has_anchors: bool,
+/// Current facts one analysis reviews, newest first kept. Knowledge has no
+/// fact limit, so this bounds the *review*, never the store: one analysis
+/// request must fit [`super::bridge::MAX_FRAME_BYTES`] (the bridge trims the
+/// oldest further when it does not) and Memory Care's duplicate scan is
+/// pairwise. Every fact stays stored and counted (`facts_total`).
+pub(crate) const MAX_REVIEWED_FACTS: usize = 1_000;
+/// Current facts the work analysis reads next to the sessions (same reason:
+/// the sessions share its one frame).
+const MAX_WORK_FACTS: usize = 200;
+
+/// Every record of the project's knowledge store, history included.
+pub(crate) fn knowledge_records(
+    scope: &ProjectScope,
+) -> Vec<crate::core::knowledge::KnowledgeFact> {
+    crate::core::knowledge::ProjectKnowledge::load_or_create(&scope.root).facts
 }
 
-/// One lifecycle action, in the order it is queued.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Action {
-    Supersede { old: String, new: String },
-    Retract { node: String },
-    Confirm { node: String },
+/// The newest `limit` current facts and the number of all current facts.
+fn newest_current(scope: &ProjectScope, limit: usize) -> (Value, usize) {
+    let mut facts: Vec<_> = knowledge_records(scope)
+        .into_iter()
+        .filter(crate::core::knowledge::KnowledgeFact::is_current)
+        .collect();
+    let total = facts.len();
+    let skip = total.saturating_sub(limit);
+    facts.drain(..skip);
+    (
+        serde_json::to_value(facts).unwrap_or(Value::Array(Vec::new())),
+        total,
+    )
 }
 
-/// What is already in the place or pending, so nothing is queued twice.
-#[derive(Debug, Default)]
-pub struct Present {
-    /// `(from, to)` of live or pending `supersedes` edges.
-    pub supersedes: BTreeSet<(String, String)>,
-    /// Targets of pending `retract` events.
-    pub retracting: BTreeSet<String>,
-    /// Targets of pending `field.set anchors` events.
-    pub confirming: BTreeSet<String>,
-    /// Nodes queued by a pending `node.add` (this sync's captures): live for
-    /// the plan, so a successor captured in the same run supersedes its
-    /// predecessor instead of the predecessor being retracted.
-    pub adding: BTreeSet<String>,
+/// The newest [`MAX_REVIEWED_FACTS`] current facts and the number of all
+/// current facts.
+fn current_facts(scope: &ProjectScope) -> (Value, usize) {
+    newest_current(scope, MAX_REVIEWED_FACTS)
 }
 
-impl Present {
-    /// [`node_view`] in `graph`, or a pending addition as a live node.
-    pub fn view(&self, graph: &Graph, node_id: &str) -> Option<NodeView> {
-        node_view(graph, node_id).or_else(|| {
-            self.adding.contains(node_id).then_some(NodeView {
-                live: true,
-                marked: false,
-                has_anchors: false,
-            })
-        })
+fn newest_current_facts(scope: &ProjectScope, limit: usize) -> Value {
+    newest_current(scope, limit).0
+}
+
+/// The current facts a forget names (at most 100 refs), whatever their age,
+/// and the number of all current facts.
+fn named_current_facts(scope: &ProjectScope, refs: &[Value]) -> (Value, usize) {
+    let wanted: std::collections::HashSet<&str> = refs.iter().filter_map(Value::as_str).collect();
+    let current: Vec<_> = knowledge_records(scope)
+        .into_iter()
+        .filter(crate::core::knowledge::KnowledgeFact::is_current)
+        .collect();
+    let total = current.len();
+    let named: Vec<_> = current
+        .into_iter()
+        .filter(|f| wanted.contains(format!("{}/{}", f.category, f.key).as_str()))
+        .collect();
+    (
+        serde_json::to_value(named).unwrap_or(Value::Array(Vec::new())),
+        total,
+    )
+}
+
+/// Every record, history included (compare and restore count them all; the
+/// frame limit bounds the request).
+fn all_facts(scope: &ProjectScope) -> Value {
+    serde_json::to_value(knowledge_records(scope)).unwrap_or(Value::Array(Vec::new()))
+}
+
+fn snapshot_list(scope: &ProjectScope) -> Value {
+    serde_json::to_value(snapshots::list(scope, snapshots::LIST_LIMIT)).unwrap_or(Value::Null)
+}
+
+/// The guard timeline of the project in scope (its agent sessions), or of
+/// the whole trail for the device scope.
+fn guard_inputs(scope: &ProjectScope) -> ProResult<(Vec<Value>, Vec<GuardEvent>)> {
+    let trail = scope.data_dir.join("audit").join("trail.jsonl");
+    if scope.is_device() {
+        guard::timeline(&trail)
+    } else {
+        guard::timeline_for(&trail, Some(&scope.sessions))
     }
 }
 
-/// The `(category, key)` of every fact the knowledge journal of the
-/// checkout at `root` records as removed.
-pub fn removed_identities(root: &str) -> BTreeSet<(String, String)> {
-    let Ok(dir) = lean_ctx::core::knowledge::knowledge_dir_of(root) else {
-        return BTreeSet::new();
+/// Heatmap entries under the project, keyed by project-relative path.
+pub(crate) fn heatmap(scope: &ProjectScope) -> Map<String, Value> {
+    let Some(bytes) = super::read_bounded(&scope.state_dir.join("heatmap.json"), HEATMAP_LIMIT)
+    else {
+        return Map::new();
     };
-    lean_ctx::core::knowledge::journal::rows_since(&dir, 0, usize::MAX)
+    let Ok(data) = serde_json::from_slice::<Value>(&bytes) else {
+        return Map::new();
+    };
+    let entries = data
+        .get("entries")
+        .and_then(Value::as_object)
+        .or_else(|| data.as_object())
+        .cloned()
+        .unwrap_or_default();
+    let prefixes = root_prefixes(scope);
+    entries
         .into_iter()
-        .filter(|r| r.op == "removed")
-        .map(|r| (r.category, r.key))
+        .filter(|(_, entry)| entry.is_object())
+        .filter_map(|(path, entry)| {
+            let relative = prefixes
+                .iter()
+                .find_map(|p| path.strip_prefix(p.as_str()))?;
+            let entry: HeatmapEntry = serde_json::from_value(entry).ok()?;
+            Some((relative.to_string(), serde_json::to_value(entry).ok()?))
+        })
         .collect()
 }
 
-/// The actions that bring the vault in line with the store, in node id
-/// order (deterministic).
-///
-/// `removed` are the `(category, key)` identities the knowledge journal
-/// records as removed. An empty store withdraws only those: a store that
-/// was reset or could not be read never withdraws everything.
-pub fn plan(
-    own: &[OwnNode],
-    store: &[StoreFact],
-    removed: &BTreeSet<(String, String)>,
-    node: impl Fn(&str) -> Option<NodeView>,
-    present: &Present,
-) -> Vec<Action> {
-    if store.is_empty() && removed.is_empty() {
-        return Vec::new();
+fn root_prefixes(scope: &ProjectScope) -> Vec<String> {
+    let sep = std::path::MAIN_SEPARATOR;
+    let mut prefixes = vec![format!("{}{sep}", scope.root.trim_end_matches(sep))];
+    let canonical = format!(
+        "{}{sep}",
+        scope.canonical.to_string_lossy().trim_end_matches(sep)
+    );
+    if !prefixes.contains(&canonical) {
+        prefixes.push(canonical);
     }
-    let mut by_identity: BTreeMap<(&str, &str), Vec<&StoreFact>> = BTreeMap::new();
-    for fact in store {
-        by_identity
-            .entry((fact.category.as_str(), fact.key.as_str()))
-            .or_default()
-            .push(fact);
-    }
-    // The own live node of each (category, key, value digest).
-    let mut node_of: BTreeMap<(&str, &str, &str), &str> = BTreeMap::new();
-    for n in own {
-        if node(&n.node_id).is_some_and(|v| v.live) {
-            node_of.insert(
-                (n.category.as_str(), n.key.as_str(), n.value_digest.as_str()),
-                n.node_id.as_str(),
+    prefixes
+}
+
+fn view_costs(scope: &ProjectScope) -> Map<String, Value> {
+    let Some(data) =
+        super::read_bounded(&scope.state_dir.join("context_ledger.json"), HEATMAP_LIMIT)
+            .and_then(|b| serde_json::from_slice::<Value>(&b).ok())
+    else {
+        return Map::new();
+    };
+    let prefixes = root_prefixes(scope);
+    let mut out = Map::new();
+    for entry in data
+        .get("entries")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        let path = entry.get("path").and_then(Value::as_str).unwrap_or("");
+        let estimates = entry
+            .get("view_costs")
+            .and_then(|v| v.get("estimates"))
+            .filter(|e| e.as_object().is_some_and(|o| !o.is_empty()));
+        if let (Some(relative), Some(estimates)) = (
+            prefixes.iter().find_map(|p| path.strip_prefix(p.as_str())),
+            estimates,
+        ) {
+            out.insert(
+                relative.to_string(),
+                json!({
+                    "estimates": estimates,
+                    "active": entry.get("active_view").cloned().unwrap_or(Value::Null),
+                    "state": entry.get("state").cloned().unwrap_or(Value::Null),
+                }),
             );
         }
     }
-    let mut actions = Vec::new();
-    for n in own {
-        let Some(view) = node(&n.node_id).filter(|v| v.live) else {
-            continue;
-        };
-        let facts = by_identity
-            .get(&(n.category.as_str(), n.key.as_str()))
-            .map(Vec::as_slice)
-            .unwrap_or_default();
-        let same = facts.iter().find(|f| f.value_digest == n.value_digest);
-        if let Some(fact) = same.filter(|f| f.current) {
-            if view.marked
-                && view.has_anchors
-                && fact.confirmed_here
-                && !present.confirming.contains(&n.node_id)
-            {
-                actions.push(Action::Confirm {
-                    node: n.node_id.clone(),
-                });
-            }
-            continue;
-        }
-        // The node's value is not current any more (superseded, expired or
-        // removed). A current successor with its own node supersedes it.
-        let successor = facts
-            .iter()
-            .filter(|f| f.current && f.value_digest != n.value_digest)
-            .find_map(|f| {
-                node_of.get(&(f.category.as_str(), f.key.as_str(), f.value_digest.as_str()))
-            });
-        if let Some(&new) = successor {
-            if !present
-                .supersedes
-                .contains(&(new.to_owned(), n.node_id.clone()))
-            {
-                actions.push(Action::Supersede {
-                    old: n.node_id.clone(),
-                    new: new.to_owned(),
-                });
-            }
-        } else {
-            let journaled = removed.contains(&(n.category.clone(), n.key.clone()));
-            if (store.is_empty() && !journaled) || present.retracting.contains(&n.node_id) {
-                continue;
-            }
-            actions.push(Action::Retract {
-                node: n.node_id.clone(),
-            });
+    out
+}
+
+/// Project-relative paths of `candidates` that are regular files of the project.
+fn existing(scope: &ProjectScope, candidates: impl IntoIterator<Item = String>) -> Vec<String> {
+    let mut found = BTreeSet::new();
+    for relative in candidates.into_iter().take(MAX_EXISTENCE_CHECKS) {
+        if let Ok(path) = scope.jailed(&relative)
+            && path.is_file()
+        {
+            found.insert(relative);
         }
     }
-    actions.sort();
-    actions.dedup();
-    actions
+    found.into_iter().collect()
 }
 
-/// The own `fact` nodes of the checkout `project_hash`, from `own_sources`.
-pub fn own_nodes(replica: &Replica, project_hash: &str) -> Result<Vec<OwnNode>, HiveError> {
-    Ok(replica
-        .own_sources()?
+fn adaptive_inputs(
+    scope: &ProjectScope,
+    routes: &dyn RouteSource,
+    state: &ProState,
+) -> ProResult<Map<String, Value>> {
+    let mut ranked: Vec<(String, Value)> = heatmap(scope).into_iter().collect();
+    ranked.sort_by_key(|(_, e)| std::cmp::Reverse(e.get("access_count").and_then(Value::as_i64)));
+    ranked.truncate(MAX_HEAT_ENTRIES);
+    let heat: Map<String, Value> = ranked.into_iter().collect();
+    let paths = existing(scope, heat.keys().cloned());
+    let views: Map<String, Value> = view_costs(scope)
         .into_iter()
-        .filter(|(_, kind, _)| kind == "fact")
-        .filter_map(|(node_id, _, source)| {
-            if source.get("project_hash")?.as_str()? != project_hash {
-                return None;
-            }
-            Some(OwnNode {
-                node_id,
-                category: source.get("category")?.as_str()?.to_owned(),
-                key: source.get("key")?.as_str()?.to_owned(),
-                value_digest: source.get("value_digest")?.as_str()?.to_owned(),
-            })
-        })
-        .collect())
+        .filter(|(path, _)| heat.contains_key(path))
+        .collect();
+    let price = ledger::recorded_price(scope)?.map(|p| p * 1e6);
+    let mut inputs = Map::new();
+    inputs.insert("heatmap".into(), Value::Object(heat));
+    inputs.insert("view_costs".into(), Value::Object(views));
+    inputs.insert(
+        "overlay_history".into(),
+        routes
+            .get("/api/context-overlay-history")
+            .unwrap_or(Value::Array(Vec::new())),
+    );
+    inputs.insert("price_per_m".into(), json!(price));
+    inputs.insert(
+        "adaptive_state".into(),
+        serde_json::to_value(state.adaptive()).unwrap_or(Value::Null),
+    );
+    inputs.insert("existing_paths".into(), json!(paths));
+    Ok(inputs)
 }
 
-/// The vault's view of `node_id` in `graph`.
-pub fn node_view(graph: &Graph, node_id: &str) -> Option<NodeView> {
-    let node = graph.nodes.get(node_id)?;
-    Some(NodeView {
-        live: !node.retracted && !node.purged,
-        marked: matches!(
-            node.fields.get("anchor_state").and_then(Value::as_str),
-            Some("to_verify" | "gone")
-        ),
-        has_anchors: node
-            .fields
-            .get("anchors")
-            .and_then(Value::as_array)
-            .is_some_and(|a| !a.is_empty()),
+fn agents(scope: &ProjectScope) -> Value {
+    let registry: Value = super::read_json(&scope.data_dir.join("agents").join("registry.json"))
+        .unwrap_or(Value::Null);
+    let list = registry
+        .get("agents")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    Value::Array(
+        list.into_iter()
+            .take(MAX_AGENTS)
+            .map(|a| {
+                json!({
+                    "agent_id": a.get("agent_id").cloned().unwrap_or(Value::Null),
+                    "agent_type": a.get("agent_type").cloned().unwrap_or(Value::Null),
+                    "transport": a.get("transport").cloned().unwrap_or(Value::Null),
+                })
+            })
+            .collect(),
+    )
+}
+
+/// The inputs `op` needs. `guard_new` is only set for `alerts.evaluate`.
+pub(crate) fn inputs(
+    request: &BridgeRequest,
+    scope: &ProjectScope,
+    routes: &dyn RouteSource,
+    now: UtcDateTime,
+    guard_new: Option<Vec<GuardEvent>>,
+) -> ProResult<Collected> {
+    let state = ProState::new(scope);
+    let mut inputs = Map::new();
+    let mut put = |key: &str, value: Value| {
+        inputs.insert(key.to_string(), val
+```
+
+### Core Architecture Module: `rust/crates/lean-ctx-apps/src/core/dashboard_pro/effects.rs`
+```
+// SPDX-License-Identifier: Apache-2.0
+//! Plans the runtime answers are checked against the request and the bound
+//! project before any of them runs, then executed with the engine's own code
+//! paths and read back. Anything unknown, outside the project, or not what
+//! the user asked for is a 409.
+
+use std::collections::{BTreeSet, HashMap};
+
+use base64::Engine as _;
+use lean_ctx_time::{OffsetDateTime, UtcDateTime};
+use serde_json::{Value, json};
+
+use crate::core::knowledge::{ImportMerge, KnowledgeFact, ProjectKnowledge};
+
+use super::request::{BridgeRequest, Op, is_fact_ref, is_profile_name, is_safe_webhook};
+use super::state::ProState;
+use super::wire::{AlertRecord, AppliedItem, Baseline, FileOut, Plan, Profile, ProjectColumn};
+use super::{
+    GUARD_KINDS, ProError, ProResult, ProjectScope, collect, export, ledger, plain_text,
+    security_fields, snapshots,
+};
+
+/// At most this many plans in one answer.
+const MAX_PLANS: usize = 8;
+const SNAPSHOT_HINT: &str = "A snapshot was saved first; restore it under Memory Care → Snapshots.";
+
+/// Desktop and webhook delivery of alerts.
+pub trait Notifier: Send + Sync {
+    fn desktop(&self, text: &str) -> bool;
+    fn webhook(&self, url: &str, body: &[u8]) -> bool;
+}
+
+/// The engine's notifier: the native desktop notification and an https
+/// POST without redirects and with a timeout.
+pub struct SystemNotifier;
+
+impl Notifier for SystemNotifier {
+    fn desktop(&self, text: &str) -> bool {
+        crate::core::value::notify::send("LeanCTX", text)
+    }
+
+    fn webhook(&self, url: &str, body: &[u8]) -> bool {
+        if !is_safe_webhook(url) {
+            return false;
+        }
+        let timeout = Some(std::time::Duration::from_secs(6));
+        let agent =
+            crate::core::http_client::ureq_agent_without_redirects(timeout, timeout, timeout);
+        agent
+            .post(url)
+            .header("Content-Type", "application/json")
+            .send(body)
+            .is_ok_and(|r| r.status().is_success())
+    }
+}
+
+/// What one plan produced.
+pub(crate) enum Outcome {
+    Applied(Value),
+    File(FileOut),
+}
+
+pub(crate) struct Ctx<'a> {
+    pub(crate) scope: &'a ProjectScope,
+    pub(crate) request: &'a BridgeRequest,
+    pub(crate) now: UtcDateTime,
+    pub(crate) notifier: &'a dyn Notifier,
+}
+
+/// Typed plans the op allows, or 409.
+pub(crate) fn parse_plans(op: Op, raw: Vec<Value>) -> ProResult<Vec<Plan>> {
+    if raw.is_empty() || raw.len() > MAX_PLANS {
+        return Err(ProError::conflict("Unexpected number of planned changes"));
+    }
+    raw.into_iter()
+        .map(|value| {
+            let plan: Plan = serde_json::from_value(value)
+                .map_err(|_| ProError::conflict("Unknown planned change"))?;
+            if !op.allowed_effects().contains(&plan.effect()) {
+                return Err(ProError::conflict(
+                    "Planned change does not fit the request",
+                ));
+            }
+            Ok(plan)
+        })
+        .collect()
+}
+
+fn ensure(condition: bool, message: &str) -> ProResult<()> {
+    if condition {
+        Ok(())
+    } else {
+        Err(ProError::conflict(message))
+    }
+}
+
+fn is_time(value: &str) -> bool {
+    OffsetDateTime::parse_from_rfc3339(value).is_ok()
+}
+
+fn fact_ref(fact: &KnowledgeFact) -> String {
+    format!("{}/{}", fact.category, fact.key)
+}
+
+fn current_map(facts: &[KnowledgeFact]) -> HashMap<String, KnowledgeFact> {
+    facts
+        .iter()
+        .filter(|f| f.is_current())
+        .map(|f| (fact_ref(f), f.clone()))
+        .collect()
+}
+
+/// A restore against the live store: what comes back, what is reset.
+pub(crate) struct RestorePlan {
+    snapshot: HashMap<String, KnowledgeFact>,
+    now: HashMap<String, KnowledgeFact>,
+    pub(crate) missing: Vec<String>,
+    pub(crate) changed: Vec<String>,
+}
+
+pub(crate) fn restore_plan(scope: &ProjectScope, id: &str) -> ProResult<RestorePlan> {
+    let snapshot = current_map(&snapshots::read_facts(scope, id)?);
+    let records = collect::knowledge_records(scope);
+    let now = current_map(&records);
+    let mut missing: Vec<String> = snapshot
+        .keys()
+        .filter(|r| !now.contains_key(*r))
+        .cloned()
+        .collect();
+    let mut changed: Vec<String> = snapshot
+        .iter()
+        .filter(|(r, f)| now.get(*r).is_some_and(|n| n.value != f.value))
+        .map(|(r, _)| r.clone())
+        .collect();
+    missing.sort();
+    changed.sort();
+    // No room check: knowledge has no fact limit, so a restore never pushes
+    // other facts out.
+    Ok(RestorePlan {
+        snapshot,
+        now,
+        missing,
+        changed,
     })
 }
 
-/// What the folded place and the pending queue already hold.
-pub fn present(graph: &Graph, replica: &Replica) -> Result<Present, HiveError> {
-    let mut out = Present::default();
-    for edge in graph.edges.values() {
-        if edge.kind == "supersedes" && !edge.retracted {
-            out.supersedes.insert((edge.from.clone(), edge.to.clone()));
-        }
-    }
-    for (_, bytes) in replica.pending()? {
-        let Ok(event) = serde_json::from_slice::<Value>(&bytes) else {
-            continue;
-        };
-        let target = event["target"].as_str().unwrap_or_d
-```
-
-### Core Architecture Module: `rust/crates/lean-ctx-hive/src/delivery/knowledge_state.rs`
-```
-// SPDX-License-Identifier: Apache-2.0
-//! Knowledge states (Hive v5 CHECKLIST 2.2.1; C0 2.0
-//! `enums/knowledge-states.json`, `vectors/knowledge_state.vectors.json`):
-//! `verified | provisional | outdated | conflicting | rejected`, derived from
-//! the folded replica on every read, never stored. Hive derives the same
-//! state from its projection, so the web and the agent see one answer.
-
-use std::collections::HashSet;
-
-use serde_json::Value;
-
-use crate::capture::conflicts::Kind;
-use crate::replica::fold::{Graph, Node};
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum State {
-    Verified,
-    Provisional,
-    Outdated,
-    Conflicting,
-    Rejected,
+fn same_set(a: &[String], b: &[String]) -> bool {
+    a.iter().collect::<BTreeSet<_>>() == b.iter().collect::<BTreeSet<_>>()
 }
 
-impl State {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::Verified => "verified",
-            Self::Provisional => "provisional",
-            Self::Outdated => "outdated",
-            Self::Conflicting => "conflicting",
-            Self::Rejected => "rejected",
-        }
-    }
-
-    /// May an agent be given the node as current truth?
-    pub fn served_as_truth(self) -> bool {
-        matches!(self, Self::Verified | Self::Provisional)
-    }
+fn requested_profile(ctx: &Ctx<'_>) -> Option<Profile> {
+    let name = ctx.request.b_str("name");
+    ProState::new(ctx.scope)
+        .profiles()
+        .into_iter()
+        .find(|p| p.name == name)
 }
 
-/// The folded facts the state is derived from (the C0 vector inputs).
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct Inputs<'a> {
-    pub retracted: bool,
-    pub purged: bool,
-    pub evidence: Option<&'a str>,
-    /// A decision's `status`.
-    pub status: Option<&'a str>,
-    pub anchor_state: Option<&'a str>,
-    /// A live `supersedes` edge from a live node points at this one.
-    pub superseded: bool,
-    /// A live `contradicts` edge to a live node that is not superseded.
-    pub contradicted: bool,
-}
-
-/// `(state, reason)`; the reason is `None` only for `verified`.
-pub fn of_inputs(i: &Inputs<'_>) -> (State, Option<&'static str>) {
-    if i.retracted || i.purged {
-        return (State::Rejected, Some("retracted"));
-    }
-    if i.status == Some("reverted") {
-        return (State::Rejected, Some("reverted"));
-    }
-    if i.superseded || i.status == Some("superseded") {
-        return (State::Outdated, Some("superseded"));
-    }
-    match i.anchor_state {
-        Some("gone") => return (State::Outdated, Some("anchor_gone")),
-        Some("to_verify") => return (State::Outdated, Some("anchor_changed")),
-        _ => {}
-    }
-    if i.contradicted {
-        return (State::Conflicting, Some("contradicted"));
-    }
-    if i.evidence != Some("observed") {
-        return (State::Provisional, Some("not_observed"));
-    }
-    (State::Verified, None)
-}
-
-fn live(graph: &Graph, id: &str) -> bool {
-    graph
-        .nodes
-        .get(id)
-        .is_some_and(|n| !n.retracted && !n.purged)
-}
-
-/// The edge-derived inputs of every node, built once per graph (one pass
-/// over the edges, so delivery stays linear in the vault size).
-#[derive(Debug, Default)]
-pub struct Index {
-    /// Targets of a live `supersedes` edge from a live node.
-    superseded: HashSet<String>,
-    /// Ends of a live `contradicts` edge whose other end is live and not
-    /// superseded.
-    contradicted: HashSet<String>,
-}
-
-impl Index {
-    /// From the folded edges alone.
-    pub fn new(graph: &Graph) -> Self {
-        Self::build(graph, &[])
-    }
-
-    /// From the folded edges and the links of each fact's values the save
-    /// history resolves ([`crate::capture::conflicts::derived`]): two
-    /// Instances' concurrent values of one shared fact are `conflicting`
-    /// as soon as both are folded here, not only once the conflict edge has
-    /// travelled through the Hive (#286).
-    pub fn with_saves(
-        graph: &Graph,
-        saves: &std::collections::BTreeMap<String, crate::replica::log::Save>,
-    ) -> Self {
-        Self::build(graph, &crate::capture::conflicts::derived(graph, saves))
-    }
-
-    fn build(graph: &Graph, links: &[(Kind, String, String)]) -> Self {
-        let mut superseded: HashSet<String> = graph
-            .edges
-            .values()
-            .filter(|e| e.kind == "supersedes" && !e.retracted && live(graph, &e.from))
-            .map(|e| e.to.clone())
-            .collect();
-        superseded.extend(
-            links
-                .iter()
-                .filter(|(kind, from, _)| *kind == Kind::Supersedes && live(graph, from))
-                .map(|(_, _, to)| to.clone()),
-        );
-        let open = |id: &str| live(graph, id) && !superseded.contains(id);
-        let mut contradicted = HashSet::new();
-        let pairs = graph
-            .edges
-            .values()
-            .filter(|e| e.kind == "contradicts" && !e.retracted)
-            .map(|e| (e.from.as_str(), e.to.as_str()))
-            .chain(
-                links
+/// Checks one plan against the request and the project, without effects.
+pub(crate) fn validate(ctx: &Ctx<'_>, plan: &Plan) -> ProResult<()> {
+    let request = ctx.request;
+    let state = ProState::new(ctx.scope);
+    match plan {
+        Plan::AlertsSettings { settings } => {
+            let stored = state.alert_settings();
+            let wanted = |key: &str| request.body.get(key);
+            let kinds: Vec<Value> = settings.kinds.iter().map(|k| json!(k)).collect();
+            ensure(
+                settings
+                    .kinds
                     .iter()
-                    .filter(|(kind, _, _)| *kind == Kind::Contradicts)
-                    .map(|(_, from, to)| (from.as_str(), to.as_str())),
-            );
-        for (from, to) in pairs {
-            if open(to) {
-                contradicted.insert(from.to_owned());
+                    .all(|k| GUARD_KINDS.contains(&k.as_str()))
+                    && settings.kinds.iter().collect::<BTreeSet<_>>().len() == settings.kinds.len(),
+                "Alert kinds outside the guard list",
+            )?;
+            ensure(
+                settings.webhook.is_empty() || is_safe_webhook(&settings.webhook),
+                "Unsafe webhook",
+            )?;
+            let matches = |key: &str, planned: Value, stored: Value| {
+                wanted(key).map_or(planned == stored, |w| *w == planned)
+            };
+            ensure(
+                matches("enabled", json!(settings.enabled), json!(stored.enabled))
+                    && matches("desktop", json!(settings.desktop), json!(stored.desktop))
+                    && matches("webhook", json!(settings.webhook), json!(stored.webhook))
+                    && matches("kinds", Value::Array(kinds), json!(stored.kinds)),
+                "Alert settings differ from the request",
+            )
+        }
+        Plan::AlertsNotify {
+            at,
+            text,
+            counts,
+            test,
+            desktop,
+            webhook,
+        } => {
+            let stored = state.alert_settings();
+            ensure(*test == (request.op == Op::AlertsTest), "Unexpected alert")?;
+            ensure(*test || stored.enabled, "Alerts are off")?;
+            ensure(is_time(at) && plain_text(text, 240), "Invalid alert text")?;
+            ensure(
+                counts.iter().all(|(k, n)| {
+                    GUARD_KINDS.contains(&k.as_str()) && (0..=1_000_000_000).contains(n)
+                }),
+                "Alert counts outside the guard list",
+            )?;
+            ensure(
+                *desktop == stored.desktop && *webhook == stored.webhook,
+                "Alert channels differ from the settings",
+            )
+        }
+        Plan::ProfilesPut {
+            name,
+            values,
+            saved_at,
+        } => {
+            ensure(
+                request.b_str("action") == "save" && name == request.b_str("name"),
+                "Profile differs from the request",
+            )?;
+            ensure(
+                is_profile_name(name) && is_time(saved_at),
+                "Invalid profile",
+            )?;
+            for (key, value) in values {
+                let field = security_fields::lookup(key)
+                    .ok_or_else(|| ProError::conflict("Profile holds an unmanaged setting"))?;
+                security_fields::wire_of(field, value)?;
             }
-            if open(from) {
-                contradicted.insert(to.to_owned());
+            Ok(())
+        }
+        Plan::ProfilesDelete { name } => ensure(
+            request.b_str("action") == "delete" && name == request.b_str("name"),
+            "Profile differs from the request",
+        ),
+        Plan::ConfigSet {
+            key,
+            wire,
+            expected,
+            weakening,
+        } => {
+            ensure(
+                request.b_str("action") == "apply",
+                "Unexpected setting change",
+            )?;
+            let field = security_fields::lookup(key)
+                .ok_or_else(|| ProError::conflict("This setting is not managed here"))?;
+            ensure(
+                security_fields::wire_of(field, expected)? == *wire
+                    && security_fields::expected_of(field, wire) == *expected,
+                "Setting value does not match its wire form",
+            )?;
+            let profile =
+                requested_profile(ctx).ok_or_else(|| ProError::not_found("Unknown profile"))?;
+            let stored = profile
+                .values
+                .get(key)
+                .map(|v| security_fields::wire_of(field, v))
+                .transpose()?;
+            ensure(
+                stored.as_deref() == Some(wire.as_str()),
+                "Setting is not part of the profile",
+            )?;
+            let before = security_fields::effective(key).unwrap_or_default();
+            let lowers = security_fields::weakening(field, &before, wire);
+            if lowers && !request.b_true("confirm_weaker") {
+                return Err(ProError::conflict(
+                    "This lowers protection. Confirm the change to continue.",
+                ));
             }
+            ensure(lowers == *weakening, "Protection change misreported")
         }
-        Self {
-            superseded,
-            contradicted,
-        }
-    }
-
-    /// The state of `node_id` (`node` is its folded node).
-    pub fn state(&self, node_id: &str, node: &Node) -> (State, Option<&'static str>) {
-        let f = |k: &str| node.fields.get(k).and_then(Value::as_str);
-        of_inputs(&Inputs {
-            retracted: node.retracted,
-            purged: node.purged,
-            evidence: f("evidence"),
-            status: (node.node_type == "decision")
-                .then(|| f("status"))
-                .flatten(),
-            anchor_state: f("anchor_state"),
-            superseded: self.superseded.contains(node_id),
-            contradicted: self.contradicted.contains(node_id),
-        })
-    }
-}
-
-/// The state of one node of `graph` (builds the index; use [`Index`] for
-/// many nodes).
-pub fn of(graph: &Graph, node_id: &str, node: &Node) -> (State, Option<&'static str>) {
-    Index::new(graph).state(node_id, node)
-}
-
-#[cfg(test)]
-mod tests {
-    use serde_json::{Map, Value, json};
-
-    use super::*;
-    use crate::replica::fold::Edge;
-
-    const VECTORS: &str = include_str!(
-        "../../../../crates/lean-ctx-protocol/tests/fixtures/hive-v2/vectors/knowledge_state.vectors.json"
-    );
-
-    #[test]
-    fn the_c0_knowledge_state_vectors_hold() {
-        let doc: Value = serde_json::from_str(VECTORS).unwrap();
-        let defaults = doc["defaults"].as_object().unwrap();
-        let mut seen = std::collections::BTreeSet::new();
-        for c in doc["cases"].as_array().unwrap() {
-            let name = c["name"].as_str().unwrap();
-            let mut m: Map<String, Value> = defaults.clone();
-            if let Some(Value::Object(set)) = c.get("set") {
-                for (k, v) in set {
-                    assert!(m.contains_key(k), "{name}: unknown input {k}");
-                    m.insert(k.clone(), v.clone());
-                }
-            }
-            let b = |k: &str| m[k].as_bool().unwrap();
-            let (state, reason) = of_inputs(&Inputs {
-                retracted: b("retracted"),
-                purged: b("purged"),
-                evidence: m["evidence"].as_str(),
-                status: m["status"].as_str(),
-                anchor_state: m["anchor_state"].as_str(),
-                superseded: b("superseded"),
-                contradicted: b("contradicted"),
-            });
-            assert_eq!(state.as_str(), c["state"], "{name}");
-            assert_eq!(
-                reason.map_or(Value::Null, Value::from),
-                c["reason"],
-                "{name}"
-            );
-            seen.insert(state);
-        }
-        assert_eq!(seen.len(), 5, "a case per state");
-    }
-
-    fn node(fields: &Value) -> Node {
-        Node {
-            node_type: "fact".into(),
-            fields: fields.as_object().cloned().unwrap(),
-            ..Node::default()
-        }
-    }
-
-    fn edge(kind: &str, from: &str, to: &str) -> Edge {
-        Edge {
-            kind: kind.into(),
-            from: from.into(),
-            to: to.into(),
-            ..Edge::default()
-        }
-    }
-
-    #[test]
-    fn the_graph_inputs_follow_live_edges() {
-        let mut g = Graph::default();
-        for id in ["n_a", "n_b", "n_c"] {
-            g.nodes.insert(
-                id.into(),
-                node(&json!({"statement": id, "evidence": "observed"})),
-            );
-        }
-        let state = |g: &Graph, id: &str| of(g, id, &g.nodes[id]).0;
-        assert_eq!(state(&g, "n_a"), State::Verified);
-        g.edges
-            .insert("e_1".into(), edge("contradicts", "n_a", "n_b"));
-        assert_eq!(state(&g, "n_a"), State::Conflicting);
-        assert_eq!(state(&g, "n_b"), State::Conflicting);
-        // c supersedes b: b is outdated, the contradiction with it is moot.
-        g.edges
-            .insert("e_2".into(), edge("supersedes", "n_c", "n_b"));
-        assert_eq!(state(&g, "n_b"), State::Outdated);
-        assert_eq!(state(&g, "n_a"), State::Verified);
-        // A retracted successor supersedes nothing.
-        g.nodes.get_mut("n_c").unwrap().retracted = true;
-        assert_eq!(state(&g, "n_b"), State::Conflicting);
-        // The anchor re-check makes a claim outdated, `fresh` clears it.
-        g.nodes
-            .get_mut("n_a")
-            .unwrap()
-            .fields
-            .insert("anchor_state".into(), json!("to_verify"));
-        assert_eq!(
-            of(&g, "n_a", &g.nodes["n_a"]),
-            (State::Outdated, Some("anchor_changed"))
-        );
-        g.nodes
-            .get_mut("n_a")
-            .unwrap()
-            .fields
-            .insert("anchor_state".into(), json!("fresh"));
-        assert_eq!(state(&g, "n_a"), State::Conflicting);
-    }
-
-    /// Retrieval never serves outdated, conflicting or rejected knowledge
-    /// as current truth: rejected and superseded leave delivery, the rest
-    /// come last with a label.
-    #[
+        Plan::MemorySnapshot { reason } => ensure(
+            reason == request.b_str("reason"),
+            "Snapshot differs from the request",
+        ),
+        Plan::MemoryRestore {
+            
 ```
 
-### Core Architecture Module: `rust/crates/lean-ctx-hive/src/state.rs`
+### Core Architecture Module: `rust/crates/lean-ctx-apps/src/core/dashboard_pro/export.rs`
 ```
 // SPDX-License-Identifier: Apache-2.0
-//! Durable Hive state on this machine.
-//!
-//! `<config_dir>/hive/` (directory 0700, files 0600, written atomically):
-//! `instance.key`, `kx.key`, `instance.json`, `lease.json` (re-verified on
-//! every load), `keys.json`, `token.json` (never logged).
-//! `<data_dir>/hive/`: `activity.json` and, with later packages, project
-//! maps, cursors and the outbox.
+//! The Ledger export: a filtered selection as CSV (formula-safe cells) or a
+//! JSON array, in ledger order, with numbers, names and chain hashes only.
 
-use std::collections::BTreeMap;
-use std::fmt;
-use std::path::{Path, PathBuf};
+use std::borrow::Cow;
 
-use serde::de::DeserializeOwned;
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Map, Value};
 
-use super::HiveError;
+use super::ledger::{KINDS, LEDGER_NONE, LEDGER_OTHER, LEDGER_PROXY, entry_lines, ledger_kind};
+use super::wire::{LedgerEntry, LedgerFilters, ProjectColumn};
+use super::{ProError, ProResult, ProjectScope};
 
-pub(crate) const INSTANCE_KEY_FILE: &str = "instance.key";
-pub(crate) const KX_KEY_FILE: &str = "kx.key";
-pub(crate) const INSTANCE_FILE: &str = "instance.json";
-pub(crate) const LEASE_FILE: &str = "lease.json";
-pub(crate) const KEYS_FILE: &str = "keys.json";
-pub(crate) const TOKEN_FILE: &str = "token.json";
-pub(crate) const ACTIVITY_FILE: &str = "activity.json";
-/// The person's sharing answer at connect (`super::connect`).
-pub(crate) const SHARING_FILE: &str = "sharing.json";
-/// When the enrolled Hive last answered that it has no match route
-/// (`super::mapping`).
-pub(crate) const MATCH_FILE: &str = "vault-match.json";
+pub(crate) const LEDGER_EXPORT_FIELDS: [&str; 21] = [
+    "ts",
+    "kind",
+    "tool",
+    "mechanism",
+    "model_id",
+    "baseline_tokens",
+    "actual_tokens",
+    "saved_tokens",
+    "bounce_adjustment",
+    "saved_usd",
+    "unit_price_per_m_usd",
+    "lines_added",
+    "lines_removed",
+    "measurement_method",
+    "evidence_class",
+    "attribution_group",
+    "repo_hash",
+    "project",
+    "version",
+    "prev_hash",
+    "entry_hash",
+];
 
-/// The enrolled instance.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct InstanceRecord {
-    pub instance_id: String,
-    pub org_id: String,
-    pub org_name: String,
-    pub label: String,
-    /// Origin the instance is enrolled with.
-    pub url: String,
-    pub org_salt_id: String,
-    pub enrolled_at: String,
-    /// Origin of the Hive web app, when enrollment named one (1.3).
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub web_url: Option<String>,
-    /// `personal` | `team`, when enrollment named it (Hive C line).
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub org_kind: Option<String>,
-    /// The company the team belongs to, when enrollment named one.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub company_name: Option<String>,
-}
+/// The largest export the engine produces.
+pub(crate) const MAX_EXPORT_BYTES: usize = 32 << 20;
 
-impl InstanceRecord {
-    /// Where the instance is enrolled, as people read it (owner decision
-    /// 26.10.: Personal, Team, Company): `Company Acme · Team Platform`,
-    /// `Team Platform`, `Personal (Ada)`; an older server's record keeps
-    /// the plain name.
-    pub fn workspace_label(&self) -> String {
-        let name = &self.org_name;
-        match (self.company_name.as_deref(), self.org_kind.as_deref()) {
-            (Some(company), _) => format!("Company {company} · Team {name}"),
-            (None, Some("team")) => format!("Team {name}"),
-            (None, Some("personal")) => format!("Personal ({name})"),
-            _ => name.clone(),
-        }
+pub(crate) fn mime_of(format: &str) -> &'static str {
+    if format == "csv" {
+        "text/csv; charset=utf-8"
+    } else {
+        "application/json"
     }
 }
 
-/// The last verified lease, as received, plus the service clock offset.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct LeaseRecord {
-    pub envelope: Value,
-    /// `server_time - local time` when the lease arrived, in seconds.
-    pub offset_seconds: i64,
-    pub received_at: String,
+/// `leanctx-ledger-YYYY-MM-DD.<format>` for `day`.
+pub(crate) fn file_name(day: lean_ctx_time::Date, format: &str) -> String {
+    format!("leanctx-ledger-{day}.{format}")
 }
 
-/// A cached access token. `Debug` never shows the token.
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct TokenRecord {
-    pub access_token: String,
-    /// Unix seconds (service clock).
-    pub expires_at: i64,
-}
-
-impl fmt::Debug for TokenRecord {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("TokenRecord")
-            .field("access_token", &"<redacted>")
-            .field("expires_at", &self.expires_at)
-            .finish()
+/// A spreadsheet must never run a cell as a formula.
+pub(crate) fn csv_safe(value: &str) -> Cow<'_, str> {
+    if value.starts_with(['=', '+', '-', '@', '\t', '\r']) {
+        Cow::Owned(format!("'{value}"))
+    } else {
+        Cow::Borrowed(value)
     }
 }
 
-/// When Hive last answered, per channel.
-#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ActivityRecord {
-    pub last_seen: Option<String>,
-    #[serde(default)]
-    pub last_success: BTreeMap<String, String>,
-    pub last_error: Option<String>,
-    /// Why Hive last refused this workspace as locked (`trial_ended`,
-    /// `plan_ended`); cleared by the next lease Hive issues.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub locked: Option<String>,
-    /// Why the last lease renewal failed; kept until a renewal succeeds
-    /// (unlike `last_error`, which the next success of any channel clears).
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub renew_error: Option<String>,
+fn csv_cell(value: &Value) -> String {
+    let text: Cow<'_, str> = match value {
+        Value::Null => Cow::Borrowed(""),
+        Value::String(text) => csv_safe(text),
+        Value::Bool(flag) => Cow::Borrowed(if *flag { "True" } else { "False" }),
+        Value::Number(number) => Cow::Owned(number.to_string()),
+        other => {
+            let rendered = other.to_string();
+            Cow::Owned(csv_safe(&rendered).into_owned())
+        }
+    };
+    if text.contains([',', '"', '\n', '\r']) {
+        format!("\"{}\"", text.replace('"', "\"\""))
+    } else {
+        text.into_owned()
+    }
 }
 
-/// Paths of the Hive state; [`HiveStore::open`] for this machine,
-/// [`HiveStore::at`] for tests and embedders.
-#[derive(Debug, Clone)]
-pub struct HiveStore {
-    config: PathBuf,
-    data: PathBuf,
+fn project_of(column: &ProjectColumn, entry: &LedgerEntry) -> String {
+    match column {
+        ProjectColumn::Fixed { name } => name.clone(),
+        ProjectColumn::Labels { labels } => {
+            if entry.tool.as_deref() == Some("proxy_cache") {
+                return LEDGER_PROXY.into();
+            }
+            let repo = entry.repo_hash.as_deref().unwrap_or("");
+            labels.iter().find(|l| l.hash == repo).map_or_else(
+                || {
+                    if repo.is_empty() {
+                        LEDGER_NONE
+                    } else {
+                        LEDGER_OTHER
+                    }
+                    .to_string()
+                },
+                |l| l.name.clone(),
+            )
+        }
+    }
 }
 
-impl HiveStore {
-    /// `<config_dir>/hive` and `<data_dir>/hive` of this installation. Opening
-    /// only resolves the paths: a read-only config directory keeps its mode (the
-    /// Hive's own directories are made private when something is written there).
-    pub fn open() -> Result<Self, HiveError> {
-        let config = lean_ctx::core::paths::config_dir_read_only().map_err(HiveError::Local)?;
-        let data = lean_ctx::core::paths::data_dir().map_err(HiveError::Local)?;
-        Ok(Self::at(config.join("hive"), data.join("hive")))
-    }
+fn record(raw: &Map<String, Value>, entry: &LedgerEntry, project: &str) -> Map<String, Value> {
+    let (added, removed) = entry_lines(entry);
+    LEDGER_EXPORT_FIELDS
+        .iter()
+        .map(|field| {
+            let value = match *field {
+                "kind" => Value::from(KINDS[ledger_kind(entry) as usize]),
+                "lines_added" => Value::from(added),
+                "lines_removed" => Value::from(removed),
+                "project" => Value::from(project),
+                other => raw.get(other).cloned().unwrap_or_else(|| "".into()),
+            };
+            ((*field).to_string(), value)
+        })
+        .collect()
+}
 
-    /// State rooted at explicit directories.
-    pub fn at(config_dir: impl Into<PathBuf>, data_dir: impl Into<PathBuf>) -> Self {
-        Self {
-            config: config_dir.into(),
-            data: data_dir.into(),
+/// The export bytes, or 413 once they would exceed [`MAX_EXPORT_BYTES`].
+pub(crate) fn build(
+    scope: &ProjectScope,
+    filters: &LedgerFilters,
+    format: &str,
+    column: &ProjectColumn,
+) -> ProResult<Vec<u8>> {
+    let mut out: Vec<u8> = Vec::new();
+    let csv = format == "csv";
+    if csv {
+        out.extend_from_slice(LEDGER_EXPORT_FIELDS.join(",").as_bytes());
+        out.push(b'\n');
+    } else {
+        out.push(b'[');
+    }
+    let mut count = 0usize;
+    super::ledger::export_entries(scope, filters, |raw, entry| {
+        let values = record(raw, entry, &project_of(column, entry));
+        if csv {
+            let line: Vec<String> = LEDGER_EXPORT_FIELDS
+                .iter()
+                .map(|f| csv_cell(values.get(*f).unwrap_or(&Value::Null)))
+                .collect();
+            out.extend_from_slice(line.join(",").as_bytes());
+            out.push(b'\n');
+        } else {
+            if count > 0 {
+                out.push(b',');
+            }
+            out.push(b'\n');
+            let encoded = serde_json::to_vec(&Value::Object(values))
+                .map_err(|_| ProError::internal("Export failed"))?;
+            out.extend_from_slice(&encoded);
         }
-    }
-
-    pub fn config_dir(&self) -> &Path {
-        &self.config
-    }
-
-    pub fn data_dir(&self) -> &Path {
-        &self.data
-    }
-
-    pub(crate) fn read_config_bytes(&self, name: &str) -> Result<Option<Vec<u8>>, HiveError> {
-        read_optional(&self.config.join(name))
-    }
-
-    pub(crate) fn write_config_bytes(&self, name: &str, bytes: &[u8]) -> Result<(), HiveError> {
-        write_private(&self.config, name, bytes)
-    }
-
-    pub(crate) fn read_config<T: DeserializeOwned>(
-        &self,
-        name: &str,
-    ) -> Result<Option<T>, HiveError> {
-        read_json(&self.config.join(name))
-    }
-
-    pub(crate) fn write_config<T: Serialize>(
-        &self,
-        name: &str,
-        value: &T,
-    ) -> Result<(), HiveError> {
-        write_private(&self.config, name, &to_json(value)?)
-    }
-
-    pub(crate) fn remove_config(&self, name: &str) -> Result<(), HiveError> {
-        remove_optional(&self.config.join(name))
-    }
-
-    pub fn instance(&self) -> Result<Option<InstanceRecord>, HiveError> {
-        self.read_config(INSTANCE_FILE)
-    }
-
-    pub fn activity(&self) -> ActivityRecord {
-        read_json(&self.data.join(ACTIVITY_FILE))
-            .ok()
-            .flatten()
-            .unwrap_or_default()
-    }
-
-    /// Record a successful exchange on `channel` at `when` (RFC 3339).
-    pub(crate) fn record_success(&self, channel: &str, when: &str) {
-        let mut activity = self.activity();
-        activity.last_seen = Some(when.to_string());
-        activity
-            .last_success
-            .insert(channel.to_string(), when.to_string());
-        activity.last_error = None;
-        // Activity is informational; failing to record it never fails the exchange.
-        if let Ok(bytes) = to_json(&activity) {
-            let _ = write_private(&self.data, ACTIVITY_FILE, &bytes);
+        count += 1;
+        if out.len() > MAX_EXPORT_BYTES {
+            return Err(ProError::new(
+                413,
+                "The selection is too large to export; narrow the filters",
+            ));
         }
+        Ok(())
+    })?;
+    if !csv {
+        out.extend_from_slice(b"\n]\n");
     }
+    Ok(out)
+}
 
-    /// Record (`Some`) or clear (`None`) a locked workspace (E9).
-    pub fn record_locked(&self, reason: Option<&str>) {
-        let mut activity = self.activity();
-        if activity.locked.as_deref() == reason {
-            return;
-        }
-        activity.locked = reason.map(str::to_string);
-        if let Ok(bytes) = to_json(&activity) {
-            let _ = write_private(&self.data, ACTIVITY_FILE, &bytes);
-        }
-    }
-
-    /// Record (`Some`) or clear (`None`) why the lease renewal failed.
-    pub(crate) fn record_renew_error(&self, message: Option<&str>) {
-        let mut activity = self.activity();
-        if activity.renew_error.as_deref() == message {
-            return;
-        }
-        activity.renew_error = message.map(str::to_string);
-        if let Ok(bytes) = to_json(&activity) {
-            let _ = write_private(&self.data, ACTIVITY_FILE, &bytes);
-        }
-    }
-
-    pub(crate) fn record_error(&self, message: &str) {
-        let mut activity = self.activity();
-        activity.last_error = Some(message.to_string());
-        if let Ok(bytes) = to_json(&activity) {
-            let _ = write_private(&self.data, ACTIVITY_FILE, &bytes);
-        }
-    }
-
-    /// Whether this engine may record anything for Hive now: connected (an
-    /// instance record) and not revoked. Two file checks; the recording
-    /// paths call it on every record (K2 review 2, N1).
-    pub(crate) fn may_record(&self) -> bool {
-        self.config.join(INSTANCE_FILE).is_file()
-            && !self.config.join(super::revoked::REVOKED_FILE).is_file()
-    }
-
-    /// The slower half of the recording check (K2 review 3, NEW-3): the
-    /// `[hive]` switches allow engine metrics and the stored lease has not
-    /// lapsed (read from the local copy; a lease that cannot be read counts
-    /// as lapsed).
-    pub(crate) fn recording_allowed(&self, config: &super::config::HiveConfig) -> bool {
-        config.enabled != Some(false) && config.metrics_upload && self.lease_live()
-    }
-
-    fn lease_live(&self) -> bool {
-        use lean_ctx_protocol::hive::lease::{HiveLeaseV1, LeaseState};
-        let Ok(Some(record)) = self.read_config::<LeaseRecord>(LEASE_FILE) else {
-            return false;
-        };
-        let Ok(lease) = serde_json::from_value::<HiveLeaseV1>(record.envelope["lease"].clone())
-        else {
-            return false;
-        };
-        let service_now =
-            (chrono::Utc::now() + chrono::Duration::seconds(record.offset_seconds)).fixed_offset();
-        matches!(
-            lease.state_at(service_now),
-            Ok(LeaseState::Valid | LeaseState::Grace)
-        )
-    }
-
-    /// Remove credentials, lease and keys; with `keep_local` the data
-    /// directory (pulled knowledge, outbox, activity) stays, but nothing
-    /// keeps recording for Hive (metrics, signals, 
 ```
 
 
@@ -2518,11 +2450,11 @@ impl HiveStore {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2260** (2026-11-23): **bug: Pi replace mode silently drops the <skills> prompt section**
+  *Symptoms*:  lean-ctx version: 3.10.0 (official)  OS: Windows 11 64-bit  AI tool: Pi (pi-coding-agent 1.5.2 + pi-lean-ctx 3.12.6, Replace mode)   What happened:   With Pi set up in Replace mode, Pi's system prompt never contains the \<skills> section, so the model is not told that  any skill exists. /skill:name still works, and nothing warns.   Cause: Pi only emits that section when a tool named read or bash is declared  (packages/coding-agent/src/core/system-prompt.ts). Replace mode removes read/bash/ls/find/grep from the active tools  (REPLACEABLE_BUILTIN_TOOLS in extensions/config.ts) and exposes ctx_read/ctx_shell instead. Neither name is present,  so the whole block is dropped. Hybrid mode is unaffected because it only sets routeShell, and read stays active.   What you expected:   Either skills stay advertised in Replace mode (ctx_read can read SKILL.md just fine), or Replace mode prints a warning  and the docs say skills auto-routing is off.   Steps to reproduce:   1. Set up Pi with lean-ctx in Replace mode, so ~/.pi/agent/extensions/pi-lean-ctx/config.json contains "mode":     "replace".  2. Put a skill in ~/.pi/agent/skills/\<name\>/SKILL.md, then start a Pi session and finish a turn.  3. In the session file under ~/.pi/agent/sessions/, look at the system message: \<tools>, \<rules>, \<docs>, \<cwd> are     there, \<skills> is not. Remove "mode": "replace" and repeat: it appears.   Relevant output:   ```    $ cat ~/.pi/agent/extensions/pi-lean-ctx/config.json    {      "env": { "
+
 - **Issue #2256** (2026-11-16): **bug: pi-lean-ctx prints errors inside user prompt editor**
   *Symptoms*: **lean-ctx version:** lean-ctx 3.12.2 (official, https://github.com/yvgude/lean-ctx)  **OS:** macOS  **AI tool:** Pi  **What happened:**  When reads fail extension prints a red error message inside user prompt editor:      [pi-lean-ctx] ctx_read bridge call failed, falling back to CLI: Error: ENOENT: no such file or directory, open ...  **What you expected:**  Failed tool calls should be in the transcript, don't touch the prompt editor.  **Steps to reproduce:** 1. Make a model generate a failing ctx_read call.  **Relevant output:** ```     [pi-lean-ctx] ctx_read bridge call failed, falling back to CLI: Error: ENOENT: no such file or directory, open ... ``` 
-
-- **Issue #2252** (2026-11-15): **bug: excessive memory consumption by the cockpit**
-  *Symptoms*: **lean-ctx version:** Engine 3.12.5 according to MCP metadata; installed Cockpit runtime 3.12.3. CLI `--version` was not independently verified.  **OS:** Windows 11 Pro, build 26200, 32 GB RAM.  **AI tool:** Codex desktop with LeanCTX MCP.  **What happened:**  The separate `leanctx-cockpit.exe` process rapidly consumed tens of GiB of committed memory and exhausted Windows system commit.  Windows Resource Exhaustion Detector, Event ID 2004, identified Cockpit as the largest allocator during two separate incidents:  - Approximately **42 GiB within 91 seconds** of process creation. - Approximately **54 GiB** during another launch.  An unexpected system shutdown followed the latest incident. The logs confirm memory exhaustion and an unclean shutdown, but do not establish the exact shutdown mechanism.  These measurements are **process commit**, not RSS or Working Set.  The allocating function inside the proprietary Cockpit runtime remains unknown. Reviewing the public launcher revealed two relevant gaps: no child-process memory limit in the inspected Windows launch path, and discarded runtime stderr.  **What you expected:**  Cockpit should maintain bounded memory usage and remain responsive. Excessive allocation should trigger cancellation or controlled termination before exhausting system commit. Diagnostic logs should preserve the failing operation and exit reason while redacting credentials.  **Steps to reproduce:**  No deterministic minimal reproduction is available yet. The o
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2539,631 +2471,536 @@ impl HiveStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `866f1755` (2026-11-16)
-**Commit Message**: security: re-pin credential_redaction.rs scanner digest (#2255)
-
-The history policy pins the scanner sources; the #2255 change to
-credential_redaction.rs moved its sha256. Re-pin it, update the
-baseline report's policy fingerprint and the report digest.
-history-policy-gate: 0 new findings; tests/security 179 passed.
+### Incident Patch 1: `11af55a0` (2026-11-22)
+**Commit Message**: fix(shell): enforce the timeout when -c writes to a file (#2268)
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `security/history-policy-v1.json` (modified, +2/-2)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -129,7 +129,7 @@
-     "tests/security/test_security_check_workflow.py": "2d0c9b9a6ceb61c97379290d549bbdcf7812ce17db9794b5d1b067e2202c2844",
-     "rust/crates/lean-ctx-proxy/src/anthropic.rs": "cfd755f17537a42ec421b3a0420c76dbe73060f90e2a3740401d5236dfdb2f12",
-     "rust/crates/lean-ctx-proxy/src/anthropic_tests.rs": "d7fde182afeeee749896ea84fe615360981fe3962a80e3a0d6d8ad13b3c3b5e0",
--    "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "6e522741b965a4ab8bb858e4fb765f4f6ca7d5aa18dd14533490874341313cb1",
-+    "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "4f90e1332d1bb5a43e7792f433ec295ff2ec3a2dea6127af49ca2fbc61fe599c",
-     "rust/crates/lean-ctx-protocol/src/context_checkpoint.rs": "698433cd958541d830f5dde38598625dc323d28d5724c072cb4532c322d8c102",
-     "rust/crates/lean-ctx-protocol/src/context_checkpoint/tests_core.rs": "2aa83f250907035c82ea5ae56078d0077d539a5799b51b4ab2139940ea7630d0",
-     "rust/src/core/execution_ledger/host/checkpoint_transfer/content.rs": "5ecda30a661986ded5651f0a33804f56b81c8c8687ed7e87b43c3784043d0031",
-@@ -138,6 +138,6 @@
-   "baseline": {
-     "commit": "b37ee3be11f2525cd785348d3e43ccdbb590fe94",
-     "report": "security/evidence/full-history-baseline-v1.json",
--    "report_sha256": "8fb633fa2e1d6873973dc66494bf3bde32e9c7a79c633e79b78bb696432f3a02"
-+    "report_sha256": "64a7705157ae8e2fba05620cc547e6f904bb1e6f81dcbe9ac61870c10e343b2d"
-   }
- }
+@@ -220,6 +220,7 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   `hook write-guard` with an unquoted binary, so PowerShell split paths such as
+   `…/Author Software/…/lean-ctx.exe` and every Write failed its PreToolUse hook. It is now
+   quoted like every other hook; `lean-ctx init` or `update` repairs existing settings.
++- **`lean-ctx -c` enforces the shell timeout when stdout is a regular file (#2268).**
+ - **GitHub Copilot CLI shows why lean-ctx denied a tool call (#2254).** The deny output now
+   carries `permissionDecisionReason` beside the decision instead of "No reason provided".
+ - **Nullable type annotations are no longer redacted (#2255).** `private var token: Session? =
 ```
 
----
-
-### Incident Patch 2: `6200b20c` (2026-11-16)
-**Commit Message**: fix(hooks,redaction): quote write-guard, Copilot deny reason, nullable types (#2254, #2255)
-
-- write-guard: governor and standard installs wrote `<binary> hook
-  write-guard` unquoted; PowerShell split a spaced install path
-  (Discord report, 3.12.5 Windows). Both now use hook_shell_command.
-  ensure_group_hook finds the hook for its timeout by command + args,
-  so Windows exec form keeps the timeout.
-- #2254: build_dual_deny_output adds top-level permissionDecisionReason;
-  Copilot CLI showed "No reason provided" without it. Claude payloads
-  keep the hookSpecificOutput-only shape.
-- #2255: `private var token: ProbeCorrelation? = null` was masked. New
-  credential_redaction::is_nullable_type_name / is_nullable_type_annotation
-  (protocol crate, used by core redaction too) accept `Name?` only on a
-  line anchored as a declaration. .env/YAML/URL/prose values ending in
-  `?` stay masked; the line scan runs only for type-shaped values.
-
-Tests: every_pre_tool_hook_quotes_a_spaced_binary; deny-output assert;
-nullable preserve + must-stay-masked cases in both redaction crates.
-Independent review: ACCEPT after two rounds.
-
-crate: lean-ctx-hooks, lean-ctx-protocol; monolith: core/redaction
-
-**File**: `CHANGELOG.md` (modified, +13/-0)
+**File**: `rust/src/shell/exec/execution.rs` (modified, +93/-6)
 ```diff
-@@ -6,6 +6,19 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
- 
- ## [Unreleased]
- 
-+### Fixed
-+
-+- **The write-guard hook runs from an install path with a space.** `lean-ctx init` wrote
-+  `hook write-guard` with an unquoted binary, so PowerShell split paths such as
-+  `…/Author Software/…/lean-ctx.exe` and every Write failed its PreToolUse hook. It is now
-+  quoted like every other hook; `lean-ctx init` or `update` repairs existing settings.
-+- **GitHub Copilot CLI shows why lean-ctx denied a tool call (#2254).** The deny output now
-+  carries `permissionDecisionReason` beside the decision instead of "No reason provided".
-+- **Nullable type annotations are no longer redacted (#2255).** `private var token: Session? =
-+  null` (Kotlin, Swift) kept the type masked. A `Name?` value now stays visible only on a
-+  line that starts by declaring it (`val`/`var`/`let`, or a `fun`/`func`/`init`/`constructor`
-+  parameter list); `password: Welcome?` in `.env`, YAML, URLs or prose stays masked.
-+
- ## [3.12.6] — 2026-11-15
- 
- ### Added
-```
-
-**File**: `rust/crates/lean-ctx-hooks/src/hook_handlers/mod.rs` (modified, +3/-1)
-```diff
-@@ -384,8 +384,10 @@ fn build_dual_deny_output(msg: &str) -> String {
-         "reason": msg,
-         "permission": "deny",
-         "user_message": msg,
--        // GitHub Copilot CLI dialect (top-level permissionDecision).
-+        // GitHub Copilot CLI dialect: it reads the reason beside the decision
-+        // and shows "No reason provided" without it (#2254).
-         "permissionDecision": "deny",
-+        "permissionDecisionReason": msg,
-         // Claude Code / CodeBuddy dialect.
-         "hookSpecificOutput": {
-             "hookEventName": "PreToolUse",
-```
-
-**File**: `rust/crates/lean-ctx-hooks/src/hook_handlers/tests_command_rewrites.rs` (modified, +2/-0)
-```diff
-@@ -413,6 +413,8 @@ fn deny_output_is_claude_valid_for_claude_payloads_only() {
-         serde_json::from_str(&build_deny_output("x", &cursor)).expect("valid JSON");
-     assert_eq!(p["permission"], "deny");
-     assert_eq!(p["permissionDecision"], "deny");
-+    // #2254: Copilot CLI reads the reason beside the decision.
-+    assert_eq!(p["permissionDecisionReason"], "x");
- }
- 
- #[test]
-```
-
-**File**: `rust/crates/lean-ctx-hooks/src/hooks/agents/claude_governor.rs` (modified, +26/-1)
-```diff
-@@ -318,7 +318,7 @@ fn apply_hooks(root: &mut serde_json::Value, binary: &str) {
-         ensure_command_hook(
-             arr,
-             super::governor_hosts::CLAUDE_WRITE_MATCHER,
--            &format!("{binary} hook write-guard"),
-+            &crate::hooks::hook_shell_command(binary, "write-guard"),
-         );
-     }
-     if let Some(arr) = event_array(hooks, "PostToolUse") {
-@@ -443,6 +443,31 @@ mod tests {
-         }
+@@ -468,7 +468,7 @@ fn execute_shell_post_gate(command: &str, collapsed_nested: bool) -> i32 {
+     // capture) and TTYs keep compressing. This is the single choke point, so it
+     // holds for every caller (hook, direct CLI, Pi/MCP bridges).
+     if stdout_is_regular_file() {
+-        return exec_inherit_tracked(command, &shell, &shell_flag);
++        return exec_inherit_limited(command, &shell, &shell_flag, Stdio::inherit());
      }
  
-+    /// Discord report (3.12.5, Windows without Git Bash): write-guard was the
-+    /// one governor hook written with an unquoted binary, so PowerShell split
-+    /// `…/Author Software/…/lean-ctx.exe` at the space.
-+    #[test]
-+    fn every_pre_tool_hook_quotes_a_spaced_binary() {
-+        let binary = "C:/Users/u/AppData/Local/Author Software/bin/lean-ctx.exe";
-+        let mut root = serde_json::json!({});
-+        apply_hooks(&mut root, binary);
-+        let commands: Vec<String> = root["hooks"]["PreToolUse"]
-+            .as_array()
-+            .unwrap()
-+            .iter()
-+            .flat_map(|g| g["hooks"].as_array().unwrap().clone())
-+            .map(|h| h["command"].as_str().unwrap().to_string())
-+            .collect();
-+        assert!(!commands.is_empty());
-+        for command in commands {
-+            // Exec form on Windows names the program alone; shell form quotes it.
-+            assert!(
-+                command == binary || command.starts_with(&format!("\"{binary}\" hook ")),
-+                "unquoted spaced binary: {command}"
-+            );
+     // Also bypass compression when the redirect is INSIDE the command string
+@@ -478,7 +478,7 @@ fn execute_shell_post_gate(command: &str, collapsed_nested: bool) -> i32 {
+     // the file gets correct data — but the overhead is wasted and the compressed
+     // empty output confuses agents. Let sh handle it natively. (#1303)
+     if command_has_file_redirect(command) {
+-        return exec_inherit_tracked(command, &shell, &shell_flag);
++        return exec_inherit_limited(command, &shell, &shell_flag, Stdio::inherit());
+     }
+ 
+     super::super::pipeline::exec_buffered(command, &shell, &shell_flag, &cfg)
+@@ -630,6 +630,18 @@ fn sandbox_launcher_command(argv: &[String]) -> Command {
+ }
+ 
+ fn exec_inherit(command: &str, shell: &str, shell_flag: &str) -> i32 {
++    let status = inherit_command(command, shell, shell_flag).status();
++
++    match status {
++        Ok(s) => crate::shell::exit_status::exit_code(s),
++        Err(e) => {
++            tracing::error!("lean-ctx: failed to execute: {e}");
++            127
 +        }
 +    }
-+
-     fn home_with_standard_setup() -> tempfile::TempDir {
-         let home = tempfile::tempdir().unwrap();
-         super::super::install_claude_hook_config(home.path());
-```
-
-**File**: `rust/crates/lean-ctx-hooks/src/hooks/agents/governor_hosts.rs` (modified, +9/-5)
-```diff
-@@ -228,11 +228,10 @@ pub(crate) const CODEX_WRITE_MATCHER: &str = "apply_patch|Edit|Write";
- pub(crate) const CURSOR_WRITE_MATCHER: &str = "Write|Delete|Edit|StrReplace|MultiEdit|EditNotebook";
- pub(crate) const GEMINI_WRITE_MATCHER: &str = "write_file|replace|edit";
- 
-+/// `hook write-guard` with the binary quoted when its path holds a space, as
-+/// every other hook command: PowerShell splits `…/Author Software/…` otherwise.
- pub(super) fn write_guard_command() -> String {
--    format!(
--        "{} hook write-guard",
--        super::super::resolve_hook_command_binary()
--    )
-+    crate::hooks::hook_shell_command(&super::super::resolve_hook_command_binary(), "write-guard")
- }
- 
- /// Claude-dialect: exactly one `hook write-guard` entry under `matcher` in
-@@ -281,12 +280,17 @@ pub(super) fn ensure_group_hook(
-     let Some(timeout) = timeout else {
-         return;
-     };
-+    // Matched as written: on Windows a quoted binary becomes exec form
-+    // (`command` the program, `args` the rest), so compare command and args.
-+    let desired = crate::hooks::claude_command_hook(command);
-     let hook = arr
-         .iter_mut()
-         .filter(|g| g.get("matcher").and_then(|m| m.as_str()) == Some(matcher))
-         .filter_map(|g| g.get_mut("hooks").and_then(|h| h.as_array_mut()))
-         .flatten()
--        .find(|h| h.get("command").and_then(|c| c.as_str()) == Some(command));
-+        .find(|h| {
-+            h.get("command") == desired.get("command") && h.get("args") == desired.get("args")
-+        });
-     if let Some(obj) = hook.and_then(|h| h.as_object_mut()) {
-         obj.insert("timeout".to_string(), serde_json::json!(timeout));
-     }
-```
-
-**File**: `rust/crates/lean-ctx-protocol/src/credential_redaction.rs` (modified, +75/-3)
-```diff
-@@ -64,6 +64,10 @@ fn is_identifier_reference(value: &str) -> bool {
-     if value.contains(|character: char| character.is_ascii_digit()) {
-         return false;
-     }
-+    is_dotted_identifier(value)
 +}
 +
-+fn is_dotted_identifier(value: &str) -> bool {
-     value.split('.').all(|segment| {
-         let mut characters = segment.chars();
-         matches!(
-@@ -75,6 +79,45 @@ fn is_identifier_reference(value: &str) -> bool {
-     })
- }
- 
-+/// #2255: whether `value` reads as a nullable type name (`Session?`,
-+/// `java.time.Instant?`): an identifier chain ending in `?` whose last segment
-+/// starts upper-case. Cheap; callers test it before scanning back for the line.
-+#[must_use]
-+pub fn is_nullable_type_name(value: &str) -> bool {
-+    value.trim().strip_suffix('?').is_some_and(|name| {
-+        !name.is_empty()
-+            && is_dotted_identifier(name)
-+            && name.rsplit('.').next().is_some_and(|last| {
-+                last.starts_with(|character: char| character.is_ascii_uppercase())
-+            })
-+    })
++fn inherit_command(command: &str, shell: &str, shell_flag: &str) -> Command {
+     // #1286: the zsh preamble is applied at spawn time only, so `command`
+     // stays clean for classification/compression upstream.
+     let spawn_command = super::super::platform::zsh_safe_command(command, shell);
+@@ -642,15 +654,38 @@ fn exec_inherit(command: &str, shell: &str, shell_flag: &str) -> i32 {
+     super::super::reentry::mark_child(&mut cmd);
+     super::super::platform::apply_utf8_locale(&mut cmd);
+     super::super::platform::apply_profile_free_env(&mut cmd);
+-    let status = cmd.status();
++    cmd
 +}
-+
-+/// #2255: whether `value` is a nullable type in a declaration
-+/// (`private var token: ProbeCorrelation? = null`, `fun f(token: Session?)`).
-+///
-+/// `line_before_value` is the text from the line start up to the value. The
-+/// value must be a type name ending in `?` (last segment starts upper-case),
-+/// and the line must start by declaring it: `val`/`var`/`let` (after optional
-+/// annotations and modifiers), or a `fun name(`/`func name(`/`init(`/
-+/// `constructor(` parameter list. A `.env`, YAML, URL or prose line does not,
-+/// so `password: Welcome?` stays a secret.
-+#[must_use]
-+pub fn is_nullable_type_annotation(line_before_value: &str, value: &str) -> bool {
-+    if !is_nullable_type_name(value) {
-+        return false;
+ 
+-    match status {
+-        Ok(s) => crate::shell::exit_status::exit_code(s),
++/// The verbatim path of forced compression (`-c` writing to a file): output
++/// bytes pass through untouched, but the command keeps the deadline and the
++/// child cleanup of the buffered runner (#2268). As there, the child gets its
++/// own process group only when stdin is not a terminal, so an interactive
++/// session keeps job control. The limit notice goes to stderr; stdout stays
++/// exactly what the command wrote.
++fn exec_inherit_limited(command: &str, shell: &str, shell_flag: &str, stdout: Stdio) -> i32 {
++    let mut cmd = inherit_command(command, shell, shell_flag);
++    cmd.stdout(stdout);
++    let isolate = !crate::core::host_env::stdin_is_terminal();
++    #[cfg(unix)]
++    if isolate {
++        use std::os::unix::process::CommandExt as _;
++        cmd.process_group(0);
 +    }
-+    // Anchored at the line start: modifier words like `static` or `open` are
-+    // English too, so a modifier elsewhere in a line declares nothing.
-+    let property = static_regex!(
-+        r"^\s*(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:private|public|internal|protected|override|open|final|static|weak|unowned|lateinit)\s+)*(?:val|var|let)\s+[A-Za-z_]\w*\s*:\s*$"
-+    );
-+    let parameter = static_regex!(
-+        r"^\s*(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:private|public|internal|protected|override|open|final|static|suspend|inline|operator|infix|mutating|convenience|required)\s+)*(?:func?\s+[\w.<>]+\s*|init\s*|constructor\s*)\((?:[^=()]*,)?\s*[A-Za-z_]\w*\s*:\s*$"
-+    );
-+    property.is_match(line_before_value) || parameter.is_match(line_before_value)
-+}
-+
- fn is_placeholder_value(value: &str) -> bool {
-     let value = value
-         .trim()
-@@ -211,15 +254,27 @@ fn rules() -> Vec<Rule> {
- pub fn redact_text(input: &str) -> String {
-     let mut output = input.to_owned();
-     for rule in rules() {
-+        let text = output.as_str();
-         output = rule
-             .regex
--            .replace_all(&output, |captures: &regex::Captures| {
-+            .replace_all(text, |captures: &regex::Captures| {
-                 let whole = captures.get(0).map_or("", |value| value.as_str());
-                 if rule.guard_value
-                     && let Some(value) = captures.get(2)
--                    && is_benign_secret_value(value.as_str())
-                 {
--                    return whole.to_owned();
-+                    if is_benign_secret_value(value.as_str()) {
-+                        return whole.to_owned();
-+                    }
-+                    // The line scan runs only for type-shaped `?` values.
-+                    if is_nullable_type_name(value.as_str()) {
-+                        let line_start = text[..value.start()].rfind('\n').map_or(0, |at| at + 1);
-+                        if is_nullable_type_annotation(
-+                            &text[line_start..value.start()],
-+                            value.as_str(),
-+                        ) {
-+                            return whole.to_owned();
-+                        }
-+                    }
-                 }
-                 match captures.get(1) {
-                     Some(prefix) => format!("{}[REDACTED:{}]", prefix.as_str(), rule.label),
-@@ -259,9 +314,26 @@ mod tests {
-             "api_key=${OPENAI_API_KEY}",
-             "token: process.env.API_TOKEN",
-             "password: undefined",
-+            "private var token: ProbeCorrelation? = null",
-             "safe source text",
-         ] {
-             assert!(!contains_credential(value), "{value}");
++    let child = match cmd.spawn() {
++        Ok(child) => child,
+         Err(e) => {
+             tracing::error!("lean-ctx: failed to execute: {e}");
+-            127
++            return 127;
          }
-+        // A `?` value outside a declaration is a password, not a type (#2255).
-+        for value in [
-+            "password: Sunshine?",
-+            "DB_PASSWORD=Sunshine?",
-+            "https://h/cb?token=Letmein?&x=1",
-+            "  password: Welcome?",
-+            "The static password: Summer2024?",
-+            "- final password: Winter2025?",
-+            "have fun (password: Hunter22?, x)",
-+            "Calling init(admin, password: Summer2024?, x)",
-+        ] {
-+            assert!(contains_credent
-```
-
-**File**: `rust/src/core/redaction.rs` (modified, +17/-0)
-```diff
-@@ -871,6 +871,23 @@ fn redact_found(input: &str, excludes: &[regex::Regex]) -> (String, Vec<&'static
-                 && let Some(value) = caps.get(2)
-             {
-                 let quoted = is_quoted_at(&normalized, value.start());
-+                // #2255: `private var token: Session? = null` declares a type.
-+                // The line scan runs only for unquoted, type-shaped `?` values.
-+                if !quoted
-+                    && lean_ctx_protocol::credential_redaction::is_nullable_type_name(
-+                        value.as_str(),
-+                    )
-+                {
-+                    let line_start = normalized[..value.start()]
-+                        .rfind('\n')
-+                        .map_or(0, |at| at + 1);
-+                    if lean_ctx_protocol::credential_redaction::is_nullable_type_annotation(
-+                        &normalized[line_start..value.start()],
-+                        value.as_str(),
-+                    ) {
-+                        continue;
-+                    }
-+                }
-                 match secret_value_span(value.as_str(), quoted) {
-                     None => continue,
-                     Some(span) if span.len() < value.len() => {
-```
-
-**File**: `rust/src/core/redaction/tests.rs` (modified, +16/-0)
-```diff
-@@ -135,9 +135,25 @@ fn keeps_type_annotations() {
-         "secret: () => void",
-         "password: string | undefined",
-         "credential: { value: string }",
-+        // #2255: nullable types (Kotlin, Swift, C#) name a type, not a value.
-+        "    private var token: ProbeCorrelation? = null",
-+        "var token: Session?",
-     ] {
-         assert_eq!(redact_text(s), s, "must not redact type annotation: {s}");
++    };
++    let (max_bytes, timeout) = super::exec_limits(command);
++    let (status, timed_out) = super::wait_inherited_with_timeout(child, timeout, isolate);
++    if timed_out {
++        eprint!("{}", super::output_limit_notice(max_bytes, timeout));
      }
-+    // Outside a declaration a `?` value is a password, not a type (#2255).
-+    for s in [
-+        "password: Sunshine?",
-+        "DB_PASSWORD=Sunshine?",
-+        "https://h/cb?token=Letmein?&x=1",
-+        "The static password: Summer2024?",
-+        "have fun (password: Hunter22?, x)",
-+    ] {
-+        assert!(
-+            redact_text(s).contains("[REDACTED"),
-+            "must stay masked: {s}"
-+        );
-+    }
++    crate::core::tool_lifecycle::record_shell_command(0, 0);
++    crate::shell::exit_status::exit_code(status)
  }
  
- /// A primitive type after a sensitive-looking name is a declaration, not
+ fn exec_shell_default(command: &str, shell: &str, shell_flag: &str) -> i32 {
+@@ -1120,4 +1155,56 @@ mod exec_tests {
+             "{envs:?}"
+         );
+     }
++
++    /// Runs `command` through the verbatim `-c` path with stdout bound to
++    /// `stdout` under a 250 ms `LEAN_CTX_SHELL_TIMEOUT_MS`, returning the
++    /// exit code and the elapsed time.
++    #[cfg(unix)]
++    fn run_limited(command: &str, stdout: std::process::Stdio) -> (i32, std::time::Duration) {
++        let _lock = crate::core::data_dir::test_env_lock();
++        let saved = std::env::var("LEAN_CTX_SHELL_TIMEOUT_MS").ok();
++        crate::test_env::set_var("LEAN_CTX_SHELL_TIMEOUT_MS", "250");
++        let start = std::time::Instant::now();
++        let code = super::exec_inherit_limited(command, "sh", "-c", stdout);
++        let elapsed = start.elapsed();
++        match saved {
++            Some(v) => crate::test_env::set_var("LEAN_CTX_SHELL_TIMEOUT_MS", v),
++            None => crate::test_env::remove_var("LEAN_CTX_SHELL_TIMEOUT_MS"),
++        }
++        (code, elapsed)
++    }
++
++    /// #2268: the verbatim path times out like the buffered runner, with
++    /// stdout on a pipe.
++    #[cfg(unix)]
++    #[test]
++    fn inherit_limited_times_out_with_stdout_on_a_pipe() {
++        let (reader, writer) = std::io::pipe().expect("pipe");
++        let (code, elapsed) = run_limited("sleep 3", writer.into());
++        drop(reader);
++        asser
+```
+
+**File**: `rust/src/shell/exec/process.rs` (modified, +51/-6)
+```diff
+@@ -150,12 +150,7 @@ pub fn wait_with_limits_captured(
+         || reader_join_failed;
+ 
+     if timed_out || stdout_truncated {
+-        let notice = format!(
+-            "\n[lean-ctx: output truncated at {} MB / {}s limit]\n",
+-            max_bytes / (1024 * 1024),
+-            timeout.as_secs()
+-        );
+-        stdout_buf.extend_from_slice(notice.as_bytes());
++        stdout_buf.extend_from_slice(output_limit_notice(max_bytes, timeout).as_bytes());
+     }
+     if stderr_truncated {
+         let notice = format!(
+@@ -193,6 +188,56 @@ pub fn wait_with_limits_captured(
+     }
+ }
+ 
++/// The notice a run that hit its byte or time limit reports.
++pub fn output_limit_notice(max_bytes: usize, timeout: std::time::Duration) -> String {
++    format!(
++        "\n[lean-ctx: output truncated at {} MB / {}s limit]\n",
++        max_bytes / (1024 * 1024),
++        timeout.as_secs()
++    )
++}
++
++/// Wait for a child whose stdio is inherited (its output goes straight to the
++/// caller's file, pipe or terminal), ending it at `timeout` with the same
++/// kill as [`wait_with_limits_captured`]: the child's own process group when
++/// it leads one (`kill_group`), else the child alone (#2268). Returns the
++/// exit status and whether the deadline fired.
++pub fn wait_inherited_with_timeout(
++    mut child: Child,
++    timeout: std::time::Duration,
++    kill_group: bool,
++) -> (std::process::ExitStatus, bool) {
++    const REAP_BUDGET: std::time::Duration = std::time::Duration::from_secs(2);
++    const MAX_POLL: std::time::Duration = std::time::Duration::from_millis(50);
++
++    let own_group = owned_group(&mut child, kill_group);
++    let start = std::time::Instant::now();
++    // Short first polls keep a quick command as fast as a plain `wait`.
++    let mut poll = std::time::Duration::from_millis(1);
++    let mut timed_out = false;
++    loop {
++        if start.elapsed() > timeout {
++            // Not reaped yet: the leader still pins its group id.
++            kill_child(&mut child, own_group);
++            timed_out = true;
++            break;
++        }
++        match exited_unreaped(&mut child) {
++            Ok(true) => break,
++            Err(_) => {
++                kill_child(&mut child, own_group);
++                break;
++            }
++            Ok(false) => {
++                std::thread::sleep(poll.min(timeout.saturating_sub(start.elapsed())));
++                poll = (poll * 2).min(MAX_POLL);
++            }
++        }
++    }
++    let status = reap_within(&mut child, REAP_BUDGET).unwrap_or_else(synthetic_failure_status);
++    (status, timed_out)
++}
++
+ /// What one reader has read of its stream so far, shared with the waiting
+ /// thread: the bytes (never more than the stream's limit) and whether the
+ /// limit cut them short.
 ```
 
 ---
 
-### Incident Patch 3: `992b9781` (2026-11-16)
-**Commit Message**: fix(pi): keep failed reads out of the prompt editor (#2256)
+### Incident Patch 2: `f3c0ba69` (2026-11-22)
+**Commit Message**: fix: Windows host-shell parsing and path comparison; shell-policy state-guard bindings; npm mcpName
 
-ctx_read's bridge try also wrapped readFile/readSlice, so a missing
-file was logged as "bridge call failed, falling back to CLI: ENOENT"
-via console.error, which Pi draws inside its prompt editor, and then
-retried through the CLI.
-
-- New bridge-read.ts (Pi-free, vitest-testable): readViaBridge runs
-  only the bridge call; a failure falls back silently and is kept for
-  /lean-ctx ("Last read fallback").
-- Both ctx_read paths read the file after the bridge call, outside any
-  catch, so ENOENT becomes the tool's error in the transcript.
-- mcp-bridge: transport error, max-reconnect and "Reconnected" no
-  longer write to the console (lastError already carries them); the
-  schema-cache write failure is ignored (cache only).
-
-Test: bridge-read.test.ts — a failing bridge returns undefined,
-records the fallback, and does not call console.error.
+Covered by the 3.12.7 advisory.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.gitattributes` (modified, +4/-0)
+```diff
+@@ -50,3 +50,7 @@ THIRD_PARTY_NOTICES merge=leanctx-regenerate
+ # Vendored upstream sources keep upstream bytes (the vendored digest and the
+ # third-party asset record pin them), so `git diff --check` must not ask for a fix.
+ rust/crates/vendor/oauth2/UPGRADE.md -whitespace
++
++# Cloud's signed test vector is hashed byte for byte (`plan_events` tests);
++# a CRLF checkout on Windows would change its digest.
++rust/crates/lean-ctx-cloud/tests/fixtures/plan.vector.json -text
+```
 
 **File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -18,6 +18,10 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   null` (Kotlin, Swift) kept the type masked. A `Name?` value now stays visible only on a
-   line that starts by declaring it (`val`/`var`/`let`, or a `fun`/`func`/`init`/`constructor`
-   parameter list); `password: Welcome?` in `.env`, YAML, URLs or prose stays masked.
-+- **Pi: a failed read no longer prints into the prompt editor (#2256).** `ctx_read` on a missing
-+  file printed "bridge call failed, falling back to CLI: ENOENT" into Pi's editor. The file
-+  error now reaches the transcript as the tool's error, and bridge fallbacks, transport
-+  errors and reconnects are no longer written to the console; `/lean-ctx` shows the last one.
+@@ -114,6 +114,8 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
  
- ## [3.12.6] — 2026-11-15
+ - **`lean-ctx run [--cloud]`: a coding agent on a task in a fresh worktree.** `lean-ctx run "<task>"` starts Claude Code or Codex (`--agent`) in a new git worktree on branch `leanctx/run/<id>`, with the agent's own login or the LeanCTX balance (`--model-access`); `run list|status|events|stop|fetch` follow it (contract §35). `--cloud` is for a LeanCTX computer, which is not available yet (until LeanCTX Cloud offers computers it ends with `computer_not_available`, "LeanCTX computers are not available yet.", and nothing is started); then the code goes there only over SSH as a git push, never through LeanCTX Cloud. A run is billed from its first minute and starts only from a terminal: without one nothing is sent ("Starting a paid computer needs you at a terminal or in LeanCTX Code."), and without `--yes` (or a yes at the prompt) the command exits with `confirmation_required` and the price. `run stop` and `--max-minutes` kill the agent's process group 10 s after SIGTERM; `run fetch` fast-forwards the run branch; a run whose computer was stopped for an empty balance ends as `stopped` with `stop_reason: balance_empty`.
  
++- **The `lean-ctx-bin` npm package declares `"mcpName": "io.github.yvgude/lean-ctx"` (#2263).** MCP registries that verify npm package identity (such as Agentregistry) can register LeanCTX from the published package.
++
+ ### Changed
+ 
+ - **One claims model: explicit `ctx_agent` claims are unit claims.** `claim`/`release` with
+@@ -321,6 +323,8 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ 
+ - **`ctx_shell` no longer refuses a `gh api` loop as a program run on lean-ctx's own state when a reassigned variable also appears inside single quotes (#2261).** In `c=""; for p in 1; do gh api -f c="$c" -f q='($c)' …; c=$(echo q); done` the state guard also substituted the literal `$c` inside `'($c)'`, so the run-time value of `c` was read as a path into `~/.config/lean-ctx`. A `$` or backtick inside single quotes is now text, as in the shell. A variable that really expands to the state directory is still refused, and segments that may run a word as shell code later (`trap`, `ssh`, `watch`, a shell or a wrapper, `git`) or use `$'…'` or a here-document keep the old reading.
+ 
++- **`ctx_shell` no longer refuses a copy to a variable that holds literal text around a `date` substitution as a write to lean-ctx's own state (#2267).** In `backup=".git/backups/x.$(date -u +%Y%m%dT%H%M%SZ).$$.bak" && cp -p f "$backup"` the state guard bound `backup` to `~/.config/lean-ctx` alone and dropped the literal text, an overblock. Where every substitution in the value is a `date +FORMAT` whose output holds no `/` or `.`, and the literal text before it is a relative path inside the working directory, the value now stays literal and the substitution is judged as a glob (`.git/backups/x.*.bak`). Any other run-time value keeps the fail-closed reading, and its refusal now names the words the command wrote (`cp -p f $b`) instead of the state directory.
++
+ - **Rules setup and uninstall no longer drop user text around the lean-ctx block.**
+   A rules file whose `<!-- /lean-ctx-rules -->` line went missing is now
+   refused with a hint by setup, and left untouched by uninstall, instead of
 ```
 
-**File**: `PUBLISH_MANIFEST.toml` (modified, +3/-0)
+**File**: `PUBLISH_MANIFEST.toml` (modified, +1/-0)
 ```diff
-@@ -2780,6 +2780,9 @@ new_paths = [
-   # #2208 download targets.
-   "packages/pi-lean-ctx/extensions/lens-read-bridge.ts",
-   "packages/pi-lean-ctx/test/lens-read-bridge.test.ts",
-+  # #2256 pi ctx_read bridge fallback without console output: own code, Apache-2.0.
-+  "packages/pi-lean-ctx/extensions/bridge-read.ts",
-+  "packages/pi-lean-ctx/test/bridge-read.test.ts",
-   "rust/src/core/editor_registry/writers/install/muse.rs",
-   "rust/src/core/request_ledger.rs",
-   "rust/crates/lean-ctx-shell-policy/src/download_targets.rs",
+@@ -67,6 +67,7 @@ new_paths = [
+   "rust/crates/lean-ctx-doc/src/state.rs",
+   "rust/crates/lean-ctx-doc/src/write.rs",
+   "rust/crates/lean-ctx-shell-policy/src/command_word.rs",
++  "rust/crates/lean-ctx-shell-policy/src/gh2267_tests.rs",
+   "rust/crates/lean-ctx-shell-policy/src/tests_alias_body.rs",
+   "rust/crates/lean-ctx-shell-policy/src/tests_case_arm.rs",
+   "rust/crates/lean-ctx-shell-policy/src/records_guard.rs",
 ```
 
-**File**: `packages/pi-lean-ctx/extensions/bridge-read.ts` (added, +47/-0)
+**File**: `packages/lean-ctx-bin/package.json` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Bridge-backed ctx_read without console output (#2256).
-+//
-+// Kept free of Pi imports so it is unit-testable on its own (importing Pi's
-+// runtime drags in an undici that cannot load under vitest).
-+//
-+// Pi draws its prompt editor in the same terminal, so a `console.error` from a
-+// tool call lands inside the editor. A failed bridge call is not the user's
-+// business: the read falls back to the CLI, and the reason is kept for
-+// `/lean-ctx` instead. Errors about the file itself (a missing path) are not
-+// bridge failures; callers read the file outside this function so those reach
-+// the transcript as the tool's error.
-+
-+export interface BridgeReader {
-+  callTool(
-+    name: string,
-+    args: Record<string, unknown>,
-+    signal?: AbortSignal,
-+  ): Promise<{ content: Array<{ type: "text"; text: string }> }>;
-+}
-+
-+let lastFallback: string | undefined;
-+
-+/**
-+ * Run `ctx_read` through the MCP bridge. Returns the text, or `undefined` when
-+ * there is no bridge or the call failed (the caller then uses the CLI).
-+ */
-+export async function readViaBridge(
-+  bridge: BridgeReader | null,
-+  args: Record<string, unknown> & { mode: string },
-+  signal?: AbortSignal,
-+): Promise<string | undefined> {
-+  if (!bridge) return undefined;
-+  try {
-+    const result = await bridge.callTool("ctx_read", args, signal);
-+    return result.content.map((block) => block.text).join("");
-+  } catch (err) {
-+    const reason = err instanceof Error ? err.message : String(err);
-+    lastFallback = `ctx_read(${args.mode}) fell back to the CLI: ${reason}`;
-+    return undefined;
-+  }
-+}
-+
-+/** The latest bridge fallback, for the `/lean-ctx` status. */
-+export function lastReadFallback(): string | undefined {
-+  return lastFallback;
-+}
+@@ -1,6 +1,7 @@
+ {
+   "name": "lean-ctx-bin",
+   "version": "3.12.7",
++  "mcpName": "io.github.yvgude/lean-ctx",
+   "description": "LeanCTX | OSS — the open-source runtime for the Context Gateway for AI Systems. Select context, apply supported controls, and inspect evidence. No Rust required.",
+   "keywords": [
+     "lean-ctx",
 ```
 
-**File**: `packages/pi-lean-ctx/extensions/index.ts` (modified, +32/-33)
+**File**: `rust/crates/lean-ctx-hooks/src/hook_handlers/file_rewrite.rs` (modified, +31/-14)
 ```diff
-@@ -41,6 +41,7 @@ import { posixSafeEnv } from "./env.js";
- import { classifySearchExit, innerTimeoutEnv, sanitizeExtraEnv } from "./exec-result.js";
- import { withFooter } from "./footer.js";
- import { notifyLensRead } from "./lens-read-bridge.js";
-+import { lastReadFallback, readViaBridge } from "./bridge-read.js";
- import { boundReadOutput, READ_OUTPUT_MAX_BYTES, READ_OUTPUT_MAX_LINES } from "./read-output.js";
+@@ -1283,28 +1283,45 @@ mod tests {
+     fn own_wrap_by_binary_path_is_never_wrapped_again() {
+         // Default allowlist and mode: no process-wide env override, which would
+         // leak into parallel rewrite tests that hold no lock.
++        //
++        // `python parse_elf.py` is the line from #2088. On Windows the gate
++        // reads `lean-ctx.exe` as the listed `lean-ctx` and judges the inner
++        // line, which the default allowlist passes, so that wrap is
++        // allowlisted there. `ssh` is on no default allowlist: its wrap is
++        // refused on every host, so only the own-wrap recognition can keep
++        // the hook from wrapping it again.
+         let outcomes: Vec<_> = [
+             "C:/Users/User/AppData/Roaming/npm/node_modules/lean-ctx-bin/bin/lean-ctx.exe",
+             "C:/Users/First Last/AppData/Roaming/npm/node_modules/lean-ctx-bin/bin/lean-ctx.exe",
+         ]
+         .into_iter()
+-        .map(|binary| {
+-            let once = super::wrap_single_command("python parse_elf.py", binary);
+-            (
+-                once.clone(),
+-                lean_ctx_shell_policy::passes_enforced(&once),
+-                rewrite_candidate(&once, binary),
+-                super::needs_enforcement_wrap(&once, binary),
+-                super::rewrite_skip_reason(&once, binary),
+-            )
++        .flat_map(|binary| {
++            [
++                ("python parse_elf.py", false),
++                ("ssh example.com uptime", true),
++            ]
++            .into_iter()
++            .map(move |(inner, refused_everywhere)| {
++                let once = super::wrap_single_command(inner, binary);
++                (
++                    once.clone(),
++                    refused_everywhere,
++                    lean_ctx_shell_policy::passes_enforced(&once),
++                    rewrite_candidate(&once, binary),
++                    super::needs_enforcement_wrap(&once, binary),
++                    super::rewrite_skip_reason(&once, binary),
++                )
++            })
+         })
+         .collect();
  
- const BRIDGE_STARTUP_TIMEOUT_MS = 10_000;
-@@ -604,17 +605,14 @@ export default async function (pi: ExtensionAPI) {
-         const mode = `lines:${startLine}-${endLine}`;
-         // Route line-range reads through the bridge too, so re-reading the same
-         // slice hits the session cache instead of re-spawning a CLI per call (#361).
--        if (mcpBridge) {
--          try {
--            const bridged = await mcpBridge.callTool("ctx_read", { path: absolutePath, mode, ...(forceFresh ? { fresh: true } : {}) }, signal);
--            const bridgedText = bridged.content.map((block) => block.text).join("");
--            const originalSlice = await readSlice(absolutePath, startOffset, params.limit);
--            const decorated = withFooter(bridgedText, { originalText: originalSlice.text, always: true, preferEstimate: true, suppressIfNoSaving: true });
--            notifyLensRead(absolutePath, startOffset, params.limit);
--            return boundedReadResult(decorated.text, { path: absolutePath, lines: originalSlice.lines, source: "lean-ctx-bridge", mode, compression: decorated.stats });
--          } catch (err) {
--            console.error(`[pi-lean-ctx] ctx_read(${mode}) bridge call failed, falling back to CLI: ${err}`);
--          }
-+        // The file is read outside the bridge call: a missing path is the
-+        // tool's error for the transcript, not a bridge failure (#2256).
-+        const bridgedText = await readViaBridge(mcpBridge, { path: absolutePath, mode, ...(forceFresh ? { fresh: true } : {}) }, signal);
-+        if (bridgedText !== undefined) {
-+          const originalSlice = await readSlice(absolutePath, startOffset, params.limit);
-+          const decorated = withFooter(bridgedText, { originalText: originalSlice.text, always: true, preferEstimate: true, suppressIfNoSaving: true });
-+          notifyLensRead(absolutePath, startOffset, params.limit);
-+          return boundedReadResult(decorated.text, { path: absolutePath, lines: originalSlice.lines, source: "lean-ctx-bridge", mode, compression: decorated.stats });
-         }
-         const args = ["read", absolutePath, "-m", mode, ...(forceFresh ? ["--fresh"] : [])];
-         try {
-@@ -650,25 +648,20 @@ export default async function (pi: ExtensionAPI) {
-       // CEP session (counted by `lean-ctx gain`). The one-shot CLI path below
-       // spawns a fresh `lean-ctx read` per call and therefore cannot cache
-       // across calls — it is used when the bridge is unavailable or errors.
--      if (mcpBridge) {
--        try {
--          const bridged = await mcpBridge.callTool(
--            "ctx_read",
--            { path: absolutePath, mode, ...(wantsFresh ? { fresh: true } : {}) },
--            signal,
--          );
--          const bridgedText = bridged.content.map((block) => block.text).join("");
--          const originalText = await readFile(absolutePath, "utf8");
--          const decorated = withFooter(bridgedText, { originalText, always: true, preferEstimate: true, suppressIfNoSaving: true });
--          notifyLensRead(absolutePath);
--          return boundedReadResult(
--            decorated.text,
--            { path: absolutePath, source: "lean-ctx-bridge", mode, compression: decorated.stats },
--            verbatimSource ? originalText : undefined,
--          );
--        } catch (err) {
--          console.error(`[pi-lean-ctx] ctx_read bridge call failed, falling back to CLI: ${err}`);
--        }
-+      const bridgedText = await readViaBridge(
-+        mcpBridge,
-+        { path: absolutePath, mode, ...(wantsFresh ? { fresh: true } : {}) },
-+        signal,
-+      );
-+      if (bridgedText !== undefined) {
-+        const originalText = await readFile(absolutePath, "utf8");
-+        const decorated = withFooter(bridgedText, { originalText, always: true, preferEstimate: true, suppressIfNoSaving: true });
-+        notifyLensRead(absolutePath);
-+        return boundedReadResult(
-+          decorated.text,
-+          { path: absolutePath, source: "lean-ctx-bridge", mode, compression: decorated.stats },
-+          verbatimSource ? originalText : undefined,
-+        );
-       }
- 
-       const args = ["read", absolutePath, "-m", mode, ...(wantsFresh ? ["--fresh"] : [])];
-@@ -918,11 +911,13 @@ export default async function (pi: ExtensionAPI) {
-         localTools: localToolNames,
-       }, {
-         onSchemasDiscovered: (tools) => {
-+          // Discovery can run during a tool call, so no console output here
-+          // (#2256). The cache only speeds up the next start; a failed write
-+          // means that start discovers the 
+-        for (once, allowlisted, rewritten, wrap_again, reason) in outcomes {
+-            assert!(
+-                !allowlisted,
+-                "precondition: the path form itself is not allowlisted: {once}"
+-            );
++        for (once, refused_everywhere, allowlisted, rewritten, wrap_again, reason) in outcomes {
++            if refused_everywhere {
++                assert!(
++                    !allowlisted,
++                    "precondition: the path form itself is not allowlisted: {once}"
++                );
++            }
+             assert_eq!(rewritten, None, "{once}");
+             assert!(!wrap_again, "must not nest another -c layer: {once}");
+             assert_eq!(reason, "already a lean-ctx command", "{once}");
 ```
 
-**File**: `packages/pi-lean-ctx/extensions/mcp-bridge.ts` (modified, +3/-6)
+**File**: `rust/crates/lean-ctx-hooks/src/hook_handlers/tests_parsing_platform.rs` (modified, +3/-0)
 ```diff
-@@ -423,8 +423,9 @@ export class McpBridge {
- 
-     transport.onerror = (err) => {
-       if (this.transport !== transport) return;
-+      // Kept for `/lean-ctx`; console output would land in Pi's prompt
-+      // editor while a session runs (#2256).
-       this.lastError = err.message;
--      console.error(`[lean-ctx MCP bridge] Transport error: ${err.message}`);
-     };
- 
-     this.transport = transport;
-@@ -445,10 +446,7 @@ export class McpBridge {
-     if (this.shuttingDown) return;
-     if (this.reconnectTimer) return;
-     if (this.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
--      this.lastError = `Max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}) reached.`;
--      console.error(
--        `[lean-ctx MCP bridge] Max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}) reached. MCP tools unavailable.`,
--      );
-+      this.lastError = `Max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}) reached. MCP tools unavailable.`;
-       return;
-     }
- 
-@@ -473,7 +471,6 @@ export class McpBridge {
-         if (!this.isConnected()) {
-           throw new Error("lean-ctx MCP bridge failed to connect.");
-         }
--        if (!this.shuttingDown) console.error("[lean-ctx MCP bridge] Reconnected successfully");
-       } catch (error) {
-         this.lastError = error instanceof Error ? error.message : String(error);
-         this.scheduleReconnect();
+@@ -150,6 +150,9 @@ fn rewrite_preserves_native_windows_binary_path() {
+     // #518: a Windows native binary path must survive into the rewritten
+     // command verbatim — no `/c/...` MSYS rewrite, which PowerShell/cmd
+     // cannot execute.
++    // The rewrite guards read the shell, allowlist and config from the
++    // environment, which other tests change while they hold this lock.
++    let _lock = lean_ctx::core::data_dir::test_env_lock();
+     let win_binary = "C:/Users/Dawid/.cargo/bin/lean-ctx.exe";
+     let rewritten =
+         rewrite_candidate("git status", win_binary).expect("git status is a rewrite candidate");
 ```
 
-**File**: `packages/pi-lean-ctx/test/bridge-read.test.ts` (added, +25/-0)
+**File**: `rust/crates/lean-ctx-server/src/tools/ctx_agent_claims.rs` (modified, +8/-1)
 ```diff
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: Apache-2.0
-+import { afterEach, describe, expect, it, vi } from "vitest";
+@@ -778,10 +778,17 @@ mod tests {
+         let unit = parse_unit("./src/lib.rs#fn:parse", ROOT).unwrap();
+         assert_eq!(unit.file, "src/lib.rs");
+         assert_eq!(unit.symbol.as_deref(), Some("fn:parse"));
++        // An absolute path inside the root is made root-relative. The root is
++        // a real absolute directory: `/work/app` has no drive on Windows.
++        let (dir, root, _) = fresh();
+         assert_eq!(
+-            parse_unit("/work/app/src/a.rs", ROOT).unwrap().render(),
++            parse_unit(&format!("{root}/src/a.rs"), &root)
++                .unwrap()
++                .render(),
+             "src/a.rs"
+         );
++        let elsewhere = dir.path().parent().unwrap().join("elsewhere/a.rs");
++        assert!(parse_unit(&elsewhere.to_string_lossy(), &root).is_err());
+         assert!(parse_unit("../other/a.rs", ROOT).is_err());
+         assert!(parse_unit("/elsewhere/a.rs", ROOT).is_err());
+         assert!(parse_unit("src/a.rs#parse", ROOT).is_err());
+```
+
+**File**: `rust/crates/lean-ctx-server/src/tools/ctx_graph_landing/tests.rs` (modified, +13/-11)
+```diff
+@@ -100,8 +100,9 @@ fn commit(dir: &Path, msg: &str) {
+     git(dir, &["commit", "-q", "-m", msg]);
+ }
+ 
+-/// `main` = base; `head` changes `helper`; `other` changes `api` (a caller of
+-/// `helper`); `apart` changes only `unrelated`.
++/// `main` = base; `topic` changes `helper`; `other` changes `api` (a caller of
++/// `helper`); `apart` changes only `unrelated`. Not `head`: on a
++/// case-insensitive file system (Windows) git resolves `head` to `HEAD`.
+ fn fixture() -> tempfile::TempDir {
+     let tmp = tempfile::tempdir().expect("tempdir");
+     let d = tmp.path();
+@@ -112,7 +113,7 @@ fn fixture() -> tempfile::TempDir {
+     write(d, "tests/other_test.rs", OTHER_TEST);
+     commit(d, "base");
+     for (branch, from, to) in [
+-        ("head", "    x + 1\n", "    x + 2\n"),
++        ("topic", "    x + 1\n", "    x + 2\n"),
+         ("other", "    helper(x) * 2\n", "    helper(x) * 3\n"),
+         ("apart", "    7\n", "    8\n"),
+     ] {
+@@ -549,7 +550,8 @@ fn module_level_change_after_single_line_import_requires_full_suite() {
+ #[test]
+ fn caller_cap_requires_full_suite_and_makes_overlap_unknown() {
+     let repo = fixture();
+-    let report = analyze_capped(repo.path(), "main", "head", Some("apart"), 3, 0).expect("analyze");
++    let report =
++        analyze_capped(repo.path(), "main", "topic", Some("apart"), 3, 0).expect("analyze");
+     assert!(!report.head.complete);
+     assert!(report.head.full_suite);
+     assert!(
+@@ -574,7 +576,7 @@ fn caller_cap_requires_full_suite_and_makes_overlap_unknown() {
+ 
+     // Uncapped, the same pair of heads proves `none`.
+     let full =
+-        analyze_capped(repo.path(), "main", "head", Some("apart"), 3, 5000).expect("analyze");
++        analyze_capped(repo.path(), "main", "topic", Some("apart"), 3, 5000).expect("analyze");
+     assert!(full.head.complete && !full.head.full_suite);
+     assert!(full.overlap.as_ref().is_some_and(|o| o.complete));
+ }
+@@ -677,7 +679,7 @@ fn unreadable_security_file_is_selected_whole() {
+ #[test]
+ fn reports_changed_units_callers_and_affected_tests() {
+     let repo = fixture();
+-    let report = run(repo.path(), "head", None, 3);
++    let report = run(repo.path(), "topic", None, 3);
+     assert_eq!(report["schema"], super::SCHEMA);
+     let head = &report["head"];
+ 
+@@ -714,7 +716,7 @@ fn reports_changed_units_callers_and_affected_tests() {
+ #[test]
+ fn depth_bounds_the_caller_search() {
+     let repo = fixture();
+-    let head = &run(repo.path(), "head", None, 1)["head"];
++    let head = &run(repo.path(), "topic", None, 1)["head"];
+     assert_eq!(reason(head, ":test_api"), None, "{head}");
+     assert_eq!(reason(head, ":test_login"), Some("security"), "{head}");
+     // Unfollowed dependents make the selection unsafe.
+@@ -725,7 +727,7 @@ fn depth_bounds_the_caller_search() {
+ #[test]
+ fn detects_semantic_overlap_between_two_heads() {
+     let repo = fixture();
+-    let report = run(repo.path(), "head", Some("other"), 3);
++    let report = run(repo.path(), "topic", Some("other"), 3);
+     let overlap = &report["overlap"];
+     assert_eq!(overlap["verdict"], "overlap", "{overlap}");
+     let pair = overlap["pairs"]
+@@ -746,7 +748,7 @@ fn detects_semantic_overlap_between_two_heads() {
+     );
+     assert_eq!(pair["hops"], 1);
+ 
+-    let apart = run(repo.path(), "head", Some("apart"), 3);
++    let apart = run(repo.path(), "topic", Some("apart"), 3);
+     assert_eq!(apart["overlap"]["verdict"], "none", "{}", apart["overlap"]);
+ }
+ 
+@@ -757,15 +759,15 @@ fn output_is_deterministic() {
+     for format in [Some("json"), None] {
+         let a = handle(
+             Some("main"),
+-            Some("head"),
++            Some("topic"),
+             Some("other"),
+             None,
+             root,
+             format,
+         );
+         let b = handle(
+             Some("main"),
+-            Some("head"),
++            Some("topic"),
+             Some("other"),
+             None,
+             root,
+```
+
+---
+
+### Incident Patch 3: `984a6f57` (2026-11-22)
+**Commit Message**: fix(ci): pipeline expansion tests skip without the private CI include
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `scripts/tests/gitlab_ci_expand.py` (modified, +5/-0)
+```diff
+@@ -51,10 +51,15 @@ def resolve_extends(d, name, seen=()):
+     j = {k: v for k, v in job.items() if k != 'extends'}
+     return deep_merge(base, j)
+ 
++class MissingReference(KeyError):
++    """A !reference whose target is not defined in the loaded configuration."""
 +
-+import { lastReadFallback, readViaBridge } from "../extensions/bridge-read.js";
-+
-+describe("readViaBridge", () => {
-+  afterEach(() => {
-+    vi.restoreAllMocks();
-+  });
-+
-+  it("falls back without writing into Pi's prompt editor (#2256)", async () => {
-+    const errors = vi.spyOn(console, "error");
-+    const failing = {
-+      callTool: async () => {
-+        throw new Error("MCP transport closed");
-+      },
-+    };
-+
-+    const text = await readViaBridge(failing, { path: "/tmp/x.ts", mode: "full" });
-+
-+    expect(text).toBeUndefined();
-+    expect(errors).not.toHaveBeenCalled();
-+    expect(lastReadFallback()).toBe("ctx_read(full) fell back to the CLI: MCP transport closed");
-+  });
-+});
+ def resolve_refs(d, node):
+     if isinstance(node, Ref):
+         cur = d
+         for p in node:
++            if not isinstance(cur, dict) or p not in cur:
++                raise MissingReference(list(node))
+             cur = cur[p]
+         return resolve_refs(d, copy.deepcopy(cur))
+     if isinstance(node, dict):
+```
+
+**File**: `scripts/tests/test_gitlab_runtime_gate.py` (modified, +9/-1)
+```diff
+@@ -1246,8 +1246,16 @@ def setUpClass(cls):
+         except ImportError:
+             raise unittest.SkipTest("PyYAML not installed")
+         cls.ex = load_expand()
+-        cls.cfg = cls.ex.expand(str(ROOT))
+         cls.private = (ROOT / "ee/ci/scope-register.yml").exists()
++        try:
++            cls.cfg = cls.ex.expand(str(ROOT))
++        except cls.ex.MissingReference as missing:
++            # The pipeline references jobs of the private include; without it
++            # (the public export) there is no complete pipeline to expand.
++            # In the private checkout a dangling reference stays a failure.
++            if cls.private:
++                raise
++            raise unittest.SkipTest(f"!reference {missing.args[0]} needs the private CI include")
+ 
+     def run_pipeline(self, source, branch, flag=None, jobs=None, extra=None):
+         """{job: (tags, resource_group, cache policies)}, or None for no pipeline."""
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2266** (2026-11-22): chore(release): 3.12.7 (@yvgude)
+- **PR #2265** (closed): chore(release): 3.12.7 (@yvgude)
 - **PR #2257** (2026-11-16): fix: write-guard quoting, Copilot deny reason, nullable types, Pi read errors (#2254, #2255, #2256) (@yvgude)
 - **PR #2253** (2026-11-15): chore(release): 3.12.6 (@yvgude)
 - **PR #2251** (2026-11-14): Release 3.12.5 (@yvgude)
 - **PR #2249** (2026-11-14): Release 3.12.5 (@yvgude)
-- **PR #2246** (closed): chore(deps): bump hono from 4.13.13 to 4.13.18 in /packages/pi-lean-ctx (@dependabot[bot])
-- **PR #2245** (closed): Release 3.12.5 (@yvgude)
 
 ---
 
@@ -3183,33 +3020,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security: re-pin credential_redaction.rs scanner digest
+## X. shell): enforce the timeout when -c writes to a file
 
 **RULE**:
-When implementing operations in `security/history-policy-v1.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `866f1755`: security: re-pin credential_redaction.rs scanner digest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `11af55a0`: shell): enforce the timeout when -c writes to a file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `security/history-policy-v1.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "4f90e1332d1bb5a43e7792f433ec295ff2ec3a2dea6127af49ca2fbc61fe599c",
-    "report_sha256": "64a7705157ae8e2fba05620cc547e6f904bb1e6f81dcbe9ac61870c10e343b2d"
+- **`lean-ctx -c` enforces the shell timeout when stdout is a regular file (#2268).**
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "6e522741b965a4ab8bb858e4fb765f4f6ca7d5aa18dd14533490874341313cb1",
-    "report_sha256": "8fb633fa2e1d6873973dc66494bf3bde32e9c7a79c633e79b78bb696432f3a02"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `866f1755` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `11af55a0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

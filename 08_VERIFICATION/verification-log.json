@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-DKMW",
-    "timestamp": "2026-11-21T17:49:49.112Z",
-    "repository": "FastVideo/FastH3-Omni-Comfy",
-    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-    "contentHash": "702ce0bda670fe18299d9499ee7d755fdf54bd3289b5b5e963a83398acba1466",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-DLUL",
-    "timestamp": "2026-11-21T17:49:50.685Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "90c2f4a4054d5ad260687dc1b8e5352a49c0d38733a35585eb339df16f9f65b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-DQGN",
-    "timestamp": "2026-11-21T17:49:56.663Z",
-    "repository": "openreplay/openreplay",
-    "learningId": "learn-github-openreplay-openreplay",
-    "contentHash": "bb82497f94a9281706806b3a5d75b36f0d1729a7a06372e201ea667d0f5f9549",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-DRSB",
-    "timestamp": "2026-11-21T17:49:58.379Z",
-    "repository": "kube-rs/kube",
-    "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "55c73f6a61c28307863d62968ebb3411dca660e7936cc8ac37e124ab5eaf544c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-DWBN",
     "timestamp": "2026-11-21T17:50:04.259Z",
     "repository": "duckdb/duckdb",
@@ -7490,6 +7430,66 @@
     "repository": "apache/shardingsphere",
     "learningId": "learn-github-apache-shardingsphere",
     "contentHash": "1d68794b4c4cc91f42c3cc2055fede5cf8ac0bfd642dc95ba49c8e77b02371f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-J6HG",
+    "timestamp": "2026-11-23T17:29:31.540Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+    "contentHash": "b6c95fe289aae987a1e15c7f2a1af3b88c0393dc237702c202a452fb960f406b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-J89G",
+    "timestamp": "2026-11-23T17:29:33.844Z",
+    "repository": "yvgude/lean-ctx",
+    "learningId": "learn-github-yvgude-lean-ctx",
+    "contentHash": "a9a72670c3e0499ffcd30bd30285e9aa46cd39c6394322c8b03202f309752e8c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-JBOO",
+    "timestamp": "2026-11-23T17:29:38.280Z",
+    "repository": "Louis-CFM/coucou",
+    "learningId": "learn-github-louis-cfm-coucou",
+    "contentHash": "38e13dbb967e5e11e13e67e21f15def3b57709477680284dac1c3b82b5e707b5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-JDSH",
+    "timestamp": "2026-11-23T17:29:41.009Z",
+    "repository": "k3s-io/k3s",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

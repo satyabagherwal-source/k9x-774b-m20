@@ -4,22 +4,22 @@
 {
   "source_repository": "Louis-CFM/coucou",
   "source_url": "https://github.com/Louis-CFM/coucou",
-  "source_version": "ab981434",
+  "source_version": "754f2bdb",
   "license": "MIT",
-  "timestamp": "2026-11-20T17:12:13.104Z",
+  "timestamp": "2026-11-23T17:29:38.656Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-louis-cfm-coucou",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Louis-CFM/coucou](https://github.com/Louis-CFM/coucou) (Revision: `ab981434`).  
-> **License**: MIT | **Timestamp**: `2026-11-20T17:12:13.104Z`  
+> **Provenance**: Harvested from [Louis-CFM/coucou](https://github.com/Louis-CFM/coucou) (Revision: `754f2bdb`).  
+> **License**: MIT | **Timestamp**: `2026-11-23T17:29:38.656Z`  
 > **Learning ID**: `learn-github-louis-cfm-coucou`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Louis-CFM/coucou` (Commit: `ab981434`)
+- **Target Repository**: `Louis-CFM/coucou` (Commit: `754f2bdb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:12:11.839Z  
+> **Harvest Timestamp**: 2026-11-23T17:29:37.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7359 stars
+- **Stars / Engagement**: 7410 stars
 
 ---
 
@@ -1804,124 +1804,335 @@ final class SoundEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80ad610c` (2026-11-19)
-**Commit Message**: Merge pull request #1110 from chennurivarun/fix/dictation-keyboard-languages-main-thread
+### Incident Patch 1: `b85bb19e` (2026-11-21)
+**Commit Message**: Release prep: Windows and Linux 0.6.0, Android 0.6.0
 
-Flow: read keyboard layouts on the main thread (macOS 27 crash)
+Windows and Linux 0.6.0: start a Claude Code session from the island or
+from Coucou for Android 0.6.0, drop a file on a session, approve
+Antigravity and OpenCode. Version 0.6.0 in Cargo, npm, Tauri and the Arch
+PKGBUILD; CHANGELOG dated; README rows, Linux links and paragraph.
+What's new: the session item says island (no notch on a PC), and the phone
+launch replaces the « OK Coucou » item; 14 languages, the test passes.
 
-**File**: `NotchBuddy/Sources/App/AnalyzerDictation.swift` (modified, +1/-1)
+Android 0.6.0 (#1133 by @Rhytam23): CHANGELOG dated, README row and
+download links, docs/android.html and docs/index.html point to android-v0.6.0.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
+
+**File**: `CHANGELOG.md` (modified, +2/-2)
 ```diff
-@@ -97,7 +97,7 @@ final class AnalyzerDictation: @unchecked Sendable {
-     /// supported, or not installed on this Mac): MacDictation listens then, as before.
-     static func locales(for language: String) async -> [Locale]? {
-         guard SpeechTranscriber.isAvailable else { return nil }
--        let wanted = language == MacDictation.automatic ? MacDictation.automaticLocales() : [Locale(identifier: language)]
-+        let wanted = language == MacDictation.automatic ? await MacDictation.automaticLocales() : [Locale(identifier: language)]
-         guard !wanted.isEmpty else { return nil }
-         let installed = Set(await SpeechTranscriber.installedLocales.map { $0.identifier(.bcp47) })
-         var out: [Locale] = []
+@@ -39,7 +39,7 @@ Fixes:
+ - **Mochi reads the memory pressure** as soon as he comes back on screen (#795 by @orrrrli)
+ - **iPhone link**: the relay is sturdier (#1035) and no longer retries a bad device token forever (#1036), by @hasnain-amir
+ 
+-## Windows and Linux 0.6.0 — Unreleased
++## Windows and Linux 0.6.0 — November 21, 2026
+ 
+ - **The n8n card fills in on start** and shows each new execution, with its sound (#1093, #1095 by @Ohualtex)
+ - **Hardening** — the hook pipe only accepts your own account, Coucou's folders are restricted to you, and the hook relay is checked by its SHA-256 (#1076, #1100 by @Ohualtex)
+@@ -68,7 +68,7 @@ Fixes:
+ - **The finished card goes away when a new prompt comes** (#587) and **the GitHub week strip is graded against its own week** (#611), by @rollecode
+ - **Botan, the founders list** — the second step of the card shown after an update has one more line, *Botan: Mochi is leaving the notch. Join the founders ↗*, which opens [louisraille.fr/botan](https://louisraille.fr/botan). The card is a little taller for it
+ 
+-## Android 0.6.0 — Unreleased
++## Android 0.6.0 — November 21, 2026
+ 
+ - **Coucou for Android 0.6.0**, by @Rhytam23 (versionCode 6)
+   - **Start a Claude Code session from your phone** — a row on Home, **New Claude Code session**: pick one of the projects your computer lists, write what Claude should do, and send. Your terminal opens on the computer with Claude Code and your words, and the session shows on the phone like any other. Sending asks for your fingerprint or screen lock, like Allow. The phone sees the projects' folder names only and cannot type a path; the sheet says whether it was sent, refused (and why) or got no answer. It needs Coucou 0.6.0 on Windows or Linux with Settings → Android phone → **Let the phone start Claude Code sessions** turned on (off by default); with an older computer or a Mac the phone says "Your computer doesn't offer this yet" and everything else works as before
 ```
 
-**File**: `NotchBuddy/Sources/App/MacDictation.swift` (modified, +3/-2)
+**File**: `README.md` (modified, +6/-5)
 ```diff
-@@ -232,7 +232,8 @@ final class MacDictation: @unchecked Sendable {
+@@ -147,7 +147,7 @@ The Mac app does the work; the iPhone app keeps you in the loop when you step aw
+ - 🧩 **Home-screen widgets** — nine of them, from a tiny Mochi to a big card with plan usage and quick buttons. Orange when something waits for you, blue while it works, green when it's done. Read-only: a request is always decided in the app.
+ - 🔒 **Local and private** — the phone talks straight to your computer on your Wi-Fi, paired with a QR code and a pinned certificate. The phone link is **off by default**, and nothing listens until you turn it on.
  
-     /// The languages Automatic listens for: last winner, macOS languages, keyboard layouts,
-     /// Coucou's own language, then English — one per language, up to three.
--    static func automaticLocales() -> [Locale] {
-+    /// Main actor: macOS 27 traps when the keyboard layouts are read off the main thread.
-+    @MainActor static func automaticLocales() -> [Locale] {
-         var ids: [String] = []
-         if let last = UserDefaults.standard.string(forKey: lastHeardKey) { ids.append(last) }
-         // The Mac's languages (not Coucou's override in Settings → General → Language).
-@@ -281,7 +282,7 @@ final class MacDictation: @unchecked Sendable {
-     }
+-**Status:** tested on a real phone (Android 13) with the Windows app. The phone link is in **Coucou 0.4.0 for Windows and Linux**. Download the signed APK from the [latest Android release](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0). Android needs Coucou on **Windows or Linux**, or Coucou 0.6.0 or later on the **Mac** (GitHub build), Android 11 or later, and both on the same Wi-Fi. Full guide: [`android/README.md`](android/README.md).
++**Status:** tested on a real phone (Android 13) with the Windows app. The phone link is in **Coucou 0.4.0 for Windows and Linux**; starting a Claude Code session from the phone needs **Coucou 0.6.0 for Windows or Linux**. Download the signed APK from the [latest Android release](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0). Android needs Coucou on **Windows or Linux**, or Coucou 0.6.0 or later on the **Mac** (GitHub build), Android 11 or later, and both on the same Wi-Fi. Full guide: [`android/README.md`](android/README.md).
  
-     /// The main language of each enabled keyboard layout ("fr" for AZERTY, "en" for ABC…).
--    private static func keyboardLanguages() -> [String] {
-+    @MainActor private static func keyboardLanguages() -> [String] {
-         let filter = ["TISPropertyInputSourceCategory": "TISCategoryKeyboardInputSource"] as CFDictionary
-         guard let list = TISCreateInputSourceList(filter, false)?.takeRetainedValue() as? [TISInputSource] else { return [] }
-         return list.compactMap { source in
+ <table>
+ <tr>
+@@ -198,6 +198,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
+ 
+ | Windows & Linux | Date | Highlights |
+ |---------|------|------------|
++| 0.6.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.6.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.6.0) | Nov 21, 2026 | Start a Claude Code session from the island or from your Android phone, drop a file on a session, approve Antigravity and OpenCode, Botan founders list |
+ | 0.5.9 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.9) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.9) | Nov 3, 2026 | The island never disappears (Mochi or the time when closed), ✕ to fold it, dictation keeps your language, your own dictation key, silence while you speak |
+ | 0.5.8 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.8) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.8) | Oct 31, 2026 | 14 fixes and features by @Ohualtex: permission requests queue, Claude Desktop cards and pill, plan usage in the compact island, Flow pill in a corner |
+ | 0.5.7 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.7) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.7) | Oct 31, 2026 | Mail with classic Outlook on Windows: search, filters, automatic sorting, mail plans from the chat; search the settings |
+@@ -217,7 +218,7 @@ Coucou for Android, by [@Rhytam23](https://github.com/Rhytam23), is released und
+ 
+ | Android | Date | Highlights |
+ |---------|------|------------|
+-| 0.6.0 | Unreleased | Start a Claude Code session on your computer from the phone, spoken alerts when an agent needs you or finishes |
++| [0.6.0](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0) | Nov 21, 2026 | Start a Claude Code session on your Windows or Linux computer from the phone (off by default, standard permission mode), spoken alerts when an agent needs you or finishes |
+ | [0.5.0](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0) | Nov 13, 2026 | Swipe the island up to put it away, nothing lost with the swipe (quiet notifications), hide the island in Do Not Disturb, six more languages (16 translations), a steadier relay link for testers |
+ | [0.4.0](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.4.0) | Nov 3, 2026 | Works with a Mac as well as with Windows and Linux; the island sits in the middle again at a lower screen resolution |
+ | [0.3.0](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.3.0) | Oct 22, 2026 | A light theme and your phone's colours, nine more languages (Arabic right to left), quick actions, a Team widget, Share to Coucou, the weekly recap, a per-agent mute |
+@@ -250,7 +251,7 @@ Everything else, troubleshooting included, is in [docs/IPHONE.md](docs/IPHONE.md
+ 
+ ### Android
+ 
+-1. **Download** `Coucou-Android-0.5.0.apk` from the [release page](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0) on your phone (Android 11 or later) and open it. Android asks once to allow installs from your browser or file manager. You can also [build it from source](#build-from-source).
++1. **Download** `Coucou-Android-0.6.0.apk` from the [release page](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0) on your phone (Android 11 or later) and open it. A
+```
+
+**File**: `docs/android.html` (modified, +2/-2)
+```diff
+@@ -5,7 +5,7 @@
+ <section id="en">
+ <h1>Coucou for Android</h1>
+ <div class="meta">Your computer does the work, your Android phone keeps you in the loop when you step away.</div>
+-<p style="text-align:center;margin:20px 0"><a class="btn" href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0">Download Coucou for Android 0.5.0</a></p>
++<p style="text-align:center;margin:20px 0"><a class="btn" href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0">Download Coucou for Android 0.6.0</a></p>
+ <p class="meta" style="text-align:center">A signed APK, free, no ads. By Rhytam Biswas (<a href="https://github.com/Rhytam23">@Rhytam23</a>).</p>
+ <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:16px 0">
+ <img src="media/android-home.jpg" style="width:100%;max-width:230px;border-radius:14px" alt="Home: Mochi, the agent list, plan usage and a service">
+@@ -22,7 +22,7 @@ <h2>What you need</h2>
+ 
+ <h2>Get it on your phone</h2>
+ <ol>
+-<li><b>Download</b> <code>Coucou-Android-0.5.0.apk</code> from the <a href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0">release page</a> on your phone and open it. Android asks once to allow installs from your browser or file manager.</li>
++<li><b>Download</b> <code>Coucou-Android-0.6.0.apk</code> from the <a href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0">release page</a> on your phone and open it. Android asks once to allow installs from your browser or file manager.</li>
+ <li><b>On your computer:</b> close any older Coucou, start 0.4.0 or later, then Settings → <b>Android phone</b> → turn on <b>Phone link</b>. If Windows asks about the firewall, allow Coucou on private networks.</li>
+ <li><b>Show pairing code</b>, then scan it with the app (or paste the link).</li>
+ <li><b>Start a Claude Code session</b> on the computer: it shows up on the phone within seconds.</li>
+```
+
+**File**: `docs/index.html` (modified, +1/-1)
+```diff
+@@ -66,7 +66,7 @@ <h2>Now on Android</h2>
+ <li><b>Free,</b> no ads, no analytics.</li>
+ </ul>
+ <p class="meta">Needs Coucou 0.4.0 or later on Windows or Linux, or 0.6.0 or later on the Mac (GitHub build), Android 11 or later, and both on the same Wi-Fi.</p>
+-<p style="text-align:center"><a class="btn" href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0">Download the Android app</a><a class="btn ghost" href="android.html">How to set it up</a></p>
++<p style="text-align:center"><a class="btn" href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0">Download the Android app</a><a class="btn ghost" href="android.html">How to set it up</a></p>
+ <div class="card"><b>Private by design.</b> No account, no analytics, no tracking. Your keys stay in your Keychain, Windows Credential Manager or the Linux Secret Service. <a href="privacy.html">Read the privacy policy</a>.</div>
+ <p class="meta">Requires macOS 15 or later. No notch? Mochi sits in a small bar at the top of the screen. Windows 10/11: the button downloads the .msi installer; prefer an .exe? <a href="https://github.com/Louis-CFM/coucou/releases/download/windows-latest/Coucou-Windows-setup.exe">Here it is</a>. Not signed yet, so SmartScreen may ask: click <b>More info → Run anyway</b>. Linux: version 0.5 is out (AppImage, .deb, .rpm), <a href="https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.0">download it here</a>.</p>
+ <footer>© 2026 Louis Raillé · Coucou’s code is open source (MIT) · <a href="https://github.com/Louis-CFM/coucou">GitHub</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="legal.html">Legal notice</a></footer></div></body></html>
+```
+
+**File**: `linux/arch/PKGBUILD` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ pkgname=coucou-git
+ _pkgname=coucou
+-pkgver=0.5.9
++pkgver=0.6.0
+ pkgrel=1
+ pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
+ arch=('x86_64' 'aarch64')
+```
+
+**File**: `windows/Cargo.lock` (modified, +2/-2)
+```diff
+@@ -804,7 +804,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "coucou"
+-version = "0.5.9"
++version = "0.6.0"
+ dependencies = [
+  "arboard",
+  "cpal",
+@@ -841,7 +841,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "coucou-hook"
+-version = "0.5.9"
++version = "0.6.0"
+ dependencies = [
+  "libc",
+  "serde_json",
+```
+
+**File**: `windows/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ members = ["src-tauri", "hook"]
+ resolver = "2"
+ 
+ [workspace.package]
+-version = "0.5.9"
++version = "0.6.0"
+ edition = "2021"
+ license = "MIT"
+ 
+```
+
+**File**: `windows/package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "coucou-windows",
+-  "version": "0.5.9",
++  "version": "0.6.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "coucou-windows",
+-      "version": "0.5.9",
++      "version": "0.6.0",
+       "dependencies": {
+         "@tauri-apps/api": "^2"
+       },
 ```
 
 ---
 
-### Incident Patch 2: `c227a944` (2026-11-19)
-**Commit Message**: fix: avoid crash when requesting speech permission
+### Incident Patch 2: `3a565329` (2026-11-20)
+**Commit Message**: Linux: a session from the phone runs 'command claude', never an alias
 
-Mark the Speech authorization callback @Sendable so it does not inherit requestPermissions main-actor isolation. Speech may invoke it on a background queue; it only resumes a thread-safe continuation.
+As Louis asked: the Linux terminal runs an interactive login shell, so a
+user's alias or shell function named claude still applied, and an alias
+such as claude='claude --dangerously-skip-permissions' would have
+reached a session started from the phone. The phone's launch now uses
+'command claude', which takes the program on $PATH only. The island's
+own launch is unchanged; Windows already skipped aliases with
+Get-Command -CommandType Application.
 
-**File**: `NotchBuddy/Sources/App/Voice/VoiceSettings.swift` (modified, +1/-1)
-```diff
-@@ -135,7 +135,7 @@ enum VoiceSettings {
-         let mic = await AVAudioApplication.requestRecordPermission()
-         guard mic else { return false }
-         return await withCheckedContinuation { cont in
--            SFSpeechRecognizer.requestAuthorization { status in
-+            SFSpeechRecognizer.requestAuthorization { @Sendable status in
-                 cont.resume(returning: status == .authorized)
-             }
-         }
-```
-
----
-
-### Incident Patch 3: `a7ffb534` (2026-11-16)
-**Commit Message**: Flow: read keyboard layouts on the main thread (macOS 27 crash)
-
-On macOS 27, TISCreateInputSourceList asserts it runs on the main queue.
-AnalyzerDictation.locales(for:) is a nonisolated async function, so with
-the language on Automatic it ran on the cooperative pool and Coucou
-trapped (EXC_BREAKPOINT in dispatch_assert_queue) the moment the Flow key
-went down. automaticLocales() is now main-actor isolated, so the compiler
-makes every caller hop to the main thread.
+Tests: the phone's command on zsh, bash and fish, with and without a
+prompt; the island keeps plain claude.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `NotchBuddy/Sources/App/AnalyzerDictation.swift` (modified, +1/-1)
+**File**: `docs/ANDROID_0_6_PLAN.md` (modified, +2/-1)
 ```diff
-@@ -97,7 +97,7 @@ final class AnalyzerDictation: @unchecked Sendable {
-     /// supported, or not installed on this Mac): MacDictation listens then, as before.
-     static func locales(for language: String) async -> [Locale]? {
-         guard SpeechTranscriber.isAvailable else { return nil }
--        let wanted = language == MacDictation.automatic ? MacDictation.automaticLocales() : [Locale(identifier: language)]
-+        let wanted = language == MacDictation.automatic ? await MacDictation.automaticLocales() : [Locale(identifier: language)]
-         guard !wanted.isEmpty else { return nil }
-         let installed = Set(await SpeechTranscriber.installedLocales.map { $0.identifier(.bcp47) })
-         var out: [Locale] = []
+@@ -147,7 +147,8 @@ the row is there when a computer is paired, and says what is missing.
+    terminal to type.
+ 3. **Decided (Louis, 19 November): a session started from the phone always starts in the standard permission mode**,
+    with `--permission-mode default`, whatever the computer's own Claude Code settings say, so it always asks for approval
+-   and the requests arrive on the phone as usual. The island's own launch is unchanged. In `launch.rs` this is
++   and the requests arrive on the phone as usual. On Linux it runs as `command claude`, so a shell alias or function cannot
++   add a flag (Louis, 20 November). The island's own launch is unchanged. In `launch.rs` this is
+    `Origin::Phone` and `launch_from_phone`, tested in `a_session_from_the_phone_always_starts_in_the_standard_permission_mode`.
+ 4. **The list is the island's whole list**, including a folder the user picked by hand there, not only folders sessions ran in.
+ 5. **Two folders with the same name look the same on the phone** (the path is never sent). Rare with ten projects.
 ```
 
-**File**: `NotchBuddy/Sources/App/MacDictation.swift` (modified, +3/-2)
+**File**: `docs/ANDROID_LINK.md` (modified, +3/-1)
 ```diff
-@@ -232,7 +232,8 @@ final class MacDictation: @unchecked Sendable {
+@@ -279,7 +279,9 @@ sent nothing about it, and its `launch` messages are an unknown type: ignored an
+   check that the folder exists, and the prompt handed over the same way, **never written into a command line** (an environment variable
+   on Linux, a temporary file read and deleted by PowerShell on Windows). There is no second launcher.
+ - **Claude Code always starts in the standard permission mode** (`claude --permission-mode default`), whatever the computer's own
+-  Claude Code settings say: a phone can never start a session that doesn't ask for approval. The island's own launch is unchanged.
++  Claude Code settings say: a phone can never start a session that doesn't ask for approval. On Linux it is started as `command claude`,
++  so an alias or a shell function in the user's .bashrc or .zshrc cannot add a flag of its own; on Windows `Get-Command -CommandType
++  Application` already skips them. The island's own launch is unchanged.
+ - The answer goes to the phone that asked. A `launch` whose `id` is not valid is ignored (there is nothing to answer to); the same `id`
+   twice starts one session. The prompt is never logged, on either side, and the phone does not keep it.
+ - **The phone asks for its screen lock (fingerprint, pattern, PIN) before it sends**, like Allow; with no screen lock set up it sends
+```
+
+**File**: `windows/src-tauri/src/launch.rs` (modified, +26/-5)
+```diff
+@@ -53,6 +53,19 @@ impl Origin {
+             Origin::Phone => " --permission-mode default",
+         }
+     }
++
++    /// How the Linux shell names Claude Code. From a phone, `command claude`:
++    /// the program on $PATH, never an alias or a shell function from the
++    /// user's .bashrc or .zshrc, which could add a flag of its own (an alias
++    /// with --dangerously-skip-permissions, say). The island keeps `claude`,
++    /// as it ships today. Windows already skips them for both, with
++    /// Get-Command -CommandType Application.
++    pub fn shell_claude(self) -> &'static str {
++        match self {
++            Origin::Island => "claude",
++            Origin::Phone => "command claude",
++        }
++    }
+ }
  
-     /// The languages Automatic listens for: last winner, macOS languages, keyboard layouts,
-     /// Coucou's own language, then English — one per language, up to three.
--    static func automaticLocales() -> [Locale] {
-+    /// Main actor: macOS 27 traps when the keyboard layouts are read off the main thread.
-+    @MainActor static func automaticLocales() -> [Locale] {
-         var ids: [String] = []
-         if let last = UserDefaults.standard.string(forKey: lastHeardKey) { ids.append(last) }
-         // The Mac's languages (not Coucou's override in Settings → General → Language).
-@@ -281,7 +282,7 @@ final class MacDictation: @unchecked Sendable {
+ /// The prompt as it is handed over: trimmed, on one line.
+@@ -84,8 +97,8 @@ pub fn sh_quote(s: &str) -> String {
+ /// shell again in the project once Claude Code quits.
+ #[cfg_attr(windows, allow(dead_code))]
+ pub fn shell_command(shell: &str, has_prompt: bool, origin: Origin) -> Vec<String> {
+-    let flags = origin.claude_flags();
+-    let run = if has_prompt { format!(r#"claude{flags} "$COUCOU_PROMPT""#) } else { format!("claude{flags}") };
++    let (claude, flags) = (origin.shell_claude(), origin.claude_flags());
++    let run = if has_prompt { format!(r#"{claude}{flags} "$COUCOU_PROMPT""#) } else { format!("{claude}{flags}") };
+     vec![shell.to_string(), "-lic".to_string(), format!("{run}; exec {} -l", sh_quote(shell))]
+ }
+ 
+@@ -448,19 +461,27 @@ mod tests {
+         // overrides them for this session: it asks for approval, and the requests reach the phone as usual.
+         assert_eq!(Origin::Phone.claude_flags(), " --permission-mode default");
+         assert_eq!(Origin::Island.claude_flags(), "", "the island's own launch is unchanged");
++        // On Linux the phone's session skips the user's aliases and shell functions: an alias such as
++        // claude='claude --dangerously-skip-permissions' in .zshrc never reaches it.
++        assert_eq!(Origin::Phone.shell_claude(), "command claude");
++        assert_eq!(Origin::Island.shell_claude(), "claude", "the island's own launch is unchanged");
+ 
+         // Linux, with and without a prompt; the prompt stays in the environment.
+         assert_eq!(
+             shell_command("/bin/zsh", true, Origin::Phone),
+-            s(&["/bin/zsh", "-lic", r#"claude --permission-mode default "$COUCOU_PROMPT"; exec /bin/zsh -l"#])
++            s(&["/bin/zsh", "-lic", r#"command claude --permission-mode default "$COUCOU_PROMPT"; exec /bin/zsh -l"#])
+         );
+         assert_eq!(
+             shell_command("/bin/bash", false, Origin::Phone),
+-            s(&["/bin/bash", "-lic", "claude --permission-mode default; exec /bin/bash -l"])
++            s(&["/bin/bash", "-lic", "command claude --permission-mode default; exec /bin/bash -l"])
++        );
++        assert_eq!(
++            shell_command("/usr/bin/fish", true, Origin::Phone),
++            s(&["/usr/bin/fish", "-lic", r#"command claude --permission-mode default "$COUCOU_PROMPT"; exec /usr/bin/fish -l"#])
+         );
+         let nasty = r#"--dangerously-skip-permissions "x"; claude --permission-mode bypassPermissions"#;
+         let spawn = linux_spawn("/usr/bin/kitty", "/bin/zsh", "/home/me/p", nasty, Origin::Phone);
+-        assert_eq!(spawn.args.last().unwrap(), r#"claude --permission-mode default "$COUCOU_PROMPT"; exec /bin/zsh -l"#);
++        assert_eq!(spawn.args.last().unwrap(), r#"command claude --permission-mode default "$COUCOU_PROMPT"; exec /bin/zsh -l"#);
+         assert!(spawn.args.iter().all(|a| !a.contains("dangerously") && !a.contains("bypass")), "{:?}", spawn.args);
+         assert_eq!(spawn.env, vec![("COUCOU_PROMPT".to_string(), nasty.to_string())]);
+ 
+```
+
+---
+
+### Incident Patch 3: `754f2bdb` (2026-11-21)
+**Commit Message**: Merge pull request #1146 from Louis-CFM/fix-herdr-test-race
+
+Tests: the two herdr tests sharing the pane list no longer race
+
+**File**: `windows/src-tauri/src/herdr.rs` (modified, +6/-0)
+```diff
+@@ -152,8 +152,13 @@ mod tests {
+         assert!(from_payload(&payload("w1:pA", "/home/me/.cargo/bin/herdr", "Ubuntu")).is_some());
      }
  
-     /// The main language of each enabled keyboard layout ("fr" for AZERTY, "en" for ABC…).
--    private static func keyboardLanguages() -> [String] {
-+    @MainActor private static func keyboardLanguages() -> [String] {
-         let filter = ["TISPropertyInputSourceCategory": "TISCategoryKeyboardInputSource"] as CFDictionary
-         guard let list = TISCreateInputSourceList(filter, false)?.takeRetainedValue() as? [TISInputSource] else { return [] }
-         return list.compactMap { source in
++    /// The pane list is shared by the whole process, and tests run in parallel:
++    /// the cap test fills it past the limit, which would evict another test's pane.
++    static SHARED_LIST: std::sync::Mutex<()> = std::sync::Mutex::new(());
++
+     #[test]
+     fn the_pane_list_is_capped() {
++        let _list = SHARED_LIST.lock().unwrap_or_else(|e| e.into_inner());
+         let extra = crate::session_window::MAX_SESSIONS + 3;
+         for i in 0..extra {
+             observe(&json!({ "session_id": format!("herdr-cap-{i}"), "herdr_pane": "w1:pC",
+@@ -181,6 +186,7 @@ mod tests {
+ 
+     #[test]
+     fn a_session_end_forgets_the_pane() {
++        let _list = SHARED_LIST.lock().unwrap_or_else(|e| e.into_inner());
+         let start = json!({ "session_id": "herdr-test-1", "herdr_pane": "w1:pB", "herdr_bin": "/b/herdr",
+             "wsl_distro": "Ubuntu" });
+         observe(&start, "SessionStart");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1146** (2026-11-21): Tests: the two herdr tests sharing the pane list no longer race (@Louis-CFM)
+- **PR #1145** (2026-11-21): Release prep: Windows and Linux 0.6.0, Android 0.6.0 (@Louis-CFM)
+- **PR #1138** (closed): Feature upstream 061 (@Dev-Madhan)
 - **PR #1134** (2026-11-20): Tests: the chat PDF test gets its own temp folder (flaky on Linux CI) (@Rhytam23)
+- **PR #1133** (2026-11-21): Coucou for Android 0.6.0: start a Claude Code session from the phone, spoken alerts (@Rhytam23)
 - **PR #1132** (2026-11-19): Release prep: Mac 0.6.1 (@Louis-CFM)
-- **PR #1131** (2026-11-19): Mochi at 60 fps open, 30 folded: no more 120 Hz redraws (#1116) (@Louis-CFM)
-- **PR #1128** (2026-11-19): Fix crash when requesting speech recognition permission (@luchdom)
-- **PR #1124** (2026-11-19): Flow: dictation pasted as heard when the rewrite model answers or refuses instead of rewriting (@liztim17)
-- **PR #1123** (2026-11-18): README: Botan, the founders list (@Louis-CFM)
 
 ---
 
@@ -1941,31 +2152,33 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in AnalyzerDictation.swift
+## X. Release prep: Windows and Linux 0.6.0, Android 0.6.0
 
 **RULE**:
-When implementing operations in `NotchBuddy/Sources/App/AnalyzerDictation.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80ad610c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b85bb19e`: Release prep: Windows and Linux 0.6.0, Android 0.6.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `NotchBuddy/Sources/App/AnalyzerDictation.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        let wanted = language == MacDictation.automatic ? await MacDictation.automaticLocales() : [Locale(identifier: language)]
+## Windows and Linux 0.6.0 — November 21, 2026
+## Android 0.6.0 — November 21, 2026
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        let wanted = language == MacDictation.automatic ? MacDictation.automaticLocales() : [Locale(identifier: language)]
+## Windows and Linux 0.6.0 — Unreleased
+## Android 0.6.0 — Unreleased
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80ad610c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b85bb19e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

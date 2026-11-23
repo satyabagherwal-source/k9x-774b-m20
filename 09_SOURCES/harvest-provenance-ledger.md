@@ -12428,3 +12428,7 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `15487f34` | Multi-dimensional audit evidence | 2026-11-23T17:20:46.102Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `a40acf9d` | Multi-dimensional audit evidence | 2026-11-23T17:20:47.863Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `0d551770` | Multi-dimensional audit evidence | 2026-11-23T17:20:51.843Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-23T17:29:31.545Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `8ff3aef4` | Multi-dimensional audit evidence | 2026-11-23T17:29:33.849Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `754f2bdb` | Multi-dimensional audit evidence | 2026-11-23T17:29:38.286Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `b5039cf8` | Multi-dimensional audit evidence | 2026-11-23T17:29:41.014Z |

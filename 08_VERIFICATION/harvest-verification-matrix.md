@@ -12395,3 +12395,7 @@
 | `CYCLE-20261123-7X1U` | `2026-11-23T17:20:46.098Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10080` | Yes (`b311b454...`) |
 | `CYCLE-20261123-7YEP` | `2026-11-23T17:20:47.857Z` | `rustls/rustls` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rustls-rustls-learnings.md` | Yes (`74450d7e...`) |
 | `CYCLE-20261123-81HA` | `2026-11-23T17:20:51.838Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10081` | Yes (`1d68794b...`) |
+| `CYCLE-20261123-J6HG` | `2026-11-23T17:29:31.540Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`b6c95fe2...`) |
+| `CYCLE-20261123-J89G` | `2026-11-23T17:29:33.844Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10082` | Yes (`a9a72670...`) |
+| `CYCLE-20261123-JBOO` | `2026-11-23T17:29:38.280Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md` | Yes (`38e13dbb...`) |
+| `CYCLE-20261123-JDSH` | `2026-11-23T17:29:41.009Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10083` | Yes (`949e4e3a...`) |

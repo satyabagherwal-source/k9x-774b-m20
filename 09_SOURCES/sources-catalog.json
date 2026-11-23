@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "b889c27d8916264c5119328c709082f16a4637df30640009270a02ee76b715ca",
-    "lastHarvestedAt": "2026-11-19T05:47:13.665Z",
+    "contentHash": "b6c95fe289aae987a1e15c7f2a1af3b88c0393dc237702c202a452fb960f406b",
+    "lastHarvestedAt": "2026-11-23T17:29:31.545Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "9701b374",
+    "sourceVersion": "8ff3aef4",
     "license": "Apache-2.0",
-    "contentHash": "8a8db34cb5f8213a69f7b788679301533dffec084cd8037370defbc48219a008",
-    "lastHarvestedAt": "2026-11-17T14:33:23.855Z",
+    "contentHash": "a9a72670c3e0499ffcd30bd30285e9aa46cd39c6394322c8b03202f309752e8c",
+    "lastHarvestedAt": "2026-11-23T17:29:33.849Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "647ad670",
+    "sourceVersion": "b5039cf8",
     "license": "Apache-2.0",
-    "contentHash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
-    "lastHarvestedAt": "2026-11-20T10:34:23.729Z",
+    "contentHash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
+    "lastHarvestedAt": "2026-11-23T17:29:41.014Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "ab981434",
+    "sourceVersion": "754f2bdb",
     "license": "MIT",
-    "contentHash": "90b14faa35c2222adcc3105e2fc8f9a3775bc7b5f3107bf4ddd8ba92dff30483",
-    "lastHarvestedAt": "2026-11-20T17:12:12.914Z",
+    "contentHash": "38e13dbb967e5e11e13e67e21f15def3b57709477680284dac1c3b82b5e707b5",
+    "lastHarvestedAt": "2026-11-23T17:29:38.286Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {

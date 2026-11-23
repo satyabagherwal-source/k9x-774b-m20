@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T17:20:51.854Z",
+  "last_updated": "2026-11-23T17:29:41.026Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1745,14 +1745,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "content_hash": "b889c27d8916264c5119328c709082f16a4637df30640009270a02ee76b715ca",
-      "verified_at": "2026-11-19T05:47:13.673Z",
+      "content_hash": "b6c95fe289aae987a1e15c7f2a1af3b88c0393dc237702c202a452fb960f406b",
+      "verified_at": "2026-11-23T17:29:31.557Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T05:47:13.673Z"
+      "last_updated": "2026-11-23T17:29:31.557Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "8a8db34cb5f8213a69f7b788679301533dffec084cd8037370defbc48219a008",
-      "verified_at": "2026-11-17T14:33:23.865Z",
+      "content_hash": "a9a72670c3e0499ffcd30bd30285e9aa46cd39c6394322c8b03202f309752e8c",
+      "verified_at": "2026-11-23T17:29:33.861Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:33:23.865Z"
+      "last_updated": "2026-11-23T17:29:33.861Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
-      "verified_at": "2026-11-20T10:34:23.738Z",
+      "content_hash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
+      "verified_at": "2026-11-23T17:29:41.026Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T10:34:23.738Z"
+      "last_updated": "2026-11-23T17:29:41.026Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -14001,14 +14001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-louis-cfm-coucou",
-      "content_hash": "90b14faa35c2222adcc3105e2fc8f9a3775bc7b5f3107bf4ddd8ba92dff30483",
-      "verified_at": "2026-11-20T17:12:12.922Z",
+      "content_hash": "38e13dbb967e5e11e13e67e21f15def3b57709477680284dac1c3b82b5e707b5",
+      "verified_at": "2026-11-23T17:29:38.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:12:12.922Z"
+      "last_updated": "2026-11-23T17:29:38.340Z"
     },
     "lxml/lxml": {
       "repository": "lxml/lxml",

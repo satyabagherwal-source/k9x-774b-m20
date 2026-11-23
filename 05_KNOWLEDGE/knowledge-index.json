@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T17:20:58.173Z",
+  "last_updated": "2026-11-23T17:29:48.557Z",
   "total_verified_learnings": 9084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24074,
+  "total_items": 24082,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216415,8 +216415,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "647ad670",
-      "content_hash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
+      "source_version": "b5039cf8",
+      "content_hash": "949e4e3abcd668b7023304b3b9283f146a33a356210c8ca59fff6b09cb44028e",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -216434,6 +216434,11 @@
           "number": 9553,
           "title": "Bump Traefik to v3.7.19 and chart to v42.4.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10083,
+          "title": "Add SpatiumDDI to ADOPTERS.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216441,7 +216446,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T10:34:23.494Z",
+      "verified_at": "2026-11-23T17:29:40.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216483,10 +216488,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "repository": "k3s-io/k3s",
-      "source_version": "647ad670",
-      "content_hash": "52bdcf861d2392451e13032e44173ea74de3e3d7de853d304aa992c35b6fda3a",
+      "source_version": "b5039cf8",
+      "content_hash": "1d2cc7938fdbb44b3e32389f358094665de3adcc5827ca43290c85608f993ea0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T10:34:24.179Z"
+      "persisted_at": "2026-11-23T17:29:41.564Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s",
@@ -216495,10 +216500,10 @@
       "relative_path": "08_VERIFICATION/k3s-io-k3s-verification-protocol-empirical-defect-shield-for-k3s-io-k3s.md",
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io/k3s",
       "repository": "k3s-io/k3s",
-      "source_version": "647ad670",
-      "content_hash": "6782e58abe123392aeae921082a8142865838e9d23d38eef36262f62b6754601",
+      "source_version": "b5039cf8",
+      "content_hash": "12febd7c3d16d1e2d353cb5cac32489e097dce4b11361001d6c454aad735092c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T10:34:24.382Z"
+      "persisted_at": "2026-11-23T17:29:41.802Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-",
@@ -220382,14 +220387,19 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "9701b374",
-      "content_hash": "8a8db34cb5f8213a69f7b788679301533dffec084cd8037370defbc48219a008",
+      "source_version": "8ff3aef4",
+      "content_hash": "a9a72670c3e0499ffcd30bd30285e9aa46cd39c6394322c8b03202f309752e8c",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
         {
           "number": 8973,
           "title": "re-pin credential_redaction.rs scanner digest",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10082,
+          "title": "enforce the timeout when -c writes to a file",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -220398,7 +220408,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T14:33:23.645Z",
+      "verified_at": "2026-11-23T17:29:33.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220450,10 +220460,10 @@
       "relative_path": "08_VERIFICATION/yvgude-lean-ctx-verification-protocol-empirical-defect-shield-for-yvgude-lean-ct.md",
       "title": "Verification Protocol: Empirical Defect Shield for yvgude/lean-ctx",
       "repository": "yvgude/lean-ctx",
-      "source_version": "9701b374",
-      "content_hash": "c4c7ee5d0d5c1bc3df951a62eb240218fb7a260ca686e7f56f3309ad8909c7a3",
+      "source_version": "8ff3aef4",
+      "content_hash": "fbefaa023ff24dee6d5317f37ab4748c4a589fc2d8c9c65eefa16bb3949b66e0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T14:33:24.431Z"
+      "persisted_at": "2026-11-23T17:29:34.660Z"
     },
     "learn-github-invertase-react-native-firebase": {
       "learning_id": "learn-github-invertase-react-native-firebase",
@@ -220749,9 +220759,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yvgude-lean-ctx-learnings",
       "repository": "yvgude-lean-ctx-learnings",
       "source_version": "HEAD",
-      "content_hash": "45929c1f304ac358078775f6779a61809c59c567e308e6146fccead0a754ac7b",
+      "content_hash": "167d527ef764a71f24390186d600ca2f1d6b76cc2f47f02a1d31893105955207",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T14:33:43.611Z"
+      "persisted_at": "2026-11-23T17:29:45.608Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core",
@@ -233674,7 +233684,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "b889c27d8916264c5119328c709082f16a4637df30640009270a02ee76b715ca",
+      "content_hash": "b6c95fe289aae987a1e15c7f2a1af3b88c0393dc237702c202a452fb960f406b",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [],
@@ -233683,7 +233693,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T05:47:13.422Z",
+      "verified_at": "2026-11-23T17:29:31.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233700,9 +233710,9 @@
       "title": "Research & Knowledge Intelligence: mudler/locate-anything.cpp-gguf Core Invariants",
       "repository": "mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "f60c86e2dab022fcca75bdd2c5ba50c43f8753a785bb603727359d519a365f67",
+      "content_hash": "32e22144e6002de334c8981c53ea6dc74d0ee4cfb70606df57d5fc614041575e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T05:47:13.871Z"
+      "persisted_at": "2026-11-23T17:29:31.838Z"
     },
     "learn-github-zed-industries-zed": {
       "learning_id": "learn-github-zed-industries-zed",
@@ -233861,9 +233871,9 @@
       "title": "Research & Knowledge Intelligence: hf-mudler-locate-anything.cpp-gguf-learnings Core Invariants",
       "repository": "hf-mudler-locate-anything.cpp-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ff3693f01f5555341ba4410ebbeb15841f3460604daa6895416c2320d7c291f",
+      "content_hash": "9197d4e029589569aa1a39d0062cc471a04651a5934eac8bc1515e9be54e5ed8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T05:47:16.953Z"
+      "persisted_at": "2026-11-23T17:29:46.101Z"
     },
     "learn-huggingface-jialinyyzz-humanizer": {
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
@@ -259849,8 +259859,8 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "ab981434",
-      "content_hash": "90b14faa35c2222adcc3105e2fc8f9a3775bc7b5f3107bf4ddd8ba92dff30483",
+      "source_version": "754f2bdb",
+      "content_hash": "38e13dbb967e5e11e13e67e21f15def3b57709477680284dac1c3b82b5e707b5",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
@@ -259865,7 +259875,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:12:12.714Z",
+      "verified_at": "2026-11-23T17:29:38.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259881,10 +259891,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-architecture-intelligence-louis-cfm-coucou-core-invariants.md",
       "title": "Architecture Intelligence: Louis-CFM/coucou Core Invariants",
       "repository": "Louis-CFM/coucou",
-      "source_version": "ab981434",
-      "content_hash": "03678fd53674d13262d8158212f6337ca1cca979eeb207b74dc92906c84eca72",
+      "source_version": "754f2bdb",
+      "content_hash": "79c7b82eea710076c5c0e141c100a159bafb01281ec7ac4c3f0fb3d2abec5b62",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:12:13.255Z"
+      "persisted_at": "2026-11-23T17:29:38.889Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou",
@@ -259893,10 +259903,10 @@
       "relative_path": "12_DECISIONS/ADR-louis-cfm-coucou-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in Louis-CFM/coucou",
       "repository": "Louis-CFM/coucou",
-      "source_version": "ab981434",
-      "content_hash": "daee61abc4b1dc3a1d5025738692c9e4bbd243a7229c6c5a24300375f0a03e61",
+      "source_version": "754f2bdb",
+      "content_hash": "9cea98a0095de979b8bf4a7030d43c80e698bcea35249de7e4b4fe48e8515a3f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:12:13.405Z"
+      "persisted_at": "2026-11-23T17:29:39.151Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-louis-cfm-coucou": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-louis-cfm-coucou",
@@ -259905,10 +259915,10 @@
       "relative_path": "08_VERIFICATION/louis-cfm-coucou-verification-protocol-empirical-defect-shield-for-louis-cfm-cou.md",
       "title": "Verification Protocol: Empirical Defect Shield for Louis-CFM/coucou",
       "repository": "Louis-CFM/coucou",
-      "source_version": "ab981434",
-      "content_hash": "39760d8c56ec8d2a15295ca9be513854238f35098bc556835230b0ac000fdc73",
+      "source_version": "754f2bdb",
+      "content_hash": "ab0386bd0598207bf142b8dcf2c8c09b313d557f1062aa0ed421d7fe1f78615c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:12:13.533Z"
+      "persisted_at": "2026-11-23T17:29:39.352Z"
     },
     "rule-8757": {
       "learning_id": "rule-8757",
@@ -260021,9 +260031,9 @@
       "title": "Architecture Intelligence: louis-cfm-coucou-learnings Core Invariants",
       "repository": "louis-cfm-coucou-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ed9986151b5945b3f05a5dc8f6385eebee3f2d5a11d567640aeb4afb47b6500",
+      "content_hash": "9114cb7572d4941cd993f66d8d2062ea502f4c5e75f1a7f034a5b68f34128f34",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:12:28.675Z"
+      "persisted_at": "2026-11-23T17:29:48.108Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou-learnings",
@@ -260033,9 +260043,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in louis-cfm-coucou-learnings",
       "repository": "louis-cfm-coucou-learnings",
       "source_version": "HEAD",
-      "content_hash": "75707cde31a5f0c27aa7ff61431550777c302a008e8218725f214d5646fe67d4",
+      "content_hash": "afe65a9a76ac9e7ee6e145baa980e29708e59c70517a77eb747c4463867e8b72",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:12:28.821Z"
+      "persisted_at": "2026-11-23T17:29:48.341Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-louis-cfm-coucou-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-louis-cfm-coucou-learnings",
@@ -260045,9 +260055,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for louis-cfm-coucou-learnings",
       "repository": "louis-cfm-coucou-learnings",
       "source_version": "HEAD",
-      "content_hash": "22279e17ac2e80cf4f1cfb1a6914b1273ed93cb417bb44603ca636090a99bc5e",
+      "content_hash": "aea86103ca0b5a78fec0f6fdc83473fccfa148f9d5112093fce6937dd68dcf5a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:12:28.948Z"
+      "persisted_at": "2026-11-23T17:29:48.557Z"
     },
     "candidate_directive-web-ui-align-literal-and-duration-keyword-parsing-with-promql": {
       "item_id": "candidate_directive-web-ui-align-literal-and-duration-keyword-parsing-with-promql",
@@ -328049,6 +328059,106 @@
       "content_hash": "7beff8814386750d1807c1c9437f6fb30144e8ffd322962845c24a996a3887ad",
       "domain_letter": "H",
       "persisted_at": "2026-11-23T17:20:57.743Z"
+    },
+    "rule-10082": {
+      "learning_id": "rule-10082",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10082,
+      "title": "enforce the timeout when -c writes to a file",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "8ff3aef4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:29:33.562Z"
+    },
+    "candidate_directive-enforce-the-timeout-when-c-writes-to-a-file": {
+      "item_id": "candidate_directive-enforce-the-timeout-when-c-writes-to-a-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J8IO-enforce-the-timeout-when-c-writes-to-a-file.md",
+      "title": "enforce the timeout when -c writes to a file",
+      "repository": "yvgude/lean-ctx",
+      "source_version": "8ff3aef4",
+      "content_hash": "43d3496d941705f902e3b00b2961e9dddc83f235e6d14e779ffed7b21e5b477b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T17:29:34.183Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-technical-construction-intelligence-yvgude-lean-ctx-core-invaria.md",
+      "title": "Technical Construction Intelligence: yvgude/lean-ctx Core Invariants",
+      "repository": "yvgude/lean-ctx",
+      "source_version": "8ff3aef4",
+      "content_hash": "afa6933b364f41ac00d1fce94e19d192161eeabd251f43c658058adea9d7bbcf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T17:29:34.420Z"
+    },
+    "candidate_directive-release-prep-windows-and-linux-0-6-0-android-0-6-0": {
+      "item_id": "candidate_directive-release-prep-windows-and-linux-0-6-0-android-0-6-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JJ33-release-prep-windows-and-linux-0-6-0-android-0-6-0.md",
+      "title": "Release prep: Windows and Linux 0.6.0, Android 0.6.0",
+      "repository": "louis-cfm-coucou-learnings",
+      "source_version": "HEAD",
+      "content_hash": "135ca435014d5268a665cbc359dabe9c5d321e326a07ffb8eec6758a380b7472",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T17:29:47.877Z"
+    },
+    "rule-10083": {
+      "learning_id": "rule-10083",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10083,
+      "title": "Add SpatiumDDI to ADOPTERS.md",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "b5039cf8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T17:29:40.735Z"
+    },
+    "candidate_directive-add-spatiumddi-to-adopters-md": {
+      "item_id": "candidate_directive-add-spatiumddi-to-adopters-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JE1B-add-spatiumddi-to-adopters-md.md",
+      "title": "Add SpatiumDDI to ADOPTERS.md",
+      "repository": "k3s-io/k3s",
+      "source_version": "b5039cf8",
+      "content_hash": "5b97d652652413a8ad83f80cd99503317f808ebad3c1cc3febc19bbbba85046c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T17:29:41.328Z"
+    },
+    "candidate_directive-shell-enforce-the-timeout-when-c-writes-to-a-file": {
+      "item_id": "candidate_directive-shell-enforce-the-timeout-when-c-writes-to-a-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JGYN-shell-enforce-the-timeout-when-c-writes-to-a-file.md",
+      "title": "shell): enforce the timeout when -c writes to a file",
+      "repository": "yvgude-lean-ctx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e6057e0fdf0f899bfddbbf35aaa1181c5ad01436097f05b0b5a23e7c7a33d08",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T17:29:45.126Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-learnings-technical-construction-intelligence-yvgude-lean-ctx-le.md",
+      "title": "Technical Construction Intelligence: yvgude-lean-ctx-learnings Core Invariants",
+      "repository": "yvgude-lean-ctx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a52aee9970c3b5fd2325ac8e9a2dcf9bdc8c4f075e0cf3a5d99456ce17f58c7e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T17:29:45.358Z"
     }
   },
   "ai-builder-brain": {

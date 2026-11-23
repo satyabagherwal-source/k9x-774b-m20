@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T17:20:57.956Z",
-  "total_records": 2433,
+  "last_updated": "2026-11-23T17:29:48.108Z",
+  "total_records": 2435,
   "domains": {
     "A": {
       "total": 20,
@@ -1546,7 +1546,7 @@
       ]
     },
     "H": {
-      "total": 579,
+      "total": 581,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2126,7 +2126,9 @@
         "domain_intelligence-technical-construction-intelligence-defguard-defguard-learnings-core-invariants",
         "DOM-H-9811BE70",
         "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants"
       ]
     },
     "I": {
@@ -11032,8 +11034,8 @@
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "repository": "k3s-io/k3s",
-      "content_hash": "52bdcf861d2392451e13032e44173ea74de3e3d7de853d304aa992c35b6fda3a",
-      "created_at": "2026-11-20T10:34:24.179Z"
+      "content_hash": "1d2cc7938fdbb44b3e32389f358094665de3adcc5827ca43290c85608f993ea0",
+      "created_at": "2026-11-23T17:29:41.564Z"
     },
     "DOM-D-81EB8074": {
       "record_id": "DOM-D-81EB8074",
@@ -16769,8 +16771,8 @@
       "title": "Research & Knowledge Intelligence: mudler/locate-anything.cpp-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mudler-locate-anything-cpp-gguf-research-knowledge-intelligence-mudler-locate.md",
       "repository": "mudler/locate-anything.cpp-gguf",
-      "content_hash": "f60c86e2dab022fcca75bdd2c5ba50c43f8753a785bb603727359d519a365f67",
-      "created_at": "2026-11-19T05:47:13.871Z"
+      "content_hash": "32e22144e6002de334c8981c53ea6dc74d0ee4cfb70606df57d5fc614041575e",
+      "created_at": "2026-11-23T17:29:31.838Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants",
@@ -16838,8 +16840,8 @@
       "title": "Research & Knowledge Intelligence: hf-mudler-locate-anything.cpp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mudler-locate-anything-cpp-gguf-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-mudler-locate-anything.cpp-gguf-learnings",
-      "content_hash": "0ff3693f01f5555341ba4410ebbeb15841f3460604daa6895416c2320d7c291f",
-      "created_at": "2026-11-19T05:47:16.953Z"
+      "content_hash": "9197d4e029589569aa1a39d0062cc471a04651a5934eac8bc1515e9be54e5ed8",
+      "created_at": "2026-11-23T17:29:46.101Z"
     },
     "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants",
@@ -24460,8 +24462,8 @@
       "title": "Architecture Intelligence: Louis-CFM/coucou Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-architecture-intelligence-louis-cfm-coucou-core-invariants.md",
       "repository": "Louis-CFM/coucou",
-      "content_hash": "03678fd53674d13262d8158212f6337ca1cca979eeb207b74dc92906c84eca72",
-      "created_at": "2026-11-20T17:12:13.255Z"
+      "content_hash": "79c7b82eea710076c5c0e141c100a159bafb01281ec7ac4c3f0fb3d2abec5b62",
+      "created_at": "2026-11-23T17:29:38.889Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants",
@@ -24487,8 +24489,8 @@
       "title": "Architecture Intelligence: louis-cfm-coucou-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-learnings-architecture-intelligence-louis-cfm-coucou-learnings-.md",
       "repository": "louis-cfm-coucou-learnings",
-      "content_hash": "6ed9986151b5945b3f05a5dc8f6385eebee3f2d5a11d567640aeb4afb47b6500",
-      "created_at": "2026-11-20T17:12:28.675Z"
+      "content_hash": "9114cb7572d4941cd993f66d8d2062ea502f4c5e75f1a7f034a5b68f34128f34",
+      "created_at": "2026-11-23T17:29:48.108Z"
     },
     "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants",
@@ -40856,6 +40858,24 @@
       "repository": "sqlpage/SQLPage",
       "content_hash": "6bcde7887ff2c29b93190bb72586d048a36ec008ac646a1b682e9af9a3aef3a7",
       "created_at": "2026-11-23T16:53:44.840Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: yvgude/lean-ctx Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-technical-construction-intelligence-yvgude-lean-ctx-core-invaria.md",
+      "repository": "yvgude/lean-ctx",
+      "content_hash": "afa6933b364f41ac00d1fce94e19d192161eeabd251f43c658058adea9d7bbcf",
+      "created_at": "2026-11-23T17:29:34.420Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: yvgude-lean-ctx-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-learnings-technical-construction-intelligence-yvgude-lean-ctx-le.md",
+      "repository": "yvgude-lean-ctx-learnings",
+      "content_hash": "a52aee9970c3b5fd2325ac8e9a2dcf9bdc8c4f075e0cf3a5d99456ce17f58c7e",
+      "created_at": "2026-11-23T17:29:45.358Z"
     }
   }
 }
