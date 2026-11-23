@@ -12417,3 +12417,7 @@
 | `CYCLE-20261123-HBHH` | `2026-11-23T18:24:03.941Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10091` | Yes (`a0b8f3fd...`) |
 | `CYCLE-20261123-RRUP` | `2026-11-23T18:32:11.713Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`8834d809...`) |
 | `CYCLE-20261123-S59M` | `2026-11-23T18:32:29.098Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10092` | Yes (`8dae7bf3...`) |
+| `CYCLE-20261123-2R2E` | `2026-11-23T18:40:43.910Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`2bf8d7b5...`) |
+| `CYCLE-20261123-2YTN` | `2026-11-23T18:40:53.963Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10093` | Yes (`74ba0eff...`) |
+| `CYCLE-20261123-35UG` | `2026-11-23T18:41:03.064Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10094` | Yes (`a4ac71f4...`) |
+| `CYCLE-2026-11-23-PROJ-EVOLVE` | `2026-11-23T18:41:37.261Z` | `nginx-kubernetes-ingress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-981FC0DE` [Domain I] | Yes (`db407240...`) |

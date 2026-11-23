@@ -175,8 +175,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
     "license": "Open-Source",
-    "contentHash": "1aa3303a869dce15937709ea24d0fc3ed6c31a565f11e92519e039c3f3724352",
-    "lastHarvestedAt": "2026-11-19T07:51:02.038Z",
+    "contentHash": "2bf8d7b58a29c8980467b44673412d53d16c387027ddaa55625bc90ff77bf9ff",
+    "lastHarvestedAt": "2026-11-23T18:40:43.915Z",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark"
   },
   "hf-liquidai-d1-3b": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "8a4e65a1",
+    "sourceVersion": "80c1ffc3",
     "license": "NOASSERTION",
-    "contentHash": "37354a618c6bb86ee6afb7a8da4b86cdd460598646d61c721b1c488a7fdb3c01",
-    "lastHarvestedAt": "2026-11-22T16:12:33.209Z",
+    "contentHash": "a4ac71f41a3576909e2a38b33dc2cdf1f505b4f5ac5b5f8b4396ea2d7c82a167",
+    "lastHarvestedAt": "2026-11-23T18:41:03.068Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "7ba55784",
+    "sourceVersion": "fad2fe84",
     "license": "Apache-2.0",
-    "contentHash": "79074d3e1188c8676fa39befb66a7a86df7395663e1cab6cea46a961cbb6762f",
-    "lastHarvestedAt": "2026-11-21T17:05:54.309Z",
+    "contentHash": "74ba0eff437774a91dba7e57772d2447c5fc6c277097903bab6a1692cf2f6886",
+    "lastHarvestedAt": "2026-11-23T18:40:53.968Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {

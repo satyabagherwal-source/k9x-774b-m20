@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T18:32:33.910Z",
+  "last_updated": "2026-11-23T18:41:39.344Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50372,6 +50372,46 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-58B132-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-3WT0",
+      "directive_title": "Update WAF and nginx for main",
+      "source_repo": "nginx-kubernetes-ingress-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3WT0-update-waf-and-nginx-for-main.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-3XTW",
+      "directive_title": "[PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts",
+      "source_repo": "yugabyte-yugabyte-db-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3XTW-plat-24048-yba-retry-setflaginmemory-while-the-server-restarts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-23",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-DB47DA",
+      "directive_title": "Update WAF and nginx for main",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nginx-kubernetes-ingress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DB47DA-update-waf-and-nginx-for-main.md",
+      "staged_date": "2026-11-23"
+    },
+    {
+      "id": "CD-REV-1B5BA7",
+      "directive_title": "[PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yugabyte-yugabyte-db",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1B5BA7--plat-24048-yba-retry-setflaginmemory-wh.md",
       "staged_date": "2026-11-23"
     }
   ]

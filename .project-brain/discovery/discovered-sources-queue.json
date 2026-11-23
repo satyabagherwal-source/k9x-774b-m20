@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T18:16:05.564Z",
+  "updated_at": "2026-11-23T18:41:39.039Z",
   "stats": {
-    "total_discovered": 7956,
-    "approved_pending_harvest": 7527,
+    "total_discovered": 7966,
+    "approved_pending_harvest": 7537,
     "harvested_count": 0,
     "rejected_count": 429,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7521,
+      "COMMUNITY_AND_EXPERT": 7531,
       "OFFICIAL_DOCUMENTATION": 250,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -172052,6 +172052,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stakater-reloader-learnings.md",
         "fileName": "stakater-reloader-learnings.md"
+      }
+    },
+    "SRC-92AF3B455041": {
+      "id": "SRC-92AF3B455041",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11514?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11514?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:37.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-1677531AFDAB": {
+      "id": "SRC-1677531AFDAB",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/c1078e1ea1444f1231a8708f7929d24028618d3e?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/c1078e1ea1444f1231a8708f7929d24028618d3e?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:37.445Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-35A5819C405C": {
+      "id": "SRC-35A5819C405C",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/b938f270b4500be2c3784f28621828bb5b4c7afa?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/b938f270b4500be2c3784f28621828bb5b4c7afa?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:37.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-C92AA86E1288": {
+      "id": "SRC-C92AA86E1288",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11513?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11513?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:37.562Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-314B7CA2883C": {
+      "id": "SRC-314B7CA2883C",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/7da45dc3235dfcfafa7b08865aafccf92d152b01?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/7da45dc3235dfcfafa7b08865aafccf92d152b01?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:37.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-F6E1C28CB6C3": {
+      "id": "SRC-F6E1C28CB6C3",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/d7d118107f7907d9cc3b1613571040e55d63d2c7?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/d7d118107f7907d9cc3b1613571040e55d63d2c7?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:37.679Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-3824A9D2CF1B": {
+      "id": "SRC-3824A9D2CF1B",
+      "url": "https://github.com/asottile/pyupgrade",
+      "title": "https://github.com/asottile/pyupgrade",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:37.742Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-006A45FDB02C": {
+      "id": "SRC-006A45FDB02C",
+      "url": "https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=39005",
+      "title": "https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=39005",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:38.888Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-40C867BDBE9E": {
+      "id": "SRC-40C867BDBE9E",
+      "url": "https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=39005",
+      "title": "https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=39005",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:38.954Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-28943A43BBBA": {
+      "id": "SRC-28943A43BBBA",
+      "url": "https://reviewable.io/reviews/yugabyte/yugabyte-db/39005",
+      "title": "https://reviewable.io/reviews/yugabyte/yugabyte-db/39005",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T18:41:39.039Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
       }
     }
   }

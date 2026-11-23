@@ -4,23 +4,23 @@
 {
   "source_repository": "yugabyte/yugabyte-db",
   "source_url": "https://github.com/yugabyte/yugabyte-db",
-  "source_version": "8a4e65a1",
+  "source_version": "80c1ffc3",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T16:12:33.504Z",
+  "timestamp": "2026-11-23T18:41:03.286Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-yugabyte-yugabyte-db",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `8a4e65a1`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T16:12:33.504Z`  
+> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `80c1ffc3`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-23T18:41:03.286Z`  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T16:12:31.924Z  
+> **Harvest Timestamp**: 2026-11-23T18:41:02.008Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10674 stars
+- **Stars / Engagement**: 10675 stars
 
 ---
 
@@ -2259,11 +2259,14 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #38869** (2026-11-22): **[BACKPORT 2026.2][#37695] DocDB: Fix PgVectorIndexTest.BackfillLargeTransactionAppliedAfterCommit/ColocatedYbHnswHnswlib**
-  *Symptoms*: ## Summary  `ListTabletPeersForTableName` returns only peers whose tablet metadata already includes the table. In the colocated variant, a follower adds the table to that metadata only after it applies the table-creation Raft entry, so a lagging follower can be missing and `ASSERT_EQ(peers.size(), cluster_->num_tablet_servers())` sees 2 instead of 3. This adds a test utility `WaitForTableNumPeers` in `mini_cluster`, which waits until a table has a given number of peers and returns them. The test now uses it to wait, with a timeout of `30s * kTimeMultiplier`, until every tablet server's replica includes the table, and then runs the existing check on each replica.  Introduced by ff7bf2fbc58 ([#36909] DocDB: Hold a request scope while backfilling a vector index (#37128)), which added this test: it has failed in CSI since its first run.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  Original commit: 65fc931744dfc07638447cf72d5092fa53c498b8 / #37696  ## Test plan  ./yb_build.sh fastdebug --gcc15 --cxx-test pg_vector_index-test --gtest-filter PgVectorIndexTest.BackfillLargeTransactionAppliedAfterCommit/ColocatedYbHnswHnswlib -n 100 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6 Ran the above locally with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI 
+- **Issue #39005** (2026-11-23): **[PLAT-23681] YBA: Renumber the update_time migration to V481**
+  *Symptoms*: ## Summary  #38600 (PLAT-23681) and #38118 (PLAT-23570) each added a V480 migration, and neither PR showed a conflict, so master now fails Flyway validation with "Found more than one migration with version 480". YBA doesn't start, and tests that start the app (FakeDB) fail.  #38118 merged first, so this moves the `customer_config.update_time` migration to V481. The migration uses `ADD COLUMN IF NOT EXISTS`, so it applies cleanly whichever order a DB sees it in.  ## Test plan  - [x] `V480__Health_Check_And_Scheduler_Not_Running_AlertsTest`, `CustomerConfigTest`, `StorageConfigApiTest`, `EditStorageConfigTest` (FakeDB, so Flyway validates every migration) - [x] Local YBA on a fresh DB starts and applies both migrations (V480 alerts, then V481 update_time)  
+  **Post-Mortem & Fix Analysis**:
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=39005) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=39005) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=39005) it.</sub>
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/39005) <!-- Reviewable:end --> 
 
-- **Issue #38856** (2026-11-22): **[BACKPORT 2026.1][#38602] DocDB: Vector index: xCluster: deleted vector comes back on target after a tablet split (#38605)**
-  *Symptoms*: ## Summary  On an xCluster target, with both transactional and non-transactional replication, a transaction replicated from the source is stored as external intents and applied, writing its vector reverse mapping entries, only when its apply record arrives. If a row is deleted or its vector is updated on the source while the transaction that wrote the vector is committed but not applied (#38070), the target can get the reverse mapping tombstone of the old vector before the mapping entry. Since #38070 the post-split compaction drops a tombstone without a mapping entry only if it is older than the start of the oldest running transaction of the tablet, but the transaction participant does not track external transactions. So if the target tablet is split in that window, the tombstone is dropped, and once the apply record arrives, the mapping of the old vector is live again. The target's table stays correct, but its vector searches return the updated row by its old vector, or a deleted row once it is inserted again. Already affected indexes are reported by `yb-ts-cli verify_vector_indexes` as `SPURIOUS_REVERSE_MAPPING` and have to be rebuilt.  This needs the apply on the source to be delayed until a `cdc_state` checkpoint update passes the statement (every `cdc_state_checkpoint_update_interval_ms`, 15 s by default), since after a target split the poller resumes from that checkpoint and replicates the statement again. On a transactional stream, it also needs the source to replicate
+- **Issue #38987** (2026-11-23): **[BACKPORT 2026.1][#36720] YSQL: Stop the notifications poller from polling the master (#38567)**
+  *Symptoms*: ## Summary  Notifications slots were created like any logical replication slot, with `detect_publication_changes_implicitly` set and the PG catalog tables in the stream. Every node's LISTEN/NOTIFY poller polled the sys catalog tablet on the master leader each round (~4-5 `GetChanges`/s per node when idle), so a master leader change terminated every listener (#36720).  A notifications slot streams only `pg_yb_notifications` through a fixed publication, so it needs none of what catalog polling detects. The master now creates notifications slots without `detect_publication_changes_implicitly` and without the catalog tables, so they use pub refresh (every `cdcsdk_publication_list_refresh_interval_secs`, default 15 min) instead. The poller still reads the catalog from the master once per pub refresh, and an error there is still fatal; that is tracked in #38556.  ## Upgrade/Rollback safety  Only notifications slots created after the master upgrade change; existing ones keep catalog polling until recreated. Old and new tservers both support pub refresh, so mixed versions and rollback are safe.  Original commit: 0ab1c892afbd16c325cc1b5784044e82a4a888e1 / #38567  ## Test plan  - [x] `./yb_build.sh debug --java-test org.yb.pgsql.TestPgListenNotify`: 37/37 pass (6 hit a local "insufficient disk space" setup error and passed on rerun). New tests: - `testPollerDoesNotPollMaster`: masters serve no `GetChanges` while a listener idles. - `testNotificationsAcrossPubRefreshes`: notifications k
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2280,495 +2283,607 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `290d6d08` (2026-11-20)
-**Commit Message**: [#38002] YSQL: Fix race between implicit tablegroup drop and concurrent CREATE TABLE
+### Incident Patch 1: `8c5ff0f2` (2026-11-23)
+**Commit Message**: [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts (#38827)
+
+## Summary
+
+A K8s edit pushes the master addresses in memory (`SetFlagInMemory`) to
+every master and tserver after its non-restart helm upgrade, and
+PLAT-23585 added the same push in the middle of a master move.
+`SetFlagInMemory` made one `setFlag` RPC per flag with no retry. A pod
+can restart at any time, for example when the cluster autoscaler drains
+a node after a full move removes the old pods, so a push that hit a
+restarting pod failed with `ConnectionResetException` and failed the
+edit at its last step.
+
+On K8s universes, `SetFlagInMemory` now retries an RPC failure every 5s
+until `yb.wait_for_server_timeout` (default 5 min, the timeout
+`WaitForServer` uses). The deadline is checked between attempts, so an
+attempt that hangs can run one admin operation timeout past it. A
+restarted pod reads its flags from the gflags Secret, which the helm
+upgrade before the push already rendered, so it only has to come back
+up.
+
+- VM universes are unchanged: one attempt. A VM server that is down
+usually does not come back on its own, and master failover pushes best
+effort without `ignoreErrors` and relies on the first
+
+**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java` (modified, +45/-1)
+```diff
+@@ -22,6 +22,7 @@
+ import com.yugabyte.yw.forms.UniverseDefinitionTaskParams.Cluster;
+ import com.yugabyte.yw.models.Universe;
+ import com.yugabyte.yw.models.helpers.NodeDetails;
++import java.time.Duration;
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.Map.Entry;
+@@ -43,6 +44,12 @@ public class SetFlagInMemory extends ServerSubTaskBase {
+   // The gflag for master addresses.
+   private static final String MASTER_MASTER_ADDR_FLAG = "master_addresses";
+ 
++  private static final Duration RETRY_DELAY = Duration.ofSeconds(5);
++
++  // Whether a failed setFlag RPC is retried, and until when.
++  private boolean retryRpcFailures;
++  private long retryDeadlineMs;
++
+   @Inject
+   public SetFlagInMemory(BaseTaskDependencies baseTaskDependencies) {
+     super(baseTaskDependencies);
+@@ -84,6 +91,7 @@ protected Params taskParams() {
+   @Override
+   public void run() {
+     checkParams();
++    retryDeadlineMs = System.currentTimeMillis() + retryTimeout().toMillis();
+     try {
+       setFlags();
+     } catch (RuntimeException e) {
+@@ -119,6 +127,11 @@ private void setFlags() {
+     }
+     try (YBClientApi client = getClient()) {
+       Universe universe = Universe.getOrBadRequest(taskParams().getUniverseUUID());
++      // A K8s pod can restart at any time, e.g. when the cluster autoscaler moves it, and comes
++      // back on its own; a VM server that is down usually does not. A best-effort push is often
++      // to a server that is down for good. VM callers that push best effort without ignoreErrors
++      // (master failover) rely on the first failure, so they must not wait either.
++      retryRpcFailures = !taskParams().ignoreErrors && Util.isKubernetesBasedUniverse(universe);
+ 
+       if (!taskParams().updateMasterAddrs) {
+         String ysqlPgConfCsv =
+@@ -226,10 +239,41 @@ public static String getInMemoryYsqlPgConfCsv(
+     return GFlagsUtil.overrideWithTelemetryYsqlPgConfCsv(baseYsqlPgConfCsv, telemetryYsqlPgConfCsv);
+   }
+ 
++  // Package-private so tests can stub the timeout and the wait.
++  Duration retryTimeout() {
++    return config.getDuration("yb.wait_for_server_timeout");
++  }
++
++  void waitBeforeRetry(Duration delay) {
++    waitFor(delay);
++  }
++
+   private void setFlag(YBClientApi client, String gflag, String value, HostAndPort hp)
+       throws Exception {
+     log.debug("Setting gflag {} on node {} via non-restart rpc", gflag, hp);
+-    boolean setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
++    boolean setSuccess;
++    while (true) {
++      try {
++        setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
++        break;
++      } catch (Exception e) {
++        // A server that answers and refuses the flag is not retried. The deadline is checked only
++        // between attempts, so an attempt that hangs can run one admin operation timeout past it.
++        if (!retryRpcFailures
++            || ExceptionUtils.indexOfType(e, InterruptedException.class) >= 0
++            || System.currentTimeMillis() + RETRY_DELAY.toMillis() >= retryDeadlineMs) {
++          throw e;
++        }
++        log.warn(
++            "Retrying gflag {} on {} {} in {}: {}",
++            gflag,
++            taskParams().serverType,
++            taskParams().nodeName,
++            RETRY_DELAY,
++            e.getMessage());
++        waitBeforeRetry(RETRY_DELAY);
++      }
++    }
+     if (!setSuccess) {
+       throw new RuntimeException(
+           "Could not set gflag "
+```
+
+**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemoryTest.java` (modified, +91/-20)
+```diff
+@@ -8,7 +8,12 @@
+ import static org.mockito.ArgumentMatchers.anyBoolean;
+ import static org.mockito.ArgumentMatchers.anyString;
+ import static org.mockito.ArgumentMatchers.eq;
++import static org.mockito.Mockito.doNothing;
++import static org.mockito.Mockito.doReturn;
+ import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.never;
++import static org.mockito.Mockito.spy;
++import static org.mockito.Mockito.times;
+ import static org.mockito.Mockito.verify;
+ import static org.mockito.Mockito.when;
+ 
+@@ -24,6 +29,8 @@
+ import com.yugabyte.yw.models.helpers.exporters.audit.AuditLogConfig;
+ import com.yugabyte.yw.models.helpers.exporters.audit.YCQLAuditConfig;
+ import com.yugabyte.yw.models.helpers.exporters.metrics.MetricsExportConfig;
++import java.io.IOException;
++import java.time.Duration;
+ import java.util.Map;
+ import org.junit.Before;
+ import org.junit.Test;
+@@ -42,35 +49,51 @@ public void setUp() throws Exception {
+     mockClient = mock(YBClientApi.class);
+     when(mockYBClient.getClient(any(), any())).thenReturn(mockClient);
+     when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean())).thenReturn(true);
+-    universe = createUniverse("k8s-universe", defaultCustomer.getId(), CloudType.kubernetes);
+-    universe =
+-        Universe.saveDetails(
+-            universe.getUniverseUUID(),
+-            u -> {
+-              NodeDetails node = new NodeDetails();
+-              node.nodeName = NODE_NAME;
+-              node.isTserver = true;
+-              node.isMaster = true;
+-              node.state = NodeDetails.NodeState.Live;
+-              node.tserverRpcPort = 9100;
+-              node.masterRpcPort = 7100;
+-              node.cloudInfo = new CloudSpecificInfo();
+-              node.cloudInfo.private_ip = "10.0.0.1";
+-              node.placementUuid = u.getUniverseDetails().getPrimaryCluster().uuid;
+-              u.getUniverseDetails().nodeDetailsSet.add(node);
+-            });
++    universe = universeWithNode("k8s-universe", CloudType.kubernetes);
++  }
++
++  private Universe universeWithNode(String name, CloudType cloudType) {
++    Universe created = createUniverse(name, defaultCustomer.getId(), cloudType);
++    return Universe.saveDetails(
++        created.getUniverseUUID(),
++        u -> {
++          NodeDetails node = new NodeDetails();
++          node.nodeName = NODE_NAME;
++          node.isTserver = true;
++          node.isMaster = true;
++          node.state = NodeDetails.NodeState.Live;
++          node.tserverRpcPort = 9100;
++          node.masterRpcPort = 7100;
++          node.cloudInfo = new CloudSpecificInfo();
++          node.cloudInfo.private_ip = "10.0.0.1";
++          node.placementUuid = u.getUniverseDetails().getPrimaryCluster().uuid;
++          u.getUniverseDetails().nodeDetailsSet.add(node);
++        });
+   }
+ 
+   private void runSetFlagInMemory(ServerType serverType) {
++    SetFlagInMemory task = app.injector().instanceOf(SetFlagInMemory.class);
++    task.initialize(params(serverType));
++    task.run();
++  }
++
++  private SetFlagInMemory.Params params(ServerType serverType) {
+     SetFlagInMemory.Params params = new SetFlagInMemory.Params();
+     params.setUniverseUUID(universe.getUniverseUUID());
+     params.nodeName = NODE_NAME;
+     params.serverType = serverType;
+     params.force = true;
+     params.gflags = Map.of(GFlagsUtil.YSQL_PG_CONF_CSV, USER_PG_CONF_CSV);
+-    SetFlagInMemory task = app.injector().instanceOf(SetFlagInMemory.class);
++    return params;
++  }
++
++  /** A task that does not wait between retries and retries for the given time. */
++  private SetFlagInMemory retryingTask(SetFlagInMemory.Params params, Duration timeout) {
++    SetFlagInMemory task = spy(app.injector().instanceOf(SetFlagInMemory.class));
++    doReturn(timeout).when(task).retryTimeout();
++    doNothing().when(task).waitBeforeRetry(any());
+     task.initialize(params);
+-    task.run();
++    return task;
+   }
+ 
+   private void persistTelemetryConfig(TelemetryConfig telemetryConfig) {
+@@ -132,6 +155,54 @@ public void testK8sKeepsRawValueWithMetricsOnlyRow() throws Exception {
+   @Test
+   public void testFailedRpcFailsTask() throws Exception {
+     when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean())).thenReturn(false);
+-    assertThrows(RuntimeException.class, () -> runSetFlagInMemory(ServerType.TSERVER));
++    SetFlagInMemory task = retryingTask(params(ServerType.TSERVER), Duration.ofMinutes(5));
++    assertThrows(RuntimeException.class, task::run);
++    // The server answered, so the refusal is not retried.
++    verify(mockClient).setFlag(any(), anyString(), anyString(), anyBoolean());
++    verify(task, never()).waitBeforeRetry(any());
++  }
++
++  @Test
++  public void testRetriesUntilRestartingServerIsBack() throws Exception {
++    when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean()))
++        .thenThrow(new IOException("Connection reset"))
++        .thenThrow(new IOException("Connection reset"))
++        .thenReturn(true);
++    SetFlag
+```
+
+---
+
+### Incident Patch 2: `a61295c2` (2026-11-23)
+**Commit Message**: [#38925] DocDB: Fix PgVectorIndexSingleServerTest.FilteredSearchWithConcurrentUpdates/DistributedYbHnswHnswlib (#38926)
+
+## Summary
+
+The writer thread's `UPDATE` in `TestSearchWithConcurrentUpdates` sometimes failed with `Restart read required` (40001). `WriteQuery::PickReadTimeIfNecessary` uses the tablet's safe time as the read time, and a pending operation can hold safe time back. As a result, the writer's next transaction can read at a time before the previous transaction's commit, so a later, non-first statement that touches a row the previous transaction wrote needs a read restart, which snapshot isolation does not allow. This is correct, retryable database behavior, so the writer now runs each transaction in a lambda that returns a `Status`, asserts that any failure is `IsRetryable`, and issues `ROLLBACK` instead of failing the test.
+
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
+
+## Test plan
+
+./yb_build.sh fastdebug --gcc15 --cxx-test pg_vector_index_single_server-test --gtest-filter PgVectorIndexSingleServerTest.FilteredSearchWithConcurrentUpdates/DistributedYbHnswHnswlib -n 180 YB
+
+**File**: `src/yb/yql/pgwrapper/pg_vector_index_single_server-test.cc` (modified, +17/-10)
+```diff
+@@ -460,19 +460,26 @@ void PgVectorIndexSingleServerTest::TestSearchWithConcurrentUpdates(
+     std::iota(ids.begin(), ids.end(), 1);
+     while (!stop_flag.load(std::memory_order_acquire)) {
+       std::shuffle(ids.begin(), ids.end(), ThreadLocalRandom());
+-      ASSERT_OK(write_conn.Execute("BEGIN"));
+-      for (size_t i = 0; i != kRowsPerTransaction; ++i) {
+-        auto id = ids[i];
+-        auto vector = Vector(id);
+-        if (RandomUniformBool()) {
+-          for (auto& coordinate : vector) {
+-            coordinate = -coordinate;
++      auto status = [&]() -> Status {
++        RETURN_NOT_OK(write_conn.Execute("BEGIN"));
++        for (size_t i = 0; i != kRowsPerTransaction; ++i) {
++          auto id = ids[i];
++          auto vector = Vector(id);
++          if (RandomUniformBool()) {
++            for (auto& coordinate : vector) {
++              coordinate = -coordinate;
++            }
+           }
++          RETURN_NOT_OK(write_conn.ExecuteFormat(
++              "UPDATE test SET embedding = '$0' WHERE id = $1", AsString(vector), id));
+         }
+-        ASSERT_OK(write_conn.ExecuteFormat(
+-            "UPDATE test SET embedding = '$0' WHERE id = $1", AsString(vector), id));
++        return write_conn.Execute("COMMIT");
++      }();
++      if (!status.ok()) {
++        // A non-first statement of a snapshot isolation transaction cannot restart its read.
++        ASSERT_TRUE(IsRetryable(status)) << status;
++        ASSERT_OK(write_conn.Execute("ROLLBACK"));
+       }
+-      ASSERT_OK(write_conn.Execute("COMMIT"));
+     }
+   });
+ 
+```
+
+---
+
+### Incident Patch 3: `4010b626` (2026-11-22)
+**Commit Message**: [#38657] YSQL: Fix race between ALTER TABLE ALL IN TABLESPACE CASCADE and concurrent CREATE TABLE
 
 Summary:
-Since 53cc8bf2f0f/D60021 an implicit tablegroup of a colocated database is dropped together with its last relation. That causes three problems:
+`ALTER TABLE ALL IN TABLESPACE <old> [COLOCATED WITH <table>] SET TABLESPACE <new> CASCADE` moves an implicit tablegroup of a colocated database to another tablespace. It takes none of the tablegroup locks that 290d6d08a120bdf4430f868b743784fb1afa5a62/D60169 added, so it is not serialized with a concurrent `CREATE TABLE` or `CREATE INDEX`:
 
-- The drop is not serialized with a concurrent `CREATE TABLE` or `CREATE INDEX` into the same tablegroup. `DROP TABLE` can fail with `Cannot delete non-empty tablegroup`, or the new table is created in a tablegroup that is gone. Two concurrent drops of the last two relations leave the tablegroup behind empty.
-- DB scoped xCluster accepts a colocation parent only at setup. Dropping `default` replaces the colocation tablet of the database, and the first colocated table of a tablespace creates a new one. In both cases the `CREATE TABLE` fails on the target, and in automatic mode DDL replication pauses.
-- `CREATE INDEX ... TABLESPACE pg_default` puts the index in a tablegroup of its own, and the second such index fails with `tablegroup "colocation_1663" already exists`.
+- A relation created in the tablegroup while the statement runs is not moved with it. It stays in the moved tablegroup with its old tablespace in `pg_class`.
+- The first relation created in the target tablespace while the statement runs gets a tablegroup of its own. The database ends with two implicit tablegroups for one tablespace, and a clone of it fails with `Created table not found: <id>.colocation.parent.uuid`.
 
-This diff:
+This diff makes the statement take two locks before it moves anything, and look up the tablegroups again once it holds them:
 
-- Keeps the `default` tablegroup when it becomes empty, as before D60021. It is recognized by its name, so this also holds for a `default` that is in a tablespace, which 
+- `AccessExclusiveLock` on the tablegroup that moves. Creates and drops in that tablegroup wait for the statement, and the statement waits for them.
+- On the target tablespace, the lock that the first c
 
-**File**: `src/postgres/src/backend/catalog/dependency.c` (modified, +5/-5)
+**File**: `src/postgres/src/backend/commands/tablecmds.c` (modified, +42/-3)
 ```diff
-@@ -1389,8 +1389,7 @@ deleteOneObject(const ObjectAddress *object, Relation *depRel, int flags,
- 		CatalogTupleDelete(*depRel, tup);
- 
- 		if (MyDatabaseColocated &&
--			depform->refclassid == YbTablegroupRelationId &&
--			!tablegroupHasDependents(depform->refobjid))
-+			depform->refclassid == YbTablegroupRelationId)
- 		{
- 			implicit_tablegroup.classId = depform->refclassid;
- 			implicit_tablegroup.objectId = depform->refobjid;
-@@ -1401,11 +1400,12 @@ deleteOneObject(const ObjectAddress *object, Relation *depRel, int flags,
- 	systable_endscan(scan);
- 
- 	/*
--	 * YB: Check if implicit tablegroup has any more tables in it.
--	 * If not delete it.
-+	 * YB: Delete the implicit tablegroup if YbLockImplicitTablegroupForDrop
-+	 * says that it is not needed any more.
- 	 */
- 	if (is_colocated_tables_with_tablespace_enabled &&
--		OidIsValid(implicit_tablegroup.objectId))
-+		OidIsValid(implicit_tablegroup.objectId) &&
-+		YbLockImplicitTablegroupForDrop(implicit_tablegroup.objectId))
- 	{
- 		deleteSharedDependencyRecordsFor(implicit_tablegroup.classId, implicit_tablegroup.objectId,
- 										 implicit_tablegroup.objectSubId);
-```
-
-**File**: `src/postgres/src/backend/commands/indexcmds.c` (modified, +11/-6)
-```diff
-@@ -1176,21 +1176,26 @@ DefineIndex(Oid relationId,
- 			is_colocated_via_database && !MyColocatedDatabaseLegacy)
- 		{
- 			char	   *tablegroup_name = NULL;
-+			Oid			grp_tablespace_id = tablespaceId;
- 
--			if (OidIsValid(tablespaceId))
-+			/* The database's default tablespace means no tablespace. */
-+			if (grp_tablespace_id == MyDatabaseTableSpace)
-+				grp_tablespace_id = InvalidOid;
+@@ -16500,10 +16500,23 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
+ 	/* Get the orig and new tablespace OIDs */
+ 	orig_tablespaceoid = get_tablespace_oid(stmt->orig_tablespacename, false);
+ 	new_tablespaceoid = get_tablespace_oid(stmt->new_tablespacename, false);
+-	yb_orig_tablegroup_name = get_implicit_tablegroup_name(orig_tablespaceoid);
 +
-+			if (OidIsValid(grp_tablespace_id))
- 			{
- 				/*
- 				 * We look in pg_shdepend rather than directly use the derived name,
- 				 * as later we might need to associate an existing implicit tablegroup to a tablespace
- 				 */
--				shdepFindImplicitTablegroup(tablespaceId, &tablegroupId);
-+				tablegroupId = YbLockImplicitTablegroup(grp_tablespace_id);
++yb_lookup_tablegroups:
+ 	yb_new_tablegroup_name = get_implicit_tablegroup_name(new_tablespaceoid);
+-	yb_orig_tablegroup_oid = get_tablegroup_oid(yb_orig_tablegroup_name, true);
+-	yb_new_tablegroup_oid = get_tablegroup_oid(yb_new_tablegroup_name, true);
++	/* YB: Found by tablespace, since the name need not be colocation_<oid>. */
++	if (MyDatabaseColocated)
++	{
++		/* Relations with no tablespace are in the default tablegroup. */
++		if (orig_tablespaceoid == MyDatabaseTableSpace)
++			yb_orig_tablegroup_oid =
++				get_tablegroup_oid(DEFAULT_TABLEGROUP_NAME, true);
++		else
++			shdepFindImplicitTablegroup(orig_tablespaceoid,
++										&yb_orig_tablegroup_oid);
++		shdepFindImplicitTablegroup(new_tablespaceoid,
++									&yb_new_tablegroup_oid);
++	}
++	yb_orig_tablegroup_name = get_tablegroup_name(yb_orig_tablegroup_oid);
+ 	/*
+ 	 * YB: If a relation name is passed with the ALTER TABLE ALL ... COLOCATED
+ 	 * WITH ... SET TABLESPACE ... CASCADE command then we get the relation
+@@ -16532,6 +16545,22 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
+ 						" as it contains existing colocated relation",
+ 						stmt->new_tablespacename)));
  
- 				/*
- 				 * If we do not find a tablegroup corresponding to the given tablespace, we
- 				 * would have to create one. We derive the name from tablespace OID.
- 				 */
- 				tablegroup_name = OidIsValid(tablegroupId) ? get_tablegroup_name(tablegroupId) :
--					get_implicit_tablegroup_name(tablespaceId);
-+					get_implicit_tablegroup_name(grp_tablespace_id);
++	/* YB: A move renames the tablegroup, and the default is found by name. */
++	if (MyDatabaseColocated && yb_orig_tablegroup_name != NULL &&
++		strcmp(yb_orig_tablegroup_name, DEFAULT_TABLEGROUP_NAME) == 0)
++		ereport(ERROR,
++				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
++				 errmsg("cannot move the default tablegroup"
++						" to another tablespace")));
++
++	/* YB: The tablegroup would have to become or join the default one. */
++	if (MyDatabaseColocated && OidIsValid(yb_orig_tablegroup_oid) &&
++		new_tablespaceoid == MyDatabaseTableSpace)
++		ereport(ERROR,
++				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
++				 errmsg("cannot move colocated relations to the database"
++						" default tablespace")));
++
+ 	/*
+ 	 * YB: If CASCADE is not specified and the original tablespace contains
+ 	 * colocated tables then we don't support moving it unless cascade is
+@@ -16583,6 +16612,16 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
+ 						   get_tablespace_name(new_tablespaceoid));
+ 	}
  
- 			}
- 			else if (yb_binary_restore && OidIsValid(binary_upgrade_next_tablegroup_oid))
-@@ -1256,11 +1261,11 @@ DefineIndex(Oid relationId,
- 			else
- 			{
- 				tablegroup_name = DEFAULT_TABLEGROUP_NAME;
--				tablegroupId = get_tablegroup_oid(tablegroup_name, true);
-+				tablegroupId = YbLockImplicitTablegroup(InvalidOid);
- 			}
- 
--			char	   *tablespace_name = (OidIsValid(tablespaceId) ?
--										   get_tablespace_name(tablespaceId) :
-+			char	   *tablespace_name = (OidIsValid(grp_tablespace_id) ?
-+										   get_tablespace_name(grp_tablespace_id) :
- 										   NULL);
- 
- 			/* Tablegroup doesn't exist, so create it. */
++	/*
++	 * YB: The checks passed, so lock the tablegroup that moves and the
++	 * tablespace it moves to. If that took a lock, look up and check again.
++	 */
++	if (yb_cascade && MyDatabaseColocated &&
++		OidIsValid(yb_orig_tablegroup_oid) &&
++		YbLockImplicitTablegroupForMove(yb_orig_tablegroup_oid,
++										new_tablespaceoid))
++		goto yb_lookup_tablegroups;
++
+ 	/*
+ 	 * Now that the checks are done, check if we should set either to
+ 	 * InvalidOid because it is our database's default tablespace.
 ```
 
-**File**: `src/postgres/src/backend/commands/yb_cmds.c` (modified, +2/-2)
+**File**: `src/postgres/src/backend/commands/yb_tablegroup.c` (modified, +79/-0)
 ```diff
-@@ -771,7 +771,7 @@ YBCCreateTable(CreateStmt *stmt, char *tableName, char relkind, TupleDesc desc,
- 			 * as later we might need to associate an existing implicit tablegroup to a tablespace
- 			 */
- 
--			shdepFindImplicitTablegroup(tablespaceId, &tablegroupId);
-+			tablegroupId = YbLockImplicitTablegroup(tablespaceId);
- 
- 			/*
- 			 * If we do not find a tablegroup corresponding to the given tablespace, we
-@@ -821,7 +821,7 @@ YBCCreateTable(CreateStmt *stmt, char *tableName, char relkind, TupleDesc desc,
- 		else
- 		{
- 			tablegroup_name = DEFAULT_TABLEGROUP_NAME;
--			tablegroupId = get_tablegroup_oid(tablegroup_name, true);
-+			tablegroupId = YbLockImplicitTablegroup(InvalidOid);
- 		}
- 
- 		char	   *tablespace_name = (OidIsValid(tablespaceId) ?
-```
-
-**File**: `src/postgres/src/backend/commands/yb_tablegroup.c` (modified, +118/-1)
-```diff
-@@ -67,6 +67,7 @@
- #include "utils/lsyscache.h"
- #include "utils/memutils.h"
- #include "utils/rel.h"
-+#include "utils/snapmgr.h"
- #include "utils/syscache.h"
- #include "utils/varlena.h"
- #include "yb/yql/pggate/ybc_pggate.h"
-@@ -138,6 +139,9 @@ CreateTableGroup(YbCreateTableGroupStmt *stmt)
- 
- 	if (stmt->tablespacename)
- 		tablespaceoid = get_tablespace_oid(stmt->tablespacename, false);
-+	else if (stmt->implicit)
-+		/* The relation it is created for is in no tablespace. */
-+		tablespaceoid = InvalidOid;
- 	else
- 		tablespaceoid = GetDefaultTablespace(RELPERSISTENCE_PERMANENT, false);
- 
-@@ -333,6 +337,112 @@ get_tablegroup_name(Oid grp_oid)
- 	return result;
+@@ -42,6 +42,7 @@
+ #include "catalog/indexing.h"
+ #include "catalog/namespace.h"
+ #include "catalog/objectaccess.h"
++#include "catalog/pg_depend.h"
+ #include "catalog/pg_namespace.h"
+ #include "catalog/pg_tablespace.h"
+ #include "catalog/pg_yb_tablegroup.h"
+@@ -443,6 +444,84 @@ YbLockImplicitTablegroupForDrop(Oid grp_oid)
+ 	return !tablegroupHasDependents(grp_oid);
  }
  
 +/*
-+ * Whether this is the default tablegroup. It is kept when empty, so that the
-+ * database keeps its colocation tablet. It can be in a tablespace, if it was
-+ * created while colocated tables with tablespaces were off.
++ * Whether the current user owns a relation that is stored in the tablegroup.
 + */
 +static bool
-+is_kept_default_tablegroup(Oid grp_oid)
++owns_relation_in_tablegroup(Oid grp_oid)
 +{
-+	char	   *grp_name = get_tablegroup_name(grp_oid);
++	Relation	depRel;
++	ScanKeyData key[2];
++	SysScanDesc scan;
++	HeapTuple	tup;
++	bool		result = false;
 +
-+	return grp_name != NULL &&
-+		strcmp(grp_name, DEFAULT_TABLEGROUP_NAME) == 0;
-+}
-+
-+/*
-+ * Find the implicit tablegroup for the given tablespace (InvalidOid means the
-+ * default tablegroup) and lock it, so that dropping its last relation cannot
-+ * drop it under us. If there is none, return InvalidOid with a lock held that
-+ * lets only one session create it.
-+ */
-+Oid
-+YbLockImplicitTablegroup(Oid tablespaceoid)
-+{
-+	bool		creation_locked = false;
-+
-+	for (;;)
++	depRel = table_open(DependRelationId, AccessShareLock);
++	ScanKeyInit(&key[0],
++				Anum_pg_depend_refclassid,
++				BTEqualStrategyNumber, F_OIDEQ,
++				ObjectIdGetDatum(YbTablegroupRelationId));
++	ScanKeyInit(&key[1],
++				Anum_pg_depend_refobjid,
++				BTEqualStrategyNumber, F_OIDEQ,
++				ObjectIdGetDatum(grp_oid));
++	scan = systable_beginscan(depRel, DependReferenceIndexId, true,
++							  NULL, 2, key);
++	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 +	{
-+		Oid			grp_oid;
++		Form_pg_depend depform = (Form_pg_depend) GETSTRUCT(tup);
 +
-+		if (OidIsValid(tablespaceoid))
-+			shdepFindImplicitTablegroup(tablespaceoid, &grp_oid);
-+		else
-+			grp_oid = get_tablegroup_oid(DEFAULT_TABLEGROUP_NAME, true);
-+
-+		/* Without object locks there is nothing to wait for. */
-+		if (!YBCUsingObjectLocksGloballyForCurrentTxn())
-+			return grp_oid;
-+
-+		if (OidIsValid(grp_oid))
++		if (depform->classid == RelationRelationId &&
++			SearchSysCacheExists1(RELOID, ObjectIdGetDatum(depform->objid)) &&
++			pg_class_ownercheck(depform->objid, GetUserId()))
 +		{
-+			LOCKTAG		tag;
-+
-+			/*
-+			 * Found while we hold its lock, possibly since an earlier step of
-+			 * this transaction, so it cannot be dropped under us.
-+			 */
-+			SET_LOCKTAG_OBJECT(tag, MyDatabaseId, YbTablegroupRelationId,
-+							   grp_oid, 0);
-+			if (LockHeldByMe(&tag, AccessShareLock))
-+				return grp_oid;
-+			LockDatabaseObject(YbTablegroupRelationId, grp_oid, 0,
-+							   AccessShareLock);
++			result = true;
++			break;
 +		}
-+		else
-+		{
-+			if (creation_locked)
-+				return InvalidOid;
-+
-+			/*
-+			 * There is no tablegroup to lock yet, so lock the tablespace as
-+			 * seen from this database.
-+			 */
-+			LockDatabaseObject(TableSpaceRelationId,
-+							   OidIsValid(tablespaceoid) ?
-+							   tablespaceoid : MyDatabaseTableSpace,
-+							   0, AccessExclusiveLock);
-+			creation_locked = true;
-+		}
-+
-+		/*
-+		 * Look again with a new snapshot, in case whoever we waited for
-+		 * dropped or created the tablegroup.
-+		 */
-+		YbInvalidateCatalogSnapshot();
 +	}
++	systable_endscan(scan);
++	table_close(depRel, AccessShareLock);
++
++	return result;
 +}
 +
 +/*
-+ * Return whether an implicit tablegroup should be dropped along with a
-+ * relation that is being dropped from it.
++ * Lock an implicit tablegroup that is being moved to another tablespace
++ * against creates and drops in it, and lock that tablespace against the
++ * creation of a tablegroup for it. Return whether a lock was taken, in which
++ * case what the caller looked up before may be stale.
 + */
 +bool
-+YbLockImplicitTablegroupForDrop(Oid grp_oid)
++YbLockImplicitTablegroupForMove(Oid grp_oid, Oid new_tablespaceoid)
 +{
-+	ObjectAddress address;
++	LOCKTAG		grp_tag;
++	LOCKTAG		tablespace_tag;
 +
-+	if (is_kept_default_tablegroup(grp_oid))
-+		return false;
++	Assert(OidIsValid(grp_oid) && OidIsValid(new_tablespaceoid));
 +
 +	if (!YBCUsingObjectLocksGloballyForCurrentTxn())
-+		return !tablegroupHasDependents(grp_oid);
-+
-+	/* Wait for concurrent drops in this tablegroup. */
-+	LockDatabaseObject(YbTablegroupRelationId, grp_oid, 0,
-+					   ShareUpdateExclusiveLock);
-+	YbInvalidateCatalogSnapshot();
-+	if (tablegroupHasDependents(grp_oid))
 +		return false;
 +
-+	/* It looks empty, so wait for concurrent creates too. */
-+	ObjectAddressSet(address, YbTablegroupRelationId, grp_oid);
-+	AcquireDeletionLock(&address, 0);
++	SET_LOCKTAG_OBJECT(grp_tag, MyDatabaseId, YbTablegroupRelationId,
++					   grp_oid, 0);
++	SET_LOCKTAG_OBJECT(tablespace_tag, MyDatabaseId, TableSpaceRelationId,
++					   new_tablespaceoid, 0);
++	if (LockHeldByMe(&grp_tag, AccessExclusiveLock) &&
++		LockHeldByMe(&tablespace_tag, AccessExclusiveLock))
++		return false;
++
++	/* Otherwise any user could block creates and drops in the tablegroup. */
++	if (!owns_relation_in_tablegroup(grp_oid))
++		return false;
++
++	LockDatabaseObject(YbTablegroupRelationId, grp_oid, 0,
++					   AccessExclusiveLock);
++	LockDatabaseObject(TableSpaceRelationId, new_tablespaceoid, 0,
++					   AccessExclusiveLock);
 +	YbInvalidateCatalogSnapshot();
-+	return !tablegroupHasDependents(grp_oid);
++	return true;
 +}
 +
  /*
   * RemoveTablegroupById - remove a tablegroup by its OID.
   * If a tablegroup does not exist with the provided oid, then an error is raised.
-@@ -358,7 +468,7 @@ RemoveTablegroupById(Oid grp_oid, bool remove_implicit)
- 	 * Checking if it is an implicit tablegroup before checking if the
- 	 * tablegroup exists to give proper error message if DROP TABLEGROUP ...
- 	 * CASCADE is executed. This is because during DROP CASCADE, the implicit
--	 * tablegroup will be implicitly deleted when dependent tables are dropped
-+	 * tablegroup may be implicitly deleted when dependent tables are dropped
- 	 * (if yb_enable_colocated_tables_with_tablespaces is enabled) and we
- 	 * would get a "tablegroup with oid does not exist" error message.
- 	 */
-@@ -458,6 +568,13 @@ RenameTablegroup(const char *oldname, const char *newname)
- 				 errmsg("tablegroup system catalog does not exist")));
- 	}
- 
-+	/* An implicit tablegroup is found by its name. */
-+	if (MyDatabaseColocated)
-+		ereport(ERROR,
-+				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-+				 errmsg("cannot rename an implicit tablegroup "
-+						"in a colocated database")));
-+
- 	/*
- 	 * Look up the target tablegroup's OID, and get exclusive lock on it. We
- 	 * need this for the same reasons as DROP TABLEGROUP.
 ```
 
 **File**: `src/postgres/src/include/commands/yb_tablegroup.h` (modified, +2/-0)
 ```diff
-@@ -34,6 +34,8 @@ extern Oid	CreateTableGroup(YbCreateTableGroupStmt *stmt);
- 
- extern Oid	get_tablegroup_oid(const char *tablegroupname, bool missing_ok);
+@@ -36,6 +36,8 @@ extern Oid	get_tablegroup_oid(const char *tablegroupname, bool missing_ok);
  extern char *get_tablegroup_name(Oid grp_oid);
-+extern Oid	YbLockImplicitTablegroup(Oid tablespaceoid);
-+extern bool YbLockImplicitTablegroupForDrop(Oid grp_oid);
+ extern Oid	YbLockImplicitTablegroup(Oid tablespaceoid);
+ extern bool YbLockImplicitTablegroupForDrop(Oid grp_oid);
++extern bool YbLockImplicitTablegroupForMove(Oid grp_oid,
++											Oid new_tablespaceoid);
  
  extern void RemoveTablegroupById(Oid grp_oid, bool remove_implicit);
  extern char *get_implicit_tablegroup_name(Oid oidSuffix);
 ```
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.colocated_tables_with_tablespaces.out` (modified, +31/-10)
+**File**: `src/yb/yql/pgwrapper/pg_object_locks-test.cc` (modified, +188/-10)
 ```diff
-@@ -5,6 +5,17 @@ CREATE DATABASE colocation_test colocation = true;
- CREATE TABLESPACE tsp1 WITH (replica_placement = '{"num_replicas": 3, "placement_blocks" : [{"cloud" : "cloud1", "region" : "region1", "zone" : "zone1", "min_num_replicas" : 1}, {"cloud" :  "cloud1", "region": "region1", "zone" : "zone2", "min_num_replicas" : 1}, {"cloud" : "cloud1", "region": "region1", "zone" : "zone3", "min_num_replicas" : 1}]}');
- CREATE TABLESPACE tsp2 WITH (replica_placement = '{"num_replicas": 3, "placement_blocks" : [{"cloud" : "cloud1", "region" : "region2", "zone" : "zone1", "min_num_replicas" : 1}, {"cloud" :  "cloud1", "region": "region2", "zone" : "zone2", "min_num_replicas" : 1}, {"cloud" : "cloud1", "region": "region2", "zone" : "zone3", "min_num_replicas" : 1}]}');
- CREATE TABLESPACE tsp3 WITH (replica_placement = '{"num_replicas": 3, "placement_blocks" : [{"cloud" : "cloud1", "region" : "region3", "zone" : "zone1", "min_num_replicas" : 1}, {"cloud" :  "cloud1", "region": "region3", "zone" : "zone2", "min_num_replicas" : 1}, {"cloud" : "cloud1", "region": "region3", "zone" : "zone3", "min_num_replicas" : 1}]}');
-+-- default_tablespace must not put the default tablegroup in a tablespace
-+SET default_tablespace = tsp1;
-+CREATE TABLE in_pg_default (a int) TABLESPACE pg_default;
-+RESET default_tablespace;
-+SELECT grpname, grptablespace FROM pg_yb_tablegroup;
-+ grpname | grptablespace 
-+---------+---------------
-+ default |             0
-+(1 row)
+@@ -401,6 +401,7 @@ class PgObjectLocksImplicitTablegroupTest : public PgObjectLocksTestRF1 {
+     PgObjectLocksTestRF1::SetUp();
+     auto conn = ASSERT_RESULT(Connect());
+     ASSERT_OK(conn.Execute("CREATE TABLESPACE ts LOCATION '/data'"));
++    ASSERT_OK(conn.Execute("CREATE TABLESPACE ts2 LOCATION '/data'"));
+     ASSERT_OK(conn.ExecuteFormat("CREATE DATABASE $0 WITH COLOCATION = true", kDbName));
+   }
+ 
+@@ -438,7 +439,32 @@ class PgObjectLocksImplicitTablegroupTest : public PgObjectLocksTestRF1 {
+     ASSERT_NO_FATALS(CheckUsableInSingleTablegroup(second, "t2"));
+   }
+ 
++  Result<std::string> TablegroupOf(PGConn& conn, const std::string& table) {
++    return conn.FetchRow<std::string>(Format(
++        "SELECT grpname FROM pg_yb_tablegroup WHERE oid = "
++        "(SELECT tablegroup_oid FROM yb_table_properties('$0'::regclass))", table));
++  }
 +
-+DROP TABLE in_pg_default;
- -- Should succeed in creating colocated partitioned tables with tablespace
- CREATE TABLE partitioned_table (name varchar, region varchar, PRIMARY KEY(name, region)) PARTITION BY LIST(region);
- CREATE TABLE partition_in_dc1 PARTITION OF partitioned_table FOR VALUES IN ('region1') TABLESPACE tsp1;
-@@ -34,11 +45,11 @@ SELECT y.spcname FROM pg_tablespace as y JOIN pg_yb_tablegroup as x ON x.grptabl
- (3 rows)
- 
- DROP TABLE partitioned_table;
---- Implicit tablegroups must be deleted since it has no tables
-+-- The tablespace tablegroups must be deleted since they have no tables, the default one stays
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     0
-+     1
- (1 row)
- 
- -- Test non-colocated children tables of a partitioned table
-@@ -82,7 +93,7 @@ GRANT CREATE ON TABLESPACE tsp2 TO user2;
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     0
-+     1
- (1 row)
- 
- SET SESSION ROLE user1;
-@@ -92,7 +103,7 @@ ERROR:  permission denied for tablespace tsp2
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     1
-+     2
- (1 row)
- 
- SET SESSION ROLE user2;
-@@ -106,7 +117,7 @@ LINE 1: CREATE TABLE s1.t4 (a INT) TABLESPACE tsp2;
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     2
-+     3
- (1 row)
- 
- SET SESSION ROLE user1;
-@@ -115,7 +126,7 @@ DROP TABLE s1.t1;
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     1
-+     2
- (1 row)
- 
- SET SESSION ROLE user2;
-@@ -124,7 +135,7 @@ DROP TABLE s2.t3;
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     0
-+     1
- (1 row)
- 
- RESET ROLE;
-@@ -152,7 +163,7 @@ DROP TABLE base_table;
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     0
-+     1
- (1 row)
- 
- -- Test colocated indexes
-@@ -232,7 +243,7 @@ DROP TABLE table_1;
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     0
-+     1
- (1 row)
- 
- -- Describing colocated table with tablespace must show both colocation and tablespace info
-@@ -264,7 +275,7 @@ DROP TABLE table_1;
- SELECT COUNT(*) FROM pg_yb_tablegroup;
-  count 
- -------
--     0
-+     1
- (1 row)
- 
- -- Test ALTER TABLE/INDEX/MATERIALIZED VIEW ALL IN TABLESPACE ... SET TABLESPACE ... CASCADE
-@@ -597,6 +608,16 @@ SELECT grpname, grpowner, grptablespace, grpacl, grpoptions FROM pg_yb_tablegrou
-  default |       10 |             0 |        | 
- (1 row)
- 
-+-- The same holds for indexes, however many there are
-+CREATE INDEX index1 ON table2(a) TABLESPACE pg_default;
-+CREATE INDEX index2 ON table2(a) TABLESPACE pg_default;
-+ALTER TABLE table2 ADD CONSTRAINT table2_a_key UNIQUE (a) USING INDEX TABLESPACE pg_default;
-+SELECT grpname, grpowner, grptablespace, grpacl, grpoptions FROM pg_yb_tablegroup;
-+ grpname | grpowner | grptablespace | grpacl | grpoptions 
-+---------+----------+---------------+--------+------------
-+ default |       10 |             0 |        | 
-+(1 row)
++  Result<std::string> TablespaceOf(PGConn& conn, const std::string& table) {
++    return conn.FetchRow<std::string>(Format(
++        "SELECT COALESCE(s.spcname, 'pg_default') FROM pg_class c "
++        "LEFT JOIN pg_tablespace s ON s.oid = c.reltablespace WHERE c.oid = '$0'::regclass",
++        table));
++  }
 +
- DROP TABLE table1;
- DROP TABLE table2;
- -- In pg_yb_tablegroup grpname should always be colocation_<grptablespace> (i.e. colocation_<tablespace_oid>)
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.feature_colocation.out` (modified, +6/-9)
-```diff
-@@ -920,21 +920,18 @@ HINT:  Use DROP ... CASCADE to drop the dependent objects too.
- DROP TABLEGROUP "default" CASCADE;
- NOTICE:  drop cascades to table tbl
- ERROR:  cannot drop an implicit tablegroup in a colocated database.
-+DROP TABLE tbl;
-+DROP TABLEGROUP "default";
-+ERROR:  cannot drop an implicit tablegroup in a colocated database.
- -- Cannot set privileges of an implicit tablegroup
- CREATE ROLE test_role;
- GRANT CREATE ON TABLEGROUP "default" TO test_role;
- ERROR:  cannot set privileges of an implicit tablegroup in a colocated database
- REVOKE CREATE ON TABLEGROUP "default" FROM test_role;
- ERROR:  cannot set privileges of an implicit tablegroup in a colocated database
---- An implicit tablegroup is dropped along with its last table
--DROP TABLE tbl;
--SELECT * FROM pg_yb_tablegroup;
-- oid | grpname | grpowner | grptablespace | grpacl | grpoptions 
-------+---------+----------+---------------+--------+------------
--(0 rows)
++  Status SetColocatedTablesWithTablespaces(PGConn& conn, bool enabled) {
++    RETURN_NOT_OK(SET_FLAG(ysql_yb_enable_colocated_tables_with_tablespaces, enabled));
++    return WaitFor([&]() -> Result<bool> {
++      return VERIFY_RESULT(conn.FetchRow<std::string>(
++          "SHOW yb_enable_colocated_tables_with_tablespaces")) == (enabled ? "on" : "off");
++    }, 10s * kTimeMultiplier, "Timed out waiting for the setting to reach postgres");
++  }
++
+   static constexpr auto kDbName = "colo";
++  static constexpr auto kMoveTablegroupStmt =
++      "ALTER TABLE ALL IN TABLESPACE ts SET TABLESPACE ts2 CASCADE";
++  static constexpr auto kCreateInTargetTablespaceStmt =
++      "CREATE TABLE t2 (k INT PRIMARY KEY) TABLESPACE ts2";
+ };
+ 
+ TEST_F(PgObjectLocksImplicitTablegroupTest, DropOfLastTableWaitsForCreate) {
+@@ -566,24 +592,176 @@ TEST_F(PgObjectLocksImplicitTablegroupTest, EmptyDefaultTablegroupIsKept) {
+ 
+ TEST_F(PgObjectLocksImplicitTablegroupTest, DefaultTablegroupInTablespaceIsKept) {
+   auto conn = ASSERT_RESULT(ConnectToDB(kDbName));
+-  auto set_feature = [&](bool enabled) -> Status {
+-    RETURN_NOT_OK(SET_FLAG(ysql_yb_enable_colocated_tables_with_tablespaces, enabled));
+-    return WaitFor([&]() -> Result<bool> {
+-      return VERIFY_RESULT(conn.FetchRow<std::string>(
+-          "SHOW yb_enable_colocated_tables_with_tablespaces")) == (enabled ? "on" : "off");
+-    }, 10s * kTimeMultiplier, "Timed out waiting for the setting to reach postgres");
+-  };
 -
--DROP TABLEGROUP "default";
--ERROR:  tablegroup "default" does not exist
-+-- Cannot rename an implicit tablegroup
-+ALTER TABLEGROUP "default" RENAME TO renamed;
-+ERROR:  cannot rename an implicit tablegroup in a colocated database
- -- Any user can create tables/indexes in an implicit tablegroup
- GRANT CREATE ON SCHEMA public TO test_role;
- SET SESSION AUTHORIZATION test_role;
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.colocated_tables_with_tablespaces.sql` (modified, +13/-1)
-```diff
-@@ -9,6 +9,13 @@ CREATE TABLESPACE tsp2 WITH (replica_placement = '{"num_replicas": 3, "placement
+   // While the feature is off, the first table puts the default tablegroup in its tablespace.
+-  ASSERT_OK(set_feature(false));
++  ASSERT_OK(SetColocatedTablesWithTablespaces(conn, false));
+   ASSERT_OK(conn.Execute(CreateTableStmt("t1")));
+-  ASSERT_OK(set_feature(true));
++  ASSERT_OK(SetColocatedTablesWithTablespaces(conn, true));
+   ASSERT_OK(conn.Execute("DROP TABLE t1"));
+   ASSERT_EQ(ASSERT_RESULT(conn.FetchRow<PGUint64>(
+       "SELECT COUNT(*) FROM pg_yb_tablegroup "
+       "WHERE grpname = 'default' AND grptablespace != 0")), 1);
+ }
  
- CREATE TABLESPACE tsp3 WITH (replica_placement = '{"num_replicas": 3, "placement_blocks" : [{"cloud" : "cloud1", "region" : "region3", "zone" : "zone1", "min_num_replicas" : 1}, {"cloud" :  "cloud1", "region": "region3", "zone" : "zone2", "min_num_replicas" : 1}, {"cloud" : "cloud1", "region": "region3", "zone" : "zone3", "min_num_replicas" : 1}]}');
- 
-+-- default_tablespace must not put the default tablegroup in a tablespace
-+SET default_tablespace = tsp1;
-+CREATE TABLE in_pg_default (a int) TABLESPACE pg_default;
-+RESET default_tablespace;
-+SELECT grpname, grptablespace FROM pg_yb_tablegroup;
-+DROP TABLE in_pg_default;
++TEST_F(PgObjectLocksImplicitTablegroupTest, MoveOfTablegroupWaitsForCreate) {
++  auto creator = ASSERT_RESULT(ConnectToDB(kDbName));
++  auto mover = ASSERT_RESULT(ConnectToDB(kDbName));
++  ASSERT_OK(mover.Execute(CreateTableStmt("t1")));
 +
- -- Should succeed in creating colocated partitioned tables with tablespace
- CREATE TABLE partitioned_table (name varchar, region varchar, PRIMARY KEY(name, region)) PARTITION BY LIST(region);
- CREATE TABLE partition_in_dc1 PARTITION OF partitioned_table FOR VALUES IN ('region1') TABLESPACE tsp1;
-@@ -21,7 +28,7 @@ SELECT COUNT(*) FROM pg_tablespace;
- -- The created implicit tablegroups must use the specified tablespaces
- SELECT y.spcname FROM pg_tablespace as y JOIN pg_yb_tablegroup as x ON x.grptablespace = y.oid;
- DROP TABLE partitioned_table;
---- Implicit tablegroups must be deleted since it has no tables
-+-- The tablespace tablegroups must be deleted since they have no tables, the default one stays
- SELECT COUNT(*) FROM pg_yb_tablegroup;
- 
- -- Test non-colocated children tables of a partitioned table
-@@ -288,6 +295,11 @@ CREATE TABLE table1(a int);
- SELECT grpname, grpowner, grptablespace, grpacl, grpoptions FROM pg_yb_tablegroup;
- CREATE TABLE table2(a int) TABLESPACE pg_default;
- SELECT grpname, grpowner, grptablespace, grpacl, grpoptions FROM pg_yb_tablegroup;
-+-- The same holds for indexes, however many there are
-+CREATE INDEX index1 ON table2(a) TABLESPACE pg_default;
-+CREATE INDEX index2 ON table2(a) TABLESPACE pg_default;
-+ALTER TABLE table2 ADD CONSTRAINT table2_a_key UNIQUE (a) USING INDEX TABLESPACE pg_default;
-+SELECT grpname, grpowner, grptablespace, grpacl, grpoptions FROM pg_yb_tablegroup;
- DROP TABLE table1;
- DROP TABLE table2;
- 
++  ASSERT_OK(creator.StartTransaction(IsolationLevel::SNAPSHOT_ISOLATION));
++  ASSERT_OK(creator.Execute(CreateTableStmt("t2")));
++  auto move_future = std::async(std::launch::async, [&]() {
++    return mover.Execute(kMoveTablegroupStmt);
++  });
++  ASSERT_OK(WaitForLockWaiter());
++  ASSERT_OK(creator.CommitTransaction());
++  ASSERT_OK(move_future.get());
++
++  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t2")), "ts2");
++  ASSERT_NO_FATALS(CheckUsableInSingleTablegroup(creator, "t2"));
++}
++
++TEST_F(PgObjectLocksImplicitTablegroupTest, CreateWaitsForMoveOfTablegroup) {
++  auto creator = ASSERT_RESULT(ConnectToDB(kDbName));
++  auto mover = ASSERT_RESULT(ConnectToDB(kDbName));
++  ASSERT_OK(mover.Execute(CreateTableStmt("t1")));
++
++  ASSERT_OK(mover.StartTransaction(IsolationLevel::SNAPSHOT_ISOLATION));
++  ASSERT_OK(mover.Execute(kMoveTablegroupStmt));
++  auto create_future = std::async(std::launch::async, [&]() {
++    return creator.Execute(CreateTableStmt("t2"));
++  });
++  ASSERT_OK(WaitForLockWaiter());
++  ASSERT_OK(mover.CommitTransaction());
++  ASSERT_OK(create_future.get());
++
++  // The tablegroup of t1 left ts, so t2 is in a new one.
++  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t1")), "ts2");
++  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t2")), "ts");
++  ASSERT_EQ(ASSERT_RESULT(creator.FetchRow<PGUint64>("SELECT COUNT(*) FROM pg_yb_tablegroup")), 2);
++  ASSERT_OK(creator.Execute("INSERT INTO t2 VALUES (1)"));
++  ASSERT_EQ(ASSERT_RESULT(creator.FetchRow<PGUint64>("SELECT COUNT(*) FROM t2")), 1);
++}
++
++TEST_F(PgObjectLo
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38869** (2026-11-22): [BACKPORT 2026.2][#37695] DocDB: Fix PgVectorIndexTest.BackfillLargeTransactionAppliedAfterCommit/ColocatedYbHnswHnswlib (@csi-fix)
-- **PR #38856** (2026-11-22): [BACKPORT 2026.1][#38602] DocDB: Vector index: xCluster: deleted vector comes back on target after a tablet split (#38605) (@arybochkin)
-- **PR #38855** (2026-11-21): [BACKPORT 2026.1][#38340] DocDB: Split pg_vector_index-test.cc into smaller test files (@spolitov)
-- **PR #38854** (2026-11-22): [BACKPORT 2026.2][#38602] DocDB: Vector index: xCluster: deleted vector comes back on target after a tablet split (#38605) (@arybochkin)
-- **PR #38811** (2026-11-21): [BACKPORT 2025.2][#38264] DocDB: Show each MiniCluster tserver's own rpc_bind_addresses in custom varz (#38304) (@ajcaldera1)
-- **PR #38810** (2026-11-21): [BACKPORT 2026.1][#38264] DocDB: Show each MiniCluster tserver's own rpc_bind_addresses in custom varz (#38304) (@ajcaldera1)
+- **PR #39005** (2026-11-23): [PLAT-23681] YBA: Renumber the update_time migration to V481 (@artem-mindrov)
+- **PR #38987** (2026-11-23): [BACKPORT 2026.1][#36720] YSQL: Stop the notifications poller from polling the master (#38567) (@arpang)
+- **PR #38986** (2026-11-23): [BACKPORT 2026.2][PLAT-24001,PLAT-24003] YBA: Redact stored LDAP secrets in configure responses and the state transition delta (@asc-073-yb)
+- **PR #38984** (2026-11-23): [BACKPORT 2026.2][#36720] YSQL: Stop the notifications poller from polling the master (#38567) (@arpang)
+- **PR #38965** (2026-11-23): [#38964] CDC: Wait for stream metadata in CDCSDKYsqlTest.TestStreamActiveOnNamespaceNoPKTable (@csi-fix)
+- **PR #38960** (2026-11-23): [BACKPORT 2026.1][PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts (#38827) (@kv83821-yb)
 
 ---
 
@@ -2788,39 +2903,59 @@ This diff:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#38002] YSQL: Fix race between implicit tablegroup drop and concurrent CREATE T
+## X. [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts
 
 **RULE**:
-When implementing operations in `src/postgres/src/backend/catalog/dependency.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `290d6d08`: [#38002] YSQL: Fix race between implicit tablegroup drop and concurrent CREATE TABLE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c5ff0f2`: [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/backend/catalog/dependency.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-			depform->refclassid == YbTablegroupRelationId)
-	 * YB: Delete the implicit tablegroup if YbLockImplicitTablegroupForDrop
-	 * says that it is not needed any more.
-		OidIsValid(implicit_tablegroup.objectId) &&
-		YbLockImplicitTablegroupForDrop(implicit_tablegroup.objectId))
+import java.time.Duration;
+  private static final Duration RETRY_DELAY = Duration.ofSeconds(5);
+
+  // Whether a failed setFlag RPC is retried, and until when.
+  private boolean retryRpcFailures;
+  private long retryDeadlineMs;
+
+    retryDeadlineMs = System.currentTimeMillis() + retryTimeout().toMillis();
+      // A K8s pod can restart at any time, e.g. when the cluster autoscaler moves it, and comes
+      // back on its own; a VM server that is down usually does not. A best-effort push is often
+      // to a server that is down for good. VM callers that push best effort without ignoreErrors
+      // (master failover) rely on the first failure, so they must not wait either.
+      retryRpcFailures = !taskParams().ignoreErrors && Util.isKubernetesBasedUniverse(universe);
+  // Package-private so tests can stub the timeout and the wait.
+  Duration retryTimeout() {
+    return config.getDuration("yb.wait_for_server_timeout");
+  }
+
+  void waitBeforeRetry(Duration delay) {
+    waitFor(delay);
+  }
+
+    boolean setSuccess;
+    while (true) {
+      try {
+        setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
+        break;
+      } catch (Exception e) {
+        // A server t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-			depform->refclassid == YbTablegroupRelationId &&
-			!tablegroupHasDependents(depform->refobjid))
-	 * YB: Check if implicit tablegroup has any more tables in it.
-	 * If not delete it.
-		OidIsValid(implicit_tablegroup.objectId))
+    boolean setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `290d6d08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c5ff0f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

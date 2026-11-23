@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
   "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T07:51:02.224Z",
+  "timestamp": "2026-11-23T18:40:44.128Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [autotrust/GLM5.3-Flash-E224-DGX-Spark](https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark) (Revision: `hf-autotru`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T07:51:02.224Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-23T18:40:44.128Z`  
 > **Learning ID**: `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark](https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T07:51:01.363Z  
+> **Harvest Timestamp**: 2026-11-23T18:40:43.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 11395 downloads | 74 likes
+- **Stars / Engagement**: 9504 downloads | 74 likes
 
 ---
 

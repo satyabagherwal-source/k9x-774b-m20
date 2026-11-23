@@ -12450,3 +12450,7 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `520e2886` | Multi-dimensional audit evidence | 2026-11-23T18:24:03.946Z |
 | `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-23T18:32:11.718Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6c8cbc67` | Multi-dimensional audit evidence | 2026-11-23T18:32:29.102Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-23T18:40:43.915Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `fad2fe84` | Multi-dimensional audit evidence | 2026-11-23T18:40:53.968Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `80c1ffc3` | Multi-dimensional audit evidence | 2026-11-23T18:41:03.068Z |
+| `learn-dom-i-981fc0de` | `project://nginx-kubernetes-ingress` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md` | 2026-11-23T18:41:37.261Z |

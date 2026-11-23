@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T18:32:34.674Z",
-  "total_records": 2438,
+  "last_updated": "2026-11-23T18:41:39.540Z",
+  "total_records": 2439,
   "domains": {
     "A": {
       "total": 20,
@@ -2135,7 +2135,7 @@
       ]
     },
     "I": {
-      "total": 135,
+      "total": 136,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2271,7 +2271,8 @@
         "domain_intelligence-content-information-intelligence-daveebbelaar-bama-core-invariants",
         "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-core-invariants",
-        "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-learnings-core-invariants",
+        "DOM-I-981FC0DE"
       ]
     },
     "J": {
@@ -17503,8 +17504,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/GLM5.3-Flash-E224-DGX-Spark Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-glm5-3-flash-e224-dgx-spark-research-knowledge-intelligence-autotru.md",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "content_hash": "7e3c566ef1f7bbd618dd07b1aceda996e4d1f33915160baee5a85b9d840e955d",
-      "created_at": "2026-11-19T07:51:02.225Z"
+      "content_hash": "9578fa3edbdfbac30a3965cb1ff86f5b4b6bd780f12da3e6d5b47157e67ee826",
+      "created_at": "2026-11-23T18:40:44.129Z"
     },
     "domain_intelligence-architecture-intelligence-meta-folly-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-meta-folly-core-invariants",
@@ -17590,8 +17591,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnings-research-knowledge-intelligen.md",
       "repository": "hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings",
-      "content_hash": "e0720655c7d0b5345fe9bdd62aecc768c823215d862fd6ebae0d06f150af491e",
-      "created_at": "2026-11-19T07:51:14.642Z"
+      "content_hash": "c1fc294fc465460a26ef9219bcb1d664caea0af84fb471306d2e5e33568afe2f",
+      "created_at": "2026-11-23T18:41:06.695Z"
     },
     "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants",
@@ -24687,8 +24688,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "ab24e97cb45202f111994628178dae092bd1fa2c306cbf1fb8c104701e850291",
-      "created_at": "2026-11-21T17:05:54.661Z"
+      "content_hash": "ea6133d28939544b4f2ba857f50e2efd12c2f00ab9c6d6f073a29e71675f840f",
+      "created_at": "2026-11-23T18:40:54.370Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -24705,8 +24706,8 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
       "repository": "nginx-kubernetes-ingress-learnings",
-      "content_hash": "24f47e3a7d6a2df286825b4362f88b8c8f2867961fce7b2da71a92893e722942",
-      "created_at": "2026-11-20T13:27:16.267Z"
+      "content_hash": "ca0cf164f0a2ff0ee309922ac97f78a3e71dd74b9572e9886fbf6e777bc731fb",
+      "created_at": "2026-11-23T18:41:38.212Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -27389,8 +27390,8 @@
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "repository": "yugabyte/yugabyte-db",
-      "content_hash": "92b731fe5c7119f6a32dd10a0241746ec9d0f47289c5808ebbac38d79e09f8bc",
-      "created_at": "2026-11-22T16:12:33.723Z"
+      "content_hash": "770a4bdd113388f6b65bf2bdbce0abebf300d5a4ba760d4c8953ccd9ab1501fc",
+      "created_at": "2026-11-23T18:41:03.458Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -31094,8 +31095,8 @@
       "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-learnings-quality-verification-intelligence-yugabyte-yugaby.md",
       "repository": "yugabyte-yugabyte-db-learnings",
-      "content_hash": "73a3ca7a7e6c8019e96e7587ba965ec236c4dcdeedd6f77191c31703be359a4c",
-      "created_at": "2026-11-22T16:12:39.513Z"
+      "content_hash": "98dd33d2e5a625b4562aa235fe2386425f1b366c77e251480712403a890760f8",
+      "created_at": "2026-11-23T18:41:39.540Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -40906,6 +40907,40 @@
       "repository": "stakater-reloader-learnings",
       "content_hash": "2cd15a5c3c05b7ae51c28dc9cf77493549ca7b8d24281c292722329ad1768386",
       "created_at": "2026-11-23T18:16:06.003Z"
+    },
+    "DOM-I-981FC0DE": {
+      "record_id": "DOM-I-981FC0DE",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "Manual dispatch: Creates a new release-XY branch and bumps versions",
+      "content": "Creates a new `release-X.Y` branch and bumps versions",
+      "content_hash": "db407240ac4c8520af5881eda9c2445dc8a7d8467ca310394112b15b2c9204ca",
+      "summary": "Creates a new `release-X.Y` branch and bumps versions -> Creates a new `release-X.Y` branch and bumps versions",
+      "provenance": {
+        "source_uri": "project://nginx-kubernetes-ingress/nginx-kubernetes-ingress-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`create-release-branch.yml`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nginx-kubernetes-ingress)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of nginx-kubernetes-ingress"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-23T18:41:37.232Z"
     }
   }
 }
