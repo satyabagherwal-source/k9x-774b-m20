@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T06:14:31.552Z",
-  "total_records": 2396,
+  "last_updated": "2026-11-23T06:22:35.859Z",
+  "total_records": 2398,
   "domains": {
     "A": {
       "total": 20,
@@ -1107,7 +1107,7 @@
       ]
     },
     "G": {
-      "total": 408,
+      "total": 410,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1516,7 +1516,9 @@
         "domain_intelligence-architecture-intelligence-buresdv-cork-core-invariants",
         "domain_intelligence-architecture-intelligence-buresdv-cork-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-core-invariants",
-        "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants",
+        "domain_intelligence-architecture-intelligence-xerj-org-xerj-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8166,8 +8168,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "1215848fde2a85abcd7453c123be6870d07210a67cc28803f85217ea77a24a07",
-      "created_at": "2026-11-23T05:27:32.677Z"
+      "content_hash": "9611dba760bac91400524171af5e8c68aa58a8652f7199b5d005e2947fb3cf41",
+      "created_at": "2026-11-23T06:22:35.859Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12801,8 +12803,8 @@
       "title": "Research & Knowledge Intelligence: openai/gpt-oss-120b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-120b-research-knowledge-intelligence-openai-gpt-oss-120b-core-.md",
       "repository": "openai/gpt-oss-120b",
-      "content_hash": "7dd4cfcf1c55cb9f45aab9ab2c5cb47e58398ede2ab8f1080f444d7152482ddd",
-      "created_at": "2026-11-18T20:54:06.424Z"
+      "content_hash": "0b67a40b6fc3b32c94c3aca6af8cccde1f9b4a4ab78bc3c41f8a7b1cbe53b6b3",
+      "created_at": "2026-11-23T06:22:16.305Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-core-invariants",
@@ -12912,8 +12914,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-120b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-120b-learnings-research-knowledge-intelligence-hf-openai-gpt-o.md",
       "repository": "hf-openai-gpt-oss-120b-learnings",
-      "content_hash": "3ff9f015b5986b5e84aa9ebb8bbd4d90c10ccc56e8d9782ee260eac66aa93c4c",
-      "created_at": "2026-11-18T20:54:18.113Z"
+      "content_hash": "08bf2d30101470390369dc197aefff03056255be5eb627da5c52aa669354cd48",
+      "created_at": "2026-11-23T06:22:34.120Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant",
@@ -40288,6 +40290,24 @@
       "repository": "erkamyaman-rust-anything-learnings",
       "content_hash": "30b6d6733c199cc0213f778933c8951266e408e208a9e7c444274461571b912d",
       "created_at": "2026-11-23T06:14:28.984Z"
+    },
+    "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: xerj-org/xerj Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xerj-org-xerj-architecture-intelligence-xerj-org-xerj-core-invariants.md",
+      "repository": "xerj-org/xerj",
+      "content_hash": "0e32140c56588c770860996f4e99a281d43271ccc134195d48bf68d3cac104a4",
+      "created_at": "2026-11-23T06:22:30.843Z"
+    },
+    "domain_intelligence-architecture-intelligence-xerj-org-xerj-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-xerj-org-xerj-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: xerj-org-xerj-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xerj-org-xerj-learnings-architecture-intelligence-xerj-org-xerj-learnings-core-i.md",
+      "repository": "xerj-org-xerj-learnings",
+      "content_hash": "926737abe07e7a950e7f39d43542d961ab1e1234b56b560f68dd1042e451e3b4",
+      "created_at": "2026-11-23T06:22:34.817Z"
     }
   }
 }

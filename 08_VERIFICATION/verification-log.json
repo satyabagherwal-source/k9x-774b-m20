@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-J2MU",
-    "timestamp": "2026-11-21T06:42:14.934Z",
-    "repository": "Folkbench/folkbench",
-    "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "a84b8da6455c1030e7ae0bd980a8a3c0ae0d992e614592250409d8e0b8c585f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-N1NV",
-    "timestamp": "2026-11-21T06:45:20.299Z",
-    "repository": "lingyired/status-trio",
-    "learningId": "learn-github-lingyired-status-trio",
-    "contentHash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-CM2G",
     "timestamp": "2026-11-21T07:05:13.144Z",
     "repository": "jithin-sabu/purge-app",
@@ -7490,6 +7460,36 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "f52e754a508d35a517c50db4bb56596510534ecc9a1c1d194b94a146f5b5d2f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-P2XZ",
+    "timestamp": "2026-11-23T06:22:16.103Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "07d157ac3b1aa5a26d56ad21aed1107cb7257b596f740b794cc909b17aa01b7b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261123-PE1K",
+    "timestamp": "2026-11-23T06:22:30.488Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "d3bcd9d96de47ac07c10866e63789d21ef2d374d60bcd3d58d8c619b52fd78b1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

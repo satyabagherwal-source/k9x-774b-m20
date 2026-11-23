@@ -12283,3 +12283,5 @@
 | `CYCLE-20261123-ER4Q` | `2026-11-23T06:14:14.234Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10030` | Yes (`eca9f2ee...`) |
 | `CYCLE-20261123-EXWH` | `2026-11-23T06:14:23.009Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10031` | Yes (`83769852...`) |
 | `CYCLE-20261123-EZ56` | `2026-11-23T06:14:24.618Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10032` | Yes (`f52e754a...`) |
+| `CYCLE-20261123-P2XZ` | `2026-11-23T06:22:16.103Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`07d157ac...`) |
+| `CYCLE-20261123-PE1K` | `2026-11-23T06:22:30.488Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10033` | Yes (`d3bcd9d9...`) |

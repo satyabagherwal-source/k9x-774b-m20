@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T05:35:33.333Z",
-    "lastVerified": "2026-11-23T05:35:33.333Z",
+    "lastChecked": "2026-11-23T06:22:27.643Z",
+    "lastVerified": "2026-11-23T06:22:27.643Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-23T06:14:28.147Z",
-    "lastVerified": "2026-11-23T06:14:28.147Z",
+    "lastChecked": "2026-11-23T06:22:33.781Z",
+    "lastVerified": "2026-11-23T06:22:33.781Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2265,8 +2265,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-22T22:49:31.966Z",
-    "lastVerified": "2026-11-22T22:49:31.966Z",
+    "lastChecked": "2026-11-23T06:22:22.716Z",
+    "lastVerified": "2026-11-23T06:22:22.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3079,14 +3079,14 @@
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T04:05:06.081Z",
-    "lastVerified": "2026-11-22T04:05:06.081Z",
+    "lastChecked": "2026-11-23T06:22:29.524Z",
+    "lastVerified": "2026-11-23T06:22:29.524Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
+    "contentHash": "d3bcd9d96de47ac07c10866e63789d21ef2d374d60bcd3d58d8c619b52fd78b1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4160,9 +4160,9 @@
   "svenstaro-miniserve": {
     "name": "miniserve",
     "officialUrl": "https://github.com/svenstaro/miniserve",
-    "lastChecked": "2026-11-21T22:29:47.655Z",
+    "lastChecked": "2026-11-23T06:22:12.639Z",
     "revisionIdentifier": "68b6f063",
-    "lastVerified": "2026-11-21T22:29:47.655Z"
+    "lastVerified": "2026-11-23T06:22:12.639Z"
   },
   "hf-hexgrad-kokoro-82m": {
     "name": "hexgrad/Kokoro-82M",
@@ -4555,9 +4555,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-22T05:19:53.969Z",
+    "lastChecked": "2026-11-23T06:22:20.139Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-22T05:19:53.969Z"
+    "lastVerified": "2026-11-23T06:22:20.140Z"
   },
   "typedb-typedb": {
     "name": "typedb",
@@ -4645,12 +4645,12 @@
     "officialUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T20:54:05.647Z",
-    "lastVerified": "2026-11-18T20:54:05.647Z",
+    "lastChecked": "2026-11-23T06:22:15.486Z",
+    "lastVerified": "2026-11-23T06:22:15.486Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "127990feb86ae2639790499317290303fc8e89458b70685c8d8d48e5afd95444",
+    "contentHash": "07d157ac3b1aa5a26d56ad21aed1107cb7257b596f740b794cc909b17aa01b7b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9864,9 +9864,9 @@
   "kdchang-reactjs101": {
     "name": "reactjs101",
     "officialUrl": "https://github.com/kdchang/reactjs101",
-    "lastChecked": "2026-11-20T05:20:59.733Z",
+    "lastChecked": "2026-11-23T06:22:17.745Z",
     "revisionIdentifier": "9a6f238b",
-    "lastVerified": "2026-11-20T05:20:59.733Z"
+    "lastVerified": "2026-11-23T06:22:17.745Z"
   },
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",

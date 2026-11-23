@@ -12316,3 +12316,5 @@ Every entry in this ledger must capture:
 | `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `b30206b1` | Multi-dimensional audit evidence | 2026-11-23T06:14:14.239Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `e3bea4e4` | Multi-dimensional audit evidence | 2026-11-23T06:14:23.014Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f7d2828f` | Multi-dimensional audit evidence | 2026-11-23T06:14:24.624Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-23T06:22:16.106Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `98e7681c` | Multi-dimensional audit evidence | 2026-11-23T06:22:30.491Z |

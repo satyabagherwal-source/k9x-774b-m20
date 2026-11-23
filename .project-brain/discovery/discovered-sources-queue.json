@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-23T06:14:31.034Z",
+  "updated_at": "2026-11-23T06:22:34.441Z",
   "stats": {
-    "total_discovered": 7798,
-    "approved_pending_harvest": 7376,
+    "total_discovered": 7799,
+    "approved_pending_harvest": 7377,
     "harvested_count": 0,
     "rejected_count": 422,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7367,
+      "COMMUNITY_AND_EXPERT": 7368,
       "OFFICIAL_DOCUMENTATION": 247,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 6,
@@ -168625,6 +168625,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
         "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-6BFEEC7F86E1": {
+      "id": "SRC-6BFEEC7F86E1",
+      "url": "https://github.com/xerj-org/xerj/issues/3468",
+      "title": "https://github.com/xerj-org/xerj/issues/3468",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-23T06:22:34.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
       }
     }
   }

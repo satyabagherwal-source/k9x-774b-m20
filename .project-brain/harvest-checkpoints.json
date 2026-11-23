@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T06:14:24.636Z",
+  "last_updated": "2026-11-23T06:22:30.499Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1190,14 +1190,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-120b",
-      "content_hash": "127990feb86ae2639790499317290303fc8e89458b70685c8d8d48e5afd95444",
-      "verified_at": "2026-11-18T20:54:06.259Z",
+      "content_hash": "07d157ac3b1aa5a26d56ad21aed1107cb7257b596f740b794cc909b17aa01b7b",
+      "verified_at": "2026-11-23T06:22:16.115Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T20:54:06.259Z"
+      "last_updated": "2026-11-23T06:22:16.115Z"
     },
     "zai-org/GLM-5.2": {
       "repository": "zai-org/GLM-5.2",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
-      "verified_at": "2026-11-22T04:05:07.202Z",
+      "content_hash": "d3bcd9d96de47ac07c10866e63789d21ef2d374d60bcd3d58d8c619b52fd78b1",
+      "verified_at": "2026-11-23T06:22:30.498Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T04:05:07.202Z"
+      "last_updated": "2026-11-23T06:22:30.498Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",

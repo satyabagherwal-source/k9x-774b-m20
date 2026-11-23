@@ -915,8 +915,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceVersion": "hf-openai-gpt-oss-120b",
     "license": "Open-Source",
-    "contentHash": "127990feb86ae2639790499317290303fc8e89458b70685c8d8d48e5afd95444",
-    "lastHarvestedAt": "2026-11-18T20:54:06.252Z",
+    "contentHash": "07d157ac3b1aa5a26d56ad21aed1107cb7257b596f740b794cc909b17aa01b7b",
+    "lastHarvestedAt": "2026-11-23T06:22:16.106Z",
     "learningId": "learn-huggingface-openai-gpt-oss-120b"
   },
   "hf-zai-org-glm-5.2": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "34a14c0d",
+    "sourceVersion": "98e7681c",
     "license": "Apache-2.0",
-    "contentHash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
-    "lastHarvestedAt": "2026-11-22T04:05:07.194Z",
+    "contentHash": "d3bcd9d96de47ac07c10866e63789d21ef2d374d60bcd3d58d8c619b52fd78b1",
+    "lastHarvestedAt": "2026-11-23T06:22:30.491Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {

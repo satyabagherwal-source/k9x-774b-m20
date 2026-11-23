@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T06:14:31.809Z",
+  "last_updated": "2026-11-23T06:22:36.138Z",
   "total_verified_learnings": 9077,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23898,
+  "total_items": 23903,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1215848fde2a85abcd7453c123be6870d07210a67cc28803f85217ea77a24a07",
+      "content_hash": "9611dba760bac91400524171af5e8c68aa58a8652f7199b5d005e2947fb3cf41",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T05:27:32.677Z"
+      "persisted_at": "2026-11-23T06:22:35.859Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bdadb4a775ee5ed39c440ad6b8f45eb5cba1cdbe9a3efcac26a208fcca6b30f",
+      "content_hash": "a9bc411b9b9be2b38aaafec48affd176996e159e07eca4cfe7cb559d5e98ec74",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T05:27:32.827Z"
+      "persisted_at": "2026-11-23T06:22:36.012Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "be0ce740fd8e5b890b62c2c1ec83e3fc7088e40e92ea17c977e01867acbff04c",
+      "content_hash": "9b8c1bad12011df215899b0bc353df0852f6925ee552d3aa20a3cae6a6685acf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:27:32.947Z"
+      "persisted_at": "2026-11-23T06:22:36.138Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -222083,7 +222083,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "127990feb86ae2639790499317290303fc8e89458b70685c8d8d48e5afd95444",
+      "content_hash": "07d157ac3b1aa5a26d56ad21aed1107cb7257b596f740b794cc909b17aa01b7b",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "promoted_rules": [],
@@ -222092,7 +222092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T20:54:06.053Z",
+      "verified_at": "2026-11-23T06:22:15.904Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222109,9 +222109,9 @@
       "title": "Research & Knowledge Intelligence: openai/gpt-oss-120b Core Invariants",
       "repository": "openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "7dd4cfcf1c55cb9f45aab9ab2c5cb47e58398ede2ab8f1080f444d7152482ddd",
+      "content_hash": "0b67a40b6fc3b32c94c3aca6af8cccde1f9b4a4ab78bc3c41f8a7b1cbe53b6b3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:54:06.424Z"
+      "persisted_at": "2026-11-23T06:22:16.305Z"
     },
     "learn-github-nats-io-nats-server": {
       "learning_id": "learn-github-nats-io-nats-server",
@@ -222241,9 +222241,9 @@
       "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-120b-learnings Core Invariants",
       "repository": "hf-openai-gpt-oss-120b-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ff9f015b5986b5e84aa9ebb8bbd4d90c10ccc56e8d9782ee260eac66aa93c4c",
+      "content_hash": "08bf2d30101470390369dc197aefff03056255be5eb627da5c52aa669354cd48",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:54:18.113Z"
+      "persisted_at": "2026-11-23T06:22:34.120Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant",
@@ -282280,8 +282280,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "34a14c0d",
-      "content_hash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
+      "source_version": "98e7681c",
+      "content_hash": "d3bcd9d96de47ac07c10866e63789d21ef2d374d60bcd3d58d8c619b52fd78b1",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -282304,6 +282304,11 @@
           "number": 9893,
           "title": "engine,storage): searches stop waiting on WAL and snapshot fsyncs under write lo",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10033,
+          "title": "run the pressure purge off the memory sampler thread (Refs #2427)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -282311,7 +282316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T04:05:06.974Z",
+      "verified_at": "2026-11-23T06:22:30.306Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282339,10 +282344,10 @@
       "relative_path": "03_SKILLS/xerj-org-xerj-skill-operational-integration-playbook-for-xerj-org-xerj.md",
       "title": "Skill: Operational & Integration Playbook for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "34a14c0d",
-      "content_hash": "06088fd773dcdecfe792372a395dbcfc580fa53a75e80aa27825bde7de0a07a8",
-      "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:05:07.755Z"
+      "source_version": "98e7681c",
+      "content_hash": "29c913afeb069cc17200fc2c7433638c8594350ea77f8ff7bff0f40590adf6f9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:22:30.996Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj",
@@ -282351,10 +282356,10 @@
       "relative_path": "08_VERIFICATION/xerj-org-xerj-verification-protocol-empirical-defect-shield-for-xerj-org-xerj.md",
       "title": "Verification Protocol: Empirical Defect Shield for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "34a14c0d",
-      "content_hash": "8a3d167976f4190622a960aed5a5e0ed639c5506646bafd81e81aa1f6752a51f",
+      "source_version": "98e7681c",
+      "content_hash": "5667ec1549e5c2d87570dceeaa4489787b0329cdb5be22c34dc5bd04e562f8d5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:05:07.902Z"
+      "persisted_at": "2026-11-23T06:22:31.125Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
@@ -299980,9 +299985,9 @@
       "title": "Skill: Operational & Integration Playbook for xerj-org-xerj-learnings",
       "repository": "xerj-org-xerj-learnings",
       "source_version": "HEAD",
-      "content_hash": "3bfeb13092f6116306336670747a3c4bba71c4503474ebd725a7b027b86b1732",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:40:02.149Z"
+      "content_hash": "27c645737dde2e86ad841ecc1d5a8fa35be1841391ea075618f8174e526a253a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:22:34.973Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj-learnings",
@@ -299992,9 +299997,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for xerj-org-xerj-learnings",
       "repository": "xerj-org-xerj-learnings",
       "source_version": "HEAD",
-      "content_hash": "55dbb3f17da09f8cbaf73cd9b4485f9e51c61cb677276fd363ef12e48b2ea341",
+      "content_hash": "97bd48e75e982db41431e2c11282956dc7d32d934e090d48fea2fa1370bce007",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:40:02.322Z"
+      "persisted_at": "2026-11-23T06:22:35.101Z"
     },
     "learn-github-herdrdev-herdr": {
       "learning_id": "learn-github-herdrdev-herdr",
@@ -310085,13 +310090,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QPBL-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PI2J-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "642e4680c705396182e2a0e5743d0900243226e995174f1a3333ce1e669f1a8d",
+      "content_hash": "6be05ebe15b699d3d058ad6e5e31347451312f11e7d4814be23bad81cf8af3d2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T05:27:32.533Z"
+      "persisted_at": "2026-11-23T06:22:35.710Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -325464,6 +325469,68 @@
       "content_hash": "b964196df01ba74af43e2b6985382cd10bcd922d4f6418d8b4b35eafb348dc97",
       "domain_letter": "G",
       "persisted_at": "2026-11-23T06:14:31.325Z"
+    },
+    "rule-10033": {
+      "learning_id": "rule-10033",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10033,
+      "title": "run the pressure purge off the memory sampler thread (Refs #2427)",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "98e7681c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-23T06:22:30.306Z"
+    },
+    "candidate_directive-run-the-pressure-purge-off-the-memory-sampler-thread-refs-2427": {
+      "item_id": "candidate_directive-run-the-pressure-purge-off-the-memory-sampler-thread-refs-2427",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PE7C-run-the-pressure-purge-off-the-memory-sampler-thread-refs-2427.md",
+      "title": "run the pressure purge off the memory sampler thread (Refs #2427)",
+      "repository": "xerj-org/xerj",
+      "source_version": "98e7681c",
+      "content_hash": "bc949ee990f8e77a525f0c4c8ceacd94ad7168da3b9ce0b7896fdf9a1ef62def",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T06:22:30.700Z"
+    },
+    "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xerj-org-xerj-architecture-intelligence-xerj-org-xerj-core-invariants.md",
+      "title": "Architecture Intelligence: xerj-org/xerj Core Invariants",
+      "repository": "xerj-org/xerj",
+      "source_version": "98e7681c",
+      "content_hash": "0e32140c56588c770860996f4e99a281d43271ccc134195d48bf68d3cac104a4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:22:30.843Z"
+    },
+    "candidate_directive-governor-run-the-pressure-purge-off-the-memory-sampler-thread-refs-2427": {
+      "item_id": "candidate_directive-governor-run-the-pressure-purge-off-the-memory-sampler-thread-refs-2427",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PH99-governor-run-the-pressure-purge-off-the-memory-sampler-thread-refs-2427.md",
+      "title": "governor: run the pressure purge off the memory sampler thread (Refs #2427)",
+      "repository": "xerj-org-xerj-learnings",
+      "source_version": "HEAD",
+      "content_hash": "173f0dbac1e1a4b2e7fc5af791de5fd2865204d01dcc06021e983ebaf2b061a3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-23T06:22:34.656Z"
+    },
+    "domain_intelligence-architecture-intelligence-xerj-org-xerj-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-xerj-org-xerj-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xerj-org-xerj-learnings-architecture-intelligence-xerj-org-xerj-learnings-core-i.md",
+      "title": "Architecture Intelligence: xerj-org-xerj-learnings Core Invariants",
+      "repository": "xerj-org-xerj-learnings",
+      "source_version": "HEAD",
+      "content_hash": "926737abe07e7a950e7f39d43542d961ab1e1234b56b560f68dd1042e451e3b4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-23T06:22:34.817Z"
     }
   },
   "ai-builder-brain": {

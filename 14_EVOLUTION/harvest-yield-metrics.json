@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-23T06:14:24.631Z",
-  "total_cycles_completed": 11680,
-  "total_learnings_persisted": 11680,
-  "total_rules_promoted": 10862,
+  "last_updated": "2026-11-23T06:22:30.496Z",
+  "total_cycles_completed": 11682,
+  "total_learnings_persisted": 11682,
+  "total_rules_promoted": 10863,
   "history": [
-    {
-      "timestamp": "2026-11-22T11:14:15.687Z",
-      "repository": "n4ze3m/tiny-voca",
-      "learningId": "learn-huggingface-n4ze3m-tiny-voca",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T11:14:17.237Z",
-      "repository": "abue-ammar/tinycast",
-      "learningId": "learn-github-abue-ammar-tinycast",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T11:34:34.208Z",
       "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-23T06:14:24.631Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:22:16.112Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-23T06:22:30.496Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
